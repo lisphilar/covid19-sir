@@ -9,7 +9,9 @@ With this Python package we can apply SIR-F model to COVID-19 data. SIR-F is a c
 
 ## Installation
 - pip install
+```pip install git+https://github.com/lisphilar/covid19-sir.git```
 - Clone this repository
+```git clone https://github.com/lisphilar/covid19-sir.git```
 
 ## Usage
 (Updated the codes will be uploaded)
