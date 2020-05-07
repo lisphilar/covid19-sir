@@ -22,9 +22,6 @@ Please install this package using
 - pip install ```pip install git+https://github.com/lisphilar/covid19-sir.git```, or
 - Clone this repository ```git clone https://github.com/lisphilar/covid19-sir.git```
 
-Then, please install the required packages.
-- pipenv users: ```pipenv install```
-
 ## Usage
 (Updated the codes will be uploaded)
 
