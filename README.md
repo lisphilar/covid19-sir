@@ -19,7 +19,7 @@ Secondary source: [Secondary source: COVID-19 dataset in Japan by Lisphilar](htt
 ## Installation
 Please install this package using
 - pipenv install ```pipenv install git+https://github.com/lisphilar/covid19-sir#egg=covsirphy```, or
-- pip install ```pip install git+https://github.com/lisphilar/covid19-sir.git```, or
+- pip install ```pip install git+https://github.com/lisphilar/covid19-sir#egg=covsirphy```, or
 - Clone this repository ```git clone https://github.com/lisphilar/covid19-sir.git```
 
 ## Usage
