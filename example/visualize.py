@@ -6,9 +6,10 @@ from covsirphy.cleaning.jhu import JHUData
 
 def main():
     # JHU dataset
+    jhu_file = "input/covid_19_data.csv"
     # Show raw dataframe
-    raw = JHUData("../input/novel-corona-virus-2019-dataset/covid_19_data.csv")
-    print(raw)
+    jhu_data = JHUData(jhu_file)
+    print(jhu_data.raw.tail())
 
 
 if __name__ == "__main__":

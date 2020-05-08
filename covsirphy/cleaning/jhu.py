@@ -8,4 +8,6 @@ class JHUData(CleaningBase):
     """
     Class for data cleaning of JHU/ dataset.
     """
-    pass
+
+    def __init__(self, filename):
+        super().__init__(filename)
