@@ -52,7 +52,10 @@ def select_area(ncov_df, group="Date",
             df = df.loc[df.index != df2.index, :]
         sel = SelectArea(df)
     # Return
-    sel.set_min(["Recovered", "Deaths"], 0)
+    try:
+        sel.set_min(["Recovered", "Deaths"], 0)
+    except KeyError:
+        pass
     return sel.selected(group=group)
 
 
@@ -110,7 +113,7 @@ class SelectArea(object):
         if not set(columns).issubset(set(df.columns)):
             diffs = list(set(columns) - set(df.columns))
             diff_str = ", ".join(diffs)
-            diff_str += "columns" if len(diffs) > 1 else "column"
+            diff_str += " columns" if len(diffs) > 1 else " column"
             raise KeyError(f"The dataset does not have {diff_str}.")
         df = df.loc[df[columns].sum() > total, :]
         self.df = df.copy()
