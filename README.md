@@ -25,5 +25,7 @@ Please install this package using
 ## Usage
 (Updated the codes will be uploaded)
 
-## Author
-Lisphilar
+## Citation
+Lisphilar, 2020, Kaggle notebook, COVID-19 data with SIR model, https://www.kaggle.com/lisphilar/covid-19-data-with-sir-model
+
+Lisphilar, 2020, GitHub repository, https://github.com/lisphilar/covid19-sir
