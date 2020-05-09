@@ -115,7 +115,7 @@ class SelectArea(object):
             diff_str = ", ".join(diffs)
             diff_str += " columns" if len(diffs) > 1 else " column"
             raise KeyError(f"The dataset does not have {diff_str}.")
-        df = df.loc[df[columns].sum() > total, :]
+        df = df.loc[df[columns].sum(axis=1) > total, :]
         self.df = df.copy()
 
     def clear_selection(self):
