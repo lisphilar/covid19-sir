@@ -23,7 +23,10 @@ Please install this package using
 - Clone this repository ```git clone https://github.com/lisphilar/covid19-sir.git```
 
 ## Usage
-(Updated the codes will be uploaded)
+```
+from covsirphy.analysis.scenario import Scenario
+```
+(Please see the Kaggle notebook, update later)
 
 ## Citation
 Lisphilar, 2020, Kaggle notebook, COVID-19 data with SIR model, https://www.kaggle.com/lisphilar/covid-19-data-with-sir-model

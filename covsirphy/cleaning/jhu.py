@@ -1,7 +1,9 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-from covsirphy.cleaning import CleaningBase
+from covsirphy.cleaning.cbase import CleaningBase
+
+__all__ = ["JHUData"]
 
 
 class JHUData(CleaningBase):
