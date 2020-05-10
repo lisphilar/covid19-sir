@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-from covsirphy.cleaning.jhu import JHUData
+from covsirphy import JHUData
 
 
 def main():

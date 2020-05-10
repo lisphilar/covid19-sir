@@ -33,7 +33,8 @@ git clone https://github.com/lisphilar/covid19-sir.git
 
 ## Usage
 ```
-from covsirphy.analysis.scenario import Scenario
+import covsirphy as cs
+from covsirphy import Scenario
 ```
 (Please see the Kaggle notebook, update later)
 
