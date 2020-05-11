@@ -53,7 +53,7 @@ def select_area(ncov_df, group="Date",
         sel = SelectArea(df)
     # Return
     try:
-        sel.set_min(["Recovered", "Deaths"], 0)
+        sel.set_min(["Recovered", "Fatal"], 0)
     except KeyError:
         pass
     return sel.selected(group=group)

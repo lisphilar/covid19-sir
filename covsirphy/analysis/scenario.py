@@ -57,7 +57,7 @@ class Scenario(object):
         record_df = record_df.set_index("Date").resample("D").last()
         record_df = record_df.interpolate(method="linear")
         record_df = record_df.loc[:, [
-            "Confirmed", "Infected", "Deaths", "Recovered"]]
+            "Confirmed", "Infected", "Fatal", "Recovered"]]
         self.record_df = record_df.reset_index()
         self.name = name
         self.date_format = date_format
