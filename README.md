@@ -39,14 +39,12 @@ from covsirphy import JHUData
 ```
 Perform data cleaning of JHU dataset.
 ```Python
-jhu_file = "CSV file of JHU dataset"
-jhu_data = JHUData(jhu_file)
+jhu_data = JHUData("CSV file of JHU dataset")
 # Raw dataframe
 jhu_data.raw
 # Cleaned dataframe
 jhu_data.cleaned()
 ```
-
 (Please see the Kaggle notebook, update later)
 
 ## Citation
