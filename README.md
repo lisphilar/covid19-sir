@@ -17,33 +17,39 @@ Secondary source: [Secondary source: COVID-19 dataset in Japan by Lisphilar](htt
 
 
 ## Installation
-We have three options.
-### pip install
-When you use this package in Kaggle notebook,
+When you use this package in Kaggle notebook or local environment with Pip,
 ```
 pip install git+https://github.com/lisphilar/covid19-sir#egg=covsirphy
 ```
-
-### pipenv install
 With Pipenv environment,
 ```
 pipenv install git+https://github.com/lisphilar/covid19-sir#egg=covsirphy
 ```
-
-### For developers
+For developers,
 ```
 git clone https://github.com/lisphilar/covid19-sir.git
 pipenv install --dev
 ```
 
-## Usage
+## Quick usage
+Import this package.
 ```
 import covsirphy as cs
-from covsirphy import Scenario
+from covsirphy import JHUData
 ```
+Perform data cleaning of JHU dataset.
+```
+jhu_file = "CSV file of JHU dataset"
+jhu_data = JHUData(jhu_file)
+# Raw dataframe
+jhu_data.raw
+# Cleaned dataframe
+jhu_data.cleaned()
+```
+
 (Please see the Kaggle notebook, update later)
 
 ## Citation
 Lisphilar, 2020, Kaggle notebook, COVID-19 data with SIR model, https://www.kaggle.com/lisphilar/covid-19-data-with-sir-model
 
-Lisphilar, 2020, GitHub repository, https://github.com/lisphilar/covid19-sir
+Lisphilar, 2020, GitHub repository, Covsirphy, Python package for COVID-19 data with SIR model, https://github.com/lisphilar/covid19-sir
