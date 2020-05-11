@@ -34,7 +34,7 @@ def create_target_df(ncov_df, total_population,
     # column T
     df["T"] = ((df["Date"] - first_date).dt.total_seconds() / 60).astype(int)
     # coluns except T
-    df = df.rename({"Fatal": fatal}, axis=1)
+    df = df.rename({"Deaths": fatal}, axis=1)
     cols = [confirmed, recovered, fatal]
     if not set(cols).issubset(set(df.columns)):
         raise KeyError(f"ncov_df must have {', '.join(cols)} column!")
