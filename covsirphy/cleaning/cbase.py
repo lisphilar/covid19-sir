@@ -92,5 +92,5 @@ class CleaningBase(object):
         r_cols = self.RATE_COLUMNS[:]
         df[r_cols[0]] = df["Fatal"] / df[cols].sum(axis=1)
         df[r_cols[1]] = df["Recovered"] / df[cols].sum(axis=1)
-        df[r_cols[2]] = df["Fata'"] / (df["Deaths"] + df["Recovered"])
+        df[r_cols[2]] = df["Fatal"] / (df["Fatal"] + df["Recovered"])
         return df
