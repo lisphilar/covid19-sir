@@ -4,16 +4,16 @@
 
 # Initialize the input directory
 mkdir -p input
-rm input/*.csv
+rm input/*.csv 2>/dev/null
 
 # Download datasets
 
 # The number of cases
-kaggle datasets download -d sudalairajkumar/novel-corona-virus-2019-dataset
+pipenv run kaggle datasets download -d sudalairajkumar/novel-corona-virus-2019-dataset
 # The number of cases in Japan
-kaggle datasets download -d lisphilar/covid19-dataset-in-japan
+pipenv run kaggle datasets download -d lisphilar/covid19-dataset-in-japan
 # Total population
-kaggle datasets download -d dgrechka/covid19-global-forecasting-locations-population
+pipenv run kaggle datasets download -d dgrechka/covid19-global-forecasting-locations-population
 
 # Move files to input direcotory
 mv *.zip input/
