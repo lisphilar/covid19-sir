@@ -6,7 +6,7 @@ from covsirphy.selection.area import select_area
 
 def create_target_df(ncov_df, total_population,
                      confirmed="Confirmed", recovered="Recovered",
-                     fatal="Deaths", **kwargs):
+                     fatal="Fatal", **kwargs):
     """
     Select the records of the places, calculate the number of susceptible people,
      and calculate the elapsed time [day] from the start date of the target dataframe.

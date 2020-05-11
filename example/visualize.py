@@ -9,7 +9,9 @@ def main():
     jhu_file = "input/covid_19_data.csv"
     # Show raw dataframe
     jhu_data = JHUData(jhu_file)
-    print(jhu_data.raw.tail())
+    jhu_data.cleaned()
+    jhu_data.total()
+    # TODO: Visualization of total data
 
 
 if __name__ == "__main__":
