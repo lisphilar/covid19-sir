@@ -17,18 +17,23 @@ Secondary source: [Secondary source: COVID-19 dataset in Japan by Lisphilar](htt
 
 
 ## Installation
-Please install this package using
-- pipenv install
-```
-pipenv install git+https://github.com/lisphilar/covid19-sir#egg=covsirphy
-```
-- pip install
+We have three options.
+### pip install
+When you use this package in Kaggle notebook,
 ```
 pip install git+https://github.com/lisphilar/covid19-sir#egg=covsirphy
 ```
-- Clone this repository
+
+### pipenv install
+With Pipenv environment,
+```
+pipenv install git+https://github.com/lisphilar/covid19-sir#egg=covsirphy
+```
+
+### For developers
 ```
 git clone https://github.com/lisphilar/covid19-sir.git
+pipenv install --dev
 ```
 
 ## Usage
