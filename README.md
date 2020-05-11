@@ -33,12 +33,12 @@ pipenv install --dev
 
 ## Quick usage
 Import this package.
-```
+```Python
 import covsirphy as cs
 from covsirphy import JHUData
 ```
 Perform data cleaning of JHU dataset.
-```
+```Python
 jhu_file = "CSV file of JHU dataset"
 jhu_data = JHUData(jhu_file)
 # Raw dataframe
