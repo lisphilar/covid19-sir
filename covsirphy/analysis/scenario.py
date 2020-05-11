@@ -185,8 +185,8 @@ class Scenario(object):
                 raise Exception("Please set total_population!")
             total_population = self.total_population
         end_dates = [
-            (datetime.strptime(s, self.date_format) -
-             timedelta(days=1)).strftime(self.date_format)
+            (
+                datetime.strptime(s, self.date_format) - timedelta(days=1)).strftime(self.date_format)
             for s in start_dates[1:]
         ]
         end_dates.append(None)
@@ -250,12 +250,13 @@ class Scenario(object):
                          compare_df[f"{val}_observed"])
                         for val in model.MONOTONIC
                     ]
-                    max_ok = [obs.max() * 0.8 <= est.max() <= obs.max()
-                              * 1.2 for (est, obs) in targets]
+                    max_ok = [
+                        obs.max() * 0.8 <= est.max() <= obs.max() * 1.2 for (est, obs) in targets]
                     monotonic_ok = [
                         target[0].is_monotonic for target in targets]
-                    elapsed = (datetime.now() -
-                               est_start_time_class).total_seconds()
+                    elapsed = (
+                        datetime.now() - est_start_time_class
+                    ).total_seconds()
                     if all(max_ok) or not all(monotonic_ok) or elapsed > 60 * 3:
                         break
                 if all(monotonic_ok) and all(max_ok):
@@ -481,8 +482,8 @@ class Scenario(object):
         @first <float>: parameter value of the start date
         @last <float>: parameter value of the end date
         """
-        start = (pd.to_datetime(start_date) -
-                 timedelta(days=1)).strftime(self.date_format)
+        start = (pd.to_datetime(start_date) - timedelta(days=1)
+                 ).strftime(self.date_format)
         dates = pd.date_range(start=start, end=end_date, freq="D")
         values = np.logspace(
             start=np.log10(first), stop=np.log10(last), num=len(dates), base=10.0
