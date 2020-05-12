@@ -17,7 +17,7 @@ Secondary source: [Secondary source: COVID-19 dataset in Japan by Lisphilar](htt
 
 
 ## Installation
-When you use this package in Kaggle notebook or local environment with Pip,
+When you use this package in Kaggle notebook (need to turn on Internet option in notebook settings) or local environment with Pip,
 ```
 pip install git+https://github.com/lisphilar/covid19-sir#egg=covsirphy
 ```
