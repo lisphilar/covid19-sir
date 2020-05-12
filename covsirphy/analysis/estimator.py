@@ -15,6 +15,7 @@ optuna.logging.disable_default_handler()
 
 
 class Estimator(object):
+    # TODO: Refactoring with method separation
     def __init__(self, model, ncov_df, total_population, name=None,
                  places=None, areas=None, excluded_places=None,
                  start_date=None, end_date=None, date_format="%d%b%Y",
@@ -180,7 +181,7 @@ class Estimator(object):
                 title=f"{self.model.NAME}: Comparison of observed/estimated {v}(t)"
             )
             ax.yaxis.set_major_formatter(ScalarFormatter(useMathText=True))
-            ax.ticklabel_format(style="sci",  axis="y", scilimits=(0, 0))
+            ax.ticklabel_format(style="sci", axis="y", scilimits=(0, 0))
             ax.legend(bbox_to_anchor=(1.02, 0),
                       loc="lower left", borderaxespad=0)
         for v in use_variables:
@@ -193,7 +194,7 @@ class Estimator(object):
         axes.ravel()[0].yaxis.set_major_formatter(
             ScalarFormatter(useMathText=True))
         axes.ravel()[0].ticklabel_format(
-            style="sci",  axis="y", scilimits=(0, 0))
+            style="sci", axis="y", scilimits=(0, 0))
         axes.ravel()[0].legend(bbox_to_anchor=(1.02, 0),
                                loc="lower left", borderaxespad=0)
         fig.tight_layout()

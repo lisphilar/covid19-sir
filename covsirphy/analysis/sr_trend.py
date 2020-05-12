@@ -18,6 +18,7 @@ class Trend(object):
     """
     Class for S-R trend analysis.
     """
+    # TODO: Refactoring with method separation
     SUFFIX_DICT = defaultdict(lambda: "th")
     SUFFIX_DICT.update({1: "st", 2: "nd", 3: "rd"})
 
@@ -83,7 +84,9 @@ class Trend(object):
         # Curve fitting
         # S = a * np.exp(-b * R)
         # dS/dR = - b * S
-        def f(x, a, b): return a * np.exp(-b * x)
+
+        def f(x, a, b):
+            return a * np.exp(-b * x)
         a_ini = self.total_population
         b_ini = - df["Actual"].diff().reset_index(drop=True)[1] / a_ini
         with warnings.catch_warnings():

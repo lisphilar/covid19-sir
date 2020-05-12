@@ -19,6 +19,7 @@ class Scenario(object):
     """
     Class for scenario analysis.
     """
+    # TODO: Refactoring with method separation
     SUFFIX_DICT = defaultdict(lambda: "th")
     SUFFIX_DICT.update({1: "st", 2: "nd", 3: "rd"})
 
@@ -222,6 +223,7 @@ class Scenario(object):
             print(f"Hyperparameter estimation of {num} phase.")
             target_dict = self.phase_dict[num]
             while True:
+                est_obj_count = 0
                 # Create estimator
                 est_start_time_class = datetime.now()
                 self.estimator_dict[num] = Estimator(
@@ -269,9 +271,16 @@ class Scenario(object):
                     s += f" {vals[0]} is non-monotonic."
                     print(s)
                 except IndexError:
-                    s = "\tEstimator will be replaced "
-                    s += "because it is incapable of improvement."
-                    print(s)
+                    est_obj_count += 0
+                    if est_obj_count == 2:
+                        s = "Estimater replacemnt was skipped"
+                        s += " to break closed loop."
+                        print(s)
+                        break
+                    else:
+                        s = "\tEstimator will be replaced "
+                        s += "because it is incapable of improvement."
+                        print(s)
             tau = self.estimator_dict[num].param_dict["tau"]
         minutes, seconds = divmod(
             int((datetime.now() - est_start_time).total_seconds()), 60)
