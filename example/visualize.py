@@ -11,6 +11,7 @@ def main():
     jhu_data = JHUData(jhu_file)
     jhu_data.cleaned()
     jhu_data.total()
+    # TODO: output the dataframe as a CSV file
     # TODO: Visualization of total data
 
 

@@ -273,7 +273,7 @@ class Scenario(object):
                 except IndexError:
                     est_obj_count += 1
                     if est_obj_count == 2:
-                        s = "Estimater replacemnt was skipped"
+                        s = "\tEstimater replacemnt was skipped"
                         s += " to break closed loop."
                         print(s)
                         break
