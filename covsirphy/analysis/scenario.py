@@ -271,7 +271,7 @@ class Scenario(object):
                     s += f" {vals[0]} is non-monotonic."
                     print(s)
                 except IndexError:
-                    est_obj_count += 0
+                    est_obj_count += 1
                     if est_obj_count == 2:
                         s = "Estimater replacemnt was skipped"
                         s += " to break closed loop."
