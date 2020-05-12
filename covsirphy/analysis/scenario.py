@@ -222,8 +222,8 @@ class Scenario(object):
         for num in self.phase_dict.keys():
             print(f"Hyperparameter estimation of {num} phase.")
             target_dict = self.phase_dict[num]
+            est_obj_count = 0
             while True:
-                est_obj_count = 0
                 # Create estimator
                 est_start_time_class = datetime.now()
                 self.estimator_dict[num] = Estimator(
