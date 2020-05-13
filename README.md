@@ -35,16 +35,19 @@ pipenv install --dev
 Import this package.
 ```Python
 import covsirphy as cs
-from covsirphy import JHUData
+from covsirphy import JHUData, Population
 ```
 Perform data cleaning of JHU dataset.
 ```Python
 # With CSV filepath of JHU dataset
-jhu_data = JHUData(filename="input/covid_19_data.csv")
-# Raw dataframe
-jhu_data.raw
-# Cleaned dataframe
+jhu_data = JHUData("input/covid_19_data.csv")
 jhu_data.cleaned()
+```
+Perform data cleaning of population dataset.
+```Python
+# With CSV filepath of population dataset
+pop = Population("input/locations_population.csv")
+pop_dict = pop.to_dict(country_level=True)
 ```
 (Please see the Kaggle notebook, update later)
 
