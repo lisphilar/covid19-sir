@@ -2,28 +2,13 @@
 # -*- coding: utf-8 -*-
 
 import pandas as pd
+from covsirphy.cleaning.word import Word
 
 
-class CleaningBase(object):
+class CleaningBase(Word):
     """
     Basic class for data cleaning.
     """
-    DATE = "Date"
-    COUNTRY = "Country"
-    PROVINCE = "Province"
-    S = "Susceptible"
-    C = "Confirmed"
-    CI = "Infected"
-    F = "Fatal"
-    R = "Recovered"
-    COLUMNS = [DATE, COUNTRY, PROVINCE, C, CI, F, R]
-    VALUE_COLUMNS = [C, CI, F, R]
-    RATE_COLUMNS = [
-        "Fatal per Confirmed",
-        "Recovered per Confirmed",
-        "Fatal per (Fatal or Recovered)"
-    ]
-    T = "Elapsed"
 
     def __init__(self, filename):
         """

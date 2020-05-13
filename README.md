@@ -39,7 +39,8 @@ from covsirphy import JHUData
 ```
 Perform data cleaning of JHU dataset.
 ```Python
-jhu_data = JHUData("CSV file of JHU dataset")
+# With CSV filepath of JHU dataset
+jhu_data = JHUData(filename="input/covid_19_data.csv")
 # Raw dataframe
 jhu_data.raw
 # Cleaned dataframe

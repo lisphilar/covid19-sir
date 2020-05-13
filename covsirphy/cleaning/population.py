@@ -2,13 +2,12 @@
 # -*- coding: utf-8 -*-
 
 import numpy as np
-import pandas as pd
 from covsirphy.cleaning.cbase import CleaningBase
 
 
-class JHUData(CleaningBase):
+class Population(CleaningBase):
     """
-    Data cleaning of JHU-style dataset.
+    Data cleaning of total population dataset.
     """
 
     def __init__(self, filename):
@@ -19,28 +18,20 @@ class JHUData(CleaningBase):
         Perform data cleaing of the raw data.
         This method overwrite super().cleaning() method.
         @return <pd.DataFrame>
-            - index <int>: reseted index
-            - Date <pd.TimeStamp>: Observation date
             - Country <str>: country/region name
             - Province <str>: province/prefecture/state name
-            - Confirmed <int>: the number of confirmed cases
-            - Infected <int>: the number of currently infected cases
-            - Fatal <int>: the number of fatal cases
-            - Recovered <int>: the number of recovered cases
+            - Population <int>: total population
         """
         df = self._raw.copy()
         # Rename the columns
         df = df.rename(
             {
-                "ObservationDate": self.DATE,
-                "Country/Region": self.COUNTRY,
-                "Province/State": self.PROVINCE,
-                "Deaths": self.F
+                "Country.Region": self.COUNTRY,
+                "Province.State": self.PROVINCE,
+                "Population": self.N
             },
             axis=1
         )
-        # Datetime columns
-        df[self.DATE] = pd.to_datetime(df[self.DATE])
         # Country
         df[self.COUNTRY] = df[self.COUNTRY].replace(
             {
@@ -76,14 +67,31 @@ class JHUData(CleaningBase):
         df.loc[df[self.COUNTRY] == "Diamond Princess", [
             self.COUNTRY, self.PROVINCE]] = ["Others", "Diamond Princess"]
         # Values
-        df[self.CI] = df[self.C] - df[self.F] - df[self.R]
-        df[self.VALUE_COLUMNS] = df[self.VALUE_COLUMNS].astype(np.int64)
-        df = df.loc[:, self.COLUMNS].reset_index(drop=True)
+        df[self.N] = df[self.N].astype(np.int64)
+        df = df.loc[:, [self.COUNTRY, self.PROVINCE, self.N]]
         return df
 
-    def replace(self, use_df, country, province=None):
+    def total(self):
         """
-        Replace a part of cleaned dataset with a dataframe.
+        Return the total value of population in the datset.
+        @return <int>
         """
-        # TODO: replacement with other datasets
-        raise Exception("JHUData.replace() will be coded later!")
+        values = self._cleaned_df[self.N]
+        return sum(values)
+
+    def to_dict(self, country_level=True):
+        """
+        Return dictionary of population values.
+        @country_level <str>: whether key is country name or not
+        @return <dict[str]=int>:
+            - if @country_level is True, {"country", population}
+            - if False, {"country/province", population}
+        """
+        df = self._cleaned_df.copy()
+        if country_level:
+            df = df.loc[df[self.PROVINCE] == "-", :]
+            df["key"] = df[self.COUNTRY]
+        else:
+            df["key"] = df[self.COUNTRY].str.cat(df[self.PROVINCE], sep="/")
+        pop_dict = df.set_index("key").to_dict()[self.N]
+        return pop_dict

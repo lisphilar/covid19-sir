@@ -7,6 +7,7 @@ class Word(object):
     Word definition.
     """
     # Variables of SIR-like model
+    N = "Population"
     S = "Susceptible"
     C = "Confirmed"
     CI = "Infected"
