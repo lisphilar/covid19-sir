@@ -32,10 +32,11 @@ pipenv install --dev
 ```
 
 ## Quick usage
+### Preparation
 Import this package.
 ```Python
 import covsirphy as cs
-from covsirphy import JHUData, Population
+from covsirphy import JHUData, CountryData, Population
 ```
 Perform data cleaning of JHU dataset.
 ```Python
@@ -69,6 +70,7 @@ pop.update(country="Example", province="-", value=1_000_000)
 # Return dictionary
 pop.to_dict(country_level=True)
 ```
+### Scenario analysis
 (Please see the Kaggle notebook, update later)
 
 ## Citation
