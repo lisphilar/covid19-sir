@@ -4,6 +4,7 @@
 import numpy as np
 import pandas as pd
 from covsirphy.cleaning.cbase import CleaningBase
+from covsirphy.cleaning.country_data import CountryData
 
 
 class JHUData(CleaningBase):
@@ -81,9 +82,21 @@ class JHUData(CleaningBase):
         df = df.loc[:, self.COLUMNS].reset_index(drop=True)
         return df
 
-    def replace(self, use_df, country, province=None):
+    def replace(self, country_data):
         """
         Replace a part of cleaned dataset with a dataframe.
+        @country_data <cs.CountryData>: dataset ofject of the country
+        @return self
         """
-        # TODO: replacement with other datasets
-        raise Exception("JHUData.replace() will be coded later!")
+        if not isinstance(country_data, CountryData):
+            raise TypeError("country_data must be <covsirphy.CountryData>.")
+        # Read new dataset
+        country = country_data.country
+        new = country_data.cleaned()
+        # Remove the data in the country from JHU dataset
+        df = self._cleaned_df.copy()
+        df = df.loc[df[self.COUNTRY] != country, :]
+        # Combine JHU data and the new data
+        df = pd.concat([df, new], axis=0)
+        self._cleaned_df = df.copy()
+        return self

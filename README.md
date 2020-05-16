@@ -43,18 +43,21 @@ Perform data cleaning of JHU dataset.
 jhu_data = JHUData("input/covid_19_data.csv")
 jhu_data.cleaned()
 ```
-We can import dataset for one country.
+We can replace JHU data with country-specific dataset.
 ```Python
 # As an example, read Japan dataset
 jpn_data = CountryData("input/covid_jpn_total.csv", country="Japan")
 jpn_data.set_variables(
+    # Specify the column names to read
     date="Date",
     confirmed="Positive",
     fatal="Fatal",
     recovered="Discharged",
     province=None
 )
-jpn_data.cleaned()
+# Replacement of JHU data in Japan
+jhu_data = jhu_data.replace(jpn_data)
+jhu_data.cleaned()
 ```
 
 Perform data cleaning of population dataset.

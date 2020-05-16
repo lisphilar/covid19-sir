@@ -16,10 +16,17 @@ class CountryData(CleaningBase):
         @country <str>: country name
         """
         self._raw = pd.read_csv(filename)
-        self.country = country
+        self._country = country
         self.province_col = None
         self.var_dict = dict()
         self._cleaned_df = pd.DataFrame()
+
+    @property
+    def country(self):
+        """
+        Return the country name.
+        """
+        return self._country
 
     def raw_columns(self):
         """
@@ -74,9 +81,10 @@ class CountryData(CleaningBase):
         df[self.CI] = df[self.C] - df[self.F] - df[self.R]
         df[self.VALUE_COLUMNS] = df[self.VALUE_COLUMNS].astype(np.int64)
         # Groupby date and province
+        df[self.DATE] = pd.to_datetime(df[self.DATE])
         df = df.groupby([self.DATE, self.PROVINCE]).sum().reset_index()
         # Add country column
-        df[self.COUNTRY] = self.country
+        df[self.COUNTRY] = self._country
         df = df.loc[:, self.COLUMNS]
         return df
 
