@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*-
 
 import numpy as np
+import pandas as pd
 from covsirphy.cleaning.cbase import CleaningBase
 
 
@@ -92,6 +93,22 @@ class Population(CleaningBase):
             df = df.loc[df[self.PROVINCE] == "-", :]
             df["key"] = df[self.COUNTRY]
         else:
+            df = df.loc[df[self.PROVINCE] != "-", :]
             df["key"] = df[self.COUNTRY].str.cat(df[self.PROVINCE], sep="/")
         pop_dict = df.set_index("key").to_dict()[self.N]
         return pop_dict
+
+    def update(self, country, value, province="-"):
+        """
+        Update the value of a new place.
+        @country <str>: caountry name
+        @value <int>: population in the place
+        @province <str>: province name
+        """
+        series = pd.Series(
+            [country, province, value],
+            index=[self.COUNTRY, self.PROVINCE, self.N]
+        )
+        df = self._cleaned_df.append(series, ignore_index=True)
+        self._cleaned_df = df.copy()
+        return self

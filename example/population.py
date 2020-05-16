@@ -14,6 +14,8 @@ def main():
     # Read population dataset
     pop_file = "input/locations_population.csv"
     pop = Population(pop_file)
+    # Add example country
+    pop.update(country="Example", province="-", value=1_000_000)
     # Show the cleaned data as a CSV file
     pop_df = pop.cleaned()
     pop_df.to_csv(output_dir.joinpath("cleaned.csv"), index=False)
