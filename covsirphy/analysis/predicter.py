@@ -4,7 +4,7 @@
 import numpy as np
 from datetime import datetime, timedelta
 import pandas as pd
-from covsirphy.analysis.simulation import simulation
+# from covsirphy.analysis.simulation import simulation
 from covsirphy.util.plotting import line_plot
 
 

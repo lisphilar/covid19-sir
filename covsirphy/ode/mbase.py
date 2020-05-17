@@ -15,7 +15,8 @@ class ModelBase(Word):
     @classmethod
     def param_dict(cls, train_df_divided=None, q_range=None):
         """
-        Define parameters without tau. This function should be overwritten.
+        Define parameters without tau.
+        This function should be overwritten in subclass.
         @train_df_divided <pd.DataFrame>:
             - column: t and non-dimensional variables
         @q_range <list[float, float]>:
@@ -32,7 +33,7 @@ class ModelBase(Word):
     def calc_variables(cls, cleaned_df, population):
         """
         Calculate the variables of the model.
-        This function should be overwritten.
+        This function should be overwritten in subclass.
         @cleaned_df <pd.DataFrame>: cleaned data
             - index (Date) <pd.TimeStamp>: Observation date
             - Confirmed <int>: the number of confirmed cases
@@ -42,7 +43,7 @@ class ModelBase(Word):
         @population <int>: total population in the place
         @return <pd.DataFrame>
             - index (Date) <pd.TimeStamp>: Observation date
-            - T <int>: Elapsed time from the start date [min]
+            - Elapsed <int>: Elapsed time from the start date [min]
             - x, y, z, w etc.
                 - calculated in child classes.
                 - non-dimensionalized variables of Susceptible etc.
@@ -61,10 +62,10 @@ class ModelBase(Word):
     @classmethod
     def nondim_cols(cls, target_df, columns, population):
         """
-        Nondimentionalize the columns with population value.
+        Non-dimentionalize the columns with population value.
         @target_df <pd.DataFrame>: dataframe with dimention
             - Elapsed: elpased time from the start date [min]
-            - X, Y etc. (defined by @column)
+            - X, Y etc. (defined by @column, upper cases)
         @columns <list[str]>: list of column (with upper strings)
         @population <int>: total population in the place
         """
@@ -74,28 +75,31 @@ class ModelBase(Word):
         df = df.loc[:, [cls.T, *cols_lower]]
         return df
 
-    @staticmethod
-    def calc_variables_reverse(df, total_population):
+    @classmethod
+    def calc_variables_reverse(cls, df, total_population):
         """
         Calculate measurable variables using the variables of the model.
-        This function should be overwritten.
-        @df <pd.DataFrame>
-        @total_population <int>
-        @return <pd.DataFrame>
+        This function should be overwritten in subclass.
+        @df <pd.DataFrame>:
+            - x, y, z, w etc.
+                - calculated in child classes.
+                - non-dimensionalized variables of Susceptible etc.
+        @total_population <int>: total population
+        @return <pd.DataFrame>:
+            - The number of cases
         """
-        # TODO: revise
         return df
 
     def calc_r0(self):
         """
-        Calculate R0. This function should be overwritten.
+        This function should be overwritten in subclass.
         """
         return None
 
     def calc_days_dict(self, tau):
         """
         Calculate 1/beta [day] etc.
-        This function should be overwritten.
+        This function should be overwritten in subclass.
         @param tau <int>: tau value [hour]
         """
         return dict()

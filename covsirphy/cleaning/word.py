@@ -13,6 +13,10 @@ class Word(object):
     CI = "Infected"
     F = "Fatal"
     R = "Recovered"
+    FR = "Fatal or Recovered"
+    V = "Vacctinated"
+    E = "Exposed"
+    W = "Waiting"
     # Column names
     DATE = "Date"
     T = "Elapsed"

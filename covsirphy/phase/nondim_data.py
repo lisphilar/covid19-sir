@@ -8,7 +8,7 @@ from covsirphy.ode.mbase import ModelBase
 
 class NondimData(Word):
     """
-    Dataset for ODE analysis.
+    Create dataset for ODE analysis.
     """
 
     def __init__(self, clean_df, country=None, province=None):
@@ -101,7 +101,7 @@ class NondimData(Word):
         @population <int>: total population in the place
         @return <pd.DataFrame>
             - index (Date) <pd.TimeStamp>: Observation date
-            - T <int>: Elapsed time from the start date [min]
+            - Elapsed <int>: Elapsed time from the start date [min]
             - x, y, z, w etc.
                 - calculated in child classes.
                 - non-dimensionalized variables of Susceptible etc.

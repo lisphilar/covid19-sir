@@ -7,6 +7,7 @@ from covsirphy.ode.mbase import ModelBase
 
 class SIRD(ModelBase):
     NAME = "SIR-D"
+    PARAMETERS = ["kappa", "rho", "sigma"]
     VARIABLES = ["x", "y", "z", "w"]
     PRIORITIES = np.array([1, 10, 10, 2])
     MONOTONIC = ["z", "w"]
@@ -65,25 +66,44 @@ class SIRD(ModelBase):
         @population <int>: total population in the place
         @return <pd.DataFrame>
             - index (Date) <pd.TimeStamp>: Observation date
-            - T <int>: Elapsed time from the start date [min]
+            - Elapsed <int>: Elapsed time from the start date [min]
             - x: Susceptible / Population
             - y: Infected / Population
             - z: Recovered / Population
             - w: Fatal / Population
         """
         df = super().calc_variables(cleaned_df, population)
-        df["X"] = df[cls.S]
+        df["X"] = population - df[cls.C]
         df["Y"] = df[cls.CI]
         df["Z"] = df[cls.R]
         df["W"] = df[cls.F]
+        # Columns will be changed to lower cases
         return cls.nondim_cols(df, ["X", "Y", "Z", "W"], population)
 
-    @staticmethod
-    def calc_variables_reverse(df, total_population):
-        df["Susceptible"] = df["X"]
-        df["Infected"] = df["Y"]
-        df["Recovered"] = df["Z"]
-        df["Deaths"] = df["W"]
+    @classmethod
+    def calc_variables_reverse(cls, df, population):
+        """
+        Calculate measurable variables.
+        @df <pd.DataFrame>:
+            - index: reseted index
+            - x: Susceptible / Population
+            - y: Infected / Population
+            - z: Recovered / Population
+            - w: Fatal / Population
+        @population <int>: population value in the place
+        @return <pd.DataFrame>:
+            - index: reseted index
+            - Confirmed <int>: the number of confirmed cases
+            - Infected <int>: the number of currently infected cases
+            - Fatal <int>: the number of fatal cases
+            - Recovered <int>: the number of recovered cases
+        """
+        df[cls.C] = 1 - df["x"]
+        df[cls.CI] = df["y"]
+        df[cls.F] = df["z"]
+        df[cls.R] = df["w"]
+        df = df.loc[:, [cls.C, cls.CI, cls.F, cls.R]]
+        df = (df * population).astype(np.int64)
         return df
 
     def calc_r0(self):

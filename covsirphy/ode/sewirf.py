@@ -7,6 +7,7 @@ from covsirphy.ode.mbase import ModelBase
 
 class SEWIRF(ModelBase):
     NAME = "SEWIR-F"
+    PARAMETERS = ["theta", "kappa", "rho1", "rho2", "rho3", "sigma"]
     VARIABLES = ["x1", "x2", "x3", "y", "z", "w"]
     PRIORITIES = np.array([0, 0, 0, 10, 10, 2])
     MONOTONIC = ["z", "w"]
@@ -69,7 +70,7 @@ class SEWIRF(ModelBase):
         @population <int>: total population in the place
         @return <pd.DataFrame>
             - index (Date) <pd.TimeStamp>: Observation date
-            - T <int>: Elapsed time from the start date [min]
+            - Elapsed <int>: Elapsed time from the start date [min]
             - x1: Susceptible / Population
             - x2: 0 (will not be used for hyperparameter estimation)
             - x3: 0 (will not be used for hyperparameter estimation)
@@ -85,16 +86,40 @@ class SEWIRF(ModelBase):
         df["Z"] = df[cls.R]
         df["W"] = df[cls.F]
         cols = ["X1", "X2", "X3", "Y", "Z", "W"]
+        # Columns will be changed to lower cases
         return cls.nondim_cols(df, cols, population)
 
-    @staticmethod
-    def calc_variables_reverse(df, total_population):
-        df["Susceptible"] = df["X1"]
-        df["Infected"] = df["Y"]
-        df["Recovered"] = df["Z"]
-        df["Fatal"] = df["W"]
-        df["Exposed"] = df["X2"]
-        df["Waiting"] = df["X3"]
+    @classmethod
+    def calc_variables_reverse(cls, df, population):
+        """
+        Calculate measurable variables.
+        @df <pd.DataFrame>:
+            - index: reseted index
+            - x1: Susceptible / Population
+            - x2: Exposed / Population
+            - x3: Waiting / Population
+            - y: Infected / Population
+            - z: Recovered / Population
+            - w: Fatal / Population
+        @population <int>: population value in the place
+        @return <pd.DataFrame>:
+            - index: reseted index
+            - Confirmed <int>: the number of confirmed cases
+            - Infected <int>: the number of currently infected cases
+            - Fatal <int>: the number of fatal cases
+            - Recovered <int>: the number of recovered cases
+            - Exposed <int>: the number of exposed cases
+            - Waiting <int>: the number of waiting cases
+        """
+        df[cls.S] = df["x1"]
+        df[cls.E] = df["x2"]
+        df[cls.W] = df["x3"]
+        df[cls.C] = df[["y", "z", "w"]].sum(axis=1)
+        df[cls.CI] = df["y"]
+        df[cls.F] = df["z"]
+        df[cls.R] = df["w"]
+        df = df.loc[:, [cls.C, cls.CI, cls.F, cls.R, cls.E, cls.W]]
+        df = (df * population).astype(np.int64)
         return df
 
     def calc_r0(self):

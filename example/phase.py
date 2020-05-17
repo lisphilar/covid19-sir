@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 from pathlib import Path
-from covsirphy import NondimData, SIRF
+from covsirphy import Estimator, SIRF
 from .dataset import main as dat_main
 from .population import main as pop_main
 
@@ -17,13 +17,13 @@ def main():
     # Read population dataset
     pop = pop_main()
     population = pop.value(country="Italy")
-    # Analyzable dataset
-    nondim_data = NondimData(ncov_df, country="Italy")
-    train_df = nondim_data.make(
+    # Non-dimentional dataset
+    estimator = Estimator(
+        ncov_df, country="Italy", province=None,
         model=SIRF, population=population,
-        start_date="01May2020", end_date=None
+        start_date="28Mar2020", end_date="04Apr2020"
     )
-    train_df.to_csv(output_dir.joinpath("train.csv"), index=True)
+    estimator.train_df.to_csv(output_dir.joinpath("train.csv"), index=True)
 
 
 if __name__ == "__main__":

@@ -2,23 +2,21 @@
 # -*- coding: utf-8 -*-
 
 from collections import Counter
-# from covsirphy.analysis import Estimator, Predicter, Scenario
-# from covsirphy.analysis import simulation, Trend
+from covsirphy.analysis import Simulator
 from covsirphy.cleaning import CleaningBase, JHUData, Word, Population
-from covsirphy.cleaning import CountryData, NondimData
+from covsirphy.cleaning import CountryData
 from covsirphy.ode import ModelBase, SIR, SIRD, SIRF, SIRFV, SEWIRF
-from covsirphy.optimize import EstimatorNew
+from covsirphy.phase import NondimData, Estimator
 from covsirphy.selection import select_area, SelectArea, create_target_df
 from covsirphy.util import line_plot, jpn_map
 
 
 __all__ = [
-    # "Estimator", "Predicter", "Scenario",
-    "simulation", "Trend",
+    "Simulator",
     "CleaningBase", "JHUData", "Word", "Population",
-    "CountryData", "NondimData",
+    "CountryData",
     "ModelBase", "SIR", "SIRD", "SIRF", "SIRFV", "SEWIRF",
-    "EstimatorNew",
+    "NondimData", "Estimator",
     "select_area", "SelectArea", "create_target_df",
     "line_plot", "jpn_map",
 ]

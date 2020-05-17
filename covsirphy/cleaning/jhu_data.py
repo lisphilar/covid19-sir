@@ -4,7 +4,6 @@
 import numpy as np
 import pandas as pd
 
-from covsirphy.cleaning.nondim_data import NondimData
 from covsirphy.cleaning.cbase import CleaningBase
 from covsirphy.cleaning.country_data import CountryData
 
@@ -115,4 +114,4 @@ class JHUData(CleaningBase):
         if province:
             df = df.loc[df[self.PROVINCE] == province, :]
         df = df.reset_index(drop=True)
-        return NondimData(df)
+        return df

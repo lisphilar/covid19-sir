@@ -8,7 +8,7 @@ from datetime import datetime, timedelta
 import matplotlib.pyplot as plt
 from matplotlib.ticker import ScalarFormatter
 import pandas as pd
-from covsirphy.analysis.simulation import simulation
+# from covsirphy.analysis.simulation import simulation
 from covsirphy.util.plotting import line_plot
 
 optuna.logging.disable_default_handler()
