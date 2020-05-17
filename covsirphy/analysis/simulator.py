@@ -22,27 +22,27 @@ class Simulator(Word):
         self.country = country
         self.province = province
         # list of dictionary
-        # key: model, step_n, param_dict, y0_dict, population
+        # key: model, step_n, population, param_dict, y0_dict
         self.settings = list()
         self._nondim_df = pd.DataFrame()
         self._dim_df = pd.DataFrame()
 
-    def add(self, model, step_n, param_dict, y0_dict, population):
+    def add(self, model, step_n, population, param_dict=None, y0_dict=None):
         """
         Add models to the simulator.
         @model <subclass of cs.ModelBase>: the first ODE model
         @step_n <int>: the number of steps
+        @population <int>: population in the place
         @param_dict <dict[str]=float>:
-            - dictionary of parameter values
+            - dictionary of parameter values or None
             - if not include some params, the last values will be used
                 - NameError when the model is the first model
                 - NameError if new params are included
         @y0_dict <doct[str]=float>:
-            - dictionary of initial values
+            - dictionary of initial values or None
             - if not include some variables, the last values will be used
                 - NameError when the model is the first model
                 - NameError if new variable are included
-        @population <int>: population in the place
         @return self
         """
         # Check model
@@ -53,33 +53,36 @@ class Simulator(Word):
         # Check step number
         if not isinstance(step_n, int) or step_n < 1:
             raise TypeError("@step_n must be a non-negative integer.")
-        # Check param values
-        for param in model.PARAMETERS:
-            if param in param_dict.keys():
-                continue
-            if (not self.models) or (param not in self.models[-1].PARAMETERS):
-                s = f"{param} value must be specified in @param_dict."
-                raise NameError(s)
-            param_dict[param] = None
-        # Check initial values
-        for var in model.VARIABLES:
-            if var in y0_dict.keys():
-                continue
-            if (not self.models) or (var not in self.models[-1].VARIABLES):
-                s = f"Initial value of {var} must be specified in @y0_dict."
-                raise NameError(s)
-            y0_dict[var] = None
         # Check population value
         if not isinstance(step_n, int) or step_n < 1:
             raise TypeError("@population must be a non-negative integer.")
+        # Check param values
+        param_dict = dict() if param_dict is None else param_dict
+        for param in model.PARAMETERS:
+            if param in param_dict.keys():
+                continue
+            if (not self.settings) or (param not in self.settings[-1]["model"].PARAMETERS):
+                s = f"{param} value must be specified in @param_dict."
+                raise NameError(s)
+            param_dict[param] = self.settings[-1]["param_dict"][param]
+        # Check initial values
+        y0_dict = dict() if y0_dict is None else y0_dict
+        for var in model.VARIABLES:
+            if var in y0_dict.keys():
+                continue
+            if (not self.settings) or (var not in self.settings[-1]["model"].VARIABLES):
+                s = f"Initial value of {var} must be specified in @y0_dict."
+                raise NameError(s)
+            # Will use the last values the last phase
+            y0_dict[var] = None
         # Regiter the setting
         self.settings.append(
             {
                 "model": model,
                 "step_n": step_n,
+                "population": population,
                 "param_dict": param_dict.copy(),
                 "y0_dict": y0_dict.copy(),
-                "population": population
             }
         )
         return self
@@ -121,17 +124,28 @@ class Simulator(Word):
         for setting in self.settings:
             model = setting["model"]
             population = setting["population"]
+            # Initial values
+            y0_dict = setting["y0_dict"]
+            if None in y0_dict.values():
+                for (k, v) in y0_dict.items():
+                    if v is not None:
+                        continue
+                    y0_dict[k] = self._nondim_df.loc[
+                        self._nondim_df.index[-1], k
+                    ]
             # Non-dimensional
             nondim_df = self._solve_ode(
                 model=model,
                 step_n=setting["step_n"],
                 param_dict=setting["param_dict"],
-                y0_dict=setting["y0_dict"]
+                y0_dict=y0_dict
             )
             nondim_df.fillna(0)
             self._nondim_df = pd.concat(
-                [self._nondim_df, nondim_df], axis=0, ignore_index=True
+                [self._nondim_df.iloc[:-1, :], nondim_df],
+                axis=0, ignore_index=True
             )
+            self._nondim_df["t"] = self._nondim_df.index
             # Dimensional
             dim_df = model.calc_variables_reverse(nondim_df, population)
             self._dim_df = pd.concat(

@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 from pathlib import Path
-from covsirphy import Simulator, SIRF
+from covsirphy import Simulator, SIRD, SIRF
 
 
 def main():
@@ -13,14 +13,20 @@ def main():
     # Simulation
     simulator = Simulator(country="Example", province="Example-1")
     simulator.add(
-        model=SIRF, step_n=180,
+        model=SIRD, step_n=90, population=1_000_000,
         param_dict={
-            "theta": 0.002, "kappa": 0.005, "rho": 0.2, "sigma": 0.075
+            "kappa": 0.005, "rho": 0.2, "sigma": 0.075
         },
         y0_dict={
             "x": 0.999, "y": 0.001, "z": 0, "w": 0
+        }
+    )
+    simulator.add(
+        model=SIRF, step_n=90, population=1_000_000,
+        param_dict={
+            "theta": 0.002, "kappa": 0.005, "rho": 0.2, "sigma": 0.075
         },
-        population=1_000_000
+        y0_dict=None
     )
     simulator.run()
     # Non-dimensional
