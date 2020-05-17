@@ -55,15 +55,37 @@ class SEWIRF(ModelBase):
         param_dict["sigma"] = (0, 1)
         return param_dict
 
-    @staticmethod
-    def calc_variables(df):
-        df["X1"] = df["Susceptible"]
+    @classmethod
+    def calc_variables(cls, cleaned_df, population):
+        """
+        Calculate the variables of SIR-F model.
+        This function overwrites the parent class.
+        @cleaned_df <pd.DataFrame>: cleaned data
+            - index (Date) <pd.TimeStamp>: Observation date
+            - Confirmed <int>: the number of confirmed cases
+            - Infected <int>: the number of currently infected cases
+            - Fatal <int>: the number of fatal cases
+            - Recovered <int>: the number of recovered cases
+        @population <int>: total population in the place
+        @return <pd.DataFrame>
+            - index (Date) <pd.TimeStamp>: Observation date
+            - T <int>: Elapsed time from the start date [min]
+            - x1: Susceptible / Population
+            - x2: 0 (will not be used for hyperparameter estimation)
+            - x3: 0 (will not be used for hyperparameter estimation)
+            - y: Infected / Population
+            - z: Recovered / Population
+            - w: Fatal / Population
+        """
+        df = super().calc_variables(cleaned_df, population)
+        df["X1"] = df[cls.S]
         df["X2"] = 0
         df["X3"] = 0
-        df["Y"] = df["Infected"]
-        df["Z"] = df["Recovered"]
-        df["W"] = df["Fatal"]
-        return df.loc[:, ["T", "X1", "X2", "X3", "Y", "Z", "W"]]
+        df["Y"] = df[cls.CI]
+        df["Z"] = df[cls.R]
+        df["W"] = df[cls.F]
+        cols = ["X1", "X2", "X3", "Y", "Z", "W"]
+        return cls.nondim_cols(df, cols, population)
 
     @staticmethod
     def calc_variables_reverse(df, total_population):

@@ -3,6 +3,8 @@
 
 import numpy as np
 import pandas as pd
+
+from covsirphy.cleaning.nondim_data import NondimData
 from covsirphy.cleaning.cbase import CleaningBase
 from covsirphy.cleaning.country_data import CountryData
 
@@ -17,7 +19,7 @@ class JHUData(CleaningBase):
 
     def cleaning(self):
         """
-        Perform data cleaing of the raw data.
+        Perform data cleaning of the raw data.
         This method overwrite super().cleaning() method.
         @return <pd.DataFrame>
             - index <int>: reseted index
@@ -100,3 +102,17 @@ class JHUData(CleaningBase):
         df = pd.concat([df, new], axis=0)
         self._cleaned_df = df.copy()
         return self
+
+    def subset(self, country, province=None):
+        """
+        Return the subset in the area.
+        @country <str>: country name
+        @province <str>: province name
+        @return <cs.NondimData>
+        """
+        df = self._cleaned_df.copy()
+        df = df.loc[df[self.COUNTRY] == country, :]
+        if province:
+            df = df.loc[df[self.PROVINCE] == province, :]
+        df = df.reset_index(drop=True)
+        return NondimData(df)

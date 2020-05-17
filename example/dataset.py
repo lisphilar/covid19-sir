@@ -29,11 +29,11 @@ def main():
     jpn_df.to_csv(output_dir.joinpath("jpn_cleaned.csv"), index=False)
     # Replace data in Japan with Japan-specific dataset
     jhu_data_replaced = jhu_data.replace(jpn_data)
-    jhu_df_replaced = jhu_data_replaced.cleaned()
-    jhu_df_replaced.to_csv(
+    ncov_df = jhu_data_replaced.cleaned()
+    ncov_df.to_csv(
         output_dir.joinpath("jhu_cleaned_replaced.csv"), index=False
     )
-    return jhu_data_replaced
+    return ncov_df
 
 
 if __name__ == "__main__":

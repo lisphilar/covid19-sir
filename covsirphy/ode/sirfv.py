@@ -64,13 +64,32 @@ class SIRFV(ModelBase):
         param_dict["sigma"] = (0, 1)
         return param_dict
 
-    @staticmethod
-    def calc_variables(df):
-        df["X"] = df["Susceptible"]
-        df["Y"] = df["Infected"]
-        df["Z"] = df["Recovered"]
-        df["W"] = df["Fatal"]
-        return df.loc[:, ["T", "X", "Y", "Z", "W"]]
+    @classmethod
+    def calc_variables(cls, cleaned_df, population):
+        """
+        Calculate the variables of SIR-FV model.
+        This function overwrites the parent class.
+        @cleaned_df <pd.DataFrame>: cleaned data
+            - index (Date) <pd.TimeStamp>: Observation date
+            - Confirmed <int>: the number of confirmed cases
+            - Infected <int>: the number of currently infected cases
+            - Fatal <int>: the number of fatal cases
+            - Recovered <int>: the number of recovered cases
+        @population <int>: total population in the place
+        @return <pd.DataFrame>
+            - index (Date) <pd.TimeStamp>: Observation date
+            - T <int>: Elapsed time from the start date [min]
+            - x: Susceptible / Population
+            - y: Infected / Population
+            - z: Recovered / Population
+            - w: Fatal / Population
+        """
+        df = super().calc_variables(cleaned_df, population)
+        df["X"] = df[cls.S]
+        df["Y"] = df[cls.CI]
+        df["Z"] = df[cls.R]
+        df["W"] = df[cls.F]
+        return cls.nondim_cols(df, ["X", "Y", "Z", "W"], population)
 
     @staticmethod
     def calc_variables_reverse(df, total_population):

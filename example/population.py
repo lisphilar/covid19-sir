@@ -15,7 +15,7 @@ def main():
     pop_file = "input/locations_population.csv"
     pop = Population(pop_file)
     # Add example country
-    pop.update(country="Example", province="-", value=1_000_000)
+    pop.update(value=1_000_000, country="Example", province="-")
     # Show the cleaned data as a CSV file
     pop_df = pop.cleaned()
     pop_df.to_csv(output_dir.joinpath("cleaned.csv"), index=False)
@@ -27,6 +27,8 @@ def main():
     pop_province_dict = pop.to_dict(country_level=False)
     with output_dir.joinpath("dictionary_province.json").open("w") as fh:
         json.dump(pop_province_dict, fh, indent=4)
+    # Return
+    return pop
 
 
 if __name__ == "__main__":

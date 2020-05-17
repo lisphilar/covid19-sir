@@ -42,7 +42,7 @@ Perform data cleaning of JHU dataset.
 ```Python
 # With CSV filepath of JHU dataset
 jhu_data = JHUData("input/covid_19_data.csv")
-jhu_data.cleaned()
+ncov_df = jhu_data.cleaned()
 ```
 (Optinal) We can replace JHU data with country-specific dataset.
 ```Python
@@ -58,7 +58,7 @@ jpn_data.set_variables(
 )
 # Replacement of JHU data in Japan
 jhu_data = jhu_data.replace(jpn_data)
-jhu_data.cleaned()
+ncov_df = jhu_data.cleaned()
 ```
 
 Perform data cleaning of population dataset.

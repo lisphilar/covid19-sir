@@ -94,15 +94,30 @@ class Population(CleaningBase):
             df["key"] = df[self.COUNTRY]
         else:
             df = df.loc[df[self.PROVINCE] != "-", :]
-            df["key"] = df[self.COUNTRY].str.cat(df[self.PROVINCE], sep="/")
+            df["key"] = df[self.COUNTRY].str.cat(
+                df[self.PROVINCE], sep=self.SEP
+            )
         pop_dict = df.set_index("key").to_dict()[self.N]
         return pop_dict
 
-    def update(self, country, value, province="-"):
+    def value(self, country, province=None):
+        """
+        Return the value of population in the place.
+        @country <str>: country name
+        @province <str>: province name
+        @return <int>: population in the place
+        """
+        if province is None:
+            pop_dict = self.to_dict(country_level=True)
+            return pop_dict[country]
+        pop_dict = self.to_dict(country_level=False)
+        return pop_dict[f"{country}{self.SEP}{province}"]
+
+    def update(self, value, country, province="-"):
         """
         Update the value of a new place.
-        @country <str>: caountry name
         @value <int>: population in the place
+        @country <str>: country name
         @province <str>: province name
         """
         series = pd.Series(

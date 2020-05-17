@@ -19,7 +19,12 @@ class Word(object):
     COUNTRY = "Country"
     PROVINCE = "Province"
     COLUMNS = [DATE, COUNTRY, PROVINCE, C, CI, F, R]
+    NLOC_COLUMNS = [DATE, C, CI, F, R]
     VALUE_COLUMNS = [C, CI, F, R]
+    # Date format: 22Jan2020 etc.
+    DATE_FORMAT = "%d%b%Y"
+    # Separator of country and province
+    SEP = "/"
     # EDA
     RATE_COLUMNS = [
         "Fatal per Confirmed",

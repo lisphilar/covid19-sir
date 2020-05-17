@@ -2,10 +2,10 @@
 # -*- coding: utf-8 -*-
 
 import numpy as np
-from covsirphy.selection.target import create_target_df
+from covsirphy.cleaning.word import Word
 
 
-class ModelBase(object):
+class ModelBase(Word):
     NAME = "Model"
     VARIABLES = ["x"]
     PRIORITIES = np.array([1])
@@ -24,17 +24,54 @@ class ModelBase(object):
             @min <float>: min value
             @max <float>: max value
         """
+        # TODO: revise
         param_dict = dict()
         return param_dict
 
-    @staticmethod
-    def calc_variables(df):
+    @classmethod
+    def calc_variables(cls, cleaned_df, population):
         """
         Calculate the variables of the model.
         This function should be overwritten.
-        @df <pd.DataFrame>
+        @cleaned_df <pd.DataFrame>: cleaned data
+            - index (Date) <pd.TimeStamp>: Observation date
+            - Confirmed <int>: the number of confirmed cases
+            - Infected <int>: the number of currently infected cases
+            - Fatal <int>: the number of fatal cases
+            - Recovered <int>: the number of recovered cases
+        @population <int>: total population in the place
         @return <pd.DataFrame>
+            - index (Date) <pd.TimeStamp>: Observation date
+            - T <int>: Elapsed time from the start date [min]
+            - x, y, z, w etc.
+                - calculated in child classes.
+                - non-dimensionalized variables of Susceptible etc.
         """
+        df = cleaned_df.copy()
+        if set(df.columns) != set(cls.VALUE_COLUMNS):
+            cols_str = ", ".join(cls.VALUE_COLUMNS)
+            raise KeyError(f"@cleaned_df must has {cols_str} columns.")
+        # Calculate Susceptible
+        df[cls.S] = population - df[cls.C]
+        # Calculate elapsed time from the start date [min]
+        df[cls.T] = (df.index - df.index.min()).total_seconds()
+        df[cls.T] = (df[cls.T] // 60).astype(np.int64)
+        return df
+
+    @classmethod
+    def nondim_cols(cls, target_df, columns, population):
+        """
+        Nondimentionalize the columns with population value.
+        @target_df <pd.DataFrame>: dataframe with dimention
+            - Elapsed: elpased time from the start date [min]
+            - X, Y etc. (defined by @column)
+        @columns <list[str]>: list of column (with upper strings)
+        @population <int>: total population in the place
+        """
+        df = target_df.copy()
+        cols_lower = [col.lower() for col in columns]
+        df[cols_lower] = df[columns] / population
+        df = df.loc[:, [cls.T, *cols_lower]]
         return df
 
     @staticmethod
@@ -46,29 +83,8 @@ class ModelBase(object):
         @total_population <int>
         @return <pd.DataFrame>
         """
+        # TODO: revise
         return df
-
-    @classmethod
-    def create_dataset(cls, ncov_df, total_population, **kwargs):
-        """
-        Create dataset with the model-specific varibles.
-        The variables will be divided by total population.
-        The column names (not include T) will be lower letters.
-        **kwargs: See the function named create_target_df()
-        @return <tuple(objects)>:
-            - start_date <pd.Timestamp>
-            - initials <tuple(float)>: the initial values
-            - Tend <int>: the last value of T
-            - df <pd.DataFrame>: the dataset
-        """
-        start_date, target_df = create_target_df(
-            ncov_df, total_population, **kwargs)
-        df = cls.calc_variables(target_df).set_index("T") / total_population
-        df.columns = [n.lower() for n in df.columns]
-        initials = df.iloc[0, :].values
-        df = df.reset_index()
-        Tend = df.iloc[-1, 0]
-        return (start_date, initials, Tend, df)
 
     def calc_r0(self):
         """
