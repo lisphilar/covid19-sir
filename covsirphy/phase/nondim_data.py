@@ -125,7 +125,7 @@ class NondimData(Word):
         @end_date <str>: end date, like 01Feb2020
         @return <pd.DataFrame>
             - index (Date) <pd.TimeStamp>: Observation date
-            - T <int>: Elapsed time from the start date [min]
+            - Elapsed <int>: Elapsed time from the start date [min]
             - x, y, z, w etc.
                 - calculated in child classes.
                 - non-dimensionalized variables of Susceptible etc.

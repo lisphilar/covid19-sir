@@ -13,7 +13,7 @@ class ModelBase(Word):
     MONOTONIC = ["x"]
 
     @classmethod
-    def param_dict(cls, train_df_divided=None, q_range=None):
+    def param(cls, train_df_divided=None, q_range=None):
         """
         Define parameters without tau.
         This function should be overwritten in subclass.

@@ -28,8 +28,8 @@ class SIR(ModelBase):
         return np.array([dxdt, dydt, dzdt])
 
     @classmethod
-    def param_dict(cls, train_df_divided=None, q_range=None):
-        param_dict = super().param_dict()
+    def param(cls, train_df_divided=None, q_range=None):
+        param_dict = super().param()
         q_range = super().QUANTILE_RANGE[:] if q_range is None else q_range
         if train_df_divided is not None:
             df = train_df_divided.copy()

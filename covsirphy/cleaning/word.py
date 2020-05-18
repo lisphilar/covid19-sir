@@ -20,6 +20,7 @@ class Word(object):
     # Column names
     DATE = "Date"
     T = "Elapsed"
+    TS = "t"
     COUNTRY = "Country"
     PROVINCE = "Province"
     COLUMNS = [DATE, COUNTRY, PROVINCE, C, CI, F, R]
