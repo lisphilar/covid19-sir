@@ -52,7 +52,9 @@ class Simulator(Word):
             )
         # Check step number
         if not isinstance(step_n, int) or step_n < 1:
-            raise TypeError("@step_n must be a non-negative integer.")
+            raise TypeError(
+                f"@step_n must be a non-negative integer, but {step_n} was applied."
+            )
         # Check population value
         if not isinstance(step_n, int) or step_n < 1:
             raise TypeError("@population must be a non-negative integer.")
@@ -163,7 +165,9 @@ class Simulator(Word):
                 - calculated in child classes.
                 - non-dimensionalized variables of Susceptible etc.
         """
-        return self._nondim_df
+        df = self._nondim_df.copy()
+        df = df.reset_index(drop=True)
+        return df
 
     def dim(self, tau, start_date):
         """
@@ -190,4 +194,5 @@ class Simulator(Word):
         df[self.PROVINCE] = self.province
         # Return the dataframe
         df = df.loc[:, [self.DATE, self.COUNTRY, self.PROVINCE, *cols]]
+        df = df.reset_index(drop=True)
         return df

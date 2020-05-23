@@ -3,6 +3,7 @@
 
 from datetime import datetime
 import matplotlib.pyplot as plt
+from matplotlib.ticker import ScalarFormatter
 import numpy as np
 import optuna
 import pandas as pd
@@ -156,6 +157,7 @@ class Optimizer(Word):
     def rmsle(self, train_df, dim=1):
         """
         Calculate RMSLE score.
+        This can be overwritten in child class.
         @train_df <pd.DataFrame>: actual data
             - index: reseted index
             - t: time step, 0, 1, 2,...
@@ -165,7 +167,7 @@ class Optimizer(Word):
         """
         predicted_df = self.predict()
         df = self.compare(train_df, predicted_df)
-        df = df * dim + 1
+        df = (df * dim + 1).astype(np.int64)
         a_list = [np.log10(df[f"{v}{self.A}"]) for v in self.y_list]
         p_list = [np.log10(df[f"{v}{self.P}"]) for v in self.y_list]
         diffs = [((a - p) ** 2).sum() for (a, p) in zip(a_list, p_list)]
@@ -206,6 +208,60 @@ class Optimizer(Word):
         fig_df = df.loc[:, df.columns.str.startswith("params_")]
         fig_df.columns = fig_df.columns.str.replace("params_", "")
         sns.pairplot(fig_df, diag_kind="kde", markers="+")
+        # Save figure or show figure
+        if filename is None:
+            plt.show()
+            return df
+        plt.savefig(filename, bbox_inches="tight", transparent=True, dpi=300)
+        return df
+
+    def accuracy(self, train_df, variables=None, filename=None):
+        """
+        Show the accuracy as a figure.
+        This can be overwritten in child class.
+        @train_df <pd.DataFrame>: actual data
+            - index: reseted index
+            - t: time step, 0, 1, 2,...
+            - includes columns defined by self.y_list
+        @variables <list[str]>: variables to compare or None (all variables)
+        @filename <str>: filename of the figure, or None (show figure)
+        """
+        # Create comparison table
+        predicted_df = self.predict()
+        df = self.compare(train_df, predicted_df)
+        print(predicted_df)
+        print(train_df)
+        # Prepare figure object
+        val_len = len(variables) + 1
+        fig, axes = plt.subplots(
+            ncols=1, nrows=val_len, figsize=(9, 6 * val_len / 2)
+        )
+        # Comparison of each variable
+        for (ax, v) in zip(axes.ravel()[1:], variables):
+            df[[f"{v}{self.A}", f"{v}{self.P}"]].plot.line(
+                ax=ax, ylim=(0, None), sharex=True,
+                title=f"{self.model.NAME}: Comparison of observed/estimated {v}(t)"
+            )
+            ax.yaxis.set_major_formatter(ScalarFormatter(useMathText=True))
+            ax.ticklabel_format(style="sci", axis="y", scilimits=(0, 0))
+            ax.legend(
+                bbox_to_anchor=(1.02, 0), loc="lower left", borderaxespad=0
+            )
+        # Summarize in a figure
+        for v in variables:
+            df[f"{v}_diff"] = df[f"{v}{self.A}"] - df[f"{v}{self.P}"]
+            df[f"{v}_diff"].plot.line(
+                ax=axes.ravel()[0], sharex=True,
+                title=f"{self.model.NAME}: observed - estimated"
+            )
+        axes.ravel()[0].axhline(y=0, color="black", linestyle="--")
+        axes.ravel()[0].yaxis.set_major_formatter(
+            ScalarFormatter(useMathText=True))
+        axes.ravel()[0].ticklabel_format(
+            style="sci", axis="y", scilimits=(0, 0))
+        axes.ravel()[0].legend(bbox_to_anchor=(1.02, 0),
+                               loc="lower left", borderaxespad=0)
+        fig.tight_layout()
         # Save figure or show figure
         if filename is None:
             plt.show()

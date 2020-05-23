@@ -90,7 +90,7 @@ class NondimData(Word):
 
     def _make(self, grouped_df, model, population):
         """
-        Make nondim_data dataset for an ODE model using the cleaned dataset.
+        Make nondim dataset for an ODE model using the cleaned dataset.
         @grouped_df <pd.DataFrame>: cleaned data grouped by Date
             - index (Date) <pd.TimeStamp>: Observation date
             - Confirmed <int>: the number of confirmed cases
@@ -118,7 +118,7 @@ class NondimData(Word):
 
     def make(self, model, population, start_date=None, end_date=None):
         """
-        Make nondim_data datssrt for an ODE model.
+        Make nondim dataset for an ODE model.
         @model <cs.ModelBase>: ODE model
         @population <int>: total population in the place
         @start_date <str>: start date, like 22Jan2020

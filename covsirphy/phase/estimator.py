@@ -6,7 +6,7 @@ import optuna
 import pandas as pd
 from covsirphy.analysis.simulator import Simulator
 from covsirphy.ode.mbase import ModelBase
-from covsirphy.phase.nondim_data import NondimData
+from covsirphy.phase.nondim import NondimData
 from covsirphy.phase.optimize import Optimizer
 
 
@@ -52,13 +52,14 @@ class Estimator(Optimizer):
         )
         self.y0_dict = self.min_train_df.iloc[0, :].to_dict()
         self.train_df = None
-        self.step_n = len(self.min_train_df)
         self.x = self.TS
         self.y_list = model.VARIABLES[:]
         self.fixed_dict = kwargs.copy()
         self.study = None
         self.total_trials = 0
         self.run_time = 0
+        # step_n will be defined in divide_minutes()
+        self.step_n = None
 
     def objective(self, trial):
         """
@@ -94,6 +95,7 @@ class Estimator(Optimizer):
         df = self.min_train_df.copy()
         df[self.TS] = (df[self.T] / tau).astype(np.int64)
         train_df = df.drop(self.T, axis=1).reset_index(drop=True)
+        self.step_n = int(train_df[self.TS].max())
         return train_df
 
     def error_f(self, param_dict, train_df):
@@ -107,6 +109,8 @@ class Estimator(Optimizer):
             - x, y, z, w etc.
         @return <float>: score of the error function to minimize
         """
+        if self.step_n is None:
+            raise ValueError("self.step_n must be done.")
         sim_df = self.simulate(self.step_n, param_dict)
         df = self.compare(train_df, sim_df)
         df = (df * self.population + 1).astype(np.int64)
@@ -114,11 +118,13 @@ class Estimator(Optimizer):
         v_list = self.model.VARIABLES[:]
         diffs = [df[f"{v}{self.A}"] - df[f"{v}{self.P}"] for v in v_list]
         numerators = [df[f"{v}{self.A}"] for v in v_list]
+        np.seterr(divide="raise")
         try:
             scores = [
-                p * np.average(diff / numerator, weights=df.index)
+                p * np.average(diff.abs() / numerator, weights=df.index)
                 for (p, diff, numerator)
                 in zip(self.model.PRIORITIES, diffs, numerators)
+                if p != 0
             ]
         except ZeroDivisionError:
             return np.inf
@@ -147,9 +153,9 @@ class Estimator(Optimizer):
         df = simulator.non_dim()
         return df
 
-    def result(self, name):
+    def summary(self, name):
         """
-        Return the estimated parameters.
+        Summarize the results of optimization.
         This function should be overwritten in subclass.
         @name <str>: index of the dataframe
         @return <pd.DataFrame>:
@@ -171,10 +177,7 @@ class Estimator(Optimizer):
         # dimensional parameters [day]
         param_dict.update(model_instance.calc_days_dict(tau))
         # RMSLE
-        param_dict["RMSLE"] = super().rmsle(
-            train_df=self.divide_minutes(tau),
-            dim=self.population
-        )
+        param_dict["RMSLE"] = self.rmsle(tau)
         # The number of trials
         param_dict["Trials"] = self.total_trials
         # Runtime
@@ -183,3 +186,33 @@ class Estimator(Optimizer):
         # Convert to dataframe
         df = pd.DataFrame.from_dict({name: param_dict}, orient="index")
         return df.fillna("-")
+
+    def rmsle(self, tau):
+        """
+        Return RMSLE score.
+        @tau <int>: tau value
+        """
+        score = super().rmsle(
+            train_df=self.divide_minutes(tau),
+            dim=self.population
+        )
+        return score
+
+    def accuracy(self, filename=None):
+        """
+        Show the accuracy as a figure.
+        @filename <str>: filename of the figure, or None (show figure)
+        """
+        tau = super().param()["tau"]
+        train_df = self.divide_minutes(tau)
+        use_variables = [
+            v for (i, (p, v))
+            in enumerate(zip(self.model.PRIORITIES, self.model.VARIABLES))
+            if p != 0 and i != 0
+        ]
+        df = super().accuracy(
+            train_df=train_df,
+            variables=use_variables,
+            filename=filename
+        )
+        return df
