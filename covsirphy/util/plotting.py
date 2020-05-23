@@ -16,10 +16,17 @@ def line_plot(df, title, xlabel=None, ylabel="Cases",
               h=None, v=None, xlim=(None, None), ylim=(0, None),
               math_scale=True, x_logscale=False, y_logscale=False,
               y_integer=False, show_legend=True,
-              bbox_to_anchor=(1.02, 0), bbox_loc="lower left"):
+              bbox_to_anchor=(1.02, 0), bbox_loc="lower left", filename=None):
     """
     Show chlonological change of the data.
     """
+    # TODO: Change to a class object
+    # Matlotlib setting
+    plt.style.use("seaborn-ticks")
+    plt.rcParams["xtick.direction"] = "in"
+    plt.rcParams["ytick.direction"] = "in"
+    plt.rcParams["font.size"] = 11.0
+    plt.rcParams["figure.figsize"] = (9, 6)
     ax = df.plot()
     # Scale
     if math_scale:
@@ -55,4 +62,10 @@ def line_plot(df, title, xlabel=None, ylabel="Cases",
         for value in v:
             ax.axvline(x=value, color="black", linestyle=":")
     plt.tight_layout()
-    plt.show()
+    # Save figure or show figure
+    if filename is None:
+        plt.show()
+        return None
+    matplotlib.use("Agg")
+    plt.savefig(filename)
+    return None
