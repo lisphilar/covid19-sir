@@ -3,21 +3,19 @@
 
 from collections import Counter
 from covsirphy.analysis import Simulator
-from covsirphy.cleaning import CleaningBase, JHUData, Word, Population
-from covsirphy.cleaning import CountryData
+from covsirphy.cleaning import CleaningBase, Word, Population
+from covsirphy.cleaning import JHUData, CountryData
 from covsirphy.ode import ModelBase, SIR, SIRD, SIRF, SIRFV, SEWIRF
 from covsirphy.phase import NondimData, Estimator
-from covsirphy.selection import select_area, SelectArea, create_target_df
 from covsirphy.util import line_plot, jpn_map
 
 
 __all__ = [
     "Simulator",
-    "CleaningBase", "JHUData", "Word", "Population",
-    "CountryData",
+    "CleaningBase", "Word", "Population",
+    "JHUData", "CountryData",
     "ModelBase", "SIR", "SIRD", "SIRF", "SIRFV", "SEWIRF",
     "NondimData", "Estimator",
-    "select_area", "SelectArea", "create_target_df",
     "line_plot", "jpn_map",
 ]
 

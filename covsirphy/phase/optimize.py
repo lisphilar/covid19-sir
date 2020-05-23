@@ -59,7 +59,7 @@ class Optimizer(Word):
         """
         Objective function of Optuna study.
         This defines the parameter values using Optuna.
-        This function should be overwritten in subclass.
+        This method should be overwritten in subclass.
         @trial <optuna.trial>: a trial of the study
         @return <float>: score of the error function to minimize
         """
@@ -69,7 +69,7 @@ class Optimizer(Word):
     def error_f(self, param_dict, train_df):
         """
         Definition of error score to minimize in the study.
-        This function should be overwritten in subclass.
+        This method should be overwritten in subclass.
         @param_dict <dict[str]=int/float>:
             - estimated parameter values
         @train_df <pd.DataFrame>: actual data
@@ -86,7 +86,7 @@ class Optimizer(Word):
     def simulate(self, param_dict):
         """
         Simulate the values with the parameters.
-        This function should be overwritten in subclass.
+        This method should be overwritten in subclass.
         @param_dict <dict[str]=int/float>:
             - estimated parameter values
         @return <pd.DataFrame>:
@@ -139,7 +139,7 @@ class Optimizer(Word):
     def result(self, name):
         """
         Return the estimated parameters as a dataframe.
-        This function should be overwritten in subclass.
+        This method should be overwritten in subclass.
         @name <str>: index of the dataframe
         @return <pd.DataFrame>:
             - (estimated parameters)
@@ -157,7 +157,7 @@ class Optimizer(Word):
     def rmsle(self, train_df, dim=1):
         """
         Calculate RMSLE score.
-        This can be overwritten in child class.
+        This method can be overwritten in child class.
         @train_df <pd.DataFrame>: actual data
             - index: reseted index
             - t: time step, 0, 1, 2,...
@@ -177,7 +177,7 @@ class Optimizer(Word):
     def predict(self):
         """
         Predict the values with the calculated values.
-        This function can be overwritten in subclass.
+        This method can be overwritten in subclass.
         """
         param_dict = self.param()
         param_dict.pop("tau")
@@ -218,7 +218,7 @@ class Optimizer(Word):
     def accuracy(self, train_df, variables=None, filename=None):
         """
         Show the accuracy as a figure.
-        This can be overwritten in child class.
+        This method can be overwritten in child class.
         @train_df <pd.DataFrame>: actual data
             - index: reseted index
             - t: time step, 0, 1, 2,...
@@ -229,8 +229,6 @@ class Optimizer(Word):
         # Create comparison table
         predicted_df = self.predict()
         df = self.compare(train_df, predicted_df)
-        print(predicted_df)
-        print(train_df)
         # Prepare figure object
         val_len = len(variables) + 1
         fig, axes = plt.subplots(

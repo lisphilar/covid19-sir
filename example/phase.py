@@ -18,12 +18,8 @@ def main():
     pop = pop_main()
     population = pop.value(country="Italy")
     # Non-dimentional dataset
-    estimator = Estimator(
-        ncov_df, country="Italy", province=None,
-        model=SIRF, population=population,
-        start_date="28Mar2020", end_date="04Apr2020"
-    )
-    estimator.train_df.to_csv(output_dir.joinpath("train.csv"), index=True)
+    print(ncov_df)
+    print(population)
 
 
 if __name__ == "__main__":
