@@ -56,9 +56,9 @@ def line_plot(df, title, xlabel=None, ylabel="Cases",
         for value in v:
             ax.axvline(x=value, color="black", linestyle=":")
     plt.tight_layout()
-    # plt.show()
     # Save figure or show figure
     if filename is None:
+        plt.show()
         return None
     plt.savefig(filename, bbox_inches="tight", transparent=True, dpi=300)
     return None

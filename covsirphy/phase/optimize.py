@@ -2,9 +2,11 @@
 # -*- coding: utf-8 -*-
 
 from datetime import datetime
+import matplotlib.pyplot as plt
 import numpy as np
 import optuna
 import pandas as pd
+import seaborn as sns
 from covsirphy.cleaning.word import Word
 
 
@@ -12,6 +14,7 @@ class Optimizer(Word):
     """
     Hyperparameter optimization with Optuna package.
     """
+    optuna.logging.disable_default_handler()
     A = "_actual"
     P = "_predicted"
 
@@ -23,7 +26,6 @@ class Optimizer(Word):
             - Response variables which is not @x
         @param (keyword arguments): fixed parameter values
         """
-        optuna.logging.disable_default_handler()
         self.x = x
         self.y_list = [v for v in train_df.columns if v != x]
         self.train_df = train_df.copy()
@@ -178,3 +180,35 @@ class Optimizer(Word):
         param_dict = self.param()
         param_dict.pop("tau")
         return self.simulate(self.step_n, param_dict)
+
+    def history(self, show_figure=True, filename=None):
+        """
+        Show the history of optimization as a dataframe.
+        @show_figure <bool>:
+            - if True, show the history as a pair-plot of parameters.
+        @filename <str>: filename of the figure, or None (show figure)
+        """
+        # Create dataframe of the history
+        df = self.study.trials_dataframe()
+        series = df["datetime_complete"] - df["datetime_start"]
+        df["time[s]"] = series.dt.total_seconds()
+        df = df.drop(
+            ["datetime_complete", "datetime_start"],
+            axis=1
+        )
+        try:
+            df = df.drop("system_attrs__number", axis=1)
+        except KeyError:
+            pass
+        # Show figure
+        if not show_figure:
+            return df
+        fig_df = df.loc[:, df.columns.str.startswith("params_")]
+        fig_df.columns = fig_df.columns.str.replace("params_", "")
+        sns.pairplot(fig_df, diag_kind="kde", markers="+")
+        # Save figure or show figure
+        if filename is None:
+            plt.show()
+            return df
+        plt.savefig(filename, bbox_inches="tight", transparent=True, dpi=300)
+        return df

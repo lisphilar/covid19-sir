@@ -38,8 +38,12 @@ def main():
         country="Example", province="Example-1"
     )
     estimator.run(n_trials=500)
-    estimated_df = estimator.result("SIR-F")
-    estimated_df.to_csv(output_dir.joinpath("estimated.csv"), index=True)
+    estimated_df = estimator.result(name="SIR-F")
+    estimated_df.to_csv(
+        output_dir.joinpath("estimate_parameter.csv"), index=True
+    )
+    # Show the history of optimization
+    estimator.history(filename=output_dir.joinpath("estimate_history.jpg"))
 
 
 if __name__ == "__main__":
