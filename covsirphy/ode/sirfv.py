@@ -10,7 +10,7 @@ class SIRFV(ModelBase):
     PARAMETERS = ["theta", "kappa", "rho", "sigma", "omega"]
     VARIABLES = ["x", "y", "z", "w"]
     PRIORITIES = np.array([1, 10, 10, 2])
-    MONOTONIC = ["z", "w"]
+    MONOTONIC_INCREASE = ["z", "w"]
 
     def __init__(self, theta, kappa, rho, sigma, omega=None, n=None, v_per_day=None):
         """

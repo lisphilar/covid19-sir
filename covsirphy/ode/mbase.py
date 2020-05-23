@@ -10,7 +10,7 @@ class ModelBase(Word):
     VARIABLES = ["x"]
     PRIORITIES = np.array([1])
     QUANTILE_RANGE = [0.3, 0.7]
-    MONOTONIC = ["x"]
+    MONOTONIC_INCREASE = ["x"]
 
     @classmethod
     def param(cls, train_df_divided=None, q_range=None):

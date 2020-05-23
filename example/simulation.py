@@ -37,7 +37,7 @@ def main():
         clean_df=dim_df, model=SIRF, population=eg_population,
         country="Example", province="Example-1"
     )
-    estimator.run(n_trials=500)
+    estimator.run()
     estimated_df = estimator.summary(name="SIR-F")
     estimated_df.to_csv(
         output_dir.joinpath("estimate_parameter.csv"), index=True

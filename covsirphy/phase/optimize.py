@@ -40,10 +40,10 @@ class Optimizer(Word):
     def run(self, n_trials, n_jobs=-1):
         """
         Run optimization.
-        @n_trials <int>: the number of trials.
+        This method can be overwritten in subclass.
+        @n_trials <int>: the number of trials
         @n_jobs <int>: the number of parallel jobs or -1 (CPU count)
         """
-        self.total_trials += n_trials
         start_time = datetime.now()
         if self.study is None:
             self.study = optuna.create_study(direction="minimize")
@@ -54,6 +54,7 @@ class Optimizer(Word):
         )
         end_time = datetime.now()
         self.run_time += (end_time - start_time).total_seconds()
+        self.total_trials += n_trials
 
     def objective(self, trial):
         """
@@ -226,7 +227,7 @@ class Optimizer(Word):
         @variables <list[str]>: variables to compare or None (all variables)
         @filename <str>: filename of the figure, or None (show figure)
         """
-        # Create comparison table
+        # Create a table to compare observed/estimated values
         predicted_df = self.predict()
         df = self.compare(train_df, predicted_df)
         # Prepare figure object

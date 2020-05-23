@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
+from datetime import datetime
 import numpy as np
 import optuna
 import pandas as pd
@@ -61,6 +62,75 @@ class Estimator(Optimizer):
         # step_n will be defined in divide_minutes()
         self.step_n = None
 
+    def run(self, timeout=120, n_jobs=-1,
+            timeout_iteration=30, allowance=(0.8, 1.2)):
+        """
+        Run optimization.
+        Maximum values:
+            - @timeout <int>: time-out of run
+        @n_jobs <int>: the number of parallel jobs or -1 (CPU count)
+        @timeout <int>: time-out of one iteration
+            - if the result satisfied all conditions, optimization ends
+                - values of monotonic increasing variables increases monotonically
+                - the last value of predicted values are in the allowance
+                    for the variables that are increasing monotonically
+        @allowance <tuple(float, float)>:
+            - the allowance of the predicted value
+        @return self
+        """
+        if self.study is None:
+            self.study = optuna.create_study(direction="minimize")
+        print("\tRunning optimization...")
+        start_time = datetime.now()
+        while True:
+            # Perform optimization
+            self.study.optimize(
+                lambda x: self.objective(x),
+                n_jobs=n_jobs,
+                timeout=timeout_iteration
+            )
+            end_time = datetime.now()
+            self.run_time = (end_time - start_time).total_seconds()
+            self.total_trials = len(self.study.trials)
+            # Show run-time
+            minutes, seconds = divmod(int(self.run_time), 60)
+            print(
+                f"\r\tPerformed {self.total_trials} trials in {minutes} min {seconds} sec",
+                end=str()
+            )
+            # Time-out
+            if self.run_time >= timeout:
+                break
+            # Create a table to compare observed/estimated values
+            tau = super().param()["tau"]
+            train_df = self.divide_minutes(tau)
+            comp_df = self.compare(train_df, self.predict())
+            # Check monotonic variables
+            mono_ok_list = [
+                comp_df[f"{v}{self.P}"].is_monotonic_increasing
+                for v in self.model.MONOTONIC_INCREASE
+            ]
+            if not all(mono_ok_list):
+                continue
+            # Check the last value
+            last_value_nest = [
+                comp_df.iloc[-1, :][[f"{v}{self.A}", f"{v}{self.P}"]].tolist()
+                for v in self.model.MONOTONIC_INCREASE
+            ]
+            last_ok_list = [
+                (a * allowance[0] <= p) and (p <= a * allowance[1])
+                for (a, p) in last_value_nest
+            ]
+            if not all(last_ok_list):
+                continue
+            break
+        minutes, seconds = divmod(int(self.run_time), 60)
+        print(
+            f"\r\tFinished {self.total_trials} trials in {minutes} min {seconds} sec.",
+            end="\n"
+        )
+        return self
+
     def objective(self, trial):
         """
         Objective function of Optuna study.
@@ -73,6 +143,10 @@ class Estimator(Optimizer):
             tau = self.fixed_dict["tau"]
         else:
             tau = trial.suggest_int("tau", 1, 1440)
+        if not isinstance(tau, int) or tau <= 0:
+            raise TypeError(
+                f"@tau must be a non-negative integer, but {tau} was applied."
+            )
         train_df = self.divide_minutes(tau)
         # Set parameters of the models
         p_dict = {"tau": None}
@@ -92,6 +166,10 @@ class Estimator(Optimizer):
         Devide T by tau in the training dataset.
         @tau <int>: tau value [min]
         """
+        if not isinstance(tau, int) or tau <= 0:
+            raise TypeError(
+                f"@tau must be a non-negative integer, but {tau} was applied."
+            )
         df = self.min_train_df.copy()
         df[self.TS] = (df[self.T] / tau).astype(np.int64)
         train_df = df.drop(self.T, axis=1).reset_index(drop=True)
