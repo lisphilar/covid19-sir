@@ -36,3 +36,6 @@ class Word(object):
         "Recovered per Confirmed",
         "Fatal per (Fatal or Recovered)"
     ]
+    # Optimization
+    A = "_actual"
+    P = "_predicted"

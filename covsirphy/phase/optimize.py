@@ -16,8 +16,6 @@ class Optimizer(Word):
     Hyperparameter optimization with Optuna package.
     """
     optuna.logging.disable_default_handler()
-    A = "_actual"
-    P = "_predicted"
 
     def __init__(self, train_df, x="t", **params):
         """
@@ -169,6 +167,8 @@ class Optimizer(Word):
         predicted_df = self.predict()
         df = self.compare(train_df, predicted_df)
         df = (df * dim + 1).astype(np.int64)
+        for v in self.y_list:
+            df = df.loc[df[f"{v}{self.A}"] * df[f"{v}{self.P}"] > 0, :]
         a_list = [np.log10(df[f"{v}{self.A}"]) for v in self.y_list]
         p_list = [np.log10(df[f"{v}{self.P}"]) for v in self.y_list]
         diffs = [((a - p) ** 2).sum() for (a, p) in zip(a_list, p_list)]

@@ -5,11 +5,13 @@ import matplotlib.pyplot as plt
 import matplotlib
 from matplotlib.ticker import ScalarFormatter
 
-plt.style.use("seaborn-ticks")
+# plt.style.use("seaborn-ticks")
+plt.style.use("fast")
 plt.rcParams["xtick.direction"] = "in"
 plt.rcParams["ytick.direction"] = "in"
 plt.rcParams["font.size"] = 11.0
 plt.rcParams["figure.figsize"] = (9, 6)
+plt.rcParams["legend.frameon"] = False
 
 
 def line_plot(df, title, xlabel=None, ylabel="Cases",

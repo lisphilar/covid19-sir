@@ -10,7 +10,7 @@ class SIRF(ModelBase):
     PARAMETERS = ["theta", "kappa", "rho", "sigma"]
     VARIABLES = ["x", "y", "z", "w"]
     PRIORITIES = np.array([1, 10, 10, 2])
-    MONOTONIC_INCREASE = ["z", "w"]
+    VARS_INCLEASE = ["z", "w"]
 
     def __init__(self, theta, kappa, rho, sigma):
         super().__init__()

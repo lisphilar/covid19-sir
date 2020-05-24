@@ -6,11 +6,16 @@ from covsirphy.cleaning.word import Word
 
 
 class ModelBase(Word):
-    NAME = "Model"
-    VARIABLES = ["x"]
-    PRIORITIES = np.array([1])
+    # Quantile range of the parametes when setting initial values
     QUANTILE_RANGE = [0.3, 0.7]
-    MONOTONIC_INCREASE = ["x"]
+    # Model name
+    NAME = "Model"
+    # Variables in non-dimensional ODEs
+    VARIABLES = ["x"]
+    # Priorities of the varialbles when optimization
+    PRIORITIES = np.array([1])
+    # Variables that increases monotonically
+    VARS_INCLEASE = ["x"]
 
     @classmethod
     def param(cls, train_df_divided=None, q_range=None):

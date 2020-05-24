@@ -15,6 +15,7 @@ class Estimator(Optimizer):
     """
     Hyperparameter optimization of an ODE model.
     """
+    np.seterr(divide="raise")
 
     def __init__(self, clean_df, model, population,
                  country, province=None, **kwargs):
@@ -62,18 +63,18 @@ class Estimator(Optimizer):
         # step_n will be defined in divide_minutes()
         self.step_n = None
 
-    def run(self, timeout=120, n_jobs=-1,
+    def run(self, timeout=180, n_jobs=-1,
             timeout_iteration=30, allowance=(0.8, 1.2)):
         """
         Run optimization.
-        Maximum values:
-            - @timeout <int>: time-out of run
+        If the result satisfied all conditions, optimization ends.
+            - all values are not under than 0
+            - values of monotonic increasing variables increases monotonically
+            - predicted values are in the allowance
+                when each actual value shows max value
+        - @timeout <int>: time-out of run
         @n_jobs <int>: the number of parallel jobs or -1 (CPU count)
         @timeout <int>: time-out of one iteration
-            - if the result satisfied all conditions, optimization ends
-                - values of monotonic increasing variables increases monotonically
-                - the last value of predicted values are in the allowance
-                    for the variables that are increasing monotonically
         @allowance <tuple(float, float)>:
             - the allowance of the predicted value
         @return self
@@ -94,32 +95,38 @@ class Estimator(Optimizer):
             self.total_trials = len(self.study.trials)
             # Show run-time
             minutes, seconds = divmod(int(self.run_time), 60)
-            print(
-                f"\r\tPerformed {self.total_trials} trials in {minutes} min {seconds} sec",
-                end=str()
-            )
             # Time-out
             if self.run_time >= timeout:
                 break
+            print(
+                f"\r\tPerformed {self.total_trials} trials in {minutes} min {seconds} sec.",
+                end=str()
+            )
             # Create a table to compare observed/estimated values
             tau = super().param()["tau"]
             train_df = self.divide_minutes(tau)
             comp_df = self.compare(train_df, self.predict())
+            # All values are not under than 0
+            if (comp_df < 0).values.sum():
+                continue
             # Check monotonic variables
             mono_ok_list = [
                 comp_df[f"{v}{self.P}"].is_monotonic_increasing
-                for v in self.model.MONOTONIC_INCREASE
+                for v in self.model.VARS_INCLEASE
             ]
             if not all(mono_ok_list):
                 continue
-            # Check the last value
-            last_value_nest = [
-                comp_df.iloc[-1, :][[f"{v}{self.A}", f"{v}{self.P}"]].tolist()
-                for v in self.model.MONOTONIC_INCREASE
+            # Check the values when argmax(actual)
+            values_nest = [
+                comp_df.loc[
+                    comp_df[f"{v}{self.A}"].idxmax(),
+                    [f"{v}{self.A}", f"{v}{self.P}"]
+                ].tolist()
+                for v in self.model.VARIABLES
             ]
             last_ok_list = [
                 (a * allowance[0] <= p) and (p <= a * allowance[1])
-                for (a, p) in last_value_nest
+                for (a, p) in values_nest
             ]
             if not all(last_ok_list):
                 continue
@@ -165,16 +172,20 @@ class Estimator(Optimizer):
         """
         Devide T by tau in the training dataset.
         @tau <int>: tau value [min]
+        @return <pd.DataFrame>:
+            - index: reseted index
+            - t: time steps
+            - x, y, z, w etc.
         """
         if not isinstance(tau, int) or tau <= 0:
             raise TypeError(
                 f"@tau must be a non-negative integer, but {tau} was applied."
             )
-        df = self.min_train_df.copy()
-        df[self.TS] = (df[self.T] / tau).astype(np.int64)
-        train_df = df.drop(self.T, axis=1).reset_index(drop=True)
-        self.step_n = int(train_df[self.TS].max())
-        return train_df
+        df = self.min_train_df.reset_index(drop=True)
+        df = df.rename({self.T: self.TS}, axis=1)
+        df[self.TS] = (df[self.TS] / tau).astype(np.int64)
+        self.step_n = int(df[self.TS].max())
+        return df
 
     def error_f(self, param_dict, train_df):
         """
@@ -193,16 +204,18 @@ class Estimator(Optimizer):
         df = self.compare(train_df, sim_df)
         df = (df * self.population + 1).astype(np.int64)
         # Calculate error score
-        v_list = self.model.VARIABLES[:]
+        v_list = [
+            v for (p, v)
+            in zip(self.model.PRIORITIES, self.model.VARIABLES)
+            if p > 0
+        ]
         diffs = [df[f"{v}{self.A}"] - df[f"{v}{self.P}"] for v in v_list]
         numerators = [df[f"{v}{self.A}"] for v in v_list]
-        np.seterr(divide="raise")
         try:
             scores = [
                 p * np.average(diff.abs() / numerator, weights=df.index)
                 for (p, diff, numerator)
                 in zip(self.model.PRIORITIES, diffs, numerators)
-                if p != 0
             ]
         except ZeroDivisionError:
             return np.inf

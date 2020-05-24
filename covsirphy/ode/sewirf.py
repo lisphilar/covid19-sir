@@ -10,7 +10,7 @@ class SEWIRF(ModelBase):
     PARAMETERS = ["theta", "kappa", "rho1", "rho2", "rho3", "sigma"]
     VARIABLES = ["x1", "x2", "x3", "y", "z", "w"]
     PRIORITIES = np.array([0, 0, 0, 10, 10, 2])
-    MONOTONIC_INCREASE = ["z", "w"]
+    VARS_INCLEASE = ["z", "w"]
 
     def __init__(self, theta, kappa, rho1, rho2, rho3, sigma):
         super().__init__()

@@ -10,7 +10,7 @@ class SIR(ModelBase):
     PARAMETERS = ["rho", "sigma"]
     VARIABLES = ["x", "y", "z"]
     PRIORITIES = np.array([1, 1, 1])
-    MONOTONIC_INCREASE = ["z"]
+    VARS_INCLEASE = ["z"]
 
     def __init__(self, rho, sigma):
         super().__init__()
