@@ -6,7 +6,8 @@ from covsirphy.analysis import Simulator
 from covsirphy.cleaning import CleaningBase, Word, Population
 from covsirphy.cleaning import JHUData, CountryData
 from covsirphy.ode import ModelBase, SIR, SIRD, SIRF, SIRFV, SEWIRF
-from covsirphy.phase import NondimData, Estimator
+from covsirphy.phase import PhaseData, NondimData, Estimator
+from covsirphy.phase import SRData, Trend
 from covsirphy.util import line_plot, jpn_map
 
 
@@ -15,7 +16,7 @@ __all__ = [
     "CleaningBase", "Word", "Population",
     "JHUData", "CountryData",
     "ModelBase", "SIR", "SIRD", "SIRF", "SIRFV", "SEWIRF",
-    "NondimData", "Estimator",
+    "PhaseData", "NondimData", "Estimator", "SRData", "Trend",
     "line_plot", "jpn_map",
 ]
 

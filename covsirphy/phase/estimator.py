@@ -18,7 +18,8 @@ class Estimator(Optimizer):
     np.seterr(divide="raise")
 
     def __init__(self, clean_df, model, population,
-                 country, province=None, **kwargs):
+                 country, province=None,
+                 start_date=None, end_date=None, **kwargs):
         """
         @clean_df <pd.DataFrame>: cleaned data
             - index <int>: reseted index
@@ -33,9 +34,9 @@ class Estimator(Optimizer):
         @population <int>: total population in the place
         @country <str>: country name
         @province <str>: province name
-        @kwargs: the other keyword arguments of NondimData.make()
-            - @start_date <str>: start date, like 22Jan2020
-            - @end_date <str>: end date, like 01Feb2020
+        @start_date <str>: start date, like 22Jan2020
+        @end_date <str>: end date, like 01Feb2020
+        @kwargs: parameter values of the model
         """
         optuna.logging.disable_default_handler()
         if not issubclass(model, ModelBase):
@@ -50,7 +51,8 @@ class Estimator(Optimizer):
             clean_df, country=country, province=province
         )
         self.min_train_df = nondim_data.make(
-            model=model, population=population, **kwargs
+            model=model, population=population,
+            start_date=start_date, end_date=end_date
         )
         self.y0_dict = self.min_train_df.iloc[0, :].to_dict()
         self.train_df = None
@@ -133,8 +135,7 @@ class Estimator(Optimizer):
             break
         minutes, seconds = divmod(int(self.run_time), 60)
         print(
-            f"\r\tFinished {self.total_trials} trials in {minutes} min {seconds} sec.",
-            end="\n"
+            f"\r\tFinished {self.total_trials} trials in {minutes} min {seconds} sec."
         )
         return self
 

@@ -1,6 +1,9 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
+from collections import defaultdict
+import numpy as np
+
 
 class Word(object):
     """
@@ -39,3 +42,28 @@ class Word(object):
     # Optimization
     A = "_actual"
     P = "_predicted"
+    # Phase name
+    SUFFIX_DICT = defaultdict(lambda: "th")
+    SUFFIX_DICT.update({1: "st", 2: "nd", 3: "rd"})
+
+    @classmethod
+    def num2str(cls, num):
+        """
+        Convert numbers to 1st, 2nd etc.
+        @num <int>: number
+        @return <str>
+        """
+        q, mod = divmod(num, 10)
+        suffix = "th" if q == 1 else cls.SUFFIX_DICT[mod]
+        return f"{num}{suffix}"
+
+    @staticmethod
+    def negative_exp(x, a, b):
+        """
+        Negative exponential function f(x)=A exp(-Bx).
+        @x <float>: x values
+        parameters of the function
+            - a <float>
+            - b <float>
+        """
+        return a * np.exp(-b * x)

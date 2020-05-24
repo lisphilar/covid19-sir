@@ -186,10 +186,12 @@ class Optimizer(Word):
 
     def history(self, show_figure=True, filename=None):
         """
-        Show the history of optimization as a dataframe.
+        Show the history of optimization as a figure
+            and return it as dataframe.
         @show_figure <bool>:
             - if True, show the history as a pair-plot of parameters.
         @filename <str>: filename of the figure, or None (show figure)
+        @retun <pd.DataFrame>: the history
         """
         # Create dataframe of the history
         df = self.study.trials_dataframe()

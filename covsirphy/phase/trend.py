@@ -1,7 +1,14 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
+from datetime import datetime
+import functools
+import matplotlib.pyplot as plt
+from matplotlib.ticker import ScalarFormatter
+import numpy as np
+from scipy.optimize import curve_fit
 from covsirphy.cleaning.word import Word
+from covsirphy.phase.sr_data import SRData
 
 
 class Trend(Word):
@@ -10,7 +17,7 @@ class Trend(Word):
     """
 
     def __init__(self, clean_df, population,
-                 country, province=None, **kwargs):
+                 country, province=None, start_date=None, end_date=None):
         """
         @clean_df <pd.DataFrame>: cleaned data
             - index <int>: reseted index
@@ -24,11 +31,174 @@ class Trend(Word):
         @population <int>: total population in the place
         @country <str>: country name
         @province <str>: province name
-        @kwargs: the other keyword arguments of NondimData.make()
-            - @start_date <str>: start date, like 22Jan2020
-            - @end_date <str>: end date, like 01Feb2020
+        @start_date <str>: start date, like 22Jan2020
+        @end_date <str>: end date, like 01Feb2020
         """
         self.population = population
-        self.country = country
-        self.province = province
-        self.train_df = None
+        if province is None:
+            self.name = country
+        else:
+            self.name = f"{country}{self.SEP}{province}"
+        sr_data = SRData(
+            clean_df, country=country, province=province
+        )
+        self.train_df = sr_data.make(
+            population, start_date=start_date, end_date=end_date
+        )
+        self.result_df = None
+        # Start date
+        self.start_date = self.train_df.index.min()
+        if start_date is not None:
+            self.start_date = max(
+                self.start_date,
+                datetime.strptime(start_date, self.DATE_FORMAT)
+            )
+        self.start_date = self.start_date.strftime(self.DATE_FORMAT)
+        # End date
+        self.end_date = self.train_df.index.max()
+        if end_date is not None:
+            self.end_date = min(
+                self.end_date,
+                datetime.strptime(end_date, self.DATE_FORMAT)
+            )
+        self.end_date = self.end_date.strftime(self.DATE_FORMAT)
+
+    def analyse(self):
+        """
+        Perform curve fitting of S-R trend
+            with negative exponential function and save the result.
+        """
+        self.result_df = self._analyse(self.train_df)
+
+    def _analyse(self, train_df):
+        """
+        Perform curve fitting of S-R trend
+            with negative exponential function.
+        @train_df <pd.DataFrame>: training dataset
+            - index (Date) <pd.TimeStamp>: Observation date
+            - Recovered: The number of recovered cases
+            - Susceptible_actual: Actual data of Susceptible
+        @return <pd.DataFrame>
+            - index (Date) <pd.TimeStamp>: Observation date
+            - Recovered: The number of recovered cases
+            - Susceptible_actual: Actual values of Susceptible
+            - Susceptible_predicted: Predicted values of Susceptible
+        """
+        df = train_df.copy()
+        # Calculate initial values of parameters
+        x_series = df[self.R]
+        y_series = df[f"{self.S}{self.A}"]
+        a_ini = y_series.max()
+        b_ini = y_series.diff().reset_index(drop=True)[1] / a_ini
+        # Curve fitting with negative exponential fucntion
+        param, _ = curve_fit(
+            self.negative_exp, x_series, y_series,
+            p0=[a_ini, b_ini]
+        )
+        # Predict the values with the parameters
+        f_partial = functools.partial(
+            self.negative_exp, a=param[0], b=param[1]
+        )
+        df[f"{self.S}{self.P}"] = x_series.apply(
+            lambda x: f_partial(x)
+        ).astype(np.int64)
+        return df
+
+    def rmsle(self):
+        """
+        Calculate RMSLE score of actual/predicted Suscptible.
+        @return <float>
+        """
+        df = self.result_df.copy()
+        if df is None:
+            raise NameError("Must perform Trend().run() in advance.")
+        actual = df[f"{self.S}{self.A}"]
+        predicted = df[f"{self.S}{self.P}"]
+        # Calcuate RMSLE score
+        scores = np.abs(
+            np.log10(actual + 1) - np.log10(predicted + 1)
+        )
+        return scores.sum()
+
+    def show(self, filename=None):
+        """
+        show the result as a figure.
+        @show_figure <bool>:
+            - if True, show the history as a pair-plot of parameters.
+        @filename <str>: filename of the figure, or None (show figure)
+        """
+        df = self.result_df.copy()
+        df["Predicted"] = df[f"{self.S}{self.P}"]
+        title = f"{self.name}: S-R trend from {self.start_date} to {self.end_date}"
+        self.show_with_many(
+            result_df=df, predicted_cols=["Predicted"],
+            title=title,
+            filename=filename
+        )
+
+    def show_with_many(self, result_df, predicted_cols,
+                       title, vlines=None, filename=None):
+        """
+        show the result as a figure.
+        @result_df <pd.DataFrame>: training dataset
+            - index (Date) <pd.TimeStamp>: Observation date
+            - Recovered: The number of recovered cases
+            - Susceptible_actual: Actual values of Susceptible
+            - columns defined by @columns
+        @predicted_cols <list[str]>:
+            - list of columns which have predicted values
+        @title <str>: title of the figure
+        @vlines <list[int]>:
+            - list of Recovered values to show vertical lines
+        @filename <str>: filename of the figure, or None (show figure)
+        """
+        df = result_df.copy()
+        if df is None:
+            raise NameError("Must perform Trend().run() in advance.")
+        x_series = df[self.R]
+        actual = df[f"{self.S}{self.A}"]
+        # Plot the actual values
+        plt.plot(
+            x_series, actual,
+            label="Actual", color="black",
+            marker=".", markeredgewidth=0, linewidth=0
+        )
+        # Plot the predicted values
+        for col in predicted_cols:
+            plt.plot(x_series, df[col], label=col)
+        # x-axis
+        plt.xlabel(self.R)
+        plt.xlim(0, None)
+        # y-axis
+        plt.ylabel(self.S)
+        plt.yscale("log")
+        ymin = df.drop(self.R, axis=1).values.min()
+        ymax = df.drop(self.R, axis=1).values.max()
+        ydiff_scale = int(np.log10(ymax - ymin))
+        yticks = np.linspace(
+            round(ymin, - ydiff_scale),
+            round(ymax, - ydiff_scale),
+            5
+        )
+        plt.tick_params(left=False)
+        plt.yticks([v.round() for v in yticks])
+        # Offset in y axis
+        fmt = ScalarFormatter(useOffset=False)
+        fmt.set_scientific(False)
+        plt.gca().yaxis.set_major_formatter(fmt)
+        # Title
+        plt.title(title)
+        # Vertical lines
+        if isinstance(vlines, (list, tuple)):
+            for value in vlines:
+                plt.axvline(x=value, color="black", linestyle=":")
+        # Legend
+        plt.legend(
+            bbox_to_anchor=(1.02, 0), loc="lower left", borderaxespad=0
+        )
+        # Save figure or show figure
+        plt.tight_layout()
+        if filename is None:
+            plt.show()
+        plt.savefig(
+            filename, bbox_inches="tight", transparent=True, dpi=300)

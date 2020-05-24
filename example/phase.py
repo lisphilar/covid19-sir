@@ -2,7 +2,8 @@
 # -*- coding: utf-8 -*-
 
 from pathlib import Path
-from covsirphy import Estimator, SIRF
+# from covsirphy import Estimator, SIRF
+from covsirphy import Trend
 from .dataset import main as dat_main
 from .population import main as pop_main
 
@@ -16,10 +17,14 @@ def main():
     ncov_df = dat_main()
     # Read population dataset
     pop = pop_main()
-    population = pop.value(country="Italy")
-    # Non-dimentional dataset
-    print(ncov_df)
-    print(population)
+    ita_population = pop.value(country="Japan")
+    # Trend analysis
+    ita_trend = Trend(
+        ncov_df, ita_population, country="Japan"
+    )
+    ita_trend.analyse()
+    ita_trend.rmsle()
+    ita_trend.show(filename=output_dir.joinpath("ita_trend.jpg"))
 
 
 if __name__ == "__main__":

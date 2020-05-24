@@ -3,58 +3,49 @@
 
 from datetime import datetime
 from covsirphy.phase.phase_data import PhaseData
-from covsirphy.ode.mbase import ModelBase
 
 
-class NondimData(PhaseData):
+class SRData(PhaseData):
     """
-    Create dataset for ODE analysis.
+    Create dataset for S-R trend analysis.
     """
 
     def __init__(self, clean_df, country=None, province=None):
         super().__init__(clean_df, country=country, province=province)
 
-    def _make(self, grouped_df, model, population):
+    def _make(self, grouped_df, population):
         """
-        Make non-dimensional dataset for an ODE model.
+        Make dataset for S-R trend analysis.
         @grouped_df <pd.DataFrame>: cleaned data grouped by Date
             - index (Date) <pd.TimeStamp>: Observation date
             - Confirmed <int>: the number of confirmed cases
             - Infected <int>: the number of currently infected cases
             - Fatal <int>: the number of fatal cases
             - Recovered <int>: the number of recovered cases
-        @model <sub-class of cs.ModelBase>: ODE model
         @population <int>: total population in the place
         @return <pd.DataFrame>
             - index (Date) <pd.TimeStamp>: Observation date
-            - Elapsed <int>: Elapsed time from the start date [min]
-            - x, y, z, w etc.
-                - calculated in child classes.
-                - non-dimensionalized variables of Susceptible etc.
+            - Recovered: The number of recovered cases
+            - Susceptible_actual: Actual data of Susceptible
         """
         df = grouped_df.copy()
         if set(df.columns) != set(self.VALUE_COLUMNS):
             cols_str = ", ".join(self.VALUE_COLUMNS)
             raise KeyError(f"@cleaned_df must has {cols_str} columns.")
-        if not issubclass(model, ModelBase):
-            raise TypeError(
-                "@model must be an ODE model <sub-class of cs.ModelBase>."
-            )
-        return model.calc_variables(df, population)
+        df[f"{self.S}{self.A}"] = population - df[self.C]
+        df = df.loc[:, [self.R, f"{self.S}{self.A}"]]
+        return df
 
-    def make(self, model, population, start_date=None, end_date=None):
+    def make(self, population, start_date=None, end_date=None):
         """
-        Make non-dimensional dataset for an ODE model.
-        @model <cs.ModelBase>: ODE model
+        Make dataset for S-R trend analysis.
         @population <int>: total population in the place
         @start_date <str>: start date, like 22Jan2020
         @end_date <str>: end date, like 01Feb2020
         @return <pd.DataFrame>
             - index (Date) <pd.TimeStamp>: Observation date
-            - Elapsed <int>: Elapsed time from the start date [min]
-            - x, y, z, w etc.
-                - calculated in child classes.
-                - non-dimensionalized variables of Susceptible etc.
+            - Recovered: The number of recovered cases
+            - Susceptible_actual: Actual values of Susceptible
         """
         df = self.all_df.copy()
         series = df.index.copy()
@@ -70,4 +61,4 @@ class NondimData(PhaseData):
             end_obj = datetime.strptime(end_date, self.DATE_FORMAT)
         # subset
         df = df.loc[(start_obj <= series) & (series <= end_obj), :]
-        return self._make(df, model, population)
+        return self._make(df, population)
