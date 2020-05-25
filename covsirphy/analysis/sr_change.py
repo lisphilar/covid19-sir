@@ -109,17 +109,21 @@ class ChangeFinder(Word):
         @timeout <int>: time-out of run
         @n_trials_iteration <int>: the number of trials in one iteration
         @n_jobs <int>: the number of parallel jobs or -1 (CPU count)
+        @return self
         """
         self.n_points = n_points
         self.min_duration = min_duration
         start_time = datetime.now()
+        if n_points <= 0:
+            self.run_time = 0
+            self.total_trials = 0
+            return self
         if self.study is None:
             self.study = optuna.create_study(
                 direction="minimize"
             )
+        print("Finding change points of S-R trend...")
         while True:
-            if n_points <= 0:
-                break
             self.study.optimize(
                 lambda x: self.objective(x),
                 n_trials=n_trials_iteration,
@@ -128,13 +132,23 @@ class ChangeFinder(Word):
             # Check whether the change points are fixed or not
             if set(self.change_dates) == set(self.change_dates_previous):
                 break
-            # Check time-out
+            # Check time-out and show cummurative run-time
             end_time = datetime.now()
             self.run_time += (end_time - start_time).total_seconds()
+            minutes, seconds = divmod(int(self.run_time), 60)
+            self.total_trials = len(self.study.trials)
             if self.run_time > timeout:
+                print(
+                    f"\rFinished {self.total_trials} trials in {minutes} min {seconds} sec.\n",
+                    end=str()
+                )
                 break
+            print(
+                f"\rPerformed {self.total_trials} trials in {minutes} min {seconds} sec.",
+                end=str()
+            )
             self.change_dates_previous = self.change_dates[:]
-        self.total_trials = len(self.study.trials)
+        return self
 
     def objective(self, trial):
         """
@@ -203,20 +217,38 @@ class ChangeFinder(Word):
             - if True, show the history as a pair-plot of parameters.
         @filename <str>: filename of the figure, or None (show figure)
         @return <dict[str]={str: str/int}>:
-            - key: 
+            - key: phase number, like 1th, 2nd,...
+                - 0th (initial) phase will be removed
+            - value: {
+                'start_date': <str> start date of the phass,
+                'end_date': <str> end date of the phase,
+                'population': <int>: population value at the start date
+            }
         """
+        # Create phase dictionary
         start_dates, end_dates = self.phase_range(self.change_dates)
-        dates_itr = enumerate(zip(start_dates, end_dates), start=0)
+        pop_list = [self.pop_dict[date] for date in start_dates]
+        phases = [self.num2str(num) for num in range(len(start_dates))]
+        phase_dict = {
+            phase: {
+                "start_date": start_date,
+                "end_date": end_date,
+                "population": population
+            }
+            for (start_date, end_date, population, phase)
+            in list(zip(start_dates, end_dates, pop_list, phases))[1:]
+        }
+        # Curve fitting
         df_list = list()
-        for (num, (start_date, end_date)) in dates_itr:
-            population = self.pop_dict[start_date]
+        zip_itr = zip(start_dates, end_dates, pop_list, phases)
+        for (start_date, end_date, population, phase) in zip_itr:
             trend = Trend(
                 self.clean_df, population, self.country, province=self.province,
                 start_date=start_date, end_date=end_date
             )
             trend.analyse()
             df = trend.result()
-            phase = self.num2str(num).replace("0th", "Initial")
+            phase = phase.replace("0th", "Initial")
             df = df.rename({f"{self.S}{self.P}": f"{phase}{self.P}"}, axis=1)
             df = df.rename({f"{self.S}{self.A}": f"{phase}{self.A}"}, axis=1)
             df = df.rename({f"{self.R}": f"{phase}_{self.R}"}, axis=1)
@@ -232,6 +264,7 @@ class ChangeFinder(Word):
             lambda x: pd.to_numeric(x, errors="coerce", downcast="integer"),
             axis=0
         )
+        # Show figure
         pred_cols = comp_df.loc[
             :, comp_df.columns.str.endswith(self.P)
         ].columns.tolist()
@@ -246,4 +279,4 @@ class ChangeFinder(Word):
             title=title,
             filename=filename
         )
-        return self.change_dates
+        return phase_dict
