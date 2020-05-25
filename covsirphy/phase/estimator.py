@@ -76,7 +76,7 @@ class Estimator(Optimizer):
                 when each actual value shows max value
         - @timeout <int>: time-out of run
         @n_jobs <int>: the number of parallel jobs or -1 (CPU count)
-        @timeout <int>: time-out of one iteration
+        @timeout_iteration <int>: time-out of one iteration
         @allowance <tuple(float, float)>:
             - the allowance of the predicted value
         @return self

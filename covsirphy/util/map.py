@@ -8,7 +8,7 @@ import japanmap
 import pandas as pd
 
 
-def jpn_map(prefectures, values, title, cmap_name="Reds"):
+def jpn_map(prefectures, values, title, cmap_name="Reds", filename=None):
     """
     Show colored Japan prefecture map.
     @prefectures <list/pd.Series[str]>: prefecture name.
@@ -16,6 +16,7 @@ def jpn_map(prefectures, values, title, cmap_name="Reds"):
     @title <str>: title of the figure
     @cmap_name <str>: Please refere to
         - https://matplotlib.org/3.1.0/tutorials/colors/colormaps.html
+        @filename <str>: filename of the figure, or None (show figure)
     """
     # Prefecture code created in
     # https://www.kaggle.com/lisphilar/eda-of-japan-dataset
@@ -51,7 +52,8 @@ def jpn_map(prefectures, values, title, cmap_name="Reds"):
     norm = matplotlib.colors.Normalize(
         vmin=df["Value"].min(), vmax=df["Value"].max())
 
-    def fcol(x): return "#" + bytes(cmap(norm(x), bytes=True)[:3]).hex()
+    def fcol(x):
+        return "#" + bytes(cmap(norm(x), bytes=True)[:3]).hex()
     # Show figure
     plt.xticks(color="None")
     plt.yticks(color="None")
@@ -61,4 +63,11 @@ def jpn_map(prefectures, values, title, cmap_name="Reds"):
     mappable._A = []
     plt.colorbar(mappable)
     plt.title(title)
-    plt.show()
+    if filename is None:
+        plt.show()
+        return None
+    plt.savefig(
+        filename, bbox_inches="tight", transparent=True, dpi=300
+    )
+    plt.clf()
+    return None

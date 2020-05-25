@@ -35,10 +35,11 @@ class Optimizer(Word):
         self.total_trials = 0
         self.run_time = 0
 
-    def run(self, n_trials, n_jobs=-1):
+    def run(self, n_trials, timeout, n_jobs=-1):
         """
         Run optimization.
         This method can be overwritten in subclass.
+        @timeout <int>: time-out of run
         @n_trials <int>: the number of trials
         @n_jobs <int>: the number of parallel jobs or -1 (CPU count)
         """
@@ -48,6 +49,7 @@ class Optimizer(Word):
         self.study.optimize(
             lambda x: self.objective(x),
             n_trials=n_trials,
+            timeout=timeout,
             n_jobs=n_jobs
         )
         end_time = datetime.now()
@@ -216,6 +218,7 @@ class Optimizer(Word):
             plt.show()
             return df
         plt.savefig(filename, bbox_inches="tight", transparent=True, dpi=300)
+        plt.clf()
         return df
 
     def accuracy(self, train_df, variables=None, filename=None):
@@ -268,4 +271,5 @@ class Optimizer(Word):
             plt.show()
             return df
         plt.savefig(filename, bbox_inches="tight", transparent=True, dpi=300)
+        plt.clf()
         return df

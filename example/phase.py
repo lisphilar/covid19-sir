@@ -2,8 +2,7 @@
 # -*- coding: utf-8 -*-
 
 from pathlib import Path
-# from covsirphy import Estimator, SIRF
-from covsirphy import Trend
+from covsirphy import ChangeFinder
 from .dataset import main as dat_main
 from .population import main as pop_main
 
@@ -17,14 +16,19 @@ def main():
     ncov_df = dat_main()
     # Read population dataset
     pop = pop_main()
-    ita_population = pop.value(country="Japan")
-    # Trend analysis
-    ita_trend = Trend(
-        ncov_df, ita_population, country="Japan"
+    ita_population = pop.value(country="Italy")
+    # Show S-R trend
+    ita_change = ChangeFinder(
+        ncov_df, ita_population, country="Italy"
     )
-    ita_trend.analyse()
-    ita_trend.rmsle()
-    ita_trend.show(filename=output_dir.joinpath("ita_trend.jpg"))
+    ita_change.run(n_points=0)
+    ita_change.show(filename=output_dir.joinpath("ita_trend.png"))
+    # Find change points
+    ita_change = ChangeFinder(
+        ncov_df, ita_population, country="Italy"
+    )
+    ita_change.run(n_points=4)
+    ita_change.show(filename=output_dir.joinpath("ita_change_points.png"))
 
 
 if __name__ == "__main__":

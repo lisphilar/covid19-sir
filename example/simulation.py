@@ -33,7 +33,7 @@ def main():
     line_plot(
         dim_df.set_index("Date")[["Infected", "Recovered", "Fatal"]],
         title="Example data",
-        filename=output_dir.joinpath("dim.jpg")
+        filename=output_dir.joinpath("dim.png")
     )
     # Hyperparameter estimation of example data
     estimator = Estimator(
@@ -49,9 +49,9 @@ def main():
         output_dir.joinpath("estimate_parameter.csv"), index=True
     )
     # Show the history of optimization
-    estimator.history(filename=output_dir.joinpath("estimate_history.jpg"))
+    estimator.history(filename=output_dir.joinpath("estimate_history.png"))
     # Show the accuracy as a figure
-    estimator.accuracy(filename=output_dir.joinpath("estimate_accuracy.jpg"))
+    estimator.accuracy(filename=output_dir.joinpath("estimate_accuracy.png"))
 
 
 if __name__ == "__main__":

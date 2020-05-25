@@ -3,10 +3,11 @@
 
 from datetime import datetime
 import functools
+import warnings
 import matplotlib.pyplot as plt
 from matplotlib.ticker import ScalarFormatter
 import numpy as np
-from scipy.optimize import curve_fit
+from scipy.optimize import curve_fit, OptimizeWarning
 from covsirphy.cleaning.word import Word
 from covsirphy.phase.sr_data import SRData
 
@@ -68,9 +69,9 @@ class Trend(Word):
         Perform curve fitting of S-R trend
             with negative exponential function and save the result.
         """
-        self.result_df = self._analyse(self.train_df)
+        self.result_df = self._fitting(self.train_df)
 
-    def _analyse(self, train_df):
+    def _fitting(self, train_df):
         """
         Perform curve fitting of S-R trend
             with negative exponential function.
@@ -89,8 +90,12 @@ class Trend(Word):
         x_series = df[self.R]
         y_series = df[f"{self.S}{self.A}"]
         a_ini = y_series.max()
-        b_ini = y_series.diff().reset_index(drop=True)[1] / a_ini
+        try:
+            b_ini = y_series.diff().reset_index(drop=True)[1] / a_ini
+        except KeyError:
+            raise KeyError("The length of @train_df must be over 2.")
         # Curve fitting with negative exponential fucntion
+        warnings.simplefilter("ignore", OptimizeWarning)
         param, _ = curve_fit(
             self.negative_exp, x_series, y_series,
             p0=[a_ini, b_ini]
@@ -120,6 +125,12 @@ class Trend(Word):
         )
         return scores.sum()
 
+    def result(self):
+        """
+        Show the result as a dataframe.
+        """
+        return self.result_df
+
     def show(self, filename=None):
         """
         show the result as a figure.
@@ -127,7 +138,7 @@ class Trend(Word):
             - if True, show the history as a pair-plot of parameters.
         @filename <str>: filename of the figure, or None (show figure)
         """
-        df = self.result_df.copy()
+        df = self.result()
         df["Predicted"] = df[f"{self.S}{self.P}"]
         title = f"{self.name}: S-R trend from {self.start_date} to {self.end_date}"
         self.show_with_many(
@@ -136,7 +147,8 @@ class Trend(Word):
             filename=filename
         )
 
-    def show_with_many(self, result_df, predicted_cols,
+    @classmethod
+    def show_with_many(cls, result_df, predicted_cols,
                        title, vlines=None, filename=None):
         """
         show the result as a figure.
@@ -152,11 +164,13 @@ class Trend(Word):
             - list of Recovered values to show vertical lines
         @filename <str>: filename of the figure, or None (show figure)
         """
+        if filename is not None:
+            plt.switch_backend("Agg")
         df = result_df.copy()
         if df is None:
             raise NameError("Must perform Trend().run() in advance.")
-        x_series = df[self.R]
-        actual = df[f"{self.S}{self.A}"]
+        x_series = df[cls.R]
+        actual = df[f"{cls.S}{cls.A}"]
         # Plot the actual values
         plt.plot(
             x_series, actual,
@@ -164,24 +178,27 @@ class Trend(Word):
             marker=".", markeredgewidth=0, linewidth=0
         )
         # Plot the predicted values
-        for col in predicted_cols:
-            plt.plot(x_series, df[col], label=col)
+        if len(predicted_cols) == 1:
+            plt.plot(x_series, df[predicted_cols[0]], label="Regression")
+        else:
+            for col in predicted_cols:
+                plt.plot(x_series, df[col], label=col.replace(cls.P, str()))
         # x-axis
-        plt.xlabel(self.R)
+        plt.xlabel(cls.R)
         plt.xlim(0, None)
         # y-axis
-        plt.ylabel(self.S)
+        plt.ylabel(cls.S)
         plt.yscale("log")
-        ymin = df.drop(self.R, axis=1).values.min()
-        ymax = df.drop(self.R, axis=1).values.max()
+        ymin, ymax = plt.ylim()
         ydiff_scale = int(np.log10(ymax - ymin))
         yticks = np.linspace(
             round(ymin, - ydiff_scale),
             round(ymax, - ydiff_scale),
-            5
+            len(plt.yticks()[0])
         )
-        plt.tick_params(left=False)
-        plt.yticks([v.round() for v in yticks])
+        yticks
+        # TODO: Change the format of yticks to integers
+        # plt.yticks([v.round() for v in yticks])
         # Offset in y axis
         fmt = ScalarFormatter(useOffset=False)
         fmt.set_scientific(False)
@@ -197,8 +214,13 @@ class Trend(Word):
             bbox_to_anchor=(1.02, 0), loc="lower left", borderaxespad=0
         )
         # Save figure or show figure
+        warnings.simplefilter("ignore", UserWarning)
         plt.tight_layout()
         if filename is None:
             plt.show()
+            return None
         plt.savefig(
-            filename, bbox_inches="tight", transparent=True, dpi=300)
+            filename, bbox_inches="tight", transparent=False, dpi=300
+        )
+        plt.clf()
+        return None
