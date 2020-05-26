@@ -72,7 +72,7 @@ pop.to_dict(country_level=True)
 ### Scenario analysis
 As an example, use dataset in Italy.
 ```Python
-ita_scenario = cs.Scenario(jhu_data, pop_data, "Italy")
+ita_scenario = cs.Scenario(jhu_data, pop_data, country="Italy", province=None)
 ```
 See the records as a figure.
 ```Python
