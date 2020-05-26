@@ -45,7 +45,7 @@ class SRData(PhaseData):
         @return <pd.DataFrame>
             - index (Date) <pd.TimeStamp>: Observation date
             - Recovered: The number of recovered cases
-            - Susceptible_actual: Actual values of Susceptible
+            - Susceptible_actual: Actual values of Susceptible (> 0)
         """
         df = self.all_df.copy()
         series = df.index.copy()
@@ -59,6 +59,7 @@ class SRData(PhaseData):
             end_obj = series.max()
         else:
             end_obj = datetime.strptime(end_date, self.DATE_FORMAT)
-        # subset
+        # Subset
         df = df.loc[(start_obj <= series) & (series <= end_obj), :]
+        df = df.loc[df[self.R] > 0, :]
         return self._make(df, population)

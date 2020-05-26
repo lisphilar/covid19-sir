@@ -5,6 +5,7 @@ from datetime import datetime, timedelta
 import numpy as np
 import optuna
 import pandas as pd
+from covsirphy.analysis.phase_series import PhaseSeries
 from covsirphy.cleaning.word import Word
 from covsirphy.phase.trend import Trend
 from covsirphy.phase.sr_data import SRData
@@ -28,7 +29,7 @@ class ChangeFinder(Word):
             - Infected <int>: the number of currently infected cases
             - Fatal <int>: the number of fatal cases
             - Recovered <int>: the number of recovered cases
-        @population <int/dict>: initial value of total population in the place
+        @population <int>: initial value of total population in the place
         @country <str>: country name
         @province <str>: province name
         @popualtion_change_dict <dict[str]=int/None>:
@@ -48,6 +49,7 @@ class ChangeFinder(Word):
         self.pop_dict = self._read_population_data(
             self.dates, population, popualtion_change_dict
         )
+        self.population = population
         # Setting for optimization
         self.n_points = 0
         self.min_duration = 0
@@ -69,9 +71,10 @@ class ChangeFinder(Word):
             - Infected <int>: the number of currently infected cases
             - Fatal <int>: the number of fatal cases
             - Recovered <int>: the number of recovered cases
-        @population <int/dict>: initial value of total population in the place
+        @population <int>: initial value of total population in the place
         @country <str>: country name
         @province <str>: province name
+        @return <list[str]>: list of dates, like 22Jan2020
         """
         sr_data = SRData(clean_df, country=country, province=province)
         df = sr_data.make(population)
@@ -82,7 +85,7 @@ class ChangeFinder(Word):
         """
         Make population dictionary easy to use in this class.
         @dates <list[str]>: list of dates, like 22Jan2020
-        @population <int/dict>: initial value of total population in the place
+        @population <int>: initial value of total population in the place
         @change_dict <dict[str]=int/None>:
             - dictionary of total population
                 - key: start date of population change
@@ -134,7 +137,7 @@ class ChangeFinder(Word):
                 break
             # Check time-out and show cummurative run-time
             end_time = datetime.now()
-            self.run_time += (end_time - start_time).total_seconds()
+            self.run_time = (end_time - start_time).total_seconds()
             minutes, seconds = divmod(int(self.run_time), 60)
             self.total_trials = len(self.study.trials)
             if self.run_time > timeout:
@@ -213,45 +216,36 @@ class ChangeFinder(Word):
     def _create_phases(self):
         """
         Create a dictionary of phases.
-        @return <dict[str]={str: str/int}>:
-            - key: phase number, like 1th, 2nd,...
-            - value: {
-                'Start': <str> start date of the phass,
-                'End': <str> end date of the phase,
-                'Population': <int>: population value at the start date
-            }
+        @return <covsirphy.PhaseSeries>
         """
         start_dates, end_dates = self.phase_range(self.change_dates)
         pop_list = [self.pop_dict[date] for date in start_dates]
         phases = [self.num2str(num) for num in range(len(start_dates))]
-        phase_dict = {
-            phase: {
-                self.START: start_date,
-                self.END: end_date,
-                self.N: population
-            }
-            for (start_date, end_date, population, phase)
-            in zip(start_dates, end_dates, pop_list, phases)
-        }
-        return phase_dict
+        phase_series = PhaseSeries(
+            first_date=self.dates[0], population=self.population
+        )
+        phase_itr = enumerate(zip(start_dates, end_dates, pop_list, phases))
+        for (i, (start_date, end_date, population, phase)) in phase_itr:
+            if i == 0:
+                continue
+            phase_series.add(
+                start_date=start_date,
+                end_date=end_date,
+                population=population
+            )
+        return phase_series
 
-    def show(self, filename=None):
+    def show(self, show_figure=True, filename=None):
         """
         show the result as a figure and return a dictionary of phases.
         @show_figure <bool>:
-            - if True, show the history as a pair-plot of parameters.
+            - if True, show the result as a figure.
         @filename <str>: filename of the figure, or None (show figure)
-        @return <dict[str]={str: str/int}>:
-            - key: phase number, like 1th, 2nd,...
-                - 0th (initial) phase will be removed
-            - value: {
-                'Start': <str> start date of the phass,
-                'End': <str> end date of the phase,
-                'Population': <int>: population value at the start date
-            }
+        @return <covsirphy.PhaseSeries>
         """
         # Create phase dictionary
-        phase_dict = self._create_phases()
+        phase_series = self._create_phases()
+        phase_dict = phase_series.to_dict()
         # Curve fitting
         df_list = list()
         for (phase, info) in phase_dict.items():
@@ -264,12 +258,16 @@ class ChangeFinder(Word):
             )
             trend.analyse()
             df = trend.result()
-            phase = phase.replace("0th", "Initial")
+            phase = phase.replace("0th", self.INITIAL)
             df = df.rename({f"{self.S}{self.P}": f"{phase}{self.P}"}, axis=1)
             df = df.rename({f"{self.S}{self.A}": f"{phase}{self.A}"}, axis=1)
             df = df.rename({f"{self.R}": f"{phase}_{self.R}"}, axis=1)
             df_list.append(df)
-        comp_df = pd.concat(df_list, axis=1)
+
+        if self.n_points == 0:
+            comp_df = pd.concat(df_list, axis=1)
+        else:
+            comp_df = pd.concat(df_list[1:], axis=1)
         comp_df[self.R] = comp_df.fillna(0).loc[
             :, comp_df.columns.str.endswith(self.R)
         ].sum(axis=1)
@@ -281,6 +279,8 @@ class ChangeFinder(Word):
             axis=0
         )
         # Show figure
+        if not show_figure:
+            return phase_series
         pred_cols = comp_df.loc[
             :, comp_df.columns.str.endswith(self.P)
         ].columns.tolist()
@@ -296,4 +296,4 @@ class ChangeFinder(Word):
             filename=filename
         )
         # TODO: show vertical lines
-        return phase_dict
+        return phase_series

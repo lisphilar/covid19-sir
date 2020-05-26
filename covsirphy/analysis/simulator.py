@@ -9,7 +9,7 @@ from covsirphy.cleaning.word import Word
 from covsirphy.ode.mbase import ModelBase
 
 
-class Simulator(Word):
+class ODESimulator(Word):
     """
     Simulation of an ODE model.
     """

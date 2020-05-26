@@ -107,11 +107,18 @@ class JHUData(CleaningBase):
         Return the subset in the area.
         @country <str>: country name
         @province <str>: province name
-        @return <cs.NondimData>
+        @return <pd.DataFrame>
+            - index <int>: reseted index
+            - Date <pd.TimeStamp>: Observation date
+            - Confirmed <int>: the number of confirmed cases
+            - Infected <int>: the number of currently infected cases
+            - Fatal <int>: the number of fatal cases
+            - Recovered <int>: the number of recovered cases (> 0)
         """
         df = self._cleaned_df.copy()
         df = df.loc[df[self.COUNTRY] == country, :]
         if province:
             df = df.loc[df[self.PROVINCE] == province, :]
-        df = df.reset_index(drop=True)
+        df = df.groupby(self.DATE).sum().reset_index()
+        df = df.loc[df[self.R] > 0, :]
         return df

@@ -3,7 +3,8 @@
 
 from collections import Counter
 import better_exceptions
-from covsirphy.analysis import Simulator, ChangeFinder
+from covsirphy.analysis import ODESimulator, ChangeFinder
+from covsirphy.analysis import PhaseSeries, Scenario
 from covsirphy.cleaning import CleaningBase, Word, Population
 from covsirphy.cleaning import JHUData, CountryData
 from covsirphy.ode import ModelBase, SIR, SIRD, SIRF, SIRFV, SEWIRF
@@ -13,7 +14,8 @@ from covsirphy.util import line_plot, jpn_map
 
 
 __all__ = [
-    "Simulator", "ChangeFinder",
+    "ODESimulator", "ChangeFinder",
+    "PhaseSeries", "Scenario",
     "CleaningBase", "Word", "Population",
     "JHUData", "CountryData",
     "ModelBase", "SIR", "SIRD", "SIRF", "SIRFV", "SEWIRF",

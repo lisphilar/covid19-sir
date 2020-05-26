@@ -68,6 +68,6 @@ class NondimData(PhaseData):
             end_obj = series.max()
         else:
             end_obj = datetime.strptime(end_date, self.DATE_FORMAT)
-        # subset
+        # Subset
         df = df.loc[(start_obj <= series) & (series <= end_obj), :]
         return self._make(df, model, population)

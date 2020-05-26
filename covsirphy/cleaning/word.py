@@ -47,6 +47,11 @@ class Word(object):
     # Phase name
     SUFFIX_DICT = defaultdict(lambda: "th")
     SUFFIX_DICT.update({1: "st", 2: "nd", 3: "rd"})
+    PAST = "Past"
+    FUTURE = "Future"
+    INITIAL = "Initial"
+    # Flag
+    UNKNOWN = "-"
 
     @classmethod
     def num2str(cls, num):

@@ -63,7 +63,7 @@ def line_plot(df, title, xlabel=None, ylabel="Cases",
         plt.show()
         return None
     plt.savefig(
-        filename, bbox_inches="tight", transparent=True, dpi=300
+        filename, bbox_inches="tight", transparent=False, dpi=300
     )
     plt.clf()
     return None

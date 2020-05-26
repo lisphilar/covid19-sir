@@ -3,7 +3,7 @@
 
 from pathlib import Path
 import pandas as pd
-from covsirphy import Simulator, Estimator, SIRF, line_plot
+from covsirphy import ODESimulator, Estimator, SIRF, line_plot
 
 
 def main():
@@ -17,7 +17,7 @@ def main():
     setted_param_dict = {
         "theta": 0.002, "kappa": 0.005, "rho": 0.2, "sigma": 0.075
     }
-    simulator = Simulator(country="Example", province="Example-1")
+    simulator = ODESimulator(country="Example", province="Example-1")
     simulator.add(
         model=SIRF, step_n=180, population=eg_population,
         param_dict=setted_param_dict,

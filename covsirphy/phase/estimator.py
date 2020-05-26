@@ -5,7 +5,7 @@ from datetime import datetime
 import numpy as np
 import optuna
 import pandas as pd
-from covsirphy.analysis.simulator import Simulator
+from covsirphy.analysis.simulator import ODESimulator
 from covsirphy.ode.mbase import ModelBase
 from covsirphy.phase.nondim import NondimData
 from covsirphy.phase.optimize import Optimizer
@@ -234,7 +234,7 @@ class Estimator(Optimizer):
             - t: time steps, 0, 1, 2, 3...
             - x, y, z, w etc.
         """
-        simulator = Simulator(country=self.country, province=self.province)
+        simulator = ODESimulator(country=self.country, province=self.province)
         simulator.add(
             model=self.model,
             step_n=step_n,
