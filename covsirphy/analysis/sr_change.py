@@ -210,9 +210,34 @@ class ChangeFinder(Word):
             scores.append(trend.rmsle())
         return np.average(scores, weights=range(1, len(scores) + 1))
 
+    def _create_phases(self):
+        """
+        Create a dictionary of phases.
+        @return <dict[str]={str: str/int}>:
+            - key: phase number, like 1th, 2nd,...
+            - value: {
+                'Start': <str> start date of the phass,
+                'End': <str> end date of the phase,
+                'Population': <int>: population value at the start date
+            }
+        """
+        start_dates, end_dates = self.phase_range(self.change_dates)
+        pop_list = [self.pop_dict[date] for date in start_dates]
+        phases = [self.num2str(num) for num in range(len(start_dates))]
+        phase_dict = {
+            phase: {
+                self.START: start_date,
+                self.END: end_date,
+                self.N: population
+            }
+            for (start_date, end_date, population, phase)
+            in zip(start_dates, end_dates, pop_list, phases)
+        }
+        return phase_dict
+
     def show(self, filename=None):
         """
-        show the result as a figure and return the change points.
+        show the result as a figure and return a dictionary of phases.
         @show_figure <bool>:
             - if True, show the history as a pair-plot of parameters.
         @filename <str>: filename of the figure, or None (show figure)
@@ -220,28 +245,19 @@ class ChangeFinder(Word):
             - key: phase number, like 1th, 2nd,...
                 - 0th (initial) phase will be removed
             - value: {
-                'start_date': <str> start date of the phass,
-                'end_date': <str> end date of the phase,
-                'population': <int>: population value at the start date
+                'Start': <str> start date of the phass,
+                'End': <str> end date of the phase,
+                'Population': <int>: population value at the start date
             }
         """
         # Create phase dictionary
-        start_dates, end_dates = self.phase_range(self.change_dates)
-        pop_list = [self.pop_dict[date] for date in start_dates]
-        phases = [self.num2str(num) for num in range(len(start_dates))]
-        phase_dict = {
-            phase: {
-                "start_date": start_date,
-                "end_date": end_date,
-                "population": population
-            }
-            for (start_date, end_date, population, phase)
-            in list(zip(start_dates, end_dates, pop_list, phases))[1:]
-        }
+        phase_dict = self._create_phases()
         # Curve fitting
         df_list = list()
-        zip_itr = zip(start_dates, end_dates, pop_list, phases)
-        for (start_date, end_date, population, phase) in zip_itr:
+        for (phase, info) in phase_dict.items():
+            start_date = info[self.START]
+            end_date = info[self.END]
+            population = info[self.N]
             trend = Trend(
                 self.clean_df, population, self.country, province=self.province,
                 start_date=start_date, end_date=end_date
@@ -279,4 +295,5 @@ class ChangeFinder(Word):
             title=title,
             filename=filename
         )
+        # TODO: show vertical lines
         return phase_dict

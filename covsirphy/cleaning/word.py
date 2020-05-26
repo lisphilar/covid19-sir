@@ -22,6 +22,8 @@ class Word(object):
     W = "Waiting"
     # Column names
     DATE = "Date"
+    START = "Start"
+    END = "End"
     T = "Elapsed"
     TS = "t"
     COUNTRY = "Country"
