@@ -36,18 +36,17 @@ pipenv install --dev
 Import this package.
 ```Python
 import covsirphy as cs
-from covsirphy import JHUData, CountryData, Population
 ```
 Perform data cleaning of JHU dataset.
 ```Python
 # With CSV filepath of JHU dataset
-jhu_data = JHUData("input/covid_19_data.csv")
+jhu_data = cs.JHUData("input/covid_19_data.csv")
 ncov_df = jhu_data.cleaned()
 ```
 (Optinal) We can replace JHU data with country-specific dataset.
 ```Python
 # As an example, read Japan dataset
-jpn_data = CountryData("input/covid_jpn_total.csv", country="Japan")
+jpn_data = cs.CountryData("input/covid_jpn_total.csv", country="Japan")
 jpn_data.set_variables(
     # Specify the column names to read
     date="Date",
@@ -64,14 +63,34 @@ ncov_df = jhu_data.cleaned()
 Perform data cleaning of population dataset.
 ```Python
 # With CSV filepath of population dataset
-pop = Population("input/locations_population.csv")
+pop = cs.Population("input/locations_population.csv")
 # We can add a new record
 pop.update(country="Example", province="-", value=1_000_000)
 # Return dictionary
 pop.to_dict(country_level=True)
 ```
 ### Scenario analysis
-(Please see the Kaggle notebook, update later)
+As an example, use dataset in Italy.
+```Python
+ita_scenario = cs.Scenario(jhu_data, pop_data, "Italy")
+```
+See the records in a figure.
+```Python
+ita_record_df = ita_scenario.records()
+```
+Show S-R trend and determine the number of change points.
+```Python
+ita_scenario.trend()
+```
+As an example, set the number of change points as 4.
+```Python
+ita_scenario.trend(n_points=4, set_phase=True)
+```
+Start/end date of the four phase were automatically determined.
+```Python
+print(ita_scenario.summary())
+```
+(Update later)
 
 ## Citation
 Lisphilar, 2020, Kaggle notebook, COVID-19 data with SIR model, https://www.kaggle.com/lisphilar/covid-19-data-with-sir-model
