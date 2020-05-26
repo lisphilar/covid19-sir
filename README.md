@@ -74,7 +74,7 @@ As an example, use dataset in Italy.
 ```Python
 ita_scenario = cs.Scenario(jhu_data, pop_data, "Italy")
 ```
-See the records in a figure.
+See the records as a figure.
 ```Python
 ita_record_df = ita_scenario.records()
 ```
@@ -86,7 +86,7 @@ As an example, set the number of change points as 4.
 ```Python
 ita_scenario.trend(n_points=4, set_phase=True)
 ```
-Start/end date of the four phase were automatically determined.
+Start/end date of the four phase were automatically determined. Let's see.
 ```Python
 print(ita_scenario.summary())
 ```
