@@ -103,12 +103,15 @@ class ChangeFinder(Word):
             pop_dict[date] = population_now
         return pop_dict
 
-    def run(self, n_points, min_duration=7,
+    def run(self, n_points, min_duration=7, allowance=3,
             timeout=60, n_trials_iteration=10, n_jobs=-1):
         """
         Run optimization.
         @n_points <int>: the number of change points
         @min_duration <int>: minimum duration of one phase [days]
+        @allowance <int>: allowance of change points [days]
+            - if the estimated change points was equal to previous iteration
+              with this allowance, stop running.
         @timeout <int>: time-out of run
         @n_trials_iteration <int>: the number of trials in one iteration
         @n_jobs <int>: the number of parallel jobs or -1 (CPU count)
@@ -132,15 +135,20 @@ class ChangeFinder(Word):
                 n_trials=n_trials_iteration,
                 n_jobs=n_jobs
             )
-            # Check whether the change points are fixed or not
-            if set(self.change_dates) == set(self.change_dates_previous):
-                break
-            # Check time-out and show cummurative run-time
+            # Check whether the change points are fixed (with allowance) or not
+            allow_obj = timedelta(days=allowance)
+            fixed_ok = [
+                abs(self.date_obj(this) - self.date_obj(previous)) <= allow_obj
+                for (this, previous)
+                in zip(self.change_dates, self.change_dates_previous)
+            ]
+            # Calculate cummurative run-time
             end_time = datetime.now()
             self.run_time = (end_time - start_time).total_seconds()
             minutes, seconds = divmod(int(self.run_time), 60)
             self.total_trials = len(self.study.trials)
-            if self.run_time > timeout:
+            # If fixed or time-out, break
+            if (all(fixed_ok) and self.change_dates_previous) or (self.run_time > timeout):
                 print(
                     f"\rFinished {self.total_trials} trials in {minutes} min {seconds} sec.\n",
                     end=str()

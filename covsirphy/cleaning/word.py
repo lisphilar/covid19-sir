@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*-
 
 from collections import defaultdict
+from datetime import datetime
 import numpy as np
 
 
@@ -75,3 +76,13 @@ class Word(object):
             - b <float>
         """
         return a * np.exp(-b * x)
+
+    @classmethod
+    def date_obj(cls, date_str):
+        """
+        Convert a string to a datetime object.
+        @date_str <str>: date, like 22Jan2020
+        @return <datetime.datetime>
+        """
+        obj = datetime.strptime(date_str, cls.DATE_FORMAT)
+        return obj
