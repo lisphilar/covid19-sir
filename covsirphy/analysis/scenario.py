@@ -42,12 +42,15 @@ class Scenario(Word):
             self.name = country
         else:
             self.name = f"{country}{self.SEP}{province}"
-        # First date of the area
+        # First/last date of the area
         sr_data = SRData(self.clean_df, country=country, province=province)
         df = sr_data.make(self.population)
         self.first_date = df.index.min().strftime(self.DATE_FORMAT)
+        self.last_date = df.index.max().strftime(self.DATE_FORMAT)
         # Init
-        self.phase_series = PhaseSeries(self.first_date, self.population)
+        self.phase_series = PhaseSeries(
+            self.first_date, self.last_date, self.population
+        )
 
     def records(self, show_figure=True, filename=None):
         """
@@ -116,3 +119,9 @@ class Scenario(Word):
             if not include_init_phase:
                 self.phase_series.delete("0th")
         return self
+
+    def estimate(self, model, phases=None):
+        """
+        Estimate the parameters of the model using the records.
+        """
+        pass

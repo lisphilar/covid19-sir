@@ -230,7 +230,7 @@ class ChangeFinder(Word):
         pop_list = [self.pop_dict[date] for date in start_dates]
         phases = [self.num2str(num) for num in range(len(start_dates))]
         phase_series = PhaseSeries(
-            first_date=self.dates[0], population=self.population
+            self.dates[0], self.dates[-1], self.population
         )
         phase_itr = enumerate(zip(start_dates, end_dates, pop_list, phases))
         for (i, (start_date, end_date, population, phase)) in phase_itr:

@@ -11,22 +11,23 @@ class PhaseSeries(Word):
     A series of phases.
     """
 
-    def __init__(self, first_date, population):
+    def __init__(self, first_date, last_record_date, population):
         """
         @first_date <str>: the first date of the series, like 22Jan2020
+        @last_record_date <str>: the last date of the records, like 25May2020
         @population <int>: initial value of total population in the place
         """
+        self.last_record_date = last_record_date
         # Phase ID of each date: {pd.TimeStamp: int}
-        now = datetime.now()
         self.phase_dict = {
             date_obj: 0 for date_obj
-            in pd.date_range(start=first_date, end=now, freq="D")
+            in pd.date_range(start=first_date, end=last_record_date, freq="D")
         }
         # Information of each phase ID: {int: dict[str]=str/dict}
         self.info_dict = {
             0: {
                 self.START: first_date,
-                self.END: now.strftime(self.DATE_FORMAT),
+                self.END: last_record_date,
                 self.N: population
             }
         }
@@ -133,14 +134,12 @@ class PhaseSeries(Word):
         Return 'Past' or 'Future' for the targrt date.
         @target_date <str>: target date, like 22Jan2020
         @ref_date <str/None>: reference date
-            - if None, will use today
+            - if None, will use last date of the records
         @return <str>: 'Past' or 'Future'
         """
         target_obj = datetime.strptime(target_date, self.DATE_FORMAT)
-        if ref_date is None:
-            ref_obj = datetime.now()
-        else:
-            ref_obj = datetime.strptime(ref_date, self.DATE_FORMAT)
+        ref_date = self.last_record_date if ref_date is None else ref_date
+        ref_obj = datetime.strptime(ref_date, self.DATE_FORMAT)
         if target_obj <= ref_obj:
             return self.PAST
         return self.FUTURE
