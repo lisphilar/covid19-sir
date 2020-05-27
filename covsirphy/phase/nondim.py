@@ -45,7 +45,7 @@ class NondimData(PhaseData):
     def make(self, model, population, start_date=None, end_date=None):
         """
         Make non-dimensional dataset for an ODE model.
-        @model <cs.ModelBase>: ODE model
+        @model <covsirphy.ModelBase>: ODE model
         @population <int>: total population in the place
         @start_date <str>: start date, like 22Jan2020
         @end_date <str>: end date, like 01Feb2020

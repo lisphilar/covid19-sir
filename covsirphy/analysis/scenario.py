@@ -1,13 +1,12 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-from covsirphy.analysis.phase_series import PhaseSeries
+from covsirphy.ode import ModelBase
+from covsirphy.cleaning import JHUData, Population, Word
+from covsirphy.phase import SRData
+from covsirphy.util import line_plot
 from covsirphy.analysis.sr_change import ChangeFinder
-from covsirphy.cleaning.word import Word
-from covsirphy.cleaning.jhu_data import JHUData
-from covsirphy.cleaning.population import Population
-from covsirphy.phase.sr_data import SRData
-from covsirphy.util.plotting import line_plot
+from covsirphy.analysis.phase_series import PhaseSeries
 
 
 class Scenario(Word):
@@ -123,5 +122,10 @@ class Scenario(Word):
     def estimate(self, model, phases=None):
         """
         Estimate the parameters of the model using the records.
+        @model <covsirphy.ModelBase>: ODE model
         """
-        pass
+        # Arguments
+        if not issubclass(model, ModelBase):
+            raise TypeError(
+                "@model must be an ODE model <sub-class of cs.ModelBase>."
+            )

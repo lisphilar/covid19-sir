@@ -115,12 +115,6 @@ class PhaseSeries(Word):
                 'Population': <int>: population value at the start date
             }
         """
-        # Add population value of initial phase using 1st phase
-        try:
-            self.info_dict[0][self.N] = self.info_dict[1][self.N]
-        except KeyError:
-            # 1st phase is not defined
-            pass
         # Convert phase ID to phase name
         info_dict = {
             self.num2str(num): self.info_dict[num]
