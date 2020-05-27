@@ -47,6 +47,7 @@ class Word(object):
     # Phase name
     SUFFIX_DICT = defaultdict(lambda: "th")
     SUFFIX_DICT.update({1: "st", 2: "nd", 3: "rd"})
+    TENSE = "Type"
     PAST = "Past"
     FUTURE = "Future"
     INITIAL = "Initial"

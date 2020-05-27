@@ -47,11 +47,11 @@ class PhaseSeries(Word):
         )
         new_id = max(self.phase_dict.values()) + 1
         # Tense of dates
-        start_type = self._tense(start_date)
-        end_type = self._tense(end_date)
-        if start_type != end_type:
+        start_tense = self._tense(start_date)
+        end_tense = self._tense(end_date)
+        if start_tense != end_tense:
             raise ValueError(
-                f"@start_date is {start_type}, but @end_date is {end_type}."
+                f"@start_date is {start_tense}, but @end_date is {end_tense}."
             )
         # Add new phase
         for date_obj in date_series:
@@ -63,6 +63,7 @@ class PhaseSeries(Word):
             self.phase_dict[date_obj] = new_id
         # Add phase information
         self.info_dict[new_id] = {
+            self.TENSE: start_tense,
             self.START: start_date,
             self.END: end_date,
             self.N: population
@@ -91,6 +92,7 @@ class PhaseSeries(Word):
         Summarize the series of phases in a dataframe.
         @return <pd.DataFrame>:
             - index: phase name, like 1st, 2nd, 3rd...
+            - Type: 'Past' or 'Future'
             - Start: start date of the phase
             - End: end date of the phase
             - Population: population value of the start date

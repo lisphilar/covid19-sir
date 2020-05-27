@@ -33,7 +33,6 @@ pipenv install --dev
 
 ## Quick usage
 ### Preparation
-Import this package.
 ```Python
 import covsirphy as cs
 ```
@@ -43,7 +42,7 @@ Perform data cleaning of JHU dataset.
 jhu_data = cs.JHUData("input/covid_19_data.csv")
 ncov_df = jhu_data.cleaned()
 ```
-(Optinal) We can replace JHU data with country-specific dataset.
+(Optional) We can replace JHU data with country-specific dataset.
 ```Python
 # As an example, read Japan dataset
 jpn_data = cs.CountryData("input/covid_jpn_total.csv", country="Japan")
@@ -59,15 +58,14 @@ jpn_data.set_variables(
 jhu_data = jhu_data.replace(jpn_data)
 ncov_df = jhu_data.cleaned()
 ```
-
 Perform data cleaning of population dataset.
 ```Python
 # With CSV filepath of population dataset
-pop = cs.Population("input/locations_population.csv")
+pop_data = cs.Population("input/locations_population.csv")
 # We can add a new record
-pop.update(country="Example", province="-", value=1_000_000)
+pop_data.update(country="Example", province="-", value=1_000_000)
 # Return dictionary
-pop.to_dict(country_level=True)
+pop_data.to_dict(country_level=True)
 ```
 ### Scenario analysis
 As an example, use dataset in Italy.
