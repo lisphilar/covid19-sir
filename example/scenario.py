@@ -30,6 +30,17 @@ def main():
         filename=output_dir.joinpath("ita_change_points.png")
     )
     print(ita_scenario.summary())
+    # Hyoerparameter estimaition
+    ita_scenario.estimate(cs.SIRF)
+    print(ita_scenario.summary())
+    # Show the history of optimization
+    ita_scenario.estimate_history(
+        phase="1st", filename=output_dir.joinpath("estimate_history_1st.png")
+    )
+    # Show the accuracy as a figure
+    ita_scenario.estimate_accuracy(
+        phase="1st", filename=output_dir.joinpath("estimate_accuracy_1st.png")
+    )
 
 
 if __name__ == "__main__":

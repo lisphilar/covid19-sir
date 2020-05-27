@@ -69,12 +69,14 @@ pop_data.to_dict(country_level=True)
 ```
 ### Scenario analysis
 As an example, use dataset in Italy.
+#### Check records
 ```Python
 ita_scenario = cs.Scenario(jhu_data, pop_data, country="Italy", province=None)
 ```
 See the records as a figure.
 ```Python
 ita_record_df = ita_scenario.records()
+#### S-R trend analysis
 ```
 Show S-R trend and determine the number of change points.
 ```Python
@@ -88,6 +90,17 @@ Start/end date of the four phase were automatically determined. Let's see.
 ```Python
 print(ita_scenario.summary())
 ```
+#### Hyperparameter estimation of ODE models
+As an example, use SIR-F model.
+```Python
+ita_scenario.estimate(cs.SIRF)
+print(ita_scenario.summary())
+```
+We can check the accuracy of estimation with a figure.
+```Python
+ita_scenario.estimate_accuracy(phase="1st")
+```
+
 (Update later)
 
 ## Citation

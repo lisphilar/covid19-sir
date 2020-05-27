@@ -1,9 +1,10 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
+from inspect import signature
 from covsirphy.ode import ModelBase
 from covsirphy.cleaning import JHUData, Population, Word
-from covsirphy.phase import SRData
+from covsirphy.phase import Estimator, SRData
 from covsirphy.util import line_plot
 from covsirphy.analysis.sr_change import ChangeFinder
 from covsirphy.analysis.phase_series import PhaseSeries
@@ -50,6 +51,9 @@ class Scenario(Word):
         self.phase_series = PhaseSeries(
             self.first_date, self.last_date, self.population
         )
+        self.tau = None
+        # {phase: Estimator}
+        self.estimator_dict = dict()
 
     def records(self, show_figure=True, filename=None):
         """
@@ -119,13 +123,96 @@ class Scenario(Word):
                 self.phase_series.delete("0th")
         return self
 
-    def estimate(self, model, phases=None):
+    def _estimate(self, model, phase, **kwargs):
         """
         Estimate the parameters of the model using the records.
+        @phase <str>: phase name, like 1st, 2nd...
         @model <covsirphy.ModelBase>: ODE model
+        @kwargs:
+            - keyword arguments of the model parameter
+            - keyword arguments of covsirphy.Estimator.run()
+        @retun self
         """
-        # Arguments
+        # Set parameters
+        try:
+            setting_dict = self.phase_series.to_dict()[phase]
+        except KeyError:
+            raise KeyError(f"{phase} phase has not been registered.")
+        start_date = setting_dict[self.START]
+        end_date = setting_dict[self.END]
+        population = setting_dict[self.N]
+        # Run estinmation
+        print(f"{phase} phase with {model.NAME} model:")
+        est_kwargs = {
+            p: kwargs[p] for p in model.PARAMETERS if p in kwargs.keys()
+        }
+        if self.tau is not None:
+            est_kwargs[self.TAU] = self.tau
+        estimator = Estimator(
+            self.clean_df, model, population,
+            country=self.country, province=self.province,
+            start_date=start_date, end_date=end_date,
+            **est_kwargs
+        )
+        sign = signature(Estimator.run)
+        run_params = list(sign.parameters.keys())
+        run_kwargs = {k: v for (k, v) in kwargs.items() if k in run_params}
+        estimator.run(**run_kwargs)
+        est_df = estimator.summary(phase)
+        est_dict = est_df.to_dict(orient="index")
+        self.tau = est_dict[phase][self.TAU]
+        self.phase_series.update(phase, **est_dict[phase])
+        self.estimator_dict[phase] = estimator
+
+    def estimate(self, model, phases=None, **kwargs):
+        """
+        Estimate the parameters of the model using the records.
+        @phases <list[str]>: list of phase names, like 1st, 2nd...
+            - if None, all past phase will be used
+        @model <covsirphy.ModelBase>: ODE model
+        @kwargs:
+            - keyword arguments of the model parameter
+            - keyword arguments of covsirphy.Estimator.run()
+        @return self
+        """
+        # Check model
         if not issubclass(model, ModelBase):
             raise TypeError(
                 "@model must be an ODE model <sub-class of cs.ModelBase>."
             )
+        # Phase names
+        phase_dict = self.phase_series.to_dict()
+        past_phases = [k for (k, v) in phase_dict.items()]
+        phases = past_phases[:] if phases is None else phases
+        if not set(phases).issubset(set(past_phases)):
+            for phase in phases:
+                if phase not in past_phases:
+                    raise KeyError(f"{phase} is not a past phase.")
+        # Run hyperparameter estimation
+        for phase in phases:
+            self._estimate(model, phase, **kwargs)
+        return self
+
+    def estimate_history(self, phase, **kwargs):
+        """
+        Show the history of optimization.
+        @phase <str>: phase name, like 1st, 2nd...
+        @kwargs: keyword arguments of <covsirphy.Estimator.history()>
+        """
+        try:
+            estimator = self.estimator_dict[phase]
+        except KeyError:
+            raise KeyError(f"Estimator of {phase} phase has not been registered.")
+        estimator.history(**kwargs)
+
+    def estimate_accuracy(self, phase, **kwargs):
+        """
+        Show the accuracy as a figure.
+        @phase <str>: phase name, like 1st, 2nd...
+        @kwargs: keyword arguments of <covsirphy.Estimator.accuracy()>
+        """
+        try:
+            estimator = self.estimator_dict[phase]
+        except KeyError:
+            raise KeyError(f"Estimator of {phase} phase has not been registered.")
+        estimator.accuracy(**kwargs)

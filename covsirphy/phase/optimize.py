@@ -183,7 +183,7 @@ class Optimizer(Word):
         This method can be overwritten in subclass.
         """
         param_dict = self.param()
-        param_dict.pop("tau")
+        param_dict.pop(self.TAU)
         return self.simulate(self.step_n, param_dict)
 
     def history(self, show_figure=True, filename=None):
@@ -217,7 +217,7 @@ class Optimizer(Word):
         if filename is None:
             plt.show()
             return df
-        plt.savefig(filename, bbox_inches="tight", transparent=True, dpi=300)
+        plt.savefig(filename, bbox_inches="tight", transparent=False, dpi=300)
         plt.clf()
         return df
 
@@ -270,6 +270,6 @@ class Optimizer(Word):
         if filename is None:
             plt.show()
             return df
-        plt.savefig(filename, bbox_inches="tight", transparent=True, dpi=300)
+        plt.savefig(filename, bbox_inches="tight", transparent=False, dpi=300)
         plt.clf()
         return df

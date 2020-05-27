@@ -97,6 +97,7 @@ class PhaseSeries(Word):
             - Start: start date of the phase
             - End: end date of the phase
             - Population: population value of the start date
+            - values added by self.update()
         """
         # Conver phase ID to phase name
         info_dict = self.to_dict()
@@ -110,9 +111,11 @@ class PhaseSeries(Word):
         @return <dict[str]={str: str/int}>:
             - key: phase number, like 1th, 2nd,...
             - value: {
+                'Type': <str> 'Past' or 'Future'
                 'Start': <str> start date of the phase,
                 'End': <str> end date of the phase,
-                'Population': <int>: population value at the start date
+                'Population': <int> population value at the start date
+                - values added by self.update()
             }
         """
         # Convert phase ID to phase name
@@ -137,3 +140,16 @@ class PhaseSeries(Word):
         if target_obj <= ref_obj:
             return self.PAST
         return self.FUTURE
+
+    def update(self, phase, **kwargs):
+        """
+        Update information of the phase.
+        @phase <str>: phase name
+        @kwargs: keyword arguments to add
+        """
+        try:
+            phase_id = int(phase[:-2])
+        except ValueError:
+            raise ValueError("@phase is phase name, like 0th, 1st, 2nd...")
+        self.info_dict[phase_id].update(kwargs)
+        return self

@@ -105,7 +105,7 @@ class Estimator(Optimizer):
                 end=str()
             )
             # Create a table to compare observed/estimated values
-            tau = super().param()["tau"]
+            tau = super().param()[self.TAU]
             train_df = self.divide_minutes(tau)
             comp_df = self.compare(train_df, self.predict())
             # All values are not under than 0
@@ -148,17 +148,17 @@ class Estimator(Optimizer):
         @return <float>: score of the error function to minimize
         """
         # Convert T to t using tau
-        if "tau" in self.fixed_dict.keys():
-            tau = self.fixed_dict["tau"]
+        if self.TAU in self.fixed_dict.keys():
+            tau = self.fixed_dict[self.TAU]
         else:
-            tau = trial.suggest_int("tau", 1, 1440)
+            tau = trial.suggest_int(self.TAU, 1, 1440)
         if not isinstance(tau, int) or tau <= 0:
             raise TypeError(
                 f"@tau must be a non-negative integer, but {tau} was applied."
             )
         train_df = self.divide_minutes(tau)
         # Set parameters of the models
-        p_dict = {"tau": None}
+        p_dict = {self.TAU: None}
         model_param_dict = self.model.param(train_df_divided=train_df)
         p_dict.update(
             {
@@ -167,7 +167,7 @@ class Estimator(Optimizer):
             }
         )
         p_dict.update(self.fixed_dict)
-        p_dict.pop("tau")
+        p_dict.pop(self.TAU)
         return self.error_f(p_dict, train_df)
 
     def divide_minutes(self, tau):
@@ -263,7 +263,7 @@ class Estimator(Optimizer):
         """
         param_dict = super().param()
         model_params = param_dict.copy()
-        tau = model_params.pop("tau")
+        tau = model_params.pop(self.TAU)
         model_instance = self.model(**model_params)
         # Rt
         param_dict["Rt"] = model_instance.calc_r0()
@@ -296,7 +296,7 @@ class Estimator(Optimizer):
         Show the accuracy as a figure.
         @filename <str>: filename of the figure, or None (show figure)
         """
-        tau = super().param()["tau"]
+        tau = super().param()[self.TAU]
         train_df = self.divide_minutes(tau)
         use_variables = [
             v for (i, (p, v))

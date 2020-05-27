@@ -67,7 +67,7 @@ def jpn_map(prefectures, values, title, cmap_name="Reds", filename=None):
         plt.show()
         return None
     plt.savefig(
-        filename, bbox_inches="tight", transparent=True, dpi=300
+        filename, bbox_inches="tight", transparent=False, dpi=300
     )
     plt.clf()
     return None

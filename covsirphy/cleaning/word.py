@@ -27,6 +27,7 @@ class Word(object):
     END = "End"
     T = "Elapsed"
     TS = "t"
+    TAU = "tau"
     COUNTRY = "Country"
     PROVINCE = "Province"
     COLUMNS = [DATE, COUNTRY, PROVINCE, C, CI, F, R]
