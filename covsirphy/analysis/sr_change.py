@@ -109,6 +109,7 @@ class ChangeFinder(Word):
         Run optimization.
         @n_points <int>: the number of change points
         @min_duration <int>: minimum duration of one phase [days]
+            - must be over 2
         @allowance <int>: allowance of change points [days]
             - if the estimated change points was equal to previous iteration
               with this allowance, stop running.
@@ -120,6 +121,8 @@ class ChangeFinder(Word):
         self.n_points = n_points
         self.min_duration = min_duration
         start_time = datetime.now()
+        if min_duration <= 2:
+            raise ValueError("@min_duration must be over 2.")
         if n_points <= 0:
             self.run_time = 0
             self.total_trials = 0

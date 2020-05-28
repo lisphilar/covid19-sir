@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-from datetime import datetime
+from datetime import datetime, timedelta
 import itertools
 import pandas as pd
 from covsirphy.cleaning.word import Word
@@ -21,9 +21,9 @@ class PhaseSeries(Word):
         self.first_date = first_date
         self.last_record_date = last_record_date
         self.init_population = population
-        self.clear()
+        self.clear(include_past=True)
 
-    def clear(self, include_past=True):
+    def clear(self, include_past=False):
         """
         Clear phase information.
         @include_past <bool>:
@@ -35,7 +35,7 @@ class PhaseSeries(Word):
         self.info_dict = self._init_info_dict(include_past=include_past)
         return self
 
-    def _init_phase_dict(self, include_past=True):
+    def _init_phase_dict(self, include_past=False):
         """
         Return initialized dictionary which is to remember phase ID of each date.
         @include_past <bool>:
@@ -57,7 +57,7 @@ class PhaseSeries(Word):
         }
         return phase_dict
 
-    def _init_info_dict(self, include_past=True):
+    def _init_info_dict(self, include_past=False):
         """
         Return initialized dictionary which is to remember phase information.
         @include_past <bool>:
@@ -97,15 +97,17 @@ class PhaseSeries(Word):
         grouped_ids = list(itertools.groupby(self.phase_dict.values()))
         return grouped_ids[num][0]
 
-    def add(self, start_date, end_date, population=None):
+    def add(self, start_date, end_date, population=None, **kwargs):
         """
         Add a new phase.
         @start_date <str>: start date of the new phase
         @end_date <str>: end date of the new phase
         @population <int>: population value of the start date
             - if None, initial value will be used
+        @kwargs: keyword arguments to save as phase information
         @return self
         """
+        # Arguments
         if population is None:
             population = self.population
         date_series = pd.date_range(
@@ -119,6 +121,13 @@ class PhaseSeries(Word):
             raise ValueError(
                 f"@start_date is {start_tense}, but @end_date is {end_tense}."
             )
+        # end_date must be over start_date - 2
+        start_obj = self.date_obj(start_date)
+        end_obj = self.date_obj(end_date)
+        min_end_obj = start_obj + timedelta(days=2)
+        if end_obj <= min_end_obj:
+            min_end_date = min_end_obj.strftime(self.DATE_FORMAT)
+            raise ValueError(f"@end_date must be over {min_end_date}.")
         # Add new phase
         for date_obj in date_series:
             if date_obj in self.phase_dict.keys():
@@ -134,6 +143,7 @@ class PhaseSeries(Word):
             self.END: end_date,
             self.N: population
         }
+        self.info_dict[new_id].update(**kwargs)
         return self
 
     def delete(self, phase):
@@ -212,3 +222,18 @@ class PhaseSeries(Word):
         phase_id = phase_id = self._phase_name2id(phase)
         self.info_dict[phase_id].update(kwargs)
         return self
+
+    def next_date(self):
+        """
+        Return the next date of the end date of the last registered phase.
+        return <str>: like 01Feb2020
+        """
+        un_date_objects = [
+            k for (k, v) in self.phase_dict.items()
+            if v != 0
+        ]
+        if not un_date_objects:
+            return self.first_date
+        last_end_date_obj = un_date_objects[-1]
+        next_date_obj = last_end_date_obj + timedelta(days=1)
+        return next_date_obj.strftime(self.DATE_FORMAT)

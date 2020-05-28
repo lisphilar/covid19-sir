@@ -39,7 +39,7 @@ class ODESimulator(Word):
                 - NameError when the model is the first model
                 - NameError if new params are included
         @y0_dict <doct[str]=float>:
-            - dictionary of initial values or None
+            - dictionary of initial values or None (non-dimensional)
             - if not include some variables, the last values will be used
                 - NameError when the model is the first model
                 - NameError if new variable are included

@@ -33,6 +33,7 @@ class Word(object):
     COLUMNS = [DATE, COUNTRY, PROVINCE, C, CI, F, R]
     NLOC_COLUMNS = [DATE, C, CI, F, R]
     VALUE_COLUMNS = [C, CI, F, R]
+    FIG_COLUMNS = [CI, F, R, FR, V, E, W]
     # Date format: 22Jan2020 etc.
     DATE_FORMAT = "%d%b%Y"
     # Separator of country and province
@@ -53,6 +54,8 @@ class Word(object):
     PAST = "Past"
     FUTURE = "Future"
     INITIAL = "Initial"
+    ODE = "ODE"
+    RT = "Rt"
     # Flag
     UNKNOWN = "-"
 
@@ -63,6 +66,8 @@ class Word(object):
         @num <int>: number
         @return <str>
         """
+        if not isinstance(num, int):
+            raise TypeError("@num must be an integer.")
         q, mod = divmod(num, 10)
         suffix = "th" if q == 1 else cls.SUFFIX_DICT[mod]
         return f"{num}{suffix}"

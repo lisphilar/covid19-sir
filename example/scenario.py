@@ -32,15 +32,26 @@ def main():
     print(ita_scenario.summary())
     # Hyoerparameter estimaition
     ita_scenario.estimate(cs.SIRF)
-    print(ita_scenario.summary())
     # Show the history of optimization
     ita_scenario.estimate_history(
-        phase="1st", filename=output_dir.joinpath("estimate_history_1st.png")
+        phase="1st", filename=output_dir.joinpath("ita_estimate_history_1st.png")
     )
     # Show the accuracy as a figure
     ita_scenario.estimate_accuracy(
-        phase="1st", filename=output_dir.joinpath("estimate_accuracy_1st.png")
+        phase="1st", filename=output_dir.joinpath("ita_estimate_accuracy_1st.png")
     )
+    # Add future phase
+    ita_scenario.clear()
+    ita_scenario.add_phase(end_date="01Aug2020")
+    ita_scenario.add_phase(end_date="31Dec2020")
+    # Prediction of the number of cases
+    pred_df = ita_scenario.predict(
+        filename=output_dir.joinpath("ita_predicted.png")
+    )
+    pred_df.to_csv(output_dir.joinpath("ita_predicted.csv"), index=False)
+    # Save summary as a CSV file
+    summary_df = ita_scenario.summary()
+    summary_df.to_csv(output_dir.joinpath("ita_summary.csv"), index=False)
 
 
 if __name__ == "__main__":

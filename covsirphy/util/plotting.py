@@ -22,7 +22,7 @@ def line_plot(df, title, xlabel=None, ylabel="Cases",
     """
     Show chlonological change of the data.
     """
-    # TODO: Change to a class object
+    # TODO: add doc-string
     ax = df.plot()
     # Scale
     if math_scale:

@@ -48,7 +48,9 @@ class NondimData(PhaseData):
         @model <covsirphy.ModelBase>: ODE model
         @population <int>: total population in the place
         @start_date <str>: start date, like 22Jan2020
+            - if None, the first date of the records will be used
         @end_date <str>: end date, like 01Feb2020
+            - if None, the last date of the records will be used
         @return <pd.DataFrame>
             - index (Date) <pd.TimeStamp>: Observation date
             - Elapsed <int>: Elapsed time from the start date [min]

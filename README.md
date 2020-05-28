@@ -100,8 +100,20 @@ We can check the accuracy of estimation with a figure.
 ```Python
 ita_scenario.estimate_accuracy(phase="1st")
 ```
-
-(Update later)
+#### Prediction of the number of cases
+we can add some future phases.
+```Python
+# if needed, we clear the registered future phases
+ita_scenario.clear()
+# Add future phases one by one
+ita_scenario.add_phase(end_date="01Aug2020")
+ita_scenario.add_phase(end_date="31Dec2020")
+print(ita_scenario.summary())
+```
+Then, we can predict the number of cases and get a figure.
+```Python
+pred_df = ita_scenario.predict()
+```
 
 ## Citation
 Lisphilar, 2020, Kaggle notebook, COVID-19 data with SIR model, https://www.kaggle.com/lisphilar/covid-19-data-with-sir-model
