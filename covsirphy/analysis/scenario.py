@@ -330,6 +330,7 @@ class Scenario(Word):
         line_plot(
             dim_df.set_index(self.DATE)[fig_cols],
             title=f"{self.name}: Predicted number of cases",
-            filename=filename
+            filename=filename,
+            y_integer=True
         )
         return dim_df
