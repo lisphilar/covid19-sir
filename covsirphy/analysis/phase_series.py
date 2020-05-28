@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*-
 
 from datetime import datetime
+import itertools
 import pandas as pd
 from covsirphy.cleaning.word import Word
 
@@ -83,6 +84,19 @@ class PhaseSeries(Word):
         }
         return info_dict
 
+    def _phase_name2id(self, phase):
+        """
+        Return phase ID of the phase.
+        @phase <str>: phase name, like 1st, 2nd, 3rd,...
+        @return <int>
+        """
+        try:
+            num = int(phase[:-2])
+        except ValueError:
+            raise ValueError("@phase is phase name, like 0th, 1st, 2nd...")
+        grouped_ids = list(itertools.groupby(self.phase_dict.values()))
+        return grouped_ids[num][0]
+
     def add(self, start_date, end_date, population=None):
         """
         Add a new phase.
@@ -128,10 +142,7 @@ class PhaseSeries(Word):
         @phase <str>: phase name, like 0th, 1st, 2nd...
         @return self
         """
-        try:
-            phase_id = int(phase[:-2])
-        except ValueError:
-            raise ValueError("@phase is phase name, like 0th, 1st, 2nd...")
+        phase_id = self._phase_name2id(phase)
         self.phase_dict = {
             k: 0 if v is phase_id else v
             for (k, v) in self.phase_dict.items()
@@ -198,9 +209,6 @@ class PhaseSeries(Word):
         @phase <str>: phase name
         @kwargs: keyword arguments to add
         """
-        try:
-            phase_id = int(phase[:-2])
-        except ValueError:
-            raise ValueError("@phase is phase name, like 0th, 1st, 2nd...")
+        phase_id = phase_id = self._phase_name2id(phase)
         self.info_dict[phase_id].update(kwargs)
         return self

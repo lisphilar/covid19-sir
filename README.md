@@ -76,8 +76,8 @@ ita_scenario = cs.Scenario(jhu_data, pop_data, country="Italy", province=None)
 See the records as a figure.
 ```Python
 ita_record_df = ita_scenario.records()
-#### S-R trend analysis
 ```
+#### S-R trend analysis
 Show S-R trend and determine the number of change points.
 ```Python
 ita_scenario.trend()
