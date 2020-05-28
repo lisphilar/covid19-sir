@@ -216,3 +216,5 @@ class Scenario(Word):
         except KeyError:
             raise KeyError(f"Estimator of {phase} phase has not been registered.")
         estimator.accuracy(**kwargs)
+
+    

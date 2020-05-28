@@ -17,20 +17,71 @@ class PhaseSeries(Word):
         @last_record_date <str>: the last date of the records, like 25May2020
         @population <int>: initial value of total population in the place
         """
+        self.first_date = first_date
         self.last_record_date = last_record_date
-        # Phase ID of each date: {pd.TimeStamp: int}
-        self.phase_dict = {
-            date_obj: 0 for date_obj
-            in pd.date_range(start=first_date, end=last_record_date, freq="D")
+        self.init_population = population
+        self.clear()
+
+    def clear(self, include_past=True):
+        """
+        Clear phase information.
+        @include_past <bool>:
+            - if True, include past phases.
+            - future phase are always included
+        return self
+        """
+        self.phase_dict = self._init_phase_dict(include_past=include_past)
+        self.info_dict = self._init_info_dict(include_past=include_past)
+        return self
+
+    def _init_phase_dict(self, include_past=True):
+        """
+        Return initialized dictionary which is to remember phase ID of each date.
+        @include_past <bool>:
+            - if True, include past phases.
+            - future phase are always included
+        return <dict[pd.TimeStamp]=int>:
+            - key: dates from the first date to the last date of the records
+            - value: 0 (phase ID)
+        """
+        past_date_objects = pd.date_range(
+            start=self.first_date, end=self.last_record_date, freq="D"
+        )
+        if include_past:
+            return dict.fromkeys(past_date_objects, 0)
+        last_date_obj = self.date_obj(self.last_record_date)
+        phase_dict = {
+            k: v for (k, v) in self.phase_dict.items()
+            if k <= last_date_obj
         }
-        # Information of each phase ID: {int: dict[str]=str/dict}
-        self.info_dict = {
-            0: {
-                self.START: first_date,
-                self.END: last_record_date,
-                self.N: population
+        return phase_dict
+
+    def _init_info_dict(self, include_past=True):
+        """
+        Return initialized dictionary which is to remember phase information.
+        @include_past <bool>:
+            - if True, include past phases.
+            - future phase are always included
+        return <dict[str]=str/int>:
+            - 'Start': the first date of the records
+            - 'End': the last date of the records
+            - 'Population': initial value of total population
+        """
+        if include_past:
+            info_dict = {
+                0: {
+                    self.START: self.first_date,
+                    self.END: self.last_record_date,
+                    self.N: self.init_population
+                }
             }
+            return info_dict
+        last_date_obj = self.date_obj(self.last_record_date)
+        info_dict = {
+            k: v for (k, v) in self.info_dict.items()
+            if self.date_obj(v[self.END]) <= last_date_obj
         }
+        return info_dict
 
     def add(self, start_date, end_date, population=None):
         """
