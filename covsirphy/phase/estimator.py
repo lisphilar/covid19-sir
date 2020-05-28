@@ -66,7 +66,7 @@ class Estimator(Optimizer):
         self.step_n = None
 
     def run(self, timeout=180, n_jobs=-1,
-            timeout_iteration=30, allowance=(0.8, 1.2)):
+            timeout_iteration=10, allowance=(0.8, 1.2)):
         """
         Run optimization.
         If the result satisfied all conditions, optimization ends.
