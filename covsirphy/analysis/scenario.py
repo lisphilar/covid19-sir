@@ -151,7 +151,7 @@ class Scenario(Word):
             - if True, show the records as a line-plot.
         @filename <str>: filename of the figure, or None (show figure)
         @kwargs: the other keyword arguments of ChangeFinder().run()
-        @return self
+        @return None
         """
         finder = ChangeFinder(
             self.clean_df, self.population,
@@ -163,7 +163,7 @@ class Scenario(Word):
             self.phase_series = phase_series
             if not include_init_phase:
                 self.phase_series.delete("0th")
-        return self
+        return None
 
     def _estimate(self, model, phase, **kwargs):
         """
