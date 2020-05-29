@@ -8,6 +8,7 @@ from covsirphy.ode.mbase import ModelBase
 class SIRD(ModelBase):
     NAME = "SIR-D"
     PARAMETERS = ["kappa", "rho", "sigma"]
+    DAY_PARAMETERS = ["1/alpha2 [day]", "1/beta [day]", "1/gamma [day]"]
     VARIABLES = ["x", "y", "z", "w"]
     PRIORITIES = np.array([1, 10, 10, 2])
     VARS_INCLEASE = ["z", "w"]

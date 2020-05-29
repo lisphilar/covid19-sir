@@ -52,6 +52,15 @@ def main():
     # Save summary as a CSV file
     summary_df = ita_scenario.summary()
     summary_df.to_csv(output_dir.joinpath("ita_summary.csv"), index=True)
+    # Parameter history
+    ita_scenario.param_history(
+        targets=["Rt"], divide_by_first=False,
+        filename=output_dir.joinpath("ita_param_history_rt.png")
+    )
+    ita_scenario.param_history(
+        targets=["rho", "sigma"], divide_by_first=True,
+        filename=output_dir.joinpath("ita_param_history_rho_sigma.png")
+    )
 
 
 if __name__ == "__main__":

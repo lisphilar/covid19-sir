@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*-
 
 from inspect import signature
+import matplotlib.pyplot as plt
 from covsirphy.ode import ModelBase
 from covsirphy.cleaning import JHUData, Population, Word
 from covsirphy.phase import Estimator, SRData, NondimData
@@ -347,5 +348,63 @@ class Scenario(Word):
         if param not in df.columns:
             raise KeyError(f"@param must be in {', '.join(df.columns)}.")
         if phase == "last":
-            phase = self.index[-1]
+            phase = df.index[-1]
         return df.loc[phase, param]
+
+    def param_history(self, targets=None, divide_by_first=True,
+                      show_figure=True, filename=None, box_plot=True, **kwargs):
+        """
+        Return subset of summary.
+        @targets <list[str]/str>: parameters to show (Rt etc.)
+        @divide_by_first <bool>: if True, divide the values by 1st phase's values
+        @box_plot <bool>: if True, box plot. if False, line plot.
+        @show_figure <bool>:
+            - if True, show the result as a figure.
+        @filename <str>: filename of the figure, or None (show figure)
+        @kwargs: keword arguments of pd.DataFrame.plot or line_plot()
+        @return <pd.DataFrame>
+        """
+        if filename is not None:
+            plt.switch_backend("Agg")
+        df = self.summary()
+        model_param_nest = [m.PARAMETERS for m in self.model_dict.values()]
+        model_parameters = list(set(sum(model_param_nest, list())))
+        model_day_nest = [m.DAY_PARAMETERS for m in self.model_dict.values()]
+        model_day_params = list(set(sum(model_day_nest, list())))
+        selectable_cols = [
+            self.N, *model_parameters, self.RT, *model_day_params
+        ]
+        targets = [targets] if isinstance(targets, str) else targets
+        targets = selectable_cols if targets is None else targets
+        if not set(targets).issubset(set(selectable_cols)):
+            raise KeyError(
+                f"@targets must be a subset of {', '.join(selectable_cols)}."
+            )
+        df = df.loc[:, targets]
+        if divide_by_first:
+            df = df / df.iloc[0, :]
+            title = f"{self.name}: Ratio to 1st phase parameters"
+        else:
+            title = f"{self.name}: History of parameter values"
+        if box_plot:
+            df.plot.bar(title=title)
+            plt.xticks(rotation=0)
+            plt.legend(
+                bbox_to_anchor=(1.02, 0), loc="lower left", borderaxespad=0
+            )
+        else:
+            _df = df.reset_index(drop=True)
+            _df.index = _df.index + 1
+            line_plot(
+                _df, title=title,
+                xlabel="Phase", ylabel=str(), math_scale=False
+            )
+        plt.tight_layout()
+        if filename is None:
+            plt.show()
+            return df
+        plt.savefig(
+            filename, bbox_inches="tight", transparent=False, dpi=300
+        )
+        plt.clf()
+        return df

@@ -8,6 +8,11 @@ from covsirphy.ode.mbase import ModelBase
 class SEWIRF(ModelBase):
     NAME = "SEWIR-F"
     PARAMETERS = ["theta", "kappa", "rho1", "rho2", "rho3", "sigma"]
+    DAY_PARAMETERS = [
+        "alpha1 [-]", "1/alpha2 [day]",
+        "1/beta1 [day]", "1/beta2 [day]", "1/beta3 [day]",
+        "1/gamma [day]"
+    ]
     VARIABLES = ["x1", "x2", "x3", "y", "z", "w"]
     PRIORITIES = np.array([0, 0, 0, 10, 10, 2])
     VARS_INCLEASE = ["z", "w"]

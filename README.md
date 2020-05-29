@@ -98,7 +98,13 @@ print(ita_scenario.summary())
 ```
 We can check the accuracy of estimation with a figure.
 ```Python
+# Table
 ita_scenario.estimate_accuracy(phase="1st")
+# Get a value
+ita_scenario.get("Rt", phase="4th")
+# Show parameter history as a figure
+ita_scenario.param_history(targets=["Rt"], divide_by_first=False)
+ita_scenario.param_history(targets=["rho", "sigma"])
 ```
 #### Prediction of the number of cases
 we can add some future phases.

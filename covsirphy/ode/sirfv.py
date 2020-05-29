@@ -8,6 +8,9 @@ from covsirphy.ode.mbase import ModelBase
 class SIRFV(ModelBase):
     NAME = "SIR-FV"
     PARAMETERS = ["theta", "kappa", "rho", "sigma", "omega"]
+    DAY_PARAMETERS = [
+        "alpha1 [-]", "1/alpha2 [day]", "1/beta [day]", "1/gamma [day]"
+    ]
     VARIABLES = ["x", "y", "z", "w"]
     PRIORITIES = np.array([1, 10, 10, 2])
     VARS_INCLEASE = ["z", "w"]
