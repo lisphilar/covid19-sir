@@ -29,6 +29,14 @@ if dup_list:
     dup_str = ', '.join(dup_list)
     raise Exception(f"Duplication was found in modules. {dup_str}")
 
-# Show excetions in better format
-better_exceptions.MAX_LENGTH = None
-better_exceptions.hook()
+# Show excetions in better format if used from command line
+try:
+    environ = get_ipython().__class__.__name__
+    # True: IPythonShell, False: Notebook
+    is_terminal = (environ == "TerminalInteractiveShell")
+except NameError:
+    is_terminal = True
+
+if is_terminal:
+    better_exceptions.MAX_LENGTH = None
+    better_exceptions.hook()
