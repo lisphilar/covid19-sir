@@ -118,8 +118,8 @@ class SIRFV(ModelBase):
         df[cls.S] = df["x"]
         df[cls.C] = df[["y", "z", "w"]].sum(axis=1)
         df[cls.CI] = df["y"]
-        df[cls.F] = df["z"]
-        df[cls.R] = df["w"]
+        df[cls.R] = df["z"]
+        df[cls.F] = df["w"]
         df[cls.V] = 1 - df[["x", "y", "z", "w"]].sum(axis=1)
         df = df.loc[:, [cls.C, cls.CI, cls.F, cls.R, cls.V]]
         df = (df * population).astype(np.int64)

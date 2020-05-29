@@ -103,8 +103,8 @@ class SIRF(ModelBase):
         """
         df[cls.C] = 1 - df["x"]
         df[cls.CI] = df["y"]
-        df[cls.F] = df["z"]
-        df[cls.R] = df["w"]
+        df[cls.R] = df["z"]
+        df[cls.F] = df["w"]
         df = df.loc[:, [cls.C, cls.CI, cls.F, cls.R]]
         df = (df * population).astype(np.int64)
         return df

@@ -121,8 +121,8 @@ class SEWIRF(ModelBase):
         df[cls.W] = df["x3"]
         df[cls.C] = df[["y", "z", "w"]].sum(axis=1)
         df[cls.CI] = df["y"]
-        df[cls.F] = df["z"]
-        df[cls.R] = df["w"]
+        df[cls.R] = df["z"]
+        df[cls.F] = df["w"]
         df = df.loc[:, [cls.C, cls.CI, cls.F, cls.R, cls.E, cls.W]]
         df = (df * population).astype(np.int64)
         return df
