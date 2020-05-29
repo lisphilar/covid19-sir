@@ -55,7 +55,7 @@ jpn_data.set_variables(
     province=None
 )
 # Replacement of JHU data in Japan
-jhu_data = jhu_data.replace(jpn_data)
+jhu_data.replace(jpn_data)
 ncov_df = jhu_data.cleaned()
 ```
 Perform data cleaning of population dataset.

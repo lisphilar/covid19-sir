@@ -28,8 +28,8 @@ def main():
     jpn_df = jpn_data.cleaned()
     jpn_df.to_csv(output_dir.joinpath("jpn_cleaned.csv"), index=False)
     # Replace data in Japan with Japan-specific dataset
-    jhu_data_replaced = jhu_data.replace(jpn_data)
-    ncov_df = jhu_data_replaced.cleaned()
+    jhu_data.replace(jpn_data)
+    ncov_df = jhu_data.cleaned()
     ncov_df.to_csv(
         output_dir.joinpath("jhu_cleaned_replaced.csv"), index=False
     )
