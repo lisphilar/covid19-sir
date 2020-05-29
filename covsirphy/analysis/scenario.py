@@ -334,3 +334,18 @@ class Scenario(Word):
             y_integer=True
         )
         return dim_df
+
+    def get(self, param, phase="last"):
+        """
+        Get the parameter value of the phase.
+        @param <str>: parameter name (columns in self.summary())
+        @phase <str>: phase name or 'last'
+            - if 'last', the value of the last phase will be returned
+        @return <str/int/float>
+        """
+        df = self.summary()
+        if param not in df.columns:
+            raise KeyError(f"@param must be in {', '.join(df.columns)}.")
+        if phase == "last":
+            phase = self.index[-1]
+        return df.loc[phase, param]

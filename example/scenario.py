@@ -51,7 +51,7 @@ def main():
     pred_df.to_csv(output_dir.joinpath("ita_predicted.csv"), index=False)
     # Save summary as a CSV file
     summary_df = ita_scenario.summary()
-    summary_df.to_csv(output_dir.joinpath("ita_summary.csv"), index=False)
+    summary_df.to_csv(output_dir.joinpath("ita_summary.csv"), index=True)
 
 
 if __name__ == "__main__":
