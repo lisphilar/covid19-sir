@@ -110,6 +110,7 @@ class Scenario(Word):
                 model_param_dict = dict()
                 for param in model.PARAMETERS:
                     model_param_dict[param] = summary_df.loc[summary_df.index[-1], param]
+                model_param_dict.update(kwargs)
                 param_dict.update(model_param_dict)
                 model_instance = model(**model_param_dict)
                 param_dict[self.RT] = model_instance.calc_r0()
@@ -389,22 +390,26 @@ class Scenario(Word):
         if box_plot:
             df.plot.bar(title=title)
             plt.xticks(rotation=0)
+            if divide_by_first or self.RT in targets:
+                plt.axhline(y=1.0, color="black", linestyle=":")
             plt.legend(
                 bbox_to_anchor=(1.02, 0), loc="lower left", borderaxespad=0
             )
-        else:
-            _df = df.reset_index(drop=True)
-            _df.index = _df.index + 1
-            line_plot(
-                _df, title=title,
-                xlabel="Phase", ylabel=str(), math_scale=False
+            plt.tight_layout()
+            if filename is None:
+                plt.show()
+                return df
+            plt.savefig(
+                filename, bbox_inches="tight", transparent=False, dpi=300
             )
-        plt.tight_layout()
-        if filename is None:
-            plt.show()
+            plt.clf()
             return df
-        plt.savefig(
-            filename, bbox_inches="tight", transparent=False, dpi=300
+        _df = df.reset_index(drop=True)
+        _df.index = _df.index + 1
+        h = 1.0 if divide_by_first else None
+        line_plot(
+            _df, title=title,
+            xlabel="Phase", ylabel=str(), math_scale=False, h=h,
+            show_figure=show_figure, filename=filename
         )
-        plt.clf()
-        return df
+

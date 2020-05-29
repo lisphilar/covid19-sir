@@ -43,7 +43,9 @@ def main():
     # Add future phase
     ita_scenario.clear()
     ita_scenario.add_phase(end_date="01Aug2020")
-    ita_scenario.add_phase(end_date="31Dec2020")
+    sigma_4th = ita_scenario.get("sigma", phase="4th")
+    sigma_6th = sigma_4th * 2
+    ita_scenario.add_phase(end_date="31Dec2020", sigma=sigma_6th)
     # Prediction of the number of cases
     pred_df = ita_scenario.predict(
         filename=output_dir.joinpath("ita_predicted.png")
@@ -54,7 +56,7 @@ def main():
     summary_df.to_csv(output_dir.joinpath("ita_summary.csv"), index=True)
     # Parameter history
     ita_scenario.param_history(
-        targets=["Rt"], divide_by_first=False,
+        targets=["Rt"], divide_by_first=False, bix_plot=False,
         filename=output_dir.joinpath("ita_param_history_rt.png")
     )
     ita_scenario.param_history(

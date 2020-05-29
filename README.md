@@ -103,7 +103,7 @@ ita_scenario.estimate_accuracy(phase="1st")
 # Get a value
 ita_scenario.get("Rt", phase="4th")
 # Show parameter history as a figure
-ita_scenario.param_history(targets=["Rt"], divide_by_first=False)
+ita_scenario.param_history(targets=["Rt"], divide_by_first=False, bix_plot=False)
 ita_scenario.param_history(targets=["rho", "sigma"])
 ```
 #### Prediction of the number of cases
@@ -113,7 +113,10 @@ we can add some future phases.
 ita_scenario.clear()
 # Add future phases one by one
 ita_scenario.add_phase(end_date="01Aug2020")
-ita_scenario.add_phase(end_date="31Dec2020")
+# We can change parameter values
+sigma_4th = ita_scenario.get("sigma", phase="4th")
+sigma_6th = sigma_4th * 2
+ita_scenario.add_phase(end_date="31Dec2020", sigma=sigma_6th)
 print(ita_scenario.summary())
 ```
 Then, we can predict the number of cases and get a figure.
