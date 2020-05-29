@@ -79,7 +79,7 @@ class Estimator(Optimizer):
         @timeout_iteration <int>: time-out of one iteration
         @allowance <tuple(float, float)>:
             - the allowance of the predicted value
-        @return self
+        @return None
         """
         if self.study is None:
             self.study = optuna.create_study(direction="minimize")
@@ -138,7 +138,7 @@ class Estimator(Optimizer):
             f"\r\tFinished {self.total_trials} trials in {minutes} min {seconds} sec.\n",
             end=str()
         )
-        return self
+        return None
 
     def objective(self, trial):
         """
