@@ -30,7 +30,7 @@ def main():
         filename=output_dir.joinpath("ita_change_points.png")
     )
     print(ita_scenario.summary())
-    # Hyoerparameter estimaition
+    # Hyperparameter estimaition
     ita_scenario.estimate(cs.SIRF)
     # Show the history of optimization
     ita_scenario.estimate_history(
@@ -41,7 +41,7 @@ def main():
         phase="1st", filename=output_dir.joinpath("ita_estimate_accuracy_1st.png")
     )
     # Add future phase
-    # not ita_scenario.clear()
+    # ita_scenario.clear()
     ita_scenario.add_phase(end_date="01Aug2020")
     sigma_4th = ita_scenario.get("sigma", phase="4th")
     sigma_6th = sigma_4th * 2

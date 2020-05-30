@@ -59,6 +59,8 @@ class Estimator(Optimizer):
         self.x = self.TS
         self.y_list = model.VARIABLES[:]
         self.fixed_dict = kwargs.copy()
+        if self.TAU in self.fixed_dict.keys():
+            self.fixed_dict[self.TAU] = int(self.fixed_dict[self.TAU])
         self.study = None
         self.total_trials = 0
         self.run_time = 0

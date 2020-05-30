@@ -38,7 +38,7 @@ def main():
     # Hyperparameter estimation of example data
     estimator = Estimator(
         clean_df=dim_df, model=SIRF, population=eg_population,
-        country="Example", province="Example-1"
+        country="Example", province="Example-1", tau=eg_tau
     )
     estimator.run()
     estimated_df = estimator.summary(name="SIR-F")
