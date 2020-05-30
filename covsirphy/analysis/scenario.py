@@ -331,8 +331,6 @@ class Scenario(Word):
         # Show figure
         fig_cols_set = set(dim_df.set_index(self.DATE).columns) & set(self.FIG_COLUMNS)
         fig_cols = [col for col in self.FIG_COLUMNS if col in fig_cols_set]
-        if dim_df[fig_cols].values.max() > self.population / 2:
-            fig_cols.append(self.S)
         # TODO: add vertical lines to line-plot with tau and step_n
         line_plot(
             dim_df.set_index(self.DATE)[fig_cols],
