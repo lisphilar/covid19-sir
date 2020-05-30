@@ -41,7 +41,7 @@ def main():
         phase="1st", filename=output_dir.joinpath("ita_estimate_accuracy_1st.png")
     )
     # Add future phase
-    ita_scenario.clear()
+    # not ita_scenario.clear()
     ita_scenario.add_phase(end_date="01Aug2020")
     sigma_4th = ita_scenario.get("sigma", phase="4th")
     sigma_6th = sigma_4th * 2
