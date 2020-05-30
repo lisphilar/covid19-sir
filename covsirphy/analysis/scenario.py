@@ -326,6 +326,8 @@ class Scenario(Word):
             )
         simulator.run()
         dim_df = simulator.dim(self.tau, df.loc["1st", self.START])
+        if not show_figure:
+            return dim_df
         # Show figure
         fig_cols_set = set(dim_df.set_index(self.DATE).columns) & set(self.FIG_COLUMNS)
         fig_cols = [col for col in self.FIG_COLUMNS if col in fig_cols_set]
