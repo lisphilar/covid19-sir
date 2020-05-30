@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
+from datetime import timedelta
 from inspect import signature
 import matplotlib.pyplot as plt
 from covsirphy.ode import ModelBase
@@ -77,11 +78,13 @@ class Scenario(Word):
         )
         return df
 
-    def add_phase(self, end_date, population=None, model=None, **kwargs):
+    def add_phase(self, end_date=None, days=None, population=None, model=None, **kwargs):
         """
         Add a new phase.
         The start date is the next date of the last registered phase.
-        @end_date <str>: end date of the new phase
+        - @end_date or @days must be speicified
+            @end_date <str>: end date of the new phase
+            @days <int>: the number of days to add
         @population <int>: population value of the start date
             - if None, the same as initial value
         @model <covsirphy.ModelBase>: ODE model
@@ -90,9 +93,16 @@ class Scenario(Word):
                 - if model is not the same, None
                 - tau is fixed as the last phase's value or 1440
         """
+        start_date = self.phase_series.next_date()
+        if end_date is None:
+            if days is None:
+                raise NameError("@end_date or @days must be specified.")
+            if not isinstance(days, int):
+                raise TypeError("@days must be an integer.")
+            end_obj = self.date_obj(start_date) + timedelta(days=days)
+            end_date = end_obj.strftime(self.DATE_FORMAT)
         if population is None:
             population = self.population
-        start_date = self.phase_series.next_date()
         if model is not None and not issubclass(model, ModelBase):
             raise TypeError(
                 "@model must be an ODE model <sub-class of cs.ModelBase>."

@@ -117,6 +117,7 @@ ita_scenario.add_phase(end_date="01Aug2020")
 sigma_4th = ita_scenario.get("sigma", phase="4th")
 sigma_6th = sigma_4th * 2
 ita_scenario.add_phase(end_date="31Dec2020", sigma=sigma_6th)
+ita_scenario.add_phase(days=30)
 print(ita_scenario.summary())
 ```
 Then, we can predict the number of cases and get a figure.
