@@ -89,7 +89,6 @@ class Scenario(Word):
             - un-included parameters will be the same as the last phase
                 - if model is not the same, None
                 - tau is fixed as the last phase's value or 1440
-        @return self
         """
         if population is None:
             population = self.population
@@ -116,7 +115,6 @@ class Scenario(Word):
                 param_dict[self.RT] = model_instance.calc_r0()
                 param_dict.update(model_instance.calc_days_dict(self.tau))
         self.phase_series.add(start_date, end_date, population, **param_dict)
-        return self
 
     def clear(self, include_past=False):
         """
@@ -124,10 +122,8 @@ class Scenario(Word):
         @include_past <bool>:
             - if True, include past phases.
             - future phase are always included
-        return self
         """
         self.phase_series.clear(include_past=include_past)
-        return self
 
     def summary(self):
         """
@@ -163,7 +159,6 @@ class Scenario(Word):
             self.phase_series = phase_series
             if not include_init_phase:
                 self.phase_series.delete("0th")
-        return None
 
     def _estimate(self, model, phase, **kwargs):
         """
@@ -217,7 +212,6 @@ class Scenario(Word):
         @kwargs:
             - keyword arguments of the model parameter
             - keyword arguments of covsirphy.Estimator.run()
-        @return self
         """
         # Check model
         if not issubclass(model, ModelBase):
@@ -235,7 +229,6 @@ class Scenario(Word):
         # Run hyperparameter estimation
         for phase in phases:
             self._estimate(model, phase, **kwargs)
-        return self
 
     def estimate_history(self, phase, **kwargs):
         """
@@ -412,4 +405,3 @@ class Scenario(Word):
             xlabel="Phase", ylabel=str(), math_scale=False, h=h,
             show_figure=show_figure, filename=filename
         )
-

@@ -71,6 +71,7 @@ class PhaseSeries(Word):
         if include_past:
             info_dict = {
                 0: {
+                    self.TENSE: self.PAST,
                     self.START: self.first_date,
                     self.END: self.last_record_date,
                     self.N: self.init_population
@@ -233,7 +234,8 @@ class PhaseSeries(Word):
             if v != 0
         ]
         if not un_date_objects:
-            return self.first_date
-        last_end_date_obj = un_date_objects[-1]
+            last_end_date_obj = list(self.phase_dict.keys())[-1]
+        else:
+            last_end_date_obj = un_date_objects[-1]
         next_date_obj = last_end_date_obj + timedelta(days=1)
         return next_date_obj.strftime(self.DATE_FORMAT)

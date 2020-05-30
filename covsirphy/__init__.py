@@ -35,7 +35,7 @@ try:
     # True: IPythonShell, False: Notebook
     is_terminal = (environ == "TerminalInteractiveShell")
 except NameError:
-    is_terminal = True
+    is_terminal = False
 
 if is_terminal:
     better_exceptions.MAX_LENGTH = None
