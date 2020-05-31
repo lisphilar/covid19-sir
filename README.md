@@ -32,6 +32,10 @@ The author is trying to add the following functionalities.
 If you have ideas or need new functinalities, please join this project.
 Any suggestions (Github issues, pull request, comment on Kaggle notebook) are always welcomed.
 
+## Need discussion
+- How to deal with linelist of case reports
+- How to deal with mobility data
+
 ## Installation
 When you use this package in Kaggle notebook (need to turn on Internet option in notebook settings) or local environment with Pip,
 ```

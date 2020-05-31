@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*-
 
 from pathlib import Path
+import numpy as np
 import pandas as pd
 from covsirphy import ODESimulator, Estimator, SIRF, line_plot
 
@@ -45,6 +46,7 @@ def main():
     estimated_df.loc["Setted"] = pd.Series(
         {**setted_param_dict, "tau": eg_tau}
     )
+    estimated_df["tau"] = estimated_df["tau"].astype(np.int64)
     estimated_df.to_csv(
         output_dir.joinpath("estimate_parameter.csv"), index=True
     )
