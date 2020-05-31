@@ -1,20 +1,36 @@
-# COVID-19 data with SIR model [![GitHub license](https://img.shields.io/github/license/lisphilar/covid19-sir)](https://github.com/lisphilar/covid19-sir/blob/master/LICENSE.md)[![Python version](https://img.shields.io/badge/Python-3.7|3.8-green.svg)](https://www.python.org/)
-This is a package for COVID-19 data analysis with SIR-derived models. Please refer to [COVID-19 data with SIR model](https://www.kaggle.com/lisphilar/covid-19-data-with-sir-model) notebook in Kaggle to understand the methods of analysis.
+# Covsirphy: COVID-19 data with SIR model [![GitHub license](https://img.shields.io/github/license/lisphilar/covid19-sir)](https://github.com/lisphilar/covid19-sir/blob/master/LICENSE.md)[![Python version](https://img.shields.io/badge/Python-3.7|3.8-green.svg)](https://www.python.org/)
 
 ## Introduction
-With this Python package we can apply SIR-F model to COVID-19 data. SIR-F is a customized ODE model derived from SIR model. To evaluate the effect of measures, parameter estimation of SIR-F will be applied to subsets of time series data in each country. Parameter change points will be determined by S-R trend analysis. The details are explained in [COVID-19 data with SIR model](https://www.kaggle.com/lisphilar/covid-19-data-with-sir-model) in Kaggle.
+This is a package for COVID-19 (Coronavirus disease 2019) data analysis with SIR-derived models. Please refer to [COVID-19 data with SIR model](https://www.kaggle.com/lisphilar/covid-19-data-with-sir-model) notebook in Kaggle to understand the methods of analysis.
 
-## Recomended datasets
-The datasets can be download using Kaggle API key and Kaggle package. Please read [How to Use Kaggle: Public API](https://www.kaggle.com/docs/api) and my Bash code `input.sh` in this repository.
-### The number of cases
-Primary source: [COVID-19 Data Repository by CSSE at Johns Hopkins University](https://github.com/CSSEGISandData/COVID-19)  
-Secondary source: [Novel Corona Virus 2019 Dataset by SRK](https://www.kaggle.com/sudalairajkumar/novel-corona-virus-2019-dataset)  
-### The number of cases in Japan
-Primary source: [Ministry of Health, Labour and Welefare HP (in English)](https://www.mhlw.go.jp/stf/seisakunitsuite/bunya/newpage_00032.html)  
-Secondary source: [Secondary source: COVID-19 dataset in Japan by Lisphilar](https://www.kaggle.com/lisphilar/covid19-dataset-in-japan)  
-### Total population
-[covid19 global forecasting: locations population by Dmitry A. Grechka](https://www.kaggle.com/dgrechka/covid19-global-forecasting-locations-population)  
+With this Python package we can apply epidemic models to COVID-19 data. Epidemic models include simple SIR and SIR-F model. SIR-F is a customized SIR-derived ODE model. To evaluate the effect of measures, parameter estimation of SIR-F will be applied to subsets of time series data in each country. Parameter change points will be determined by S-R trend analysis. The details are explained in "Method" part of [COVID-19 data with SIR model](https://www.kaggle.com/lisphilar/covid-19-data-with-sir-model).
 
+## Functionalities
+- Data cleaning
+    - Epidemic data: raw data must include date, country, (province), the number of confirmed/fatal/recovered cases
+    - Population data: raw data must include country, (province), values of population
+- Data visualization with Matplotlib
+- S-R Trend analysis with Optuna and scipy.optimize.curve_fit
+- Numerical simulation of ODE models with scipy.integrate.solve_ivp
+- Description of ODE models
+    - Basic class of ODE models
+    - SIR, SIR-D, SIR-F, SIR-FV and SEWIR-F model
+- Parameter Estimation of ODE models with Optuna and numerical simulation
+- Predict the number of cases with user-defined parameter values
+
+## Inspiration
+- Monitor the spread of COVID-19
+- Keep track parameter values/reproductive number in each country/province
+- Find the relationship of reproductive number and measures taken in each country/province
+
+## Trying now
+The author is trying to add the following functionalities.
+- Speed-up S-R trend analysis and hyperparameter estimation of ODE models
+- Keep track parameter values/reproductive number of all country with a simple code
+- Find relationship of reproductive number and measures automatically
+
+If you have ideas or need new functinalities, please join this project.
+Any suggestions (Github issues, pull request, comment on Kaggle notebook) are always welcomed.
 
 ## Installation
 When you use this package in Kaggle notebook (need to turn on Internet option in notebook settings) or local environment with Pip,
@@ -31,7 +47,21 @@ git clone https://github.com/lisphilar/covid19-sir.git
 pipenv install --dev
 ```
 
+## Recomended datasets
+The datasets can be download using Kaggle API key and Kaggle package. Please read [How to Use Kaggle: Public API](https://www.kaggle.com/docs/api) and Bash code `input.sh` in the top directory of this repository.
+
+### The number of cases
+Primary source: [COVID-19 Data Repository by CSSE at Johns Hopkins University](https://github.com/CSSEGISandData/COVID-19)  
+Secondary source: [Novel Corona Virus 2019 Dataset by SRK](https://www.kaggle.com/sudalairajkumar/novel-corona-virus-2019-dataset)  
+### The number of cases in Japan
+Primary source: [Ministry of Health, Labour and Welefare HP (in English)](https://www.mhlw.go.jp/stf/seisakunitsuite/bunya/newpage_00032.html)  
+Secondary source: [Secondary source: COVID-19 dataset in Japan by Lisphilar](https://www.kaggle.com/lisphilar/covid19-dataset-in-japan)  
+### Total population
+[covid19 global forecasting: locations population by Dmitry A. Grechka](https://www.kaggle.com/dgrechka/covid19-global-forecasting-locations-population)  
+
+
 ## Quick usage
+
 ### Preparation
 ```Python
 import covsirphy as cs

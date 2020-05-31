@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-import pandas as pd
+from dask import dataframe as dd
 from covsirphy.cleaning.word import Word
 
 
@@ -14,7 +14,7 @@ class CleaningBase(Word):
         """
         @filename <str>: CSV filename of the dataset
         """
-        self._raw = pd.read_csv(filename)
+        self._raw = dd.read_csv(filename).compute()
         self._cleaned_df = self.cleaning()
 
     @property
