@@ -42,9 +42,9 @@ class ChangeFinder(Word):
         self.country = country
         self.province = province
         if province is None:
-            self.name = country
+            self.area = country
         else:
-            self.name = f"{country}{self.SEP}{province}"
+            self.area = f"{country}{self.SEP}{province}"
         self.dates = self.get_dates(clean_df, population, country, province)
         self.pop_dict = self._read_population_data(
             self.dates, population, popualtion_change_dict
@@ -296,10 +296,10 @@ class ChangeFinder(Word):
             :, comp_df.columns.str.endswith(self.P)
         ].columns.tolist()
         if len(pred_cols) == 1:
-            title = f"{self.name}: S-R trend without change points"
+            title = f"{self.area}: S-R trend without change points"
         else:
             change_str = ", ".join(self.change_dates)
-            title = f"{self.name}: S-R trend changed on {change_str}"
+            title = f"{self.area}: S-R trend changed on {change_str}"
         Trend.show_with_many(
             result_df=comp_df,
             predicted_cols=pred_cols,

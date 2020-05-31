@@ -33,8 +33,8 @@ If you have ideas or need new functinalities, please join this project.
 Any suggestions (Github issues, pull request, comment on Kaggle notebook) are always welcomed.
 
 ## Need discussion
-- How to deal with linelist of case reports
-- How to deal with mobility data
+- Analysis with linelist of case reports
+- Analysis with mobility data
 
 ## Installation
 When you use this package in Kaggle notebook (need to turn on Internet option in notebook settings) or local environment with Pip,
@@ -143,20 +143,24 @@ ita_scenario.param_history(targets=["rho", "sigma"])
 #### Prediction of the number of cases
 we can add some future phases.
 ```Python
-# if needed, we clear the registered future phases
-ita_scenario.clear()
-# Add future phases one by one
-ita_scenario.add_phase(end_date="01Aug2020")
-# We can change parameter values
-sigma_4th = ita_scenario.get("sigma", phase="4th")
+# if needed, clear the registered future phases
+ita_scenario.clear(name="Main")
+# Add future phase to main scenario
+ita_scenario.add_phase(name="Main", end_date="01Aug2020")
+# Get parameter value
+sigma_4th = ita_scenario.get("sigma", name="Main", phase="4th")
+# Add future phase with chainged parameter value to new scenario
 sigma_6th = sigma_4th * 2
-ita_scenario.add_phase(end_date="31Dec2020", sigma=sigma_6th)
-ita_scenario.add_phase(days=30)
+ita_scenario.add_phase(end_date="31Dec2020", name="Medicine", sigma=sigma_6th)
+ita_scenario.add_phase(days=30, name="Medicine")
 print(ita_scenario.summary())
 ```
 Then, we can predict the number of cases and get a figure.
 ```Python
+# Prediction and show figure
 pred_df = ita_scenario.predict()
+# Describe representatibe values
+print(ita_scenario.describe())
 ```
 
 ## Citation

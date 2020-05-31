@@ -37,9 +37,9 @@ class Trend(Word):
         """
         self.population = population
         if province is None:
-            self.name = country
+            self.area = country
         else:
-            self.name = f"{country}{self.SEP}{province}"
+            self.area = f"{country}{self.SEP}{province}"
         sr_data = SRData(
             clean_df, country=country, province=province
         )
@@ -140,7 +140,7 @@ class Trend(Word):
         """
         df = self.result()
         df["Predicted"] = df[f"{self.S}{self.P}"]
-        title = f"{self.name}: S-R trend from {self.start_date} to {self.end_date}"
+        title = f"{self.area}: S-R trend from {self.start_date} to {self.end_date}"
         self.show_with_many(
             result_df=df, predicted_cols=["Predicted"],
             title=title,

@@ -107,11 +107,16 @@ class Population(CleaningBase):
         @province <str>: province name
         @return <int>: population in the place
         """
-        if province is None:
-            pop_dict = self.to_dict(country_level=True)
-            return pop_dict[country]
-        pop_dict = self.to_dict(country_level=False)
-        return pop_dict[f"{country}{self.SEP}{province}"]
+        try:
+            if province is None:
+                pop_dict = self.to_dict(country_level=True)
+                return pop_dict[country]
+            pop_dict = self.to_dict(country_level=False)
+            return pop_dict[f"{country}{self.SEP}{province}"]
+        except KeyError:
+            raise KeyError(
+                f"Population data of ({country}, {province}) is not registered."
+            )
 
     def update(self, value, country, province="-"):
         """

@@ -30,7 +30,8 @@ class Word(object):
     TAU = "tau"
     COUNTRY = "Country"
     PROVINCE = "Province"
-    COLUMNS = [DATE, COUNTRY, PROVINCE, C, CI, F, R]
+    STR_COLUMNS = [DATE, COUNTRY, PROVINCE]
+    COLUMNS = [*STR_COLUMNS, C, CI, F, R]
     NLOC_COLUMNS = [DATE, C, CI, F, R]
     VALUE_COLUMNS = [C, CI, F, R]
     FIG_COLUMNS = [CI, F, R, FR, V, E, W]
@@ -56,6 +57,10 @@ class Word(object):
     INITIAL = "Initial"
     ODE = "ODE"
     RT = "Rt"
+    # Scenario analysis
+    PHASE = "Phase"
+    SERIES = "Scenario"
+    MAIN = "Main"
     # Flag
     UNKNOWN = "-"
 
@@ -92,3 +97,16 @@ class Word(object):
         """
         obj = datetime.strptime(date_str, cls.DATE_FORMAT)
         return obj
+
+    @staticmethod
+    def flatten(nested_list, unique=True):
+        """
+        Flatten the nested list.
+        @nested_list <list[list[object]]>: nested list
+        @unique <bool>: if True, only unique values will remain
+        @return <list[object]>
+        """
+        flattened = sum(nested_list, list())
+        if unique:
+            return list(set(flattened))
+        return flattened

@@ -40,14 +40,16 @@ def main():
     ita_scenario.estimate_accuracy(
         phase="1st", filename=output_dir.joinpath("ita_estimate_accuracy_1st.png")
     )
-    # Add future phase
-    # ita_scenario.clear()
-    ita_scenario.add_phase(end_date="01Aug2020")
+    # Add future phase to main scenario
+    ita_scenario.add_phase(name="Main", end_date="01Aug2020")
+    ita_scenario.add_phase(name="Main", end_date="31Dec2020")
+    # Add future phase to alternative scenario
     sigma_4th = ita_scenario.get("sigma", phase="4th")
     sigma_6th = sigma_4th * 2
-    ita_scenario.add_phase(end_date="31Dec2020", sigma=sigma_6th)
+    ita_scenario.add_phase(name="New medicines", end_date="31Dec2020", sigma=sigma_6th)
     # Prediction of the number of cases
     pred_df = ita_scenario.predict(
+        name="Main",
         filename=output_dir.joinpath("ita_predicted.png")
     )
     pred_df.to_csv(output_dir.joinpath("ita_predicted.csv"), index=False)
@@ -56,13 +58,15 @@ def main():
     summary_df.to_csv(output_dir.joinpath("ita_summary.csv"), index=True)
     # Parameter history
     ita_scenario.param_history(
-        targets=["Rt"], divide_by_first=False, bix_plot=False,
+        targets=["Rt"], name="Main", divide_by_first=False, bix_plot=False,
         filename=output_dir.joinpath("ita_param_history_rt.png")
     )
     ita_scenario.param_history(
-        targets=["rho", "sigma"], divide_by_first=True,
+        targets=["rho", "sigma"], name="New medicines", divide_by_first=True,
         filename=output_dir.joinpath("ita_param_history_rho_sigma.png")
     )
+    desc_df = ita_scenario.describe()
+    desc_df.to_csv(output_dir.joinpath("ita_description.csv"), index=True)
 
 
 if __name__ == "__main__":
