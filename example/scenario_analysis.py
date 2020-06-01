@@ -50,11 +50,11 @@ def main():
     ita_scenario.add_phase(name="New medicines", end_date="31Dec2020", sigma=sigma_6th)
     ita_scenario.add_phase(name="New medicines", days=1000)
     # Prediction of the number of cases
-    pred_df = ita_scenario.predict(
+    sim_df = ita_scenario.predict(
         name="Main",
-        filename=output_dir.joinpath("ita_predicted.png")
+        filename=output_dir.joinpath("ita_simulate.png")
     )
-    pred_df.to_csv(output_dir.joinpath("ita_predicted.csv"), index=False)
+    sim_df.to_csv(output_dir.joinpath("ita_simulate.csv"), index=False)
     # Save summary as a CSV file
     summary_df = ita_scenario.summary()
     summary_df.to_csv(output_dir.joinpath("ita_summary.csv"), index=True)

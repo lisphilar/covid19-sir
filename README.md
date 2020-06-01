@@ -118,7 +118,7 @@ ita_scenario.trend()
 ```
 As an example, set the number of change points as 4.
 ```Python
-ita_scenario.trend(n_points=4, set_phase=True)
+ita_scenario.trend(n_points=4, set_phases=True)
 ```
 Start/end date of the four phase were automatically determined. Let's see.
 ```Python
@@ -158,7 +158,7 @@ print(ita_scenario.summary())
 Then, we can predict the number of cases and get a figure.
 ```Python
 # Prediction and show figure
-pred_df = ita_scenario.predict(name="Main")
+sim_df = ita_scenario.simulate(name="Main")
 # Describe representatibe values
 print(ita_scenario.describe())
 ```

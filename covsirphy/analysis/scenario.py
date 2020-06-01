@@ -5,6 +5,7 @@ import copy
 from datetime import timedelta
 from inspect import signature
 import math
+import warnings
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
@@ -366,9 +367,22 @@ class Scenario(Word):
             )
         estimator.accuracy(**kwargs)
 
-    def predict(self, name="Main", y0_dict=None, show_figure=True, filename=None):
+    def predict(self, **kwargs):
         """
-        Predict the number of cases.
+        Old method. Please use Scenario.simulate().
+        @kwargs: keyword arguments of Scenario.simulate()
+        @return <pd.DataFrame>
+        """
+        warnings.warn(
+            "Plese use Scenario simulate() rather than Scenario.predict()",
+            DeprecationWarning,
+            stacklevel=2
+        )
+        return self.simulate(**kwargs)
+
+    def simulate(self, name="Main", y0_dict=None, show_figure=True, filename=None):
+        """
+        Simulate ODE models with setted parameter values.
         @name <str>: phase series name
             - if 'Main', main PhaseSeries will be used
         @y0_dict <doct[str]=float>:
