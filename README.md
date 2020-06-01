@@ -1,7 +1,7 @@
-# Covsirphy: COVID-19 data with SIR model [![GitHub license](https://img.shields.io/github/license/lisphilar/covid19-sir)](https://github.com/lisphilar/covid19-sir/blob/master/LICENSE.md)[![Python version](https://img.shields.io/badge/Python-3.7|3.8-green.svg)](https://www.python.org/)
+# CovsirPhy: COVID-19 data with SIR model [![GitHub license](https://img.shields.io/github/license/lisphilar/covid19-sir)](https://github.com/lisphilar/covid19-sir/blob/master/LICENSE.md)[![Python version](https://img.shields.io/badge/Python-3.7|3.8-green.svg)](https://www.python.org/)
 
 ## Introduction
-This is a package for COVID-19 (Coronavirus disease 2019) data analysis with SIR-derived models. Please refer to [COVID-19 data with SIR model](https://www.kaggle.com/lisphilar/covid-19-data-with-sir-model) notebook in Kaggle to understand the methods of analysis.
+CovsirPhy is a package for COVID-19 (Coronavirus disease 2019) data analysis with SIR-derived models. Please refer to [COVID-19 data with SIR model](https://www.kaggle.com/lisphilar/covid-19-data-with-sir-model) notebook in Kaggle to understand the methods of analysis.
 
 With this Python package we can apply epidemic models to COVID-19 data. Epidemic models include simple SIR and SIR-F model. SIR-F is a customized SIR-derived ODE model. To evaluate the effect of measures, parameter estimation of SIR-F will be applied to subsets of time series data in each country. Parameter change points will be determined by S-R trend analysis. The details are explained in "Method" part of [COVID-19 data with SIR model](https://www.kaggle.com/lisphilar/covid-19-data-with-sir-model).
 
@@ -158,7 +158,7 @@ print(ita_scenario.summary())
 Then, we can predict the number of cases and get a figure.
 ```Python
 # Prediction and show figure
-pred_df = ita_scenario.predict()
+pred_df = ita_scenario.predict(name="Main")
 # Describe representatibe values
 print(ita_scenario.describe())
 ```
@@ -166,4 +166,4 @@ print(ita_scenario.describe())
 ## Citation
 Lisphilar, 2020, Kaggle notebook, COVID-19 data with SIR model, https://www.kaggle.com/lisphilar/covid-19-data-with-sir-model
 
-Lisphilar, 2020, GitHub repository, Covsirphy, Python package for COVID-19 data with SIR model, https://github.com/lisphilar/covid19-sir
+CovsirPhy development team, 2020, GitHub repository, CovsirPhy, Python package for COVID-19 data with SIR model, https://github.com/lisphilar/covid19-sir
