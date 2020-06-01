@@ -1,9 +1,9 @@
 # CovsirPhy: COVID-19 data with SIR model [![GitHub license](https://img.shields.io/github/license/lisphilar/covid19-sir)](https://github.com/lisphilar/covid19-sir/blob/master/LICENSE.md)[![Python version](https://img.shields.io/badge/Python-3.7|3.8-green.svg)](https://www.python.org/)
 
 ## Introduction
-CovsirPhy is a package for COVID-19 (Coronavirus disease 2019) data analysis with SIR-derived models. Please refer to [COVID-19 data with SIR model](https://www.kaggle.com/lisphilar/covid-19-data-with-sir-model) notebook in Kaggle to understand the methods of analysis.
+CovsirPhy is a Python package for COVID-19 (Coronavirus disease 2019) data analysis with SIR-derived models. Please refer to "Method" part of [COVID-19 data with SIR model](https://www.kaggle.com/lisphilar/covid-19-data-with-sir-model) notebook in Kaggle to understand the methods of analysis.
 
-With this Python package we can apply epidemic models to COVID-19 data. Epidemic models include simple SIR and SIR-F model. SIR-F is a customized SIR-derived ODE model. To evaluate the effect of measures, parameter estimation of SIR-F will be applied to subsets of time series data in each country. Parameter change points will be determined by S-R trend analysis. The details are explained in "Method" part of [COVID-19 data with SIR model](https://www.kaggle.com/lisphilar/covid-19-data-with-sir-model).
+With CovsirPhy, we can apply epidemic models to COVID-19 data. Epidemic models include simple SIR and SIR-F model. SIR-F is a customized SIR-derived ODE model. To evaluate the effect of measures, parameter estimation of SIR-F will be applied to subsets of time series data in each country. Parameter change points will be determined by S-R trend analysis.
 
 ## Functionalities
 - Data cleaning
@@ -16,7 +16,7 @@ With this Python package we can apply epidemic models to COVID-19 data. Epidemic
     - Basic class of ODE models
     - SIR, SIR-D, SIR-F, SIR-FV and SEWIR-F model
 - Parameter Estimation of ODE models with Optuna and numerical simulation
-- Predict the number of cases with user-defined parameter values
+- Simulate the number of cases with user-defined parameter values
 
 ## Inspiration
 - Monitor the spread of COVID-19
@@ -52,7 +52,7 @@ pipenv install --dev
 ```
 
 ## Recomended datasets
-The datasets can be download using Kaggle API key and Kaggle package. Please read [How to Use Kaggle: Public API](https://www.kaggle.com/docs/api) and Bash code `input.sh` in the top directory of this repository.
+We can download the following datasets using Kaggle API key and Kaggle package. Please read [How to Use Kaggle: Public API](https://www.kaggle.com/docs/api) and Bash code `input.sh` in the top directory of this repository.
 
 ### The number of cases
 Primary source: [COVID-19 Data Repository by CSSE at Johns Hopkins University](https://github.com/CSSEGISandData/COVID-19)  
@@ -94,7 +94,7 @@ ncov_df = jhu_data.cleaned()
 ```
 Perform data cleaning of population dataset.
 ```Python
-# With CSV filepath of population dataset
+# Read population dataset
 pop_data = cs.Population("input/locations_population.csv")
 # We can add a new record
 pop_data.update(country="Example", province="-", value=1_000_000)
@@ -112,7 +112,7 @@ See the records as a figure.
 ita_record_df = ita_scenario.records()
 ```
 #### S-R trend analysis
-Show S-R trend and determine the number of change points.
+Show S-R trend to determine the number of change points.
 ```Python
 ita_scenario.trend()
 ```
@@ -159,7 +159,7 @@ Then, we can predict the number of cases and get a figure.
 ```Python
 # Prediction and show figure
 sim_df = ita_scenario.simulate(name="Main")
-# Describe representatibe values
+# Describe representative values
 print(ita_scenario.describe())
 ```
 
