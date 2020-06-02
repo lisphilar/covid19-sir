@@ -26,7 +26,7 @@ With CovsirPhy, we can apply epidemic models to COVID-19 data. Epidemic models i
 ## Trying now
 The author is trying to add the following functionalities.
 - Speed-up S-R trend analysis and hyperparameter estimation of ODE models
-- Keep track parameter values/reproductive number of all country with a simple code
+- Keep track parameter values/reproductive number of all countries with a simple code
 - Find relationship of reproductive number and measures automatically
 
 If you have ideas or need new functinalities, please join this project.
