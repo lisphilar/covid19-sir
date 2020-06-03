@@ -19,13 +19,12 @@ class SIR(ModelBase):
         self.sigma = sigma
 
     def __call__(self, t, X):
-        # x, y, z = [X[i] for i in range(len(self.VARIABLES))]
-        # dxdt = - self.rho * x * y
+        x, y, z = X
+        y = max(y, 0)
+        dxdt = - self.rho * x * y
         # dydt = self.rho * x * y - self.sigma * y
-        # dzdt = self.sigma * y
-        dxdt = - self.rho * X[0] * X[1]
-        dydt = self.rho * X[0] * X[1] - self.sigma * X[1]
-        dzdt = self.sigma * X[1]
+        dzdt = self.sigma * y
+        dydt = 0 - min(dxdt + dzdt, y)
         return np.array([dxdt, dydt, dzdt])
 
     @classmethod

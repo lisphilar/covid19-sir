@@ -116,6 +116,8 @@ class ODESimulator(Word):
         t_df = pd.Series(data=sol["t"], name="t")
         y_df = pd.DataFrame(data=sol["y"].T.copy(), columns=variables)
         sim_df = pd.concat([t_df, y_df], axis=1)
+        # y in non-dimesional model must be over 0
+        sim_df.loc[sim_df["y"] < 0, "y"] = 0
         return sim_df
 
     def run(self):

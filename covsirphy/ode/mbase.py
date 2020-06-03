@@ -17,6 +17,12 @@ class ModelBase(Word):
     # Variables that increases monotonically
     VARS_INCLEASE = ["x"]
 
+    def __init__(self):
+        pass
+
+    def __call__(self, t, X):
+        return np.array(list())
+
     @classmethod
     def param(cls, train_df_divided=None, q_range=None):
         """
