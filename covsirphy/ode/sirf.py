@@ -12,6 +12,7 @@ class SIRF(ModelBase):
         "alpha1 [-]", "1/alpha2 [day]", "1/beta [day]", "1/gamma [day]"
     ]
     VARIABLES = ["x", "y", "z", "w"]
+
     PRIORITIES = np.array([1, 10, 10, 2])
     VARS_INCLEASE = ["z", "w"]
 
@@ -23,17 +24,14 @@ class SIRF(ModelBase):
         self.sigma = sigma
 
     def __call__(self, t, X):
-        # x, y, z, w = [X[i] for i in range(len(self.VARIABLES))]
-        # dxdt = - self.rho * x * y
+        x, y, z, w = X
+        y = max(y, 0)
+        dxdt = - self.rho * x * y
         # dydt = self.rho * (1 - self.theta) * x * y - (self.sigma + self.kappa) * y
-        # dzdt = self.sigma * y
-        # dwdt = self.rho * self.theta * x * y + self.kappa * y
-        dxdt = - self.rho * X[0] * X[1]
-        dydt = self.rho * (1 - self.theta) * \
-            X[0] * X[1] - (self.sigma + self.kappa) * X[1]
-        dzdt = self.sigma * X[1]
-        dwdt = self.rho * self.theta * X[0] * X[1] + self.kappa * X[1]
-        return np.array([dxdt, dydt, dzdt, dwdt])
+        dzdt = self.sigma * y
+        dwdt = self.rho * self.theta * x * y + self.kappa * y
+        dydt = 0 - min(dxdt + dzdt + dwdt, y)
+        return np.array([dxdt, dydt, dzdt, dwdt], dtype=np.float64)
 
     @classmethod
     def param(cls, train_df_divided=None, q_range=None):

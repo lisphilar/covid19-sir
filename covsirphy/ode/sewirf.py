@@ -27,20 +27,16 @@ class SEWIRF(ModelBase):
         self.sigma = sigma
 
     def __call__(self, t, X):
-        # x1, x2, x3, y, z, w = [X[i] for i in range(len(self.VARIABLES))]
-        # dx1dt = - self.rho1 * x1 * (x3 + y)
-        # dx2dt = self.rho1 * x1 * (x3 + y) - self.rho2 * x2
-        # dx3dt = self.rho2 * x2 - self.rho3 * x3
-        # dydt = self.rho3 * (1 - self.theta) * x3 - (self.sigma + self.kappa) * y
-        # dzdt = self.sigma * y
-        # dwdt = self.rho3 * self.theta * x3 + self.kappa * y
-        dx1dt = - self.rho1 * X[0] * (X[2] + X[3])
-        dx2dt = self.rho1 * X[0] * (X[2] + X[3]) - self.rho2 * X[1]
-        dx3dt = self.rho2 * X[1] - self.rho3 * X[2]
-        dydt = self.rho3 * (1 - self.theta) * \
-            X[2] - (self.sigma + self.kappa) * X[3]
-        dzdt = self.sigma * X[3]
-        dwdt = self.rho3 * self.theta * X[2] + self.kappa * X[3]
+        x1, x2, x3, y, z, w = X
+        y = max(y, 0)
+        dx1dt = - self.rho1 * x1 * (x3 + y)
+        dx2dt = self.rho1 * x1 * (x3 + y) - self.rho2 * x2
+        dx3dt = self.rho2 * x2 - self.rho3 * x3
+        dydt = self.rho3 * (1 - self.theta) * x3 - (self.sigma + self.kappa) * y
+        dzdt = self.sigma * y
+        dwdt = self.rho3 * self.theta * x3 + self.kappa * y
+        if y + dydt < 0:
+            dydt = 0 - y
         return np.array([dx1dt, dx2dt, dx3dt, dydt, dzdt, dwdt])
 
     @classmethod
