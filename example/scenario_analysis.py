@@ -50,7 +50,7 @@ def main():
     ita_scenario.add_phase(name="New medicines", end_date="31Dec2020", sigma=sigma_6th)
     ita_scenario.add_phase(name="New medicines", days=1000)
     # Prediction of the number of cases
-    sim_df = ita_scenario.predict(
+    sim_df = ita_scenario.simulate(
         name="Main",
         filename=output_dir.joinpath("ita_simulate.png")
     )
