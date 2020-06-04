@@ -67,6 +67,24 @@ class Estimator(Optimizer):
         # step_n will be defined in divide_minutes()
         self.step_n = None
 
+    def _init_study(self):
+        """
+        Initialize Optuna study.
+        """
+        self.study = optuna.create_study(direction="minimize")
+
+    def _add_trial(self, n_jobs=-1, timeout_iteration=10):
+        """
+        Run optimization.
+        @n_jobs <int>: the number of parallel jobs or -1 (CPU count)
+        @timeout_iteration <int>: time-out of one iteration
+        """
+        self.study.optimize(
+            lambda x: self.objective(x),
+            n_jobs=n_jobs,
+            timeout=timeout_iteration
+        )
+
     def run(self, timeout=180, n_jobs=-1,
             timeout_iteration=10, allowance=(0.8, 1.2)):
         """
@@ -84,16 +102,12 @@ class Estimator(Optimizer):
         @return None
         """
         if self.study is None:
-            self.study = optuna.create_study(direction="minimize")
+            self._init_study()
         print("\tRunning optimization...")
         start_time = datetime.now()
         while True:
             # Perform optimization
-            self.study.optimize(
-                lambda x: self.objective(x),
-                n_jobs=n_jobs,
-                timeout=timeout_iteration
-            )
+            self._add_trial(n_jobs=n_jobs, timeout_iteration=timeout_iteration)
             end_time = datetime.now()
             self.run_time = (end_time - start_time).total_seconds()
             self.total_trials = len(self.study.trials)
@@ -119,6 +133,8 @@ class Estimator(Optimizer):
                 for v in self.model.VARS_INCLEASE
             ]
             if not all(mono_ok_list):
+                # Initialize the study
+                self._init_study()
                 continue
             # Check the values when argmax(actual)
             values_nest = [
