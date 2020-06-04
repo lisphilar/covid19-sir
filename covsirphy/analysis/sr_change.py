@@ -9,6 +9,7 @@ from covsirphy.analysis.phase_series import PhaseSeries
 from covsirphy.cleaning.word import Word
 from covsirphy.phase.trend import Trend
 from covsirphy.phase.sr_data import SRData
+from covsirphy.util.stopwatch import StopWatch
 
 
 class ChangeFinder(Word):
@@ -103,6 +104,24 @@ class ChangeFinder(Word):
             pop_dict[date] = population_now
         return pop_dict
 
+    def _init_study(self):
+        """
+        Initialize Optuna study.
+        """
+        self.study = optuna.create_study(direction="minimize")
+
+    def add_trial(self, n_trials_iteration=10, n_jobs=-1):
+        """
+        Run trial.
+        @n_trials_iteration <int>: the number of trials in one iteration
+        @n_jobs <int>: the number of parallel jobs or -1 (CPU count)
+        """
+        self.study.optimize(
+            lambda x: self.objective(x),
+            n_trials=n_trials_iteration,
+            n_jobs=n_jobs
+        )
+
     def run(self, n_points, min_duration=7, allowance=3,
             timeout=60, n_trials_iteration=10, n_jobs=-1):
         """
@@ -120,7 +139,7 @@ class ChangeFinder(Word):
         """
         self.n_points = n_points
         self.min_duration = min_duration
-        start_time = datetime.now()
+        stopwatch = StopWatch()
         if min_duration <= 2:
             raise ValueError("@min_duration must be over 2.")
         if n_points <= 0:
@@ -128,16 +147,10 @@ class ChangeFinder(Word):
             self.total_trials = 0
             return self
         if self.study is None:
-            self.study = optuna.create_study(
-                direction="minimize"
-            )
+            self._init_study()
         print("Finding change points of S-R trend...")
         while True:
-            self.study.optimize(
-                lambda x: self.objective(x),
-                n_trials=n_trials_iteration,
-                n_jobs=n_jobs
-            )
+            self.add_trial(n_trials_iteration, n_jobs)
             # Check whether the change points are fixed (with allowance) or not
             allow_obj = timedelta(days=allowance)
             fixed_ok = [
@@ -146,19 +159,18 @@ class ChangeFinder(Word):
                 in zip(self.change_dates, self.change_dates_previous)
             ]
             # Calculate cummurative run-time
-            end_time = datetime.now()
-            self.run_time = (end_time - start_time).total_seconds()
-            minutes, seconds = divmod(int(self.run_time), 60)
+            self.run_time = stopwatch.stop()
             self.total_trials = len(self.study.trials)
             # If fixed or time-out, break
             if (all(fixed_ok) and self.change_dates_previous) or (self.run_time > timeout):
                 print(
-                    f"\rFinished {self.total_trials} trials in {minutes} min {seconds} sec.\n",
+                    f"\rFinished {self.total_trials} trials in {stopwatch.show()}.\n",
                     end=str()
                 )
                 break
+            stopwatch.stop()
             print(
-                f"\rPerformed {self.total_trials} trials in {minutes} min {seconds} sec.",
+                f"\rPerformed {self.total_trials} trials in {stopwatch.show()}.",
                 end=str()
             )
             self.change_dates_previous = self.change_dates[:]

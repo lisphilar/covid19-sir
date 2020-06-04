@@ -1,7 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-from datetime import datetime
 import numpy as np
 import optuna
 import pandas as pd
@@ -9,6 +8,7 @@ from covsirphy.analysis.simulator import ODESimulator
 from covsirphy.ode.mbase import ModelBase
 from covsirphy.phase.nondim import NondimData
 from covsirphy.phase.optimize import Optimizer
+from covsirphy.util.stopwatch import StopWatch
 
 
 class Estimator(Optimizer):
@@ -67,15 +67,9 @@ class Estimator(Optimizer):
         # step_n will be defined in divide_minutes()
         self.step_n = None
 
-    def _init_study(self):
-        """
-        Initialize Optuna study.
-        """
-        self.study = optuna.create_study(direction="minimize")
-
     def _add_trial(self, n_jobs=-1, timeout_iteration=10):
         """
-        Run optimization.
+        Run trial.
         @n_jobs <int>: the number of parallel jobs or -1 (CPU count)
         @timeout_iteration <int>: time-out of one iteration
         """
@@ -104,20 +98,17 @@ class Estimator(Optimizer):
         if self.study is None:
             self._init_study()
         print("\tRunning optimization...")
-        start_time = datetime.now()
+        stopwatch = StopWatch()
         while True:
             # Perform optimization
             self._add_trial(n_jobs=n_jobs, timeout_iteration=timeout_iteration)
-            end_time = datetime.now()
-            self.run_time = (end_time - start_time).total_seconds()
+            self.run_time = stopwatch.stop()
             self.total_trials = len(self.study.trials)
-            # Show run-time
-            minutes, seconds = divmod(int(self.run_time), 60)
             # Time-out
             if self.run_time >= timeout:
                 break
             print(
-                f"\r\tPerformed {self.total_trials} trials in {minutes} min {seconds} sec.",
+                f"\r\tPerformed {self.total_trials} trials in {stopwatch.show()}.",
                 end=str()
             )
             # Create a table to compare observed/estimated values
@@ -151,9 +142,9 @@ class Estimator(Optimizer):
             if not all(last_ok_list):
                 continue
             break
-        minutes, seconds = divmod(int(self.run_time), 60)
+        stopwatch.stop()
         print(
-            f"\r\tFinished {self.total_trials} trials in {minutes} min {seconds} sec.\n",
+            f"\r\tFinished {self.total_trials} trials in {stopwatch.show()}.\n",
             end=str()
         )
         return None

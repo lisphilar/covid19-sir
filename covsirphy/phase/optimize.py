@@ -35,6 +35,12 @@ class Optimizer(Word):
         self.total_trials = 0
         self.run_time = 0
 
+    def _init_study(self):
+        """
+        Initialize Optuna study.
+        """
+        self.study = optuna.create_study(direction="minimize")
+
     def run(self, n_trials, timeout, n_jobs=-1):
         """
         Run optimization.

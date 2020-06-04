@@ -10,7 +10,7 @@ from covsirphy.cleaning import JHUData, CountryData
 from covsirphy.ode import ModelBase, SIR, SIRD, SIRF, SIRFV, SEWIRF
 from covsirphy.phase import PhaseData, NondimData, Estimator
 from covsirphy.phase import SRData, Trend
-from covsirphy.util import line_plot, jpn_map
+from covsirphy.util import line_plot, jpn_map, StopWatch
 
 
 __all__ = [
@@ -20,7 +20,7 @@ __all__ = [
     "JHUData", "CountryData",
     "ModelBase", "SIR", "SIRD", "SIRF", "SIRFV", "SEWIRF",
     "PhaseData", "NondimData", "Estimator", "SRData", "Trend",
-    "line_plot", "jpn_map",
+    "line_plot", "jpn_map", "StopWatch",
 ]
 
 # Check duplication
