@@ -4,7 +4,6 @@
 import copy
 from datetime import timedelta
 from inspect import signature
-import math
 import warnings
 import matplotlib.pyplot as plt
 import numpy as np
