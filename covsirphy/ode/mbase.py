@@ -36,7 +36,6 @@ class ModelBase(Word):
             @min <float>: min value
             @max <float>: max value
         """
-        # TODO: revise
         param_dict = dict()
         return param_dict
 

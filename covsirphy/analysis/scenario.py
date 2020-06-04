@@ -410,10 +410,12 @@ class Scenario(Word):
             self.country,
             province="-" if self.province is None else self.province
         )
+        start_dates = list()
         for phase in df.index:
             model_name = df.loc[phase, self.ODE]
             model = self.model_dict[model_name]
             start_obj = self.date_obj(df.loc[phase, self.START])
+            start_dates.append(start_obj)
             end_obj = self.date_obj(df.loc[phase, self.END])
             phase_seconds = (end_obj - start_obj).total_seconds() + 1
             step_n = round(phase_seconds / (60 * self.tau))
@@ -463,7 +465,8 @@ class Scenario(Word):
             fig_df[fig_cols],
             title=f"{self.area}: Predicted number of cases",
             filename=filename,
-            y_integer=True
+            y_integer=True,
+            v=start_dates[1:]
         )
         return dim_df
 

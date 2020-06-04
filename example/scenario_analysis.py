@@ -43,12 +43,12 @@ def main():
     # Add future phase to main scenario
     ita_scenario.add_phase(name="Main", end_date="01Aug2020")
     ita_scenario.add_phase(name="Main", end_date="31Dec2020")
-    ita_scenario.add_phase(name="Main", days=1000)
+    ita_scenario.add_phase(name="Main", days=300)
     # Add future phase to alternative scenario
     sigma_4th = ita_scenario.get("sigma", phase="4th")
     sigma_6th = sigma_4th * 2
     ita_scenario.add_phase(name="New medicines", end_date="31Dec2020", sigma=sigma_6th)
-    ita_scenario.add_phase(name="New medicines", days=1000)
+    ita_scenario.add_phase(name="New medicines", days=300)
     # Prediction of the number of cases
     sim_df = ita_scenario.simulate(
         name="Main",
