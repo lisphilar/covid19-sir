@@ -23,12 +23,13 @@ class Scenario(Word):
     Scenario analysis.
     """
 
-    def __init__(self, jhu_data, pop_data, country, province=None):
+    def __init__(self, jhu_data, pop_data, country, province=None, tau=1440):
         """
         @jhu_data <covsirphy.JHUData>: object of records
         @pop_data <covsirphy.Population>: Population object
         @country <str>: country name
         @province <str>: province name
+        @tau <int>: tau value
         """
         # Records
         if not isinstance(jhu_data, JHUData):
@@ -56,7 +57,7 @@ class Scenario(Word):
         self.first_date = df.index.min().strftime(self.DATE_FORMAT)
         self.last_date = df.index.max().strftime(self.DATE_FORMAT)
         # Init
-        self.tau = None
+        self.tau = tau
         # {model_name: model_class}
         self.model_dict = dict()
         # {scenario_name: PhaseSeries}
@@ -415,9 +416,8 @@ class Scenario(Word):
             model = self.model_dict[model_name]
             start_obj = self.date_obj(df.loc[phase, self.START])
             end_obj = self.date_obj(df.loc[phase, self.END])
-            # TODO: Something wrong woth step_n calculation
             phase_seconds = (end_obj - start_obj).total_seconds() + 1
-            step_n = math.ceil(phase_seconds / (60 * self.tau))
+            step_n = round(phase_seconds / (60 * self.tau))
             population = df.loc[phase, self.N]
             param_dict = df[model.PARAMETERS].to_dict(orient="index")[phase]
             if phase == self.num2str(1):
