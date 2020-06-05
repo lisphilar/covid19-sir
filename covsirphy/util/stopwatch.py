@@ -27,4 +27,4 @@ class StopWatch(object):
         @return <str>: eg. '1 min 30 sec'
         """
         minutes, seconds = divmod(int(self.elapsed), 60)
-        return f"{minutes} min {seconds}"
+        return f"{minutes} min {seconds} sec"
