@@ -126,6 +126,7 @@ class Estimator(Optimizer):
             if not all(mono_ok_list):
                 # Initialize the study
                 self._init_study()
+                stopwatch = StopWatch()
                 continue
             # Check the values when argmax(actual)
             values_nest = [
