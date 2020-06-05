@@ -271,6 +271,7 @@ class ChangeFinder(Word):
         phase_dict = phase_series.to_dict()
         # Curve fitting
         df_list = list()
+        vlines = list()
         for (phase, info) in phase_dict.items():
             start_date = info[self.START]
             end_date = info[self.END]
@@ -281,12 +282,14 @@ class ChangeFinder(Word):
             )
             trend.analyse()
             df = trend.result()
+            # Get min value for vline
+            vlines.append(df[self.R].min())
+            # Rename the columns
             phase = phase.replace("0th", self.INITIAL)
             df = df.rename({f"{self.S}{self.P}": f"{phase}{self.P}"}, axis=1)
             df = df.rename({f"{self.S}{self.A}": f"{phase}{self.A}"}, axis=1)
             df = df.rename({f"{self.R}": f"{phase}_{self.R}"}, axis=1)
             df_list.append(df)
-
         if self.n_points == 0:
             comp_df = pd.concat(df_list, axis=1)
         else:
@@ -316,7 +319,7 @@ class ChangeFinder(Word):
             result_df=comp_df,
             predicted_cols=pred_cols,
             title=title,
+            vlines=vlines[2:],
             filename=filename
         )
-        # TODO: show vertical lines
         return phase_series

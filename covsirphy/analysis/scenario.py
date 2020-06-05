@@ -449,7 +449,6 @@ class Scenario(Word):
         simulator.run()
         dim_df = simulator.dim(self.tau, df.loc[self.num2str(1), self.START])
         dim_df = dim_df.set_index(self.DATE).resample("D").mean()
-        # TODO: smoothing the values
         dim_df = dim_df.astype(np.int64)
         fig_df = dim_df.copy()
         dim_df[self.DATE] = dim_df.index.strftime(self.DATE_FORMAT)
@@ -460,7 +459,6 @@ class Scenario(Word):
         # Show figure
         fig_cols_set = set(fig_df.columns) & set(self.FIG_COLUMNS)
         fig_cols = [col for col in self.FIG_COLUMNS if col in fig_cols_set]
-        # TODO: add vertical lines to line-plot with tau and step_n
         line_plot(
             fig_df[fig_cols],
             title=f"{self.area}: Predicted number of cases",
