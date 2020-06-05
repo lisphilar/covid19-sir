@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*-
 
 from collections import Counter
+import sys
 import better_exceptions
 from covsirphy.analysis import ODESimulator, ChangeFinder
 from covsirphy.analysis import PhaseSeries, Scenario
@@ -30,13 +31,6 @@ if dup_list:
     raise Exception(f"Duplication was found in modules. {dup_str}")
 
 # Show excetions in better format if used from command line
-try:
-    environ = get_ipython().__class__.__name__
-    # True: IPythonShell, False: Notebook
-    is_terminal = (environ == "TerminalInteractiveShell")
-except NameError:
-    is_terminal = False
-
-if is_terminal:
+if not hasattr(sys, "ps1"):
     better_exceptions.MAX_LENGTH = None
     better_exceptions.hook()
