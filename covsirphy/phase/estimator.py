@@ -79,7 +79,7 @@ class Estimator(Optimizer):
             timeout=timeout_iteration
         )
 
-    def run(self, timeout=180, n_jobs=-1,
+    def run(self, timeout=180, n_jobs=-1, reset_n_max=3,
             timeout_iteration=10, allowance=(0.8, 1.2)):
         """
         Run optimization.
@@ -90,6 +90,8 @@ class Estimator(Optimizer):
                 when each actual value shows max value
         - @timeout <int>: time-out of run
         @n_jobs <int>: the number of parallel jobs or -1 (CPU count)
+        @reset_n_max <int>:
+            - if study was reseted @reset_n_max times, will not be reseted anymore
         @timeout_iteration <int>: time-out of one iteration
         @allowance <tuple(float, float)>:
             - the allowance of the predicted value
@@ -99,6 +101,7 @@ class Estimator(Optimizer):
             self._init_study()
         print("\tRunning optimization...")
         stopwatch = StopWatch()
+        reset_n = 0
         while True:
             # Perform optimization
             self._add_trial(n_jobs=n_jobs, timeout_iteration=timeout_iteration)
@@ -124,10 +127,12 @@ class Estimator(Optimizer):
                 for v in self.model.VARS_INCLEASE
             ]
             if not all(mono_ok_list):
-                # Initialize the study
-                self._init_study()
-                stopwatch = StopWatch()
-                continue
+                reset_n += 1
+                if reset_n <= reset_n_max:
+                    # Initialize the study
+                    self._init_study()
+                    stopwatch = StopWatch()
+                    continue
             # Check the values when argmax(actual)
             values_nest = [
                 comp_df.loc[
