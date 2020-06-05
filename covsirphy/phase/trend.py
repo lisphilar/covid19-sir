@@ -3,9 +3,12 @@
 
 from datetime import datetime
 import functools
+import sys
 import warnings
+import matplotlib
+if not hasattr(sys, "ps1"):
+    matplotlib.use("Agg")
 import matplotlib.pyplot as plt
-from matplotlib.ticker import ScalarFormatter
 import numpy as np
 from scipy.optimize import curve_fit, OptimizeWarning
 from covsirphy.cleaning.word import Word
@@ -164,8 +167,6 @@ class Trend(Word):
             - list of Recovered values to show vertical lines
         @filename <str>: filename of the figure, or None (show figure)
         """
-        if filename is not None:
-            plt.switch_backend("Agg")
         df = result_df.copy()
         if df is None:
             raise NameError("Must perform Trend().run() in advance.")
@@ -188,19 +189,21 @@ class Trend(Word):
         plt.xlim(0, None)
         # y-axis
         plt.ylabel(cls.S)
-        plt.yscale("log")
+        plt.yscale("log", basey=10)
+        # Delete y-labels of log-scale (minor) axis
+        plt.setp(plt.gca().get_yticklabels(minor=True), visible=False)
+        plt.gca().tick_params(left=False, which="minor")
+        # Set new y-labels of major axis
         ymin, ymax = plt.ylim()
         ydiff_scale = int(np.log10(ymax - ymin))
         yticks = np.linspace(
             round(ymin, - ydiff_scale),
             round(ymax, - ydiff_scale),
-            len(plt.yticks()[0])
+            5,
+            dtype=np.int64
         )
-        yticks
-        # TODO: Change the format of yticks to integers
-        # plt.yticks([v.round() for v in yticks])
-        # Offset in y axis
-        fmt = ScalarFormatter(useOffset=False)
+        plt.gca().set_yticks(yticks)
+        fmt = matplotlib.ticker.ScalarFormatter(useOffset=False)
         fmt.set_scientific(False)
         plt.gca().yaxis.set_major_formatter(fmt)
         # Title

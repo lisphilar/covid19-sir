@@ -4,7 +4,11 @@
 import copy
 from datetime import timedelta
 from inspect import signature
+import sys
 import warnings
+import matplotlib
+if not hasattr(sys, "ps1"):
+    matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
@@ -401,7 +405,7 @@ class Scenario(Word):
         # TODO: Refactoring, split this method
         name = self.MAIN if name == "Main" else name
         df = self.series_dict[name].summary()
-        # Future must be added in advance
+        # Future phases must be added in advance
         if self.FUTURE not in df[self.TENSE].unique():
             raise KeyError(
                 f"Future phases of {name} scenario must be registered by Scenario.add_phase() in advance."
@@ -503,8 +507,6 @@ class Scenario(Word):
         @kwargs: keword arguments of pd.DataFrame.plot or line_plot()
         @return <pd.DataFrame>
         """
-        if filename is not None:
-            plt.switch_backend("Agg")
         name = self.MAIN if name == "Main" else name
         if name not in self.series_dict.keys():
             raise KeyError(f"@name {name} scenario has not been registered.")

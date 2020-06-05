@@ -1,9 +1,11 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-import matplotlib.pyplot as plt
+import sys
 import matplotlib
-from matplotlib.ticker import ScalarFormatter
+if not hasattr(sys, "ps1"):
+    matplotlib.use("Agg")
+import matplotlib.pyplot as plt
 
 # plt.style.use("seaborn-ticks")
 plt.style.use("fast")
@@ -26,7 +28,9 @@ def line_plot(df, title, xlabel=None, ylabel="Cases",
     ax = df.plot()
     # Scale
     if math_scale:
-        ax.yaxis.set_major_formatter(ScalarFormatter(useMathText=True))
+        ax.yaxis.set_major_formatter(
+            matplotlib.ticker.ScalarFormatter(useMathText=True)
+        )
         ax.ticklabel_format(style="sci", axis="y", scilimits=(0, 0))
     if x_logscale:
         ax.set_xscale("log")
