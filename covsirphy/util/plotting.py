@@ -17,14 +17,39 @@ plt.rcParams["legend.frameon"] = False
 
 
 def line_plot(df, title, xlabel=None, ylabel="Cases",
-              h=None, v=None, xlim=(None, None), ylim=(0, None),
-              math_scale=True, x_logscale=False, y_logscale=False,
-              y_integer=False, show_legend=True,
-              bbox_to_anchor=(1.02, 0), bbox_loc="lower left", filename=None):
+              v=None, h=None,
+              xlim=(None, None), ylim=(0, None),
+              math_scale=True, x_logscale=False, y_logscale=False, y_integer=False,
+              show_legend=True, bbox_to_anchor=(1.02, 0), bbox_loc="lower left",
+              filename=None):
     """
     Show chlonological change of the data.
+    @df <pd.DataFrame>: data
+        - index: reseted index
+        - columns: field names
+        - values: data values
+    @title <str>: title of the figure
+    - labels:
+        @xlabel <str>: x-label
+        @ylabel <str>: y-label
+    - additional lines
+        @v <list[int/float]>: list of x valus of vertical lines or None
+        @h <list[int/float]>: list of y valus of horizontal lines or None
+    - limit of domain
+        @xlim <tuple(int/float, int/float)>: limit of x dimain
+        @ylim <tuple(int/float, int/float)>: limit of y dimain
+        - if None, the value will be automatically determined by Matplotlib
+    - scale of labels
+        @math_scale <bool>: whether use LaTEX or not
+        @x_logscale <bool>: whether use log-scale in x-axis or not
+        @y_logscale <bool>: whether use log-scale in y-axis or not
+        @y_integer <bool>: whether force to show the values as integer or not
+    - legend
+        @show_legend <bool>: whether show legend or not
+        @bbox_to_anchor <tuple(int/float, int/float)>: distance of legend and plot
+        @bbox_loc <str>: location of legend
+    @filename <str>: filename of the figure, or None (show figure)
     """
-    # TODO: add doc-string
     ax = df.plot()
     # Scale
     if math_scale:
