@@ -386,7 +386,7 @@ class Scenario(Word):
 
     def simulate(self, name="Main", y0_dict=None, show_figure=True, filename=None):
         """
-        Simulate ODE models with setted parameter values.
+        Simulate ODE models with setted parameter values and show it as a figure.
         @name <str>: phase series name
             - if 'Main', main PhaseSeries will be used
         @y0_dict <doct[str]=float>:
@@ -402,7 +402,6 @@ class Scenario(Word):
             - Province <str>: province/prefecture/state name
             - variables of the models <int>: Confirmed <int> etc.
         """
-        # TODO: Refactoring, split this method
         name = self.MAIN if name == "Main" else name
         df = self.series_dict[name].summary()
         # Future phases must be added in advance
@@ -410,16 +409,56 @@ class Scenario(Word):
             raise KeyError(
                 f"Future phases of {name} scenario must be registered by Scenario.add_phase() in advance."
             )
+        # Simulation
+        dim_df, start_objects = self._simulate(name=name, y0_dict=y0_dict)
+        dim_df = dim_df.set_index(self.DATE).resample("D").mean()
+        dim_df = dim_df.astype(np.int64)
+        fig_df = dim_df.copy()
+        dim_df[self.DATE] = dim_df.index.strftime(self.DATE_FORMAT)
+        dim_df = dim_df.reset_index(drop=True)
+        dim_df = dim_df.loc[:, [self.DATE, *dim_df.columns.tolist()[:-1]]]
+        # Return dataframe if figure is not needed
+        if not show_figure:
+            return dim_df
+        # Show figure
+        fig_cols_set = set(fig_df.columns) & set(self.FIG_COLUMNS)
+        fig_cols = [col for col in self.FIG_COLUMNS if col in fig_cols_set]
+        line_plot(
+            fig_df[fig_cols],
+            title=f"{self.area}: Predicted number of cases",
+            filename=filename,
+            y_integer=True,
+            v=start_objects[1:]
+        )
+        return dim_df
+
+    def _simulate(self, name, y0_dict):
+        """
+        Simulate ODE models with setted parameter values.
+        @name <str>: phase series name
+        @y0_dict <doct[str]=float>:
+            - dictionary of initial values or None
+            - if model will be changed in the later phase, must be specified
+        @return <tuple(pd.DataFrame, list[pd.TimeStamp])>:
+            - <pd.DataFrame>: output of ODESimulator.dim()
+                - index <int>: reseted index
+                - Date <pd.TimeStamp>: Observation date
+                - Country <str>: country/region name
+                - Province <str>: province/prefecture/state name
+                - variables of the models <int>: Confirmed <int> etc.
+            - <list[pd.TimeStamp]>: list of start dates
+        """
+        df = self.series_dict[name].summary()
         simulator = ODESimulator(
             self.country,
             province="-" if self.province is None else self.province
         )
-        start_dates = list()
+        start_objects = list()
         for phase in df.index:
             model_name = df.loc[phase, self.ODE]
             model = self.model_dict[model_name]
             start_obj = self.date_obj(df.loc[phase, self.START])
-            start_dates.append(start_obj)
+            start_objects.append(start_obj)
             end_obj = self.date_obj(df.loc[phase, self.END])
             phase_seconds = (end_obj - start_obj).total_seconds() + 1
             step_n = round(phase_seconds / (60 * self.tau))
@@ -452,25 +491,7 @@ class Scenario(Word):
             )
         simulator.run()
         dim_df = simulator.dim(self.tau, df.loc[self.num2str(1), self.START])
-        dim_df = dim_df.set_index(self.DATE).resample("D").mean()
-        dim_df = dim_df.astype(np.int64)
-        fig_df = dim_df.copy()
-        dim_df[self.DATE] = dim_df.index.strftime(self.DATE_FORMAT)
-        dim_df = dim_df.reset_index(drop=True)
-        dim_df = dim_df.loc[:, [self.DATE, *dim_df.columns.tolist()[:-1]]]
-        if not show_figure:
-            return dim_df
-        # Show figure
-        fig_cols_set = set(fig_df.columns) & set(self.FIG_COLUMNS)
-        fig_cols = [col for col in self.FIG_COLUMNS if col in fig_cols_set]
-        line_plot(
-            fig_df[fig_cols],
-            title=f"{self.area}: Predicted number of cases",
-            filename=filename,
-            y_integer=True,
-            v=start_dates[1:]
-        )
-        return dim_df
+        return dim_df, start_objects
 
     def get(self, param, name="Main", phase="last"):
         """
