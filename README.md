@@ -52,16 +52,27 @@ pipenv install --dev
 ```
 
 ## Recomended datasets
-We can download the following datasets using Kaggle API key and Kaggle package. Please read [How to Use Kaggle: Public API](https://www.kaggle.com/docs/api) and Bash code `input.sh` in the top directory of this repository.
+Datasets are not included in this repository, but we can download the following useful datasets from Kaggle and GitHub. Please read Bash code `input.sh` in the top directory of this repository.
 
-### The number of cases
+### Kaggle
+Kaggle API key and Kaggle package are necessary. Please read [How to Use Kaggle: Public API](https://www.kaggle.com/docs/api).
+
+#### The number of cases
 Primary source: [COVID-19 Data Repository by CSSE at Johns Hopkins University](https://github.com/CSSEGISandData/COVID-19)  
 Secondary source: [Novel Corona Virus 2019 Dataset by SRK](https://www.kaggle.com/sudalairajkumar/novel-corona-virus-2019-dataset)  
-### The number of cases in Japan
+#### The number of cases in Japan
 Primary source: [Ministry of Health, Labour and Welefare HP (in English)](https://www.mhlw.go.jp/stf/seisakunitsuite/bunya/newpage_00032.html)  
 Secondary source: [Secondary source: COVID-19 dataset in Japan by Lisphilar](https://www.kaggle.com/lisphilar/covid19-dataset-in-japan)  
-### Total population
+#### Total population
 [covid19 global forecasting: locations population by Dmitry A. Grechka](https://www.kaggle.com/dgrechka/covid19-global-forecasting-locations-population)  
+
+### GitHub
+`subversion` command (`sudo apt install subversion`) is necessary.
+
+#### Measures taken by each country and response scores
+[Thomas Hale, Sam Webster, Anna Petherick, Toby Phillips, and Beatriz Kira. (2020).  
+Oxford COVID-19 Government Response Tracker. Blavatnik School of Government.](https://github.com/OxCGRT/covid-policy-tracker)
+
 
 
 ## Quick usage
