@@ -51,8 +51,8 @@ git clone https://github.com/lisphilar/covid19-sir.git
 pipenv install --dev
 ```
 
-## Recomended datasets
-Datasets are not included in this repository, but we can download the following useful datasets from Kaggle and GitHub. Please read Bash code `input.sh` in the top directory of this repository.
+## Recommended datasets
+Datasets are not included in this repository, but we can download the following recommended datasets from Kaggle and GitHub. Please read Bash code `input.sh` in the top directory of this repository.
 
 ### Kaggle
 Kaggle API key and Kaggle package are necessary. Please read [How to Use Kaggle: Public API](https://www.kaggle.com/docs/api).
@@ -112,6 +112,15 @@ pop_data.update(country="Example", province="-", value=1_000_000)
 # Return dictionary
 pop_data.to_dict(country_level=True)
 ```
+Perform data cleaning of OxGCRT dataset.
+```Python
+# Read OxGCRT dataset
+oxcgrt_data = cs.OxCGRTData("input/oxcgrt/OxCGRT_latest.csv")
+oxcgrt_df = oxcgrt_data.cleaned()
+# Create a subset for a country with ISO3 country code
+oxcgrt_data.subset(iso3="JPN")
+```
+
 ### Scenario analysis
 As an example, use dataset in Italy.
 #### Check records

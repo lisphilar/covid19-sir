@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 from pathlib import Path
-from covsirphy import JHUData, CountryData
+import covsirphy as cs
 
 
 def main():
@@ -12,12 +12,12 @@ def main():
     output_dir.mkdir(exist_ok=True, parents=True)
     # Read JHU dataset
     jhu_file = "input/covid_19_data.csv"
-    jhu_data = JHUData(jhu_file)
+    jhu_data = cs.JHUData(jhu_file)
     ncov_df = jhu_data.cleaned()
     ncov_df.to_csv(output_dir.joinpath("jhu_cleaned.csv"), index=False)
-    # Read Japan datset
+    # Read Japan dataset
     jpn_file = "input/covid_jpn_total.csv"
-    jpn_data = CountryData(jpn_file, country="Japan")
+    jpn_data = cs.CountryData(jpn_file, country="Japan")
     jpn_data.set_variables(
         date="Date",
         confirmed="Positive",
@@ -32,6 +32,16 @@ def main():
     ncov_df = jhu_data.cleaned()
     ncov_df.to_csv(
         output_dir.joinpath("jhu_cleaned_replaced.csv"), index=False
+    )
+    # Read OxCGRT data
+    oxcgrt_file = "input/oxcgrt/OxCGRT_latest.csv"
+    oxcgrt_data = cs.OxCGRTData(oxcgrt_file)
+    oxcgrt_df = oxcgrt_data.cleaned()
+    oxcgrt_df.to_csv(
+        output_dir.joinpath("oxcgrt_cleaned.csv"), index=False
+    )
+    oxcgrt_data.subset(iso3="JPN").to_csv(
+        output_dir.joinpath("oxcgrt_cleaned_jpn.csv"), index=False
     )
     return ncov_df
 

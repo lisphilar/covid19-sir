@@ -87,20 +87,3 @@ class CountryData(CleaningBase):
         df[self.COUNTRY] = self._country
         df = df.loc[:, self.COLUMNS]
         return df
-
-    def cleaned(self):
-        """
-        Return the cleaned dataset.
-        Cleaning method is defined by self.cleaning() method.
-        @return <pd.DataFrame>
-            - index <int>: reseted index
-            - Date <pd.TimeStamp>: Observation date
-            - Country <str>: country/region name
-            - Province <str>: province/prefecture/sstate name
-            - Confirmed <int>: the number of confirmed cases
-            - Infected <int>: the number of currently infected cases
-            - Fatal <int>: the number of fatal cases
-            - Recovered <int>: the number of recovered cases
-        """
-        self._cleaned_df = self.cleaning()
-        return self._cleaned_df
