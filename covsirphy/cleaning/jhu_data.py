@@ -121,4 +121,12 @@ class JHUData(CleaningBase):
             df = df.loc[df[self.PROVINCE] == province, :]
         df = df.groupby(self.DATE).sum().reset_index()
         df = df.loc[df[self.R] > 0, :]
+        if df.empty:
+            if province is None:
+                raise KeyError(
+                    f"@country {country} is not included in the dataset."
+                )
+            raise KeyError(
+                f"({country}, {province}) is not included in the dataset."
+            )
         return df

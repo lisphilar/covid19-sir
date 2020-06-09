@@ -6,7 +6,7 @@
 mkdir -p input
 rm input/*.csv 2>/dev/null
 
-# Download datasets
+# Download datasets from Kaggle
 
 # The number of cases
 pipenv run kaggle datasets download -d sudalairajkumar/novel-corona-virus-2019-dataset
@@ -26,3 +26,10 @@ rm input/*.zip
 rm input/*time_series_covid_19_*.csv
 rm input/COVID19_line_list_data.csv
 rm input/COVID19_open_line_list.csv
+
+
+# Download datasets from GitHub
+# sudo apt install subversion
+
+# Oxford Covid-19 Government Response Tracker (OxCGRT)
+svn export https://github.com/OxCGRT/covid-policy-tracker/trunk/data input/oxcgrt --force --non-recursive

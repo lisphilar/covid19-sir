@@ -29,6 +29,7 @@ class Word(object):
     TS = "t"
     TAU = "tau"
     COUNTRY = "Country"
+    ISO3 = "ISO3"
     PROVINCE = "Province"
     STR_COLUMNS = [DATE, COUNTRY, PROVINCE]
     COLUMNS = [*STR_COLUMNS, C, CI, F, R]

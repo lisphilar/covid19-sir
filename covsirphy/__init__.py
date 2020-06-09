@@ -7,7 +7,7 @@ import better_exceptions
 from covsirphy.analysis import ODESimulator, ChangeFinder
 from covsirphy.analysis import PhaseSeries, Scenario
 from covsirphy.cleaning import CleaningBase, Word, Population
-from covsirphy.cleaning import JHUData, CountryData
+from covsirphy.cleaning import JHUData, CountryData, OxCGRTData
 from covsirphy.ode import ModelBase, SIR, SIRD, SIRF, SIRFV, SEWIRF
 from covsirphy.phase import PhaseData, NondimData, Estimator
 from covsirphy.phase import SRData, Trend
@@ -18,7 +18,7 @@ __all__ = [
     "ODESimulator", "ChangeFinder",
     "PhaseSeries", "Scenario",
     "CleaningBase", "Word", "Population",
-    "JHUData", "CountryData",
+    "JHUData", "CountryData", "OxCGRTData",
     "ModelBase", "SIR", "SIRD", "SIRF", "SIRFV", "SEWIRF",
     "PhaseData", "NondimData", "Estimator", "SRData", "Trend",
     "line_plot", "jpn_map", "StopWatch",
