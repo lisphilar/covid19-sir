@@ -24,7 +24,7 @@ class Trend(Word):
                  country, province=None, start_date=None, end_date=None):
         """
         @clean_df <pd.DataFrame>: cleaned data
-            - index <int>: reseted index
+            - index <int>: reset index
             - Date <pd.TimeStamp>: Observation date
             - Country <str>: country/region name
             - Province <str>: province/prefecture/sstate name
@@ -97,7 +97,7 @@ class Trend(Word):
             b_ini = y_series.diff().reset_index(drop=True)[1] / a_ini
         except KeyError:
             raise KeyError("The length of @train_df must be over 2.")
-        # Curve fitting with negative exponential fucntion
+        # Curve fitting with negative exponential function
         warnings.simplefilter("ignore", OptimizeWarning)
         param, _ = curve_fit(
             self.negative_exp, x_series, y_series,
@@ -114,7 +114,7 @@ class Trend(Word):
 
     def rmsle(self):
         """
-        Calculate RMSLE score of actual/predicted Suscptible.
+        Calculate RMSLE score of actual/predicted Susceptible.
         @return <float>
         """
         df = self.result_df.copy()
@@ -122,7 +122,7 @@ class Trend(Word):
             raise NameError("Must perform Trend().run() in advance.")
         actual = df[f"{self.S}{self.A}"]
         predicted = df[f"{self.S}{self.P}"]
-        # Calcuate RMSLE score
+        # Calculate RMSLE score
         scores = np.abs(
             np.log10(actual + 1) - np.log10(predicted + 1)
         )

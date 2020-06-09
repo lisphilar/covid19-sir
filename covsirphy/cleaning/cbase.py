@@ -30,7 +30,7 @@ class CleaningBase(Word):
         Return the cleaned dataset.
         Cleaning method is defined by self.cleaning() method.
         @return <pd.DataFrame>
-            - index <int>: reseted index
+            - index <int>: reset index
             - Date <pd.TimeStamp>: Observation date
             - Country <str>: country/region name
             - Province <str>: province/prefecture/sstate name
@@ -43,10 +43,10 @@ class CleaningBase(Word):
 
     def cleaning(self):
         """
-        Perform data cleaing of the raw data.
+        Perform data cleaning of the raw data.
         This method will be defined in child classes.
         @return <pd.DataFrame>
-            - index <int>: reseted index
+            - index <int>: reset index
             - Date <pd.TimeStamp>: Observation date
             - Country <str>: country/region name
             - Province <str>: province/prefecture/sstate name
@@ -60,7 +60,7 @@ class CleaningBase(Word):
 
     def total(self):
         """
-        Return a dataframe to show chlonological change of number and rates.
+        Return a dataframe to show chronological change of number and rates.
         @return <pd.DataFrame>:
             - index (Date) <pd.TimeStamp>: Observation date
             - with group-by Date, sum of the values

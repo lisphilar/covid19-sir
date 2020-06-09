@@ -29,7 +29,7 @@ The author is trying to add the following functionalities.
 - Keep track parameter values/reproductive number of all countries with a simple code
 - Find relationship of reproductive number and measures automatically
 
-If you have ideas or need new functinalities, please join this project.
+If you have ideas or need new functionalities, please join this project.
 Any suggestions (Github issues, pull request, comment on Kaggle notebook) are always welcomed.
 
 ## Need discussion
@@ -51,14 +51,14 @@ git clone https://github.com/lisphilar/covid19-sir.git
 pipenv install --dev
 ```
 
-## Recomended datasets
+## Recommended datasets
 We can download the following datasets using Kaggle API key and Kaggle package. Please read [How to Use Kaggle: Public API](https://www.kaggle.com/docs/api) and Bash code `input.sh` in the top directory of this repository.
 
 ### The number of cases
 Primary source: [COVID-19 Data Repository by CSSE at Johns Hopkins University](https://github.com/CSSEGISandData/COVID-19)  
 Secondary source: [Novel Corona Virus 2019 Dataset by SRK](https://www.kaggle.com/sudalairajkumar/novel-corona-virus-2019-dataset)  
 ### The number of cases in Japan
-Primary source: [Ministry of Health, Labour and Welefare HP (in English)](https://www.mhlw.go.jp/stf/seisakunitsuite/bunya/newpage_00032.html)  
+Primary source: [Ministry of Health, Labour and Welfare HP (in English)](https://www.mhlw.go.jp/stf/seisakunitsuite/bunya/newpage_00032.html)  
 Secondary source: [Secondary source: COVID-19 dataset in Japan by Lisphilar](https://www.kaggle.com/lisphilar/covid19-dataset-in-japan)  
 ### Total population
 [covid19 global forecasting: locations population by Dmitry A. Grechka](https://www.kaggle.com/dgrechka/covid19-global-forecasting-locations-population)  
@@ -149,7 +149,7 @@ ita_scenario.clear(name="Main")
 ita_scenario.add_phase(name="Main", end_date="01Aug2020")
 # Get parameter value
 sigma_4th = ita_scenario.get("sigma", name="Main", phase="4th")
-# Add future phase with chainged parameter value to new scenario
+# Add future phase with changed parameter value to new scenario
 sigma_6th = sigma_4th * 2
 ita_scenario.add_phase(end_date="31Dec2020", name="Medicine", sigma=sigma_6th)
 ita_scenario.add_phase(days=30, name="Medicine")

@@ -20,7 +20,7 @@ class Optimizer(Word):
     def __init__(self, train_df, x="t", **params):
         """
         @train_df <pd.DataFrame>: training dataset
-            - index: reseted index
+            - index: reset index
             - Explanatory variable defined by @x
             - Response variables which is not @x
         @param (keyword arguments): fixed parameter values
@@ -80,7 +80,7 @@ class Optimizer(Word):
         @param_dict <dict[str]=int/float>:
             - estimated parameter values
         @train_df <pd.DataFrame>: actual data
-            - index: reseted index
+            - index: reset index
             - t: time step, 0, 1, 2,...
             - includes columns defined by @variables
         @return <float>: score of the error function to minimize
@@ -109,11 +109,11 @@ class Optimizer(Word):
         """
         Return comparison table.
         @actual_df <pd.DataFrame>: actual data
-            - index: reseted index
+            - index: reset index
             - t: time step, 0, 1, 2,...
             - includes columns defined by self.y_list
         @predicted_df <pd.DataFrame>: predicted data
-            - index: reseted index
+            - index: reset index
             - t: time step, 0, 1, 2,...
             - includes columns defined by self.y_list
         @return <pd.DataFrame>:
@@ -166,7 +166,7 @@ class Optimizer(Word):
         Calculate RMSLE score.
         This method can be overwritten in child class.
         @train_df <pd.DataFrame>: actual data
-            - index: reseted index
+            - index: reset index
             - t: time step, 0, 1, 2,...
             - includes columns defined by self.y_list
         @dim <int/float>: dimension where comparison will be performed
@@ -199,7 +199,7 @@ class Optimizer(Word):
         @show_figure <bool>:
             - if True, show the history as a pair-plot of parameters.
         @filename <str>: filename of the figure, or None (show figure)
-        @retun <pd.DataFrame>: the history
+        @return <pd.DataFrame>: the history
         """
         # Create dataframe of the history
         df = self.study.trials_dataframe()
@@ -232,7 +232,7 @@ class Optimizer(Word):
         Show the accuracy as a figure.
         This method can be overwritten in child class.
         @train_df <pd.DataFrame>: actual data
-            - index: reseted index
+            - index: reset index
             - t: time step, 0, 1, 2,...
             - includes columns defined by self.y_list
         @variables <list[str]>: variables to compare or None (all variables)

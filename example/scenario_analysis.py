@@ -16,7 +16,7 @@ def main():
     # Read population dataset
     pop_file = "input/locations_population.csv"
     pop_data = cs.Population(pop_file)
-    # Start sceario analysis
+    # Start scenario analysis
     ita_scenario = cs.Scenario(jhu_data, pop_data, "Italy")
     # Show records
     ita_record_df = ita_scenario.records(
@@ -30,7 +30,7 @@ def main():
         filename=output_dir.joinpath("ita_change_points.png")
     )
     print(ita_scenario.summary())
-    # Hyperparameter estimaition
+    # Hyperparameter estimation
     ita_scenario.estimate(cs.SIRF)
     # Show the history of optimization
     ita_scenario.estimate_history(

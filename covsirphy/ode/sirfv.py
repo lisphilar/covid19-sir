@@ -19,7 +19,7 @@ class SIRFV(ModelBase):
         """
         (n and v_per_day) or omega must be applied.
         @n <float or int>: total population
-        @v_par_day <float or int>: vacctinated persons per day
+        @v_par_day <float or int>: vaccinated persons per day
         """
         super().__init__()
         self.theta = theta
@@ -38,7 +38,7 @@ class SIRFV(ModelBase):
     def __call__(self, t, X):
         x, y, z, w = X
         y = max(y, 0)
-        # x with vacctination
+        # x with vaccination
         dxdt = - self.rho * x * y - self.omega
         dxdt = 0 - x if x + dxdt < 0 else dxdt
         # y, z, w
@@ -102,19 +102,19 @@ class SIRFV(ModelBase):
         """
         Calculate measurable variables.
         @df <pd.DataFrame>:
-            - index: reseted index
+            - index: reset index
             - x: Susceptible / Population
             - y: Infected / Population
             - z: Recovered / Population
             - w: Fatal / Population
         @population <int>: population value in the place
         @return <pd.DataFrame>:
-            - index: reseted index
+            - index: reset index
             - Confirmed <int>: the number of confirmed cases
             - Infected <int>: the number of currently infected cases
             - Fatal <int>: the number of fatal cases
             - Recovered <int>: the number of recovered cases
-            - Vacctinated <int>: the number of vacctinated cases
+            - Vaccinated <int>: the number of vaccinated cases
         """
         df[cls.S] = df["x"]
         df[cls.C] = df[["y", "z", "w"]].sum(axis=1)

@@ -13,7 +13,7 @@ class PhaseData(Word):
     def __init__(self, clean_df, country=None, province=None):
         """
         @clean_df <pd.DataFrame>: cleaned data
-            - index <int>: reseted index
+            - index <int>: reset index
             - Date <pd.TimeStamp>: Observation date
             - Country <str>: country/region name
             - Province <str>: province/prefecture/sstate name
@@ -32,7 +32,7 @@ class PhaseData(Word):
     def _set_place(self, clean_df, country=None, province=None):
         """
         @clean_df <pd.DataFrame>: cleaned data
-            - index <int>: reseted index
+            - index <int>: reset index
             - Date <pd.TimeStamp>: Observation date
             - Country <str>: country/region name
             - Province <str>: province/prefecture/sstate name
@@ -42,8 +42,8 @@ class PhaseData(Word):
             - Recovered <int>: the number of recovered cases
         @country <str>: country name
         @province <str>: province name
-        @return <pd.DataFrme>:
-            - index <int>: reseted index
+        @return <pd.DataFrame>:
+            - index <int>: reset index
             - Date <pd.TimeStamp>: Observation date
             - Country <str>: country/region name
             - Province <str>: province/prefecture/sstate name
@@ -67,7 +67,7 @@ class PhaseData(Word):
         """
         Grouping by date.
         @clean_df <pd.DataFrame>: cleaned data
-            - index <int>: reseted index
+            - index <int>: reset index
             - Date <pd.TimeStamp>: Observation date
             - Country <str>: country/region name
             - Province <str>: province/prefecture/sstate name
@@ -75,7 +75,7 @@ class PhaseData(Word):
             - Infected <int>: the number of currently infected cases
             - Fatal <int>: the number of fatal cases
             - Recovered <int>: the number of recovered cases
-        @return <pd.DataFrme>:
+        @return <pd.DataFrame>:
             - index (Date) <pd.TimeStamp>: Observation date
             - Confirmed <int>: the number of confirmed cases
             - Infected <int>: the number of currently infected cases
