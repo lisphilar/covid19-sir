@@ -21,7 +21,7 @@ class JHUData(CleaningBase):
         Perform data cleaning of the raw data.
         This method overwrite super().cleaning() method.
         @return <pd.DataFrame>
-            - index <int>: reset index
+            - index <int>: reseted index
             - Date <pd.TimeStamp>: Observation date
             - Country <str>: country/region name
             - Province <str>: province/prefecture/state name
@@ -86,7 +86,7 @@ class JHUData(CleaningBase):
     def replace(self, country_data):
         """
         Replace a part of cleaned dataset with a dataframe.
-        @country_data <cs.CountryData>: dataset object of the country
+        @country_data <cs.CountryData>: dataset ofject of the country
         @return self
         """
         if not isinstance(country_data, CountryData):
@@ -108,7 +108,7 @@ class JHUData(CleaningBase):
         @country <str>: country name
         @province <str>: province name
         @return <pd.DataFrame>
-            - index <int>: reset index
+            - index <int>: reseted index
             - Date <pd.TimeStamp>: Observation date
             - Confirmed <int>: the number of confirmed cases
             - Infected <int>: the number of currently infected cases
