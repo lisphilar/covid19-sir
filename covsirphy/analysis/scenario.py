@@ -106,7 +106,7 @@ class Scenario(Word):
         - @name <str>: phase series name
             - if 'Main', main PhaseSeries will be used
             - if not registered, new phase series will be created
-        - @end_date or @days must be speicified
+        - @end_date or @days must be specified
             @end_date <str>: end date of the new phase
             @days <int>: the number of days to add
         @population <int>: population value of the start date
@@ -121,7 +121,7 @@ class Scenario(Word):
         """
         # Parse arguments
         if not isinstance(name, str):
-            raise TypeError(f"@name must be as tring, but {type(name)} was applied.")
+            raise TypeError(f"@name must be a string, but {type(name)} was applied.")
         if name == "Main":
             name = self.MAIN
         if name not in self.series_dict.keys():
@@ -254,7 +254,7 @@ class Scenario(Word):
             - keyword arguments of the model parameter
                 - tau value cannot be changed
             - keyword arguments of covsirphy.Estimator.run()
-        @retun self
+        @return self
         """
         name = self.MAIN if name == "Main" else name
         if name not in self.series_dict.keys():
@@ -267,7 +267,7 @@ class Scenario(Word):
         start_date = setting_dict[self.START]
         end_date = setting_dict[self.END]
         population = setting_dict[self.N]
-        # Run estinmation
+        # Run estimation
         print(f"{phase} phase with {model.NAME} model:")
         est_kwargs = {
             p: kwargs[p] for p in model.PARAMETERS if p in kwargs.keys()
@@ -343,7 +343,7 @@ class Scenario(Word):
         """
         name = self.MAIN if name == "Main" else name
         if name not in self.series_dict.keys():
-            raise KeyError(f"@name {name} is not difined.")
+            raise KeyError(f"@name {name} is not defined.")
         try:
             estimator = self.estimator_dict[name][phase]
         except KeyError:
@@ -362,7 +362,7 @@ class Scenario(Word):
         """
         name = self.MAIN if name == "Main" else name
         if name not in self.series_dict.keys():
-            raise KeyError(f"@name {name} is not difined.")
+            raise KeyError(f"@name {name} is not defined.")
         try:
             estimator = self.estimator_dict[name][phase]
         except KeyError:
@@ -378,7 +378,7 @@ class Scenario(Word):
         @return <pd.DataFrame>
         """
         warnings.warn(
-            "Plese use Scenario simulate() rather than Scenario.predict()",
+            "Please use Scenario simulate() rather than Scenario.predict()",
             DeprecationWarning,
             stacklevel=2
         )
@@ -389,14 +389,14 @@ class Scenario(Word):
         Simulate ODE models with setted parameter values and show it as a figure.
         @name <str>: phase series name
             - if 'Main', main PhaseSeries will be used
-        @y0_dict <doct[str]=float>:
+        @y0_dict <dict[str]=float>:
             - dictionary of initial values or None
             - if model will be changed in the later phase, must be specified
         @show_figure <bool>:
             - if True, show the result as a figure.
         @filename <str>: filename of the figure, or None (show figure)
         @return <pd.DataFrame>
-            - index <int>: reseted index
+            - index <int>: reset index
             - Date <str>: date, like 31Dec2020
             - Country <str>: country/region name
             - Province <str>: province/prefecture/state name
@@ -436,12 +436,12 @@ class Scenario(Word):
         """
         Simulate ODE models with setted parameter values.
         @name <str>: phase series name
-        @y0_dict <doct[str]=float>:
+        @y0_dict <dict[str]=float>:
             - dictionary of initial values or None
             - if model will be changed in the later phase, must be specified
         @return <tuple(pd.DataFrame, list[pd.TimeStamp])>:
             - <pd.DataFrame>: output of ODESimulator.dim()
-                - index <int>: reseted index
+                - index <int>: reset index
                 - Date <pd.TimeStamp>: Observation date
                 - Country <str>: country/region name
                 - Province <str>: province/prefecture/state name
@@ -465,7 +465,7 @@ class Scenario(Word):
             population = df.loc[phase, self.N]
             param_dict = df[model.PARAMETERS].to_dict(orient="index")[phase]
             if phase == self.num2str(1):
-                # Calculate intial values
+                # Calculate initial values
                 nondim_data = NondimData(
                     self.clean_df, country=self.country,
                     province=self.province
