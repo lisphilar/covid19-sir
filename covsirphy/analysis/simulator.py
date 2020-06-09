@@ -38,7 +38,7 @@ class ODESimulator(Word):
             - if not include some params, the last values will be used
                 - NameError when the model is the first model
                 - NameError if new params are included
-        @y0_dict <doct[str]=float>:
+        @y0_dict <dict[str]=float>:
             - dictionary of initial values or None (non-dimensional)
             - if not include some variables, the last values will be used
                 - NameError when the model is the first model
@@ -77,7 +77,7 @@ class ODESimulator(Word):
                 raise NameError(s)
             # Will use the last values the last phase
             y0_dict[var] = None
-        # Regiter the setting
+        # Register the setting
         self.settings.append(
             {
                 "model": model,
@@ -95,9 +95,9 @@ class ODESimulator(Word):
         @model <subclass of cs.ModelBase>: the ODE model
         @step_n <int>: the number of steps
         @param_dict <dict[str]=float>: dictionary of parameter values
-        @y0_dict <doct[str]=float>: dictionary of initial values
+        @y0_dict <dict[str]=float>: dictionary of initial values
         @return <pd.DataFrame>:
-            - index: reseted index
+            - index: reset index
             - t: time steps, 0, 1, 2, 3...
             - x, y, z, w etc.
                 - calculated in child classes.
@@ -116,7 +116,7 @@ class ODESimulator(Word):
         t_df = pd.Series(data=sol["t"], name="t")
         y_df = pd.DataFrame(data=sol["y"].T.copy(), columns=variables)
         sim_df = pd.concat([t_df, y_df], axis=1)
-        # y in non-dimesional model must be over 0
+        # y in non-dimensional model must be over 0
         sim_df.loc[sim_df["y"] < 0, "y"] = 0
         return sim_df
 
@@ -159,9 +159,9 @@ class ODESimulator(Word):
 
     def non_dim(self):
         """
-        Return the non-dimensinalized results.
+        Return the non-dimensionalized results.
         @return <pd.DataFrame>:
-            - index: reseted index
+            - index: reset index
             - t: time steps, 0, 1, 2, 3...
             - x, y, z, w etc.
                 - calculated in child classes.
@@ -177,7 +177,7 @@ class ODESimulator(Word):
         @tau <int>: tau value [min]
         @start_date <str>: start date of the records, like 22Jan2020
         @return <pd.DataFrame>
-            - index <int>: reseted index
+            - index <int>: reset index
             - Date <pd.TimeStamp>: Observation date
             - Country <str>: country/region name
             - Province <str>: province/prefecture/state name

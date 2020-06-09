@@ -19,10 +19,10 @@ class ChangeFinder(Word):
     optuna.logging.disable_default_handler()
 
     def __init__(self, clean_df, population, country, province=None,
-                 popualtion_change_dict=None):
+                 population_change_dict=None):
         """
         @clean_df <pd.DataFrame>: cleaned data
-            - index <int>: reseted index
+            - index <int>: reset index
             - Date <pd.TimeStamp>: Observation date
             - Country <str>: country/region name
             - Province <str>: province/prefecture/sstate name
@@ -33,7 +33,7 @@ class ChangeFinder(Word):
         @population <int>: initial value of total population in the place
         @country <str>: country name
         @province <str>: province name
-        @popualtion_change_dict <dict[str]=int/None>:
+        @population_change_dict <dict[str]=int/None>:
             - dictionary of total population
                 - key: start date of population change
                 - value: total population
@@ -48,7 +48,7 @@ class ChangeFinder(Word):
             self.area = f"{country}{self.SEP}{province}"
         self.dates = self.get_dates(clean_df, population, country, province)
         self.pop_dict = self._read_population_data(
-            self.dates, population, popualtion_change_dict
+            self.dates, population, population_change_dict
         )
         self.population = population
         # Setting for optimization
@@ -64,7 +64,7 @@ class ChangeFinder(Word):
         """
         Get dates from the dataset.
         @clean_df <pd.DataFrame>: cleaned data
-            - index <int>: reseted index
+            - index <int>: reset index
             - Date <pd.TimeStamp>: Observation date
             - Country <str>: country/region name
             - Province <str>: province/prefecture/sstate name
@@ -158,7 +158,7 @@ class ChangeFinder(Word):
                 for (this, previous)
                 in zip(self.change_dates, self.change_dates_previous)
             ]
-            # Calculate cummurative run-time
+            # Calculate cumulative run-time
             self.run_time = stopwatch.stop()
             self.total_trials = len(self.study.trials)
             # If fixed or time-out, break
@@ -220,7 +220,7 @@ class ChangeFinder(Word):
     def error_f(self, start_dates, end_dates):
         """
         Definition of error score to minimize in the study.
-        This is weghtend average of RMSLE scores.
+        This is weighted average of RMSLE scores.
         @start_dates <list[str]>: list of start date of phases (candidates)
         @end_dates <list[str]>: list of end date of phases (candidates)
         @return <float> : score of the error function to minimize

@@ -95,7 +95,7 @@ class SEWIRF(ModelBase):
         """
         Calculate measurable variables.
         @df <pd.DataFrame>:
-            - index: reseted index
+            - index: reset index
             - x1: Susceptible / Population
             - x2: Exposed / Population
             - x3: Waiting / Population
@@ -104,7 +104,7 @@ class SEWIRF(ModelBase):
             - w: Fatal / Population
         @population <int>: population value in the place
         @return <pd.DataFrame>:
-            - index: reseted index
+            - index: reset index
             - Confirmed <int>: the number of confirmed cases
             - Infected <int>: the number of currently infected cases
             - Fatal <int>: the number of fatal cases

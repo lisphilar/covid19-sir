@@ -76,13 +76,13 @@ class SIR(ModelBase):
         """
         Calculate measurable variables.
         @df <pd.DataFrame>:
-            - index: reseted index
+            - index: reset index
             - x: Susceptible / Population
             - y: Infected / Population
             - z: (Recovered + Fatal) / Population
         @population <int>: population value in the place
         @return <pd.DataFrame>:
-            - index: reseted index
+            - index: reset index
             - Confirmed <int>: the number of confirmed cases
             - Infected <int>: the number of currently infected cases
             - Fatal + Recovered <int>:

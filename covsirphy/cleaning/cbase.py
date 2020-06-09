@@ -35,7 +35,7 @@ class CleaningBase(Word):
 
     def cleaning(self):
         """
-        Perform data cleaing of the raw data.
+        Perform data cleaning of the raw data.
         This method will be defined in child classes.
         @return <pd.DataFrame>
         """
@@ -44,7 +44,7 @@ class CleaningBase(Word):
 
     def total(self):
         """
-        Return a dataframe to show chlonological change of number and rates.
+        Return a dataframe to show chronological change of number and rates.
         @return <pd.DataFrame>:
             - index (Date) <pd.TimeStamp>: Observation date
             - with group-by Date, sum of the values

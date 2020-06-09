@@ -54,10 +54,10 @@ class CountryData(CleaningBase):
 
     def cleaning(self):
         """
-        Perform data cleaing of the raw data.
+        Perform data cleaning of the raw data.
         This method overwrite super().cleaning() method.
         @return <pd.DataFrame>
-            - index <int>: reseted index
+            - index <int>: reset index
             - Date <pd.TimeStamp>: Observation date
             - Country <str>: country/region name
             - Province <str>: province/prefecture/state name
@@ -67,7 +67,7 @@ class CountryData(CleaningBase):
             - Recovered <int>: the number of recovered cases
         """
         if not self.var_dict:
-            s = "Please execute CountryData.set_varialbles() in advance."
+            s = "Please execute CountryData.set_variables() in advance."
             raise Exception(s)
         df = self._raw.copy()
         # Rename the columns

@@ -18,7 +18,7 @@ class Word(object):
     F = "Fatal"
     R = "Recovered"
     FR = "Fatal or Recovered"
-    V = "Vacctinated"
+    V = "Vaccinated"
     E = "Exposed"
     W = "Waiting"
     # Column names

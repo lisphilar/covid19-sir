@@ -23,9 +23,9 @@ def line_plot(df, title, xlabel=None, ylabel="Cases",
               show_legend=True, bbox_to_anchor=(1.02, 0), bbox_loc="lower left",
               filename=None):
     """
-    Show chlonological change of the data.
+    Show chronological change of the data.
     @df <pd.DataFrame>: data
-        - index: reseted index
+        - index: reset index
         - columns: field names
         - values: data values
     @title <str>: title of the figure
@@ -33,8 +33,8 @@ def line_plot(df, title, xlabel=None, ylabel="Cases",
         @xlabel <str>: x-label
         @ylabel <str>: y-label
     - additional lines
-        @v <list[int/float]>: list of x valus of vertical lines or None
-        @h <list[int/float]>: list of y valus of horizontal lines or None
+        @v <list[int/float]>: list of x values of vertical lines or None
+        @h <list[int/float]>: list of y values of horizontal lines or None
     - limit of domain
         @xlim <tuple(int/float, int/float)>: limit of x dimain
         @ylim <tuple(int/float, int/float)>: limit of y dimain

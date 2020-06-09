@@ -172,7 +172,7 @@ class PhaseSeries(Word):
             - Population: population value of the start date
             - values added by self.update()
         """
-        # Conver phase ID to phase name
+        # Convert phase ID to phase name
         info_dict = self.to_dict()
         # Convert to dataframe
         df = pd.DataFrame.from_dict(info_dict, orient="index")
@@ -201,7 +201,7 @@ class PhaseSeries(Word):
 
     def _tense(self, target_date, ref_date=None):
         """
-        Return 'Past' or 'Future' for the targrt date.
+        Return 'Past' or 'Future' for the target date.
         @target_date <str>: target date, like 22Jan2020
         @ref_date <str/None>: reference date
             - if None, will use last date of the records

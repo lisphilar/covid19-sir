@@ -6,13 +6,13 @@ from covsirphy.cleaning.word import Word
 
 
 class ModelBase(Word):
-    # Quantile range of the parametes when setting initial values
+    # Quartile range of the parametes when setting initial values
     QUANTILE_RANGE = [0.3, 0.7]
     # Model name
     NAME = "Model"
     # Variables in non-dimensional ODEs
     VARIABLES = ["x"]
-    # Priorities of the varialbles when optimization
+    # Priorities of the variables when optimization
     PRIORITIES = np.array([1])
     # Variables that increases monotonically
     VARS_INCLEASE = ["x"]
@@ -72,9 +72,9 @@ class ModelBase(Word):
     @classmethod
     def nondim_cols(cls, target_df, columns, population):
         """
-        Non-dimentionalize the columns with population value.
-        @target_df <pd.DataFrame>: dataframe with dimention
-            - Elapsed: elpased time from the start date [min]
+        Non-dimensional the columns with population value.
+        @target_df <pd.DataFrame>: dataframe with dimension
+            - Elapsed: elapsed time from the start date [min]
             - X, Y etc. (defined by @column, upper cases)
         @columns <list[str]>: list of column (with upper strings)
         @population <int>: total population in the place

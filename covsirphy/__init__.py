@@ -30,7 +30,7 @@ if dup_list:
     dup_str = ', '.join(dup_list)
     raise Exception(f"Duplication was found in modules. {dup_str}")
 
-# Show excetions in better format if used from command line
+# Show exceptions in better format if used from command line
 if not hasattr(sys, "ps1"):
     better_exceptions.MAX_LENGTH = None
     better_exceptions.hook()

@@ -1,4 +1,4 @@
-# CovsirPhy: COVID-19 data with SIR model [![GitHub license](https://img.shields.io/github/license/lisphilar/covid19-sir)](https://github.com/lisphilar/covid19-sir/blob/master/LICENSE.md)[![Python version](https://img.shields.io/badge/Python-3.7|3.8-green.svg)](https://www.python.org/)
+# CovsirPhy: COVID-19 data with SIR model [![GitHub license](https://img.shields.io/github/license/lisphilar/covid19-sir)](https://github.com/lisphilar/covid19-sir/blob/master/LICENSE)[![Python version](https://img.shields.io/badge/Python-3.7|3.8-green.svg)](https://www.python.org/)
 
 ## Introduction
 CovsirPhy is a Python package for COVID-19 (Coronavirus disease 2019) data analysis with SIR-derived models. Please refer to "Method" part of [COVID-19 data with SIR model](https://www.kaggle.com/lisphilar/covid-19-data-with-sir-model) notebook in Kaggle to understand the methods of analysis.
@@ -29,7 +29,7 @@ The author is trying to add the following functionalities.
 - Keep track parameter values/reproductive number of all countries with a simple code
 - Find relationship of reproductive number and measures automatically
 
-If you have ideas or need new functinalities, please join this project.
+If you have ideas or need new functionalities, please join this project.
 Any suggestions (Github issues, pull request, comment on Kaggle notebook) are always welcomed.
 
 ## Need discussion
@@ -60,8 +60,8 @@ Kaggle API key and Kaggle package are necessary. Please read [How to Use Kaggle:
 #### The number of cases
 Primary source: [COVID-19 Data Repository by CSSE at Johns Hopkins University](https://github.com/CSSEGISandData/COVID-19)  
 Secondary source: [Novel Corona Virus 2019 Dataset by SRK](https://www.kaggle.com/sudalairajkumar/novel-corona-virus-2019-dataset)  
-#### The number of cases in Japan
-Primary source: [Ministry of Health, Labour and Welefare HP (in English)](https://www.mhlw.go.jp/stf/seisakunitsuite/bunya/newpage_00032.html)  
+### The number of cases in Japan
+Primary source: [Ministry of Health, Labour and Welfare HP (in English)](https://www.mhlw.go.jp/stf/seisakunitsuite/bunya/newpage_00032.html)  
 Secondary source: [Secondary source: COVID-19 dataset in Japan by Lisphilar](https://www.kaggle.com/lisphilar/covid19-dataset-in-japan)  
 #### Total population
 [covid19 global forecasting: locations population by Dmitry A. Grechka](https://www.kaggle.com/dgrechka/covid19-global-forecasting-locations-population)  
@@ -169,7 +169,7 @@ ita_scenario.clear(name="Main")
 ita_scenario.add_phase(name="Main", end_date="01Aug2020")
 # Get parameter value
 sigma_4th = ita_scenario.get("sigma", name="Main", phase="4th")
-# Add future phase with chainged parameter value to new scenario
+# Add future phase with changed parameter value to new scenario
 sigma_6th = sigma_4th * 2
 ita_scenario.add_phase(end_date="31Dec2020", name="Medicine", sigma=sigma_6th)
 ita_scenario.add_phase(days=30, name="Medicine")

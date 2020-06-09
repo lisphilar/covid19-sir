@@ -16,7 +16,7 @@ class Population(CleaningBase):
 
     def cleaning(self):
         """
-        Perform data cleaing of the raw data.
+        Perform data cleaning of the raw data.
         This method overwrite super().cleaning() method.
         @return <pd.DataFrame>
             - Country <str>: country/region name

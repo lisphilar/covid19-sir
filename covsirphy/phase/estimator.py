@@ -22,7 +22,7 @@ class Estimator(Optimizer):
                  start_date=None, end_date=None, **kwargs):
         """
         @clean_df <pd.DataFrame>: cleaned data
-            - index <int>: reseted index
+            - index <int>: reset index
             - Date <pd.TimeStamp>: Observation date
             - Country <str>: country/region name
             - Province <str>: province/prefecture/sstate name
@@ -91,7 +91,7 @@ class Estimator(Optimizer):
         - @timeout <int>: time-out of run
         @n_jobs <int>: the number of parallel jobs or -1 (CPU count)
         @reset_n_max <int>:
-            - if study was reseted @reset_n_max times, will not be reseted anymore
+            - if study was reset @reset_n_max times, will not be reset anymore
         @timeout_iteration <int>: time-out of one iteration
         @allowance <tuple(float, float)>:
             - the allowance of the predicted value
@@ -187,10 +187,10 @@ class Estimator(Optimizer):
 
     def divide_minutes(self, tau):
         """
-        Devide T by tau in the training dataset.
+        Divide T by tau in the training dataset.
         @tau <int>: tau value [min]
         @return <pd.DataFrame>:
-            - index: reseted index
+            - index: reset index
             - t: time steps
             - x, y, z, w etc.
         """
@@ -210,7 +210,7 @@ class Estimator(Optimizer):
         @param_dict <dict[str]=int/float>:
             - estimated parameter values
         @train_df <pd.DataFrame>: training dataset
-            - index: reseted index
+            - index: reset index
             - t: time steps
             - x, y, z, w etc.
         @return <float>: score of the error function to minimize
@@ -245,7 +245,7 @@ class Estimator(Optimizer):
         @param_dict <dict[str]=int/float>:
             - estimated parameter values
         @return <pd.DataFrame>:
-            - index: reseted index
+            - index: reset index
             - t: time steps, 0, 1, 2, 3...
             - x, y, z, w etc.
         """
