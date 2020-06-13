@@ -179,6 +179,7 @@ class Estimator(Optimizer):
             {
                 k: trial.suggest_uniform(k, *v)
                 for (k, v) in model_param_dict.items()
+                if k not in self.fixed_dict.keys()
             }
         )
         p_dict.update(self.fixed_dict)
