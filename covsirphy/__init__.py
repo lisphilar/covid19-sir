@@ -8,7 +8,8 @@ from covsirphy.analysis import ODESimulator, ChangeFinder
 from covsirphy.analysis import PhaseSeries, Scenario
 from covsirphy.cleaning import CleaningBase, Word, Population
 from covsirphy.cleaning import JHUData, CountryData, OxCGRTData
-from covsirphy.ode import ModelBase, SIR, SIRD, SIRF, SIRFV, SEWIRF
+from covsirphy.ode import ModelBaseCommon, ModelBase
+from covsirphy.ode import SIR, SIRD, SIRF, SIRFV, SEWIRF
 from covsirphy.phase import PhaseData, NondimData, Estimator
 from covsirphy.phase import SRData, Trend
 from covsirphy.util import line_plot, jpn_map, StopWatch
@@ -19,7 +20,8 @@ __all__ = [
     "PhaseSeries", "Scenario",
     "CleaningBase", "Word", "Population",
     "JHUData", "CountryData", "OxCGRTData",
-    "ModelBase", "SIR", "SIRD", "SIRF", "SIRFV", "SEWIRF",
+    "ModelBaseCommon", "ModelBase",
+    "SIR", "SIRD", "SIRF", "SIRFV", "SEWIRF",
     "PhaseData", "NondimData", "Estimator", "SRData", "Trend",
     "line_plot", "jpn_map", "StopWatch",
 ]

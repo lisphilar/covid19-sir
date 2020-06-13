@@ -154,6 +154,7 @@ class ODESimulator(Word):
             )
             self._nondim_df["t"] = self._nondim_df.index
             # Dimensional
+            # TODO: calc_variables_reverse was removed
             dim_df = model.calc_variables_reverse(nondim_df, population)
             self._dim_df = pd.concat(
                 [self._dim_df, dim_df], axis=0, ignore_index=True, sort=True

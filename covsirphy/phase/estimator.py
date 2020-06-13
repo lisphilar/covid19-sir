@@ -174,7 +174,8 @@ class Estimator(Optimizer):
         train_df = self.divide_minutes(tau)
         # Set parameters of the models
         p_dict = {self.TAU: None}
-        model_param_dict = self.model.param(train_df_divided=train_df)
+        # TODO: not use non-dim data
+        model_param_dict = self.model.param_range(train_df_divided=train_df)
         p_dict.update(
             {
                 k: trial.suggest_uniform(k, *v)
@@ -195,6 +196,7 @@ class Estimator(Optimizer):
             - t: time steps
             - x, y, z, w etc.
         """
+        # TODO: not use non-dim data
         if not isinstance(tau, int) or tau <= 0:
             raise TypeError(
                 f"@tau must be a non-negative integer, but {tau} was applied."

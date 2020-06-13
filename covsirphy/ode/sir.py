@@ -6,6 +6,7 @@ from covsirphy.ode.mbase import ModelBase
 
 
 class SIR(ModelBase):
+    # TODO: Update models
     NAME = "SIR"
     PARAMETERS = ["rho", "sigma"]
     DAY_PARAMETERS = ["1/beta [day]", "1/gamma [day]"]
