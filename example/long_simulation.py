@@ -24,6 +24,7 @@ def main():
     )
     simulator.run()
     # Non-dimensional
+    # TODO: not use non-dimensional data
     nondim_df = simulator.non_dim()
     nondim_df.to_csv(output_dir.joinpath("non_dim.csv"), index=False)
     # Dimensional

@@ -79,6 +79,7 @@ class ModelBase(Word):
         @columns <list[str]>: list of column (with upper strings)
         @population <int>: total population in the place
         """
+        # TODO: not use non-dimensional data
         df = target_df.copy()
         cols_lower = [col.lower() for col in columns]
         df[cols_lower] = df[columns] / population

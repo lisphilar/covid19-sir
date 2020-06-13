@@ -10,6 +10,7 @@ class NondimData(PhaseData):
     """
     Create dataset for ODE analysis.
     """
+    # TODO: not use non-dimensional data
 
     def __init__(self, clean_df, country=None, province=None):
         super().__init__(clean_df, country=country, province=province)

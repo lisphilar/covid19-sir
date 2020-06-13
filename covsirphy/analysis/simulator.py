@@ -24,6 +24,7 @@ class ODESimulator(Word):
         # list of dictionary
         # key: model, step_n, population, param_dict, y0_dict
         self.settings = list()
+        # TODO: not use non-dimensional data
         self._nondim_df = pd.DataFrame()
         self._dim_df = pd.DataFrame()
 
@@ -103,6 +104,7 @@ class ODESimulator(Word):
                 - calculated in child classes.
                 - non-dimensionalized variables of Susceptible etc.
         """
+        # TODO: not use non-dimensional data
         tstart, dt, tend = 0, 1, step_n
         variables = model.VARIABLES[:]
         initials = [y0_dict[var] for var in variables]
@@ -124,6 +126,7 @@ class ODESimulator(Word):
         """
         Run the simulator.
         """
+        # TODO: not use non-dimensional data
         self._nondim_df = pd.DataFrame()
         for setting in self.settings:
             model = setting["model"]
@@ -167,6 +170,7 @@ class ODESimulator(Word):
                 - calculated in child classes.
                 - non-dimensionalized variables of Susceptible etc.
         """
+        # TODO: not use non-dimensional data
         df = self._nondim_df.copy()
         df = df.reset_index(drop=True)
         return df

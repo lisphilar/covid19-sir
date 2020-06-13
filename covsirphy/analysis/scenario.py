@@ -26,7 +26,7 @@ class Scenario(Word):
     Scenario analysis.
     """
 
-    def __init__(self, jhu_data, pop_data, country, province=None, tau=1440):
+    def __init__(self, jhu_data, pop_data, country, province=None):
         """
         @jhu_data <covsirphy.JHUData>: object of records
         @pop_data <covsirphy.Population>: Population object
@@ -60,7 +60,7 @@ class Scenario(Word):
         self.first_date = df.index.min().strftime(self.DATE_FORMAT)
         self.last_date = df.index.max().strftime(self.DATE_FORMAT)
         # Init
-        self.tau = tau
+        self.tau = None
         # {model_name: model_class}
         self.model_dict = dict()
         # {scenario_name: PhaseSeries}
@@ -466,6 +466,7 @@ class Scenario(Word):
             param_dict = df[model.PARAMETERS].to_dict(orient="index")[phase]
             if phase == self.num2str(1):
                 # Calculate initial values
+                # TODO: directly use dimensional data
                 nondim_data = NondimData(
                     self.clean_df, country=self.country,
                     province=self.province

@@ -216,6 +216,7 @@ class Estimator(Optimizer):
             - x, y, z, w etc.
         @return <float>: score of the error function to minimize
         """
+        # TODO: convert dim-data to non-dim data
         if self.step_n is None:
             raise ValueError("self.step_n must be done.")
         sim_df = self.simulate(self.step_n, param_dict)
@@ -301,6 +302,7 @@ class Estimator(Optimizer):
         Return RMSLE score.
         @tau <int>: tau value
         """
+        # TODO: not use non-dimensional data
         score = super().rmsle(
             train_df=self.divide_minutes(tau),
             dim=self.population
@@ -312,6 +314,7 @@ class Estimator(Optimizer):
         Show the accuracy as a figure.
         @filename <str>: filename of the figure, or None (show figure)
         """
+        # TODO: not use non-dimensional data
         tau = super().param()[self.TAU]
         train_df = self.divide_minutes(tau)
         use_variables = [
