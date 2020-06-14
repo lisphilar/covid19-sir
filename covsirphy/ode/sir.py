@@ -6,51 +6,79 @@ from covsirphy.ode.mbase import ModelBase
 
 
 class SIR(ModelBase):
-    # TODO: Update models
+    """
+    SIR model.
+    """
+    # Model name
     NAME = "SIR"
+    # names of parameters
     PARAMETERS = ["rho", "sigma"]
-    DAY_PARAMETERS = ["1/beta [day]", "1/gamma [day]"]
-    VARIABLES = ["x", "y", "z"]
+    # Variable names in dimensional ODEs
+    VARIABLES = [super().S, super().SI, super().FR]
+    # Priorities of the variables when optimization
     PRIORITIES = np.array([1, 1, 1])
-    VARS_INCLEASE = ["z"]
+    # Variables that increases monotonically
+    VARS_INCLEASE = [super().FR]
 
-    def __init__(self, rho, sigma):
-        super().__init__()
+    def __init__(self, population, rho, sigma):
+        """
+        This method should be overwritten in subclass.
+        @population <int>: total population
+        parameter values of non-dimensional ODE model
+            - @rho <float>
+            - @sigma <float>
+        """
+        # Total population
+        if not isinstance(population, int):
+            raise TypeError("@population must be an integer.")
+        self.population = population
+        # Non-dim parameters
         self.rho = rho
         self.sigma = sigma
 
     def __call__(self, t, X):
-        x, y, z = X
-        y = max(y, 0)
-        dxdt = - self.rho * x * y
-        # dydt = self.rho * x * y - self.sigma * y
-        dzdt = self.sigma * y
-        dydt = 0 - min(dxdt + dzdt, y)
-        return np.array([dxdt, dydt, dzdt])
+        """
+        Return the list of dS/dt (tau-free) etc.
+        This method should be overwritten in subclass.
+        @return <np.array>
+        """
+        s, i, _, n = X, self.population
+        dsdt = 0 - round(self.beta * s * i / n)
+        drdt = round(self.sigma * i)
+        didt = 0 - dsdt - drdt
+        return np.array([dsdt, didt, drdt])
 
     @classmethod
-    def param(cls, train_df_divided=None, q_range=None):
-        param_dict = super().param()
-        q_range = super().QUANTILE_RANGE[:] if q_range is None else q_range
-        if train_df_divided is not None:
-            df = train_df_divided.copy()
-            # rho = - (dx/dt) / x / y
-            rho_series = 0 - df["x"].diff() / df["t"].diff() / \
-                df["x"] / df["y"]
-            param_dict["rho"] = rho_series.quantile(q_range)
-            # sigma = (dz/dt) / y
-            sigma_series = df["z"].diff() / df["t"].diff() / df["y"]
-            param_dict["sigma"] = sigma_series.quantile(q_range)
-            return param_dict
-        param_dict["rho"] = (0, 1)
-        param_dict["sigma"] = (0, 1)
-        return param_dict
+    def param_range(cls, tau_free_df=None):
+        """
+        Define the range of parameters (not including tau value).
+        This function should be overwritten in subclass.
+        @tau_free_df <pd.DataFrame>:
+            - columns: t and dimensional variables
+        @return <dict[name]=(min, max)>:
+            - min <float>: min value
+            - max <float>: max value
+        """
+        df = cls.validate_tau_free(tau_free_df)
+        t, x, y, z = df[cls.TS], df[cls.S], df[cls.CI], df[cls.FR]
+        # rho = - (dx/dt) / x / y
+        rho_series = 0 - x.diff() / t.diff() / x / y
+        # sigma = (dz/dt) / y
+        sigma_series = z.diff() / t / y
+        # Calculate quantile
+        _dict = {
+            k: v.quantile(cls.QUANTILE_RANGE)
+            for (k, v) in zip(
+                ["rho", "sigma"], [rho_series, sigma_series]
+            )
+        }
+        return _dict
 
     @classmethod
     def calc_variables(cls, cleaned_df, population):
         """
-        Calculate the variables of SIR model.
-        This function overwrites the parent class.
+        Calculate the variables of the model.
+        This method should be overwritten in subclass.
         @cleaned_df <pd.DataFrame>: cleaned data
             - index (Date) <pd.TimeStamp>: Observation date
             - Confirmed <int>: the number of confirmed cases
@@ -61,49 +89,28 @@ class SIR(ModelBase):
         @return <pd.DataFrame>
             - index (Date) <pd.TimeStamp>: Observation date
             - Elapsed <int>: Elapsed time from the start date [min]
-            - x: Susceptible / Population
-            - y: Infected / Population
-            - z: (Recovered + Fatal) / Population
+            - columns with dimensional variables
         """
-        df = super().calc_variables(cleaned_df, population)
-        df["X"] = population - df[cls.C]
-        df["Y"] = df[cls.CI]
-        df["Z"] = df[cls.R] + df[cls.F]
-        # Columns will be changed to lower cases
-        return cls.nondim_cols(df, ["X", "Y", "Z"], population)
-
-    @classmethod
-    def calc_variables_reverse(cls, df, population):
-        """
-        Calculate measurable variables.
-        @df <pd.DataFrame>:
-            - index: reset index
-            - x: Susceptible / Population
-            - y: Infected / Population
-            - z: (Recovered + Fatal) / Population
-        @population <int>: population value in the place
-        @return <pd.DataFrame>:
-            - index: reset index
-            - Confirmed <int>: the number of confirmed cases
-            - Infected <int>: the number of currently infected cases
-            - Fatal + Recovered <int>:
-                the number of fatal or recovered cases
-        """
-        df[cls.C] = 1 - df["x"]
-        df[cls.CI] = df["y"]
-        df[cls.FR] = df["z"]
-        df = df.loc[:, [cls.C, cls.CI, cls.FR]]
-        df = (df * population).astype(np.int64)
-        return df
+        df = cls.calc_elapsed(cleaned_df)
+        # Calculate dimensional variables
+        df[cls.S] = population - df[cls.C]
+        df[cls.FR] = df[cls.F] + df[cls.R]
+        return df.loc[:, [cls.T, *cls.VARIABLES]]
 
     def calc_r0(self):
-        if self.sigma == 0:
-            return np.nan
-        r0 = self.rho / self.sigma
-        return round(r0, 2)
+        """
+        This method should be overwritten in subclass.
+        """
+        rt = self.rho / self.sigma
+        return round(rt, 2)
 
     def calc_days_dict(self, tau):
+        """
+        Calculate 1/beta [day] etc.
+        This method should be overwritten in subclass.
+        @param tau <int>: tau value [min]
+        """
         _dict = dict()
         _dict["1/beta [day]"] = int(tau / 24 / 60 / self.rho)
         _dict["1/gamma [day]"] = int(tau / 24 / 60 / self.sigma)
-        return _dict
+        return dict()

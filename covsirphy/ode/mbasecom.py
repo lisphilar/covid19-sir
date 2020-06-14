@@ -63,3 +63,20 @@ class ModelBaseCommon(Word):
         df[cls.T] = (df.index - df.index.min()).total_seconds()
         df[cls.T] = (df[cls.T] // 60).astype(np.int64)
         return df
+
+    @classmethod
+    def validate_tau_free(cls, tau_free_df):
+        """
+        Validate tau-free dataset and return itself.
+        @tau_free_df <pd.DataFrame>:
+            - columns: t and dimensional variables
+            - dimensional variables are defined by model.VARIABLES
+        @return <pd.DataFrame>
+        """
+        df = tau_free_df.copy()
+        if not isinstance(df, pd.DataFrame):
+            raise TypeError("@tau_free_df must be a instance of <pd.DataFrame>")
+        if not set(cls.VARIABLES).issubset(set(cls.TS) + set(df.columns)):
+            cols_str = ', '.join(list(df.columns))
+            raise KeyError(f"@tau_free_df must have {cols_str} columns.")
+        return df

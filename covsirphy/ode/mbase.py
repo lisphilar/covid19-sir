@@ -6,11 +6,14 @@ from covsirphy.ode.mbasecom import ModelBaseCommon
 
 
 class ModelBase(ModelBaseCommon):
+    """
+    Base class of ODE models.
+    """
     # Model name
     NAME = "ModelBase"
     # names of parameters
     PARAMETERS = list()
-    # Variable names in non-dimensional ODEs
+    # Variable names in dimensional ODEs
     VARIABLES = list()
     # Priorities of the variables when optimization
     PRIORITIES = np.array(list())
@@ -23,33 +26,34 @@ class ModelBase(ModelBaseCommon):
         @population <int>: total population
         """
         # Total population
+        if not isinstance(population, int):
+            raise TypeError("@population must be an integer.")
         self.population = population
-        # Dictionary of non-dim parameters: {name: value}
-        self.non_param_dict = dict()
-        # Dictionary of dimensional parameters: {name: value}
-        self.dim_param_dict = dict()
+        # Non-dim parameters
 
     def __call__(self, t, X):
         """
-        Return the list of dS/dt (dimensional) etc.
+        Return the list of dS/dt (tau-free) etc.
         This method should be overwritten in subclass.
         @return <np.array>
         """
         return np.array(list())
 
     @classmethod
-    def param_range(cls, train_df_divided=None):
+    def param_range(cls, tau_free_df):
         """
         Define the range of parameters (not including tau value).
         This function should be overwritten in subclass.
-        @train_df_divided <pd.DataFrame>:
+        @tau_free_df <pd.DataFrame>:
             - columns: t and dimensional variables
+            - dimensional variables are defined by model.VARIABLES
         @return <dict[name]=(min, max)>:
             - min <float>: min value
             - max <float>: max value
         """
-        param_range_dict = dict()
-        return param_range_dict
+        _ = cls.validate_tau_free(tau_free_df)
+        _dict = dict()
+        return _dict
 
     @classmethod
     def calc_variables(cls, cleaned_df, population):
@@ -83,6 +87,6 @@ class ModelBase(ModelBaseCommon):
         """
         Calculate 1/beta [day] etc.
         This method should be overwritten in subclass.
-        @param tau <int>: tau value [hour]
+        @param tau <int>: tau value [min]
         """
         return dict()

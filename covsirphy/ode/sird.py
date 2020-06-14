@@ -30,11 +30,11 @@ class SIRD(ModelBase):
         return np.array([dxdt, dydt, dzdt, dwdt])
 
     @classmethod
-    def param(cls, train_df_divided=None, q_range=None):
+    def param(cls, tau_free_df=None, q_range=None):
         param_dict = super().param()
         q_range = super().QUANTILE_RANGE[:] if q_range is None else q_range
-        if train_df_divided is not None:
-            df = train_df_divided.copy()
+        if tau_free_df is not None:
+            df = tau_free_df.copy()
             # kappa = (dw/dt) / y
             kappa_series = df["w"].diff() / df["t"].diff() / df["y"]
             param_dict["kappa"] = kappa_series.quantile(q_range)

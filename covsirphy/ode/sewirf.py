@@ -40,7 +40,7 @@ class SEWIRF(ModelBase):
         return np.array([dx1dt, dx2dt, dx3dt, dydt, dzdt, dwdt])
 
     @classmethod
-    def param(cls, train_df_divided=None, q_range=None):
+    def param(cls, tau_free_df=None, q_range=None):
         param_dict = super().param()
         q_range = super().QUANTILE_RANGE[:] if q_range is None else q_range
         param_dict["theta"] = (0, 1)
@@ -48,8 +48,8 @@ class SEWIRF(ModelBase):
         param_dict["rho1"] = (0, 1)
         param_dict["rho2"] = (0, 1)
         param_dict["rho3"] = (0, 1)
-        if train_df_divided is not None:
-            df = train_df_divided.copy()
+        if tau_free_df is not None:
+            df = tau_free_df.copy()
             # sigma = (dz/dt) / y
             sigma_series = df["z"].diff() / df["t"].diff() / df["y"]
             param_dict["sigma"] = sigma_series.quantile(q_range)

@@ -175,7 +175,7 @@ class Estimator(Optimizer):
         # Set parameters of the models
         p_dict = {self.TAU: None}
         # TODO: not use non-dim data
-        model_param_dict = self.model.param_range(train_df_divided=train_df)
+        model_param_dict = self.model.param_range(tau_free_df=train_df)
         p_dict.update(
             {
                 k: trial.suggest_uniform(k, *v)
