@@ -14,7 +14,7 @@ import numpy as np
 import pandas as pd
 from covsirphy.ode import ModelBase
 from covsirphy.cleaning import JHUData, Population, Word
-from covsirphy.phase import Estimator, SRData, NondimData
+from covsirphy.phase import Estimator, SRData, TauFreeData
 from covsirphy.util import line_plot
 from covsirphy.analysis.phase_series import PhaseSeries
 from covsirphy.analysis.simulator import ODESimulator
@@ -467,18 +467,18 @@ class Scenario(Word):
             if phase == self.num2str(1):
                 # Calculate initial values
                 # TODO: directly use dimensional data
-                nondim_data = NondimData(
+                taufree_data = TauFreeData(
                     self.clean_df, country=self.country,
                     province=self.province
                 )
-                nondim_df = nondim_data.make(model, population)
+                taufree_df = taufree_data.make(model, population)
                 init_index = [
                     date_obj for (date_obj, _)
                     in self.series_dict[name].phase_dict.items()
                     if date_obj == start_obj
                 ][0]
                 y0_dict_phase = {
-                    v: nondim_df.loc[init_index, v] for v in model.VARIABLES
+                    v: taufree_df.loc[init_index, v] for v in model.VARIABLES
                 }
             else:
                 try:

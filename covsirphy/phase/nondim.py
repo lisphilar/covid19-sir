@@ -6,7 +6,7 @@ from covsirphy.phase.phase_data import PhaseData
 from covsirphy.ode.mbase import ModelBase
 
 
-class NondimData(PhaseData):
+class TauFreeData(PhaseData):
     """
     Create dataset for ODE analysis.
     """

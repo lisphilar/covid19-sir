@@ -65,18 +65,18 @@ class ModelBaseCommon(Word):
         return df
 
     @classmethod
-    def validate_tau_free(cls, tau_free_df):
+    def validate_taufree(cls, taufree_df):
         """
         Validate tau-free dataset and return itself.
-        @tau_free_df <pd.DataFrame>:
+        @taufree_df <pd.DataFrame>:
             - columns: t and dimensional variables
             - dimensional variables are defined by model.VARIABLES
         @return <pd.DataFrame>
         """
-        df = tau_free_df.copy()
+        df = taufree_df.copy()
         if not isinstance(df, pd.DataFrame):
-            raise TypeError("@tau_free_df must be a instance of <pd.DataFrame>")
+            raise TypeError("@taufree_df must be a instance of <pd.DataFrame>")
         if not set(cls.VARIABLES).issubset(set(cls.TS) + set(df.columns)):
             cols_str = ', '.join(list(df.columns))
-            raise KeyError(f"@tau_free_df must have {cols_str} columns.")
+            raise KeyError(f"@taufree_df must have {cols_str} columns.")
         return df

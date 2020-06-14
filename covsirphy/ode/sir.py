@@ -49,17 +49,17 @@ class SIR(ModelBase):
         return np.array([dsdt, didt, drdt])
 
     @classmethod
-    def param_range(cls, tau_free_df=None):
+    def param_range(cls, taufree_df=None):
         """
         Define the range of parameters (not including tau value).
         This function should be overwritten in subclass.
-        @tau_free_df <pd.DataFrame>:
+        @taufree_df <pd.DataFrame>:
             - columns: t and dimensional variables
         @return <dict[name]=(min, max)>:
             - min <float>: min value
             - max <float>: max value
         """
-        df = cls.validate_tau_free(tau_free_df)
+        df = cls.validate_taufree(taufree_df)
         t, x, y, z = df[cls.TS], df[cls.S], df[cls.CI], df[cls.FR]
         # rho = - (dx/dt) / x / y
         rho_series = 0 - x.diff() / t.diff() / x / y

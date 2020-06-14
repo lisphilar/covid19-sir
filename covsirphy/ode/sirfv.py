@@ -49,14 +49,14 @@ class SIRFV(ModelBase):
         return np.array([dxdt, dydt, dzdt, dwdt])
 
     @classmethod
-    def param(cls, tau_free_df=None, q_range=None):
+    def param(cls, taufree_df=None, q_range=None):
         param_dict = super().param()
         q_range = super().QUANTILE_RANGE[:] if q_range is None else q_range
         param_dict["theta"] = (0, 1)
         param_dict["kappa"] = (0, 1)
         param_dict["omega"] = (0, 1)
-        if tau_free_df is not None:
-            df = tau_free_df.copy()
+        if taufree_df is not None:
+            df = taufree_df.copy()
             # rho = - (dx/dt) / x / y
             rho_series = 0 - df["x"].diff() / df["t"].diff() / \
                 df["x"] / df["y"]
@@ -95,7 +95,7 @@ class SIRFV(ModelBase):
         df["Z"] = df[cls.R]
         df["W"] = df[cls.F]
         # Columns will be changed to lower cases
-        return cls.nondim_cols(df, ["X", "Y", "Z", "W"], population)
+        return cls.taufree_cols(df, ["X", "Y", "Z", "W"], population)
 
     @classmethod
     def calc_variables_reverse(cls, df, population):

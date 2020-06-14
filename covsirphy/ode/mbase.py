@@ -40,18 +40,18 @@ class ModelBase(ModelBaseCommon):
         return np.array(list())
 
     @classmethod
-    def param_range(cls, tau_free_df):
+    def param_range(cls, taufree_df):
         """
         Define the range of parameters (not including tau value).
         This function should be overwritten in subclass.
-        @tau_free_df <pd.DataFrame>:
+        @taufree_df <pd.DataFrame>:
             - columns: t and dimensional variables
             - dimensional variables are defined by model.VARIABLES
         @return <dict[name]=(min, max)>:
             - min <float>: min value
             - max <float>: max value
         """
-        _ = cls.validate_tau_free(tau_free_df)
+        _ = cls.validate_taufree(taufree_df)
         _dict = dict()
         return _dict
 
