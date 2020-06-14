@@ -162,7 +162,7 @@ class ODEData(PhaseData):
             - key: dimensional variables
             - value: the number of cases
         """
-        subset_df = self.subset(start_date=start_date)
+        subset_df = self.subset(start_date=start_date, end_date=None)
         all_df = self._make(subset_df, model, population, tau=None)
         y0_dict = {
             k: all_df.loc[all_df.index[0], k]

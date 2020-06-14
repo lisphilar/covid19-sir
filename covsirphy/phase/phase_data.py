@@ -24,8 +24,11 @@ class PhaseData(Word):
         @country <str>: country name
         @province <str>: province name
         """
+        df = self.validate_dataframe(
+            clean_df, name="clean_df", columns=self.COLUMNS
+        )
         df = self._set_place(
-            clean_df, country=country, province=province
+            df, country=country, province=province
         )
         self.all_df = self._groupby_date(df)
 

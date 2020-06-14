@@ -39,23 +39,20 @@ class Estimator(Optimizer):
         @kwargs: parameter values of the model
         """
         optuna.logging.disable_default_handler()
-        if not issubclass(model, ModelBase):
-            raise TypeError(
-                "@model must be an ODE model <sub-class of cs.ModelBase>."
-            )
+        model = self.validate_subclass(model, ModelBase, name="model")
         self.model = model
         self.population = population
         self.country = country
         self.province = province
-        ode_data = ODEData(
+        self.start_date = start_date
+        self.end_date = end_date
+        clean_df = self.validate_dataframe(
+            clean_df, name="clean_df", columns=self.COLUMNS
+        )
+        self.ode_data = ODEData(
             clean_df, country=country, province=province
         )
-        self.min_train_df = ode_data.make(
-            model=model, population=population,
-            start_date=start_date, end_date=end_date
-        )
-        self.y0_dict = self.min_train_df.iloc[0, :].to_dict()
-        self.train_df = None
+        self.y0_dict = self.ode_data.y0(model, population, start_date=start_date)
         self.x = self.TS
         self.y_list = model.VARIABLES[:]
         self.fixed_dict = kwargs.copy()
@@ -64,6 +61,8 @@ class Estimator(Optimizer):
         self.study = None
         self.total_trials = 0
         self.run_time = 0
+        # Defined in parent class, but not used
+        self.train_df = None
         # step_n will be defined in divide_minutes()
         self.step_n = None
 
@@ -167,15 +166,13 @@ class Estimator(Optimizer):
             tau = self.fixed_dict[self.TAU]
         else:
             tau = trial.suggest_int(self.TAU, 1, 1440)
-        if not isinstance(tau, int) or tau <= 0:
-            raise TypeError(
-                f"@tau must be a non-negative integer, but {tau} was applied."
-            )
-        train_df = self.divide_minutes(tau)
+        tau = self.validate_natural_int(tau, name=self.TAU)
+        taufree_df = self.divide_minutes(tau)
         # Set parameters of the models
         p_dict = {self.TAU: None}
-        # TODO: not use non-dim data
-        model_param_dict = self.model.param_range(ode_df=train_df)
+        model_param_dict = self.model.param_range(
+            taufree_df, self.population
+        )
         p_dict.update(
             {
                 k: trial.suggest_uniform(k, *v)
@@ -185,7 +182,7 @@ class Estimator(Optimizer):
         )
         p_dict.update(self.fixed_dict)
         p_dict.pop(self.TAU)
-        return self.error_f(p_dict, train_df)
+        return self.error_f(p_dict, taufree_df)
 
     def divide_minutes(self, tau):
         """
@@ -193,37 +190,35 @@ class Estimator(Optimizer):
         @tau <int>: tau value [min]
         @return <pd.DataFrame>:
             - index: reset index
-            - t: time steps
-            - x, y, z, w etc.
+            - t <int>: Elapsed time divided by tau value [-]
+            - columns with dimensional variables
         """
-        # TODO: not use non-dim data
-        if not isinstance(tau, int) or tau <= 0:
-            raise TypeError(
-                f"@tau must be a non-negative integer, but {tau} was applied."
-            )
-        df = self.min_train_df.reset_index(drop=True)
-        df = df.rename({self.T: self.TS}, axis=1)
-        df[self.TS] = (df[self.TS] / tau).astype(np.int64)
-        self.step_n = int(df[self.TS].max())
-        return df
+        tau = self.validate_natural_int(tau, name="tau")
+        taufree_df = self.ode_data.make(
+            model=self.model,
+            population=self.population,
+            start_date=self.start_date,
+            end_date=self.end_date,
+            tau=tau
+        )
+        self.step_n = len(taufree_df)
+        return taufree_df
 
-    def error_f(self, param_dict, train_df):
+    def error_f(self, param_dict, taufree_df):
         """
         Definition of error score to minimize in the study.
         @param_dict <dict[str]=int/float>:
             - estimated parameter values
-        @train_df <pd.DataFrame>: training dataset
+        @taufree_df <pd.DataFrame>: training dataset
             - index: reset index
-            - t: time steps
-            - x, y, z, w etc.
+            - t: time steps [-]
+            - columns with dimensional variables
         @return <float>: score of the error function to minimize
         """
-        # TODO: convert dim-data to non-dim data
         if self.step_n is None:
-            raise ValueError("self.step_n must be done.")
+            raise ValueError("self.step_n must be defined in advance.")
         sim_df = self.simulate(self.step_n, param_dict)
-        df = self.compare(train_df, sim_df)
-        df = (df * self.population + 1).astype(np.int64)
+        df = self.compare(taufree_df, sim_df)
         # Calculate error score
         v_list = [
             v for (p, v)
@@ -231,7 +226,7 @@ class Estimator(Optimizer):
             if p > 0
         ]
         diffs = [df[f"{v}{self.A}"] - df[f"{v}{self.P}"] for v in v_list]
-        numerators = [df[f"{v}{self.A}"] for v in v_list]
+        numerators = [df[f"{v}{self.A}"] + 1 for v in v_list]
         try:
             scores = [
                 p * np.average(diff.abs() / numerator, weights=df.index)
@@ -250,8 +245,8 @@ class Estimator(Optimizer):
             - estimated parameter values
         @return <pd.DataFrame>:
             - index: reset index
-            - t: time steps, 0, 1, 2, 3...
-            - x, y, z, w etc.
+            - t <int>: Elapsed time divided by tau value [-]
+            - columns with dimensionalized variables
         """
         simulator = ODESimulator(country=self.country, province=self.province)
         simulator.add(
@@ -262,9 +257,7 @@ class Estimator(Optimizer):
             y0_dict=self.y0_dict
         )
         simulator.run()
-        # TODO: convert dim-data to non-dim data
-        df = simulator.non_dim()
-        return df
+        return simulator.taufree()
 
     def summary(self, name):
         """
@@ -305,10 +298,9 @@ class Estimator(Optimizer):
         Return RMSLE score.
         @tau <int>: tau value
         """
-        # TODO: not use non-dimensional data
         score = super().rmsle(
             train_df=self.divide_minutes(tau),
-            dim=self.population
+            dim=1
         )
         return score
 
@@ -317,7 +309,6 @@ class Estimator(Optimizer):
         Show the accuracy as a figure.
         @filename <str>: filename of the figure, or None (show figure)
         """
-        # TODO: not use non-dimensional data
         tau = super().param()[self.TAU]
         train_df = self.divide_minutes(tau)
         use_variables = [

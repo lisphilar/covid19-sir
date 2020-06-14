@@ -144,15 +144,30 @@ class ODESimulator(Word):
             self._taufree_df = taufree_df.copy()
         return self
 
+    def taufree(self):
+        """
+        Return tau-free results.
+        @return <pd.DataFrame>:
+            - index: reset index
+            - t <int>: Elapsed time divided by tau value [-]
+            - columns with dimensionalized variables
+        """
+        df = self._taufree_df.copy()
+        if df.empty:
+            raise Exception("ODESimulator.run() must be done in advance.")
+        df = df.reset_index(drop=True)
+        return df
+
     def non_dim(self):
         """
         Return the non-dimensionalized results.
         @return <pd.DataFrame>:
             - index: reset index
-            - t: time steps, 0, 1, 2, 3...
+            - t <int>: Elapsed time divided by tau value [-]
             - non-dimensionalized variables of Susceptible etc.
         """
-        df = self._taufree_df.set_index(self.TS)
+        df = self.taufree()
+        df = df.set_index(self.TS)
         df = df.apply(lambda x: x / sum(x), axis=1)
         var_dict_rev = {v: k for (k, v) in self.var_dict.items()}
         df.columns = [var_dict_rev[col] for col in df.columns]
@@ -161,7 +176,7 @@ class ODESimulator(Word):
 
     def dim(self, tau, start_date):
         """
-        Return the dimensionalized values.
+        Return the dimensionalized results.
         @tau <int>: tau value [min]
         @start_date <str>: start date of the records, like 22Jan2020
         @return <pd.DataFrame>
@@ -171,8 +186,10 @@ class ODESimulator(Word):
             - Province <str>: province/prefecture/state name
             - variables of the models <int>: Confirmed etc.
         """
-        df = self._taufree_df.drop(self.TS, axis=1)
+        df = self.taufree()
+        df = df.drop(self.TS, axis=1)
         df = df.reset_index(drop=True)
+        # TODO: Restore Confirmed, Recovered, Recovered for all models
         var_cols = df.columns.tolist()
         # Date
         start_obj = datetime.strptime(start_date, self.DATE_FORMAT)

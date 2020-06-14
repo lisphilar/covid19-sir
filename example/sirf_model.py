@@ -50,15 +50,13 @@ def main():
         y_integer=True,
         filename=output_dir.joinpath("dim.png")
     )
-    import sys
-    sys.exit()
     # Hyperparameter estimation of example data
     estimator = cs.Estimator(
         clean_df=dim_df, model=cs.SIRF, population=eg_population,
         country="Example", province=model.NAME, tau=eg_tau
     )
     estimator.run()
-    estimated_df = estimator.summary(name="SIR-F")
+    estimated_df = estimator.summary(name=model.NAME)
     estimated_df.loc["Setted"] = pd.Series(
         {**set_param_dict, "tau": eg_tau}
     )
