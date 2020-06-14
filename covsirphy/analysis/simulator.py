@@ -26,6 +26,8 @@ class ODESimulator(Word):
         self.settings = list()
         # tau-free data: reset index, 't', columns with dimensional variables
         self._taufree_df = pd.DataFrame()
+        # key: non-dim variable name, value: dimensional variable name
+        self.var_dict = dict()
 
     def add(self, model, step_n, population, param_dict=None, y0_dict=None):
         """
@@ -78,6 +80,8 @@ class ODESimulator(Word):
                 "y0_dict": y0_dict.copy(),
             }
         )
+        # Update variable dictionary
+        self.var_dict.update(model.VAR_DICT)
         return self
 
     def _solve_ode(self, model, step_n, param_dict, y0_dict, population):
@@ -110,6 +114,7 @@ class ODESimulator(Word):
         t_df = pd.Series(data=sol["t"], name=self.TS)
         y_df = pd.DataFrame(data=sol["y"].T.copy(), columns=variables)
         sim_df = pd.concat([t_df, y_df], axis=1)
+        sim_df = sim_df.astype(np.int64)
         return sim_df
 
     def run(self):
@@ -132,7 +137,7 @@ class ODESimulator(Word):
             new_df = self._solve_ode(**setting)
             taufree_df = pd.concat(
                 [self._taufree_df.iloc[:-1, :], new_df],
-                axis=1, ignore_index=True
+                axis=0, ignore_index=True
             )
             taufree_df = taufree_df.fillna(0)
             taufree_df[self.TS] = taufree_df.index
@@ -149,6 +154,8 @@ class ODESimulator(Word):
         """
         df = self._taufree_df.set_index(self.TS)
         df = df.apply(lambda x: x / sum(x), axis=1)
+        var_dict_rev = {v: k for (k, v) in self.var_dict.items()}
+        df.columns = [var_dict_rev[col] for col in df.columns]
         df = df.reset_index()
         return df
 

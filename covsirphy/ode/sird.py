@@ -14,12 +14,18 @@ class SIRD(ModelBase):
     # names of parameters
     PARAMETERS = ["kappa", "rho", "sigma"]
     DAY_PARAMETERS = ["1/alpha2 [day]", "1/beta [day]", "1/gamma [day]"]
-    # Variable names in dimensional ODEs
-    VARIABLES = [super().S, super().SI, super().R, super().F]
+    # Variable names in (non-dim, dimensional) ODEs
+    VAR_DICT = {
+        "x": ModelBase.S,
+        "y": ModelBase.CI,
+        "z": ModelBase.R,
+        "w": ModelBase.F
+    }
+    VARIABLES = list(VAR_DICT.values())
     # Priorities of the variables when optimization
     PRIORITIES = np.array([1, 10, 10, 2])
     # Variables that increases monotonically
-    VARS_INCLEASE = [super().R, super().F]
+    VARS_INCLEASE = [ModelBase.R, ModelBase.F]
 
     def __init__(self, population, kappa, rho, sigma):
         """
@@ -43,7 +49,8 @@ class SIRD(ModelBase):
         Return the list of dS/dt (tau-free) etc.
         @return <np.array>
         """
-        n, s, i, *_ = self.population, X
+        n = self.population
+        s, i, *_ = X
         dsdt = 0 - round(self.rho * s * i / n)
         drdt = round(self.sigma * i)
         dfdt = round(self.kappa * i)

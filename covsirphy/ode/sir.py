@@ -14,12 +14,17 @@ class SIR(ModelBase):
     # names of parameters
     PARAMETERS = ["rho", "sigma"]
     DAY_PARAMETERS = ["1/beta [day]", "1/gamma [day]"]
-    # Variable names in dimensional ODEs
-    VARIABLES = [super().S, super().SI, super().FR]
+    # Variable names in (non-dim, dimensional) ODEs
+    VAR_DICT = {
+        "x": ModelBase.S,
+        "y": ModelBase.CI,
+        "z": ModelBase.FR
+    }
+    VARIABLES = list(VAR_DICT.values())
     # Priorities of the variables when optimization
     PRIORITIES = np.array([1, 1, 1])
     # Variables that increases monotonically
-    VARS_INCLEASE = [super().FR]
+    VARS_INCLEASE = [ModelBase.FR]
 
     def __init__(self, population, rho, sigma):
         """
@@ -41,7 +46,8 @@ class SIR(ModelBase):
         Return the list of dS/dt (tau-free) etc.
         @return <np.array>
         """
-        n, s, i, *_ = self.population, X
+        n = self.population
+        s, i, *_ = X
         dsdt = 0 - round(self.rho * s * i / n)
         drdt = round(self.sigma * i)
         didt = 0 - dsdt - drdt

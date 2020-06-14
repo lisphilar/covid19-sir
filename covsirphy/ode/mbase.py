@@ -14,8 +14,9 @@ class ModelBase(ModelBaseCommon):
     # names of parameters
     PARAMETERS = list()
     DAY_PARAMETERS = list()
-    # Variable names in dimensional ODEs
-    VARIABLES = list()
+    # Variable names in (non-dim, dimensional) ODEs
+    VAR_DICT = dict()
+    VARIABLES = list(VAR_DICT.values())
     # Priorities of the variables when optimization
     PRIORITIES = np.array(list())
     # Variables that increases monotonically

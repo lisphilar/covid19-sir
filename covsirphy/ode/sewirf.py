@@ -18,15 +18,20 @@ class SEWIRF(ModelBase):
         "1/beta1 [day]", "1/beta2 [day]", "1/beta3 [day]",
         "1/gamma [day]"
     ]
-    # Variable names in dimensional ODEs
-    VARIABLES = [
-        super().S, super().SI, super().R, super().F,
-        super().E, super().W
-    ]
+    # Variable names in (non-dim, dimensional) ODEs
+    VAR_DICT = {
+        "x1": ModelBase.S,
+        "y": ModelBase.CI,
+        "z": ModelBase.R,
+        "w": ModelBase.F,
+        "x2": ModelBase.E,
+        "x3": ModelBase.W,
+    }
+    VARIABLES = list(VAR_DICT.values())
     # Priorities of the variables when optimization
     PRIORITIES = np.array([0, 10, 10, 2, 0, 0])
     # Variables that increases monotonically
-    VARS_INCLEASE = [super().R, super().F]
+    VARS_INCLEASE = [ModelBase.R, ModelBase.F]
 
     def __init__(self, population, theta, kappa, rho1, rho2, rho3, sigma):
         """
@@ -56,7 +61,8 @@ class SEWIRF(ModelBase):
         Return the list of dS/dt (tau-free) etc.
         @return <np.array>
         """
-        n, s, i, *_, e, w = self.population, X
+        n = self.population
+        s, i, *_, e, w = X
         beta_swi = round(self.rho1 * s * (w + i) / n)
         dsdt = 0 - beta_swi
         dedt = beta_swi - round(self.rho2 * e)

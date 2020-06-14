@@ -10,31 +10,45 @@ def main():
     code_path = Path(__file__)
     output_dir = code_path.with_name("output").joinpath(code_path.stem)
     output_dir.mkdir(exist_ok=True, parents=True)
-    # Simulation
+    # Setting
     eg_population = 1_000_000
     eg_tau = 1440
-    setted_param_dict = {
+    start_date = "22Jan2020"
+    model = cs.SIRF
+    set_param_dict = {
         "theta": 0.002, "kappa": 0.005, "rho": 0.2, "sigma": 0.075
     }
-    simulator = cs.ODESimulator(country="Example", province="Example-1")
+    y0_dict = {
+        "Susceptible": 999_999, "Infected": 1000, "Recovered": 0, "Fatal": 0
+    }
+    # Simulation
+    simulator = cs.ODESimulator(country="Example", province=model.NAME)
     simulator.add(
         model=cs.SIRF, step_n=1000, population=eg_population,
-        param_dict=setted_param_dict,
-        y0_dict={"x": 0.999, "y": 0.001, "z": 0, "w": 0}
+        param_dict=set_param_dict, y0_dict=y0_dict
     )
     simulator.run()
     # Non-dimensional
-    # TODO: not use non-dimensional data
-    ode_df = simulator.non_dim()
-    ode_df.to_csv(output_dir.joinpath("non_dim.csv"), index=False)
+    nondim_df = simulator.non_dim()
+    nondim_df.to_csv(output_dir.joinpath("non_dim.csv"), index=False)
+    cs.line_plot(
+        nondim_df.set_index("t"),
+        title=f"{model.NAME}: Example data (non-dimensional)",
+        ylabel=str(),
+        h=[0, 1.0],
+        ylim=(None, None),
+        filename=output_dir.joinpath("non_dim_long.png")
+    )
     # Dimensional
-    dim_df = simulator.dim(tau=eg_tau, start_date="22Jan2020")
+    dim_df = simulator.dim(tau=eg_tau, start_date=start_date)
     dim_df.to_csv(output_dir.joinpath("dim.csv"), index=False)
     cs.line_plot(
-        dim_df.set_index("Date")[["Infected", "Recovered", "Fatal"]],
-        title="Example data",
-        filename=output_dir.joinpath("dim.png"),
-        ylim=(None, None)
+        dim_df.set_index("Date"),
+        title=f"{model.NAME}: Example data (dimensional)",
+        h=[0, eg_population],
+        y_integer=True,
+        ylim=(None, None),
+        filename=output_dir.joinpath("dim_long.png")
     )
 
 
