@@ -6,121 +6,120 @@ from covsirphy.ode.mbase import ModelBase
 
 
 class SIRD(ModelBase):
+    """
+    SIR-D model.
+    """
+    # Model name
     NAME = "SIR-D"
+    # names of parameters
     PARAMETERS = ["kappa", "rho", "sigma"]
     DAY_PARAMETERS = ["1/alpha2 [day]", "1/beta [day]", "1/gamma [day]"]
-    VARIABLES = ["x", "y", "z", "w"]
+    # Variable names in dimensional ODEs
+    VARIABLES = [super().S, super().SI, super().R, super().F]
+    # Priorities of the variables when optimization
     PRIORITIES = np.array([1, 10, 10, 2])
-    VARS_INCLEASE = ["z", "w"]
+    # Variables that increases monotonically
+    VARS_INCLEASE = [super().R, super().F]
 
-    def __init__(self, kappa, rho, sigma):
-        super().__init__()
+    def __init__(self, population, kappa, rho, sigma):
+        """
+        @population <int>: total population
+        parameter values of non-dimensional ODE model
+            - @kappa <float>
+            - @rho <float>
+            - @sigma <float>
+        """
+        # Total population
+        if not isinstance(population, int):
+            raise TypeError("@population must be an integer.")
+        self.population = population
+        # Non-dim parameters
         self.kappa = kappa
         self.rho = rho
         self.sigma = sigma
 
     def __call__(self, t, X):
-        x, y, z, w = X
-        y = max(y, 0)
-        dxdt = - self.rho * x * y
-        # dydt = self.rho * x * y - (self.sigma + self.kappa) * y
-        dzdt = self.sigma * y
-        dwdt = self.kappa * y
-        dydt = 0 - min(dxdt + dzdt + dwdt, y)
-        return np.array([dxdt, dydt, dzdt, dwdt])
-
-    @classmethod
-    def param(cls, ode_df=None, q_range=None):
-        param_dict = super().param()
-        q_range = super().QUANTILE_RANGE[:] if q_range is None else q_range
-        if ode_df is not None:
-            df = ode_df.copy()
-            # kappa = (dw/dt) / y
-            kappa_series = df["w"].diff() / df["t"].diff() / df["y"]
-            param_dict["kappa"] = kappa_series.quantile(q_range)
-            # rho = - (dx/dt) / x / y
-            rho_series = 0 - df["x"].diff() / df["t"].diff() / \
-                df["x"] / df["y"]
-            param_dict["rho"] = rho_series.quantile(q_range)
-            # sigma = (dz/dt) / y
-            sigma_series = df["z"].diff() / df["t"].diff() / df["y"]
-            param_dict["sigma"] = sigma_series.quantile(q_range)
-            return param_dict
-        param_dict["kappa"] = (0, 1)
-        param_dict["rho"] = (0, 1)
-        param_dict["sigma"] = (0, 1)
-        return param_dict
-
-    @classmethod
-    def calc_variables(cls, cleaned_df, population):
         """
-        Calculate the variables of SIR-D model.
-        This function overwrites the parent class.
-        @cleaned_df <pd.DataFrame>: cleaned data
-            - index (Date) <pd.TimeStamp>: Observation date
+        Return the list of dS/dt (tau-free) etc.
+        @return <np.array>
+        """
+        n, s, i, *_ = self.population, X
+        dsdt = 0 - round(self.beta * s * i / n)
+        drdt = round(self.sigma * i)
+        dfdt = round(self.kappa * i)
+        didt = 0 - dsdt - drdt - dfdt
+        return np.array([dsdt, didt, drdt, dfdt])
+
+    @classmethod
+    def param_range(cls, taufree_df, population):
+        """
+        Define the range of parameters (not including tau value).
+        @taufree_df <pd.DataFrame>:
+            - index: reset index
+            - t <int>: time steps (tau-free)
+            - columns with dimensional variables
+        @population <int>: total population
+        @return <dict[name]=(min, max)>:
+            - min <float>: min value
+            - max <float>: max value
+        """
+        df = cls.validate_dataframe(
+            taufree_df, name="taufree_df", columns=[cls.TS, *cls.VARIABLES]
+        )
+        n, t = population, df[cls.TS]
+        s, i, r, d = df[cls.S], df[cls.CI], df[cls.R], df[cls.F]
+        # kappa = (dD/dt) / I
+        kappa_series = d.diff() / t / i
+        # rho = - n * (dS/dt) / S / I
+        rho_series = 0 - n * s.diff() / t.diff() / s / i
+        # sigma = (dR/dt) / I
+        sigma_series = r.diff() / t / i
+        # Calculate quantile
+        _dict = {
+            k: v.quantile(cls.QUANTILE_RANGE)
+            for (k, v) in zip(
+                ["kappa", "rho", "sigma"],
+                [kappa_series, rho_series, sigma_series]
+            )
+        }
+        return _dict
+
+    @classmethod
+    def specialize(cls, data_df, population):
+        """
+        Specialize the dataset for this model.
+        @data_df <pd.DataFrame>:
+            - index: reset index
             - Confirmed <int>: the number of confirmed cases
             - Infected <int>: the number of currently infected cases
             - Fatal <int>: the number of fatal cases
             - Recovered <int>: the number of recovered cases
+            - any columns
         @population <int>: total population in the place
-        @return <pd.DataFrame>
-            - index (Date) <pd.TimeStamp>: Observation date
-            - Elapsed <int>: Elapsed time from the start date [min]
-            - x: Susceptible / Population
-            - y: Infected / Population
-            - z: Recovered / Population
-            - w: Fatal / Population
-        """
-        df = super().calc_variables(cleaned_df, population)
-        df["X"] = population - df[cls.C]
-        df["Y"] = df[cls.CI]
-        df["Z"] = df[cls.R]
-        df["W"] = df[cls.F]
-        # Columns will be changed to lower cases
-        return cls.ode_cols(df, ["X", "Y", "Z", "W"], population)
-
-    @classmethod
-    def calc_variables_reverse(cls, df, population):
-        """
-        Calculate measurable variables.
-        @df <pd.DataFrame>:
-            - index: reset index
-            - x: Susceptible / Population
-            - y: Infected / Population
-            - z: Recovered / Population
-            - w: Fatal / Population
-        @population <int>: population value in the place
         @return <pd.DataFrame>:
             - index: reset index
-            - Confirmed <int>: the number of confirmed cases
-            - Infected <int>: the number of currently infected cases
-            - Fatal <int>: the number of fatal cases
-            - Recovered <int>: the number of recovered cases
+            - any columns @data_df has
+            - Susceptible <int> the number of susceptible cases
         """
-        df[cls.C] = 1 - df["x"]
-        df[cls.CI] = df["y"]
-        df[cls.R] = df["z"]
-        df[cls.F] = df["w"]
-        df = df.loc[:, [cls.C, cls.CI, cls.F, cls.R]]
-        df = (df * population).astype(np.int64)
+        df = super().specialize(data_df, population)
+        # Calculate dimensional variables
+        df[cls.S] = population - df[cls.C]
         return df
 
     def calc_r0(self):
-        try:
-            r0 = self.rho / (self.sigma + self.kappa)
-        except ZeroDivisionError:
-            return np.nan
-        return round(r0, 2)
+        """
+        Calculate (basic) reproduction number.
+        """
+        rt = self.rho / (self.sigma + self.kappa)
+        return round(rt, 2)
 
     def calc_days_dict(self, tau):
+        """
+        Calculate 1/beta [day] etc.
+        @param tau <int>: tau value [min]
+        """
         _dict = dict()
-        if self.kappa == 0:
-            _dict["1/alpha2 [day]"] = 0
-        else:
-            _dict["1/alpha2 [day]"] = int(tau / 24 / 60 / self.kappa)
+        _dict["1/alpha2 [day]"] = int(tau / 24 / 60 / self.kappa)
         _dict["1/beta [day]"] = int(tau / 24 / 60 / self.rho)
-        if self.sigma == 0:
-            _dict["1/gamma [day]"] = 0
-        else:
-            _dict["1/gamma [day]"] = int(tau / 24 / 60 / self.sigma)
-        return _dict
+        _dict["1/gamma [day]"] = int(tau / 24 / 60 / self.sigma)
+        return dict()

@@ -131,7 +131,7 @@ class ODEData(PhaseData):
             - Fatal <int>: the number of fatal cases
             - Recovered <int>: the number of recovered cases
         @model <sub-class of cs.ModelBase>: ODE model
-        @population <int>: total population in the place
+        @population <int>: total population
         @tau <int/None>: tau value [min] or None (un-set)
         @return <pd.DataFrame>:
             - index: reset index
@@ -149,7 +149,7 @@ class ODEData(PhaseData):
         """
         Make a dataset for ODE analysis.
         @model <covsirphy.ModelBase>: ODE model
-        @population <int>: total population in the place
+        @population <int>: total population
         @start_date <str>: start date, like 22Jan2020
             - if None, the first date of the records will be used
         @end_date <str>: end date, like 01Feb2020

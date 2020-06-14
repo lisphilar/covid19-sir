@@ -13,6 +13,7 @@ class SIR(ModelBase):
     NAME = "SIR"
     # names of parameters
     PARAMETERS = ["rho", "sigma"]
+    DAY_PARAMETERS = ["1/beta [day]", "1/gamma [day]"]
     # Variable names in dimensional ODEs
     VARIABLES = [super().S, super().SI, super().FR]
     # Priorities of the variables when optimization
@@ -22,7 +23,6 @@ class SIR(ModelBase):
 
     def __init__(self, population, rho, sigma):
         """
-        This method should be overwritten in subclass.
         @population <int>: total population
         parameter values of non-dimensional ODE model
             - @rho <float>
@@ -39,32 +39,35 @@ class SIR(ModelBase):
     def __call__(self, t, X):
         """
         Return the list of dS/dt (tau-free) etc.
-        This method should be overwritten in subclass.
         @return <np.array>
         """
-        s, i, _, n = X, self.population
+        n, s, i, *_ = self.population, X
         dsdt = 0 - round(self.beta * s * i / n)
         drdt = round(self.sigma * i)
         didt = 0 - dsdt - drdt
         return np.array([dsdt, didt, drdt])
 
     @classmethod
-    def param_range(cls, ode_df=None):
+    def param_range(cls, taufree_df, population):
         """
         Define the range of parameters (not including tau value).
-        This function should be overwritten in subclass.
-        @ode_df <pd.DataFrame>:
-            - columns: t and dimensional variables
+        @taufree_df <pd.DataFrame>:
+            - index: reset index
+            - t <int>: time steps (tau-free)
+            - columns with dimensional variables
+        @population <int>: total population
         @return <dict[name]=(min, max)>:
             - min <float>: min value
             - max <float>: max value
         """
-        df = cls.validate_ode(ode_df)
-        t, x, y, z = df[cls.TS], df[cls.S], df[cls.CI], df[cls.FR]
-        # rho = - (dx/dt) / x / y
-        rho_series = 0 - x.diff() / t.diff() / x / y
-        # sigma = (dz/dt) / y
-        sigma_series = z.diff() / t / y
+        df = cls.validate_dataframe(
+            taufree_df, name="taufree_df", columns=[cls.TS, *cls.VARIABLES]
+        )
+        n, t, s, i, r = population, df[cls.TS], df[cls.S], df[cls.CI], df[cls.FR]
+        # rho = - n * (dS/dt) / S / I
+        rho_series = 0 - n * s.diff() / t.diff() / s / i
+        # sigma = (dR/dt) / I
+        sigma_series = r.diff() / t / i
         # Calculate quantile
         _dict = {
             k: v.quantile(cls.QUANTILE_RANGE)
@@ -100,7 +103,7 @@ class SIR(ModelBase):
 
     def calc_r0(self):
         """
-        This method should be overwritten in subclass.
+        Calculate (basic) reproduction number.
         """
         rt = self.rho / self.sigma
         return round(rt, 2)
@@ -108,7 +111,6 @@ class SIR(ModelBase):
     def calc_days_dict(self, tau):
         """
         Calculate 1/beta [day] etc.
-        This method should be overwritten in subclass.
         @param tau <int>: tau value [min]
         """
         _dict = dict()

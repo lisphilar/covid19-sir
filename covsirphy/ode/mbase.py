@@ -13,6 +13,7 @@ class ModelBase(ModelBaseCommon):
     NAME = "ModelBase"
     # names of parameters
     PARAMETERS = list()
+    DAY_PARAMETERS = list()
     # Variable names in dimensional ODEs
     VARIABLES = list()
     # Priorities of the variables when optimization
@@ -40,18 +41,19 @@ class ModelBase(ModelBaseCommon):
         return np.array(list())
 
     @classmethod
-    def param_range(cls, ode_df):
+    def param_range(cls, taufree_df, population):
         """
         Define the range of parameters (not including tau value).
-        This function should be overwritten in subclass.
-        @ode_df <pd.DataFrame>:
-            - columns: t and dimensional variables
-            - dimensional variables are defined by model.VARIABLES
+        This method should be overwritten in subclass.
+        @taufree_df <pd.DataFrame>:
+            - index: reset index
+            - t <int>: time steps (tau-free)
+            - columns with dimensional variables
+        @population <int>: total population
         @return <dict[name]=(min, max)>:
             - min <float>: min value
             - max <float>: max value
         """
-        _ = cls.validate_ode(ode_df)
         _dict = dict()
         return _dict
 
@@ -80,6 +82,7 @@ class ModelBase(ModelBaseCommon):
 
     def calc_r0(self):
         """
+        Calculate (basic) reproduction number.
         This method should be overwritten in subclass.
         """
         return None
