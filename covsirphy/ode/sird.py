@@ -118,8 +118,9 @@ class SIRD(ModelBase):
         Calculate 1/beta [day] etc.
         @param tau <int>: tau value [min]
         """
-        _dict = dict()
-        _dict["1/alpha2 [day]"] = int(tau / 24 / 60 / self.kappa)
-        _dict["1/beta [day]"] = int(tau / 24 / 60 / self.rho)
-        _dict["1/gamma [day]"] = int(tau / 24 / 60 / self.sigma)
-        return dict()
+        _dict = {
+            "1/alpha2 [day]": int(tau / 24 / 60 / self.kappa),
+            "1/beta [day]": int(tau / 24 / 60 / self.rho),
+            "1/gamma [day]": int(tau / 24 / 60 / self.sigma)
+        }
+        return _dict

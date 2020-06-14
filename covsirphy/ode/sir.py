@@ -71,9 +71,7 @@ class SIR(ModelBase):
         # Calculate quantile
         _dict = {
             k: v.quantile(cls.QUANTILE_RANGE)
-            for (k, v) in zip(
-                ["rho", "sigma"], [rho_series, sigma_series]
-            )
+            for (k, v) in zip(["rho", "sigma"], [rho_series, sigma_series])
         }
         return _dict
 
@@ -113,7 +111,8 @@ class SIR(ModelBase):
         Calculate 1/beta [day] etc.
         @param tau <int>: tau value [min]
         """
-        _dict = dict()
-        _dict["1/beta [day]"] = int(tau / 24 / 60 / self.rho)
-        _dict["1/gamma [day]"] = int(tau / 24 / 60 / self.sigma)
-        return dict()
+        _dict = {
+            "1/beta [day]": int(tau / 24 / 60 / self.rho),
+            "1/gamma [day]": int(tau / 24 / 60 / self.sigma)
+        }
+        return _dict
