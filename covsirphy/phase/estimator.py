@@ -6,7 +6,7 @@ import optuna
 import pandas as pd
 from covsirphy.analysis.simulator import ODESimulator
 from covsirphy.ode.mbase import ModelBase
-from covsirphy.phase.taufree import TauFreeData
+from covsirphy.phase.ode_data import ODEData
 from covsirphy.phase.optimize import Optimizer
 from covsirphy.util.stopwatch import StopWatch
 
@@ -47,10 +47,10 @@ class Estimator(Optimizer):
         self.population = population
         self.country = country
         self.province = province
-        taufree_data = TauFreeData(
+        ode_data = ODEData(
             clean_df, country=country, province=province
         )
-        self.min_train_df = taufree_data.make(
+        self.min_train_df = ode_data.make(
             model=model, population=population,
             start_date=start_date, end_date=end_date
         )
@@ -175,7 +175,7 @@ class Estimator(Optimizer):
         # Set parameters of the models
         p_dict = {self.TAU: None}
         # TODO: not use non-dim data
-        model_param_dict = self.model.param_range(taufree_df=train_df)
+        model_param_dict = self.model.param_range(ode_df=train_df)
         p_dict.update(
             {
                 k: trial.suggest_uniform(k, *v)
@@ -262,6 +262,7 @@ class Estimator(Optimizer):
             y0_dict=self.y0_dict
         )
         simulator.run()
+        # TODO: convert dim-data to non-dim data
         df = simulator.non_dim()
         return df
 

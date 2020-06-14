@@ -10,7 +10,7 @@ from covsirphy.cleaning import CleaningBase, Word, Population
 from covsirphy.cleaning import JHUData, CountryData, OxCGRTData
 from covsirphy.ode import ModelBaseCommon, ModelBase
 from covsirphy.ode import SIR, SIRD, SIRF, SIRFV, SEWIRF
-from covsirphy.phase import PhaseData, TauFreeData, Estimator
+from covsirphy.phase import PhaseData, ODEData, Estimator
 from covsirphy.phase import SRData, Trend
 from covsirphy.util import line_plot, jpn_map, StopWatch
 
@@ -22,7 +22,7 @@ __all__ = [
     "JHUData", "CountryData", "OxCGRTData",
     "ModelBaseCommon", "ModelBase",
     "SIR", "SIRD", "SIRF", "SIRFV", "SEWIRF",
-    "PhaseData", "TauFreeData", "Estimator", "SRData", "Trend",
+    "PhaseData", "ODEData", "Estimator", "SRData", "Trend",
     "line_plot", "jpn_map", "StopWatch",
 ]
 

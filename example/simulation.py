@@ -27,8 +27,8 @@ def main():
     simulator.run()
     # Non-dimensional
     # TODO: not use non-dimensional data
-    taufree_df = simulator.non_dim()
-    taufree_df.to_csv(output_dir.joinpath("non_dim.csv"), index=False)
+    ode_df = simulator.non_dim()
+    ode_df.to_csv(output_dir.joinpath("non_dim.csv"), index=False)
     # Dimensional
     dim_df = simulator.dim(tau=eg_tau, start_date="22Jan2020")
     dim_df.to_csv(output_dir.joinpath("dim.csv"), index=False)

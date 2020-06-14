@@ -2,22 +2,23 @@
 # -*- coding: utf-8 -*-
 
 from datetime import datetime
+import numpy as np
+import pandas as pd
 from covsirphy.phase.phase_data import PhaseData
 from covsirphy.ode.mbase import ModelBase
 
 
-class TauFreeData(PhaseData):
+class ODEData(PhaseData):
     """
-    Create dataset for ODE analysis.
+    Tau-free dataset for ODE analysis.
     """
-    # TODO: not use non-dimensional data
 
     def __init__(self, clean_df, country=None, province=None):
         super().__init__(clean_df, country=country, province=province)
 
-    def _make(self, grouped_df, model, population):
+    def _make(self, grouped_df, model, population, tau):
         """
-        Make non-dimensional dataset for an ODE model.
+        Create tau-free dataset for ODE analysis.
         @grouped_df <pd.DataFrame>: cleaned data grouped by Date
             - index (Date) <pd.TimeStamp>: Observation date
             - Confirmed <int>: the number of confirmed cases
@@ -26,12 +27,11 @@ class TauFreeData(PhaseData):
             - Recovered <int>: the number of recovered cases
         @model <sub-class of cs.ModelBase>: ODE model
         @population <int>: total population in the place
+        @tau <int>: tau value [min]
         @return <pd.DataFrame>
             - index (Date) <pd.TimeStamp>: Observation date
-            - Elapsed <int>: Elapsed time from the start date [min]
-            - x, y, z, w etc.
-                - calculated in child classes.
-                - non-dimensionalized variables of Susceptible etc.
+            - Elapsed <int>: Elapsed time from the from date [min]
+            - columns with dimensional variables
         """
         df = grouped_df.copy()
         if set(df.columns) != set(self.VALUE_COLUMNS):
@@ -74,3 +74,33 @@ class TauFreeData(PhaseData):
         # Subset
         df = df.loc[(start_obj <= series) & (series <= end_obj), :]
         return self._make(df, model, population)
+
+    def _calc_elapsed(self, grouped_df):
+        """
+        Calculate elapsed time from the first date.
+        @grouped_df <pd.DataFrame>: cleaned data grouped by Date
+            - index (Date) <pd.TimeStamp>: Observation date
+            - Confirmed <int>: the number of confirmed cases
+            - Infected <int>: the number of currently infected cases
+            - Fatal <int>: the number of fatal cases
+            - Recovered <int>: the number of recovered cases
+        @return <pd.DataFrame>
+            - index: reset index
+            - Confirmed <int>: the number of confirmed cases
+            - Infected <int>: the number of currently infected cases
+            - Fatal <int>: the number of fatal cases
+            - Recovered <int>: the number of recovered cases
+            - Elapsed <int>: Elapsed time from the first date [min]
+        """
+        df = grouped_df.copy()
+        if not isinstance(df.index, pd.DatetimeIndex):
+            raise TypeError("Index of @grouped_df must be <pd.DatetimeIndex>")
+        if set(df.columns) != set(self.VALUE_COLUMNS):
+            cols_str = ", ".join(self.VALUE_COLUMNS)
+            raise KeyError(f"@grouped_df must has {cols_str} columns.")
+        # Calculate elapsed time from the first date [min]
+        df[self.TS] = (df.index - df.index.min()).total_seconds()
+        df[self.TS] = (df[self.T] // 60).astype(np.int64)
+        df = df.reset_index(drop=True)
+        return df
+

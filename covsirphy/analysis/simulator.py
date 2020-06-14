@@ -25,7 +25,7 @@ class ODESimulator(Word):
         # key: model, step_n, population, param_dict, y0_dict
         self.settings = list()
         # TODO: not use non-dimensional data
-        self._taufree_df = pd.DataFrame()
+        self._ode_df = pd.DataFrame()
         self._dim_df = pd.DataFrame()
 
     def add(self, model, step_n, population, param_dict=None, y0_dict=None):
@@ -127,7 +127,7 @@ class ODESimulator(Word):
         Run the simulator.
         """
         # TODO: not use non-dimensional data
-        self._taufree_df = pd.DataFrame()
+        self._ode_df = pd.DataFrame()
         for setting in self.settings:
             model = setting["model"]
             population = setting["population"]
@@ -137,25 +137,25 @@ class ODESimulator(Word):
                 for (k, v) in y0_dict.items():
                     if v is not None:
                         continue
-                    y0_dict[k] = self._taufree_df.loc[
-                        self._taufree_df.index[-1], k
+                    y0_dict[k] = self._ode_df.loc[
+                        self._ode_df.index[-1], k
                     ]
             # Non-dimensional
-            taufree_df = self._solve_ode(
+            ode_df = self._solve_ode(
                 model=model,
                 step_n=setting["step_n"],
                 param_dict=setting["param_dict"],
                 y0_dict=y0_dict
             )
-            taufree_df.fillna(0)
-            self._taufree_df = pd.concat(
-                [self._taufree_df.iloc[:-1, :], taufree_df],
+            ode_df.fillna(0)
+            self._ode_df = pd.concat(
+                [self._ode_df.iloc[:-1, :], ode_df],
                 axis=0, ignore_index=True
             )
-            self._taufree_df["t"] = self._taufree_df.index
+            self._ode_df["t"] = self._ode_df.index
             # Dimensional
             # TODO: calc_variables_reverse was removed
-            dim_df = model.calc_variables_reverse(taufree_df, population)
+            dim_df = model.calc_variables_reverse(ode_df, population)
             self._dim_df = pd.concat(
                 [self._dim_df, dim_df], axis=0, ignore_index=True, sort=True
             )
@@ -172,7 +172,7 @@ class ODESimulator(Word):
                 - non-dimensionalized variables of Susceptible etc.
         """
         # TODO: not use non-dimensional data
-        df = self._taufree_df.copy()
+        df = self._ode_df.copy()
         df = df.reset_index(drop=True)
         return df
 
