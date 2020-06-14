@@ -4,6 +4,7 @@
 from collections import defaultdict
 from datetime import datetime
 import numpy as np
+import pandas as pd
 
 
 class Word(object):
@@ -111,3 +112,26 @@ class Word(object):
         if unique:
             return list(set(flattened))
         return flattened
+
+    @staticmethod
+    def validate_dataframe(df, name="df", time_index=False, columns=None):
+        """
+        Validate the dataframe has the columns.
+        @df <pd.DataFrame>: the dataframe to validate
+        @name <str>: argument name of the dataframe
+        @time_index <bool>: if True, the dataframe must has DatetimeIndex
+        @columns <list[str]/None>: the columns the dataframe must have
+        @df <pd.DataFrame>: as-is the dataframe
+        """
+        if not isinstance(df, pd.DataFrame):
+            raise TypeError(f"@{name} must be a instance of <pd.DataFrame>.")
+        if time_index and (not isinstance(df.index, pd.DatetimeIndex)):
+            raise TypeError(f"Index of @{name} must be <pd.DatetimeIndex>.")
+        if columns is None:
+            return df
+        if not set(columns).issubset(set(df.columns)):
+            cols_str = ', '.join(
+                [col for col in columns if col not in df.columns]
+            )
+            raise KeyError(f"@{name} must have {cols_str}, but not included.")
+        return df

@@ -56,26 +56,27 @@ class ModelBase(ModelBaseCommon):
         return _dict
 
     @classmethod
-    def calc_variables(cls, cleaned_df, population):
+    def specialize(cls, data_df, population):
         """
-        Calculate the variables of the model.
+        Specialize the dataset for this model.
         This method should be overwritten in subclass.
-        @cleaned_df <pd.DataFrame>: cleaned data
-            - index (Date) <pd.TimeStamp>: Observation date
+        @data_df <pd.DataFrame>:
+            - index: reset index
             - Confirmed <int>: the number of confirmed cases
             - Infected <int>: the number of currently infected cases
             - Fatal <int>: the number of fatal cases
             - Recovered <int>: the number of recovered cases
+            - any columns
         @population <int>: total population in the place
-        @return <pd.DataFrame>
-            - index (Date) <pd.TimeStamp>: Observation date
-            - Elapsed <int>: Elapsed time from the start date [min]
+        @return <pd.DataFrame>:
+            - index: reset index
+            - any columns @data_df has
             - columns with dimensional variables
         """
-        df = cls.calc_elapsed(cleaned_df)
-        # Calculate dimensional variables
-        df[cls.S] = population - df[cls.C]
-        return df.loc[:, [cls.T, *cls.VARIABLES]]
+        df = cls.validate_dataframe(
+            data_df, name="data_df", columns=cls.VALUE_COLUMNS
+        )
+        return df
 
     def calc_r0(self):
         """

@@ -75,27 +75,28 @@ class SIR(ModelBase):
         return _dict
 
     @classmethod
-    def calc_variables(cls, cleaned_df, population):
+    def specialize(cls, data_df, population):
         """
-        Calculate the variables of the model.
-        This method should be overwritten in subclass.
-        @cleaned_df <pd.DataFrame>: cleaned data
-            - index (Date) <pd.TimeStamp>: Observation date
+        Specialize the dataset for this model.
+        @data_df <pd.DataFrame>:
+            - index: reset index
             - Confirmed <int>: the number of confirmed cases
             - Infected <int>: the number of currently infected cases
             - Fatal <int>: the number of fatal cases
             - Recovered <int>: the number of recovered cases
+            - any columns
         @population <int>: total population in the place
-        @return <pd.DataFrame>
-            - index (Date) <pd.TimeStamp>: Observation date
-            - Elapsed <int>: Elapsed time from the start date [min]
-            - columns with dimensional variables
+        @return <pd.DataFrame>:
+            - index: reset index
+            - any columns @data_df has
+            - Susceptible <int> the number of susceptible cases
+            - Fatal or Recovered <int>: total number of fatal/recovered cases
         """
-        df = cls.calc_elapsed(cleaned_df)
+        df = super().specialize(data_df, population)
         # Calculate dimensional variables
         df[cls.S] = population - df[cls.C]
         df[cls.FR] = df[cls.F] + df[cls.R]
-        return df.loc[:, [cls.T, *cls.VARIABLES]]
+        return df
 
     def calc_r0(self):
         """
