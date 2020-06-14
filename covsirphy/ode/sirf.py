@@ -14,7 +14,7 @@ class SIRF(ModelBase):
     # names of parameters
     PARAMETERS = ["theta", "kappa", "rho", "sigma"]
     DAY_PARAMETERS = [
-        "1/alpha1 [day]", "1/alpha2 [day]", "1/beta [day]", "1/gamma [day]"
+        "alpha1 [-]", "1/alpha2 [day]", "1/beta [day]", "1/gamma [day]"
     ]
     # Variable names in dimensional ODEs
     VARIABLES = [super().S, super().SI, super().R, super().F]
@@ -100,7 +100,7 @@ class SIRF(ModelBase):
         @return <pd.DataFrame>:
             - index: reset index
             - any columns @data_df has
-            - Susceptible <int> the number of susceptible cases
+            - Susceptible <int>: the number of susceptible cases
         """
         df = super().specialize(data_df, population)
         # Calculate dimensional variables
@@ -120,9 +120,10 @@ class SIRF(ModelBase):
         @param tau <int>: tau value [min]
         """
         _dict = {
-            "1/alpha1 [day]": round(self.theta, 3),
+            "alpha1 [-]": round(self.theta, 3),
             "1/alpha2 [day]": int(tau / 24 / 60 / self.kappa),
             "1/beta [day]": int(tau / 24 / 60 / self.rho),
-            "1/gamma [day]": int(tau / 24 / 60 / self.sigma)
+            "1/gamma [day]": int(tau / 24 / 60 / self.sigma),
+            "Vaccinated [persons]": int(self.omega * self.population)
         }
         return _dict

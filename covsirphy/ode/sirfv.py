@@ -6,143 +6,138 @@ from covsirphy.ode.mbase import ModelBase
 
 
 class SIRFV(ModelBase):
-    NAME = "SIR-FV"
+    """
+    SIR-FV model.
+    """
+    # Model name
+    NAME = "SIR-F"
+    # names of parameters
     PARAMETERS = ["theta", "kappa", "rho", "sigma", "omega"]
     DAY_PARAMETERS = [
-        "alpha1 [-]", "1/alpha2 [day]", "1/beta [day]", "1/gamma [day]"
+        "alpha1", "1/alpha2 [day]", "1/beta [day]", "1/gamma [day]"
     ]
-    VARIABLES = ["x", "y", "z", "w"]
-    PRIORITIES = np.array([1, 10, 10, 2])
-    VARS_INCLEASE = ["z", "w"]
+    # Variable names in dimensional ODEs
+    VARIABLES = [super().S, super().SI, super().R, super().F, super().V]
+    # Priorities of the variables when optimization
+    PRIORITIES = np.array([0, 10, 10, 2, 0])
+    # Variables that increases monotonically
+    VARS_INCLEASE = [super().R, super().F]
 
-    def __init__(self, theta, kappa, rho, sigma, omega=None, n=None, v_per_day=None):
+    def __init__(self, population, theta, kappa, rho, sigma,
+                 omega=None, v_per_day=None):
         """
-        (n and v_per_day) or omega must be applied.
-        @n <float or int>: total population
-        @v_par_day <float or int>: vaccinated persons per day
+        @population <int>: total population
+        parameter values of non-dimensional ODE model
+            - @theta <float>
+            - @kappa <float>
+            - @rho <float>
+            - @sigma <float>
+            - @omega <float> or v_per_day <int>
         """
-        super().__init__()
+        # Total population
+        if not isinstance(population, int):
+            raise TypeError("@population must be an integer.")
+        self.population = population
+        # Non-dim parameters
         self.theta = theta
         self.kappa = kappa
         self.rho = rho
         self.sigma = sigma
         if omega is None:
-            try:
-                self.omega = float(v_per_day) / float(n)
-            except TypeError:
-                s = "Neither (n and va_per_day) nor omega must be applied!"
-                raise TypeError(s)
+            if v_per_day is None:
+                raise TypeError("@omega or @v_per_day must be applied.")
+            omega = v_per_day / population
         else:
-            self.omega = float(omega)
+            if v_per_day is not None and omega != v_per_day / population:
+                raise ValueError("@v_per_day / @population does not match @omega.")
+        self.omega = omega
 
     def __call__(self, t, X):
-        x, y, z, w = X
-        y = max(y, 0)
-        # x with vaccination
-        dxdt = - self.rho * x * y - self.omega
-        dxdt = 0 - x if x + dxdt < 0 else dxdt
-        # y, z, w
-        # dydt = self.rho * (1 - self.theta) * x * y - (self.sigma + self.kappa) * y
-        dzdt = self.sigma * y
-        dwdt = self.rho * self.theta * x * y + self.kappa * y
-        dydt = 0 - min(dxdt + dzdt + dwdt, y)
-        return np.array([dxdt, dydt, dzdt, dwdt])
-
-    @classmethod
-    def param(cls, ode_df=None, q_range=None):
-        param_dict = super().param()
-        q_range = super().QUANTILE_RANGE[:] if q_range is None else q_range
-        param_dict["theta"] = (0, 1)
-        param_dict["kappa"] = (0, 1)
-        param_dict["omega"] = (0, 1)
-        if ode_df is not None:
-            df = ode_df.copy()
-            # rho = - (dx/dt) / x / y
-            rho_series = 0 - df["x"].diff() / df["t"].diff() / \
-                df["x"] / df["y"]
-            param_dict["rho"] = rho_series.quantile(q_range)
-            # sigma = (dz/dt) / y
-            sigma_series = df["z"].diff() / df["t"].diff() / df["y"]
-            param_dict["sigma"] = sigma_series.quantile(q_range)
-            return param_dict
-        param_dict["rho"] = (0, 1)
-        param_dict["sigma"] = (0, 1)
-        return param_dict
-
-    @classmethod
-    def calc_variables(cls, cleaned_df, population):
         """
-        Calculate the variables of SIR-FV model.
-        This function overwrites the parent class.
-        @cleaned_df <pd.DataFrame>: cleaned data
-            - index (Date) <pd.TimeStamp>: Observation date
+        Return the list of dS/dt (tau-free) etc.
+        @return <np.array>
+        """
+        n, s, i, *_ = self.population, X
+        beta_si = round(self.beta * s * i / n)
+        dvdt = round(self.w * n)
+        dsdt = 0 - beta_si - dvdt
+        drdt = round(self.sigma * i)
+        dfdt = round(self.kappa * i) + round((0 - beta_si) * self.theta)
+        didt = 0 - dsdt - drdt - dfdt - dvdt
+        return np.array([dsdt, didt, drdt, dfdt, dvdt])
+
+    @classmethod
+    def param_range(cls, taufree_df, population):
+        """
+        Define the range of parameters (not including tau value).
+        @taufree_df <pd.DataFrame>:
+            - index: reset index
+            - t <int>: time steps (tau-free)
+            - columns with dimensional variables
+        @population <int>: total population
+        @return <dict[name]=(min, max)>:
+            - min <float>: min value
+            - max <float>: max value
+        """
+        df = cls.validate_dataframe(
+            taufree_df, name="taufree_df", columns=[cls.TS, *cls.VARIABLES]
+        )
+        n, t = population, df[cls.TS]
+        s, i, r, f = df[cls.S], df[cls.CI], df[cls.R], df[cls.F]
+        # sigma = (dR/dt) / I
+        sigma_series = r.diff() / t / i
+        # omega = 0 - (dS/dt + dI/dt + dR/dt + dF/dt) / n
+        omega_series = 0 - (s + i + r + f).diff() / t / n
+        # Calculate quantile
+        _dict = {
+            k: v.quantile(cls.QUANTILE_RANGE)
+            for (k, v) in zip(["sigma", "omega"], [sigma_series, omega_series])
+        }
+        _dict["theta"] = (0, 1)
+        _dict["kappa"] = (0, 1)
+        _dict["rho"] = (0, 1)
+        return _dict
+
+    @classmethod
+    def specialize(cls, data_df, population):
+        """
+        Specialize the dataset for this model.
+        @data_df <pd.DataFrame>:
+            - index: reset index
             - Confirmed <int>: the number of confirmed cases
             - Infected <int>: the number of currently infected cases
             - Fatal <int>: the number of fatal cases
             - Recovered <int>: the number of recovered cases
+            - any columns
         @population <int>: total population in the place
-        @return <pd.DataFrame>
-            - index (Date) <pd.TimeStamp>: Observation date
-            - Elapsed <int>: Elapsed time from the start date [min]
-            - x: Susceptible / Population
-            - y: Infected / Population
-            - z: Recovered / Population
-            - w: Fatal / Population
-        """
-        df = super().calc_variables(cleaned_df, population)
-        df["X"] = population - df[cls.C]
-        df["Y"] = df[cls.CI]
-        df["Z"] = df[cls.R]
-        df["W"] = df[cls.F]
-        # Columns will be changed to lower cases
-        return cls.ode_cols(df, ["X", "Y", "Z", "W"], population)
-
-    @classmethod
-    def calc_variables_reverse(cls, df, population):
-        """
-        Calculate measurable variables.
-        @df <pd.DataFrame>:
-            - index: reset index
-            - x: Susceptible / Population
-            - y: Infected / Population
-            - z: Recovered / Population
-            - w: Fatal / Population
-        @population <int>: population value in the place
         @return <pd.DataFrame>:
             - index: reset index
-            - Confirmed <int>: the number of confirmed cases
-            - Infected <int>: the number of currently infected cases
-            - Fatal <int>: the number of fatal cases
-            - Recovered <int>: the number of recovered cases
-            - Vaccinated <int>: the number of vaccinated cases
+            - any columns @data_df has
+            - Susceptible <int>: 0
+            - Vactinated <int>: 0
         """
-        df[cls.S] = df["x"]
-        df[cls.C] = df[["y", "z", "w"]].sum(axis=1)
-        df[cls.CI] = df["y"]
-        df[cls.R] = df["z"]
-        df[cls.F] = df["w"]
-        df[cls.V] = 1 - df[["x", "y", "z", "w"]].sum(axis=1)
-        df = df.loc[:, [cls.C, cls.CI, cls.F, cls.R, cls.V]]
-        df = (df * population).astype(np.int64)
+        df = super().specialize(data_df, population)
+        # Calculate dimensional variables
+        df[cls.S] = 0
+        df[cls.V] = 0
         return df
 
     def calc_r0(self):
-        try:
-            r0 = self.rho * (1 - self.theta) / (self.sigma + self.kappa)
-        except ZeroDivisionError:
-            return np.nan
-        return round(r0, 2)
+        """
+        Calculate (basic) reproduction number.
+        """
+        rt = self.rho * (1 - self.theta) / (self.sigma + self.kappa)
+        return round(rt, 2)
 
     def calc_days_dict(self, tau):
-        _dict = dict()
-        _dict["alpha1 [-]"] = round(self.theta, 3)
-        if self.kappa == 0:
-            _dict["1/alpha2 [day]"] = 0
-        else:
-            _dict["1/alpha2 [day]"] = int(tau / 24 / 60 / self.kappa)
-        _dict["1/beta [day]"] = int(tau / 24 / 60 / self.rho)
-        if self.sigma == 0:
-            _dict["1/gamma [day]"] = 0
-        else:
-            _dict["1/gamma [day]"] = int(tau / 24 / 60 / self.sigma)
+        """
+        Calculate 1/beta [day] etc.
+        @param tau <int>: tau value [min]
+        """
+        _dict = {
+            "alpha1": round(self.theta, 3),
+            "1/alpha2 [day]": int(tau / 24 / 60 / self.kappa),
+            "1/beta [day]": int(tau / 24 / 60 / self.rho),
+            "1/gamma [day]": int(tau / 24 / 60 / self.sigma)
+        }
         return _dict

@@ -90,7 +90,7 @@ class SIR(ModelBase):
         @return <pd.DataFrame>:
             - index: reset index
             - any columns @data_df has
-            - Susceptible <int> the number of susceptible cases
+            - Susceptible <int>: the number of susceptible cases
             - Fatal or Recovered <int>: total number of fatal/recovered cases
         """
         df = super().specialize(data_df, population)

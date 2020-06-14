@@ -99,7 +99,7 @@ class SIRD(ModelBase):
         @return <pd.DataFrame>:
             - index: reset index
             - any columns @data_df has
-            - Susceptible <int> the number of susceptible cases
+            - Susceptible <int>: the number of susceptible cases
         """
         df = super().specialize(data_df, population)
         # Calculate dimensional variables
