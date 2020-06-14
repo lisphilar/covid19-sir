@@ -10,11 +10,12 @@ class SIRFV(ModelBase):
     SIR-FV model.
     """
     # Model name
-    NAME = "SIR-F"
+    NAME = "SIR-FV"
     # names of parameters
     PARAMETERS = ["theta", "kappa", "rho", "sigma", "omega"]
     DAY_PARAMETERS = [
-        "alpha1", "1/alpha2 [day]", "1/beta [day]", "1/gamma [day]"
+        "alpha1", "1/alpha2 [day]", "1/beta [day]", "1/gamma [day]",
+        "Vaccinated [persons]"
     ]
     # Variable names in dimensional ODEs
     VARIABLES = [super().S, super().SI, super().R, super().F, super().V]
@@ -58,7 +59,7 @@ class SIRFV(ModelBase):
         @return <np.array>
         """
         n, s, i, *_ = self.population, X
-        beta_si = round(self.beta * s * i / n)
+        beta_si = round(self.rho * s * i / n)
         dvdt = round(self.w * n)
         dsdt = 0 - beta_si - dvdt
         drdt = round(self.sigma * i)
@@ -138,6 +139,7 @@ class SIRFV(ModelBase):
             "alpha1": round(self.theta, 3),
             "1/alpha2 [day]": int(tau / 24 / 60 / self.kappa),
             "1/beta [day]": int(tau / 24 / 60 / self.rho),
-            "1/gamma [day]": int(tau / 24 / 60 / self.sigma)
+            "1/gamma [day]": int(tau / 24 / 60 / self.sigma),
+            "Vaccinated [persons]": int(self.omega * self.population)
         }
         return _dict

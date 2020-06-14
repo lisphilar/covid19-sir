@@ -44,7 +44,7 @@ class SIRD(ModelBase):
         @return <np.array>
         """
         n, s, i, *_ = self.population, X
-        dsdt = 0 - round(self.beta * s * i / n)
+        dsdt = 0 - round(self.rho * s * i / n)
         drdt = round(self.sigma * i)
         dfdt = round(self.kappa * i)
         didt = 0 - dsdt - drdt - dfdt

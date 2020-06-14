@@ -48,7 +48,7 @@ class SIRF(ModelBase):
         @return <np.array>
         """
         n, s, i, *_ = self.population, X
-        dsdt = 0 - round(self.beta * s * i / n)
+        dsdt = 0 - round(self.rho * s * i / n)
         drdt = round(self.sigma * i)
         dfdt = round(self.kappa * i) + round((0 - dsdt) * self.theta)
         didt = 0 - dsdt - drdt - dfdt
@@ -123,7 +123,6 @@ class SIRF(ModelBase):
             "alpha1 [-]": round(self.theta, 3),
             "1/alpha2 [day]": int(tau / 24 / 60 / self.kappa),
             "1/beta [day]": int(tau / 24 / 60 / self.rho),
-            "1/gamma [day]": int(tau / 24 / 60 / self.sigma),
-            "Vaccinated [persons]": int(self.omega * self.population)
+            "1/gamma [day]": int(tau / 24 / 60 / self.sigma)
         }
         return _dict
