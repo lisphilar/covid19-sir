@@ -82,19 +82,6 @@ class ODEData(PhaseData):
         df = df.drop(self.T, axis=1)
         return df
 
-    @staticmethod
-    def _validate_model(model):
-        """
-        Validate ODE model.
-        @model <sub-class of cs.ModelBase>: ODE model
-        @return <sub-class of cs.ModelBase>: as-is the model
-        """
-        if not issubclass(model, ModelBase):
-            raise TypeError(
-                "@model must be an ODE model <sub-class of cs.ModelBase>."
-            )
-        return model
-
     def _specialize(self, data_df, model, population):
         """
         Specialize the dataset for the model.
@@ -112,7 +99,7 @@ class ODEData(PhaseData):
             - t <int>: if included in @data_df
             - columns with dimensional variables
         """
-        model = self._validate_model(model)
+        model = self.validate_subclass(model, ModelBase, name="model")
         df = model.specialize(data_df, population)
         time_cols = list()
         if self.T in data_df.columns:
@@ -163,3 +150,22 @@ class ODEData(PhaseData):
         """
         df = self.subset(start_date=start_date, end_date=end_date)
         return self._make(df, model, population, tau)
+
+    def y0(self, model, population, start_date=None):
+        """
+        Return the initial values of the model.
+        @model <covsirphy.ModelBase>: ODE model
+        @population <int>: total population
+        @start_date <str>: start date, like 22Jan2020
+            - if None, the first date of the records will be used
+        @return <dict[str]=int>:
+            - key: dimensional variables
+            - value: the number of cases
+        """
+        subset_df = self.subset(start_date=start_date)
+        all_df = self._make(subset_df, model, population, tau=None)
+        y0_dict = {
+            k: all_df.loc[all_df.index[0], k]
+            for k in model.VARIABLES
+        }
+        return y0_dict

@@ -114,15 +114,16 @@ class Word(object):
         return flattened
 
     @staticmethod
-    def validate_dataframe(df, name="df", time_index=False, columns=None):
+    def validate_dataframe(target, name="df", time_index=False, columns=None):
         """
         Validate the dataframe has the columns.
-        @df <pd.DataFrame>: the dataframe to validate
+        @target <pd.DataFrame>: the dataframe to validate
         @name <str>: argument name of the dataframe
         @time_index <bool>: if True, the dataframe must has DatetimeIndex
         @columns <list[str]/None>: the columns the dataframe must have
-        @df <pd.DataFrame>: as-is the dataframe
+        @df <pd.DataFrame>: as-is the target
         """
+        df = target.copy()
         if not isinstance(df, pd.DataFrame):
             raise TypeError(f"@{name} must be a instance of <pd.DataFrame>.")
         if time_index and (not isinstance(df.index, pd.DatetimeIndex)):
@@ -135,3 +136,38 @@ class Word(object):
             )
             raise KeyError(f"@{name} must have {cols_str}, but not included.")
         return df
+
+    @staticmethod
+    def validate_natural_int(target, name="number"):
+        """
+        Validate the natural (non-negative) number.
+        If the value is natural number and the type was float,
+         will be converted to an integer.
+        @target <int/float/str>: value to validate
+        @name <str>: argument name of the value
+        @return <int>: as-is the target
+        """
+        s = f"@{name} must be a natural number, but {target} was applied"
+        try:
+            number = int(target)
+        except TypeError:
+            raise TypeError(f"{s} and not converted to integer.")
+        if number != target:
+            raise ValueError(f"{s}. |{target} - {number}| > 0")
+        if number < 1:
+            raise ValueError(f"{s}. This value is under 1")
+        return number
+
+    @staticmethod
+    def validate_subclass(target, parent, name="target"):
+        """
+        Validate the target is a subclass of the parent class.
+        @target <object>: target to validate
+        @parent <object>: parent class
+        @name <str>: argument name of the target
+        @return <int>: as-is the target
+        """
+        s = f"@{name} must be an sub class of {type(parent)}, but {type(target)} was applied."
+        if not issubclass(target, parent):
+            raise TypeError(s)
+        return target
