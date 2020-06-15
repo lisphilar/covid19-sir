@@ -94,7 +94,7 @@ class SIRFV(ModelBase):
         n, t = population, df[cls.TS]
         s, i, r, f = df[cls.S], df[cls.CI], df[cls.R], df[cls.F]
         # sigma = (dR/dt) / I
-        sigma_series = r.diff() / t / i
+        sigma_series = r.diff() / t.diff() / i
         # omega = 0 - (dS/dt + dI/dt + dR/dt + dF/dt) / n
         omega_series = 0 - (s + i + r + f).diff() / t / n
         # Calculate quantile

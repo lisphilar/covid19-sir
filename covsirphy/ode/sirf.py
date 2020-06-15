@@ -82,7 +82,7 @@ class SIRF(ModelBase):
         # rho = - n * (dS/dt) / S / I
         rho_series = 0 - n * s.diff() / t.diff() / s / i
         # sigma = (dR/dt) / I
-        sigma_series = r.diff() / t / i
+        sigma_series = r.diff() / t.diff() / i
         # Calculate quantile
         _dict = {
             k: v.quantile(cls.QUANTILE_RANGE)
