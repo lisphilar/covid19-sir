@@ -48,8 +48,8 @@ class SIR(ModelBase):
         """
         n = self.population
         s, i, *_ = X
-        dsdt = 0 - round(self.rho * s * i / n)
-        drdt = round(self.sigma * i)
+        dsdt = 0 - self.rho * s * i / n
+        drdt = self.sigma * i
         didt = 0 - dsdt - drdt
         return np.array([dsdt, didt, drdt])
 

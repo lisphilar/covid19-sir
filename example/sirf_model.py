@@ -21,7 +21,7 @@ def main():
         "theta": 0.002, "kappa": 0.005, "rho": 0.2, "sigma": 0.075
     }
     y0_dict = {
-        "Susceptible": 999_999, "Infected": 1000, "Recovered": 0, "Fatal": 0
+        "Susceptible": 999_000, "Infected": 1000, "Recovered": 0, "Fatal": 0
     }
     # Simulation
     simulator = cs.ODESimulator(country="Example", province=model.NAME)
@@ -53,7 +53,7 @@ def main():
     # Hyperparameter estimation of example data
     estimator = cs.Estimator(
         clean_df=dim_df, model=cs.SIRF, population=eg_population,
-        country="Example", province=model.NAME, tau=eg_tau
+        country="Example", province=model.NAME# , tau=eg_tau
     )
     estimator.run()
     estimated_df = estimator.summary(name=model.NAME)

@@ -67,11 +67,11 @@ class SIRFV(ModelBase):
         """
         n = self.population
         s, i, *_ = X
-        beta_si = round(self.rho * s * i / n)
-        dvdt = round(self.w * n)
+        beta_si = self.rho * s * i / n
+        dvdt = self.w * n
         dsdt = 0 - beta_si - dvdt
-        drdt = round(self.sigma * i)
-        dfdt = round(self.kappa * i) + round((0 - beta_si) * self.theta)
+        drdt = self.sigma * i
+        dfdt = self.kappa * i + (0 - beta_si) * self.theta
         didt = 0 - dsdt - drdt - dfdt - dvdt
         return np.array([dsdt, didt, drdt, dfdt, dvdt])
 

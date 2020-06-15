@@ -19,7 +19,7 @@ def main():
         "theta": 0.002, "kappa": 0.005, "rho": 0.2, "sigma": 0.075
     }
     y0_dict = {
-        "Susceptible": 999_999, "Infected": 1000, "Recovered": 0, "Fatal": 0
+        "Susceptible": 999_000, "Infected": 1000, "Recovered": 0, "Fatal": 0
     }
     # Simulation
     simulator = cs.ODESimulator(country="Example", province=model.NAME)
@@ -35,7 +35,7 @@ def main():
         nondim_df.set_index("t"),
         title=f"{model.NAME}: Example data (non-dimensional)",
         ylabel=str(),
-        h=[0, 1.0],
+        h=1.0,
         ylim=(None, None),
         filename=output_dir.joinpath("non_dim_long.png")
     )
@@ -45,7 +45,7 @@ def main():
     cs.line_plot(
         dim_df.set_index("Date"),
         title=f"{model.NAME}: Example data (dimensional)",
-        h=[0, eg_population],
+        h=eg_population,
         y_integer=True,
         ylim=(None, None),
         filename=output_dir.joinpath("dim_long.png")

@@ -63,12 +63,12 @@ class SEWIRF(ModelBase):
         """
         n = self.population
         s, i, *_, e, w = X
-        beta_swi = round(self.rho1 * s * (w + i) / n)
+        beta_swi = self.rho1 * s * (w + i) / n
         dsdt = 0 - beta_swi
-        dedt = beta_swi - round(self.rho2 * e)
-        dwdt = round(self.rho2 * e) - round(self.rho3 * w)
-        drdt = round(self.sigma * i)
-        dfdt = round(self.kappa * i) + round(self.theta * self.rho3 * w)
+        dedt = beta_swi - self.rho2 * e
+        dwdt = self.rho2 * e - self.rho3 * w
+        drdt = self.sigma * i
+        dfdt = self.kappa * i + self.theta * self.rho3 * w
         didt = 0 - dsdt - drdt - dfdt - dedt - dwdt
         return np.array([dsdt, didt, drdt, dfdt, dedt, dwdt])
 

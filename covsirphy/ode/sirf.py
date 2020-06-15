@@ -55,9 +55,9 @@ class SIRF(ModelBase):
         """
         n = self.population
         s, i, *_ = X
-        dsdt = 0 - round(self.rho * s * i / n)
-        drdt = round(self.sigma * i)
-        dfdt = round(self.kappa * i) + round((0 - dsdt) * self.theta)
+        dsdt = 0 - self.rho * s * i / n
+        drdt = self.sigma * i
+        dfdt = self.kappa * i + (0 - dsdt) * self.theta
         didt = 0 - dsdt - drdt - dfdt
         return np.array([dsdt, didt, drdt, dfdt])
 

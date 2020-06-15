@@ -101,6 +101,9 @@ class ODESimulator(Word):
             - t <int>: Elapsed time divided by tau value [-]
             - columns with dimensional variables
         """
+        step_n = self.validate_natural_int(step_n, name="step_n")
+        population = self.validate_natural_int(population, name="population")
+        model = self.validate_subclass(model, ModelBase, name="model")
         tstart, dt, tend = 0, 1, step_n
         variables = model.VARIABLES[:]
         initials = [y0_dict[var] for var in variables]
@@ -113,8 +116,8 @@ class ODESimulator(Word):
         )
         t_df = pd.Series(data=sol["t"], name=self.TS)
         y_df = pd.DataFrame(data=sol["y"].T.copy(), columns=variables)
+        y_df = y_df.round()
         sim_df = pd.concat([t_df, y_df], axis=1)
-        sim_df = sim_df.astype(np.int64)
         return sim_df
 
     def run(self):
