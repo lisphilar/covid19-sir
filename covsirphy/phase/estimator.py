@@ -52,13 +52,12 @@ class Estimator(Optimizer):
                 self.fixed_dict[self.TAU], name="tau"
             )
         # Training dataset
-        clean_df = self.validate_dataframe(
+        df = self.validate_dataframe(
             clean_df, name="clean_df", columns=model.VARIABLES
         )
-        restored_df = model.restore(clean_df)
-        self.ode_data = ODEData(
-            restored_df, country=country, province=province
-        )
+        if set(self.VALUE_COLUMNS) not in set(df.columns):
+            df = model.restore(df)
+        self.ode_data = ODEData(df, country=country, province=province)
         self.y0_dict = self.ode_data.y0(model, population, start_date=start_date)
         # For optimization
         optuna.logging.disable_default_handler()
