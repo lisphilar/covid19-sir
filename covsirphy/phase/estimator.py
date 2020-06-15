@@ -174,27 +174,24 @@ class Estimator(Optimizer):
         @trial <optuna.trial>: a trial of the study
         @return <float>: score of the error function to minimize
         """
+        fixed_dict = self.fixed_dict.copy()
         # Convert T to t using tau
-        if self.TAU in self.fixed_dict.keys():
-            tau = self.fixed_dict[self.TAU]
+        if self.TAU in fixed_dict.keys():
+            tau = fixed_dict.pop(self.TAU)
         else:
             tau = trial.suggest_int(self.TAU, 1, 1440)
         tau = self.validate_natural_int(tau, name=self.TAU)
         taufree_df = self.divide_minutes(tau)
         # Set parameters of the models
-        p_dict = {self.TAU: None}
         model_param_dict = self.model.param_range(
             taufree_df, self.population
         )
-        p_dict.update(
-            {
-                k: trial.suggest_uniform(k, *v)
-                for (k, v) in model_param_dict.items()
-                if k not in self.fixed_dict.keys()
-            }
-        )
-        p_dict.update(self.fixed_dict)
-        p_dict.pop(self.TAU)
+        p_dict = {
+            k: trial.suggest_uniform(k, *v)
+            for (k, v) in model_param_dict.items()
+            if k not in self.fixed_dict.keys()
+        }
+        p_dict.update(fixed_dict)
         return self.error_f(p_dict, taufree_df)
 
     def divide_minutes(self, tau):
