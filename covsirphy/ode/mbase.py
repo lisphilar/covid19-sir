@@ -81,6 +81,32 @@ class ModelBase(ModelBaseCommon):
         )
         return df
 
+    @classmethod
+    def restore(cls, specialized_df):
+        """
+        Restore Confirmed/Infected/Recovered/Fatal.
+         using a dataframe with the variables of the model.
+        This method should be overwritten in subclass.
+        @specialized_df <pd.DataFrame>: dataframe with the variables
+            - index <object>
+            - variables of the models <int>
+            - any columns
+        @return <pd.DataFrame>:
+            - index <object>: as-is
+            - Confirmed <int>: the number of confirmed cases
+            - Infected <int>: the number of currently infected cases
+            - Fatal <int>: the number of fatal cases
+            - Recovered <int>: the number of recovered cases
+            - the other columns @specialzed_df has
+        """
+        df = specialized_df.copy()
+        other_cols = list(set(df.columns) - set(cls.VALUE_COLUMNS))
+        df[cls.C] = None
+        df[cls.CI] = None
+        df[cls.F] = None
+        df[cls.R] = None
+        return df.loc[:, [*cls.VALUE_COLUMNS, *other_cols]]
+
     def calc_r0(self):
         """
         Calculate (basic) reproduction number.

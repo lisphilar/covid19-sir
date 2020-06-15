@@ -48,8 +48,8 @@ class ODEData(PhaseData):
             name="grouped_df", time_index=True, columns=self.VALUE_COLUMNS
         )
         # Calculate elapsed time from the first date [min]
-        df[self.TS] = (df.index - df.index.min()).total_seconds()
-        df[self.TS] = (df[self.T] // 60).astype(np.int64)
+        df[self.T] = (df.index - df.index.min()).total_seconds()
+        df[self.T] = (df[self.T] // 60).astype(np.int64)
         df = df.reset_index(drop=True)
         return df
 
@@ -163,9 +163,8 @@ class ODEData(PhaseData):
             - value: the number of cases
         """
         subset_df = self.subset(start_date=start_date, end_date=None)
-        all_df = self._make(subset_df, model, population, tau=None)
+        df = self._make(subset_df, model, population, tau=None)
         y0_dict = {
-            k: all_df.loc[all_df.index[0], k]
-            for k in model.VARIABLES
+            k: df.loc[df.index[0], k] for k in model.VARIABLES
         }
         return y0_dict

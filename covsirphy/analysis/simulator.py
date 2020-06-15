@@ -189,7 +189,6 @@ class ODESimulator(Word):
         df = self.taufree()
         df = df.drop(self.TS, axis=1)
         df = df.reset_index(drop=True)
-        # TODO: Restore Confirmed, Recovered, Recovered for all models
         var_cols = df.columns.tolist()
         # Date
         start_obj = datetime.strptime(start_date, self.DATE_FORMAT)

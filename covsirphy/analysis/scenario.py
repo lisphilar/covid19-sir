@@ -144,14 +144,7 @@ class Scenario(Word):
                 return None
             last_model_name = summary_df.loc[summary_df.index[-1], self.ODE]
             model = self.model_dict[last_model_name]
-        if not issubclass(model, ModelBase):
-            if isinstance(model, ModelBase):
-                raise TypeError(
-                    "@model must be <sub-class of cs.ModelBase>, not instance."
-                )
-            raise TypeError(
-                "@model must be an ODE model <sub-class of cs.ModelBase> or None."
-            )
+        model = self.validate_subclass(model, ModelBase, name="model")
         # Phase information
         param_dict = {self.TAU: self.tau, self.ODE: model.NAME}
         model_param_dict = {
@@ -160,10 +153,9 @@ class Scenario(Word):
         }
         model_param_dict.update(kwargs)
         param_dict.update(model_param_dict)
-        try:
-            model_instance = model(**model_param_dict)
-        except TypeError as e:
-            raise e
+        model_instance = model(
+            population=population, **model_param_dict
+        )
         param_dict[self.RT] = model_instance.calc_r0()
         param_dict.update(model_instance.calc_days_dict(self.tau))
         self.series_dict[name].add(start_date, end_date, population, **param_dict)

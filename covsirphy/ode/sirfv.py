@@ -131,6 +131,32 @@ class SIRFV(ModelBase):
         df[cls.V] = 0
         return df
 
+    @classmethod
+    def restore(cls, specialized_df):
+        """
+        Restore Confirmed/Infected/Recovered/Fatal.
+         using a dataframe with the variables of the model.
+        @specialized_df <pd.DataFrame>: dataframe with the variables
+            - index <object>
+            - Susceptible <int>: the number of susceptible cases
+            - Infected <int>: the number of currently infected cases
+            - Recovered <int>: the number of recovered cases
+            - Fatal <int>: the number of fatal cases
+            - Vaccinated <int>: the number of vactinated persons
+            - any columns
+        @return <pd.DataFrame>:
+            - index <object>: as-is
+            - Confirmed <int>: the number of confirmed cases
+            - Infected <int>: the number of currently infected cases
+            - Fatal <int>: the number of fatal cases
+            - Recovered <int>: the number of recovered cases
+            - the other columns @specialzed_df has
+        """
+        df = specialized_df.copy()
+        other_cols = list(set(df.columns) - set(cls.VALUE_COLUMNS))
+        df[cls.C] = df[cls.CI] + df[cls.R] + df[cls.F]
+        return df.loc[:, [*cls.VALUE_COLUMNS, *other_cols]]
+
     def calc_r0(self):
         """
         Calculate (basic) reproduction number.

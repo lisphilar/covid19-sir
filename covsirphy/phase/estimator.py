@@ -38,7 +38,7 @@ class Estimator(Optimizer):
         @end_date <str>: end date, like 01Feb2020
         @kwargs: parameter values of the model
         """
-        optuna.logging.disable_default_handler()
+        # Read arguments
         model = self.validate_subclass(model, ModelBase, name="model")
         self.model = model
         self.population = population
@@ -46,18 +46,24 @@ class Estimator(Optimizer):
         self.province = province
         self.start_date = start_date
         self.end_date = end_date
-        clean_df = self.validate_dataframe(
-            clean_df, name="clean_df", columns=self.COLUMNS
-        )
-        self.ode_data = ODEData(
-            clean_df, country=country, province=province
-        )
-        self.y0_dict = self.ode_data.y0(model, population, start_date=start_date)
-        self.x = self.TS
-        self.y_list = model.VARIABLES[:]
         self.fixed_dict = kwargs.copy()
         if self.TAU in self.fixed_dict.keys():
-            self.fixed_dict[self.TAU] = int(self.fixed_dict[self.TAU])
+            self.fixed_dict[self.TAU] = self.validate_natural_int(
+                self.fixed_dict[self.TAU], name="tau"
+            )
+        # Training dataset
+        clean_df = self.validate_dataframe(
+            clean_df, name="clean_df", columns=model.VARIABLES
+        )
+        restored_df = model.restore(clean_df)
+        self.ode_data = ODEData(
+            restored_df, country=country, province=province
+        )
+        self.y0_dict = self.ode_data.y0(model, population, start_date=start_date)
+        # For optimization
+        optuna.logging.disable_default_handler()
+        self.x = self.TS
+        self.y_list = model.VARIABLES[:]
         self.study = None
         self.total_trials = 0
         self.run_time = 0
@@ -277,7 +283,9 @@ class Estimator(Optimizer):
         param_dict = super().param()
         model_params = param_dict.copy()
         tau = model_params.pop(self.TAU)
-        model_instance = self.model(**model_params)
+        model_instance = self.model(
+            population=self.population, **model_params
+        )
         # Rt
         param_dict["Rt"] = model_instance.calc_r0()
         # dimensional parameters [day]
