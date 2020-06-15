@@ -71,7 +71,7 @@ class Estimator(Optimizer):
         # step_n will be defined in divide_minutes()
         self.step_n = None
 
-    def _add_trial(self, n_jobs=-1, timeout_iteration=10):
+    def _run_trial(self, n_jobs, timeout_iteration):
         """
         Run trial.
         @n_jobs <int>: the number of parallel jobs or -1 (CPU count)
@@ -108,7 +108,7 @@ class Estimator(Optimizer):
         reset_n = 0
         while True:
             # Perform optimization
-            self._add_trial(n_jobs=n_jobs, timeout_iteration=timeout_iteration)
+            self._run_trial(n_jobs=n_jobs, timeout_iteration=timeout_iteration)
             self.run_time = stopwatch.stop()
             self.total_trials = len(self.study.trials)
             # Time-out
