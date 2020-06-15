@@ -187,7 +187,7 @@ class ODESimulator(Word):
             - Date <pd.TimeStamp>: Observation date
             - Country <str>: country/region name
             - Province <str>: province/prefecture/state name
-            - variables of the models <int>: Confirmed etc.
+            - variables of the models <int>
         """
         df = self.taufree()
         df = df.drop(self.TS, axis=1)

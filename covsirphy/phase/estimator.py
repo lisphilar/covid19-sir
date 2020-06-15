@@ -21,15 +21,23 @@ class Estimator(Optimizer):
                  country, province=None,
                  start_date=None, end_date=None, **kwargs):
         """
-        @clean_df <pd.DataFrame>: cleaned data
-            - index <int>: reset index
-            - Date <pd.TimeStamp>: Observation date
-            - Country <str>: country/region name
-            - Province <str>: province/prefecture/sstate name
-            - Confirmed <int>: the number of confirmed cases
-            - Infected <int>: the number of currently infected cases
-            - Fatal <int>: the number of fatal cases
-            - Recovered <int>: the number of recovered cases
+        @clean_df <pd.DataFrame>:
+            - cleaned observed data or simulated data
+            - observed data
+                - index <int>: reset index
+                - Date <pd.TimeStamp>: Observation date
+                - Country <str>: country/region name
+                - Province <str>: province/prefecture/sstate name
+                - Confirmed <int>: the number of confirmed cases
+                - Infected <int>: the number of currently infected cases
+                - Fatal <int>: the number of fatal cases
+                - Recovered <int>: the number of recovered cases
+            - simulated data
+                - index <int>: reset index
+                - Date <pd.TimeStamp>: Observation date
+                - Country <str>: country/region name
+                - Province <str>: province/prefecture/state name
+                - variables of the models <int>
         @model <subclass of cs.ModelBase>: ODE model
         @population <int>: total population in the place
         @country <str>: country name
