@@ -36,7 +36,6 @@ def main():
         title=f"{model.NAME}: Example data (non-dimensional)",
         ylabel=str(),
         h=1.0,
-        ylim=(None, None),
         filename=output_dir.joinpath("non_dim_long.png")
     )
     # Dimensional
@@ -47,7 +46,6 @@ def main():
         title=f"{model.NAME}: Example data (dimensional)",
         h=eg_population,
         y_integer=True,
-        ylim=(None, None),
         filename=output_dir.joinpath("dim_long.png")
     )
 

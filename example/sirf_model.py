@@ -53,7 +53,7 @@ def main():
     # Hyperparameter estimation of example data
     estimator = cs.Estimator(
         clean_df=dim_df, model=cs.SIRF, population=eg_population,
-        country="Example", province=model.NAME# , tau=eg_tau
+        country="Example", province=model.NAME, tau=eg_tau
     )
     estimator.run()
     estimated_df = estimator.summary(name=model.NAME)

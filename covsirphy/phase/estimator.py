@@ -207,7 +207,7 @@ class Estimator(Optimizer):
             end_date=self.end_date,
             tau=tau
         )
-        self.step_n = len(taufree_df)
+        self.step_n = int(taufree_df[self.TS].max())
         return taufree_df
 
     def error_f(self, param_dict, taufree_df):
