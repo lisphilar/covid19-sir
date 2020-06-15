@@ -84,7 +84,7 @@ class Estimator(Optimizer):
             timeout=timeout_iteration
         )
 
-    def run(self, timeout=180, n_jobs=-1, reset_n_max=3,
+    def run(self, timeout=60, n_jobs=-1, reset_n_max=3,
             timeout_iteration=10, allowance=(0.8, 1.2)):
         """
         Run optimization.
