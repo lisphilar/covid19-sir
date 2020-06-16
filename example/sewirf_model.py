@@ -19,7 +19,7 @@ def main():
     model = cs.SEWIRF
     set_param_dict = {
         "theta": 0.002, "kappa": 0.005, "rho1": 0.2, "sigma": 0.075,
-        "rho2": 0.17, "rho3": 0.167
+        "rho2": 0.167, "rho3": 0.167
     }
     y0_dict = {
         "Susceptible": 994_000, "Exposed": 3000, "Waiting": 0.002,
@@ -56,7 +56,8 @@ def main():
     # Hyperparameter estimation of example data
     estimator = cs.Estimator(
         clean_df=dim_df, model=model, population=eg_population,
-        country="Example", province=model.NAME, tau=eg_tau
+        country="Example", province=model.NAME, tau=eg_tau,
+        rho2=0.167, rho3=0.167
     )
     estimator.run()
     estimated_df = estimator.summary(name=model.NAME)

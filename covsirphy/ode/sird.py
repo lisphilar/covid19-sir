@@ -76,7 +76,7 @@ class SIRD(ModelBase):
         n, t = population, df[cls.TS]
         s, i, r, d = df[cls.S], df[cls.CI], df[cls.R], df[cls.F]
         # kappa = (dD/dt) / I
-        kappa_series = d.diff() / t / i
+        kappa_series = d.diff() / t.diff() / i
         # rho = - n * (dS/dt) / S / I
         rho_series = 0 - n * s.diff() / t.diff() / s / i
         # sigma = (dR/dt) / I

@@ -68,7 +68,7 @@ class SIRFV(ModelBase):
         n = self.population
         s, i, *_ = X
         beta_si = self.rho * s * i / n
-        dvdt = self.w * n
+        dvdt = self.omega * n
         dsdt = 0 - beta_si - dvdt
         drdt = self.sigma * i
         dfdt = self.kappa * i + (0 - beta_si) * self.theta
@@ -96,15 +96,11 @@ class SIRFV(ModelBase):
         # sigma = (dR/dt) / I
         sigma_series = r.diff() / t.diff() / i
         # omega = 0 - (dS/dt + dI/dt + dR/dt + dF/dt) / n
-        omega_series = 0 - (s + i + r + f).diff() / t / n
-        # Calculate quantile
-        _dict = {
-            k: v.quantile(cls.QUANTILE_RANGE)
-            for (k, v) in zip(["sigma", "omega"], [sigma_series, omega_series])
-        }
-        _dict["theta"] = (0, 1)
-        _dict["kappa"] = (0, 1)
-        _dict["rho"] = (0, 1)
+        omega_series = (n - s + i + r + f).diff() / t.diff() / n
+        # Calculate range
+        _dict = {param: (0, 1) for param in cls.PARAMETERS}
+        _dict["sigma"] = sigma_series.quantile(cls.QUANTILE_RANGE)
+        _dict["omega"] = omega_series.quantile(cls.QUANTILE_RANGE)
         return _dict
 
     @classmethod

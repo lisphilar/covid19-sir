@@ -91,7 +91,7 @@ class SEWIRF(ModelBase):
         _, t, i, r = population, df[cls.TS], df[cls.CI], df[cls.R]
         # sigma = (dR/dt) / I
         sigma_series = r.diff() / t.diff() / i
-        # Calculate quantile
+        # Calculate range
         _dict = {param: (0, 1) for param in cls.PARAMETERS}
         _dict["sigma"] = sigma_series.quantile(cls.QUANTILE_RANGE)
         return _dict
