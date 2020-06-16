@@ -131,9 +131,6 @@ class Estimator(Optimizer):
             tau = super().param()[self.TAU]
             train_df = self.divide_minutes(tau)
             comp_df = self.compare(train_df, self.predict())
-            # All values are not under than 0
-            if (comp_df < 0).values.sum():
-                continue
             # Check monotonic variables
             mono_ok_list = [
                 comp_df[f"{v}{self.P}"].is_monotonic_increasing
