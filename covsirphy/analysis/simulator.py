@@ -134,10 +134,11 @@ class ODESimulator(Word):
                     raise NameError(
                         "Initial values of simulation must be specified in advance."
                     )
-                for k in keys_with_none:
-                    y0_dict[k] = self._taufree_df.loc[
-                        self._taufree_df.index[-1], k
-                    ]
+                last_value_dict = {
+                    k: self._taufree_df.loc[self._taufree_df.index[-1], k]
+                    for k in keys_with_none
+                }
+                y0_dict.update(last_value_dict)
             setting["y0_dict"] = y0_dict.copy()
             # Solve ODEs
             new_df = self._solve_ode(**setting)
