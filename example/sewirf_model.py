@@ -16,12 +16,14 @@ def main():
     eg_population = 1_000_000
     eg_tau = 1440
     start_date = "22Jan2020"
-    model = cs.SIRF
+    model = cs.SEWIRF
     set_param_dict = {
-        "theta": 0.002, "kappa": 0.005, "rho": 0.2, "sigma": 0.075
+        "theta": 0.002, "kappa": 0.005, "rho1": 0.2, "sigma": 0.075,
+        "rho2": 0.17, "rho3": 0.167
     }
     y0_dict = {
-        "Susceptible": 999_000, "Infected": 1000, "Recovered": 0, "Fatal": 0
+        "Susceptible": 994_000, "Exposed": 3000, "Waiting": 0.002,
+        "Infected": 1000, "Recovered": 0, "Fatal": 0
     }
     # Simulation
     simulator = cs.ODESimulator(country="Example", province=model.NAME)

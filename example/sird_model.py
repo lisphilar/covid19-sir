@@ -16,9 +16,9 @@ def main():
     eg_population = 1_000_000
     eg_tau = 1440
     start_date = "22Jan2020"
-    model = cs.SIRF
+    model = cs.SIRD
     set_param_dict = {
-        "theta": 0.002, "kappa": 0.005, "rho": 0.2, "sigma": 0.075
+        "kappa": 0.005, "rho": 0.2, "sigma": 0.075
     }
     y0_dict = {
         "Susceptible": 999_000, "Infected": 1000, "Recovered": 0, "Fatal": 0
