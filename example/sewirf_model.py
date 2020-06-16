@@ -45,7 +45,7 @@ def main():
     )
     # Dimensional
     dim_df = simulator.dim(tau=eg_tau, start_date=start_date)
-    dim_df.to_csv(output_dir.joinpath("dim.csv"), index=False)
+    dim_df.to_csv(output_dir.joinpath(f"{model.NAME}_dim.csv"), index=False)
     cs.line_plot(
         dim_df.set_index("Date"),
         title=f"{model.NAME}: Example data (dimensional)",
