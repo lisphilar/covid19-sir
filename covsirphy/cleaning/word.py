@@ -171,3 +171,16 @@ class Word(object):
         if not issubclass(target, parent):
             raise TypeError(s)
         return target
+
+    @classmethod
+    def divisors(cls, value):
+        """
+        Return the list of divisors of the value.
+        @value <int>: target value
+        @return <list[int]>: the list of divisors
+        """
+        value = cls.validate_natural_int(value)
+        divisors = [
+            i for i in range(1, value + 1) if value % i == 0
+        ]
+        return divisors

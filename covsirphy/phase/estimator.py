@@ -74,6 +74,7 @@ class Estimator(Optimizer):
         self.study = None
         self.total_trials = 0
         self.run_time = 0
+        self.tau_candidates = self.divisors(1440)
         # Defined in parent class, but not used
         self.train_df = None
         # step_n will be defined in divide_minutes()
@@ -179,7 +180,7 @@ class Estimator(Optimizer):
         if self.TAU in fixed_dict.keys():
             tau = fixed_dict.pop(self.TAU)
         else:
-            tau = trial.suggest_int(self.TAU, 1, 1440)
+            tau = trial.suggest_categorical(self.TAU, self.tau_candidates)
         tau = self.validate_natural_int(tau, name=self.TAU)
         taufree_df = self.divide_minutes(tau)
         # Set parameters of the models
