@@ -34,7 +34,7 @@ class JHUData(CleaningBase):
             - if @population is not None:
                 - Susceptible <int>: the number of susceptible cases
         """
-        df = self._cleaned_df
+        df = self._cleaned_df.copy()
         if population is None:
             return df
         population = self.validate_natural_int(population, name="population")
