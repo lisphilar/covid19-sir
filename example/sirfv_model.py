@@ -32,13 +32,15 @@ def main():
     simulator.run()
     # Non-dimensional
     nondim_df = simulator.non_dim()
-    nondim_df.to_csv(output_dir.joinpath("non_dim.csv"), index=False)
+    nondim_df.to_csv(output_dir.joinpath(
+        f"{model.NAME}_non_dim.csv"), index=False
+    )
     cs.line_plot(
         nondim_df.set_index("t"),
         title=f"{model.NAME}: Example data (non-dimensional)",
         ylabel=str(),
         h=1.0,
-        filename=output_dir.joinpath("non_dim.png")
+        filename=output_dir.joinpath(f"{model.NAME}_non_dim.png")
     )
     # Dimensional
     dim_df = simulator.dim(tau=eg_tau, start_date=start_date)
@@ -48,7 +50,7 @@ def main():
         title=f"{model.NAME}: Example data (dimensional)",
         h=eg_population,
         y_integer=True,
-        filename=output_dir.joinpath("dim.png")
+        filename=output_dir.joinpath(f"{model.NAME}_dim.png")
     )
     # Hyperparameter estimation of example data
     estimator = cs.Estimator(
@@ -62,12 +64,16 @@ def main():
     )
     estimated_df["tau"] = estimated_df["tau"].astype(np.int64)
     estimated_df.to_csv(
-        output_dir.joinpath("estimate_parameter.csv"), index=True
+        output_dir.joinpath(f"{model.NAME}_estimate_parameter.csv"), index=True
     )
     # Show the history of optimization
-    estimator.history(filename=output_dir.joinpath("estimate_history.png"))
+    estimator.history(filename=output_dir.joinpath(
+        f"{model.NAME}_estimate_history.png")
+    )
     # Show the accuracy as a figure
-    estimator.accuracy(filename=output_dir.joinpath("estimate_accuracy.png"))
+    estimator.accuracy(filename=output_dir.joinpath(
+        f"{model.NAME}_estimate_accuracy.png")
+    )
 
 
 if __name__ == "__main__":
