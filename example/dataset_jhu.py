@@ -33,16 +33,6 @@ def main():
     ncov_df.to_csv(
         output_dir.joinpath("jhu_cleaned_replaced.csv"), index=False
     )
-    # Read OxCGRT data
-    oxcgrt_file = "input/oxcgrt/OxCGRT_latest.csv"
-    oxcgrt_data = cs.OxCGRTData(oxcgrt_file)
-    oxcgrt_df = oxcgrt_data.cleaned()
-    oxcgrt_df.to_csv(
-        output_dir.joinpath("oxcgrt_cleaned.csv"), index=False
-    )
-    oxcgrt_data.subset(iso3="JPN").to_csv(
-        output_dir.joinpath("oxcgrt_cleaned_jpn.csv"), index=False
-    )
     return ncov_df
 
 

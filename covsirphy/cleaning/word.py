@@ -4,6 +4,7 @@
 from collections import defaultdict
 from datetime import datetime
 import numpy as np
+import pandas as pd
 
 
 class Word(object):
@@ -111,3 +112,89 @@ class Word(object):
         if unique:
             return list(set(flattened))
         return flattened
+
+    @staticmethod
+    def validate_dataframe(target, name="df", time_index=False, columns=None):
+        """
+        Validate the dataframe has the columns.
+        @target <pd.DataFrame>: the dataframe to validate
+        @name <str>: argument name of the dataframe
+        @time_index <bool>: if True, the dataframe must has DatetimeIndex
+        @columns <list[str]/None>: the columns the dataframe must have
+        @df <pd.DataFrame>: as-is the target
+        """
+        df = target.copy()
+        if not isinstance(df, pd.DataFrame):
+            raise TypeError(f"@{name} must be a instance of <pd.DataFrame>.")
+        if time_index and (not isinstance(df.index, pd.DatetimeIndex)):
+            raise TypeError(f"Index of @{name} must be <pd.DatetimeIndex>.")
+        if columns is None:
+            return df
+        if not set(columns).issubset(set(df.columns)):
+            cols_str = ', '.join(
+                [col for col in columns if col not in df.columns]
+            )
+            raise KeyError(f"@{name} must have {cols_str}, but not included.")
+        return df
+
+    @staticmethod
+    def validate_natural_int(target, name="number"):
+        """
+        Validate the natural (non-negative) number.
+        If the value is natural number and the type was float,
+         will be converted to an integer.
+        @target <int/float/str>: value to validate
+        @name <str>: argument name of the value
+        @return <int>: as-is the target
+        """
+        s = f"@{name} must be a natural number, but {target} was applied"
+        try:
+            number = int(target)
+        except TypeError:
+            raise TypeError(f"{s} and not converted to integer.")
+        if number != target:
+            raise ValueError(f"{s}. |{target} - {number}| > 0")
+        if number < 1:
+            raise ValueError(f"{s}. This value is under 1")
+        return number
+
+    @staticmethod
+    def validate_subclass(target, parent, name="target"):
+        """
+        Validate the target is a subclass of the parent class.
+        @target <object>: target to validate
+        @parent <object>: parent class
+        @name <str>: argument name of the target
+        @return <int>: as-is the target
+        """
+        s = f"@{name} must be an sub class of {type(parent)}, but {type(target)} was applied."
+        if not issubclass(target, parent):
+            raise TypeError(s)
+        return target
+
+    @staticmethod
+    def validate_instance(target, class_obj, name="target"):
+        """
+        Validate the target is a instance of the class object.
+        @target <instance>: target to validate
+        @parent <class>: class object
+        @name <str>: argument name of the target
+        @return <instance>: as-is target
+        """
+        s = f"@{name} must be an instance of {type(class_obj)}, but {type(target)} was applied."
+        if not isinstance(target, class_obj):
+            raise TypeError(s)
+        return target
+
+    @classmethod
+    def divisors(cls, value):
+        """
+        Return the list of divisors of the value.
+        @value <int>: target value
+        @return <list[int]>: the list of divisors
+        """
+        value = cls.validate_natural_int(value)
+        divisors = [
+            i for i in range(1, value + 1) if value % i == 0
+        ]
+        return divisors

@@ -24,8 +24,11 @@ class PhaseData(Word):
         @country <str>: country name
         @province <str>: province name
         """
+        df = self.validate_dataframe(
+            clean_df, name="clean_df", columns=self.COLUMNS
+        )
         df = self._set_place(
-            clean_df, country=country, province=province
+            df, country=country, province=province
         )
         self.all_df = self._groupby_date(df)
 
@@ -99,10 +102,10 @@ class PhaseData(Word):
             - Recovered <int>: the number of recovered cases
         @return <pd.DataFrame>
         """
-        df = grouped_df.copy()
-        if set(df.columns) != set(self.VALUE_COLUMNS):
-            cols_str = ", ".join(self.VALUE_COLUMNS)
-            raise KeyError(f"@cleaned_df must has {cols_str} columns.")
+        df = self.validate_dataframe(
+            grouped_df,
+            name="grouped_df", time_index=True, columns=self.VALUE_COLUMNS
+        )
         return df
 
     def make(self, start_date=None, end_date=None):
@@ -112,6 +115,21 @@ class PhaseData(Word):
         @start_date <str>: start date, like 22Jan2020
         @end_date <str>: end date, like 01Feb2020
         @return <pd.DataFrame>
+        """
+        df = self.subset(start_date=start_date, end_date=end_date)
+        return self._make(df)
+
+    def subset(self, start_date, end_date):
+        """
+        Return the subset of the data with start/end date.
+        @start_date <str>: start date, like 22Jan2020
+        @end_date <str>: end date, like 01Feb2020
+        @return <pd.DataFrame>:
+            - index (Date) <pd.TimeStamp>: Observation date
+            - Confirmed <int>: the number of confirmed cases
+            - Infected <int>: the number of currently infected cases
+            - Fatal <int>: the number of fatal cases
+            - Recovered <int>: the number of recovered cases
         """
         df = self.all_df.copy()
         series = df.index.copy()
@@ -127,4 +145,4 @@ class PhaseData(Word):
             end_obj = datetime.strptime(end_date, self.DATE_FORMAT)
         # Subset
         df = df.loc[(start_obj <= series) & (series <= end_obj), :]
-        return self._make(df)
+        return df

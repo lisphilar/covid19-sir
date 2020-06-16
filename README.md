@@ -69,13 +69,14 @@ Secondary source: [Secondary source: COVID-19 dataset in Japan by Lisphilar](htt
 ### GitHub
 `subversion` command (`sudo apt install subversion`) is necessary.
 
-#### Measures taken by each country and response scores
+#### OxCGRT: Measures taken by each country and response scores
 [Thomas Hale, Sam Webster, Anna Petherick, Toby Phillips, and Beatriz Kira. (2020).  
 Oxford COVID-19 Government Response Tracker. Blavatnik School of Government.](https://github.com/OxCGRT/covid-policy-tracker)
 
 
 
 ## Quick usage
+Example Python codes are in `example` directory. With Pipenv environment, we can run the Python codes with Bash code `example.sh` in the top directory of this repository.
 
 ### Preparation
 ```Python
@@ -114,7 +115,7 @@ pop_data.to_dict(country_level=True)
 ```
 Perform data cleaning of OxGCRT dataset.
 ```Python
-# Read OxGCRT dataset
+# Read OxCGRT dataset
 oxcgrt_data = cs.OxCGRTData("input/oxcgrt/OxCGRT_latest.csv")
 oxcgrt_df = oxcgrt_data.cleaned()
 # Create a subset for a country with ISO3 country code

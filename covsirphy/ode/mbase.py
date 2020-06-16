@@ -2,114 +2,122 @@
 # -*- coding: utf-8 -*-
 
 import numpy as np
-from covsirphy.cleaning.word import Word
+from covsirphy.ode.mbasecom import ModelBaseCommon
 
 
-class ModelBase(Word):
-    # Quartile range of the parametes when setting initial values
-    QUANTILE_RANGE = [0.3, 0.7]
+class ModelBase(ModelBaseCommon):
+    """
+    Base class of ODE models.
+    """
     # Model name
-    NAME = "Model"
-    # Variables in non-dimensional ODEs
-    VARIABLES = ["x"]
+    NAME = "ModelBase"
+    # names of parameters
+    PARAMETERS = list()
+    DAY_PARAMETERS = list()
+    # Variable names in (non-dim, dimensional) ODEs
+    VAR_DICT = dict()
+    VARIABLES = list(VAR_DICT.values())
     # Priorities of the variables when optimization
-    PRIORITIES = np.array([1])
+    PRIORITIES = np.array(list())
     # Variables that increases monotonically
-    VARS_INCLEASE = ["x"]
+    VARS_INCLEASE = list()
 
-    def __init__(self):
-        pass
+    def __init__(self, population):
+        """
+        This method should be overwritten in subclass.
+        @population <int>: total population
+        """
+        # Total population
+        if not isinstance(population, int):
+            raise TypeError("@population must be an integer.")
+        self.population = population
+        # Non-dim parameters
 
     def __call__(self, t, X):
+        """
+        Return the list of dS/dt (tau-free) etc.
+        This method should be overwritten in subclass.
+        @return <np.array>
+        """
         return np.array(list())
 
     @classmethod
-    def param(cls, train_df_divided=None, q_range=None):
+    def param_range(cls, taufree_df, population):
         """
-        Define parameters without tau.
-        This function should be overwritten in subclass.
-        @train_df_divided <pd.DataFrame>:
-            - column: t and non-dimensional variables
-        @q_range <list[float, float]>:
-            quantile rage of the parameters calculated by the data
-        @return <dict[name]=(min, max):
-            @min <float>: min value
-            @max <float>: max value
+        Define the range of parameters (not including tau value).
+        This method should be overwritten in subclass.
+        @taufree_df <pd.DataFrame>:
+            - index: reset index
+            - t <int>: time steps (tau-free)
+            - columns with dimensional variables
+        @population <int>: total population
+        @return <dict[name]=(min, max)>:
+            - min <float>: min value
+            - max <float>: max value
         """
-        param_dict = dict()
-        return param_dict
+        _dict = dict()
+        return _dict
 
     @classmethod
-    def calc_variables(cls, cleaned_df, population):
+    def specialize(cls, data_df, population):
         """
-        Calculate the variables of the model.
-        This function should be overwritten in subclass.
-        @cleaned_df <pd.DataFrame>: cleaned data
-            - index (Date) <pd.TimeStamp>: Observation date
+        Specialize the dataset for this model.
+        This method should be overwritten in subclass.
+        @data_df <pd.DataFrame>:
+            - index: reset index
             - Confirmed <int>: the number of confirmed cases
             - Infected <int>: the number of currently infected cases
             - Fatal <int>: the number of fatal cases
             - Recovered <int>: the number of recovered cases
+            - any columns
         @population <int>: total population in the place
-        @return <pd.DataFrame>
-            - index (Date) <pd.TimeStamp>: Observation date
-            - Elapsed <int>: Elapsed time from the start date [min]
-            - x, y, z, w etc.
-                - calculated in child classes.
-                - non-dimensionalized variables of Susceptible etc.
-        """
-        df = cleaned_df.copy()
-        if set(df.columns) != set(cls.VALUE_COLUMNS):
-            cols_str = ", ".join(cls.VALUE_COLUMNS)
-            raise KeyError(f"@cleaned_df must has {cols_str} columns.")
-        # Calculate Susceptible
-        df[cls.S] = population - df[cls.C]
-        # Calculate elapsed time from the start date [min]
-        df[cls.T] = (df.index - df.index.min()).total_seconds()
-        df[cls.T] = (df[cls.T] // 60).astype(np.int64)
-        return df
-
-    @classmethod
-    def nondim_cols(cls, target_df, columns, population):
-        """
-        Non-dimensional the columns with population value.
-        @target_df <pd.DataFrame>: dataframe with dimension
-            - Elapsed: elapsed time from the start date [min]
-            - X, Y etc. (defined by @column, upper cases)
-        @columns <list[str]>: list of column (with upper strings)
-        @population <int>: total population in the place
-        """
-        df = target_df.copy()
-        cols_lower = [col.lower() for col in columns]
-        df[cols_lower] = df[columns] / population
-        df = df.loc[:, [cls.T, *cols_lower]]
-        return df
-
-    @classmethod
-    def calc_variables_reverse(cls, df, total_population):
-        """
-        Calculate measurable variables using the variables of the model.
-        This function should be overwritten in subclass.
-        @df <pd.DataFrame>:
-            - x, y, z, w etc.
-                - calculated in child classes.
-                - non-dimensionalized variables of Susceptible etc.
-        @total_population <int>: total population
         @return <pd.DataFrame>:
-            - The number of cases
+            - index: reset index
+            - any columns @data_df has
+            - columns with dimensional variables
         """
+        df = cls.validate_dataframe(
+            data_df, name="data_df", columns=cls.VALUE_COLUMNS
+        )
         return df
+
+    @classmethod
+    def restore(cls, specialized_df):
+        """
+        Restore Confirmed/Infected/Recovered/Fatal.
+         using a dataframe with the variables of the model.
+        This method should be overwritten in subclass.
+        @specialized_df <pd.DataFrame>: dataframe with the variables
+            - index <object>
+            - variables of the models <int>
+            - any columns
+        @return <pd.DataFrame>:
+            - index <object>: as-is
+            - Confirmed <int>: the number of confirmed cases
+            - Infected <int>: the number of currently infected cases
+            - Fatal <int>: the number of fatal cases
+            - Recovered <int>: the number of recovered cases
+            - the other columns @specialzed_df has
+        """
+        df = specialized_df.copy()
+        other_cols = list(set(df.columns) - set(cls.VALUE_COLUMNS))
+        df[cls.C] = None
+        df[cls.CI] = None
+        df[cls.F] = None
+        df[cls.R] = None
+        return df.loc[:, [*cls.VALUE_COLUMNS, *other_cols]]
 
     def calc_r0(self):
         """
-        This function should be overwritten in subclass.
+        Calculate (basic) reproduction number.
+        This method should be overwritten in subclass.
         """
         return None
 
     def calc_days_dict(self, tau):
         """
         Calculate 1/beta [day] etc.
-        This function should be overwritten in subclass.
-        @param tau <int>: tau value [hour]
+        This method should be overwritten in subclass.
+        @param tau <int>: tau value [min]
         """
         return dict()

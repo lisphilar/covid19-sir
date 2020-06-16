@@ -16,6 +16,31 @@ class JHUData(CleaningBase):
     def __init__(self, filename):
         super().__init__(filename)
 
+    def cleaned(self, population=None):
+        """
+        Return the cleaned dataset.
+        Cleaning method is defined by self.cleaning() method.
+        @population <int>:
+            - if this is not None, Susceptible will be calculated.
+        @return <pd.DataFrame>
+            - index <int>: reset index
+            - Date <pd.TimeStamp>: Observation date
+            - Country <str>: country/region name
+            - Province <str>: province/prefecture/state name
+            - Confirmed <int>: the number of confirmed cases
+            - Infected <int>: the number of currently infected cases
+            - Fatal <int>: the number of fatal cases
+            - Recovered <int>: the number of recovered cases
+            - if @population is not None:
+                - Susceptible <int>: the number of susceptible cases
+        """
+        df = self._cleaned_df.copy()
+        if population is None:
+            return df
+        population = self.validate_natural_int(population, name="population")
+        df[self.S] = population - df[self.C]
+        return df
+
     def cleaning(self):
         """
         Perform data cleaning of the raw data.
