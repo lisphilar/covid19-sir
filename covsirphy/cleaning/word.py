@@ -172,6 +172,20 @@ class Word(object):
             raise TypeError(s)
         return target
 
+    @staticmethod
+    def validate_instance(target, class_obj, name="target"):
+        """
+        Validate the target is a instance of the class object.
+        @target <instance>: target to validate
+        @parent <class>: class object
+        @name <str>: argument name of the target
+        @return <instance>: as-is target
+        """
+        s = f"@{name} must be an instance of {type(class_obj)}, but {type(target)} was applied."
+        if not isinstance(target, class_obj):
+            raise TypeError(s)
+        return target
+
     @classmethod
     def divisors(cls, value):
         """

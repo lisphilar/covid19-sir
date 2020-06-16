@@ -34,19 +34,13 @@ class Scenario(Word):
         @province <str>: province name
         @tau <int>: tau value
         """
-        # Records
-        if not isinstance(jhu_data, JHUData):
-            raise TypeError(
-                "@jhu_data must be a instance of <covsirphy.JHUData>."
-            )
-        self.jhu_data = jhu_data
-        self.clean_df = jhu_data.cleaned()
         # Population
-        if not isinstance(pop_data, Population):
-            raise TypeError(
-                "@pop_data must be a instance of <covsirphy.Population>."
-            )
+        pop_data = self.validate_instance(pop_data, Population, name="pop_data")
         self.population = pop_data.value(country, province=province)
+        # Records
+        jhu_data = self.validate_instance(jhu_data, JHUData, name="jhu_data")
+        self.jhu_data = jhu_data
+        self.clean_df = jhu_data.cleaned(population=self.population)
         # Area name
         self.country = country
         self.province = province
@@ -135,8 +129,7 @@ class Scenario(Word):
                 raise TypeError("@days must be an integer.")
             end_obj = self.date_obj(start_date) + timedelta(days=days)
             end_date = end_obj.strftime(self.DATE_FORMAT)
-        if population is None:
-            population = self.population
+        population = population or self.population
         summary_df = self.series_dict[name].summary()
         if model is None:
             if self.ODE not in summary_df.columns:
@@ -244,7 +237,7 @@ class Scenario(Word):
             - if not registered, new phase series will be created
         @kwargs:
             - keyword arguments of the model parameter
-                - tau value cannot be changed
+                - tau value cannot be included
             - keyword arguments of covsirphy.Estimator.run()
         @return self
         """
@@ -301,10 +294,7 @@ class Scenario(Word):
             - keyword arguments of covsirphy.Estimator.run()
         """
         # Check model
-        if not issubclass(model, ModelBase):
-            raise TypeError(
-                "@model must be an ODE model <sub-class of cs.ModelBase>."
-            )
+        model = self.validate_subclass(model, ModelBase, "model")
         # Phase names
         if series_list is None:
             series_list = list(self.series_dict.keys())
@@ -312,7 +302,7 @@ class Scenario(Word):
             try:
                 phase_dict = self.series_dict[name].to_dict()
             except KeyError:
-                raise KeyError(f"{name} is not defined.")
+                raise KeyError(f"{name} has not been defined.")
             if len(series_list) > 1:
                 print(f"<{name} scenario>")
             past_phases = [k for (k, v) in phase_dict.items()]
@@ -335,7 +325,7 @@ class Scenario(Word):
         """
         name = self.MAIN if name == "Main" else name
         if name not in self.series_dict.keys():
-            raise KeyError(f"@name {name} is not defined.")
+            raise KeyError(f"@name {name} has not been defined.")
         try:
             estimator = self.estimator_dict[name][phase]
         except KeyError:
@@ -449,7 +439,8 @@ class Scenario(Word):
         for phase in df.index:
             model_name = df.loc[phase, self.ODE]
             model = self.model_dict[model_name]
-            start_obj = self.date_obj(df.loc[phase, self.START])
+            start_date = df.loc[phase, self.START]
+            start_obj = self.date_obj(start_date)
             start_objects.append(start_obj)
             end_obj = self.date_obj(df.loc[phase, self.END])
             phase_seconds = (end_obj - start_obj).total_seconds() + 1
@@ -458,20 +449,13 @@ class Scenario(Word):
             param_dict = df[model.PARAMETERS].to_dict(orient="index")[phase]
             if phase == self.num2str(1):
                 # Calculate initial values
-                # TODO: directly use dimensional data
                 ode_data = ODEData(
                     self.clean_df, country=self.country,
                     province=self.province
                 )
-                ode_df = ode_data.make(model, population)
-                init_index = [
-                    date_obj for (date_obj, _)
-                    in self.series_dict[name].phase_dict.items()
-                    if date_obj == start_obj
-                ][0]
-                y0_dict_phase = {
-                    v: ode_df.loc[init_index, v] for v in model.VARIABLES
-                }
+                y0_dict_phase = ode_data.y0(
+                    model, population, start_date=start_date
+                )
             else:
                 try:
                     y0_dict_phase = y0_dict.copy()
@@ -483,7 +467,8 @@ class Scenario(Word):
                 y0_dict=y0_dict_phase
             )
         simulator.run()
-        dim_df = simulator.dim(self.tau, df.loc[self.num2str(1), self.START])
+        first_date = df.loc[self.num2str(1), self.START]
+        dim_df = simulator.dim(self.tau, first_date)
         return dim_df, start_objects
 
     def get(self, param, name="Main", phase="last"):
