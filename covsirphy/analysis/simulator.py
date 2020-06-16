@@ -197,6 +197,7 @@ class ODESimulator(Word):
         df = df.drop(self.TS, axis=1)
         df = df.reset_index(drop=True)
         var_cols = df.columns.tolist()
+        df = df.astype(np.int64)
         # Date
         start_obj = datetime.strptime(start_date, self.DATE_FORMAT)
         elapsed = pd.Series(df.index * tau)
