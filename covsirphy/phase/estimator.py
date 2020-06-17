@@ -19,7 +19,7 @@ class Estimator(Optimizer):
 
     def __init__(self, clean_df, model, population,
                  country, province=None,
-                 start_date=None, end_date=None, seed=0, **kwargs):
+                 start_date=None, end_date=None, **kwargs):
         """
         @clean_df <pd.DataFrame>:
             - cleaned observed data or simulated data
@@ -44,7 +44,6 @@ class Estimator(Optimizer):
         @province <str>: province name
         @start_date <str>: start date, like 22Jan2020
         @end_date <str>: end date, like 01Feb2020
-        @seed <int>: random seed of hyperparameter optimization
         @kwargs: parameter values of the model
         """
         # Read arguments
@@ -60,7 +59,6 @@ class Estimator(Optimizer):
             self.fixed_dict[self.TAU] = self.validate_natural_int(
                 self.fixed_dict[self.TAU], name="tau"
             )
-        self.seed = self.validate_natural_int(seed, name="seed", include_zero=True)
         # Training dataset
         df = self.validate_dataframe(
             clean_df, name="clean_df", columns=model.VARIABLES
@@ -94,8 +92,9 @@ class Estimator(Optimizer):
             timeout=timeout_iteration
         )
 
-    def run(self, timeout=60, n_jobs=-1, reset_n_max=3,
-            timeout_iteration=10, allowance=(0.8, 1.2)):
+    def run(self, timeout=60, reset_n_max=3,
+            timeout_iteration=10, allowance=(0.8, 1.2),
+            n_jobs=-1, seed=None):
         """
         Run optimization.
         If the result satisfied all conditions, optimization ends.
@@ -104,16 +103,20 @@ class Estimator(Optimizer):
             - predicted values are in the allowance
                 when each actual value shows max value
         - @timeout <int>: time-out of run
-        @n_jobs <int>: the number of parallel jobs or -1 (CPU count)
         @reset_n_max <int>:
             - if study was reset @reset_n_max times, will not be reset anymore
         @timeout_iteration <int>: time-out of one iteration
         @allowance <tuple(float, float)>:
             - the allowance of the predicted value
+        @n_jobs <int>: the number of parallel jobs or -1 (CPU count)
+        @seed <int/None>: random seed of hyperparameter optimization
+            - this will effective when @n_jobs is 1
         @return None
         """
+        if seed is not None and n_jobs != 1:
+            raise ValueError("@seed must be None when @n_jobs is not equal to 1.")
         if self.study is None:
-            self._init_study()
+            self._init_study(seed=seed)
         print("\tRunning optimization...")
         stopwatch = StopWatch()
         reset_n = 0

@@ -17,13 +17,12 @@ class Optimizer(Word):
     """
     optuna.logging.disable_default_handler()
 
-    def __init__(self, train_df, x="t", seed=0, **params):
+    def __init__(self, train_df, x="t", **params):
         """
         @train_df <pd.DataFrame>: training dataset
             - index: reset index
             - Explanatory variable defined by @x
             - Response variables which is not @x
-        @seed <int>: random seed of hyperparameter optimization
         @param (keyword arguments): fixed parameter values
         """
         self.x = x
@@ -35,28 +34,33 @@ class Optimizer(Word):
         self.study = None
         self.total_trials = 0
         self.run_time = 0
-        self.seed = self.validate_natural_int(seed, name="seed", include_zero=True)
 
-    def _init_study(self):
+    def _init_study(self, seed=None):
         """
         Initialize Optuna study.
+        @seed <int/None>: random seed of hyperparameter optimization
+            - this will effective when the number of CPUs is 1
         """
         self.study = optuna.create_study(
             direction="minimize",
-            sampler=optuna.samplers.TPESampler(seed=self.seed)
+            sampler=optuna.samplers.TPESampler(seed=seed)
         )
 
-    def run(self, n_trials, timeout, n_jobs=-1):
+    def run(self, n_trials, timeout, n_jobs=-1, seed=None):
         """
         Run optimization.
         This method can be overwritten in subclass.
         @timeout <int>: time-out of run
         @n_trials <int>: the number of trials
         @n_jobs <int>: the number of parallel jobs or -1 (CPU count)
+        @seed <int/None>: random seed of hyperparameter optimization
+            - this will effective when @n_jobs is 1
         """
+        if seed is not None and n_jobs != 1:
+            raise ValueError("@seed must be None when @n_jobs is not equal to 1.")
         start_time = datetime.now()
         if self.study is None:
-            self.study = optuna.create_study(direction="minimize")
+            self._init_study(seed=seed)
         self.study.optimize(
             lambda x: self.objective(x),
             n_trials=n_trials,
