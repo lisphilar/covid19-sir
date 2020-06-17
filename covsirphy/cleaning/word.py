@@ -138,13 +138,14 @@ class Word(object):
         return df
 
     @staticmethod
-    def validate_natural_int(target, name="number"):
+    def validate_natural_int(target, name="number", include_zero=False):
         """
         Validate the natural (non-negative) number.
         If the value is natural number and the type was float,
          will be converted to an integer.
         @target <int/float/str>: value to validate
         @name <str>: argument name of the value
+        @include_zero <bool>: include 0 or not
         @return <int>: as-is the target
         """
         s = f"@{name} must be a natural number, but {target} was applied"
@@ -154,8 +155,9 @@ class Word(object):
             raise TypeError(f"{s} and not converted to integer.")
         if number != target:
             raise ValueError(f"{s}. |{target} - {number}| > 0")
-        if number < 1:
-            raise ValueError(f"{s}. This value is under 1")
+        min_value = 0 if include_zero else 1
+        if number < min_value:
+            raise ValueError(f"{s}. This value is under {min_value}")
         return number
 
     @staticmethod

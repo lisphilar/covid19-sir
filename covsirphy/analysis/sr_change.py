@@ -19,7 +19,7 @@ class ChangeFinder(Word):
     optuna.logging.disable_default_handler()
 
     def __init__(self, clean_df, population, country, province=None,
-                 population_change_dict=None):
+                 population_change_dict=None, seed=0):
         """
         @clean_df <pd.DataFrame>: cleaned data
             - index <int>: reset index
@@ -37,6 +37,7 @@ class ChangeFinder(Word):
             - dictionary of total population
                 - key: start date of population change
                 - value: total population
+        @seed <int>: random seed of hyperparameter optimization
         """
         # Arguments
         self.clean_df = clean_df.copy()
@@ -59,6 +60,7 @@ class ChangeFinder(Word):
         self.study = None
         self.run_time = 0
         self.total_trials = 0
+        self.seed = self.validate_natural_int(seed, name="seed", include_zero=True)
 
     def get_dates(self, clean_df, population, country, province):
         """
@@ -108,7 +110,10 @@ class ChangeFinder(Word):
         """
         Initialize Optuna study.
         """
-        self.study = optuna.create_study(direction="minimize")
+        self.study = optuna.create_study(
+            direction="minimize",
+            sampler=optuna.samplers.TPESampler(seed=self.seed)
+        )
 
     def add_trial(self, n_trials_iteration=10, n_jobs=-1):
         """

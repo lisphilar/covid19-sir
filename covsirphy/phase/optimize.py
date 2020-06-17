@@ -17,12 +17,13 @@ class Optimizer(Word):
     """
     optuna.logging.disable_default_handler()
 
-    def __init__(self, train_df, x="t", **params):
+    def __init__(self, train_df, x="t", seed=0, **params):
         """
         @train_df <pd.DataFrame>: training dataset
             - index: reset index
             - Explanatory variable defined by @x
             - Response variables which is not @x
+        @seed <int>: random seed of hyperparameter optimization
         @param (keyword arguments): fixed parameter values
         """
         self.x = x
@@ -34,12 +35,16 @@ class Optimizer(Word):
         self.study = None
         self.total_trials = 0
         self.run_time = 0
+        self.seed = self.validate_natural_int(seed, name="seed", include_zero=True)
 
     def _init_study(self):
         """
         Initialize Optuna study.
         """
-        self.study = optuna.create_study(direction="minimize")
+        self.study = optuna.create_study(
+            direction="minimize",
+            sampler=optuna.samplers.TPESampler(seed=self.seed)
+        )
 
     def run(self, n_trials, timeout, n_jobs=-1):
         """

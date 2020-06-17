@@ -19,7 +19,7 @@ class Estimator(Optimizer):
 
     def __init__(self, clean_df, model, population,
                  country, province=None,
-                 start_date=None, end_date=None, **kwargs):
+                 start_date=None, end_date=None, seed=0, **kwargs):
         """
         @clean_df <pd.DataFrame>:
             - cleaned observed data or simulated data
@@ -44,6 +44,7 @@ class Estimator(Optimizer):
         @province <str>: province name
         @start_date <str>: start date, like 22Jan2020
         @end_date <str>: end date, like 01Feb2020
+        @seed <int>: random seed of hyperparameter optimization
         @kwargs: parameter values of the model
         """
         # Read arguments
@@ -59,6 +60,7 @@ class Estimator(Optimizer):
             self.fixed_dict[self.TAU] = self.validate_natural_int(
                 self.fixed_dict[self.TAU], name="tau"
             )
+        self.seed = self.validate_natural_int(seed, name="seed", include_zero=True)
         # Training dataset
         df = self.validate_dataframe(
             clean_df, name="clean_df", columns=model.VARIABLES

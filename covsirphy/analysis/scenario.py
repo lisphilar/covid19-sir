@@ -26,13 +26,13 @@ class Scenario(Word):
     Scenario analysis.
     """
 
-    def __init__(self, jhu_data, pop_data, country, province=None):
+    def __init__(self, jhu_data, pop_data, country, province=None, seed=0):
         """
         @jhu_data <covsirphy.JHUData>: object of records
         @pop_data <covsirphy.Population>: Population object
         @country <str>: country name
         @province <str>: province name
-        @tau <int>: tau value
+        @seed <int>: random seed of hyperparameter optimization
         """
         # Population
         pop_data = self.validate_instance(pop_data, Population, name="pop_data")
@@ -55,6 +55,8 @@ class Scenario(Word):
         self.last_date = df.index.max().strftime(self.DATE_FORMAT)
         # Init
         self.tau = None
+        # Random seed
+        self.seed = self.validate_natural_int(seed, name="seed", include_zero=True)
         # {model_name: model_class}
         self.model_dict = dict()
         # {scenario_name: PhaseSeries}
@@ -217,7 +219,8 @@ class Scenario(Word):
         """
         finder = ChangeFinder(
             self.clean_df, self.population,
-            country=self.country, province=self.province
+            country=self.country, province=self.province,
+            seed=self.seed
         )
         finder.run(n_points=n_points, **kwargs)
         phase_series = finder.show(show_figure=show_figure, filename=filename)
@@ -265,6 +268,7 @@ class Scenario(Word):
             self.clean_df, model, population,
             country=self.country, province=self.province,
             start_date=start_date, end_date=end_date,
+            seed=self.seed,
             **est_kwargs
         )
         sign = signature(Estimator.run)
