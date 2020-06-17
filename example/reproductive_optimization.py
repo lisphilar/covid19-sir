@@ -46,11 +46,11 @@ def main():
     restored_df = model.restore(dim_df)
     # 1st trial of S-R trend analysis
     change_finder = cs.ChangeFinder(restored_df, eg_population, "Trend")
-    change_finder.run(n_points=1, n_jobs=1, seed=2019)
+    change_finder.run(n_points=1, n_jobs=1, seed=0)
     change_finder.show(filename=output_dir.joinpath("trend_1st.png"))
     # 2nd trial of S-R trend analysis
     change_finder = cs.ChangeFinder(restored_df, eg_population, "Trend")
-    change_finder.run(n_points=1, n_jobs=1, seed=2019)
+    change_finder.run(n_points=1, n_jobs=1, seed=0)
     change_finder.show(filename=output_dir.joinpath("trend_2nd.png"))
     # Dataset for parameter estimation
     simulator = cs.ODESimulator(country="Param", province=model.NAME)
@@ -72,14 +72,14 @@ def main():
         clean_df=dim_df, model=model, population=eg_population,
         country="Param", province=model.NAME, tau=eg_tau
     )
-    estimator.run(n_jobs=1, seed=2019)
+    estimator.run(n_jobs=1, seed=0)
     estimator.history(filename=output_dir.joinpath("estimate_history_1st.png"))
     # 2nd trial of parameter estimation
     estimator = cs.Estimator(
         clean_df=dim_df, model=model, population=eg_population,
         country="Param", province=model.NAME, tau=eg_tau
     )
-    estimator.run(n_jobs=1, seed=2019)
+    estimator.run(n_jobs=1, seed=0)
     estimator.history(filename=output_dir.joinpath("estimate_history_2nd.png"))
 
 
