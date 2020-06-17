@@ -110,7 +110,8 @@ class Trend(Word):
         )
         df[f"{self.S}{self.P}"] = x_series.apply(
             lambda x: f_partial(x)
-        ).astype(np.int64)
+        )
+        df = df.astype(np.int64, errors="ignore")
         return df
 
     def rmsle(self):
@@ -121,6 +122,7 @@ class Trend(Word):
         df = self.result_df.copy()
         if df is None:
             raise NameError("Must perform Trend().analyse() in advance.")
+        df = df.replace(np.inf, 0)
         df = df.loc[df[f"{self.S}{self.A}"] > 0, :]
         df = df.loc[df[f"{self.S}{self.P}"] > 0, :]
         if df.empty:
@@ -174,7 +176,7 @@ class Trend(Word):
         """
         df = result_df.copy()
         if df is None:
-            raise NameError("Must perform Trend().run() in advance.")
+            raise NameError("Must perform Trend().analyse() in advance.")
         x_series = df[cls.R]
         actual = df[f"{cls.S}{cls.A}"]
         # Plot the actual values
