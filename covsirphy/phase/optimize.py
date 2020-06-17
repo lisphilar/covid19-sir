@@ -35,23 +35,32 @@ class Optimizer(Word):
         self.total_trials = 0
         self.run_time = 0
 
-    def _init_study(self):
+    def _init_study(self, seed=None):
         """
         Initialize Optuna study.
+        @seed <int/None>: random seed of hyperparameter optimization
+            - this will effective when the number of CPUs is 1
         """
-        self.study = optuna.create_study(direction="minimize")
+        self.study = optuna.create_study(
+            direction="minimize",
+            sampler=optuna.samplers.TPESampler(seed=seed)
+        )
 
-    def run(self, n_trials, timeout, n_jobs=-1):
+    def run(self, n_trials, timeout, n_jobs=-1, seed=None):
         """
         Run optimization.
         This method can be overwritten in subclass.
         @timeout <int>: time-out of run
         @n_trials <int>: the number of trials
         @n_jobs <int>: the number of parallel jobs or -1 (CPU count)
+        @seed <int/None>: random seed of hyperparameter optimization
+            - this will effective when @n_jobs is 1
         """
+        if seed is not None and n_jobs != 1:
+            raise ValueError("@seed must be None when @n_jobs is not equal to 1.")
         start_time = datetime.now()
         if self.study is None:
-            self.study = optuna.create_study(direction="minimize")
+            self._init_study(seed=seed)
         self.study.optimize(
             lambda x: self.objective(x),
             n_trials=n_trials,

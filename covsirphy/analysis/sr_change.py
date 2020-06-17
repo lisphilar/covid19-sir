@@ -104,11 +104,16 @@ class ChangeFinder(Word):
             pop_dict[date] = population_now
         return pop_dict
 
-    def _init_study(self):
+    def _init_study(self, seed=None):
         """
         Initialize Optuna study.
+        @seed <int/None>: random seed of hyperparameter optimization
+            - this will effective when @n_jobs is 1
         """
-        self.study = optuna.create_study(direction="minimize")
+        self.study = optuna.create_study(
+            direction="minimize",
+            sampler=optuna.samplers.TPESampler(seed=seed)
+        )
 
     def add_trial(self, n_trials_iteration=10, n_jobs=-1):
         """
@@ -123,7 +128,7 @@ class ChangeFinder(Word):
         )
 
     def run(self, n_points, min_duration=7, allowance=3,
-            timeout=60, n_trials_iteration=10, n_jobs=-1):
+            timeout=60, n_trials_iteration=10, n_jobs=-1, seed=None):
         """
         Run optimization.
         @n_points <int>: the number of change points
@@ -135,6 +140,8 @@ class ChangeFinder(Word):
         @timeout <int>: time-out of run
         @n_trials_iteration <int>: the number of trials in one iteration
         @n_jobs <int>: the number of parallel jobs or -1 (CPU count)
+        @seed <int/None>: random seed of hyperparameter optimization
+            - this will effective when @n_jobs is 1
         @return self
         """
         self.n_points = n_points
@@ -146,8 +153,10 @@ class ChangeFinder(Word):
             self.run_time = 0
             self.total_trials = 0
             return self
+        if seed is not None and n_jobs != 1:
+            raise ValueError("@seed must be None when @n_jobs is not equal to 1.")
         if self.study is None:
-            self._init_study()
+            self._init_study(seed=seed)
         print("Finding change points of S-R trend...")
         while True:
             self.add_trial(n_trials_iteration, n_jobs)

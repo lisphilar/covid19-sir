@@ -99,6 +99,7 @@ class Trend(Word):
             raise KeyError("The length of @train_df must be over 2.")
         # Curve fitting with negative exponential function
         warnings.simplefilter("ignore", OptimizeWarning)
+        warnings.simplefilter("ignore", RuntimeWarning)
         param, _ = curve_fit(
             self.negative_exp, x_series, y_series,
             p0=[a_ini, b_ini]
@@ -109,7 +110,8 @@ class Trend(Word):
         )
         df[f"{self.S}{self.P}"] = x_series.apply(
             lambda x: f_partial(x)
-        ).astype(np.int64)
+        )
+        df = df.astype(np.int64, errors="ignore")
         return df
 
     def rmsle(self):
@@ -119,7 +121,12 @@ class Trend(Word):
         """
         df = self.result_df.copy()
         if df is None:
-            raise NameError("Must perform Trend().run() in advance.")
+            raise NameError("Must perform Trend().analyse() in advance.")
+        df = df.replace(np.inf, 0)
+        df = df.loc[df[f"{self.S}{self.A}"] > 0, :]
+        df = df.loc[df[f"{self.S}{self.P}"] > 0, :]
+        if df.empty:
+            return np.inf
         actual = df[f"{self.S}{self.A}"]
         predicted = df[f"{self.S}{self.P}"]
         # Calculate RMSLE score
@@ -169,7 +176,7 @@ class Trend(Word):
         """
         df = result_df.copy()
         if df is None:
-            raise NameError("Must perform Trend().run() in advance.")
+            raise NameError("Must perform Trend().analyse() in advance.")
         x_series = df[cls.R]
         actual = df[f"{cls.S}{cls.A}"]
         # Plot the actual values

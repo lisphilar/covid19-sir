@@ -32,7 +32,6 @@ class Scenario(Word):
         @pop_data <covsirphy.Population>: Population object
         @country <str>: country name
         @province <str>: province name
-        @tau <int>: tau value
         """
         # Population
         pop_data = self.validate_instance(pop_data, Population, name="pop_data")

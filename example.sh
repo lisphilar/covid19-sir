@@ -28,6 +28,10 @@ pipenv run python -m example.sewirf_model
 echo "<Long ODE simulation with SIR-F model>"
 pipenv run python -m example.long_simulation
 
+# Reproductive hyperparameter estimation
+echo "<Reproductive hyperparameter estimation>"
+pipenv run python -m example.reproductive_optimization
+
 # Scenario analysis
 echo "<Scenario analysis>"
 pipenv run python -m example.scenario_analysis

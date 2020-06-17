@@ -92,8 +92,9 @@ class Estimator(Optimizer):
             timeout=timeout_iteration
         )
 
-    def run(self, timeout=60, n_jobs=-1, reset_n_max=3,
-            timeout_iteration=10, allowance=(0.8, 1.2)):
+    def run(self, timeout=60, reset_n_max=3,
+            timeout_iteration=10, allowance=(0.8, 1.2),
+            n_jobs=-1, seed=None):
         """
         Run optimization.
         If the result satisfied all conditions, optimization ends.
@@ -102,16 +103,20 @@ class Estimator(Optimizer):
             - predicted values are in the allowance
                 when each actual value shows max value
         - @timeout <int>: time-out of run
-        @n_jobs <int>: the number of parallel jobs or -1 (CPU count)
         @reset_n_max <int>:
             - if study was reset @reset_n_max times, will not be reset anymore
         @timeout_iteration <int>: time-out of one iteration
         @allowance <tuple(float, float)>:
             - the allowance of the predicted value
+        @n_jobs <int>: the number of parallel jobs or -1 (CPU count)
+        @seed <int/None>: random seed of hyperparameter optimization
+            - this will effective when @n_jobs is 1
         @return None
         """
+        if seed is not None and n_jobs != 1:
+            raise ValueError("@seed must be None when @n_jobs is not equal to 1.")
         if self.study is None:
-            self._init_study()
+            self._init_study(seed=seed)
         print("\tRunning optimization...")
         stopwatch = StopWatch()
         reset_n = 0
