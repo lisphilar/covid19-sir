@@ -81,6 +81,8 @@ Example Python codes are in `example` directory. With Pipenv environment, we can
 ### Preparation
 ```Python
 import covsirphy as cs
+cs.__version__
+cs.get_version()
 ```
 Perform data cleaning of JHU dataset.
 ```Python
