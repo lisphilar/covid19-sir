@@ -4,6 +4,7 @@
 from collections import Counter
 import sys
 import better_exceptions
+from covsirphy.__version__ import __version__
 from covsirphy.analysis import ODESimulator, ChangeFinder
 from covsirphy.analysis import PhaseSeries, Scenario
 from covsirphy.cleaning import CleaningBase, Word, Population
@@ -13,6 +14,13 @@ from covsirphy.ode import SIR, SIRD, SIRF, SIRFV, SEWIRF
 from covsirphy.phase import PhaseData, ODEData, Estimator
 from covsirphy.phase import SRData, Trend
 from covsirphy.util import line_plot, jpn_map, StopWatch
+
+
+def get_version():
+    """
+    Return the version number, like CovsirPhy v0.0.0
+    """
+    return f"CovsirPhy v{__version__}"
 
 
 __all__ = [
