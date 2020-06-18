@@ -1,0 +1,410 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>covsirphy.analysis.simulator &mdash; CovsirPhy  documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+
+  
+  
+  
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
+        <script src="../../../_static/jquery.js"></script>
+        <script src="../../../_static/underscore.js"></script>
+        <script src="../../../_static/doctools.js"></script>
+        <script src="../../../_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="../../../_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../../../index.html" class="icon icon-home" alt="Documentation Home"> CovsirPhy
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../covsirphy.html">covsirphy package</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">CovsirPhy</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../../index.html" class="icon icon-home"></a> &raquo;</li>
+        
+          <li><a href="../../index.html">Module code</a> &raquo;</li>
+        
+      <li>covsirphy.analysis.simulator</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for covsirphy.analysis.simulator</h1><div class="highlight"><pre>
+<span></span><span class="ch">#!/usr/bin/env python</span>
+<span class="c1"># -*- coding: utf-8 -*-</span>
+
+<span class="kn">from</span> <span class="nn">datetime</span> <span class="kn">import</span> <span class="n">datetime</span><span class="p">,</span> <span class="n">timedelta</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<span class="kn">from</span> <span class="nn">scipy.integrate</span> <span class="kn">import</span> <span class="n">solve_ivp</span>
+<span class="kn">from</span> <span class="nn">covsirphy.cleaning.word</span> <span class="kn">import</span> <span class="n">Word</span>
+<span class="kn">from</span> <span class="nn">covsirphy.ode.mbase</span> <span class="kn">import</span> <span class="n">ModelBase</span>
+
+
+<div class="viewcode-block" id="ODESimulator"><a class="viewcode-back" href="../../../covsirphy.analysis.html#covsirphy.ODESimulator">[docs]</a><span class="k">class</span> <span class="nc">ODESimulator</span><span class="p">(</span><span class="n">Word</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Simulation of an ODE model.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">country</span><span class="p">,</span> <span class="n">province</span><span class="o">=</span><span class="s2">&quot;-&quot;</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        @country &lt;str&gt;: country name</span>
+<span class="sd">        @province &lt;str&gt;: province name</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">country</span> <span class="o">=</span> <span class="n">country</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">province</span> <span class="o">=</span> <span class="n">province</span>
+        <span class="c1"># list of dictionary</span>
+        <span class="c1"># keys: model, step_n, population, param_dict, y0_dict</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">settings</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+        <span class="c1"># tau-free data: reset index, &#39;t&#39;, columns with dimensional variables</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_taufree_df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">()</span>
+        <span class="c1"># key: non-dim variable name, value: dimensional variable name</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">var_dict</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+
+<div class="viewcode-block" id="ODESimulator.add"><a class="viewcode-back" href="../../../covsirphy.analysis.html#covsirphy.ODESimulator.add">[docs]</a>    <span class="k">def</span> <span class="nf">add</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model</span><span class="p">,</span> <span class="n">step_n</span><span class="p">,</span> <span class="n">population</span><span class="p">,</span> <span class="n">param_dict</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">y0_dict</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Add models to the simulator.</span>
+<span class="sd">        @model &lt;subclass of cs.ModelBase&gt;: the first ODE model</span>
+<span class="sd">        @step_n &lt;int&gt;: the number of steps</span>
+<span class="sd">        @population &lt;int&gt;: population in the place</span>
+<span class="sd">        @param_dict &lt;dict[str]=float&gt;:</span>
+<span class="sd">            - dictionary of parameter values or None</span>
+<span class="sd">            - if not include some params, the last values will be used</span>
+<span class="sd">                - NameError when the model is the first model</span>
+<span class="sd">                - NameError if new params are included</span>
+<span class="sd">        @y0_dict &lt;dict[str]=float&gt;:</span>
+<span class="sd">            - dictionary of dimensional initial values or None</span>
+<span class="sd">            - None or if not include some variables, the last values will be used</span>
+<span class="sd">                - NameError when the model is the first model</span>
+<span class="sd">                - NameError if new variable are included</span>
+<span class="sd">        @return self</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Validate the arguments</span>
+        <span class="n">model</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">validate_subclass</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">ModelBase</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;model&quot;</span><span class="p">)</span>
+        <span class="n">step_n</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">validate_natural_int</span><span class="p">(</span><span class="n">step_n</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;step_n&quot;</span><span class="p">)</span>
+        <span class="n">population</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">validate_natural_int</span><span class="p">(</span><span class="n">population</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;population&quot;</span><span class="p">)</span>
+        <span class="c1"># Check param values</span>
+        <span class="n">param_dict</span> <span class="o">=</span> <span class="n">param_dict</span> <span class="ow">or</span> <span class="nb">dict</span><span class="p">()</span>
+        <span class="k">for</span> <span class="n">param</span> <span class="ow">in</span> <span class="n">model</span><span class="o">.</span><span class="n">PARAMETERS</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">param</span> <span class="ow">in</span> <span class="n">param_dict</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+                <span class="k">continue</span>
+            <span class="k">if</span> <span class="p">(</span><span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">settings</span><span class="p">)</span> <span class="ow">or</span> <span class="p">(</span><span class="n">param</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">settings</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">][</span><span class="s2">&quot;model&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">PARAMETERS</span><span class="p">):</span>
+                <span class="n">s</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">param</span><span class="si">}</span><span class="s2"> value must be specified in @param_dict.&quot;</span>
+                <span class="k">raise</span> <span class="ne">NameError</span><span class="p">(</span><span class="n">s</span><span class="p">)</span>
+            <span class="n">param_dict</span><span class="p">[</span><span class="n">param</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">settings</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">][</span><span class="s2">&quot;param_dict&quot;</span><span class="p">][</span><span class="n">param</span><span class="p">]</span>
+        <span class="c1"># Check initial values</span>
+        <span class="n">y0_dict</span> <span class="o">=</span> <span class="n">y0_dict</span> <span class="ow">or</span> <span class="nb">dict</span><span class="p">()</span>
+        <span class="k">for</span> <span class="n">var</span> <span class="ow">in</span> <span class="n">model</span><span class="o">.</span><span class="n">VARIABLES</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">var</span> <span class="ow">in</span> <span class="n">y0_dict</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+                <span class="k">continue</span>
+            <span class="k">if</span> <span class="p">(</span><span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">settings</span><span class="p">)</span> <span class="ow">or</span> <span class="p">(</span><span class="n">var</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">settings</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">][</span><span class="s2">&quot;model&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">VARIABLES</span><span class="p">):</span>
+                <span class="n">s</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;Initial value of </span><span class="si">{</span><span class="n">var</span><span class="si">}</span><span class="s2"> must be specified in @y0_dict.&quot;</span>
+                <span class="k">raise</span> <span class="ne">NameError</span><span class="p">(</span><span class="n">s</span><span class="p">)</span>
+            <span class="c1"># Will use the last values the last phase</span>
+            <span class="n">y0_dict</span><span class="p">[</span><span class="n">var</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="c1"># Register the setting</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">settings</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+            <span class="p">{</span>
+                <span class="s2">&quot;model&quot;</span><span class="p">:</span> <span class="n">model</span><span class="p">,</span>
+                <span class="s2">&quot;step_n&quot;</span><span class="p">:</span> <span class="n">step_n</span><span class="p">,</span>
+                <span class="s2">&quot;population&quot;</span><span class="p">:</span> <span class="n">population</span><span class="p">,</span>
+                <span class="s2">&quot;param_dict&quot;</span><span class="p">:</span> <span class="n">param_dict</span><span class="o">.</span><span class="n">copy</span><span class="p">(),</span>
+                <span class="s2">&quot;y0_dict&quot;</span><span class="p">:</span> <span class="n">y0_dict</span><span class="o">.</span><span class="n">copy</span><span class="p">(),</span>
+            <span class="p">}</span>
+        <span class="p">)</span>
+        <span class="c1"># Update variable dictionary</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">var_dict</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">model</span><span class="o">.</span><span class="n">VAR_DICT</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span></div>
+
+    <span class="k">def</span> <span class="nf">_solve_ode</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model</span><span class="p">,</span> <span class="n">step_n</span><span class="p">,</span> <span class="n">param_dict</span><span class="p">,</span> <span class="n">y0_dict</span><span class="p">,</span> <span class="n">population</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Solve ODE of the model.</span>
+<span class="sd">        @model &lt;subclass of cs.ModelBase&gt;: the ODE model</span>
+<span class="sd">        @step_n &lt;int&gt;: the number of steps</span>
+<span class="sd">        @param_dict &lt;dict[str]=float&gt;: dictionary of parameter values</span>
+<span class="sd">            - key &lt;str&gt;: parameter name</span>
+<span class="sd">            - value &lt;float&gt;: parameter value</span>
+<span class="sd">        @y0_dict &lt;dict[str]=int&gt;: dictionary of initial values</span>
+<span class="sd">            - key &lt;str&gt;: dimensional variable name</span>
+<span class="sd">            - value &lt;int&gt;:initial value of the variable</span>
+<span class="sd">        @population &lt;int&gt;: total population</span>
+<span class="sd">        @return &lt;pd.DataFrame&gt;:</span>
+<span class="sd">            - index: reset index</span>
+<span class="sd">            - t &lt;int&gt;: Elapsed time divided by tau value [-]</span>
+<span class="sd">            - columns with dimensional variables</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">step_n</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">validate_natural_int</span><span class="p">(</span><span class="n">step_n</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;step_n&quot;</span><span class="p">)</span>
+        <span class="n">population</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">validate_natural_int</span><span class="p">(</span><span class="n">population</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;population&quot;</span><span class="p">)</span>
+        <span class="n">model</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">validate_subclass</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">ModelBase</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;model&quot;</span><span class="p">)</span>
+        <span class="n">tstart</span><span class="p">,</span> <span class="n">dt</span><span class="p">,</span> <span class="n">tend</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">step_n</span>
+        <span class="n">variables</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">VARIABLES</span><span class="p">[:]</span>
+        <span class="n">initials</span> <span class="o">=</span> <span class="p">[</span><span class="n">y0_dict</span><span class="p">[</span><span class="n">var</span><span class="p">]</span> <span class="k">for</span> <span class="n">var</span> <span class="ow">in</span> <span class="n">variables</span><span class="p">]</span>
+        <span class="n">sol</span> <span class="o">=</span> <span class="n">solve_ivp</span><span class="p">(</span>
+            <span class="n">fun</span><span class="o">=</span><span class="n">model</span><span class="p">(</span><span class="n">population</span><span class="o">=</span><span class="n">population</span><span class="p">,</span> <span class="o">**</span><span class="n">param_dict</span><span class="p">),</span>
+            <span class="n">t_span</span><span class="o">=</span><span class="p">[</span><span class="n">tstart</span><span class="p">,</span> <span class="n">tend</span><span class="p">],</span>
+            <span class="n">y0</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">initials</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">int64</span><span class="p">),</span>
+            <span class="n">t_eval</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">tstart</span><span class="p">,</span> <span class="n">tend</span> <span class="o">+</span> <span class="n">dt</span><span class="p">,</span> <span class="n">dt</span><span class="p">),</span>
+            <span class="n">dense_output</span><span class="o">=</span><span class="kc">False</span>
+        <span class="p">)</span>
+        <span class="n">t_df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">sol</span><span class="p">[</span><span class="s2">&quot;t&quot;</span><span class="p">],</span> <span class="n">name</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">TS</span><span class="p">)</span>
+        <span class="n">y_df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">sol</span><span class="p">[</span><span class="s2">&quot;y&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">T</span><span class="o">.</span><span class="n">copy</span><span class="p">(),</span> <span class="n">columns</span><span class="o">=</span><span class="n">variables</span><span class="p">)</span>
+        <span class="n">y_df</span> <span class="o">=</span> <span class="n">y_df</span><span class="o">.</span><span class="n">round</span><span class="p">()</span>
+        <span class="n">sim_df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">([</span><span class="n">t_df</span><span class="p">,</span> <span class="n">y_df</span><span class="p">],</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">sim_df</span>
+
+<div class="viewcode-block" id="ODESimulator.run"><a class="viewcode-back" href="../../../covsirphy.analysis.html#covsirphy.ODESimulator.run">[docs]</a>    <span class="k">def</span> <span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Run the simulator.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_taufree_df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">()</span>
+        <span class="k">for</span> <span class="n">setting</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">settings</span><span class="p">:</span>
+            <span class="c1"># Initial values</span>
+            <span class="n">y0_dict</span> <span class="o">=</span> <span class="n">setting</span><span class="p">[</span><span class="s2">&quot;y0_dict&quot;</span><span class="p">]</span>
+            <span class="k">if</span> <span class="kc">None</span> <span class="ow">in</span> <span class="n">y0_dict</span><span class="o">.</span><span class="n">values</span><span class="p">():</span>
+                <span class="n">keys_with_none</span> <span class="o">=</span> <span class="p">[</span><span class="n">k</span> <span class="k">for</span> <span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="n">v</span><span class="p">)</span> <span class="ow">in</span> <span class="n">y0_dict</span><span class="o">.</span><span class="n">items</span><span class="p">()</span> <span class="k">if</span> <span class="n">v</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">]</span>
+                <span class="k">if</span> <span class="n">keys_with_none</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">_taufree_df</span><span class="o">.</span><span class="n">empty</span><span class="p">:</span>
+                    <span class="k">raise</span> <span class="ne">NameError</span><span class="p">(</span>
+                        <span class="s2">&quot;Initial values of simulation must be specified in advance.&quot;</span>
+                    <span class="p">)</span>
+                <span class="n">last_value_dict</span> <span class="o">=</span> <span class="p">{</span>
+                    <span class="n">k</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_taufree_df</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_taufree_df</span><span class="o">.</span><span class="n">index</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="n">k</span><span class="p">]</span>
+                    <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">keys_with_none</span>
+                <span class="p">}</span>
+                <span class="n">y0_dict</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">last_value_dict</span><span class="p">)</span>
+            <span class="n">setting</span><span class="p">[</span><span class="s2">&quot;y0_dict&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">y0_dict</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+            <span class="c1"># Solve ODEs</span>
+            <span class="n">new_df</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_solve_ode</span><span class="p">(</span><span class="o">**</span><span class="n">setting</span><span class="p">)</span>
+            <span class="n">taufree_df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">(</span>
+                <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_taufree_df</span><span class="o">.</span><span class="n">iloc</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="p">:],</span> <span class="n">new_df</span><span class="p">],</span>
+                <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">ignore_index</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">sort</span><span class="o">=</span><span class="kc">True</span>
+            <span class="p">)</span>
+            <span class="n">taufree_df</span> <span class="o">=</span> <span class="n">taufree_df</span><span class="o">.</span><span class="n">fillna</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+            <span class="n">taufree_df</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">TS</span><span class="p">]</span> <span class="o">=</span> <span class="n">taufree_df</span><span class="o">.</span><span class="n">index</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_taufree_df</span> <span class="o">=</span> <span class="n">taufree_df</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+        <span class="k">return</span> <span class="bp">self</span></div>
+
+<div class="viewcode-block" id="ODESimulator.taufree"><a class="viewcode-back" href="../../../covsirphy.analysis.html#covsirphy.ODESimulator.taufree">[docs]</a>    <span class="k">def</span> <span class="nf">taufree</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Return tau-free results.</span>
+<span class="sd">        @return &lt;pd.DataFrame&gt;:</span>
+<span class="sd">            - index: reset index</span>
+<span class="sd">            - t &lt;int&gt;: Elapsed time divided by tau value [-]</span>
+<span class="sd">            - columns with dimensionalized variables</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">df</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_taufree_df</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">df</span><span class="o">.</span><span class="n">empty</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s2">&quot;ODESimulator.run() must be done in advance.&quot;</span><span class="p">)</span>
+        <span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">reset_index</span><span class="p">(</span><span class="n">drop</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">df</span></div>
+
+<div class="viewcode-block" id="ODESimulator.non_dim"><a class="viewcode-back" href="../../../covsirphy.analysis.html#covsirphy.ODESimulator.non_dim">[docs]</a>    <span class="k">def</span> <span class="nf">non_dim</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Return the non-dimensionalized results.</span>
+<span class="sd">        @return &lt;pd.DataFrame&gt;:</span>
+<span class="sd">            - index: reset index</span>
+<span class="sd">            - t &lt;int&gt;: Elapsed time divided by tau value [-]</span>
+<span class="sd">            - non-dimensionalized variables of Susceptible etc.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">df</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">taufree</span><span class="p">()</span>
+        <span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">set_index</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">TS</span><span class="p">)</span>
+        <span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span> <span class="o">/</span> <span class="nb">sum</span><span class="p">(</span><span class="n">x</span><span class="p">),</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+        <span class="n">var_dict_rev</span> <span class="o">=</span> <span class="p">{</span><span class="n">v</span><span class="p">:</span> <span class="n">k</span> <span class="k">for</span> <span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="n">v</span><span class="p">)</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">var_dict</span><span class="o">.</span><span class="n">items</span><span class="p">()}</span>
+        <span class="n">df</span><span class="o">.</span><span class="n">columns</span> <span class="o">=</span> <span class="p">[</span><span class="n">var_dict_rev</span><span class="p">[</span><span class="n">col</span><span class="p">]</span> <span class="k">for</span> <span class="n">col</span> <span class="ow">in</span> <span class="n">df</span><span class="o">.</span><span class="n">columns</span><span class="p">]</span>
+        <span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">reset_index</span><span class="p">()</span>
+        <span class="k">return</span> <span class="n">df</span></div>
+
+<div class="viewcode-block" id="ODESimulator.dim"><a class="viewcode-back" href="../../../covsirphy.analysis.html#covsirphy.ODESimulator.dim">[docs]</a>    <span class="k">def</span> <span class="nf">dim</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tau</span><span class="p">,</span> <span class="n">start_date</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Return the dimensionalized results.</span>
+<span class="sd">        @tau &lt;int&gt;: tau value [min]</span>
+<span class="sd">        @start_date &lt;str&gt;: start date of the records, like 22Jan2020</span>
+<span class="sd">        @return &lt;pd.DataFrame&gt;</span>
+<span class="sd">            - index &lt;int&gt;: reset index</span>
+<span class="sd">            - Date &lt;pd.TimeStamp&gt;: Observation date</span>
+<span class="sd">            - Country &lt;str&gt;: country/region name</span>
+<span class="sd">            - Province &lt;str&gt;: province/prefecture/state name</span>
+<span class="sd">            - variables of the models &lt;int&gt;</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">df</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">taufree</span><span class="p">()</span>
+        <span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">drop</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">TS</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+        <span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">reset_index</span><span class="p">(</span><span class="n">drop</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="n">var_cols</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">columns</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span>
+        <span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">int64</span><span class="p">)</span>
+        <span class="c1"># Date</span>
+        <span class="n">start_obj</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">strptime</span><span class="p">(</span><span class="n">start_date</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">DATE_FORMAT</span><span class="p">)</span>
+        <span class="n">elapsed</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">(</span><span class="n">df</span><span class="o">.</span><span class="n">index</span> <span class="o">*</span> <span class="n">tau</span><span class="p">)</span>
+        <span class="n">df</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">DATE</span><span class="p">]</span> <span class="o">=</span> <span class="n">start_obj</span> <span class="o">+</span> <span class="n">elapsed</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span>
+            <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">timedelta</span><span class="p">(</span><span class="n">minutes</span><span class="o">=</span><span class="n">x</span><span class="p">)</span>
+        <span class="p">)</span>
+        <span class="c1"># Place</span>
+        <span class="n">df</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">COUNTRY</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">country</span>
+        <span class="n">df</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">PROVINCE</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">province</span>
+        <span class="c1"># Return the dataframe</span>
+        <span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">loc</span><span class="p">[:,</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">DATE</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">COUNTRY</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">PROVINCE</span><span class="p">,</span> <span class="o">*</span><span class="n">var_cols</span><span class="p">]]</span>
+        <span class="k">return</span> <span class="n">df</span></div></div>
+</pre></div>
+
+           </div>
+           
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        
+        &copy; Copyright 2020, CovsirPhy Development Team
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>
