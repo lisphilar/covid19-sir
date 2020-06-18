@@ -1,0 +1,788 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>covsirphy.analysis.scenario &mdash; CovsirPhy  documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+
+  
+  
+  
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
+        <script src="../../../_static/jquery.js"></script>
+        <script src="../../../_static/underscore.js"></script>
+        <script src="../../../_static/doctools.js"></script>
+        <script src="../../../_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="../../../_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../../../index.html" class="icon icon-home" alt="Documentation Home"> CovsirPhy
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../covsirphy.html">covsirphy package</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">CovsirPhy</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../../index.html" class="icon icon-home"></a> &raquo;</li>
+        
+          <li><a href="../../index.html">Module code</a> &raquo;</li>
+        
+      <li>covsirphy.analysis.scenario</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for covsirphy.analysis.scenario</h1><div class="highlight"><pre>
+<span></span><span class="ch">#!/usr/bin/env python</span>
+<span class="c1"># -*- coding: utf-8 -*-</span>
+
+<span class="kn">import</span> <span class="nn">copy</span>
+<span class="kn">from</span> <span class="nn">datetime</span> <span class="kn">import</span> <span class="n">timedelta</span>
+<span class="kn">from</span> <span class="nn">inspect</span> <span class="kn">import</span> <span class="n">signature</span>
+<span class="kn">import</span> <span class="nn">sys</span>
+<span class="kn">import</span> <span class="nn">warnings</span>
+<span class="kn">import</span> <span class="nn">matplotlib</span>
+<span class="k">if</span> <span class="ow">not</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">sys</span><span class="p">,</span> <span class="s2">&quot;ps1&quot;</span><span class="p">):</span>
+    <span class="n">matplotlib</span><span class="o">.</span><span class="n">use</span><span class="p">(</span><span class="s2">&quot;Agg&quot;</span><span class="p">)</span>
+<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<span class="kn">from</span> <span class="nn">covsirphy.ode</span> <span class="kn">import</span> <span class="n">ModelBase</span>
+<span class="kn">from</span> <span class="nn">covsirphy.cleaning</span> <span class="kn">import</span> <span class="n">JHUData</span><span class="p">,</span> <span class="n">Population</span><span class="p">,</span> <span class="n">Word</span>
+<span class="kn">from</span> <span class="nn">covsirphy.phase</span> <span class="kn">import</span> <span class="n">Estimator</span><span class="p">,</span> <span class="n">SRData</span><span class="p">,</span> <span class="n">ODEData</span>
+<span class="kn">from</span> <span class="nn">covsirphy.util</span> <span class="kn">import</span> <span class="n">line_plot</span>
+<span class="kn">from</span> <span class="nn">covsirphy.analysis.phase_series</span> <span class="kn">import</span> <span class="n">PhaseSeries</span>
+<span class="kn">from</span> <span class="nn">covsirphy.analysis.simulator</span> <span class="kn">import</span> <span class="n">ODESimulator</span>
+<span class="kn">from</span> <span class="nn">covsirphy.analysis.sr_change</span> <span class="kn">import</span> <span class="n">ChangeFinder</span>
+
+
+<div class="viewcode-block" id="Scenario"><a class="viewcode-back" href="../../../covsirphy.analysis.html#covsirphy.Scenario">[docs]</a><span class="k">class</span> <span class="nc">Scenario</span><span class="p">(</span><span class="n">Word</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Scenario analysis.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">jhu_data</span><span class="p">,</span> <span class="n">pop_data</span><span class="p">,</span> <span class="n">country</span><span class="p">,</span> <span class="n">province</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        @jhu_data &lt;covsirphy.JHUData&gt;: object of records</span>
+<span class="sd">        @pop_data &lt;covsirphy.Population&gt;: Population object</span>
+<span class="sd">        @country &lt;str&gt;: country name</span>
+<span class="sd">        @province &lt;str&gt;: province name</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Population</span>
+        <span class="n">pop_data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">validate_instance</span><span class="p">(</span><span class="n">pop_data</span><span class="p">,</span> <span class="n">Population</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;pop_data&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">population</span> <span class="o">=</span> <span class="n">pop_data</span><span class="o">.</span><span class="n">value</span><span class="p">(</span><span class="n">country</span><span class="p">,</span> <span class="n">province</span><span class="o">=</span><span class="n">province</span><span class="p">)</span>
+        <span class="c1"># Records</span>
+        <span class="n">jhu_data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">validate_instance</span><span class="p">(</span><span class="n">jhu_data</span><span class="p">,</span> <span class="n">JHUData</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;jhu_data&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">jhu_data</span> <span class="o">=</span> <span class="n">jhu_data</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">clean_df</span> <span class="o">=</span> <span class="n">jhu_data</span><span class="o">.</span><span class="n">cleaned</span><span class="p">(</span><span class="n">population</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">population</span><span class="p">)</span>
+        <span class="c1"># Area name</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">country</span> <span class="o">=</span> <span class="n">country</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">province</span> <span class="o">=</span> <span class="n">province</span>
+        <span class="k">if</span> <span class="n">province</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">area</span> <span class="o">=</span> <span class="n">country</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">area</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">country</span><span class="si">}{</span><span class="bp">self</span><span class="o">.</span><span class="n">SEP</span><span class="si">}{</span><span class="n">province</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="c1"># First/last date of the area</span>
+        <span class="n">sr_data</span> <span class="o">=</span> <span class="n">SRData</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">clean_df</span><span class="p">,</span> <span class="n">country</span><span class="o">=</span><span class="n">country</span><span class="p">,</span> <span class="n">province</span><span class="o">=</span><span class="n">province</span><span class="p">)</span>
+        <span class="n">df</span> <span class="o">=</span> <span class="n">sr_data</span><span class="o">.</span><span class="n">make</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">population</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">first_date</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">min</span><span class="p">()</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">DATE_FORMAT</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">last_date</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">max</span><span class="p">()</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">DATE_FORMAT</span><span class="p">)</span>
+        <span class="c1"># Init</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">tau</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="c1"># {model_name: model_class}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">model_dict</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+        <span class="c1"># {scenario_name: PhaseSeries}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">series_dict</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">series_dict</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">MAIN</span><span class="p">]</span> <span class="o">=</span> <span class="n">PhaseSeries</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">first_date</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">last_date</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">population</span>
+        <span class="p">)</span>
+        <span class="c1"># {scenario: {phase: Estimator}}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">estimator_dict</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+
+<div class="viewcode-block" id="Scenario.delete"><a class="viewcode-back" href="../../../covsirphy.analysis.html#covsirphy.Scenario.delete">[docs]</a>    <span class="k">def</span> <span class="nf">delete</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Delete a PhaseSeries.</span>
+<span class="sd">        @name &lt;str&gt;: PhaseSeries name</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">name</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">MAIN</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;@name </span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2"> cannot be deleted.&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">series_dict</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="n">name</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Scenario.records"><a class="viewcode-back" href="../../../covsirphy.analysis.html#covsirphy.Scenario.records">[docs]</a>    <span class="k">def</span> <span class="nf">records</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">show_figure</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">filename</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Return the records as a dataframe.</span>
+<span class="sd">        @show_figure &lt;bool&gt;:</span>
+<span class="sd">            - if True, show the records as a line-plot.</span>
+<span class="sd">        @filename &lt;str&gt;: filename of the figure, or None (show figure)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">df</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">jhu_data</span><span class="o">.</span><span class="n">subset</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">country</span><span class="p">,</span> <span class="n">province</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">province</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">show_figure</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">df</span>
+        <span class="n">line_plot</span><span class="p">(</span>
+            <span class="n">df</span><span class="o">.</span><span class="n">set_index</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">DATE</span><span class="p">)</span><span class="o">.</span><span class="n">drop</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">C</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">),</span>
+            <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">area</span><span class="si">}</span><span class="s2">: Cases over time&quot;</span><span class="p">,</span>
+            <span class="n">y_integer</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+            <span class="n">filename</span><span class="o">=</span><span class="n">filename</span>
+        <span class="p">)</span>
+        <span class="k">return</span> <span class="n">df</span></div>
+
+<div class="viewcode-block" id="Scenario.add_phase"><a class="viewcode-back" href="../../../covsirphy.analysis.html#covsirphy.Scenario.add_phase">[docs]</a>    <span class="k">def</span> <span class="nf">add_phase</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;Main&quot;</span><span class="p">,</span> <span class="n">end_date</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">days</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                  <span class="n">population</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">model</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Add a new phase.</span>
+<span class="sd">        The start date is the next date of the last registered phase.</span>
+<span class="sd">        - @name &lt;str&gt;: phase series name</span>
+<span class="sd">            - if &#39;Main&#39;, main PhaseSeries will be used</span>
+<span class="sd">            - if not registered, new phase series will be created</span>
+<span class="sd">        - @end_date or @days must be specified</span>
+<span class="sd">            @end_date &lt;str&gt;: end date of the new phase</span>
+<span class="sd">            @days &lt;int&gt;: the number of days to add</span>
+<span class="sd">        @population &lt;int&gt;: population value of the start date</span>
+<span class="sd">            - if None, the same as initial value</span>
+<span class="sd">        @model &lt;covsirphy.ModelBase&gt;: ODE model</span>
+<span class="sd">            - if None, the model of the last phase will be used</span>
+<span class="sd">        @kwargs: keyword arguments of ODE model parameters</span>
+<span class="sd">            - un-included parameters will be the same as the last phase</span>
+<span class="sd">                - if model is not the same, None</span>
+<span class="sd">                - tau is fixed as the last phase&#39;s value or 1440</span>
+<span class="sd">        @return None</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Parse arguments</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;@name must be a string, but </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">name</span><span class="p">)</span><span class="si">}</span><span class="s2"> was applied.&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">name</span> <span class="o">==</span> <span class="s2">&quot;Main&quot;</span><span class="p">:</span>
+            <span class="n">name</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">MAIN</span>
+        <span class="k">if</span> <span class="n">name</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">series_dict</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">series_dict</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">series_dict</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">MAIN</span><span class="p">])</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">series_dict</span><span class="p">[</span><span class="n">name</span><span class="p">]</span><span class="o">.</span><span class="n">clear</span><span class="p">()</span>
+        <span class="n">start_date</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">series_dict</span><span class="p">[</span><span class="n">name</span><span class="p">]</span><span class="o">.</span><span class="n">next_date</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">end_date</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">days</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">NameError</span><span class="p">(</span><span class="s2">&quot;@end_date or @days must be specified.&quot;</span><span class="p">)</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">days</span><span class="p">,</span> <span class="nb">int</span><span class="p">):</span>
+                <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">&quot;@days must be an integer.&quot;</span><span class="p">)</span>
+            <span class="n">end_obj</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">date_obj</span><span class="p">(</span><span class="n">start_date</span><span class="p">)</span> <span class="o">+</span> <span class="n">timedelta</span><span class="p">(</span><span class="n">days</span><span class="o">=</span><span class="n">days</span><span class="p">)</span>
+            <span class="n">end_date</span> <span class="o">=</span> <span class="n">end_obj</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">DATE_FORMAT</span><span class="p">)</span>
+        <span class="n">population</span> <span class="o">=</span> <span class="n">population</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">population</span>
+        <span class="n">summary_df</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">series_dict</span><span class="p">[</span><span class="n">name</span><span class="p">]</span><span class="o">.</span><span class="n">summary</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">model</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">ODE</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">summary_df</span><span class="o">.</span><span class="n">columns</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">series_dict</span><span class="p">[</span><span class="n">name</span><span class="p">]</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">start_date</span><span class="p">,</span> <span class="n">end_date</span><span class="p">,</span> <span class="n">population</span><span class="p">)</span>
+                <span class="k">return</span> <span class="kc">None</span>
+            <span class="n">last_model_name</span> <span class="o">=</span> <span class="n">summary_df</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">summary_df</span><span class="o">.</span><span class="n">index</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">ODE</span><span class="p">]</span>
+            <span class="n">model</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">model_dict</span><span class="p">[</span><span class="n">last_model_name</span><span class="p">]</span>
+        <span class="n">model</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">validate_subclass</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">ModelBase</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;model&quot;</span><span class="p">)</span>
+        <span class="c1"># Phase information</span>
+        <span class="n">param_dict</span> <span class="o">=</span> <span class="p">{</span><span class="bp">self</span><span class="o">.</span><span class="n">TAU</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">tau</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">ODE</span><span class="p">:</span> <span class="n">model</span><span class="o">.</span><span class="n">NAME</span><span class="p">}</span>
+        <span class="n">model_param_dict</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="n">param</span><span class="p">:</span> <span class="n">summary_df</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">summary_df</span><span class="o">.</span><span class="n">index</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="n">param</span><span class="p">]</span>
+            <span class="k">for</span> <span class="n">param</span> <span class="ow">in</span> <span class="n">model</span><span class="o">.</span><span class="n">PARAMETERS</span>
+        <span class="p">}</span>
+        <span class="n">model_param_dict</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="n">param_dict</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">model_param_dict</span><span class="p">)</span>
+        <span class="n">model_instance</span> <span class="o">=</span> <span class="n">model</span><span class="p">(</span>
+            <span class="n">population</span><span class="o">=</span><span class="n">population</span><span class="p">,</span> <span class="o">**</span><span class="n">model_param_dict</span>
+        <span class="p">)</span>
+        <span class="n">param_dict</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">RT</span><span class="p">]</span> <span class="o">=</span> <span class="n">model_instance</span><span class="o">.</span><span class="n">calc_r0</span><span class="p">()</span>
+        <span class="n">param_dict</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">model_instance</span><span class="o">.</span><span class="n">calc_days_dict</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">tau</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">series_dict</span><span class="p">[</span><span class="n">name</span><span class="p">]</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">start_date</span><span class="p">,</span> <span class="n">end_date</span><span class="p">,</span> <span class="n">population</span><span class="p">,</span> <span class="o">**</span><span class="n">param_dict</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Scenario.clear"><a class="viewcode-back" href="../../../covsirphy.analysis.html#covsirphy.Scenario.clear">[docs]</a>    <span class="k">def</span> <span class="nf">clear</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;Main&quot;</span><span class="p">,</span> <span class="n">include_past</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Clear phase information.</span>
+<span class="sd">        @name &lt;str&gt;: phase series name</span>
+<span class="sd">            - if &#39;Main&#39;, main phase series will be used</span>
+<span class="sd">            - if not registered, new phaseseries will be created</span>
+<span class="sd">        @include_past &lt;bool&gt;:</span>
+<span class="sd">            - if True, include past phases.</span>
+<span class="sd">            - future phase are always included</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">name</span> <span class="o">==</span> <span class="s2">&quot;Main&quot;</span><span class="p">:</span>
+            <span class="n">name</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">MAIN</span>
+        <span class="k">if</span> <span class="n">name</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">series_dict</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">series_dict</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">series_dict</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">MAIN</span><span class="p">])</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">series_dict</span><span class="p">[</span><span class="n">name</span><span class="p">]</span><span class="o">.</span><span class="n">clear</span><span class="p">(</span><span class="n">include_past</span><span class="o">=</span><span class="n">include_past</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Scenario.summary"><a class="viewcode-back" href="../../../covsirphy.analysis.html#covsirphy.Scenario.summary">[docs]</a>    <span class="k">def</span> <span class="nf">summary</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Summarize the series of phases and return a dataframe.</span>
+<span class="sd">        @name &lt;str&gt;: phase series name</span>
+<span class="sd">            - &#39;Main&#39; for main phase series</span>
+<span class="sd">            - name of alternative phase series registered by self.add_phase()</span>
+<span class="sd">            - if None, all phase series will be shown</span>
+<span class="sd">        @return &lt;pd.DataFrame&gt;:</span>
+<span class="sd">            - if @name not None, as the same as PhaseSeries().summary()</span>
+<span class="sd">            - if @name is None, index will be phase series name and phase name</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">name</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">series_dict</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="n">dataframes</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+            <span class="k">for</span> <span class="p">(</span><span class="n">_name</span><span class="p">,</span> <span class="n">series</span><span class="p">)</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">series_dict</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+                <span class="n">df</span> <span class="o">=</span> <span class="n">series</span><span class="o">.</span><span class="n">summary</span><span class="p">()</span>
+                <span class="n">df</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">PHASE</span><span class="p">]</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">index</span>
+                <span class="n">df</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">SERIES</span><span class="p">]</span> <span class="o">=</span> <span class="n">_name</span>
+                <span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">reset_index</span><span class="p">(</span><span class="n">drop</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+                <span class="n">dataframes</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">df</span><span class="p">)</span>
+            <span class="n">summary_df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">(</span><span class="n">dataframes</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">ignore_index</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+            <span class="n">summary_df</span> <span class="o">=</span> <span class="n">summary_df</span><span class="o">.</span><span class="n">set_index</span><span class="p">([</span><span class="bp">self</span><span class="o">.</span><span class="n">SERIES</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">PHASE</span><span class="p">])</span>
+            <span class="k">return</span> <span class="n">summary_df</span>
+        <span class="k">if</span> <span class="n">name</span> <span class="o">==</span> <span class="s2">&quot;Main&quot;</span> <span class="ow">or</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">series_dict</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="n">name</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">MAIN</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">series</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">series_dict</span><span class="p">[</span><span class="n">name</span><span class="p">]</span>
+        <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">KeyError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;@name </span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2"> has not been registered.&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">series</span><span class="o">.</span><span class="n">summary</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="Scenario.trend"><a class="viewcode-back" href="../../../covsirphy.analysis.html#covsirphy.Scenario.trend">[docs]</a>    <span class="k">def</span> <span class="nf">trend</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">n_points</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+              <span class="n">set_phases</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">include_init_phase</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+              <span class="n">show_figure</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">filename</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Perform S-R trend analysis and set phases.</span>
+<span class="sd">        @n_points &lt;int&gt;: the number of change points</span>
+<span class="sd">        @set_phases &lt;bool&gt;:</span>
+<span class="sd">            - if True and n_points is not 0, set phases automatically</span>
+<span class="sd">            - if @include_init_phase is False, initial phase will not be used</span>
+<span class="sd">        @include_init_phase &lt;bool&gt;: whether use initial phase or not</span>
+<span class="sd">        @show_figure &lt;bool&gt;:</span>
+<span class="sd">            - if True, show the records as a line-plot.</span>
+<span class="sd">        @filename &lt;str&gt;: filename of the figure, or None (show figure)</span>
+<span class="sd">        @kwargs: the other keyword arguments of ChangeFinder().run()</span>
+<span class="sd">        @return None</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">finder</span> <span class="o">=</span> <span class="n">ChangeFinder</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">clean_df</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">population</span><span class="p">,</span>
+            <span class="n">country</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">country</span><span class="p">,</span> <span class="n">province</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">province</span>
+        <span class="p">)</span>
+        <span class="n">finder</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">n_points</span><span class="o">=</span><span class="n">n_points</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="n">phase_series</span> <span class="o">=</span> <span class="n">finder</span><span class="o">.</span><span class="n">show</span><span class="p">(</span><span class="n">show_figure</span><span class="o">=</span><span class="n">show_figure</span><span class="p">,</span> <span class="n">filename</span><span class="o">=</span><span class="n">filename</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">n_points</span> <span class="o">!=</span> <span class="mi">0</span> <span class="ow">and</span> <span class="n">set_phases</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">series_dict</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">series_dict</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">phase_series</span>
+                <span class="k">if</span> <span class="ow">not</span> <span class="n">include_init_phase</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">series_dict</span><span class="p">[</span><span class="n">name</span><span class="p">]</span><span class="o">.</span><span class="n">delete</span><span class="p">(</span><span class="s2">&quot;0th&quot;</span><span class="p">)</span></div>
+
+    <span class="k">def</span> <span class="nf">_estimate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model</span><span class="p">,</span> <span class="n">phase</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;Main&quot;</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Estimate the parameters of the model using the records.</span>
+<span class="sd">        @phase &lt;str&gt;: phase name, like 1st, 2nd...</span>
+<span class="sd">        @model &lt;covsirphy.ModelBase&gt;: ODE model</span>
+<span class="sd">        @name &lt;str&gt;: phase series name</span>
+<span class="sd">            - if &#39;Main&#39;, main PhaseSeries will be used</span>
+<span class="sd">            - if not registered, new phase series will be created</span>
+<span class="sd">        @kwargs:</span>
+<span class="sd">            - keyword arguments of the model parameter</span>
+<span class="sd">                - tau value cannot be included</span>
+<span class="sd">            - keyword arguments of covsirphy.Estimator.run()</span>
+<span class="sd">        @return self</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">name</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">MAIN</span> <span class="k">if</span> <span class="n">name</span> <span class="o">==</span> <span class="s2">&quot;Main&quot;</span> <span class="k">else</span> <span class="n">name</span>
+        <span class="k">if</span> <span class="n">name</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">series_dict</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">series_dict</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">series_dict</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">MAIN</span><span class="p">])</span>
+        <span class="c1"># Set parameters</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">setting_dict</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">series_dict</span><span class="p">[</span><span class="n">name</span><span class="p">]</span><span class="o">.</span><span class="n">to_dict</span><span class="p">()[</span><span class="n">phase</span><span class="p">]</span>
+        <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">KeyError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">phase</span><span class="si">}</span><span class="s2"> phase has not been registered for @name </span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2">.&quot;</span><span class="p">)</span>
+        <span class="n">start_date</span> <span class="o">=</span> <span class="n">setting_dict</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">START</span><span class="p">]</span>
+        <span class="n">end_date</span> <span class="o">=</span> <span class="n">setting_dict</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">END</span><span class="p">]</span>
+        <span class="n">population</span> <span class="o">=</span> <span class="n">setting_dict</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">N</span><span class="p">]</span>
+        <span class="c1"># Run estimation</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">phase</span><span class="si">}</span><span class="s2"> phase with </span><span class="si">{</span><span class="n">model</span><span class="o">.</span><span class="n">NAME</span><span class="si">}</span><span class="s2"> model:&quot;</span><span class="p">)</span>
+        <span class="n">est_kwargs</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="n">p</span><span class="p">:</span> <span class="n">kwargs</span><span class="p">[</span><span class="n">p</span><span class="p">]</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">model</span><span class="o">.</span><span class="n">PARAMETERS</span> <span class="k">if</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span>
+        <span class="p">}</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">tau</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">TAU</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">TAU</span><span class="si">}</span><span class="s2"> cannot be changed.&quot;</span><span class="p">)</span>
+            <span class="n">est_kwargs</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">TAU</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">tau</span>
+        <span class="n">estimator</span> <span class="o">=</span> <span class="n">Estimator</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">clean_df</span><span class="p">,</span> <span class="n">model</span><span class="p">,</span> <span class="n">population</span><span class="p">,</span>
+            <span class="n">country</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">country</span><span class="p">,</span> <span class="n">province</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">province</span><span class="p">,</span>
+            <span class="n">start_date</span><span class="o">=</span><span class="n">start_date</span><span class="p">,</span> <span class="n">end_date</span><span class="o">=</span><span class="n">end_date</span><span class="p">,</span>
+            <span class="o">**</span><span class="n">est_kwargs</span>
+        <span class="p">)</span>
+        <span class="n">sign</span> <span class="o">=</span> <span class="n">signature</span><span class="p">(</span><span class="n">Estimator</span><span class="o">.</span><span class="n">run</span><span class="p">)</span>
+        <span class="n">run_params</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">sign</span><span class="o">.</span><span class="n">parameters</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
+        <span class="n">run_kwargs</span> <span class="o">=</span> <span class="p">{</span><span class="n">k</span><span class="p">:</span> <span class="n">v</span> <span class="k">for</span> <span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="n">v</span><span class="p">)</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">items</span><span class="p">()</span> <span class="k">if</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">run_params</span><span class="p">}</span>
+        <span class="n">estimator</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="o">**</span><span class="n">run_kwargs</span><span class="p">)</span>
+        <span class="n">est_df</span> <span class="o">=</span> <span class="n">estimator</span><span class="o">.</span><span class="n">summary</span><span class="p">(</span><span class="n">phase</span><span class="p">)</span>
+        <span class="n">phase_est_dict</span> <span class="o">=</span> <span class="p">{</span><span class="bp">self</span><span class="o">.</span><span class="n">ODE</span><span class="p">:</span> <span class="n">model</span><span class="o">.</span><span class="n">NAME</span><span class="p">}</span>
+        <span class="n">phase_est_dict</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">est_df</span><span class="o">.</span><span class="n">to_dict</span><span class="p">(</span><span class="n">orient</span><span class="o">=</span><span class="s2">&quot;index&quot;</span><span class="p">)[</span><span class="n">phase</span><span class="p">])</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">tau</span> <span class="o">=</span> <span class="n">phase_est_dict</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">TAU</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">series_dict</span><span class="p">[</span><span class="n">name</span><span class="p">]</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">phase</span><span class="p">,</span> <span class="o">**</span><span class="n">phase_est_dict</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">name</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">estimator_dict</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">estimator_dict</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">estimator_dict</span><span class="p">[</span><span class="n">name</span><span class="p">][</span><span class="n">phase</span><span class="p">]</span> <span class="o">=</span> <span class="n">estimator</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">model_dict</span><span class="p">[</span><span class="n">model</span><span class="o">.</span><span class="n">NAME</span><span class="p">]</span> <span class="o">=</span> <span class="n">model</span>
+
+<div class="viewcode-block" id="Scenario.estimate"><a class="viewcode-back" href="../../../covsirphy.analysis.html#covsirphy.Scenario.estimate">[docs]</a>    <span class="k">def</span> <span class="nf">estimate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model</span><span class="p">,</span> <span class="n">series_list</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">phases</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Estimate the parameters of the model using the records.</span>
+<span class="sd">        @series_list &lt;list[str]&gt;: list of phase series name</span>
+<span class="sd">            - if None, all phase series will be used</span>
+<span class="sd">        @phases &lt;list[str]&gt;: list of phase names, like 1st, 2nd...</span>
+<span class="sd">            - if None, all past phase will be used</span>
+<span class="sd">        @model &lt;covsirphy.ModelBase&gt;: ODE model</span>
+<span class="sd">        @kwargs:</span>
+<span class="sd">            - keyword arguments of the model parameter</span>
+<span class="sd">            - keyword arguments of covsirphy.Estimator.run()</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Check model</span>
+        <span class="n">model</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">validate_subclass</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">ModelBase</span><span class="p">,</span> <span class="s2">&quot;model&quot;</span><span class="p">)</span>
+        <span class="c1"># Phase names</span>
+        <span class="k">if</span> <span class="n">series_list</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">series_list</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">series_dict</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
+        <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">series_list</span><span class="p">:</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">phase_dict</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">series_dict</span><span class="p">[</span><span class="n">name</span><span class="p">]</span><span class="o">.</span><span class="n">to_dict</span><span class="p">()</span>
+            <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">KeyError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2"> has not been defined.&quot;</span><span class="p">)</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">series_list</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+                <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;&lt;</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2"> scenario&gt;&quot;</span><span class="p">)</span>
+            <span class="n">past_phases</span> <span class="o">=</span> <span class="p">[</span><span class="n">k</span> <span class="k">for</span> <span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="n">v</span><span class="p">)</span> <span class="ow">in</span> <span class="n">phase_dict</span><span class="o">.</span><span class="n">items</span><span class="p">()]</span>
+            <span class="n">phases</span> <span class="o">=</span> <span class="n">past_phases</span><span class="p">[:]</span> <span class="k">if</span> <span class="n">phases</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">phases</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="nb">set</span><span class="p">(</span><span class="n">phases</span><span class="p">)</span><span class="o">.</span><span class="n">issubset</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">past_phases</span><span class="p">)):</span>
+                <span class="k">for</span> <span class="n">phase</span> <span class="ow">in</span> <span class="n">phases</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="n">phase</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">past_phases</span><span class="p">:</span>
+                        <span class="k">raise</span> <span class="ne">KeyError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">phase</span><span class="si">}</span><span class="s2"> is not a past phase.&quot;</span><span class="p">)</span>
+            <span class="c1"># Run hyperparameter estimation</span>
+            <span class="k">for</span> <span class="n">phase</span> <span class="ow">in</span> <span class="n">phases</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_estimate</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">phase</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Scenario.estimate_history"><a class="viewcode-back" href="../../../covsirphy.analysis.html#covsirphy.Scenario.estimate_history">[docs]</a>    <span class="k">def</span> <span class="nf">estimate_history</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">phase</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;Main&quot;</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Show the history of optimization.</span>
+<span class="sd">        @phase &lt;str&gt;: phase name, like 1st, 2nd...</span>
+<span class="sd">        @name &lt;str&gt;: phase series name</span>
+<span class="sd">            - if &#39;Main&#39;, main PhaseSeries will be used</span>
+<span class="sd">        @kwargs: keyword arguments of &lt;covsirphy.Estimator.history()&gt;</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">name</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">MAIN</span> <span class="k">if</span> <span class="n">name</span> <span class="o">==</span> <span class="s2">&quot;Main&quot;</span> <span class="k">else</span> <span class="n">name</span>
+        <span class="k">if</span> <span class="n">name</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">series_dict</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+            <span class="k">raise</span> <span class="ne">KeyError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;@name </span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2"> has not been defined.&quot;</span><span class="p">)</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">estimator</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">estimator_dict</span><span class="p">[</span><span class="n">name</span><span class="p">][</span><span class="n">phase</span><span class="p">]</span>
+        <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">KeyError</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;Estimator of </span><span class="si">{</span><span class="n">phase</span><span class="si">}</span><span class="s2"> phase in </span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2"> has not been registered.&quot;</span>
+            <span class="p">)</span>
+        <span class="n">estimator</span><span class="o">.</span><span class="n">history</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Scenario.estimate_accuracy"><a class="viewcode-back" href="../../../covsirphy.analysis.html#covsirphy.Scenario.estimate_accuracy">[docs]</a>    <span class="k">def</span> <span class="nf">estimate_accuracy</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">phase</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;Main&quot;</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Show the accuracy as a figure.</span>
+<span class="sd">        @phase &lt;str&gt;: phase name, like 1st, 2nd...</span>
+<span class="sd">        @name &lt;str&gt;: phase series name</span>
+<span class="sd">            - if &#39;Main&#39;, main PhaseSeries will be used</span>
+<span class="sd">        @kwargs: keyword arguments of &lt;covsirphy.Estimator.accuracy()&gt;</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">name</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">MAIN</span> <span class="k">if</span> <span class="n">name</span> <span class="o">==</span> <span class="s2">&quot;Main&quot;</span> <span class="k">else</span> <span class="n">name</span>
+        <span class="k">if</span> <span class="n">name</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">series_dict</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+            <span class="k">raise</span> <span class="ne">KeyError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;@name </span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2"> is not defined.&quot;</span><span class="p">)</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">estimator</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">estimator_dict</span><span class="p">[</span><span class="n">name</span><span class="p">][</span><span class="n">phase</span><span class="p">]</span>
+        <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">KeyError</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;Estimator of </span><span class="si">{</span><span class="n">phase</span><span class="si">}</span><span class="s2"> phase in </span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2"> has not been registered.&quot;</span>
+            <span class="p">)</span>
+        <span class="n">estimator</span><span class="o">.</span><span class="n">accuracy</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Scenario.predict"><a class="viewcode-back" href="../../../covsirphy.analysis.html#covsirphy.Scenario.predict">[docs]</a>    <span class="k">def</span> <span class="nf">predict</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Old method. Please use Scenario.simulate().</span>
+<span class="sd">        @kwargs: keyword arguments of Scenario.simulate()</span>
+<span class="sd">        @return &lt;pd.DataFrame&gt;</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span>
+            <span class="s2">&quot;Please use Scenario simulate() rather than Scenario.predict()&quot;</span><span class="p">,</span>
+            <span class="ne">DeprecationWarning</span><span class="p">,</span>
+            <span class="n">stacklevel</span><span class="o">=</span><span class="mi">2</span>
+        <span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">simulate</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Scenario.simulate"><a class="viewcode-back" href="../../../covsirphy.analysis.html#covsirphy.Scenario.simulate">[docs]</a>    <span class="k">def</span> <span class="nf">simulate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;Main&quot;</span><span class="p">,</span> <span class="n">y0_dict</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">show_figure</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">filename</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Simulate ODE models with setted parameter values and show it as a figure.</span>
+<span class="sd">        @name &lt;str&gt;: phase series name</span>
+<span class="sd">            - if &#39;Main&#39;, main PhaseSeries will be used</span>
+<span class="sd">        @y0_dict &lt;dict[str]=float&gt;:</span>
+<span class="sd">            - dictionary of initial values or None</span>
+<span class="sd">            - if model will be changed in the later phase, must be specified</span>
+<span class="sd">        @show_figure &lt;bool&gt;:</span>
+<span class="sd">            - if True, show the result as a figure.</span>
+<span class="sd">        @filename &lt;str&gt;: filename of the figure, or None (show figure)</span>
+<span class="sd">        @return &lt;pd.DataFrame&gt;</span>
+<span class="sd">            - index &lt;int&gt;: reset index</span>
+<span class="sd">            - Date &lt;str&gt;: date, like 31Dec2020</span>
+<span class="sd">            - Country &lt;str&gt;: country/region name</span>
+<span class="sd">            - Province &lt;str&gt;: province/prefecture/state name</span>
+<span class="sd">            - variables of the models &lt;int&gt;: Confirmed &lt;int&gt; etc.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">name</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">MAIN</span> <span class="k">if</span> <span class="n">name</span> <span class="o">==</span> <span class="s2">&quot;Main&quot;</span> <span class="k">else</span> <span class="n">name</span>
+        <span class="n">df</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">series_dict</span><span class="p">[</span><span class="n">name</span><span class="p">]</span><span class="o">.</span><span class="n">summary</span><span class="p">()</span>
+        <span class="c1"># Future phases must be added in advance</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">FUTURE</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">df</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">TENSE</span><span class="p">]</span><span class="o">.</span><span class="n">unique</span><span class="p">():</span>
+            <span class="k">raise</span> <span class="ne">KeyError</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;Future phases of </span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2"> scenario must be registered by Scenario.add_phase() in advance.&quot;</span>
+            <span class="p">)</span>
+        <span class="c1"># Simulation</span>
+        <span class="n">dim_df</span><span class="p">,</span> <span class="n">start_objects</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_simulate</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">,</span> <span class="n">y0_dict</span><span class="o">=</span><span class="n">y0_dict</span><span class="p">)</span>
+        <span class="n">dim_df</span> <span class="o">=</span> <span class="n">dim_df</span><span class="o">.</span><span class="n">set_index</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">DATE</span><span class="p">)</span><span class="o">.</span><span class="n">resample</span><span class="p">(</span><span class="s2">&quot;D&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span>
+        <span class="n">dim_df</span> <span class="o">=</span> <span class="n">dim_df</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">int64</span><span class="p">)</span>
+        <span class="n">fig_df</span> <span class="o">=</span> <span class="n">dim_df</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+        <span class="n">dim_df</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">DATE</span><span class="p">]</span> <span class="o">=</span> <span class="n">dim_df</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">DATE_FORMAT</span><span class="p">)</span>
+        <span class="n">dim_df</span> <span class="o">=</span> <span class="n">dim_df</span><span class="o">.</span><span class="n">reset_index</span><span class="p">(</span><span class="n">drop</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="n">dim_df</span> <span class="o">=</span> <span class="n">dim_df</span><span class="o">.</span><span class="n">loc</span><span class="p">[:,</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">DATE</span><span class="p">,</span> <span class="o">*</span><span class="n">dim_df</span><span class="o">.</span><span class="n">columns</span><span class="o">.</span><span class="n">tolist</span><span class="p">()[:</span><span class="o">-</span><span class="mi">1</span><span class="p">]]]</span>
+        <span class="c1"># Return dataframe if figure is not needed</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">show_figure</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">dim_df</span>
+        <span class="c1"># Show figure</span>
+        <span class="n">fig_cols_set</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">fig_df</span><span class="o">.</span><span class="n">columns</span><span class="p">)</span> <span class="o">&amp;</span> <span class="nb">set</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">FIG_COLUMNS</span><span class="p">)</span>
+        <span class="n">fig_cols</span> <span class="o">=</span> <span class="p">[</span><span class="n">col</span> <span class="k">for</span> <span class="n">col</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">FIG_COLUMNS</span> <span class="k">if</span> <span class="n">col</span> <span class="ow">in</span> <span class="n">fig_cols_set</span><span class="p">]</span>
+        <span class="n">line_plot</span><span class="p">(</span>
+            <span class="n">fig_df</span><span class="p">[</span><span class="n">fig_cols</span><span class="p">],</span>
+            <span class="n">title</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">area</span><span class="si">}</span><span class="s2">: Predicted number of cases&quot;</span><span class="p">,</span>
+            <span class="n">filename</span><span class="o">=</span><span class="n">filename</span><span class="p">,</span>
+            <span class="n">y_integer</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+            <span class="n">v</span><span class="o">=</span><span class="n">start_objects</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span>
+        <span class="p">)</span>
+        <span class="k">return</span> <span class="n">dim_df</span></div>
+
+    <span class="k">def</span> <span class="nf">_simulate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">y0_dict</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Simulate ODE models with setted parameter values.</span>
+<span class="sd">        @name &lt;str&gt;: phase series name</span>
+<span class="sd">        @y0_dict &lt;dict[str]=float&gt;:</span>
+<span class="sd">            - dictionary of initial values or None</span>
+<span class="sd">            - if model will be changed in the later phase, must be specified</span>
+<span class="sd">        @return &lt;tuple(pd.DataFrame, list[pd.TimeStamp])&gt;:</span>
+<span class="sd">            - &lt;pd.DataFrame&gt;: output of ODESimulator.dim()</span>
+<span class="sd">                - index &lt;int&gt;: reset index</span>
+<span class="sd">                - Date &lt;pd.TimeStamp&gt;: Observation date</span>
+<span class="sd">                - Country &lt;str&gt;: country/region name</span>
+<span class="sd">                - Province &lt;str&gt;: province/prefecture/state name</span>
+<span class="sd">                - variables of the models &lt;int&gt;: Confirmed &lt;int&gt; etc.</span>
+<span class="sd">            - &lt;list[pd.TimeStamp]&gt;: list of start dates</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">df</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">series_dict</span><span class="p">[</span><span class="n">name</span><span class="p">]</span><span class="o">.</span><span class="n">summary</span><span class="p">()</span>
+        <span class="n">simulator</span> <span class="o">=</span> <span class="n">ODESimulator</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">country</span><span class="p">,</span>
+            <span class="n">province</span><span class="o">=</span><span class="s2">&quot;-&quot;</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">province</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="bp">self</span><span class="o">.</span><span class="n">province</span>
+        <span class="p">)</span>
+        <span class="n">start_objects</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+        <span class="k">for</span> <span class="n">phase</span> <span class="ow">in</span> <span class="n">df</span><span class="o">.</span><span class="n">index</span><span class="p">:</span>
+            <span class="n">model_name</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">phase</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">ODE</span><span class="p">]</span>
+            <span class="n">model</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">model_dict</span><span class="p">[</span><span class="n">model_name</span><span class="p">]</span>
+            <span class="n">start_date</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">phase</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">START</span><span class="p">]</span>
+            <span class="n">start_obj</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">date_obj</span><span class="p">(</span><span class="n">start_date</span><span class="p">)</span>
+            <span class="n">start_objects</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">start_obj</span><span class="p">)</span>
+            <span class="n">end_obj</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">date_obj</span><span class="p">(</span><span class="n">df</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">phase</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">END</span><span class="p">])</span>
+            <span class="n">phase_seconds</span> <span class="o">=</span> <span class="p">(</span><span class="n">end_obj</span> <span class="o">-</span> <span class="n">start_obj</span><span class="p">)</span><span class="o">.</span><span class="n">total_seconds</span><span class="p">()</span> <span class="o">+</span> <span class="mi">1</span>
+            <span class="n">step_n</span> <span class="o">=</span> <span class="nb">round</span><span class="p">(</span><span class="n">phase_seconds</span> <span class="o">/</span> <span class="p">(</span><span class="mi">60</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">tau</span><span class="p">))</span>
+            <span class="n">population</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">phase</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">N</span><span class="p">]</span>
+            <span class="n">param_dict</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="n">model</span><span class="o">.</span><span class="n">PARAMETERS</span><span class="p">]</span><span class="o">.</span><span class="n">to_dict</span><span class="p">(</span><span class="n">orient</span><span class="o">=</span><span class="s2">&quot;index&quot;</span><span class="p">)[</span><span class="n">phase</span><span class="p">]</span>
+            <span class="k">if</span> <span class="n">phase</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">num2str</span><span class="p">(</span><span class="mi">1</span><span class="p">):</span>
+                <span class="c1"># Calculate initial values</span>
+                <span class="n">ode_data</span> <span class="o">=</span> <span class="n">ODEData</span><span class="p">(</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">clean_df</span><span class="p">,</span> <span class="n">country</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">country</span><span class="p">,</span>
+                    <span class="n">province</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">province</span>
+                <span class="p">)</span>
+                <span class="n">y0_dict_phase</span> <span class="o">=</span> <span class="n">ode_data</span><span class="o">.</span><span class="n">y0</span><span class="p">(</span>
+                    <span class="n">model</span><span class="p">,</span> <span class="n">population</span><span class="p">,</span> <span class="n">start_date</span><span class="o">=</span><span class="n">start_date</span>
+                <span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">try</span><span class="p">:</span>
+                    <span class="n">y0_dict_phase</span> <span class="o">=</span> <span class="n">y0_dict</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+                <span class="k">except</span> <span class="ne">AttributeError</span><span class="p">:</span>
+                    <span class="n">y0_dict_phase</span> <span class="o">=</span> <span class="kc">None</span>
+            <span class="n">simulator</span><span class="o">.</span><span class="n">add</span><span class="p">(</span>
+                <span class="n">model</span><span class="p">,</span> <span class="n">step_n</span><span class="p">,</span> <span class="n">population</span><span class="p">,</span>
+                <span class="n">param_dict</span><span class="o">=</span><span class="n">param_dict</span><span class="p">,</span>
+                <span class="n">y0_dict</span><span class="o">=</span><span class="n">y0_dict_phase</span>
+            <span class="p">)</span>
+        <span class="n">simulator</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
+        <span class="n">first_date</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">num2str</span><span class="p">(</span><span class="mi">1</span><span class="p">),</span> <span class="bp">self</span><span class="o">.</span><span class="n">START</span><span class="p">]</span>
+        <span class="n">dim_df</span> <span class="o">=</span> <span class="n">simulator</span><span class="o">.</span><span class="n">dim</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">tau</span><span class="p">,</span> <span class="n">first_date</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">dim_df</span><span class="p">,</span> <span class="n">start_objects</span>
+
+<div class="viewcode-block" id="Scenario.get"><a class="viewcode-back" href="../../../covsirphy.analysis.html#covsirphy.Scenario.get">[docs]</a>    <span class="k">def</span> <span class="nf">get</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">param</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;Main&quot;</span><span class="p">,</span> <span class="n">phase</span><span class="o">=</span><span class="s2">&quot;last&quot;</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Get the parameter value of the phase.</span>
+<span class="sd">        @param &lt;str&gt;: parameter name (columns in self.summary())</span>
+<span class="sd">        @name &lt;str&gt;: phase series name</span>
+<span class="sd">            - if &#39;Main&#39;, main PhaseSeries will be used</span>
+<span class="sd">        @phase &lt;str&gt;: phase name or &#39;last&#39;</span>
+<span class="sd">            - if &#39;last&#39;, the value of the last phase will be returned</span>
+<span class="sd">        @return &lt;str/int/float&gt;</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">name</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">MAIN</span> <span class="k">if</span> <span class="n">name</span> <span class="o">==</span> <span class="s2">&quot;Main&quot;</span> <span class="k">else</span> <span class="n">name</span>
+        <span class="k">if</span> <span class="n">name</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">series_dict</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+            <span class="k">raise</span> <span class="ne">KeyError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;@name </span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2"> scenario has not been registered.&quot;</span><span class="p">)</span>
+        <span class="n">df</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">series_dict</span><span class="p">[</span><span class="n">name</span><span class="p">]</span><span class="o">.</span><span class="n">summary</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">param</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">df</span><span class="o">.</span><span class="n">columns</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">KeyError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;@param must be in </span><span class="si">{</span><span class="s1">&#39;, &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">df</span><span class="o">.</span><span class="n">columns</span><span class="p">)</span><span class="si">}</span><span class="s2">.&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">phase</span> <span class="o">==</span> <span class="s2">&quot;last&quot;</span><span class="p">:</span>
+            <span class="n">phase</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">index</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+        <span class="k">return</span> <span class="n">df</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">phase</span><span class="p">,</span> <span class="n">param</span><span class="p">]</span></div>
+
+<div class="viewcode-block" id="Scenario.param_history"><a class="viewcode-back" href="../../../covsirphy.analysis.html#covsirphy.Scenario.param_history">[docs]</a>    <span class="k">def</span> <span class="nf">param_history</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">targets</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;Main&quot;</span><span class="p">,</span> <span class="n">divide_by_first</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                      <span class="n">show_figure</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">filename</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">box_plot</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Return subset of summary.</span>
+<span class="sd">        @targets &lt;list[str]/str&gt;: parameters to show (Rt etc.)</span>
+<span class="sd">        @name &lt;str&gt;: phase series name</span>
+<span class="sd">            - if &#39;Main&#39;, main PhaseSeries will be used</span>
+<span class="sd">        @divide_by_first &lt;bool&gt;: if True, divide the values by 1st phase&#39;s values</span>
+<span class="sd">        @box_plot &lt;bool&gt;: if True, box plot. if False, line plot.</span>
+<span class="sd">        @show_figure &lt;bool&gt;:</span>
+<span class="sd">            - if True, show the result as a figure.</span>
+<span class="sd">        @filename &lt;str&gt;: filename of the figure, or None (show figure)</span>
+<span class="sd">        @kwargs: keword arguments of pd.DataFrame.plot or line_plot()</span>
+<span class="sd">        @return &lt;pd.DataFrame&gt;</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">name</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">MAIN</span> <span class="k">if</span> <span class="n">name</span> <span class="o">==</span> <span class="s2">&quot;Main&quot;</span> <span class="k">else</span> <span class="n">name</span>
+        <span class="k">if</span> <span class="n">name</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">series_dict</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+            <span class="k">raise</span> <span class="ne">KeyError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;@name </span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2"> scenario has not been registered.&quot;</span><span class="p">)</span>
+        <span class="n">df</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">series_dict</span><span class="p">[</span><span class="n">name</span><span class="p">]</span><span class="o">.</span><span class="n">summary</span><span class="p">()</span>
+        <span class="n">model_param_nest</span> <span class="o">=</span> <span class="p">[</span><span class="n">m</span><span class="o">.</span><span class="n">PARAMETERS</span> <span class="k">for</span> <span class="n">m</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">model_dict</span><span class="o">.</span><span class="n">values</span><span class="p">()]</span>
+        <span class="n">model_day_nest</span> <span class="o">=</span> <span class="p">[</span><span class="n">m</span><span class="o">.</span><span class="n">DAY_PARAMETERS</span> <span class="k">for</span> <span class="n">m</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">model_dict</span><span class="o">.</span><span class="n">values</span><span class="p">()]</span>
+        <span class="n">model_parameters</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">flatten</span><span class="p">(</span><span class="n">model_param_nest</span><span class="p">)</span>
+        <span class="n">model_day_params</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">flatten</span><span class="p">(</span><span class="n">model_day_nest</span><span class="p">)</span>
+        <span class="n">selectable_cols</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">N</span><span class="p">,</span> <span class="o">*</span><span class="n">model_parameters</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">RT</span><span class="p">,</span> <span class="o">*</span><span class="n">model_day_params</span>
+        <span class="p">]</span>
+        <span class="n">targets</span> <span class="o">=</span> <span class="p">[</span><span class="n">targets</span><span class="p">]</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">targets</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span> <span class="k">else</span> <span class="n">targets</span>
+        <span class="n">targets</span> <span class="o">=</span> <span class="n">selectable_cols</span> <span class="k">if</span> <span class="n">targets</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">targets</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">set</span><span class="p">(</span><span class="n">targets</span><span class="p">)</span><span class="o">.</span><span class="n">issubset</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">selectable_cols</span><span class="p">)):</span>
+            <span class="k">raise</span> <span class="ne">KeyError</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;@targets must be a subset of </span><span class="si">{</span><span class="s1">&#39;, &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">selectable_cols</span><span class="p">)</span><span class="si">}</span><span class="s2">.&quot;</span>
+            <span class="p">)</span>
+        <span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">loc</span><span class="p">[:,</span> <span class="n">targets</span><span class="p">]</span>
+        <span class="k">if</span> <span class="n">divide_by_first</span><span class="p">:</span>
+            <span class="n">df</span> <span class="o">=</span> <span class="n">df</span> <span class="o">/</span> <span class="n">df</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="p">:]</span>
+            <span class="n">title</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">area</span><span class="si">}</span><span class="s2">: Ratio to 1st phase parameters (</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2"> scenario)&quot;</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">title</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">area</span><span class="si">}</span><span class="s2">: History of parameter values (</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2"> scenario)&quot;</span>
+        <span class="k">if</span> <span class="n">box_plot</span><span class="p">:</span>
+            <span class="n">df</span><span class="o">.</span><span class="n">plot</span><span class="o">.</span><span class="n">bar</span><span class="p">(</span><span class="n">title</span><span class="o">=</span><span class="n">title</span><span class="p">)</span>
+            <span class="n">plt</span><span class="o">.</span><span class="n">xticks</span><span class="p">(</span><span class="n">rotation</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">divide_by_first</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">RT</span> <span class="ow">in</span> <span class="n">targets</span><span class="p">:</span>
+                <span class="n">plt</span><span class="o">.</span><span class="n">axhline</span><span class="p">(</span><span class="n">y</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;black&quot;</span><span class="p">,</span> <span class="n">linestyle</span><span class="o">=</span><span class="s2">&quot;:&quot;</span><span class="p">)</span>
+            <span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span>
+                <span class="n">bbox_to_anchor</span><span class="o">=</span><span class="p">(</span><span class="mf">1.02</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span> <span class="n">loc</span><span class="o">=</span><span class="s2">&quot;lower left&quot;</span><span class="p">,</span> <span class="n">borderaxespad</span><span class="o">=</span><span class="mi">0</span>
+            <span class="p">)</span>
+            <span class="n">plt</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
+            <span class="k">if</span> <span class="n">filename</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+                <span class="k">return</span> <span class="n">df</span>
+            <span class="n">plt</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span>
+                <span class="n">filename</span><span class="p">,</span> <span class="n">bbox_inches</span><span class="o">=</span><span class="s2">&quot;tight&quot;</span><span class="p">,</span> <span class="n">transparent</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">dpi</span><span class="o">=</span><span class="mi">300</span>
+            <span class="p">)</span>
+            <span class="n">plt</span><span class="o">.</span><span class="n">clf</span><span class="p">()</span>
+            <span class="k">return</span> <span class="n">df</span>
+        <span class="n">_df</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">reset_index</span><span class="p">(</span><span class="n">drop</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="n">_df</span><span class="o">.</span><span class="n">index</span> <span class="o">=</span> <span class="n">_df</span><span class="o">.</span><span class="n">index</span> <span class="o">+</span> <span class="mi">1</span>
+        <span class="n">h</span> <span class="o">=</span> <span class="mf">1.0</span> <span class="k">if</span> <span class="n">divide_by_first</span> <span class="k">else</span> <span class="kc">None</span>
+        <span class="n">line_plot</span><span class="p">(</span>
+            <span class="n">_df</span><span class="p">,</span> <span class="n">title</span><span class="o">=</span><span class="n">title</span><span class="p">,</span>
+            <span class="n">xlabel</span><span class="o">=</span><span class="s2">&quot;Phase&quot;</span><span class="p">,</span> <span class="n">ylabel</span><span class="o">=</span><span class="nb">str</span><span class="p">(),</span> <span class="n">math_scale</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">h</span><span class="o">=</span><span class="n">h</span><span class="p">,</span>
+            <span class="n">show_figure</span><span class="o">=</span><span class="n">show_figure</span><span class="p">,</span> <span class="n">filename</span><span class="o">=</span><span class="n">filename</span>
+        <span class="p">)</span></div>
+
+<div class="viewcode-block" id="Scenario.describe"><a class="viewcode-back" href="../../../covsirphy.analysis.html#covsirphy.Scenario.describe">[docs]</a>    <span class="k">def</span> <span class="nf">describe</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Describe representative values.</span>
+<span class="sd">        @return &lt;pd.DataFrame&gt;</span>
+<span class="sd">            - index: scenario name</span>
+<span class="sd">            - max(Infected): max value of Infected</span>
+<span class="sd">            - argmax(Infected): the date when Infected shows max value</span>
+<span class="sd">            - Infected({date}): Infected on the end date of the last phase</span>
+<span class="sd">            - Fatal({date}): Fatal on the end date of the last phase</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">_dict</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+        <span class="k">for</span> <span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">_</span><span class="p">)</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">series_dict</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="c1"># Predict the number of cases</span>
+            <span class="n">df</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">,</span> <span class="n">show_figure</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+            <span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">set_index</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">DATE</span><span class="p">)</span>
+            <span class="n">last_date</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">index</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+            <span class="c1"># Max value of Infected</span>
+            <span class="n">max_ci</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">CI</span><span class="p">]</span><span class="o">.</span><span class="n">max</span><span class="p">()</span>
+            <span class="n">argmax_ci</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">CI</span><span class="p">]</span><span class="o">.</span><span class="n">idxmax</span><span class="p">()</span>
+            <span class="c1"># Infected on the end date of the last phase</span>
+            <span class="n">last_ci</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">last_date</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">CI</span><span class="p">]</span>
+            <span class="c1"># Fatal on the end date of the last phase</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">last_f</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">last_date</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">F</span><span class="p">]</span>
+            <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
+                <span class="n">last_f</span> <span class="o">=</span> <span class="kc">None</span>
+            <span class="c1"># Save representative values</span>
+            <span class="n">_dict</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span>
+                <span class="sa">f</span><span class="s2">&quot;max(</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">CI</span><span class="si">}</span><span class="s2">)&quot;</span><span class="p">:</span> <span class="n">max_ci</span><span class="p">,</span>
+                <span class="sa">f</span><span class="s2">&quot;argmax(</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">CI</span><span class="si">}</span><span class="s2">)&quot;</span><span class="p">:</span> <span class="n">argmax_ci</span><span class="p">,</span>
+                <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">CI</span><span class="si">}</span><span class="s2"> on </span><span class="si">{</span><span class="n">last_date</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">:</span> <span class="n">last_ci</span><span class="p">,</span>
+                <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">F</span><span class="si">}</span><span class="s2"> on </span><span class="si">{</span><span class="n">last_date</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">:</span> <span class="n">last_f</span><span class="p">,</span>
+            <span class="p">}</span>
+        <span class="k">return</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="o">.</span><span class="n">from_dict</span><span class="p">(</span><span class="n">_dict</span><span class="p">,</span> <span class="n">orient</span><span class="o">=</span><span class="s2">&quot;index&quot;</span><span class="p">)</span></div></div>
+</pre></div>
+
+           </div>
+           
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        
+        &copy; Copyright 2020, CovsirPhy Development Team
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>
