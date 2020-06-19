@@ -52,7 +52,13 @@ pipenv install --dev
 ```
 
 ## Recommended datasets
-Datasets are not included in this repository, but we can download the following recommended datasets from Kaggle and GitHub. Please read Bash code `input.sh` in the top directory of this repository.
+Datasets are not included in this repository, but we can download the following recommended datasets from Kaggle and GitHub. 
+
+The necessary datasets can easily be obtained using two different: a bash script (`ìnput.sh`) or a python script (`input.py`). The bash script will not work for Windows OS. You need to setup your Kaggle account properly for both methods. Please follow the steps [provided here to ensure that you can authenticate with the Kaggle API](https://stackoverflow.com/questions/55934733/documentation-for-kaggle-api-within-python#:~:text=Here%20are%20the%20steps%20involved%20in%20using%20the%20Kaggle%20API%20from%20Python.&text=Go%20to%20your%20Kaggle%20account,json%20will%20be%20downloaded).
+
+If you choose to use the python script, note that simply putting the `kaggle.json` in the same folder as `input.py` before executing it will allow `input.py` to find it (not necessary to modify environment variables).
+
+Please read Bash code `input.sh` in the top directory of this repository to better understand its usage.
 
 ### Kaggle
 Kaggle API key and Kaggle package are necessary. Please read [How to Use Kaggle: Public API](https://www.kaggle.com/docs/api).
