@@ -18,10 +18,15 @@ class Population(CleaningBase):
         """
         Perform data cleaning of the raw data.
         This method overwrite super().cleaning() method.
-        @return <pd.DataFrame>
-            - Country <str>: country/region name
-            - Province <str>: province/prefecture/state name
-            - Population <int>: total population
+
+        Returns:
+            <pandas.DataFrame>
+                    Index:
+                        reset index
+                    Columns:
+                        - Country <str>: country/region name
+                        - Province <str>: province/prefecture/state name
+                        - Population <int>: total population
         """
         df = self._raw.copy()
         # Rename the columns
@@ -75,7 +80,9 @@ class Population(CleaningBase):
     def total(self):
         """
         Return the total value of population in the datset.
-        @return <int>
+
+        Returns:
+            <int>
         """
         values = self._cleaned_df[self.N]
         return sum(values)
@@ -83,8 +90,12 @@ class Population(CleaningBase):
     def to_dict(self, country_level=True):
         """
         Return dictionary of population values.
-        @country_level <str>: whether key is country name or not
-        @return <dict[str]=int>:
+
+        Args:
+        country_level <str>: whether key is country name or not
+
+        Returns:
+            <dict[str]=int>:
             - if @country_level is True, {"country", population}
             - if False, {"country/province", population}
         """
@@ -103,9 +114,13 @@ class Population(CleaningBase):
     def value(self, country, province=None):
         """
         Return the value of population in the place.
-        @country <str>: country name
-        @province <str>: province name
-        @return <int>: population in the place
+
+        Args:
+        country <str>: country name
+        province <str>: province name
+
+        Returns:
+            <int>: population in the place
         """
         try:
             if province is None:
@@ -121,9 +136,11 @@ class Population(CleaningBase):
     def update(self, value, country, province="-"):
         """
         Update the value of a new place.
-        @value <int>: population in the place
-        @country <str>: country name
-        @province <str>: province name
+
+        Args:
+        value <int>: population in the place
+        country <str>: country name
+        province <str>: province name
         """
         series = pd.Series(
             [country, province, value],

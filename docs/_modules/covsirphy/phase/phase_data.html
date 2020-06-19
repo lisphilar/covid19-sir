@@ -157,22 +157,24 @@
 <div class="viewcode-block" id="PhaseData"><a class="viewcode-back" href="../../../covsirphy.phase.html#covsirphy.PhaseData">[docs]</a><span class="k">class</span> <span class="nc">PhaseData</span><span class="p">(</span><span class="n">Word</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Basic class to create dataset for Trend/ODE analysis.</span>
+<span class="sd">    Args:</span>
+<span class="sd">        clean_df &lt;pandas.DataFrame&gt;: cleaned data</span>
+
+<span class="sd">            Index:</span>
+<span class="sd">                reset index</span>
+<span class="sd">            Columns:</span>
+<span class="sd">                - Date &lt;pd.TimeStamp&gt;: Observation date</span>
+<span class="sd">                - Country &lt;str&gt;: country/region name</span>
+<span class="sd">                - Province &lt;str&gt;: province/prefecture/sstate name</span>
+<span class="sd">                - Confirmed &lt;int&gt;: the number of confirmed cases</span>
+<span class="sd">                - Infected &lt;int&gt;: the number of currently infected cases</span>
+<span class="sd">                - Fatal &lt;int&gt;: the number of fatal cases</span>
+<span class="sd">                - Recovered &lt;int&gt;: the number of recovered cases</span>
+<span class="sd">        country &lt;str&gt;: country name</span>
+<span class="sd">        province &lt;str&gt;: province name</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">clean_df</span><span class="p">,</span> <span class="n">country</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">province</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        @clean_df &lt;pd.DataFrame&gt;: cleaned data</span>
-<span class="sd">            - index &lt;int&gt;: reset index</span>
-<span class="sd">            - Date &lt;pd.TimeStamp&gt;: Observation date</span>
-<span class="sd">            - Country &lt;str&gt;: country/region name</span>
-<span class="sd">            - Province &lt;str&gt;: province/prefecture/sstate name</span>
-<span class="sd">            - Confirmed &lt;int&gt;: the number of confirmed cases</span>
-<span class="sd">            - Infected &lt;int&gt;: the number of currently infected cases</span>
-<span class="sd">            - Fatal &lt;int&gt;: the number of fatal cases</span>
-<span class="sd">            - Recovered &lt;int&gt;: the number of recovered cases</span>
-<span class="sd">        @country &lt;str&gt;: country name</span>
-<span class="sd">        @province &lt;str&gt;: province name</span>
-<span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">df</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">validate_dataframe</span><span class="p">(</span>
             <span class="n">clean_df</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;clean_df&quot;</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">COLUMNS</span>
         <span class="p">)</span>
@@ -183,26 +185,34 @@
 
     <span class="k">def</span> <span class="nf">_set_place</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">clean_df</span><span class="p">,</span> <span class="n">country</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">province</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        @clean_df &lt;pd.DataFrame&gt;: cleaned data</span>
-<span class="sd">            - index &lt;int&gt;: reset index</span>
-<span class="sd">            - Date &lt;pd.TimeStamp&gt;: Observation date</span>
-<span class="sd">            - Country &lt;str&gt;: country/region name</span>
-<span class="sd">            - Province &lt;str&gt;: province/prefecture/sstate name</span>
-<span class="sd">            - Confirmed &lt;int&gt;: the number of confirmed cases</span>
-<span class="sd">            - Infected &lt;int&gt;: the number of currently infected cases</span>
-<span class="sd">            - Fatal &lt;int&gt;: the number of fatal cases</span>
-<span class="sd">            - Recovered &lt;int&gt;: the number of recovered cases</span>
-<span class="sd">        @country &lt;str&gt;: country name</span>
-<span class="sd">        @province &lt;str&gt;: province name</span>
-<span class="sd">        @return &lt;pd.DataFrame&gt;:</span>
-<span class="sd">            - index &lt;int&gt;: reset index</span>
-<span class="sd">            - Date &lt;pd.TimeStamp&gt;: Observation date</span>
-<span class="sd">            - Country &lt;str&gt;: country/region name</span>
-<span class="sd">            - Province &lt;str&gt;: province/prefecture/sstate name</span>
-<span class="sd">            - Confirmed &lt;int&gt;: the number of confirmed cases</span>
-<span class="sd">            - Infected &lt;int&gt;: the number of currently infected cases</span>
-<span class="sd">            - Fatal &lt;int&gt;: the number of fatal cases</span>
-<span class="sd">            - Recovered &lt;int&gt;: the number of recovered cases</span>
+<span class="sd">        Args:</span>
+<span class="sd">            clean_df &lt;pandas.DataFrame&gt;: cleaned data</span>
+
+<span class="sd">                Index:</span>
+<span class="sd">                    reset index</span>
+<span class="sd">                Columns:</span>
+<span class="sd">                    - Date &lt;pd.TimeStamp&gt;: Observation date</span>
+<span class="sd">                    - Country &lt;str&gt;: country/region name</span>
+<span class="sd">                    - Province &lt;str&gt;: province/prefecture/sstate name</span>
+<span class="sd">                    - Confirmed &lt;int&gt;: the number of confirmed cases</span>
+<span class="sd">                    - Infected &lt;int&gt;: the number of currently infected cases</span>
+<span class="sd">                    - Fatal &lt;int&gt;: the number of fatal cases</span>
+<span class="sd">                    - Recovered &lt;int&gt;: the number of recovered cases</span>
+<span class="sd">            country &lt;str&gt;: country name</span>
+<span class="sd">            province &lt;str&gt;: province name</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            &lt;pandas.DataFrame&gt;:</span>
+<span class="sd">                Index:</span>
+<span class="sd">                    reset index</span>
+<span class="sd">                Columns:</span>
+<span class="sd">                    - Date &lt;pd.TimeStamp&gt;: Observation date</span>
+<span class="sd">                    - Country &lt;str&gt;: country/region name</span>
+<span class="sd">                    - Province &lt;str&gt;: province/prefecture/sstate name</span>
+<span class="sd">                    - Confirmed &lt;int&gt;: the number of confirmed cases</span>
+<span class="sd">                    - Infected &lt;int&gt;: the number of currently infected cases</span>
+<span class="sd">                    - Fatal &lt;int&gt;: the number of fatal cases</span>
+<span class="sd">                    - Recovered &lt;int&gt;: the number of recovered cases</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">df</span> <span class="o">=</span> <span class="n">clean_df</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
         <span class="n">c</span><span class="p">,</span> <span class="n">p</span> <span class="o">=</span> <span class="n">country</span><span class="p">,</span> <span class="n">province</span>
@@ -218,21 +228,30 @@
     <span class="k">def</span> <span class="nf">_groupby_date</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">cleaned_df</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Grouping by date.</span>
-<span class="sd">        @clean_df &lt;pd.DataFrame&gt;: cleaned data</span>
-<span class="sd">            - index &lt;int&gt;: reset index</span>
-<span class="sd">            - Date &lt;pd.TimeStamp&gt;: Observation date</span>
-<span class="sd">            - Country &lt;str&gt;: country/region name</span>
-<span class="sd">            - Province &lt;str&gt;: province/prefecture/sstate name</span>
-<span class="sd">            - Confirmed &lt;int&gt;: the number of confirmed cases</span>
-<span class="sd">            - Infected &lt;int&gt;: the number of currently infected cases</span>
-<span class="sd">            - Fatal &lt;int&gt;: the number of fatal cases</span>
-<span class="sd">            - Recovered &lt;int&gt;: the number of recovered cases</span>
-<span class="sd">        @return &lt;pd.DataFrame&gt;:</span>
-<span class="sd">            - index (Date) &lt;pd.TimeStamp&gt;: Observation date</span>
-<span class="sd">            - Confirmed &lt;int&gt;: the number of confirmed cases</span>
-<span class="sd">            - Infected &lt;int&gt;: the number of currently infected cases</span>
-<span class="sd">            - Fatal &lt;int&gt;: the number of fatal cases</span>
-<span class="sd">            - Recovered &lt;int&gt;: the number of recovered cases</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            clean_df &lt;pandas.DataFrame&gt;: cleaned data</span>
+
+<span class="sd">                Index:</span>
+<span class="sd">                    reset index</span>
+<span class="sd">                Columns:</span>
+<span class="sd">                    - Date &lt;pd.TimeStamp&gt;: Observation date</span>
+<span class="sd">                    - Country &lt;str&gt;: country/region name</span>
+<span class="sd">                    - Province &lt;str&gt;: province/prefecture/sstate name</span>
+<span class="sd">                    - Confirmed &lt;int&gt;: the number of confirmed cases</span>
+<span class="sd">                    - Infected &lt;int&gt;: the number of currently infected cases</span>
+<span class="sd">                    - Fatal &lt;int&gt;: the number of fatal cases</span>
+<span class="sd">                    - Recovered &lt;int&gt;: the number of recovered cases</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            &lt;pandas.DataFrame&gt;:</span>
+<span class="sd">                Index:</span>
+<span class="sd">                    - Date &lt;pd.TimeStamp&gt;: Observation date</span>
+<span class="sd">                Columns:</span>
+<span class="sd">                    - Confirmed &lt;int&gt;: the number of confirmed cases</span>
+<span class="sd">                    - Infected &lt;int&gt;: the number of currently infected cases</span>
+<span class="sd">                    - Fatal &lt;int&gt;: the number of fatal cases</span>
+<span class="sd">                    - Recovered &lt;int&gt;: the number of recovered cases</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">df</span> <span class="o">=</span> <span class="n">cleaned_df</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
         <span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">drop</span><span class="p">([</span><span class="bp">self</span><span class="o">.</span><span class="n">COUNTRY</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">PROVINCE</span><span class="p">],</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
@@ -243,13 +262,20 @@
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Make a dataset using the cleaned dataset.</span>
 <span class="sd">        This method must be overwritten in child class.</span>
-<span class="sd">        @grouped_df &lt;pd.DataFrame&gt;: cleaned data grouped by Date</span>
-<span class="sd">            - index (Date) &lt;pd.TimeStamp&gt;: Observation date</span>
-<span class="sd">            - Confirmed &lt;int&gt;: the number of confirmed cases</span>
-<span class="sd">            - Infected &lt;int&gt;: the number of currently infected cases</span>
-<span class="sd">            - Fatal &lt;int&gt;: the number of fatal cases</span>
-<span class="sd">            - Recovered &lt;int&gt;: the number of recovered cases</span>
-<span class="sd">        @return &lt;pd.DataFrame&gt;</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            grouped_df &lt;pandas.DataFrame&gt;: cleaned data grouped by Date</span>
+
+<span class="sd">                Index:</span>
+<span class="sd">                    - Date &lt;pd.TimeStamp&gt;: Observation date</span>
+<span class="sd">                Columns:</span>
+<span class="sd">                    - Confirmed &lt;int&gt;: the number of confirmed cases</span>
+<span class="sd">                    - Infected &lt;int&gt;: the number of currently infected cases</span>
+<span class="sd">                    - Fatal &lt;int&gt;: the number of fatal cases</span>
+<span class="sd">                    - Recovered &lt;int&gt;: the number of recovered cases</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            &lt;pandas.DataFrame&gt;</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">df</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">validate_dataframe</span><span class="p">(</span>
             <span class="n">grouped_df</span><span class="p">,</span>
@@ -261,9 +287,13 @@
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Make a dataset using the cleaned dataset.</span>
 <span class="sd">        This method must be overwritten in child class.</span>
-<span class="sd">        @start_date &lt;str&gt;: start date, like 22Jan2020</span>
-<span class="sd">        @end_date &lt;str&gt;: end date, like 01Feb2020</span>
-<span class="sd">        @return &lt;pd.DataFrame&gt;</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            start_date &lt;str&gt;: start date, like 22Jan2020</span>
+<span class="sd">            end_date &lt;str&gt;: end date, like 01Feb2020</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            &lt;pandas.DataFrame&gt;</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">df</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">subset</span><span class="p">(</span><span class="n">start_date</span><span class="o">=</span><span class="n">start_date</span><span class="p">,</span> <span class="n">end_date</span><span class="o">=</span><span class="n">end_date</span><span class="p">)</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_make</span><span class="p">(</span><span class="n">df</span><span class="p">)</span></div>
@@ -271,14 +301,20 @@
 <div class="viewcode-block" id="PhaseData.subset"><a class="viewcode-back" href="../../../covsirphy.phase.html#covsirphy.PhaseData.subset">[docs]</a>    <span class="k">def</span> <span class="nf">subset</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">start_date</span><span class="p">,</span> <span class="n">end_date</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Return the subset of the data with start/end date.</span>
-<span class="sd">        @start_date &lt;str&gt;: start date, like 22Jan2020</span>
-<span class="sd">        @end_date &lt;str&gt;: end date, like 01Feb2020</span>
-<span class="sd">        @return &lt;pd.DataFrame&gt;:</span>
-<span class="sd">            - index (Date) &lt;pd.TimeStamp&gt;: Observation date</span>
-<span class="sd">            - Confirmed &lt;int&gt;: the number of confirmed cases</span>
-<span class="sd">            - Infected &lt;int&gt;: the number of currently infected cases</span>
-<span class="sd">            - Fatal &lt;int&gt;: the number of fatal cases</span>
-<span class="sd">            - Recovered &lt;int&gt;: the number of recovered cases</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            start_date &lt;str&gt;: start date, like 22Jan2020</span>
+<span class="sd">            end_date &lt;str&gt;: end date, like 01Feb2020</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            &lt;pandas.DataFrame&gt;:</span>
+<span class="sd">                Index:</span>
+<span class="sd">                    - Date &lt;pd.TimeStamp&gt;: Observation date</span>
+<span class="sd">                Columns:</span>
+<span class="sd">                    - Confirmed &lt;int&gt;: the number of confirmed cases</span>
+<span class="sd">                    - Infected &lt;int&gt;: the number of currently infected cases</span>
+<span class="sd">                    - Fatal &lt;int&gt;: the number of fatal cases</span>
+<span class="sd">                    - Recovered &lt;int&gt;: the number of recovered cases</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">df</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">all_df</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
         <span class="n">series</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>

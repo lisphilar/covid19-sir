@@ -19,20 +19,28 @@ class JHUData(CleaningBase):
     def cleaned(self, population=None):
         """
         Return the cleaned dataset.
-        Cleaning method is defined by self.cleaning() method.
-        @population <int>:
-            - if this is not None, Susceptible will be calculated.
-        @return <pd.DataFrame>
-            - index <int>: reset index
-            - Date <pd.TimeStamp>: Observation date
-            - Country <str>: country/region name
-            - Province <str>: province/prefecture/state name
-            - Confirmed <int>: the number of confirmed cases
-            - Infected <int>: the number of currently infected cases
-            - Fatal <int>: the number of fatal cases
-            - Recovered <int>: the number of recovered cases
-            - if @population is not None:
-                - Susceptible <int>: the number of susceptible cases
+
+        Note:
+            Cleaning method is defined by self.cleaning() method.
+
+        Args:
+            population <int>:
+                - if this is not None, Susceptible will be calculated.
+
+        Returns:
+            <pandas.DataFrame>
+                Index:
+                    reset index
+                Columns:
+                    - Date <pd.TimeStamp>: Observation date
+                    - Country <str>: country/region name
+                    - Province <str>: province/prefecture/state name
+                    - Confirmed <int>: the number of confirmed cases
+                    - Infected <int>: the number of currently infected cases
+                    - Fatal <int>: the number of fatal cases
+                    - Recovered <int>: the number of recovered cases
+                    - if @population is not None:
+                        - Susceptible <int>: the number of susceptible cases
         """
         df = self._cleaned_df.copy()
         if population is None:
@@ -45,15 +53,19 @@ class JHUData(CleaningBase):
         """
         Perform data cleaning of the raw data.
         This method overwrite super().cleaning() method.
-        @return <pd.DataFrame>
-            - index <int>: reset index
-            - Date <pd.TimeStamp>: Observation date
-            - Country <str>: country/region name
-            - Province <str>: province/prefecture/state name
-            - Confirmed <int>: the number of confirmed cases
-            - Infected <int>: the number of currently infected cases
-            - Fatal <int>: the number of fatal cases
-            - Recovered <int>: the number of recovered cases
+
+        Returns:
+            <pandas.DataFrame>
+                Index:
+                    reset index
+                Columns:
+                    - Date <pd.TimeStamp>: Observation date
+                    - Country <str>: country/region name
+                    - Province <str>: province/prefecture/state name
+                    - Confirmed <int>: the number of confirmed cases
+                    - Infected <int>: the number of currently infected cases
+                    - Fatal <int>: the number of fatal cases
+                    - Recovered <int>: the number of recovered cases
         """
         df = self._raw.copy()
         # Rename the columns
@@ -111,8 +123,12 @@ class JHUData(CleaningBase):
     def replace(self, country_data):
         """
         Replace a part of cleaned dataset with a dataframe.
-        @country_data <cs.CountryData>: dataset object of the country
-        @return self
+
+        Args:
+            country_data <cs.CountryData>: dataset object of the country
+
+        Returns:
+            self
         """
         if not isinstance(country_data, CountryData):
             raise TypeError("country_data must be <covsirphy.CountryData>.")
@@ -130,15 +146,21 @@ class JHUData(CleaningBase):
     def subset(self, country, province=None):
         """
         Return the subset in the area.
-        @country <str>: country name
-        @province <str>: province name
-        @return <pd.DataFrame>
-            - index <int>: reset index
-            - Date <pd.TimeStamp>: Observation date
-            - Confirmed <int>: the number of confirmed cases
-            - Infected <int>: the number of currently infected cases
-            - Fatal <int>: the number of fatal cases
-            - Recovered <int>: the number of recovered cases (> 0)
+
+        Args:
+            country <str>: country name
+            province <str>: province name
+
+        Returns:
+            <pandas.DataFrame>
+                    Index:
+                        reset index
+                    Columns:
+                        - Date <pd.TimeStamp>: Observation date
+                        - Confirmed <int>: the number of confirmed cases
+                        - Infected <int>: the number of currently infected cases
+                        - Fatal <int>: the number of fatal cases
+                        - Recovered <int>: the number of recovered cases (> 0)
         """
         df = self._cleaned_df.copy()
         df = df.loc[df[self.COUNTRY] == country, :]

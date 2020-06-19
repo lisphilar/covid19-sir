@@ -165,6 +165,8 @@
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">country</span><span class="p">,</span> <span class="n">province</span><span class="o">=</span><span class="s2">&quot;-&quot;</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">        Args:</span>
 <span class="sd">        @country &lt;str&gt;: country name</span>
 <span class="sd">        @province &lt;str&gt;: province name</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -181,20 +183,24 @@
 <div class="viewcode-block" id="ODESimulator.add"><a class="viewcode-back" href="../../../covsirphy.analysis.html#covsirphy.ODESimulator.add">[docs]</a>    <span class="k">def</span> <span class="nf">add</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model</span><span class="p">,</span> <span class="n">step_n</span><span class="p">,</span> <span class="n">population</span><span class="p">,</span> <span class="n">param_dict</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">y0_dict</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Add models to the simulator.</span>
-<span class="sd">        @model &lt;subclass of cs.ModelBase&gt;: the first ODE model</span>
-<span class="sd">        @step_n &lt;int&gt;: the number of steps</span>
-<span class="sd">        @population &lt;int&gt;: population in the place</span>
-<span class="sd">        @param_dict &lt;dict[str]=float&gt;:</span>
-<span class="sd">            - dictionary of parameter values or None</span>
-<span class="sd">            - if not include some params, the last values will be used</span>
-<span class="sd">                - NameError when the model is the first model</span>
-<span class="sd">                - NameError if new params are included</span>
-<span class="sd">        @y0_dict &lt;dict[str]=float&gt;:</span>
-<span class="sd">            - dictionary of dimensional initial values or None</span>
-<span class="sd">            - None or if not include some variables, the last values will be used</span>
-<span class="sd">                - NameError when the model is the first model</span>
-<span class="sd">                - NameError if new variable are included</span>
-<span class="sd">        @return self</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            model &lt;subclass of cs.ModelBase&gt;: the first ODE model</span>
+<span class="sd">            step_n &lt;int&gt;: the number of steps</span>
+<span class="sd">            population &lt;int&gt;: population in the place</span>
+<span class="sd">            param_dict &lt;dict[str]=float&gt;:</span>
+<span class="sd">                - dictionary of parameter values or None</span>
+<span class="sd">                - if not include some params, the last values will be used</span>
+<span class="sd">                    - NameError when the model is the first model</span>
+<span class="sd">                    - NameError if new params are included</span>
+<span class="sd">            y0_dict &lt;dict[str]=float&gt;:</span>
+<span class="sd">                - dictionary of dimensional initial values or None</span>
+<span class="sd">                - None or if not include some variables, the last values will be used</span>
+<span class="sd">                    - NameError when the model is the first model</span>
+<span class="sd">                    - NameError if new variable are included</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            self</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="c1"># Validate the arguments</span>
         <span class="n">model</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">validate_subclass</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">ModelBase</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;model&quot;</span><span class="p">)</span>
@@ -236,19 +242,25 @@
     <span class="k">def</span> <span class="nf">_solve_ode</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model</span><span class="p">,</span> <span class="n">step_n</span><span class="p">,</span> <span class="n">param_dict</span><span class="p">,</span> <span class="n">y0_dict</span><span class="p">,</span> <span class="n">population</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Solve ODE of the model.</span>
-<span class="sd">        @model &lt;subclass of cs.ModelBase&gt;: the ODE model</span>
-<span class="sd">        @step_n &lt;int&gt;: the number of steps</span>
-<span class="sd">        @param_dict &lt;dict[str]=float&gt;: dictionary of parameter values</span>
-<span class="sd">            - key &lt;str&gt;: parameter name</span>
-<span class="sd">            - value &lt;float&gt;: parameter value</span>
-<span class="sd">        @y0_dict &lt;dict[str]=int&gt;: dictionary of initial values</span>
-<span class="sd">            - key &lt;str&gt;: dimensional variable name</span>
-<span class="sd">            - value &lt;int&gt;:initial value of the variable</span>
-<span class="sd">        @population &lt;int&gt;: total population</span>
-<span class="sd">        @return &lt;pd.DataFrame&gt;:</span>
-<span class="sd">            - index: reset index</span>
-<span class="sd">            - t &lt;int&gt;: Elapsed time divided by tau value [-]</span>
-<span class="sd">            - columns with dimensional variables</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            model &lt;subclass of cs.ModelBase&gt;: the ODE model</span>
+<span class="sd">            step_n &lt;int&gt;: the number of steps</span>
+<span class="sd">            param_dict &lt;dict[str]=float&gt;: dictionary of parameter values</span>
+<span class="sd">                - key &lt;str&gt;: parameter name</span>
+<span class="sd">                - value &lt;float&gt;: parameter value</span>
+<span class="sd">            y0_dict &lt;dict[str]=int&gt;: dictionary of initial values</span>
+<span class="sd">                - key &lt;str&gt;: dimensional variable name</span>
+<span class="sd">                - value &lt;int&gt;:initial value of the variable</span>
+<span class="sd">            population &lt;int&gt;: total population</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            &lt;pandas.DataFrame&gt;:</span>
+<span class="sd">                Index:</span>
+<span class="sd">                    reset index</span>
+<span class="sd">                Columns:</span>
+<span class="sd">                    - t &lt;int&gt;: Elapsed time divided by tau value [-]</span>
+<span class="sd">                    - columns with dimensional variables</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">step_n</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">validate_natural_int</span><span class="p">(</span><span class="n">step_n</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;step_n&quot;</span><span class="p">)</span>
         <span class="n">population</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">validate_natural_int</span><span class="p">(</span><span class="n">population</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;population&quot;</span><span class="p">)</span>
@@ -303,10 +315,14 @@
 <div class="viewcode-block" id="ODESimulator.taufree"><a class="viewcode-back" href="../../../covsirphy.analysis.html#covsirphy.ODESimulator.taufree">[docs]</a>    <span class="k">def</span> <span class="nf">taufree</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Return tau-free results.</span>
-<span class="sd">        @return &lt;pd.DataFrame&gt;:</span>
-<span class="sd">            - index: reset index</span>
-<span class="sd">            - t &lt;int&gt;: Elapsed time divided by tau value [-]</span>
-<span class="sd">            - columns with dimensionalized variables</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            &lt;pandas.DataFrame&gt;:</span>
+<span class="sd">                    Index:</span>
+<span class="sd">                        reset index</span>
+<span class="sd">                    Columns:</span>
+<span class="sd">                        - t &lt;int&gt;: Elapsed time divided by tau value [-]</span>
+<span class="sd">                        - columns with dimensionalized variables</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">df</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_taufree_df</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
         <span class="k">if</span> <span class="n">df</span><span class="o">.</span><span class="n">empty</span><span class="p">:</span>
@@ -317,10 +333,14 @@
 <div class="viewcode-block" id="ODESimulator.non_dim"><a class="viewcode-back" href="../../../covsirphy.analysis.html#covsirphy.ODESimulator.non_dim">[docs]</a>    <span class="k">def</span> <span class="nf">non_dim</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Return the non-dimensionalized results.</span>
-<span class="sd">        @return &lt;pd.DataFrame&gt;:</span>
-<span class="sd">            - index: reset index</span>
-<span class="sd">            - t &lt;int&gt;: Elapsed time divided by tau value [-]</span>
-<span class="sd">            - non-dimensionalized variables of Susceptible etc.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            &lt;pandas.DataFrame&gt;:</span>
+<span class="sd">                Index:</span>
+<span class="sd">                    reset index</span>
+<span class="sd">                Columns:</span>
+<span class="sd">                    - t &lt;int&gt;: Elapsed time divided by tau value [-]</span>
+<span class="sd">                    - non-dimensionalized variables of Susceptible etc.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">df</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">taufree</span><span class="p">()</span>
         <span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">set_index</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">TS</span><span class="p">)</span>
@@ -333,14 +353,20 @@
 <div class="viewcode-block" id="ODESimulator.dim"><a class="viewcode-back" href="../../../covsirphy.analysis.html#covsirphy.ODESimulator.dim">[docs]</a>    <span class="k">def</span> <span class="nf">dim</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tau</span><span class="p">,</span> <span class="n">start_date</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Return the dimensionalized results.</span>
-<span class="sd">        @tau &lt;int&gt;: tau value [min]</span>
-<span class="sd">        @start_date &lt;str&gt;: start date of the records, like 22Jan2020</span>
-<span class="sd">        @return &lt;pd.DataFrame&gt;</span>
-<span class="sd">            - index &lt;int&gt;: reset index</span>
-<span class="sd">            - Date &lt;pd.TimeStamp&gt;: Observation date</span>
-<span class="sd">            - Country &lt;str&gt;: country/region name</span>
-<span class="sd">            - Province &lt;str&gt;: province/prefecture/state name</span>
-<span class="sd">            - variables of the models &lt;int&gt;</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            tau &lt;int&gt;: tau value [min]</span>
+<span class="sd">            start_date &lt;str&gt;: start date of the records, like 22Jan2020</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            &lt;pandas.DataFrame&gt;</span>
+<span class="sd">                Index:</span>
+<span class="sd">                    reset index</span>
+<span class="sd">                Columns:</span>
+<span class="sd">                    - Date &lt;pd.TimeStamp&gt;: Observation date</span>
+<span class="sd">                    - Country &lt;str&gt;: country/region name</span>
+<span class="sd">                    - Province &lt;str&gt;: province/prefecture/state name</span>
+<span class="sd">                    - variables of the models &lt;int&gt;</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">df</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">taufree</span><span class="p">()</span>
         <span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">drop</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">TS</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>

@@ -14,17 +14,20 @@ from covsirphy.cleaning.word import Word
 class Optimizer(Word):
     """
     Hyperparameter optimization with Optuna package.
+
+    Args:
+        train_df <pandas.DataFrame>: training dataset
+
+            Index:
+                reset index
+            Columns:
+                - Explanatory variable defined by @x
+                - Response variables which is not @x
+        param (keyword arguments): fixed parameter values
     """
     optuna.logging.disable_default_handler()
 
     def __init__(self, train_df, x="t", **params):
-        """
-        @train_df <pd.DataFrame>: training dataset
-            - index: reset index
-            - Explanatory variable defined by @x
-            - Response variables which is not @x
-        @param (keyword arguments): fixed parameter values
-        """
         self.x = x
         self.y_list = [v for v in train_df.columns if v != x]
         self.train_df = train_df.copy()
@@ -38,8 +41,12 @@ class Optimizer(Word):
     def _init_study(self, seed=None):
         """
         Initialize Optuna study.
-        @seed <int/None>: random seed of hyperparameter optimization
-            - this will effective when the number of CPUs is 1
+
+        Args:
+            seed <int/None>: random seed of hyperparameter optimization
+        
+        Notes:
+            @seed will effective when the number of CPUs is 1
         """
         self.study = optuna.create_study(
             direction="minimize",
@@ -50,11 +57,15 @@ class Optimizer(Word):
         """
         Run optimization.
         This method can be overwritten in subclass.
-        @timeout <int>: time-out of run
-        @n_trials <int>: the number of trials
-        @n_jobs <int>: the number of parallel jobs or -1 (CPU count)
-        @seed <int/None>: random seed of hyperparameter optimization
-            - this will effective when @n_jobs is 1
+
+        Args:
+            timeout <int>: time-out of run
+            n_trials <int>: the number of trials
+            n_jobs <int>: the number of parallel jobs or -1 (CPU count)
+            seed <int/None>: random seed of hyperparameter optimization
+        
+        Notes:
+            @seed will effective when @n_jobs is 1
         """
         if seed is not None and n_jobs != 1:
             raise ValueError("@seed must be None when @n_jobs is not equal to 1.")
@@ -76,8 +87,12 @@ class Optimizer(Word):
         Objective function of Optuna study.
         This defines the parameter values using Optuna.
         This method should be overwritten in subclass.
-        @trial <optuna.trial>: a trial of the study
-        @return <float>: score of the error function to minimize
+
+        Args:
+            trial <optuna.trial>: a trial of the study
+
+        Returns:
+            <float>: score of the error function to minimize
         """
         param_dict = dict()
         return self.error_f(param_dict, self.train_df)
@@ -86,13 +101,19 @@ class Optimizer(Word):
         """
         Definition of error score to minimize in the study.
         This method should be overwritten in subclass.
-        @param_dict <dict[str]=int/float>:
-            - estimated parameter values
-        @train_df <pd.DataFrame>: actual data
-            - index: reset index
-            - t: time step, 0, 1, 2,...
-            - includes columns defined by @variables
-        @return <float>: score of the error function to minimize
+
+        Args:
+            param_dict <dict[str]=int/float>: estimated parameter values
+            train_df <pandas.DataFrame>: actual data
+
+                Index:
+                    reset index
+                Columns:
+                    - t: time step, 0, 1, 2,...
+                    - includes columns defined by @variables
+
+        Returns:
+            <float>: score of the error function to minimize
         """
         sim_df = self.simulate(self.step_n, param_dict)
         comp_df = self.compare(self.train_df, sim_df)
@@ -103,12 +124,17 @@ class Optimizer(Word):
         """
         Simulate the values with the parameters.
         This method should be overwritten in subclass.
-        @param_dict <dict[str]=int/float>:
-            - estimated parameter values
-        @return <pd.DataFrame>:
-            - index: rested index
-            - Explanatory variable defined by self.x
-            - Response variables which defined by self.y_list
+
+        Args:
+            param_dict <dict[str]=int/float>: estimated parameter values
+
+        Returns:
+            <pandas.DataFrame>:
+                Index:
+                    reset index
+                Columns:
+                    - Explanatory variable defined by self.x
+                    - Response variables which defined by self.y_list
         """
         _ = param_dict.copy()
         df = pd.DataFrame(columns=[self.x, *self.y_list])
@@ -117,19 +143,34 @@ class Optimizer(Word):
     def compare(self, actual_df, predicted_df):
         """
         Return comparison table.
-        @actual_df <pd.DataFrame>: actual data
-            - index: reset index
-            - t: time step, 0, 1, 2,...
-            - includes columns defined by self.y_list
-        @predicted_df <pd.DataFrame>: predicted data
-            - index: reset index
-            - t: time step, 0, 1, 2,...
-            - includes columns defined by self.y_list
-        @return <pd.DataFrame>:
-            - index: time step
-            - columns with "_actual"
-            - columns with "_predicted:
-                - columns are defined by self.y_list
+
+        Args:
+            actual_df <pandas.DataFrame>: actual data
+
+                Index:
+                    reset index
+                Columns:
+                    - t: time step, 0, 1, 2,...
+                    - includes columns defined by self.y_list
+
+            predicted_df <pandas.DataFrame>: predicted data
+
+                Index:
+                    reset index
+                Columns:
+                    - t: time step, 0, 1, 2,...
+                    - includes columns defined by self.y_list
+
+        Returns:
+            <pandas.DataFrame>:
+                Index:
+                    <str>: time step
+                Index:
+                    reset index
+                Columns:
+                    - columns with "_actual"
+                    - columns with "_predicted:
+                    - columns are defined by self.y_list
         """
         # Check the arguments
         if not set(self.y_list).issubset(set(predicted_df.columns)):
@@ -146,7 +187,9 @@ class Optimizer(Word):
     def param(self):
         """
         Return the estimated parameters as a dictionary.
-        @return <dict[str]=float/int>
+
+        Returns:
+            <dict[str]=float/int>
         """
         param_dict = self.study.best_params.copy()
         param_dict.update(self.fixed_dict)
@@ -156,11 +199,18 @@ class Optimizer(Word):
         """
         Return the estimated parameters as a dataframe.
         This method should be overwritten in subclass.
-        @name <str>: index of the dataframe
-        @return <pd.DataFrame>:
-            - (estimated parameters)
-            - Trials: the number of trials
-            - Runtime: run time of estimation
+
+        Args:
+            name <str>: index of the dataframe
+
+        Returns:
+            <pandas.DataFrame>:
+                Index:
+                    reset index
+                Columns:
+                    - (estimated parameters)
+                    - Trials: the number of trials
+                    - Runtime: run time of estimation
         """
         param_dict = self.param()
         # The number of trials
@@ -174,12 +224,19 @@ class Optimizer(Word):
         """
         Calculate RMSLE score.
         This method can be overwritten in child class.
-        @train_df <pd.DataFrame>: actual data
-            - index: reset index
-            - t: time step, 0, 1, 2,...
-            - includes columns defined by self.y_list
-        @dim <int/float>: dimension where comparison will be performed
-        @return <float>
+
+        Args:
+            train_df <pandas.DataFrame>: actual data
+
+                Index:
+                    reset index
+                Columns:
+                    - t: time step, 0, 1, 2,...
+                    - includes columns defined by self.y_list
+            dim <int/float>: dimension where comparison will be performed
+
+        Returns:
+            <float>
         """
         predicted_df = self.predict()
         df = self.compare(train_df, predicted_df)
@@ -205,10 +262,13 @@ class Optimizer(Word):
         """
         Show the history of optimization as a figure
             and return it as dataframe.
-        @show_figure <bool>:
-            - if True, show the history as a pair-plot of parameters.
-        @filename <str>: filename of the figure, or None (show figure)
-        @return <pd.DataFrame>: the history
+
+        Args:
+            show_figure <bool>: if True, show the history as a pair-plot of parameters.
+            filename <str>: filename of the figure, or None (show figure)
+
+        Returns:
+            <pandas.DataFrame>: the history
         """
         # Create dataframe of the history
         df = self.study.trials_dataframe()
@@ -240,12 +300,18 @@ class Optimizer(Word):
         """
         Show the accuracy as a figure.
         This method can be overwritten in child class.
-        @train_df <pd.DataFrame>: actual data
-            - index: reset index
-            - t: time step, 0, 1, 2,...
-            - includes columns defined by self.y_list
-        @variables <list[str]>: variables to compare or None (all variables)
-        @filename <str>: filename of the figure, or None (show figure)
+
+        Args:
+            train_df <pandas.DataFrame>: actual data
+
+                Index:
+                    reset index
+                Columns:
+                    - t: time step, 0, 1, 2,...
+                    - includes columns defined by self.y_list
+
+            variables <list[str]>: variables to compare or None (all variables)
+            filename <str>: filename of the figure, or None (show figure)
         """
         # Create a table to compare observed/estimated values
         predicted_df = self.predict()

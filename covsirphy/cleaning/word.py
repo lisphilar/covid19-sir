@@ -70,8 +70,12 @@ class Word(object):
     def num2str(cls, num):
         """
         Convert numbers to 1st, 2nd etc.
+
+        Args:
         @num <int>: number
-        @return <str>
+
+        Returns:
+            <str>
         """
         if not isinstance(num, int):
             raise TypeError("@num must be an integer.")
@@ -83,10 +87,11 @@ class Word(object):
     def negative_exp(x, a, b):
         """
         Negative exponential function f(x)=A exp(-Bx).
-        @x <float>: x values
-        parameters of the function
-            - a <float>
-            - b <float>
+
+        Args:
+            x <float>: x values
+            a <float>: the first parameters of the function
+            b <float>: the second parameters of the function
         """
         return a * np.exp(-b * x)
 
@@ -94,8 +99,12 @@ class Word(object):
     def date_obj(cls, date_str):
         """
         Convert a string to a datetime object.
-        @date_str <str>: date, like 22Jan2020
-        @return <datetime.datetime>
+
+        Args:
+            date_str <str>: date, like 22Jan2020
+
+        Returns:
+            <datetime.datetime>
         """
         obj = datetime.strptime(date_str, cls.DATE_FORMAT)
         return obj
@@ -104,9 +113,13 @@ class Word(object):
     def flatten(nested_list, unique=True):
         """
         Flatten the nested list.
-        @nested_list <list[list[object]]>: nested list
-        @unique <bool>: if True, only unique values will remain
-        @return <list[object]>
+
+        Args:
+            nested_list <list[list[object]]>: nested list
+            unique <bool>: if True, only unique values will remain
+
+        Returns:
+            <list[object]>
         """
         flattened = sum(nested_list, list())
         if unique:
@@ -117,15 +130,17 @@ class Word(object):
     def validate_dataframe(target, name="df", time_index=False, columns=None):
         """
         Validate the dataframe has the columns.
-        @target <pd.DataFrame>: the dataframe to validate
-        @name <str>: argument name of the dataframe
-        @time_index <bool>: if True, the dataframe must has DatetimeIndex
-        @columns <list[str]/None>: the columns the dataframe must have
-        @df <pd.DataFrame>: as-is the target
+
+        Args:
+            target <pandas.DataFrame>: the dataframe to validate
+            name <str>: argument name of the dataframe
+            time_index <bool>: if True, the dataframe must has DatetimeIndex
+            columns <list[str]/None>: the columns the dataframe must have
+            df <pandas.DataFrame>: as-is the target
         """
         df = target.copy()
         if not isinstance(df, pd.DataFrame):
-            raise TypeError(f"@{name} must be a instance of <pd.DataFrame>.")
+            raise TypeError(f"@{name} must be a instance of <pandas.DataFrame>.")
         if time_index and (not isinstance(df.index, pd.DatetimeIndex)):
             raise TypeError(f"Index of @{name} must be <pd.DatetimeIndex>.")
         if columns is None:
@@ -143,10 +158,14 @@ class Word(object):
         Validate the natural (non-negative) number.
         If the value is natural number and the type was float,
          will be converted to an integer.
-        @target <int/float/str>: value to validate
-        @name <str>: argument name of the value
-        @include_zero <bool>: include 0 or not
-        @return <int>: as-is the target
+
+        Args:
+            target <int/float/str>: value to validate
+            name <str>: argument name of the value
+            include_zero <bool>: include 0 or not
+
+        Returns:
+            <int>: as-is the target
         """
         s = f"@{name} must be a natural number, but {target} was applied"
         try:
@@ -164,10 +183,14 @@ class Word(object):
     def validate_subclass(target, parent, name="target"):
         """
         Validate the target is a subclass of the parent class.
-        @target <object>: target to validate
-        @parent <object>: parent class
-        @name <str>: argument name of the target
-        @return <int>: as-is the target
+
+        Args:
+            target <object>: target to validate
+            parent <object>: parent class
+            name <str>: argument name of the target
+
+        Returns:
+            <int>: as-is the target
         """
         s = f"@{name} must be an sub class of {type(parent)}, but {type(target)} was applied."
         if not issubclass(target, parent):
@@ -178,10 +201,14 @@ class Word(object):
     def validate_instance(target, class_obj, name="target"):
         """
         Validate the target is a instance of the class object.
-        @target <instance>: target to validate
-        @parent <class>: class object
-        @name <str>: argument name of the target
-        @return <instance>: as-is target
+
+        Args:
+            target <instance>: target to validate
+            parent <class>: class object
+            name <str>: argument name of the target
+
+        Returns:
+            <instance>: as-is target
         """
         s = f"@{name} must be an instance of {type(class_obj)}, but {type(target)} was applied."
         if not isinstance(target, class_obj):
@@ -192,8 +219,12 @@ class Word(object):
     def divisors(cls, value):
         """
         Return the list of divisors of the value.
-        @value <int>: target value
-        @return <list[int]>: the list of divisors
+
+        Args:
+            value <int>: target value
+
+        Returns:
+            <list[int]>: the list of divisors
         """
         value = cls.validate_natural_int(value)
         divisors = [

@@ -159,14 +159,14 @@
 <div class="viewcode-block" id="PhaseSeries"><a class="viewcode-back" href="../../../covsirphy.analysis.html#covsirphy.PhaseSeries">[docs]</a><span class="k">class</span> <span class="nc">PhaseSeries</span><span class="p">(</span><span class="n">Word</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    A series of phases.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        first_date &lt;str&gt;: the first date of the series, like 22Jan2020</span>
+<span class="sd">        last_record_date &lt;str&gt;: the last date of the records, like 25May2020</span>
+<span class="sd">        population &lt;int&gt;: initial value of total population in the place</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">first_date</span><span class="p">,</span> <span class="n">last_record_date</span><span class="p">,</span> <span class="n">population</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        @first_date &lt;str&gt;: the first date of the series, like 22Jan2020</span>
-<span class="sd">        @last_record_date &lt;str&gt;: the last date of the records, like 25May2020</span>
-<span class="sd">        @population &lt;int&gt;: initial value of total population in the place</span>
-<span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">first_date</span> <span class="o">=</span> <span class="n">first_date</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">last_record_date</span> <span class="o">=</span> <span class="n">last_record_date</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">init_population</span> <span class="o">=</span> <span class="n">population</span>
@@ -175,10 +175,14 @@
 <div class="viewcode-block" id="PhaseSeries.clear"><a class="viewcode-back" href="../../../covsirphy.analysis.html#covsirphy.PhaseSeries.clear">[docs]</a>    <span class="k">def</span> <span class="nf">clear</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">include_past</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Clear phase information.</span>
-<span class="sd">        @include_past &lt;bool&gt;:</span>
-<span class="sd">            - if True, include past phases.</span>
-<span class="sd">            - future phase are always included</span>
-<span class="sd">        return self</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            include_past &lt;bool&gt;:</span>
+<span class="sd">                - if True, include past phases.</span>
+<span class="sd">                - future phase are always included</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            self</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">phase_dict</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_init_phase_dict</span><span class="p">(</span><span class="n">include_past</span><span class="o">=</span><span class="n">include_past</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">info_dict</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_init_info_dict</span><span class="p">(</span><span class="n">include_past</span><span class="o">=</span><span class="n">include_past</span><span class="p">)</span>
@@ -187,9 +191,11 @@
     <span class="k">def</span> <span class="nf">_init_phase_dict</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">include_past</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Return initialized dictionary which is to remember phase ID of each date.</span>
-<span class="sd">        @include_past &lt;bool&gt;:</span>
-<span class="sd">            - if True, include past phases.</span>
-<span class="sd">            - future phase are always included</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            include_past &lt;bool&gt;:</span>
+<span class="sd">                - if True, include past phases.</span>
+<span class="sd">                - future phase are always included</span>
 <span class="sd">        return &lt;dict[pd.TimeStamp]=int&gt;:</span>
 <span class="sd">            - key: dates from the first date to the last date of the records</span>
 <span class="sd">            - value: 0 (phase ID)</span>
@@ -209,9 +215,11 @@
     <span class="k">def</span> <span class="nf">_init_info_dict</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">include_past</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Return initialized dictionary which is to remember phase information.</span>
-<span class="sd">        @include_past &lt;bool&gt;:</span>
-<span class="sd">            - if True, include past phases.</span>
-<span class="sd">            - future phase are always included</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            include_past &lt;bool&gt;:</span>
+<span class="sd">                - if True, include past phases.</span>
+<span class="sd">                - future phase are always included</span>
 <span class="sd">        return &lt;dict[str]=str/int&gt;:</span>
 <span class="sd">            - &#39;Start&#39;: the first date of the records</span>
 <span class="sd">            - &#39;End&#39;: the last date of the records</span>
@@ -237,8 +245,12 @@
     <span class="k">def</span> <span class="nf">_phase_name2id</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">phase</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Return phase ID of the phase.</span>
-<span class="sd">        @phase &lt;str&gt;: phase name, like 1st, 2nd, 3rd,...</span>
-<span class="sd">        @return &lt;int&gt;</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            phase &lt;str&gt;: phase name, like 1st, 2nd, 3rd,...</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            &lt;int&gt;</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">try</span><span class="p">:</span>
             <span class="n">num</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">phase</span><span class="p">[:</span><span class="o">-</span><span class="mi">2</span><span class="p">])</span>
@@ -250,12 +262,16 @@
 <div class="viewcode-block" id="PhaseSeries.add"><a class="viewcode-back" href="../../../covsirphy.analysis.html#covsirphy.PhaseSeries.add">[docs]</a>    <span class="k">def</span> <span class="nf">add</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">start_date</span><span class="p">,</span> <span class="n">end_date</span><span class="p">,</span> <span class="n">population</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Add a new phase.</span>
-<span class="sd">        @start_date &lt;str&gt;: start date of the new phase</span>
-<span class="sd">        @end_date &lt;str&gt;: end date of the new phase</span>
-<span class="sd">        @population &lt;int&gt;: population value of the start date</span>
-<span class="sd">            - if None, initial value will be used</span>
-<span class="sd">        @kwargs: keyword arguments to save as phase information</span>
-<span class="sd">        @return self</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            start_date &lt;str&gt;: start date of the new phase</span>
+<span class="sd">            end_date &lt;str&gt;: end date of the new phase</span>
+<span class="sd">            population &lt;int&gt;: population value of the start date</span>
+<span class="sd">                - if None, initial value will be used</span>
+<span class="sd">            kwargs: keyword arguments to save as phase information</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            self</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="c1"># Arguments</span>
         <span class="k">if</span> <span class="n">population</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
@@ -299,8 +315,12 @@
 <div class="viewcode-block" id="PhaseSeries.delete"><a class="viewcode-back" href="../../../covsirphy.analysis.html#covsirphy.PhaseSeries.delete">[docs]</a>    <span class="k">def</span> <span class="nf">delete</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">phase</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Delete a phase.</span>
-<span class="sd">        @phase &lt;str&gt;: phase name, like 0th, 1st, 2nd...</span>
-<span class="sd">        @return self</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            phase &lt;str&gt;: phase name, like 0th, 1st, 2nd...</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            self</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">phase_id</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_phase_name2id</span><span class="p">(</span><span class="n">phase</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">phase_dict</span> <span class="o">=</span> <span class="p">{</span>
@@ -313,13 +333,17 @@
 <div class="viewcode-block" id="PhaseSeries.summary"><a class="viewcode-back" href="../../../covsirphy.analysis.html#covsirphy.PhaseSeries.summary">[docs]</a>    <span class="k">def</span> <span class="nf">summary</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Summarize the series of phases in a dataframe.</span>
-<span class="sd">        @return &lt;pd.DataFrame&gt;:</span>
-<span class="sd">            - index: phase name, like 1st, 2nd, 3rd...</span>
-<span class="sd">            - Type: &#39;Past&#39; or &#39;Future&#39;</span>
-<span class="sd">            - Start: start date of the phase</span>
-<span class="sd">            - End: end date of the phase</span>
-<span class="sd">            - Population: population value of the start date</span>
-<span class="sd">            - values added by self.update()</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            &lt;pandas.DataFrame&gt;:</span>
+<span class="sd">                Index:</span>
+<span class="sd">                    - phase name, like 1st, 2nd, 3rd...</span>
+<span class="sd">                COlumns:</span>
+<span class="sd">                    - Type: &#39;Past&#39; or &#39;Future&#39;</span>
+<span class="sd">                    - Start: start date of the phase</span>
+<span class="sd">                    - End: end date of the phase</span>
+<span class="sd">                    - Population: population value of the start date</span>
+<span class="sd">                    - values added by self.update()</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="c1"># Convert phase ID to phase name</span>
         <span class="n">info_dict</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">to_dict</span><span class="p">()</span>
@@ -330,7 +354,9 @@
 <div class="viewcode-block" id="PhaseSeries.to_dict"><a class="viewcode-back" href="../../../covsirphy.analysis.html#covsirphy.PhaseSeries.to_dict">[docs]</a>    <span class="k">def</span> <span class="nf">to_dict</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Summarize the series of phase in a dictionary.</span>
-<span class="sd">        @return &lt;dict[str]={str: str/int}&gt;:</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            &lt;dict[str]={str: str/int}&gt;:</span>
 <span class="sd">            - key: phase number, like 1th, 2nd,...</span>
 <span class="sd">            - value: {</span>
 <span class="sd">                &#39;Type&#39;: &lt;str&gt; &#39;Past&#39; or &#39;Future&#39;</span>
@@ -351,10 +377,14 @@
     <span class="k">def</span> <span class="nf">_tense</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">target_date</span><span class="p">,</span> <span class="n">ref_date</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Return &#39;Past&#39; or &#39;Future&#39; for the target date.</span>
-<span class="sd">        @target_date &lt;str&gt;: target date, like 22Jan2020</span>
-<span class="sd">        @ref_date &lt;str/None&gt;: reference date</span>
-<span class="sd">            - if None, will use last date of the records</span>
-<span class="sd">        @return &lt;str&gt;: &#39;Past&#39; or &#39;Future&#39;</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            target_date &lt;str&gt;: target date, like 22Jan2020</span>
+<span class="sd">            ref_date &lt;str/None&gt;: reference date</span>
+<span class="sd">                - if None, will use last date of the records</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            &lt;str&gt;: &#39;Past&#39; or &#39;Future&#39;</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">target_obj</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">strptime</span><span class="p">(</span><span class="n">target_date</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">DATE_FORMAT</span><span class="p">)</span>
         <span class="n">ref_date</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">last_record_date</span> <span class="k">if</span> <span class="n">ref_date</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">ref_date</span>
@@ -366,8 +396,10 @@
 <div class="viewcode-block" id="PhaseSeries.update"><a class="viewcode-back" href="../../../covsirphy.analysis.html#covsirphy.PhaseSeries.update">[docs]</a>    <span class="k">def</span> <span class="nf">update</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">phase</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Update information of the phase.</span>
-<span class="sd">        @phase &lt;str&gt;: phase name</span>
-<span class="sd">        @kwargs: keyword arguments to add</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            phase &lt;str&gt;: phase name</span>
+<span class="sd">            kwargs: keyword arguments to add</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">phase_id</span> <span class="o">=</span> <span class="n">phase_id</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_phase_name2id</span><span class="p">(</span><span class="n">phase</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">info_dict</span><span class="p">[</span><span class="n">phase_id</span><span class="p">]</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">kwargs</span><span class="p">)</span>
@@ -376,7 +408,8 @@
 <div class="viewcode-block" id="PhaseSeries.next_date"><a class="viewcode-back" href="../../../covsirphy.analysis.html#covsirphy.PhaseSeries.next_date">[docs]</a>    <span class="k">def</span> <span class="nf">next_date</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Return the next date of the end date of the last registered phase.</span>
-<span class="sd">        return &lt;str&gt;: like 01Feb2020</span>
+<span class="sd">        Returns:</span>
+<span class="sd">            &lt;str&gt;: like 01Feb2020</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">un_date_objects</span> <span class="o">=</span> <span class="p">[</span>
             <span class="n">k</span> <span class="k">for</span> <span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="n">v</span><span class="p">)</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">phase_dict</span><span class="o">.</span><span class="n">items</span><span class="p">()</span>

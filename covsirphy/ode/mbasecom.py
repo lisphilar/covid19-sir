@@ -27,7 +27,8 @@ class ModelBaseCommon(Word):
 
     def __getitem__(self, key):
         """
-        @key <str>: parameter name
+        Args:
+            key <str>: parameter name
         """
         if key not in self.non_param_dict.keys():
             raise KeyError(f"key must be in {', '.join(self.PARAMETERS)}")

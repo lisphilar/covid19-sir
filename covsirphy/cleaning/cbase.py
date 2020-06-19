@@ -8,12 +8,12 @@ from covsirphy.cleaning.word import Word
 class CleaningBase(Word):
     """
     Basic class for data cleaning.
+
+    Args:
+        filename <str>: CSV filename of the dataset
     """
 
     def __init__(self, filename):
-        """
-        @filename <str>: CSV filename of the dataset
-        """
         self._raw = dd.read_csv(filename).compute()
         self._cleaned_df = self.cleaning()
 
@@ -21,23 +21,33 @@ class CleaningBase(Word):
     def raw(self):
         """
         Return the raw data.
-        @return <pd.DataFrame>
+
+        Returns:
+            <pandas.DataFrame>: raw data
         """
         return self._raw
 
     def cleaned(self):
         """
         Return the cleaned dataset.
+
+        Notes:
         Cleaning method is defined by self.cleaning() method.
-        @return <pd.DataFrame>
+
+        Returns:
+            <pandas.DataFrame>: cleaned data
         """
         return self._cleaned_df
 
     def cleaning(self):
         """
         Perform data cleaning of the raw data.
-        This method will be defined in child classes.
-        @return <pd.DataFrame>
+
+        Notes:
+        Cleaning method is defined by self.cleaning() method.
+
+        Returns:
+            <pandas.DataFrame>: cleaned data
         """
         df = self._raw.copy()
         return df
@@ -45,16 +55,20 @@ class CleaningBase(Word):
     def total(self):
         """
         Return a dataframe to show chronological change of number and rates.
-        @return <pd.DataFrame>:
-            - index (Date) <pd.TimeStamp>: Observation date
-            - with group-by Date, sum of the values
-                - Confirmed <int>: the number of confirmed cases
-                - Infected <int>: the number of currently infected cases
-                - Fatal <int>: the number of fatal cases
-                - Recovered <int>: the number of recovered cases
-            - Fatal per Confirmed <int>
-            - Recovered per Confirmed <int>
-            - Fatal per (Fatal or Recovered) <int>
+
+        Returns:
+            <pandas.DataFrame>: group-by Date, sum of the values
+
+                Index:
+                    (Date) <pd.TimeStamp>: Observation date
+                Columns:
+                    - Confirmed <int>: the number of confirmed cases
+                    - Infected <int>: the number of currently infected cases
+                    - Fatal <int>: the number of fatal cases
+                    - Recovered <int>: the number of recovered cases
+                    - Fatal per Confirmed <int>
+                    - Recovered per Confirmed <int>
+                    - Fatal per (Fatal or Recovered) <int>
         """
         df = self._cleaned_df.groupby("Date").sum()
         cols = ["Infected", "Fatal", "Recovered"]
