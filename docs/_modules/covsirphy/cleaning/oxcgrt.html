@@ -175,12 +175,16 @@
 <span class="sd">        Policy indices (Overall etc.) are from</span>
 <span class="sd">         README.md and documentation/index_methodology.md in</span>
 <span class="sd">         https://github.com/OxCGRT/covid-policy-tracker/</span>
-<span class="sd">        @return &lt;pd.DataFrame&gt;</span>
-<span class="sd">            - index &lt;int&gt;: reset index</span>
-<span class="sd">            - Date &lt;pd.TimeStamp&gt;: Observation date</span>
-<span class="sd">            - Country &lt;str&gt;: country/region name</span>
-<span class="sd">            - ISO3 &lt;str&gt;: ISO 3166-1 alpha-3, like JPN</span>
-<span class="sd">            - other column names are defined by OxCGRT.COL_DICT</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            &lt;pandas.DataFrame&gt;</span>
+<span class="sd">                    Index:</span>
+<span class="sd">                        reset index</span>
+<span class="sd">                    Columns:</span>
+<span class="sd">                        - Date &lt;pd.TimeStamp&gt;: Observation date</span>
+<span class="sd">                        - Country &lt;str&gt;: country/region name</span>
+<span class="sd">                        - ISO3 &lt;str&gt;: ISO 3166-1 alpha-3, like JPN</span>
+<span class="sd">                        - other column names are defined by OxCGRT.COL_DICT</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">df</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_raw</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
         <span class="c1"># Rename the columns</span>
@@ -209,13 +213,21 @@
 <div class="viewcode-block" id="OxCGRTData.subset"><a class="viewcode-back" href="../../../covsirphy.cleaning.html#covsirphy.OxCGRTData.subset">[docs]</a>    <span class="k">def</span> <span class="nf">subset</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">country</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">iso3</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Create a subset for a country.</span>
-<span class="sd">        One of @country and @iso3 must be specified.</span>
-<span class="sd">            @country &lt;str&gt;: country name</span>
-<span class="sd">            @iso3 &lt;str&gt;: ISO 3166-1 alpha-3, like JPN</span>
-<span class="sd">        @return &lt;pd.DataFrame&gt;</span>
-<span class="sd">            - index &lt;int&gt;: reset index</span>
-<span class="sd">            - Date &lt;pd.TimeStamp&gt;: Observation date</span>
-<span class="sd">            - other column names are defined by OxCGRT.COL_DICT</span>
+
+<span class="sd">        Notes:</span>
+<span class="sd">            One of @country and @iso3 must be specified.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            country &lt;str&gt;: country name</span>
+<span class="sd">            iso3 &lt;str&gt;: ISO 3166-1 alpha-3, like JPN</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            &lt;pandas.DataFrame&gt;</span>
+<span class="sd">                Index:</span>
+<span class="sd">                    reset index</span>
+<span class="sd">                Columns:</span>
+<span class="sd">                    - Date &lt;pd.TimeStamp&gt;: Observation date</span>
+<span class="sd">                    - other column names are defined by OxCGRT.COL_DICT</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">df</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_cleaned_df</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
         <span class="k">if</span> <span class="n">country</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">iso3</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>

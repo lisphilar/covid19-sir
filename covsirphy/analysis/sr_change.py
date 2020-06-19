@@ -21,15 +21,20 @@ class ChangeFinder(Word):
     def __init__(self, clean_df, population, country, province=None,
                  population_change_dict=None):
         """
-        @clean_df <pd.DataFrame>: cleaned data
-            - index <int>: reset index
-            - Date <pd.TimeStamp>: Observation date
-            - Country <str>: country/region name
-            - Province <str>: province/prefecture/sstate name
-            - Confirmed <int>: the number of confirmed cases
-            - Infected <int>: the number of currently infected cases
-            - Fatal <int>: the number of fatal cases
-            - Recovered <int>: the number of recovered cases
+
+        Args:
+        @clean_df <pandas.DataFrame>: cleaned data
+
+                    Index:
+                        reset index
+                    Columns:
+                        - Date <pd.TimeStamp>: Observation date
+                        - Country <str>: country/region name
+                        - Province <str>: province/prefecture/sstate name
+                        - Confirmed <int>: the number of confirmed cases
+                        - Infected <int>: the number of currently infected cases
+                        - Fatal <int>: the number of fatal cases
+                        - Recovered <int>: the number of recovered cases
         @population <int>: initial value of total population in the place
         @country <str>: country name
         @province <str>: province name
@@ -63,19 +68,26 @@ class ChangeFinder(Word):
     def get_dates(self, clean_df, population, country, province):
         """
         Get dates from the dataset.
-        @clean_df <pd.DataFrame>: cleaned data
-            - index <int>: reset index
-            - Date <pd.TimeStamp>: Observation date
-            - Country <str>: country/region name
-            - Province <str>: province/prefecture/sstate name
-            - Confirmed <int>: the number of confirmed cases
-            - Infected <int>: the number of currently infected cases
-            - Fatal <int>: the number of fatal cases
-            - Recovered <int>: the number of recovered cases
-        @population <int>: initial value of total population in the place
-        @country <str>: country name
-        @province <str>: province name
-        @return <list[str]>: list of dates, like 22Jan2020
+
+        Args:
+            clean_df <pandas.DataFrame>: cleaned data
+
+                        Index:
+                            reset index
+                        Columns:
+                            - Date <pd.TimeStamp>: Observation date
+                            - Country <str>: country/region name
+                            - Province <str>: province/prefecture/sstate name
+                            - Confirmed <int>: the number of confirmed cases
+                            - Infected <int>: the number of currently infected cases
+                            - Fatal <int>: the number of fatal cases
+                            - Recovered <int>: the number of recovered cases
+            population <int>: initial value of total population in the place
+            country <str>: country name
+            province <str>: province name
+
+        Returns:
+            <list[str]>: list of dates, like 22Jan2020
         """
         sr_data = SRData(clean_df, country=country, province=province)
         df = sr_data.make(population)
@@ -85,13 +97,17 @@ class ChangeFinder(Word):
     def _read_population_data(self, dates, population, change_dict=None):
         """
         Make population dictionary easy to use in this class.
-        @dates <list[str]>: list of dates, like 22Jan2020
-        @population <int>: initial value of total population in the place
-        @change_dict <dict[str]=int/None>:
-            - dictionary of total population
-                - key: start date of population change
-                - value: total population
-        @return <dict[str]=int>:
+
+        Args:
+            dates <list[str]>: list of dates, like 22Jan2020
+            population <int>: initial value of total population in the place
+            change_dict <dict[str]=int/None>:
+                - dictionary of total population
+                    - key: start date of population change
+                    - value: total population
+
+        Returns:
+            <dict[str]=int>:
             - key: date, like 22Jan2020
             - value: total population on the date
         """
@@ -107,8 +123,10 @@ class ChangeFinder(Word):
     def _init_study(self, seed=None):
         """
         Initialize Optuna study.
-        @seed <int/None>: random seed of hyperparameter optimization
-            - this will effective when @n_jobs is 1
+
+        Args:
+            seed <int/None>: random seed of hyperparameter optimization
+                - this will effective when @n_jobs is 1
         """
         self.study = optuna.create_study(
             direction="minimize",
@@ -118,8 +136,10 @@ class ChangeFinder(Word):
     def add_trial(self, n_trials_iteration=10, n_jobs=-1):
         """
         Run trial.
-        @n_trials_iteration <int>: the number of trials in one iteration
-        @n_jobs <int>: the number of parallel jobs or -1 (CPU count)
+
+        Args:
+            n_trials_iteration <int>: the number of trials in one iteration
+            n_jobs <int>: the number of parallel jobs or -1 (CPU count)
         """
         self.study.optimize(
             lambda x: self.objective(x),
@@ -131,18 +151,22 @@ class ChangeFinder(Word):
             timeout=60, n_trials_iteration=10, n_jobs=-1, seed=None):
         """
         Run optimization.
-        @n_points <int>: the number of change points
-        @min_duration <int>: minimum duration of one phase [days]
-            - must be over 2
-        @allowance <int>: allowance of change points [days]
-            - if the estimated change points was equal to previous iteration
-              with this allowance, stop running.
-        @timeout <int>: time-out of run
-        @n_trials_iteration <int>: the number of trials in one iteration
-        @n_jobs <int>: the number of parallel jobs or -1 (CPU count)
-        @seed <int/None>: random seed of hyperparameter optimization
-            - this will effective when @n_jobs is 1
-        @return self
+
+        Args:
+            n_points <int>: the number of change points
+            min_duration <int>: minimum duration of one phase [days]
+                - must be over 2
+            allowance <int>: allowance of change points [days]
+                - if the estimated change points was equal to previous iteration
+                with this allowance, stop running.
+            timeout <int>: time-out of run
+            n_trials_iteration <int>: the number of trials in one iteration
+            n_jobs <int>: the number of parallel jobs or -1 (CPU count)
+            seed <int/None>: random seed of hyperparameter optimization
+                - this will effective when @n_jobs is 1
+
+        Returns:
+            self
         """
         self.n_points = n_points
         self.min_duration = min_duration
@@ -189,8 +213,12 @@ class ChangeFinder(Word):
         """
         Objective function of Optuna study.
         This defines the parameter values using Optuna.
-        @trial <optuna.trial>: a trial of the study
-        @return <float>: score of the error function to minimize
+
+        Args:
+            trial <optuna.trial>: a trial of the study
+
+        Returns:
+            <float>: score of the error function to minimize
         """
         # Suggest change points
         id_selected = [len(self.dates) - 1]
@@ -211,8 +239,12 @@ class ChangeFinder(Word):
     def phase_range(self, change_dates):
         """
         Return the start date and end date of the phases.
-        @change_dates <list[str]>: list of change points, like 22Jan2020
-        @return <tuple(list[str], list[str])>:
+
+        Args:
+            change_dates <list[str]>: list of change points, like 22Jan2020
+
+        Returns:
+            <tuple(list[str], list[str])>:
             - list of start dates
             - list of end dates
         """
@@ -230,9 +262,13 @@ class ChangeFinder(Word):
         """
         Definition of error score to minimize in the study.
         This is weighted average of RMSLE scores.
-        @start_dates <list[str]>: list of start date of phases (candidates)
-        @end_dates <list[str]>: list of end date of phases (candidates)
-        @return <float> : score of the error function to minimize
+
+        Args:
+            start_dates <list[str]>: list of start date of phases (candidates)
+            end_dates <list[str]>: list of end date of phases (candidates)
+
+        Returns:
+            <float> : score of the error function to minimize
         """
         scores = list()
         for (start_date, end_date) in zip(start_dates, end_dates):
@@ -248,7 +284,9 @@ class ChangeFinder(Word):
     def _create_phases(self):
         """
         Create a dictionary of phases.
-        @return <covsirphy.PhaseSeries>
+
+        Returns:
+            <covsirphy.PhaseSeries>
         """
         start_dates, end_dates = self.phase_range(self.change_dates)
         pop_list = [self.pop_dict[date] for date in start_dates]
@@ -270,10 +308,14 @@ class ChangeFinder(Word):
     def show(self, show_figure=True, filename=None):
         """
         show the result as a figure and return a dictionary of phases.
+
+        Args:
         @show_figure <bool>:
             - if True, show the result as a figure.
         @filename <str>: filename of the figure, or None (show figure)
-        @return <covsirphy.PhaseSeries>
+
+        Returns:
+            <covsirphy.PhaseSeries>
         """
         # Create phase dictionary
         phase_series = self._create_phases()

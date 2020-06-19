@@ -24,17 +24,18 @@ from covsirphy.analysis.sr_change import ChangeFinder
 class Scenario(Word):
     """
     Scenario analysis.
+
+    Args:
+        jhu_data <covsirphy.JHUData>: object of records
+        pop_data <covsirphy.Population>: Population object
+        country <str>: country name
+        province <str>: province name
     """
 
     def __init__(self, jhu_data, pop_data, country, province=None):
-        """
-        @jhu_data <covsirphy.JHUData>: object of records
-        @pop_data <covsirphy.Population>: Population object
-        @country <str>: country name
-        @province <str>: province name
-        """
         # Population
-        pop_data = self.validate_instance(pop_data, Population, name="pop_data")
+        pop_data = self.validate_instance(
+            pop_data, Population, name="pop_data")
         self.population = pop_data.value(country, province=province)
         # Records
         jhu_data = self.validate_instance(jhu_data, JHUData, name="jhu_data")
@@ -67,7 +68,9 @@ class Scenario(Word):
     def delete(self, name):
         """
         Delete a PhaseSeries.
-        @name <str>: PhaseSeries name
+
+        Args:
+            name <str>: PhaseSeries name
         """
         if name == self.MAIN:
             raise ValueError(f"@name {name} cannot be deleted.")
@@ -76,9 +79,10 @@ class Scenario(Word):
     def records(self, show_figure=True, filename=None):
         """
         Return the records as a dataframe.
-        @show_figure <bool>:
-            - if True, show the records as a line-plot.
-        @filename <str>: filename of the figure, or None (show figure)
+
+        Args:
+            show_figure <bool>: if True, show the records as a line-plot.
+            filename <str>: filename of the figure, or None (show figure)
         """
         df = self.jhu_data.subset(self.country, province=self.province)
         if not show_figure:
@@ -96,25 +100,31 @@ class Scenario(Word):
         """
         Add a new phase.
         The start date is the next date of the last registered phase.
-        - @name <str>: phase series name
-            - if 'Main', main PhaseSeries will be used
-            - if not registered, new phase series will be created
-        - @end_date or @days must be specified
-            @end_date <str>: end date of the new phase
-            @days <int>: the number of days to add
-        @population <int>: population value of the start date
-            - if None, the same as initial value
-        @model <covsirphy.ModelBase>: ODE model
-            - if None, the model of the last phase will be used
-        @kwargs: keyword arguments of ODE model parameters
-            - un-included parameters will be the same as the last phase
-                - if model is not the same, None
-                - tau is fixed as the last phase's value or 1440
-        @return None
+
+        Args:
+            name <str>: phase series name, 'Main' or user-defined name
+            end_date <str>: end date of the new phase
+            days <int>: the number of days to add
+            population <int>: population value of the start date
+                - if None, the same as initial value
+            model <covsirphy.ModelBase>: ODE model
+                - if None, the model of the last phase will be used
+            kwargs: keyword arguments of ODE model parameters
+                - un-included parameters will be the same as the last phase
+                    - if model is not the same, None
+                    - tau is fixed as the last phase's value or 1440
+
+        Notes:
+            - If the ohases series has not been registered, new phase series will be created
+            - @end_date or @days must be specified
+
+        Returns:
+            None
         """
         # Parse arguments
         if not isinstance(name, str):
-            raise TypeError(f"@name must be a string, but {type(name)} was applied.")
+            raise TypeError(
+                f"@name must be a string, but {type(name)} was applied.")
         if name == "Main":
             name = self.MAIN
         if name not in self.series_dict.keys():
@@ -150,17 +160,20 @@ class Scenario(Word):
         )
         param_dict[self.RT] = model_instance.calc_r0()
         param_dict.update(model_instance.calc_days_dict(self.tau))
-        self.series_dict[name].add(start_date, end_date, population, **param_dict)
+        self.series_dict[name].add(
+            start_date, end_date, population, **param_dict)
 
     def clear(self, name="Main", include_past=False):
         """
         Clear phase information.
-        @name <str>: phase series name
-            - if 'Main', main phase series will be used
-            - if not registered, new phaseseries will be created
-        @include_past <bool>:
-            - if True, include past phases.
-            - future phase are always included
+
+        Args:
+            name <str>: phase series name
+                - if 'Main', main phase series will be used
+                - if not registered, new phaseseries will be created
+            include_past <bool>:
+                - if True, include past phases.
+                - future phase are always included
         """
         if name == "Main":
             name = self.MAIN
@@ -171,11 +184,15 @@ class Scenario(Word):
     def summary(self, name=None):
         """
         Summarize the series of phases and return a dataframe.
-        @name <str>: phase series name
-            - 'Main' for main phase series
-            - name of alternative phase series registered by self.add_phase()
-            - if None, all phase series will be shown
-        @return <pd.DataFrame>:
+
+        Args:
+            name <str>: phase series name
+                - 'Main' for main phase series
+                - name of alternative phase series registered by self.add_phase()
+                - if None, all phase series will be shown
+
+        Returns:
+            <pandas.DataFrame>:
             - if @name not None, as the same as PhaseSeries().summary()
             - if @name is None, index will be phase series name and phase name
         """
@@ -203,16 +220,20 @@ class Scenario(Word):
               show_figure=True, filename=None, **kwargs):
         """
         Perform S-R trend analysis and set phases.
-        @n_points <int>: the number of change points
-        @set_phases <bool>:
-            - if True and n_points is not 0, set phases automatically
-            - if @include_init_phase is False, initial phase will not be used
-        @include_init_phase <bool>: whether use initial phase or not
-        @show_figure <bool>:
-            - if True, show the records as a line-plot.
-        @filename <str>: filename of the figure, or None (show figure)
-        @kwargs: the other keyword arguments of ChangeFinder().run()
-        @return None
+
+        Args:
+            n_points <int>: the number of change points
+            set_phases <bool>:
+                - if True and n_points is not 0, set phases automatically
+                - if @include_init_phase is False, initial phase will not be used
+            include_init_phase <bool>: whether use initial phase or not
+            show_figure <bool>:
+                - if True, show the records as a line-plot.
+            filename <str>: filename of the figure, or None (show figure)
+            kwargs: the other keyword arguments of ChangeFinder().run()
+
+        Returns:
+            None
         """
         finder = ChangeFinder(
             self.clean_df, self.population,
@@ -229,16 +250,20 @@ class Scenario(Word):
     def _estimate(self, model, phase, name="Main", **kwargs):
         """
         Estimate the parameters of the model using the records.
-        @phase <str>: phase name, like 1st, 2nd...
-        @model <covsirphy.ModelBase>: ODE model
-        @name <str>: phase series name
-            - if 'Main', main PhaseSeries will be used
-            - if not registered, new phase series will be created
-        @kwargs:
-            - keyword arguments of the model parameter
-                - tau value cannot be included
-            - keyword arguments of covsirphy.Estimator.run()
-        @return self
+
+        Args:
+            phase <str>: phase name, like 1st, 2nd...
+            model <covsirphy.ModelBase>: ODE model
+            name <str>: phase series name
+                - if 'Main', main PhaseSeries will be used
+                - if not registered, new phase series will be created
+            kwargs:
+                - keyword arguments of the model parameter
+                    - tau value cannot be included
+                - keyword arguments of covsirphy.Estimator.run()
+
+        Returns:
+            self
         """
         name = self.MAIN if name == "Main" else name
         if name not in self.series_dict.keys():
@@ -247,7 +272,8 @@ class Scenario(Word):
         try:
             setting_dict = self.series_dict[name].to_dict()[phase]
         except KeyError:
-            raise KeyError(f"{phase} phase has not been registered for @name {name}.")
+            raise KeyError(
+                f"{phase} phase has not been registered for @name {name}.")
         start_date = setting_dict[self.START]
         end_date = setting_dict[self.END]
         population = setting_dict[self.N]
@@ -283,14 +309,16 @@ class Scenario(Word):
     def estimate(self, model, series_list=None, phases=None, **kwargs):
         """
         Estimate the parameters of the model using the records.
-        @series_list <list[str]>: list of phase series name
-            - if None, all phase series will be used
-        @phases <list[str]>: list of phase names, like 1st, 2nd...
-            - if None, all past phase will be used
-        @model <covsirphy.ModelBase>: ODE model
-        @kwargs:
-            - keyword arguments of the model parameter
-            - keyword arguments of covsirphy.Estimator.run()
+
+        Args:
+            series_list <list[str]>: list of phase series name
+                - if None, all phase series will be used
+            phases <list[str]>: list of phase names, like 1st, 2nd...
+                - if None, all past phase will be used
+            model <covsirphy.ModelBase>: ODE model
+            kwargs:
+                - keyword arguments of the model parameter
+                - keyword arguments of covsirphy.Estimator.run()
         """
         # Check model
         model = self.validate_subclass(model, ModelBase, "model")
@@ -317,10 +345,12 @@ class Scenario(Word):
     def estimate_history(self, phase, name="Main", **kwargs):
         """
         Show the history of optimization.
-        @phase <str>: phase name, like 1st, 2nd...
-        @name <str>: phase series name
-            - if 'Main', main PhaseSeries will be used
-        @kwargs: keyword arguments of <covsirphy.Estimator.history()>
+
+        Args:
+            phase <str>: phase name, like 1st, 2nd...
+            name <str>: phase series name
+                - if 'Main', main PhaseSeries will be used
+            kwargs: keyword arguments of <covsirphy.Estimator.history()>
         """
         name = self.MAIN if name == "Main" else name
         if name not in self.series_dict.keys():
@@ -336,10 +366,12 @@ class Scenario(Word):
     def estimate_accuracy(self, phase, name="Main", **kwargs):
         """
         Show the accuracy as a figure.
-        @phase <str>: phase name, like 1st, 2nd...
-        @name <str>: phase series name
-            - if 'Main', main PhaseSeries will be used
-        @kwargs: keyword arguments of <covsirphy.Estimator.accuracy()>
+
+        Args:
+            phase <str>: phase name, like 1st, 2nd...
+            name <str>: phase series name
+                - if 'Main', main PhaseSeries will be used
+            kwargs: keyword arguments of <covsirphy.Estimator.accuracy()>
         """
         name = self.MAIN if name == "Main" else name
         if name not in self.series_dict.keys():
@@ -355,8 +387,12 @@ class Scenario(Word):
     def predict(self, **kwargs):
         """
         Old method. Please use Scenario.simulate().
-        @kwargs: keyword arguments of Scenario.simulate()
-        @return <pd.DataFrame>
+
+        Args:
+            kwargs: keyword arguments of Scenario.simulate()
+
+        Returns:
+            <pandas.DataFrame>
         """
         warnings.warn(
             "Please use Scenario simulate() rather than Scenario.predict()",
@@ -368,20 +404,26 @@ class Scenario(Word):
     def simulate(self, name="Main", y0_dict=None, show_figure=True, filename=None):
         """
         Simulate ODE models with setted parameter values and show it as a figure.
-        @name <str>: phase series name
-            - if 'Main', main PhaseSeries will be used
-        @y0_dict <dict[str]=float>:
-            - dictionary of initial values or None
-            - if model will be changed in the later phase, must be specified
-        @show_figure <bool>:
-            - if True, show the result as a figure.
-        @filename <str>: filename of the figure, or None (show figure)
-        @return <pd.DataFrame>
-            - index <int>: reset index
-            - Date <str>: date, like 31Dec2020
-            - Country <str>: country/region name
-            - Province <str>: province/prefecture/state name
-            - variables of the models <int>: Confirmed <int> etc.
+
+        Args:
+            name <str>: phase series name
+                - if 'Main', main PhaseSeries will be used
+            y0_dict <dict[str]=float>:
+                - dictionary of initial values or None
+                - if model will be changed in the later phase, must be specified
+            show_figure <bool>:
+                - if True, show the result as a figure.
+            filename <str>: filename of the figure, or None (show figure)
+
+        Returns:
+            <pandas.DataFrame>
+                Index:
+                    reset index
+                Columns:
+                    - Date <str>: date, like 31Dec2020
+                    - Country <str>: country/region name
+                    - Province <str>: province/prefecture/state name
+                    - variables of the models <int>: Confirmed <int> etc.
         """
         name = self.MAIN if name == "Main" else name
         df = self.series_dict[name].summary()
@@ -416,18 +458,24 @@ class Scenario(Word):
     def _simulate(self, name, y0_dict):
         """
         Simulate ODE models with setted parameter values.
-        @name <str>: phase series name
-        @y0_dict <dict[str]=float>:
-            - dictionary of initial values or None
-            - if model will be changed in the later phase, must be specified
-        @return <tuple(pd.DataFrame, list[pd.TimeStamp])>:
-            - <pd.DataFrame>: output of ODESimulator.dim()
-                - index <int>: reset index
-                - Date <pd.TimeStamp>: Observation date
-                - Country <str>: country/region name
-                - Province <str>: province/prefecture/state name
-                - variables of the models <int>: Confirmed <int> etc.
-            - <list[pd.TimeStamp]>: list of start dates
+
+        Args:
+            name <str>: phase series name
+            y0_dict <dict[str]=float>:
+                - dictionary of initial values or None
+                - if model will be changed in the later phase, must be specified
+
+        Returns:
+            <tuple(pd.DataFrame, list[pd.TimeStamp])>:
+                <pandas.DataFrame>: output of ODESimulator.dim()
+
+                    Index: reset index
+                    Columns:
+                        - Date <pd.TimeStamp>: Observation date
+                        - Country <str>: country/region name
+                        - Province <str>: province/prefecture/state name
+                        - variables of the models <int>: Confirmed <int> etc.
+                - <list[pd.TimeStamp]>: list of start dates
         """
         df = self.series_dict[name].summary()
         simulator = ODESimulator(
@@ -473,12 +521,16 @@ class Scenario(Word):
     def get(self, param, name="Main", phase="last"):
         """
         Get the parameter value of the phase.
-        @param <str>: parameter name (columns in self.summary())
-        @name <str>: phase series name
-            - if 'Main', main PhaseSeries will be used
-        @phase <str>: phase name or 'last'
-            - if 'last', the value of the last phase will be returned
-        @return <str/int/float>
+
+        Args:
+            param <str>: parameter name (columns in self.summary())
+            name <str>: phase series name
+                - if 'Main', main PhaseSeries will be used
+            phase <str>: phase name or 'last'
+                - if 'last', the value of the last phase will be returned
+
+        Returns:
+            <str/int/float>
         """
         name = self.MAIN if name == "Main" else name
         if name not in self.series_dict.keys():
@@ -494,16 +546,20 @@ class Scenario(Word):
                       show_figure=True, filename=None, box_plot=True, **kwargs):
         """
         Return subset of summary.
-        @targets <list[str]/str>: parameters to show (Rt etc.)
-        @name <str>: phase series name
-            - if 'Main', main PhaseSeries will be used
-        @divide_by_first <bool>: if True, divide the values by 1st phase's values
-        @box_plot <bool>: if True, box plot. if False, line plot.
-        @show_figure <bool>:
-            - if True, show the result as a figure.
-        @filename <str>: filename of the figure, or None (show figure)
-        @kwargs: keword arguments of pd.DataFrame.plot or line_plot()
-        @return <pd.DataFrame>
+
+        Args:
+            targets <list[str]/str>: parameters to show (Rt etc.)
+            name <str>: phase series name
+                - if 'Main', main PhaseSeries will be used
+            divide_by_first <bool>: if True, divide the values by 1st phase's values
+            box_plot <bool>: if True, box plot. if False, line plot.
+            show_figure <bool>:
+                - if True, show the result as a figure.
+            filename <str>: filename of the figure, or None (show figure)
+            kwargs: keword arguments of pd.DataFrame.plot or line_plot()
+
+        Returns:
+            <pandas.DataFrame>
         """
         name = self.MAIN if name == "Main" else name
         if name not in self.series_dict.keys():
@@ -557,12 +613,16 @@ class Scenario(Word):
     def describe(self):
         """
         Describe representative values.
-        @return <pd.DataFrame>
-            - index: scenario name
-            - max(Infected): max value of Infected
-            - argmax(Infected): the date when Infected shows max value
-            - Infected({date}): Infected on the end date of the last phase
-            - Fatal({date}): Fatal on the end date of the last phase
+
+        Returns:
+            <pandas.DataFrame>
+                Index:
+                    <int>: scenario name
+                Columns:
+                    - max(Infected): max value of Infected
+                    - argmax(Infected): the date when Infected shows max value
+                    - Infected({date}): Infected on the end date of the last phase
+                    - Fatal({date}): Fatal on the end date of the last phase
         """
         _dict = dict()
         for (name, _) in self.series_dict.items():

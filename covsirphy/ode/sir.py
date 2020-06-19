@@ -8,6 +8,11 @@ from covsirphy.ode.mbase import ModelBase
 class SIR(ModelBase):
     """
     SIR model.
+
+    Args:
+        population <int>: total population
+        rho <float>
+        sigma <float>
     """
     # Model name
     NAME = "SIR"
@@ -27,12 +32,6 @@ class SIR(ModelBase):
     VARS_INCLEASE = [ModelBase.FR]
 
     def __init__(self, population, rho, sigma):
-        """
-        @population <int>: total population
-        parameter values of non-dimensional ODE model
-            - @rho <float>
-            - @sigma <float>
-        """
         # Total population
         if not isinstance(population, int):
             raise TypeError("@population must be an integer.")
@@ -44,7 +43,13 @@ class SIR(ModelBase):
     def __call__(self, t, X):
         """
         Return the list of dS/dt (tau-free) etc.
-        @return <np.array>
+
+        Args:
+            t <int>: time steps
+            X <numpy.array>: values of th model variables
+
+        Returns:
+            <np.array>
         """
         n = self.population
         s, i, *_ = X
@@ -57,12 +62,18 @@ class SIR(ModelBase):
     def param_range(cls, taufree_df, population):
         """
         Define the range of parameters (not including tau value).
-        @taufree_df <pd.DataFrame>:
-            - index: reset index
-            - t <int>: time steps (tau-free)
-            - columns with dimensional variables
+
+        Args:
+        @taufree_df <pandas.DataFrame>:
+                    Index:
+                        reset index
+                    Columns:
+                        - t <int>: time steps (tau-free)
+                        - columns with dimensional variables
         @population <int>: total population
-        @return <dict[name]=(min, max)>:
+
+        Returns:
+            <dict[name]=(min, max)>:
             - min <float>: min value
             - max <float>: max value
         """
@@ -85,19 +96,27 @@ class SIR(ModelBase):
     def specialize(cls, data_df, population):
         """
         Specialize the dataset for this model.
-        @data_df <pd.DataFrame>:
-            - index: reset index
-            - Confirmed <int>: the number of confirmed cases
-            - Infected <int>: the number of currently infected cases
-            - Fatal <int>: the number of fatal cases
-            - Recovered <int>: the number of recovered cases
-            - any columns
+
+        Args:
+        @data_df <pandas.DataFrame>:
+                    Index:
+                        reset index
+                    Columns:
+                        - Confirmed <int>: the number of confirmed cases
+                        - Infected <int>: the number of currently infected cases
+                        - Fatal <int>: the number of fatal cases
+                        - Recovered <int>: the number of recovered cases
+                        - any columns
         @population <int>: total population in the place
-        @return <pd.DataFrame>:
-            - index: reset index
-            - any columns @data_df has
-            - Susceptible <int>: the number of susceptible cases
-            - Fatal or Recovered <int>: total number of fatal/recovered cases
+
+        Returns:
+            <pandas.DataFrame>:
+                    Index:
+                        reset index
+                    Columns:
+                        - any columns @data_df has
+                        - Susceptible <int>: the number of susceptible cases
+                        - Fatal or Recovered <int>: total number of fatal/recovered cases
         """
         df = super().specialize(data_df, population)
         # Calculate dimensional variables
@@ -110,19 +129,28 @@ class SIR(ModelBase):
         """
         Restore Confirmed/Infected/Recovered/Fatal.
          using a dataframe with the variables of the model.
-        @specialized_df <pd.DataFrame>: dataframe with the variables
-            - index <object>
-            - Susceptible <int>: the number of susceptible cases
-            - Infected <int>: the number of currently infected cases
-            - Fatal or Recovered <int>: the number of fatal/recovered cases
-            - any columns
-        @return <pd.DataFrame>:
-            - index <object>: as-is
-            - Confirmed <int>: the number of confirmed cases
-            - Infected <int>: the number of currently infected cases
-            - Fatal <int>: the number of fatal cases
-            - Recovered <int>: the number of recovered cases
-            - the other columns @specialzed_df has
+
+        Args:
+            specialized_df <pandas.DataFrame>: dataframe with the variables
+
+                Index:
+                    reset index
+                Columns:
+                    - Susceptible <int>: the number of susceptible cases
+                    - Infected <int>: the number of currently infected cases
+                    - Fatal or Recovered <int>: the number of fatal/recovered cases
+                    - any columns
+
+        Returns:
+            <pandas.DataFrame>:
+                Index:
+                    reset index
+                Columns:
+                    - Confirmed <int>: the number of confirmed cases
+                    - Infected <int>: the number of currently infected cases
+                    - Fatal <int>: the number of fatal cases
+                    - Recovered <int>: the number of recovered cases
+                    - the other columns @specialzed_df has
         """
         df = specialized_df.copy()
         other_cols = list(set(df.columns) - set(cls.VALUE_COLUMNS))
@@ -141,7 +169,9 @@ class SIR(ModelBase):
     def calc_days_dict(self, tau):
         """
         Calculate 1/beta [day] etc.
-        @param tau <int>: tau value [min]
+
+        Args:
+            param tau <int>: tau value [min]
         """
         _dict = {
             "1/beta [day]": int(tau / 24 / 60 / self.rho),

@@ -14,38 +14,42 @@ from covsirphy.util.stopwatch import StopWatch
 class Estimator(Optimizer):
     """
     Hyperparameter optimization of an ODE model.
+
+    Args:
+        clean_df <pandas.DataFrame>:
+            - cleaned observed data or simulated data
+            - observed data
+                Index:
+                    reset index
+                Columns:
+                    - Date <pd.TimeStamp>: Observation date
+                    - Country <str>: country/region name
+                    - Province <str>: province/prefecture/sstate name
+                    - Confirmed <int>: the number of confirmed cases
+                    - Infected <int>: the number of currently infected cases
+                    - Fatal <int>: the number of fatal cases
+                    - Recovered <int>: the number of recovered cases
+            - simulated data
+                Index:
+                    reset index
+                Columns:
+                    - Date <pd.TimeStamp>: Observation date
+                    - Country <str>: country/region name
+                    - Province <str>: province/prefecture/state name
+                    - variables of the models <int>
+        model <subclass of cs.ModelBase>: ODE model
+        population <int>: total population in the place
+        country <str>: country name
+        province <str>: province name
+        start_date <str>: start date, like 22Jan2020
+        end_date <str>: end date, like 01Feb2020
+        kwargs: parameter values of the model
     """
     np.seterr(divide="raise")
 
     def __init__(self, clean_df, model, population,
                  country, province=None,
                  start_date=None, end_date=None, **kwargs):
-        """
-        @clean_df <pd.DataFrame>:
-            - cleaned observed data or simulated data
-            - observed data
-                - index <int>: reset index
-                - Date <pd.TimeStamp>: Observation date
-                - Country <str>: country/region name
-                - Province <str>: province/prefecture/sstate name
-                - Confirmed <int>: the number of confirmed cases
-                - Infected <int>: the number of currently infected cases
-                - Fatal <int>: the number of fatal cases
-                - Recovered <int>: the number of recovered cases
-            - simulated data
-                - index <int>: reset index
-                - Date <pd.TimeStamp>: Observation date
-                - Country <str>: country/region name
-                - Province <str>: province/prefecture/state name
-                - variables of the models <int>
-        @model <subclass of cs.ModelBase>: ODE model
-        @population <int>: total population in the place
-        @country <str>: country name
-        @province <str>: province name
-        @start_date <str>: start date, like 22Jan2020
-        @end_date <str>: end date, like 01Feb2020
-        @kwargs: parameter values of the model
-        """
         # Read arguments
         model = self.validate_subclass(model, ModelBase, name="model")
         self.model = model
@@ -66,7 +70,8 @@ class Estimator(Optimizer):
         if set(self.VALUE_COLUMNS) not in set(df.columns):
             df = model.restore(df)
         self.ode_data = ODEData(df, country=country, province=province)
-        self.y0_dict = self.ode_data.y0(model, population, start_date=start_date)
+        self.y0_dict = self.ode_data.y0(
+            model, population, start_date=start_date)
         # For optimization
         optuna.logging.disable_default_handler()
         self.x = self.TS
@@ -83,8 +88,10 @@ class Estimator(Optimizer):
     def _run_trial(self, n_jobs, timeout_iteration):
         """
         Run trial.
-        @n_jobs <int>: the number of parallel jobs or -1 (CPU count)
-        @timeout_iteration <int>: time-out of one iteration
+
+        Args:
+            n_jobs <int>: the number of parallel jobs or -1 (CPU count)
+            timeout_iteration <int>: time-out of one iteration
         """
         self.study.optimize(
             lambda x: self.objective(x),
@@ -102,19 +109,24 @@ class Estimator(Optimizer):
             - values of monotonic increasing variables increases monotonically
             - predicted values are in the allowance
                 when each actual value shows max value
-        - @timeout <int>: time-out of run
-        @reset_n_max <int>:
-            - if study was reset @reset_n_max times, will not be reset anymore
-        @timeout_iteration <int>: time-out of one iteration
-        @allowance <tuple(float, float)>:
-            - the allowance of the predicted value
-        @n_jobs <int>: the number of parallel jobs or -1 (CPU count)
-        @seed <int/None>: random seed of hyperparameter optimization
-            - this will effective when @n_jobs is 1
-        @return None
+
+        Args:
+            timeout <int>: time-out of run
+            reset_n_max <int>: if study was reset @reset_n_max times, will not be reset anymore
+            timeout_iteration <int>: time-out of one iteration
+            allowance <tuple(float, float)>: the allowance of the predicted value
+            n_jobs <int>: the number of parallel jobs or -1 (CPU count)
+            seed <int/None>: random seed of hyperparameter optimization
+        
+        Notes:
+            @seed will effective when @n_jobs is 1
+
+        Returns:
+            None
         """
         if seed is not None and n_jobs != 1:
-            raise ValueError("@seed must be None when @n_jobs is not equal to 1.")
+            raise ValueError(
+                "@seed must be None when @n_jobs is not equal to 1.")
         if self.study is None:
             self._init_study(seed=seed)
         print("\tRunning optimization...")
@@ -174,8 +186,12 @@ class Estimator(Optimizer):
         """
         Objective function of Optuna study.
         This defines the parameter values using Optuna.
-        @trial <optuna.trial>: a trial of the study
-        @return <float>: score of the error function to minimize
+
+        Args:
+            trial <optuna.trial>: a trial of the study
+
+        Returns:
+            <float>: score of the error function to minimize
         """
         fixed_dict = self.fixed_dict.copy()
         # Convert T to t using tau
@@ -200,11 +216,17 @@ class Estimator(Optimizer):
     def divide_minutes(self, tau):
         """
         Divide T by tau in the training dataset.
-        @tau <int>: tau value [min]
-        @return <pd.DataFrame>:
-            - index: reset index
-            - t <int>: Elapsed time divided by tau value [-]
-            - columns with dimensional variables
+
+        Args:
+            tau <int>: tau value [min]
+
+        Returns:
+            <pandas.DataFrame>:
+                    Index:
+                        reset index
+                    Columns:
+                        - t <int>: Elapsed time divided by tau value [-]
+                        - columns with dimensional variables
         """
         tau = self.validate_natural_int(tau, name="tau")
         taufree_df = self.ode_data.make(
@@ -220,13 +242,19 @@ class Estimator(Optimizer):
     def error_f(self, param_dict, taufree_df):
         """
         Definition of error score to minimize in the study.
-        @param_dict <dict[str]=int/float>:
-            - estimated parameter values
-        @taufree_df <pd.DataFrame>: training dataset
-            - index: reset index
-            - t: time steps [-]
-            - columns with dimensional variables
-        @return <float>: score of the error function to minimize
+
+        Args:
+            param_dict <dict[str]=int/float>: estimated parameter values
+            taufree_df <pandas.DataFrame>: training dataset
+
+                Index:
+                    reset index
+                Columns:
+                    - t: time steps [-]
+                    - columns with dimensional variables
+
+        Returns:
+            <float>: score of the error function to minimize
         """
         if self.step_n is None:
             raise ValueError("self.step_n must be defined in advance.")
@@ -253,13 +281,18 @@ class Estimator(Optimizer):
     def simulate(self, step_n, param_dict):
         """
         Simulate the values with the parameters.
-        @step_n <int>: number of iteration
-        @param_dict <dict[str]=int/float>:
-            - estimated parameter values
-        @return <pd.DataFrame>:
-            - index: reset index
-            - t <int>: Elapsed time divided by tau value [-]
-            - columns with dimensionalized variables
+
+        Args:
+            step_n <int>: number of iteration
+            param_dict <dict[str]=int/float>: estimated parameter values
+
+        Returns:
+            <pandas.DataFrame>:
+                Index:
+                    reset index
+                Columns:
+                    - t <int>: Elapsed time divided by tau value [-]
+                    - columns with dimensionalized variables
         """
         simulator = ODESimulator(country=self.country, province=self.province)
         simulator.add(
@@ -276,16 +309,22 @@ class Estimator(Optimizer):
         """
         Summarize the results of optimization.
         This function should be overwritten in subclass.
-        @name <str>: index of the dataframe
-        @return <pd.DataFrame>:
-            - index (@name)
-            - (parameters of the model)
-            - tau
-            - Rt: basic or phase-dependent reproduction number
-            - (dimensional parameters [day])
-            - RMSLE: Root Mean Squared Log Error
-            - Trials: the number of trials
-            - Runtime: run time of estimation
+
+        Args:
+            name <str>: index of the dataframe
+
+        Returns:
+            <pandas.DataFrame>:
+                Index:
+                    reset index
+                Columns:
+                    - (parameters of the model)
+                    - tau
+                    - Rt: basic or phase-dependent reproduction number
+                    - (dimensional parameters [day])
+                    - RMSLE: Root Mean Squared Log Error
+                    - Trials: the number of trials
+                    - Runtime: run time of estimation
         """
         param_dict = super().param()
         model_params = param_dict.copy()
@@ -311,7 +350,9 @@ class Estimator(Optimizer):
     def rmsle(self, tau):
         """
         Return RMSLE score.
-        @tau <int>: tau value
+
+        Args:
+            tau <int>: tau value
         """
         score = super().rmsle(
             train_df=self.divide_minutes(tau),
@@ -322,7 +363,9 @@ class Estimator(Optimizer):
     def accuracy(self, filename=None):
         """
         Show the accuracy as a figure.
-        @filename <str>: filename of the figure, or None (show figure)
+
+        Args:
+            filename <str>: filename of the figure, or None (show figure)
         """
         tau = super().param()[self.TAU]
         train_df = self.divide_minutes(tau)

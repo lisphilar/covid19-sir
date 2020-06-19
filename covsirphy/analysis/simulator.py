@@ -16,6 +16,8 @@ class ODESimulator(Word):
 
     def __init__(self, country, province="-"):
         """
+
+        Args:
         @country <str>: country name
         @province <str>: province name
         """
@@ -32,20 +34,24 @@ class ODESimulator(Word):
     def add(self, model, step_n, population, param_dict=None, y0_dict=None):
         """
         Add models to the simulator.
-        @model <subclass of cs.ModelBase>: the first ODE model
-        @step_n <int>: the number of steps
-        @population <int>: population in the place
-        @param_dict <dict[str]=float>:
-            - dictionary of parameter values or None
-            - if not include some params, the last values will be used
-                - NameError when the model is the first model
-                - NameError if new params are included
-        @y0_dict <dict[str]=float>:
-            - dictionary of dimensional initial values or None
-            - None or if not include some variables, the last values will be used
-                - NameError when the model is the first model
-                - NameError if new variable are included
-        @return self
+
+        Args:
+            model <subclass of cs.ModelBase>: the first ODE model
+            step_n <int>: the number of steps
+            population <int>: population in the place
+            param_dict <dict[str]=float>:
+                - dictionary of parameter values or None
+                - if not include some params, the last values will be used
+                    - NameError when the model is the first model
+                    - NameError if new params are included
+            y0_dict <dict[str]=float>:
+                - dictionary of dimensional initial values or None
+                - None or if not include some variables, the last values will be used
+                    - NameError when the model is the first model
+                    - NameError if new variable are included
+
+        Returns:
+            self
         """
         # Validate the arguments
         model = self.validate_subclass(model, ModelBase, name="model")
@@ -87,19 +93,25 @@ class ODESimulator(Word):
     def _solve_ode(self, model, step_n, param_dict, y0_dict, population):
         """
         Solve ODE of the model.
-        @model <subclass of cs.ModelBase>: the ODE model
-        @step_n <int>: the number of steps
-        @param_dict <dict[str]=float>: dictionary of parameter values
-            - key <str>: parameter name
-            - value <float>: parameter value
-        @y0_dict <dict[str]=int>: dictionary of initial values
-            - key <str>: dimensional variable name
-            - value <int>:initial value of the variable
-        @population <int>: total population
-        @return <pd.DataFrame>:
-            - index: reset index
-            - t <int>: Elapsed time divided by tau value [-]
-            - columns with dimensional variables
+
+        Args:
+            model <subclass of cs.ModelBase>: the ODE model
+            step_n <int>: the number of steps
+            param_dict <dict[str]=float>: dictionary of parameter values
+                - key <str>: parameter name
+                - value <float>: parameter value
+            y0_dict <dict[str]=int>: dictionary of initial values
+                - key <str>: dimensional variable name
+                - value <int>:initial value of the variable
+            population <int>: total population
+
+        Returns:
+            <pandas.DataFrame>:
+                Index:
+                    reset index
+                Columns:
+                    - t <int>: Elapsed time divided by tau value [-]
+                    - columns with dimensional variables
         """
         step_n = self.validate_natural_int(step_n, name="step_n")
         population = self.validate_natural_int(population, name="population")
@@ -154,10 +166,14 @@ class ODESimulator(Word):
     def taufree(self):
         """
         Return tau-free results.
-        @return <pd.DataFrame>:
-            - index: reset index
-            - t <int>: Elapsed time divided by tau value [-]
-            - columns with dimensionalized variables
+
+        Returns:
+            <pandas.DataFrame>:
+                    Index:
+                        reset index
+                    Columns:
+                        - t <int>: Elapsed time divided by tau value [-]
+                        - columns with dimensionalized variables
         """
         df = self._taufree_df.copy()
         if df.empty:
@@ -168,10 +184,14 @@ class ODESimulator(Word):
     def non_dim(self):
         """
         Return the non-dimensionalized results.
-        @return <pd.DataFrame>:
-            - index: reset index
-            - t <int>: Elapsed time divided by tau value [-]
-            - non-dimensionalized variables of Susceptible etc.
+
+        Returns:
+            <pandas.DataFrame>:
+                Index:
+                    reset index
+                Columns:
+                    - t <int>: Elapsed time divided by tau value [-]
+                    - non-dimensionalized variables of Susceptible etc.
         """
         df = self.taufree()
         df = df.set_index(self.TS)
@@ -184,14 +204,20 @@ class ODESimulator(Word):
     def dim(self, tau, start_date):
         """
         Return the dimensionalized results.
-        @tau <int>: tau value [min]
-        @start_date <str>: start date of the records, like 22Jan2020
-        @return <pd.DataFrame>
-            - index <int>: reset index
-            - Date <pd.TimeStamp>: Observation date
-            - Country <str>: country/region name
-            - Province <str>: province/prefecture/state name
-            - variables of the models <int>
+
+        Args:
+            tau <int>: tau value [min]
+            start_date <str>: start date of the records, like 22Jan2020
+
+        Returns:
+            <pandas.DataFrame>
+                Index:
+                    reset index
+                Columns:
+                    - Date <pd.TimeStamp>: Observation date
+                    - Country <str>: country/region name
+                    - Province <str>: province/prefecture/state name
+                    - variables of the models <int>
         """
         df = self.taufree()
         df = df.drop(self.TS, axis=1)

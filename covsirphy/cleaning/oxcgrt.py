@@ -26,12 +26,16 @@ class OxCGRTData(CleaningBase):
         Policy indices (Overall etc.) are from
          README.md and documentation/index_methodology.md in
          https://github.com/OxCGRT/covid-policy-tracker/
-        @return <pd.DataFrame>
-            - index <int>: reset index
-            - Date <pd.TimeStamp>: Observation date
-            - Country <str>: country/region name
-            - ISO3 <str>: ISO 3166-1 alpha-3, like JPN
-            - other column names are defined by OxCGRT.COL_DICT
+
+        Returns:
+            <pandas.DataFrame>
+                    Index:
+                        reset index
+                    Columns:
+                        - Date <pd.TimeStamp>: Observation date
+                        - Country <str>: country/region name
+                        - ISO3 <str>: ISO 3166-1 alpha-3, like JPN
+                        - other column names are defined by OxCGRT.COL_DICT
         """
         df = self._raw.copy()
         # Rename the columns
@@ -60,13 +64,21 @@ class OxCGRTData(CleaningBase):
     def subset(self, country=None, iso3=None):
         """
         Create a subset for a country.
-        One of @country and @iso3 must be specified.
-            @country <str>: country name
-            @iso3 <str>: ISO 3166-1 alpha-3, like JPN
-        @return <pd.DataFrame>
-            - index <int>: reset index
-            - Date <pd.TimeStamp>: Observation date
-            - other column names are defined by OxCGRT.COL_DICT
+
+        Notes:
+            One of @country and @iso3 must be specified.
+
+        Args:
+            country <str>: country name
+            iso3 <str>: ISO 3166-1 alpha-3, like JPN
+
+        Returns:
+            <pandas.DataFrame>
+                Index:
+                    reset index
+                Columns:
+                    - Date <pd.TimeStamp>: Observation date
+                    - other column names are defined by OxCGRT.COL_DICT
         """
         df = self._cleaned_df.copy()
         if country is None and iso3 is None:

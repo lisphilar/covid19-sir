@@ -165,17 +165,27 @@
     <span class="k">def</span> <span class="nf">_make</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">grouped_df</span><span class="p">,</span> <span class="n">population</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Make dataset for S-R trend analysis.</span>
-<span class="sd">        @grouped_df &lt;pd.DataFrame&gt;: cleaned data grouped by Date</span>
-<span class="sd">            - index (Date) &lt;pd.TimeStamp&gt;: Observation date</span>
-<span class="sd">            - Confirmed &lt;int&gt;: the number of confirmed cases</span>
-<span class="sd">            - Infected &lt;int&gt;: the number of currently infected cases</span>
-<span class="sd">            - Fatal &lt;int&gt;: the number of fatal cases</span>
-<span class="sd">            - Recovered &lt;int&gt;: the number of recovered cases</span>
-<span class="sd">        @population &lt;int&gt;: total population in the place</span>
-<span class="sd">        @return &lt;pd.DataFrame&gt;</span>
-<span class="sd">            - index (Date) &lt;pd.TimeStamp&gt;: Observation date</span>
-<span class="sd">            - Recovered: The number of recovered cases</span>
-<span class="sd">            - Susceptible_actual: Actual data of Susceptible</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            grouped_df &lt;pandas.DataFrame&gt;: cleaned data grouped by Date</span>
+
+<span class="sd">                Index:</span>
+<span class="sd">                    Date &lt;pd.TimeStamp&gt;: Observation date</span>
+<span class="sd">                Columns:</span>
+<span class="sd">                    - Confirmed &lt;int&gt;: the number of confirmed cases</span>
+<span class="sd">                    - Infected &lt;int&gt;: the number of currently infected cases</span>
+<span class="sd">                    - Fatal &lt;int&gt;: the number of fatal cases</span>
+<span class="sd">                    - Recovered &lt;int&gt;: the number of recovered cases</span>
+
+<span class="sd">            population &lt;int&gt;: total population in the place</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            &lt;pandas.DataFrame&gt;</span>
+<span class="sd">                Index:</span>
+<span class="sd">                    Date &lt;pd.TimeStamp&gt;: Observation date</span>
+<span class="sd">                Columns:</span>
+<span class="sd">                    - Recovered: The number of recovered cases</span>
+<span class="sd">                    - Susceptible_actual: Actual data of Susceptible</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">df</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">validate_dataframe</span><span class="p">(</span>
             <span class="n">grouped_df</span><span class="p">,</span>
@@ -188,13 +198,23 @@
 <div class="viewcode-block" id="SRData.make"><a class="viewcode-back" href="../../../covsirphy.phase.html#covsirphy.SRData.make">[docs]</a>    <span class="k">def</span> <span class="nf">make</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">population</span><span class="p">,</span> <span class="n">start_date</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">end_date</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Make dataset for S-R trend analysis.</span>
-<span class="sd">        @population &lt;int&gt;: total population in the place</span>
-<span class="sd">        @start_date &lt;str&gt;: start date, like 22Jan2020</span>
-<span class="sd">        @end_date &lt;str&gt;: end date, like 01Feb2020</span>
-<span class="sd">        @return &lt;pd.DataFrame&gt;</span>
-<span class="sd">            - index (Date) &lt;pd.TimeStamp&gt;: Observation date</span>
-<span class="sd">            - Recovered: The number of recovered cases</span>
-<span class="sd">            - Susceptible_actual: Actual values of Susceptible (&gt; 0)</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            opulation &lt;int&gt;: total population in the place</span>
+<span class="sd">            start_date &lt;str/None&gt;: start date, like 22Jan2020</span>
+<span class="sd">            end_date &lt;str/None&gt;: end date, like 01Feb2020</span>
+
+<span class="sd">        Notes:</span>
+<span class="sd">            - When @start_date is None, the first date of the records will be used</span>
+<span class="sd">            - When @end_date is None, the last date of the records will be used</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            &lt;pandas.DataFrame&gt;</span>
+<span class="sd">                Index:</span>
+<span class="sd">                    Date &lt;pd.TimeStamp&gt;: Observation date</span>
+<span class="sd">                Columns:</span>
+<span class="sd">                    - Recovered: The number of recovered cases</span>
+<span class="sd">                    - Susceptible_actual: Actual values of Susceptible (&gt; 0)</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">df</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">all_df</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
         <span class="n">series</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>

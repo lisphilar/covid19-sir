@@ -170,15 +170,20 @@
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">clean_df</span><span class="p">,</span> <span class="n">population</span><span class="p">,</span> <span class="n">country</span><span class="p">,</span> <span class="n">province</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
                  <span class="n">population_change_dict</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        @clean_df &lt;pd.DataFrame&gt;: cleaned data</span>
-<span class="sd">            - index &lt;int&gt;: reset index</span>
-<span class="sd">            - Date &lt;pd.TimeStamp&gt;: Observation date</span>
-<span class="sd">            - Country &lt;str&gt;: country/region name</span>
-<span class="sd">            - Province &lt;str&gt;: province/prefecture/sstate name</span>
-<span class="sd">            - Confirmed &lt;int&gt;: the number of confirmed cases</span>
-<span class="sd">            - Infected &lt;int&gt;: the number of currently infected cases</span>
-<span class="sd">            - Fatal &lt;int&gt;: the number of fatal cases</span>
-<span class="sd">            - Recovered &lt;int&gt;: the number of recovered cases</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">        @clean_df &lt;pandas.DataFrame&gt;: cleaned data</span>
+
+<span class="sd">                    Index:</span>
+<span class="sd">                        reset index</span>
+<span class="sd">                    Columns:</span>
+<span class="sd">                        - Date &lt;pd.TimeStamp&gt;: Observation date</span>
+<span class="sd">                        - Country &lt;str&gt;: country/region name</span>
+<span class="sd">                        - Province &lt;str&gt;: province/prefecture/sstate name</span>
+<span class="sd">                        - Confirmed &lt;int&gt;: the number of confirmed cases</span>
+<span class="sd">                        - Infected &lt;int&gt;: the number of currently infected cases</span>
+<span class="sd">                        - Fatal &lt;int&gt;: the number of fatal cases</span>
+<span class="sd">                        - Recovered &lt;int&gt;: the number of recovered cases</span>
 <span class="sd">        @population &lt;int&gt;: initial value of total population in the place</span>
 <span class="sd">        @country &lt;str&gt;: country name</span>
 <span class="sd">        @province &lt;str&gt;: province name</span>
@@ -212,19 +217,26 @@
 <div class="viewcode-block" id="ChangeFinder.get_dates"><a class="viewcode-back" href="../../../covsirphy.analysis.html#covsirphy.ChangeFinder.get_dates">[docs]</a>    <span class="k">def</span> <span class="nf">get_dates</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">clean_df</span><span class="p">,</span> <span class="n">population</span><span class="p">,</span> <span class="n">country</span><span class="p">,</span> <span class="n">province</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Get dates from the dataset.</span>
-<span class="sd">        @clean_df &lt;pd.DataFrame&gt;: cleaned data</span>
-<span class="sd">            - index &lt;int&gt;: reset index</span>
-<span class="sd">            - Date &lt;pd.TimeStamp&gt;: Observation date</span>
-<span class="sd">            - Country &lt;str&gt;: country/region name</span>
-<span class="sd">            - Province &lt;str&gt;: province/prefecture/sstate name</span>
-<span class="sd">            - Confirmed &lt;int&gt;: the number of confirmed cases</span>
-<span class="sd">            - Infected &lt;int&gt;: the number of currently infected cases</span>
-<span class="sd">            - Fatal &lt;int&gt;: the number of fatal cases</span>
-<span class="sd">            - Recovered &lt;int&gt;: the number of recovered cases</span>
-<span class="sd">        @population &lt;int&gt;: initial value of total population in the place</span>
-<span class="sd">        @country &lt;str&gt;: country name</span>
-<span class="sd">        @province &lt;str&gt;: province name</span>
-<span class="sd">        @return &lt;list[str]&gt;: list of dates, like 22Jan2020</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            clean_df &lt;pandas.DataFrame&gt;: cleaned data</span>
+
+<span class="sd">                        Index:</span>
+<span class="sd">                            reset index</span>
+<span class="sd">                        Columns:</span>
+<span class="sd">                            - Date &lt;pd.TimeStamp&gt;: Observation date</span>
+<span class="sd">                            - Country &lt;str&gt;: country/region name</span>
+<span class="sd">                            - Province &lt;str&gt;: province/prefecture/sstate name</span>
+<span class="sd">                            - Confirmed &lt;int&gt;: the number of confirmed cases</span>
+<span class="sd">                            - Infected &lt;int&gt;: the number of currently infected cases</span>
+<span class="sd">                            - Fatal &lt;int&gt;: the number of fatal cases</span>
+<span class="sd">                            - Recovered &lt;int&gt;: the number of recovered cases</span>
+<span class="sd">            population &lt;int&gt;: initial value of total population in the place</span>
+<span class="sd">            country &lt;str&gt;: country name</span>
+<span class="sd">            province &lt;str&gt;: province name</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            &lt;list[str]&gt;: list of dates, like 22Jan2020</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">sr_data</span> <span class="o">=</span> <span class="n">SRData</span><span class="p">(</span><span class="n">clean_df</span><span class="p">,</span> <span class="n">country</span><span class="o">=</span><span class="n">country</span><span class="p">,</span> <span class="n">province</span><span class="o">=</span><span class="n">province</span><span class="p">)</span>
         <span class="n">df</span> <span class="o">=</span> <span class="n">sr_data</span><span class="o">.</span><span class="n">make</span><span class="p">(</span><span class="n">population</span><span class="p">)</span>
@@ -234,13 +246,17 @@
     <span class="k">def</span> <span class="nf">_read_population_data</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dates</span><span class="p">,</span> <span class="n">population</span><span class="p">,</span> <span class="n">change_dict</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Make population dictionary easy to use in this class.</span>
-<span class="sd">        @dates &lt;list[str]&gt;: list of dates, like 22Jan2020</span>
-<span class="sd">        @population &lt;int&gt;: initial value of total population in the place</span>
-<span class="sd">        @change_dict &lt;dict[str]=int/None&gt;:</span>
-<span class="sd">            - dictionary of total population</span>
-<span class="sd">                - key: start date of population change</span>
-<span class="sd">                - value: total population</span>
-<span class="sd">        @return &lt;dict[str]=int&gt;:</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            dates &lt;list[str]&gt;: list of dates, like 22Jan2020</span>
+<span class="sd">            population &lt;int&gt;: initial value of total population in the place</span>
+<span class="sd">            change_dict &lt;dict[str]=int/None&gt;:</span>
+<span class="sd">                - dictionary of total population</span>
+<span class="sd">                    - key: start date of population change</span>
+<span class="sd">                    - value: total population</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            &lt;dict[str]=int&gt;:</span>
 <span class="sd">            - key: date, like 22Jan2020</span>
 <span class="sd">            - value: total population on the date</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -256,8 +272,10 @@
     <span class="k">def</span> <span class="nf">_init_study</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">seed</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Initialize Optuna study.</span>
-<span class="sd">        @seed &lt;int/None&gt;: random seed of hyperparameter optimization</span>
-<span class="sd">            - this will effective when @n_jobs is 1</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            seed &lt;int/None&gt;: random seed of hyperparameter optimization</span>
+<span class="sd">                - this will effective when @n_jobs is 1</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">study</span> <span class="o">=</span> <span class="n">optuna</span><span class="o">.</span><span class="n">create_study</span><span class="p">(</span>
             <span class="n">direction</span><span class="o">=</span><span class="s2">&quot;minimize&quot;</span><span class="p">,</span>
@@ -267,8 +285,10 @@
 <div class="viewcode-block" id="ChangeFinder.add_trial"><a class="viewcode-back" href="../../../covsirphy.analysis.html#covsirphy.ChangeFinder.add_trial">[docs]</a>    <span class="k">def</span> <span class="nf">add_trial</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">n_trials_iteration</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">n_jobs</span><span class="o">=-</span><span class="mi">1</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Run trial.</span>
-<span class="sd">        @n_trials_iteration &lt;int&gt;: the number of trials in one iteration</span>
-<span class="sd">        @n_jobs &lt;int&gt;: the number of parallel jobs or -1 (CPU count)</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            n_trials_iteration &lt;int&gt;: the number of trials in one iteration</span>
+<span class="sd">            n_jobs &lt;int&gt;: the number of parallel jobs or -1 (CPU count)</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">study</span><span class="o">.</span><span class="n">optimize</span><span class="p">(</span>
             <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">objective</span><span class="p">(</span><span class="n">x</span><span class="p">),</span>
@@ -280,18 +300,22 @@
             <span class="n">timeout</span><span class="o">=</span><span class="mi">60</span><span class="p">,</span> <span class="n">n_trials_iteration</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">n_jobs</span><span class="o">=-</span><span class="mi">1</span><span class="p">,</span> <span class="n">seed</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Run optimization.</span>
-<span class="sd">        @n_points &lt;int&gt;: the number of change points</span>
-<span class="sd">        @min_duration &lt;int&gt;: minimum duration of one phase [days]</span>
-<span class="sd">            - must be over 2</span>
-<span class="sd">        @allowance &lt;int&gt;: allowance of change points [days]</span>
-<span class="sd">            - if the estimated change points was equal to previous iteration</span>
-<span class="sd">              with this allowance, stop running.</span>
-<span class="sd">        @timeout &lt;int&gt;: time-out of run</span>
-<span class="sd">        @n_trials_iteration &lt;int&gt;: the number of trials in one iteration</span>
-<span class="sd">        @n_jobs &lt;int&gt;: the number of parallel jobs or -1 (CPU count)</span>
-<span class="sd">        @seed &lt;int/None&gt;: random seed of hyperparameter optimization</span>
-<span class="sd">            - this will effective when @n_jobs is 1</span>
-<span class="sd">        @return self</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            n_points &lt;int&gt;: the number of change points</span>
+<span class="sd">            min_duration &lt;int&gt;: minimum duration of one phase [days]</span>
+<span class="sd">                - must be over 2</span>
+<span class="sd">            allowance &lt;int&gt;: allowance of change points [days]</span>
+<span class="sd">                - if the estimated change points was equal to previous iteration</span>
+<span class="sd">                with this allowance, stop running.</span>
+<span class="sd">            timeout &lt;int&gt;: time-out of run</span>
+<span class="sd">            n_trials_iteration &lt;int&gt;: the number of trials in one iteration</span>
+<span class="sd">            n_jobs &lt;int&gt;: the number of parallel jobs or -1 (CPU count)</span>
+<span class="sd">            seed &lt;int/None&gt;: random seed of hyperparameter optimization</span>
+<span class="sd">                - this will effective when @n_jobs is 1</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            self</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">n_points</span> <span class="o">=</span> <span class="n">n_points</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">min_duration</span> <span class="o">=</span> <span class="n">min_duration</span>
@@ -338,8 +362,12 @@
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Objective function of Optuna study.</span>
 <span class="sd">        This defines the parameter values using Optuna.</span>
-<span class="sd">        @trial &lt;optuna.trial&gt;: a trial of the study</span>
-<span class="sd">        @return &lt;float&gt;: score of the error function to minimize</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            trial &lt;optuna.trial&gt;: a trial of the study</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            &lt;float&gt;: score of the error function to minimize</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="c1"># Suggest change points</span>
         <span class="n">id_selected</span> <span class="o">=</span> <span class="p">[</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dates</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span><span class="p">]</span>
@@ -360,8 +388,12 @@
 <div class="viewcode-block" id="ChangeFinder.phase_range"><a class="viewcode-back" href="../../../covsirphy.analysis.html#covsirphy.ChangeFinder.phase_range">[docs]</a>    <span class="k">def</span> <span class="nf">phase_range</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">change_dates</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Return the start date and end date of the phases.</span>
-<span class="sd">        @change_dates &lt;list[str]&gt;: list of change points, like 22Jan2020</span>
-<span class="sd">        @return &lt;tuple(list[str], list[str])&gt;:</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            change_dates &lt;list[str]&gt;: list of change points, like 22Jan2020</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            &lt;tuple(list[str], list[str])&gt;:</span>
 <span class="sd">            - list of start dates</span>
 <span class="sd">            - list of end dates</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -379,9 +411,13 @@
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Definition of error score to minimize in the study.</span>
 <span class="sd">        This is weighted average of RMSLE scores.</span>
-<span class="sd">        @start_dates &lt;list[str]&gt;: list of start date of phases (candidates)</span>
-<span class="sd">        @end_dates &lt;list[str]&gt;: list of end date of phases (candidates)</span>
-<span class="sd">        @return &lt;float&gt; : score of the error function to minimize</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            start_dates &lt;list[str]&gt;: list of start date of phases (candidates)</span>
+<span class="sd">            end_dates &lt;list[str]&gt;: list of end date of phases (candidates)</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            &lt;float&gt; : score of the error function to minimize</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">scores</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
         <span class="k">for</span> <span class="p">(</span><span class="n">start_date</span><span class="p">,</span> <span class="n">end_date</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">start_dates</span><span class="p">,</span> <span class="n">end_dates</span><span class="p">):</span>
@@ -397,7 +433,9 @@
     <span class="k">def</span> <span class="nf">_create_phases</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Create a dictionary of phases.</span>
-<span class="sd">        @return &lt;covsirphy.PhaseSeries&gt;</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            &lt;covsirphy.PhaseSeries&gt;</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">start_dates</span><span class="p">,</span> <span class="n">end_dates</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">phase_range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">change_dates</span><span class="p">)</span>
         <span class="n">pop_list</span> <span class="o">=</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">pop_dict</span><span class="p">[</span><span class="n">date</span><span class="p">]</span> <span class="k">for</span> <span class="n">date</span> <span class="ow">in</span> <span class="n">start_dates</span><span class="p">]</span>
@@ -419,10 +457,14 @@
 <div class="viewcode-block" id="ChangeFinder.show"><a class="viewcode-back" href="../../../covsirphy.analysis.html#covsirphy.ChangeFinder.show">[docs]</a>    <span class="k">def</span> <span class="nf">show</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">show_figure</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">filename</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        show the result as a figure and return a dictionary of phases.</span>
+
+<span class="sd">        Args:</span>
 <span class="sd">        @show_figure &lt;bool&gt;:</span>
 <span class="sd">            - if True, show the result as a figure.</span>
 <span class="sd">        @filename &lt;str&gt;: filename of the figure, or None (show figure)</span>
-<span class="sd">        @return &lt;covsirphy.PhaseSeries&gt;</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            &lt;covsirphy.PhaseSeries&gt;</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="c1"># Create phase dictionary</span>
         <span class="n">phase_series</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_create_phases</span><span class="p">()</span>

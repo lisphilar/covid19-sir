@@ -158,12 +158,13 @@
 <div class="viewcode-block" id="CountryData"><a class="viewcode-back" href="../../../covsirphy.cleaning.html#covsirphy.CountryData">[docs]</a><span class="k">class</span> <span class="nc">CountryData</span><span class="p">(</span><span class="n">CleaningBase</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Data cleaning of country level data.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        filename &lt;str&gt;: filename to read the data</span>
+<span class="sd">        country &lt;str&gt;: country name</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="p">,</span> <span class="n">country</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        @country &lt;str&gt;: country name</span>
-<span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_raw</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_country</span> <span class="o">=</span> <span class="n">country</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">province_col</span> <span class="o">=</span> <span class="kc">None</span>
@@ -174,24 +175,31 @@
     <span class="k">def</span> <span class="nf">country</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Return the country name.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            &lt;str&gt;: country name</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_country</span>
 
 <div class="viewcode-block" id="CountryData.raw_columns"><a class="viewcode-back" href="../../../covsirphy.cleaning.html#covsirphy.CountryData.raw_columns">[docs]</a>    <span class="k">def</span> <span class="nf">raw_columns</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Return the column names of the raw data.</span>
-<span class="sd">        @return &lt;list[str]&gt;</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            &lt;list[str]&gt;: the list of column names of the raw data</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_raw</span><span class="o">.</span><span class="n">columns</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span></div>
 
 <div class="viewcode-block" id="CountryData.set_variables"><a class="viewcode-back" href="../../../covsirphy.cleaning.html#covsirphy.CountryData.set_variables">[docs]</a>    <span class="k">def</span> <span class="nf">set_variables</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">date</span><span class="p">,</span> <span class="n">confirmed</span><span class="p">,</span> <span class="n">fatal</span><span class="p">,</span> <span class="n">recovered</span><span class="p">,</span> <span class="n">province</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Set the correspondence of the variables and columns of the raw data.</span>
-<span class="sd">        @date &lt;str&gt;: column name for Date</span>
-<span class="sd">        @confirmed &lt;str&gt;: column name for Confirmed</span>
-<span class="sd">        @fatal &lt;str&gt;: column name for Fatal</span>
-<span class="sd">        @recovered &lt;str&gt;: column name for Confirmed</span>
-<span class="sd">        @province &lt;str&gt;: (optional) column name for Province</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            date &lt;str&gt;: column name for Date</span>
+<span class="sd">            confirmed &lt;str&gt;: column name for Confirmed</span>
+<span class="sd">            fatal &lt;str&gt;: column name for Fatal</span>
+<span class="sd">            recovered &lt;str&gt;: column name for Confirmed</span>
+<span class="sd">            province &lt;str&gt;: (optional) column name for Province</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">province_col</span> <span class="o">=</span> <span class="n">province</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">var_dict</span> <span class="o">=</span> <span class="p">{</span>
@@ -205,15 +213,19 @@
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Perform data cleaning of the raw data.</span>
 <span class="sd">        This method overwrite super().cleaning() method.</span>
-<span class="sd">        @return &lt;pd.DataFrame&gt;</span>
-<span class="sd">            - index &lt;int&gt;: reset index</span>
-<span class="sd">            - Date &lt;pd.TimeStamp&gt;: Observation date</span>
-<span class="sd">            - Country &lt;str&gt;: country/region name</span>
-<span class="sd">            - Province &lt;str&gt;: province/prefecture/state name</span>
-<span class="sd">            - Confirmed &lt;int&gt;: the number of confirmed cases</span>
-<span class="sd">            - Infected &lt;int&gt;: the number of currently infected cases</span>
-<span class="sd">            - Fatal &lt;int&gt;: the number of fatal cases</span>
-<span class="sd">            - Recovered &lt;int&gt;: the number of recovered cases</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            &lt;pandas.DataFrame&gt;:</span>
+<span class="sd">                Index:</span>
+<span class="sd">                    reset index</span>
+<span class="sd">                Columns:</span>
+<span class="sd">                    - Date &lt;pd.TimeStamp&gt;: Observation date</span>
+<span class="sd">                    - Country &lt;str&gt;: country/region name</span>
+<span class="sd">                    - Province &lt;str&gt;: province/prefecture/state name</span>
+<span class="sd">                    - Confirmed &lt;int&gt;: the number of confirmed cases</span>
+<span class="sd">                    - Infected &lt;int&gt;: the number of currently infected cases</span>
+<span class="sd">                    - Fatal &lt;int&gt;: the number of fatal cases</span>
+<span class="sd">                    - Recovered &lt;int&gt;: the number of recovered cases</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">var_dict</span><span class="p">:</span>
             <span class="n">s</span> <span class="o">=</span> <span class="s2">&quot;Please execute CountryData.set_variables() in advance.&quot;</span>
@@ -241,15 +253,19 @@
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Return the cleaned dataset.</span>
 <span class="sd">        Cleaning method is defined by self.cleaning() method.</span>
-<span class="sd">        @return &lt;pd.DataFrame&gt;</span>
-<span class="sd">            - index &lt;int&gt;: reset index</span>
-<span class="sd">            - Date &lt;pd.TimeStamp&gt;: Observation date</span>
-<span class="sd">            - Country &lt;str&gt;: country/region name</span>
-<span class="sd">            - Province &lt;str&gt;: province/prefecture/sstate name</span>
-<span class="sd">            - Confirmed &lt;int&gt;: the number of confirmed cases</span>
-<span class="sd">            - Infected &lt;int&gt;: the number of currently infected cases</span>
-<span class="sd">            - Fatal &lt;int&gt;: the number of fatal cases</span>
-<span class="sd">            - Recovered &lt;int&gt;: the number of recovered cases</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            &lt;pandas.DataFrame&gt;:</span>
+<span class="sd">                Index:</span>
+<span class="sd">                    reset index</span>
+<span class="sd">                Columns:</span>
+<span class="sd">                    - Date &lt;pd.TimeStamp&gt;: Observation date</span>
+<span class="sd">                    - Country &lt;str&gt;: country/region name</span>
+<span class="sd">                    - Province &lt;str&gt;: province/prefecture/sstate name</span>
+<span class="sd">                    - Confirmed &lt;int&gt;: the number of confirmed cases</span>
+<span class="sd">                    - Infected &lt;int&gt;: the number of currently infected cases</span>
+<span class="sd">                    - Fatal &lt;int&gt;: the number of fatal cases</span>
+<span class="sd">                    - Recovered &lt;int&gt;: the number of recovered cases</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_cleaned_df</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">cleaning</span><span class="p">()</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_cleaned_df</span></div></div>

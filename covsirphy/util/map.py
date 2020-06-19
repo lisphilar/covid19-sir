@@ -11,12 +11,14 @@ import pandas as pd
 def jpn_map(prefectures, values, title, cmap_name="Reds", filename=None):
     """
     Show colored Japan prefecture map.
-    @prefectures <list/pd.Series[str]>: prefecture name.
-    @values <int/float>: value of each prefectures
-    @title <str>: title of the figure
-    @cmap_name <str>: Please refere to
-        - https://matplotlib.org/3.1.0/tutorials/colors/colormaps.html
-        @filename <str>: filename of the figure, or None (show figure)
+
+    Args:
+        prefectures <list/pd.Series[str]>: prefecture name.
+        values <int/float>: value of each prefectures
+        title <str>: title of the figure
+        cmap_name <str>: Please refere to
+            https://matplotlib.org/3.1.0/tutorials/colors/colormaps.html
+        filename <str>: filename of the figure, or None (show figure)
     """
     # Prefecture code created in
     # https://www.kaggle.com/lisphilar/eda-of-japan-dataset

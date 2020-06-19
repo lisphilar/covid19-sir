@@ -9,12 +9,13 @@ from covsirphy.cleaning.cbase import CleaningBase
 class CountryData(CleaningBase):
     """
     Data cleaning of country level data.
+
+    Args:
+        filename <str>: filename to read the data
+        country <str>: country name
     """
 
     def __init__(self, filename, country):
-        """
-        @country <str>: country name
-        """
         self._raw = pd.read_csv(filename)
         self._country = country
         self.province_col = None
@@ -25,24 +26,31 @@ class CountryData(CleaningBase):
     def country(self):
         """
         Return the country name.
+
+        Returns:
+            <str>: country name
         """
         return self._country
 
     def raw_columns(self):
         """
         Return the column names of the raw data.
-        @return <list[str]>
+
+        Returns:
+            <list[str]>: the list of column names of the raw data
         """
         return self._raw.columns.tolist()
 
     def set_variables(self, date, confirmed, fatal, recovered, province=None):
         """
         Set the correspondence of the variables and columns of the raw data.
-        @date <str>: column name for Date
-        @confirmed <str>: column name for Confirmed
-        @fatal <str>: column name for Fatal
-        @recovered <str>: column name for Confirmed
-        @province <str>: (optional) column name for Province
+
+        Args:
+            date <str>: column name for Date
+            confirmed <str>: column name for Confirmed
+            fatal <str>: column name for Fatal
+            recovered <str>: column name for Confirmed
+            province <str>: (optional) column name for Province
         """
         self.province_col = province
         self.var_dict = {
@@ -56,15 +64,19 @@ class CountryData(CleaningBase):
         """
         Perform data cleaning of the raw data.
         This method overwrite super().cleaning() method.
-        @return <pd.DataFrame>
-            - index <int>: reset index
-            - Date <pd.TimeStamp>: Observation date
-            - Country <str>: country/region name
-            - Province <str>: province/prefecture/state name
-            - Confirmed <int>: the number of confirmed cases
-            - Infected <int>: the number of currently infected cases
-            - Fatal <int>: the number of fatal cases
-            - Recovered <int>: the number of recovered cases
+
+        Returns:
+            <pandas.DataFrame>:
+                Index:
+                    reset index
+                Columns:
+                    - Date <pd.TimeStamp>: Observation date
+                    - Country <str>: country/region name
+                    - Province <str>: province/prefecture/state name
+                    - Confirmed <int>: the number of confirmed cases
+                    - Infected <int>: the number of currently infected cases
+                    - Fatal <int>: the number of fatal cases
+                    - Recovered <int>: the number of recovered cases
         """
         if not self.var_dict:
             s = "Please execute CountryData.set_variables() in advance."
@@ -92,15 +104,19 @@ class CountryData(CleaningBase):
         """
         Return the cleaned dataset.
         Cleaning method is defined by self.cleaning() method.
-        @return <pd.DataFrame>
-            - index <int>: reset index
-            - Date <pd.TimeStamp>: Observation date
-            - Country <str>: country/region name
-            - Province <str>: province/prefecture/sstate name
-            - Confirmed <int>: the number of confirmed cases
-            - Infected <int>: the number of currently infected cases
-            - Fatal <int>: the number of fatal cases
-            - Recovered <int>: the number of recovered cases
+
+        Returns:
+            <pandas.DataFrame>:
+                Index:
+                    reset index
+                Columns:
+                    - Date <pd.TimeStamp>: Observation date
+                    - Country <str>: country/region name
+                    - Province <str>: province/prefecture/sstate name
+                    - Confirmed <int>: the number of confirmed cases
+                    - Infected <int>: the number of currently infected cases
+                    - Fatal <int>: the number of fatal cases
+                    - Recovered <int>: the number of recovered cases
         """
         self._cleaned_df = self.cleaning()
         return self._cleaned_df

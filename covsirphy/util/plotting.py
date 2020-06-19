@@ -24,31 +24,37 @@ def line_plot(df, title, xlabel=None, ylabel="Cases",
               filename=None):
     """
     Show chronological change of the data.
-    @df <pd.DataFrame>: data
-        - index: reset index
-        - columns: field names
-        - values: data values
-    @title <str>: title of the figure
-    - labels:
-        @xlabel <str>: x-label
-        @ylabel <str>: y-label
-    - additional lines
-        @v <list[int/float]>: list of x values of vertical lines or None
-        @h <list[int/float]>: list of y values of horizontal lines or None
-    - limit of domain
-        @xlim <tuple(int/float, int/float)>: limit of x dimain
-        @ylim <tuple(int/float, int/float)>: limit of y dimain
-        - if None, the value will be automatically determined by Matplotlib
-    - scale of labels
-        @math_scale <bool>: whether use LaTEX or not
-        @x_logscale <bool>: whether use log-scale in x-axis or not
-        @y_logscale <bool>: whether use log-scale in y-axis or not
-        @y_integer <bool>: whether force to show the values as integer or not
-    - legend
-        @show_legend <bool>: whether show legend or not
-        @bbox_to_anchor <tuple(int/float, int/float)>: distance of legend and plot
-        @bbox_loc <str>: location of legend
-    @filename <str>: filename of the figure, or None (show figure)
+
+    Args:
+        df <pandas.DataFrame>: target data
+
+            Index:
+                reset index
+            Columns:
+                field names
+            Values:
+                data values
+            title <str>: title of the figure
+        - labels:
+            xlabel <str>: x-label
+            ylabel <str>: y-label
+        - additional lines
+            v <list[int/float]>: list of x values of vertical lines or None
+            h <list[int/float]>: list of y values of horizontal lines or None
+        - limit of domain
+            xlim <tuple(int/float, int/float)>: limit of x dimain
+            ylim <tuple(int/float, int/float)>: limit of y dimain
+            - if None, the value will be automatically determined by Matplotlib
+        - scale of labels
+            math_scale <bool>: whether use LaTEX or not
+            x_logscale <bool>: whether use log-scale in x-axis or not
+            y_logscale <bool>: whether use log-scale in y-axis or not
+            y_integer <bool>: whether force to show the values as integer or not
+        - legend
+            show_legend <bool>: whether show legend or not
+            bbox_to_anchor <tuple(int/float, int/float)>: distance of legend and plot
+            bbox_loc <str>: location of legend
+        filename <str>: filename of the figure, or None (show figure)
     """
     ax = df.plot()
     # Scale

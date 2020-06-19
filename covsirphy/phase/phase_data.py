@@ -8,22 +8,25 @@ from covsirphy.cleaning.word import Word
 class PhaseData(Word):
     """
     Basic class to create dataset for Trend/ODE analysis.
+    Args:
+        clean_df <pandas.DataFrame>: cleaned data
+
+            Index:
+                reset index
+            Columns:
+                - Date <pd.TimeStamp>: Observation date
+                - Country <str>: country/region name
+                - Province <str>: province/prefecture/sstate name
+                - Confirmed <int>: the number of confirmed cases
+                - Infected <int>: the number of currently infected cases
+                - Fatal <int>: the number of fatal cases
+                - Recovered <int>: the number of recovered cases
+
+        country <str>: country name
+        province <str>: province name
     """
 
     def __init__(self, clean_df, country=None, province=None):
-        """
-        @clean_df <pd.DataFrame>: cleaned data
-            - index <int>: reset index
-            - Date <pd.TimeStamp>: Observation date
-            - Country <str>: country/region name
-            - Province <str>: province/prefecture/sstate name
-            - Confirmed <int>: the number of confirmed cases
-            - Infected <int>: the number of currently infected cases
-            - Fatal <int>: the number of fatal cases
-            - Recovered <int>: the number of recovered cases
-        @country <str>: country name
-        @province <str>: province name
-        """
         df = self.validate_dataframe(
             clean_df, name="clean_df", columns=self.COLUMNS
         )
@@ -34,26 +37,34 @@ class PhaseData(Word):
 
     def _set_place(self, clean_df, country=None, province=None):
         """
-        @clean_df <pd.DataFrame>: cleaned data
-            - index <int>: reset index
-            - Date <pd.TimeStamp>: Observation date
-            - Country <str>: country/region name
-            - Province <str>: province/prefecture/sstate name
-            - Confirmed <int>: the number of confirmed cases
-            - Infected <int>: the number of currently infected cases
-            - Fatal <int>: the number of fatal cases
-            - Recovered <int>: the number of recovered cases
-        @country <str>: country name
-        @province <str>: province name
-        @return <pd.DataFrame>:
-            - index <int>: reset index
-            - Date <pd.TimeStamp>: Observation date
-            - Country <str>: country/region name
-            - Province <str>: province/prefecture/sstate name
-            - Confirmed <int>: the number of confirmed cases
-            - Infected <int>: the number of currently infected cases
-            - Fatal <int>: the number of fatal cases
-            - Recovered <int>: the number of recovered cases
+        Args:
+            clean_df <pandas.DataFrame>: cleaned data
+
+                Index:
+                    reset index
+                Columns:
+                    - Date <pd.TimeStamp>: Observation date
+                    - Country <str>: country/region name
+                    - Province <str>: province/prefecture/sstate name
+                    - Confirmed <int>: the number of confirmed cases
+                    - Infected <int>: the number of currently infected cases
+                    - Fatal <int>: the number of fatal cases
+                    - Recovered <int>: the number of recovered cases
+            country <str>: country name
+            province <str>: province name
+
+        Returns:
+            <pandas.DataFrame>:
+                Index:
+                    reset index
+                Columns:
+                    - Date <pd.TimeStamp>: Observation date
+                    - Country <str>: country/region name
+                    - Province <str>: province/prefecture/sstate name
+                    - Confirmed <int>: the number of confirmed cases
+                    - Infected <int>: the number of currently infected cases
+                    - Fatal <int>: the number of fatal cases
+                    - Recovered <int>: the number of recovered cases
         """
         df = clean_df.copy()
         c, p = country, province
@@ -69,21 +80,30 @@ class PhaseData(Word):
     def _groupby_date(self, cleaned_df):
         """
         Grouping by date.
-        @clean_df <pd.DataFrame>: cleaned data
-            - index <int>: reset index
-            - Date <pd.TimeStamp>: Observation date
-            - Country <str>: country/region name
-            - Province <str>: province/prefecture/sstate name
-            - Confirmed <int>: the number of confirmed cases
-            - Infected <int>: the number of currently infected cases
-            - Fatal <int>: the number of fatal cases
-            - Recovered <int>: the number of recovered cases
-        @return <pd.DataFrame>:
-            - index (Date) <pd.TimeStamp>: Observation date
-            - Confirmed <int>: the number of confirmed cases
-            - Infected <int>: the number of currently infected cases
-            - Fatal <int>: the number of fatal cases
-            - Recovered <int>: the number of recovered cases
+
+        Args:
+            clean_df <pandas.DataFrame>: cleaned data
+
+                Index:
+                    reset index
+                Columns:
+                    - Date <pd.TimeStamp>: Observation date
+                    - Country <str>: country/region name
+                    - Province <str>: province/prefecture/sstate name
+                    - Confirmed <int>: the number of confirmed cases
+                    - Infected <int>: the number of currently infected cases
+                    - Fatal <int>: the number of fatal cases
+                    - Recovered <int>: the number of recovered cases
+
+        Returns:
+            <pandas.DataFrame>:
+                Index:
+                    - Date <pd.TimeStamp>: Observation date
+                Columns:
+                    - Confirmed <int>: the number of confirmed cases
+                    - Infected <int>: the number of currently infected cases
+                    - Fatal <int>: the number of fatal cases
+                    - Recovered <int>: the number of recovered cases
         """
         df = cleaned_df.copy()
         df = df.drop([self.COUNTRY, self.PROVINCE], axis=1)
@@ -94,13 +114,20 @@ class PhaseData(Word):
         """
         Make a dataset using the cleaned dataset.
         This method must be overwritten in child class.
-        @grouped_df <pd.DataFrame>: cleaned data grouped by Date
-            - index (Date) <pd.TimeStamp>: Observation date
-            - Confirmed <int>: the number of confirmed cases
-            - Infected <int>: the number of currently infected cases
-            - Fatal <int>: the number of fatal cases
-            - Recovered <int>: the number of recovered cases
-        @return <pd.DataFrame>
+
+        Args:
+            grouped_df <pandas.DataFrame>: cleaned data grouped by Date
+
+                Index:
+                    - Date <pd.TimeStamp>: Observation date
+                Columns:
+                    - Confirmed <int>: the number of confirmed cases
+                    - Infected <int>: the number of currently infected cases
+                    - Fatal <int>: the number of fatal cases
+                    - Recovered <int>: the number of recovered cases
+
+        Returns:
+            <pandas.DataFrame>
         """
         df = self.validate_dataframe(
             grouped_df,
@@ -112,9 +139,13 @@ class PhaseData(Word):
         """
         Make a dataset using the cleaned dataset.
         This method must be overwritten in child class.
-        @start_date <str>: start date, like 22Jan2020
-        @end_date <str>: end date, like 01Feb2020
-        @return <pd.DataFrame>
+
+        Args:
+            start_date <str>: start date, like 22Jan2020
+            end_date <str>: end date, like 01Feb2020
+
+        Returns:
+            <pandas.DataFrame>
         """
         df = self.subset(start_date=start_date, end_date=end_date)
         return self._make(df)
@@ -122,14 +153,20 @@ class PhaseData(Word):
     def subset(self, start_date, end_date):
         """
         Return the subset of the data with start/end date.
-        @start_date <str>: start date, like 22Jan2020
-        @end_date <str>: end date, like 01Feb2020
-        @return <pd.DataFrame>:
-            - index (Date) <pd.TimeStamp>: Observation date
-            - Confirmed <int>: the number of confirmed cases
-            - Infected <int>: the number of currently infected cases
-            - Fatal <int>: the number of fatal cases
-            - Recovered <int>: the number of recovered cases
+
+        Args:
+            start_date <str>: start date, like 22Jan2020
+            end_date <str>: end date, like 01Feb2020
+
+        Returns:
+            <pandas.DataFrame>:
+                Index:
+                    - Date <pd.TimeStamp>: Observation date
+                Columns:
+                    - Confirmed <int>: the number of confirmed cases
+                    - Infected <int>: the number of currently infected cases
+                    - Fatal <int>: the number of fatal cases
+                    - Recovered <int>: the number of recovered cases
         """
         df = self.all_df.copy()
         series = df.index.copy()

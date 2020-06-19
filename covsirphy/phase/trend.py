@@ -18,26 +18,29 @@ from covsirphy.phase.sr_data import SRData
 class Trend(Word):
     """
     S-R trend analysis in a phase.
+
+    Args:
+        clean_df <pandas.DataFrame>: cleaned data
+
+            Index:
+                reset index
+            Columns:
+                - Date <pd.TimeStamp>: Observation date
+                - Country <str>: country/region name
+                - Province <str>: province/prefecture/sstate name
+                - Confirmed <int>: the number of confirmed cases
+                - Infected <int>: the number of currently infected cases
+                - Fatal <int>: the number of fatal cases
+                - Recovered <int>: the number of recovered cases
+        population <int>: total population in the place
+        country <str>: country name
+        province <str>: province name
+        start_date <str>: start date, like 22Jan2020
+        end_date <str>: end date, like 01Feb2020
     """
 
     def __init__(self, clean_df, population,
                  country, province=None, start_date=None, end_date=None):
-        """
-        @clean_df <pd.DataFrame>: cleaned data
-            - index <int>: reset index
-            - Date <pd.TimeStamp>: Observation date
-            - Country <str>: country/region name
-            - Province <str>: province/prefecture/sstate name
-            - Confirmed <int>: the number of confirmed cases
-            - Infected <int>: the number of currently infected cases
-            - Fatal <int>: the number of fatal cases
-            - Recovered <int>: the number of recovered cases
-        @population <int>: total population in the place
-        @country <str>: country name
-        @province <str>: province name
-        @start_date <str>: start date, like 22Jan2020
-        @end_date <str>: end date, like 01Feb2020
-        """
         self.population = population
         if province is None:
             self.area = country
@@ -69,8 +72,7 @@ class Trend(Word):
 
     def analyse(self):
         """
-        Perform curve fitting of S-R trend
-            with negative exponential function and save the result.
+        Perform curve fitting of S-R trend with negative exponential function and save the result.
         """
         self.result_df = self._fitting(self.train_df)
 
@@ -78,15 +80,24 @@ class Trend(Word):
         """
         Perform curve fitting of S-R trend
             with negative exponential function.
-        @train_df <pd.DataFrame>: training dataset
-            - index (Date) <pd.TimeStamp>: Observation date
-            - Recovered: The number of recovered cases
-            - Susceptible_actual: Actual data of Susceptible
-        @return <pd.DataFrame>
-            - index (Date) <pd.TimeStamp>: Observation date
-            - Recovered: The number of recovered cases
-            - Susceptible_actual: Actual values of Susceptible
-            - Susceptible_predicted: Predicted values of Susceptible
+
+        Args:
+        @train_df <pandas.DataFrame>: training dataset
+
+            Index:
+                - index (Date) <pd.TimeStamp>: Observation date
+            Columns:
+                - Recovered: The number of recovered cases
+                - Susceptible_actual: Actual data of Susceptible
+
+        Returns:
+            <pandas.DataFrame>
+                Index:
+                    - index (Date) <pd.TimeStamp>: Observation date
+                Columns:
+                    - Recovered: The number of recovered cases
+                    - Susceptible_actual: Actual values of Susceptible
+                    - Susceptible_predicted: Predicted values of Susceptible
         """
         df = train_df.copy()
         # Calculate initial values of parameters
@@ -117,7 +128,9 @@ class Trend(Word):
     def rmsle(self):
         """
         Calculate RMSLE score of actual/predicted Susceptible.
-        @return <float>
+
+        Returns:
+            <float>
         """
         df = self.result_df.copy()
         if df is None:
@@ -144,9 +157,10 @@ class Trend(Word):
     def show(self, filename=None):
         """
         show the result as a figure.
-        @show_figure <bool>:
-            - if True, show the history as a pair-plot of parameters.
-        @filename <str>: filename of the figure, or None (show figure)
+
+        Args:
+            show_figure <bool>: if True, show the history as a pair-plot of parameters.
+            filename <str>: filename of the figure, or None (show figure)
         """
         df = self.result()
         df["Predicted"] = df[f"{self.S}{self.P}"]
@@ -162,17 +176,20 @@ class Trend(Word):
                        title, vlines=None, filename=None):
         """
         show the result as a figure.
-        @result_df <pd.DataFrame>: training dataset
-            - index (Date) <pd.TimeStamp>: Observation date
-            - Recovered: The number of recovered cases
-            - Susceptible_actual: Actual values of Susceptible
-            - columns defined by @columns
-        @predicted_cols <list[str]>:
-            - list of columns which have predicted values
-        @title <str>: title of the figure
-        @vlines <list[int]>:
-            - list of Recovered values to show vertical lines
-        @filename <str>: filename of the figure, or None (show figure)
+
+        Args:
+            result_df <pandas.DataFrame>: training dataset
+
+                Index:
+                    - index (Date) <pd.TimeStamp>: Observation date
+                Columns:
+                    - Recovered: The number of recovered cases
+                    - Susceptible_actual: Actual values of Susceptible
+                    - columns defined by @columns
+            predicted_cols <list[str]>: list of columns which have predicted values
+            title <str>: title of the figure
+            vlines <list[int]>: list of Recovered values to show vertical lines
+            filename <str>: filename of the figure, or None (show figure)
         """
         df = result_df.copy()
         if df is None:

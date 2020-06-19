@@ -16,17 +16,27 @@ class SRData(PhaseData):
     def _make(self, grouped_df, population):
         """
         Make dataset for S-R trend analysis.
-        @grouped_df <pd.DataFrame>: cleaned data grouped by Date
-            - index (Date) <pd.TimeStamp>: Observation date
-            - Confirmed <int>: the number of confirmed cases
-            - Infected <int>: the number of currently infected cases
-            - Fatal <int>: the number of fatal cases
-            - Recovered <int>: the number of recovered cases
-        @population <int>: total population in the place
-        @return <pd.DataFrame>
-            - index (Date) <pd.TimeStamp>: Observation date
-            - Recovered: The number of recovered cases
-            - Susceptible_actual: Actual data of Susceptible
+
+        Args:
+            grouped_df <pandas.DataFrame>: cleaned data grouped by Date
+
+                Index:
+                    Date <pd.TimeStamp>: Observation date
+                Columns:
+                    - Confirmed <int>: the number of confirmed cases
+                    - Infected <int>: the number of currently infected cases
+                    - Fatal <int>: the number of fatal cases
+                    - Recovered <int>: the number of recovered cases
+
+            population <int>: total population in the place
+
+        Returns:
+            <pandas.DataFrame>
+                Index:
+                    Date <pd.TimeStamp>: Observation date
+                Columns:
+                    - Recovered: The number of recovered cases
+                    - Susceptible_actual: Actual data of Susceptible
         """
         df = self.validate_dataframe(
             grouped_df,
@@ -39,13 +49,23 @@ class SRData(PhaseData):
     def make(self, population, start_date=None, end_date=None):
         """
         Make dataset for S-R trend analysis.
-        @population <int>: total population in the place
-        @start_date <str>: start date, like 22Jan2020
-        @end_date <str>: end date, like 01Feb2020
-        @return <pd.DataFrame>
-            - index (Date) <pd.TimeStamp>: Observation date
-            - Recovered: The number of recovered cases
-            - Susceptible_actual: Actual values of Susceptible (> 0)
+
+        Args:
+            opulation <int>: total population in the place
+            start_date <str/None>: start date, like 22Jan2020
+            end_date <str/None>: end date, like 01Feb2020
+
+        Notes:
+            - When @start_date is None, the first date of the records will be used
+            - When @end_date is None, the last date of the records will be used
+
+        Returns:
+            <pandas.DataFrame>
+                Index:
+                    Date <pd.TimeStamp>: Observation date
+                Columns:
+                    - Recovered: The number of recovered cases
+                    - Susceptible_actual: Actual values of Susceptible (> 0)
         """
         df = self.all_df.copy()
         series = df.index.copy()

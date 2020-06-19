@@ -163,17 +163,20 @@
 <div class="viewcode-block" id="Optimizer"><a class="viewcode-back" href="../../../covsirphy.phase.html#covsirphy.phase.optimize.Optimizer">[docs]</a><span class="k">class</span> <span class="nc">Optimizer</span><span class="p">(</span><span class="n">Word</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Hyperparameter optimization with Optuna package.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        train_df &lt;pandas.DataFrame&gt;: training dataset</span>
+
+<span class="sd">            Index:</span>
+<span class="sd">                reset index</span>
+<span class="sd">            Columns:</span>
+<span class="sd">                - Explanatory variable defined by @x</span>
+<span class="sd">                - Response variables which is not @x</span>
+<span class="sd">        param (keyword arguments): fixed parameter values</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">optuna</span><span class="o">.</span><span class="n">logging</span><span class="o">.</span><span class="n">disable_default_handler</span><span class="p">()</span>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">train_df</span><span class="p">,</span> <span class="n">x</span><span class="o">=</span><span class="s2">&quot;t&quot;</span><span class="p">,</span> <span class="o">**</span><span class="n">params</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        @train_df &lt;pd.DataFrame&gt;: training dataset</span>
-<span class="sd">            - index: reset index</span>
-<span class="sd">            - Explanatory variable defined by @x</span>
-<span class="sd">            - Response variables which is not @x</span>
-<span class="sd">        @param (keyword arguments): fixed parameter values</span>
-<span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">x</span> <span class="o">=</span> <span class="n">x</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">y_list</span> <span class="o">=</span> <span class="p">[</span><span class="n">v</span> <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">train_df</span><span class="o">.</span><span class="n">columns</span> <span class="k">if</span> <span class="n">v</span> <span class="o">!=</span> <span class="n">x</span><span class="p">]</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">train_df</span> <span class="o">=</span> <span class="n">train_df</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
@@ -187,8 +190,12 @@
     <span class="k">def</span> <span class="nf">_init_study</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">seed</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Initialize Optuna study.</span>
-<span class="sd">        @seed &lt;int/None&gt;: random seed of hyperparameter optimization</span>
-<span class="sd">            - this will effective when the number of CPUs is 1</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            seed &lt;int/None&gt;: random seed of hyperparameter optimization</span>
+<span class="sd">        </span>
+<span class="sd">        Notes:</span>
+<span class="sd">            @seed will effective when the number of CPUs is 1</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">study</span> <span class="o">=</span> <span class="n">optuna</span><span class="o">.</span><span class="n">create_study</span><span class="p">(</span>
             <span class="n">direction</span><span class="o">=</span><span class="s2">&quot;minimize&quot;</span><span class="p">,</span>
@@ -199,11 +206,15 @@
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Run optimization.</span>
 <span class="sd">        This method can be overwritten in subclass.</span>
-<span class="sd">        @timeout &lt;int&gt;: time-out of run</span>
-<span class="sd">        @n_trials &lt;int&gt;: the number of trials</span>
-<span class="sd">        @n_jobs &lt;int&gt;: the number of parallel jobs or -1 (CPU count)</span>
-<span class="sd">        @seed &lt;int/None&gt;: random seed of hyperparameter optimization</span>
-<span class="sd">            - this will effective when @n_jobs is 1</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            timeout &lt;int&gt;: time-out of run</span>
+<span class="sd">            n_trials &lt;int&gt;: the number of trials</span>
+<span class="sd">            n_jobs &lt;int&gt;: the number of parallel jobs or -1 (CPU count)</span>
+<span class="sd">            seed &lt;int/None&gt;: random seed of hyperparameter optimization</span>
+<span class="sd">        </span>
+<span class="sd">        Notes:</span>
+<span class="sd">            @seed will effective when @n_jobs is 1</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="n">seed</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">n_jobs</span> <span class="o">!=</span> <span class="mi">1</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;@seed must be None when @n_jobs is not equal to 1.&quot;</span><span class="p">)</span>
@@ -225,8 +236,12 @@
 <span class="sd">        Objective function of Optuna study.</span>
 <span class="sd">        This defines the parameter values using Optuna.</span>
 <span class="sd">        This method should be overwritten in subclass.</span>
-<span class="sd">        @trial &lt;optuna.trial&gt;: a trial of the study</span>
-<span class="sd">        @return &lt;float&gt;: score of the error function to minimize</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            trial &lt;optuna.trial&gt;: a trial of the study</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            &lt;float&gt;: score of the error function to minimize</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">param_dict</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">error_f</span><span class="p">(</span><span class="n">param_dict</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">train_df</span><span class="p">)</span></div>
@@ -235,13 +250,19 @@
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Definition of error score to minimize in the study.</span>
 <span class="sd">        This method should be overwritten in subclass.</span>
-<span class="sd">        @param_dict &lt;dict[str]=int/float&gt;:</span>
-<span class="sd">            - estimated parameter values</span>
-<span class="sd">        @train_df &lt;pd.DataFrame&gt;: actual data</span>
-<span class="sd">            - index: reset index</span>
-<span class="sd">            - t: time step, 0, 1, 2,...</span>
-<span class="sd">            - includes columns defined by @variables</span>
-<span class="sd">        @return &lt;float&gt;: score of the error function to minimize</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            param_dict &lt;dict[str]=int/float&gt;: estimated parameter values</span>
+<span class="sd">            train_df &lt;pandas.DataFrame&gt;: actual data</span>
+
+<span class="sd">                Index:</span>
+<span class="sd">                    reset index</span>
+<span class="sd">                Columns:</span>
+<span class="sd">                    - t: time step, 0, 1, 2,...</span>
+<span class="sd">                    - includes columns defined by @variables</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            &lt;float&gt;: score of the error function to minimize</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">sim_df</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">simulate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">step_n</span><span class="p">,</span> <span class="n">param_dict</span><span class="p">)</span>
         <span class="n">comp_df</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">compare</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">train_df</span><span class="p">,</span> <span class="n">sim_df</span><span class="p">)</span>
@@ -252,12 +273,17 @@
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Simulate the values with the parameters.</span>
 <span class="sd">        This method should be overwritten in subclass.</span>
-<span class="sd">        @param_dict &lt;dict[str]=int/float&gt;:</span>
-<span class="sd">            - estimated parameter values</span>
-<span class="sd">        @return &lt;pd.DataFrame&gt;:</span>
-<span class="sd">            - index: rested index</span>
-<span class="sd">            - Explanatory variable defined by self.x</span>
-<span class="sd">            - Response variables which defined by self.y_list</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            param_dict &lt;dict[str]=int/float&gt;: estimated parameter values</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            &lt;pandas.DataFrame&gt;:</span>
+<span class="sd">                Index:</span>
+<span class="sd">                    reset index</span>
+<span class="sd">                Columns:</span>
+<span class="sd">                    - Explanatory variable defined by self.x</span>
+<span class="sd">                    - Response variables which defined by self.y_list</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">_</span> <span class="o">=</span> <span class="n">param_dict</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
         <span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">x</span><span class="p">,</span> <span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">y_list</span><span class="p">])</span>
@@ -266,19 +292,34 @@
 <div class="viewcode-block" id="Optimizer.compare"><a class="viewcode-back" href="../../../covsirphy.phase.html#covsirphy.phase.optimize.Optimizer.compare">[docs]</a>    <span class="k">def</span> <span class="nf">compare</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">actual_df</span><span class="p">,</span> <span class="n">predicted_df</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Return comparison table.</span>
-<span class="sd">        @actual_df &lt;pd.DataFrame&gt;: actual data</span>
-<span class="sd">            - index: reset index</span>
-<span class="sd">            - t: time step, 0, 1, 2,...</span>
-<span class="sd">            - includes columns defined by self.y_list</span>
-<span class="sd">        @predicted_df &lt;pd.DataFrame&gt;: predicted data</span>
-<span class="sd">            - index: reset index</span>
-<span class="sd">            - t: time step, 0, 1, 2,...</span>
-<span class="sd">            - includes columns defined by self.y_list</span>
-<span class="sd">        @return &lt;pd.DataFrame&gt;:</span>
-<span class="sd">            - index: time step</span>
-<span class="sd">            - columns with &quot;_actual&quot;</span>
-<span class="sd">            - columns with &quot;_predicted:</span>
-<span class="sd">                - columns are defined by self.y_list</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            actual_df &lt;pandas.DataFrame&gt;: actual data</span>
+
+<span class="sd">                Index:</span>
+<span class="sd">                    reset index</span>
+<span class="sd">                Columns:</span>
+<span class="sd">                    - t: time step, 0, 1, 2,...</span>
+<span class="sd">                    - includes columns defined by self.y_list</span>
+
+<span class="sd">            predicted_df &lt;pandas.DataFrame&gt;: predicted data</span>
+
+<span class="sd">                Index:</span>
+<span class="sd">                    reset index</span>
+<span class="sd">                Columns:</span>
+<span class="sd">                    - t: time step, 0, 1, 2,...</span>
+<span class="sd">                    - includes columns defined by self.y_list</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            &lt;pandas.DataFrame&gt;:</span>
+<span class="sd">                Index:</span>
+<span class="sd">                    &lt;str&gt;: time step</span>
+<span class="sd">                Index:</span>
+<span class="sd">                    reset index</span>
+<span class="sd">                Columns:</span>
+<span class="sd">                    - columns with &quot;_actual&quot;</span>
+<span class="sd">                    - columns with &quot;_predicted:</span>
+<span class="sd">                    - columns are defined by self.y_list</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="c1"># Check the arguments</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="nb">set</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">y_list</span><span class="p">)</span><span class="o">.</span><span class="n">issubset</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">predicted_df</span><span class="o">.</span><span class="n">columns</span><span class="p">)):</span>
@@ -295,7 +336,9 @@
 <div class="viewcode-block" id="Optimizer.param"><a class="viewcode-back" href="../../../covsirphy.phase.html#covsirphy.phase.optimize.Optimizer.param">[docs]</a>    <span class="k">def</span> <span class="nf">param</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Return the estimated parameters as a dictionary.</span>
-<span class="sd">        @return &lt;dict[str]=float/int&gt;</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            &lt;dict[str]=float/int&gt;</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">param_dict</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">study</span><span class="o">.</span><span class="n">best_params</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
         <span class="n">param_dict</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">fixed_dict</span><span class="p">)</span>
@@ -305,11 +348,18 @@
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Return the estimated parameters as a dataframe.</span>
 <span class="sd">        This method should be overwritten in subclass.</span>
-<span class="sd">        @name &lt;str&gt;: index of the dataframe</span>
-<span class="sd">        @return &lt;pd.DataFrame&gt;:</span>
-<span class="sd">            - (estimated parameters)</span>
-<span class="sd">            - Trials: the number of trials</span>
-<span class="sd">            - Runtime: run time of estimation</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            name &lt;str&gt;: index of the dataframe</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            &lt;pandas.DataFrame&gt;:</span>
+<span class="sd">                Index:</span>
+<span class="sd">                    reset index</span>
+<span class="sd">                Columns:</span>
+<span class="sd">                    - (estimated parameters)</span>
+<span class="sd">                    - Trials: the number of trials</span>
+<span class="sd">                    - Runtime: run time of estimation</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">param_dict</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">param</span><span class="p">()</span>
         <span class="c1"># The number of trials</span>
@@ -323,12 +373,19 @@
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Calculate RMSLE score.</span>
 <span class="sd">        This method can be overwritten in child class.</span>
-<span class="sd">        @train_df &lt;pd.DataFrame&gt;: actual data</span>
-<span class="sd">            - index: reset index</span>
-<span class="sd">            - t: time step, 0, 1, 2,...</span>
-<span class="sd">            - includes columns defined by self.y_list</span>
-<span class="sd">        @dim &lt;int/float&gt;: dimension where comparison will be performed</span>
-<span class="sd">        @return &lt;float&gt;</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            train_df &lt;pandas.DataFrame&gt;: actual data</span>
+
+<span class="sd">                Index:</span>
+<span class="sd">                    reset index</span>
+<span class="sd">                Columns:</span>
+<span class="sd">                    - t: time step, 0, 1, 2,...</span>
+<span class="sd">                    - includes columns defined by self.y_list</span>
+<span class="sd">            dim &lt;int/float&gt;: dimension where comparison will be performed</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            &lt;float&gt;</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">predicted_df</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">predict</span><span class="p">()</span>
         <span class="n">df</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">compare</span><span class="p">(</span><span class="n">train_df</span><span class="p">,</span> <span class="n">predicted_df</span><span class="p">)</span>
@@ -354,10 +411,13 @@
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Show the history of optimization as a figure</span>
 <span class="sd">            and return it as dataframe.</span>
-<span class="sd">        @show_figure &lt;bool&gt;:</span>
-<span class="sd">            - if True, show the history as a pair-plot of parameters.</span>
-<span class="sd">        @filename &lt;str&gt;: filename of the figure, or None (show figure)</span>
-<span class="sd">        @return &lt;pd.DataFrame&gt;: the history</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            show_figure &lt;bool&gt;: if True, show the history as a pair-plot of parameters.</span>
+<span class="sd">            filename &lt;str&gt;: filename of the figure, or None (show figure)</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            &lt;pandas.DataFrame&gt;: the history</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="c1"># Create dataframe of the history</span>
         <span class="n">df</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">study</span><span class="o">.</span><span class="n">trials_dataframe</span><span class="p">()</span>
@@ -389,12 +449,18 @@
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Show the accuracy as a figure.</span>
 <span class="sd">        This method can be overwritten in child class.</span>
-<span class="sd">        @train_df &lt;pd.DataFrame&gt;: actual data</span>
-<span class="sd">            - index: reset index</span>
-<span class="sd">            - t: time step, 0, 1, 2,...</span>
-<span class="sd">            - includes columns defined by self.y_list</span>
-<span class="sd">        @variables &lt;list[str]&gt;: variables to compare or None (all variables)</span>
-<span class="sd">        @filename &lt;str&gt;: filename of the figure, or None (show figure)</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            train_df &lt;pandas.DataFrame&gt;: actual data</span>
+
+<span class="sd">                Index:</span>
+<span class="sd">                    reset index</span>
+<span class="sd">                Columns:</span>
+<span class="sd">                    - t: time step, 0, 1, 2,...</span>
+<span class="sd">                    - includes columns defined by self.y_list</span>
+
+<span class="sd">            variables &lt;list[str]&gt;: variables to compare or None (all variables)</span>
+<span class="sd">            filename &lt;str&gt;: filename of the figure, or None (show figure)</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="c1"># Create a table to compare observed/estimated values</span>
         <span class="n">predicted_df</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">predict</span><span class="p">()</span>
