@@ -11,11 +11,15 @@ class CleaningBase(Word):
 
     Args:
         filename <str>: CSV filename of the dataset
+
+    Attributes:
+        citation <str>: citation fo the dataset
     """
 
     def __init__(self, filename):
         self._raw = dd.read_csv(filename).compute()
         self._cleaned_df = self.cleaning()
+        self._citation = str()
 
     @property
     def raw(self):
@@ -77,3 +81,25 @@ class CleaningBase(Word):
         df[r_cols[1]] = df["Recovered"] / df[cols].sum(axis=1)
         df[r_cols[2]] = df["Fatal"] / (df["Fatal"] + df["Recovered"])
         return df
+
+    @property
+    def citation(self):
+        """
+        Return citation.
+
+        Returns:
+            <str>: citation of the datset
+        """
+        return self._citation
+
+    @citation.setter
+    def citation(self, description):
+        """
+        Set citation of the dataset.
+
+        Args:
+            description <str>: citation of the dataset
+        """
+        if not isinstance(description, str):
+            raise TypeError("@description must be a string.")
+        self._citation = description
