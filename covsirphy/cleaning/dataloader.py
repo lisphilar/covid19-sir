@@ -21,7 +21,8 @@ class DataLoader(Word):
         If @directory is None, the files will not be saved in local environment.
 
     Examples:
-        >>> data_loader = DataLoader("../input")
+        >>> import covsirphy as cs
+        >>> data_loader = cs.DataLoader("input")
         >>> jhu_data = data_loader.jhu()
         >>> print(jhu_data.citation)
         >>> print(type(jhu_data.cleaned()))

@@ -66,6 +66,8 @@ Kaggle API key and Kaggle package are necessary. Please read [How to Use Kaggle:
 #### The number of cases
 Primary source: [COVID-19 Data Repository by CSSE at Johns Hopkins University](https://github.com/CSSEGISandData/COVID-19)  
 Secondary source: [Novel Corona Virus 2019 Dataset by SRK](https://www.kaggle.com/sudalairajkumar/novel-corona-virus-2019-dataset)  
+We can download this dataset from the primary source directly. Please refer to "Quick usage" section.
+
 ### The number of cases in Japan
 Primary source: [Ministry of Health, Labour and Welfare HP (in English)](https://www.mhlw.go.jp/stf/seisakunitsuite/bunya/newpage_00032.html)  
 Secondary source: [Secondary source: COVID-19 dataset in Japan by Lisphilar](https://www.kaggle.com/lisphilar/covid19-dataset-in-japan)  
@@ -88,13 +90,18 @@ Example Python codes are in `example` directory. With Pipenv environment, we can
 ```Python
 import covsirphy as cs
 cs.__version__
-cs.get_version()
 ```
-Perform data cleaning of JHU dataset.
+Set the directory to save the datasets.
 ```Python
-# With CSV filepath of JHU dataset
-jhu_data = cs.JHUData("input/covid_19_data.csv")
-ncov_df = jhu_data.cleaned()
+data_loader = cs.DataLoader("input")
+```
+Download JHU dataset and perform data cleaning.
+```Python
+jhu_data = data_loader.jhu()
+# Show citation
+print(jhu_data.citation)
+# Return the cleaned dataset as a dataframe
+jhu_data.cleaned()
 ```
 (Optional) We can replace JHU data with country-specific dataset.
 ```Python
