@@ -2,8 +2,8 @@
 # -*- coding: utf-8 -*-
 
 from collections import Counter
-import sys
-import better_exceptions
+# import sys
+# import better_exceptions
 from covsirphy.__version__ import __version__
 from covsirphy.analysis import ODESimulator, ChangeFinder
 from covsirphy.analysis import PhaseSeries, Scenario
@@ -41,6 +41,8 @@ if dup_list:
     raise Exception(f"Duplication was found in modules. {dup_str}")
 
 # Show exceptions in better format if used from command line
+"""
 if not hasattr(sys, "ps1"):
     better_exceptions.MAX_LENGTH = None
     better_exceptions.hook()
+"""
