@@ -41,7 +41,7 @@ When you use this package in Kaggle notebook (need to turn on Internet option in
 ```
 # Installation
 pip install --upgrade pip setuptools
-pip install "git+https://github.com/lisphilar/covid19-sir#egg=covsirphy" -U
+pip install "git+https://github.com/lisphilar/covid19-sir#egg=covsirphy"
 # Un-installation
 pip install pip-autoremove
 pip-autoremove covsirphy
