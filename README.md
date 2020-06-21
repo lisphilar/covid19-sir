@@ -48,6 +48,10 @@ pipenv install git+https://github.com/lisphilar/covid19-sir#egg=covsirphy
 For developers,
 ```
 git clone https://github.com/lisphilar/covid19-sir.git
+cd covid19-sir
+pip install wheel; pip install --upgrade pip; pip install pipenv
+export PIPENV_VENV_IN_PROJECT=true
+export PIPENV_TIMEOUT=3600
 pipenv install --dev
 ```
 
