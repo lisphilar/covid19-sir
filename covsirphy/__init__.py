@@ -11,8 +11,8 @@ except ImportError:
 from covsirphy.__version__ import __version__
 from covsirphy.analysis import ODESimulator, ChangeFinder
 from covsirphy.analysis import PhaseSeries, Scenario
-from covsirphy.cleaning import CleaningBase, Word, Population
-from covsirphy.cleaning import JHUData, CountryData, OxCGRTData
+from covsirphy.cleaning import Word, CleaningBase, DataLoader
+from covsirphy.cleaning import JHUData, CountryData, Population, OxCGRTData
 from covsirphy.ode import ModelBaseCommon, ModelBase
 from covsirphy.ode import SIR, SIRD, SIRF, SIRFV, SEWIRF
 from covsirphy.phase import PhaseData, ODEData, Estimator
@@ -30,8 +30,8 @@ def get_version():
 __all__ = [
     "ODESimulator", "ChangeFinder",
     "PhaseSeries", "Scenario",
-    "CleaningBase", "Word", "Population",
-    "JHUData", "CountryData", "OxCGRTData",
+    "Word", "CleaningBase", "DataLoader",
+    "JHUData", "CountryData", "Population", "OxCGRTData",
     "ModelBaseCommon", "ModelBase",
     "SIR", "SIRD", "SIRF", "SIRFV", "SEWIRF",
     "PhaseData", "ODEData", "Estimator", "SRData", "Trend",

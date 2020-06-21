@@ -4,6 +4,8 @@
 
 # Data cleaning
 echo "<Data cleaning>"
+echo "Data loading"
+pipenv run python -m example.dataset_load
 echo "JHU data"
 pipenv run python -m example.dataset_jhu
 echo "Population"
