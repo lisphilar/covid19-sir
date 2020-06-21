@@ -39,11 +39,12 @@ Any suggestions (Github issues, pull request, comment on Kaggle notebook) are al
 ## Installation
 When you use this package in Kaggle notebook (need to turn on Internet option in notebook settings) or local environment with Pip,
 ```
-pip install "git+https://github.com/lisphilar/covid19-sir.git#egg=covsirphy"
+pip install --upgrade pip setuptools
+pip install "git+https://github.com/lisphilar/covid19-sir#egg=covsirphy"
 ```
 With Pipenv environment,
 ```
-pipenv install "git+https://github.com/lisphilar/covid19-sir.git#egg=covsirphy"
+pipenv install "git+https://github.com/lisphilar/covid19-sir#egg=covsirphy"
 ```
 For developers,
 ```
