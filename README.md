@@ -45,6 +45,7 @@ pip install "git+https://github.com/lisphilar/covid19-sir#egg=covsirphy" -U
 # Un-installation
 pip install pip-autoremove
 pip-autoremove covsirphy
+pip uninstall pip-autoremove
 ```
 With Pipenv environment,
 ```
