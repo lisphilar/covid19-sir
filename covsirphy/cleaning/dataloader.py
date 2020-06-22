@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 from pathlib import Path
-from datetime import datetime
+from datetime import datetime, timezone
 from dask import dataframe as dd
 import pandas as pd
 import requests
@@ -122,7 +122,7 @@ class DataLoader(Word):
             url <str>: URL
 
         Returns:
-            <pandas.Timestamp>: date last updated
+            <pandas.Timestamp>: time last updated (UTC)
         """
         response = requests.get(url)
         date = pd.to_datetime(response.headers["Date"]).tz_convert(None)
@@ -136,12 +136,12 @@ class DataLoader(Word):
             path <str/pathlibPath>: name of the file/directory
 
         Returns:
-            <datetime.datetime>: date last updated
+            <datetime.datetime>: time last updated (UTC)
         """
         path = Path(path)
         m_time = path.stat().st_mtime
-        # TODO: Covert to UTC and remove timezone info
         date = datetime.fromtimestamp(m_time)
+        date = date.astimezone(timezone.utc).replace(tzinfo=None)
         return date
 
     def _create_dataset(self, data_key, filename, **kwargs):
@@ -186,6 +186,7 @@ class DataLoader(Word):
             return True
         updated_local = self._last_updated_local(filename)
         updated_remote = self._last_updated_remote(url)
+        print(updated_local, updated_remote)
         if updated_local < updated_remote:
             return True
         return False
