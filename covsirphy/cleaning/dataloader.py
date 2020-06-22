@@ -140,6 +140,7 @@ class DataLoader(Word):
         """
         path = Path(path)
         m_time = path.stat().st_mtime
+        # TODO: Covert to UTC and remove timezone info
         date = datetime.fromtimestamp(m_time)
         return date
 
