@@ -8,6 +8,7 @@ import pandas as pd
 import requests
 from covsirphy.cleaning.cbase import CleaningBase
 from covsirphy.cleaning.jhu_data import JHUData
+from covsirphy.cleaning.country_data import CountryData
 from covsirphy.cleaning.word import Word
 
 
@@ -28,6 +29,10 @@ class DataLoader(Word):
         >>> print(jhu_data.citation)
         >>> print(type(jhu_data.cleaned()))
         <class 'pandas.core.frame.DataFrame'>
+        >>> jpn_data = data_loader.japan()
+        >>> print(jpn_data.citation)
+        >>> print(type(jpn_data.cleaned()))
+        <class 'pandas.core.frame.DataFrame'>
     """
 
     def __init__(self, directory):
@@ -46,9 +51,16 @@ class DataLoader(Word):
         self.jhu_date_col = "ObservationDate"
         self.jhu_p_col = "Province/State"
         self.jhu_c_col = "Country/Region"
+        # The number of cases in Japan
+        self.japan_cases_url = "https://raw.githubusercontent.com/lisphilar/covid19-sir/master/data/japan"
+        self.japan_cases_citation = "Lisphilar (2020), COVID-19 dataset in Japan, GitHub repository, " \
+            "https://github.com/lisphilar/covid19-sir/data/japan"
         # Dictionary of datasets
         self.dataset_dict = {
-            "JHU": {"class": JHUData, "url": self.jhu_url, "citation": self.jhu_citation}
+            "JHU": {"class": JHUData, "url": self.jhu_url, "citation": self.jhu_citation},
+            "Japan_cases": {
+                "class": CountryData, "url": self.japan_cases_url, "citation": self.japan_cases_citation
+            },
         }
 
     @staticmethod
@@ -275,3 +287,73 @@ class DataLoader(Word):
         ]
         df["SNo"] = df.index + 1
         return df
+
+    def japan(self, basename="covid_jpn_total.csv", local_file=None):
+        """
+        Load the datset of the number of cases in Japan.
+        https://github.com/lisphilar/covid19-sir/tree/master/data
+
+        Args:
+            basename <str>: basename of the file to save the data
+            local_file <str/None>: if not None, load the data from this file
+
+        Notes:
+            Regardless the value of @local_file, the data will be save in the directory.
+
+        Returns:
+            <covsirphy.cleaning.country_data.CountryData>: dataset at country level
+        """
+        filename = self._resolve_filename(basename)
+        if local_file is not None:
+            if Path(local_file).exists():
+                country_data = self._create_dataset_japan_cases(local_file)
+                self._save(country_data.raw, filename)
+                return country_data
+            raise FileNotFoundError(f"{local_file} does not exist.")
+        if not self._needs_pull(filename, self.japan_cases_url):
+            return self._create_dataset_japan_cases(filename)
+        # Retrieve and combine the raw data
+        df = self._japan_cases_get()
+        # Save the dataset and return dataset
+        self._save(df, filename)
+        return self._create_dataset_japan_cases(filename)
+
+    def _japan_cases_get(self):
+        """
+        Get the raw data from the following repository.
+        https://github.com/lisphilar/covid19-sir/tree/master/data/japan
+
+        Args:
+            variable <str>: confirmed, deaths or recovered
+
+        Returns:
+            <pandas.DataFrame> : the raw data
+               Index:
+                    reset index
+                Columns:
+                    as-is the repository
+        """
+        url = f"{self.japan_cases_url}/covid_jpn_total.csv"
+        df = self._get_raw(url)
+        return df
+
+    def _create_dataset_japan_cases(self, filename):
+        """
+        Create a dataset for Japan with a local file.
+
+        Args:
+            filename <str>: filename of the local file
+
+        Returns:
+            <covsirphy.cleaning.country_data.CountryData>: dataset at country level
+        """
+        country_data = self._create_dataset(
+            "Japan_cases", filename, country="Japan")
+        country_data.set_variables(
+            date="Date",
+            confirmed="Positive",
+            fatal="Fatal",
+            recovered="Discharged",
+            province=None
+        )
+        return country_data
