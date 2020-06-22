@@ -6,8 +6,9 @@ from datetime import datetime
 from dask import dataframe as dd
 import pandas as pd
 import requests
-from covsirphy.cleaning.word import Word
+from covsirphy.cleaning.cbase import CleaningBase
 from covsirphy.cleaning.jhu_data import JHUData
+from covsirphy.cleaning.word import Word
 
 
 class DataLoader(Word):
@@ -28,14 +29,6 @@ class DataLoader(Word):
         >>> print(type(jhu_data.cleaned()))
         <class 'pandas.core.frame.DataFrame'>
     """
-    # JHU dataset
-    JHU_URL = "https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master" \
-              "/csse_covid_19_data/csse_covid_19_time_series"
-    JHU_CITATION = "COVID-19 Data Repository" \
-        " by the Center for Systems Science and Engineering (CSSE)" \
-        " at Johns Hopkins University (2020)," \
-        " GitHub repository," \
-        " https://github.com/CSSEGISandData/COVID-19"
 
     def __init__(self, directory):
         self.dir_path = None if directory is None else Path(directory)
@@ -43,44 +36,20 @@ class DataLoader(Word):
         if self.dir_path is not None:
             self.dir_path.mkdir(parents=True, exist_ok=True)
         # JHU data
+        self.jhu_url = "https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master" \
+            "/csse_covid_19_data/csse_covid_19_time_series"
+        self.jhu_citation = "COVID-19 Data Repository" \
+            " by the Center for Systems Science and Engineering (CSSE)" \
+            " at Johns Hopkins University (2020)," \
+            " GitHub repository," \
+            " https://github.com/CSSEGISandData/COVID-19"
         self.jhu_date_col = "ObservationDate"
         self.jhu_p_col = "Province/State"
         self.jhu_c_col = "Country/Region"
-
-    def jhu(self):
-        """
-        Load JHU dataset (the number of cases).
-        https://github.com/CSSEGISandData/COVID-19/
-
-        Returns:
-            <covsirphy.cleaning.jhu_data.JHUData>: JHU dataset
-        """
-        last_updated_remote = self._last_updated_remote(self.JHU_URL)
-        filename = self._resolve_filename("covid_19_data.csv")
-        if filename is not None and Path(filename).exists():
-            last_updated_local = self._last_updated_local(filename)
-            if last_updated_local > last_updated_remote:
-                return self._jhu(filename)
-        # Get the raw data
-        df = self._jhu_get("confirmed")
-        # Combine the data
-        deaths_df = self._jhu_get("deaths").loc[:, ["SNo", "Deaths"]]
-        recovered_df = self._jhu_get("recovered").loc[:, ["SNo", "Recovered"]]
-        df = pd.merge(df, deaths_df, on="SNo")
-        df = pd.merge(df, recovered_df, on="SNo")
-        # Arrange the data
-        date_stamps = pd.to_datetime(df[self.jhu_date_col])
-        df[self.jhu_date_col] = date_stamps.dt.strftime("%m/%d/%Y")
-        df[self.jhu_p_col] = df[self.jhu_p_col].fillna(str())
-        updated_col = "Last Update"
-        df[updated_col] = last_updated_remote.strftime("%m/%d/%Y %H:%M")
-        key_cols = [self.jhu_date_col, self.jhu_p_col, self.jhu_c_col]
-        df = df.loc[
-            :, ["SNo", *key_cols, updated_col, "Confirmed", "Deaths", "Recovered"]
-        ]
-        # Save the dataset and return dataset
-        self._save(df, filename)
-        return self._jhu(filename)
+        # Dictionary of datasets
+        self.dataset_dict = {
+            "JHU": {"class": JHUData, "url": self.jhu_url, "citation": self.jhu_citation}
+        }
 
     @staticmethod
     def _get_raw(url):
@@ -133,36 +102,6 @@ class DataLoader(Word):
         df.to_csv(filename, index=False)
         return filename
 
-    def _jhu_get(self, variable):
-        """
-        Get the data from JHU repository.
-
-        Args:
-            variable <str>: confirmed, deaths or recovered
-
-        Returns:
-            <pandas.DataFrame>: data of the variable
-                Index:
-                    reset index
-                Columns:
-                    - Province/State
-                    - Country/Region
-                    - @variable
-                    - SNo
-        """
-        # Retrieve the data
-        url = f"{self.JHU_URL}/time_series_covid19_{variable}_global.csv"
-        df = self._get_raw(url)
-        # Arrange the data
-        df = df.drop(["Lat", "Long"], axis=1)
-        df = df.set_index([self.jhu_c_col, self.jhu_p_col]).stack()
-        df = df.reset_index()
-        df.columns = [
-            *df.columns.tolist()[:2], self.jhu_date_col, variable.capitalize()
-        ]
-        df["SNo"] = df.index + 1
-        return df
-
     def _last_updated_remote(self, url):
         """
         Return the date last updated of remote file/directory.
@@ -192,16 +131,147 @@ class DataLoader(Word):
         date = datetime.fromtimestamp(m_time)
         return date
 
-    def _jhu(self, filename):
+    def _create_dataset(self, data_key, filename, **kwargs):
         """
-        Return JHU dataset.
+        Return dataset class with citation.
 
         Args:
+            data_key <str>: key of self.dataset_dict
             filename <str>: filename of the local dataset
+            kwargs: keyword arguments of @data_class
 
         Returns:
             <covsirphy.cleaning.jhu_data.JHUData>: the dataset
+
+        Notes:
+            ".citation" attribute will returns the citation
         """
-        jhu_data = JHUData(filename)
-        jhu_data.citation = self.JHU_CITATION
-        return jhu_data
+        # Get information from self.dataset_dict
+        target_dict = self.dataset_dict[data_key]
+        data_class = target_dict["class"]
+        citation = target_dict["citation"]
+        # Validate the data class
+        data_class = self.validate_subclass(data_class, CleaningBase)
+        # Create instance and set citation
+        data_instance = data_class(filename=filename, **kwargs)
+        data_instance.citation = citation
+        return data_instance
+
+    def _needs_pull(self, filename, url):
+        """
+        Return whether we need to get the data from remote servers or not,
+        comparing the last update of the files.
+
+        Args:
+            filename <str>: filename of the local file
+            url <str>: URL of the remote server
+
+        Returns:
+            <bool>: whether we need to get the data from remote servers or not
+        """
+        if filename is None or (not Path(filename).exists()):
+            return True
+        updated_local = self._last_updated_local(filename)
+        updated_remote = self._last_updated_remote(url)
+        if updated_local < updated_remote:
+            return True
+        return False
+
+    def jhu(self, basename="covid_19_data.csv", local_file=None):
+        """
+        Load JHU dataset (the number of cases).
+        https://github.com/CSSEGISandData/COVID-19/
+
+        Args:
+            basename <str>: basename of the file to save the data
+            local_file <str/None>: if not None, load the data from this file
+
+        Notes:
+            Regardless the value of @local_file, the data will be save in the directory.
+
+        Returns:
+            <covsirphy.cleaning.jhu_data.JHUData>: JHU dataset
+        """
+        filename = self._resolve_filename(basename)
+        if local_file is not None:
+            if Path(local_file).exists():
+                jhu_data = self._create_dataset("JHU", local_file)
+                self._save(jhu_data.raw, filename)
+                return jhu_data
+            raise FileNotFoundError(f"{local_file} does not exist.")
+        if not self._needs_pull(filename, self.jhu_url):
+            return self._create_dataset("JHU", filename)
+        # Retrieve and combine the raw data
+        df = self._jhu_get()
+        # Save the dataset and return dataset
+        self._save(df, filename)
+        return self._create_dataset("JHU", filename)
+
+    def _jhu_get(self):
+        """
+        Get the raw data of the variable from JHU repository.
+
+        Args:
+            variable <str>: confirmed, deaths or recovered
+
+        Returns:
+            <pandas.DataFrame> : JHU data with all variables to use
+               Index:
+                    reset index
+                Columns:
+                    - SNo
+                    - Province/State
+                    - Country/Region
+                    - Updated
+                    - Confirmed
+                    - Deaths
+                    - Recovered
+        """
+        # Retrieve and combine the raw data
+        df = self._jhu_get_separately("confirmed")
+        deaths_df = self._jhu_get_separately("deaths")
+        recovered_df = self._jhu_get_separately("recovered")
+        df = pd.merge(df, deaths_df.loc[:, ["SNo", "Deaths"]], on="SNo")
+        df = pd.merge(df, recovered_df.loc[:, ["SNo", "Recovered"]], on="SNo")
+        # Columns will match that of Kaggle dataset
+        date_stamps = pd.to_datetime(df[self.jhu_date_col])
+        df[self.jhu_date_col] = date_stamps.dt.strftime("%m/%d/%Y")
+        df[self.jhu_p_col] = df[self.jhu_p_col].fillna(str())
+        updated_col = "Last Update"
+        last_updated_remote = self._last_updated_remote(self.jhu_url)
+        df[updated_col] = last_updated_remote.strftime("%m/%d/%Y %H:%M")
+        key_cols = [self.jhu_date_col, self.jhu_p_col, self.jhu_c_col]
+        df = df.loc[
+            :, ["SNo", *key_cols, updated_col, "Confirmed", "Deaths", "Recovered"]
+        ]
+        return df
+
+    def _jhu_get_separately(self, variable):
+        """
+        Get the raw data of the variable from JHU repository.
+
+        Args:
+            variable <str>: confirmed, deaths or recovered
+
+        Returns:
+            <pandas.DataFrame>: data of the variable
+                Index:
+                    reset index
+                Columns:
+                    - Province/State
+                    - Country/Region
+                    - @variable
+                    - SNo
+        """
+        # Retrieve the data
+        url = f"{self.jhu_url}/time_series_covid19_{variable}_global.csv"
+        df = self._get_raw(url)
+        # Arrange the data
+        df = df.drop(["Lat", "Long"], axis=1)
+        df = df.set_index([self.jhu_c_col, self.jhu_p_col]).stack()
+        df = df.reset_index()
+        df.columns = [
+            *df.columns.tolist()[:2], self.jhu_date_col, variable.capitalize()
+        ]
+        df["SNo"] = df.index + 1
+        return df
