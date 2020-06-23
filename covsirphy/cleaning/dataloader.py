@@ -331,9 +331,14 @@ class DataLoader(Word):
         filename = self._resolve_filename(basename)
         if local_file is not None:
             if Path(local_file).exists():
-                country_data = self._create_dataset_japan_cases(local_file)
-                self._save(country_data.raw, filename)
-                return country_data
+                japan_data = self._create_dataset_japan_cases(local_file)
+                df = japan_data.cleaned()
+                if set(df[self.COUNTRY].unique()) != set(["Japan"]):
+                    raise TypeError(
+                        f"{local_file} does not have Japan dataset."
+                    )
+                self._save(japan_data.raw, filename)
+                return japan_data
             raise FileNotFoundError(f"{local_file} does not exist.")
         if not self._needs_pull(filename, self.japan_cases_url):
             return self._create_dataset_japan_cases(filename)

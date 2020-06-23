@@ -1,7 +1,9 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
+from pathlib import Path
 import pandas as pd
+import pytest
 from covsirphy import Word
 from covsirphy import DataLoader, JHUData, CountryData
 
@@ -16,6 +18,19 @@ class TestDataLoader(object):
         assert isinstance(df, pd.DataFrame)
         assert set(df.columns) == set(Word.COLUMNS)
 
+    def test_jhu_local_file(self):
+        data_loader = DataLoader("input")
+        local_path = Path("input") / "covid_19_data.csv"
+        data_loader.jhu(local_file=local_path)
+        local_file = str(local_path)
+        data_loader.jhu(local_file=local_file)
+
+    def test_jhu_local_file_unexpected(self):
+        data_loader = DataLoader("input")
+        local_path = Path("input") / "covid_jpn_total.csv"
+        with pytest.raises(KeyError):
+            data_loader.jhu(local_file=local_path)
+
     def test_japan_cases(self):
         data_loader = DataLoader("input")
         japan_data = data_loader.japan()
@@ -24,6 +39,19 @@ class TestDataLoader(object):
         df = japan_data.cleaned()
         assert isinstance(df, pd.DataFrame)
         assert set(df.columns) == set(Word.COLUMNS)
+
+    def test_japan_cases_local_file(self):
+        data_loader = DataLoader("input")
+        local_path = Path("input") / "covid_jpn_total.csv"
+        data_loader.japan(local_file=local_path)
+        local_file = str(local_path)
+        data_loader.japan(local_file=local_file)
+
+    def test_japan_cases_local_file_unexpected(self):
+        data_loader = DataLoader("input")
+        local_path = Path("input") / "covid_19_data.csv"
+        with pytest.raises(Exception):
+            data_loader.japan(local_file=local_path)
 
     def test_subset(self):
         data_loader = DataLoader("input")
