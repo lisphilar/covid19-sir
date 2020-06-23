@@ -32,7 +32,8 @@ class Word(object):
     COUNTRY = "Country"
     ISO3 = "ISO3"
     PROVINCE = "Province"
-    STR_COLUMNS = [DATE, COUNTRY, PROVINCE]
+    AREA_COLUMNS = [COUNTRY, PROVINCE]
+    STR_COLUMNS = [DATE, *AREA_COLUMNS]
     COLUMNS = [*STR_COLUMNS, C, CI, F, R]
     NLOC_COLUMNS = [DATE, C, CI, F, R]
     VALUE_COLUMNS = [C, CI, F, R]
@@ -140,7 +141,8 @@ class Word(object):
         """
         df = target.copy()
         if not isinstance(df, pd.DataFrame):
-            raise TypeError(f"@{name} must be a instance of <pandas.DataFrame>.")
+            raise TypeError(
+                f"@{name} must be a instance of <pandas.DataFrame>.")
         if time_index and (not isinstance(df.index, pd.DatetimeIndex)):
             raise TypeError(f"Index of @{name} must be <pd.DatetimeIndex>.")
         if columns is None:

@@ -84,6 +84,8 @@ We can download this dataset from the primary source directly. Please refer to "
 ### The number of cases in Japan
 Primary source: [Ministry of Health, Labour and Welfare HP (in English)](https://www.mhlw.go.jp/stf/seisakunitsuite/bunya/newpage_00032.html)  
 Secondary source: [Secondary source: COVID-19 dataset in Japan by Lisphilar](https://www.kaggle.com/lisphilar/covid19-dataset-in-japan)  
+We can download this dataset from the secondary source directly. Please refer to "Quick usage" section.
+
 #### Total population
 [covid19 global forecasting: locations population by Dmitry A. Grechka](https://www.kaggle.com/dgrechka/covid19-global-forecasting-locations-population)  
 
@@ -119,17 +121,10 @@ jhu_data.cleaned()
 (Optional) We can replace JHU data with country-specific dataset.
 ```Python
 # As an example, read Japan dataset
-jpn_data = cs.CountryData("input/covid_jpn_total.csv", country="Japan")
-jpn_data.set_variables(
-    # Specify the column names to read
-    date="Date",
-    confirmed="Positive",
-    fatal="Fatal",
-    recovered="Discharged",
-    province=None
-)
-# Replacement of JHU data in Japan
-jhu_data.replace(jpn_data)
+japan_data = data_loader.japan()
+print(japan_data.citation)
+# Replace records of Japan with Japan-specific dataset
+jhu_data.replace(japan_data)
 ncov_df = jhu_data.cleaned()
 ```
 Perform data cleaning of population dataset.

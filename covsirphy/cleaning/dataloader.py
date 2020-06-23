@@ -2,12 +2,14 @@
 # -*- coding: utf-8 -*-
 
 from pathlib import Path
-from datetime import datetime
+from datetime import datetime, timezone, timedelta
 from dask import dataframe as dd
 import pandas as pd
 import requests
-from covsirphy.cleaning.word import Word
+from covsirphy.cleaning.cbase import CleaningBase
 from covsirphy.cleaning.jhu_data import JHUData
+from covsirphy.cleaning.country_data import CountryData
+from covsirphy.cleaning.word import Word
 
 
 class DataLoader(Word):
@@ -16,9 +18,14 @@ class DataLoader(Word):
 
     Args:
         directory <str/pathlib.Path>: directory to save the downloaded datasets
+        update_interval <int>: update interval of the local datasets
 
     Notes:
         If @directory is None, the files will not be saved in local environment.
+        GitHub datasets will be always updated because headers of GET response
+         does not have 'Last-Modified' keys.
+        If @update_interval hours have passed since the last update of local datasets,
+         updating will be forced when updating is not prevented by the methods.
 
     Examples:
         >>> import covsirphy as cs
@@ -27,60 +34,42 @@ class DataLoader(Word):
         >>> print(jhu_data.citation)
         >>> print(type(jhu_data.cleaned()))
         <class 'pandas.core.frame.DataFrame'>
+        >>> jpn_data = data_loader.japan()
+        >>> print(jpn_data.citation)
+        >>> print(type(jpn_data.cleaned()))
+        <class 'pandas.core.frame.DataFrame'>
     """
-    # JHU dataset
-    JHU_URL = "https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master" \
-              "/csse_covid_19_data/csse_covid_19_time_series"
-    JHU_CITATION = "COVID-19 Data Repository" \
-        " by the Center for Systems Science and Engineering (CSSE)" \
-        " at Johns Hopkins University (2020)," \
-        " GitHub repository," \
-        " https://github.com/CSSEGISandData/COVID-19"
 
-    def __init__(self, directory):
+    def __init__(self, directory, update_interval=12):
         self.dir_path = None if directory is None else Path(directory)
+        self.update_interval = self.validate_natural_int(
+            update_interval, name="update_interval", include_zero=True
+        )
         # Create the directory if not exist
         if self.dir_path is not None:
             self.dir_path.mkdir(parents=True, exist_ok=True)
         # JHU data
+        self.jhu_url = "https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master" \
+            "/csse_covid_19_data/csse_covid_19_time_series"
+        self.jhu_citation = "COVID-19 Data Repository" \
+            " by the Center for Systems Science and Engineering (CSSE)" \
+            " at Johns Hopkins University (2020)," \
+            " GitHub repository," \
+            " https://github.com/CSSEGISandData/COVID-19"
         self.jhu_date_col = "ObservationDate"
         self.jhu_p_col = "Province/State"
         self.jhu_c_col = "Country/Region"
-
-    def jhu(self):
-        """
-        Load JHU dataset (the number of cases).
-        https://github.com/CSSEGISandData/COVID-19/
-
-        Returns:
-            <covsirphy.cleaning.jhu_data.JHUData>: JHU dataset
-        """
-        last_updated_remote = self._last_updated_remote(self.JHU_URL)
-        filename = self._resolve_filename("covid_19_data.csv")
-        if filename is not None and Path(filename).exists():
-            last_updated_local = self._last_updated_local(filename)
-            if last_updated_local > last_updated_remote:
-                return self._jhu(filename)
-        # Get the raw data
-        df = self._jhu_get("confirmed")
-        # Combine the data
-        deaths_df = self._jhu_get("deaths").loc[:, ["SNo", "Deaths"]]
-        recovered_df = self._jhu_get("recovered").loc[:, ["SNo", "Recovered"]]
-        df = pd.merge(df, deaths_df, on="SNo")
-        df = pd.merge(df, recovered_df, on="SNo")
-        # Arrange the data
-        date_stamps = pd.to_datetime(df[self.jhu_date_col])
-        df[self.jhu_date_col] = date_stamps.dt.strftime("%m/%d/%Y")
-        df[self.jhu_p_col] = df[self.jhu_p_col].fillna(str())
-        updated_col = "Last Update"
-        df[updated_col] = last_updated_remote.strftime("%m/%d/%Y %H:%M")
-        key_cols = [self.jhu_date_col, self.jhu_p_col, self.jhu_c_col]
-        df = df.loc[
-            :, ["SNo", *key_cols, updated_col, "Confirmed", "Deaths", "Recovered"]
-        ]
-        # Save the dataset and return dataset
-        self._save(df, filename)
-        return self._jhu(filename)
+        # The number of cases in Japan
+        self.japan_cases_url = "https://raw.githubusercontent.com/lisphilar/covid19-sir/master/data/japan"
+        self.japan_cases_citation = "Lisphilar (2020), COVID-19 dataset in Japan, GitHub repository, " \
+            "https://github.com/lisphilar/covid19-sir/data/japan"
+        # Dictionary of datasets
+        self.dataset_dict = {
+            "JHU": {"class": JHUData, "url": self.jhu_url, "citation": self.jhu_citation},
+            "Japan_cases": {
+                "class": CountryData, "url": self.japan_cases_url, "citation": self.japan_cases_citation
+            },
+        }
 
     @staticmethod
     def _get_raw(url):
@@ -133,9 +122,170 @@ class DataLoader(Word):
         df.to_csv(filename, index=False)
         return filename
 
-    def _jhu_get(self, variable):
+    def _last_updated_remote(self, url):
         """
-        Get the data from JHU repository.
+        Return the date last updated of remote file/directory.
+
+        Args:
+            url <str>: URL
+
+        Returns:
+            <pandas.Timestamp/None>: time last updated (UTC)
+
+        Notes:
+            If "Last-Modified" key is not in the header, returns None.
+            If failed in connection with remote direcotry, returns None.
+        """
+        try:
+            response = requests.get(url)
+        except requests.ConnectionError:
+            return False
+        try:
+            date_str = response.headers["Last-Modified"]
+        except KeyError:
+            return None
+        date = pd.to_datetime(date_str).tz_convert(None)
+        return date
+
+    def _last_updated_local(self, path):
+        """
+        Return the date last updated of local file/directory.
+
+        Args:
+            path <str/pathlibPath>: name of the file/directory
+
+        Returns:
+            <datetime.datetime>: time last updated (UTC)
+        """
+        path = Path(path)
+        m_time = path.stat().st_mtime
+        date = datetime.fromtimestamp(m_time)
+        date = date.astimezone(timezone.utc).replace(tzinfo=None)
+        return date
+
+    def _create_dataset(self, data_key, filename, **kwargs):
+        """
+        Return dataset class with citation.
+
+        Args:
+            data_key <str>: key of self.dataset_dict
+            filename <str>: filename of the local dataset
+            kwargs: keyword arguments of @data_class
+
+        Returns:
+            <covsirphy.cleaning.jhu_data.JHUData>: the dataset
+
+        Notes:
+            ".citation" attribute will returns the citation
+        """
+        # Get information from self.dataset_dict
+        target_dict = self.dataset_dict[data_key]
+        data_class = target_dict["class"]
+        citation = target_dict["citation"]
+        # Validate the data class
+        data_class = self.validate_subclass(data_class, CleaningBase)
+        # Create instance and set citation
+        data_instance = data_class(filename=filename, **kwargs)
+        data_instance.citation = citation
+        return data_instance
+
+    def _needs_pull(self, filename, url):
+        """
+        Return whether we need to get the data from remote servers or not,
+        comparing the last update of the files.
+
+        Args:
+            filename <str>: filename of the local file
+            url <str>: URL of the remote server
+
+        Returns:
+            <bool>: whether we need to get the data from remote servers or not
+
+        Notes:
+            If the last updated date is unknown, returns True.
+            IF @self.update_interval hours have passed and the remote file was updated, return True.
+        """
+        if filename is None or (not Path(filename).exists()):
+            return True
+        date_local = self._last_updated_local(filename)
+        time_limit = date_local + timedelta(hours=self.update_interval)
+        if datetime.now() > time_limit:
+            date_remote = self._last_updated_remote(url)
+            if date_remote is None or date_remote > date_local:
+                return True
+        return False
+
+    def jhu(self, basename="covid_19_data.csv", local_file=None):
+        """
+        Load JHU dataset (the number of cases).
+        https://github.com/CSSEGISandData/COVID-19/
+
+        Args:
+            basename <str>: basename of the file to save the data
+            local_file <str/None>: if not None, load the data from this file
+
+        Notes:
+            Regardless the value of @local_file, the data will be save in the directory.
+
+        Returns:
+            <covsirphy.cleaning.jhu_data.JHUData>: JHU dataset
+        """
+        filename = self._resolve_filename(basename)
+        if local_file is not None:
+            if Path(local_file).exists():
+                jhu_data = self._create_dataset("JHU", local_file)
+                self._save(jhu_data.raw, filename)
+                return jhu_data
+            raise FileNotFoundError(f"{local_file} does not exist.")
+        if not self._needs_pull(filename, self.jhu_url):
+            return self._create_dataset("JHU", filename)
+        # Retrieve and combine the raw data
+        df = self._jhu_get()
+        # Save the dataset and return dataset
+        self._save(df, filename)
+        return self._create_dataset("JHU", filename)
+
+    def _jhu_get(self):
+        """
+        Get the raw data of the variable from JHU repository.
+
+        Args:
+            variable <str>: confirmed, deaths or recovered
+
+        Returns:
+            <pandas.DataFrame> : JHU data with all variables to use
+               Index:
+                    reset index
+                Columns:
+                    - SNo
+                    - Province/State
+                    - Country/Region
+                    - Updated
+                    - Confirmed
+                    - Deaths
+                    - Recovered
+        """
+        # Retrieve and combine the raw data
+        df = self._jhu_get_separately("confirmed")
+        deaths_df = self._jhu_get_separately("deaths")
+        recovered_df = self._jhu_get_separately("recovered")
+        df = pd.merge(df, deaths_df.loc[:, ["SNo", "Deaths"]], on="SNo")
+        df = pd.merge(df, recovered_df.loc[:, ["SNo", "Recovered"]], on="SNo")
+        # Columns will match that of Kaggle dataset
+        date_stamps = pd.to_datetime(df[self.jhu_date_col])
+        df[self.jhu_date_col] = date_stamps.dt.strftime("%m/%d/%Y")
+        df[self.jhu_p_col] = df[self.jhu_p_col].fillna(str())
+        updated_col = "Last Update"
+        df[updated_col] = date_stamps.dt.strftime("%m/%d/%Y %H:%M")
+        key_cols = [self.jhu_date_col, self.jhu_p_col, self.jhu_c_col]
+        df = df.loc[
+            :, ["SNo", *key_cols, updated_col, "Confirmed", "Deaths", "Recovered"]
+        ]
+        return df
+
+    def _jhu_get_separately(self, variable):
+        """
+        Get the raw data of the variable from JHU repository.
 
         Args:
             variable <str>: confirmed, deaths or recovered
@@ -151,7 +301,7 @@ class DataLoader(Word):
                     - SNo
         """
         # Retrieve the data
-        url = f"{self.JHU_URL}/time_series_covid19_{variable}_global.csv"
+        url = f"{self.jhu_url}/time_series_covid19_{variable}_global.csv"
         df = self._get_raw(url)
         # Arrange the data
         df = df.drop(["Lat", "Long"], axis=1)
@@ -163,45 +313,77 @@ class DataLoader(Word):
         df["SNo"] = df.index + 1
         return df
 
-    def _last_updated_remote(self, url):
+    def japan(self, basename="covid_jpn_total.csv", local_file=None):
         """
-        Return the date last updated of remote file/directory.
+        Load the datset of the number of cases in Japan.
+        https://github.com/lisphilar/covid19-sir/tree/master/data
 
         Args:
-            url <str>: URL
+            basename <str>: basename of the file to save the data
+            local_file <str/None>: if not None, load the data from this file
+
+        Notes:
+            Regardless the value of @local_file, the data will be save in the directory.
 
         Returns:
-            <pandas.Timestamp>: date last updated
+            <covsirphy.cleaning.country_data.CountryData>: dataset at country level
         """
-        response = requests.get(url)
-        date = pd.to_datetime(response.headers["Date"]).tz_convert(None)
-        return date
+        filename = self._resolve_filename(basename)
+        if local_file is not None:
+            if Path(local_file).exists():
+                japan_data = self._create_dataset_japan_cases(local_file)
+                df = japan_data.cleaned()
+                if set(df[self.COUNTRY].unique()) != set(["Japan"]):
+                    raise TypeError(
+                        f"{local_file} does not have Japan dataset."
+                    )
+                self._save(japan_data.raw, filename)
+                return japan_data
+            raise FileNotFoundError(f"{local_file} does not exist.")
+        if not self._needs_pull(filename, self.japan_cases_url):
+            return self._create_dataset_japan_cases(filename)
+        # Retrieve and combine the raw data
+        df = self._japan_cases_get()
+        # Save the dataset and return dataset
+        self._save(df, filename)
+        return self._create_dataset_japan_cases(filename)
 
-    def _last_updated_local(self, path):
+    def _japan_cases_get(self):
         """
-        Return the date last updated of local file/directory.
+        Get the raw data from the following repository.
+        https://github.com/lisphilar/covid19-sir/tree/master/data/japan
 
         Args:
-            path <str/pathlibPath>: name of the file/directory
+            variable <str>: confirmed, deaths or recovered
 
         Returns:
-            <datetime.datetime>: date last updated
+            <pandas.DataFrame> : the raw data
+               Index:
+                    reset index
+                Columns:
+                    as-is the repository
         """
-        path = Path(path)
-        m_time = path.stat().st_mtime
-        date = datetime.fromtimestamp(m_time)
-        return date
+        url = f"{self.japan_cases_url}/covid_jpn_total.csv"
+        df = self._get_raw(url)
+        return df
 
-    def _jhu(self, filename):
+    def _create_dataset_japan_cases(self, filename):
         """
-        Return JHU dataset.
+        Create a dataset for Japan with a local file.
 
         Args:
-            filename <str>: filename of the local dataset
+            filename <str>: filename of the local file
 
         Returns:
-            <covsirphy.cleaning.jhu_data.JHUData>: the dataset
+            <covsirphy.cleaning.country_data.CountryData>: dataset at country level
         """
-        jhu_data = JHUData(filename)
-        jhu_data.citation = self.JHU_CITATION
-        return jhu_data
+        country_data = self._create_dataset(
+            "Japan_cases", filename, country="Japan")
+        country_data.set_variables(
+            date="Date",
+            confirmed="Positive",
+            fatal="Fatal",
+            recovered="Discharged",
+            province=None
+        )
+        return country_data

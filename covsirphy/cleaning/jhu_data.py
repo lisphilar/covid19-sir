@@ -153,14 +153,17 @@ class JHUData(CleaningBase):
 
         Returns:
             <pandas.DataFrame>
-                    Index:
-                        reset index
-                    Columns:
-                        - Date <pd.TimeStamp>: Observation date
-                        - Confirmed <int>: the number of confirmed cases
-                        - Infected <int>: the number of currently infected cases
-                        - Fatal <int>: the number of fatal cases
-                        - Recovered <int>: the number of recovered cases (> 0)
+                Index:
+                    reset index
+                Columns:
+                    - Date <pd.TimeStamp>: Observation date
+                    - Confirmed <int>: the number of confirmed cases
+                    - Infected <int>: the number of currently infected cases
+                    - Fatal <int>: the number of fatal cases
+                    - Recovered <int>: the number of recovered cases (> 0)
+
+        Notes:
+            Records with Recovered > 0 will be selected.
         """
         df = self._cleaned_df.copy()
         df = df.loc[df[self.COUNTRY] == country, :]
