@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 from pathlib import Path
-from datetime import datetime, timezone
+from datetime import datetime, timezone, timedelta
 from dask import dataframe as dd
 import pandas as pd
 import requests
@@ -18,9 +18,14 @@ class DataLoader(Word):
 
     Args:
         directory <str/pathlib.Path>: directory to save the downloaded datasets
+        update_interval <int>: update interval of the local datasets
 
     Notes:
         If @directory is None, the files will not be saved in local environment.
+        GitHub datasets will be always updated because headers of GET response
+         does not have 'Last-Modified' keys.
+        If @update_interval hours have passed since the last update of local datasets,
+         updating will be forced when updating is not prevented by the methods.
 
     Examples:
         >>> import covsirphy as cs
@@ -35,8 +40,11 @@ class DataLoader(Word):
         <class 'pandas.core.frame.DataFrame'>
     """
 
-    def __init__(self, directory):
+    def __init__(self, directory, update_interval=12):
         self.dir_path = None if directory is None else Path(directory)
+        self.update_interval = self.validate_natural_int(
+            update_interval, name="update_interval", include_zero=True
+        )
         # Create the directory if not exist
         if self.dir_path is not None:
             self.dir_path.mkdir(parents=True, exist_ok=True)
@@ -122,10 +130,21 @@ class DataLoader(Word):
             url <str>: URL
 
         Returns:
-            <pandas.Timestamp>: time last updated (UTC)
+            <pandas.Timestamp/None>: time last updated (UTC)
+
+        Notes:
+            If "Last-Modified" key is not in the header, returns None.
+            If failed in connection with remote direcotry, returns None.
         """
-        response = requests.get(url)
-        date = pd.to_datetime(response.headers["Date"]).tz_convert(None)
+        try:
+            response = requests.get(url)
+        except requests.ConnectionError:
+            return False
+        try:
+            date_str = response.headers["Last-Modified"]
+        except KeyError:
+            return None
+        date = pd.to_datetime(date_str).tz_convert(None)
         return date
 
     def _last_updated_local(self, path):
@@ -181,14 +200,19 @@ class DataLoader(Word):
 
         Returns:
             <bool>: whether we need to get the data from remote servers or not
+
+        Notes:
+            If the last updated date is unknown, returns True.
+            IF @self.update_interval hours have passed and the remote file was updated, return True.
         """
         if filename is None or (not Path(filename).exists()):
             return True
-        updated_local = self._last_updated_local(filename)
-        updated_remote = self._last_updated_remote(url)
-        print(updated_local, updated_remote)
-        if updated_local < updated_remote:
-            return True
+        date_local = self._last_updated_local(filename)
+        time_limit = date_local + timedelta(hours=self.update_interval)
+        if datetime.now() > time_limit:
+            date_remote = self._last_updated_remote(url)
+            if date_remote is None or date_remote > date_local:
+                return True
         return False
 
     def jhu(self, basename="covid_19_data.csv", local_file=None):
@@ -252,8 +276,7 @@ class DataLoader(Word):
         df[self.jhu_date_col] = date_stamps.dt.strftime("%m/%d/%Y")
         df[self.jhu_p_col] = df[self.jhu_p_col].fillna(str())
         updated_col = "Last Update"
-        last_updated_remote = self._last_updated_remote(self.jhu_url)
-        df[updated_col] = last_updated_remote.strftime("%m/%d/%Y %H:%M")
+        df[updated_col] = date_stamps.dt.strftime("%m/%d/%Y %H:%M")
         key_cols = [self.jhu_date_col, self.jhu_p_col, self.jhu_c_col]
         df = df.loc[
             :, ["SNo", *key_cols, updated_col, "Confirmed", "Deaths", "Recovered"]
