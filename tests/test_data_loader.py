@@ -30,7 +30,7 @@ class TestDataLoader(object):
         jhu_data = data_loader.jhu()
         df = jhu_data.subset("Japan")
         assert isinstance(df, pd.DataFrame)
-        assert set(df.columns) == set(Word.COLUMNS)
+        assert set(df.columns) == set(Word.NLOC_COLUMNS)
 
     def test_replace(self):
         data_loader = DataLoader("input")
@@ -40,5 +40,5 @@ class TestDataLoader(object):
         assert isinstance(jhu_data, JHUData)
         replaced_df = jhu_data.subset("Japan")
         japan_df = japan_data.cleaned()
-        assert set(replaced_df.columns) == set(japan_df.columns)
+        assert set(replaced_df.columns) == set(Word.NLOC_COLUMNS)
         assert len(replaced_df) == len(japan_df)
