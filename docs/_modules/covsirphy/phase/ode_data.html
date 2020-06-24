@@ -300,9 +300,9 @@
 <span class="sd">                    - Infected (int): the number of currently infected cases</span>
 <span class="sd">                    - Fatal (int): the number of fatal cases</span>
 <span class="sd">                    - Recovered (int): the number of recovered cases</span>
-<span class="sd">            model &lt;sub-class of cs.ModelBase&gt;: ODE model</span>
+<span class="sd">            model (covsirphy.ModelBase): ODE model</span>
 <span class="sd">            population (int): total population</span>
-<span class="sd">            tau &lt;int/None&gt;: tau value [min] or None (un-set)</span>
+<span class="sd">            tau (int or None): tau value [min] or None (un-set)</span>
 
 <span class="sd">        Returns:</span>
 <span class="sd">            (pandas.DataFrame):</span>
@@ -324,11 +324,11 @@
 <span class="sd">        Make a dataset for ODE analysis.</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">            model &lt;covsirphy.ModelBase&gt;: ODE model</span>
+<span class="sd">            model (covsirphy.ModelBase): ODE model</span>
 <span class="sd">            population (int): total population</span>
-<span class="sd">            start_date &lt;str/None&gt;: start date, like 22Jan2020</span>
-<span class="sd">            end_date &lt;str/None&gt;: end date, like 01Feb2020</span>
-<span class="sd">            tau &lt;int/None&gt;: tau value [min] or None (un-set)</span>
+<span class="sd">            start_date (str or None): start date, like 22Jan2020</span>
+<span class="sd">            end_date (str or None): end date, like 01Feb2020</span>
+<span class="sd">            tau (int or None): tau value [min] or None (un-set)</span>
 
 <span class="sd">        Notes:</span>
 <span class="sd">            - When @start_date is None, the first date of the records will be used</span>
@@ -351,7 +351,7 @@
 <span class="sd">        Return the initial values of the model.</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">            model &lt;covsirphy.ModelBase&gt;: ODE model</span>
+<span class="sd">            model (covsirphy.ModelBase): ODE model</span>
 <span class="sd">            population (int): total population</span>
 <span class="sd">            start_date (str): start date, like 22Jan2020</span>
 
@@ -359,9 +359,9 @@
 <span class="sd">            - When @start_date is None, the first date of the records will be used</span>
 
 <span class="sd">        Returns:</span>
-<span class="sd">            &lt;dict[str]=int&gt;:</span>
-<span class="sd">            - key: dimensional variables</span>
-<span class="sd">            - value: the number of cases</span>
+<span class="sd">            (dict)</span>
+<span class="sd">                - key (str): dimensional variables</span>
+<span class="sd">                - value (int): the number of cases</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">subset_df</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">subset</span><span class="p">(</span><span class="n">start_date</span><span class="o">=</span><span class="n">start_date</span><span class="p">,</span> <span class="n">end_date</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
         <span class="n">df</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_make</span><span class="p">(</span><span class="n">subset_df</span><span class="p">,</span> <span class="n">model</span><span class="p">,</span> <span class="n">population</span><span class="p">,</span> <span class="n">tau</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>

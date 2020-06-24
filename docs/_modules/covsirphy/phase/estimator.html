@@ -186,7 +186,7 @@
 <span class="sd">                    - Country (str): country/region name</span>
 <span class="sd">                    - Province (str): province/prefecture/state name</span>
 <span class="sd">                    - variables of the models (int)</span>
-<span class="sd">        model &lt;subclass of cs.ModelBase&gt;: ODE model</span>
+<span class="sd">        model (covsirphy.ModelBase): ODE model</span>
 <span class="sd">        population (int): total population in the place</span>
 <span class="sd">        country (str): country name</span>
 <span class="sd">        province (str): province name</span>
@@ -265,7 +265,7 @@
 <span class="sd">            timeout_iteration (int): time-out of one iteration</span>
 <span class="sd">            allowance (tuple(float, float)): the allowance of the predicted value</span>
 <span class="sd">            n_jobs (int): the number of parallel jobs or -1 (CPU count)</span>
-<span class="sd">            seed &lt;int/None&gt;: random seed of hyperparameter optimization</span>
+<span class="sd">            seed (int or None): random seed of hyperparameter optimization</span>
 
 <span class="sd">        Notes:</span>
 <span class="sd">            @seed will effective when @n_jobs is 1</span>
@@ -337,10 +337,10 @@
 <span class="sd">        This defines the parameter values using Optuna.</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">            trial &lt;optuna.trial&gt;: a trial of the study</span>
+<span class="sd">            trial (optuna.trial): a trial of the study</span>
 
 <span class="sd">        Returns:</span>
-<span class="sd">            &lt;float&gt;: score of the error function to minimize</span>
+<span class="sd">            (float): score of the error function to minimize</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">fixed_dict</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">fixed_dict</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
         <span class="c1"># Convert T to t using tau</span>
@@ -393,7 +393,9 @@
 <span class="sd">        Definition of error score to minimize in the study.</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">            param_dict &lt;dict[str]=int/float&gt;: estimated parameter values</span>
+<span class="sd">            param_dict (dict): estimated parameter values</span>
+<span class="sd">                - key (str): parameter name</span>
+<span class="sd">                - value (int or float): parameter value</span>
 <span class="sd">            taufree_df (pandas.DataFrame): training dataset</span>
 
 <span class="sd">                Index:</span>
@@ -403,7 +405,7 @@
 <span class="sd">                    - columns with dimensional variables</span>
 
 <span class="sd">        Returns:</span>
-<span class="sd">            &lt;float&gt;: score of the error function to minimize</span>
+<span class="sd">            (float): score of the error function to minimize</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">step_n</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;self.step_n must be defined in advance.&quot;</span><span class="p">)</span>
@@ -433,7 +435,9 @@
 
 <span class="sd">        Args:</span>
 <span class="sd">            step_n (int): number of iteration</span>
-<span class="sd">            param_dict &lt;dict[str]=int/float&gt;: estimated parameter values</span>
+<span class="sd">            param_dict (dict): estimated parameter values</span>
+<span class="sd">                - key (str): parameter name</span>
+<span class="sd">                - value (int or float): parameter value</span>
 
 <span class="sd">        Returns:</span>
 <span class="sd">            (pandas.DataFrame):</span>

@@ -41,7 +41,7 @@ class ModelBase(ModelBaseCommon):
         This method should be overwritten in subclass.
 
         Returns:
-            <np.array>
+            (np.array)
         """
         return np.array(list())
 
@@ -61,9 +61,9 @@ class ModelBase(ModelBaseCommon):
         @population (int): total population
 
         Returns:
-            <dict[name]=(min, max)>:
-            - min <float>: min value
-            - max <float>: max value
+            (dict)
+                - key (str): parameter name
+                - value (tuple(float, float)): min value and max value
         """
         _dict = dict()
         return _dict

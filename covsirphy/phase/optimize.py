@@ -43,7 +43,7 @@ class Optimizer(Word):
         Initialize Optuna study.
 
         Args:
-            seed <int/None>: random seed of hyperparameter optimization
+            seed (int or None): random seed of hyperparameter optimization
 
         Notes:
             @seed will effective when the number of CPUs is 1
@@ -62,7 +62,7 @@ class Optimizer(Word):
             timeout (int): time-out of run
             n_trials (int): the number of trials
             n_jobs (int): the number of parallel jobs or -1 (CPU count)
-            seed <int/None>: random seed of hyperparameter optimization
+            seed (int or None): random seed of hyperparameter optimization
 
         Notes:
             @seed will effective when @n_jobs is 1
@@ -90,10 +90,10 @@ class Optimizer(Word):
         This method should be overwritten in subclass.
 
         Args:
-            trial <optuna.trial>: a trial of the study
+            trial (optuna.trial): a trial of the study
 
         Returns:
-            <float>: score of the error function to minimize
+            (float): score of the error function to minimize
         """
         param_dict = dict()
         return self.error_f(param_dict, self.train_df)
@@ -104,7 +104,9 @@ class Optimizer(Word):
         This method should be overwritten in subclass.
 
         Args:
-            param_dict <dict[str]=int/float>: estimated parameter values
+            param_dict (dict): estimated parameter values
+                - key (str): parameter name
+                - value (int or float): parameter value
             train_df (pandas.DataFrame): actual data
 
                 Index:
@@ -114,7 +116,7 @@ class Optimizer(Word):
                     - includes columns defined by @variables
 
         Returns:
-            <float>: score of the error function to minimize
+            (float): score of the error function to minimize
         """
         sim_df = self.simulate(self.step_n, param_dict)
         comp_df = self.compare(self.train_df, sim_df)
@@ -127,7 +129,9 @@ class Optimizer(Word):
         This method should be overwritten in subclass.
 
         Args:
-            param_dict <dict[str]=int/float>: estimated parameter values
+            param_dict (dict): estimated parameter values
+                - key (str): parameter name
+                - value (int or float): parameter value
 
         Returns:
             (pandas.DataFrame):
@@ -190,7 +194,9 @@ class Optimizer(Word):
         Return the estimated parameters as a dictionary.
 
         Returns:
-            <dict[str]=float/int>
+            (dict)
+                - key (str): parameter name
+                - value (int or float): parameter value
         """
         param_dict = self.study.best_params.copy()
         param_dict.update(self.fixed_dict)
@@ -234,10 +240,10 @@ class Optimizer(Word):
                 Columns:
                     - t: time step, 0, 1, 2,...
                     - includes columns defined by self.y_list
-            dim <int/float>: dimension where comparison will be performed
+            dim (int or float): dimension where comparison will be performed
 
         Returns:
-            <float>
+            (float): RMSLE score
         """
         predicted_df = self.predict()
         df = self.compare(train_df, predicted_df)

@@ -51,9 +51,9 @@ class SRData(PhaseData):
         Make dataset for S-R trend analysis.
 
         Args:
-            opulation (int): total population in the place
-            start_date <str/None>: start date, like 22Jan2020
-            end_date <str/None>: end date, like 01Feb2020
+            population (int): total population in the place
+            start_date (str or None): start date, like 22Jan2020
+            end_date (str or None): end date, like 01Feb2020
 
         Notes:
             - When @start_date is None, the first date of the records will be used

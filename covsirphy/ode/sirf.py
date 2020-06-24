@@ -11,10 +11,10 @@ class SIRF(ModelBase):
 
     Args:
         population (int): total population
-        theta <float>
-        kappa <float>
-        rho <float>
-        sigma <float>
+        theta (float)
+        kappa (float)
+        rho (float)
+        sigma (float)
     """
     # Model name
     NAME = "SIR-F"
@@ -53,10 +53,10 @@ class SIRF(ModelBase):
 
         Args:
             t (int): time steps
-            X <numpy.array>: values of th model variables
+            X (numpy.array): values of th model variables
 
         Returns:
-            <np.array>
+            (np.array)
         """
         n = self.population
         s, i, *_ = X
@@ -81,9 +81,9 @@ class SIRF(ModelBase):
             population (int): total population
 
         Returns:
-            <dict[name]=(min, max)>:
-            - min <float>: min value
-            - max <float>: max value
+            (dict)
+                - key (str): parameter name
+                - value (tuple(float, float)): min value and max value
         """
         df = cls.validate_dataframe(
             taufree_df, name="taufree_df", columns=[cls.TS, *cls.VARIABLES]
@@ -109,19 +109,19 @@ class SIRF(ModelBase):
         Specialize the dataset for this model.
 
         Args:
-        data_df (pandas.DataFrame):
-            Index:
-                reset index
-            Columns:
-                - Confirmed (int): the number of confirmed cases
-                - Infected (int): the number of currently infected cases
-                - Fatal (int): the number of fatal cases
-                - Recovered (int): the number of recovered cases
-                - any columns
-        population (int): total population in the place
+            data_df (pandas.DataFrame):
+                Index:
+                    reset index
+                Columns:
+                    - Confirmed (int): the number of confirmed cases
+                    - Infected (int): the number of currently infected cases
+                    - Fatal (int): the number of fatal cases
+                    - Recovered (int): the number of recovered cases
+                    - any columns
+            population (int): total population in the place
 
         Returns:
-            (pandas.DataFrame):
+            (pandas.DataFrame)
                 Index:
                     reset index
                 Columns:
@@ -152,7 +152,7 @@ class SIRF(ModelBase):
                 - any columns
 
         Returns:
-            (pandas.DataFrame):
+            (pandas.DataFrame)
                 Index:
                     (object): as-is
                 Columns:

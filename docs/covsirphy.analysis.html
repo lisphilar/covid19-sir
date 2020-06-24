@@ -337,8 +337,8 @@
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>&lt;covsirphy.JHUData&gt;</strong> (<em>jhu_data</em>) – object of records</p></li>
-<li><p><strong>&lt;covsirphy.Population&gt;</strong> (<em>pop_data</em>) – Population object</p></li>
+<li><p><strong>jhu_data</strong> (<a class="reference internal" href="covsirphy.html#covsirphy.JHUData" title="covsirphy.JHUData"><em>covsirphy.JHUData</em></a>) – object of records</p></li>
+<li><p><strong>pop_data</strong> (<a class="reference internal" href="covsirphy.html#covsirphy.Population" title="covsirphy.Population"><em>covsirphy.Population</em></a>) – Population object</p></li>
 <li><p><strong>country</strong> (<em>str</em>) – country name</p></li>
 <li><p><strong>province</strong> (<em>str</em>) – province name</p></li>
 </ul>
@@ -357,7 +357,7 @@ The start date is the next date of the last registered phase.</p>
 <li><p><strong>days</strong> (<em>int</em>) – the number of days to add</p></li>
 <li><p><strong>population</strong> (<em>int</em>) – population value of the start date
 - if None, the same as initial value</p></li>
-<li><p><strong>&lt;covsirphy.ModelBase&gt;</strong> (<em>model</em>) – ODE model
+<li><p><strong>model</strong> (<a class="reference internal" href="covsirphy.html#covsirphy.ModelBase" title="covsirphy.ModelBase"><em>covsirphy.ModelBase</em></a>) – ODE model
 - if None, the model of the last phase will be used</p></li>
 <li><p><strong>kwargs</strong> – <p>keyword arguments of ODE model parameters
 - un-included parameters will be the same as the last phase</p>
@@ -373,7 +373,7 @@ The start date is the next date of the last registered phase.</p>
 </dl>
 <p class="rubric">Notes</p>
 <ul class="simple">
-<li><p>If the ohases series has not been registered, new phase series will be created</p></li>
+<li><p>If the phases series has not been registered, new phase series will be created</p></li>
 <li><p>&#64;end_date or &#64;days must be specified</p></li>
 </ul>
 <dl class="field-list simple">
@@ -450,7 +450,7 @@ The start date is the next date of the last registered phase.</p>
 - if None, all phase series will be used</p></li>
 <li><p><strong>phases</strong> (<em>list</em><em>[</em><em>str</em><em>]</em>) – list of phase names, like 1st, 2nd…
 - if None, all past phase will be used</p></li>
-<li><p><strong>&lt;covsirphy.ModelBase&gt;</strong> (<em>model</em>) – ODE model</p></li>
+<li><p><strong>model</strong> (<a class="reference internal" href="covsirphy.html#covsirphy.ModelBase" title="covsirphy.ModelBase"><em>covsirphy.ModelBase</em></a>) – ODE model</p></li>
 <li><p><strong>kwargs</strong> – <ul>
 <li><p>keyword arguments of the model parameter</p></li>
 <li><p>keyword arguments of covsirphy.Estimator.run()</p></li>
@@ -471,7 +471,7 @@ The start date is the next date of the last registered phase.</p>
 <li><p><strong>phase</strong> (<em>str</em>) – phase name, like 1st, 2nd…</p></li>
 <li><p><strong>name</strong> (<em>str</em>) – phase series name
 - if ‘Main’, main PhaseSeries will be used</p></li>
-<li><p><strong>kwargs</strong> – keyword arguments of &lt;covsirphy.Estimator.accuracy()&gt;</p></li>
+<li><p><strong>kwargs</strong> – keyword arguments of covsirphy.Estimator.accuracy()</p></li>
 </ul>
 </dd>
 </dl>
@@ -487,7 +487,7 @@ The start date is the next date of the last registered phase.</p>
 <li><p><strong>phase</strong> (<em>str</em>) – phase name, like 1st, 2nd…</p></li>
 <li><p><strong>name</strong> (<em>str</em>) – phase series name
 - if ‘Main’, main PhaseSeries will be used</p></li>
-<li><p><strong>kwargs</strong> – keyword arguments of &lt;covsirphy.Estimator.history()&gt;</p></li>
+<li><p><strong>kwargs</strong> – keyword arguments of covsirphy.Estimator.history()</p></li>
 </ul>
 </dd>
 </dl>
@@ -574,9 +574,10 @@ The start date is the next date of the last registered phase.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>name</strong> (<em>str</em>) – phase series name
-- if ‘Main’, main PhaseSeries will be used</p></li>
-<li><p><strong>&lt;dict</strong><strong>[</strong><strong>str</strong><strong>]</strong><strong>=float&gt;</strong> (<em>y0_dict</em>) – <ul>
+<li><p><strong>name</strong> (<em>str</em>) – phase series name. If ‘Main’, main PhaseSeries will be used</p></li>
+<li><p><strong>y0_dict</strong> (<em>dict</em>) – <ul>
+<li><p>key (str): variable name</p></li>
+<li><p>value (float): initial value</p></li>
 <li><p>dictionary of initial values or None</p></li>
 <li><p>if model will be changed in the later phase, must be specified</p></li>
 </ul>
@@ -677,10 +678,12 @@ The start date is the next date of the last registered phase.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>&lt;subclass of cs.ModelBase&gt;</strong> (<em>model</em>) – the first ODE model</p></li>
+<li><p><strong>model</strong> (<em>subclass of cs.ModelBase</em>) – the first ODE model</p></li>
 <li><p><strong>step_n</strong> (<em>int</em>) – the number of steps</p></li>
 <li><p><strong>population</strong> (<em>int</em>) – population in the place</p></li>
-<li><p><strong>&lt;dict</strong><strong>[</strong><strong>str</strong><strong>]</strong><strong>=float&gt;</strong> (<em>y0_dict</em>) – <ul>
+<li><p><strong>param_dict</strong> (<em>dict</em>) – <ul>
+<li><p>key (str): parameter name</p></li>
+<li><p>value (float): parameter value</p></li>
 <li><p>dictionary of parameter values or None</p></li>
 <li><dl class="simple">
 <dt>if not include some params, the last values will be used</dt><dd><ul>
@@ -692,7 +695,9 @@ The start date is the next date of the last registered phase.</p>
 </li>
 </ul>
 </p></li>
-<li><p><strong>&lt;dict</strong><strong>[</strong><strong>str</strong><strong>]</strong><strong>=float&gt;</strong> – <ul>
+<li><p><strong>y0_dict</strong> (<em>dict</em>) – <ul>
+<li><p>key (str): variable name</p></li>
+<li><p>value (float): initial value</p></li>
 <li><p>dictionary of dimensional initial values or None</p></li>
 <li><dl class="simple">
 <dt>None or if not include some variables, the last values will be used</dt><dd><ul>
@@ -835,7 +840,7 @@ This is weighted average of RMSLE scores.</p>
 <dd class="field-even"><p>score of the error function to minimize</p>
 </dd>
 <dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>&lt;float&gt;</p>
+<dd class="field-odd"><p>(float)</p>
 </dd>
 </dl>
 </dd></dl>
@@ -884,13 +889,13 @@ This is weighted average of RMSLE scores.</p>
 This defines the parameter values using Optuna.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>&lt;optuna.trial&gt;</strong> (<em>trial</em>) – a trial of the study</p>
+<dd class="field-odd"><p><strong>trial</strong> (<em>optuna.trial</em>) – a trial of the study</p>
 </dd>
 <dt class="field-even">Returns</dt>
 <dd class="field-even"><p>score of the error function to minimize</p>
 </dd>
 <dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>&lt;float&gt;</p>
+<dd class="field-odd"><p>(float)</p>
 </dd>
 </dl>
 </dd></dl>
@@ -930,7 +935,7 @@ with this allowance, stop running.</p></li>
 <li><p><strong>timeout</strong> (<em>int</em>) – time-out of run</p></li>
 <li><p><strong>n_trials_iteration</strong> (<em>int</em>) – the number of trials in one iteration</p></li>
 <li><p><strong>n_jobs</strong> (<em>int</em>) – the number of parallel jobs or -1 (CPU count)</p></li>
-<li><p><strong>&lt;int/None&gt;</strong> (<em>seed</em>) – random seed of hyperparameter optimization
+<li><p><strong>seed</strong> (<em>int</em><em> or </em><em>None</em>) – random seed of hyperparameter optimization
 - this will effective when &#64;n_jobs is 1</p></li>
 </ul>
 </dd>
@@ -954,7 +959,7 @@ with this allowance, stop running.</p></li>
 <p>&#64;filename (str): filename of the figure, or None (show figure)</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns</dt>
-<dd class="field-odd"><p>&lt;covsirphy.PhaseSeries&gt;</p>
+<dd class="field-odd"><p>(covsirphy.PhaseSeries)</p>
 </dd>
 </dl>
 </dd></dl>

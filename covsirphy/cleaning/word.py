@@ -90,9 +90,9 @@ class Word(object):
         Negative exponential function f(x)=A exp(-Bx).
 
         Args:
-            x <float>: x values
-            a <float>: the first parameters of the function
-            b <float>: the second parameters of the function
+            x (float): x values
+            a (float): the first parameters of the function
+            b (float): the second parameters of the function
         """
         return a * np.exp(-b * x)
 
@@ -105,7 +105,7 @@ class Word(object):
             date_str (str): date, like 22Jan2020
 
         Returns:
-            <datetime.datetime>
+            (datetime.datetime)
         """
         obj = datetime.strptime(date_str, cls.DATE_FORMAT)
         return obj
@@ -162,7 +162,7 @@ class Word(object):
          will be converted to an integer.
 
         Args:
-            target <int/float/str>: value to validate
+            target (int or float or str): value to validate
             name (str): argument name of the value
             include_zero (bool): include 0 or not
 
@@ -210,7 +210,7 @@ class Word(object):
             name (str): argument name of the target
 
         Returns:
-            <instance>: as-is target
+            (instance): as-is target
         """
         s = f"@{name} must be an instance of {type(class_obj)}, but {type(target)} was applied."
         if not isinstance(target, class_obj):

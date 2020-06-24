@@ -185,15 +185,19 @@
 <span class="sd">        Add models to the simulator.</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">            model &lt;subclass of cs.ModelBase&gt;: the first ODE model</span>
+<span class="sd">            model (subclass of cs.ModelBase): the first ODE model</span>
 <span class="sd">            step_n (int): the number of steps</span>
 <span class="sd">            population (int): population in the place</span>
-<span class="sd">            param_dict &lt;dict[str]=float&gt;:</span>
+<span class="sd">            param_dict (dict):</span>
+<span class="sd">                - key (str): parameter name</span>
+<span class="sd">                - value (float): parameter value</span>
 <span class="sd">                - dictionary of parameter values or None</span>
 <span class="sd">                - if not include some params, the last values will be used</span>
 <span class="sd">                    - NameError when the model is the first model</span>
 <span class="sd">                    - NameError if new params are included</span>
-<span class="sd">            y0_dict &lt;dict[str]=float&gt;:</span>
+<span class="sd">            y0_dict (dict):</span>
+<span class="sd">                - key (str): variable name</span>
+<span class="sd">                - value (float): initial value</span>
 <span class="sd">                - dictionary of dimensional initial values or None</span>
 <span class="sd">                - None or if not include some variables, the last values will be used</span>
 <span class="sd">                    - NameError when the model is the first model</span>
@@ -244,12 +248,12 @@
 <span class="sd">        Solve ODE of the model.</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">            model &lt;subclass of cs.ModelBase&gt;: the ODE model</span>
+<span class="sd">            model (subclass of cs.ModelBase): the ODE model</span>
 <span class="sd">            step_n (int): the number of steps</span>
-<span class="sd">            param_dict &lt;dict[str]=float&gt;: dictionary of parameter values</span>
+<span class="sd">            param_dict (dict): dictionary of parameter values</span>
 <span class="sd">                - key (str): parameter name</span>
-<span class="sd">                - value &lt;float&gt;: parameter value</span>
-<span class="sd">            y0_dict &lt;dict[str]=int&gt;: dictionary of initial values</span>
+<span class="sd">                - value (float): parameter value</span>
+<span class="sd">            y0_dict (dict): dictionary of initial values</span>
 <span class="sd">                - key (str): dimensional variable name</span>
 <span class="sd">                - value (int):initial value of the variable</span>
 <span class="sd">            population (int): total population</span>

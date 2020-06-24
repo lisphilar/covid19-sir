@@ -156,7 +156,7 @@
 <span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
 
 
-<div class="viewcode-block" id="Word"><a class="viewcode-back" href="../../../covsirphy.html#covsirphy.Word">[docs]</a><span class="k">class</span> <span class="nc">Word</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+<div class="viewcode-block" id="Word"><a class="viewcode-back" href="../../../covsirphy.cleaning.html#covsirphy.Word">[docs]</a><span class="k">class</span> <span class="nc">Word</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Word definition.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
@@ -216,7 +216,7 @@
     <span class="c1"># Flag</span>
     <span class="n">UNKNOWN</span> <span class="o">=</span> <span class="s2">&quot;-&quot;</span>
 
-<div class="viewcode-block" id="Word.num2str"><a class="viewcode-back" href="../../../covsirphy.html#covsirphy.Word.num2str">[docs]</a>    <span class="nd">@classmethod</span>
+<div class="viewcode-block" id="Word.num2str"><a class="viewcode-back" href="../../../covsirphy.cleaning.html#covsirphy.Word.num2str">[docs]</a>    <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">num2str</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">num</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Convert numbers to 1st, 2nd etc.</span>
@@ -233,19 +233,19 @@
         <span class="n">suffix</span> <span class="o">=</span> <span class="s2">&quot;th&quot;</span> <span class="k">if</span> <span class="n">q</span> <span class="o">==</span> <span class="mi">1</span> <span class="k">else</span> <span class="bp">cls</span><span class="o">.</span><span class="n">SUFFIX_DICT</span><span class="p">[</span><span class="n">mod</span><span class="p">]</span>
         <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">num</span><span class="si">}{</span><span class="n">suffix</span><span class="si">}</span><span class="s2">&quot;</span></div>
 
-<div class="viewcode-block" id="Word.negative_exp"><a class="viewcode-back" href="../../../covsirphy.html#covsirphy.Word.negative_exp">[docs]</a>    <span class="nd">@staticmethod</span>
+<div class="viewcode-block" id="Word.negative_exp"><a class="viewcode-back" href="../../../covsirphy.cleaning.html#covsirphy.Word.negative_exp">[docs]</a>    <span class="nd">@staticmethod</span>
     <span class="k">def</span> <span class="nf">negative_exp</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Negative exponential function f(x)=A exp(-Bx).</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">            x &lt;float&gt;: x values</span>
-<span class="sd">            a &lt;float&gt;: the first parameters of the function</span>
-<span class="sd">            b &lt;float&gt;: the second parameters of the function</span>
+<span class="sd">            x (float): x values</span>
+<span class="sd">            a (float): the first parameters of the function</span>
+<span class="sd">            b (float): the second parameters of the function</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="n">a</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="n">b</span> <span class="o">*</span> <span class="n">x</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="Word.date_obj"><a class="viewcode-back" href="../../../covsirphy.html#covsirphy.Word.date_obj">[docs]</a>    <span class="nd">@classmethod</span>
+<div class="viewcode-block" id="Word.date_obj"><a class="viewcode-back" href="../../../covsirphy.cleaning.html#covsirphy.Word.date_obj">[docs]</a>    <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">date_obj</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">date_str</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Convert a string to a datetime object.</span>
@@ -254,12 +254,12 @@
 <span class="sd">            date_str (str): date, like 22Jan2020</span>
 
 <span class="sd">        Returns:</span>
-<span class="sd">            &lt;datetime.datetime&gt;</span>
+<span class="sd">            (datetime.datetime)</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">obj</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">strptime</span><span class="p">(</span><span class="n">date_str</span><span class="p">,</span> <span class="bp">cls</span><span class="o">.</span><span class="n">DATE_FORMAT</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">obj</span></div>
 
-<div class="viewcode-block" id="Word.flatten"><a class="viewcode-back" href="../../../covsirphy.html#covsirphy.Word.flatten">[docs]</a>    <span class="nd">@staticmethod</span>
+<div class="viewcode-block" id="Word.flatten"><a class="viewcode-back" href="../../../covsirphy.cleaning.html#covsirphy.Word.flatten">[docs]</a>    <span class="nd">@staticmethod</span>
     <span class="k">def</span> <span class="nf">flatten</span><span class="p">(</span><span class="n">nested_list</span><span class="p">,</span> <span class="n">unique</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Flatten the nested list.</span>
@@ -276,7 +276,7 @@
             <span class="k">return</span> <span class="nb">list</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">flattened</span><span class="p">))</span>
         <span class="k">return</span> <span class="n">flattened</span></div>
 
-<div class="viewcode-block" id="Word.validate_dataframe"><a class="viewcode-back" href="../../../covsirphy.html#covsirphy.Word.validate_dataframe">[docs]</a>    <span class="nd">@staticmethod</span>
+<div class="viewcode-block" id="Word.validate_dataframe"><a class="viewcode-back" href="../../../covsirphy.cleaning.html#covsirphy.Word.validate_dataframe">[docs]</a>    <span class="nd">@staticmethod</span>
     <span class="k">def</span> <span class="nf">validate_dataframe</span><span class="p">(</span><span class="n">target</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;df&quot;</span><span class="p">,</span> <span class="n">time_index</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Validate the dataframe has the columns.</span>
@@ -303,7 +303,7 @@
             <span class="k">raise</span> <span class="ne">KeyError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;@</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2"> must have </span><span class="si">{</span><span class="n">cols_str</span><span class="si">}</span><span class="s2">, but not included.&quot;</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">df</span></div>
 
-<div class="viewcode-block" id="Word.validate_natural_int"><a class="viewcode-back" href="../../../covsirphy.html#covsirphy.Word.validate_natural_int">[docs]</a>    <span class="nd">@staticmethod</span>
+<div class="viewcode-block" id="Word.validate_natural_int"><a class="viewcode-back" href="../../../covsirphy.cleaning.html#covsirphy.Word.validate_natural_int">[docs]</a>    <span class="nd">@staticmethod</span>
     <span class="k">def</span> <span class="nf">validate_natural_int</span><span class="p">(</span><span class="n">target</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;number&quot;</span><span class="p">,</span> <span class="n">include_zero</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Validate the natural (non-negative) number.</span>
@@ -311,7 +311,7 @@
 <span class="sd">         will be converted to an integer.</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">            target &lt;int/float/str&gt;: value to validate</span>
+<span class="sd">            target (int or float or str): value to validate</span>
 <span class="sd">            name (str): argument name of the value</span>
 <span class="sd">            include_zero (bool): include 0 or not</span>
 
@@ -330,7 +330,7 @@
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">s</span><span class="si">}</span><span class="s2">. This value is under </span><span class="si">{</span><span class="n">min_value</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">number</span></div>
 
-<div class="viewcode-block" id="Word.validate_subclass"><a class="viewcode-back" href="../../../covsirphy.html#covsirphy.Word.validate_subclass">[docs]</a>    <span class="nd">@staticmethod</span>
+<div class="viewcode-block" id="Word.validate_subclass"><a class="viewcode-back" href="../../../covsirphy.cleaning.html#covsirphy.Word.validate_subclass">[docs]</a>    <span class="nd">@staticmethod</span>
     <span class="k">def</span> <span class="nf">validate_subclass</span><span class="p">(</span><span class="n">target</span><span class="p">,</span> <span class="n">parent</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;target&quot;</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Validate the target is a subclass of the parent class.</span>
@@ -348,7 +348,7 @@
             <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="n">s</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">target</span></div>
 
-<div class="viewcode-block" id="Word.validate_instance"><a class="viewcode-back" href="../../../covsirphy.html#covsirphy.Word.validate_instance">[docs]</a>    <span class="nd">@staticmethod</span>
+<div class="viewcode-block" id="Word.validate_instance"><a class="viewcode-back" href="../../../covsirphy.cleaning.html#covsirphy.Word.validate_instance">[docs]</a>    <span class="nd">@staticmethod</span>
     <span class="k">def</span> <span class="nf">validate_instance</span><span class="p">(</span><span class="n">target</span><span class="p">,</span> <span class="n">class_obj</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;target&quot;</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Validate the target is a instance of the class object.</span>
@@ -359,14 +359,14 @@
 <span class="sd">            name (str): argument name of the target</span>
 
 <span class="sd">        Returns:</span>
-<span class="sd">            &lt;instance&gt;: as-is target</span>
+<span class="sd">            (instance): as-is target</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">s</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;@</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2"> must be an instance of </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">class_obj</span><span class="p">)</span><span class="si">}</span><span class="s2">, but </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">target</span><span class="p">)</span><span class="si">}</span><span class="s2"> was applied.&quot;</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">target</span><span class="p">,</span> <span class="n">class_obj</span><span class="p">):</span>
             <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="n">s</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">target</span></div>
 
-<div class="viewcode-block" id="Word.divisors"><a class="viewcode-back" href="../../../covsirphy.html#covsirphy.Word.divisors">[docs]</a>    <span class="nd">@classmethod</span>
+<div class="viewcode-block" id="Word.divisors"><a class="viewcode-back" href="../../../covsirphy.cleaning.html#covsirphy.Word.divisors">[docs]</a>    <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">divisors</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Return the list of divisors of the value.</span>

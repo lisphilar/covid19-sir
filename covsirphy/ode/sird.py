@@ -11,9 +11,9 @@ class SIRD(ModelBase):
 
     Args:
         population (int): total population
-        kappa <float>
-        rho <float>
-        sigma <float>
+        kappa (float)
+        rho (float)
+        sigma (float)
     """
     # Model name
     NAME = "SIR-D"
@@ -49,10 +49,10 @@ class SIRD(ModelBase):
 
         Args:
             t (int): time steps
-            X <numpy.array>: values of th model variables
+            X (numpy.array): values of th model variables
 
         Returns:
-            <np.array>
+            (np.array)
         """
         n = self.population
         s, i, *_ = X
@@ -77,9 +77,9 @@ class SIRD(ModelBase):
             population (int): total population
 
         Returns:
-            <dict[name]=(min, max)>:
-            - min <float>: min value
-            - max <float>: max value
+            (dict)
+                - key (str): parameter name
+                - value (tuple(float, float)): min value and max value
         """
         df = cls.validate_dataframe(
             taufree_df, name="taufree_df", columns=[cls.TS, *cls.VARIABLES]
@@ -151,7 +151,7 @@ class SIRD(ModelBase):
                 - any columns
 
         Returns:
-            (pandas.DataFrame):
+            (pandas.DataFrame)
                 Index:
                     reset index
                 Columns:

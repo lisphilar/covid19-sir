@@ -26,8 +26,8 @@ class Scenario(Word):
     Scenario analysis.
 
     Args:
-        jhu_data <covsirphy.JHUData>: object of records
-        pop_data <covsirphy.Population>: Population object
+        jhu_data (covsirphy.JHUData): object of records
+        pop_data (covsirphy.Population): Population object
         country (str): country name
         province (str): province name
     """
@@ -107,7 +107,7 @@ class Scenario(Word):
             days (int): the number of days to add
             population (int): population value of the start date
                 - if None, the same as initial value
-            model <covsirphy.ModelBase>: ODE model
+            model (covsirphy.ModelBase): ODE model
                 - if None, the model of the last phase will be used
             kwargs: keyword arguments of ODE model parameters
                 - un-included parameters will be the same as the last phase
@@ -115,7 +115,7 @@ class Scenario(Word):
                     - tau is fixed as the last phase's value or 1440
 
         Notes:
-            - If the ohases series has not been registered, new phase series will be created
+            - If the phases series has not been registered, new phase series will be created
             - @end_date or @days must be specified
 
         Returns:
@@ -253,7 +253,7 @@ class Scenario(Word):
 
         Args:
             phase (str): phase name, like 1st, 2nd...
-            model <covsirphy.ModelBase>: ODE model
+            model (covsirphy.ModelBase): ODE model
             name (str): phase series name
                 - if 'Main', main PhaseSeries will be used
                 - if not registered, new phase series will be created
@@ -315,7 +315,7 @@ class Scenario(Word):
                 - if None, all phase series will be used
             phases (list[str]): list of phase names, like 1st, 2nd...
                 - if None, all past phase will be used
-            model <covsirphy.ModelBase>: ODE model
+            model (covsirphy.ModelBase): ODE model
             kwargs:
                 - keyword arguments of the model parameter
                 - keyword arguments of covsirphy.Estimator.run()
@@ -350,7 +350,7 @@ class Scenario(Word):
             phase (str): phase name, like 1st, 2nd...
             name (str): phase series name
                 - if 'Main', main PhaseSeries will be used
-            kwargs: keyword arguments of <covsirphy.Estimator.history()>
+            kwargs: keyword arguments of covsirphy.Estimator.history()
         """
         name = self.MAIN if name == "Main" else name
         if name not in self.series_dict.keys():
@@ -371,7 +371,7 @@ class Scenario(Word):
             phase (str): phase name, like 1st, 2nd...
             name (str): phase series name
                 - if 'Main', main PhaseSeries will be used
-            kwargs: keyword arguments of <covsirphy.Estimator.accuracy()>
+            kwargs: keyword arguments of covsirphy.Estimator.accuracy()
         """
         name = self.MAIN if name == "Main" else name
         if name not in self.series_dict.keys():
@@ -406,9 +406,10 @@ class Scenario(Word):
         Simulate ODE models with setted parameter values and show it as a figure.
 
         Args:
-            name (str): phase series name
-                - if 'Main', main PhaseSeries will be used
-            y0_dict <dict[str]=float>:
+            name (str): phase series name. If 'Main', main PhaseSeries will be used
+            y0_dict (dict):
+                - key (str): variable name
+                - value (float): initial value
                 - dictionary of initial values or None
                 - if model will be changed in the later phase, must be specified
             show_figure (bool):
@@ -461,7 +462,9 @@ class Scenario(Word):
 
         Args:
             name (str): phase series name
-            y0_dict <dict[str]=float>:
+            y0_dict (dict):
+                - key (str): variable name
+                - value (float): initial value
                 - dictionary of initial values or None
                 - if model will be changed in the later phase, must be specified
 

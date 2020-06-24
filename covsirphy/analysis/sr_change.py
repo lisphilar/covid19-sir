@@ -38,10 +38,9 @@ class ChangeFinder(Word):
         @population (int): initial value of total population in the place
         @country (str): country name
         @province (str): province name
-        @population_change_dict <dict[str]=int/None>:
-            - dictionary of total population
-                - key: start date of population change
-                - value: total population
+        @population_change_dict (dict): dictionary of total population
+                - key (str): start date of population change
+                - value (int or None): total population
         """
         # Arguments
         self.clean_df = clean_df.copy()
@@ -101,15 +100,14 @@ class ChangeFinder(Word):
         Args:
             dates (list[str]): list of dates, like 22Jan2020
             population (int): initial value of total population in the place
-            change_dict <dict[str]=int/None>:
-                - dictionary of total population
-                    - key: start date of population change
-                    - value: total population
+            change_dict (dict): dictionary of total population
+                    - key (str): start date of population change
+                    - value (int or None): total population
 
         Returns:
-            <dict[str]=int>:
-            - key: date, like 22Jan2020
-            - value: total population on the date
+            (dict)
+                - key (str): date, like 22Jan2020
+                - value (int): total population on the date
         """
         change_dict = dict() if change_dict is None else change_dict.copy()
         population_now = population
@@ -125,7 +123,7 @@ class ChangeFinder(Word):
         Initialize Optuna study.
 
         Args:
-            seed <int/None>: random seed of hyperparameter optimization
+            seed (int or None): random seed of hyperparameter optimization
                 - this will effective when @n_jobs is 1
         """
         self.study = optuna.create_study(
@@ -162,7 +160,7 @@ class ChangeFinder(Word):
             timeout (int): time-out of run
             n_trials_iteration (int): the number of trials in one iteration
             n_jobs (int): the number of parallel jobs or -1 (CPU count)
-            seed <int/None>: random seed of hyperparameter optimization
+            seed (int or None): random seed of hyperparameter optimization
                 - this will effective when @n_jobs is 1
 
         Returns:
@@ -216,10 +214,10 @@ class ChangeFinder(Word):
         This defines the parameter values using Optuna.
 
         Args:
-            trial <optuna.trial>: a trial of the study
+            trial (optuna.trial): a trial of the study
 
         Returns:
-            <float>: score of the error function to minimize
+            (float): score of the error function to minimize
         """
         # Suggest change points
         id_selected = [len(self.dates) - 1]
@@ -269,7 +267,7 @@ class ChangeFinder(Word):
             end_dates (list[str]): list of end date of phases (candidates)
 
         Returns:
-            <float> : score of the error function to minimize
+            (float) : score of the error function to minimize
         """
         scores = list()
         for (start_date, end_date) in zip(start_dates, end_dates):
@@ -287,7 +285,7 @@ class ChangeFinder(Word):
         Create a dictionary of phases.
 
         Returns:
-            <covsirphy.PhaseSeries>
+            (covsirphy.PhaseSeries)
         """
         start_dates, end_dates = self.phase_range(self.change_dates)
         pop_list = [self.pop_dict[date] for date in start_dates]
@@ -316,7 +314,7 @@ class ChangeFinder(Word):
         @filename (str): filename of the figure, or None (show figure)
 
         Returns:
-            <covsirphy.PhaseSeries>
+            (covsirphy.PhaseSeries)
         """
         # Create phase dictionary
         phase_series = self._create_phases()

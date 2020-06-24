@@ -151,9 +151,9 @@ class ODEData(PhaseData):
                     - Infected (int): the number of currently infected cases
                     - Fatal (int): the number of fatal cases
                     - Recovered (int): the number of recovered cases
-            model <sub-class of cs.ModelBase>: ODE model
+            model (covsirphy.ModelBase): ODE model
             population (int): total population
-            tau <int/None>: tau value [min] or None (un-set)
+            tau (int or None): tau value [min] or None (un-set)
 
         Returns:
             (pandas.DataFrame):
@@ -175,11 +175,11 @@ class ODEData(PhaseData):
         Make a dataset for ODE analysis.
 
         Args:
-            model <covsirphy.ModelBase>: ODE model
+            model (covsirphy.ModelBase): ODE model
             population (int): total population
-            start_date <str/None>: start date, like 22Jan2020
-            end_date <str/None>: end date, like 01Feb2020
-            tau <int/None>: tau value [min] or None (un-set)
+            start_date (str or None): start date, like 22Jan2020
+            end_date (str or None): end date, like 01Feb2020
+            tau (int or None): tau value [min] or None (un-set)
 
         Notes:
             - When @start_date is None, the first date of the records will be used
@@ -202,7 +202,7 @@ class ODEData(PhaseData):
         Return the initial values of the model.
 
         Args:
-            model <covsirphy.ModelBase>: ODE model
+            model (covsirphy.ModelBase): ODE model
             population (int): total population
             start_date (str): start date, like 22Jan2020
 
@@ -210,9 +210,9 @@ class ODEData(PhaseData):
             - When @start_date is None, the first date of the records will be used
 
         Returns:
-            <dict[str]=int>:
-            - key: dimensional variables
-            - value: the number of cases
+            (dict)
+                - key (str): dimensional variables
+                - value (int): the number of cases
         """
         subset_df = self.subset(start_date=start_date, end_date=None)
         df = self._make(subset_df, model, population, tau=None)

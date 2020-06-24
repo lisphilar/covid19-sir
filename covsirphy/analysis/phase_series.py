@@ -47,9 +47,11 @@ class PhaseSeries(Word):
             include_past (bool):
                 - if True, include past phases.
                 - future phase are always included
-        return <dict[pd.TimeStamp]=int>:
-            - key: dates from the first date to the last date of the records
-            - value: 0 (phase ID)
+
+        Returns:
+            (dict)
+                - key (pd.TImeStamp): dates from the first date to the last date of the records
+                - value (int): 0 (phase ID)
         """
         past_date_objects = pd.date_range(
             start=self.first_date, end=self.last_record_date, freq="D"
@@ -71,7 +73,9 @@ class PhaseSeries(Word):
             include_past (bool):
                 - if True, include past phases.
                 - future phase are always included
-        return <dict[str]=str/int>:
+
+        Returns:
+            (dict)
             - 'Start': the first date of the records
             - 'End': the last date of the records
             - 'Population': initial value of total population

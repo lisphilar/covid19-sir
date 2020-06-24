@@ -192,7 +192,7 @@
 <span class="sd">        Initialize Optuna study.</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">            seed &lt;int/None&gt;: random seed of hyperparameter optimization</span>
+<span class="sd">            seed (int or None): random seed of hyperparameter optimization</span>
 
 <span class="sd">        Notes:</span>
 <span class="sd">            @seed will effective when the number of CPUs is 1</span>
@@ -211,7 +211,7 @@
 <span class="sd">            timeout (int): time-out of run</span>
 <span class="sd">            n_trials (int): the number of trials</span>
 <span class="sd">            n_jobs (int): the number of parallel jobs or -1 (CPU count)</span>
-<span class="sd">            seed &lt;int/None&gt;: random seed of hyperparameter optimization</span>
+<span class="sd">            seed (int or None): random seed of hyperparameter optimization</span>
 
 <span class="sd">        Notes:</span>
 <span class="sd">            @seed will effective when @n_jobs is 1</span>
@@ -239,10 +239,10 @@
 <span class="sd">        This method should be overwritten in subclass.</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">            trial &lt;optuna.trial&gt;: a trial of the study</span>
+<span class="sd">            trial (optuna.trial): a trial of the study</span>
 
 <span class="sd">        Returns:</span>
-<span class="sd">            &lt;float&gt;: score of the error function to minimize</span>
+<span class="sd">            (float): score of the error function to minimize</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">param_dict</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">error_f</span><span class="p">(</span><span class="n">param_dict</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">train_df</span><span class="p">)</span></div>
@@ -253,7 +253,9 @@
 <span class="sd">        This method should be overwritten in subclass.</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">            param_dict &lt;dict[str]=int/float&gt;: estimated parameter values</span>
+<span class="sd">            param_dict (dict): estimated parameter values</span>
+<span class="sd">                - key (str): parameter name</span>
+<span class="sd">                - value (int or float): parameter value</span>
 <span class="sd">            train_df (pandas.DataFrame): actual data</span>
 
 <span class="sd">                Index:</span>
@@ -263,7 +265,7 @@
 <span class="sd">                    - includes columns defined by @variables</span>
 
 <span class="sd">        Returns:</span>
-<span class="sd">            &lt;float&gt;: score of the error function to minimize</span>
+<span class="sd">            (float): score of the error function to minimize</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">sim_df</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">simulate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">step_n</span><span class="p">,</span> <span class="n">param_dict</span><span class="p">)</span>
         <span class="n">comp_df</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">compare</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">train_df</span><span class="p">,</span> <span class="n">sim_df</span><span class="p">)</span>
@@ -276,7 +278,9 @@
 <span class="sd">        This method should be overwritten in subclass.</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">            param_dict &lt;dict[str]=int/float&gt;: estimated parameter values</span>
+<span class="sd">            param_dict (dict): estimated parameter values</span>
+<span class="sd">                - key (str): parameter name</span>
+<span class="sd">                - value (int or float): parameter value</span>
 
 <span class="sd">        Returns:</span>
 <span class="sd">            (pandas.DataFrame):</span>
@@ -339,7 +343,9 @@
 <span class="sd">        Return the estimated parameters as a dictionary.</span>
 
 <span class="sd">        Returns:</span>
-<span class="sd">            &lt;dict[str]=float/int&gt;</span>
+<span class="sd">            (dict)</span>
+<span class="sd">                - key (str): parameter name</span>
+<span class="sd">                - value (int or float): parameter value</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">param_dict</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">study</span><span class="o">.</span><span class="n">best_params</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
         <span class="n">param_dict</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">fixed_dict</span><span class="p">)</span>
@@ -383,10 +389,10 @@
 <span class="sd">                Columns:</span>
 <span class="sd">                    - t: time step, 0, 1, 2,...</span>
 <span class="sd">                    - includes columns defined by self.y_list</span>
-<span class="sd">            dim &lt;int/float&gt;: dimension where comparison will be performed</span>
+<span class="sd">            dim (int or float): dimension where comparison will be performed</span>
 
 <span class="sd">        Returns:</span>
-<span class="sd">            &lt;float&gt;</span>
+<span class="sd">            (float): RMSLE score</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">predicted_df</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">predict</span><span class="p">()</span>
         <span class="n">df</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">compare</span><span class="p">(</span><span class="n">train_df</span><span class="p">,</span> <span class="n">predicted_df</span><span class="p">)</span>

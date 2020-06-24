@@ -427,7 +427,7 @@ This method overwrite super().cleaning() method.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>&lt;str/pathlib.Path&gt;</strong> (<em>directory</em>) – directory to save the downloaded datasets</p></li>
+<li><p><strong>directory</strong> (<em>str</em><em> or </em><em>pathlib.Path</em>) – directory to save the downloaded datasets</p></li>
 <li><p><strong>update_interval</strong> (<em>int</em>) – update interval of the local datasets</p></li>
 </ul>
 </dd>
@@ -464,7 +464,7 @@ GitHub datasets will be always updated because headers of GET response</p>
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>basename</strong> (<em>str</em>) – basename of the file to save the data</p></li>
-<li><p><strong>&lt;str/None&gt;</strong> (<em>local_file</em>) – if not None, load the data from this file</p></li>
+<li><p><strong>local_file</strong> (<em>str</em><em> or </em><em>None</em>) – if not None, load the data from this file</p></li>
 </ul>
 </dd>
 </dl>
@@ -475,7 +475,7 @@ GitHub datasets will be always updated because headers of GET response</p>
 <dd class="field-odd"><p>dataset at country level</p>
 </dd>
 <dt class="field-even">Return type</dt>
-<dd class="field-even"><p>&lt;covsirphy.cleaning.country_data.CountryData&gt;</p>
+<dd class="field-even"><p>(<a class="reference internal" href="covsirphy.html#covsirphy.CountryData" title="covsirphy.CountryData">covsirphy.CountryData</a>)</p>
 </dd>
 </dl>
 </dd></dl>
@@ -489,7 +489,7 @@ GitHub datasets will be always updated because headers of GET response</p>
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>basename</strong> (<em>str</em>) – basename of the file to save the data</p></li>
-<li><p><strong>&lt;str/None&gt;</strong> (<em>local_file</em>) – if not None, load the data from this file</p></li>
+<li><p><strong>local_file</strong> (<em>str</em><em> or </em><em>None</em>) – if not None, load the data from this file</p></li>
 </ul>
 </dd>
 </dl>
@@ -500,7 +500,7 @@ GitHub datasets will be always updated because headers of GET response</p>
 <dd class="field-odd"><p>JHU dataset</p>
 </dd>
 <dt class="field-even">Return type</dt>
-<dd class="field-even"><p>&lt;covsirphy.cleaning.jhu_data.JHUData&gt;</p>
+<dd class="field-even"><p>(<a class="reference internal" href="covsirphy.html#covsirphy.JHUData" title="covsirphy.JHUData">covsirphy.JHUData</a>)</p>
 </dd>
 </dl>
 </dd></dl>
@@ -595,7 +595,7 @@ This method overwrite super().cleaning() method.</p>
 <dd><p>Replace a part of cleaned dataset with a dataframe.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>&lt;cs.CountryData&gt;</strong> (<em>country_data</em>) – dataset object of the country</p>
+<dd class="field-odd"><p><strong>country_data</strong> (<a class="reference internal" href="covsirphy.html#covsirphy.CountryData" title="covsirphy.CountryData"><em>covsirphy.CountryData</em></a>) – dataset object of the country</p>
 </dd>
 <dt class="field-even">Returns</dt>
 <dd class="field-even"><p>self</p>
@@ -763,14 +763,14 @@ This method overwrite super().cleaning() method.</p>
 country_level (str): whether key is country name or not</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns</dt>
-<dd class="field-odd"><p><ul class="simple">
+<dd class="field-odd"><p><dl class="simple">
+<dt>(dict)</dt><dd><ul class="simple">
 <li><p>if &#64;country_level is True, {“country”, population}</p></li>
 <li><p>if False, {“country/province”, population}</p></li>
 </ul>
-</p>
 </dd>
-<dt class="field-even">Return type</dt>
-<dd class="field-even"><p>&lt;dict[str]=int&gt;</p>
+</dl>
+</p>
 </dd>
 </dl>
 </dd></dl>
@@ -1037,7 +1037,7 @@ province (str): province name</p>
 <dd class="field-odd"><p><strong>date_str</strong> (<em>str</em>) – date, like 22Jan2020</p>
 </dd>
 <dt class="field-even">Returns</dt>
-<dd class="field-even"><p>&lt;datetime.datetime&gt;</p>
+<dd class="field-even"><p>(datetime.datetime)</p>
 </dd>
 </dl>
 </dd></dl>
@@ -1083,9 +1083,9 @@ province (str): province name</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>&lt;float&gt;</strong> (<em>b</em>) – x values</p></li>
-<li><p><strong>&lt;float&gt;</strong> – the first parameters of the function</p></li>
-<li><p><strong>&lt;float&gt;</strong> – the second parameters of the function</p></li>
+<li><p><strong>x</strong> (<em>float</em>) – x values</p></li>
+<li><p><strong>a</strong> (<em>float</em>) – the first parameters of the function</p></li>
+<li><p><strong>b</strong> (<em>float</em>) – the second parameters of the function</p></li>
 </ul>
 </dd>
 </dl>
@@ -1137,7 +1137,7 @@ province (str): province name</p>
 <dd class="field-even"><p>as-is target</p>
 </dd>
 <dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>&lt;instance&gt;</p>
+<dd class="field-odd"><p>(instance)</p>
 </dd>
 </dl>
 </dd></dl>
@@ -1153,7 +1153,7 @@ If the value is natural number and the type was float,</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>&lt;int/float/str&gt;</strong> (<em>target</em>) – value to validate</p></li>
+<li><p><strong>target</strong> (<em>int</em><em> or </em><em>float</em><em> or </em><em>str</em>) – value to validate</p></li>
 <li><p><strong>name</strong> (<em>str</em>) – argument name of the value</p></li>
 <li><p><strong>include_zero</strong> (<em>bool</em>) – include 0 or not</p></li>
 </ul>

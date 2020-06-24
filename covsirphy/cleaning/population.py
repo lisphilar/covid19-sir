@@ -95,9 +95,9 @@ class Population(CleaningBase):
         country_level (str): whether key is country name or not
 
         Returns:
-            <dict[str]=int>:
-            - if @country_level is True, {"country", population}
-            - if False, {"country/province", population}
+            (dict)
+                - if @country_level is True, {"country", population}
+                - if False, {"country/province", population}
         """
         df = self._cleaned_df.copy()
         if country_level:

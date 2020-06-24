@@ -17,7 +17,7 @@ class DataLoader(Word):
     Download the dataset and perform data cleaning.
 
     Args:
-        directory <str/pathlib.Path>: directory to save the downloaded datasets
+        directory (str or pathlib.Path): directory to save the downloaded datasets
         update_interval (int): update interval of the local datasets
 
     Notes:
@@ -93,7 +93,7 @@ class DataLoader(Word):
             basename (str): basename of the file, like covid_19_data.csv
 
         Returns:
-            <str/None>: absolute path of the file
+            (str or None): absolute path of the file
 
         Notes:
             If @self.dirpath is None, return None
@@ -110,7 +110,7 @@ class DataLoader(Word):
 
         Args:
             dataframe (pandas.DataFrame): dataframe to save
-            filename <str/None>: filename to save
+            filename (str or None): filename to save
 
         Notes:
             CSV file will be created in @self.dirpath directory.
@@ -130,7 +130,7 @@ class DataLoader(Word):
             url (str): URL
 
         Returns:
-            <pandas.Timestamp/None>: time last updated (UTC)
+            (pandas.Timestamp or None): time last updated (UTC)
 
         Notes:
             If "Last-Modified" key is not in the header, returns None.
@@ -152,10 +152,10 @@ class DataLoader(Word):
         Return the date last updated of local file/directory.
 
         Args:
-            path <str/pathlibPath>: name of the file/directory
+            path (str or pathlibPath): name of the file/directory
 
         Returns:
-            <datetime.datetime>: time last updated (UTC)
+            (datetime.datetime): time last updated (UTC)
         """
         path = Path(path)
         m_time = path.stat().st_mtime
@@ -173,7 +173,7 @@ class DataLoader(Word):
             kwargs: keyword arguments of @data_class
 
         Returns:
-            <covsirphy.cleaning.jhu_data.JHUData>: the dataset
+            (covsirphy.JHUData): the dataset
 
         Notes:
             ".citation" attribute will returns the citation
@@ -222,13 +222,13 @@ class DataLoader(Word):
 
         Args:
             basename (str): basename of the file to save the data
-            local_file <str/None>: if not None, load the data from this file
+            local_file (str or None): if not None, load the data from this file
 
         Notes:
             Regardless the value of @local_file, the data will be save in the directory.
 
         Returns:
-            <covsirphy.cleaning.jhu_data.JHUData>: JHU dataset
+            (covsirphy.JHUData): JHU dataset
         """
         filename = self._resolve_filename(basename)
         if local_file is not None:
@@ -320,13 +320,13 @@ class DataLoader(Word):
 
         Args:
             basename (str): basename of the file to save the data
-            local_file <str/None>: if not None, load the data from this file
+            local_file (str or None): if not None, load the data from this file
 
         Notes:
             Regardless the value of @local_file, the data will be save in the directory.
 
         Returns:
-            <covsirphy.cleaning.country_data.CountryData>: dataset at country level
+            (covsirphy.CountryData): dataset at country level
         """
         filename = self._resolve_filename(basename)
         if local_file is not None:
@@ -375,7 +375,7 @@ class DataLoader(Word):
             filename (str): filename of the local file
 
         Returns:
-            <covsirphy.cleaning.country_data.CountryData>: dataset at country level
+            (covsirphy.CountryData): dataset at country level
         """
         country_data = self._create_dataset(
             "Japan_cases", filename, country="Japan")

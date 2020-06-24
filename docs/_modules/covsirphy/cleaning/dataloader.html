@@ -161,12 +161,12 @@
 <span class="kn">from</span> <span class="nn">covsirphy.cleaning.word</span> <span class="kn">import</span> <span class="n">Word</span>
 
 
-<div class="viewcode-block" id="DataLoader"><a class="viewcode-back" href="../../../covsirphy.html#covsirphy.DataLoader">[docs]</a><span class="k">class</span> <span class="nc">DataLoader</span><span class="p">(</span><span class="n">Word</span><span class="p">):</span>
+<div class="viewcode-block" id="DataLoader"><a class="viewcode-back" href="../../../covsirphy.cleaning.html#covsirphy.DataLoader">[docs]</a><span class="k">class</span> <span class="nc">DataLoader</span><span class="p">(</span><span class="n">Word</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Download the dataset and perform data cleaning.</span>
 
 <span class="sd">    Args:</span>
-<span class="sd">        directory &lt;str/pathlib.Path&gt;: directory to save the downloaded datasets</span>
+<span class="sd">        directory (str or pathlib.Path): directory to save the downloaded datasets</span>
 <span class="sd">        update_interval (int): update interval of the local datasets</span>
 
 <span class="sd">    Notes:</span>
@@ -242,7 +242,7 @@
 <span class="sd">            basename (str): basename of the file, like covid_19_data.csv</span>
 
 <span class="sd">        Returns:</span>
-<span class="sd">            &lt;str/None&gt;: absolute path of the file</span>
+<span class="sd">            (str or None): absolute path of the file</span>
 
 <span class="sd">        Notes:</span>
 <span class="sd">            If @self.dirpath is None, return None</span>
@@ -259,7 +259,7 @@
 
 <span class="sd">        Args:</span>
 <span class="sd">            dataframe (pandas.DataFrame): dataframe to save</span>
-<span class="sd">            filename &lt;str/None&gt;: filename to save</span>
+<span class="sd">            filename (str or None): filename to save</span>
 
 <span class="sd">        Notes:</span>
 <span class="sd">            CSV file will be created in @self.dirpath directory.</span>
@@ -279,7 +279,7 @@
 <span class="sd">            url (str): URL</span>
 
 <span class="sd">        Returns:</span>
-<span class="sd">            &lt;pandas.Timestamp/None&gt;: time last updated (UTC)</span>
+<span class="sd">            (pandas.Timestamp or None): time last updated (UTC)</span>
 
 <span class="sd">        Notes:</span>
 <span class="sd">            If &quot;Last-Modified&quot; key is not in the header, returns None.</span>
@@ -301,10 +301,10 @@
 <span class="sd">        Return the date last updated of local file/directory.</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">            path &lt;str/pathlibPath&gt;: name of the file/directory</span>
+<span class="sd">            path (str or pathlibPath): name of the file/directory</span>
 
 <span class="sd">        Returns:</span>
-<span class="sd">            &lt;datetime.datetime&gt;: time last updated (UTC)</span>
+<span class="sd">            (datetime.datetime): time last updated (UTC)</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">path</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
         <span class="n">m_time</span> <span class="o">=</span> <span class="n">path</span><span class="o">.</span><span class="n">stat</span><span class="p">()</span><span class="o">.</span><span class="n">st_mtime</span>
@@ -322,7 +322,7 @@
 <span class="sd">            kwargs: keyword arguments of @data_class</span>
 
 <span class="sd">        Returns:</span>
-<span class="sd">            &lt;covsirphy.cleaning.jhu_data.JHUData&gt;: the dataset</span>
+<span class="sd">            (covsirphy.JHUData): the dataset</span>
 
 <span class="sd">        Notes:</span>
 <span class="sd">            &quot;.citation&quot; attribute will returns the citation</span>
@@ -364,20 +364,20 @@
                 <span class="k">return</span> <span class="kc">True</span>
         <span class="k">return</span> <span class="kc">False</span>
 
-<div class="viewcode-block" id="DataLoader.jhu"><a class="viewcode-back" href="../../../covsirphy.html#covsirphy.DataLoader.jhu">[docs]</a>    <span class="k">def</span> <span class="nf">jhu</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">basename</span><span class="o">=</span><span class="s2">&quot;covid_19_data.csv&quot;</span><span class="p">,</span> <span class="n">local_file</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<div class="viewcode-block" id="DataLoader.jhu"><a class="viewcode-back" href="../../../covsirphy.cleaning.html#covsirphy.DataLoader.jhu">[docs]</a>    <span class="k">def</span> <span class="nf">jhu</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">basename</span><span class="o">=</span><span class="s2">&quot;covid_19_data.csv&quot;</span><span class="p">,</span> <span class="n">local_file</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Load JHU dataset (the number of cases).</span>
 <span class="sd">        https://github.com/CSSEGISandData/COVID-19/</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            basename (str): basename of the file to save the data</span>
-<span class="sd">            local_file &lt;str/None&gt;: if not None, load the data from this file</span>
+<span class="sd">            local_file (str or None): if not None, load the data from this file</span>
 
 <span class="sd">        Notes:</span>
 <span class="sd">            Regardless the value of @local_file, the data will be save in the directory.</span>
 
 <span class="sd">        Returns:</span>
-<span class="sd">            &lt;covsirphy.cleaning.jhu_data.JHUData&gt;: JHU dataset</span>
+<span class="sd">            (covsirphy.JHUData): JHU dataset</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">filename</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_resolve_filename</span><span class="p">(</span><span class="n">basename</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">local_file</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
@@ -462,20 +462,20 @@
         <span class="n">df</span><span class="p">[</span><span class="s2">&quot;SNo&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">index</span> <span class="o">+</span> <span class="mi">1</span>
         <span class="k">return</span> <span class="n">df</span>
 
-<div class="viewcode-block" id="DataLoader.japan"><a class="viewcode-back" href="../../../covsirphy.html#covsirphy.DataLoader.japan">[docs]</a>    <span class="k">def</span> <span class="nf">japan</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">basename</span><span class="o">=</span><span class="s2">&quot;covid_jpn_total.csv&quot;</span><span class="p">,</span> <span class="n">local_file</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<div class="viewcode-block" id="DataLoader.japan"><a class="viewcode-back" href="../../../covsirphy.cleaning.html#covsirphy.DataLoader.japan">[docs]</a>    <span class="k">def</span> <span class="nf">japan</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">basename</span><span class="o">=</span><span class="s2">&quot;covid_jpn_total.csv&quot;</span><span class="p">,</span> <span class="n">local_file</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Load the datset of the number of cases in Japan.</span>
 <span class="sd">        https://github.com/lisphilar/covid19-sir/tree/master/data</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            basename (str): basename of the file to save the data</span>
-<span class="sd">            local_file &lt;str/None&gt;: if not None, load the data from this file</span>
+<span class="sd">            local_file (str or None): if not None, load the data from this file</span>
 
 <span class="sd">        Notes:</span>
 <span class="sd">            Regardless the value of @local_file, the data will be save in the directory.</span>
 
 <span class="sd">        Returns:</span>
-<span class="sd">            &lt;covsirphy.cleaning.country_data.CountryData&gt;: dataset at country level</span>
+<span class="sd">            (covsirphy.CountryData): dataset at country level</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">filename</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_resolve_filename</span><span class="p">(</span><span class="n">basename</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">local_file</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
@@ -524,7 +524,7 @@
 <span class="sd">            filename (str): filename of the local file</span>
 
 <span class="sd">        Returns:</span>
-<span class="sd">            &lt;covsirphy.cleaning.country_data.CountryData&gt;: dataset at country level</span>
+<span class="sd">            (covsirphy.CountryData): dataset at country level</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">country_data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_create_dataset</span><span class="p">(</span>
             <span class="s2">&quot;Japan_cases&quot;</span><span class="p">,</span> <span class="n">filename</span><span class="p">,</span> <span class="n">country</span><span class="o">=</span><span class="s2">&quot;Japan&quot;</span><span class="p">)</span>

@@ -37,7 +37,7 @@ class Estimator(Optimizer):
                     - Country (str): country/region name
                     - Province (str): province/prefecture/state name
                     - variables of the models (int)
-        model <subclass of cs.ModelBase>: ODE model
+        model (covsirphy.ModelBase): ODE model
         population (int): total population in the place
         country (str): country name
         province (str): province name
@@ -116,7 +116,7 @@ class Estimator(Optimizer):
             timeout_iteration (int): time-out of one iteration
             allowance (tuple(float, float)): the allowance of the predicted value
             n_jobs (int): the number of parallel jobs or -1 (CPU count)
-            seed <int/None>: random seed of hyperparameter optimization
+            seed (int or None): random seed of hyperparameter optimization
 
         Notes:
             @seed will effective when @n_jobs is 1
@@ -188,10 +188,10 @@ class Estimator(Optimizer):
         This defines the parameter values using Optuna.
 
         Args:
-            trial <optuna.trial>: a trial of the study
+            trial (optuna.trial): a trial of the study
 
         Returns:
-            <float>: score of the error function to minimize
+            (float): score of the error function to minimize
         """
         fixed_dict = self.fixed_dict.copy()
         # Convert T to t using tau
@@ -244,7 +244,9 @@ class Estimator(Optimizer):
         Definition of error score to minimize in the study.
 
         Args:
-            param_dict <dict[str]=int/float>: estimated parameter values
+            param_dict (dict): estimated parameter values
+                - key (str): parameter name
+                - value (int or float): parameter value
             taufree_df (pandas.DataFrame): training dataset
 
                 Index:
@@ -254,7 +256,7 @@ class Estimator(Optimizer):
                     - columns with dimensional variables
 
         Returns:
-            <float>: score of the error function to minimize
+            (float): score of the error function to minimize
         """
         if self.step_n is None:
             raise ValueError("self.step_n must be defined in advance.")
@@ -284,7 +286,9 @@ class Estimator(Optimizer):
 
         Args:
             step_n (int): number of iteration
-            param_dict <dict[str]=int/float>: estimated parameter values
+            param_dict (dict): estimated parameter values
+                - key (str): parameter name
+                - value (int or float): parameter value
 
         Returns:
             (pandas.DataFrame):

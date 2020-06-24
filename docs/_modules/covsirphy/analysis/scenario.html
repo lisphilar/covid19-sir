@@ -175,8 +175,8 @@
 <span class="sd">    Scenario analysis.</span>
 
 <span class="sd">    Args:</span>
-<span class="sd">        jhu_data &lt;covsirphy.JHUData&gt;: object of records</span>
-<span class="sd">        pop_data &lt;covsirphy.Population&gt;: Population object</span>
+<span class="sd">        jhu_data (covsirphy.JHUData): object of records</span>
+<span class="sd">        pop_data (covsirphy.Population): Population object</span>
 <span class="sd">        country (str): country name</span>
 <span class="sd">        province (str): province name</span>
 <span class="sd">    &quot;&quot;&quot;</span>
@@ -256,7 +256,7 @@
 <span class="sd">            days (int): the number of days to add</span>
 <span class="sd">            population (int): population value of the start date</span>
 <span class="sd">                - if None, the same as initial value</span>
-<span class="sd">            model &lt;covsirphy.ModelBase&gt;: ODE model</span>
+<span class="sd">            model (covsirphy.ModelBase): ODE model</span>
 <span class="sd">                - if None, the model of the last phase will be used</span>
 <span class="sd">            kwargs: keyword arguments of ODE model parameters</span>
 <span class="sd">                - un-included parameters will be the same as the last phase</span>
@@ -264,7 +264,7 @@
 <span class="sd">                    - tau is fixed as the last phase&#39;s value or 1440</span>
 
 <span class="sd">        Notes:</span>
-<span class="sd">            - If the ohases series has not been registered, new phase series will be created</span>
+<span class="sd">            - If the phases series has not been registered, new phase series will be created</span>
 <span class="sd">            - @end_date or @days must be specified</span>
 
 <span class="sd">        Returns:</span>
@@ -402,7 +402,7 @@
 
 <span class="sd">        Args:</span>
 <span class="sd">            phase (str): phase name, like 1st, 2nd...</span>
-<span class="sd">            model &lt;covsirphy.ModelBase&gt;: ODE model</span>
+<span class="sd">            model (covsirphy.ModelBase): ODE model</span>
 <span class="sd">            name (str): phase series name</span>
 <span class="sd">                - if &#39;Main&#39;, main PhaseSeries will be used</span>
 <span class="sd">                - if not registered, new phase series will be created</span>
@@ -464,7 +464,7 @@
 <span class="sd">                - if None, all phase series will be used</span>
 <span class="sd">            phases (list[str]): list of phase names, like 1st, 2nd...</span>
 <span class="sd">                - if None, all past phase will be used</span>
-<span class="sd">            model &lt;covsirphy.ModelBase&gt;: ODE model</span>
+<span class="sd">            model (covsirphy.ModelBase): ODE model</span>
 <span class="sd">            kwargs:</span>
 <span class="sd">                - keyword arguments of the model parameter</span>
 <span class="sd">                - keyword arguments of covsirphy.Estimator.run()</span>
@@ -499,7 +499,7 @@
 <span class="sd">            phase (str): phase name, like 1st, 2nd...</span>
 <span class="sd">            name (str): phase series name</span>
 <span class="sd">                - if &#39;Main&#39;, main PhaseSeries will be used</span>
-<span class="sd">            kwargs: keyword arguments of &lt;covsirphy.Estimator.history()&gt;</span>
+<span class="sd">            kwargs: keyword arguments of covsirphy.Estimator.history()</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">name</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">MAIN</span> <span class="k">if</span> <span class="n">name</span> <span class="o">==</span> <span class="s2">&quot;Main&quot;</span> <span class="k">else</span> <span class="n">name</span>
         <span class="k">if</span> <span class="n">name</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">series_dict</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
@@ -520,7 +520,7 @@
 <span class="sd">            phase (str): phase name, like 1st, 2nd...</span>
 <span class="sd">            name (str): phase series name</span>
 <span class="sd">                - if &#39;Main&#39;, main PhaseSeries will be used</span>
-<span class="sd">            kwargs: keyword arguments of &lt;covsirphy.Estimator.accuracy()&gt;</span>
+<span class="sd">            kwargs: keyword arguments of covsirphy.Estimator.accuracy()</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">name</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">MAIN</span> <span class="k">if</span> <span class="n">name</span> <span class="o">==</span> <span class="s2">&quot;Main&quot;</span> <span class="k">else</span> <span class="n">name</span>
         <span class="k">if</span> <span class="n">name</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">series_dict</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
@@ -555,9 +555,10 @@
 <span class="sd">        Simulate ODE models with setted parameter values and show it as a figure.</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">            name (str): phase series name</span>
-<span class="sd">                - if &#39;Main&#39;, main PhaseSeries will be used</span>
-<span class="sd">            y0_dict &lt;dict[str]=float&gt;:</span>
+<span class="sd">            name (str): phase series name. If &#39;Main&#39;, main PhaseSeries will be used</span>
+<span class="sd">            y0_dict (dict):</span>
+<span class="sd">                - key (str): variable name</span>
+<span class="sd">                - value (float): initial value</span>
 <span class="sd">                - dictionary of initial values or None</span>
 <span class="sd">                - if model will be changed in the later phase, must be specified</span>
 <span class="sd">            show_figure (bool):</span>
@@ -610,7 +611,9 @@
 
 <span class="sd">        Args:</span>
 <span class="sd">            name (str): phase series name</span>
-<span class="sd">            y0_dict &lt;dict[str]=float&gt;:</span>
+<span class="sd">            y0_dict (dict):</span>
+<span class="sd">                - key (str): variable name</span>
+<span class="sd">                - value (float): initial value</span>
 <span class="sd">                - dictionary of initial values or None</span>
 <span class="sd">                - if model will be changed in the later phase, must be specified</span>
 

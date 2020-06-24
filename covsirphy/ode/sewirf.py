@@ -39,12 +39,12 @@ class SEWIRF(ModelBase):
         Args:
         @population (int): total population
         parameter values of non-dimensional ODE model
-            - @theta <float>
-            - @kappa <float>
-            - @rho1 <float>
-            - @rho2 <float>
-            - @rho3 <float>
-            - @sigma <float>
+            - @theta (float)
+            - @kappa (float)
+            - @rho1 (float)
+            - @rho2 (float)
+            - @rho3 (float)
+            - @sigma (float)
         """
         # Total population
         if not isinstance(population, int):
@@ -64,10 +64,10 @@ class SEWIRF(ModelBase):
 
         Args:
             t (int): time steps
-            X <numpy.array>: values of th model variables
+            X (numpy.array): values of th model variables
 
         Returns:
-            <np.array>
+            (np.array)
         """
         n = self.population
         s, i, *_, e, w = X
@@ -86,18 +86,18 @@ class SEWIRF(ModelBase):
         Define the range of parameters (not including tau value).
 
         Args:
-        @taufree_df (pandas.DataFrame):
-                    Index:
-                        reset index
-                    Columns:
-                        - t (int): time steps (tau-free)
-                        - columns with dimensional variables
-        @population (int): total population
+            taufree_df (pandas.DataFrame):
+                Index:
+                    reset index
+                Columns:
+                    - t (int): time steps (tau-free)
+                    - columns with dimensional variables
+            population (int): total population
 
         Returns:
-            <dict[name]=(min, max)>:
-            - min <float>: min value
-            - max <float>: max value
+            (dict)
+                - key (str): parameter name
+                - value (tuple(float, float)): min value and max value
         """
         df = cls.validate_dataframe(
             taufree_df, name="taufree_df", columns=[cls.TS, *cls.VARIABLES]
@@ -116,26 +116,26 @@ class SEWIRF(ModelBase):
         Specialize the dataset for this model.
 
         Args:
-        @data_df (pandas.DataFrame):
-                    Index:
-                        reset index
-                    Columns:
-                        - Confirmed (int): the number of confirmed cases
-                        - Infected (int): the number of currently infected cases
-                        - Fatal (int): the number of fatal cases
-                        - Recovered (int): the number of recovered cases
-                        - any columns
-        @population (int): total population in the place
+            data_df (pandas.DataFrame):
+                Index:
+                    reset index
+                Columns:
+                    - Confirmed (int): the number of confirmed cases
+                    - Infected (int): the number of currently infected cases
+                    - Fatal (int): the number of fatal cases
+                    - Recovered (int): the number of recovered cases
+                    - any columns
+            population (int): total population in the place
 
         Returns:
-            (pandas.DataFrame):
-                    Index:
-                        reset index
-                    Columns:
-                        - any columns @data_df has
-                        - Susceptible (int): the number of susceptible cases
-                        - Exposed (int): 0
-                        - Waiting (int): 0
+            (pandas.DataFrame)
+                Index:
+                    reset index
+                Columns:
+                    - any columns @data_df has
+                    - Susceptible (int): the number of susceptible cases
+                    - Exposed (int): 0
+                    - Waiting (int): 0
         """
         df = super().specialize(data_df, population)
         # Calculate dimensional variables

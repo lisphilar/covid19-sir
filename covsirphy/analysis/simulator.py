@@ -36,15 +36,19 @@ class ODESimulator(Word):
         Add models to the simulator.
 
         Args:
-            model <subclass of cs.ModelBase>: the first ODE model
+            model (subclass of cs.ModelBase): the first ODE model
             step_n (int): the number of steps
             population (int): population in the place
-            param_dict <dict[str]=float>:
+            param_dict (dict):
+                - key (str): parameter name
+                - value (float): parameter value
                 - dictionary of parameter values or None
                 - if not include some params, the last values will be used
                     - NameError when the model is the first model
                     - NameError if new params are included
-            y0_dict <dict[str]=float>:
+            y0_dict (dict):
+                - key (str): variable name
+                - value (float): initial value
                 - dictionary of dimensional initial values or None
                 - None or if not include some variables, the last values will be used
                     - NameError when the model is the first model
@@ -95,12 +99,12 @@ class ODESimulator(Word):
         Solve ODE of the model.
 
         Args:
-            model <subclass of cs.ModelBase>: the ODE model
+            model (subclass of cs.ModelBase): the ODE model
             step_n (int): the number of steps
-            param_dict <dict[str]=float>: dictionary of parameter values
+            param_dict (dict): dictionary of parameter values
                 - key (str): parameter name
-                - value <float>: parameter value
-            y0_dict <dict[str]=int>: dictionary of initial values
+                - value (float): parameter value
+            y0_dict (dict): dictionary of initial values
                 - key (str): dimensional variable name
                 - value (int):initial value of the variable
             population (int): total population

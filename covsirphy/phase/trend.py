@@ -130,7 +130,7 @@ class Trend(Word):
         Calculate RMSLE score of actual/predicted Susceptible.
 
         Returns:
-            <float>
+            (float): RMSLE score
         """
         df = self.result_df.copy()
         if df is None:

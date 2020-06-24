@@ -125,13 +125,13 @@ class JHUData(CleaningBase):
         Replace a part of cleaned dataset with a dataframe.
 
         Args:
-            country_data <cs.CountryData>: dataset object of the country
+            country_data (covsirphy.CountryData): dataset object of the country
 
         Returns:
             self
         """
         if not isinstance(country_data, CountryData):
-            raise TypeError("country_data must be <covsirphy.CountryData>.")
+            raise TypeError("Type of @country_data must be <covsirphy.CountryData>.")
         # Read new dataset
         country = country_data.country
         new = country_data.cleaned()
