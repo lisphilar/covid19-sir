@@ -38,21 +38,17 @@ file_list_keep = [
     ele for ele in file_list_keep if "COVID19_line_list_data.csv" not in ele]
 file_list_keep = [
     ele for ele in file_list_keep if "COVID19_open_line_list.csv" not in ele]
+file_list_keep = [
+    ele for ele in file_list_keep if "covid_jpn_metadata.csv" not in ele]
+file_list_keep = [
+    ele for ele in file_list_keep if "covid_jpn_prefecture.csv" not in ele]
+
 for file_ in file_list:
     if file_ not in file_list_keep:
         os.remove(file_)
 
-OxCGRT_files = [
-    "https://raw.githubusercontent.com/OxCGRT/covid-policy-tracker/master/data/OxCGRT_latest.csv",
-    "https://raw.githubusercontent.com/OxCGRT/covid-policy-tracker/master/data/OxCGRT_latest_allchanges.csv",
-    "https://raw.githubusercontent.com/OxCGRT/covid-policy-tracker/master/data/OxCGRT_latest_responses.csv",
-    "https://raw.githubusercontent.com/OxCGRT/covid-policy-tracker/master/data/OxCGRT_latest_withnotes.csv"
-]
+oxcgrt_file = "https://raw.githubusercontent.com/OxCGRT/covid-policy-tracker/master/data/OxCGRT_latest.csv"
 
-if not os.path.exists(path_ + "oxcgrt/"):
-    os.makedirs(path_ + "oxcgrt/")
-
-for oxcgrt_file in OxCGRT_files:
-    r = requests.get(oxcgrt_file, allow_redirects=True)
-    with open(path_ + "oxcgrt/" + oxcgrt_file.rsplit('/', 1)[-1], 'wb') as fh:
-        fh.write(r.content)
+r = requests.get(oxcgrt_file, allow_redirects=True)
+with open(path_ + oxcgrt_file.rsplit('/', 1)[-1], 'wb') as fh:
+    fh.write(r.content)
