@@ -23,9 +23,9 @@ class DataLoader(Word):
     Notes:
         If @directory is None, the files will not be saved in local environment.
         GitHub datasets will be always updated because headers of GET response
-         does not have 'Last-Modified' keys.
+        does not have 'Last-Modified' keys.
         If @update_interval hours have passed since the last update of local datasets,
-         updating will be forced when updating is not prevented by the methods.
+        updating will be forced when updating is not prevented by the methods.
 
     Examples:
         >>> import covsirphy as cs
