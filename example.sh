@@ -6,12 +6,8 @@
 echo "<Data cleaning>"
 echo "Data loading"
 pipenv run python -m example.dataset_load
-echo "JHU data"
-pipenv run python -m example.dataset_jhu
 echo "Population"
 pipenv run python -m example.dataset_population
-echo "OxCGRT"
-pipenv run python -m example.dataset_oxcgrt
 
 # ODE simulation and hyperparameter estimation
 echo "<ODE simulation and hyperparameter estimation>"

@@ -19,6 +19,9 @@ class OxCGRTData(CleaningBase):
         CleaningBase.DATE, CleaningBase.COUNTRY, CleaningBase.ISO3,
         *list(COL_DICT.values())
     ]
+    OXCGRT_COLS_WITHOUT_COUNTRY = [
+        CleaningBase.DATE, *list(COL_DICT.values())
+    ]
 
     def __init__(self, filename):
         super().__init__(filename)

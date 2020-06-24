@@ -79,6 +79,11 @@ class TestDataLoader(object):
         df = oxcgrt_data.cleaned()
         assert isinstance(df, pd.DataFrame)
         assert set(df.columns) == set(OxCGRTData.OXCGRT_COLS)
+        subset_cols_set = set(OxCGRTData.OXCGRT_COLS_WITHOUT_COUNTRY)
+        subset_df = oxcgrt_data.subset(country="Japan")
+        assert set(subset_df.columns) == subset_cols_set
+        subset_df_iso = oxcgrt_data.subset(iso3="JPN")
+        assert set(subset_df_iso.columns) == subset_cols_set
 
     def test_oxcgrt_local_file(self):
         data_loader = DataLoader("input")
