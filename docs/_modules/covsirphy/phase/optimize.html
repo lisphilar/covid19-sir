@@ -165,7 +165,7 @@
 <span class="sd">    Hyperparameter optimization with Optuna package.</span>
 
 <span class="sd">    Args:</span>
-<span class="sd">        train_df &lt;pandas.DataFrame&gt;: training dataset</span>
+<span class="sd">        train_df (pandas.DataFrame): training dataset</span>
 
 <span class="sd">            Index:</span>
 <span class="sd">                reset index</span>
@@ -193,7 +193,7 @@
 
 <span class="sd">        Args:</span>
 <span class="sd">            seed &lt;int/None&gt;: random seed of hyperparameter optimization</span>
-<span class="sd">        </span>
+
 <span class="sd">        Notes:</span>
 <span class="sd">            @seed will effective when the number of CPUs is 1</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -208,16 +208,17 @@
 <span class="sd">        This method can be overwritten in subclass.</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">            timeout &lt;int&gt;: time-out of run</span>
-<span class="sd">            n_trials &lt;int&gt;: the number of trials</span>
-<span class="sd">            n_jobs &lt;int&gt;: the number of parallel jobs or -1 (CPU count)</span>
+<span class="sd">            timeout (int): time-out of run</span>
+<span class="sd">            n_trials (int): the number of trials</span>
+<span class="sd">            n_jobs (int): the number of parallel jobs or -1 (CPU count)</span>
 <span class="sd">            seed &lt;int/None&gt;: random seed of hyperparameter optimization</span>
-<span class="sd">        </span>
+
 <span class="sd">        Notes:</span>
 <span class="sd">            @seed will effective when @n_jobs is 1</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="n">seed</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">n_jobs</span> <span class="o">!=</span> <span class="mi">1</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;@seed must be None when @n_jobs is not equal to 1.&quot;</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="s2">&quot;@seed must be None when @n_jobs is not equal to 1.&quot;</span><span class="p">)</span>
         <span class="n">start_time</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">()</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">study</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_init_study</span><span class="p">(</span><span class="n">seed</span><span class="o">=</span><span class="n">seed</span><span class="p">)</span>
@@ -253,7 +254,7 @@
 
 <span class="sd">        Args:</span>
 <span class="sd">            param_dict &lt;dict[str]=int/float&gt;: estimated parameter values</span>
-<span class="sd">            train_df &lt;pandas.DataFrame&gt;: actual data</span>
+<span class="sd">            train_df (pandas.DataFrame): actual data</span>
 
 <span class="sd">                Index:</span>
 <span class="sd">                    reset index</span>
@@ -278,7 +279,7 @@
 <span class="sd">            param_dict &lt;dict[str]=int/float&gt;: estimated parameter values</span>
 
 <span class="sd">        Returns:</span>
-<span class="sd">            &lt;pandas.DataFrame&gt;:</span>
+<span class="sd">            (pandas.DataFrame):</span>
 <span class="sd">                Index:</span>
 <span class="sd">                    reset index</span>
 <span class="sd">                Columns:</span>
@@ -294,7 +295,7 @@
 <span class="sd">        Return comparison table.</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">            actual_df &lt;pandas.DataFrame&gt;: actual data</span>
+<span class="sd">            actual_df (pandas.DataFrame): actual data</span>
 
 <span class="sd">                Index:</span>
 <span class="sd">                    reset index</span>
@@ -302,7 +303,7 @@
 <span class="sd">                    - t: time step, 0, 1, 2,...</span>
 <span class="sd">                    - includes columns defined by self.y_list</span>
 
-<span class="sd">            predicted_df &lt;pandas.DataFrame&gt;: predicted data</span>
+<span class="sd">            predicted_df (pandas.DataFrame): predicted data</span>
 
 <span class="sd">                Index:</span>
 <span class="sd">                    reset index</span>
@@ -311,9 +312,9 @@
 <span class="sd">                    - includes columns defined by self.y_list</span>
 
 <span class="sd">        Returns:</span>
-<span class="sd">            &lt;pandas.DataFrame&gt;:</span>
+<span class="sd">            (pandas.DataFrame):</span>
 <span class="sd">                Index:</span>
-<span class="sd">                    &lt;str&gt;: time step</span>
+<span class="sd">                    (str): time step</span>
 <span class="sd">                Index:</span>
 <span class="sd">                    reset index</span>
 <span class="sd">                Columns:</span>
@@ -350,10 +351,10 @@
 <span class="sd">        This method should be overwritten in subclass.</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">            name &lt;str&gt;: index of the dataframe</span>
+<span class="sd">            name (str): index of the dataframe</span>
 
 <span class="sd">        Returns:</span>
-<span class="sd">            &lt;pandas.DataFrame&gt;:</span>
+<span class="sd">            (pandas.DataFrame):</span>
 <span class="sd">                Index:</span>
 <span class="sd">                    reset index</span>
 <span class="sd">                Columns:</span>
@@ -375,7 +376,7 @@
 <span class="sd">        This method can be overwritten in child class.</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">            train_df &lt;pandas.DataFrame&gt;: actual data</span>
+<span class="sd">            train_df (pandas.DataFrame): actual data</span>
 
 <span class="sd">                Index:</span>
 <span class="sd">                    reset index</span>
@@ -413,11 +414,11 @@
 <span class="sd">            and return it as dataframe.</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">            show_figure &lt;bool&gt;: if True, show the history as a pair-plot of parameters.</span>
-<span class="sd">            filename &lt;str&gt;: filename of the figure, or None (show figure)</span>
+<span class="sd">            show_figure (bool): if True, show the history as a pair-plot of parameters.</span>
+<span class="sd">            filename (str): filename of the figure, or None (show figure)</span>
 
 <span class="sd">        Returns:</span>
-<span class="sd">            &lt;pandas.DataFrame&gt;: the history</span>
+<span class="sd">            (pandas.DataFrame): the history</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="c1"># Create dataframe of the history</span>
         <span class="n">df</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">study</span><span class="o">.</span><span class="n">trials_dataframe</span><span class="p">()</span>
@@ -451,7 +452,7 @@
 <span class="sd">        This method can be overwritten in child class.</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">            train_df &lt;pandas.DataFrame&gt;: actual data</span>
+<span class="sd">            train_df (pandas.DataFrame): actual data</span>
 
 <span class="sd">                Index:</span>
 <span class="sd">                    reset index</span>
@@ -459,8 +460,8 @@
 <span class="sd">                    - t: time step, 0, 1, 2,...</span>
 <span class="sd">                    - includes columns defined by self.y_list</span>
 
-<span class="sd">            variables &lt;list[str]&gt;: variables to compare or None (all variables)</span>
-<span class="sd">            filename &lt;str&gt;: filename of the figure, or None (show figure)</span>
+<span class="sd">            variables (list[str]): variables to compare or None (all variables)</span>
+<span class="sd">            filename (str): filename of the figure, or None (show figure)</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="c1"># Create a table to compare observed/estimated values</span>
         <span class="n">predicted_df</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">predict</span><span class="p">()</span>

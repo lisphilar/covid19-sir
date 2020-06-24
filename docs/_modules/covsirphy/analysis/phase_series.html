@@ -161,9 +161,9 @@
 <span class="sd">    A series of phases.</span>
 
 <span class="sd">    Args:</span>
-<span class="sd">        first_date &lt;str&gt;: the first date of the series, like 22Jan2020</span>
-<span class="sd">        last_record_date &lt;str&gt;: the last date of the records, like 25May2020</span>
-<span class="sd">        population &lt;int&gt;: initial value of total population in the place</span>
+<span class="sd">        first_date (str): the first date of the series, like 22Jan2020</span>
+<span class="sd">        last_record_date (str): the last date of the records, like 25May2020</span>
+<span class="sd">        population (int): initial value of total population in the place</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">first_date</span><span class="p">,</span> <span class="n">last_record_date</span><span class="p">,</span> <span class="n">population</span><span class="p">):</span>
@@ -177,7 +177,7 @@
 <span class="sd">        Clear phase information.</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">            include_past &lt;bool&gt;:</span>
+<span class="sd">            include_past (bool):</span>
 <span class="sd">                - if True, include past phases.</span>
 <span class="sd">                - future phase are always included</span>
 
@@ -193,7 +193,7 @@
 <span class="sd">        Return initialized dictionary which is to remember phase ID of each date.</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">            include_past &lt;bool&gt;:</span>
+<span class="sd">            include_past (bool):</span>
 <span class="sd">                - if True, include past phases.</span>
 <span class="sd">                - future phase are always included</span>
 <span class="sd">        return &lt;dict[pd.TimeStamp]=int&gt;:</span>
@@ -217,7 +217,7 @@
 <span class="sd">        Return initialized dictionary which is to remember phase information.</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">            include_past &lt;bool&gt;:</span>
+<span class="sd">            include_past (bool):</span>
 <span class="sd">                - if True, include past phases.</span>
 <span class="sd">                - future phase are always included</span>
 <span class="sd">        return &lt;dict[str]=str/int&gt;:</span>
@@ -247,10 +247,10 @@
 <span class="sd">        Return phase ID of the phase.</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">            phase &lt;str&gt;: phase name, like 1st, 2nd, 3rd,...</span>
+<span class="sd">            phase (str): phase name, like 1st, 2nd, 3rd,...</span>
 
 <span class="sd">        Returns:</span>
-<span class="sd">            &lt;int&gt;</span>
+<span class="sd">            (int)</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">try</span><span class="p">:</span>
             <span class="n">num</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">phase</span><span class="p">[:</span><span class="o">-</span><span class="mi">2</span><span class="p">])</span>
@@ -264,9 +264,9 @@
 <span class="sd">        Add a new phase.</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">            start_date &lt;str&gt;: start date of the new phase</span>
-<span class="sd">            end_date &lt;str&gt;: end date of the new phase</span>
-<span class="sd">            population &lt;int&gt;: population value of the start date</span>
+<span class="sd">            start_date (str): start date of the new phase</span>
+<span class="sd">            end_date (str): end date of the new phase</span>
+<span class="sd">            population (int): population value of the start date</span>
 <span class="sd">                - if None, initial value will be used</span>
 <span class="sd">            kwargs: keyword arguments to save as phase information</span>
 
@@ -317,7 +317,7 @@
 <span class="sd">        Delete a phase.</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">            phase &lt;str&gt;: phase name, like 0th, 1st, 2nd...</span>
+<span class="sd">            phase (str): phase name, like 0th, 1st, 2nd...</span>
 
 <span class="sd">        Returns:</span>
 <span class="sd">            self</span>
@@ -335,10 +335,10 @@
 <span class="sd">        Summarize the series of phases in a dataframe.</span>
 
 <span class="sd">        Returns:</span>
-<span class="sd">            &lt;pandas.DataFrame&gt;:</span>
+<span class="sd">            (pandas.DataFrame):</span>
 <span class="sd">                Index:</span>
 <span class="sd">                    - phase name, like 1st, 2nd, 3rd...</span>
-<span class="sd">                COlumns:</span>
+<span class="sd">                Columns:</span>
 <span class="sd">                    - Type: &#39;Past&#39; or &#39;Future&#39;</span>
 <span class="sd">                    - Start: start date of the phase</span>
 <span class="sd">                    - End: end date of the phase</span>
@@ -356,13 +356,13 @@
 <span class="sd">        Summarize the series of phase in a dictionary.</span>
 
 <span class="sd">        Returns:</span>
-<span class="sd">            &lt;dict[str]={str: str/int}&gt;:</span>
+<span class="sd">            (dict[str]={str: str/int}):</span>
 <span class="sd">                - key: phase number, like 1th, 2nd,...</span>
 <span class="sd">                - value: {</span>
-<span class="sd">                    &#39;Type&#39;: &lt;str&gt; &#39;Past&#39; or &#39;Future&#39;</span>
-<span class="sd">                    &#39;Start&#39;: &lt;str&gt; start date of the phase,</span>
-<span class="sd">                    &#39;End&#39;: &lt;str&gt; end date of the phase,</span>
-<span class="sd">                    &#39;Population&#39;: &lt;int&gt; population value at the start date</span>
+<span class="sd">                    &#39;Type&#39;: (str) &#39;Past&#39; or &#39;Future&#39;</span>
+<span class="sd">                    &#39;Start&#39;: (str) start date of the phase,</span>
+<span class="sd">                    &#39;End&#39;: (str) end date of the phase,</span>
+<span class="sd">                    &#39;Population&#39;: (int) population value at the start date</span>
 <span class="sd">                    - values added by self.update()</span>
 <span class="sd">                }</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -379,12 +379,12 @@
 <span class="sd">        Return &#39;Past&#39; or &#39;Future&#39; for the target date.</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">            target_date &lt;str&gt;: target date, like 22Jan2020</span>
+<span class="sd">            target_date (str): target date, like 22Jan2020</span>
 <span class="sd">            ref_date &lt;str/None&gt;: reference date</span>
 <span class="sd">                - if None, will use last date of the records</span>
 
 <span class="sd">        Returns:</span>
-<span class="sd">            &lt;str&gt;: &#39;Past&#39; or &#39;Future&#39;</span>
+<span class="sd">            (str): &#39;Past&#39; or &#39;Future&#39;</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">target_obj</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">strptime</span><span class="p">(</span><span class="n">target_date</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">DATE_FORMAT</span><span class="p">)</span>
         <span class="n">ref_date</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">last_record_date</span> <span class="k">if</span> <span class="n">ref_date</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">ref_date</span>
@@ -398,7 +398,7 @@
 <span class="sd">        Update information of the phase.</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">            phase &lt;str&gt;: phase name</span>
+<span class="sd">            phase (str): phase name</span>
 <span class="sd">            kwargs: keyword arguments to add</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">phase_id</span> <span class="o">=</span> <span class="n">phase_id</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_phase_name2id</span><span class="p">(</span><span class="n">phase</span><span class="p">)</span>
@@ -409,7 +409,7 @@
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Return the next date of the end date of the last registered phase.</span>
 <span class="sd">        Returns:</span>
-<span class="sd">            &lt;str&gt;: like 01Feb2020</span>
+<span class="sd">            (str): like 01Feb2020</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">un_date_objects</span> <span class="o">=</span> <span class="p">[</span>
             <span class="n">k</span> <span class="k">for</span> <span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="n">v</span><span class="p">)</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">phase_dict</span><span class="o">.</span><span class="n">items</span><span class="p">()</span>

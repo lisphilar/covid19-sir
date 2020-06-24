@@ -186,9 +186,9 @@
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>&lt;str&gt;</strong> (<em>last_record_date</em>) – the first date of the series, like 22Jan2020</p></li>
-<li><p><strong>&lt;str&gt;</strong> – the last date of the records, like 25May2020</p></li>
-<li><p><strong>&lt;int&gt;</strong> (<em>population</em>) – initial value of total population in the place</p></li>
+<li><p><strong>first_date</strong> (<em>str</em>) – the first date of the series, like 22Jan2020</p></li>
+<li><p><strong>last_record_date</strong> (<em>str</em>) – the last date of the records, like 25May2020</p></li>
+<li><p><strong>population</strong> (<em>int</em>) – initial value of total population in the place</p></li>
 </ul>
 </dd>
 </dl>
@@ -199,9 +199,9 @@
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>&lt;str&gt;</strong> (<em>end_date</em>) – start date of the new phase</p></li>
-<li><p><strong>&lt;str&gt;</strong> – end date of the new phase</p></li>
-<li><p><strong>&lt;int&gt;</strong> (<em>population</em>) – population value of the start date
+<li><p><strong>start_date</strong> (<em>str</em>) – start date of the new phase</p></li>
+<li><p><strong>end_date</strong> (<em>str</em>) – end date of the new phase</p></li>
+<li><p><strong>population</strong> (<em>int</em>) – population value of the start date
 - if None, initial value will be used</p></li>
 <li><p><strong>kwargs</strong> – keyword arguments to save as phase information</p></li>
 </ul>
@@ -218,7 +218,7 @@
 <dd><p>Clear phase information.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>&lt;bool&gt;</strong> (<em>include_past</em>) – <ul class="simple">
+<dd class="field-odd"><p><strong>include_past</strong> (<em>bool</em>) – <ul class="simple">
 <li><p>if True, include past phases.</p></li>
 <li><p>future phase are always included</p></li>
 </ul>
@@ -236,7 +236,7 @@
 <dd><p>Delete a phase.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>&lt;str&gt;</strong> (<em>phase</em>) – phase name, like 0th, 1st, 2nd…</p>
+<dd class="field-odd"><p><strong>phase</strong> (<em>str</em>) – phase name, like 0th, 1st, 2nd…</p>
 </dd>
 <dt class="field-even">Returns</dt>
 <dd class="field-even"><p>self</p>
@@ -249,7 +249,7 @@
 <code class="sig-name descname">next_date</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/analysis/phase_series.html#PhaseSeries.next_date"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#covsirphy.analysis.phase_series.PhaseSeries.next_date" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return the next date of the end date of the last registered phase.
 :returns: like 01Feb2020
-:rtype: &lt;str&gt;</p>
+:rtype: (str)</p>
 </dd></dl>
 
 <dl class="py method">
@@ -263,7 +263,7 @@
 <li><p>phase name, like 1st, 2nd, 3rd…</p></li>
 </ul>
 </dd>
-<dt>COlumns:</dt><dd><ul class="simple">
+<dt>Columns:</dt><dd><ul class="simple">
 <li><p>Type: ‘Past’ or ‘Future’</p></li>
 <li><p>Start: start date of the phase</p></li>
 <li><p>End: end date of the phase</p></li>
@@ -275,7 +275,7 @@
 </p>
 </dd>
 <dt class="field-even">Return type</dt>
-<dd class="field-even"><p>&lt;pandas.DataFrame&gt;</p>
+<dd class="field-even"><p>(pandas.DataFrame)</p>
 </dd>
 </dl>
 </dd></dl>
@@ -287,13 +287,13 @@
 <dl class="field-list simple">
 <dt class="field-odd">Returns</dt>
 <dd class="field-odd"><p><dl>
-<dt>str/int}&gt;:</dt><dd><ul class="simple">
+<dt>str/int}):</dt><dd><ul class="simple">
 <li><p>key: phase number, like 1th, 2nd,…</p></li>
 <li><dl class="simple">
-<dt>value: {</dt><dd><p>‘Type’: &lt;str&gt; ‘Past’ or ‘Future’
-‘Start’: &lt;str&gt; start date of the phase,
-‘End’: &lt;str&gt; end date of the phase,
-‘Population’: &lt;int&gt; population value at the start date
+<dt>value: {</dt><dd><p>‘Type’: (str) ‘Past’ or ‘Future’
+‘Start’: (str) start date of the phase,
+‘End’: (str) end date of the phase,
+‘Population’: (int) population value at the start date
 - values added by self.update()</p>
 </dd>
 </dl>
@@ -305,7 +305,7 @@
 </p>
 </dd>
 <dt class="field-even">Return type</dt>
-<dd class="field-even"><p>&lt;dict[str]={str</p>
+<dd class="field-even"><p>(dict[str]={str</p>
 </dd>
 </dl>
 </dd></dl>
@@ -317,7 +317,7 @@
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>&lt;str&gt;</strong> (<em>phase</em>) – phase name</p></li>
+<li><p><strong>phase</strong> (<em>str</em>) – phase name</p></li>
 <li><p><strong>kwargs</strong> – keyword arguments to add</p></li>
 </ul>
 </dd>
@@ -339,8 +339,8 @@
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>&lt;covsirphy.JHUData&gt;</strong> (<em>jhu_data</em>) – object of records</p></li>
 <li><p><strong>&lt;covsirphy.Population&gt;</strong> (<em>pop_data</em>) – Population object</p></li>
-<li><p><strong>&lt;str&gt;</strong> (<em>province</em>) – country name</p></li>
-<li><p><strong>&lt;str&gt;</strong> – province name</p></li>
+<li><p><strong>country</strong> (<em>str</em>) – country name</p></li>
+<li><p><strong>province</strong> (<em>str</em>) – province name</p></li>
 </ul>
 </dd>
 </dl>
@@ -352,10 +352,10 @@ The start date is the next date of the last registered phase.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>&lt;str&gt;</strong> (<em>end_date</em>) – phase series name, ‘Main’ or user-defined name</p></li>
-<li><p><strong>&lt;str&gt;</strong> – end date of the new phase</p></li>
-<li><p><strong>&lt;int&gt;</strong> (<em>population</em>) – the number of days to add</p></li>
-<li><p><strong>&lt;int&gt;</strong> – population value of the start date
+<li><p><strong>name</strong> (<em>str</em>) – phase series name, ‘Main’ or user-defined name</p></li>
+<li><p><strong>end_date</strong> (<em>str</em>) – end date of the new phase</p></li>
+<li><p><strong>days</strong> (<em>int</em>) – the number of days to add</p></li>
+<li><p><strong>population</strong> (<em>int</em>) – population value of the start date
 - if None, the same as initial value</p></li>
 <li><p><strong>&lt;covsirphy.ModelBase&gt;</strong> (<em>model</em>) – ODE model
 - if None, the model of the last phase will be used</p></li>
@@ -390,10 +390,10 @@ The start date is the next date of the last registered phase.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>&lt;str&gt;</strong> (<em>name</em>) – phase series name
+<li><p><strong>name</strong> (<em>str</em>) – phase series name
 - if ‘Main’, main phase series will be used
 - if not registered, new phaseseries will be created</p></li>
-<li><p><strong>&lt;bool&gt;</strong> (<em>include_past</em>) – <ul>
+<li><p><strong>include_past</strong> (<em>bool</em>) – <ul>
 <li><p>if True, include past phases.</p></li>
 <li><p>future phase are always included</p></li>
 </ul>
@@ -409,7 +409,7 @@ The start date is the next date of the last registered phase.</p>
 <dd><p>Delete a PhaseSeries.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>&lt;str&gt;</strong> (<em>name</em>) – PhaseSeries name</p>
+<dd class="field-odd"><p><strong>name</strong> (<em>str</em>) – PhaseSeries name</p>
 </dd>
 </dl>
 </dd></dl>
@@ -421,8 +421,8 @@ The start date is the next date of the last registered phase.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns</dt>
 <dd class="field-odd"><p><dl class="simple">
-<dt>&lt;pandas.DataFrame&gt;</dt><dd><dl class="simple">
-<dt>Index:</dt><dd><p>&lt;int&gt;: scenario name</p>
+<dt>(pandas.DataFrame)</dt><dd><dl class="simple">
+<dt>Index:</dt><dd><p>(int): scenario name</p>
 </dd>
 <dt>Columns:</dt><dd><ul class="simple">
 <li><p>max(Infected): max value of Infected</p></li>
@@ -446,9 +446,9 @@ The start date is the next date of the last registered phase.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>&lt;list</strong><strong>[</strong><strong>str</strong><strong>]</strong><strong>&gt;</strong> (<em>phases</em>) – list of phase series name
+<li><p><strong>series_list</strong> (<em>list</em><em>[</em><em>str</em><em>]</em>) – list of phase series name
 - if None, all phase series will be used</p></li>
-<li><p><strong>&lt;list</strong><strong>[</strong><strong>str</strong><strong>]</strong><strong>&gt;</strong> – list of phase names, like 1st, 2nd…
+<li><p><strong>phases</strong> (<em>list</em><em>[</em><em>str</em><em>]</em>) – list of phase names, like 1st, 2nd…
 - if None, all past phase will be used</p></li>
 <li><p><strong>&lt;covsirphy.ModelBase&gt;</strong> (<em>model</em>) – ODE model</p></li>
 <li><p><strong>kwargs</strong> – <ul>
@@ -468,8 +468,8 @@ The start date is the next date of the last registered phase.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>&lt;str&gt;</strong> (<em>name</em>) – phase name, like 1st, 2nd…</p></li>
-<li><p><strong>&lt;str&gt;</strong> – phase series name
+<li><p><strong>phase</strong> (<em>str</em>) – phase name, like 1st, 2nd…</p></li>
+<li><p><strong>name</strong> (<em>str</em>) – phase series name
 - if ‘Main’, main PhaseSeries will be used</p></li>
 <li><p><strong>kwargs</strong> – keyword arguments of &lt;covsirphy.Estimator.accuracy()&gt;</p></li>
 </ul>
@@ -484,8 +484,8 @@ The start date is the next date of the last registered phase.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>&lt;str&gt;</strong> (<em>name</em>) – phase name, like 1st, 2nd…</p></li>
-<li><p><strong>&lt;str&gt;</strong> – phase series name
+<li><p><strong>phase</strong> (<em>str</em>) – phase name, like 1st, 2nd…</p></li>
+<li><p><strong>name</strong> (<em>str</em>) – phase series name
 - if ‘Main’, main PhaseSeries will be used</p></li>
 <li><p><strong>kwargs</strong> – keyword arguments of &lt;covsirphy.Estimator.history()&gt;</p></li>
 </ul>
@@ -500,15 +500,15 @@ The start date is the next date of the last registered phase.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>&lt;str&gt;</strong> (<em>phase</em>) – parameter name (columns in self.summary())</p></li>
-<li><p><strong>&lt;str&gt;</strong> – phase series name
+<li><p><strong>param</strong> (<em>str</em>) – parameter name (columns in self.summary())</p></li>
+<li><p><strong>name</strong> (<em>str</em>) – phase series name
 - if ‘Main’, main PhaseSeries will be used</p></li>
-<li><p><strong>&lt;str&gt;</strong> – phase name or ‘last’
+<li><p><strong>phase</strong> (<em>str</em>) – phase name or ‘last’
 - if ‘last’, the value of the last phase will be returned</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
-<dd class="field-even"><p>&lt;str/int/float&gt;</p>
+<dd class="field-even"><p>(str or int or float)</p>
 </dd>
 </dl>
 </dd></dl>
@@ -520,21 +520,21 @@ The start date is the next date of the last registered phase.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>&lt;list</strong><strong>[</strong><strong>str</strong><strong>]</strong><strong>/str&gt;</strong> (<em>targets</em>) – parameters to show (Rt etc.)</p></li>
-<li><p><strong>&lt;str&gt;</strong> (<em>filename</em>) – phase series name
+<li><p><strong>targets</strong> (<em>list</em><em>[</em><em>str</em><em>]</em><em>/str</em>) – parameters to show (Rt etc.)</p></li>
+<li><p><strong>name</strong> (<em>str</em>) – phase series name
 - if ‘Main’, main PhaseSeries will be used</p></li>
-<li><p><strong>&lt;bool&gt;</strong> (<em>show_figure</em>) – if True, divide the values by 1st phase’s values</p></li>
-<li><p><strong>&lt;bool&gt;</strong> – if True, box plot. if False, line plot.</p></li>
-<li><p><strong>&lt;bool&gt;</strong> – <ul>
+<li><p><strong>divide_by_first</strong> (<em>bool</em>) – if True, divide the values by 1st phase’s values</p></li>
+<li><p><strong>box_plot</strong> (<em>bool</em>) – if True, box plot. if False, line plot.</p></li>
+<li><p><strong>show_figure</strong> (<em>bool</em>) – <ul>
 <li><p>if True, show the result as a figure.</p></li>
 </ul>
 </p></li>
-<li><p><strong>&lt;str&gt;</strong> – filename of the figure, or None (show figure)</p></li>
+<li><p><strong>filename</strong> (<em>str</em>) – filename of the figure, or None (show figure)</p></li>
 <li><p><strong>kwargs</strong> – keword arguments of pd.DataFrame.plot or line_plot()</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
-<dd class="field-even"><p>&lt;pandas.DataFrame&gt;</p>
+<dd class="field-even"><p>(pandas.DataFrame)</p>
 </dd>
 </dl>
 </dd></dl>
@@ -548,7 +548,7 @@ The start date is the next date of the last registered phase.</p>
 <dd class="field-odd"><p><strong>kwargs</strong> – keyword arguments of Scenario.simulate()</p>
 </dd>
 <dt class="field-even">Returns</dt>
-<dd class="field-even"><p>&lt;pandas.DataFrame&gt;</p>
+<dd class="field-even"><p>(pandas.DataFrame)</p>
 </dd>
 </dl>
 </dd></dl>
@@ -560,8 +560,8 @@ The start date is the next date of the last registered phase.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>&lt;bool&gt;</strong> (<em>show_figure</em>) – if True, show the records as a line-plot.</p></li>
-<li><p><strong>&lt;str&gt;</strong> (<em>filename</em>) – filename of the figure, or None (show figure)</p></li>
+<li><p><strong>show_figure</strong> (<em>bool</em>) – if True, show the records as a line-plot.</p></li>
+<li><p><strong>filename</strong> (<em>str</em>) – filename of the figure, or None (show figure)</p></li>
 </ul>
 </dd>
 </dl>
@@ -574,30 +574,30 @@ The start date is the next date of the last registered phase.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>&lt;str&gt;</strong> (<em>filename</em>) – phase series name
+<li><p><strong>name</strong> (<em>str</em>) – phase series name
 - if ‘Main’, main PhaseSeries will be used</p></li>
 <li><p><strong>&lt;dict</strong><strong>[</strong><strong>str</strong><strong>]</strong><strong>=float&gt;</strong> (<em>y0_dict</em>) – <ul>
 <li><p>dictionary of initial values or None</p></li>
 <li><p>if model will be changed in the later phase, must be specified</p></li>
 </ul>
 </p></li>
-<li><p><strong>&lt;bool&gt;</strong> (<em>show_figure</em>) – <ul>
+<li><p><strong>show_figure</strong> (<em>bool</em>) – <ul>
 <li><p>if True, show the result as a figure.</p></li>
 </ul>
 </p></li>
-<li><p><strong>&lt;str&gt;</strong> – filename of the figure, or None (show figure)</p></li>
+<li><p><strong>filename</strong> (<em>str</em>) – filename of the figure, or None (show figure)</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
 <dd class="field-even"><p><dl class="simple">
-<dt>&lt;pandas.DataFrame&gt;</dt><dd><dl class="simple">
+<dt>(pandas.DataFrame)</dt><dd><dl class="simple">
 <dt>Index:</dt><dd><p>reset index</p>
 </dd>
 <dt>Columns:</dt><dd><ul class="simple">
-<li><p>Date &lt;str&gt;: date, like 31Dec2020</p></li>
-<li><p>Country &lt;str&gt;: country/region name</p></li>
-<li><p>Province &lt;str&gt;: province/prefecture/state name</p></li>
-<li><p>variables of the models &lt;int&gt;: Confirmed &lt;int&gt; etc.</p></li>
+<li><p>Date (str): date, like 31Dec2020</p></li>
+<li><p>Country (str): country/region name</p></li>
+<li><p>Province (str): province/prefecture/state name</p></li>
+<li><p>variables of the models (int): Confirmed (int) etc.</p></li>
 </ul>
 </dd>
 </dl>
@@ -614,7 +614,7 @@ The start date is the next date of the last registered phase.</p>
 <dd><p>Summarize the series of phases and return a dataframe.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>&lt;str&gt;</strong> (<em>name</em>) – phase series name
+<dd class="field-odd"><p><strong>name</strong> (<em>str</em>) – phase series name
 - ‘Main’ for main phase series
 - name of alternative phase series registered by self.add_phase()
 - if None, all phase series will be shown</p>
@@ -627,7 +627,7 @@ The start date is the next date of the last registered phase.</p>
 </p>
 </dd>
 <dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>&lt;pandas.DataFrame&gt;</p>
+<dd class="field-odd"><p>(pandas.DataFrame)</p>
 </dd>
 </dl>
 </dd></dl>
@@ -639,18 +639,18 @@ The start date is the next date of the last registered phase.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>&lt;int&gt;</strong> (<em>n_points</em>) – the number of change points</p></li>
-<li><p><strong>&lt;bool&gt;</strong> (<em>show_figure</em>) – <ul>
+<li><p><strong>n_points</strong> (<em>int</em>) – the number of change points</p></li>
+<li><p><strong>set_phases</strong> (<em>bool</em>) – <ul>
 <li><p>if True and n_points is not 0, set phases automatically</p></li>
 <li><p>if &#64;include_init_phase is False, initial phase will not be used</p></li>
 </ul>
 </p></li>
-<li><p><strong>&lt;bool&gt;</strong> – whether use initial phase or not</p></li>
-<li><p><strong>&lt;bool&gt;</strong> – <ul>
+<li><p><strong>include_init_phase</strong> (<em>bool</em>) – whether use initial phase or not</p></li>
+<li><p><strong>show_figure</strong> (<em>bool</em>) – <ul>
 <li><p>if True, show the records as a line-plot.</p></li>
 </ul>
 </p></li>
-<li><p><strong>&lt;str&gt;</strong> (<em>filename</em>) – filename of the figure, or None (show figure)</p></li>
+<li><p><strong>filename</strong> (<em>str</em>) – filename of the figure, or None (show figure)</p></li>
 <li><p><strong>kwargs</strong> – the other keyword arguments of ChangeFinder().run()</p></li>
 </ul>
 </dd>
@@ -678,8 +678,8 @@ The start date is the next date of the last registered phase.</p>
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>&lt;subclass of cs.ModelBase&gt;</strong> (<em>model</em>) – the first ODE model</p></li>
-<li><p><strong>&lt;int&gt;</strong> (<em>population</em>) – the number of steps</p></li>
-<li><p><strong>&lt;int&gt;</strong> – population in the place</p></li>
+<li><p><strong>step_n</strong> (<em>int</em>) – the number of steps</p></li>
+<li><p><strong>population</strong> (<em>int</em>) – population in the place</p></li>
 <li><p><strong>&lt;dict</strong><strong>[</strong><strong>str</strong><strong>]</strong><strong>=float&gt;</strong> (<em>y0_dict</em>) – <ul>
 <li><p>dictionary of parameter values or None</p></li>
 <li><dl class="simple">
@@ -719,20 +719,20 @@ The start date is the next date of the last registered phase.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>&lt;int&gt;</strong> (<em>tau</em>) – tau value [min]</p></li>
-<li><p><strong>&lt;str&gt;</strong> (<em>start_date</em>) – start date of the records, like 22Jan2020</p></li>
+<li><p><strong>tau</strong> (<em>int</em>) – tau value [min]</p></li>
+<li><p><strong>start_date</strong> (<em>str</em>) – start date of the records, like 22Jan2020</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
 <dd class="field-even"><p><dl class="simple">
-<dt>&lt;pandas.DataFrame&gt;</dt><dd><dl class="simple">
+<dt>(pandas.DataFrame)</dt><dd><dl class="simple">
 <dt>Index:</dt><dd><p>reset index</p>
 </dd>
 <dt>Columns:</dt><dd><ul class="simple">
-<li><p>Date &lt;pd.TimeStamp&gt;: Observation date</p></li>
-<li><p>Country &lt;str&gt;: country/region name</p></li>
-<li><p>Province &lt;str&gt;: province/prefecture/state name</p></li>
-<li><p>variables of the models &lt;int&gt;</p></li>
+<li><p>Date (pd.TimeStamp): Observation date</p></li>
+<li><p>Country (str): country/region name</p></li>
+<li><p>Province (str): province/prefecture/state name</p></li>
+<li><p>variables of the models (int)</p></li>
 </ul>
 </dd>
 </dl>
@@ -753,7 +753,7 @@ The start date is the next date of the last registered phase.</p>
 <dt>Index:</dt><dd><p>reset index</p>
 </dd>
 <dt>Columns:</dt><dd><ul class="simple">
-<li><p>t &lt;int&gt;: Elapsed time divided by tau value [-]</p></li>
+<li><p>t (int): Elapsed time divided by tau value [-]</p></li>
 <li><p>non-dimensionalized variables of Susceptible etc.</p></li>
 </ul>
 </dd>
@@ -761,7 +761,7 @@ The start date is the next date of the last registered phase.</p>
 </p>
 </dd>
 <dt class="field-even">Return type</dt>
-<dd class="field-even"><p>&lt;pandas.DataFrame&gt;</p>
+<dd class="field-even"><p>(pandas.DataFrame)</p>
 </dd>
 </dl>
 </dd></dl>
@@ -782,7 +782,7 @@ The start date is the next date of the last registered phase.</p>
 <dt>Index:</dt><dd><p>reset index</p>
 </dd>
 <dt>Columns:</dt><dd><ul class="simple">
-<li><p>t &lt;int&gt;: Elapsed time divided by tau value [-]</p></li>
+<li><p>t (int): Elapsed time divided by tau value [-]</p></li>
 <li><p>columns with dimensionalized variables</p></li>
 </ul>
 </dd>
@@ -790,7 +790,7 @@ The start date is the next date of the last registered phase.</p>
 </p>
 </dd>
 <dt class="field-even">Return type</dt>
-<dd class="field-even"><p>&lt;pandas.DataFrame&gt;</p>
+<dd class="field-even"><p>(pandas.DataFrame)</p>
 </dd>
 </dl>
 </dd></dl>
@@ -812,8 +812,8 @@ The start date is the next date of the last registered phase.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>&lt;int&gt;</strong> (<em>n_jobs</em>) – the number of trials in one iteration</p></li>
-<li><p><strong>&lt;int&gt;</strong> – the number of parallel jobs or -1 (CPU count)</p></li>
+<li><p><strong>n_trials_iteration</strong> (<em>int</em>) – the number of trials in one iteration</p></li>
+<li><p><strong>n_jobs</strong> (<em>int</em>) – the number of parallel jobs or -1 (CPU count)</p></li>
 </ul>
 </dd>
 </dl>
@@ -827,8 +827,8 @@ This is weighted average of RMSLE scores.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>&lt;list</strong><strong>[</strong><strong>str</strong><strong>]</strong><strong>&gt;</strong> (<em>end_dates</em>) – list of start date of phases (candidates)</p></li>
-<li><p><strong>&lt;list</strong><strong>[</strong><strong>str</strong><strong>]</strong><strong>&gt;</strong> – list of end date of phases (candidates)</p></li>
+<li><p><strong>start_dates</strong> (<em>list</em><em>[</em><em>str</em><em>]</em>) – list of start date of phases (candidates)</p></li>
+<li><p><strong>end_dates</strong> (<em>list</em><em>[</em><em>str</em><em>]</em>) – list of end date of phases (candidates)</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
@@ -847,32 +847,32 @@ This is weighted average of RMSLE scores.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>&lt;pandas.DataFrame&gt;</strong> (<em>clean_df</em>) – <p>cleaned data</p>
+<li><p><strong>clean_df</strong> (<em>pandas.DataFrame</em>) – <p>cleaned data</p>
 <dl class="simple">
 <dt>Index:</dt><dd><p>reset index</p>
 </dd>
 <dt>Columns:</dt><dd><ul>
-<li><p>Date &lt;pd.TimeStamp&gt;: Observation date</p></li>
-<li><p>Country &lt;str&gt;: country/region name</p></li>
-<li><p>Province &lt;str&gt;: province/prefecture/sstate name</p></li>
-<li><p>Confirmed &lt;int&gt;: the number of confirmed cases</p></li>
-<li><p>Infected &lt;int&gt;: the number of currently infected cases</p></li>
-<li><p>Fatal &lt;int&gt;: the number of fatal cases</p></li>
-<li><p>Recovered &lt;int&gt;: the number of recovered cases</p></li>
+<li><p>Date (pd.TimeStamp): Observation date</p></li>
+<li><p>Country (str): country/region name</p></li>
+<li><p>Province (str): province/prefecture/sstate name</p></li>
+<li><p>Confirmed (int): the number of confirmed cases</p></li>
+<li><p>Infected (int): the number of currently infected cases</p></li>
+<li><p>Fatal (int): the number of fatal cases</p></li>
+<li><p>Recovered (int): the number of recovered cases</p></li>
 </ul>
 </dd>
 </dl>
 </p></li>
-<li><p><strong>&lt;int&gt;</strong> (<em>population</em>) – initial value of total population in the place</p></li>
-<li><p><strong>&lt;str&gt;</strong> (<em>province</em>) – country name</p></li>
-<li><p><strong>&lt;str&gt;</strong> – province name</p></li>
+<li><p><strong>population</strong> (<em>int</em>) – initial value of total population in the place</p></li>
+<li><p><strong>country</strong> (<em>str</em>) – country name</p></li>
+<li><p><strong>province</strong> (<em>str</em>) – province name</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
 <dd class="field-even"><p>list of dates, like 22Jan2020</p>
 </dd>
 <dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>&lt;list[str]&gt;</p>
+<dd class="field-odd"><p>(list[str])</p>
 </dd>
 </dl>
 </dd></dl>
@@ -901,7 +901,7 @@ This defines the parameter values using Optuna.</p>
 <dd><p>Return the start date and end date of the phases.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>&lt;list</strong><strong>[</strong><strong>str</strong><strong>]</strong><strong>&gt;</strong> (<em>change_dates</em>) – list of change points, like 22Jan2020</p>
+<dd class="field-odd"><p><strong>change_dates</strong> (<em>list</em><em>[</em><em>str</em><em>]</em>) – list of change points, like 22Jan2020</p>
 </dd>
 <dt class="field-even">Returns</dt>
 <dd class="field-even"><p><ul class="simple">
@@ -923,15 +923,15 @@ This defines the parameter values using Optuna.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>&lt;int&gt;</strong> (<em>n_jobs</em>) – the number of change points</p></li>
-<li><p><strong>&lt;int&gt;</strong> – minimum duration of one phase [days]
+<li><p><strong>n_points</strong> (<em>int</em>) – the number of change points</p></li>
+<li><p><strong>min_duration</strong> (<em>int</em>) – minimum duration of one phase [days]
 - must be over 2</p></li>
-<li><p><strong>&lt;int&gt;</strong> – allowance of change points [days]
+<li><p><strong>allowance</strong> (<em>int</em>) – allowance of change points [days]
 - if the estimated change points was equal to previous iteration
 with this allowance, stop running.</p></li>
-<li><p><strong>&lt;int&gt;</strong> – time-out of run</p></li>
-<li><p><strong>&lt;int&gt;</strong> – the number of trials in one iteration</p></li>
-<li><p><strong>&lt;int&gt;</strong> – the number of parallel jobs or -1 (CPU count)</p></li>
+<li><p><strong>timeout</strong> (<em>int</em>) – time-out of run</p></li>
+<li><p><strong>n_trials_iteration</strong> (<em>int</em>) – the number of trials in one iteration</p></li>
+<li><p><strong>n_jobs</strong> (<em>int</em>) – the number of parallel jobs or -1 (CPU count)</p></li>
 <li><p><strong>&lt;int/None&gt;</strong> (<em>seed</em>) – random seed of hyperparameter optimization
 - this will effective when &#64;n_jobs is 1</p></li>
 </ul>
@@ -947,13 +947,13 @@ with this allowance, stop running.</p></li>
 <code class="sig-name descname">show</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">show_figure</span><span class="o">=</span><span class="default_value">True</span></em>, <em class="sig-param"><span class="n">filename</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/analysis/sr_change.html#ChangeFinder.show"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#covsirphy.analysis.sr_change.ChangeFinder.show" title="Permalink to this definition">¶</a></dt>
 <dd><p>show the result as a figure and return a dictionary of phases.</p>
 <p>Args:
-&#64;show_figure &lt;bool&gt;:</p>
+&#64;show_figure (bool):</p>
 <blockquote>
 <div><ul class="simple">
 <li><p>if True, show the result as a figure.</p></li>
 </ul>
 </div></blockquote>
-<p>&#64;filename &lt;str&gt;: filename of the figure, or None (show figure)</p>
+<p>&#64;filename (str): filename of the figure, or None (show figure)</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns</dt>
 <dd class="field-odd"><p>&lt;covsirphy.PhaseSeries&gt;</p>

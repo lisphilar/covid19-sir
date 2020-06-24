@@ -16,33 +16,33 @@ class Estimator(Optimizer):
     Hyperparameter optimization of an ODE model.
 
     Args:
-        clean_df <pandas.DataFrame>:
+        clean_df (pandas.DataFrame):
             - cleaned observed data or simulated data
             - observed data
                 Index:
                     reset index
                 Columns:
-                    - Date <pd.TimeStamp>: Observation date
-                    - Country <str>: country/region name
-                    - Province <str>: province/prefecture/sstate name
-                    - Confirmed <int>: the number of confirmed cases
-                    - Infected <int>: the number of currently infected cases
-                    - Fatal <int>: the number of fatal cases
-                    - Recovered <int>: the number of recovered cases
+                    - Date (pd.TimeStamp): Observation date
+                    - Country (str): country/region name
+                    - Province (str): province/prefecture/sstate name
+                    - Confirmed (int): the number of confirmed cases
+                    - Infected (int): the number of currently infected cases
+                    - Fatal (int): the number of fatal cases
+                    - Recovered (int): the number of recovered cases
             - simulated data
                 Index:
                     reset index
                 Columns:
-                    - Date <pd.TimeStamp>: Observation date
-                    - Country <str>: country/region name
-                    - Province <str>: province/prefecture/state name
-                    - variables of the models <int>
+                    - Date (pd.TimeStamp): Observation date
+                    - Country (str): country/region name
+                    - Province (str): province/prefecture/state name
+                    - variables of the models (int)
         model <subclass of cs.ModelBase>: ODE model
-        population <int>: total population in the place
-        country <str>: country name
-        province <str>: province name
-        start_date <str>: start date, like 22Jan2020
-        end_date <str>: end date, like 01Feb2020
+        population (int): total population in the place
+        country (str): country name
+        province (str): province name
+        start_date (str): start date, like 22Jan2020
+        end_date (str): end date, like 01Feb2020
         kwargs: parameter values of the model
     """
     np.seterr(divide="raise")
@@ -90,8 +90,8 @@ class Estimator(Optimizer):
         Run trial.
 
         Args:
-            n_jobs <int>: the number of parallel jobs or -1 (CPU count)
-            timeout_iteration <int>: time-out of one iteration
+            n_jobs (int): the number of parallel jobs or -1 (CPU count)
+            timeout_iteration (int): time-out of one iteration
         """
         self.study.optimize(
             lambda x: self.objective(x),
@@ -111,13 +111,13 @@ class Estimator(Optimizer):
                 when each actual value shows max value
 
         Args:
-            timeout <int>: time-out of run
-            reset_n_max <int>: if study was reset @reset_n_max times, will not be reset anymore
-            timeout_iteration <int>: time-out of one iteration
-            allowance <tuple(float, float)>: the allowance of the predicted value
-            n_jobs <int>: the number of parallel jobs or -1 (CPU count)
+            timeout (int): time-out of run
+            reset_n_max (int): if study was reset @reset_n_max times, will not be reset anymore
+            timeout_iteration (int): time-out of one iteration
+            allowance (tuple(float, float)): the allowance of the predicted value
+            n_jobs (int): the number of parallel jobs or -1 (CPU count)
             seed <int/None>: random seed of hyperparameter optimization
-        
+
         Notes:
             @seed will effective when @n_jobs is 1
 
@@ -218,14 +218,14 @@ class Estimator(Optimizer):
         Divide T by tau in the training dataset.
 
         Args:
-            tau <int>: tau value [min]
+            tau (int): tau value [min]
 
         Returns:
-            <pandas.DataFrame>:
+            (pandas.DataFrame):
                     Index:
                         reset index
                     Columns:
-                        - t <int>: Elapsed time divided by tau value [-]
+                        - t (int): Elapsed time divided by tau value [-]
                         - columns with dimensional variables
         """
         tau = self.validate_natural_int(tau, name="tau")
@@ -245,7 +245,7 @@ class Estimator(Optimizer):
 
         Args:
             param_dict <dict[str]=int/float>: estimated parameter values
-            taufree_df <pandas.DataFrame>: training dataset
+            taufree_df (pandas.DataFrame): training dataset
 
                 Index:
                     reset index
@@ -283,15 +283,15 @@ class Estimator(Optimizer):
         Simulate the values with the parameters.
 
         Args:
-            step_n <int>: number of iteration
+            step_n (int): number of iteration
             param_dict <dict[str]=int/float>: estimated parameter values
 
         Returns:
-            <pandas.DataFrame>:
+            (pandas.DataFrame):
                 Index:
                     reset index
                 Columns:
-                    - t <int>: Elapsed time divided by tau value [-]
+                    - t (int): Elapsed time divided by tau value [-]
                     - columns with dimensionalized variables
         """
         simulator = ODESimulator(country=self.country, province=self.province)
@@ -311,10 +311,10 @@ class Estimator(Optimizer):
         This function should be overwritten in subclass.
 
         Args:
-            name <str>: index of the dataframe
+            name (str): index of the dataframe
 
         Returns:
-            <pandas.DataFrame>:
+            (pandas.DataFrame):
                 Index:
                     reset index
                 Columns:
@@ -352,7 +352,7 @@ class Estimator(Optimizer):
         Return RMSLE score.
 
         Args:
-            tau <int>: tau value
+            tau (int): tau value
         """
         score = super().rmsle(
             train_df=self.divide_minutes(tau),
@@ -365,7 +365,7 @@ class Estimator(Optimizer):
         Show the accuracy as a figure.
 
         Args:
-            filename <str>: filename of the figure, or None (show figure)
+            filename (str): filename of the figure, or None (show figure)
         """
         tau = super().param()[self.TAU]
         train_df = self.divide_minutes(tau)

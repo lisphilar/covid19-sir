@@ -10,10 +10,10 @@ class CleaningBase(Word):
     Basic class for data cleaning.
 
     Args:
-        filename <str>: CSV filename of the dataset
+        filename (str): CSV filename of the dataset
 
     Attributes:
-        citation <str>: citation fo the dataset
+        citation (str): citation fo the dataset
     """
 
     def __init__(self, filename):
@@ -27,7 +27,7 @@ class CleaningBase(Word):
         Return the raw data.
 
         Returns:
-            <pandas.DataFrame>: raw data
+            (pandas.DataFrame): raw data
         """
         return self._raw
 
@@ -39,7 +39,7 @@ class CleaningBase(Word):
         Cleaning method is defined by self.cleaning() method.
 
         Returns:
-            <pandas.DataFrame>: cleaned data
+            (pandas.DataFrame): cleaned data
         """
         return self._cleaned_df
 
@@ -51,7 +51,7 @@ class CleaningBase(Word):
         Cleaning method is defined by self.cleaning() method.
 
         Returns:
-            <pandas.DataFrame>: cleaned data
+            (pandas.DataFrame): cleaned data
         """
         df = self._raw.copy()
         return df
@@ -61,18 +61,18 @@ class CleaningBase(Word):
         Return a dataframe to show chronological change of number and rates.
 
         Returns:
-            <pandas.DataFrame>: group-by Date, sum of the values
+            (pandas.DataFrame): group-by Date, sum of the values
 
                 Index:
-                    (Date) <pd.TimeStamp>: Observation date
+                    (Date) (pd.TimeStamp): Observation date
                 Columns:
-                    - Confirmed <int>: the number of confirmed cases
-                    - Infected <int>: the number of currently infected cases
-                    - Fatal <int>: the number of fatal cases
-                    - Recovered <int>: the number of recovered cases
-                    - Fatal per Confirmed <int>
-                    - Recovered per Confirmed <int>
-                    - Fatal per (Fatal or Recovered) <int>
+                    - Confirmed (int): the number of confirmed cases
+                    - Infected (int): the number of currently infected cases
+                    - Fatal (int): the number of fatal cases
+                    - Recovered (int): the number of recovered cases
+                    - Fatal per Confirmed (int)
+                    - Recovered per Confirmed (int)
+                    - Fatal per (Fatal or Recovered) (int)
         """
         df = self._cleaned_df.groupby("Date").sum()
         cols = ["Infected", "Fatal", "Recovered"]
@@ -88,7 +88,7 @@ class CleaningBase(Word):
         Return citation.
 
         Returns:
-            <str>: citation of the datset
+            (str): citation of the datset
         """
         return self._citation
 
@@ -98,7 +98,7 @@ class CleaningBase(Word):
         Set citation of the dataset.
 
         Args:
-            description <str>: citation of the dataset
+            description (str): citation of the dataset
         """
         if not isinstance(description, str):
             raise TypeError("@description must be a string.")

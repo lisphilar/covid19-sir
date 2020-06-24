@@ -154,15 +154,15 @@
 <span class="kn">from</span> <span class="nn">covsirphy.cleaning.word</span> <span class="kn">import</span> <span class="n">Word</span>
 
 
-<div class="viewcode-block" id="CleaningBase"><a class="viewcode-back" href="../../../covsirphy.cleaning.html#covsirphy.CleaningBase">[docs]</a><span class="k">class</span> <span class="nc">CleaningBase</span><span class="p">(</span><span class="n">Word</span><span class="p">):</span>
+<div class="viewcode-block" id="CleaningBase"><a class="viewcode-back" href="../../../covsirphy.html#covsirphy.CleaningBase">[docs]</a><span class="k">class</span> <span class="nc">CleaningBase</span><span class="p">(</span><span class="n">Word</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Basic class for data cleaning.</span>
 
 <span class="sd">    Args:</span>
-<span class="sd">        filename &lt;str&gt;: CSV filename of the dataset</span>
+<span class="sd">        filename (str): CSV filename of the dataset</span>
 
 <span class="sd">    Attributes:</span>
-<span class="sd">        citation &lt;str&gt;: citation fo the dataset</span>
+<span class="sd">        citation (str): citation fo the dataset</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="p">):</span>
@@ -176,11 +176,11 @@
 <span class="sd">        Return the raw data.</span>
 
 <span class="sd">        Returns:</span>
-<span class="sd">            &lt;pandas.DataFrame&gt;: raw data</span>
+<span class="sd">            (pandas.DataFrame): raw data</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_raw</span>
 
-<div class="viewcode-block" id="CleaningBase.cleaned"><a class="viewcode-back" href="../../../covsirphy.cleaning.html#covsirphy.CleaningBase.cleaned">[docs]</a>    <span class="k">def</span> <span class="nf">cleaned</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="CleaningBase.cleaned"><a class="viewcode-back" href="../../../covsirphy.html#covsirphy.CleaningBase.cleaned">[docs]</a>    <span class="k">def</span> <span class="nf">cleaned</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Return the cleaned dataset.</span>
 
@@ -188,11 +188,11 @@
 <span class="sd">        Cleaning method is defined by self.cleaning() method.</span>
 
 <span class="sd">        Returns:</span>
-<span class="sd">            &lt;pandas.DataFrame&gt;: cleaned data</span>
+<span class="sd">            (pandas.DataFrame): cleaned data</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_cleaned_df</span></div>
 
-<div class="viewcode-block" id="CleaningBase.cleaning"><a class="viewcode-back" href="../../../covsirphy.cleaning.html#covsirphy.CleaningBase.cleaning">[docs]</a>    <span class="k">def</span> <span class="nf">cleaning</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="CleaningBase.cleaning"><a class="viewcode-back" href="../../../covsirphy.html#covsirphy.CleaningBase.cleaning">[docs]</a>    <span class="k">def</span> <span class="nf">cleaning</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Perform data cleaning of the raw data.</span>
 
@@ -200,28 +200,28 @@
 <span class="sd">        Cleaning method is defined by self.cleaning() method.</span>
 
 <span class="sd">        Returns:</span>
-<span class="sd">            &lt;pandas.DataFrame&gt;: cleaned data</span>
+<span class="sd">            (pandas.DataFrame): cleaned data</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">df</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_raw</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
         <span class="k">return</span> <span class="n">df</span></div>
 
-<div class="viewcode-block" id="CleaningBase.total"><a class="viewcode-back" href="../../../covsirphy.cleaning.html#covsirphy.CleaningBase.total">[docs]</a>    <span class="k">def</span> <span class="nf">total</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="CleaningBase.total"><a class="viewcode-back" href="../../../covsirphy.html#covsirphy.CleaningBase.total">[docs]</a>    <span class="k">def</span> <span class="nf">total</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Return a dataframe to show chronological change of number and rates.</span>
 
 <span class="sd">        Returns:</span>
-<span class="sd">            &lt;pandas.DataFrame&gt;: group-by Date, sum of the values</span>
+<span class="sd">            (pandas.DataFrame): group-by Date, sum of the values</span>
 
 <span class="sd">                Index:</span>
-<span class="sd">                    (Date) &lt;pd.TimeStamp&gt;: Observation date</span>
+<span class="sd">                    (Date) (pd.TimeStamp): Observation date</span>
 <span class="sd">                Columns:</span>
-<span class="sd">                    - Confirmed &lt;int&gt;: the number of confirmed cases</span>
-<span class="sd">                    - Infected &lt;int&gt;: the number of currently infected cases</span>
-<span class="sd">                    - Fatal &lt;int&gt;: the number of fatal cases</span>
-<span class="sd">                    - Recovered &lt;int&gt;: the number of recovered cases</span>
-<span class="sd">                    - Fatal per Confirmed &lt;int&gt;</span>
-<span class="sd">                    - Recovered per Confirmed &lt;int&gt;</span>
-<span class="sd">                    - Fatal per (Fatal or Recovered) &lt;int&gt;</span>
+<span class="sd">                    - Confirmed (int): the number of confirmed cases</span>
+<span class="sd">                    - Infected (int): the number of currently infected cases</span>
+<span class="sd">                    - Fatal (int): the number of fatal cases</span>
+<span class="sd">                    - Recovered (int): the number of recovered cases</span>
+<span class="sd">                    - Fatal per Confirmed (int)</span>
+<span class="sd">                    - Recovered per Confirmed (int)</span>
+<span class="sd">                    - Fatal per (Fatal or Recovered) (int)</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">df</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_cleaned_df</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="s2">&quot;Date&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
         <span class="n">cols</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;Infected&quot;</span><span class="p">,</span> <span class="s2">&quot;Fatal&quot;</span><span class="p">,</span> <span class="s2">&quot;Recovered&quot;</span><span class="p">]</span>
@@ -237,7 +237,7 @@
 <span class="sd">        Return citation.</span>
 
 <span class="sd">        Returns:</span>
-<span class="sd">            &lt;str&gt;: citation of the datset</span>
+<span class="sd">            (str): citation of the datset</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_citation</span>
 
@@ -247,7 +247,7 @@
 <span class="sd">        Set citation of the dataset.</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">            description &lt;str&gt;: citation of the dataset</span>
+<span class="sd">            description (str): citation of the dataset</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">description</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
             <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">&quot;@description must be a string.&quot;</span><span class="p">)</span>

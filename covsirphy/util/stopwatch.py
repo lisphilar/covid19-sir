@@ -8,6 +8,7 @@ class StopWatch(object):
     """
     Calculate elapsed time.
     """
+
     def __init__(self):
         self.start_time = datetime.now()
         self.elapsed = 0
@@ -17,7 +18,7 @@ class StopWatch(object):
         Stop the stopwatch.
 
         Returns:
-            <int>: elapsed time [sec]
+            (int): elapsed time [sec]
         """
         end_time = datetime.now()
         self.elapsed = (end_time - self.start_time).total_seconds()
@@ -28,7 +29,7 @@ class StopWatch(object):
         Show the elapsed time as string.
 
         Returns:
-            <str>: eg. '1 min 30 sec'
+            (str): eg. '1 min 30 sec'
         """
         minutes, seconds = divmod(int(self.elapsed), 60)
         return f"{minutes} min {seconds} sec"

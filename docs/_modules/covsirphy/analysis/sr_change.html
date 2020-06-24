@@ -172,21 +172,21 @@
         <span class="sd">&quot;&quot;&quot;</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">        @clean_df &lt;pandas.DataFrame&gt;: cleaned data</span>
+<span class="sd">        @clean_df (pandas.DataFrame): cleaned data</span>
 
 <span class="sd">                    Index:</span>
 <span class="sd">                        reset index</span>
 <span class="sd">                    Columns:</span>
-<span class="sd">                        - Date &lt;pd.TimeStamp&gt;: Observation date</span>
-<span class="sd">                        - Country &lt;str&gt;: country/region name</span>
-<span class="sd">                        - Province &lt;str&gt;: province/prefecture/sstate name</span>
-<span class="sd">                        - Confirmed &lt;int&gt;: the number of confirmed cases</span>
-<span class="sd">                        - Infected &lt;int&gt;: the number of currently infected cases</span>
-<span class="sd">                        - Fatal &lt;int&gt;: the number of fatal cases</span>
-<span class="sd">                        - Recovered &lt;int&gt;: the number of recovered cases</span>
-<span class="sd">        @population &lt;int&gt;: initial value of total population in the place</span>
-<span class="sd">        @country &lt;str&gt;: country name</span>
-<span class="sd">        @province &lt;str&gt;: province name</span>
+<span class="sd">                        - Date (pd.TimeStamp): Observation date</span>
+<span class="sd">                        - Country (str): country/region name</span>
+<span class="sd">                        - Province (str): province/prefecture/sstate name</span>
+<span class="sd">                        - Confirmed (int): the number of confirmed cases</span>
+<span class="sd">                        - Infected (int): the number of currently infected cases</span>
+<span class="sd">                        - Fatal (int): the number of fatal cases</span>
+<span class="sd">                        - Recovered (int): the number of recovered cases</span>
+<span class="sd">        @population (int): initial value of total population in the place</span>
+<span class="sd">        @country (str): country name</span>
+<span class="sd">        @province (str): province name</span>
 <span class="sd">        @population_change_dict &lt;dict[str]=int/None&gt;:</span>
 <span class="sd">            - dictionary of total population</span>
 <span class="sd">                - key: start date of population change</span>
@@ -219,24 +219,24 @@
 <span class="sd">        Get dates from the dataset.</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">            clean_df &lt;pandas.DataFrame&gt;: cleaned data</span>
+<span class="sd">            clean_df (pandas.DataFrame): cleaned data</span>
 
 <span class="sd">                        Index:</span>
 <span class="sd">                            reset index</span>
 <span class="sd">                        Columns:</span>
-<span class="sd">                            - Date &lt;pd.TimeStamp&gt;: Observation date</span>
-<span class="sd">                            - Country &lt;str&gt;: country/region name</span>
-<span class="sd">                            - Province &lt;str&gt;: province/prefecture/sstate name</span>
-<span class="sd">                            - Confirmed &lt;int&gt;: the number of confirmed cases</span>
-<span class="sd">                            - Infected &lt;int&gt;: the number of currently infected cases</span>
-<span class="sd">                            - Fatal &lt;int&gt;: the number of fatal cases</span>
-<span class="sd">                            - Recovered &lt;int&gt;: the number of recovered cases</span>
-<span class="sd">            population &lt;int&gt;: initial value of total population in the place</span>
-<span class="sd">            country &lt;str&gt;: country name</span>
-<span class="sd">            province &lt;str&gt;: province name</span>
+<span class="sd">                            - Date (pd.TimeStamp): Observation date</span>
+<span class="sd">                            - Country (str): country/region name</span>
+<span class="sd">                            - Province (str): province/prefecture/sstate name</span>
+<span class="sd">                            - Confirmed (int): the number of confirmed cases</span>
+<span class="sd">                            - Infected (int): the number of currently infected cases</span>
+<span class="sd">                            - Fatal (int): the number of fatal cases</span>
+<span class="sd">                            - Recovered (int): the number of recovered cases</span>
+<span class="sd">            population (int): initial value of total population in the place</span>
+<span class="sd">            country (str): country name</span>
+<span class="sd">            province (str): province name</span>
 
 <span class="sd">        Returns:</span>
-<span class="sd">            &lt;list[str]&gt;: list of dates, like 22Jan2020</span>
+<span class="sd">            (list[str]): list of dates, like 22Jan2020</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">sr_data</span> <span class="o">=</span> <span class="n">SRData</span><span class="p">(</span><span class="n">clean_df</span><span class="p">,</span> <span class="n">country</span><span class="o">=</span><span class="n">country</span><span class="p">,</span> <span class="n">province</span><span class="o">=</span><span class="n">province</span><span class="p">)</span>
         <span class="n">df</span> <span class="o">=</span> <span class="n">sr_data</span><span class="o">.</span><span class="n">make</span><span class="p">(</span><span class="n">population</span><span class="p">)</span>
@@ -248,8 +248,8 @@
 <span class="sd">        Make population dictionary easy to use in this class.</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">            dates &lt;list[str]&gt;: list of dates, like 22Jan2020</span>
-<span class="sd">            population &lt;int&gt;: initial value of total population in the place</span>
+<span class="sd">            dates (list[str]): list of dates, like 22Jan2020</span>
+<span class="sd">            population (int): initial value of total population in the place</span>
 <span class="sd">            change_dict &lt;dict[str]=int/None&gt;:</span>
 <span class="sd">                - dictionary of total population</span>
 <span class="sd">                    - key: start date of population change</span>
@@ -287,8 +287,8 @@
 <span class="sd">        Run trial.</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">            n_trials_iteration &lt;int&gt;: the number of trials in one iteration</span>
-<span class="sd">            n_jobs &lt;int&gt;: the number of parallel jobs or -1 (CPU count)</span>
+<span class="sd">            n_trials_iteration (int): the number of trials in one iteration</span>
+<span class="sd">            n_jobs (int): the number of parallel jobs or -1 (CPU count)</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">study</span><span class="o">.</span><span class="n">optimize</span><span class="p">(</span>
             <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">objective</span><span class="p">(</span><span class="n">x</span><span class="p">),</span>
@@ -302,15 +302,15 @@
 <span class="sd">        Run optimization.</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">            n_points &lt;int&gt;: the number of change points</span>
-<span class="sd">            min_duration &lt;int&gt;: minimum duration of one phase [days]</span>
+<span class="sd">            n_points (int): the number of change points</span>
+<span class="sd">            min_duration (int): minimum duration of one phase [days]</span>
 <span class="sd">                - must be over 2</span>
-<span class="sd">            allowance &lt;int&gt;: allowance of change points [days]</span>
+<span class="sd">            allowance (int): allowance of change points [days]</span>
 <span class="sd">                - if the estimated change points was equal to previous iteration</span>
 <span class="sd">                with this allowance, stop running.</span>
-<span class="sd">            timeout &lt;int&gt;: time-out of run</span>
-<span class="sd">            n_trials_iteration &lt;int&gt;: the number of trials in one iteration</span>
-<span class="sd">            n_jobs &lt;int&gt;: the number of parallel jobs or -1 (CPU count)</span>
+<span class="sd">            timeout (int): time-out of run</span>
+<span class="sd">            n_trials_iteration (int): the number of trials in one iteration</span>
+<span class="sd">            n_jobs (int): the number of parallel jobs or -1 (CPU count)</span>
 <span class="sd">            seed &lt;int/None&gt;: random seed of hyperparameter optimization</span>
 <span class="sd">                - this will effective when @n_jobs is 1</span>
 
@@ -327,7 +327,8 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">total_trials</span> <span class="o">=</span> <span class="mi">0</span>
             <span class="k">return</span> <span class="bp">self</span>
         <span class="k">if</span> <span class="n">seed</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">n_jobs</span> <span class="o">!=</span> <span class="mi">1</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;@seed must be None when @n_jobs is not equal to 1.&quot;</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="s2">&quot;@seed must be None when @n_jobs is not equal to 1.&quot;</span><span class="p">)</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">study</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_init_study</span><span class="p">(</span><span class="n">seed</span><span class="o">=</span><span class="n">seed</span><span class="p">)</span>
         <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Finding change points of S-R trend...&quot;</span><span class="p">)</span>
@@ -390,7 +391,7 @@
 <span class="sd">        Return the start date and end date of the phases.</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">            change_dates &lt;list[str]&gt;: list of change points, like 22Jan2020</span>
+<span class="sd">            change_dates (list[str]): list of change points, like 22Jan2020</span>
 
 <span class="sd">        Returns:</span>
 <span class="sd">            &lt;tuple(list[str], list[str])&gt;:</span>
@@ -413,8 +414,8 @@
 <span class="sd">        This is weighted average of RMSLE scores.</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">            start_dates &lt;list[str]&gt;: list of start date of phases (candidates)</span>
-<span class="sd">            end_dates &lt;list[str]&gt;: list of end date of phases (candidates)</span>
+<span class="sd">            start_dates (list[str]): list of start date of phases (candidates)</span>
+<span class="sd">            end_dates (list[str]): list of end date of phases (candidates)</span>
 
 <span class="sd">        Returns:</span>
 <span class="sd">            &lt;float&gt; : score of the error function to minimize</span>
@@ -459,9 +460,9 @@
 <span class="sd">        show the result as a figure and return a dictionary of phases.</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">        @show_figure &lt;bool&gt;:</span>
+<span class="sd">        @show_figure (bool):</span>
 <span class="sd">            - if True, show the result as a figure.</span>
-<span class="sd">        @filename &lt;str&gt;: filename of the figure, or None (show figure)</span>
+<span class="sd">        @filename (str): filename of the figure, or None (show figure)</span>
 
 <span class="sd">        Returns:</span>
 <span class="sd">            &lt;covsirphy.PhaseSeries&gt;</span>

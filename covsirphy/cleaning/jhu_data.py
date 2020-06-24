@@ -24,23 +24,23 @@ class JHUData(CleaningBase):
             Cleaning method is defined by self.cleaning() method.
 
         Args:
-            population <int>:
+            population (int):
                 - if this is not None, Susceptible will be calculated.
 
         Returns:
-            <pandas.DataFrame>
+            (pandas.DataFrame)
                 Index:
                     reset index
                 Columns:
-                    - Date <pd.TimeStamp>: Observation date
-                    - Country <str>: country/region name
-                    - Province <str>: province/prefecture/state name
-                    - Confirmed <int>: the number of confirmed cases
-                    - Infected <int>: the number of currently infected cases
-                    - Fatal <int>: the number of fatal cases
-                    - Recovered <int>: the number of recovered cases
+                    - Date (pd.TimeStamp): Observation date
+                    - Country (str): country/region name
+                    - Province (str): province/prefecture/state name
+                    - Confirmed (int): the number of confirmed cases
+                    - Infected (int): the number of currently infected cases
+                    - Fatal (int): the number of fatal cases
+                    - Recovered (int): the number of recovered cases
                     - if @population is not None:
-                        - Susceptible <int>: the number of susceptible cases
+                        - Susceptible (int): the number of susceptible cases
         """
         df = self._cleaned_df.copy()
         if population is None:
@@ -55,17 +55,17 @@ class JHUData(CleaningBase):
         This method overwrite super().cleaning() method.
 
         Returns:
-            <pandas.DataFrame>
+            (pandas.DataFrame)
                 Index:
                     reset index
                 Columns:
-                    - Date <pd.TimeStamp>: Observation date
-                    - Country <str>: country/region name
-                    - Province <str>: province/prefecture/state name
-                    - Confirmed <int>: the number of confirmed cases
-                    - Infected <int>: the number of currently infected cases
-                    - Fatal <int>: the number of fatal cases
-                    - Recovered <int>: the number of recovered cases
+                    - Date (pd.TimeStamp): Observation date
+                    - Country (str): country/region name
+                    - Province (str): province/prefecture/state name
+                    - Confirmed (int): the number of confirmed cases
+                    - Infected (int): the number of currently infected cases
+                    - Fatal (int): the number of fatal cases
+                    - Recovered (int): the number of recovered cases
         """
         df = self._raw.copy()
         # Rename the columns
@@ -148,19 +148,19 @@ class JHUData(CleaningBase):
         Return the subset in the area.
 
         Args:
-            country <str>: country name
-            province <str>: province name
+            country (str): country name
+            province (str): province name
 
         Returns:
-            <pandas.DataFrame>
+            (pandas.DataFrame)
                 Index:
                     reset index
                 Columns:
-                    - Date <pd.TimeStamp>: Observation date
-                    - Confirmed <int>: the number of confirmed cases
-                    - Infected <int>: the number of currently infected cases
-                    - Fatal <int>: the number of fatal cases
-                    - Recovered <int>: the number of recovered cases (> 0)
+                    - Date (pd.TimeStamp): Observation date
+                    - Confirmed (int): the number of confirmed cases
+                    - Infected (int): the number of currently infected cases
+                    - Fatal (int): the number of fatal cases
+                    - Recovered (int): the number of recovered cases (> 0)
 
         Notes:
             Records with Recovered > 0 will be selected.

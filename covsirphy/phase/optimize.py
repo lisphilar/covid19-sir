@@ -16,7 +16,7 @@ class Optimizer(Word):
     Hyperparameter optimization with Optuna package.
 
     Args:
-        train_df <pandas.DataFrame>: training dataset
+        train_df (pandas.DataFrame): training dataset
 
             Index:
                 reset index
@@ -44,7 +44,7 @@ class Optimizer(Word):
 
         Args:
             seed <int/None>: random seed of hyperparameter optimization
-        
+
         Notes:
             @seed will effective when the number of CPUs is 1
         """
@@ -59,16 +59,17 @@ class Optimizer(Word):
         This method can be overwritten in subclass.
 
         Args:
-            timeout <int>: time-out of run
-            n_trials <int>: the number of trials
-            n_jobs <int>: the number of parallel jobs or -1 (CPU count)
+            timeout (int): time-out of run
+            n_trials (int): the number of trials
+            n_jobs (int): the number of parallel jobs or -1 (CPU count)
             seed <int/None>: random seed of hyperparameter optimization
-        
+
         Notes:
             @seed will effective when @n_jobs is 1
         """
         if seed is not None and n_jobs != 1:
-            raise ValueError("@seed must be None when @n_jobs is not equal to 1.")
+            raise ValueError(
+                "@seed must be None when @n_jobs is not equal to 1.")
         start_time = datetime.now()
         if self.study is None:
             self._init_study(seed=seed)
@@ -104,7 +105,7 @@ class Optimizer(Word):
 
         Args:
             param_dict <dict[str]=int/float>: estimated parameter values
-            train_df <pandas.DataFrame>: actual data
+            train_df (pandas.DataFrame): actual data
 
                 Index:
                     reset index
@@ -129,7 +130,7 @@ class Optimizer(Word):
             param_dict <dict[str]=int/float>: estimated parameter values
 
         Returns:
-            <pandas.DataFrame>:
+            (pandas.DataFrame):
                 Index:
                     reset index
                 Columns:
@@ -145,7 +146,7 @@ class Optimizer(Word):
         Return comparison table.
 
         Args:
-            actual_df <pandas.DataFrame>: actual data
+            actual_df (pandas.DataFrame): actual data
 
                 Index:
                     reset index
@@ -153,7 +154,7 @@ class Optimizer(Word):
                     - t: time step, 0, 1, 2,...
                     - includes columns defined by self.y_list
 
-            predicted_df <pandas.DataFrame>: predicted data
+            predicted_df (pandas.DataFrame): predicted data
 
                 Index:
                     reset index
@@ -162,9 +163,9 @@ class Optimizer(Word):
                     - includes columns defined by self.y_list
 
         Returns:
-            <pandas.DataFrame>:
+            (pandas.DataFrame):
                 Index:
-                    <str>: time step
+                    (str): time step
                 Index:
                     reset index
                 Columns:
@@ -201,10 +202,10 @@ class Optimizer(Word):
         This method should be overwritten in subclass.
 
         Args:
-            name <str>: index of the dataframe
+            name (str): index of the dataframe
 
         Returns:
-            <pandas.DataFrame>:
+            (pandas.DataFrame):
                 Index:
                     reset index
                 Columns:
@@ -226,7 +227,7 @@ class Optimizer(Word):
         This method can be overwritten in child class.
 
         Args:
-            train_df <pandas.DataFrame>: actual data
+            train_df (pandas.DataFrame): actual data
 
                 Index:
                     reset index
@@ -264,11 +265,11 @@ class Optimizer(Word):
             and return it as dataframe.
 
         Args:
-            show_figure <bool>: if True, show the history as a pair-plot of parameters.
-            filename <str>: filename of the figure, or None (show figure)
+            show_figure (bool): if True, show the history as a pair-plot of parameters.
+            filename (str): filename of the figure, or None (show figure)
 
         Returns:
-            <pandas.DataFrame>: the history
+            (pandas.DataFrame): the history
         """
         # Create dataframe of the history
         df = self.study.trials_dataframe()
@@ -302,7 +303,7 @@ class Optimizer(Word):
         This method can be overwritten in child class.
 
         Args:
-            train_df <pandas.DataFrame>: actual data
+            train_df (pandas.DataFrame): actual data
 
                 Index:
                     reset index
@@ -310,8 +311,8 @@ class Optimizer(Word):
                     - t: time step, 0, 1, 2,...
                     - includes columns defined by self.y_list
 
-            variables <list[str]>: variables to compare or None (all variables)
-            filename <str>: filename of the figure, or None (show figure)
+            variables (list[str]): variables to compare or None (all variables)
+            filename (str): filename of the figure, or None (show figure)
         """
         # Create a table to compare observed/estimated values
         predicted_df = self.predict()

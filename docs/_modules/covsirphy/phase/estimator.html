@@ -160,38 +160,38 @@
 <span class="kn">from</span> <span class="nn">covsirphy.util.stopwatch</span> <span class="kn">import</span> <span class="n">StopWatch</span>
 
 
-<div class="viewcode-block" id="Estimator"><a class="viewcode-back" href="../../../covsirphy.phase.html#covsirphy.Estimator">[docs]</a><span class="k">class</span> <span class="nc">Estimator</span><span class="p">(</span><span class="n">Optimizer</span><span class="p">):</span>
+<div class="viewcode-block" id="Estimator"><a class="viewcode-back" href="../../../covsirphy.html#covsirphy.Estimator">[docs]</a><span class="k">class</span> <span class="nc">Estimator</span><span class="p">(</span><span class="n">Optimizer</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Hyperparameter optimization of an ODE model.</span>
 
 <span class="sd">    Args:</span>
-<span class="sd">        clean_df &lt;pandas.DataFrame&gt;:</span>
+<span class="sd">        clean_df (pandas.DataFrame):</span>
 <span class="sd">            - cleaned observed data or simulated data</span>
 <span class="sd">            - observed data</span>
 <span class="sd">                Index:</span>
 <span class="sd">                    reset index</span>
 <span class="sd">                Columns:</span>
-<span class="sd">                    - Date &lt;pd.TimeStamp&gt;: Observation date</span>
-<span class="sd">                    - Country &lt;str&gt;: country/region name</span>
-<span class="sd">                    - Province &lt;str&gt;: province/prefecture/sstate name</span>
-<span class="sd">                    - Confirmed &lt;int&gt;: the number of confirmed cases</span>
-<span class="sd">                    - Infected &lt;int&gt;: the number of currently infected cases</span>
-<span class="sd">                    - Fatal &lt;int&gt;: the number of fatal cases</span>
-<span class="sd">                    - Recovered &lt;int&gt;: the number of recovered cases</span>
+<span class="sd">                    - Date (pd.TimeStamp): Observation date</span>
+<span class="sd">                    - Country (str): country/region name</span>
+<span class="sd">                    - Province (str): province/prefecture/sstate name</span>
+<span class="sd">                    - Confirmed (int): the number of confirmed cases</span>
+<span class="sd">                    - Infected (int): the number of currently infected cases</span>
+<span class="sd">                    - Fatal (int): the number of fatal cases</span>
+<span class="sd">                    - Recovered (int): the number of recovered cases</span>
 <span class="sd">            - simulated data</span>
 <span class="sd">                Index:</span>
 <span class="sd">                    reset index</span>
 <span class="sd">                Columns:</span>
-<span class="sd">                    - Date &lt;pd.TimeStamp&gt;: Observation date</span>
-<span class="sd">                    - Country &lt;str&gt;: country/region name</span>
-<span class="sd">                    - Province &lt;str&gt;: province/prefecture/state name</span>
-<span class="sd">                    - variables of the models &lt;int&gt;</span>
+<span class="sd">                    - Date (pd.TimeStamp): Observation date</span>
+<span class="sd">                    - Country (str): country/region name</span>
+<span class="sd">                    - Province (str): province/prefecture/state name</span>
+<span class="sd">                    - variables of the models (int)</span>
 <span class="sd">        model &lt;subclass of cs.ModelBase&gt;: ODE model</span>
-<span class="sd">        population &lt;int&gt;: total population in the place</span>
-<span class="sd">        country &lt;str&gt;: country name</span>
-<span class="sd">        province &lt;str&gt;: province name</span>
-<span class="sd">        start_date &lt;str&gt;: start date, like 22Jan2020</span>
-<span class="sd">        end_date &lt;str&gt;: end date, like 01Feb2020</span>
+<span class="sd">        population (int): total population in the place</span>
+<span class="sd">        country (str): country name</span>
+<span class="sd">        province (str): province name</span>
+<span class="sd">        start_date (str): start date, like 22Jan2020</span>
+<span class="sd">        end_date (str): end date, like 01Feb2020</span>
 <span class="sd">        kwargs: parameter values of the model</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">np</span><span class="o">.</span><span class="n">seterr</span><span class="p">(</span><span class="n">divide</span><span class="o">=</span><span class="s2">&quot;raise&quot;</span><span class="p">)</span>
@@ -239,8 +239,8 @@
 <span class="sd">        Run trial.</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">            n_jobs &lt;int&gt;: the number of parallel jobs or -1 (CPU count)</span>
-<span class="sd">            timeout_iteration &lt;int&gt;: time-out of one iteration</span>
+<span class="sd">            n_jobs (int): the number of parallel jobs or -1 (CPU count)</span>
+<span class="sd">            timeout_iteration (int): time-out of one iteration</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">study</span><span class="o">.</span><span class="n">optimize</span><span class="p">(</span>
             <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">objective</span><span class="p">(</span><span class="n">x</span><span class="p">),</span>
@@ -248,7 +248,7 @@
             <span class="n">timeout</span><span class="o">=</span><span class="n">timeout_iteration</span>
         <span class="p">)</span>
 
-<div class="viewcode-block" id="Estimator.run"><a class="viewcode-back" href="../../../covsirphy.phase.html#covsirphy.Estimator.run">[docs]</a>    <span class="k">def</span> <span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">timeout</span><span class="o">=</span><span class="mi">60</span><span class="p">,</span> <span class="n">reset_n_max</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span>
+<div class="viewcode-block" id="Estimator.run"><a class="viewcode-back" href="../../../covsirphy.html#covsirphy.Estimator.run">[docs]</a>    <span class="k">def</span> <span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">timeout</span><span class="o">=</span><span class="mi">60</span><span class="p">,</span> <span class="n">reset_n_max</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span>
             <span class="n">timeout_iteration</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">allowance</span><span class="o">=</span><span class="p">(</span><span class="mf">0.8</span><span class="p">,</span> <span class="mf">1.2</span><span class="p">),</span>
             <span class="n">n_jobs</span><span class="o">=-</span><span class="mi">1</span><span class="p">,</span> <span class="n">seed</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
@@ -260,13 +260,13 @@
 <span class="sd">                when each actual value shows max value</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">            timeout &lt;int&gt;: time-out of run</span>
-<span class="sd">            reset_n_max &lt;int&gt;: if study was reset @reset_n_max times, will not be reset anymore</span>
-<span class="sd">            timeout_iteration &lt;int&gt;: time-out of one iteration</span>
+<span class="sd">            timeout (int): time-out of run</span>
+<span class="sd">            reset_n_max (int): if study was reset @reset_n_max times, will not be reset anymore</span>
+<span class="sd">            timeout_iteration (int): time-out of one iteration</span>
 <span class="sd">            allowance &lt;tuple(float, float)&gt;: the allowance of the predicted value</span>
-<span class="sd">            n_jobs &lt;int&gt;: the number of parallel jobs or -1 (CPU count)</span>
+<span class="sd">            n_jobs (int): the number of parallel jobs or -1 (CPU count)</span>
 <span class="sd">            seed &lt;int/None&gt;: random seed of hyperparameter optimization</span>
-<span class="sd">        </span>
+
 <span class="sd">        Notes:</span>
 <span class="sd">            @seed will effective when @n_jobs is 1</span>
 
@@ -331,7 +331,7 @@
         <span class="p">)</span>
         <span class="k">return</span> <span class="kc">None</span></div>
 
-<div class="viewcode-block" id="Estimator.objective"><a class="viewcode-back" href="../../../covsirphy.phase.html#covsirphy.Estimator.objective">[docs]</a>    <span class="k">def</span> <span class="nf">objective</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">trial</span><span class="p">):</span>
+<div class="viewcode-block" id="Estimator.objective"><a class="viewcode-back" href="../../../covsirphy.html#covsirphy.Estimator.objective">[docs]</a>    <span class="k">def</span> <span class="nf">objective</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">trial</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Objective function of Optuna study.</span>
 <span class="sd">        This defines the parameter values using Optuna.</span>
@@ -362,19 +362,19 @@
         <span class="n">p_dict</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">fixed_dict</span><span class="p">)</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">error_f</span><span class="p">(</span><span class="n">p_dict</span><span class="p">,</span> <span class="n">taufree_df</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="Estimator.divide_minutes"><a class="viewcode-back" href="../../../covsirphy.phase.html#covsirphy.Estimator.divide_minutes">[docs]</a>    <span class="k">def</span> <span class="nf">divide_minutes</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tau</span><span class="p">):</span>
+<div class="viewcode-block" id="Estimator.divide_minutes"><a class="viewcode-back" href="../../../covsirphy.html#covsirphy.Estimator.divide_minutes">[docs]</a>    <span class="k">def</span> <span class="nf">divide_minutes</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tau</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Divide T by tau in the training dataset.</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">            tau &lt;int&gt;: tau value [min]</span>
+<span class="sd">            tau (int): tau value [min]</span>
 
 <span class="sd">        Returns:</span>
-<span class="sd">            &lt;pandas.DataFrame&gt;:</span>
+<span class="sd">            (pandas.DataFrame):</span>
 <span class="sd">                    Index:</span>
 <span class="sd">                        reset index</span>
 <span class="sd">                    Columns:</span>
-<span class="sd">                        - t &lt;int&gt;: Elapsed time divided by tau value [-]</span>
+<span class="sd">                        - t (int): Elapsed time divided by tau value [-]</span>
 <span class="sd">                        - columns with dimensional variables</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">tau</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">validate_natural_int</span><span class="p">(</span><span class="n">tau</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;tau&quot;</span><span class="p">)</span>
@@ -388,13 +388,13 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">step_n</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">taufree_df</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">TS</span><span class="p">]</span><span class="o">.</span><span class="n">max</span><span class="p">())</span>
         <span class="k">return</span> <span class="n">taufree_df</span></div>
 
-<div class="viewcode-block" id="Estimator.error_f"><a class="viewcode-back" href="../../../covsirphy.phase.html#covsirphy.Estimator.error_f">[docs]</a>    <span class="k">def</span> <span class="nf">error_f</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">param_dict</span><span class="p">,</span> <span class="n">taufree_df</span><span class="p">):</span>
+<div class="viewcode-block" id="Estimator.error_f"><a class="viewcode-back" href="../../../covsirphy.html#covsirphy.Estimator.error_f">[docs]</a>    <span class="k">def</span> <span class="nf">error_f</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">param_dict</span><span class="p">,</span> <span class="n">taufree_df</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Definition of error score to minimize in the study.</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            param_dict &lt;dict[str]=int/float&gt;: estimated parameter values</span>
-<span class="sd">            taufree_df &lt;pandas.DataFrame&gt;: training dataset</span>
+<span class="sd">            taufree_df (pandas.DataFrame): training dataset</span>
 
 <span class="sd">                Index:</span>
 <span class="sd">                    reset index</span>
@@ -427,20 +427,20 @@
             <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">inf</span>
         <span class="k">return</span> <span class="nb">sum</span><span class="p">(</span><span class="n">scores</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="Estimator.simulate"><a class="viewcode-back" href="../../../covsirphy.phase.html#covsirphy.Estimator.simulate">[docs]</a>    <span class="k">def</span> <span class="nf">simulate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">step_n</span><span class="p">,</span> <span class="n">param_dict</span><span class="p">):</span>
+<div class="viewcode-block" id="Estimator.simulate"><a class="viewcode-back" href="../../../covsirphy.html#covsirphy.Estimator.simulate">[docs]</a>    <span class="k">def</span> <span class="nf">simulate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">step_n</span><span class="p">,</span> <span class="n">param_dict</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Simulate the values with the parameters.</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">            step_n &lt;int&gt;: number of iteration</span>
+<span class="sd">            step_n (int): number of iteration</span>
 <span class="sd">            param_dict &lt;dict[str]=int/float&gt;: estimated parameter values</span>
 
 <span class="sd">        Returns:</span>
-<span class="sd">            &lt;pandas.DataFrame&gt;:</span>
+<span class="sd">            (pandas.DataFrame):</span>
 <span class="sd">                Index:</span>
 <span class="sd">                    reset index</span>
 <span class="sd">                Columns:</span>
-<span class="sd">                    - t &lt;int&gt;: Elapsed time divided by tau value [-]</span>
+<span class="sd">                    - t (int): Elapsed time divided by tau value [-]</span>
 <span class="sd">                    - columns with dimensionalized variables</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">simulator</span> <span class="o">=</span> <span class="n">ODESimulator</span><span class="p">(</span><span class="n">country</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">country</span><span class="p">,</span> <span class="n">province</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">province</span><span class="p">)</span>
@@ -454,16 +454,16 @@
         <span class="n">simulator</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
         <span class="k">return</span> <span class="n">simulator</span><span class="o">.</span><span class="n">taufree</span><span class="p">()</span></div>
 
-<div class="viewcode-block" id="Estimator.summary"><a class="viewcode-back" href="../../../covsirphy.phase.html#covsirphy.Estimator.summary">[docs]</a>    <span class="k">def</span> <span class="nf">summary</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">):</span>
+<div class="viewcode-block" id="Estimator.summary"><a class="viewcode-back" href="../../../covsirphy.html#covsirphy.Estimator.summary">[docs]</a>    <span class="k">def</span> <span class="nf">summary</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Summarize the results of optimization.</span>
 <span class="sd">        This function should be overwritten in subclass.</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">            name &lt;str&gt;: index of the dataframe</span>
+<span class="sd">            name (str): index of the dataframe</span>
 
 <span class="sd">        Returns:</span>
-<span class="sd">            &lt;pandas.DataFrame&gt;:</span>
+<span class="sd">            (pandas.DataFrame):</span>
 <span class="sd">                Index:</span>
 <span class="sd">                    reset index</span>
 <span class="sd">                Columns:</span>
@@ -496,12 +496,12 @@
         <span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="o">.</span><span class="n">from_dict</span><span class="p">({</span><span class="n">name</span><span class="p">:</span> <span class="n">param_dict</span><span class="p">},</span> <span class="n">orient</span><span class="o">=</span><span class="s2">&quot;index&quot;</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">df</span><span class="o">.</span><span class="n">fillna</span><span class="p">(</span><span class="s2">&quot;-&quot;</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="Estimator.rmsle"><a class="viewcode-back" href="../../../covsirphy.phase.html#covsirphy.Estimator.rmsle">[docs]</a>    <span class="k">def</span> <span class="nf">rmsle</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tau</span><span class="p">):</span>
+<div class="viewcode-block" id="Estimator.rmsle"><a class="viewcode-back" href="../../../covsirphy.html#covsirphy.Estimator.rmsle">[docs]</a>    <span class="k">def</span> <span class="nf">rmsle</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tau</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Return RMSLE score.</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">            tau &lt;int&gt;: tau value</span>
+<span class="sd">            tau (int): tau value</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">score</span> <span class="o">=</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">rmsle</span><span class="p">(</span>
             <span class="n">train_df</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">divide_minutes</span><span class="p">(</span><span class="n">tau</span><span class="p">),</span>
@@ -509,12 +509,12 @@
         <span class="p">)</span>
         <span class="k">return</span> <span class="n">score</span></div>
 
-<div class="viewcode-block" id="Estimator.accuracy"><a class="viewcode-back" href="../../../covsirphy.phase.html#covsirphy.Estimator.accuracy">[docs]</a>    <span class="k">def</span> <span class="nf">accuracy</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<div class="viewcode-block" id="Estimator.accuracy"><a class="viewcode-back" href="../../../covsirphy.html#covsirphy.Estimator.accuracy">[docs]</a>    <span class="k">def</span> <span class="nf">accuracy</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Show the accuracy as a figure.</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">            filename &lt;str&gt;: filename of the figure, or None (show figure)</span>
+<span class="sd">            filename (str): filename of the figure, or None (show figure)</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">tau</span> <span class="o">=</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">param</span><span class="p">()[</span><span class="bp">self</span><span class="o">.</span><span class="n">TAU</span><span class="p">]</span>
         <span class="n">train_df</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">divide_minutes</span><span class="p">(</span><span class="n">tau</span><span class="p">)</span>

@@ -155,7 +155,7 @@
 <span class="kn">from</span> <span class="nn">covsirphy.cleaning.cbase</span> <span class="kn">import</span> <span class="n">CleaningBase</span>
 
 
-<div class="viewcode-block" id="Population"><a class="viewcode-back" href="../../../covsirphy.cleaning.html#covsirphy.Population">[docs]</a><span class="k">class</span> <span class="nc">Population</span><span class="p">(</span><span class="n">CleaningBase</span><span class="p">):</span>
+<div class="viewcode-block" id="Population"><a class="viewcode-back" href="../../../covsirphy.html#covsirphy.Population">[docs]</a><span class="k">class</span> <span class="nc">Population</span><span class="p">(</span><span class="n">CleaningBase</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Data cleaning of total population dataset.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
@@ -163,19 +163,19 @@
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="p">):</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span>
 
-<div class="viewcode-block" id="Population.cleaning"><a class="viewcode-back" href="../../../covsirphy.cleaning.html#covsirphy.Population.cleaning">[docs]</a>    <span class="k">def</span> <span class="nf">cleaning</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="Population.cleaning"><a class="viewcode-back" href="../../../covsirphy.html#covsirphy.Population.cleaning">[docs]</a>    <span class="k">def</span> <span class="nf">cleaning</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Perform data cleaning of the raw data.</span>
 <span class="sd">        This method overwrite super().cleaning() method.</span>
 
 <span class="sd">        Returns:</span>
-<span class="sd">            &lt;pandas.DataFrame&gt;</span>
+<span class="sd">            (pandas.DataFrame)</span>
 <span class="sd">                    Index:</span>
 <span class="sd">                        reset index</span>
 <span class="sd">                    Columns:</span>
-<span class="sd">                        - Country &lt;str&gt;: country/region name</span>
-<span class="sd">                        - Province &lt;str&gt;: province/prefecture/state name</span>
-<span class="sd">                        - Population &lt;int&gt;: total population</span>
+<span class="sd">                        - Country (str): country/region name</span>
+<span class="sd">                        - Province (str): province/prefecture/state name</span>
+<span class="sd">                        - Population (int): total population</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">df</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_raw</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
         <span class="c1"># Rename the columns</span>
@@ -226,22 +226,22 @@
         <span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">loc</span><span class="p">[:,</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">COUNTRY</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">PROVINCE</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">N</span><span class="p">]]</span>
         <span class="k">return</span> <span class="n">df</span></div>
 
-<div class="viewcode-block" id="Population.total"><a class="viewcode-back" href="../../../covsirphy.cleaning.html#covsirphy.Population.total">[docs]</a>    <span class="k">def</span> <span class="nf">total</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="Population.total"><a class="viewcode-back" href="../../../covsirphy.html#covsirphy.Population.total">[docs]</a>    <span class="k">def</span> <span class="nf">total</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Return the total value of population in the datset.</span>
 
 <span class="sd">        Returns:</span>
-<span class="sd">            &lt;int&gt;</span>
+<span class="sd">            (int)</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">values</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_cleaned_df</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">N</span><span class="p">]</span>
         <span class="k">return</span> <span class="nb">sum</span><span class="p">(</span><span class="n">values</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="Population.to_dict"><a class="viewcode-back" href="../../../covsirphy.cleaning.html#covsirphy.Population.to_dict">[docs]</a>    <span class="k">def</span> <span class="nf">to_dict</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">country_level</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+<div class="viewcode-block" id="Population.to_dict"><a class="viewcode-back" href="../../../covsirphy.html#covsirphy.Population.to_dict">[docs]</a>    <span class="k">def</span> <span class="nf">to_dict</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">country_level</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Return dictionary of population values.</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">        country_level &lt;str&gt;: whether key is country name or not</span>
+<span class="sd">        country_level (str): whether key is country name or not</span>
 
 <span class="sd">        Returns:</span>
 <span class="sd">            &lt;dict[str]=int&gt;:</span>
@@ -260,16 +260,16 @@
         <span class="n">pop_dict</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">set_index</span><span class="p">(</span><span class="s2">&quot;key&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">to_dict</span><span class="p">()[</span><span class="bp">self</span><span class="o">.</span><span class="n">N</span><span class="p">]</span>
         <span class="k">return</span> <span class="n">pop_dict</span></div>
 
-<div class="viewcode-block" id="Population.value"><a class="viewcode-back" href="../../../covsirphy.cleaning.html#covsirphy.Population.value">[docs]</a>    <span class="k">def</span> <span class="nf">value</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">country</span><span class="p">,</span> <span class="n">province</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<div class="viewcode-block" id="Population.value"><a class="viewcode-back" href="../../../covsirphy.html#covsirphy.Population.value">[docs]</a>    <span class="k">def</span> <span class="nf">value</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">country</span><span class="p">,</span> <span class="n">province</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Return the value of population in the place.</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">        country &lt;str&gt;: country name</span>
-<span class="sd">        province &lt;str&gt;: province name</span>
+<span class="sd">        country (str): country name</span>
+<span class="sd">        province (str): province name</span>
 
 <span class="sd">        Returns:</span>
-<span class="sd">            &lt;int&gt;: population in the place</span>
+<span class="sd">            (int): population in the place</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">try</span><span class="p">:</span>
             <span class="k">if</span> <span class="n">province</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
@@ -282,14 +282,14 @@
                 <span class="sa">f</span><span class="s2">&quot;Population data of (</span><span class="si">{</span><span class="n">country</span><span class="si">}</span><span class="s2">, </span><span class="si">{</span><span class="n">province</span><span class="si">}</span><span class="s2">) is not registered.&quot;</span>
             <span class="p">)</span></div>
 
-<div class="viewcode-block" id="Population.update"><a class="viewcode-back" href="../../../covsirphy.cleaning.html#covsirphy.Population.update">[docs]</a>    <span class="k">def</span> <span class="nf">update</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">,</span> <span class="n">country</span><span class="p">,</span> <span class="n">province</span><span class="o">=</span><span class="s2">&quot;-&quot;</span><span class="p">):</span>
+<div class="viewcode-block" id="Population.update"><a class="viewcode-back" href="../../../covsirphy.html#covsirphy.Population.update">[docs]</a>    <span class="k">def</span> <span class="nf">update</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">,</span> <span class="n">country</span><span class="p">,</span> <span class="n">province</span><span class="o">=</span><span class="s2">&quot;-&quot;</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Update the value of a new place.</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">        value &lt;int&gt;: population in the place</span>
-<span class="sd">        country &lt;str&gt;: country name</span>
-<span class="sd">        province &lt;str&gt;: province name</span>
+<span class="sd">        value (int): population in the place</span>
+<span class="sd">        country (str): country name</span>
+<span class="sd">        province (str): province name</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">series</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">(</span>
             <span class="p">[</span><span class="n">country</span><span class="p">,</span> <span class="n">province</span><span class="p">,</span> <span class="n">value</span><span class="p">],</span>

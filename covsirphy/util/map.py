@@ -15,10 +15,10 @@ def jpn_map(prefectures, values, title, cmap_name="Reds", filename=None):
     Args:
         prefectures <list/pd.Series[str]>: prefecture name.
         values <int/float>: value of each prefectures
-        title <str>: title of the figure
-        cmap_name <str>: Please refere to
+        title (str): title of the figure
+        cmap_name (str): Please refere to
             https://matplotlib.org/3.1.0/tutorials/colors/colormaps.html
-        filename <str>: filename of the figure, or None (show figure)
+        filename (str): filename of the figure, or None (show figure)
     """
     # Prefecture code created in
     # https://www.kaggle.com/lisphilar/eda-of-japan-dataset

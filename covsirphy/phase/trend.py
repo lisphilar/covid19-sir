@@ -20,23 +20,23 @@ class Trend(Word):
     S-R trend analysis in a phase.
 
     Args:
-        clean_df <pandas.DataFrame>: cleaned data
+        clean_df (pandas.DataFrame): cleaned data
 
             Index:
                 reset index
             Columns:
-                - Date <pd.TimeStamp>: Observation date
-                - Country <str>: country/region name
-                - Province <str>: province/prefecture/sstate name
-                - Confirmed <int>: the number of confirmed cases
-                - Infected <int>: the number of currently infected cases
-                - Fatal <int>: the number of fatal cases
-                - Recovered <int>: the number of recovered cases
-        population <int>: total population in the place
-        country <str>: country name
-        province <str>: province name
-        start_date <str>: start date, like 22Jan2020
-        end_date <str>: end date, like 01Feb2020
+                - Date (pd.TimeStamp): Observation date
+                - Country (str): country/region name
+                - Province (str): province/prefecture/sstate name
+                - Confirmed (int): the number of confirmed cases
+                - Infected (int): the number of currently infected cases
+                - Fatal (int): the number of fatal cases
+                - Recovered (int): the number of recovered cases
+        population (int): total population in the place
+        country (str): country name
+        province (str): province name
+        start_date (str): start date, like 22Jan2020
+        end_date (str): end date, like 01Feb2020
     """
 
     def __init__(self, clean_df, population,
@@ -82,18 +82,18 @@ class Trend(Word):
             with negative exponential function.
 
         Args:
-        @train_df <pandas.DataFrame>: training dataset
+        @train_df (pandas.DataFrame): training dataset
 
             Index:
-                - index (Date) <pd.TimeStamp>: Observation date
+                - index (Date) (pd.TimeStamp): Observation date
             Columns:
                 - Recovered: The number of recovered cases
                 - Susceptible_actual: Actual data of Susceptible
 
         Returns:
-            <pandas.DataFrame>
+            (pandas.DataFrame)
                 Index:
-                    - index (Date) <pd.TimeStamp>: Observation date
+                    - index (Date) (pd.TimeStamp): Observation date
                 Columns:
                     - Recovered: The number of recovered cases
                     - Susceptible_actual: Actual values of Susceptible
@@ -159,8 +159,8 @@ class Trend(Word):
         show the result as a figure.
 
         Args:
-            show_figure <bool>: if True, show the history as a pair-plot of parameters.
-            filename <str>: filename of the figure, or None (show figure)
+            show_figure (bool): if True, show the history as a pair-plot of parameters.
+            filename (str): filename of the figure, or None (show figure)
         """
         df = self.result()
         df["Predicted"] = df[f"{self.S}{self.P}"]
@@ -178,18 +178,18 @@ class Trend(Word):
         show the result as a figure.
 
         Args:
-            result_df <pandas.DataFrame>: training dataset
+            result_df (pandas.DataFrame): training dataset
 
                 Index:
-                    - index (Date) <pd.TimeStamp>: Observation date
+                    - index (Date) (pd.TimeStamp): Observation date
                 Columns:
                     - Recovered: The number of recovered cases
                     - Susceptible_actual: Actual values of Susceptible
                     - columns defined by @columns
-            predicted_cols <list[str]>: list of columns which have predicted values
-            title <str>: title of the figure
-            vlines <list[int]>: list of Recovered values to show vertical lines
-            filename <str>: filename of the figure, or None (show figure)
+            predicted_cols (list[str]): list of columns which have predicted values
+            title (str): title of the figure
+            vlines (list[int]): list of Recovered values to show vertical lines
+            filename (str): filename of the figure, or None (show figure)
         """
         df = result_df.copy()
         if df is None:

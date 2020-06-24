@@ -20,13 +20,13 @@ class Population(CleaningBase):
         This method overwrite super().cleaning() method.
 
         Returns:
-            <pandas.DataFrame>
+            (pandas.DataFrame)
                     Index:
                         reset index
                     Columns:
-                        - Country <str>: country/region name
-                        - Province <str>: province/prefecture/state name
-                        - Population <int>: total population
+                        - Country (str): country/region name
+                        - Province (str): province/prefecture/state name
+                        - Population (int): total population
         """
         df = self._raw.copy()
         # Rename the columns
@@ -82,7 +82,7 @@ class Population(CleaningBase):
         Return the total value of population in the datset.
 
         Returns:
-            <int>
+            (int)
         """
         values = self._cleaned_df[self.N]
         return sum(values)
@@ -92,7 +92,7 @@ class Population(CleaningBase):
         Return dictionary of population values.
 
         Args:
-        country_level <str>: whether key is country name or not
+        country_level (str): whether key is country name or not
 
         Returns:
             <dict[str]=int>:
@@ -116,11 +116,11 @@ class Population(CleaningBase):
         Return the value of population in the place.
 
         Args:
-        country <str>: country name
-        province <str>: province name
+        country (str): country name
+        province (str): province name
 
         Returns:
-            <int>: population in the place
+            (int): population in the place
         """
         try:
             if province is None:
@@ -138,9 +138,9 @@ class Population(CleaningBase):
         Update the value of a new place.
 
         Args:
-        value <int>: population in the place
-        country <str>: country name
-        province <str>: province name
+        value (int): population in the place
+        country (str): country name
+        province (str): province name
         """
         series = pd.Series(
             [country, province, value],

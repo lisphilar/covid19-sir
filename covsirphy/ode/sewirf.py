@@ -37,7 +37,7 @@ class SEWIRF(ModelBase):
         """
 
         Args:
-        @population <int>: total population
+        @population (int): total population
         parameter values of non-dimensional ODE model
             - @theta <float>
             - @kappa <float>
@@ -63,7 +63,7 @@ class SEWIRF(ModelBase):
         Return the list of dS/dt (tau-free) etc.
 
         Args:
-            t <int>: time steps
+            t (int): time steps
             X <numpy.array>: values of th model variables
 
         Returns:
@@ -86,13 +86,13 @@ class SEWIRF(ModelBase):
         Define the range of parameters (not including tau value).
 
         Args:
-        @taufree_df <pandas.DataFrame>:
+        @taufree_df (pandas.DataFrame):
                     Index:
                         reset index
                     Columns:
-                        - t <int>: time steps (tau-free)
+                        - t (int): time steps (tau-free)
                         - columns with dimensional variables
-        @population <int>: total population
+        @population (int): total population
 
         Returns:
             <dict[name]=(min, max)>:
@@ -116,26 +116,26 @@ class SEWIRF(ModelBase):
         Specialize the dataset for this model.
 
         Args:
-        @data_df <pandas.DataFrame>:
+        @data_df (pandas.DataFrame):
                     Index:
                         reset index
                     Columns:
-                        - Confirmed <int>: the number of confirmed cases
-                        - Infected <int>: the number of currently infected cases
-                        - Fatal <int>: the number of fatal cases
-                        - Recovered <int>: the number of recovered cases
+                        - Confirmed (int): the number of confirmed cases
+                        - Infected (int): the number of currently infected cases
+                        - Fatal (int): the number of fatal cases
+                        - Recovered (int): the number of recovered cases
                         - any columns
-        @population <int>: total population in the place
+        @population (int): total population in the place
 
         Returns:
-            <pandas.DataFrame>:
+            (pandas.DataFrame):
                     Index:
                         reset index
                     Columns:
                         - any columns @data_df has
-                        - Susceptible <int>: the number of susceptible cases
-                        - Exposed <int>: 0
-                        - Waiting <int>: 0
+                        - Susceptible (int): the number of susceptible cases
+                        - Exposed (int): 0
+                        - Waiting (int): 0
         """
         df = super().specialize(data_df, population)
         # Calculate dimensional variables
@@ -151,28 +151,28 @@ class SEWIRF(ModelBase):
          using a dataframe with the variables of the model.
 
         Args:
-            specialized_df <pandas.DataFrame>: dataframe with the variables
+            specialized_df (pandas.DataFrame): dataframe with the variables
 
                 Index:
-                    <object>
+                    (object)
                 Columns:
-                    - Susceptible <int>: the number of susceptible cases
-                    - Infected <int>: the number of currently infected cases
-                    - Recovered <int>: the number of recovered cases
-                    - Fatal <int>: the number of fatal cases
-                    - Exposed <int>: Exposed and in latent period (without infectivity)
-                    - Waiting <int>: Waiting cases for confirmation (with infectivity)
+                    - Susceptible (int): the number of susceptible cases
+                    - Infected (int): the number of currently infected cases
+                    - Recovered (int): the number of recovered cases
+                    - Fatal (int): the number of fatal cases
+                    - Exposed (int): Exposed and in latent period (without infectivity)
+                    - Waiting (int): Waiting cases for confirmation (with infectivity)
                     - any columns
 
         Returns:
-            <pandas.DataFrame>:
+            (pandas.DataFrame):
                 Index:
-                    <object>: as-is
+                    (object): as-is
                 Columns:
-                    - Confirmed <int>: the number of confirmed cases
-                    - Infected <int>: the number of currently infected cases
-                    - Fatal <int>: the number of fatal cases
-                    - Recovered <int>: the number of recovered cases
+                    - Confirmed (int): the number of confirmed cases
+                    - Infected (int): the number of currently infected cases
+                    - Fatal (int): the number of fatal cases
+                    - Recovered (int): the number of recovered cases
                     - the other columns @specialzed_df has
         """
         df = specialized_df.copy()
@@ -193,7 +193,7 @@ class SEWIRF(ModelBase):
         Calculate 1/beta [day] etc.
 
         Args:
-            param tau <int>: tau value [min]
+            param tau (int): tau value [min]
         """
         _dict = {
             "alpha1 [-]": round(self.theta, 3),

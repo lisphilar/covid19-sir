@@ -161,13 +161,13 @@
 <span class="kn">from</span> <span class="nn">covsirphy.cleaning.word</span> <span class="kn">import</span> <span class="n">Word</span>
 
 
-<div class="viewcode-block" id="DataLoader"><a class="viewcode-back" href="../../../covsirphy.cleaning.html#covsirphy.DataLoader">[docs]</a><span class="k">class</span> <span class="nc">DataLoader</span><span class="p">(</span><span class="n">Word</span><span class="p">):</span>
+<div class="viewcode-block" id="DataLoader"><a class="viewcode-back" href="../../../covsirphy.html#covsirphy.DataLoader">[docs]</a><span class="k">class</span> <span class="nc">DataLoader</span><span class="p">(</span><span class="n">Word</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Download the dataset and perform data cleaning.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        directory &lt;str/pathlib.Path&gt;: directory to save the downloaded datasets</span>
-<span class="sd">        update_interval &lt;int&gt;: update interval of the local datasets</span>
+<span class="sd">        update_interval (int): update interval of the local datasets</span>
 
 <span class="sd">    Notes:</span>
 <span class="sd">        If @directory is None, the files will not be saved in local environment.</span>
@@ -226,10 +226,10 @@
 <span class="sd">        Get raw dataset from the URL.</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">            url &lt;str&gt;: URL to get raw dataset</span>
+<span class="sd">            url (str): URL to get raw dataset</span>
 
 <span class="sd">        Returns:</span>
-<span class="sd">            &lt;pandas.DataFrame&gt;: raw dataset</span>
+<span class="sd">            (pandas.DataFrame): raw dataset</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">df</span> <span class="o">=</span> <span class="n">dd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">url</span><span class="p">)</span><span class="o">.</span><span class="n">compute</span><span class="p">()</span>
         <span class="k">return</span> <span class="n">df</span>
@@ -239,7 +239,7 @@
 <span class="sd">        Return the absolute path of the file in the @self.dir_path directory.</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">            basename &lt;str&gt;: basename of the file, like covid_19_data.csv</span>
+<span class="sd">            basename (str): basename of the file, like covid_19_data.csv</span>
 
 <span class="sd">        Returns:</span>
 <span class="sd">            &lt;str/None&gt;: absolute path of the file</span>
@@ -258,7 +258,7 @@
 <span class="sd">        Save the dataframe to the local environment.</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">            dataframe &lt;pandas.DataFrame&gt;: dataframe to save</span>
+<span class="sd">            dataframe (pandas.DataFrame): dataframe to save</span>
 <span class="sd">            filename &lt;str/None&gt;: filename to save</span>
 
 <span class="sd">        Notes:</span>
@@ -276,7 +276,7 @@
 <span class="sd">        Return the date last updated of remote file/directory.</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">            url &lt;str&gt;: URL</span>
+<span class="sd">            url (str): URL</span>
 
 <span class="sd">        Returns:</span>
 <span class="sd">            &lt;pandas.Timestamp/None&gt;: time last updated (UTC)</span>
@@ -317,8 +317,8 @@
 <span class="sd">        Return dataset class with citation.</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">            data_key &lt;str&gt;: key of self.dataset_dict</span>
-<span class="sd">            filename &lt;str&gt;: filename of the local dataset</span>
+<span class="sd">            data_key (str): key of self.dataset_dict</span>
+<span class="sd">            filename (str): filename of the local dataset</span>
 <span class="sd">            kwargs: keyword arguments of @data_class</span>
 
 <span class="sd">        Returns:</span>
@@ -344,11 +344,11 @@
 <span class="sd">        comparing the last update of the files.</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">            filename &lt;str&gt;: filename of the local file</span>
-<span class="sd">            url &lt;str&gt;: URL of the remote server</span>
+<span class="sd">            filename (str): filename of the local file</span>
+<span class="sd">            url (str): URL of the remote server</span>
 
 <span class="sd">        Returns:</span>
-<span class="sd">            &lt;bool&gt;: whether we need to get the data from remote servers or not</span>
+<span class="sd">            (bool): whether we need to get the data from remote servers or not</span>
 
 <span class="sd">        Notes:</span>
 <span class="sd">            If the last updated date is unknown, returns True.</span>
@@ -364,13 +364,13 @@
                 <span class="k">return</span> <span class="kc">True</span>
         <span class="k">return</span> <span class="kc">False</span>
 
-<div class="viewcode-block" id="DataLoader.jhu"><a class="viewcode-back" href="../../../covsirphy.cleaning.html#covsirphy.DataLoader.jhu">[docs]</a>    <span class="k">def</span> <span class="nf">jhu</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">basename</span><span class="o">=</span><span class="s2">&quot;covid_19_data.csv&quot;</span><span class="p">,</span> <span class="n">local_file</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<div class="viewcode-block" id="DataLoader.jhu"><a class="viewcode-back" href="../../../covsirphy.html#covsirphy.DataLoader.jhu">[docs]</a>    <span class="k">def</span> <span class="nf">jhu</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">basename</span><span class="o">=</span><span class="s2">&quot;covid_19_data.csv&quot;</span><span class="p">,</span> <span class="n">local_file</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Load JHU dataset (the number of cases).</span>
 <span class="sd">        https://github.com/CSSEGISandData/COVID-19/</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">            basename &lt;str&gt;: basename of the file to save the data</span>
+<span class="sd">            basename (str): basename of the file to save the data</span>
 <span class="sd">            local_file &lt;str/None&gt;: if not None, load the data from this file</span>
 
 <span class="sd">        Notes:</span>
@@ -399,10 +399,10 @@
 <span class="sd">        Get the raw data of the variable from JHU repository.</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">            variable &lt;str&gt;: confirmed, deaths or recovered</span>
+<span class="sd">            variable (str): confirmed, deaths or recovered</span>
 
 <span class="sd">        Returns:</span>
-<span class="sd">            &lt;pandas.DataFrame&gt; : JHU data with all variables to use</span>
+<span class="sd">            (pandas.DataFrame) : JHU data with all variables to use</span>
 <span class="sd">               Index:</span>
 <span class="sd">                    reset index</span>
 <span class="sd">                Columns:</span>
@@ -437,10 +437,10 @@
 <span class="sd">        Get the raw data of the variable from JHU repository.</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">            variable &lt;str&gt;: confirmed, deaths or recovered</span>
+<span class="sd">            variable (str): confirmed, deaths or recovered</span>
 
 <span class="sd">        Returns:</span>
-<span class="sd">            &lt;pandas.DataFrame&gt;: data of the variable</span>
+<span class="sd">            (pandas.DataFrame): data of the variable</span>
 <span class="sd">                Index:</span>
 <span class="sd">                    reset index</span>
 <span class="sd">                Columns:</span>
@@ -462,13 +462,13 @@
         <span class="n">df</span><span class="p">[</span><span class="s2">&quot;SNo&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">index</span> <span class="o">+</span> <span class="mi">1</span>
         <span class="k">return</span> <span class="n">df</span>
 
-<div class="viewcode-block" id="DataLoader.japan"><a class="viewcode-back" href="../../../covsirphy.cleaning.html#covsirphy.DataLoader.japan">[docs]</a>    <span class="k">def</span> <span class="nf">japan</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">basename</span><span class="o">=</span><span class="s2">&quot;covid_jpn_total.csv&quot;</span><span class="p">,</span> <span class="n">local_file</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<div class="viewcode-block" id="DataLoader.japan"><a class="viewcode-back" href="../../../covsirphy.html#covsirphy.DataLoader.japan">[docs]</a>    <span class="k">def</span> <span class="nf">japan</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">basename</span><span class="o">=</span><span class="s2">&quot;covid_jpn_total.csv&quot;</span><span class="p">,</span> <span class="n">local_file</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Load the datset of the number of cases in Japan.</span>
 <span class="sd">        https://github.com/lisphilar/covid19-sir/tree/master/data</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">            basename &lt;str&gt;: basename of the file to save the data</span>
+<span class="sd">            basename (str): basename of the file to save the data</span>
 <span class="sd">            local_file &lt;str/None&gt;: if not None, load the data from this file</span>
 
 <span class="sd">        Notes:</span>
@@ -503,10 +503,10 @@
 <span class="sd">        https://github.com/lisphilar/covid19-sir/tree/master/data/japan</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">            variable &lt;str&gt;: confirmed, deaths or recovered</span>
+<span class="sd">            variable (str): confirmed, deaths or recovered</span>
 
 <span class="sd">        Returns:</span>
-<span class="sd">            &lt;pandas.DataFrame&gt; : the raw data</span>
+<span class="sd">            (pandas.DataFrame) : the raw data</span>
 <span class="sd">               Index:</span>
 <span class="sd">                    reset index</span>
 <span class="sd">                Columns:</span>
@@ -521,7 +521,7 @@
 <span class="sd">        Create a dataset for Japan with a local file.</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">            filename &lt;str&gt;: filename of the local file</span>
+<span class="sd">            filename (str): filename of the local file</span>
 
 <span class="sd">        Returns:</span>
 <span class="sd">            &lt;covsirphy.cleaning.country_data.CountryData&gt;: dataset at country level</span>

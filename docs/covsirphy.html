@@ -236,8 +236,8 @@
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>&lt;int&gt;</strong> (<em>n_jobs</em>) – the number of trials in one iteration</p></li>
-<li><p><strong>&lt;int&gt;</strong> – the number of parallel jobs or -1 (CPU count)</p></li>
+<li><p><strong>n_trials_iteration</strong> (<em>int</em>) – the number of trials in one iteration</p></li>
+<li><p><strong>n_jobs</strong> (<em>int</em>) – the number of parallel jobs or -1 (CPU count)</p></li>
 </ul>
 </dd>
 </dl>
@@ -251,8 +251,8 @@ This is weighted average of RMSLE scores.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>&lt;list</strong><strong>[</strong><strong>str</strong><strong>]</strong><strong>&gt;</strong> (<em>end_dates</em>) – list of start date of phases (candidates)</p></li>
-<li><p><strong>&lt;list</strong><strong>[</strong><strong>str</strong><strong>]</strong><strong>&gt;</strong> – list of end date of phases (candidates)</p></li>
+<li><p><strong>start_dates</strong> (<em>list</em><em>[</em><em>str</em><em>]</em>) – list of start date of phases (candidates)</p></li>
+<li><p><strong>end_dates</strong> (<em>list</em><em>[</em><em>str</em><em>]</em>) – list of end date of phases (candidates)</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
@@ -271,32 +271,32 @@ This is weighted average of RMSLE scores.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>&lt;pandas.DataFrame&gt;</strong> (<em>clean_df</em>) – <p>cleaned data</p>
+<li><p><strong>clean_df</strong> (<em>pandas.DataFrame</em>) – <p>cleaned data</p>
 <dl class="simple">
 <dt>Index:</dt><dd><p>reset index</p>
 </dd>
 <dt>Columns:</dt><dd><ul>
-<li><p>Date &lt;pd.TimeStamp&gt;: Observation date</p></li>
-<li><p>Country &lt;str&gt;: country/region name</p></li>
-<li><p>Province &lt;str&gt;: province/prefecture/sstate name</p></li>
-<li><p>Confirmed &lt;int&gt;: the number of confirmed cases</p></li>
-<li><p>Infected &lt;int&gt;: the number of currently infected cases</p></li>
-<li><p>Fatal &lt;int&gt;: the number of fatal cases</p></li>
-<li><p>Recovered &lt;int&gt;: the number of recovered cases</p></li>
+<li><p>Date (pd.TimeStamp): Observation date</p></li>
+<li><p>Country (str): country/region name</p></li>
+<li><p>Province (str): province/prefecture/sstate name</p></li>
+<li><p>Confirmed (int): the number of confirmed cases</p></li>
+<li><p>Infected (int): the number of currently infected cases</p></li>
+<li><p>Fatal (int): the number of fatal cases</p></li>
+<li><p>Recovered (int): the number of recovered cases</p></li>
 </ul>
 </dd>
 </dl>
 </p></li>
-<li><p><strong>&lt;int&gt;</strong> (<em>population</em>) – initial value of total population in the place</p></li>
-<li><p><strong>&lt;str&gt;</strong> (<em>province</em>) – country name</p></li>
-<li><p><strong>&lt;str&gt;</strong> – province name</p></li>
+<li><p><strong>population</strong> (<em>int</em>) – initial value of total population in the place</p></li>
+<li><p><strong>country</strong> (<em>str</em>) – country name</p></li>
+<li><p><strong>province</strong> (<em>str</em>) – province name</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
 <dd class="field-even"><p>list of dates, like 22Jan2020</p>
 </dd>
 <dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>&lt;list[str]&gt;</p>
+<dd class="field-odd"><p>(list[str])</p>
 </dd>
 </dl>
 </dd></dl>
@@ -325,7 +325,7 @@ This defines the parameter values using Optuna.</p>
 <dd><p>Return the start date and end date of the phases.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>&lt;list</strong><strong>[</strong><strong>str</strong><strong>]</strong><strong>&gt;</strong> (<em>change_dates</em>) – list of change points, like 22Jan2020</p>
+<dd class="field-odd"><p><strong>change_dates</strong> (<em>list</em><em>[</em><em>str</em><em>]</em>) – list of change points, like 22Jan2020</p>
 </dd>
 <dt class="field-even">Returns</dt>
 <dd class="field-even"><p><ul class="simple">
@@ -347,15 +347,15 @@ This defines the parameter values using Optuna.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>&lt;int&gt;</strong> (<em>n_jobs</em>) – the number of change points</p></li>
-<li><p><strong>&lt;int&gt;</strong> – minimum duration of one phase [days]
+<li><p><strong>n_points</strong> (<em>int</em>) – the number of change points</p></li>
+<li><p><strong>min_duration</strong> (<em>int</em>) – minimum duration of one phase [days]
 - must be over 2</p></li>
-<li><p><strong>&lt;int&gt;</strong> – allowance of change points [days]
+<li><p><strong>allowance</strong> (<em>int</em>) – allowance of change points [days]
 - if the estimated change points was equal to previous iteration
 with this allowance, stop running.</p></li>
-<li><p><strong>&lt;int&gt;</strong> – time-out of run</p></li>
-<li><p><strong>&lt;int&gt;</strong> – the number of trials in one iteration</p></li>
-<li><p><strong>&lt;int&gt;</strong> – the number of parallel jobs or -1 (CPU count)</p></li>
+<li><p><strong>timeout</strong> (<em>int</em>) – time-out of run</p></li>
+<li><p><strong>n_trials_iteration</strong> (<em>int</em>) – the number of trials in one iteration</p></li>
+<li><p><strong>n_jobs</strong> (<em>int</em>) – the number of parallel jobs or -1 (CPU count)</p></li>
 <li><p><strong>&lt;int/None&gt;</strong> (<em>seed</em>) – random seed of hyperparameter optimization
 - this will effective when &#64;n_jobs is 1</p></li>
 </ul>
@@ -371,13 +371,13 @@ with this allowance, stop running.</p></li>
 <code class="sig-name descname">show</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">show_figure</span><span class="o">=</span><span class="default_value">True</span></em>, <em class="sig-param"><span class="n">filename</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/analysis/sr_change.html#ChangeFinder.show"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#covsirphy.ChangeFinder.show" title="Permalink to this definition">¶</a></dt>
 <dd><p>show the result as a figure and return a dictionary of phases.</p>
 <p>Args:
-&#64;show_figure &lt;bool&gt;:</p>
+&#64;show_figure (bool):</p>
 <blockquote>
 <div><ul class="simple">
 <li><p>if True, show the result as a figure.</p></li>
 </ul>
 </div></blockquote>
-<p>&#64;filename &lt;str&gt;: filename of the figure, or None (show figure)</p>
+<p>&#64;filename (str): filename of the figure, or None (show figure)</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns</dt>
 <dd class="field-odd"><p>&lt;covsirphy.PhaseSeries&gt;</p>
@@ -394,25 +394,30 @@ with this allowance, stop running.</p></li>
 <p>Basic class for data cleaning.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>&lt;str&gt;</strong> (<em>filename</em>) – CSV filename of the dataset</p>
+<dd class="field-odd"><p><strong>filename</strong> (<em>str</em>) – CSV filename of the dataset</p>
 </dd>
 </dl>
 <dl class="py attribute">
-<dt>
-<code class="sig-name descname">citation &lt;str&gt;</code></dt>
+<dt id="covsirphy.CleaningBase.citation">
+<code class="sig-name descname">citation</code><a class="headerlink" href="#covsirphy.CleaningBase.citation" title="Permalink to this definition">¶</a></dt>
 <dd><p>citation fo the dataset</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>str</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py method">
-<dt id="covsirphy.CleaningBase.citation">
-<em class="property">property </em><code class="sig-name descname">citation</code><a class="headerlink" href="#covsirphy.CleaningBase.citation" title="Permalink to this definition">¶</a></dt>
+<dt id="id0">
+<em class="property">property </em><code class="sig-name descname">citation</code><a class="headerlink" href="#id0" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return citation.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns</dt>
 <dd class="field-odd"><p>citation of the datset</p>
 </dd>
 <dt class="field-even">Return type</dt>
-<dd class="field-even"><p>&lt;str&gt;</p>
+<dd class="field-even"><p>(str)</p>
 </dd>
 </dl>
 </dd></dl>
@@ -428,7 +433,7 @@ Cleaning method is defined by self.cleaning() method.</p>
 <dd class="field-odd"><p>cleaned data</p>
 </dd>
 <dt class="field-even">Return type</dt>
-<dd class="field-even"><p>&lt;pandas.DataFrame&gt;</p>
+<dd class="field-even"><p>(pandas.DataFrame)</p>
 </dd>
 </dl>
 </dd></dl>
@@ -444,7 +449,7 @@ Cleaning method is defined by self.cleaning() method.</p>
 <dd class="field-odd"><p>cleaned data</p>
 </dd>
 <dt class="field-even">Return type</dt>
-<dd class="field-even"><p>&lt;pandas.DataFrame&gt;</p>
+<dd class="field-even"><p>(pandas.DataFrame)</p>
 </dd>
 </dl>
 </dd></dl>
@@ -458,7 +463,7 @@ Cleaning method is defined by self.cleaning() method.</p>
 <dd class="field-odd"><p>raw data</p>
 </dd>
 <dt class="field-even">Return type</dt>
-<dd class="field-even"><p>&lt;pandas.DataFrame&gt;</p>
+<dd class="field-even"><p>(pandas.DataFrame)</p>
 </dd>
 </dl>
 </dd></dl>
@@ -472,16 +477,16 @@ Cleaning method is defined by self.cleaning() method.</p>
 <dd class="field-odd"><p><p>group-by Date, sum of the values</p>
 <blockquote>
 <div><dl class="simple">
-<dt>Index:</dt><dd><p>(Date) &lt;pd.TimeStamp&gt;: Observation date</p>
+<dt>Index:</dt><dd><p>(Date) (pd.TimeStamp): Observation date</p>
 </dd>
 <dt>Columns:</dt><dd><ul class="simple">
-<li><p>Confirmed &lt;int&gt;: the number of confirmed cases</p></li>
-<li><p>Infected &lt;int&gt;: the number of currently infected cases</p></li>
-<li><p>Fatal &lt;int&gt;: the number of fatal cases</p></li>
-<li><p>Recovered &lt;int&gt;: the number of recovered cases</p></li>
-<li><p>Fatal per Confirmed &lt;int&gt;</p></li>
-<li><p>Recovered per Confirmed &lt;int&gt;</p></li>
-<li><p>Fatal per (Fatal or Recovered) &lt;int&gt;</p></li>
+<li><p>Confirmed (int): the number of confirmed cases</p></li>
+<li><p>Infected (int): the number of currently infected cases</p></li>
+<li><p>Fatal (int): the number of fatal cases</p></li>
+<li><p>Recovered (int): the number of recovered cases</p></li>
+<li><p>Fatal per Confirmed (int)</p></li>
+<li><p>Recovered per Confirmed (int)</p></li>
+<li><p>Fatal per (Fatal or Recovered) (int)</p></li>
 </ul>
 </dd>
 </dl>
@@ -489,7 +494,7 @@ Cleaning method is defined by self.cleaning() method.</p>
 </p>
 </dd>
 <dt class="field-even">Return type</dt>
-<dd class="field-even"><p>&lt;pandas.DataFrame&gt;</p>
+<dd class="field-even"><p>(pandas.DataFrame)</p>
 </dd>
 </dl>
 </dd></dl>
@@ -504,8 +509,8 @@ Cleaning method is defined by self.cleaning() method.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>&lt;str&gt;</strong> (<em>country</em>) – filename to read the data</p></li>
-<li><p><strong>&lt;str&gt;</strong> – country name</p></li>
+<li><p><strong>filename</strong> (<em>str</em>) – filename to read the data</p></li>
+<li><p><strong>country</strong> (<em>str</em>) – country name</p></li>
 </ul>
 </dd>
 </dl>
@@ -520,20 +525,20 @@ Cleaning method is defined by self.cleaning() method.</p>
 <dt>Index:</dt><dd><p>reset index</p>
 </dd>
 <dt>Columns:</dt><dd><ul class="simple">
-<li><p>Date &lt;pd.TimeStamp&gt;: Observation date</p></li>
-<li><p>Country &lt;str&gt;: country/region name</p></li>
-<li><p>Province &lt;str&gt;: province/prefecture/sstate name</p></li>
-<li><p>Confirmed &lt;int&gt;: the number of confirmed cases</p></li>
-<li><p>Infected &lt;int&gt;: the number of currently infected cases</p></li>
-<li><p>Fatal &lt;int&gt;: the number of fatal cases</p></li>
-<li><p>Recovered &lt;int&gt;: the number of recovered cases</p></li>
+<li><p>Date (pd.TimeStamp): Observation date</p></li>
+<li><p>Country (str): country/region name</p></li>
+<li><p>Province (str): province/prefecture/sstate name</p></li>
+<li><p>Confirmed (int): the number of confirmed cases</p></li>
+<li><p>Infected (int): the number of currently infected cases</p></li>
+<li><p>Fatal (int): the number of fatal cases</p></li>
+<li><p>Recovered (int): the number of recovered cases</p></li>
 </ul>
 </dd>
 </dl>
 </p>
 </dd>
 <dt class="field-even">Return type</dt>
-<dd class="field-even"><p>&lt;pandas.DataFrame&gt;</p>
+<dd class="field-even"><p>(pandas.DataFrame)</p>
 </dd>
 </dl>
 </dd></dl>
@@ -549,20 +554,20 @@ This method overwrite super().cleaning() method.</p>
 <dt>Index:</dt><dd><p>reset index</p>
 </dd>
 <dt>Columns:</dt><dd><ul class="simple">
-<li><p>Date &lt;pd.TimeStamp&gt;: Observation date</p></li>
-<li><p>Country &lt;str&gt;: country/region name</p></li>
-<li><p>Province &lt;str&gt;: province/prefecture/state name</p></li>
-<li><p>Confirmed &lt;int&gt;: the number of confirmed cases</p></li>
-<li><p>Infected &lt;int&gt;: the number of currently infected cases</p></li>
-<li><p>Fatal &lt;int&gt;: the number of fatal cases</p></li>
-<li><p>Recovered &lt;int&gt;: the number of recovered cases</p></li>
+<li><p>Date (pd.TimeStamp): Observation date</p></li>
+<li><p>Country (str): country/region name</p></li>
+<li><p>Province (str): province/prefecture/state name</p></li>
+<li><p>Confirmed (int): the number of confirmed cases</p></li>
+<li><p>Infected (int): the number of currently infected cases</p></li>
+<li><p>Fatal (int): the number of fatal cases</p></li>
+<li><p>Recovered (int): the number of recovered cases</p></li>
 </ul>
 </dd>
 </dl>
 </p>
 </dd>
 <dt class="field-even">Return type</dt>
-<dd class="field-even"><p>&lt;pandas.DataFrame&gt;</p>
+<dd class="field-even"><p>(pandas.DataFrame)</p>
 </dd>
 </dl>
 </dd></dl>
@@ -576,7 +581,7 @@ This method overwrite super().cleaning() method.</p>
 <dd class="field-odd"><p>country name</p>
 </dd>
 <dt class="field-even">Return type</dt>
-<dd class="field-even"><p>&lt;str&gt;</p>
+<dd class="field-even"><p>(str)</p>
 </dd>
 </dl>
 </dd></dl>
@@ -590,7 +595,7 @@ This method overwrite super().cleaning() method.</p>
 <dd class="field-odd"><p>the list of column names of the raw data</p>
 </dd>
 <dt class="field-even">Return type</dt>
-<dd class="field-even"><p>&lt;list[str]&gt;</p>
+<dd class="field-even"><p>(list[str])</p>
 </dd>
 </dl>
 </dd></dl>
@@ -602,11 +607,11 @@ This method overwrite super().cleaning() method.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>&lt;str&gt;</strong> (<em>province</em>) – column name for Date</p></li>
-<li><p><strong>&lt;str&gt;</strong> – column name for Confirmed</p></li>
-<li><p><strong>&lt;str&gt;</strong> – column name for Fatal</p></li>
-<li><p><strong>&lt;str&gt;</strong> – column name for Confirmed</p></li>
-<li><p><strong>&lt;str&gt;</strong> – (optional) column name for Province</p></li>
+<li><p><strong>date</strong> (<em>str</em>) – column name for Date</p></li>
+<li><p><strong>confirmed</strong> (<em>str</em>) – column name for Confirmed</p></li>
+<li><p><strong>fatal</strong> (<em>str</em>) – column name for Fatal</p></li>
+<li><p><strong>recovered</strong> (<em>str</em>) – column name for Confirmed</p></li>
+<li><p><strong>province</strong> (<em>str</em>) – (optional) column name for Province</p></li>
 </ul>
 </dd>
 </dl>
@@ -623,7 +628,7 @@ This method overwrite super().cleaning() method.</p>
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>&lt;str/pathlib.Path&gt;</strong> (<em>directory</em>) – directory to save the downloaded datasets</p></li>
-<li><p><strong>&lt;int&gt;</strong> (<em>update_interval</em>) – update interval of the local datasets</p></li>
+<li><p><strong>update_interval</strong> (<em>int</em>) – update interval of the local datasets</p></li>
 </ul>
 </dd>
 </dl>
@@ -658,7 +663,7 @@ GitHub datasets will be always updated because headers of GET response</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>&lt;str&gt;</strong> (<em>basename</em>) – basename of the file to save the data</p></li>
+<li><p><strong>basename</strong> (<em>str</em>) – basename of the file to save the data</p></li>
 <li><p><strong>&lt;str/None&gt;</strong> (<em>local_file</em>) – if not None, load the data from this file</p></li>
 </ul>
 </dd>
@@ -683,7 +688,7 @@ GitHub datasets will be always updated because headers of GET response</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>&lt;str&gt;</strong> (<em>basename</em>) – basename of the file to save the data</p></li>
+<li><p><strong>basename</strong> (<em>str</em>) – basename of the file to save the data</p></li>
 <li><p><strong>&lt;str/None&gt;</strong> (<em>local_file</em>) – if not None, load the data from this file</p></li>
 </ul>
 </dd>
@@ -710,20 +715,20 @@ GitHub datasets will be always updated because headers of GET response</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>&lt;pandas.DataFrame&gt;</strong> (<em>clean_df</em>) – <ul>
+<li><p><strong>clean_df</strong> (<em>pandas.DataFrame</em>) – <ul>
 <li><p>cleaned observed data or simulated data</p></li>
 <li><dl class="simple">
 <dt>observed data</dt><dd><dl class="simple">
 <dt>Index:</dt><dd><p>reset index</p>
 </dd>
 <dt>Columns:</dt><dd><ul>
-<li><p>Date &lt;pd.TimeStamp&gt;: Observation date</p></li>
-<li><p>Country &lt;str&gt;: country/region name</p></li>
-<li><p>Province &lt;str&gt;: province/prefecture/sstate name</p></li>
-<li><p>Confirmed &lt;int&gt;: the number of confirmed cases</p></li>
-<li><p>Infected &lt;int&gt;: the number of currently infected cases</p></li>
-<li><p>Fatal &lt;int&gt;: the number of fatal cases</p></li>
-<li><p>Recovered &lt;int&gt;: the number of recovered cases</p></li>
+<li><p>Date (pd.TimeStamp): Observation date</p></li>
+<li><p>Country (str): country/region name</p></li>
+<li><p>Province (str): province/prefecture/sstate name</p></li>
+<li><p>Confirmed (int): the number of confirmed cases</p></li>
+<li><p>Infected (int): the number of currently infected cases</p></li>
+<li><p>Fatal (int): the number of fatal cases</p></li>
+<li><p>Recovered (int): the number of recovered cases</p></li>
 </ul>
 </dd>
 </dl>
@@ -735,10 +740,10 @@ GitHub datasets will be always updated because headers of GET response</p>
 <dt>Index:</dt><dd><p>reset index</p>
 </dd>
 <dt>Columns:</dt><dd><ul>
-<li><p>Date &lt;pd.TimeStamp&gt;: Observation date</p></li>
-<li><p>Country &lt;str&gt;: country/region name</p></li>
-<li><p>Province &lt;str&gt;: province/prefecture/state name</p></li>
-<li><p>variables of the models &lt;int&gt;</p></li>
+<li><p>Date (pd.TimeStamp): Observation date</p></li>
+<li><p>Country (str): country/region name</p></li>
+<li><p>Province (str): province/prefecture/state name</p></li>
+<li><p>variables of the models (int)</p></li>
 </ul>
 </dd>
 </dl>
@@ -748,11 +753,11 @@ GitHub datasets will be always updated because headers of GET response</p>
 </ul>
 </p></li>
 <li><p><strong>&lt;subclass of cs.ModelBase&gt;</strong> (<em>model</em>) – ODE model</p></li>
-<li><p><strong>&lt;int&gt;</strong> (<em>population</em>) – total population in the place</p></li>
-<li><p><strong>&lt;str&gt;</strong> (<em>end_date</em>) – country name</p></li>
-<li><p><strong>&lt;str&gt;</strong> – province name</p></li>
-<li><p><strong>&lt;str&gt;</strong> – start date, like 22Jan2020</p></li>
-<li><p><strong>&lt;str&gt;</strong> – end date, like 01Feb2020</p></li>
+<li><p><strong>population</strong> (<em>int</em>) – total population in the place</p></li>
+<li><p><strong>country</strong> (<em>str</em>) – country name</p></li>
+<li><p><strong>province</strong> (<em>str</em>) – province name</p></li>
+<li><p><strong>start_date</strong> (<em>str</em>) – start date, like 22Jan2020</p></li>
+<li><p><strong>end_date</strong> (<em>str</em>) – end date, like 01Feb2020</p></li>
 <li><p><strong>kwargs</strong> – parameter values of the model</p></li>
 </ul>
 </dd>
@@ -763,7 +768,7 @@ GitHub datasets will be always updated because headers of GET response</p>
 <dd><p>Show the accuracy as a figure.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>&lt;str&gt;</strong> (<em>filename</em>) – filename of the figure, or None (show figure)</p>
+<dd class="field-odd"><p><strong>filename</strong> (<em>str</em>) – filename of the figure, or None (show figure)</p>
 </dd>
 </dl>
 </dd></dl>
@@ -774,14 +779,14 @@ GitHub datasets will be always updated because headers of GET response</p>
 <dd><p>Divide T by tau in the training dataset.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>&lt;int&gt;</strong> (<em>tau</em>) – tau value [min]</p>
+<dd class="field-odd"><p><strong>tau</strong> (<em>int</em>) – tau value [min]</p>
 </dd>
 <dt class="field-even">Returns</dt>
 <dd class="field-even"><p><dl class="simple">
 <dt>Index:</dt><dd><p>reset index</p>
 </dd>
 <dt>Columns:</dt><dd><ul class="simple">
-<li><p>t &lt;int&gt;: Elapsed time divided by tau value [-]</p></li>
+<li><p>t (int): Elapsed time divided by tau value [-]</p></li>
 <li><p>columns with dimensional variables</p></li>
 </ul>
 </dd>
@@ -789,7 +794,7 @@ GitHub datasets will be always updated because headers of GET response</p>
 </p>
 </dd>
 <dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>&lt;pandas.DataFrame&gt;</p>
+<dd class="field-odd"><p>(pandas.DataFrame)</p>
 </dd>
 </dl>
 </dd></dl>
@@ -802,7 +807,7 @@ GitHub datasets will be always updated because headers of GET response</p>
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>&lt;dict</strong><strong>[</strong><strong>str</strong><strong>]</strong><strong>=int/float&gt;</strong> (<em>param_dict</em>) – estimated parameter values</p></li>
-<li><p><strong>&lt;pandas.DataFrame&gt;</strong> (<em>taufree_df</em>) – <p>training dataset</p>
+<li><p><strong>taufree_df</strong> (<em>pandas.DataFrame</em>) – <p>training dataset</p>
 <dl class="simple">
 <dt>Index:</dt><dd><p>reset index</p>
 </dd>
@@ -848,7 +853,7 @@ This defines the parameter values using Optuna.</p>
 <dd><p>Return RMSLE score.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>&lt;int&gt;</strong> (<em>tau</em>) – tau value</p>
+<dd class="field-odd"><p><strong>tau</strong> (<em>int</em>) – tau value</p>
 </dd>
 </dl>
 </dd></dl>
@@ -872,11 +877,11 @@ If the result satisfied all conditions, optimization ends.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>&lt;int&gt;</strong> (<em>n_jobs</em>) – time-out of run</p></li>
-<li><p><strong>&lt;int&gt;</strong> – if study was reset &#64;reset_n_max times, will not be reset anymore</p></li>
-<li><p><strong>&lt;int&gt;</strong> – time-out of one iteration</p></li>
+<li><p><strong>timeout</strong> (<em>int</em>) – time-out of run</p></li>
+<li><p><strong>reset_n_max</strong> (<em>int</em>) – if study was reset &#64;reset_n_max times, will not be reset anymore</p></li>
+<li><p><strong>timeout_iteration</strong> (<em>int</em>) – time-out of one iteration</p></li>
 <li><p><strong>&lt;tuple</strong> (<em>allowance</em>) – the allowance of the predicted value</p></li>
-<li><p><strong>&lt;int&gt;</strong> – the number of parallel jobs or -1 (CPU count)</p></li>
+<li><p><strong>n_jobs</strong> (<em>int</em>) – the number of parallel jobs or -1 (CPU count)</p></li>
 <li><p><strong>&lt;int/None&gt;</strong> (<em>seed</em>) – random seed of hyperparameter optimization</p></li>
 </ul>
 </dd>
@@ -897,7 +902,7 @@ If the result satisfied all conditions, optimization ends.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>&lt;int&gt;</strong> (<em>step_n</em>) – number of iteration</p></li>
+<li><p><strong>step_n</strong> (<em>int</em>) – number of iteration</p></li>
 <li><p><strong>&lt;dict</strong><strong>[</strong><strong>str</strong><strong>]</strong><strong>=int/float&gt;</strong> (<em>param_dict</em>) – estimated parameter values</p></li>
 </ul>
 </dd>
@@ -906,7 +911,7 @@ If the result satisfied all conditions, optimization ends.</p>
 <dt>Index:</dt><dd><p>reset index</p>
 </dd>
 <dt>Columns:</dt><dd><ul class="simple">
-<li><p>t &lt;int&gt;: Elapsed time divided by tau value [-]</p></li>
+<li><p>t (int): Elapsed time divided by tau value [-]</p></li>
 <li><p>columns with dimensionalized variables</p></li>
 </ul>
 </dd>
@@ -914,7 +919,7 @@ If the result satisfied all conditions, optimization ends.</p>
 </p>
 </dd>
 <dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>&lt;pandas.DataFrame&gt;</p>
+<dd class="field-odd"><p>(pandas.DataFrame)</p>
 </dd>
 </dl>
 </dd></dl>
@@ -926,7 +931,7 @@ If the result satisfied all conditions, optimization ends.</p>
 This function should be overwritten in subclass.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>&lt;str&gt;</strong> (<em>name</em>) – index of the dataframe</p>
+<dd class="field-odd"><p><strong>name</strong> (<em>str</em>) – index of the dataframe</p>
 </dd>
 <dt class="field-even">Returns</dt>
 <dd class="field-even"><p><dl class="simple">
@@ -946,7 +951,7 @@ This function should be overwritten in subclass.</p>
 </p>
 </dd>
 <dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>&lt;pandas.DataFrame&gt;</p>
+<dd class="field-odd"><p>(pandas.DataFrame)</p>
 </dd>
 </dl>
 </dd></dl>
@@ -968,27 +973,27 @@ This function should be overwritten in subclass.</p>
 </div>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>&lt;int&gt;</strong> (<em>population</em>) – <ul class="simple">
+<dd class="field-odd"><p><strong>population</strong> (<em>int</em>) – <ul class="simple">
 <li><p>if this is not None, Susceptible will be calculated.</p></li>
 </ul>
 </p>
 </dd>
 <dt class="field-even">Returns</dt>
 <dd class="field-even"><p><dl class="simple">
-<dt>&lt;pandas.DataFrame&gt;</dt><dd><dl class="simple">
+<dt>(pandas.DataFrame)</dt><dd><dl class="simple">
 <dt>Index:</dt><dd><p>reset index</p>
 </dd>
 <dt>Columns:</dt><dd><ul class="simple">
-<li><p>Date &lt;pd.TimeStamp&gt;: Observation date</p></li>
-<li><p>Country &lt;str&gt;: country/region name</p></li>
-<li><p>Province &lt;str&gt;: province/prefecture/state name</p></li>
-<li><p>Confirmed &lt;int&gt;: the number of confirmed cases</p></li>
-<li><p>Infected &lt;int&gt;: the number of currently infected cases</p></li>
-<li><p>Fatal &lt;int&gt;: the number of fatal cases</p></li>
-<li><p>Recovered &lt;int&gt;: the number of recovered cases</p></li>
+<li><p>Date (pd.TimeStamp): Observation date</p></li>
+<li><p>Country (str): country/region name</p></li>
+<li><p>Province (str): province/prefecture/state name</p></li>
+<li><p>Confirmed (int): the number of confirmed cases</p></li>
+<li><p>Infected (int): the number of currently infected cases</p></li>
+<li><p>Fatal (int): the number of fatal cases</p></li>
+<li><p>Recovered (int): the number of recovered cases</p></li>
 <li><dl class="simple">
 <dt>if &#64;population is not None:</dt><dd><ul>
-<li><p>Susceptible &lt;int&gt;: the number of susceptible cases</p></li>
+<li><p>Susceptible (int): the number of susceptible cases</p></li>
 </ul>
 </dd>
 </dl>
@@ -1011,17 +1016,17 @@ This method overwrite super().cleaning() method.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns</dt>
 <dd class="field-odd"><p><dl class="simple">
-<dt>&lt;pandas.DataFrame&gt;</dt><dd><dl class="simple">
+<dt>(pandas.DataFrame)</dt><dd><dl class="simple">
 <dt>Index:</dt><dd><p>reset index</p>
 </dd>
 <dt>Columns:</dt><dd><ul class="simple">
-<li><p>Date &lt;pd.TimeStamp&gt;: Observation date</p></li>
-<li><p>Country &lt;str&gt;: country/region name</p></li>
-<li><p>Province &lt;str&gt;: province/prefecture/state name</p></li>
-<li><p>Confirmed &lt;int&gt;: the number of confirmed cases</p></li>
-<li><p>Infected &lt;int&gt;: the number of currently infected cases</p></li>
-<li><p>Fatal &lt;int&gt;: the number of fatal cases</p></li>
-<li><p>Recovered &lt;int&gt;: the number of recovered cases</p></li>
+<li><p>Date (pd.TimeStamp): Observation date</p></li>
+<li><p>Country (str): country/region name</p></li>
+<li><p>Province (str): province/prefecture/state name</p></li>
+<li><p>Confirmed (int): the number of confirmed cases</p></li>
+<li><p>Infected (int): the number of currently infected cases</p></li>
+<li><p>Fatal (int): the number of fatal cases</p></li>
+<li><p>Recovered (int): the number of recovered cases</p></li>
 </ul>
 </dd>
 </dl>
@@ -1053,21 +1058,21 @@ This method overwrite super().cleaning() method.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>&lt;str&gt;</strong> (<em>province</em>) – country name</p></li>
-<li><p><strong>&lt;str&gt;</strong> – province name</p></li>
+<li><p><strong>country</strong> (<em>str</em>) – country name</p></li>
+<li><p><strong>province</strong> (<em>str</em>) – province name</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
 <dd class="field-even"><p><dl class="simple">
-<dt>&lt;pandas.DataFrame&gt;</dt><dd><dl class="simple">
+<dt>(pandas.DataFrame)</dt><dd><dl class="simple">
 <dt>Index:</dt><dd><p>reset index</p>
 </dd>
 <dt>Columns:</dt><dd><ul class="simple">
-<li><p>Date &lt;pd.TimeStamp&gt;: Observation date</p></li>
-<li><p>Confirmed &lt;int&gt;: the number of confirmed cases</p></li>
-<li><p>Infected &lt;int&gt;: the number of currently infected cases</p></li>
-<li><p>Fatal &lt;int&gt;: the number of fatal cases</p></li>
-<li><p>Recovered &lt;int&gt;: the number of recovered cases (&gt; 0)</p></li>
+<li><p>Date (pd.TimeStamp): Observation date</p></li>
+<li><p>Confirmed (int): the number of confirmed cases</p></li>
+<li><p>Infected (int): the number of currently infected cases</p></li>
+<li><p>Fatal (int): the number of fatal cases</p></li>
+<li><p>Recovered (int): the number of recovered cases (&gt; 0)</p></li>
 </ul>
 </dd>
 </dl>
@@ -1129,7 +1134,7 @@ This method overwrite super().cleaning() method.</p>
 This method should be overwritten in subclass.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>tau &lt;int&gt;</strong> (<em>param</em>) – tau value [min]</p>
+<dd class="field-odd"><p><strong>tau</strong> (<em>param</em>) – tau value [min]</p>
 </dd>
 </dl>
 </dd></dl>
@@ -1147,19 +1152,19 @@ This method should be overwritten in subclass.</p>
 <dd><p>Define the range of parameters (not including tau value).
 This method should be overwritten in subclass.</p>
 <p>Args:
-&#64;taufree_df &lt;pandas.DataFrame&gt;:</p>
+&#64;taufree_df (pandas.DataFrame):</p>
 <blockquote>
 <div><dl class="simple">
 <dt>Index:</dt><dd><p>reset index</p>
 </dd>
 <dt>Columns:</dt><dd><ul class="simple">
-<li><p>t &lt;int&gt;: time steps (tau-free)</p></li>
+<li><p>t (int): time steps (tau-free)</p></li>
 <li><p>columns with dimensional variables</p></li>
 </ul>
 </dd>
 </dl>
 </div></blockquote>
-<p>&#64;population &lt;int&gt;: total population</p>
+<p>&#64;population (int): total population</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns</dt>
 <dd class="field-odd"><p><ul class="simple">
@@ -1184,12 +1189,12 @@ This method should be overwritten in subclass.</p>
 <p>This method should be overwritten in subclass.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>&lt;pandas.DataFrame&gt;</strong> (<em>specialized_df</em>) – <p>dataframe with the variables</p>
+<dd class="field-odd"><p><strong>specialized_df</strong> (<em>pandas.DataFrame</em>) – <p>dataframe with the variables</p>
 <dl class="simple">
-<dt>Index:</dt><dd><p>&lt;object&gt;:</p>
+<dt>Index:</dt><dd><p>(object):</p>
 </dd>
 <dt>Columns:</dt><dd><ul class="simple">
-<li><p>variables of the models &lt;int&gt;</p></li>
+<li><p>variables of the models (int)</p></li>
 <li><p>any columns</p></li>
 </ul>
 </dd>
@@ -1198,13 +1203,13 @@ This method should be overwritten in subclass.</p>
 </dd>
 <dt class="field-even">Returns</dt>
 <dd class="field-even"><p><dl class="simple">
-<dt>Index:</dt><dd><p>&lt;object&gt;: as-is</p>
+<dt>Index:</dt><dd><p>(object): as-is</p>
 </dd>
 <dt>Columns:</dt><dd><ul class="simple">
-<li><p>Confirmed &lt;int&gt;: the number of confirmed cases</p></li>
-<li><p>Infected &lt;int&gt;: the number of currently infected cases</p></li>
-<li><p>Fatal &lt;int&gt;: the number of fatal cases</p></li>
-<li><p>Recovered &lt;int&gt;: the number of recovered cases</p></li>
+<li><p>Confirmed (int): the number of confirmed cases</p></li>
+<li><p>Infected (int): the number of currently infected cases</p></li>
+<li><p>Fatal (int): the number of fatal cases</p></li>
+<li><p>Recovered (int): the number of recovered cases</p></li>
 <li><p>the other columns &#64;specialzed_df has</p></li>
 </ul>
 </dd>
@@ -1212,7 +1217,7 @@ This method should be overwritten in subclass.</p>
 </p>
 </dd>
 <dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>&lt;pandas.DataFrame&gt;</p>
+<dd class="field-odd"><p>(pandas.DataFrame)</p>
 </dd>
 </dl>
 </dd></dl>
@@ -1223,22 +1228,22 @@ This method should be overwritten in subclass.</p>
 <dd><p>Specialize the dataset for this model.
 This method should be overwritten in subclass.</p>
 <p>Args:
-&#64;data_df &lt;pandas.DataFrame&gt;:</p>
+&#64;data_df (pandas.DataFrame):</p>
 <blockquote>
 <div><dl class="simple">
 <dt>Index:</dt><dd><p>reset index</p>
 </dd>
 <dt>Columns:</dt><dd><ul class="simple">
-<li><p>Confirmed &lt;int&gt;: the number of confirmed cases</p></li>
-<li><p>Infected &lt;int&gt;: the number of currently infected cases</p></li>
-<li><p>Fatal &lt;int&gt;: the number of fatal cases</p></li>
-<li><p>Recovered &lt;int&gt;: the number of recovered cases</p></li>
+<li><p>Confirmed (int): the number of confirmed cases</p></li>
+<li><p>Infected (int): the number of currently infected cases</p></li>
+<li><p>Fatal (int): the number of fatal cases</p></li>
+<li><p>Recovered (int): the number of recovered cases</p></li>
 <li><p>any columns</p></li>
 </ul>
 </dd>
 </dl>
 </div></blockquote>
-<p>&#64;population &lt;int&gt;: total population in the place</p>
+<p>&#64;population (int): total population in the place</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns</dt>
 <dd class="field-odd"><p><dl class="simple">
@@ -1253,7 +1258,7 @@ This method should be overwritten in subclass.</p>
 </p>
 </dd>
 <dt class="field-even">Return type</dt>
-<dd class="field-even"><p>&lt;pandas.DataFrame&gt;</p>
+<dd class="field-even"><p>(pandas.DataFrame)</p>
 </dd>
 </dl>
 </dd></dl>
@@ -1284,24 +1289,24 @@ This method should be overwritten in subclass.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>&lt;pandas.DataFrame&gt;</strong> (<em>clean_df</em>) – <p>cleaned data</p>
+<li><p><strong>clean_df</strong> (<em>pandas.DataFrame</em>) – <p>cleaned data</p>
 <dl class="simple">
 <dt>Index:</dt><dd><p>reset index</p>
 </dd>
 <dt>Columns:</dt><dd><ul>
-<li><p>Date &lt;pd.TimeStamp&gt;: Observation date</p></li>
-<li><p>Country &lt;str&gt;: country/region name</p></li>
-<li><p>Province &lt;str&gt;: province/prefecture/sstate name</p></li>
-<li><p>Confirmed &lt;int&gt;: the number of confirmed cases</p></li>
-<li><p>Infected &lt;int&gt;: the number of currently infected cases</p></li>
-<li><p>Fatal &lt;int&gt;: the number of fatal cases</p></li>
-<li><p>Recovered &lt;int&gt;: the number of recovered cases</p></li>
+<li><p>Date (pd.TimeStamp): Observation date</p></li>
+<li><p>Country (str): country/region name</p></li>
+<li><p>Province (str): province/prefecture/sstate name</p></li>
+<li><p>Confirmed (int): the number of confirmed cases</p></li>
+<li><p>Infected (int): the number of currently infected cases</p></li>
+<li><p>Fatal (int): the number of fatal cases</p></li>
+<li><p>Recovered (int): the number of recovered cases</p></li>
 </ul>
 </dd>
 </dl>
 </p></li>
-<li><p><strong>&lt;str&gt;</strong> (<em>province</em>) – country name</p></li>
-<li><p><strong>&lt;str&gt;</strong> – province name</p></li>
+<li><p><strong>country</strong> (<em>str</em>) – country name</p></li>
+<li><p><strong>province</strong> (<em>str</em>) – province name</p></li>
 </ul>
 </dd>
 </dl>
@@ -1313,7 +1318,7 @@ This method should be overwritten in subclass.</p>
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>&lt;covsirphy.ModelBase&gt;</strong> (<em>model</em>) – ODE model</p></li>
-<li><p><strong>&lt;int&gt;</strong> (<em>population</em>) – total population</p></li>
+<li><p><strong>population</strong> (<em>int</em>) – total population</p></li>
 <li><p><strong>&lt;str/None&gt;</strong> (<em>end_date</em>) – start date, like 22Jan2020</p></li>
 <li><p><strong>&lt;str/None&gt;</strong> – end date, like 01Feb2020</p></li>
 <li><p><strong>&lt;int/None&gt;</strong> (<em>tau</em>) – tau value [min] or None (un-set)</p></li>
@@ -1331,8 +1336,8 @@ This method should be overwritten in subclass.</p>
 <dt>Index:</dt><dd><p>reset index</p>
 </dd>
 <dt>Columns:</dt><dd><ul class="simple">
-<li><p>Elapsed &lt;int&gt;: if tau is None</p></li>
-<li><p>t &lt;int&gt;: if tau is not None</p></li>
+<li><p>Elapsed (int): if tau is None</p></li>
+<li><p>t (int): if tau is not None</p></li>
 <li><p>columns with dimensional variables</p></li>
 </ul>
 </dd>
@@ -1340,7 +1345,7 @@ This method should be overwritten in subclass.</p>
 </p>
 </dd>
 <dt class="field-even">Return type</dt>
-<dd class="field-even"><p>&lt;pandas.DataFrame&gt;</p>
+<dd class="field-even"><p>(pandas.DataFrame)</p>
 </dd>
 </dl>
 </dd></dl>
@@ -1353,8 +1358,8 @@ This method should be overwritten in subclass.</p>
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>&lt;covsirphy.ModelBase&gt;</strong> (<em>model</em>) – ODE model</p></li>
-<li><p><strong>&lt;int&gt;</strong> (<em>population</em>) – total population</p></li>
-<li><p><strong>&lt;str&gt;</strong> (<em>start_date</em>) – start date, like 22Jan2020</p></li>
+<li><p><strong>population</strong> (<em>int</em>) – total population</p></li>
+<li><p><strong>start_date</strong> (<em>str</em>) – start date, like 22Jan2020</p></li>
 </ul>
 </dd>
 </dl>
@@ -1391,8 +1396,8 @@ This method should be overwritten in subclass.</p>
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>&lt;subclass of cs.ModelBase&gt;</strong> (<em>model</em>) – the first ODE model</p></li>
-<li><p><strong>&lt;int&gt;</strong> (<em>population</em>) – the number of steps</p></li>
-<li><p><strong>&lt;int&gt;</strong> – population in the place</p></li>
+<li><p><strong>step_n</strong> (<em>int</em>) – the number of steps</p></li>
+<li><p><strong>population</strong> (<em>int</em>) – population in the place</p></li>
 <li><p><strong>&lt;dict</strong><strong>[</strong><strong>str</strong><strong>]</strong><strong>=float&gt;</strong> (<em>y0_dict</em>) – <ul>
 <li><p>dictionary of parameter values or None</p></li>
 <li><dl class="simple">
@@ -1432,20 +1437,20 @@ This method should be overwritten in subclass.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>&lt;int&gt;</strong> (<em>tau</em>) – tau value [min]</p></li>
-<li><p><strong>&lt;str&gt;</strong> (<em>start_date</em>) – start date of the records, like 22Jan2020</p></li>
+<li><p><strong>tau</strong> (<em>int</em>) – tau value [min]</p></li>
+<li><p><strong>start_date</strong> (<em>str</em>) – start date of the records, like 22Jan2020</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
 <dd class="field-even"><p><dl class="simple">
-<dt>&lt;pandas.DataFrame&gt;</dt><dd><dl class="simple">
+<dt>(pandas.DataFrame)</dt><dd><dl class="simple">
 <dt>Index:</dt><dd><p>reset index</p>
 </dd>
 <dt>Columns:</dt><dd><ul class="simple">
-<li><p>Date &lt;pd.TimeStamp&gt;: Observation date</p></li>
-<li><p>Country &lt;str&gt;: country/region name</p></li>
-<li><p>Province &lt;str&gt;: province/prefecture/state name</p></li>
-<li><p>variables of the models &lt;int&gt;</p></li>
+<li><p>Date (pd.TimeStamp): Observation date</p></li>
+<li><p>Country (str): country/region name</p></li>
+<li><p>Province (str): province/prefecture/state name</p></li>
+<li><p>variables of the models (int)</p></li>
 </ul>
 </dd>
 </dl>
@@ -1466,7 +1471,7 @@ This method should be overwritten in subclass.</p>
 <dt>Index:</dt><dd><p>reset index</p>
 </dd>
 <dt>Columns:</dt><dd><ul class="simple">
-<li><p>t &lt;int&gt;: Elapsed time divided by tau value [-]</p></li>
+<li><p>t (int): Elapsed time divided by tau value [-]</p></li>
 <li><p>non-dimensionalized variables of Susceptible etc.</p></li>
 </ul>
 </dd>
@@ -1474,7 +1479,7 @@ This method should be overwritten in subclass.</p>
 </p>
 </dd>
 <dt class="field-even">Return type</dt>
-<dd class="field-even"><p>&lt;pandas.DataFrame&gt;</p>
+<dd class="field-even"><p>(pandas.DataFrame)</p>
 </dd>
 </dl>
 </dd></dl>
@@ -1495,7 +1500,7 @@ This method should be overwritten in subclass.</p>
 <dt>Index:</dt><dd><p>reset index</p>
 </dd>
 <dt>Columns:</dt><dd><ul class="simple">
-<li><p>t &lt;int&gt;: Elapsed time divided by tau value [-]</p></li>
+<li><p>t (int): Elapsed time divided by tau value [-]</p></li>
 <li><p>columns with dimensionalized variables</p></li>
 </ul>
 </dd>
@@ -1503,7 +1508,7 @@ This method should be overwritten in subclass.</p>
 </p>
 </dd>
 <dt class="field-even">Return type</dt>
-<dd class="field-even"><p>&lt;pandas.DataFrame&gt;</p>
+<dd class="field-even"><p>(pandas.DataFrame)</p>
 </dd>
 </dl>
 </dd></dl>
@@ -1533,13 +1538,13 @@ Policy indices (Overall etc.) are from</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns</dt>
 <dd class="field-odd"><p><dl class="simple">
-<dt>&lt;pandas.DataFrame&gt;</dt><dd><dl class="simple">
+<dt>(pandas.DataFrame)</dt><dd><dl class="simple">
 <dt>Index:</dt><dd><p>reset index</p>
 </dd>
 <dt>Columns:</dt><dd><ul class="simple">
-<li><p>Date &lt;pd.TimeStamp&gt;: Observation date</p></li>
-<li><p>Country &lt;str&gt;: country/region name</p></li>
-<li><p>ISO3 &lt;str&gt;: ISO 3166-1 alpha-3, like JPN</p></li>
+<li><p>Date (pd.TimeStamp): Observation date</p></li>
+<li><p>Country (str): country/region name</p></li>
+<li><p>ISO3 (str): ISO 3166-1 alpha-3, like JPN</p></li>
 <li><p>other column names are defined by OxCGRT.COL_DICT</p></li>
 </ul>
 </dd>
@@ -1560,17 +1565,17 @@ Policy indices (Overall etc.) are from</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>&lt;str&gt;</strong> (<em>iso3</em>) – country name</p></li>
-<li><p><strong>&lt;str&gt;</strong> – ISO 3166-1 alpha-3, like JPN</p></li>
+<li><p><strong>country</strong> (<em>str</em>) – country name</p></li>
+<li><p><strong>iso3</strong> (<em>str</em>) – ISO 3166-1 alpha-3, like JPN</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
 <dd class="field-even"><p><dl class="simple">
-<dt>&lt;pandas.DataFrame&gt;</dt><dd><dl class="simple">
+<dt>(pandas.DataFrame)</dt><dd><dl class="simple">
 <dt>Index:</dt><dd><p>reset index</p>
 </dd>
 <dt>Columns:</dt><dd><ul class="simple">
-<li><p>Date &lt;pd.TimeStamp&gt;: Observation date</p></li>
+<li><p>Date (pd.TimeStamp): Observation date</p></li>
 <li><p>other column names are defined by OxCGRT.COL_DICT</p></li>
 </ul>
 </dd>
@@ -1595,19 +1600,19 @@ Policy indices (Overall etc.) are from</p>
 <em class="property">class </em><code class="sig-prename descclassname">covsirphy.</code><code class="sig-name descname">PhaseData</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">clean_df</span></em>, <em class="sig-param"><span class="n">country</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">province</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/phase/phase_data.html#PhaseData"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#covsirphy.PhaseData" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="covsirphy.cleaning.html#covsirphy.cleaning.word.Word" title="covsirphy.cleaning.word.Word"><code class="xref py py-class docutils literal notranslate"><span class="pre">covsirphy.cleaning.word.Word</span></code></a></p>
 <p>Basic class to create dataset for Trend/ODE analysis.
-:param clean_df &lt;pandas.DataFrame&gt;: cleaned data</p>
+:param clean_df: cleaned data</p>
 <blockquote>
 <div><dl class="simple">
 <dt>Index:</dt><dd><p>reset index</p>
 </dd>
 <dt>Columns:</dt><dd><ul class="simple">
-<li><p>Date &lt;pd.TimeStamp&gt;: Observation date</p></li>
-<li><p>Country &lt;str&gt;: country/region name</p></li>
-<li><p>Province &lt;str&gt;: province/prefecture/sstate name</p></li>
-<li><p>Confirmed &lt;int&gt;: the number of confirmed cases</p></li>
-<li><p>Infected &lt;int&gt;: the number of currently infected cases</p></li>
-<li><p>Fatal &lt;int&gt;: the number of fatal cases</p></li>
-<li><p>Recovered &lt;int&gt;: the number of recovered cases</p></li>
+<li><p>Date (pd.TimeStamp): Observation date</p></li>
+<li><p>Country (str): country/region name</p></li>
+<li><p>Province (str): province/prefecture/sstate name</p></li>
+<li><p>Confirmed (int): the number of confirmed cases</p></li>
+<li><p>Infected (int): the number of currently infected cases</p></li>
+<li><p>Fatal (int): the number of fatal cases</p></li>
+<li><p>Recovered (int): the number of recovered cases</p></li>
 </ul>
 </dd>
 </dl>
@@ -1615,8 +1620,8 @@ Policy indices (Overall etc.) are from</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>&lt;str&gt;</strong> (<em>province</em>) – country name</p></li>
-<li><p><strong>&lt;str&gt;</strong> – province name</p></li>
+<li><p><strong>country</strong> (<em>str</em>) – country name</p></li>
+<li><p><strong>province</strong> (<em>str</em>) – province name</p></li>
 </ul>
 </dd>
 </dl>
@@ -1628,12 +1633,12 @@ This method must be overwritten in child class.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>&lt;str&gt;</strong> (<em>end_date</em>) – start date, like 22Jan2020</p></li>
-<li><p><strong>&lt;str&gt;</strong> – end date, like 01Feb2020</p></li>
+<li><p><strong>start_date</strong> (<em>str</em>) – start date, like 22Jan2020</p></li>
+<li><p><strong>end_date</strong> (<em>str</em>) – end date, like 01Feb2020</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
-<dd class="field-even"><p>&lt;pandas.DataFrame&gt;</p>
+<dd class="field-even"><p>(pandas.DataFrame)</p>
 </dd>
 </dl>
 </dd></dl>
@@ -1645,28 +1650,28 @@ This method must be overwritten in child class.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>&lt;str&gt;</strong> (<em>end_date</em>) – start date, like 22Jan2020</p></li>
-<li><p><strong>&lt;str&gt;</strong> – end date, like 01Feb2020</p></li>
+<li><p><strong>start_date</strong> (<em>str</em>) – start date, like 22Jan2020</p></li>
+<li><p><strong>end_date</strong> (<em>str</em>) – end date, like 01Feb2020</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
 <dd class="field-even"><p><dl class="simple">
 <dt>Index:</dt><dd><ul class="simple">
-<li><p>Date &lt;pd.TimeStamp&gt;: Observation date</p></li>
+<li><p>Date (pd.TimeStamp): Observation date</p></li>
 </ul>
 </dd>
 <dt>Columns:</dt><dd><ul class="simple">
-<li><p>Confirmed &lt;int&gt;: the number of confirmed cases</p></li>
-<li><p>Infected &lt;int&gt;: the number of currently infected cases</p></li>
-<li><p>Fatal &lt;int&gt;: the number of fatal cases</p></li>
-<li><p>Recovered &lt;int&gt;: the number of recovered cases</p></li>
+<li><p>Confirmed (int): the number of confirmed cases</p></li>
+<li><p>Infected (int): the number of currently infected cases</p></li>
+<li><p>Fatal (int): the number of fatal cases</p></li>
+<li><p>Recovered (int): the number of recovered cases</p></li>
 </ul>
 </dd>
 </dl>
 </p>
 </dd>
 <dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>&lt;pandas.DataFrame&gt;</p>
+<dd class="field-odd"><p>(pandas.DataFrame)</p>
 </dd>
 </dl>
 </dd></dl>
@@ -1681,9 +1686,9 @@ This method must be overwritten in child class.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>&lt;str&gt;</strong> (<em>last_record_date</em>) – the first date of the series, like 22Jan2020</p></li>
-<li><p><strong>&lt;str&gt;</strong> – the last date of the records, like 25May2020</p></li>
-<li><p><strong>&lt;int&gt;</strong> (<em>population</em>) – initial value of total population in the place</p></li>
+<li><p><strong>first_date</strong> (<em>str</em>) – the first date of the series, like 22Jan2020</p></li>
+<li><p><strong>last_record_date</strong> (<em>str</em>) – the last date of the records, like 25May2020</p></li>
+<li><p><strong>population</strong> (<em>int</em>) – initial value of total population in the place</p></li>
 </ul>
 </dd>
 </dl>
@@ -1694,9 +1699,9 @@ This method must be overwritten in child class.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>&lt;str&gt;</strong> (<em>end_date</em>) – start date of the new phase</p></li>
-<li><p><strong>&lt;str&gt;</strong> – end date of the new phase</p></li>
-<li><p><strong>&lt;int&gt;</strong> (<em>population</em>) – population value of the start date
+<li><p><strong>start_date</strong> (<em>str</em>) – start date of the new phase</p></li>
+<li><p><strong>end_date</strong> (<em>str</em>) – end date of the new phase</p></li>
+<li><p><strong>population</strong> (<em>int</em>) – population value of the start date
 - if None, initial value will be used</p></li>
 <li><p><strong>kwargs</strong> – keyword arguments to save as phase information</p></li>
 </ul>
@@ -1713,7 +1718,7 @@ This method must be overwritten in child class.</p>
 <dd><p>Clear phase information.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>&lt;bool&gt;</strong> (<em>include_past</em>) – <ul class="simple">
+<dd class="field-odd"><p><strong>include_past</strong> (<em>bool</em>) – <ul class="simple">
 <li><p>if True, include past phases.</p></li>
 <li><p>future phase are always included</p></li>
 </ul>
@@ -1731,7 +1736,7 @@ This method must be overwritten in child class.</p>
 <dd><p>Delete a phase.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>&lt;str&gt;</strong> (<em>phase</em>) – phase name, like 0th, 1st, 2nd…</p>
+<dd class="field-odd"><p><strong>phase</strong> (<em>str</em>) – phase name, like 0th, 1st, 2nd…</p>
 </dd>
 <dt class="field-even">Returns</dt>
 <dd class="field-even"><p>self</p>
@@ -1744,7 +1749,7 @@ This method must be overwritten in child class.</p>
 <code class="sig-name descname">next_date</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/analysis/phase_series.html#PhaseSeries.next_date"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#covsirphy.PhaseSeries.next_date" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return the next date of the end date of the last registered phase.
 :returns: like 01Feb2020
-:rtype: &lt;str&gt;</p>
+:rtype: (str)</p>
 </dd></dl>
 
 <dl class="py method">
@@ -1758,7 +1763,7 @@ This method must be overwritten in child class.</p>
 <li><p>phase name, like 1st, 2nd, 3rd…</p></li>
 </ul>
 </dd>
-<dt>COlumns:</dt><dd><ul class="simple">
+<dt>Columns:</dt><dd><ul class="simple">
 <li><p>Type: ‘Past’ or ‘Future’</p></li>
 <li><p>Start: start date of the phase</p></li>
 <li><p>End: end date of the phase</p></li>
@@ -1770,7 +1775,7 @@ This method must be overwritten in child class.</p>
 </p>
 </dd>
 <dt class="field-even">Return type</dt>
-<dd class="field-even"><p>&lt;pandas.DataFrame&gt;</p>
+<dd class="field-even"><p>(pandas.DataFrame)</p>
 </dd>
 </dl>
 </dd></dl>
@@ -1782,13 +1787,13 @@ This method must be overwritten in child class.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns</dt>
 <dd class="field-odd"><p><dl>
-<dt>str/int}&gt;:</dt><dd><ul class="simple">
+<dt>str/int}):</dt><dd><ul class="simple">
 <li><p>key: phase number, like 1th, 2nd,…</p></li>
 <li><dl class="simple">
-<dt>value: {</dt><dd><p>‘Type’: &lt;str&gt; ‘Past’ or ‘Future’
-‘Start’: &lt;str&gt; start date of the phase,
-‘End’: &lt;str&gt; end date of the phase,
-‘Population’: &lt;int&gt; population value at the start date
+<dt>value: {</dt><dd><p>‘Type’: (str) ‘Past’ or ‘Future’
+‘Start’: (str) start date of the phase,
+‘End’: (str) end date of the phase,
+‘Population’: (int) population value at the start date
 - values added by self.update()</p>
 </dd>
 </dl>
@@ -1800,7 +1805,7 @@ This method must be overwritten in child class.</p>
 </p>
 </dd>
 <dt class="field-even">Return type</dt>
-<dd class="field-even"><p>&lt;dict[str]={str</p>
+<dd class="field-even"><p>(dict[str]={str</p>
 </dd>
 </dl>
 </dd></dl>
@@ -1812,7 +1817,7 @@ This method must be overwritten in child class.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>&lt;str&gt;</strong> (<em>phase</em>) – phase name</p></li>
+<li><p><strong>phase</strong> (<em>str</em>) – phase name</p></li>
 <li><p><strong>kwargs</strong> – keyword arguments to add</p></li>
 </ul>
 </dd>
@@ -1834,13 +1839,13 @@ This method overwrite super().cleaning() method.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns</dt>
 <dd class="field-odd"><p><dl class="simple">
-<dt>&lt;pandas.DataFrame&gt;</dt><dd><dl class="simple">
+<dt>(pandas.DataFrame)</dt><dd><dl class="simple">
 <dt>Index:</dt><dd><p>reset index</p>
 </dd>
 <dt>Columns:</dt><dd><ul class="simple">
-<li><p>Country &lt;str&gt;: country/region name</p></li>
-<li><p>Province &lt;str&gt;: province/prefecture/state name</p></li>
-<li><p>Population &lt;int&gt;: total population</p></li>
+<li><p>Country (str): country/region name</p></li>
+<li><p>Province (str): province/prefecture/state name</p></li>
+<li><p>Population (int): total population</p></li>
 </ul>
 </dd>
 </dl>
@@ -1856,7 +1861,7 @@ This method overwrite super().cleaning() method.</p>
 <code class="sig-name descname">to_dict</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">country_level</span><span class="o">=</span><span class="default_value">True</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/cleaning/population.html#Population.to_dict"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#covsirphy.Population.to_dict" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return dictionary of population values.</p>
 <p>Args:
-country_level &lt;str&gt;: whether key is country name or not</p>
+country_level (str): whether key is country name or not</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns</dt>
 <dd class="field-odd"><p><ul class="simple">
@@ -1877,7 +1882,7 @@ country_level &lt;str&gt;: whether key is country name or not</p>
 <dd><p>Return the total value of population in the datset.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns</dt>
-<dd class="field-odd"><p>&lt;int&gt;</p>
+<dd class="field-odd"><p>(int)</p>
 </dd>
 </dl>
 </dd></dl>
@@ -1887,9 +1892,9 @@ country_level &lt;str&gt;: whether key is country name or not</p>
 <code class="sig-name descname">update</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">value</span></em>, <em class="sig-param"><span class="n">country</span></em>, <em class="sig-param"><span class="n">province</span><span class="o">=</span><span class="default_value">'-'</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/cleaning/population.html#Population.update"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#covsirphy.Population.update" title="Permalink to this definition">¶</a></dt>
 <dd><p>Update the value of a new place.</p>
 <p>Args:
-value &lt;int&gt;: population in the place
-country &lt;str&gt;: country name
-province &lt;str&gt;: province name</p>
+value (int): population in the place
+country (str): country name
+province (str): province name</p>
 </dd></dl>
 
 <dl class="py method">
@@ -1897,14 +1902,14 @@ province &lt;str&gt;: province name</p>
 <code class="sig-name descname">value</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">country</span></em>, <em class="sig-param"><span class="n">province</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/cleaning/population.html#Population.value"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#covsirphy.Population.value" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return the value of population in the place.</p>
 <p>Args:
-country &lt;str&gt;: country name
-province &lt;str&gt;: province name</p>
+country (str): country name
+province (str): province name</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns</dt>
 <dd class="field-odd"><p>population in the place</p>
 </dd>
 <dt class="field-even">Return type</dt>
-<dd class="field-even"><p>&lt;int&gt;</p>
+<dd class="field-even"><p>(int)</p>
 </dd>
 </dl>
 </dd></dl>
@@ -1957,7 +1962,7 @@ province &lt;str&gt;: province name</p>
 <dd><p>Calculate 1/beta [day] etc.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>tau &lt;int&gt;</strong> (<em>param</em>) – tau value [min]</p>
+<dd class="field-odd"><p><strong>tau</strong> (<em>param</em>) – tau value [min]</p>
 </dd>
 </dl>
 </dd></dl>
@@ -1973,19 +1978,19 @@ province &lt;str&gt;: province name</p>
 <em class="property">classmethod </em><code class="sig-name descname">param_range</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">taufree_df</span></em>, <em class="sig-param"><span class="n">population</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/ode/sewirf.html#SEWIRF.param_range"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#covsirphy.SEWIRF.param_range" title="Permalink to this definition">¶</a></dt>
 <dd><p>Define the range of parameters (not including tau value).</p>
 <p>Args:
-&#64;taufree_df &lt;pandas.DataFrame&gt;:</p>
+&#64;taufree_df (pandas.DataFrame):</p>
 <blockquote>
 <div><dl class="simple">
 <dt>Index:</dt><dd><p>reset index</p>
 </dd>
 <dt>Columns:</dt><dd><ul class="simple">
-<li><p>t &lt;int&gt;: time steps (tau-free)</p></li>
+<li><p>t (int): time steps (tau-free)</p></li>
 <li><p>columns with dimensional variables</p></li>
 </ul>
 </dd>
 </dl>
 </div></blockquote>
-<p>&#64;population &lt;int&gt;: total population</p>
+<p>&#64;population (int): total population</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns</dt>
 <dd class="field-odd"><p><ul class="simple">
@@ -2009,17 +2014,17 @@ province &lt;str&gt;: province name</p>
 </dl>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>&lt;pandas.DataFrame&gt;</strong> (<em>specialized_df</em>) – <p>dataframe with the variables</p>
+<dd class="field-odd"><p><strong>specialized_df</strong> (<em>pandas.DataFrame</em>) – <p>dataframe with the variables</p>
 <dl class="simple">
-<dt>Index:</dt><dd><p>&lt;object&gt;</p>
+<dt>Index:</dt><dd><p>(object)</p>
 </dd>
 <dt>Columns:</dt><dd><ul class="simple">
-<li><p>Susceptible &lt;int&gt;: the number of susceptible cases</p></li>
-<li><p>Infected &lt;int&gt;: the number of currently infected cases</p></li>
-<li><p>Recovered &lt;int&gt;: the number of recovered cases</p></li>
-<li><p>Fatal &lt;int&gt;: the number of fatal cases</p></li>
-<li><p>Exposed &lt;int&gt;: Exposed and in latent period (without infectivity)</p></li>
-<li><p>Waiting &lt;int&gt;: Waiting cases for confirmation (with infectivity)</p></li>
+<li><p>Susceptible (int): the number of susceptible cases</p></li>
+<li><p>Infected (int): the number of currently infected cases</p></li>
+<li><p>Recovered (int): the number of recovered cases</p></li>
+<li><p>Fatal (int): the number of fatal cases</p></li>
+<li><p>Exposed (int): Exposed and in latent period (without infectivity)</p></li>
+<li><p>Waiting (int): Waiting cases for confirmation (with infectivity)</p></li>
 <li><p>any columns</p></li>
 </ul>
 </dd>
@@ -2028,13 +2033,13 @@ province &lt;str&gt;: province name</p>
 </dd>
 <dt class="field-even">Returns</dt>
 <dd class="field-even"><p><dl class="simple">
-<dt>Index:</dt><dd><p>&lt;object&gt;: as-is</p>
+<dt>Index:</dt><dd><p>(object): as-is</p>
 </dd>
 <dt>Columns:</dt><dd><ul class="simple">
-<li><p>Confirmed &lt;int&gt;: the number of confirmed cases</p></li>
-<li><p>Infected &lt;int&gt;: the number of currently infected cases</p></li>
-<li><p>Fatal &lt;int&gt;: the number of fatal cases</p></li>
-<li><p>Recovered &lt;int&gt;: the number of recovered cases</p></li>
+<li><p>Confirmed (int): the number of confirmed cases</p></li>
+<li><p>Infected (int): the number of currently infected cases</p></li>
+<li><p>Fatal (int): the number of fatal cases</p></li>
+<li><p>Recovered (int): the number of recovered cases</p></li>
 <li><p>the other columns &#64;specialzed_df has</p></li>
 </ul>
 </dd>
@@ -2042,7 +2047,7 @@ province &lt;str&gt;: province name</p>
 </p>
 </dd>
 <dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>&lt;pandas.DataFrame&gt;</p>
+<dd class="field-odd"><p>(pandas.DataFrame)</p>
 </dd>
 </dl>
 </dd></dl>
@@ -2052,22 +2057,22 @@ province &lt;str&gt;: province name</p>
 <em class="property">classmethod </em><code class="sig-name descname">specialize</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">data_df</span></em>, <em class="sig-param"><span class="n">population</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/ode/sewirf.html#SEWIRF.specialize"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#covsirphy.SEWIRF.specialize" title="Permalink to this definition">¶</a></dt>
 <dd><p>Specialize the dataset for this model.</p>
 <p>Args:
-&#64;data_df &lt;pandas.DataFrame&gt;:</p>
+&#64;data_df (pandas.DataFrame):</p>
 <blockquote>
 <div><dl class="simple">
 <dt>Index:</dt><dd><p>reset index</p>
 </dd>
 <dt>Columns:</dt><dd><ul class="simple">
-<li><p>Confirmed &lt;int&gt;: the number of confirmed cases</p></li>
-<li><p>Infected &lt;int&gt;: the number of currently infected cases</p></li>
-<li><p>Fatal &lt;int&gt;: the number of fatal cases</p></li>
-<li><p>Recovered &lt;int&gt;: the number of recovered cases</p></li>
+<li><p>Confirmed (int): the number of confirmed cases</p></li>
+<li><p>Infected (int): the number of currently infected cases</p></li>
+<li><p>Fatal (int): the number of fatal cases</p></li>
+<li><p>Recovered (int): the number of recovered cases</p></li>
 <li><p>any columns</p></li>
 </ul>
 </dd>
 </dl>
 </div></blockquote>
-<p>&#64;population &lt;int&gt;: total population in the place</p>
+<p>&#64;population (int): total population in the place</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns</dt>
 <dd class="field-odd"><p><dl class="simple">
@@ -2075,16 +2080,16 @@ province &lt;str&gt;: province name</p>
 </dd>
 <dt>Columns:</dt><dd><ul class="simple">
 <li><p>any columns &#64;data_df has</p></li>
-<li><p>Susceptible &lt;int&gt;: the number of susceptible cases</p></li>
-<li><p>Exposed &lt;int&gt;: 0</p></li>
-<li><p>Waiting &lt;int&gt;: 0</p></li>
+<li><p>Susceptible (int): the number of susceptible cases</p></li>
+<li><p>Exposed (int): 0</p></li>
+<li><p>Waiting (int): 0</p></li>
 </ul>
 </dd>
 </dl>
 </p>
 </dd>
 <dt class="field-even">Return type</dt>
-<dd class="field-even"><p>&lt;pandas.DataFrame&gt;</p>
+<dd class="field-even"><p>(pandas.DataFrame)</p>
 </dd>
 </dl>
 </dd></dl>
@@ -2099,7 +2104,7 @@ province &lt;str&gt;: province name</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>&lt;int&gt;</strong> (<em>population</em>) – total population</p></li>
+<li><p><strong>population</strong> (<em>int</em>) – total population</p></li>
 <li><p><strong>&lt;float&gt;</strong> (<em>sigma</em>) – </p></li>
 <li><p><strong>&lt;float&gt;</strong> – </p></li>
 </ul>
@@ -2146,7 +2151,7 @@ province &lt;str&gt;: province name</p>
 <dd><p>Calculate 1/beta [day] etc.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>tau &lt;int&gt;</strong> (<em>param</em>) – tau value [min]</p>
+<dd class="field-odd"><p><strong>tau</strong> (<em>param</em>) – tau value [min]</p>
 </dd>
 </dl>
 </dd></dl>
@@ -2162,19 +2167,19 @@ province &lt;str&gt;: province name</p>
 <em class="property">classmethod </em><code class="sig-name descname">param_range</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">taufree_df</span></em>, <em class="sig-param"><span class="n">population</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/ode/sir.html#SIR.param_range"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#covsirphy.SIR.param_range" title="Permalink to this definition">¶</a></dt>
 <dd><p>Define the range of parameters (not including tau value).</p>
 <p>Args:
-&#64;taufree_df &lt;pandas.DataFrame&gt;:</p>
+&#64;taufree_df (pandas.DataFrame):</p>
 <blockquote>
 <div><dl class="simple">
 <dt>Index:</dt><dd><p>reset index</p>
 </dd>
 <dt>Columns:</dt><dd><ul class="simple">
-<li><p>t &lt;int&gt;: time steps (tau-free)</p></li>
+<li><p>t (int): time steps (tau-free)</p></li>
 <li><p>columns with dimensional variables</p></li>
 </ul>
 </dd>
 </dl>
 </div></blockquote>
-<p>&#64;population &lt;int&gt;: total population</p>
+<p>&#64;population (int): total population</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns</dt>
 <dd class="field-odd"><p><ul class="simple">
@@ -2198,14 +2203,14 @@ province &lt;str&gt;: province name</p>
 </dl>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>&lt;pandas.DataFrame&gt;</strong> (<em>specialized_df</em>) – <p>dataframe with the variables</p>
+<dd class="field-odd"><p><strong>specialized_df</strong> (<em>pandas.DataFrame</em>) – <p>dataframe with the variables</p>
 <dl class="simple">
 <dt>Index:</dt><dd><p>reset index</p>
 </dd>
 <dt>Columns:</dt><dd><ul class="simple">
-<li><p>Susceptible &lt;int&gt;: the number of susceptible cases</p></li>
-<li><p>Infected &lt;int&gt;: the number of currently infected cases</p></li>
-<li><p>Fatal or Recovered &lt;int&gt;: the number of fatal/recovered cases</p></li>
+<li><p>Susceptible (int): the number of susceptible cases</p></li>
+<li><p>Infected (int): the number of currently infected cases</p></li>
+<li><p>Fatal or Recovered (int): the number of fatal/recovered cases</p></li>
 <li><p>any columns</p></li>
 </ul>
 </dd>
@@ -2217,10 +2222,10 @@ province &lt;str&gt;: province name</p>
 <dt>Index:</dt><dd><p>reset index</p>
 </dd>
 <dt>Columns:</dt><dd><ul class="simple">
-<li><p>Confirmed &lt;int&gt;: the number of confirmed cases</p></li>
-<li><p>Infected &lt;int&gt;: the number of currently infected cases</p></li>
-<li><p>Fatal &lt;int&gt;: the number of fatal cases</p></li>
-<li><p>Recovered &lt;int&gt;: the number of recovered cases</p></li>
+<li><p>Confirmed (int): the number of confirmed cases</p></li>
+<li><p>Infected (int): the number of currently infected cases</p></li>
+<li><p>Fatal (int): the number of fatal cases</p></li>
+<li><p>Recovered (int): the number of recovered cases</p></li>
 <li><p>the other columns &#64;specialzed_df has</p></li>
 </ul>
 </dd>
@@ -2228,7 +2233,7 @@ province &lt;str&gt;: province name</p>
 </p>
 </dd>
 <dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>&lt;pandas.DataFrame&gt;</p>
+<dd class="field-odd"><p>(pandas.DataFrame)</p>
 </dd>
 </dl>
 </dd></dl>
@@ -2238,22 +2243,22 @@ province &lt;str&gt;: province name</p>
 <em class="property">classmethod </em><code class="sig-name descname">specialize</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">data_df</span></em>, <em class="sig-param"><span class="n">population</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/ode/sir.html#SIR.specialize"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#covsirphy.SIR.specialize" title="Permalink to this definition">¶</a></dt>
 <dd><p>Specialize the dataset for this model.</p>
 <p>Args:
-&#64;data_df &lt;pandas.DataFrame&gt;:</p>
+&#64;data_df (pandas.DataFrame):</p>
 <blockquote>
 <div><dl class="simple">
 <dt>Index:</dt><dd><p>reset index</p>
 </dd>
 <dt>Columns:</dt><dd><ul class="simple">
-<li><p>Confirmed &lt;int&gt;: the number of confirmed cases</p></li>
-<li><p>Infected &lt;int&gt;: the number of currently infected cases</p></li>
-<li><p>Fatal &lt;int&gt;: the number of fatal cases</p></li>
-<li><p>Recovered &lt;int&gt;: the number of recovered cases</p></li>
+<li><p>Confirmed (int): the number of confirmed cases</p></li>
+<li><p>Infected (int): the number of currently infected cases</p></li>
+<li><p>Fatal (int): the number of fatal cases</p></li>
+<li><p>Recovered (int): the number of recovered cases</p></li>
 <li><p>any columns</p></li>
 </ul>
 </dd>
 </dl>
 </div></blockquote>
-<p>&#64;population &lt;int&gt;: total population in the place</p>
+<p>&#64;population (int): total population in the place</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns</dt>
 <dd class="field-odd"><p><dl class="simple">
@@ -2261,15 +2266,15 @@ province &lt;str&gt;: province name</p>
 </dd>
 <dt>Columns:</dt><dd><ul class="simple">
 <li><p>any columns &#64;data_df has</p></li>
-<li><p>Susceptible &lt;int&gt;: the number of susceptible cases</p></li>
-<li><p>Fatal or Recovered &lt;int&gt;: total number of fatal/recovered cases</p></li>
+<li><p>Susceptible (int): the number of susceptible cases</p></li>
+<li><p>Fatal or Recovered (int): total number of fatal/recovered cases</p></li>
 </ul>
 </dd>
 </dl>
 </p>
 </dd>
 <dt class="field-even">Return type</dt>
-<dd class="field-even"><p>&lt;pandas.DataFrame&gt;</p>
+<dd class="field-even"><p>(pandas.DataFrame)</p>
 </dd>
 </dl>
 </dd></dl>
@@ -2284,7 +2289,7 @@ province &lt;str&gt;: province name</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>&lt;int&gt;</strong> (<em>population</em>) – total population</p></li>
+<li><p><strong>population</strong> (<em>int</em>) – total population</p></li>
 <li><p><strong>&lt;float&gt;</strong> (<em>sigma</em>) – </p></li>
 <li><p><strong>&lt;float&gt;</strong> – </p></li>
 <li><p><strong>&lt;float&gt;</strong> – </p></li>
@@ -2332,7 +2337,7 @@ province &lt;str&gt;: province name</p>
 <dd><p>Calculate 1/beta [day] etc.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>tau &lt;int&gt;</strong> (<em>param</em>) – tau value [min]</p>
+<dd class="field-odd"><p><strong>tau</strong> (<em>param</em>) – tau value [min]</p>
 </dd>
 </dl>
 </dd></dl>
@@ -2350,17 +2355,17 @@ province &lt;str&gt;: province name</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>&lt;pandas.DataFrame&gt;</strong> (<em>taufree_df</em>) – <dl class="simple">
+<li><p><strong>taufree_df</strong> (<em>pandas.DataFrame</em>) – <dl class="simple">
 <dt>Index:</dt><dd><p>reset index</p>
 </dd>
 <dt>Columns:</dt><dd><ul>
-<li><p>t &lt;int&gt;: time steps (tau-free)</p></li>
+<li><p>t (int): time steps (tau-free)</p></li>
 <li><p>columns with dimensional variables</p></li>
 </ul>
 </dd>
 </dl>
 </p></li>
-<li><p><strong>&lt;int&gt;</strong> (<em>population</em>) – total population</p></li>
+<li><p><strong>population</strong> (<em>int</em>) – total population</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
@@ -2381,16 +2386,16 @@ province &lt;str&gt;: province name</p>
 <em class="property">classmethod </em><code class="sig-name descname">restore</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">specialized_df</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/ode/sird.html#SIRD.restore"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#covsirphy.SIRD.restore" title="Permalink to this definition">¶</a></dt>
 <dd><p>Restore Confirmed/Infected/Recovered/Fatal using a dataframe with the variables of the model.</p>
 <p>Args:
-&#64;specialized_df &lt;pandas.DataFrame&gt;: dataframe with the variables</p>
+&#64;specialized_df (pandas.DataFrame): dataframe with the variables</p>
 <blockquote>
 <div><dl class="simple">
 <dt>Index:</dt><dd><p>reset index</p>
 </dd>
 <dt>Columns:</dt><dd><ul class="simple">
-<li><p>Susceptible &lt;int&gt;: the number of susceptible cases</p></li>
-<li><p>Infected &lt;int&gt;: the number of currently infected cases</p></li>
-<li><p>Recovered &lt;int&gt;: the number of recovered cases</p></li>
-<li><p>Fatal &lt;int&gt;: the number of fatal cases</p></li>
+<li><p>Susceptible (int): the number of susceptible cases</p></li>
+<li><p>Infected (int): the number of currently infected cases</p></li>
+<li><p>Recovered (int): the number of recovered cases</p></li>
+<li><p>Fatal (int): the number of fatal cases</p></li>
 <li><p>any columns</p></li>
 </ul>
 </dd>
@@ -2402,10 +2407,10 @@ province &lt;str&gt;: province name</p>
 <dt>Index:</dt><dd><p>reset index</p>
 </dd>
 <dt>Columns:</dt><dd><ul class="simple">
-<li><p>Confirmed &lt;int&gt;: the number of confirmed cases</p></li>
-<li><p>Infected &lt;int&gt;: the number of currently infected cases</p></li>
-<li><p>Fatal &lt;int&gt;: the number of fatal cases</p></li>
-<li><p>Recovered &lt;int&gt;: the number of recovered cases</p></li>
+<li><p>Confirmed (int): the number of confirmed cases</p></li>
+<li><p>Infected (int): the number of currently infected cases</p></li>
+<li><p>Fatal (int): the number of fatal cases</p></li>
+<li><p>Recovered (int): the number of recovered cases</p></li>
 <li><p>the other columns &#64;specialzed_df has</p></li>
 </ul>
 </dd>
@@ -2413,7 +2418,7 @@ province &lt;str&gt;: province name</p>
 </p>
 </dd>
 <dt class="field-even">Return type</dt>
-<dd class="field-even"><p>&lt;pandas.DataFrame&gt;</p>
+<dd class="field-even"><p>(pandas.DataFrame)</p>
 </dd>
 </dl>
 </dd></dl>
@@ -2425,20 +2430,20 @@ province &lt;str&gt;: province name</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>&lt;pandas.DataFrame&gt;</strong> (<em>data_df</em>) – <dl class="simple">
+<li><p><strong>data_df</strong> (<em>pandas.DataFrame</em>) – <dl class="simple">
 <dt>Index:</dt><dd><p>reset index</p>
 </dd>
 <dt>Columns:</dt><dd><ul>
-<li><p>Confirmed &lt;int&gt;: the number of confirmed cases</p></li>
-<li><p>Infected &lt;int&gt;: the number of currently infected cases</p></li>
-<li><p>Fatal &lt;int&gt;: the number of fatal cases</p></li>
-<li><p>Recovered &lt;int&gt;: the number of recovered cases</p></li>
+<li><p>Confirmed (int): the number of confirmed cases</p></li>
+<li><p>Infected (int): the number of currently infected cases</p></li>
+<li><p>Fatal (int): the number of fatal cases</p></li>
+<li><p>Recovered (int): the number of recovered cases</p></li>
 <li><p>any columns</p></li>
 </ul>
 </dd>
 </dl>
 </p></li>
-<li><p><strong>&lt;int&gt;</strong> (<em>population</em>) – total population in the place</p></li>
+<li><p><strong>population</strong> (<em>int</em>) – total population in the place</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
@@ -2447,14 +2452,14 @@ province &lt;str&gt;: province name</p>
 </dd>
 <dt>Columns:</dt><dd><ul class="simple">
 <li><p>any columns &#64;data_df has</p></li>
-<li><p>Susceptible &lt;int&gt;: the number of susceptible cases</p></li>
+<li><p>Susceptible (int): the number of susceptible cases</p></li>
 </ul>
 </dd>
 </dl>
 </p>
 </dd>
 <dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>&lt;pandas.DataFrame&gt;</p>
+<dd class="field-odd"><p>(pandas.DataFrame)</p>
 </dd>
 </dl>
 </dd></dl>
@@ -2469,7 +2474,7 @@ province &lt;str&gt;: province name</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>&lt;int&gt;</strong> (<em>population</em>) – total population</p></li>
+<li><p><strong>population</strong> (<em>int</em>) – total population</p></li>
 <li><p><strong>&lt;float&gt;</strong> (<em>sigma</em>) – </p></li>
 <li><p><strong>&lt;float&gt;</strong> – </p></li>
 <li><p><strong>&lt;float&gt;</strong> – </p></li>
@@ -2518,7 +2523,7 @@ province &lt;str&gt;: province name</p>
 <dd><p>Calculate 1/beta [day] etc.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>tau &lt;int&gt;</strong> (<em>param</em>) – tau value [min]</p>
+<dd class="field-odd"><p><strong>tau</strong> (<em>param</em>) – tau value [min]</p>
 </dd>
 </dl>
 </dd></dl>
@@ -2536,17 +2541,17 @@ province &lt;str&gt;: province name</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>&lt;pandas.DataFrame&gt;</strong> (<em>taufree_df</em>) – <dl class="simple">
+<li><p><strong>taufree_df</strong> (<em>pandas.DataFrame</em>) – <dl class="simple">
 <dt>Index:</dt><dd><p>reset index</p>
 </dd>
 <dt>Columns:</dt><dd><ul>
-<li><p>t &lt;int&gt;: time steps (tau-free)</p></li>
+<li><p>t (int): time steps (tau-free)</p></li>
 <li><p>columns with dimensional variables</p></li>
 </ul>
 </dd>
 </dl>
 </p></li>
-<li><p><strong>&lt;int&gt;</strong> (<em>population</em>) – total population</p></li>
+<li><p><strong>population</strong> (<em>int</em>) – total population</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
@@ -2570,16 +2575,16 @@ province &lt;str&gt;: province name</p>
 </dd>
 </dl>
 <p>Args:
-specialized_df &lt;pandas.DataFrame&gt;: dataframe with the variables</p>
+specialized_df (pandas.DataFrame): dataframe with the variables</p>
 <blockquote>
 <div><dl class="simple">
-<dt>Index:</dt><dd><p>&lt;object&gt;</p>
+<dt>Index:</dt><dd><p>(object)</p>
 </dd>
 <dt>Columns:</dt><dd><ul class="simple">
-<li><p>Susceptible &lt;int&gt;: the number of susceptible cases</p></li>
-<li><p>Infected &lt;int&gt;: the number of currently infected cases</p></li>
-<li><p>Recovered &lt;int&gt;: the number of recovered cases</p></li>
-<li><p>Fatal &lt;int&gt;: the number of fatal cases</p></li>
+<li><p>Susceptible (int): the number of susceptible cases</p></li>
+<li><p>Infected (int): the number of currently infected cases</p></li>
+<li><p>Recovered (int): the number of recovered cases</p></li>
+<li><p>Fatal (int): the number of fatal cases</p></li>
 <li><p>any columns</p></li>
 </ul>
 </dd>
@@ -2588,13 +2593,13 @@ specialized_df &lt;pandas.DataFrame&gt;: dataframe with the variables</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns</dt>
 <dd class="field-odd"><p><dl class="simple">
-<dt>Index:</dt><dd><p>&lt;object&gt;: as-is</p>
+<dt>Index:</dt><dd><p>(object): as-is</p>
 </dd>
 <dt>Columns:</dt><dd><ul class="simple">
-<li><p>Confirmed &lt;int&gt;: the number of confirmed cases</p></li>
-<li><p>Infected &lt;int&gt;: the number of currently infected cases</p></li>
-<li><p>Fatal &lt;int&gt;: the number of fatal cases</p></li>
-<li><p>Recovered &lt;int&gt;: the number of recovered cases</p></li>
+<li><p>Confirmed (int): the number of confirmed cases</p></li>
+<li><p>Infected (int): the number of currently infected cases</p></li>
+<li><p>Fatal (int): the number of fatal cases</p></li>
+<li><p>Recovered (int): the number of recovered cases</p></li>
 <li><p>the other columns &#64;specialzed_df has</p></li>
 </ul>
 </dd>
@@ -2602,7 +2607,7 @@ specialized_df &lt;pandas.DataFrame&gt;: dataframe with the variables</p>
 </p>
 </dd>
 <dt class="field-even">Return type</dt>
-<dd class="field-even"><p>&lt;pandas.DataFrame&gt;</p>
+<dd class="field-even"><p>(pandas.DataFrame)</p>
 </dd>
 </dl>
 </dd></dl>
@@ -2612,22 +2617,22 @@ specialized_df &lt;pandas.DataFrame&gt;: dataframe with the variables</p>
 <em class="property">classmethod </em><code class="sig-name descname">specialize</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">data_df</span></em>, <em class="sig-param"><span class="n">population</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/ode/sirf.html#SIRF.specialize"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#covsirphy.SIRF.specialize" title="Permalink to this definition">¶</a></dt>
 <dd><p>Specialize the dataset for this model.</p>
 <p>Args:
-data_df &lt;pandas.DataFrame&gt;:</p>
+data_df (pandas.DataFrame):</p>
 <blockquote>
 <div><dl class="simple">
 <dt>Index:</dt><dd><p>reset index</p>
 </dd>
 <dt>Columns:</dt><dd><ul class="simple">
-<li><p>Confirmed &lt;int&gt;: the number of confirmed cases</p></li>
-<li><p>Infected &lt;int&gt;: the number of currently infected cases</p></li>
-<li><p>Fatal &lt;int&gt;: the number of fatal cases</p></li>
-<li><p>Recovered &lt;int&gt;: the number of recovered cases</p></li>
+<li><p>Confirmed (int): the number of confirmed cases</p></li>
+<li><p>Infected (int): the number of currently infected cases</p></li>
+<li><p>Fatal (int): the number of fatal cases</p></li>
+<li><p>Recovered (int): the number of recovered cases</p></li>
 <li><p>any columns</p></li>
 </ul>
 </dd>
 </dl>
 </div></blockquote>
-<p>population &lt;int&gt;: total population in the place</p>
+<p>population (int): total population in the place</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns</dt>
 <dd class="field-odd"><p><dl class="simple">
@@ -2635,14 +2640,14 @@ data_df &lt;pandas.DataFrame&gt;:</p>
 </dd>
 <dt>Columns:</dt><dd><ul class="simple">
 <li><p>any columns &#64;data_df has</p></li>
-<li><p>Susceptible &lt;int&gt;: the number of susceptible cases</p></li>
+<li><p>Susceptible (int): the number of susceptible cases</p></li>
 </ul>
 </dd>
 </dl>
 </p>
 </dd>
 <dt class="field-even">Return type</dt>
-<dd class="field-even"><p>&lt;pandas.DataFrame&gt;</p>
+<dd class="field-even"><p>(pandas.DataFrame)</p>
 </dd>
 </dl>
 </dd></dl>
@@ -2656,12 +2661,12 @@ data_df &lt;pandas.DataFrame&gt;:</p>
 <p>SIR-FV model.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>&lt;int&gt;</strong> (<em>population</em>) – total population
+<dd class="field-odd"><p><strong>population</strong> (<em>int</em>) – total population
 theta &lt;float&gt;
 kappa &lt;float&gt;
 rho &lt;float&gt;
 sigma &lt;float&gt;
-omega &lt;float&gt; or v_per_day &lt;int&gt;</p>
+omega &lt;float&gt; or v_per_day (int)</p>
 </dd>
 </dl>
 <dl class="py attribute">
@@ -2705,7 +2710,7 @@ omega &lt;float&gt; or v_per_day &lt;int&gt;</p>
 <dd><p>Calculate 1/beta [day] etc.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>tau &lt;int&gt;</strong> (<em>param</em>) – tau value [min]</p>
+<dd class="field-odd"><p><strong>tau</strong> (<em>param</em>) – tau value [min]</p>
 </dd>
 </dl>
 </dd></dl>
@@ -2723,17 +2728,17 @@ omega &lt;float&gt; or v_per_day &lt;int&gt;</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>&lt;pandas.DataFrame&gt;</strong> (<em>taufree_df</em>) – <dl class="simple">
+<li><p><strong>taufree_df</strong> (<em>pandas.DataFrame</em>) – <dl class="simple">
 <dt>Index:</dt><dd><p>reset index</p>
 </dd>
 <dt>Columns:</dt><dd><ul>
-<li><p>t &lt;int&gt;: time steps (tau-free)</p></li>
+<li><p>t (int): time steps (tau-free)</p></li>
 <li><p>columns with dimensional variables</p></li>
 </ul>
 </dd>
 </dl>
 </p></li>
-<li><p><strong>&lt;int&gt;</strong> (<em>population</em>) – total population</p></li>
+<li><p><strong>population</strong> (<em>int</em>) – total population</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
@@ -2757,17 +2762,17 @@ omega &lt;float&gt; or v_per_day &lt;int&gt;</p>
 </dd>
 </dl>
 <p>Args:
-specialized_df &lt;pandas.DataFrame&gt;: dataframe with the variables</p>
+specialized_df (pandas.DataFrame): dataframe with the variables</p>
 <blockquote>
 <div><dl class="simple">
-<dt>Index:</dt><dd><p>&lt;object&gt;:</p>
+<dt>Index:</dt><dd><p>(object):</p>
 </dd>
 <dt>Columns:</dt><dd><ul class="simple">
-<li><p>Susceptible &lt;int&gt;: the number of susceptible cases</p></li>
-<li><p>Infected &lt;int&gt;: the number of currently infected cases</p></li>
-<li><p>Recovered &lt;int&gt;: the number of recovered cases</p></li>
-<li><p>Fatal &lt;int&gt;: the number of fatal cases</p></li>
-<li><p>Vaccinated &lt;int&gt;: the number of vactinated persons</p></li>
+<li><p>Susceptible (int): the number of susceptible cases</p></li>
+<li><p>Infected (int): the number of currently infected cases</p></li>
+<li><p>Recovered (int): the number of recovered cases</p></li>
+<li><p>Fatal (int): the number of fatal cases</p></li>
+<li><p>Vaccinated (int): the number of vactinated persons</p></li>
 <li><p>any columns</p></li>
 </ul>
 </dd>
@@ -2776,13 +2781,13 @@ specialized_df &lt;pandas.DataFrame&gt;: dataframe with the variables</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns</dt>
 <dd class="field-odd"><p><dl class="simple">
-<dt>Index:</dt><dd><p>&lt;object&gt;: as-is</p>
+<dt>Index:</dt><dd><p>(object): as-is</p>
 </dd>
 <dt>Columns:</dt><dd><ul class="simple">
-<li><p>Confirmed &lt;int&gt;: the number of confirmed cases</p></li>
-<li><p>Infected &lt;int&gt;: the number of currently infected cases</p></li>
-<li><p>Fatal &lt;int&gt;: the number of fatal cases</p></li>
-<li><p>Recovered &lt;int&gt;: the number of recovered cases</p></li>
+<li><p>Confirmed (int): the number of confirmed cases</p></li>
+<li><p>Infected (int): the number of currently infected cases</p></li>
+<li><p>Fatal (int): the number of fatal cases</p></li>
+<li><p>Recovered (int): the number of recovered cases</p></li>
 <li><p>the other columns &#64;specialzed_df has</p></li>
 </ul>
 </dd>
@@ -2790,7 +2795,7 @@ specialized_df &lt;pandas.DataFrame&gt;: dataframe with the variables</p>
 </p>
 </dd>
 <dt class="field-even">Return type</dt>
-<dd class="field-even"><p>&lt;pandas.DataFrame&gt;</p>
+<dd class="field-even"><p>(pandas.DataFrame)</p>
 </dd>
 </dl>
 </dd></dl>
@@ -2800,22 +2805,22 @@ specialized_df &lt;pandas.DataFrame&gt;: dataframe with the variables</p>
 <em class="property">classmethod </em><code class="sig-name descname">specialize</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">data_df</span></em>, <em class="sig-param"><span class="n">population</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/ode/sirfv.html#SIRFV.specialize"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#covsirphy.SIRFV.specialize" title="Permalink to this definition">¶</a></dt>
 <dd><p>Specialize the dataset for this model.</p>
 <p>Args:
-data_df &lt;pandas.DataFrame&gt;:</p>
+data_df (pandas.DataFrame):</p>
 <blockquote>
 <div><dl class="simple">
 <dt>Index:</dt><dd><p>reset index</p>
 </dd>
 <dt>Columns:</dt><dd><ul class="simple">
-<li><p>Confirmed &lt;int&gt;: the number of confirmed cases</p></li>
-<li><p>Infected &lt;int&gt;: the number of currently infected cases</p></li>
-<li><p>Fatal &lt;int&gt;: the number of fatal cases</p></li>
-<li><p>Recovered &lt;int&gt;: the number of recovered cases</p></li>
+<li><p>Confirmed (int): the number of confirmed cases</p></li>
+<li><p>Infected (int): the number of currently infected cases</p></li>
+<li><p>Fatal (int): the number of fatal cases</p></li>
+<li><p>Recovered (int): the number of recovered cases</p></li>
 <li><p>any columns</p></li>
 </ul>
 </dd>
 </dl>
 </div></blockquote>
-<p>population &lt;int&gt;: total population in the place</p>
+<p>population (int): total population in the place</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns</dt>
 <dd class="field-odd"><p><dl class="simple">
@@ -2823,15 +2828,15 @@ data_df &lt;pandas.DataFrame&gt;:</p>
 </dd>
 <dt>Columns:</dt><dd><ul class="simple">
 <li><p>any columns &#64;data_df has</p></li>
-<li><p>Susceptible &lt;int&gt;: 0</p></li>
-<li><p>Vactinated &lt;int&gt;: 0</p></li>
+<li><p>Susceptible (int): 0</p></li>
+<li><p>Vactinated (int): 0</p></li>
 </ul>
 </dd>
 </dl>
 </p>
 </dd>
 <dt class="field-even">Return type</dt>
-<dd class="field-even"><p>&lt;pandas.DataFrame&gt;</p>
+<dd class="field-even"><p>(pandas.DataFrame)</p>
 </dd>
 </dl>
 </dd></dl>
@@ -2850,7 +2855,7 @@ data_df &lt;pandas.DataFrame&gt;:</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>&lt;int&gt;</strong> (<em>opulation</em>) – total population in the place</p></li>
+<li><p><strong>opulation</strong> (<em>int</em>) – total population in the place</p></li>
 <li><p><strong>&lt;str/None&gt;</strong> (<em>end_date</em>) – start date, like 22Jan2020</p></li>
 <li><p><strong>&lt;str/None&gt;</strong> – end date, like 01Feb2020</p></li>
 </ul>
@@ -2864,8 +2869,8 @@ data_df &lt;pandas.DataFrame&gt;:</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns</dt>
 <dd class="field-odd"><p><dl class="simple">
-<dt>&lt;pandas.DataFrame&gt;</dt><dd><dl class="simple">
-<dt>Index:</dt><dd><p>Date &lt;pd.TimeStamp&gt;: Observation date</p>
+<dt>(pandas.DataFrame)</dt><dd><dl class="simple">
+<dt>Index:</dt><dd><p>Date (pd.TimeStamp): Observation date</p>
 </dd>
 <dt>Columns:</dt><dd><ul class="simple">
 <li><p>Recovered: The number of recovered cases</p></li>
@@ -2892,8 +2897,8 @@ data_df &lt;pandas.DataFrame&gt;:</p>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>&lt;covsirphy.JHUData&gt;</strong> (<em>jhu_data</em>) – object of records</p></li>
 <li><p><strong>&lt;covsirphy.Population&gt;</strong> (<em>pop_data</em>) – Population object</p></li>
-<li><p><strong>&lt;str&gt;</strong> (<em>province</em>) – country name</p></li>
-<li><p><strong>&lt;str&gt;</strong> – province name</p></li>
+<li><p><strong>country</strong> (<em>str</em>) – country name</p></li>
+<li><p><strong>province</strong> (<em>str</em>) – province name</p></li>
 </ul>
 </dd>
 </dl>
@@ -2905,10 +2910,10 @@ The start date is the next date of the last registered phase.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>&lt;str&gt;</strong> (<em>end_date</em>) – phase series name, ‘Main’ or user-defined name</p></li>
-<li><p><strong>&lt;str&gt;</strong> – end date of the new phase</p></li>
-<li><p><strong>&lt;int&gt;</strong> (<em>population</em>) – the number of days to add</p></li>
-<li><p><strong>&lt;int&gt;</strong> – population value of the start date
+<li><p><strong>name</strong> (<em>str</em>) – phase series name, ‘Main’ or user-defined name</p></li>
+<li><p><strong>end_date</strong> (<em>str</em>) – end date of the new phase</p></li>
+<li><p><strong>days</strong> (<em>int</em>) – the number of days to add</p></li>
+<li><p><strong>population</strong> (<em>int</em>) – population value of the start date
 - if None, the same as initial value</p></li>
 <li><p><strong>&lt;covsirphy.ModelBase&gt;</strong> (<em>model</em>) – ODE model
 - if None, the model of the last phase will be used</p></li>
@@ -2943,10 +2948,10 @@ The start date is the next date of the last registered phase.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>&lt;str&gt;</strong> (<em>name</em>) – phase series name
+<li><p><strong>name</strong> (<em>str</em>) – phase series name
 - if ‘Main’, main phase series will be used
 - if not registered, new phaseseries will be created</p></li>
-<li><p><strong>&lt;bool&gt;</strong> (<em>include_past</em>) – <ul>
+<li><p><strong>include_past</strong> (<em>bool</em>) – <ul>
 <li><p>if True, include past phases.</p></li>
 <li><p>future phase are always included</p></li>
 </ul>
@@ -2962,7 +2967,7 @@ The start date is the next date of the last registered phase.</p>
 <dd><p>Delete a PhaseSeries.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>&lt;str&gt;</strong> (<em>name</em>) – PhaseSeries name</p>
+<dd class="field-odd"><p><strong>name</strong> (<em>str</em>) – PhaseSeries name</p>
 </dd>
 </dl>
 </dd></dl>
@@ -2974,8 +2979,8 @@ The start date is the next date of the last registered phase.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns</dt>
 <dd class="field-odd"><p><dl class="simple">
-<dt>&lt;pandas.DataFrame&gt;</dt><dd><dl class="simple">
-<dt>Index:</dt><dd><p>&lt;int&gt;: scenario name</p>
+<dt>(pandas.DataFrame)</dt><dd><dl class="simple">
+<dt>Index:</dt><dd><p>(int): scenario name</p>
 </dd>
 <dt>Columns:</dt><dd><ul class="simple">
 <li><p>max(Infected): max value of Infected</p></li>
@@ -2999,9 +3004,9 @@ The start date is the next date of the last registered phase.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>&lt;list</strong><strong>[</strong><strong>str</strong><strong>]</strong><strong>&gt;</strong> (<em>phases</em>) – list of phase series name
+<li><p><strong>series_list</strong> (<em>list</em><em>[</em><em>str</em><em>]</em>) – list of phase series name
 - if None, all phase series will be used</p></li>
-<li><p><strong>&lt;list</strong><strong>[</strong><strong>str</strong><strong>]</strong><strong>&gt;</strong> – list of phase names, like 1st, 2nd…
+<li><p><strong>phases</strong> (<em>list</em><em>[</em><em>str</em><em>]</em>) – list of phase names, like 1st, 2nd…
 - if None, all past phase will be used</p></li>
 <li><p><strong>&lt;covsirphy.ModelBase&gt;</strong> (<em>model</em>) – ODE model</p></li>
 <li><p><strong>kwargs</strong> – <ul>
@@ -3021,8 +3026,8 @@ The start date is the next date of the last registered phase.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>&lt;str&gt;</strong> (<em>name</em>) – phase name, like 1st, 2nd…</p></li>
-<li><p><strong>&lt;str&gt;</strong> – phase series name
+<li><p><strong>phase</strong> (<em>str</em>) – phase name, like 1st, 2nd…</p></li>
+<li><p><strong>name</strong> (<em>str</em>) – phase series name
 - if ‘Main’, main PhaseSeries will be used</p></li>
 <li><p><strong>kwargs</strong> – keyword arguments of &lt;covsirphy.Estimator.accuracy()&gt;</p></li>
 </ul>
@@ -3037,8 +3042,8 @@ The start date is the next date of the last registered phase.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>&lt;str&gt;</strong> (<em>name</em>) – phase name, like 1st, 2nd…</p></li>
-<li><p><strong>&lt;str&gt;</strong> – phase series name
+<li><p><strong>phase</strong> (<em>str</em>) – phase name, like 1st, 2nd…</p></li>
+<li><p><strong>name</strong> (<em>str</em>) – phase series name
 - if ‘Main’, main PhaseSeries will be used</p></li>
 <li><p><strong>kwargs</strong> – keyword arguments of &lt;covsirphy.Estimator.history()&gt;</p></li>
 </ul>
@@ -3053,15 +3058,15 @@ The start date is the next date of the last registered phase.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>&lt;str&gt;</strong> (<em>phase</em>) – parameter name (columns in self.summary())</p></li>
-<li><p><strong>&lt;str&gt;</strong> – phase series name
+<li><p><strong>param</strong> (<em>str</em>) – parameter name (columns in self.summary())</p></li>
+<li><p><strong>name</strong> (<em>str</em>) – phase series name
 - if ‘Main’, main PhaseSeries will be used</p></li>
-<li><p><strong>&lt;str&gt;</strong> – phase name or ‘last’
+<li><p><strong>phase</strong> (<em>str</em>) – phase name or ‘last’
 - if ‘last’, the value of the last phase will be returned</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
-<dd class="field-even"><p>&lt;str/int/float&gt;</p>
+<dd class="field-even"><p>(str or int or float)</p>
 </dd>
 </dl>
 </dd></dl>
@@ -3073,21 +3078,21 @@ The start date is the next date of the last registered phase.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>&lt;list</strong><strong>[</strong><strong>str</strong><strong>]</strong><strong>/str&gt;</strong> (<em>targets</em>) – parameters to show (Rt etc.)</p></li>
-<li><p><strong>&lt;str&gt;</strong> (<em>filename</em>) – phase series name
+<li><p><strong>targets</strong> (<em>list</em><em>[</em><em>str</em><em>]</em><em>/str</em>) – parameters to show (Rt etc.)</p></li>
+<li><p><strong>name</strong> (<em>str</em>) – phase series name
 - if ‘Main’, main PhaseSeries will be used</p></li>
-<li><p><strong>&lt;bool&gt;</strong> (<em>show_figure</em>) – if True, divide the values by 1st phase’s values</p></li>
-<li><p><strong>&lt;bool&gt;</strong> – if True, box plot. if False, line plot.</p></li>
-<li><p><strong>&lt;bool&gt;</strong> – <ul>
+<li><p><strong>divide_by_first</strong> (<em>bool</em>) – if True, divide the values by 1st phase’s values</p></li>
+<li><p><strong>box_plot</strong> (<em>bool</em>) – if True, box plot. if False, line plot.</p></li>
+<li><p><strong>show_figure</strong> (<em>bool</em>) – <ul>
 <li><p>if True, show the result as a figure.</p></li>
 </ul>
 </p></li>
-<li><p><strong>&lt;str&gt;</strong> – filename of the figure, or None (show figure)</p></li>
+<li><p><strong>filename</strong> (<em>str</em>) – filename of the figure, or None (show figure)</p></li>
 <li><p><strong>kwargs</strong> – keword arguments of pd.DataFrame.plot or line_plot()</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
-<dd class="field-even"><p>&lt;pandas.DataFrame&gt;</p>
+<dd class="field-even"><p>(pandas.DataFrame)</p>
 </dd>
 </dl>
 </dd></dl>
@@ -3101,7 +3106,7 @@ The start date is the next date of the last registered phase.</p>
 <dd class="field-odd"><p><strong>kwargs</strong> – keyword arguments of Scenario.simulate()</p>
 </dd>
 <dt class="field-even">Returns</dt>
-<dd class="field-even"><p>&lt;pandas.DataFrame&gt;</p>
+<dd class="field-even"><p>(pandas.DataFrame)</p>
 </dd>
 </dl>
 </dd></dl>
@@ -3113,8 +3118,8 @@ The start date is the next date of the last registered phase.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>&lt;bool&gt;</strong> (<em>show_figure</em>) – if True, show the records as a line-plot.</p></li>
-<li><p><strong>&lt;str&gt;</strong> (<em>filename</em>) – filename of the figure, or None (show figure)</p></li>
+<li><p><strong>show_figure</strong> (<em>bool</em>) – if True, show the records as a line-plot.</p></li>
+<li><p><strong>filename</strong> (<em>str</em>) – filename of the figure, or None (show figure)</p></li>
 </ul>
 </dd>
 </dl>
@@ -3127,30 +3132,30 @@ The start date is the next date of the last registered phase.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>&lt;str&gt;</strong> (<em>filename</em>) – phase series name
+<li><p><strong>name</strong> (<em>str</em>) – phase series name
 - if ‘Main’, main PhaseSeries will be used</p></li>
 <li><p><strong>&lt;dict</strong><strong>[</strong><strong>str</strong><strong>]</strong><strong>=float&gt;</strong> (<em>y0_dict</em>) – <ul>
 <li><p>dictionary of initial values or None</p></li>
 <li><p>if model will be changed in the later phase, must be specified</p></li>
 </ul>
 </p></li>
-<li><p><strong>&lt;bool&gt;</strong> (<em>show_figure</em>) – <ul>
+<li><p><strong>show_figure</strong> (<em>bool</em>) – <ul>
 <li><p>if True, show the result as a figure.</p></li>
 </ul>
 </p></li>
-<li><p><strong>&lt;str&gt;</strong> – filename of the figure, or None (show figure)</p></li>
+<li><p><strong>filename</strong> (<em>str</em>) – filename of the figure, or None (show figure)</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
 <dd class="field-even"><p><dl class="simple">
-<dt>&lt;pandas.DataFrame&gt;</dt><dd><dl class="simple">
+<dt>(pandas.DataFrame)</dt><dd><dl class="simple">
 <dt>Index:</dt><dd><p>reset index</p>
 </dd>
 <dt>Columns:</dt><dd><ul class="simple">
-<li><p>Date &lt;str&gt;: date, like 31Dec2020</p></li>
-<li><p>Country &lt;str&gt;: country/region name</p></li>
-<li><p>Province &lt;str&gt;: province/prefecture/state name</p></li>
-<li><p>variables of the models &lt;int&gt;: Confirmed &lt;int&gt; etc.</p></li>
+<li><p>Date (str): date, like 31Dec2020</p></li>
+<li><p>Country (str): country/region name</p></li>
+<li><p>Province (str): province/prefecture/state name</p></li>
+<li><p>variables of the models (int): Confirmed (int) etc.</p></li>
 </ul>
 </dd>
 </dl>
@@ -3167,7 +3172,7 @@ The start date is the next date of the last registered phase.</p>
 <dd><p>Summarize the series of phases and return a dataframe.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>&lt;str&gt;</strong> (<em>name</em>) – phase series name
+<dd class="field-odd"><p><strong>name</strong> (<em>str</em>) – phase series name
 - ‘Main’ for main phase series
 - name of alternative phase series registered by self.add_phase()
 - if None, all phase series will be shown</p>
@@ -3180,7 +3185,7 @@ The start date is the next date of the last registered phase.</p>
 </p>
 </dd>
 <dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>&lt;pandas.DataFrame&gt;</p>
+<dd class="field-odd"><p>(pandas.DataFrame)</p>
 </dd>
 </dl>
 </dd></dl>
@@ -3192,18 +3197,18 @@ The start date is the next date of the last registered phase.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>&lt;int&gt;</strong> (<em>n_points</em>) – the number of change points</p></li>
-<li><p><strong>&lt;bool&gt;</strong> (<em>show_figure</em>) – <ul>
+<li><p><strong>n_points</strong> (<em>int</em>) – the number of change points</p></li>
+<li><p><strong>set_phases</strong> (<em>bool</em>) – <ul>
 <li><p>if True and n_points is not 0, set phases automatically</p></li>
 <li><p>if &#64;include_init_phase is False, initial phase will not be used</p></li>
 </ul>
 </p></li>
-<li><p><strong>&lt;bool&gt;</strong> – whether use initial phase or not</p></li>
-<li><p><strong>&lt;bool&gt;</strong> – <ul>
+<li><p><strong>include_init_phase</strong> (<em>bool</em>) – whether use initial phase or not</p></li>
+<li><p><strong>show_figure</strong> (<em>bool</em>) – <ul>
 <li><p>if True, show the records as a line-plot.</p></li>
 </ul>
 </p></li>
-<li><p><strong>&lt;str&gt;</strong> (<em>filename</em>) – filename of the figure, or None (show figure)</p></li>
+<li><p><strong>filename</strong> (<em>str</em>) – filename of the figure, or None (show figure)</p></li>
 <li><p><strong>kwargs</strong> – the other keyword arguments of ChangeFinder().run()</p></li>
 </ul>
 </dd>
@@ -3229,7 +3234,7 @@ The start date is the next date of the last registered phase.</p>
 <dd class="field-odd"><p>eg. ‘1 min 30 sec’</p>
 </dd>
 <dt class="field-even">Return type</dt>
-<dd class="field-even"><p>&lt;str&gt;</p>
+<dd class="field-even"><p>(str)</p>
 </dd>
 </dl>
 </dd></dl>
@@ -3243,7 +3248,7 @@ The start date is the next date of the last registered phase.</p>
 <dd class="field-odd"><p>elapsed time [sec]</p>
 </dd>
 <dt class="field-even">Return type</dt>
-<dd class="field-even"><p>&lt;int&gt;</p>
+<dd class="field-even"><p>(int)</p>
 </dd>
 </dl>
 </dd></dl>
@@ -3258,27 +3263,27 @@ The start date is the next date of the last registered phase.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>&lt;pandas.DataFrame&gt;</strong> (<em>clean_df</em>) – <p>cleaned data</p>
+<li><p><strong>clean_df</strong> (<em>pandas.DataFrame</em>) – <p>cleaned data</p>
 <dl class="simple">
 <dt>Index:</dt><dd><p>reset index</p>
 </dd>
 <dt>Columns:</dt><dd><ul>
-<li><p>Date &lt;pd.TimeStamp&gt;: Observation date</p></li>
-<li><p>Country &lt;str&gt;: country/region name</p></li>
-<li><p>Province &lt;str&gt;: province/prefecture/sstate name</p></li>
-<li><p>Confirmed &lt;int&gt;: the number of confirmed cases</p></li>
-<li><p>Infected &lt;int&gt;: the number of currently infected cases</p></li>
-<li><p>Fatal &lt;int&gt;: the number of fatal cases</p></li>
-<li><p>Recovered &lt;int&gt;: the number of recovered cases</p></li>
+<li><p>Date (pd.TimeStamp): Observation date</p></li>
+<li><p>Country (str): country/region name</p></li>
+<li><p>Province (str): province/prefecture/sstate name</p></li>
+<li><p>Confirmed (int): the number of confirmed cases</p></li>
+<li><p>Infected (int): the number of currently infected cases</p></li>
+<li><p>Fatal (int): the number of fatal cases</p></li>
+<li><p>Recovered (int): the number of recovered cases</p></li>
 </ul>
 </dd>
 </dl>
 </p></li>
-<li><p><strong>&lt;int&gt;</strong> (<em>population</em>) – total population in the place</p></li>
-<li><p><strong>&lt;str&gt;</strong> (<em>end_date</em>) – country name</p></li>
-<li><p><strong>&lt;str&gt;</strong> – province name</p></li>
-<li><p><strong>&lt;str&gt;</strong> – start date, like 22Jan2020</p></li>
-<li><p><strong>&lt;str&gt;</strong> – end date, like 01Feb2020</p></li>
+<li><p><strong>population</strong> (<em>int</em>) – total population in the place</p></li>
+<li><p><strong>country</strong> (<em>str</em>) – country name</p></li>
+<li><p><strong>province</strong> (<em>str</em>) – province name</p></li>
+<li><p><strong>start_date</strong> (<em>str</em>) – start date, like 22Jan2020</p></li>
+<li><p><strong>end_date</strong> (<em>str</em>) – end date, like 01Feb2020</p></li>
 </ul>
 </dd>
 </dl>
@@ -3312,8 +3317,8 @@ The start date is the next date of the last registered phase.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>&lt;bool&gt;</strong> (<em>show_figure</em>) – if True, show the history as a pair-plot of parameters.</p></li>
-<li><p><strong>&lt;str&gt;</strong> (<em>filename</em>) – filename of the figure, or None (show figure)</p></li>
+<li><p><strong>show_figure</strong> (<em>bool</em>) – if True, show the history as a pair-plot of parameters.</p></li>
+<li><p><strong>filename</strong> (<em>str</em>) – filename of the figure, or None (show figure)</p></li>
 </ul>
 </dd>
 </dl>
@@ -3326,10 +3331,10 @@ The start date is the next date of the last registered phase.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>&lt;pandas.DataFrame&gt;</strong> (<em>result_df</em>) – <p>training dataset</p>
+<li><p><strong>result_df</strong> (<em>pandas.DataFrame</em>) – <p>training dataset</p>
 <dl class="simple">
 <dt>Index:</dt><dd><ul>
-<li><p>index (Date) &lt;pd.TimeStamp&gt;: Observation date</p></li>
+<li><p>index (Date) (pd.TimeStamp): Observation date</p></li>
 </ul>
 </dd>
 <dt>Columns:</dt><dd><ul>
@@ -3340,10 +3345,10 @@ The start date is the next date of the last registered phase.</p>
 </dd>
 </dl>
 </p></li>
-<li><p><strong>&lt;list</strong><strong>[</strong><strong>str</strong><strong>]</strong><strong>&gt;</strong> (<em>predicted_cols</em>) – list of columns which have predicted values</p></li>
-<li><p><strong>&lt;str&gt;</strong> (<em>filename</em>) – title of the figure</p></li>
-<li><p><strong>&lt;list</strong><strong>[</strong><strong>int</strong><strong>]</strong><strong>&gt;</strong> (<em>vlines</em>) – list of Recovered values to show vertical lines</p></li>
-<li><p><strong>&lt;str&gt;</strong> – filename of the figure, or None (show figure)</p></li>
+<li><p><strong>predicted_cols</strong> (<em>list</em><em>[</em><em>str</em><em>]</em>) – list of columns which have predicted values</p></li>
+<li><p><strong>title</strong> (<em>str</em>) – title of the figure</p></li>
+<li><p><strong>vlines</strong> (<em>list</em><em>[</em><em>int</em><em>]</em>) – list of Recovered values to show vertical lines</p></li>
+<li><p><strong>filename</strong> (<em>str</em>) – filename of the figure, or None (show figure)</p></li>
 </ul>
 </dd>
 </dl>
@@ -3567,7 +3572,7 @@ The start date is the next date of the last registered phase.</p>
 <dd><p>Convert a string to a datetime object.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>&lt;str&gt;</strong> (<em>date_str</em>) – date, like 22Jan2020</p>
+<dd class="field-odd"><p><strong>date_str</strong> (<em>str</em>) – date, like 22Jan2020</p>
 </dd>
 <dt class="field-even">Returns</dt>
 <dd class="field-even"><p>&lt;datetime.datetime&gt;</p>
@@ -3581,13 +3586,13 @@ The start date is the next date of the last registered phase.</p>
 <dd><p>Return the list of divisors of the value.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>&lt;int&gt;</strong> (<em>value</em>) – target value</p>
+<dd class="field-odd"><p><strong>value</strong> (<em>int</em>) – target value</p>
 </dd>
 <dt class="field-even">Returns</dt>
 <dd class="field-even"><p>the list of divisors</p>
 </dd>
 <dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>&lt;list[int]&gt;</p>
+<dd class="field-odd"><p>(list[int])</p>
 </dd>
 </dl>
 </dd></dl>
@@ -3599,12 +3604,12 @@ The start date is the next date of the last registered phase.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>&lt;list</strong><strong>[</strong><strong>list</strong><strong>[</strong><strong>object</strong><strong>]</strong><strong>]</strong><strong>&gt;</strong> (<em>nested_list</em>) – nested list</p></li>
-<li><p><strong>&lt;bool&gt;</strong> (<em>unique</em>) – if True, only unique values will remain</p></li>
+<li><p><strong>nested_list</strong> (<em>list</em><em>[</em><em>list</em><em>[</em><em>object</em><em>]</em><em>]</em>) – nested list</p></li>
+<li><p><strong>unique</strong> (<em>bool</em>) – if True, only unique values will remain</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
-<dd class="field-even"><p>&lt;list[object]&gt;</p>
+<dd class="field-even"><p>(list[object])</p>
 </dd>
 </dl>
 </dd></dl>
@@ -3629,10 +3634,10 @@ The start date is the next date of the last registered phase.</p>
 <em class="property">classmethod </em><code class="sig-name descname">num2str</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">num</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/cleaning/word.html#Word.num2str"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#covsirphy.Word.num2str" title="Permalink to this definition">¶</a></dt>
 <dd><p>Convert numbers to 1st, 2nd etc.</p>
 <p>Args:
-&#64;num &lt;int&gt;: number</p>
+&#64;num (int): number</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns</dt>
-<dd class="field-odd"><p>&lt;str&gt;</p>
+<dd class="field-odd"><p>(str)</p>
 </dd>
 </dl>
 </dd></dl>
@@ -3644,11 +3649,11 @@ The start date is the next date of the last registered phase.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>&lt;pandas.DataFrame&gt;</strong> (<em>df</em>) – the dataframe to validate</p></li>
-<li><p><strong>&lt;str&gt;</strong> (<em>name</em>) – argument name of the dataframe</p></li>
-<li><p><strong>&lt;bool&gt;</strong> (<em>time_index</em>) – if True, the dataframe must has DatetimeIndex</p></li>
-<li><p><strong>&lt;list</strong><strong>[</strong><strong>str</strong><strong>]</strong><strong>/None&gt;</strong> (<em>columns</em>) – the columns the dataframe must have</p></li>
-<li><p><strong>&lt;pandas.DataFrame&gt;</strong> – as-is the target</p></li>
+<li><p><strong>target</strong> (<em>pandas.DataFrame</em>) – the dataframe to validate</p></li>
+<li><p><strong>name</strong> (<em>str</em>) – argument name of the dataframe</p></li>
+<li><p><strong>time_index</strong> (<em>bool</em>) – if True, the dataframe must has DatetimeIndex</p></li>
+<li><p><strong>columns</strong> (<em>list</em><em>[</em><em>str</em><em>]</em><em>/None</em>) – the columns the dataframe must have</p></li>
+<li><p><strong>df</strong> (<em>pandas.DataFrame</em>) – as-is the target</p></li>
 </ul>
 </dd>
 </dl>
@@ -3661,9 +3666,9 @@ The start date is the next date of the last registered phase.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>&lt;instance&gt;</strong> (<em>target</em>) – target to validate</p></li>
-<li><p><strong>&lt;class&gt;</strong> (<em>parent</em>) – class object</p></li>
-<li><p><strong>&lt;str&gt;</strong> (<em>name</em>) – argument name of the target</p></li>
+<li><p><strong>target</strong> (<em>instance</em>) – target to validate</p></li>
+<li><p><strong>parent</strong> (<em>class</em>) – class object</p></li>
+<li><p><strong>name</strong> (<em>str</em>) – argument name of the target</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
@@ -3687,15 +3692,15 @@ If the value is natural number and the type was float,</p>
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>&lt;int/float/str&gt;</strong> (<em>target</em>) – value to validate</p></li>
-<li><p><strong>&lt;str&gt;</strong> (<em>name</em>) – argument name of the value</p></li>
-<li><p><strong>&lt;bool&gt;</strong> (<em>include_zero</em>) – include 0 or not</p></li>
+<li><p><strong>name</strong> (<em>str</em>) – argument name of the value</p></li>
+<li><p><strong>include_zero</strong> (<em>bool</em>) – include 0 or not</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
 <dd class="field-even"><p>as-is the target</p>
 </dd>
 <dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>&lt;int&gt;</p>
+<dd class="field-odd"><p>(int)</p>
 </dd>
 </dl>
 </dd></dl>
@@ -3707,16 +3712,16 @@ If the value is natural number and the type was float,</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>&lt;object&gt;</strong> (<em>parent</em>) – target to validate</p></li>
-<li><p><strong>&lt;object&gt;</strong> – parent class</p></li>
-<li><p><strong>&lt;str&gt;</strong> (<em>name</em>) – argument name of the target</p></li>
+<li><p><strong>target</strong> (<em>object</em>) – target to validate</p></li>
+<li><p><strong>parent</strong> (<em>object</em>) – parent class</p></li>
+<li><p><strong>name</strong> (<em>str</em>) – argument name of the target</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
 <dd class="field-even"><p>as-is the target</p>
 </dd>
 <dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>&lt;int&gt;</p>
+<dd class="field-odd"><p>(int)</p>
 </dd>
 </dl>
 </dd></dl>
@@ -3732,10 +3737,10 @@ If the value is natural number and the type was float,</p>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>&lt;list/pd.Series</strong><strong>[</strong><strong>str</strong><strong>]</strong><strong>&gt;</strong> (<em>prefectures</em>) – prefecture name.</p></li>
 <li><p><strong>&lt;int/float&gt;</strong> (<em>values</em>) – value of each prefectures</p></li>
-<li><p><strong>&lt;str&gt;</strong> (<em>filename</em>) – title of the figure</p></li>
-<li><p><strong>&lt;str&gt;</strong> – Please refere to
+<li><p><strong>title</strong> (<em>str</em>) – title of the figure</p></li>
+<li><p><strong>cmap_name</strong> (<em>str</em>) – Please refere to
 <a class="reference external" href="https://matplotlib.org/3.1.0/tutorials/colors/colormaps.html">https://matplotlib.org/3.1.0/tutorials/colors/colormaps.html</a></p></li>
-<li><p><strong>&lt;str&gt;</strong> – filename of the figure, or None (show figure)</p></li>
+<li><p><strong>filename</strong> (<em>str</em>) – filename of the figure, or None (show figure)</p></li>
 </ul>
 </dd>
 </dl>
@@ -3748,7 +3753,7 @@ If the value is natural number and the type was float,</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>&lt;pandas.DataFrame&gt;</strong> (<em>df</em>) – <p>target data</p>
+<li><p><strong>df</strong> (<em>pandas.DataFrame</em>) – <p>target data</p>
 <dl class="simple">
 <dt>Index:</dt><dd><p>reset index</p>
 </dd>
@@ -3757,23 +3762,23 @@ If the value is natural number and the type was float,</p>
 <dt>Values:</dt><dd><p>data values</p>
 </dd>
 </dl>
-<p>title &lt;str&gt;: title of the figure</p>
+<p>title (str): title of the figure</p>
 </p></li>
-<li><p><strong>labels</strong> (<em>-</em>) – xlabel &lt;str&gt;: x-label
-ylabel &lt;str&gt;: y-label</p></li>
-<li><p><strong>additional lines</strong> (<em>-</em>) – v &lt;list[int/float]&gt;: list of x values of vertical lines or None
-h &lt;list[int/float]&gt;: list of y values of horizontal lines or None</p></li>
-<li><p><strong>limit of domain</strong> (<em>-</em>) – xlim &lt;tuple(int/float, int/float)&gt;: limit of x dimain
-ylim &lt;tuple(int/float, int/float)&gt;: limit of y dimain
+<li><p><strong>labels</strong> (<em>-</em>) – xlabel (str): x-label
+ylabel (str): y-label</p></li>
+<li><p><strong>additional lines</strong> (<em>-</em>) – v (list[int/float]): list of x values of vertical lines or None
+h (list[int/float]): list of y values of horizontal lines or None</p></li>
+<li><p><strong>limit of domain</strong> (<em>-</em>) – xlim &lt;tuple(int or float, int or float)&gt;: limit of x dimain
+ylim &lt;tuple(int or float, int or float)&gt;: limit of y dimain
 - if None, the value will be automatically determined by Matplotlib</p></li>
-<li><p><strong>scale of labels</strong> (<em>-</em>) – math_scale &lt;bool&gt;: whether use LaTEX or not
-x_logscale &lt;bool&gt;: whether use log-scale in x-axis or not
-y_logscale &lt;bool&gt;: whether use log-scale in y-axis or not
-y_integer &lt;bool&gt;: whether force to show the values as integer or not</p></li>
-<li><p><strong>legend</strong> (<em>-</em>) – show_legend &lt;bool&gt;: whether show legend or not
+<li><p><strong>scale of labels</strong> (<em>-</em>) – math_scale (bool): whether use LaTEX or not
+x_logscale (bool): whether use log-scale in x-axis or not
+y_logscale (bool): whether use log-scale in y-axis or not
+y_integer (bool): whether force to show the values as integer or not</p></li>
+<li><p><strong>legend</strong> (<em>-</em>) – show_legend (bool): whether show legend or not
 bbox_to_anchor &lt;tuple(int/float, int/float)&gt;: distance of legend and plot
-bbox_loc &lt;str&gt;: location of legend</p></li>
-<li><p><strong>&lt;str&gt;</strong> (<em>filename</em>) – filename of the figure, or None (show figure)</p></li>
+bbox_loc (str): location of legend</p></li>
+<li><p><strong>filename</strong> (<em>str</em>) – filename of the figure, or None (show figure)</p></li>
 </ul>
 </dd>
 </dl>
