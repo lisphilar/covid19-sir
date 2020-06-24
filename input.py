@@ -1,16 +1,18 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-from kaggle.api.kaggle_api_extended import KaggleApi
 import os
 import glob
 import shutil
 import requests
 
+# The KAGGLE_CONFIG_DIR env var must be setup before loading KaggleApi
 cwd = os.getcwd()
-# Put your kaggle.json in the same folder as input.py
 os.environ["KAGGLE_CONFIG_DIR"] = cwd + "/"
+from kaggle.api.kaggle_api_extended import KaggleApi
 
+# Put your kaggle.json in the same folder as input.py
+print(os.environ["KAGGLE_CONFIG_DIR"])
 api = KaggleApi()
 api.authenticate()
 path_ = cwd + "/input/"
@@ -30,6 +32,7 @@ api.dataset_download_files('lisphilar/covid19-dataset-in-japan',
                            path=path_ + "/",
                            unzip=True)
 
+# Removing files that will not be neccessary
 file_list = glob.glob(path_ + '/*')
 file_list_keep = file_list
 file_list_keep = [
