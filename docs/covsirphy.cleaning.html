@@ -91,6 +91,7 @@
 <li class="toctree-l4"><a class="reference internal" href="#submodules">Submodules</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#module-covsirphy.cleaning.cbase">covsirphy.cleaning.cbase module</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#module-covsirphy.cleaning.country_data">covsirphy.cleaning.country_data module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#module-covsirphy.cleaning.dataloader">covsirphy.cleaning.dataloader module</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#module-covsirphy.cleaning.jhu_data">covsirphy.cleaning.jhu_data module</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#module-covsirphy.cleaning.oxcgrt">covsirphy.cleaning.oxcgrt module</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#module-covsirphy.cleaning.population">covsirphy.cleaning.population module</a></li>
@@ -404,6 +405,97 @@ This method overwrite super().cleaning() method.</p>
 <li><p><strong>&lt;str&gt;</strong> – column name for Confirmed</p></li>
 <li><p><strong>&lt;str&gt;</strong> – (optional) column name for Province</p></li>
 </ul>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-covsirphy.cleaning.dataloader">
+<span id="covsirphy-cleaning-dataloader-module"></span><h2>covsirphy.cleaning.dataloader module<a class="headerlink" href="#module-covsirphy.cleaning.dataloader" title="Permalink to this headline">¶</a></h2>
+<dl class="py class">
+<dt id="covsirphy.cleaning.dataloader.DataLoader">
+<em class="property">class </em><code class="sig-prename descclassname">covsirphy.cleaning.dataloader.</code><code class="sig-name descname">DataLoader</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">directory</span></em>, <em class="sig-param"><span class="n">update_interval</span><span class="o">=</span><span class="default_value">12</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/cleaning/dataloader.html#DataLoader"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#covsirphy.cleaning.dataloader.DataLoader" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#covsirphy.cleaning.word.Word" title="covsirphy.cleaning.word.Word"><code class="xref py py-class docutils literal notranslate"><span class="pre">covsirphy.cleaning.word.Word</span></code></a></p>
+<p>Download the dataset and perform data cleaning.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>&lt;str/pathlib.Path&gt;</strong> (<em>directory</em>) – directory to save the downloaded datasets</p></li>
+<li><p><strong>&lt;int&gt;</strong> (<em>update_interval</em>) – update interval of the local datasets</p></li>
+</ul>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<p>If &#64;directory is None, the files will not be saved in local environment.
+GitHub datasets will be always updated because headers of GET response</p>
+<blockquote>
+<div><p>does not have ‘Last-Modified’ keys.</p>
+</div></blockquote>
+<dl class="simple">
+<dt>If &#64;update_interval hours have passed since the last update of local datasets,</dt><dd><p>updating will be forced when updating is not prevented by the methods.</p>
+</dd>
+</dl>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">covsirphy</span> <span class="k">as</span> <span class="nn">cs</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">data_loader</span> <span class="o">=</span> <span class="n">cs</span><span class="o">.</span><span class="n">DataLoader</span><span class="p">(</span><span class="s2">&quot;input&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">jhu_data</span> <span class="o">=</span> <span class="n">data_loader</span><span class="o">.</span><span class="n">jhu</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">jhu_data</span><span class="o">.</span><span class="n">citation</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">jhu_data</span><span class="o">.</span><span class="n">cleaned</span><span class="p">()))</span>
+<span class="go">&lt;class &#39;pandas.core.frame.DataFrame&#39;&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">jpn_data</span> <span class="o">=</span> <span class="n">data_loader</span><span class="o">.</span><span class="n">japan</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">jpn_data</span><span class="o">.</span><span class="n">citation</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">jpn_data</span><span class="o">.</span><span class="n">cleaned</span><span class="p">()))</span>
+<span class="go">&lt;class &#39;pandas.core.frame.DataFrame&#39;&gt;</span>
+</pre></div>
+</div>
+<dl class="py method">
+<dt id="covsirphy.cleaning.dataloader.DataLoader.japan">
+<code class="sig-name descname">japan</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">basename</span><span class="o">=</span><span class="default_value">'covid_jpn_total.csv'</span></em>, <em class="sig-param"><span class="n">local_file</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/cleaning/dataloader.html#DataLoader.japan"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#covsirphy.cleaning.dataloader.DataLoader.japan" title="Permalink to this definition">¶</a></dt>
+<dd><p>Load the datset of the number of cases in Japan.
+<a class="reference external" href="https://github.com/lisphilar/covid19-sir/tree/master/data">https://github.com/lisphilar/covid19-sir/tree/master/data</a></p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>&lt;str&gt;</strong> (<em>basename</em>) – basename of the file to save the data</p></li>
+<li><p><strong>&lt;str/None&gt;</strong> (<em>local_file</em>) – if not None, load the data from this file</p></li>
+</ul>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<p>Regardless the value of &#64;local_file, the data will be save in the directory.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>dataset at country level</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>&lt;covsirphy.cleaning.country_data.CountryData&gt;</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="covsirphy.cleaning.dataloader.DataLoader.jhu">
+<code class="sig-name descname">jhu</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">basename</span><span class="o">=</span><span class="default_value">'covid_19_data.csv'</span></em>, <em class="sig-param"><span class="n">local_file</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/cleaning/dataloader.html#DataLoader.jhu"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#covsirphy.cleaning.dataloader.DataLoader.jhu" title="Permalink to this definition">¶</a></dt>
+<dd><p>Load JHU dataset (the number of cases).
+<a class="reference external" href="https://github.com/CSSEGISandData/COVID-19/">https://github.com/CSSEGISandData/COVID-19/</a></p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>&lt;str&gt;</strong> (<em>basename</em>) – basename of the file to save the data</p></li>
+<li><p><strong>&lt;str/None&gt;</strong> (<em>local_file</em>) – if not None, load the data from this file</p></li>
+</ul>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<p>Regardless the value of &#64;local_file, the data will be save in the directory.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>JHU dataset</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>&lt;covsirphy.cleaning.jhu_data.JHUData&gt;</p>
 </dd>
 </dl>
 </dd></dl>
