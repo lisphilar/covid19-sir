@@ -31,8 +31,8 @@ class OxCGRTData(CleaningBase):
         Perform data cleaning of the raw data.
         This method overwrite super().cleaning() method.
         Policy indices (Overall etc.) are from
-         README.md and documentation/index_methodology.md in
-         https://github.com/OxCGRT/covid-policy-tracker/
+        README.md and documentation/index_methodology.md in
+        https://github.com/OxCGRT/covid-policy-tracker/
 
         Returns:
             (pandas.DataFrame)

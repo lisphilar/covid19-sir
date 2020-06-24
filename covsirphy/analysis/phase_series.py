@@ -211,9 +211,9 @@ class PhaseSeries(Word):
         Summarize the series of phase in a dictionary.
 
         Returns:
-            (dict[str]={str: str/int}):
-                - key: phase number, like 1th, 2nd,...
-                - value: {
+            (dict)
+                - key (str): phase number, like 1th, 2nd,...
+                - value (str): {
                     'Type': (str) 'Past' or 'Future'
                     'Start': (str) start date of the phase,
                     'End': (str) end date of the phase,

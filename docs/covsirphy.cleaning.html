@@ -220,8 +220,8 @@
 <dt id="covsirphy.cleaning.cbase.CleaningBase.cleaned">
 <code class="sig-name descname">cleaned</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/cleaning/cbase.html#CleaningBase.cleaned"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#covsirphy.cleaning.cbase.CleaningBase.cleaned" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return the cleaned dataset.</p>
-<p>Notes:
-Cleaning method is defined by self.cleaning() method.</p>
+<p class="rubric">Notes</p>
+<p>Cleaning method is defined by self.cleaning() method.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns</dt>
 <dd class="field-odd"><p>cleaned data</p>
@@ -236,8 +236,8 @@ Cleaning method is defined by self.cleaning() method.</p>
 <dt id="covsirphy.cleaning.cbase.CleaningBase.cleaning">
 <code class="sig-name descname">cleaning</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/cleaning/cbase.html#CleaningBase.cleaning"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#covsirphy.cleaning.cbase.CleaningBase.cleaning" title="Permalink to this definition">¶</a></dt>
 <dd><p>Perform data cleaning of the raw data.</p>
-<p>Notes:
-Cleaning method is defined by self.cleaning() method.</p>
+<p class="rubric">Notes</p>
+<p>Cleaning method is defined by self.cleaning() method.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns</dt>
 <dd class="field-odd"><p>cleaned data</p>
@@ -443,11 +443,18 @@ updating will be forced when updating is not prevented by the methods.</p>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">data_loader</span> <span class="o">=</span> <span class="n">cs</span><span class="o">.</span><span class="n">DataLoader</span><span class="p">(</span><span class="s2">&quot;input&quot;</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">jhu_data</span> <span class="o">=</span> <span class="n">data_loader</span><span class="o">.</span><span class="n">jhu</span><span class="p">()</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">jhu_data</span><span class="o">.</span><span class="n">citation</span><span class="p">)</span>
+<span class="gp">...</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">jhu_data</span><span class="o">.</span><span class="n">cleaned</span><span class="p">()))</span>
 <span class="go">&lt;class &#39;pandas.core.frame.DataFrame&#39;&gt;</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">jpn_data</span> <span class="o">=</span> <span class="n">data_loader</span><span class="o">.</span><span class="n">japan</span><span class="p">()</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">jpn_data</span><span class="o">.</span><span class="n">citation</span><span class="p">)</span>
+<span class="gp">...</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">jpn_data</span><span class="o">.</span><span class="n">cleaned</span><span class="p">()))</span>
+<span class="go">&lt;class &#39;pandas.core.frame.DataFrame&#39;&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">oxcgrt_data</span> <span class="o">=</span> <span class="n">data_loader</span><span class="o">.</span><span class="n">oxcgrt</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">oxcgrt_data</span><span class="o">.</span><span class="n">citation</span><span class="p">)</span>
+<span class="gp">...</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">oxcgrt_data</span><span class="o">.</span><span class="n">cleaned</span><span class="p">()))</span>
 <span class="go">&lt;class &#39;pandas.core.frame.DataFrame&#39;&gt;</span>
 </pre></div>
 </div>
@@ -497,6 +504,31 @@ updating will be forced when updating is not prevented by the methods.</p>
 </dd>
 <dt class="field-even">Return type</dt>
 <dd class="field-even"><p>(<a class="reference internal" href="covsirphy.html#covsirphy.JHUData" title="covsirphy.JHUData">covsirphy.JHUData</a>)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="covsirphy.cleaning.dataloader.DataLoader.oxcgrt">
+<code class="sig-name descname">oxcgrt</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">basename</span><span class="o">=</span><span class="default_value">'OxCGRT_latest.csv'</span></em>, <em class="sig-param"><span class="n">local_file</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/cleaning/dataloader.html#DataLoader.oxcgrt"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#covsirphy.cleaning.dataloader.DataLoader.oxcgrt" title="Permalink to this definition">¶</a></dt>
+<dd><p>Load OxCGRT dataset.
+<a class="reference external" href="https://github.com/OxCGRT/covid-policy-tracker">https://github.com/OxCGRT/covid-policy-tracker</a></p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>basename</strong> (<em>str</em>) – basename of the file to save the data</p></li>
+<li><p><strong>local_file</strong> (<em>str</em><em> or </em><em>None</em>) – if not None, load the data from this file</p></li>
+</ul>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<p>Regardless the value of &#64;local_file, the data will be save in the directory.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>OxCGRT dataset</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>(<a class="reference internal" href="covsirphy.html#covsirphy.OxCGRTData" title="covsirphy.OxCGRTData">covsirphy.OxCGRTData</a>)</p>
 </dd>
 </dl>
 </dd></dl>
@@ -648,16 +680,24 @@ This method overwrite super().cleaning() method.</p>
 <code class="sig-name descname">COL_DICT</code><em class="property"> = {'ContainmentHealthIndexForDisplay': 'Containment and health index', 'EconomicSupportIndexForDisplay': 'Economic support index', 'GovernmentResponseIndexForDisplay': 'Government response index', 'StringencyIndexForDisplay': 'Stringency index'}</em><a class="headerlink" href="#covsirphy.cleaning.oxcgrt.OxCGRTData.COL_DICT" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
+<dl class="py attribute">
+<dt id="covsirphy.cleaning.oxcgrt.OxCGRTData.OXCGRT_COLS">
+<code class="sig-name descname">OXCGRT_COLS</code><em class="property"> = ['Date', 'Country', 'ISO3', 'Government response index', 'Containment and health index', 'Stringency index', 'Economic support index']</em><a class="headerlink" href="#covsirphy.cleaning.oxcgrt.OxCGRTData.OXCGRT_COLS" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="covsirphy.cleaning.oxcgrt.OxCGRTData.OXCGRT_COLS_WITHOUT_COUNTRY">
+<code class="sig-name descname">OXCGRT_COLS_WITHOUT_COUNTRY</code><em class="property"> = ['Date', 'Government response index', 'Containment and health index', 'Stringency index', 'Economic support index']</em><a class="headerlink" href="#covsirphy.cleaning.oxcgrt.OxCGRTData.OXCGRT_COLS_WITHOUT_COUNTRY" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
 <dl class="py method">
 <dt id="covsirphy.cleaning.oxcgrt.OxCGRTData.cleaning">
 <code class="sig-name descname">cleaning</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/cleaning/oxcgrt.html#OxCGRTData.cleaning"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#covsirphy.cleaning.oxcgrt.OxCGRTData.cleaning" title="Permalink to this definition">¶</a></dt>
 <dd><p>Perform data cleaning of the raw data.
 This method overwrite super().cleaning() method.
-Policy indices (Overall etc.) are from</p>
-<blockquote>
-<div><p>README.md and documentation/index_methodology.md in
+Policy indices (Overall etc.) are from
+README.md and documentation/index_methodology.md in
 <a class="reference external" href="https://github.com/OxCGRT/covid-policy-tracker/">https://github.com/OxCGRT/covid-policy-tracker/</a></p>
-</div></blockquote>
 <dl class="field-list simple">
 <dt class="field-odd">Returns</dt>
 <dd class="field-odd"><p><dl class="simple">
@@ -1142,10 +1182,8 @@ province (str): province name</p>
 <dt id="covsirphy.cleaning.word.Word.validate_natural_int">
 <em class="property">static </em><code class="sig-name descname">validate_natural_int</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">target</span></em>, <em class="sig-param"><span class="n">name</span><span class="o">=</span><span class="default_value">'number'</span></em>, <em class="sig-param"><span class="n">include_zero</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/cleaning/word.html#Word.validate_natural_int"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#covsirphy.cleaning.word.Word.validate_natural_int" title="Permalink to this definition">¶</a></dt>
 <dd><p>Validate the natural (non-negative) number.
-If the value is natural number and the type was float,</p>
-<blockquote>
-<div><p>will be converted to an integer.</p>
-</div></blockquote>
+If the value is natural number and the type was float,
+will be converted to an integer.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">

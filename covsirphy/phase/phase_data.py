@@ -8,6 +8,7 @@ from covsirphy.cleaning.word import Word
 class PhaseData(Word):
     """
     Basic class to create dataset for Trend/ODE analysis.
+
     Args:
         clean_df (pandas.DataFrame): cleaned data
 

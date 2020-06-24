@@ -158,6 +158,7 @@
 <span class="kn">from</span> <span class="nn">covsirphy.cleaning.cbase</span> <span class="kn">import</span> <span class="n">CleaningBase</span>
 <span class="kn">from</span> <span class="nn">covsirphy.cleaning.jhu_data</span> <span class="kn">import</span> <span class="n">JHUData</span>
 <span class="kn">from</span> <span class="nn">covsirphy.cleaning.country_data</span> <span class="kn">import</span> <span class="n">CountryData</span>
+<span class="kn">from</span> <span class="nn">covsirphy.cleaning.oxcgrt</span> <span class="kn">import</span> <span class="n">OxCGRTData</span>
 <span class="kn">from</span> <span class="nn">covsirphy.cleaning.word</span> <span class="kn">import</span> <span class="n">Word</span>
 
 
@@ -181,11 +182,18 @@
 <span class="sd">        &gt;&gt;&gt; data_loader = cs.DataLoader(&quot;input&quot;)</span>
 <span class="sd">        &gt;&gt;&gt; jhu_data = data_loader.jhu()</span>
 <span class="sd">        &gt;&gt;&gt; print(jhu_data.citation)</span>
+<span class="sd">        ...</span>
 <span class="sd">        &gt;&gt;&gt; print(type(jhu_data.cleaned()))</span>
 <span class="sd">        &lt;class &#39;pandas.core.frame.DataFrame&#39;&gt;</span>
 <span class="sd">        &gt;&gt;&gt; jpn_data = data_loader.japan()</span>
 <span class="sd">        &gt;&gt;&gt; print(jpn_data.citation)</span>
+<span class="sd">        ...</span>
 <span class="sd">        &gt;&gt;&gt; print(type(jpn_data.cleaned()))</span>
+<span class="sd">        &lt;class &#39;pandas.core.frame.DataFrame&#39;&gt;</span>
+<span class="sd">        &gt;&gt;&gt; oxcgrt_data = data_loader.oxcgrt()</span>
+<span class="sd">        &gt;&gt;&gt; print(oxcgrt_data.citation)</span>
+<span class="sd">        ...</span>
+<span class="sd">        &gt;&gt;&gt; print(type(oxcgrt_data.cleaned()))</span>
 <span class="sd">        &lt;class &#39;pandas.core.frame.DataFrame&#39;&gt;</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
@@ -197,7 +205,7 @@
         <span class="c1"># Create the directory if not exist</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">dir_path</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">dir_path</span><span class="o">.</span><span class="n">mkdir</span><span class="p">(</span><span class="n">parents</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-        <span class="c1"># JHU data</span>
+        <span class="c1"># JHU dataset: the number of cases</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">jhu_url</span> <span class="o">=</span> <span class="s2">&quot;https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master&quot;</span> \
             <span class="s2">&quot;/csse_covid_19_data/csse_covid_19_time_series&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">jhu_citation</span> <span class="o">=</span> <span class="s2">&quot;COVID-19 Data Repository&quot;</span> \
@@ -212,11 +220,20 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">japan_cases_url</span> <span class="o">=</span> <span class="s2">&quot;https://raw.githubusercontent.com/lisphilar/covid19-sir/master/data/japan&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">japan_cases_citation</span> <span class="o">=</span> <span class="s2">&quot;Lisphilar (2020), COVID-19 dataset in Japan, GitHub repository, &quot;</span> \
             <span class="s2">&quot;https://github.com/lisphilar/covid19-sir/data/japan&quot;</span>
+        <span class="c1"># OxCGRT dataset: Oxford Covid-19 Government Response Tracker</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">oxcgrt_url</span> <span class="o">=</span> <span class="s2">&quot;https://raw.githubusercontent.com/OxCGRT/covid-policy-tracker/master/data&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">oxcgrt_citation</span> <span class="o">=</span> <span class="s2">&quot;Thomas Hale, Sam Webster, Anna Petherick, Toby Phillips, and Beatriz Kira.&quot;</span> \
+            <span class="s2">&quot; (2020). Oxford COVID-19 Government Response Tracker. Blavatnik School of Government.&quot;</span>
         <span class="c1"># Dictionary of datasets</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">dataset_dict</span> <span class="o">=</span> <span class="p">{</span>
-            <span class="s2">&quot;JHU&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;class&quot;</span><span class="p">:</span> <span class="n">JHUData</span><span class="p">,</span> <span class="s2">&quot;url&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">jhu_url</span><span class="p">,</span> <span class="s2">&quot;citation&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">jhu_citation</span><span class="p">},</span>
+            <span class="s2">&quot;JHU&quot;</span><span class="p">:</span> <span class="p">{</span>
+                <span class="s2">&quot;class&quot;</span><span class="p">:</span> <span class="n">JHUData</span><span class="p">,</span> <span class="s2">&quot;url&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">jhu_url</span><span class="p">,</span> <span class="s2">&quot;citation&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">jhu_citation</span>
+            <span class="p">},</span>
             <span class="s2">&quot;Japan_cases&quot;</span><span class="p">:</span> <span class="p">{</span>
                 <span class="s2">&quot;class&quot;</span><span class="p">:</span> <span class="n">CountryData</span><span class="p">,</span> <span class="s2">&quot;url&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">japan_cases_url</span><span class="p">,</span> <span class="s2">&quot;citation&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">japan_cases_citation</span>
+            <span class="p">},</span>
+            <span class="s2">&quot;OxCGRT&quot;</span><span class="p">:</span> <span class="p">{</span>
+                <span class="s2">&quot;class&quot;</span><span class="p">:</span> <span class="n">OxCGRTData</span><span class="p">,</span> <span class="s2">&quot;url&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">oxcgrt_url</span><span class="p">,</span> <span class="s2">&quot;citation&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">oxcgrt_citation</span>
             <span class="p">},</span>
         <span class="p">}</span>
 
@@ -491,7 +508,7 @@
             <span class="k">raise</span> <span class="ne">FileNotFoundError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">local_file</span><span class="si">}</span><span class="s2"> does not exist.&quot;</span><span class="p">)</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_needs_pull</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">japan_cases_url</span><span class="p">):</span>
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_create_dataset_japan_cases</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span>
-        <span class="c1"># Retrieve and combine the raw data</span>
+        <span class="c1"># Retrieve the raw data</span>
         <span class="n">df</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_japan_cases_get</span><span class="p">()</span>
         <span class="c1"># Save the dataset and return dataset</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_save</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">filename</span><span class="p">)</span>
@@ -501,9 +518,6 @@
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Get the raw data from the following repository.</span>
 <span class="sd">        https://github.com/lisphilar/covid19-sir/tree/master/data/japan</span>
-
-<span class="sd">        Args:</span>
-<span class="sd">            variable (str): confirmed, deaths or recovered</span>
 
 <span class="sd">        Returns:</span>
 <span class="sd">            (pandas.DataFrame) : the raw data</span>
@@ -535,7 +549,53 @@
             <span class="n">recovered</span><span class="o">=</span><span class="s2">&quot;Discharged&quot;</span><span class="p">,</span>
             <span class="n">province</span><span class="o">=</span><span class="kc">None</span>
         <span class="p">)</span>
-        <span class="k">return</span> <span class="n">country_data</span></div>
+        <span class="k">return</span> <span class="n">country_data</span>
+
+<div class="viewcode-block" id="DataLoader.oxcgrt"><a class="viewcode-back" href="../../../covsirphy.cleaning.html#covsirphy.DataLoader.oxcgrt">[docs]</a>    <span class="k">def</span> <span class="nf">oxcgrt</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">basename</span><span class="o">=</span><span class="s2">&quot;OxCGRT_latest.csv&quot;</span><span class="p">,</span> <span class="n">local_file</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Load OxCGRT dataset.</span>
+<span class="sd">        https://github.com/OxCGRT/covid-policy-tracker</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            basename (str): basename of the file to save the data</span>
+<span class="sd">            local_file (str or None): if not None, load the data from this file</span>
+
+<span class="sd">        Notes:</span>
+<span class="sd">            Regardless the value of @local_file, the data will be save in the directory.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            (covsirphy.OxCGRTData): OxCGRT dataset</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">filename</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_resolve_filename</span><span class="p">(</span><span class="n">basename</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">local_file</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">Path</span><span class="p">(</span><span class="n">local_file</span><span class="p">)</span><span class="o">.</span><span class="n">exists</span><span class="p">():</span>
+                <span class="n">oxcgrt_data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_create_dataset</span><span class="p">(</span><span class="s2">&quot;OxCGRT&quot;</span><span class="p">,</span> <span class="n">local_file</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_save</span><span class="p">(</span><span class="n">oxcgrt_data</span><span class="o">.</span><span class="n">raw</span><span class="p">,</span> <span class="n">filename</span><span class="p">)</span>
+                <span class="k">return</span> <span class="n">oxcgrt_data</span>
+            <span class="k">raise</span> <span class="ne">FileNotFoundError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">local_file</span><span class="si">}</span><span class="s2"> does not exist.&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_needs_pull</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">oxcgrt_url</span><span class="p">):</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_create_dataset</span><span class="p">(</span><span class="s2">&quot;OxCGRT&quot;</span><span class="p">,</span> <span class="n">filename</span><span class="p">)</span>
+        <span class="c1"># Retrieve the raw data</span>
+        <span class="n">df</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_oxcgrt_get</span><span class="p">()</span>
+        <span class="c1"># Save the dataset and return dataset</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_save</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">filename</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_create_dataset</span><span class="p">(</span><span class="s2">&quot;OxCGRT&quot;</span><span class="p">,</span> <span class="n">filename</span><span class="p">)</span></div>
+
+    <span class="k">def</span> <span class="nf">_oxcgrt_get</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Get the raw data from the following repository.</span>
+<span class="sd">        https://github.com/OxCGRT/covid-policy-tracker</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            (pandas.DataFrame) : the raw data</span>
+<span class="sd">               Index:</span>
+<span class="sd">                    reset index</span>
+<span class="sd">                Columns:</span>
+<span class="sd">                    as-is the repository</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">url</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">oxcgrt_url</span><span class="si">}</span><span class="s2">/OxCGRT_latest.csv&quot;</span>
+        <span class="n">df</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_raw</span><span class="p">(</span><span class="n">url</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">df</span></div>
 </pre></div>
 
            </div>

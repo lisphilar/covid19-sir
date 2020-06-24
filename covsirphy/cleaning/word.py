@@ -159,7 +159,7 @@ class Word(object):
         """
         Validate the natural (non-negative) number.
         If the value is natural number and the type was float,
-         will be converted to an integer.
+        will be converted to an integer.
 
         Args:
             target (int or float or str): value to validate

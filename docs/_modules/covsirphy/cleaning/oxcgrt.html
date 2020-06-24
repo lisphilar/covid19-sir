@@ -164,6 +164,13 @@
         <span class="s2">&quot;StringencyIndexForDisplay&quot;</span><span class="p">:</span> <span class="s2">&quot;Stringency index&quot;</span><span class="p">,</span>
         <span class="s2">&quot;EconomicSupportIndexForDisplay&quot;</span><span class="p">:</span> <span class="s2">&quot;Economic support index&quot;</span>
     <span class="p">}</span>
+    <span class="n">OXCGRT_COLS</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="n">CleaningBase</span><span class="o">.</span><span class="n">DATE</span><span class="p">,</span> <span class="n">CleaningBase</span><span class="o">.</span><span class="n">COUNTRY</span><span class="p">,</span> <span class="n">CleaningBase</span><span class="o">.</span><span class="n">ISO3</span><span class="p">,</span>
+        <span class="o">*</span><span class="nb">list</span><span class="p">(</span><span class="n">COL_DICT</span><span class="o">.</span><span class="n">values</span><span class="p">())</span>
+    <span class="p">]</span>
+    <span class="n">OXCGRT_COLS_WITHOUT_COUNTRY</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="n">CleaningBase</span><span class="o">.</span><span class="n">DATE</span><span class="p">,</span> <span class="o">*</span><span class="nb">list</span><span class="p">(</span><span class="n">COL_DICT</span><span class="o">.</span><span class="n">values</span><span class="p">())</span>
+    <span class="p">]</span>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="p">):</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span>
@@ -173,18 +180,18 @@
 <span class="sd">        Perform data cleaning of the raw data.</span>
 <span class="sd">        This method overwrite super().cleaning() method.</span>
 <span class="sd">        Policy indices (Overall etc.) are from</span>
-<span class="sd">         README.md and documentation/index_methodology.md in</span>
-<span class="sd">         https://github.com/OxCGRT/covid-policy-tracker/</span>
+<span class="sd">        README.md and documentation/index_methodology.md in</span>
+<span class="sd">        https://github.com/OxCGRT/covid-policy-tracker/</span>
 
 <span class="sd">        Returns:</span>
 <span class="sd">            (pandas.DataFrame)</span>
-<span class="sd">                    Index:</span>
-<span class="sd">                        reset index</span>
-<span class="sd">                    Columns:</span>
-<span class="sd">                        - Date (pd.TimeStamp): Observation date</span>
-<span class="sd">                        - Country (str): country/region name</span>
-<span class="sd">                        - ISO3 (str): ISO 3166-1 alpha-3, like JPN</span>
-<span class="sd">                        - other column names are defined by OxCGRT.COL_DICT</span>
+<span class="sd">                Index:</span>
+<span class="sd">                    reset index</span>
+<span class="sd">                Columns:</span>
+<span class="sd">                    - Date (pd.TimeStamp): Observation date</span>
+<span class="sd">                    - Country (str): country/region name</span>
+<span class="sd">                    - ISO3 (str): ISO 3166-1 alpha-3, like JPN</span>
+<span class="sd">                    - other column names are defined by OxCGRT.COL_DICT</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">df</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_raw</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
         <span class="c1"># Rename the columns</span>

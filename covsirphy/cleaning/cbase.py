@@ -36,7 +36,7 @@ class CleaningBase(Word):
         Return the cleaned dataset.
 
         Notes:
-        Cleaning method is defined by self.cleaning() method.
+            Cleaning method is defined by self.cleaning() method.
 
         Returns:
             (pandas.DataFrame): cleaned data
@@ -48,7 +48,7 @@ class CleaningBase(Word):
         Perform data cleaning of the raw data.
 
         Notes:
-        Cleaning method is defined by self.cleaning() method.
+            Cleaning method is defined by self.cleaning() method.
 
         Returns:
             (pandas.DataFrame): cleaned data
