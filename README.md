@@ -90,11 +90,10 @@ We can download this dataset from the secondary source directly. Please refer to
 [covid19 global forecasting: locations population by Dmitry A. Grechka](https://www.kaggle.com/dgrechka/covid19-global-forecasting-locations-population)  
 
 ### GitHub
-`subversion` command (`sudo apt install subversion`) is necessary.
-
 #### OxCGRT: Measures taken by each country and response scores
 [Thomas Hale, Sam Webster, Anna Petherick, Toby Phillips, and Beatriz Kira. (2020).  
-Oxford COVID-19 Government Response Tracker. Blavatnik School of Government.](https://github.com/OxCGRT/covid-policy-tracker)
+Oxford COVID-19 Government Response Tracker. Blavatnik School of Government.](https://github.com/OxCGRT/covid-policy-tracker)  
+We can download this dataset from the primary source directly. Please refer to "Quick usage" section.
 
 
 
@@ -138,11 +137,13 @@ pop_data.to_dict(country_level=True)
 ```
 Perform data cleaning of OxGCRT dataset.
 ```Python
-# Read OxCGRT dataset
-oxcgrt_data = cs.OxCGRTData("input/oxcgrt/OxCGRT_latest.csv")
+oxcgrt_data = data_loader.oxcgrt()
+# Show citation
+print(oxcgrt_data.citation)
+# Data cleaning
 oxcgrt_df = oxcgrt_data.cleaned()
 # Create a subset for a country with ISO3 country code
-oxcgrt_data.subset(iso3="JPN")
+jpn_oxcgrt_df = oxcgrt_data.subset(iso3="JPN")
 ```
 
 ### Scenario analysis
