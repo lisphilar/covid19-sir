@@ -160,11 +160,15 @@
 
 <span class="sd">    Args:</span>
 <span class="sd">        filename &lt;str&gt;: CSV filename of the dataset</span>
+
+<span class="sd">    Attributes:</span>
+<span class="sd">        citation &lt;str&gt;: citation fo the dataset</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_raw</span> <span class="o">=</span> <span class="n">dd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span><span class="o">.</span><span class="n">compute</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_cleaned_df</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">cleaning</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_citation</span> <span class="o">=</span> <span class="nb">str</span><span class="p">()</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">raw</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
@@ -225,7 +229,29 @@
         <span class="n">df</span><span class="p">[</span><span class="n">r_cols</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="s2">&quot;Fatal&quot;</span><span class="p">]</span> <span class="o">/</span> <span class="n">df</span><span class="p">[</span><span class="n">cols</span><span class="p">]</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
         <span class="n">df</span><span class="p">[</span><span class="n">r_cols</span><span class="p">[</span><span class="mi">1</span><span class="p">]]</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="s2">&quot;Recovered&quot;</span><span class="p">]</span> <span class="o">/</span> <span class="n">df</span><span class="p">[</span><span class="n">cols</span><span class="p">]</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
         <span class="n">df</span><span class="p">[</span><span class="n">r_cols</span><span class="p">[</span><span class="mi">2</span><span class="p">]]</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="s2">&quot;Fatal&quot;</span><span class="p">]</span> <span class="o">/</span> <span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="s2">&quot;Fatal&quot;</span><span class="p">]</span> <span class="o">+</span> <span class="n">df</span><span class="p">[</span><span class="s2">&quot;Recovered&quot;</span><span class="p">])</span>
-        <span class="k">return</span> <span class="n">df</span></div></div>
+        <span class="k">return</span> <span class="n">df</span></div>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">citation</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Return citation.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            &lt;str&gt;: citation of the datset</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_citation</span>
+
+    <span class="nd">@citation</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span> <span class="nf">citation</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">description</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Set citation of the dataset.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            description &lt;str&gt;: citation of the dataset</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">description</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">&quot;@description must be a string.&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_citation</span> <span class="o">=</span> <span class="n">description</span></div>
 </pre></div>
 
            </div>

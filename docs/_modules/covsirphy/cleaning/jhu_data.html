@@ -302,14 +302,17 @@
 
 <span class="sd">        Returns:</span>
 <span class="sd">            &lt;pandas.DataFrame&gt;</span>
-<span class="sd">                    Index:</span>
-<span class="sd">                        reset index</span>
-<span class="sd">                    Columns:</span>
-<span class="sd">                        - Date &lt;pd.TimeStamp&gt;: Observation date</span>
-<span class="sd">                        - Confirmed &lt;int&gt;: the number of confirmed cases</span>
-<span class="sd">                        - Infected &lt;int&gt;: the number of currently infected cases</span>
-<span class="sd">                        - Fatal &lt;int&gt;: the number of fatal cases</span>
-<span class="sd">                        - Recovered &lt;int&gt;: the number of recovered cases (&gt; 0)</span>
+<span class="sd">                Index:</span>
+<span class="sd">                    reset index</span>
+<span class="sd">                Columns:</span>
+<span class="sd">                    - Date &lt;pd.TimeStamp&gt;: Observation date</span>
+<span class="sd">                    - Confirmed &lt;int&gt;: the number of confirmed cases</span>
+<span class="sd">                    - Infected &lt;int&gt;: the number of currently infected cases</span>
+<span class="sd">                    - Fatal &lt;int&gt;: the number of fatal cases</span>
+<span class="sd">                    - Recovered &lt;int&gt;: the number of recovered cases (&gt; 0)</span>
+
+<span class="sd">        Notes:</span>
+<span class="sd">            Records with Recovered &gt; 0 will be selected.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">df</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_cleaned_df</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
         <span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">df</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">COUNTRY</span><span class="p">]</span> <span class="o">==</span> <span class="n">country</span><span class="p">,</span> <span class="p">:]</span>

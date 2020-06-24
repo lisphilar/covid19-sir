@@ -22,5 +22,5 @@ help:
 
 # https://github.com/sphinx-doc/sphinx/issues/3382
 github:
-	@make html
+	@pipenv run make html
 	@cp -a _build/html/. ../docs
