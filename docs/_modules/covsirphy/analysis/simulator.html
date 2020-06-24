@@ -167,8 +167,8 @@
         <span class="sd">&quot;&quot;&quot;</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">        @country &lt;str&gt;: country name</span>
-<span class="sd">        @province &lt;str&gt;: province name</span>
+<span class="sd">        @country (str): country name</span>
+<span class="sd">        @province (str): province name</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">country</span> <span class="o">=</span> <span class="n">country</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">province</span> <span class="o">=</span> <span class="n">province</span>
@@ -185,15 +185,19 @@
 <span class="sd">        Add models to the simulator.</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">            model &lt;subclass of cs.ModelBase&gt;: the first ODE model</span>
-<span class="sd">            step_n &lt;int&gt;: the number of steps</span>
-<span class="sd">            population &lt;int&gt;: population in the place</span>
-<span class="sd">            param_dict &lt;dict[str]=float&gt;:</span>
+<span class="sd">            model (subclass of cs.ModelBase): the first ODE model</span>
+<span class="sd">            step_n (int): the number of steps</span>
+<span class="sd">            population (int): population in the place</span>
+<span class="sd">            param_dict (dict):</span>
+<span class="sd">                - key (str): parameter name</span>
+<span class="sd">                - value (float): parameter value</span>
 <span class="sd">                - dictionary of parameter values or None</span>
 <span class="sd">                - if not include some params, the last values will be used</span>
 <span class="sd">                    - NameError when the model is the first model</span>
 <span class="sd">                    - NameError if new params are included</span>
-<span class="sd">            y0_dict &lt;dict[str]=float&gt;:</span>
+<span class="sd">            y0_dict (dict):</span>
+<span class="sd">                - key (str): variable name</span>
+<span class="sd">                - value (float): initial value</span>
 <span class="sd">                - dictionary of dimensional initial values or None</span>
 <span class="sd">                - None or if not include some variables, the last values will be used</span>
 <span class="sd">                    - NameError when the model is the first model</span>
@@ -244,22 +248,22 @@
 <span class="sd">        Solve ODE of the model.</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">            model &lt;subclass of cs.ModelBase&gt;: the ODE model</span>
-<span class="sd">            step_n &lt;int&gt;: the number of steps</span>
-<span class="sd">            param_dict &lt;dict[str]=float&gt;: dictionary of parameter values</span>
-<span class="sd">                - key &lt;str&gt;: parameter name</span>
-<span class="sd">                - value &lt;float&gt;: parameter value</span>
-<span class="sd">            y0_dict &lt;dict[str]=int&gt;: dictionary of initial values</span>
-<span class="sd">                - key &lt;str&gt;: dimensional variable name</span>
-<span class="sd">                - value &lt;int&gt;:initial value of the variable</span>
-<span class="sd">            population &lt;int&gt;: total population</span>
+<span class="sd">            model (subclass of cs.ModelBase): the ODE model</span>
+<span class="sd">            step_n (int): the number of steps</span>
+<span class="sd">            param_dict (dict): dictionary of parameter values</span>
+<span class="sd">                - key (str): parameter name</span>
+<span class="sd">                - value (float): parameter value</span>
+<span class="sd">            y0_dict (dict): dictionary of initial values</span>
+<span class="sd">                - key (str): dimensional variable name</span>
+<span class="sd">                - value (int):initial value of the variable</span>
+<span class="sd">            population (int): total population</span>
 
 <span class="sd">        Returns:</span>
-<span class="sd">            &lt;pandas.DataFrame&gt;:</span>
+<span class="sd">            (pandas.DataFrame):</span>
 <span class="sd">                Index:</span>
 <span class="sd">                    reset index</span>
 <span class="sd">                Columns:</span>
-<span class="sd">                    - t &lt;int&gt;: Elapsed time divided by tau value [-]</span>
+<span class="sd">                    - t (int): Elapsed time divided by tau value [-]</span>
 <span class="sd">                    - columns with dimensional variables</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">step_n</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">validate_natural_int</span><span class="p">(</span><span class="n">step_n</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;step_n&quot;</span><span class="p">)</span>
@@ -317,11 +321,11 @@
 <span class="sd">        Return tau-free results.</span>
 
 <span class="sd">        Returns:</span>
-<span class="sd">            &lt;pandas.DataFrame&gt;:</span>
+<span class="sd">            (pandas.DataFrame):</span>
 <span class="sd">                    Index:</span>
 <span class="sd">                        reset index</span>
 <span class="sd">                    Columns:</span>
-<span class="sd">                        - t &lt;int&gt;: Elapsed time divided by tau value [-]</span>
+<span class="sd">                        - t (int): Elapsed time divided by tau value [-]</span>
 <span class="sd">                        - columns with dimensionalized variables</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">df</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_taufree_df</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
@@ -335,11 +339,11 @@
 <span class="sd">        Return the non-dimensionalized results.</span>
 
 <span class="sd">        Returns:</span>
-<span class="sd">            &lt;pandas.DataFrame&gt;:</span>
+<span class="sd">            (pandas.DataFrame):</span>
 <span class="sd">                Index:</span>
 <span class="sd">                    reset index</span>
 <span class="sd">                Columns:</span>
-<span class="sd">                    - t &lt;int&gt;: Elapsed time divided by tau value [-]</span>
+<span class="sd">                    - t (int): Elapsed time divided by tau value [-]</span>
 <span class="sd">                    - non-dimensionalized variables of Susceptible etc.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">df</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">taufree</span><span class="p">()</span>
@@ -355,18 +359,18 @@
 <span class="sd">        Return the dimensionalized results.</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">            tau &lt;int&gt;: tau value [min]</span>
-<span class="sd">            start_date &lt;str&gt;: start date of the records, like 22Jan2020</span>
+<span class="sd">            tau (int): tau value [min]</span>
+<span class="sd">            start_date (str): start date of the records, like 22Jan2020</span>
 
 <span class="sd">        Returns:</span>
-<span class="sd">            &lt;pandas.DataFrame&gt;</span>
+<span class="sd">            (pandas.DataFrame)</span>
 <span class="sd">                Index:</span>
 <span class="sd">                    reset index</span>
 <span class="sd">                Columns:</span>
-<span class="sd">                    - Date &lt;pd.TimeStamp&gt;: Observation date</span>
-<span class="sd">                    - Country &lt;str&gt;: country/region name</span>
-<span class="sd">                    - Province &lt;str&gt;: province/prefecture/state name</span>
-<span class="sd">                    - variables of the models &lt;int&gt;</span>
+<span class="sd">                    - Date (pd.TimeStamp): Observation date</span>
+<span class="sd">                    - Country (str): country/region name</span>
+<span class="sd">                    - Province (str): province/prefecture/state name</span>
+<span class="sd">                    - variables of the models (int)</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">df</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">taufree</span><span class="p">()</span>
         <span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">drop</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">TS</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>

@@ -11,20 +11,20 @@ class ODEData(PhaseData):
     Dataset for ODE analysis.
 
     Args:
-        clean_df <pandas.DataFrame>: cleaned data
+        clean_df (pandas.DataFrame): cleaned data
 
             Index:
                 reset index
             Columns:
-                - Date <pd.TimeStamp>: Observation date
-                - Country <str>: country/region name
-                - Province <str>: province/prefecture/sstate name
-                - Confirmed <int>: the number of confirmed cases
-                - Infected <int>: the number of currently infected cases
-                - Fatal <int>: the number of fatal cases
-                - Recovered <int>: the number of recovered cases
-        country <str>: country name
-        province <str>: province name
+                - Date (pd.TimeStamp): Observation date
+                - Country (str): country/region name
+                - Province (str): province/prefecture/sstate name
+                - Confirmed (int): the number of confirmed cases
+                - Infected (int): the number of currently infected cases
+                - Fatal (int): the number of fatal cases
+                - Recovered (int): the number of recovered cases
+        country (str): country name
+        province (str): province name
     """
 
     def __init__(self, clean_df, country=None, province=None):
@@ -35,26 +35,26 @@ class ODEData(PhaseData):
         Calculate elapsed time from the first date.
 
         Args:
-            grouped_df <pandas.DataFrame>: cleaned data grouped by Date
+            grouped_df (pandas.DataFrame): cleaned data grouped by Date
 
                 Index:
-                    Date <pd.TimeStamp>: Observation date
+                    Date (pd.TimeStamp): Observation date
                 Columns:
-                    - Confirmed <int>: the number of confirmed cases
-                    - Infected <int>: the number of currently infected cases
-                    - Fatal <int>: the number of fatal cases
-                    - Recovered <int>: the number of recovered cases
+                    - Confirmed (int): the number of confirmed cases
+                    - Infected (int): the number of currently infected cases
+                    - Fatal (int): the number of fatal cases
+                    - Recovered (int): the number of recovered cases
 
         Returns:
-            <pandas.DataFrame>
+            (pandas.DataFrame)
                 Index:
                     reset index
                 Columns:
-                    - Confirmed <int>: the number of confirmed cases
-                    - Infected <int>: the number of currently infected cases
-                    - Fatal <int>: the number of fatal cases
-                    - Recovered <int>: the number of recovered cases
-                    - Elapsed <int>: Elapsed time from the first date [min]
+                    - Confirmed (int): the number of confirmed cases
+                    - Infected (int): the number of currently infected cases
+                    - Fatal (int): the number of fatal cases
+                    - Recovered (int): the number of recovered cases
+                    - Elapsed (int): Elapsed time from the first date [min]
         """
         df = self.validate_dataframe(
             grouped_df,
@@ -71,27 +71,27 @@ class ODEData(PhaseData):
         Create tau-free dataset.
 
         Args:
-            elapsed_df <pandas.DataFrame>:
+            elapsed_df (pandas.DataFrame):
                 Index:
                     reset index
                 Columns:
-                    - Confirmed <int>: the number of confirmed cases
-                    - Infected <int>: the number of currently infected cases
-                    - Fatal <int>: the number of fatal cases
-                    - Recovered <int>: the number of recovered cases
-                    - Elapsed <int>: Elapsed time from the first date [min]
-        tau <int>: tau value [min]
+                    - Confirmed (int): the number of confirmed cases
+                    - Infected (int): the number of currently infected cases
+                    - Fatal (int): the number of fatal cases
+                    - Recovered (int): the number of recovered cases
+                    - Elapsed (int): Elapsed time from the first date [min]
+        tau (int): tau value [min]
 
         Returns:
-            <pandas.DataFrame>:
+            (pandas.DataFrame):
                 Index:
                     reset index
                 Columns:
-                    - Confirmed <int>: the number of confirmed cases
-                    - Infected <int>: the number of currently infected cases
-                    - Fatal <int>: the number of fatal cases
-                    - Recovered <int>: the number of recovered cases
-                    - t <int>: Elapsed time divided by tau value [-]
+                    - Confirmed (int): the number of confirmed cases
+                    - Infected (int): the number of currently infected cases
+                    - Fatal (int): the number of fatal cases
+                    - Recovered (int): the number of recovered cases
+                    - t (int): Elapsed time divided by tau value [-]
         """
         df = self.validate_dataframe(
             elapsed_df,
@@ -108,24 +108,24 @@ class ODEData(PhaseData):
         Specialize the dataset for the model.
 
         Args:
-            data_df <pandas.DataFrame>:
+            data_df (pandas.DataFrame):
                 Index:
                     reset index
                 Columns:
-                    - Confirmed <int>: the number of confirmed cases
-                    - Infected <int>: the number of currently infected cases
-                    - Fatal <int>: the number of fatal cases
-                    - Recovered <int>: the number of recovered cases
+                    - Confirmed (int): the number of confirmed cases
+                    - Infected (int): the number of currently infected cases
+                    - Fatal (int): the number of fatal cases
+                    - Recovered (int): the number of recovered cases
                     - any columns
-            population <int>: total population in the place
+            population (int): total population in the place
 
         Returns:
-            <pandas.DataFrame>:
+            (pandas.DataFrame):
                 Index:
                     reset index
                 Columns:
-                    - Elapsed <int>: if included in @data_df
-                    - t <int>: if included in @data_df
+                    - Elapsed (int): if included in @data_df
+                    - t (int): if included in @data_df
                     - columns with dimensional variables
         """
         model = self.validate_subclass(model, ModelBase, name="model")
@@ -142,26 +142,26 @@ class ODEData(PhaseData):
         Create tau-free dataset for ODE analysis.
 
         Args:
-            grouped_df <pandas.DataFrame>: cleaned data grouped by Date
+            grouped_df (pandas.DataFrame): cleaned data grouped by Date
 
                 Index:
-                    Date <pd.TimeStamp>: Observation date
+                    Date (pd.TimeStamp): Observation date
                 Columns:
-                    - Confirmed <int>: the number of confirmed cases
-                    - Infected <int>: the number of currently infected cases
-                    - Fatal <int>: the number of fatal cases
-                    - Recovered <int>: the number of recovered cases
-            model <sub-class of cs.ModelBase>: ODE model
-            population <int>: total population
-            tau <int/None>: tau value [min] or None (un-set)
+                    - Confirmed (int): the number of confirmed cases
+                    - Infected (int): the number of currently infected cases
+                    - Fatal (int): the number of fatal cases
+                    - Recovered (int): the number of recovered cases
+            model (covsirphy.ModelBase): ODE model
+            population (int): total population
+            tau (int or None): tau value [min] or None (un-set)
 
         Returns:
-            <pandas.DataFrame>:
+            (pandas.DataFrame):
                 Index:
                     reset index
                 Columns:
-                    - Elapsed <int>: if tau is None
-                    - t <int>: if tau is not None
+                    - Elapsed (int): if tau is None
+                    - t (int): if tau is not None
                     - columns with dimensional variables
         """
         df = self._calc_elapsed(grouped_df)
@@ -175,23 +175,23 @@ class ODEData(PhaseData):
         Make a dataset for ODE analysis.
 
         Args:
-            model <covsirphy.ModelBase>: ODE model
-            population <int>: total population
-            start_date <str/None>: start date, like 22Jan2020
-            end_date <str/None>: end date, like 01Feb2020
-            tau <int/None>: tau value [min] or None (un-set)
+            model (covsirphy.ModelBase): ODE model
+            population (int): total population
+            start_date (str or None): start date, like 22Jan2020
+            end_date (str or None): end date, like 01Feb2020
+            tau (int or None): tau value [min] or None (un-set)
 
         Notes:
             - When @start_date is None, the first date of the records will be used
             - When @end_date is None, the last date of the records will be used
 
         Returns:
-            <pandas.DataFrame>:
+            (pandas.DataFrame):
                 Index:
                     reset index
                 Columns:
-                    - Elapsed <int>: if tau is None
-                    - t <int>: if tau is not None
+                    - Elapsed (int): if tau is None
+                    - t (int): if tau is not None
                     - columns with dimensional variables
         """
         df = self.subset(start_date=start_date, end_date=end_date)
@@ -202,17 +202,17 @@ class ODEData(PhaseData):
         Return the initial values of the model.
 
         Args:
-            model <covsirphy.ModelBase>: ODE model
-            population <int>: total population
-            start_date <str>: start date, like 22Jan2020
+            model (covsirphy.ModelBase): ODE model
+            population (int): total population
+            start_date (str): start date, like 22Jan2020
 
         Notes:
             - When @start_date is None, the first date of the records will be used
 
         Returns:
-            <dict[str]=int>:
-            - key: dimensional variables
-            - value: the number of cases
+            (dict)
+                - key (str): dimensional variables
+                - value (int): the number of cases
         """
         subset_df = self.subset(start_date=start_date, end_date=None)
         df = self._make(subset_df, model, population, tau=None)

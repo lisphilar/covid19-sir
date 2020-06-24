@@ -27,7 +27,7 @@ class ModelBase(ModelBaseCommon):
         This method should be overwritten in subclass.
 
         Args:
-        @population <int>: total population
+        @population (int): total population
         """
         # Total population
         if not isinstance(population, int):
@@ -41,7 +41,7 @@ class ModelBase(ModelBaseCommon):
         This method should be overwritten in subclass.
 
         Returns:
-            <np.array>
+            (np.array)
         """
         return np.array(list())
 
@@ -52,18 +52,18 @@ class ModelBase(ModelBaseCommon):
         This method should be overwritten in subclass.
 
         Args:
-        @taufree_df <pandas.DataFrame>:
+        @taufree_df (pandas.DataFrame):
                     Index:
                         reset index
                     Columns:
-                        - t <int>: time steps (tau-free)
+                        - t (int): time steps (tau-free)
                         - columns with dimensional variables
-        @population <int>: total population
+        @population (int): total population
 
         Returns:
-            <dict[name]=(min, max)>:
-            - min <float>: min value
-            - max <float>: max value
+            (dict)
+                - key (str): parameter name
+                - value (tuple(float, float)): min value and max value
         """
         _dict = dict()
         return _dict
@@ -75,19 +75,19 @@ class ModelBase(ModelBaseCommon):
         This method should be overwritten in subclass.
 
         Args:
-        @data_df <pandas.DataFrame>:
+        @data_df (pandas.DataFrame):
                     Index:
                         reset index
                     Columns:
-                        - Confirmed <int>: the number of confirmed cases
-                        - Infected <int>: the number of currently infected cases
-                        - Fatal <int>: the number of fatal cases
-                        - Recovered <int>: the number of recovered cases
+                        - Confirmed (int): the number of confirmed cases
+                        - Infected (int): the number of currently infected cases
+                        - Fatal (int): the number of fatal cases
+                        - Recovered (int): the number of recovered cases
                         - any columns
-        @population <int>: total population in the place
+        @population (int): total population in the place
 
         Returns:
-            <pandas.DataFrame>:
+            (pandas.DataFrame):
                     Index:
                         reset index
                     Columns:
@@ -107,23 +107,23 @@ class ModelBase(ModelBaseCommon):
         This method should be overwritten in subclass.
 
         Args:
-            specialized_df <pandas.DataFrame>: dataframe with the variables
+            specialized_df (pandas.DataFrame): dataframe with the variables
 
                 Index:
-                    <object>:
+                    (object):
                 Columns:
-                    - variables of the models <int>
+                    - variables of the models (int)
                     - any columns
 
         Returns:
-            <pandas.DataFrame>:
+            (pandas.DataFrame):
                 Index:
-                    <object>: as-is
+                    (object): as-is
                 Columns:
-                    - Confirmed <int>: the number of confirmed cases
-                    - Infected <int>: the number of currently infected cases
-                    - Fatal <int>: the number of fatal cases
-                    - Recovered <int>: the number of recovered cases
+                    - Confirmed (int): the number of confirmed cases
+                    - Infected (int): the number of currently infected cases
+                    - Fatal (int): the number of fatal cases
+                    - Recovered (int): the number of recovered cases
                     - the other columns @specialzed_df has
         """
         df = specialized_df.copy()
@@ -147,6 +147,6 @@ class ModelBase(ModelBaseCommon):
         This method should be overwritten in subclass.
 
         Args:
-            param tau <int>: tau value [min]
+            param tau (int): tau value [min]
         """
         return dict()

@@ -18,8 +18,8 @@ class ODESimulator(Word):
         """
 
         Args:
-        @country <str>: country name
-        @province <str>: province name
+        @country (str): country name
+        @province (str): province name
         """
         self.country = country
         self.province = province
@@ -36,15 +36,19 @@ class ODESimulator(Word):
         Add models to the simulator.
 
         Args:
-            model <subclass of cs.ModelBase>: the first ODE model
-            step_n <int>: the number of steps
-            population <int>: population in the place
-            param_dict <dict[str]=float>:
+            model (subclass of cs.ModelBase): the first ODE model
+            step_n (int): the number of steps
+            population (int): population in the place
+            param_dict (dict):
+                - key (str): parameter name
+                - value (float): parameter value
                 - dictionary of parameter values or None
                 - if not include some params, the last values will be used
                     - NameError when the model is the first model
                     - NameError if new params are included
-            y0_dict <dict[str]=float>:
+            y0_dict (dict):
+                - key (str): variable name
+                - value (float): initial value
                 - dictionary of dimensional initial values or None
                 - None or if not include some variables, the last values will be used
                     - NameError when the model is the first model
@@ -95,22 +99,22 @@ class ODESimulator(Word):
         Solve ODE of the model.
 
         Args:
-            model <subclass of cs.ModelBase>: the ODE model
-            step_n <int>: the number of steps
-            param_dict <dict[str]=float>: dictionary of parameter values
-                - key <str>: parameter name
-                - value <float>: parameter value
-            y0_dict <dict[str]=int>: dictionary of initial values
-                - key <str>: dimensional variable name
-                - value <int>:initial value of the variable
-            population <int>: total population
+            model (subclass of cs.ModelBase): the ODE model
+            step_n (int): the number of steps
+            param_dict (dict): dictionary of parameter values
+                - key (str): parameter name
+                - value (float): parameter value
+            y0_dict (dict): dictionary of initial values
+                - key (str): dimensional variable name
+                - value (int):initial value of the variable
+            population (int): total population
 
         Returns:
-            <pandas.DataFrame>:
+            (pandas.DataFrame):
                 Index:
                     reset index
                 Columns:
-                    - t <int>: Elapsed time divided by tau value [-]
+                    - t (int): Elapsed time divided by tau value [-]
                     - columns with dimensional variables
         """
         step_n = self.validate_natural_int(step_n, name="step_n")
@@ -168,11 +172,11 @@ class ODESimulator(Word):
         Return tau-free results.
 
         Returns:
-            <pandas.DataFrame>:
+            (pandas.DataFrame):
                     Index:
                         reset index
                     Columns:
-                        - t <int>: Elapsed time divided by tau value [-]
+                        - t (int): Elapsed time divided by tau value [-]
                         - columns with dimensionalized variables
         """
         df = self._taufree_df.copy()
@@ -186,11 +190,11 @@ class ODESimulator(Word):
         Return the non-dimensionalized results.
 
         Returns:
-            <pandas.DataFrame>:
+            (pandas.DataFrame):
                 Index:
                     reset index
                 Columns:
-                    - t <int>: Elapsed time divided by tau value [-]
+                    - t (int): Elapsed time divided by tau value [-]
                     - non-dimensionalized variables of Susceptible etc.
         """
         df = self.taufree()
@@ -206,18 +210,18 @@ class ODESimulator(Word):
         Return the dimensionalized results.
 
         Args:
-            tau <int>: tau value [min]
-            start_date <str>: start date of the records, like 22Jan2020
+            tau (int): tau value [min]
+            start_date (str): start date of the records, like 22Jan2020
 
         Returns:
-            <pandas.DataFrame>
+            (pandas.DataFrame)
                 Index:
                     reset index
                 Columns:
-                    - Date <pd.TimeStamp>: Observation date
-                    - Country <str>: country/region name
-                    - Province <str>: province/prefecture/state name
-                    - variables of the models <int>
+                    - Date (pd.TimeStamp): Observation date
+                    - Country (str): country/region name
+                    - Province (str): province/prefecture/state name
+                    - variables of the models (int)
         """
         df = self.taufree()
         df = df.drop(self.TS, axis=1)

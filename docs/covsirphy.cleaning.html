@@ -91,6 +91,7 @@
 <li class="toctree-l4"><a class="reference internal" href="#submodules">Submodules</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#module-covsirphy.cleaning.cbase">covsirphy.cleaning.cbase module</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#module-covsirphy.cleaning.country_data">covsirphy.cleaning.country_data module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#module-covsirphy.cleaning.dataloader">covsirphy.cleaning.dataloader module</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#module-covsirphy.cleaning.jhu_data">covsirphy.cleaning.jhu_data module</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#module-covsirphy.cleaning.oxcgrt">covsirphy.cleaning.oxcgrt module</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#module-covsirphy.cleaning.population">covsirphy.cleaning.population module</a></li>
@@ -187,25 +188,30 @@
 <p>Basic class for data cleaning.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>&lt;str&gt;</strong> (<em>filename</em>) – CSV filename of the dataset</p>
+<dd class="field-odd"><p><strong>filename</strong> (<em>str</em>) – CSV filename of the dataset</p>
 </dd>
 </dl>
 <dl class="py attribute">
-<dt>
-<code class="sig-name descname">citation &lt;str&gt;</code></dt>
+<dt id="covsirphy.cleaning.cbase.CleaningBase.citation">
+<code class="sig-name descname">citation</code><a class="headerlink" href="#covsirphy.cleaning.cbase.CleaningBase.citation" title="Permalink to this definition">¶</a></dt>
 <dd><p>citation fo the dataset</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>str</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py method">
-<dt id="covsirphy.cleaning.cbase.CleaningBase.citation">
-<em class="property">property </em><code class="sig-name descname">citation</code><a class="headerlink" href="#covsirphy.cleaning.cbase.CleaningBase.citation" title="Permalink to this definition">¶</a></dt>
+<dt id="id0">
+<em class="property">property </em><code class="sig-name descname">citation</code><a class="headerlink" href="#id0" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return citation.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns</dt>
 <dd class="field-odd"><p>citation of the datset</p>
 </dd>
 <dt class="field-even">Return type</dt>
-<dd class="field-even"><p>&lt;str&gt;</p>
+<dd class="field-even"><p>(str)</p>
 </dd>
 </dl>
 </dd></dl>
@@ -221,7 +227,7 @@ Cleaning method is defined by self.cleaning() method.</p>
 <dd class="field-odd"><p>cleaned data</p>
 </dd>
 <dt class="field-even">Return type</dt>
-<dd class="field-even"><p>&lt;pandas.DataFrame&gt;</p>
+<dd class="field-even"><p>(pandas.DataFrame)</p>
 </dd>
 </dl>
 </dd></dl>
@@ -237,7 +243,7 @@ Cleaning method is defined by self.cleaning() method.</p>
 <dd class="field-odd"><p>cleaned data</p>
 </dd>
 <dt class="field-even">Return type</dt>
-<dd class="field-even"><p>&lt;pandas.DataFrame&gt;</p>
+<dd class="field-even"><p>(pandas.DataFrame)</p>
 </dd>
 </dl>
 </dd></dl>
@@ -251,7 +257,7 @@ Cleaning method is defined by self.cleaning() method.</p>
 <dd class="field-odd"><p>raw data</p>
 </dd>
 <dt class="field-even">Return type</dt>
-<dd class="field-even"><p>&lt;pandas.DataFrame&gt;</p>
+<dd class="field-even"><p>(pandas.DataFrame)</p>
 </dd>
 </dl>
 </dd></dl>
@@ -265,16 +271,16 @@ Cleaning method is defined by self.cleaning() method.</p>
 <dd class="field-odd"><p><p>group-by Date, sum of the values</p>
 <blockquote>
 <div><dl class="simple">
-<dt>Index:</dt><dd><p>(Date) &lt;pd.TimeStamp&gt;: Observation date</p>
+<dt>Index:</dt><dd><p>(Date) (pd.TimeStamp): Observation date</p>
 </dd>
 <dt>Columns:</dt><dd><ul class="simple">
-<li><p>Confirmed &lt;int&gt;: the number of confirmed cases</p></li>
-<li><p>Infected &lt;int&gt;: the number of currently infected cases</p></li>
-<li><p>Fatal &lt;int&gt;: the number of fatal cases</p></li>
-<li><p>Recovered &lt;int&gt;: the number of recovered cases</p></li>
-<li><p>Fatal per Confirmed &lt;int&gt;</p></li>
-<li><p>Recovered per Confirmed &lt;int&gt;</p></li>
-<li><p>Fatal per (Fatal or Recovered) &lt;int&gt;</p></li>
+<li><p>Confirmed (int): the number of confirmed cases</p></li>
+<li><p>Infected (int): the number of currently infected cases</p></li>
+<li><p>Fatal (int): the number of fatal cases</p></li>
+<li><p>Recovered (int): the number of recovered cases</p></li>
+<li><p>Fatal per Confirmed (int)</p></li>
+<li><p>Recovered per Confirmed (int)</p></li>
+<li><p>Fatal per (Fatal or Recovered) (int)</p></li>
 </ul>
 </dd>
 </dl>
@@ -282,7 +288,7 @@ Cleaning method is defined by self.cleaning() method.</p>
 </p>
 </dd>
 <dt class="field-even">Return type</dt>
-<dd class="field-even"><p>&lt;pandas.DataFrame&gt;</p>
+<dd class="field-even"><p>(pandas.DataFrame)</p>
 </dd>
 </dl>
 </dd></dl>
@@ -300,8 +306,8 @@ Cleaning method is defined by self.cleaning() method.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>&lt;str&gt;</strong> (<em>country</em>) – filename to read the data</p></li>
-<li><p><strong>&lt;str&gt;</strong> – country name</p></li>
+<li><p><strong>filename</strong> (<em>str</em>) – filename to read the data</p></li>
+<li><p><strong>country</strong> (<em>str</em>) – country name</p></li>
 </ul>
 </dd>
 </dl>
@@ -316,20 +322,20 @@ Cleaning method is defined by self.cleaning() method.</p>
 <dt>Index:</dt><dd><p>reset index</p>
 </dd>
 <dt>Columns:</dt><dd><ul class="simple">
-<li><p>Date &lt;pd.TimeStamp&gt;: Observation date</p></li>
-<li><p>Country &lt;str&gt;: country/region name</p></li>
-<li><p>Province &lt;str&gt;: province/prefecture/sstate name</p></li>
-<li><p>Confirmed &lt;int&gt;: the number of confirmed cases</p></li>
-<li><p>Infected &lt;int&gt;: the number of currently infected cases</p></li>
-<li><p>Fatal &lt;int&gt;: the number of fatal cases</p></li>
-<li><p>Recovered &lt;int&gt;: the number of recovered cases</p></li>
+<li><p>Date (pd.TimeStamp): Observation date</p></li>
+<li><p>Country (str): country/region name</p></li>
+<li><p>Province (str): province/prefecture/sstate name</p></li>
+<li><p>Confirmed (int): the number of confirmed cases</p></li>
+<li><p>Infected (int): the number of currently infected cases</p></li>
+<li><p>Fatal (int): the number of fatal cases</p></li>
+<li><p>Recovered (int): the number of recovered cases</p></li>
 </ul>
 </dd>
 </dl>
 </p>
 </dd>
 <dt class="field-even">Return type</dt>
-<dd class="field-even"><p>&lt;pandas.DataFrame&gt;</p>
+<dd class="field-even"><p>(pandas.DataFrame)</p>
 </dd>
 </dl>
 </dd></dl>
@@ -345,20 +351,20 @@ This method overwrite super().cleaning() method.</p>
 <dt>Index:</dt><dd><p>reset index</p>
 </dd>
 <dt>Columns:</dt><dd><ul class="simple">
-<li><p>Date &lt;pd.TimeStamp&gt;: Observation date</p></li>
-<li><p>Country &lt;str&gt;: country/region name</p></li>
-<li><p>Province &lt;str&gt;: province/prefecture/state name</p></li>
-<li><p>Confirmed &lt;int&gt;: the number of confirmed cases</p></li>
-<li><p>Infected &lt;int&gt;: the number of currently infected cases</p></li>
-<li><p>Fatal &lt;int&gt;: the number of fatal cases</p></li>
-<li><p>Recovered &lt;int&gt;: the number of recovered cases</p></li>
+<li><p>Date (pd.TimeStamp): Observation date</p></li>
+<li><p>Country (str): country/region name</p></li>
+<li><p>Province (str): province/prefecture/state name</p></li>
+<li><p>Confirmed (int): the number of confirmed cases</p></li>
+<li><p>Infected (int): the number of currently infected cases</p></li>
+<li><p>Fatal (int): the number of fatal cases</p></li>
+<li><p>Recovered (int): the number of recovered cases</p></li>
 </ul>
 </dd>
 </dl>
 </p>
 </dd>
 <dt class="field-even">Return type</dt>
-<dd class="field-even"><p>&lt;pandas.DataFrame&gt;</p>
+<dd class="field-even"><p>(pandas.DataFrame)</p>
 </dd>
 </dl>
 </dd></dl>
@@ -372,7 +378,7 @@ This method overwrite super().cleaning() method.</p>
 <dd class="field-odd"><p>country name</p>
 </dd>
 <dt class="field-even">Return type</dt>
-<dd class="field-even"><p>&lt;str&gt;</p>
+<dd class="field-even"><p>(str)</p>
 </dd>
 </dl>
 </dd></dl>
@@ -386,7 +392,7 @@ This method overwrite super().cleaning() method.</p>
 <dd class="field-odd"><p>the list of column names of the raw data</p>
 </dd>
 <dt class="field-even">Return type</dt>
-<dd class="field-even"><p>&lt;list[str]&gt;</p>
+<dd class="field-even"><p>(list[str])</p>
 </dd>
 </dl>
 </dd></dl>
@@ -398,12 +404,103 @@ This method overwrite super().cleaning() method.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>&lt;str&gt;</strong> (<em>province</em>) – column name for Date</p></li>
-<li><p><strong>&lt;str&gt;</strong> – column name for Confirmed</p></li>
-<li><p><strong>&lt;str&gt;</strong> – column name for Fatal</p></li>
-<li><p><strong>&lt;str&gt;</strong> – column name for Confirmed</p></li>
-<li><p><strong>&lt;str&gt;</strong> – (optional) column name for Province</p></li>
+<li><p><strong>date</strong> (<em>str</em>) – column name for Date</p></li>
+<li><p><strong>confirmed</strong> (<em>str</em>) – column name for Confirmed</p></li>
+<li><p><strong>fatal</strong> (<em>str</em>) – column name for Fatal</p></li>
+<li><p><strong>recovered</strong> (<em>str</em>) – column name for Confirmed</p></li>
+<li><p><strong>province</strong> (<em>str</em>) – (optional) column name for Province</p></li>
 </ul>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-covsirphy.cleaning.dataloader">
+<span id="covsirphy-cleaning-dataloader-module"></span><h2>covsirphy.cleaning.dataloader module<a class="headerlink" href="#module-covsirphy.cleaning.dataloader" title="Permalink to this headline">¶</a></h2>
+<dl class="py class">
+<dt id="covsirphy.cleaning.dataloader.DataLoader">
+<em class="property">class </em><code class="sig-prename descclassname">covsirphy.cleaning.dataloader.</code><code class="sig-name descname">DataLoader</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">directory</span></em>, <em class="sig-param"><span class="n">update_interval</span><span class="o">=</span><span class="default_value">12</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/cleaning/dataloader.html#DataLoader"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#covsirphy.cleaning.dataloader.DataLoader" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#covsirphy.cleaning.word.Word" title="covsirphy.cleaning.word.Word"><code class="xref py py-class docutils literal notranslate"><span class="pre">covsirphy.cleaning.word.Word</span></code></a></p>
+<p>Download the dataset and perform data cleaning.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>directory</strong> (<em>str</em><em> or </em><em>pathlib.Path</em>) – directory to save the downloaded datasets</p></li>
+<li><p><strong>update_interval</strong> (<em>int</em>) – update interval of the local datasets</p></li>
+</ul>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<p>If &#64;directory is None, the files will not be saved in local environment.
+GitHub datasets will be always updated because headers of GET response</p>
+<blockquote>
+<div><p>does not have ‘Last-Modified’ keys.</p>
+</div></blockquote>
+<dl class="simple">
+<dt>If &#64;update_interval hours have passed since the last update of local datasets,</dt><dd><p>updating will be forced when updating is not prevented by the methods.</p>
+</dd>
+</dl>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">covsirphy</span> <span class="k">as</span> <span class="nn">cs</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">data_loader</span> <span class="o">=</span> <span class="n">cs</span><span class="o">.</span><span class="n">DataLoader</span><span class="p">(</span><span class="s2">&quot;input&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">jhu_data</span> <span class="o">=</span> <span class="n">data_loader</span><span class="o">.</span><span class="n">jhu</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">jhu_data</span><span class="o">.</span><span class="n">citation</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">jhu_data</span><span class="o">.</span><span class="n">cleaned</span><span class="p">()))</span>
+<span class="go">&lt;class &#39;pandas.core.frame.DataFrame&#39;&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">jpn_data</span> <span class="o">=</span> <span class="n">data_loader</span><span class="o">.</span><span class="n">japan</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">jpn_data</span><span class="o">.</span><span class="n">citation</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">jpn_data</span><span class="o">.</span><span class="n">cleaned</span><span class="p">()))</span>
+<span class="go">&lt;class &#39;pandas.core.frame.DataFrame&#39;&gt;</span>
+</pre></div>
+</div>
+<dl class="py method">
+<dt id="covsirphy.cleaning.dataloader.DataLoader.japan">
+<code class="sig-name descname">japan</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">basename</span><span class="o">=</span><span class="default_value">'covid_jpn_total.csv'</span></em>, <em class="sig-param"><span class="n">local_file</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/cleaning/dataloader.html#DataLoader.japan"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#covsirphy.cleaning.dataloader.DataLoader.japan" title="Permalink to this definition">¶</a></dt>
+<dd><p>Load the datset of the number of cases in Japan.
+<a class="reference external" href="https://github.com/lisphilar/covid19-sir/tree/master/data">https://github.com/lisphilar/covid19-sir/tree/master/data</a></p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>basename</strong> (<em>str</em>) – basename of the file to save the data</p></li>
+<li><p><strong>local_file</strong> (<em>str</em><em> or </em><em>None</em>) – if not None, load the data from this file</p></li>
+</ul>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<p>Regardless the value of &#64;local_file, the data will be save in the directory.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>dataset at country level</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>(<a class="reference internal" href="covsirphy.html#covsirphy.CountryData" title="covsirphy.CountryData">covsirphy.CountryData</a>)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="covsirphy.cleaning.dataloader.DataLoader.jhu">
+<code class="sig-name descname">jhu</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">basename</span><span class="o">=</span><span class="default_value">'covid_19_data.csv'</span></em>, <em class="sig-param"><span class="n">local_file</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/cleaning/dataloader.html#DataLoader.jhu"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#covsirphy.cleaning.dataloader.DataLoader.jhu" title="Permalink to this definition">¶</a></dt>
+<dd><p>Load JHU dataset (the number of cases).
+<a class="reference external" href="https://github.com/CSSEGISandData/COVID-19/">https://github.com/CSSEGISandData/COVID-19/</a></p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>basename</strong> (<em>str</em>) – basename of the file to save the data</p></li>
+<li><p><strong>local_file</strong> (<em>str</em><em> or </em><em>None</em>) – if not None, load the data from this file</p></li>
+</ul>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<p>Regardless the value of &#64;local_file, the data will be save in the directory.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>JHU dataset</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>(<a class="reference internal" href="covsirphy.html#covsirphy.JHUData" title="covsirphy.JHUData">covsirphy.JHUData</a>)</p>
 </dd>
 </dl>
 </dd></dl>
@@ -428,27 +525,27 @@ This method overwrite super().cleaning() method.</p>
 </div>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>&lt;int&gt;</strong> (<em>population</em>) – <ul class="simple">
+<dd class="field-odd"><p><strong>population</strong> (<em>int</em>) – <ul class="simple">
 <li><p>if this is not None, Susceptible will be calculated.</p></li>
 </ul>
 </p>
 </dd>
 <dt class="field-even">Returns</dt>
 <dd class="field-even"><p><dl class="simple">
-<dt>&lt;pandas.DataFrame&gt;</dt><dd><dl class="simple">
+<dt>(pandas.DataFrame)</dt><dd><dl class="simple">
 <dt>Index:</dt><dd><p>reset index</p>
 </dd>
 <dt>Columns:</dt><dd><ul class="simple">
-<li><p>Date &lt;pd.TimeStamp&gt;: Observation date</p></li>
-<li><p>Country &lt;str&gt;: country/region name</p></li>
-<li><p>Province &lt;str&gt;: province/prefecture/state name</p></li>
-<li><p>Confirmed &lt;int&gt;: the number of confirmed cases</p></li>
-<li><p>Infected &lt;int&gt;: the number of currently infected cases</p></li>
-<li><p>Fatal &lt;int&gt;: the number of fatal cases</p></li>
-<li><p>Recovered &lt;int&gt;: the number of recovered cases</p></li>
+<li><p>Date (pd.TimeStamp): Observation date</p></li>
+<li><p>Country (str): country/region name</p></li>
+<li><p>Province (str): province/prefecture/state name</p></li>
+<li><p>Confirmed (int): the number of confirmed cases</p></li>
+<li><p>Infected (int): the number of currently infected cases</p></li>
+<li><p>Fatal (int): the number of fatal cases</p></li>
+<li><p>Recovered (int): the number of recovered cases</p></li>
 <li><dl class="simple">
 <dt>if &#64;population is not None:</dt><dd><ul>
-<li><p>Susceptible &lt;int&gt;: the number of susceptible cases</p></li>
+<li><p>Susceptible (int): the number of susceptible cases</p></li>
 </ul>
 </dd>
 </dl>
@@ -471,17 +568,17 @@ This method overwrite super().cleaning() method.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns</dt>
 <dd class="field-odd"><p><dl class="simple">
-<dt>&lt;pandas.DataFrame&gt;</dt><dd><dl class="simple">
+<dt>(pandas.DataFrame)</dt><dd><dl class="simple">
 <dt>Index:</dt><dd><p>reset index</p>
 </dd>
 <dt>Columns:</dt><dd><ul class="simple">
-<li><p>Date &lt;pd.TimeStamp&gt;: Observation date</p></li>
-<li><p>Country &lt;str&gt;: country/region name</p></li>
-<li><p>Province &lt;str&gt;: province/prefecture/state name</p></li>
-<li><p>Confirmed &lt;int&gt;: the number of confirmed cases</p></li>
-<li><p>Infected &lt;int&gt;: the number of currently infected cases</p></li>
-<li><p>Fatal &lt;int&gt;: the number of fatal cases</p></li>
-<li><p>Recovered &lt;int&gt;: the number of recovered cases</p></li>
+<li><p>Date (pd.TimeStamp): Observation date</p></li>
+<li><p>Country (str): country/region name</p></li>
+<li><p>Province (str): province/prefecture/state name</p></li>
+<li><p>Confirmed (int): the number of confirmed cases</p></li>
+<li><p>Infected (int): the number of currently infected cases</p></li>
+<li><p>Fatal (int): the number of fatal cases</p></li>
+<li><p>Recovered (int): the number of recovered cases</p></li>
 </ul>
 </dd>
 </dl>
@@ -498,7 +595,7 @@ This method overwrite super().cleaning() method.</p>
 <dd><p>Replace a part of cleaned dataset with a dataframe.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>&lt;cs.CountryData&gt;</strong> (<em>country_data</em>) – dataset object of the country</p>
+<dd class="field-odd"><p><strong>country_data</strong> (<a class="reference internal" href="covsirphy.html#covsirphy.CountryData" title="covsirphy.CountryData"><em>covsirphy.CountryData</em></a>) – dataset object of the country</p>
 </dd>
 <dt class="field-even">Returns</dt>
 <dd class="field-even"><p>self</p>
@@ -513,21 +610,21 @@ This method overwrite super().cleaning() method.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>&lt;str&gt;</strong> (<em>province</em>) – country name</p></li>
-<li><p><strong>&lt;str&gt;</strong> – province name</p></li>
+<li><p><strong>country</strong> (<em>str</em>) – country name</p></li>
+<li><p><strong>province</strong> (<em>str</em>) – province name</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
 <dd class="field-even"><p><dl class="simple">
-<dt>&lt;pandas.DataFrame&gt;</dt><dd><dl class="simple">
+<dt>(pandas.DataFrame)</dt><dd><dl class="simple">
 <dt>Index:</dt><dd><p>reset index</p>
 </dd>
 <dt>Columns:</dt><dd><ul class="simple">
-<li><p>Date &lt;pd.TimeStamp&gt;: Observation date</p></li>
-<li><p>Confirmed &lt;int&gt;: the number of confirmed cases</p></li>
-<li><p>Infected &lt;int&gt;: the number of currently infected cases</p></li>
-<li><p>Fatal &lt;int&gt;: the number of fatal cases</p></li>
-<li><p>Recovered &lt;int&gt;: the number of recovered cases (&gt; 0)</p></li>
+<li><p>Date (pd.TimeStamp): Observation date</p></li>
+<li><p>Confirmed (int): the number of confirmed cases</p></li>
+<li><p>Infected (int): the number of currently infected cases</p></li>
+<li><p>Fatal (int): the number of fatal cases</p></li>
+<li><p>Recovered (int): the number of recovered cases (&gt; 0)</p></li>
 </ul>
 </dd>
 </dl>
@@ -568,13 +665,13 @@ Policy indices (Overall etc.) are from</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns</dt>
 <dd class="field-odd"><p><dl class="simple">
-<dt>&lt;pandas.DataFrame&gt;</dt><dd><dl class="simple">
+<dt>(pandas.DataFrame)</dt><dd><dl class="simple">
 <dt>Index:</dt><dd><p>reset index</p>
 </dd>
 <dt>Columns:</dt><dd><ul class="simple">
-<li><p>Date &lt;pd.TimeStamp&gt;: Observation date</p></li>
-<li><p>Country &lt;str&gt;: country/region name</p></li>
-<li><p>ISO3 &lt;str&gt;: ISO 3166-1 alpha-3, like JPN</p></li>
+<li><p>Date (pd.TimeStamp): Observation date</p></li>
+<li><p>Country (str): country/region name</p></li>
+<li><p>ISO3 (str): ISO 3166-1 alpha-3, like JPN</p></li>
 <li><p>other column names are defined by OxCGRT.COL_DICT</p></li>
 </ul>
 </dd>
@@ -595,17 +692,17 @@ Policy indices (Overall etc.) are from</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>&lt;str&gt;</strong> (<em>iso3</em>) – country name</p></li>
-<li><p><strong>&lt;str&gt;</strong> – ISO 3166-1 alpha-3, like JPN</p></li>
+<li><p><strong>country</strong> (<em>str</em>) – country name</p></li>
+<li><p><strong>iso3</strong> (<em>str</em>) – ISO 3166-1 alpha-3, like JPN</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
 <dd class="field-even"><p><dl class="simple">
-<dt>&lt;pandas.DataFrame&gt;</dt><dd><dl class="simple">
+<dt>(pandas.DataFrame)</dt><dd><dl class="simple">
 <dt>Index:</dt><dd><p>reset index</p>
 </dd>
 <dt>Columns:</dt><dd><ul class="simple">
-<li><p>Date &lt;pd.TimeStamp&gt;: Observation date</p></li>
+<li><p>Date (pd.TimeStamp): Observation date</p></li>
 <li><p>other column names are defined by OxCGRT.COL_DICT</p></li>
 </ul>
 </dd>
@@ -641,13 +738,13 @@ This method overwrite super().cleaning() method.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns</dt>
 <dd class="field-odd"><p><dl class="simple">
-<dt>&lt;pandas.DataFrame&gt;</dt><dd><dl class="simple">
+<dt>(pandas.DataFrame)</dt><dd><dl class="simple">
 <dt>Index:</dt><dd><p>reset index</p>
 </dd>
 <dt>Columns:</dt><dd><ul class="simple">
-<li><p>Country &lt;str&gt;: country/region name</p></li>
-<li><p>Province &lt;str&gt;: province/prefecture/state name</p></li>
-<li><p>Population &lt;int&gt;: total population</p></li>
+<li><p>Country (str): country/region name</p></li>
+<li><p>Province (str): province/prefecture/state name</p></li>
+<li><p>Population (int): total population</p></li>
 </ul>
 </dd>
 </dl>
@@ -663,17 +760,17 @@ This method overwrite super().cleaning() method.</p>
 <code class="sig-name descname">to_dict</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">country_level</span><span class="o">=</span><span class="default_value">True</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/cleaning/population.html#Population.to_dict"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#covsirphy.cleaning.population.Population.to_dict" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return dictionary of population values.</p>
 <p>Args:
-country_level &lt;str&gt;: whether key is country name or not</p>
+country_level (str): whether key is country name or not</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns</dt>
-<dd class="field-odd"><p><ul class="simple">
+<dd class="field-odd"><p><dl class="simple">
+<dt>(dict)</dt><dd><ul class="simple">
 <li><p>if &#64;country_level is True, {“country”, population}</p></li>
 <li><p>if False, {“country/province”, population}</p></li>
 </ul>
-</p>
 </dd>
-<dt class="field-even">Return type</dt>
-<dd class="field-even"><p>&lt;dict[str]=int&gt;</p>
+</dl>
+</p>
 </dd>
 </dl>
 </dd></dl>
@@ -684,7 +781,7 @@ country_level &lt;str&gt;: whether key is country name or not</p>
 <dd><p>Return the total value of population in the datset.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns</dt>
-<dd class="field-odd"><p>&lt;int&gt;</p>
+<dd class="field-odd"><p>(int)</p>
 </dd>
 </dl>
 </dd></dl>
@@ -694,9 +791,9 @@ country_level &lt;str&gt;: whether key is country name or not</p>
 <code class="sig-name descname">update</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">value</span></em>, <em class="sig-param"><span class="n">country</span></em>, <em class="sig-param"><span class="n">province</span><span class="o">=</span><span class="default_value">'-'</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/cleaning/population.html#Population.update"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#covsirphy.cleaning.population.Population.update" title="Permalink to this definition">¶</a></dt>
 <dd><p>Update the value of a new place.</p>
 <p>Args:
-value &lt;int&gt;: population in the place
-country &lt;str&gt;: country name
-province &lt;str&gt;: province name</p>
+value (int): population in the place
+country (str): country name
+province (str): province name</p>
 </dd></dl>
 
 <dl class="py method">
@@ -704,14 +801,14 @@ province &lt;str&gt;: province name</p>
 <code class="sig-name descname">value</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">country</span></em>, <em class="sig-param"><span class="n">province</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/cleaning/population.html#Population.value"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#covsirphy.cleaning.population.Population.value" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return the value of population in the place.</p>
 <p>Args:
-country &lt;str&gt;: country name
-province &lt;str&gt;: province name</p>
+country (str): country name
+province (str): province name</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns</dt>
 <dd class="field-odd"><p>population in the place</p>
 </dd>
 <dt class="field-even">Return type</dt>
-<dd class="field-even"><p>&lt;int&gt;</p>
+<dd class="field-even"><p>(int)</p>
 </dd>
 </dl>
 </dd></dl>
@@ -937,10 +1034,10 @@ province &lt;str&gt;: province name</p>
 <dd><p>Convert a string to a datetime object.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>&lt;str&gt;</strong> (<em>date_str</em>) – date, like 22Jan2020</p>
+<dd class="field-odd"><p><strong>date_str</strong> (<em>str</em>) – date, like 22Jan2020</p>
 </dd>
 <dt class="field-even">Returns</dt>
-<dd class="field-even"><p>&lt;datetime.datetime&gt;</p>
+<dd class="field-even"><p>(datetime.datetime)</p>
 </dd>
 </dl>
 </dd></dl>
@@ -951,13 +1048,13 @@ province &lt;str&gt;: province name</p>
 <dd><p>Return the list of divisors of the value.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>&lt;int&gt;</strong> (<em>value</em>) – target value</p>
+<dd class="field-odd"><p><strong>value</strong> (<em>int</em>) – target value</p>
 </dd>
 <dt class="field-even">Returns</dt>
 <dd class="field-even"><p>the list of divisors</p>
 </dd>
 <dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>&lt;list[int]&gt;</p>
+<dd class="field-odd"><p>(list[int])</p>
 </dd>
 </dl>
 </dd></dl>
@@ -969,12 +1066,12 @@ province &lt;str&gt;: province name</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>&lt;list</strong><strong>[</strong><strong>list</strong><strong>[</strong><strong>object</strong><strong>]</strong><strong>]</strong><strong>&gt;</strong> (<em>nested_list</em>) – nested list</p></li>
-<li><p><strong>&lt;bool&gt;</strong> (<em>unique</em>) – if True, only unique values will remain</p></li>
+<li><p><strong>nested_list</strong> (<em>list</em><em>[</em><em>list</em><em>[</em><em>object</em><em>]</em><em>]</em>) – nested list</p></li>
+<li><p><strong>unique</strong> (<em>bool</em>) – if True, only unique values will remain</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
-<dd class="field-even"><p>&lt;list[object]&gt;</p>
+<dd class="field-even"><p>(list[object])</p>
 </dd>
 </dl>
 </dd></dl>
@@ -986,9 +1083,9 @@ province &lt;str&gt;: province name</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>&lt;float&gt;</strong> (<em>b</em>) – x values</p></li>
-<li><p><strong>&lt;float&gt;</strong> – the first parameters of the function</p></li>
-<li><p><strong>&lt;float&gt;</strong> – the second parameters of the function</p></li>
+<li><p><strong>x</strong> (<em>float</em>) – x values</p></li>
+<li><p><strong>a</strong> (<em>float</em>) – the first parameters of the function</p></li>
+<li><p><strong>b</strong> (<em>float</em>) – the second parameters of the function</p></li>
 </ul>
 </dd>
 </dl>
@@ -999,10 +1096,10 @@ province &lt;str&gt;: province name</p>
 <em class="property">classmethod </em><code class="sig-name descname">num2str</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">num</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/cleaning/word.html#Word.num2str"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#covsirphy.cleaning.word.Word.num2str" title="Permalink to this definition">¶</a></dt>
 <dd><p>Convert numbers to 1st, 2nd etc.</p>
 <p>Args:
-&#64;num &lt;int&gt;: number</p>
+&#64;num (int): number</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns</dt>
-<dd class="field-odd"><p>&lt;str&gt;</p>
+<dd class="field-odd"><p>(str)</p>
 </dd>
 </dl>
 </dd></dl>
@@ -1014,11 +1111,11 @@ province &lt;str&gt;: province name</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>&lt;pandas.DataFrame&gt;</strong> (<em>df</em>) – the dataframe to validate</p></li>
-<li><p><strong>&lt;str&gt;</strong> (<em>name</em>) – argument name of the dataframe</p></li>
-<li><p><strong>&lt;bool&gt;</strong> (<em>time_index</em>) – if True, the dataframe must has DatetimeIndex</p></li>
-<li><p><strong>&lt;list</strong><strong>[</strong><strong>str</strong><strong>]</strong><strong>/None&gt;</strong> (<em>columns</em>) – the columns the dataframe must have</p></li>
-<li><p><strong>&lt;pandas.DataFrame&gt;</strong> – as-is the target</p></li>
+<li><p><strong>target</strong> (<em>pandas.DataFrame</em>) – the dataframe to validate</p></li>
+<li><p><strong>name</strong> (<em>str</em>) – argument name of the dataframe</p></li>
+<li><p><strong>time_index</strong> (<em>bool</em>) – if True, the dataframe must has DatetimeIndex</p></li>
+<li><p><strong>columns</strong> (<em>list</em><em>[</em><em>str</em><em>]</em><em>/None</em>) – the columns the dataframe must have</p></li>
+<li><p><strong>df</strong> (<em>pandas.DataFrame</em>) – as-is the target</p></li>
 </ul>
 </dd>
 </dl>
@@ -1031,16 +1128,16 @@ province &lt;str&gt;: province name</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>&lt;instance&gt;</strong> (<em>target</em>) – target to validate</p></li>
-<li><p><strong>&lt;class&gt;</strong> (<em>parent</em>) – class object</p></li>
-<li><p><strong>&lt;str&gt;</strong> (<em>name</em>) – argument name of the target</p></li>
+<li><p><strong>target</strong> (<em>instance</em>) – target to validate</p></li>
+<li><p><strong>parent</strong> (<em>class</em>) – class object</p></li>
+<li><p><strong>name</strong> (<em>str</em>) – argument name of the target</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
 <dd class="field-even"><p>as-is target</p>
 </dd>
 <dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>&lt;instance&gt;</p>
+<dd class="field-odd"><p>(instance)</p>
 </dd>
 </dl>
 </dd></dl>
@@ -1056,16 +1153,16 @@ If the value is natural number and the type was float,</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>&lt;int/float/str&gt;</strong> (<em>target</em>) – value to validate</p></li>
-<li><p><strong>&lt;str&gt;</strong> (<em>name</em>) – argument name of the value</p></li>
-<li><p><strong>&lt;bool&gt;</strong> (<em>include_zero</em>) – include 0 or not</p></li>
+<li><p><strong>target</strong> (<em>int</em><em> or </em><em>float</em><em> or </em><em>str</em>) – value to validate</p></li>
+<li><p><strong>name</strong> (<em>str</em>) – argument name of the value</p></li>
+<li><p><strong>include_zero</strong> (<em>bool</em>) – include 0 or not</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
 <dd class="field-even"><p>as-is the target</p>
 </dd>
 <dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>&lt;int&gt;</p>
+<dd class="field-odd"><p>(int)</p>
 </dd>
 </dl>
 </dd></dl>
@@ -1077,16 +1174,16 @@ If the value is natural number and the type was float,</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>&lt;object&gt;</strong> (<em>parent</em>) – target to validate</p></li>
-<li><p><strong>&lt;object&gt;</strong> – parent class</p></li>
-<li><p><strong>&lt;str&gt;</strong> (<em>name</em>) – argument name of the target</p></li>
+<li><p><strong>target</strong> (<em>object</em>) – target to validate</p></li>
+<li><p><strong>parent</strong> (<em>object</em>) – parent class</p></li>
+<li><p><strong>name</strong> (<em>str</em>) – argument name of the target</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
 <dd class="field-even"><p>as-is the target</p>
 </dd>
 <dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>&lt;int&gt;</p>
+<dd class="field-odd"><p>(int)</p>
 </dd>
 </dl>
 </dd></dl>

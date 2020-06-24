@@ -20,6 +20,14 @@ covsirphy.cleaning.country\_data module
    :undoc-members:
    :show-inheritance:
 
+covsirphy.cleaning.dataloader module
+------------------------------------
+
+.. automodule:: covsirphy.cleaning.dataloader
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
 covsirphy.cleaning.jhu\_data module
 -----------------------------------
 

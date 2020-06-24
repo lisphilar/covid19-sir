@@ -165,33 +165,33 @@
 <span class="sd">    Hyperparameter optimization of an ODE model.</span>
 
 <span class="sd">    Args:</span>
-<span class="sd">        clean_df &lt;pandas.DataFrame&gt;:</span>
+<span class="sd">        clean_df (pandas.DataFrame):</span>
 <span class="sd">            - cleaned observed data or simulated data</span>
 <span class="sd">            - observed data</span>
 <span class="sd">                Index:</span>
 <span class="sd">                    reset index</span>
 <span class="sd">                Columns:</span>
-<span class="sd">                    - Date &lt;pd.TimeStamp&gt;: Observation date</span>
-<span class="sd">                    - Country &lt;str&gt;: country/region name</span>
-<span class="sd">                    - Province &lt;str&gt;: province/prefecture/sstate name</span>
-<span class="sd">                    - Confirmed &lt;int&gt;: the number of confirmed cases</span>
-<span class="sd">                    - Infected &lt;int&gt;: the number of currently infected cases</span>
-<span class="sd">                    - Fatal &lt;int&gt;: the number of fatal cases</span>
-<span class="sd">                    - Recovered &lt;int&gt;: the number of recovered cases</span>
+<span class="sd">                    - Date (pd.TimeStamp): Observation date</span>
+<span class="sd">                    - Country (str): country/region name</span>
+<span class="sd">                    - Province (str): province/prefecture/sstate name</span>
+<span class="sd">                    - Confirmed (int): the number of confirmed cases</span>
+<span class="sd">                    - Infected (int): the number of currently infected cases</span>
+<span class="sd">                    - Fatal (int): the number of fatal cases</span>
+<span class="sd">                    - Recovered (int): the number of recovered cases</span>
 <span class="sd">            - simulated data</span>
 <span class="sd">                Index:</span>
 <span class="sd">                    reset index</span>
 <span class="sd">                Columns:</span>
-<span class="sd">                    - Date &lt;pd.TimeStamp&gt;: Observation date</span>
-<span class="sd">                    - Country &lt;str&gt;: country/region name</span>
-<span class="sd">                    - Province &lt;str&gt;: province/prefecture/state name</span>
-<span class="sd">                    - variables of the models &lt;int&gt;</span>
-<span class="sd">        model &lt;subclass of cs.ModelBase&gt;: ODE model</span>
-<span class="sd">        population &lt;int&gt;: total population in the place</span>
-<span class="sd">        country &lt;str&gt;: country name</span>
-<span class="sd">        province &lt;str&gt;: province name</span>
-<span class="sd">        start_date &lt;str&gt;: start date, like 22Jan2020</span>
-<span class="sd">        end_date &lt;str&gt;: end date, like 01Feb2020</span>
+<span class="sd">                    - Date (pd.TimeStamp): Observation date</span>
+<span class="sd">                    - Country (str): country/region name</span>
+<span class="sd">                    - Province (str): province/prefecture/state name</span>
+<span class="sd">                    - variables of the models (int)</span>
+<span class="sd">        model (covsirphy.ModelBase): ODE model</span>
+<span class="sd">        population (int): total population in the place</span>
+<span class="sd">        country (str): country name</span>
+<span class="sd">        province (str): province name</span>
+<span class="sd">        start_date (str): start date, like 22Jan2020</span>
+<span class="sd">        end_date (str): end date, like 01Feb2020</span>
 <span class="sd">        kwargs: parameter values of the model</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">np</span><span class="o">.</span><span class="n">seterr</span><span class="p">(</span><span class="n">divide</span><span class="o">=</span><span class="s2">&quot;raise&quot;</span><span class="p">)</span>
@@ -239,8 +239,8 @@
 <span class="sd">        Run trial.</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">            n_jobs &lt;int&gt;: the number of parallel jobs or -1 (CPU count)</span>
-<span class="sd">            timeout_iteration &lt;int&gt;: time-out of one iteration</span>
+<span class="sd">            n_jobs (int): the number of parallel jobs or -1 (CPU count)</span>
+<span class="sd">            timeout_iteration (int): time-out of one iteration</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">study</span><span class="o">.</span><span class="n">optimize</span><span class="p">(</span>
             <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">objective</span><span class="p">(</span><span class="n">x</span><span class="p">),</span>
@@ -260,13 +260,13 @@
 <span class="sd">                when each actual value shows max value</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">            timeout &lt;int&gt;: time-out of run</span>
-<span class="sd">            reset_n_max &lt;int&gt;: if study was reset @reset_n_max times, will not be reset anymore</span>
-<span class="sd">            timeout_iteration &lt;int&gt;: time-out of one iteration</span>
-<span class="sd">            allowance &lt;tuple(float, float)&gt;: the allowance of the predicted value</span>
-<span class="sd">            n_jobs &lt;int&gt;: the number of parallel jobs or -1 (CPU count)</span>
-<span class="sd">            seed &lt;int/None&gt;: random seed of hyperparameter optimization</span>
-<span class="sd">        </span>
+<span class="sd">            timeout (int): time-out of run</span>
+<span class="sd">            reset_n_max (int): if study was reset @reset_n_max times, will not be reset anymore</span>
+<span class="sd">            timeout_iteration (int): time-out of one iteration</span>
+<span class="sd">            allowance (tuple(float, float)): the allowance of the predicted value</span>
+<span class="sd">            n_jobs (int): the number of parallel jobs or -1 (CPU count)</span>
+<span class="sd">            seed (int or None): random seed of hyperparameter optimization</span>
+
 <span class="sd">        Notes:</span>
 <span class="sd">            @seed will effective when @n_jobs is 1</span>
 
@@ -337,10 +337,10 @@
 <span class="sd">        This defines the parameter values using Optuna.</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">            trial &lt;optuna.trial&gt;: a trial of the study</span>
+<span class="sd">            trial (optuna.trial): a trial of the study</span>
 
 <span class="sd">        Returns:</span>
-<span class="sd">            &lt;float&gt;: score of the error function to minimize</span>
+<span class="sd">            (float): score of the error function to minimize</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">fixed_dict</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">fixed_dict</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
         <span class="c1"># Convert T to t using tau</span>
@@ -367,14 +367,14 @@
 <span class="sd">        Divide T by tau in the training dataset.</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">            tau &lt;int&gt;: tau value [min]</span>
+<span class="sd">            tau (int): tau value [min]</span>
 
 <span class="sd">        Returns:</span>
-<span class="sd">            &lt;pandas.DataFrame&gt;:</span>
+<span class="sd">            (pandas.DataFrame):</span>
 <span class="sd">                    Index:</span>
 <span class="sd">                        reset index</span>
 <span class="sd">                    Columns:</span>
-<span class="sd">                        - t &lt;int&gt;: Elapsed time divided by tau value [-]</span>
+<span class="sd">                        - t (int): Elapsed time divided by tau value [-]</span>
 <span class="sd">                        - columns with dimensional variables</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">tau</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">validate_natural_int</span><span class="p">(</span><span class="n">tau</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;tau&quot;</span><span class="p">)</span>
@@ -393,8 +393,10 @@
 <span class="sd">        Definition of error score to minimize in the study.</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">            param_dict &lt;dict[str]=int/float&gt;: estimated parameter values</span>
-<span class="sd">            taufree_df &lt;pandas.DataFrame&gt;: training dataset</span>
+<span class="sd">            param_dict (dict): estimated parameter values</span>
+<span class="sd">                - key (str): parameter name</span>
+<span class="sd">                - value (int or float): parameter value</span>
+<span class="sd">            taufree_df (pandas.DataFrame): training dataset</span>
 
 <span class="sd">                Index:</span>
 <span class="sd">                    reset index</span>
@@ -403,7 +405,7 @@
 <span class="sd">                    - columns with dimensional variables</span>
 
 <span class="sd">        Returns:</span>
-<span class="sd">            &lt;float&gt;: score of the error function to minimize</span>
+<span class="sd">            (float): score of the error function to minimize</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">step_n</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;self.step_n must be defined in advance.&quot;</span><span class="p">)</span>
@@ -432,15 +434,17 @@
 <span class="sd">        Simulate the values with the parameters.</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">            step_n &lt;int&gt;: number of iteration</span>
-<span class="sd">            param_dict &lt;dict[str]=int/float&gt;: estimated parameter values</span>
+<span class="sd">            step_n (int): number of iteration</span>
+<span class="sd">            param_dict (dict): estimated parameter values</span>
+<span class="sd">                - key (str): parameter name</span>
+<span class="sd">                - value (int or float): parameter value</span>
 
 <span class="sd">        Returns:</span>
-<span class="sd">            &lt;pandas.DataFrame&gt;:</span>
+<span class="sd">            (pandas.DataFrame):</span>
 <span class="sd">                Index:</span>
 <span class="sd">                    reset index</span>
 <span class="sd">                Columns:</span>
-<span class="sd">                    - t &lt;int&gt;: Elapsed time divided by tau value [-]</span>
+<span class="sd">                    - t (int): Elapsed time divided by tau value [-]</span>
 <span class="sd">                    - columns with dimensionalized variables</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">simulator</span> <span class="o">=</span> <span class="n">ODESimulator</span><span class="p">(</span><span class="n">country</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">country</span><span class="p">,</span> <span class="n">province</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">province</span><span class="p">)</span>
@@ -460,10 +464,10 @@
 <span class="sd">        This function should be overwritten in subclass.</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">            name &lt;str&gt;: index of the dataframe</span>
+<span class="sd">            name (str): index of the dataframe</span>
 
 <span class="sd">        Returns:</span>
-<span class="sd">            &lt;pandas.DataFrame&gt;:</span>
+<span class="sd">            (pandas.DataFrame):</span>
 <span class="sd">                Index:</span>
 <span class="sd">                    reset index</span>
 <span class="sd">                Columns:</span>
@@ -501,7 +505,7 @@
 <span class="sd">        Return RMSLE score.</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">            tau &lt;int&gt;: tau value</span>
+<span class="sd">            tau (int): tau value</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">score</span> <span class="o">=</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">rmsle</span><span class="p">(</span>
             <span class="n">train_df</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">divide_minutes</span><span class="p">(</span><span class="n">tau</span><span class="p">),</span>
@@ -514,7 +518,7 @@
 <span class="sd">        Show the accuracy as a figure.</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">            filename &lt;str&gt;: filename of the figure, or None (show figure)</span>
+<span class="sd">            filename (str): filename of the figure, or None (show figure)</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">tau</span> <span class="o">=</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">param</span><span class="p">()[</span><span class="bp">self</span><span class="o">.</span><span class="n">TAU</span><span class="p">]</span>
         <span class="n">train_df</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">divide_minutes</span><span class="p">(</span><span class="n">tau</span><span class="p">)</span>

@@ -160,8 +160,8 @@
 <span class="sd">    Data cleaning of country level data.</span>
 
 <span class="sd">    Args:</span>
-<span class="sd">        filename &lt;str&gt;: filename to read the data</span>
-<span class="sd">        country &lt;str&gt;: country name</span>
+<span class="sd">        filename (str): filename to read the data</span>
+<span class="sd">        country (str): country name</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="p">,</span> <span class="n">country</span><span class="p">):</span>
@@ -177,7 +177,7 @@
 <span class="sd">        Return the country name.</span>
 
 <span class="sd">        Returns:</span>
-<span class="sd">            &lt;str&gt;: country name</span>
+<span class="sd">            (str): country name</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_country</span>
 
@@ -186,7 +186,7 @@
 <span class="sd">        Return the column names of the raw data.</span>
 
 <span class="sd">        Returns:</span>
-<span class="sd">            &lt;list[str]&gt;: the list of column names of the raw data</span>
+<span class="sd">            (list[str]): the list of column names of the raw data</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_raw</span><span class="o">.</span><span class="n">columns</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span></div>
 
@@ -195,11 +195,11 @@
 <span class="sd">        Set the correspondence of the variables and columns of the raw data.</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">            date &lt;str&gt;: column name for Date</span>
-<span class="sd">            confirmed &lt;str&gt;: column name for Confirmed</span>
-<span class="sd">            fatal &lt;str&gt;: column name for Fatal</span>
-<span class="sd">            recovered &lt;str&gt;: column name for Confirmed</span>
-<span class="sd">            province &lt;str&gt;: (optional) column name for Province</span>
+<span class="sd">            date (str): column name for Date</span>
+<span class="sd">            confirmed (str): column name for Confirmed</span>
+<span class="sd">            fatal (str): column name for Fatal</span>
+<span class="sd">            recovered (str): column name for Confirmed</span>
+<span class="sd">            province (str): (optional) column name for Province</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">province_col</span> <span class="o">=</span> <span class="n">province</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">var_dict</span> <span class="o">=</span> <span class="p">{</span>
@@ -215,17 +215,17 @@
 <span class="sd">        This method overwrite super().cleaning() method.</span>
 
 <span class="sd">        Returns:</span>
-<span class="sd">            &lt;pandas.DataFrame&gt;:</span>
+<span class="sd">            (pandas.DataFrame):</span>
 <span class="sd">                Index:</span>
 <span class="sd">                    reset index</span>
 <span class="sd">                Columns:</span>
-<span class="sd">                    - Date &lt;pd.TimeStamp&gt;: Observation date</span>
-<span class="sd">                    - Country &lt;str&gt;: country/region name</span>
-<span class="sd">                    - Province &lt;str&gt;: province/prefecture/state name</span>
-<span class="sd">                    - Confirmed &lt;int&gt;: the number of confirmed cases</span>
-<span class="sd">                    - Infected &lt;int&gt;: the number of currently infected cases</span>
-<span class="sd">                    - Fatal &lt;int&gt;: the number of fatal cases</span>
-<span class="sd">                    - Recovered &lt;int&gt;: the number of recovered cases</span>
+<span class="sd">                    - Date (pd.TimeStamp): Observation date</span>
+<span class="sd">                    - Country (str): country/region name</span>
+<span class="sd">                    - Province (str): province/prefecture/state name</span>
+<span class="sd">                    - Confirmed (int): the number of confirmed cases</span>
+<span class="sd">                    - Infected (int): the number of currently infected cases</span>
+<span class="sd">                    - Fatal (int): the number of fatal cases</span>
+<span class="sd">                    - Recovered (int): the number of recovered cases</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">var_dict</span><span class="p">:</span>
             <span class="n">s</span> <span class="o">=</span> <span class="s2">&quot;Please execute CountryData.set_variables() in advance.&quot;</span>
@@ -255,17 +255,17 @@
 <span class="sd">        Cleaning method is defined by self.cleaning() method.</span>
 
 <span class="sd">        Returns:</span>
-<span class="sd">            &lt;pandas.DataFrame&gt;:</span>
+<span class="sd">            (pandas.DataFrame):</span>
 <span class="sd">                Index:</span>
 <span class="sd">                    reset index</span>
 <span class="sd">                Columns:</span>
-<span class="sd">                    - Date &lt;pd.TimeStamp&gt;: Observation date</span>
-<span class="sd">                    - Country &lt;str&gt;: country/region name</span>
-<span class="sd">                    - Province &lt;str&gt;: province/prefecture/sstate name</span>
-<span class="sd">                    - Confirmed &lt;int&gt;: the number of confirmed cases</span>
-<span class="sd">                    - Infected &lt;int&gt;: the number of currently infected cases</span>
-<span class="sd">                    - Fatal &lt;int&gt;: the number of fatal cases</span>
-<span class="sd">                    - Recovered &lt;int&gt;: the number of recovered cases</span>
+<span class="sd">                    - Date (pd.TimeStamp): Observation date</span>
+<span class="sd">                    - Country (str): country/region name</span>
+<span class="sd">                    - Province (str): province/prefecture/sstate name</span>
+<span class="sd">                    - Confirmed (int): the number of confirmed cases</span>
+<span class="sd">                    - Infected (int): the number of currently infected cases</span>
+<span class="sd">                    - Fatal (int): the number of fatal cases</span>
+<span class="sd">                    - Recovered (int): the number of recovered cases</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_cleaned_df</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">cleaning</span><span class="p">()</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_cleaned_df</span></div></div>

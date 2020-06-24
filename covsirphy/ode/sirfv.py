@@ -10,12 +10,12 @@ class SIRFV(ModelBase):
     SIR-FV model.
 
     Args:
-        population <int>: total population
-            theta <float>
-            kappa <float>
-            rho <float>
-            sigma <float>
-            omega <float> or v_per_day <int>
+        population (int): total population
+            theta (float)
+            kappa (float)
+            rho (float)
+            sigma (float)
+            omega (float) or v_per_day (int)
     """
     # Model name
     NAME = "SIR-FV"
@@ -65,11 +65,11 @@ class SIRFV(ModelBase):
         Return the list of dS/dt (tau-free) etc.
 
         Args:
-            t <int>: time steps
-            X <numpy.array>: values of th model variables
+            t (int): time steps
+            X (numpy.array): values of th model variables
 
         Returns:
-            <np.array>
+            (np.array)
         """
         n = self.population
         s, i, *_ = X
@@ -87,18 +87,18 @@ class SIRFV(ModelBase):
         Define the range of parameters (not including tau value).
 
         Args:
-            taufree_df <pandas.DataFrame>:
+            taufree_df (pandas.DataFrame):
                 Index:
                     reset index
                 Columns:
-                    - t <int>: time steps (tau-free)
+                    - t (int): time steps (tau-free)
                     - columns with dimensional variables
-            population <int>: total population
+            population (int): total population
 
         Returns:
-            <dict[name]=(min, max)>:
-            - min <float>: min value
-            - max <float>: max value
+            (dict)
+                - key (str): parameter name
+                - value (tuple(float, float)): min value and max value
         """
         df = cls.validate_dataframe(
             taufree_df, name="taufree_df", columns=[cls.TS, *cls.VARIABLES]
@@ -121,25 +121,25 @@ class SIRFV(ModelBase):
         Specialize the dataset for this model.
 
         Args:
-        data_df <pandas.DataFrame>:
-            Index:
-                reset index
-            Columns:
-                - Confirmed <int>: the number of confirmed cases
-                - Infected <int>: the number of currently infected cases
-                - Fatal <int>: the number of fatal cases
-                - Recovered <int>: the number of recovered cases
-                - any columns
-        population <int>: total population in the place
+            data_df (pandas.DataFrame):
+                Index:
+                    reset index
+                Columns:
+                    - Confirmed (int): the number of confirmed cases
+                    - Infected (int): the number of currently infected cases
+                    - Fatal (int): the number of fatal cases
+                    - Recovered (int): the number of recovered cases
+                    - any columns
+            population (int): total population in the place
 
         Returns:
-            <pandas.DataFrame>:
+            (pandas.DataFrame)
                 Index:
                     reset index
                 Columns:
                     - any columns @data_df has
-                    - Susceptible <int>: 0
-                    - Vactinated <int>: 0
+                    - Susceptible (int): 0
+                    - Vactinated (int): 0
         """
         df = super().specialize(data_df, population)
         # Calculate dimensional variables
@@ -154,27 +154,27 @@ class SIRFV(ModelBase):
          using a dataframe with the variables of the model.
 
         Args:
-        specialized_df <pandas.DataFrame>: dataframe with the variables
+        specialized_df (pandas.DataFrame): dataframe with the variables
 
             Index:
-                <object>:
+                (object)
             Columns:
-                - Susceptible <int>: the number of susceptible cases
-                - Infected <int>: the number of currently infected cases
-                - Recovered <int>: the number of recovered cases
-                - Fatal <int>: the number of fatal cases
-                - Vaccinated <int>: the number of vactinated persons
+                - Susceptible (int): the number of susceptible cases
+                - Infected (int): the number of currently infected cases
+                - Recovered (int): the number of recovered cases
+                - Fatal (int): the number of fatal cases
+                - Vaccinated (int): the number of vactinated persons
                 - any columns
 
         Returns:
-            <pandas.DataFrame>:
+            (pandas.DataFrame)
                 Index:
-                    <object>: as-is
+                    (object): as-is
                 Columns:
-                    - Confirmed <int>: the number of confirmed cases
-                    - Infected <int>: the number of currently infected cases
-                    - Fatal <int>: the number of fatal cases
-                    - Recovered <int>: the number of recovered cases
+                    - Confirmed (int): the number of confirmed cases
+                    - Infected (int): the number of currently infected cases
+                    - Fatal (int): the number of fatal cases
+                    - Recovered (int): the number of recovered cases
                     - the other columns @specialzed_df has
         """
         df = specialized_df.copy()
@@ -194,7 +194,7 @@ class SIRFV(ModelBase):
         Calculate 1/beta [day] etc.
 
         Args:
-            param tau <int>: tau value [min]
+            param tau (int): tau value [min]
         """
         _dict = {
             "alpha1": round(self.theta, 3),

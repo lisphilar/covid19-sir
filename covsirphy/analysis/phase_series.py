@@ -12,9 +12,9 @@ class PhaseSeries(Word):
     A series of phases.
 
     Args:
-        first_date <str>: the first date of the series, like 22Jan2020
-        last_record_date <str>: the last date of the records, like 25May2020
-        population <int>: initial value of total population in the place
+        first_date (str): the first date of the series, like 22Jan2020
+        last_record_date (str): the last date of the records, like 25May2020
+        population (int): initial value of total population in the place
     """
 
     def __init__(self, first_date, last_record_date, population):
@@ -28,7 +28,7 @@ class PhaseSeries(Word):
         Clear phase information.
 
         Args:
-            include_past <bool>:
+            include_past (bool):
                 - if True, include past phases.
                 - future phase are always included
 
@@ -44,12 +44,14 @@ class PhaseSeries(Word):
         Return initialized dictionary which is to remember phase ID of each date.
 
         Args:
-            include_past <bool>:
+            include_past (bool):
                 - if True, include past phases.
                 - future phase are always included
-        return <dict[pd.TimeStamp]=int>:
-            - key: dates from the first date to the last date of the records
-            - value: 0 (phase ID)
+
+        Returns:
+            (dict)
+                - key (pd.TImeStamp): dates from the first date to the last date of the records
+                - value (int): 0 (phase ID)
         """
         past_date_objects = pd.date_range(
             start=self.first_date, end=self.last_record_date, freq="D"
@@ -68,10 +70,12 @@ class PhaseSeries(Word):
         Return initialized dictionary which is to remember phase information.
 
         Args:
-            include_past <bool>:
+            include_past (bool):
                 - if True, include past phases.
                 - future phase are always included
-        return <dict[str]=str/int>:
+
+        Returns:
+            (dict)
             - 'Start': the first date of the records
             - 'End': the last date of the records
             - 'Population': initial value of total population
@@ -98,10 +102,10 @@ class PhaseSeries(Word):
         Return phase ID of the phase.
 
         Args:
-            phase <str>: phase name, like 1st, 2nd, 3rd,...
+            phase (str): phase name, like 1st, 2nd, 3rd,...
 
         Returns:
-            <int>
+            (int)
         """
         try:
             num = int(phase[:-2])
@@ -115,9 +119,9 @@ class PhaseSeries(Word):
         Add a new phase.
 
         Args:
-            start_date <str>: start date of the new phase
-            end_date <str>: end date of the new phase
-            population <int>: population value of the start date
+            start_date (str): start date of the new phase
+            end_date (str): end date of the new phase
+            population (int): population value of the start date
                 - if None, initial value will be used
             kwargs: keyword arguments to save as phase information
 
@@ -168,7 +172,7 @@ class PhaseSeries(Word):
         Delete a phase.
 
         Args:
-            phase <str>: phase name, like 0th, 1st, 2nd...
+            phase (str): phase name, like 0th, 1st, 2nd...
 
         Returns:
             self
@@ -186,10 +190,10 @@ class PhaseSeries(Word):
         Summarize the series of phases in a dataframe.
 
         Returns:
-            <pandas.DataFrame>:
+            (pandas.DataFrame):
                 Index:
                     - phase name, like 1st, 2nd, 3rd...
-                COlumns:
+                Columns:
                     - Type: 'Past' or 'Future'
                     - Start: start date of the phase
                     - End: end date of the phase
@@ -207,13 +211,13 @@ class PhaseSeries(Word):
         Summarize the series of phase in a dictionary.
 
         Returns:
-            <dict[str]={str: str/int}>:
+            (dict[str]={str: str/int}):
                 - key: phase number, like 1th, 2nd,...
                 - value: {
-                    'Type': <str> 'Past' or 'Future'
-                    'Start': <str> start date of the phase,
-                    'End': <str> end date of the phase,
-                    'Population': <int> population value at the start date
+                    'Type': (str) 'Past' or 'Future'
+                    'Start': (str) start date of the phase,
+                    'End': (str) end date of the phase,
+                    'Population': (int) population value at the start date
                     - values added by self.update()
                 }
         """
@@ -230,12 +234,12 @@ class PhaseSeries(Word):
         Return 'Past' or 'Future' for the target date.
 
         Args:
-            target_date <str>: target date, like 22Jan2020
-            ref_date <str/None>: reference date
+            target_date (str): target date, like 22Jan2020
+            ref_date (str or None): reference date
                 - if None, will use last date of the records
 
         Returns:
-            <str>: 'Past' or 'Future'
+            (str): 'Past' or 'Future'
         """
         target_obj = datetime.strptime(target_date, self.DATE_FORMAT)
         ref_date = self.last_record_date if ref_date is None else ref_date
@@ -249,7 +253,7 @@ class PhaseSeries(Word):
         Update information of the phase.
 
         Args:
-            phase <str>: phase name
+            phase (str): phase name
             kwargs: keyword arguments to add
         """
         phase_id = phase_id = self._phase_name2id(phase)
@@ -260,7 +264,7 @@ class PhaseSeries(Word):
         """
         Return the next date of the end date of the last registered phase.
         Returns:
-            <str>: like 01Feb2020
+            (str): like 01Feb2020
         """
         un_date_objects = [
             k for (k, v) in self.phase_dict.items()

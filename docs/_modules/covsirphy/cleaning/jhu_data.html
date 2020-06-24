@@ -173,23 +173,23 @@
 <span class="sd">            Cleaning method is defined by self.cleaning() method.</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">            population &lt;int&gt;:</span>
+<span class="sd">            population (int):</span>
 <span class="sd">                - if this is not None, Susceptible will be calculated.</span>
 
 <span class="sd">        Returns:</span>
-<span class="sd">            &lt;pandas.DataFrame&gt;</span>
+<span class="sd">            (pandas.DataFrame)</span>
 <span class="sd">                Index:</span>
 <span class="sd">                    reset index</span>
 <span class="sd">                Columns:</span>
-<span class="sd">                    - Date &lt;pd.TimeStamp&gt;: Observation date</span>
-<span class="sd">                    - Country &lt;str&gt;: country/region name</span>
-<span class="sd">                    - Province &lt;str&gt;: province/prefecture/state name</span>
-<span class="sd">                    - Confirmed &lt;int&gt;: the number of confirmed cases</span>
-<span class="sd">                    - Infected &lt;int&gt;: the number of currently infected cases</span>
-<span class="sd">                    - Fatal &lt;int&gt;: the number of fatal cases</span>
-<span class="sd">                    - Recovered &lt;int&gt;: the number of recovered cases</span>
+<span class="sd">                    - Date (pd.TimeStamp): Observation date</span>
+<span class="sd">                    - Country (str): country/region name</span>
+<span class="sd">                    - Province (str): province/prefecture/state name</span>
+<span class="sd">                    - Confirmed (int): the number of confirmed cases</span>
+<span class="sd">                    - Infected (int): the number of currently infected cases</span>
+<span class="sd">                    - Fatal (int): the number of fatal cases</span>
+<span class="sd">                    - Recovered (int): the number of recovered cases</span>
 <span class="sd">                    - if @population is not None:</span>
-<span class="sd">                        - Susceptible &lt;int&gt;: the number of susceptible cases</span>
+<span class="sd">                        - Susceptible (int): the number of susceptible cases</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">df</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_cleaned_df</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
         <span class="k">if</span> <span class="n">population</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
@@ -204,17 +204,17 @@
 <span class="sd">        This method overwrite super().cleaning() method.</span>
 
 <span class="sd">        Returns:</span>
-<span class="sd">            &lt;pandas.DataFrame&gt;</span>
+<span class="sd">            (pandas.DataFrame)</span>
 <span class="sd">                Index:</span>
 <span class="sd">                    reset index</span>
 <span class="sd">                Columns:</span>
-<span class="sd">                    - Date &lt;pd.TimeStamp&gt;: Observation date</span>
-<span class="sd">                    - Country &lt;str&gt;: country/region name</span>
-<span class="sd">                    - Province &lt;str&gt;: province/prefecture/state name</span>
-<span class="sd">                    - Confirmed &lt;int&gt;: the number of confirmed cases</span>
-<span class="sd">                    - Infected &lt;int&gt;: the number of currently infected cases</span>
-<span class="sd">                    - Fatal &lt;int&gt;: the number of fatal cases</span>
-<span class="sd">                    - Recovered &lt;int&gt;: the number of recovered cases</span>
+<span class="sd">                    - Date (pd.TimeStamp): Observation date</span>
+<span class="sd">                    - Country (str): country/region name</span>
+<span class="sd">                    - Province (str): province/prefecture/state name</span>
+<span class="sd">                    - Confirmed (int): the number of confirmed cases</span>
+<span class="sd">                    - Infected (int): the number of currently infected cases</span>
+<span class="sd">                    - Fatal (int): the number of fatal cases</span>
+<span class="sd">                    - Recovered (int): the number of recovered cases</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">df</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_raw</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
         <span class="c1"># Rename the columns</span>
@@ -274,13 +274,13 @@
 <span class="sd">        Replace a part of cleaned dataset with a dataframe.</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">            country_data &lt;cs.CountryData&gt;: dataset object of the country</span>
+<span class="sd">            country_data (covsirphy.CountryData): dataset object of the country</span>
 
 <span class="sd">        Returns:</span>
 <span class="sd">            self</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">country_data</span><span class="p">,</span> <span class="n">CountryData</span><span class="p">):</span>
-            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">&quot;country_data must be &lt;covsirphy.CountryData&gt;.&quot;</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">&quot;Type of @country_data must be &lt;covsirphy.CountryData&gt;.&quot;</span><span class="p">)</span>
         <span class="c1"># Read new dataset</span>
         <span class="n">country</span> <span class="o">=</span> <span class="n">country_data</span><span class="o">.</span><span class="n">country</span>
         <span class="n">new</span> <span class="o">=</span> <span class="n">country_data</span><span class="o">.</span><span class="n">cleaned</span><span class="p">()</span>
@@ -297,19 +297,19 @@
 <span class="sd">        Return the subset in the area.</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">            country &lt;str&gt;: country name</span>
-<span class="sd">            province &lt;str&gt;: province name</span>
+<span class="sd">            country (str): country name</span>
+<span class="sd">            province (str): province name</span>
 
 <span class="sd">        Returns:</span>
-<span class="sd">            &lt;pandas.DataFrame&gt;</span>
+<span class="sd">            (pandas.DataFrame)</span>
 <span class="sd">                Index:</span>
 <span class="sd">                    reset index</span>
 <span class="sd">                Columns:</span>
-<span class="sd">                    - Date &lt;pd.TimeStamp&gt;: Observation date</span>
-<span class="sd">                    - Confirmed &lt;int&gt;: the number of confirmed cases</span>
-<span class="sd">                    - Infected &lt;int&gt;: the number of currently infected cases</span>
-<span class="sd">                    - Fatal &lt;int&gt;: the number of fatal cases</span>
-<span class="sd">                    - Recovered &lt;int&gt;: the number of recovered cases (&gt; 0)</span>
+<span class="sd">                    - Date (pd.TimeStamp): Observation date</span>
+<span class="sd">                    - Confirmed (int): the number of confirmed cases</span>
+<span class="sd">                    - Infected (int): the number of currently infected cases</span>
+<span class="sd">                    - Fatal (int): the number of fatal cases</span>
+<span class="sd">                    - Recovered (int): the number of recovered cases (&gt; 0)</span>
 
 <span class="sd">        Notes:</span>
 <span class="sd">            Records with Recovered &gt; 0 will be selected.</span>

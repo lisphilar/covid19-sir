@@ -222,10 +222,10 @@
 <span class="sd">        Convert numbers to 1st, 2nd etc.</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">        @num &lt;int&gt;: number</span>
+<span class="sd">        @num (int): number</span>
 
 <span class="sd">        Returns:</span>
-<span class="sd">            &lt;str&gt;</span>
+<span class="sd">            (str)</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">num</span><span class="p">,</span> <span class="nb">int</span><span class="p">):</span>
             <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">&quot;@num must be an integer.&quot;</span><span class="p">)</span>
@@ -239,9 +239,9 @@
 <span class="sd">        Negative exponential function f(x)=A exp(-Bx).</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">            x &lt;float&gt;: x values</span>
-<span class="sd">            a &lt;float&gt;: the first parameters of the function</span>
-<span class="sd">            b &lt;float&gt;: the second parameters of the function</span>
+<span class="sd">            x (float): x values</span>
+<span class="sd">            a (float): the first parameters of the function</span>
+<span class="sd">            b (float): the second parameters of the function</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="n">a</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="n">b</span> <span class="o">*</span> <span class="n">x</span><span class="p">)</span></div>
 
@@ -251,10 +251,10 @@
 <span class="sd">        Convert a string to a datetime object.</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">            date_str &lt;str&gt;: date, like 22Jan2020</span>
+<span class="sd">            date_str (str): date, like 22Jan2020</span>
 
 <span class="sd">        Returns:</span>
-<span class="sd">            &lt;datetime.datetime&gt;</span>
+<span class="sd">            (datetime.datetime)</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">obj</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">strptime</span><span class="p">(</span><span class="n">date_str</span><span class="p">,</span> <span class="bp">cls</span><span class="o">.</span><span class="n">DATE_FORMAT</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">obj</span></div>
@@ -265,11 +265,11 @@
 <span class="sd">        Flatten the nested list.</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">            nested_list &lt;list[list[object]]&gt;: nested list</span>
-<span class="sd">            unique &lt;bool&gt;: if True, only unique values will remain</span>
+<span class="sd">            nested_list (list[list[object]]): nested list</span>
+<span class="sd">            unique (bool): if True, only unique values will remain</span>
 
 <span class="sd">        Returns:</span>
-<span class="sd">            &lt;list[object]&gt;</span>
+<span class="sd">            (list[object])</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">flattened</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span><span class="n">nested_list</span><span class="p">,</span> <span class="nb">list</span><span class="p">())</span>
         <span class="k">if</span> <span class="n">unique</span><span class="p">:</span>
@@ -282,16 +282,16 @@
 <span class="sd">        Validate the dataframe has the columns.</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">            target &lt;pandas.DataFrame&gt;: the dataframe to validate</span>
-<span class="sd">            name &lt;str&gt;: argument name of the dataframe</span>
-<span class="sd">            time_index &lt;bool&gt;: if True, the dataframe must has DatetimeIndex</span>
-<span class="sd">            columns &lt;list[str]/None&gt;: the columns the dataframe must have</span>
-<span class="sd">            df &lt;pandas.DataFrame&gt;: as-is the target</span>
+<span class="sd">            target (pandas.DataFrame): the dataframe to validate</span>
+<span class="sd">            name (str): argument name of the dataframe</span>
+<span class="sd">            time_index (bool): if True, the dataframe must has DatetimeIndex</span>
+<span class="sd">            columns (list[str]/None): the columns the dataframe must have</span>
+<span class="sd">            df (pandas.DataFrame): as-is the target</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">df</span> <span class="o">=</span> <span class="n">target</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">):</span>
             <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span>
-                <span class="sa">f</span><span class="s2">&quot;@</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2"> must be a instance of &lt;pandas.DataFrame&gt;.&quot;</span><span class="p">)</span>
+                <span class="sa">f</span><span class="s2">&quot;@</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2"> must be a instance of (pandas.DataFrame).&quot;</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">time_index</span> <span class="ow">and</span> <span class="p">(</span><span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">df</span><span class="o">.</span><span class="n">index</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">DatetimeIndex</span><span class="p">)):</span>
             <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Index of @</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2"> must be &lt;pd.DatetimeIndex&gt;.&quot;</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">columns</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
@@ -311,12 +311,12 @@
 <span class="sd">         will be converted to an integer.</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">            target &lt;int/float/str&gt;: value to validate</span>
-<span class="sd">            name &lt;str&gt;: argument name of the value</span>
-<span class="sd">            include_zero &lt;bool&gt;: include 0 or not</span>
+<span class="sd">            target (int or float or str): value to validate</span>
+<span class="sd">            name (str): argument name of the value</span>
+<span class="sd">            include_zero (bool): include 0 or not</span>
 
 <span class="sd">        Returns:</span>
-<span class="sd">            &lt;int&gt;: as-is the target</span>
+<span class="sd">            (int): as-is the target</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">s</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;@</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2"> must be a natural number, but </span><span class="si">{</span><span class="n">target</span><span class="si">}</span><span class="s2"> was applied&quot;</span>
         <span class="k">try</span><span class="p">:</span>
@@ -336,12 +336,12 @@
 <span class="sd">        Validate the target is a subclass of the parent class.</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">            target &lt;object&gt;: target to validate</span>
-<span class="sd">            parent &lt;object&gt;: parent class</span>
-<span class="sd">            name &lt;str&gt;: argument name of the target</span>
+<span class="sd">            target (object): target to validate</span>
+<span class="sd">            parent (object): parent class</span>
+<span class="sd">            name (str): argument name of the target</span>
 
 <span class="sd">        Returns:</span>
-<span class="sd">            &lt;int&gt;: as-is the target</span>
+<span class="sd">            (int): as-is the target</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">s</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;@</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2"> must be an sub class of </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">parent</span><span class="p">)</span><span class="si">}</span><span class="s2">, but </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">target</span><span class="p">)</span><span class="si">}</span><span class="s2"> was applied.&quot;</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="nb">issubclass</span><span class="p">(</span><span class="n">target</span><span class="p">,</span> <span class="n">parent</span><span class="p">):</span>
@@ -354,12 +354,12 @@
 <span class="sd">        Validate the target is a instance of the class object.</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">            target &lt;instance&gt;: target to validate</span>
-<span class="sd">            parent &lt;class&gt;: class object</span>
-<span class="sd">            name &lt;str&gt;: argument name of the target</span>
+<span class="sd">            target (instance): target to validate</span>
+<span class="sd">            parent (class): class object</span>
+<span class="sd">            name (str): argument name of the target</span>
 
 <span class="sd">        Returns:</span>
-<span class="sd">            &lt;instance&gt;: as-is target</span>
+<span class="sd">            (instance): as-is target</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">s</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;@</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2"> must be an instance of </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">class_obj</span><span class="p">)</span><span class="si">}</span><span class="s2">, but </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">target</span><span class="p">)</span><span class="si">}</span><span class="s2"> was applied.&quot;</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">target</span><span class="p">,</span> <span class="n">class_obj</span><span class="p">):</span>
@@ -372,10 +372,10 @@
 <span class="sd">        Return the list of divisors of the value.</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">            value &lt;int&gt;: target value</span>
+<span class="sd">            value (int): target value</span>
 
 <span class="sd">        Returns:</span>
-<span class="sd">            &lt;list[int]&gt;: the list of divisors</span>
+<span class="sd">            (list[int]): the list of divisors</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">value</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">validate_natural_int</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
         <span class="n">divisors</span> <span class="o">=</span> <span class="p">[</span>

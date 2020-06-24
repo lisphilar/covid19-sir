@@ -159,12 +159,12 @@
 <span class="sd">    SIR-FV model.</span>
 
 <span class="sd">    Args:</span>
-<span class="sd">        population &lt;int&gt;: total population</span>
-<span class="sd">            theta &lt;float&gt;</span>
-<span class="sd">            kappa &lt;float&gt;</span>
-<span class="sd">            rho &lt;float&gt;</span>
-<span class="sd">            sigma &lt;float&gt;</span>
-<span class="sd">            omega &lt;float&gt; or v_per_day &lt;int&gt;</span>
+<span class="sd">        population (int): total population</span>
+<span class="sd">            theta (float)</span>
+<span class="sd">            kappa (float)</span>
+<span class="sd">            rho (float)</span>
+<span class="sd">            sigma (float)</span>
+<span class="sd">            omega (float) or v_per_day (int)</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="c1"># Model name</span>
     <span class="n">NAME</span> <span class="o">=</span> <span class="s2">&quot;SIR-FV&quot;</span>
@@ -214,11 +214,11 @@
 <span class="sd">        Return the list of dS/dt (tau-free) etc.</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">            t &lt;int&gt;: time steps</span>
-<span class="sd">            X &lt;numpy.array&gt;: values of th model variables</span>
+<span class="sd">            t (int): time steps</span>
+<span class="sd">            X (numpy.array): values of th model variables</span>
 
 <span class="sd">        Returns:</span>
-<span class="sd">            &lt;np.array&gt;</span>
+<span class="sd">            (np.array)</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">n</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">population</span>
         <span class="n">s</span><span class="p">,</span> <span class="n">i</span><span class="p">,</span> <span class="o">*</span><span class="n">_</span> <span class="o">=</span> <span class="n">X</span>
@@ -236,18 +236,18 @@
 <span class="sd">        Define the range of parameters (not including tau value).</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">            taufree_df &lt;pandas.DataFrame&gt;:</span>
+<span class="sd">            taufree_df (pandas.DataFrame):</span>
 <span class="sd">                Index:</span>
 <span class="sd">                    reset index</span>
 <span class="sd">                Columns:</span>
-<span class="sd">                    - t &lt;int&gt;: time steps (tau-free)</span>
+<span class="sd">                    - t (int): time steps (tau-free)</span>
 <span class="sd">                    - columns with dimensional variables</span>
-<span class="sd">            population &lt;int&gt;: total population</span>
+<span class="sd">            population (int): total population</span>
 
 <span class="sd">        Returns:</span>
-<span class="sd">            &lt;dict[name]=(min, max)&gt;:</span>
-<span class="sd">            - min &lt;float&gt;: min value</span>
-<span class="sd">            - max &lt;float&gt;: max value</span>
+<span class="sd">            (dict)</span>
+<span class="sd">                - key (str): parameter name</span>
+<span class="sd">                - value (tuple(float, float)): min value and max value</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">df</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">validate_dataframe</span><span class="p">(</span>
             <span class="n">taufree_df</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;taufree_df&quot;</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="bp">cls</span><span class="o">.</span><span class="n">TS</span><span class="p">,</span> <span class="o">*</span><span class="bp">cls</span><span class="o">.</span><span class="n">VARIABLES</span><span class="p">]</span>
@@ -270,25 +270,25 @@
 <span class="sd">        Specialize the dataset for this model.</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">        data_df &lt;pandas.DataFrame&gt;:</span>
-<span class="sd">            Index:</span>
-<span class="sd">                reset index</span>
-<span class="sd">            Columns:</span>
-<span class="sd">                - Confirmed &lt;int&gt;: the number of confirmed cases</span>
-<span class="sd">                - Infected &lt;int&gt;: the number of currently infected cases</span>
-<span class="sd">                - Fatal &lt;int&gt;: the number of fatal cases</span>
-<span class="sd">                - Recovered &lt;int&gt;: the number of recovered cases</span>
-<span class="sd">                - any columns</span>
-<span class="sd">        population &lt;int&gt;: total population in the place</span>
+<span class="sd">            data_df (pandas.DataFrame):</span>
+<span class="sd">                Index:</span>
+<span class="sd">                    reset index</span>
+<span class="sd">                Columns:</span>
+<span class="sd">                    - Confirmed (int): the number of confirmed cases</span>
+<span class="sd">                    - Infected (int): the number of currently infected cases</span>
+<span class="sd">                    - Fatal (int): the number of fatal cases</span>
+<span class="sd">                    - Recovered (int): the number of recovered cases</span>
+<span class="sd">                    - any columns</span>
+<span class="sd">            population (int): total population in the place</span>
 
 <span class="sd">        Returns:</span>
-<span class="sd">            &lt;pandas.DataFrame&gt;:</span>
+<span class="sd">            (pandas.DataFrame)</span>
 <span class="sd">                Index:</span>
 <span class="sd">                    reset index</span>
 <span class="sd">                Columns:</span>
 <span class="sd">                    - any columns @data_df has</span>
-<span class="sd">                    - Susceptible &lt;int&gt;: 0</span>
-<span class="sd">                    - Vactinated &lt;int&gt;: 0</span>
+<span class="sd">                    - Susceptible (int): 0</span>
+<span class="sd">                    - Vactinated (int): 0</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">df</span> <span class="o">=</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">specialize</span><span class="p">(</span><span class="n">data_df</span><span class="p">,</span> <span class="n">population</span><span class="p">)</span>
         <span class="c1"># Calculate dimensional variables</span>
@@ -303,27 +303,27 @@
 <span class="sd">         using a dataframe with the variables of the model.</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">        specialized_df &lt;pandas.DataFrame&gt;: dataframe with the variables</span>
+<span class="sd">        specialized_df (pandas.DataFrame): dataframe with the variables</span>
 
 <span class="sd">            Index:</span>
-<span class="sd">                &lt;object&gt;:</span>
+<span class="sd">                (object)</span>
 <span class="sd">            Columns:</span>
-<span class="sd">                - Susceptible &lt;int&gt;: the number of susceptible cases</span>
-<span class="sd">                - Infected &lt;int&gt;: the number of currently infected cases</span>
-<span class="sd">                - Recovered &lt;int&gt;: the number of recovered cases</span>
-<span class="sd">                - Fatal &lt;int&gt;: the number of fatal cases</span>
-<span class="sd">                - Vaccinated &lt;int&gt;: the number of vactinated persons</span>
+<span class="sd">                - Susceptible (int): the number of susceptible cases</span>
+<span class="sd">                - Infected (int): the number of currently infected cases</span>
+<span class="sd">                - Recovered (int): the number of recovered cases</span>
+<span class="sd">                - Fatal (int): the number of fatal cases</span>
+<span class="sd">                - Vaccinated (int): the number of vactinated persons</span>
 <span class="sd">                - any columns</span>
 
 <span class="sd">        Returns:</span>
-<span class="sd">            &lt;pandas.DataFrame&gt;:</span>
+<span class="sd">            (pandas.DataFrame)</span>
 <span class="sd">                Index:</span>
-<span class="sd">                    &lt;object&gt;: as-is</span>
+<span class="sd">                    (object): as-is</span>
 <span class="sd">                Columns:</span>
-<span class="sd">                    - Confirmed &lt;int&gt;: the number of confirmed cases</span>
-<span class="sd">                    - Infected &lt;int&gt;: the number of currently infected cases</span>
-<span class="sd">                    - Fatal &lt;int&gt;: the number of fatal cases</span>
-<span class="sd">                    - Recovered &lt;int&gt;: the number of recovered cases</span>
+<span class="sd">                    - Confirmed (int): the number of confirmed cases</span>
+<span class="sd">                    - Infected (int): the number of currently infected cases</span>
+<span class="sd">                    - Fatal (int): the number of fatal cases</span>
+<span class="sd">                    - Recovered (int): the number of recovered cases</span>
 <span class="sd">                    - the other columns @specialzed_df has</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">df</span> <span class="o">=</span> <span class="n">specialized_df</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
@@ -343,7 +343,7 @@
 <span class="sd">        Calculate 1/beta [day] etc.</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">            param tau &lt;int&gt;: tau value [min]</span>
+<span class="sd">            param tau (int): tau value [min]</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">_dict</span> <span class="o">=</span> <span class="p">{</span>
             <span class="s2">&quot;alpha1&quot;</span><span class="p">:</span> <span class="nb">round</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">theta</span><span class="p">,</span> <span class="mi">3</span><span class="p">),</span>

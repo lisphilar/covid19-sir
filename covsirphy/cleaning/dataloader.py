@@ -17,8 +17,8 @@ class DataLoader(Word):
     Download the dataset and perform data cleaning.
 
     Args:
-        directory <str/pathlib.Path>: directory to save the downloaded datasets
-        update_interval <int>: update interval of the local datasets
+        directory (str or pathlib.Path): directory to save the downloaded datasets
+        update_interval (int): update interval of the local datasets
 
     Notes:
         If @directory is None, the files will not be saved in local environment.
@@ -77,10 +77,10 @@ class DataLoader(Word):
         Get raw dataset from the URL.
 
         Args:
-            url <str>: URL to get raw dataset
+            url (str): URL to get raw dataset
 
         Returns:
-            <pandas.DataFrame>: raw dataset
+            (pandas.DataFrame): raw dataset
         """
         df = dd.read_csv(url).compute()
         return df
@@ -90,10 +90,10 @@ class DataLoader(Word):
         Return the absolute path of the file in the @self.dir_path directory.
 
         Args:
-            basename <str>: basename of the file, like covid_19_data.csv
+            basename (str): basename of the file, like covid_19_data.csv
 
         Returns:
-            <str/None>: absolute path of the file
+            (str or None): absolute path of the file
 
         Notes:
             If @self.dirpath is None, return None
@@ -109,8 +109,8 @@ class DataLoader(Word):
         Save the dataframe to the local environment.
 
         Args:
-            dataframe <pandas.DataFrame>: dataframe to save
-            filename <str/None>: filename to save
+            dataframe (pandas.DataFrame): dataframe to save
+            filename (str or None): filename to save
 
         Notes:
             CSV file will be created in @self.dirpath directory.
@@ -127,10 +127,10 @@ class DataLoader(Word):
         Return the date last updated of remote file/directory.
 
         Args:
-            url <str>: URL
+            url (str): URL
 
         Returns:
-            <pandas.Timestamp/None>: time last updated (UTC)
+            (pandas.Timestamp or None): time last updated (UTC)
 
         Notes:
             If "Last-Modified" key is not in the header, returns None.
@@ -152,10 +152,10 @@ class DataLoader(Word):
         Return the date last updated of local file/directory.
 
         Args:
-            path <str/pathlibPath>: name of the file/directory
+            path (str or pathlibPath): name of the file/directory
 
         Returns:
-            <datetime.datetime>: time last updated (UTC)
+            (datetime.datetime): time last updated (UTC)
         """
         path = Path(path)
         m_time = path.stat().st_mtime
@@ -168,12 +168,12 @@ class DataLoader(Word):
         Return dataset class with citation.
 
         Args:
-            data_key <str>: key of self.dataset_dict
-            filename <str>: filename of the local dataset
+            data_key (str): key of self.dataset_dict
+            filename (str): filename of the local dataset
             kwargs: keyword arguments of @data_class
 
         Returns:
-            <covsirphy.cleaning.jhu_data.JHUData>: the dataset
+            (covsirphy.JHUData): the dataset
 
         Notes:
             ".citation" attribute will returns the citation
@@ -195,11 +195,11 @@ class DataLoader(Word):
         comparing the last update of the files.
 
         Args:
-            filename <str>: filename of the local file
-            url <str>: URL of the remote server
+            filename (str): filename of the local file
+            url (str): URL of the remote server
 
         Returns:
-            <bool>: whether we need to get the data from remote servers or not
+            (bool): whether we need to get the data from remote servers or not
 
         Notes:
             If the last updated date is unknown, returns True.
@@ -221,14 +221,14 @@ class DataLoader(Word):
         https://github.com/CSSEGISandData/COVID-19/
 
         Args:
-            basename <str>: basename of the file to save the data
-            local_file <str/None>: if not None, load the data from this file
+            basename (str): basename of the file to save the data
+            local_file (str or None): if not None, load the data from this file
 
         Notes:
             Regardless the value of @local_file, the data will be save in the directory.
 
         Returns:
-            <covsirphy.cleaning.jhu_data.JHUData>: JHU dataset
+            (covsirphy.JHUData): JHU dataset
         """
         filename = self._resolve_filename(basename)
         if local_file is not None:
@@ -250,10 +250,10 @@ class DataLoader(Word):
         Get the raw data of the variable from JHU repository.
 
         Args:
-            variable <str>: confirmed, deaths or recovered
+            variable (str): confirmed, deaths or recovered
 
         Returns:
-            <pandas.DataFrame> : JHU data with all variables to use
+            (pandas.DataFrame) : JHU data with all variables to use
                Index:
                     reset index
                 Columns:
@@ -288,10 +288,10 @@ class DataLoader(Word):
         Get the raw data of the variable from JHU repository.
 
         Args:
-            variable <str>: confirmed, deaths or recovered
+            variable (str): confirmed, deaths or recovered
 
         Returns:
-            <pandas.DataFrame>: data of the variable
+            (pandas.DataFrame): data of the variable
                 Index:
                     reset index
                 Columns:
@@ -319,14 +319,14 @@ class DataLoader(Word):
         https://github.com/lisphilar/covid19-sir/tree/master/data
 
         Args:
-            basename <str>: basename of the file to save the data
-            local_file <str/None>: if not None, load the data from this file
+            basename (str): basename of the file to save the data
+            local_file (str or None): if not None, load the data from this file
 
         Notes:
             Regardless the value of @local_file, the data will be save in the directory.
 
         Returns:
-            <covsirphy.cleaning.country_data.CountryData>: dataset at country level
+            (covsirphy.CountryData): dataset at country level
         """
         filename = self._resolve_filename(basename)
         if local_file is not None:
@@ -354,10 +354,10 @@ class DataLoader(Word):
         https://github.com/lisphilar/covid19-sir/tree/master/data/japan
 
         Args:
-            variable <str>: confirmed, deaths or recovered
+            variable (str): confirmed, deaths or recovered
 
         Returns:
-            <pandas.DataFrame> : the raw data
+            (pandas.DataFrame) : the raw data
                Index:
                     reset index
                 Columns:
@@ -372,10 +372,10 @@ class DataLoader(Word):
         Create a dataset for Japan with a local file.
 
         Args:
-            filename <str>: filename of the local file
+            filename (str): filename of the local file
 
         Returns:
-            <covsirphy.cleaning.country_data.CountryData>: dataset at country level
+            (covsirphy.CountryData): dataset at country level
         """
         country_data = self._create_dataset(
             "Japan_cases", filename, country="Japan")

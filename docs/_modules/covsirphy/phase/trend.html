@@ -169,23 +169,23 @@
 <span class="sd">    S-R trend analysis in a phase.</span>
 
 <span class="sd">    Args:</span>
-<span class="sd">        clean_df &lt;pandas.DataFrame&gt;: cleaned data</span>
+<span class="sd">        clean_df (pandas.DataFrame): cleaned data</span>
 
 <span class="sd">            Index:</span>
 <span class="sd">                reset index</span>
 <span class="sd">            Columns:</span>
-<span class="sd">                - Date &lt;pd.TimeStamp&gt;: Observation date</span>
-<span class="sd">                - Country &lt;str&gt;: country/region name</span>
-<span class="sd">                - Province &lt;str&gt;: province/prefecture/sstate name</span>
-<span class="sd">                - Confirmed &lt;int&gt;: the number of confirmed cases</span>
-<span class="sd">                - Infected &lt;int&gt;: the number of currently infected cases</span>
-<span class="sd">                - Fatal &lt;int&gt;: the number of fatal cases</span>
-<span class="sd">                - Recovered &lt;int&gt;: the number of recovered cases</span>
-<span class="sd">        population &lt;int&gt;: total population in the place</span>
-<span class="sd">        country &lt;str&gt;: country name</span>
-<span class="sd">        province &lt;str&gt;: province name</span>
-<span class="sd">        start_date &lt;str&gt;: start date, like 22Jan2020</span>
-<span class="sd">        end_date &lt;str&gt;: end date, like 01Feb2020</span>
+<span class="sd">                - Date (pd.TimeStamp): Observation date</span>
+<span class="sd">                - Country (str): country/region name</span>
+<span class="sd">                - Province (str): province/prefecture/sstate name</span>
+<span class="sd">                - Confirmed (int): the number of confirmed cases</span>
+<span class="sd">                - Infected (int): the number of currently infected cases</span>
+<span class="sd">                - Fatal (int): the number of fatal cases</span>
+<span class="sd">                - Recovered (int): the number of recovered cases</span>
+<span class="sd">        population (int): total population in the place</span>
+<span class="sd">        country (str): country name</span>
+<span class="sd">        province (str): province name</span>
+<span class="sd">        start_date (str): start date, like 22Jan2020</span>
+<span class="sd">        end_date (str): end date, like 01Feb2020</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">clean_df</span><span class="p">,</span> <span class="n">population</span><span class="p">,</span>
@@ -231,18 +231,18 @@
 <span class="sd">            with negative exponential function.</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">        @train_df &lt;pandas.DataFrame&gt;: training dataset</span>
+<span class="sd">        @train_df (pandas.DataFrame): training dataset</span>
 
 <span class="sd">            Index:</span>
-<span class="sd">                - index (Date) &lt;pd.TimeStamp&gt;: Observation date</span>
+<span class="sd">                - index (Date) (pd.TimeStamp): Observation date</span>
 <span class="sd">            Columns:</span>
 <span class="sd">                - Recovered: The number of recovered cases</span>
 <span class="sd">                - Susceptible_actual: Actual data of Susceptible</span>
 
 <span class="sd">        Returns:</span>
-<span class="sd">            &lt;pandas.DataFrame&gt;</span>
+<span class="sd">            (pandas.DataFrame)</span>
 <span class="sd">                Index:</span>
-<span class="sd">                    - index (Date) &lt;pd.TimeStamp&gt;: Observation date</span>
+<span class="sd">                    - index (Date) (pd.TimeStamp): Observation date</span>
 <span class="sd">                Columns:</span>
 <span class="sd">                    - Recovered: The number of recovered cases</span>
 <span class="sd">                    - Susceptible_actual: Actual values of Susceptible</span>
@@ -279,7 +279,7 @@
 <span class="sd">        Calculate RMSLE score of actual/predicted Susceptible.</span>
 
 <span class="sd">        Returns:</span>
-<span class="sd">            &lt;float&gt;</span>
+<span class="sd">            (float): RMSLE score</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">df</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">result_df</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
         <span class="k">if</span> <span class="n">df</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
@@ -308,8 +308,8 @@
 <span class="sd">        show the result as a figure.</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">            show_figure &lt;bool&gt;: if True, show the history as a pair-plot of parameters.</span>
-<span class="sd">            filename &lt;str&gt;: filename of the figure, or None (show figure)</span>
+<span class="sd">            show_figure (bool): if True, show the history as a pair-plot of parameters.</span>
+<span class="sd">            filename (str): filename of the figure, or None (show figure)</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">df</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">result</span><span class="p">()</span>
         <span class="n">df</span><span class="p">[</span><span class="s2">&quot;Predicted&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">S</span><span class="si">}{</span><span class="bp">self</span><span class="o">.</span><span class="n">P</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">]</span>
@@ -327,18 +327,18 @@
 <span class="sd">        show the result as a figure.</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">            result_df &lt;pandas.DataFrame&gt;: training dataset</span>
+<span class="sd">            result_df (pandas.DataFrame): training dataset</span>
 
 <span class="sd">                Index:</span>
-<span class="sd">                    - index (Date) &lt;pd.TimeStamp&gt;: Observation date</span>
+<span class="sd">                    - index (Date) (pd.TimeStamp): Observation date</span>
 <span class="sd">                Columns:</span>
 <span class="sd">                    - Recovered: The number of recovered cases</span>
 <span class="sd">                    - Susceptible_actual: Actual values of Susceptible</span>
 <span class="sd">                    - columns defined by @columns</span>
-<span class="sd">            predicted_cols &lt;list[str]&gt;: list of columns which have predicted values</span>
-<span class="sd">            title &lt;str&gt;: title of the figure</span>
-<span class="sd">            vlines &lt;list[int]&gt;: list of Recovered values to show vertical lines</span>
-<span class="sd">            filename &lt;str&gt;: filename of the figure, or None (show figure)</span>
+<span class="sd">            predicted_cols (list[str]): list of columns which have predicted values</span>
+<span class="sd">            title (str): title of the figure</span>
+<span class="sd">            vlines (list[int]): list of Recovered values to show vertical lines</span>
+<span class="sd">            filename (str): filename of the figure, or None (show figure)</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">df</span> <span class="o">=</span> <span class="n">result_df</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
         <span class="k">if</span> <span class="n">df</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>

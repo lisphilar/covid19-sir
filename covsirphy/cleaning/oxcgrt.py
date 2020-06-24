@@ -28,13 +28,13 @@ class OxCGRTData(CleaningBase):
          https://github.com/OxCGRT/covid-policy-tracker/
 
         Returns:
-            <pandas.DataFrame>
+            (pandas.DataFrame)
                     Index:
                         reset index
                     Columns:
-                        - Date <pd.TimeStamp>: Observation date
-                        - Country <str>: country/region name
-                        - ISO3 <str>: ISO 3166-1 alpha-3, like JPN
+                        - Date (pd.TimeStamp): Observation date
+                        - Country (str): country/region name
+                        - ISO3 (str): ISO 3166-1 alpha-3, like JPN
                         - other column names are defined by OxCGRT.COL_DICT
         """
         df = self._raw.copy()
@@ -69,15 +69,15 @@ class OxCGRTData(CleaningBase):
             One of @country and @iso3 must be specified.
 
         Args:
-            country <str>: country name
-            iso3 <str>: ISO 3166-1 alpha-3, like JPN
+            country (str): country name
+            iso3 (str): ISO 3166-1 alpha-3, like JPN
 
         Returns:
-            <pandas.DataFrame>
+            (pandas.DataFrame)
                 Index:
                     reset index
                 Columns:
-                    - Date <pd.TimeStamp>: Observation date
+                    - Date (pd.TimeStamp): Observation date
                     - other column names are defined by OxCGRT.COL_DICT
         """
         df = self._cleaned_df.copy()
@@ -91,10 +91,13 @@ class OxCGRTData(CleaningBase):
             try:
                 country = iso_dict[iso3]
             except KeyError:
-                raise KeyError(f"@iso3 {iso3} is not included in this dataset.")
+                raise KeyError(
+                    f"@iso3 {iso3} is not included in this dataset.")
         df = df.loc[df[self.COUNTRY] == country, :]
-        df = df.drop([self.COUNTRY, self.ISO3], axis=1).groupby(self.DATE).last()
+        df = df.drop([self.COUNTRY, self.ISO3],
+                     axis=1).groupby(self.DATE).last()
         df = df.reset_index()
         if df.empty:
-            raise KeyError(f"@country {country} is not included in the dataset.")
+            raise KeyError(
+                f"@country {country} is not included in the dataset.")
         return df
