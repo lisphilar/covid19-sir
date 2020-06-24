@@ -9,6 +9,7 @@ import requests
 from covsirphy.cleaning.cbase import CleaningBase
 from covsirphy.cleaning.jhu_data import JHUData
 from covsirphy.cleaning.country_data import CountryData
+from covsirphy.cleaning.oxcgrt import OxCGRTData
 from covsirphy.cleaning.word import Word
 
 
@@ -32,11 +33,18 @@ class DataLoader(Word):
         >>> data_loader = cs.DataLoader("input")
         >>> jhu_data = data_loader.jhu()
         >>> print(jhu_data.citation)
+        ...
         >>> print(type(jhu_data.cleaned()))
         <class 'pandas.core.frame.DataFrame'>
         >>> jpn_data = data_loader.japan()
         >>> print(jpn_data.citation)
+        ...
         >>> print(type(jpn_data.cleaned()))
+        <class 'pandas.core.frame.DataFrame'>
+        >>> oxcgrt_data = data_loader.oxcgrt()
+        >>> print(oxcgrt_data.citation)
+        ...
+        >>> print(type(oxcgrt_data.cleaned()))
         <class 'pandas.core.frame.DataFrame'>
     """
 
@@ -48,7 +56,7 @@ class DataLoader(Word):
         # Create the directory if not exist
         if self.dir_path is not None:
             self.dir_path.mkdir(parents=True, exist_ok=True)
-        # JHU data
+        # JHU dataset: the number of cases
         self.jhu_url = "https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master" \
             "/csse_covid_19_data/csse_covid_19_time_series"
         self.jhu_citation = "COVID-19 Data Repository" \
@@ -63,11 +71,20 @@ class DataLoader(Word):
         self.japan_cases_url = "https://raw.githubusercontent.com/lisphilar/covid19-sir/master/data/japan"
         self.japan_cases_citation = "Lisphilar (2020), COVID-19 dataset in Japan, GitHub repository, " \
             "https://github.com/lisphilar/covid19-sir/data/japan"
+        # OxCGRT dataset: Oxford Covid-19 Government Response Tracker
+        self.oxcgrt_url = "https://raw.githubusercontent.com/OxCGRT/covid-policy-tracker/master/data"
+        self.oxcgrt_citation = "Thomas Hale, Sam Webster, Anna Petherick, Toby Phillips, and Beatriz Kira." \
+            " (2020). Oxford COVID-19 Government Response Tracker. Blavatnik School of Government."
         # Dictionary of datasets
         self.dataset_dict = {
-            "JHU": {"class": JHUData, "url": self.jhu_url, "citation": self.jhu_citation},
+            "JHU": {
+                "class": JHUData, "url": self.jhu_url, "citation": self.jhu_citation
+            },
             "Japan_cases": {
                 "class": CountryData, "url": self.japan_cases_url, "citation": self.japan_cases_citation
+            },
+            "OxCGRT": {
+                "class": OxCGRTData, "url": self.oxcgrt_url, "citation": self.oxcgrt_citation
             },
         }
 
@@ -342,7 +359,7 @@ class DataLoader(Word):
             raise FileNotFoundError(f"{local_file} does not exist.")
         if not self._needs_pull(filename, self.japan_cases_url):
             return self._create_dataset_japan_cases(filename)
-        # Retrieve and combine the raw data
+        # Retrieve the raw data
         df = self._japan_cases_get()
         # Save the dataset and return dataset
         self._save(df, filename)
@@ -352,9 +369,6 @@ class DataLoader(Word):
         """
         Get the raw data from the following repository.
         https://github.com/lisphilar/covid19-sir/tree/master/data/japan
-
-        Args:
-            variable (str): confirmed, deaths or recovered
 
         Returns:
             (pandas.DataFrame) : the raw data
@@ -387,3 +401,49 @@ class DataLoader(Word):
             province=None
         )
         return country_data
+
+    def oxcgrt(self, basename="OxCGRT_latest.csv", local_file=None):
+        """
+        Load OxCGRT dataset.
+        https://github.com/OxCGRT/covid-policy-tracker
+
+        Args:
+            basename (str): basename of the file to save the data
+            local_file (str or None): if not None, load the data from this file
+
+        Notes:
+            Regardless the value of @local_file, the data will be save in the directory.
+
+        Returns:
+            (covsirphy.OxCGRTData): OxCGRT dataset
+        """
+        filename = self._resolve_filename(basename)
+        if local_file is not None:
+            if Path(local_file).exists():
+                oxcgrt_data = self._create_dataset("OxCGRT", local_file)
+                self._save(oxcgrt_data.raw, filename)
+                return oxcgrt_data
+            raise FileNotFoundError(f"{local_file} does not exist.")
+        if not self._needs_pull(filename, self.oxcgrt_url):
+            return self._create_dataset("OxCGRT", filename)
+        # Retrieve the raw data
+        df = self._oxcgrt_get()
+        # Save the dataset and return dataset
+        self._save(df, filename)
+        return self._create_dataset("OxCGRT", filename)
+
+    def _oxcgrt_get(self):
+        """
+        Get the raw data from the following repository.
+        https://github.com/OxCGRT/covid-policy-tracker
+
+        Returns:
+            (pandas.DataFrame) : the raw data
+               Index:
+                    reset index
+                Columns:
+                    as-is the repository
+        """
+        url = f"{self.oxcgrt_url}/OxCGRT_latest.csv"
+        df = self._get_raw(url)
+        return df

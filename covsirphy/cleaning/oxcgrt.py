@@ -15,6 +15,10 @@ class OxCGRTData(CleaningBase):
         "StringencyIndexForDisplay": "Stringency index",
         "EconomicSupportIndexForDisplay": "Economic support index"
     }
+    OXCGRT_COLS = [
+        CleaningBase.DATE, CleaningBase.COUNTRY, CleaningBase.ISO3,
+        *list(COL_DICT.values())
+    ]
 
     def __init__(self, filename):
         super().__init__(filename)
@@ -29,13 +33,13 @@ class OxCGRTData(CleaningBase):
 
         Returns:
             (pandas.DataFrame)
-                    Index:
-                        reset index
-                    Columns:
-                        - Date (pd.TimeStamp): Observation date
-                        - Country (str): country/region name
-                        - ISO3 (str): ISO 3166-1 alpha-3, like JPN
-                        - other column names are defined by OxCGRT.COL_DICT
+                Index:
+                    reset index
+                Columns:
+                    - Date (pd.TimeStamp): Observation date
+                    - Country (str): country/region name
+                    - ISO3 (str): ISO 3166-1 alpha-3, like JPN
+                    - other column names are defined by OxCGRT.COL_DICT
         """
         df = self._raw.copy()
         # Rename the columns
