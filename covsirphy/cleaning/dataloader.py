@@ -10,6 +10,7 @@ from covsirphy.cleaning.cbase import CleaningBase
 from covsirphy.cleaning.jhu_data import JHUData
 from covsirphy.cleaning.country_data import CountryData
 from covsirphy.cleaning.oxcgrt import OxCGRTData
+# from covsirphy.cleaning.population import PopulationData
 from covsirphy.cleaning.word import Word
 
 
@@ -18,7 +19,7 @@ class DataLoader(Word):
     Download the dataset and perform data cleaning.
 
     Args:
-        directory (str or pathlib.Path): directory to save the downloaded datasets
+        directory (str or pathlib.Path or None): directory to save the downloaded datasets
         update_interval (int): update interval of the local datasets
 
     Notes:

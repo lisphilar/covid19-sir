@@ -13,7 +13,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 from covsirphy.ode import ModelBase
-from covsirphy.cleaning import JHUData, Population, Word
+from covsirphy.cleaning import JHUData, PopulationData, Word
 from covsirphy.phase import Estimator, SRData, ODEData
 from covsirphy.util import line_plot
 from covsirphy.analysis.phase_series import PhaseSeries
@@ -27,16 +27,16 @@ class Scenario(Word):
 
     Args:
         jhu_data (covsirphy.JHUData): object of records
-        pop_data (covsirphy.Population): Population object
+        population_data (covsirphy.PopulationData): PopulationData object
         country (str): country name
         province (str): province name
     """
 
-    def __init__(self, jhu_data, pop_data, country, province=None):
+    def __init__(self, jhu_data, population_data, country, province=None):
         # Population
-        pop_data = self.validate_instance(
-            pop_data, Population, name="pop_data")
-        self.population = pop_data.value(country, province=province)
+        population_data = self.validate_instance(
+            population_data, PopulationData, name="population_data")
+        self.population = population_data.value(country, province=province)
         # Records
         jhu_data = self.validate_instance(jhu_data, JHUData, name="jhu_data")
         self.jhu_data = jhu_data

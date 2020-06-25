@@ -1,12 +1,13 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
+import warnings
 import numpy as np
 import pandas as pd
 from covsirphy.cleaning.cbase import CleaningBase
 
 
-class Population(CleaningBase):
+class PopulationData(CleaningBase):
     """
     Data cleaning of total population dataset.
     """
@@ -149,3 +150,17 @@ class Population(CleaningBase):
         df = self._cleaned_df.append(series, ignore_index=True)
         self._cleaned_df = df.copy()
         return self
+
+
+class Population(PopulationData):
+    """
+    This is deprecated and please use PopulationData class.
+    """
+
+    def __init__(self, filename):
+        super().__init__(filename)
+        warnings.warn(
+            "Please use PopulationData() class rather than Population()",
+            DeprecationWarning,
+            stacklevel=2
+        )

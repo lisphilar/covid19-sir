@@ -3,7 +3,7 @@
 
 import json
 from pathlib import Path
-from covsirphy import Population
+from covsirphy import PopulationData
 
 
 def main():
@@ -13,7 +13,7 @@ def main():
     output_dir.mkdir(exist_ok=True, parents=True)
     # Read population dataset
     pop_file = "input/locations_population.csv"
-    pop_data = Population(pop_file)
+    pop_data = PopulationData(pop_file)
     # Add example country
     pop_data.update(value=1_000_000, country="Example", province="-")
     # Show the cleaned data as a CSV file
