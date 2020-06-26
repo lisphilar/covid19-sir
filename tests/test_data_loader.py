@@ -28,7 +28,7 @@ class TestDataLoader(object):
     def test_jhu_local_file_unexpected(self):
         data_loader = DataLoader("input")
         local_path = Path("input") / "covid_jpn_total.csv"
-        with pytest.raises(KeyError):
+        with pytest.raises(Exception):
             data_loader.jhu(local_file=local_path)
 
     def test_japan_cases(self):
