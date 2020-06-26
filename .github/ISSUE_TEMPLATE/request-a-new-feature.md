@@ -1,8 +1,8 @@
 ---
-name: Feature request
+name: Request a new feature
 about: Suggest an idea for this project
 title: ''
-labels: enhancement, Brainstorming
+labels: Brainstorming, enhancement
 assignees: ''
 
 ---
