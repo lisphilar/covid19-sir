@@ -129,11 +129,11 @@ ncov_df = jhu_data.cleaned()
 Perform data cleaning of population dataset.
 ```Python
 # Read population dataset
-pop_data = cs.Population("input/locations_population.csv")
+population_data = cs.PopulationData("input/locations_population.csv")
 # We can add a new record
-pop_data.update(country="Example", province="-", value=1_000_000)
+population_data.update(country="Example", province="-", value=1_000_000)
 # Return dictionary
-pop_data.to_dict(country_level=True)
+population_data.to_dict(country_level=True)
 ```
 Perform data cleaning of OxGCRT dataset.
 ```Python
@@ -150,7 +150,7 @@ jpn_oxcgrt_df = oxcgrt_data.subset(iso3="JPN")
 As an example, use dataset in Italy.
 #### Check records
 ```Python
-ita_scenario = cs.Scenario(jhu_data, pop_data, country="Italy", province=None)
+ita_scenario = cs.Scenario(jhu_data, population_data, country="Italy", province=None)
 ```
 See the records as a figure.
 ```Python
