@@ -19,11 +19,10 @@ class DataLoader(Word):
     Download the dataset and perform data cleaning.
 
     Args:
-        directory (str or pathlib.Path or None): directory to save the downloaded datasets
+        directory (str or pathlib.Path): directory to save the downloaded datasets
         update_interval (int): update interval of the local datasets
 
     Notes:
-        If @directory is None, the files will not be saved in local environment.
         GitHub datasets will be always updated because headers of GET response
         does not have 'Last-Modified' keys.
         If @update_interval hours have passed since the last update of local datasets,
@@ -55,13 +54,16 @@ class DataLoader(Word):
     """
 
     def __init__(self, directory, update_interval=12):
-        self.dir_path = None if directory is None else Path(directory)
+        if not isinstance(directory, (str, Path)):
+            raise TypeError(
+                f"@directory must be a string or a path but {directory} was applied."
+            )
+        self.dir_path = Path(directory)
         self.update_interval = self.validate_natural_int(
             update_interval, name="update_interval", include_zero=True
         )
         # Create the directory if not exist
-        if self.dir_path is not None:
-            self.dir_path.mkdir(parents=True, exist_ok=True)
+        self.dir_path.mkdir(parents=True, exist_ok=True)
         # JHU dataset: the number of cases
         self.jhu_url = "https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master" \
             "/csse_covid_19_data/csse_covid_19_time_series"
@@ -134,13 +136,8 @@ class DataLoader(Word):
             basename (str): basename of the file, like covid_19_data.csv
 
         Returns:
-            (str or None): absolute path of the file
-
-        Notes:
-            If @self.dirpath is None, return None
+            (str): absolute path of the file
         """
-        if self.dir_path is None:
-            return None
         file_path = self.dir_path / basename
         filename = str(file_path.resolve())
         return filename
