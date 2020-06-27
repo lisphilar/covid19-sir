@@ -63,6 +63,12 @@ export PIPENV_VENV_IN_PROJECT=true
 export PIPENV_TIMEOUT=3600
 pipenv install --dev
 ```
+Developers can perform tests.
+- Windows user need to install [Graphviz for Windows](https://graphviz.org/_pages/Download/Download_windows.html) in advance.
+- Debian/Ubuntu user need to install Graphviz with `sudo apt install graphviz` in advance.
+
+Tests can be done with `pipenv run pytest -v --durations=0 --profile-svg` and call graph will be saved as SVG file (prof/combined.svg).
+
 
 ## Recommended datasets
 Datasets are not included in this repository, but we can download the following recommended datasets from Kaggle and GitHub. 

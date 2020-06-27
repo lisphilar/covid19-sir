@@ -9,8 +9,7 @@ from covsirphy import DataLoader, JHUData, CountryData, OxCGRTData
 
 
 class TestDataLoader(object):
-    def test_jhu(self):
-        data_loader = DataLoader("input")
+    def test_jhu(self, data_loader):
         jhu_data = data_loader.jhu()
         assert isinstance(jhu_data, JHUData)
         assert isinstance(jhu_data.citation, str)
@@ -18,21 +17,18 @@ class TestDataLoader(object):
         assert isinstance(df, pd.DataFrame)
         assert set(df.columns) == set(Word.COLUMNS)
 
-    def test_jhu_local_file(self):
-        data_loader = DataLoader("input")
+    def test_jhu_local_file(self, data_loader):
         local_path = Path("input") / "covid_19_data.csv"
         data_loader.jhu(local_file=local_path)
         local_file = str(local_path)
         data_loader.jhu(local_file=local_file)
 
-    def test_jhu_local_file_unexpected(self):
-        data_loader = DataLoader("input")
+    def test_jhu_local_file_unexpected(self, data_loader):
         local_path = Path("input") / "covid_jpn_total.csv"
-        with pytest.raises(KeyError):
+        with pytest.raises(Exception):
             data_loader.jhu(local_file=local_path)
 
-    def test_japan_cases(self):
-        data_loader = DataLoader("input")
+    def test_japan_cases(self, data_loader):
         japan_data = data_loader.japan()
         assert isinstance(japan_data, CountryData)
         assert isinstance(japan_data.citation, str)
@@ -40,8 +36,7 @@ class TestDataLoader(object):
         assert isinstance(df, pd.DataFrame)
         assert set(df.columns) == set(Word.COLUMNS)
 
-    def test_japan_cases_local_file(self):
-        data_loader = DataLoader("input")
+    def test_japan_cases_local_file(self, data_loader):
         local_path = Path("input") / "covid_jpn_total.csv"
         data_loader.japan(local_file=local_path)
         local_file = str(local_path)
@@ -53,15 +48,13 @@ class TestDataLoader(object):
         with pytest.raises(Exception):
             data_loader.japan(local_file=local_path)
 
-    def test_subset(self):
-        data_loader = DataLoader("input")
+    def test_subset(self, data_loader):
         jhu_data = data_loader.jhu()
         df = jhu_data.subset("Japan")
         assert isinstance(df, pd.DataFrame)
         assert set(df.columns) == set(Word.NLOC_COLUMNS)
 
-    def test_replace(self):
-        data_loader = DataLoader("input")
+    def test_replace(self, data_loader):
         jhu_data = data_loader.jhu()
         japan_data = data_loader.japan()
         jhu_data.replace(japan_data)
@@ -71,8 +64,7 @@ class TestDataLoader(object):
         assert set(replaced_df.columns) == set(Word.NLOC_COLUMNS)
         assert len(replaced_df) == len(japan_df)
 
-    def test_oxcgrt(self):
-        data_loader = DataLoader("input")
+    def test_oxcgrt(self, data_loader):
         oxcgrt_data = data_loader.oxcgrt()
         assert isinstance(oxcgrt_data, OxCGRTData)
         assert isinstance(oxcgrt_data.citation, str)
@@ -85,15 +77,13 @@ class TestDataLoader(object):
         subset_df_iso = oxcgrt_data.subset(iso3="JPN")
         assert set(subset_df_iso.columns) == subset_cols_set
 
-    def test_oxcgrt_local_file(self):
-        data_loader = DataLoader("input")
+    def test_oxcgrt_local_file(self, data_loader):
         local_path = Path("input") / "OxCGRT_latest.csv"
         data_loader.oxcgrt(local_file=local_path)
         local_file = str(local_path)
         data_loader.oxcgrt(local_file=local_file)
 
-    def test_oxcgrt_local_file_unexpected(self):
-        data_loader = DataLoader("input")
+    def test_oxcgrt_local_file_unexpected(self, data_loader):
         local_path = Path("input") / "covid_jpn_total.csv"
         with pytest.raises(Exception):
             data_loader.oxcgrt(local_file=local_path)
