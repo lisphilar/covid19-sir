@@ -3,11 +3,8 @@
 # Outputs will be saved in example/output directory
 
 # Data cleaning
-echo "<Data cleaning>"
-echo "Data loading"
+echo "<Data loading>"
 pipenv run python -m example.dataset_load
-echo "Population"
-pipenv run python -m example.dataset_population
 
 # ODE simulation and hyperparameter estimation
 echo "<ODE simulation and hyperparameter estimation>"
