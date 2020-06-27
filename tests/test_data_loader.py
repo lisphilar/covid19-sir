@@ -4,8 +4,8 @@
 from pathlib import Path
 import pandas as pd
 import pytest
-from covsirphy import Word
-from covsirphy import DataLoader, JHUData, CountryData, OxCGRTData
+from covsirphy import DataLoader
+from covsirphy import Word, JHUData, CountryData, PopulationData, OxCGRTData
 
 
 class TestDataLoader(object):
@@ -63,6 +63,28 @@ class TestDataLoader(object):
         japan_df = japan_data.cleaned()
         assert set(replaced_df.columns) == set(Word.NLOC_COLUMNS)
         assert len(replaced_df) == len(japan_df)
+
+    def test_population(self, data_loader):
+        population_data = data_loader.population()
+        assert isinstance(population_data, PopulationData)
+        assert isinstance(population_data.citation, str)
+        df = population_data.cleaned()
+        assert isinstance(df, pd.DataFrame)
+        assert set(df.columns) == set(PopulationData.POPULATION_COLS)
+        assert isinstance(population_data.value("JPN"), int)
+        assert isinstance(population_data.to_dict(), dict)
+        population_data.update(10_000, "Example")
+
+    def test_population_local_file(self, data_loader):
+        local_path = Path("input") / "locations_population.csv"
+        data_loader.population(local_file=local_path)
+        local_file = str(local_path)
+        data_loader.population(local_file=local_file)
+
+    def test_population_local_file_unexpected(self, data_loader):
+        local_path = Path("input") / "covid_jpn_total.csv"
+        with pytest.raises(Exception):
+            data_loader.population(local_file=local_path)
 
     def test_oxcgrt(self, data_loader):
         oxcgrt_data = data_loader.oxcgrt()

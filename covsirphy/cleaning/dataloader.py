@@ -426,52 +426,6 @@ class DataLoader(Word):
         )
         return country_data
 
-    def oxcgrt(self, basename="OxCGRT_latest.csv", local_file=None):
-        """
-        Load OxCGRT dataset.
-        https://github.com/OxCGRT/covid-policy-tracker
-
-        Args:
-            basename (str): basename of the file to save the data
-            local_file (str or None): if not None, load the data from this file
-
-        Notes:
-            Regardless the value of @local_file, the data will be save in the directory.
-
-        Returns:
-            (covsirphy.OxCGRTData): OxCGRT dataset
-        """
-        filename = self._resolve_filename(basename)
-        if local_file is not None:
-            if Path(local_file).exists():
-                oxcgrt_data = self._create_dataset("OxCGRT", local_file)
-                self._save(oxcgrt_data.raw, filename)
-                return oxcgrt_data
-            raise FileNotFoundError(f"{local_file} does not exist.")
-        if not self._needs_pull(filename, self.oxcgrt_url):
-            return self._create_dataset("OxCGRT", filename)
-        # Retrieve the raw data
-        df = self._oxcgrt_get()
-        # Save the dataset and return dataset
-        self._save(df, filename)
-        return self._create_dataset("OxCGRT", filename)
-
-    def _oxcgrt_get(self):
-        """
-        Get the raw data from the following repository.
-        https://github.com/OxCGRT/covid-policy-tracker
-
-        Returns:
-            (pandas.DataFrame) : the raw data
-               Index:
-                    reset index
-                Columns:
-                    as-is the repository
-        """
-        url = f"{self.oxcgrt_url}/OxCGRT_latest.csv"
-        df = self._get_raw(url)
-        return df
-
     def population(self, basename="locations_population.csv", local_file=None):
         """
         Load Population dataset from THE WORLD BANK, Population, total.
@@ -527,11 +481,59 @@ class DataLoader(Word):
                 "countryiso3code": self.ISO3,
                 "country.value": "Country.Region",
                 "value": "Population"
-            }
+            },
+            axis=1
         )
         df["Province.State"] = "-"
         df["Provenance"] = "https://data.worldbank.org/indicator/SP.POP.TOTL"
+        df = df.loc[~df["Population"].isna(), :].reset_index()
         df = df.loc[
             :, [self.ISO3, "Province.State", "Country.Region", "Population", "Provenance"]
         ]
+        return df
+
+    def oxcgrt(self, basename="OxCGRT_latest.csv", local_file=None):
+        """
+        Load OxCGRT dataset.
+        https://github.com/OxCGRT/covid-policy-tracker
+
+        Args:
+            basename (str): basename of the file to save the data
+            local_file (str or None): if not None, load the data from this file
+
+        Notes:
+            Regardless the value of @local_file, the data will be save in the directory.
+
+        Returns:
+            (covsirphy.OxCGRTData): OxCGRT dataset
+        """
+        filename = self._resolve_filename(basename)
+        if local_file is not None:
+            if Path(local_file).exists():
+                oxcgrt_data = self._create_dataset("OxCGRT", local_file)
+                self._save(oxcgrt_data.raw, filename)
+                return oxcgrt_data
+            raise FileNotFoundError(f"{local_file} does not exist.")
+        if not self._needs_pull(filename, self.oxcgrt_url):
+            return self._create_dataset("OxCGRT", filename)
+        # Retrieve the raw data
+        df = self._oxcgrt_get()
+        # Save the dataset and return dataset
+        self._save(df, filename)
+        return self._create_dataset("OxCGRT", filename)
+
+    def _oxcgrt_get(self):
+        """
+        Get the raw data from the following repository.
+        https://github.com/OxCGRT/covid-policy-tracker
+
+        Returns:
+            (pandas.DataFrame) : the raw data
+               Index:
+                    reset index
+                Columns:
+                    as-is the repository
+        """
+        url = f"{self.oxcgrt_url}/OxCGRT_latest.csv"
+        df = self._get_raw(url)
         return df

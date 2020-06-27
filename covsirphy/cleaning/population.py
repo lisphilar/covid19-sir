@@ -11,6 +11,12 @@ class PopulationData(CleaningBase):
     """
     Data cleaning of total population dataset.
     """
+    POPULATION_COLS = [
+        CleaningBase.ISO3,
+        CleaningBase.COUNTRY,
+        CleaningBase.PROVINCE,
+        CleaningBase.N
+    ]
 
     def __init__(self, filename):
         super().__init__(filename)
@@ -79,7 +85,7 @@ class PopulationData(CleaningBase):
         # Values
         df[self.N] = df[self.N].astype(np.int64)
         # Columns to use
-        df = df.loc[:, [self.COUNTRY, self.PROVINCE, self.N]]
+        df = df.loc[:, [self.ISO3, self.COUNTRY, self.PROVINCE, self.N]]
         return df
 
     def total(self):
@@ -139,7 +145,7 @@ class PopulationData(CleaningBase):
             if df.empty:
                 raise KeyError(
                     f"{province} is not registered as a province of {country}.")
-        total_population = df[self.N].sum()
+        total_population = int(df[self.N].sum())
         return total_population
 
     def update(self, value, country, province="-"):
