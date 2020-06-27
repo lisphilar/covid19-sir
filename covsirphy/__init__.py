@@ -12,12 +12,14 @@ from covsirphy.__version__ import __version__
 from covsirphy.analysis import ODESimulator, ChangeFinder
 from covsirphy.analysis import PhaseSeries, Scenario
 from covsirphy.cleaning import Word, CleaningBase, DataLoader
-from covsirphy.cleaning import JHUData, CountryData, Population, OxCGRTData
+from covsirphy.cleaning import JHUData, CountryData, PopulationData, OxCGRTData
 from covsirphy.ode import ModelBaseCommon, ModelBase
 from covsirphy.ode import SIR, SIRD, SIRF, SIRFV, SEWIRF
 from covsirphy.phase import PhaseData, ODEData, Estimator
 from covsirphy.phase import SRData, Trend
 from covsirphy.util import line_plot, jpn_map, StopWatch
+# Deprecated
+from covsirphy.cleaning import Population
 
 
 def get_version():
@@ -31,11 +33,13 @@ __all__ = [
     "ODESimulator", "ChangeFinder",
     "PhaseSeries", "Scenario",
     "Word", "CleaningBase", "DataLoader",
-    "JHUData", "CountryData", "Population", "OxCGRTData",
+    "JHUData", "CountryData", "PopulationData", "OxCGRTData",
     "ModelBaseCommon", "ModelBase",
     "SIR", "SIRD", "SIRF", "SIRFV", "SEWIRF",
     "PhaseData", "ODEData", "Estimator", "SRData", "Trend",
     "line_plot", "jpn_map", "StopWatch",
+    # Deprecated
+    "Population",
 ]
 
 # Check duplication

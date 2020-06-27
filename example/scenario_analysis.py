@@ -8,16 +8,19 @@ import covsirphy as cs
 def main():
     # Create output directory in example directory
     code_path = Path(__file__)
+    input_dir = code_path.parent.with_name("input")
     output_dir = code_path.with_name("output").joinpath(code_path.stem)
     output_dir.mkdir(exist_ok=True, parents=True)
-    # Read JHU dataset
-    jhu_file = "input/covid_19_data.csv"
-    jhu_data = cs.JHUData(jhu_file)
-    # Read population dataset
-    pop_file = "input/locations_population.csv"
-    pop_data = cs.Population(pop_file)
+    # Create data loader instance
+    data_loader = cs.DataLoader(input_dir)
+    # Load JHU dataset and replace Japan data with government-announced data
+    jhu_data = data_loader.jhu()
+    japan_data = data_loader.japan()
+    jhu_data.replace(japan_data)
+    # Load Population dataset
+    population_data = data_loader.population()
     # Start scenario analysis
-    ita_scenario = cs.Scenario(jhu_data, pop_data, "Italy")
+    ita_scenario = cs.Scenario(jhu_data, population_data, "Italy")
     # Show records
     ita_record_df = ita_scenario.records(
         filename=output_dir.joinpath("ita_records.png"))
@@ -47,7 +50,8 @@ def main():
     # Add future phase to alternative scenario
     sigma_4th = ita_scenario.get("sigma", phase="4th")
     sigma_6th = sigma_4th * 2
-    ita_scenario.add_phase(name="New medicines", end_date="31Dec2020", sigma=sigma_6th)
+    ita_scenario.add_phase(name="New medicines",
+                           end_date="31Dec2020", sigma=sigma_6th)
     ita_scenario.add_phase(name="New medicines", days=100)
     # Prediction of the number of cases
     sim_df = ita_scenario.simulate(

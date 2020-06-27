@@ -1,15 +1,22 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
+import warnings
 import numpy as np
 import pandas as pd
 from covsirphy.cleaning.cbase import CleaningBase
 
 
-class Population(CleaningBase):
+class PopulationData(CleaningBase):
     """
     Data cleaning of total population dataset.
     """
+    POPULATION_COLS = [
+        CleaningBase.ISO3,
+        CleaningBase.COUNTRY,
+        CleaningBase.PROVINCE,
+        CleaningBase.N
+    ]
 
     def __init__(self, filename):
         super().__init__(filename)
@@ -17,16 +24,16 @@ class Population(CleaningBase):
     def cleaning(self):
         """
         Perform data cleaning of the raw data.
-        This method overwrite super().cleaning() method.
 
         Returns:
             (pandas.DataFrame)
-                    Index:
-                        reset index
-                    Columns:
-                        - Country (str): country/region name
-                        - Province (str): province/prefecture/state name
-                        - Population (int): total population
+                Index:
+                    reset index
+                Columns:
+                    - ISO3 (str): ISO3 code or "-"
+                    - Country (str): country/region name
+                    - Province (str): province/prefecture/state name
+                    - Population (int): total population
         """
         df = self._raw.copy()
         # Rename the columns
@@ -38,6 +45,9 @@ class Population(CleaningBase):
             },
             axis=1
         )
+        # ISO3
+        if self.ISO3 not in df.columns:
+            df[self.ISO3] = "-"
         # Country
         df[self.COUNTRY] = df[self.COUNTRY].replace(
             {
@@ -74,7 +84,8 @@ class Population(CleaningBase):
             self.COUNTRY, self.PROVINCE]] = ["Others", "Diamond Princess"]
         # Values
         df[self.N] = df[self.N].astype(np.int64)
-        df = df.loc[:, [self.COUNTRY, self.PROVINCE, self.N]]
+        # Columns to use
+        df = df.loc[:, [self.ISO3, self.COUNTRY, self.PROVINCE, self.N]]
         return df
 
     def total(self):
@@ -116,22 +127,26 @@ class Population(CleaningBase):
         Return the value of population in the place.
 
         Args:
-        country (str): country name
-        province (str): province name
+            country (str): country name or ISO3 code
+            province (str): province name
 
         Returns:
             (int): population in the place
         """
-        try:
-            if province is None:
-                pop_dict = self.to_dict(country_level=True)
-                return pop_dict[country]
-            pop_dict = self.to_dict(country_level=False)
-            return pop_dict[f"{country}{self.SEP}{province}"]
-        except KeyError:
-            raise KeyError(
-                f"Population data of ({country}, {province}) is not registered."
-            )
+        cleaned_df = self._cleaned_df.copy()
+        df = cleaned_df.loc[cleaned_df[self.ISO3] == country, :]
+        if df.empty:
+            df = cleaned_df.loc[cleaned_df[self.COUNTRY] == country, :]
+            if df.empty:
+                raise KeyError(
+                    f"{country} is not registered. Please use ISO3 code, like JPN.")
+        if province is not None:
+            df = df.loc[df[self.PROVINCE] == province, :]
+            if df.empty:
+                raise KeyError(
+                    f"{province} is not registered as a province of {country}.")
+        total_population = int(df[self.N].sum())
+        return total_population
 
     def update(self, value, country, province="-"):
         """
@@ -149,3 +164,17 @@ class Population(CleaningBase):
         df = self._cleaned_df.append(series, ignore_index=True)
         self._cleaned_df = df.copy()
         return self
+
+
+class Population(PopulationData):
+    """
+    This is deprecated and please use PopulationData class.
+    """
+
+    def __init__(self, filename):
+        super().__init__(filename)
+        warnings.warn(
+            "Please use PopulationData() class rather than Population()",
+            DeprecationWarning,
+            stacklevel=2
+        )

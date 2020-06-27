@@ -30,6 +30,13 @@ def main():
     ncov_df.to_csv(
         output_dir.joinpath("jhu_cleaned_replaced.csv"), index=False
     )
+    # Load Population dataset
+    population_data = data_loader.population()
+    print(population_data.citation)
+    population_df = population_data.cleaned()
+    population_df.to_csv(
+        output_dir.joinpath("population_cleaned.csv"), index=False
+    )
     # Load OxCGRT dataset
     oxcgrt_data = data_loader.oxcgrt()
     print(oxcgrt_data.citation)
