@@ -10,7 +10,7 @@ from covsirphy.cleaning.cbase import CleaningBase
 from covsirphy.cleaning.jhu_data import JHUData
 from covsirphy.cleaning.country_data import CountryData
 from covsirphy.cleaning.oxcgrt import OxCGRTData
-# from covsirphy.cleaning.population import PopulationData
+from covsirphy.cleaning.population import PopulationData
 from covsirphy.cleaning.word import Word
 
 
@@ -42,6 +42,11 @@ class DataLoader(Word):
         ...
         >>> print(type(jpn_data.cleaned()))
         <class 'pandas.core.frame.DataFrame'>
+        >>> population_data = data_loader.population()
+        >>> print(population_data.citation)
+        ...
+        >>> print(type(population_data.cleaned()))
+        <class 'pandas.core.frame.DataFrame'>
         >>> oxcgrt_data = data_loader.oxcgrt()
         >>> print(oxcgrt_data.citation)
         ...
@@ -72,6 +77,11 @@ class DataLoader(Word):
         self.japan_cases_url = "https://raw.githubusercontent.com/lisphilar/covid19-sir/master/data/japan"
         self.japan_cases_citation = "Lisphilar (2020), COVID-19 dataset in Japan, GitHub repository, " \
             "https://github.com/lisphilar/covid19-sir/data/japan"
+        # Population dataset: THE WORLD BANK
+        self.population_url = "http://api.worldbank.org/v2/country/all/indicator/SP.POP.TOTL?"
+        self.population_citation = "The World Bank Group (2020), THE WORLD BANK, Population, total," \
+            " https://data.worldbank.org/indicator/SP.POP.TOTL," \
+            " licensed under CC BY-4.0."
         # OxCGRT dataset: Oxford Covid-19 Government Response Tracker
         self.oxcgrt_url = "https://raw.githubusercontent.com/OxCGRT/covid-policy-tracker/master/data"
         self.oxcgrt_citation = "Thomas Hale, Sam Webster, Anna Petherick, Toby Phillips, and Beatriz Kira." \
@@ -84,22 +94,35 @@ class DataLoader(Word):
             "Japan_cases": {
                 "class": CountryData, "url": self.japan_cases_url, "citation": self.japan_cases_citation
             },
+            "Population": {
+                "class": PopulationData, "url": self.population_url, "citation": self.population_citation
+            },
             "OxCGRT": {
                 "class": OxCGRTData, "url": self.oxcgrt_url, "citation": self.oxcgrt_citation
             },
         }
 
     @staticmethod
-    def _get_raw(url):
+    def _get_raw(url, is_json=False):
         """
         Get raw dataset from the URL.
 
         Args:
             url (str): URL to get raw dataset
+            is_json (bool): if True, parse the response as Json data.
 
         Returns:
             (pandas.DataFrame): raw dataset
         """
+        if is_json:
+            r = requests.get(url)
+            try:
+                json_data = r.json()[1]
+            except Exception:
+                raise TypeError(
+                    f"Unknown data format was used in Web API {url}")
+            df = pd.json_normalize(json_data)
+            return df
         df = dd.read_csv(url).compute()
         return df
 
@@ -447,4 +470,68 @@ class DataLoader(Word):
         """
         url = f"{self.oxcgrt_url}/OxCGRT_latest.csv"
         df = self._get_raw(url)
+        return df
+
+    def population(self, basename="locations_population.csv", local_file=None):
+        """
+        Load Population dataset from THE WORLD BANK, Population, total.
+        https://data.worldbank.org/indicator/SP.POP.TOTL
+
+        Args:
+            basename (str): basename of the file to save the data
+            local_file (str or None): if not None, load the data from this file
+
+        Notes:
+            Regardless the value of @local_file, the data will be save in the directory.
+
+        Returns:
+            (covsirphy.Population): Population dataset
+        """
+        filename = self._resolve_filename(basename)
+        if local_file is not None:
+            if Path(local_file).exists():
+                population_data = self._create_dataset(
+                    "Population", local_file)
+                self._save(population_data.raw, filename)
+                return population_data
+            raise FileNotFoundError(f"{local_file} does not exist.")
+        if not self._needs_pull(filename, self.population_url):
+            return self._create_dataset("Population", filename)
+        # Retrieve the raw data
+        df = self._population_get()
+        # Save the dataset and return dataset
+        self._save(df, filename)
+        return self._create_dataset("Population", filename)
+
+    def _population_get(self):
+        """
+        Get the raw data using the following Web API.
+        http://api.worldbank.org/v2/country/all/indicator/SP.POP.TOTL?format=json&mrv=1&per_page=1000
+
+        Returns:
+            (pandas.DataFrame) : the raw data
+               Index:
+                    reset index
+                Columns:
+                    ISO3 (str): ISO3 code
+                    Province.State (str): "-"
+                    Country.Region (str): country name
+                    Population (int): population value
+                    Provenance (str): "https://data.worldbank.org/indicator/SP.POP.TOTL"
+        """
+        url = f"{self.population_url}format=json&mrv=1&per_page=1000"
+        df = self._get_raw(url, is_json=True)
+        # Change columns names
+        df = df.rename(
+            {
+                "countryiso3code": self.ISO3,
+                "country.value": "Country.Region",
+                "value": "Population"
+            }
+        )
+        df["Province.State"] = "-"
+        df["Provenance"] = "https://data.worldbank.org/indicator/SP.POP.TOTL"
+        df = df.loc[
+            :, [self.ISO3, "Province.State", "Country.Region", "Population", "Provenance"]
+        ]
         return df
