@@ -631,8 +631,7 @@ This method overwrite super().cleaning() method.</p>
 </dd>
 </dl>
 <p class="rubric">Notes</p>
-<p>If &#64;directory is None, the files will not be saved in local environment.
-GitHub datasets will be always updated because headers of GET response
+<p>GitHub datasets will be always updated because headers of GET response
 does not have ‘Last-Modified’ keys.
 If &#64;update_interval hours have passed since the last update of local datasets,
 updating will be forced when updating is not prevented by the methods.</p>
@@ -648,6 +647,11 @@ updating will be forced when updating is not prevented by the methods.</p>
 <span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">jpn_data</span><span class="o">.</span><span class="n">citation</span><span class="p">)</span>
 <span class="gp">...</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">jpn_data</span><span class="o">.</span><span class="n">cleaned</span><span class="p">()))</span>
+<span class="go">&lt;class &#39;pandas.core.frame.DataFrame&#39;&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">population_data</span> <span class="o">=</span> <span class="n">data_loader</span><span class="o">.</span><span class="n">population</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">population_data</span><span class="o">.</span><span class="n">citation</span><span class="p">)</span>
+<span class="gp">...</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">population_data</span><span class="o">.</span><span class="n">cleaned</span><span class="p">()))</span>
 <span class="go">&lt;class &#39;pandas.core.frame.DataFrame&#39;&gt;</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">oxcgrt_data</span> <span class="o">=</span> <span class="n">data_loader</span><span class="o">.</span><span class="n">oxcgrt</span><span class="p">()</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">oxcgrt_data</span><span class="o">.</span><span class="n">citation</span><span class="p">)</span>
@@ -727,6 +731,31 @@ updating will be forced when updating is not prevented by the methods.</p>
 </dd>
 <dt class="field-even">Return type</dt>
 <dd class="field-even"><p>(<a class="reference internal" href="#covsirphy.OxCGRTData" title="covsirphy.OxCGRTData">covsirphy.OxCGRTData</a>)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="covsirphy.DataLoader.population">
+<code class="sig-name descname">population</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">basename</span><span class="o">=</span><span class="default_value">'locations_population.csv'</span></em>, <em class="sig-param"><span class="n">local_file</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/cleaning/dataloader.html#DataLoader.population"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#covsirphy.DataLoader.population" title="Permalink to this definition">¶</a></dt>
+<dd><p>Load Population dataset from THE WORLD BANK, Population, total.
+<a class="reference external" href="https://data.worldbank.org/indicator/SP.POP.TOTL">https://data.worldbank.org/indicator/SP.POP.TOTL</a></p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>basename</strong> (<em>str</em>) – basename of the file to save the data</p></li>
+<li><p><strong>local_file</strong> (<em>str</em><em> or </em><em>None</em>) – if not None, load the data from this file</p></li>
+</ul>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<p>Regardless the value of &#64;local_file, the data will be save in the directory.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>Population dataset</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>(<a class="reference internal" href="#covsirphy.Population" title="covsirphy.Population">covsirphy.Population</a>)</p>
 </dd>
 </dl>
 </dd></dl>
@@ -1863,13 +1892,24 @@ This method must be overwritten in child class.</p>
 <dl class="py class">
 <dt id="covsirphy.Population">
 <em class="property">class </em><code class="sig-prename descclassname">covsirphy.</code><code class="sig-name descname">Population</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">filename</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/cleaning/population.html#Population"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#covsirphy.Population" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="covsirphy.cleaning.html#covsirphy.cleaning.population.PopulationData" title="covsirphy.cleaning.population.PopulationData"><code class="xref py py-class docutils literal notranslate"><span class="pre">covsirphy.cleaning.population.PopulationData</span></code></a></p>
+<p>This is deprecated and please use PopulationData class.</p>
+</dd></dl>
+
+<dl class="py class">
+<dt id="covsirphy.PopulationData">
+<em class="property">class </em><code class="sig-prename descclassname">covsirphy.</code><code class="sig-name descname">PopulationData</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">filename</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/cleaning/population.html#PopulationData"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#covsirphy.PopulationData" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="covsirphy.cleaning.html#covsirphy.cleaning.cbase.CleaningBase" title="covsirphy.cleaning.cbase.CleaningBase"><code class="xref py py-class docutils literal notranslate"><span class="pre">covsirphy.cleaning.cbase.CleaningBase</span></code></a></p>
 <p>Data cleaning of total population dataset.</p>
+<dl class="py attribute">
+<dt id="covsirphy.PopulationData.POPULATION_COLS">
+<code class="sig-name descname">POPULATION_COLS</code><em class="property"> = ['ISO3', 'Country', 'Province', 'Population']</em><a class="headerlink" href="#covsirphy.PopulationData.POPULATION_COLS" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
 <dl class="py method">
-<dt id="covsirphy.Population.cleaning">
-<code class="sig-name descname">cleaning</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/cleaning/population.html#Population.cleaning"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#covsirphy.Population.cleaning" title="Permalink to this definition">¶</a></dt>
-<dd><p>Perform data cleaning of the raw data.
-This method overwrite super().cleaning() method.</p>
+<dt id="covsirphy.PopulationData.cleaning">
+<code class="sig-name descname">cleaning</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/cleaning/population.html#PopulationData.cleaning"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#covsirphy.PopulationData.cleaning" title="Permalink to this definition">¶</a></dt>
+<dd><p>Perform data cleaning of the raw data.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns</dt>
 <dd class="field-odd"><p><dl class="simple">
@@ -1877,6 +1917,7 @@ This method overwrite super().cleaning() method.</p>
 <dt>Index:</dt><dd><p>reset index</p>
 </dd>
 <dt>Columns:</dt><dd><ul class="simple">
+<li><p>ISO3 (str): ISO3 code or “-“</p></li>
 <li><p>Country (str): country/region name</p></li>
 <li><p>Province (str): province/prefecture/state name</p></li>
 <li><p>Population (int): total population</p></li>
@@ -1891,8 +1932,8 @@ This method overwrite super().cleaning() method.</p>
 </dd></dl>
 
 <dl class="py method">
-<dt id="covsirphy.Population.to_dict">
-<code class="sig-name descname">to_dict</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">country_level</span><span class="o">=</span><span class="default_value">True</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/cleaning/population.html#Population.to_dict"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#covsirphy.Population.to_dict" title="Permalink to this definition">¶</a></dt>
+<dt id="covsirphy.PopulationData.to_dict">
+<code class="sig-name descname">to_dict</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">country_level</span><span class="o">=</span><span class="default_value">True</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/cleaning/population.html#PopulationData.to_dict"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#covsirphy.PopulationData.to_dict" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return dictionary of population values.</p>
 <p>Args:
 country_level (str): whether key is country name or not</p>
@@ -1911,8 +1952,8 @@ country_level (str): whether key is country name or not</p>
 </dd></dl>
 
 <dl class="py method">
-<dt id="covsirphy.Population.total">
-<code class="sig-name descname">total</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/cleaning/population.html#Population.total"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#covsirphy.Population.total" title="Permalink to this definition">¶</a></dt>
+<dt id="covsirphy.PopulationData.total">
+<code class="sig-name descname">total</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/cleaning/population.html#PopulationData.total"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#covsirphy.PopulationData.total" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return the total value of population in the datset.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns</dt>
@@ -1922,8 +1963,8 @@ country_level (str): whether key is country name or not</p>
 </dd></dl>
 
 <dl class="py method">
-<dt id="covsirphy.Population.update">
-<code class="sig-name descname">update</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">value</span></em>, <em class="sig-param"><span class="n">country</span></em>, <em class="sig-param"><span class="n">province</span><span class="o">=</span><span class="default_value">'-'</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/cleaning/population.html#Population.update"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#covsirphy.Population.update" title="Permalink to this definition">¶</a></dt>
+<dt id="covsirphy.PopulationData.update">
+<code class="sig-name descname">update</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">value</span></em>, <em class="sig-param"><span class="n">country</span></em>, <em class="sig-param"><span class="n">province</span><span class="o">=</span><span class="default_value">'-'</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/cleaning/population.html#PopulationData.update"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#covsirphy.PopulationData.update" title="Permalink to this definition">¶</a></dt>
 <dd><p>Update the value of a new place.</p>
 <p>Args:
 value (int): population in the place
@@ -1932,18 +1973,21 @@ province (str): province name</p>
 </dd></dl>
 
 <dl class="py method">
-<dt id="covsirphy.Population.value">
-<code class="sig-name descname">value</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">country</span></em>, <em class="sig-param"><span class="n">province</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/cleaning/population.html#Population.value"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#covsirphy.Population.value" title="Permalink to this definition">¶</a></dt>
+<dt id="covsirphy.PopulationData.value">
+<code class="sig-name descname">value</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">country</span></em>, <em class="sig-param"><span class="n">province</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/cleaning/population.html#PopulationData.value"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#covsirphy.PopulationData.value" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return the value of population in the place.</p>
-<p>Args:
-country (str): country name
-province (str): province name</p>
 <dl class="field-list simple">
-<dt class="field-odd">Returns</dt>
-<dd class="field-odd"><p>population in the place</p>
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>country</strong> (<em>str</em>) – country name or ISO3 code</p></li>
+<li><p><strong>province</strong> (<em>str</em>) – province name</p></li>
+</ul>
 </dd>
-<dt class="field-even">Return type</dt>
-<dd class="field-even"><p>(int)</p>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>population in the place</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>(int)</p>
 </dd>
 </dl>
 </dd></dl>
@@ -2929,14 +2973,14 @@ specialized_df (pandas.DataFrame): dataframe with the variables</p>
 
 <dl class="py class">
 <dt id="covsirphy.Scenario">
-<em class="property">class </em><code class="sig-prename descclassname">covsirphy.</code><code class="sig-name descname">Scenario</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">jhu_data</span></em>, <em class="sig-param"><span class="n">pop_data</span></em>, <em class="sig-param"><span class="n">country</span></em>, <em class="sig-param"><span class="n">province</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/analysis/scenario.html#Scenario"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#covsirphy.Scenario" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">covsirphy.</code><code class="sig-name descname">Scenario</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">jhu_data</span></em>, <em class="sig-param"><span class="n">population_data</span></em>, <em class="sig-param"><span class="n">country</span></em>, <em class="sig-param"><span class="n">province</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/analysis/scenario.html#Scenario"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#covsirphy.Scenario" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="covsirphy.cleaning.html#covsirphy.cleaning.word.Word" title="covsirphy.cleaning.word.Word"><code class="xref py py-class docutils literal notranslate"><span class="pre">covsirphy.cleaning.word.Word</span></code></a></p>
 <p>Scenario analysis.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>jhu_data</strong> (<a class="reference internal" href="#covsirphy.JHUData" title="covsirphy.JHUData"><em>covsirphy.JHUData</em></a>) – object of records</p></li>
-<li><p><strong>pop_data</strong> (<a class="reference internal" href="#covsirphy.Population" title="covsirphy.Population"><em>covsirphy.Population</em></a>) – Population object</p></li>
+<li><p><strong>population_data</strong> (<a class="reference internal" href="#covsirphy.PopulationData" title="covsirphy.PopulationData"><em>covsirphy.PopulationData</em></a>) – PopulationData object</p></li>
 <li><p><strong>country</strong> (<em>str</em>) – country name</p></li>
 <li><p><strong>province</strong> (<em>str</em>) – province name</p></li>
 </ul>
