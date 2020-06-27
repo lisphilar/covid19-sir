@@ -87,7 +87,9 @@ class DataLoader(Word):
         # OxCGRT dataset: Oxford Covid-19 Government Response Tracker
         self.oxcgrt_url = "https://raw.githubusercontent.com/OxCGRT/covid-policy-tracker/master/data"
         self.oxcgrt_citation = "Thomas Hale, Sam Webster, Anna Petherick, Toby Phillips, and Beatriz Kira." \
-            " (2020). Oxford COVID-19 Government Response Tracker. Blavatnik School of Government."
+            " (2020). Oxford COVID-19 Government Response Tracker. Blavatnik School of Government," \
+            " https://github.com/OxCGRT/covid-policy-tracker," \
+            " licensed under CC BY-4.0"
         # Dictionary of datasets
         self.dataset_dict = {
             "JHU": {

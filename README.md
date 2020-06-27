@@ -1,13 +1,12 @@
 # CovsirPhy: COVID-19 data with SIR model [![GitHub license](https://img.shields.io/github/license/lisphilar/covid19-sir)](https://github.com/lisphilar/covid19-sir/blob/master/LICENSE)[![Python version](https://img.shields.io/badge/Python-3.7|3.8-green.svg)](https://www.python.org/)
 
-## Introduction
-CovsirPhy is a Python package for COVID-19 (Coronavirus disease 2019) data analysis with SIR-derived models. Please refer to "Method" part of [COVID-19 data with SIR model](https://www.kaggle.com/lisphilar/covid-19-data-with-sir-model) notebook in Kaggle to understand the methods of analysis.
+**CovsirPhy is a Python package for COVID-19 (Coronavirus disease 2019) data analysis with SIR-derived models. Please refer to "Method" part of [COVID-19 data with SIR model](https://www.kaggle.com/lisphilar/covid-19-data-with-sir-model) notebook in Kaggle to understand the methods.**
 
-With CovsirPhy, we can apply epidemic models to COVID-19 data. Epidemic models include simple SIR and SIR-F model. SIR-F is a customized SIR-derived ODE model. To evaluate the effect of measures, parameter estimation of SIR-F will be applied to subsets of time series data in each country. Parameter change points will be determined by S-R trend analysis.
+SIR-F is a customized SIR-derived ODE model. To evaluate the effect of measures, parameter estimation of SIR-F will be applied to subsets of time series data in each country. Parameter change points will be determined by S-R trend analysis.
 
 ## Functionalities
-- Data cleaning
-    - Epidemic data: raw data must include date, country, (province), the number of confirmed/fatal/recovered cases
+- Downloading and cleaning data
+    - Epidemic data: the number of confirmed/fatal/recovered cases
     - Population data: raw data must include country, (province), values of population
 - Data visualization with Matplotlib
 - S-R Trend analysis with Optuna and scipy.optimize.curve_fit
@@ -30,37 +29,73 @@ The author is trying to add the following functionalities.
 - Find relationship of reproductive number and measures automatically
 
 If you have ideas or need new functionalities, please join this project.
-Any suggestions (Github issues, pull request, comment on Kaggle notebook) are always welcomed.
+Any suggestions with [Github Issues](https://github.com/lisphilar/covid19-sir/issues/new/choose) are always welcomed.
 
-## Need discussion
-- Analysis with linelist of case reports
-- Analysis with mobility data
+## Installation and dataset preparation
+We have the following options to start analysis with CovsirPhy. Datasets are not included in this package, but we can prepare them with `DataLoader` class.
 
-## Installation
-When you use this package in Kaggle notebook (need to turn on Internet option in notebook settings) or local environment with Pip,
+||Installation|Dataset preparation|
+|:---|:---|:---|
+|Preferred|pip/pipenv|Automated with `DataLoader` class|
+|Developers|git-cloning|Automated with `DataLoader` class|
+|Kagglers (local environment)|git-cloning|Kaggle API and Python script|
+|Kagglers (Kaggle platform)|pip|Kaggle Datasets|
+
+We will use the following datasets.
+||Description|URL|
+|:---|:---|:---|
+|The number of cases (JHU)|COVID-19 Data Repository by the Center for Systems Science and Engineering (CSSE) at Johns Hopkins University.|https://github.com/CSSEGISandData/COVID-19|
+|The number of cases in Japan|Lisphilar (2020), COVID-19 dataset in Japan.|https://github.com/lisphilar/covid19-sir/data/japan|
+|Population in each country|The World Bank Group (2020), THE WORLD BANK, Population, total.|https://data.worldbank.org/indicator/SP.POP.TOTL|
+|Government Response Tracker (OxCGRT)|Thomas Hale, Sam Webster, Anna Petherick, Toby Phillips, and Beatriz Kira. (2020). Oxford COVID-19 Government Response Tracker. Blavatnik School of Government.|https://github.com/OxCGRT/covid-policy-tracker|
+
+If you want to use a new dataset for your analysis, please kindly inform us via [GitHub Issues](https://github.com/lisphilar/covid19-sir/issues/new/choose) with "Request new method of DataLoader class" template.
+
+### 1. Preferred
+Install this package with pip,
 ```
-# Installation
 pip install --upgrade pip setuptools
 pip install "git+https://github.com/lisphilar/covid19-sir#egg=covsirphy"
-# Un-installation
-pip install pip-autoremove
-pip-autoremove covsirphy
-pip uninstall pip-autoremove
 ```
-With Pipenv environment,
+Alternatively, we can install it with pipenv,
 ```
-# Installation
 pipenv install "git+https://github.com/lisphilar/covid19-sir#egg=covsirphy"
-# Un-installation
-pipenv uninstall covsirphy
 ```
-For developers,
+
+Then, download the datasets with the following codes, when you want to save the data in `input` directory.
+```Python
+import covsirphy as cs
+# Set the directory to save the datasets
+data_loader = cs.DataLoader("input")
+# The number of cases (JHU)
+jhu_data = data_loader.jhu()
+# (Optional) The number of cases in Japan
+japan_data = data_loader.japan()
+# Population in each country
+population_data = data_loader.population()
+# (Optional) Government Response Tracker (OxCGRT)
+oxcgrt_data = data_loader.oxcgrt()
+```
+If `input` directory has the datasets, `DataLoader` will load the local files. If the datasets were updated in remote servers, `DataLoader` will update the local files automatically.
+
+We can get descriptions of the datasets and raw/cleaned datasets easily. As an example, JHU dataset will be used here.
+```Python
+# Description (string)
+jhu_data.citation
+# Raw data (pandas.DataFrame)
+jhu_data.raw
+# Cleaned data (pandas.DataFrame)
+jhu_data.cleaned()
+```
+
+### 2. Developers
+Developers will clone this repository with `git clone` command and install dependencies with pipenv.
 ```
 git clone https://github.com/lisphilar/covid19-sir.git
 cd covid19-sir
 pip install wheel; pip install --upgrade pip; pip install pipenv
 export PIPENV_VENV_IN_PROJECT=true
-export PIPENV_TIMEOUT=3600
+export PIPENV_TIMEOUT=7200
 pipenv install --dev
 ```
 Developers can perform tests.
@@ -69,41 +104,68 @@ Developers can perform tests.
 
 Tests can be done with `pipenv run pytest -v --durations=0 --profile-svg` and call graph will be saved as SVG file (prof/combined.svg).
 
+We can prepare the dataset with the same codes as that explained in "1.Preferred" subsection.
 
-## Recommended datasets
-Datasets are not included in this repository, but we can download the following recommended datasets from Kaggle and GitHub. 
+### 3. Kagglers (local environment)
+As explained in "2. Developers" subsection, we need to git-clone this repository and install the dependencies when you want to uses this package with Kaggle API in your local environment.
 
-The necessary datasets can easily be obtained using two different: a bash script (`ìnput.sh`) or a python script (`input.py`). The bash script will not work for Windows OS. You need to setup your Kaggle account properly for both methods. Please follow the steps [provided here to ensure that you can authenticate with the Kaggle API](https://stackoverflow.com/questions/55934733/documentation-for-kaggle-api-within-python#:~:text=Here%20are%20the%20steps%20involved%20in%20using%20the%20Kaggle%20API%20from%20Python.&text=Go%20to%20your%20Kaggle%20account,json%20will%20be%20downloaded).
+Then, please move to account page and download "kaggle.json" by selecting "API > Create New API Token" button. Copy the json file to the top directory of the local repository. Please refer to [How to Use Kaggle: Public API](https://www.kaggle.com/docs/api) and [stackoverflow: documentation for Kaggle API *within* python?](https://stackoverflow.com/questions/55934733/documentation-for-kaggle-api-within-python#:~:text=Here%20are%20the%20steps%20involved%20in%20using%20the%20Kaggle%20API%20from%20Python.&text=Go%20to%20your%20Kaggle%20account,json%20will%20be%20downloaded)
 
-If you choose to use the python script, note that simply putting the `kaggle.json` in the same folder as `input.py` before executing it will allow `input.py` to find it (not necessary to modify environment variables).
+We can download datasets with `pipenv run ./input.py` command. Modification of environment variables is un-necessary. Files will be saved in `input` directory of your local repository.
 
-Please read Bash code `input.sh` in the top directory of this repository to better understand its usage.
+Note:  
+Except for OxCGRT dataset, the datasets downloaded with `input.py` scripts are not the same as that explained in the previous subsections. URLs are shown in the next table.
+||Description|URL|
+|:---|:---|:---|
+|The number of cases (JHU)|Novel Corona Virus 2019 Dataset by SRK|https://www.kaggle.com/sudalairajkumar/novel-corona-virus-2019-dataset|
+|The number of cases in Japan|COVID-19 dataset in Japan by Lisphilar|https://www.kaggle.com/lisphilar/covid19-dataset-in-japan|
+|Population in each country|covid19 global forecasting: locations population by Dmitry A. Grechka|https://www.kaggle.com/dgrechka/covid19-global-forecasting-locations-population|
+|Government Response Tracker (OxCGRT)|Thomas Hale, Sam Webster, Anna Petherick, Toby Phillips, and Beatriz Kira. (2020). Oxford COVID-19 Government Response Tracker. Blavatnik School of Government.|https://github.com/OxCGRT/covid-policy-tracker|
 
-### Kaggle
-Kaggle API key and Kaggle package are necessary. Please read [How to Use Kaggle: Public API](https://www.kaggle.com/docs/api).
+Usage of `DataLoader` class is as follows. Please specify `local_file` argument in the methods.
+```Python
+import covsirphy as cs
+# Set the directory to save the datasets
+data_loader = cs.DataLoader("input")
+# The number of cases (JHU)
+jhu_data = data_loader.jhu(local_file="covid_19_data.csv")
+# (Optional) The number of cases in Japan
+japan_data = data_loader.japan(local_file="covid_jpn_total.csv")
+# Population in each country
+population_data = data_loader.population(local_file="locations_population.csv")
+# (Optional) Government Response Tracker (OxCGRT)
+oxcgrt_data = data_loader.oxcgrt(local_file="OxCGRT_latest.csv")
+```
 
-#### The number of cases
-Primary source: [COVID-19 Data Repository by CSSE at Johns Hopkins University](https://github.com/CSSEGISandData/COVID-19)  
-Secondary source: [Novel Corona Virus 2019 Dataset by SRK](https://www.kaggle.com/sudalairajkumar/novel-corona-virus-2019-dataset)  
-We can download this dataset from the primary source directly. Please refer to "Quick usage" section.
+### 4. Kagglers (Kaggle platform)
+When you want to use this package in Kaggle notebook, please turn on Internet option in notebook setting and download the datasets explained in the previous section.
 
-### The number of cases in Japan
-Primary source: [Ministry of Health, Labour and Welfare HP (in English)](https://www.mhlw.go.jp/stf/seisakunitsuite/bunya/newpage_00032.html)  
-Secondary source: [Secondary source: COVID-19 dataset in Japan by Lisphilar](https://www.kaggle.com/lisphilar/covid19-dataset-in-japan)  
-We can download this dataset from the secondary source directly. Please refer to "Quick usage" section.
+Then, install this package with pip command.
+```Python
+!pip install "git+https://github.com/lisphilar/covid19-sir#egg=covsirphy"
+```
 
-#### Total population
-[covid19 global forecasting: locations population by Dmitry A. Grechka](https://www.kaggle.com/dgrechka/covid19-global-forecasting-locations-population)  
+Then, please load the datasets with the following codes, specifying the filenames.
+```Python
+import covsirphy as cs
+# The number of cases (JHU)
+jhu_data = cs.JHUData("/kaggle/input/novel-corona-virus-2019-dataset/covid_19_data.csv")
+# (Optional) The number of cases in Japan
+jpn_data = cs.CountryData("/kaggle/input/covid19-dataset-in-japan/covid_jpn_total.csv", country="Japan")
+jpn_data.set_variables(
+    date="Date", confirmed="Positive", fatal="Fatal", recovered="Discharged", province=None
+)
+# Population in each country
+pop_data = cs.Population(
+    "/kaggle/input/covid19-global-forecasting-locations-population/locations_population.csv"
+)
+```
 
-### GitHub
-#### OxCGRT: Measures taken by each country and response scores
-[Thomas Hale, Sam Webster, Anna Petherick, Toby Phillips, and Beatriz Kira. (2020).  
-Oxford COVID-19 Government Response Tracker. Blavatnik School of Government.](https://github.com/OxCGRT/covid-policy-tracker)  
-We can download this dataset from the primary source directly. Please refer to "Quick usage" section.
+Note:  
+Currently, OxCGRT dataset is not supported.
 
 
-
-## Quick usage
+## Quick usage for analysis
 Example Python codes are in `example` directory. With Pipenv environment, we can run the Python codes with Bash code `example.sh` in the top directory of this repository.
 
 ### Preparation
@@ -111,45 +173,14 @@ Example Python codes are in `example` directory. With Pipenv environment, we can
 import covsirphy as cs
 cs.__version__
 ```
-Set the directory to save the datasets.
+Please load the datasets as explained in the previous section.
+
+(Optional) We can replace a part of JHU data with country-specific datasets.
+As an example, we will the records in Japan, because values of JHU dataset sometimes differ from government-announced values as shown in [COVID-19: Government/JHU data in Japan](https://www.kaggle.com/lisphilar/covid-19-government-jhu-data-in-japan).
+
 ```Python
-data_loader = cs.DataLoader("input")
-```
-Download JHU dataset and perform data cleaning.
-```Python
-jhu_data = data_loader.jhu()
-# Show citation
-print(jhu_data.citation)
-# Return the cleaned dataset as a dataframe
-jhu_data.cleaned()
-```
-(Optional) We can replace JHU data with country-specific dataset.
-```Python
-# As an example, read Japan dataset
-japan_data = data_loader.japan()
-print(japan_data.citation)
-# Replace records of Japan with Japan-specific dataset
 jhu_data.replace(japan_data)
 ncov_df = jhu_data.cleaned()
-```
-Perform data cleaning of population dataset.
-```Python
-# Read population dataset
-population_data = cs.PopulationData("input/locations_population.csv")
-# We can add a new record
-population_data.update(country="Example", province="-", value=1_000_000)
-# Return dictionary
-population_data.to_dict(country_level=True)
-```
-Perform data cleaning of OxGCRT dataset.
-```Python
-oxcgrt_data = data_loader.oxcgrt()
-# Show citation
-print(oxcgrt_data.citation)
-# Data cleaning
-oxcgrt_df = oxcgrt_data.cleaned()
-# Create a subset for a country with ISO3 country code
-jpn_oxcgrt_df = oxcgrt_data.subset(iso3="JPN")
 ```
 
 ### Scenario analysis
