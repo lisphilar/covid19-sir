@@ -1,6 +1,6 @@
 # CovsirPhy: COVID-19 data with SIR model [![GitHub license](https://img.shields.io/github/license/lisphilar/covid19-sir)](https://github.com/lisphilar/covid19-sir/blob/master/LICENSE)[![Python version](https://img.shields.io/badge/Python-3.7|3.8-green.svg)](https://www.python.org/)
 
-**CovsirPhy is a Python package for COVID-19 (Coronavirus disease 2019) data analysis with SIR-derived models. Please refer to "Method" part of [COVID-19 data with SIR model](https://www.kaggle.com/lisphilar/covid-19-data-with-sir-model) notebook in Kaggle to understand the methods.**
+<strong>CovsirPhy is a Python package for COVID-19 (Coronavirus disease 2019) data analysis with SIR-derived models. Please refer to "Method" part of [COVID-19 data with SIR model](https://www.kaggle.com/lisphilar/covid-19-data-with-sir-model) notebook in Kaggle to understand the methods.</strong>
 
 SIR-F is a customized SIR-derived ODE model. To evaluate the effect of measures, parameter estimation of SIR-F will be applied to subsets of time series data in each country. Parameter change points will be determined by S-R trend analysis.
 
@@ -42,6 +42,7 @@ We have the following options to start analysis with CovsirPhy. Datasets are not
 |Kagglers (Kaggle platform)|pip|Kaggle Datasets|
 
 We will use the following datasets.
+
 ||Description|URL|
 |:---|:---|:---|
 |The number of cases (JHU)|COVID-19 Data Repository by the Center for Systems Science and Engineering (CSSE) at Johns Hopkins University.|https://github.com/CSSEGISandData/COVID-19|
@@ -52,28 +53,18 @@ We will use the following datasets.
 If you want to use a new dataset for your analysis, please kindly inform us via [GitHub Issues](https://github.com/lisphilar/covid19-sir/issues/new/choose) with "Request new method of DataLoader class" template.
 
 ### 1. Standard users
-Install this package with pip,
+Covsirphy is available at PyPI (The Python Package Index) and supports Python 3.7 or newer versions.
 ```
-pip install --upgrade pip setuptools
-pip install "git+https://github.com/lisphilar/covid19-sir#egg=covsirphy"
-```
-Alternatively, we can install it with pipenv,
-```
-pipenv install "git+https://github.com/lisphilar/covid19-sir#egg=covsirphy"
+pip install covsirphy
 ```
 
 Then, download the datasets with the following codes, when you want to save the data in `input` directory.
 ```Python
 import covsirphy as cs
-# Set the directory to save the datasets
 data_loader = cs.DataLoader("input")
-# The number of cases (JHU)
 jhu_data = data_loader.jhu()
-# (Optional) The number of cases in Japan
 japan_data = data_loader.japan()
-# Population in each country
 population_data = data_loader.population()
-# (Optional) Government Response Tracker (OxCGRT)
 oxcgrt_data = data_loader.oxcgrt()
 ```
 If `input` directory has the datasets, `DataLoader` will load the local files. If the datasets were updated in remote servers, `DataLoader` will update the local files automatically.
@@ -99,12 +90,14 @@ export PIPENV_TIMEOUT=7200
 pipenv install --dev
 ```
 Developers can perform tests.
+
 - Windows user need to install [Graphviz for Windows](https://graphviz.org/_pages/Download/Download_windows.html) in advance.
 - Debian/Ubuntu user need to install Graphviz with `sudo apt install graphviz` in advance.
 
 Tests can be done with `pipenv run pytest -v --durations=0 --profile-svg` and call graph will be saved as SVG file (prof/combined.svg).
 
 If you can run `make` command,
+
 |||
 |:---|:---|
 |`make install`|Install pipenv and the dependencies of CovsirPhy|
@@ -124,6 +117,7 @@ We can download datasets with `pipenv run ./input.py` command. Modification of e
 
 Note:  
 Except for OxCGRT dataset, the datasets downloaded with `input.py` scripts are not the same as that explained in the previous subsections. URLs are shown in the next table.
+
 ||Description|URL|
 |:---|:---|:---|
 |The number of cases (JHU)|Novel Corona Virus 2019 Dataset by SRK|https://www.kaggle.com/sudalairajkumar/novel-corona-virus-2019-dataset|
@@ -134,15 +128,10 @@ Except for OxCGRT dataset, the datasets downloaded with `input.py` scripts are n
 Usage of `DataLoader` class is as follows. Please specify `local_file` argument in the methods.
 ```Python
 import covsirphy as cs
-# Set the directory to save the datasets
 data_loader = cs.DataLoader("input")
-# The number of cases (JHU)
 jhu_data = data_loader.jhu(local_file="covid_19_data.csv")
-# (Optional) The number of cases in Japan
 japan_data = data_loader.japan(local_file="covid_jpn_total.csv")
-# Population in each country
 population_data = data_loader.population(local_file="locations_population.csv")
-# (Optional) Government Response Tracker (OxCGRT)
 oxcgrt_data = data_loader.oxcgrt(local_file="OxCGRT_latest.csv")
 ```
 
@@ -151,7 +140,7 @@ When you want to use this package in Kaggle notebook, please turn on Internet op
 
 Then, install this package with pip command.
 ```Python
-!pip install "git+https://github.com/lisphilar/covid19-sir#egg=covsirphy"
+!pip install covsirphy
 ```
 
 Then, please load the datasets with the following codes, specifying the filenames.
@@ -253,6 +242,9 @@ sim_df = ita_scenario.simulate(name="Main")
 # Describe representative values
 print(ita_scenario.describe())
 ```
+
+## Apache License 2.0
+Please refer to [LICENSE](https://github.com/lisphilar/covid19-sir/blob/master/LICENSE) file.
 
 ## Citation
 Lisphilar, 2020, Kaggle notebook, COVID-19 data with SIR model, https://www.kaggle.com/lisphilar/covid-19-data-with-sir-model

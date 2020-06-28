@@ -1,4 +1,4 @@
-.PHONY: test docs example clean
+.PHONY: test docs example pypi test-pypi clean
 
 install:
 	@pip install wheel; pip install --upgrade pip
@@ -48,6 +48,23 @@ example:
 	@echo "<Scenario analysis>"
 	@pipenv run python -m example.scenario_analysis
 
+pypi:
+	@# sudo apt install pandoc
+	@pandoc --from markdown --to rst README.md -o README.rst
+	@rm -rf covsirphy.egg-info/*
+	@rm -rf dist/*
+	@pipenv run python setup.py sdist bdist_wheel
+	@pipenv run twine upload --repository pypi dist/*
+
+
+test-pypi:
+	@# sudo apt install pandoc
+	@pandoc --from markdown --to rst README.md -o README.rst
+	@rm -rf covsirphy.egg-info/*
+	@rm -rf dist/*
+	@pipenv run python setup.py sdist bdist_wheel
+	@pipenv run twine upload --repository testpypi dist/*
+
 
 clean:
 	@rm -rf input
@@ -55,4 +72,6 @@ clean:
 	@rm -rf .pytest_cache
 	@rm -rf covsirphy/__pycache__
 	@rm -rf example/output
+	@rm -rf dist CovsirPhy.egg-info
+	@rm -f README.rst
 	@pipenv clean || true
