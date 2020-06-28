@@ -36,7 +36,7 @@ We have the following options to start analysis with CovsirPhy. Datasets are not
 
 ||Installation|Dataset preparation|
 |:---|:---|:---|
-|Standard|pip/pipenv|Automated with `DataLoader` class|
+|Standard users|pip/pipenv|Automated with `DataLoader` class|
 |Developers|git-cloning|Automated with `DataLoader` class|
 |Kagglers (local environment)|git-cloning|Kaggle API and Python script|
 |Kagglers (Kaggle platform)|pip|Kaggle Datasets|
@@ -51,7 +51,7 @@ We will use the following datasets.
 
 If you want to use a new dataset for your analysis, please kindly inform us via [GitHub Issues](https://github.com/lisphilar/covid19-sir/issues/new/choose) with "Request new method of DataLoader class" template.
 
-### 1. Standard
+### 1. Standard users
 Install this package with pip,
 ```
 pip install --upgrade pip setuptools
@@ -103,6 +103,10 @@ Developers can perform tests.
 - Debian/Ubuntu user need to install Graphviz with `sudo apt install graphviz` in advance.
 
 Tests can be done with `pipenv run pytest -v --durations=0 --profile-svg` and call graph will be saved as SVG file (prof/combined.svg).
+If you can run `make` command,
+- Run tests using Pytest: `make test`
+- Update sphinx document: `make docs`
+- Run example codes: `make example`
 
 We can prepare the dataset with the same codes as that explained in "1.Preferred" subsection.
 
