@@ -137,7 +137,7 @@ oxcgrt_data = data_loader.oxcgrt(local_file="OxCGRT_latest.csv")
 When you want to use this package in Kaggle notebook, please turn on Internet option in notebook setting and download the datasets explained in the previous section.
 
 Then, install this package with pip command.
-```Python
+```
 !pip install covsirphy
 ```
 

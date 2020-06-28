@@ -14,8 +14,12 @@ test:
 
 # https://github.com/sphinx-doc/sphinx/issues/3382
 docs:
+	@# sudo apt install pandoc
+	@pandoc --from markdown --to rst README.md -o docs/README.rst
 	@sphinx-apidoc -o docs covsirphy
 	@cd docs; pipenv run make html; cp -a _build/html/. ../docs
+	@rm -rf docs/_modules
+	@rm -rf docs/_sources
 
 
 example:
