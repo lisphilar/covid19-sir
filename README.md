@@ -104,6 +104,7 @@ Developers can perform tests.
 
 Tests can be done with `pipenv run pytest -v --durations=0 --profile-svg` and call graph will be saved as SVG file (prof/combined.svg).
 If you can run `make` command,
+- Install pipenv and the dependencies of CovsirPhy: `make install`
 - Run tests using Pytest: `make test`
 - Update sphinx document: `make docs`
 - Run example codes: `make example`

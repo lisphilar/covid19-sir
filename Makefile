@@ -1,5 +1,13 @@
 .PHONY: test docs example clean
 
+install:
+	@pip install wheel; pip install --upgrade pip
+	@pip install pipenv
+	@export PIPENV_VENV_IN_PROJECT=true
+	@export PIPENV_TIMEOUT=7200
+	@pipenv install --dev
+
+
 test:
 	@pipenv run pytest -v --durations=0 --profile-svg
 
