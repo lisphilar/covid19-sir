@@ -46,14 +46,14 @@ We will use the following datasets.
 ||Description|URL|
 |:---|:---|:---|
 |The number of cases (JHU)|COVID-19 Data Repository by the Center for Systems Science and Engineering (CSSE) at Johns Hopkins University.|https://github.com/CSSEGISandData/COVID-19|
-|The number of cases in Japan|Lisphilar (2020), COVID-19 dataset in Japan.|https://github.com/lisphilar/covid19-sir/data/japan|
+|The number of cases in Japan|Lisphilar (2020), COVID-19 dataset in Japan.|https://github.com/lisphilar/covid19-sir/tree/master/data|
 |Population in each country|The World Bank Group (2020), THE WORLD BANK, Population, total.|https://data.worldbank.org/indicator/SP.POP.TOTL|
 |Government Response Tracker (OxCGRT)|Thomas Hale, Sam Webster, Anna Petherick, Toby Phillips, and Beatriz Kira. (2020). Oxford COVID-19 Government Response Tracker. Blavatnik School of Government.|https://github.com/OxCGRT/covid-policy-tracker|
 
 If you want to use a new dataset for your analysis, please kindly inform us via [GitHub Issues](https://github.com/lisphilar/covid19-sir/issues/new/choose) with "Request new method of DataLoader class" template.
 
 ### 1. Standard users
-Covsirphy is available at PyPI (The Python Package Index) and supports Python 3.7 or newer versions.
+Covsirphy is available at [PyPI (The Python Package Index): covsirphy](https://pypi.org/project/covsirphy/) and supports Python 3.7 or newer versions.
 ```
 pip install covsirphy
 ```
@@ -89,12 +89,10 @@ export PIPENV_VENV_IN_PROJECT=true
 export PIPENV_TIMEOUT=7200
 pipenv install --dev
 ```
-Developers can perform tests.
+Developers can perform tests with `pipenv run pytest -v --durations=0 --profile-svg` and call graph will be saved as SVG file (prof/combined.svg).
 
 - Windows user need to install [Graphviz for Windows](https://graphviz.org/_pages/Download/Download_windows.html) in advance.
 - Debian/Ubuntu user need to install Graphviz with `sudo apt install graphviz` in advance.
-
-Tests can be done with `pipenv run pytest -v --durations=0 --profile-svg` and call graph will be saved as SVG file (prof/combined.svg).
 
 If you can run `make` command,
 
@@ -106,7 +104,7 @@ If you can run `make` command,
 |`make example`|Run example codes|
 |`make clean`|Clean-up output files and pipenv environment|
 
-We can prepare the dataset with the same codes as that explained in "1.Preferred" subsection.
+We can prepare the dataset with the same codes as that was explained in "1.Preferred" subsection.
 
 ### 3. Kagglers (local environment)
 As explained in "2. Developers" subsection, we need to git-clone this repository and install the dependencies when you want to uses this package with Kaggle API in your local environment.
@@ -116,7 +114,7 @@ Then, please move to account page and download "kaggle.json" by selecting "API >
 We can download datasets with `pipenv run ./input.py` command. Modification of environment variables is un-necessary. Files will be saved in `input` directory of your local repository.
 
 Note:  
-Except for OxCGRT dataset, the datasets downloaded with `input.py` scripts are not the same as that explained in the previous subsections. URLs are shown in the next table.
+Except for OxCGRT dataset, the datasets downloaded with `input.py` scripts are different from that explained in the previous subsections. URLs are shown in the next table.
 
 ||Description|URL|
 |:---|:---|:---|

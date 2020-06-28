@@ -1,4 +1,4 @@
-# Dataset for analysing COVID-19 outbreak [![GitHub license](https://img.shields.io/github/license/lisphilar/covid19-sir/data)](https://github.com/lisphilar/covid19-sir/blob/master/data/LICENSE)
+# Dataset for analysing COVID-19 outbreak
 
 In this directory, datasets for analysing COVID-19 outbreak are archived.
 
