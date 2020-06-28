@@ -1,4 +1,4 @@
-.PHONY: test docs example
+.PHONY: test docs example clean
 
 test:
 	@pipenv run pytest -v --durations=0 --profile-svg
@@ -39,3 +39,11 @@ example:
 	@# Scenario analysis
 	@echo "<Scenario analysis>"
 	@pipenv run python -m example.scenario_analysis
+
+
+clean:
+	@rm -rf input
+	@rm -rf prof
+	@rm -rf .pytest_cache
+	@rm -rf covsirphy/__pycache__
+	@pipenv clean || true
