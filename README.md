@@ -103,11 +103,15 @@ Developers can perform tests.
 - Debian/Ubuntu user need to install Graphviz with `sudo apt install graphviz` in advance.
 
 Tests can be done with `pipenv run pytest -v --durations=0 --profile-svg` and call graph will be saved as SVG file (prof/combined.svg).
+
 If you can run `make` command,
-- Install pipenv and the dependencies of CovsirPhy: `make install`
-- Run tests using Pytest: `make test`
-- Update sphinx document: `make docs`
-- Run example codes: `make example`
+|||
+|:---|:---|
+|`make install`|Install pipenv and the dependencies of CovsirPhy|
+|`make test`|Run tests using Pytest|
+|`make docs`|Update sphinx document|
+|`make example`|Run example codes|
+|`make clean`|Clean-up output files and pipenv environment|
 
 We can prepare the dataset with the same codes as that explained in "1.Preferred" subsection.
 

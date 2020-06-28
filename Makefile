@@ -54,4 +54,5 @@ clean:
 	@rm -rf prof
 	@rm -rf .pytest_cache
 	@rm -rf covsirphy/__pycache__
+	@rm -rf example/output
 	@pipenv clean || true
