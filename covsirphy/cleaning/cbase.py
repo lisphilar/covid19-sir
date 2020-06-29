@@ -77,8 +77,9 @@ class CleaningBase(Word):
         df = self._cleaned_df.groupby("Date").sum()
         cols = ["Infected", "Fatal", "Recovered"]
         r_cols = self.RATE_COLUMNS[:]
-        df[r_cols[0]] = df["Fatal"] / df[cols].sum(axis=1)
-        df[r_cols[1]] = df["Recovered"] / df[cols].sum(axis=1)
+        total_series = df[cols].sum(axis=1)
+        df[r_cols[0]] = df["Fatal"] / total_series
+        df[r_cols[1]] = df["Recovered"] / total_series
         df[r_cols[2]] = df["Fatal"] / (df["Fatal"] + df["Recovered"])
         return df
 

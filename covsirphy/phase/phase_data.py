@@ -1,7 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-from datetime import datetime
 from covsirphy.cleaning.word import Word
 
 
@@ -171,16 +170,9 @@ class PhaseData(Word):
         """
         df = self.all_df.copy()
         series = df.index.copy()
-        # Start date
-        if start_date is None:
-            start_obj = series.min()
-        else:
-            start_obj = datetime.strptime(start_date, self.DATE_FORMAT)
-        # End date
-        if end_date is None:
-            end_obj = series.max()
-        else:
-            end_obj = datetime.strptime(end_date, self.DATE_FORMAT)
+        # Start/end date
+        start_obj = self.to_date_obj(date_str=start_date, default=series.min())
+        end_obj = self.to_date_obj(date_str=end_date, default=series.max())
         # Subset
         df = df.loc[(start_obj <= series) & (series <= end_obj), :]
         return df
