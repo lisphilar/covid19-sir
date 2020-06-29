@@ -84,6 +84,7 @@
             
               <p class="caption"><span class="caption-text">Contents:</span></p>
 <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="README.html">CovsirPhy: COVID-19 data with SIR model</a></li>
 <li class="toctree-l1 current"><a class="reference internal" href="covsirphy.html">covsirphy package</a><ul class="current">
 <li class="toctree-l2 current"><a class="reference internal" href="covsirphy.html#subpackages">Subpackages</a><ul class="current">
 <li class="toctree-l3 current"><a class="current reference internal" href="#">covsirphy.analysis package</a><ul>
@@ -369,10 +370,8 @@ The start date is the next date of the last registered phase.</p>
 </dd>
 </dl>
 <p class="rubric">Notes</p>
-<ul class="simple">
-<li><p>If the phases series has not been registered, new phase series will be created</p></li>
-<li><p>&#64;end_date or &#64;days must be specified</p></li>
-</ul>
+<p>If the phases series has not been registered, new phase series will be created.
+&#64;end_date or &#64;days must be specified.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns</dt>
 <dd class="field-odd"><p>None</p>
@@ -448,11 +447,7 @@ The start date is the next date of the last registered phase.</p>
 <li><p><strong>phases</strong> (<em>list</em><em>[</em><em>str</em><em>]</em>) – list of phase names, like 1st, 2nd…
 - if None, all past phase will be used</p></li>
 <li><p><strong>model</strong> (<a class="reference internal" href="covsirphy.html#covsirphy.ModelBase" title="covsirphy.ModelBase"><em>covsirphy.ModelBase</em></a>) – ODE model</p></li>
-<li><p><strong>kwargs</strong> – <ul>
-<li><p>keyword arguments of the model parameter</p></li>
-<li><p>keyword arguments of covsirphy.Estimator.run()</p></li>
-</ul>
-</p></li>
+<li><p><strong>kwargs</strong> – keyword arguments of model parameters and covsirphy.Estimator.run()</p></li>
 </ul>
 </dd>
 </dl>
@@ -466,12 +461,13 @@ The start date is the next date of the last registered phase.</p>
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>phase</strong> (<em>str</em>) – phase name, like 1st, 2nd…</p></li>
-<li><p><strong>name</strong> (<em>str</em>) – phase series name
-- if ‘Main’, main PhaseSeries will be used</p></li>
+<li><p><strong>name</strong> (<em>str</em>) – phase series name</p></li>
 <li><p><strong>kwargs</strong> – keyword arguments of covsirphy.Estimator.accuracy()</p></li>
 </ul>
 </dd>
 </dl>
+<p class="rubric">Notes</p>
+<p>If ‘Main’ was used as &#64;name, main PhaseSeries will be used.</p>
 </dd></dl>
 
 <dl class="py method">
@@ -482,12 +478,13 @@ The start date is the next date of the last registered phase.</p>
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>phase</strong> (<em>str</em>) – phase name, like 1st, 2nd…</p></li>
-<li><p><strong>name</strong> (<em>str</em>) – phase series name
-- if ‘Main’, main PhaseSeries will be used</p></li>
+<li><p><strong>name</strong> (<em>str</em>) – phase series name</p></li>
 <li><p><strong>kwargs</strong> – keyword arguments of covsirphy.Estimator.history()</p></li>
 </ul>
 </dd>
 </dl>
+<p class="rubric">Notes</p>
+<p>If ‘Main’ was used as &#64;name, main PhaseSeries will be used.</p>
 </dd></dl>
 
 <dl class="py method">
@@ -498,8 +495,7 @@ The start date is the next date of the last registered phase.</p>
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>param</strong> (<em>str</em>) – parameter name (columns in self.summary())</p></li>
-<li><p><strong>name</strong> (<em>str</em>) – phase series name
-- if ‘Main’, main PhaseSeries will be used</p></li>
+<li><p><strong>name</strong> (<em>str</em>) – phase series name</p></li>
 <li><p><strong>phase</strong> (<em>str</em>) – phase name or ‘last’
 - if ‘last’, the value of the last phase will be returned</p></li>
 </ul>
@@ -508,24 +504,22 @@ The start date is the next date of the last registered phase.</p>
 <dd class="field-even"><p>(str or int or float)</p>
 </dd>
 </dl>
+<p class="rubric">Notes</p>
+<p>If ‘Main’ was used as &#64;name, main PhaseSeries will be used.</p>
 </dd></dl>
 
 <dl class="py method">
 <dt id="covsirphy.analysis.scenario.Scenario.param_history">
-<code class="sig-name descname">param_history</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">targets</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">name</span><span class="o">=</span><span class="default_value">'Main'</span></em>, <em class="sig-param"><span class="n">divide_by_first</span><span class="o">=</span><span class="default_value">True</span></em>, <em class="sig-param"><span class="n">show_figure</span><span class="o">=</span><span class="default_value">True</span></em>, <em class="sig-param"><span class="n">filename</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">box_plot</span><span class="o">=</span><span class="default_value">True</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/analysis/scenario.html#Scenario.param_history"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#covsirphy.analysis.scenario.Scenario.param_history" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">param_history</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">targets</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">name</span><span class="o">=</span><span class="default_value">'Main'</span></em>, <em class="sig-param"><span class="n">divide_by_first</span><span class="o">=</span><span class="default_value">True</span></em>, <em class="sig-param"><span class="n">show_figure</span><span class="o">=</span><span class="default_value">True</span></em>, <em class="sig-param"><span class="n">filename</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">show_box_plot</span><span class="o">=</span><span class="default_value">True</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/analysis/scenario.html#Scenario.param_history"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#covsirphy.analysis.scenario.Scenario.param_history" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return subset of summary.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>targets</strong> (<em>list</em><em>[</em><em>str</em><em>]</em><em>/str</em>) – parameters to show (Rt etc.)</p></li>
-<li><p><strong>name</strong> (<em>str</em>) – phase series name
-- if ‘Main’, main PhaseSeries will be used</p></li>
+<li><p><strong>name</strong> (<em>str</em>) – phase series name</p></li>
 <li><p><strong>divide_by_first</strong> (<em>bool</em>) – if True, divide the values by 1st phase’s values</p></li>
-<li><p><strong>box_plot</strong> (<em>bool</em>) – if True, box plot. if False, line plot.</p></li>
-<li><p><strong>show_figure</strong> (<em>bool</em>) – <ul>
-<li><p>if True, show the result as a figure.</p></li>
-</ul>
-</p></li>
+<li><p><strong>show_box_plot</strong> (<em>bool</em>) – if True, box plot. if False, line plot.</p></li>
+<li><p><strong>show_figure</strong> (<em>bool</em>) – If True, show the result as a figure.</p></li>
 <li><p><strong>filename</strong> (<em>str</em>) – filename of the figure, or None (show figure)</p></li>
 <li><p><strong>kwargs</strong> – keword arguments of pd.DataFrame.plot or line_plot()</p></li>
 </ul>
@@ -534,6 +528,8 @@ The start date is the next date of the last registered phase.</p>
 <dd class="field-even"><p>(pandas.DataFrame)</p>
 </dd>
 </dl>
+<p class="rubric">Notes</p>
+<p>If ‘Main’ was used as &#64;name, main PhaseSeries will be used.</p>
 </dd></dl>
 
 <dl class="py method">
@@ -613,7 +609,6 @@ The start date is the next date of the last registered phase.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><p><strong>name</strong> (<em>str</em>) – phase series name
-- ‘Main’ for main phase series
 - name of alternative phase series registered by self.add_phase()
 - if None, all phase series will be shown</p>
 </dd>
@@ -628,6 +623,8 @@ The start date is the next date of the last registered phase.</p>
 <dd class="field-odd"><p>(pandas.DataFrame)</p>
 </dd>
 </dl>
+<p class="rubric">Notes</p>
+<p>If ‘Main’ was used as &#64;name, main PhaseSeries will be used.</p>
 </dd></dl>
 
 <dl class="py method">
