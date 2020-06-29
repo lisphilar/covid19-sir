@@ -71,7 +71,6 @@ class TestDataLoader(object):
         df = population_data.cleaned()
         assert isinstance(df, pd.DataFrame)
         assert set(df.columns) == set(PopulationData.POPULATION_COLS)
-        assert isinstance(population_data.value("JPN"), int)
         assert isinstance(population_data.to_dict(), dict)
         population_data.update(10_000, "Example")
 
@@ -85,6 +84,16 @@ class TestDataLoader(object):
         local_path = Path("input") / "covid_jpn_total.csv"
         with pytest.raises(Exception):
             data_loader.population(local_file=local_path)
+
+    def test_population_value(self, data_loader):
+        population_data = data_loader.population()
+        df = population_data.cleaned()
+        if "JPN" in df["ISO3"].unique():
+            assert isinstance(population_data.value("JPN"), int)
+        else:
+            with pytest.raises(KeyError):
+                population_data.value("JPN")
+        assert isinstance(population_data.value("Japan"), int)
 
     def test_oxcgrt(self, data_loader):
         oxcgrt_data = data_loader.oxcgrt()
