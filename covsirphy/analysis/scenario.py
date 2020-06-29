@@ -9,13 +9,12 @@ import warnings
 import matplotlib
 if not hasattr(sys, "ps1"):
     matplotlib.use("Agg")
-import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 from covsirphy.ode import ModelBase
 from covsirphy.cleaning import JHUData, PopulationData, Word
 from covsirphy.phase import Estimator, SRData, ODEData
-from covsirphy.util import line_plot
+from covsirphy.util import line_plot, box_plot
 from covsirphy.analysis.phase_series import PhaseSeries
 from covsirphy.analysis.simulator import ODESimulator
 from covsirphy.analysis.sr_change import ChangeFinder
@@ -320,9 +319,7 @@ class Scenario(Word):
             phases (list[str]): list of phase names, like 1st, 2nd...
                 - if None, all past phase will be used
             model (covsirphy.ModelBase): ODE model
-            kwargs:
-                - keyword arguments of the model parameter
-                - keyword arguments of covsirphy.Estimator.run()
+            kwargs: keyword arguments of model parameters and covsirphy.Estimator.run()
         """
         # Check model
         model = self.validate_subclass(model, ModelBase, "model")
@@ -338,10 +335,9 @@ class Scenario(Word):
                 print(f"<{name} scenario>")
             past_phases = [k for (k, v) in phase_dict.items()]
             phases = past_phases[:] if phases is None else phases
-            if not set(phases).issubset(set(past_phases)):
-                for phase in phases:
-                    if phase not in past_phases:
-                        raise KeyError(f"{phase} is not a past phase.")
+            future_phases = list(set(phases) - set(past_phases))
+            if future_phases:
+                raise KeyError(f"{future_phases[0]} is not a past phase.")
             # Run hyperparameter estimation
             for phase in phases:
                 self._estimate(model, phase, **kwargs)
@@ -516,10 +512,7 @@ class Scenario(Word):
                     model, population, start_date=start_date
                 )
             else:
-                try:
-                    y0_dict_phase = y0_dict.copy()
-                except AttributeError:
-                    y0_dict_phase = None
+                y0_dict_phase = y0_dict.copy() if y0_dict is not None else None
             simulator.add(
                 model, step_n, population,
                 param_dict=param_dict,
@@ -557,7 +550,7 @@ class Scenario(Word):
         return df.loc[phase, param]
 
     def param_history(self, targets=None, name="Main", divide_by_first=True,
-                      show_figure=True, filename=None, box_plot=True, **kwargs):
+                      show_figure=True, filename=None, show_box_plot=True, **kwargs):
         """
         Return subset of summary.
 
@@ -565,7 +558,7 @@ class Scenario(Word):
             targets (list[str]/str): parameters to show (Rt etc.)
             name (str): phase series name
             divide_by_first (bool): if True, divide the values by 1st phase's values
-            box_plot (bool): if True, box plot. if False, line plot.
+            show_box_plot (bool): if True, box plot. if False, line plot.
             show_figure (bool): If True, show the result as a figure.
             filename (str): filename of the figure, or None (show figure)
             kwargs: keword arguments of pd.DataFrame.plot or line_plot()
@@ -576,6 +569,8 @@ class Scenario(Word):
         Notes:
             If 'Main' was used as @name, main PhaseSeries will be used.
         """
+        if "box_plot" in kwargs.keys():
+            raise KeyError("Please use 'show_box_plot', not 'box_plot'")
         name = self.MAIN if name == "Main" else name
         if name not in self.series_dict.keys():
             raise KeyError(f"@name {name} scenario has not been registered.")
@@ -599,22 +594,9 @@ class Scenario(Word):
             title = f"{self.area}: Ratio to 1st phase parameters ({name} scenario)"
         else:
             title = f"{self.area}: History of parameter values ({name} scenario)"
-        if box_plot:
-            df.plot.bar(title=title)
-            plt.xticks(rotation=0)
-            if divide_by_first or self.RT in targets:
-                plt.axhline(y=1.0, color="black", linestyle=":")
-            plt.legend(
-                bbox_to_anchor=(1.02, 0), loc="lower left", borderaxespad=0
-            )
-            plt.tight_layout()
-            if filename is None:
-                plt.show()
-                return df
-            plt.savefig(
-                filename, bbox_inches="tight", transparent=False, dpi=300
-            )
-            plt.clf()
+        if show_box_plot:
+            h_values = [1.0] if divide_by_first or self.RT in targets else None
+            box_plot(df, title, h=h_values, filename=filename)
             return df
         _df = df.reset_index(drop=True)
         _df.index = _df.index + 1
@@ -624,6 +606,7 @@ class Scenario(Word):
             xlabel="Phase", ylabel=str(), math_scale=False, h=h,
             show_figure=show_figure, filename=filename
         )
+        return df
 
     def describe(self):
         """

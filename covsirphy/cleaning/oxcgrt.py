@@ -95,16 +95,14 @@ class OxCGRTData(CleaningBase):
                 raise ValueError("Either @country or @iso3 must be used.")
             iso_df = df.loc[:, [self.ISO3, self.COUNTRY]].drop_duplicates()
             iso_dict = iso_df.set_index(self.ISO3).to_dict()[self.COUNTRY]
-            try:
-                country = iso_dict[iso3]
-            except KeyError:
-                raise KeyError(
-                    f"@iso3 {iso3} is not included in this dataset.")
+            if iso3 not in iso_dict.keys():
+                raise KeyError(f"@{iso3} is not included in this dataset.")
+            country = iso_dict[iso3]
         df = df.loc[df[self.COUNTRY] == country, :]
-        df = df.drop([self.COUNTRY, self.ISO3],
-                     axis=1).groupby(self.DATE).last()
+        df = df.drop(
+            [self.COUNTRY, self.ISO3], axis=1
+        ).groupby(self.DATE).last()
         df = df.reset_index()
-        if df.empty:
-            raise KeyError(
-                f"@country {country} is not included in the dataset.")
-        return df
+        if not df.empty:
+            return df
+        raise KeyError(f"@country {country} is not included in the dataset.")

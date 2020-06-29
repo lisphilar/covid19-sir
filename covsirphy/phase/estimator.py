@@ -159,27 +159,37 @@ class Estimator(Optimizer):
                     self._init_study()
                     stopwatch = StopWatch()
                     continue
-            # Check the values when argmax(actual)
-            values_nest = [
-                comp_df.loc[
-                    comp_df[f"{v}{self.A}"].idxmax(),
-                    [f"{v}{self.A}", f"{v}{self.P}"]
-                ].tolist()
-                for v in self.model.VARIABLES
-            ]
-            last_ok_list = [
-                (a * allowance[0] <= p) and (p <= a * allowance[1])
-                for (a, p) in values_nest
-            ]
-            if not all(last_ok_list):
-                continue
-            break
+            # Need additional trials when the values are not in allowance
+            if self._is_in_allowance(comp_df, allowance):
+                break
         stopwatch.stop()
         print(
             f"\r\tFinished {self.total_trials} trials in {stopwatch.show()}.\n",
             end=str()
         )
         return None
+
+    def _is_in_allowance(self, comp_df, allowance):
+        """
+        Return whether all max values of predicted values are in allowance or not.
+
+        Args:
+            comp_df (pandas.DataFrame): [description]
+            allowance (tuple(float, float)): the allowance of the predicted value
+
+        Returns:
+            (bool): True when all max values of predicted values are in allowance
+        """
+        df = self.validate_dataframe(comp_df, name="comp_df")
+        variables = self.model.VARIABLES[:]
+        a_max_values = [df[f"{v}{self.A}"].max() for v in variables]
+        p_max_values = [df[f"{v}{self.P}"].max() for v in variables]
+        allowance0, allowance1 = allowance
+        ok_list = [
+            (a * allowance0 <= p) and (p <= a * allowance1)
+            for (a, p) in zip(a_max_values, p_max_values)
+        ]
+        return all(ok_list)
 
     def objective(self, trial):
         """
