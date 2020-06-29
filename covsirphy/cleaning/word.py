@@ -233,3 +233,23 @@ class Word(object):
             i for i in range(1, value + 1) if value % i == 0
         ]
         return divisors
+
+    @classmethod
+    def to_date_obj(cls, date_str=None, default=None):
+        """
+        Convert a string to a datatime object.
+
+        Args:
+            date_str (str or None, optional): string, like 22Jan2020
+            default (datetime.datetime or None, optional): default value to return
+
+        Returns:
+            (datetime.datetime or None)
+
+        Notes:
+            If @date_str is None, returns @default value
+        """
+        if date_str is None:
+            return default
+        date_obj = datetime.strptime(date_str, cls.DATE_FORMAT)
+        return date_obj
