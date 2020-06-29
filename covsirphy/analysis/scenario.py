@@ -115,8 +115,8 @@ class Scenario(Word):
                     - tau is fixed as the last phase's value or 1440
 
         Notes:
-            - If the phases series has not been registered, new phase series will be created
-            - @end_date or @days must be specified
+            If the phases series has not been registered, new phase series will be created.
+            @end_date or @days must be specified.
 
         Returns:
             None
@@ -187,7 +187,6 @@ class Scenario(Word):
 
         Args:
             name (str): phase series name
-                - 'Main' for main phase series
                 - name of alternative phase series registered by self.add_phase()
                 - if None, all phase series will be shown
 
@@ -195,6 +194,9 @@ class Scenario(Word):
             (pandas.DataFrame):
             - if @name not None, as the same as PhaseSeries().summary()
             - if @name is None, index will be phase series name and phase name
+
+        Notes:
+            If 'Main' was used as @name, main PhaseSeries will be used.
         """
         if name is None and len(self.series_dict.keys()) > 1:
             dataframes = list()
@@ -255,8 +257,6 @@ class Scenario(Word):
             phase (str): phase name, like 1st, 2nd...
             model (covsirphy.ModelBase): ODE model
             name (str): phase series name
-                - if 'Main', main PhaseSeries will be used
-                - if not registered, new phase series will be created
             kwargs:
                 - keyword arguments of the model parameter
                     - tau value cannot be included
@@ -264,6 +264,10 @@ class Scenario(Word):
 
         Returns:
             self
+
+        Notes:
+            If 'Main' was used as @name, main PhaseSeries will be used.
+            If @name phase was not registered, new PhaseSeries will be created.
         """
         name = self.MAIN if name == "Main" else name
         if name not in self.series_dict.keys():
@@ -349,8 +353,10 @@ class Scenario(Word):
         Args:
             phase (str): phase name, like 1st, 2nd...
             name (str): phase series name
-                - if 'Main', main PhaseSeries will be used
             kwargs: keyword arguments of covsirphy.Estimator.history()
+
+        Notes:
+            If 'Main' was used as @name, main PhaseSeries will be used.
         """
         name = self.MAIN if name == "Main" else name
         if name not in self.series_dict.keys():
@@ -370,8 +376,10 @@ class Scenario(Word):
         Args:
             phase (str): phase name, like 1st, 2nd...
             name (str): phase series name
-                - if 'Main', main PhaseSeries will be used
             kwargs: keyword arguments of covsirphy.Estimator.accuracy()
+
+        Notes:
+            If 'Main' was used as @name, main PhaseSeries will be used.
         """
         name = self.MAIN if name == "Main" else name
         if name not in self.series_dict.keys():
@@ -529,12 +537,14 @@ class Scenario(Word):
         Args:
             param (str): parameter name (columns in self.summary())
             name (str): phase series name
-                - if 'Main', main PhaseSeries will be used
             phase (str): phase name or 'last'
                 - if 'last', the value of the last phase will be returned
 
         Returns:
             (str or int or float)
+
+        Notes:
+            If 'Main' was used as @name, main PhaseSeries will be used.
         """
         name = self.MAIN if name == "Main" else name
         if name not in self.series_dict.keys():
@@ -554,16 +564,17 @@ class Scenario(Word):
         Args:
             targets (list[str]/str): parameters to show (Rt etc.)
             name (str): phase series name
-                - if 'Main', main PhaseSeries will be used
             divide_by_first (bool): if True, divide the values by 1st phase's values
             box_plot (bool): if True, box plot. if False, line plot.
-            show_figure (bool):
-                - if True, show the result as a figure.
+            show_figure (bool): If True, show the result as a figure.
             filename (str): filename of the figure, or None (show figure)
             kwargs: keword arguments of pd.DataFrame.plot or line_plot()
 
         Returns:
             (pandas.DataFrame)
+
+        Notes:
+            If 'Main' was used as @name, main PhaseSeries will be used.
         """
         name = self.MAIN if name == "Main" else name
         if name not in self.series_dict.keys():
