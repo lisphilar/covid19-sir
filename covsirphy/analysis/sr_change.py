@@ -3,7 +3,7 @@
 
 from datetime import datetime, timedelta
 from matplotlib import pyplot as plt
-from ruptures import Pelt
+import ruptures as rpt
 from covsirphy.analysis.phase_series import PhaseSeries
 from covsirphy.cleaning.word import Word
 from covsirphy.phase.sr_data import SRData
@@ -45,7 +45,7 @@ class ChangeFinder(Word):
             self.area = country
         else:
             self.area = f"{country}{self.SEP}{province}"
-        self.dates = self._get_dates(clean_df, population, country, province)
+        self.dates = self.get_dates(clean_df, population, country, province)
         self.pop_dict = self._read_population_data(
             self.dates, population, population_change_dict
         )
@@ -54,8 +54,8 @@ class ChangeFinder(Word):
         # Index: Date(pd.TimeStamp, Columns: Recovered (int) and Susceptible_actual (int)
         sr_data = SRData(clean_df, country=country, province=province)
         self.sr_df = sr_data.make(population)
-        self.start_date_obj = self.sr_df.index[0]
         # Setting for optimization
+        self.change_dates = list()
 
     def run(self):
         """
@@ -73,8 +73,12 @@ class ChangeFinder(Word):
         # TODO: Convert the dataframe for S-R analysis
         self.sr_df_for_analysis = df.copy()
         # Detection
-        algo = Pelt(model="rbf", jump=2, min_size=6).fit(df.to_numpy())
-        self.result = algo.predict(pen=0.5)
+        # TODO: Revise parameters
+        algorithm = rpt.Pelt(model="rbf", jump=2,
+                             min_size=6).fit(df.to_numpy())
+        self.result = algorithm.predict(pen=0.5)
+        # TODO: Set change points
+        self.change_dates = list()
         return self
 
     def show(self, show_figure=True, filename=None):
@@ -92,9 +96,58 @@ class ChangeFinder(Word):
         phase_series = self._create_phases()
         # Show figure or save figure
         if show_figure and filename is None:
-            plt.display(self.sr_df_for_analysis, self.result)
+            rpt.display(self.sr_df_for_analysis, self.result)
             plt.show()
         return phase_series
+
+    def get_dates(self, clean_df, population, country, province):
+        """
+        Get dates from the dataset.
+        Args:
+            clean_df (pandas.DataFrame): cleaned data
+                        Index:
+                            reset index
+                        Columns:
+                            - Date (pd.TimeStamp): Observation date
+                            - Country (str): country/region name
+                            - Province (str): province/prefecture/sstate name
+                            - Confirmed (int): the number of confirmed cases
+                            - Infected (int): the number of currently infected cases
+                            - Fatal (int): the number of fatal cases
+                            - Recovered (int): the number of recovered cases
+            population (int): initial value of total population in the place
+            country (str): country name
+            province (str): province name
+        Returns:
+            (list[str]): list of dates, like 22Jan2020
+        """
+        sr_data = SRData(clean_df, country=country, province=province)
+        df = sr_data.make(population)
+        dates = [date_obj.strftime(self.DATE_FORMAT) for date_obj in df.index]
+        return dates
+
+    def _read_population_data(self, dates, population, change_dict=None):
+        """
+        Make population dictionary easy to use in this class.
+        Args:
+            dates (list[str]): list of dates, like 22Jan2020
+            population (int): initial value of total population in the place
+            change_dict (dict): dictionary of total population
+                    - key (str): start date of population change
+                    - value (int or None): total population
+        Returns:
+            (dict)
+                - key (str): date, like 22Jan2020
+                - value (int): total population on the date
+        """
+        change_dict = dict() if change_dict is None else change_dict.copy()
+        population_now = population
+        pop_dict = dict()
+        for date in dates:
+            if date in change_dict.keys():
+                population_now = change_dict[date]
+            pop_dict[date] = population_now
+        return pop_dict
 
     def _phase_range(self, change_dates):
         """
