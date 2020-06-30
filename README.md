@@ -152,12 +152,12 @@ import covsirphy as cs
 # The number of cases (JHU)
 jhu_data = cs.JHUData("/kaggle/input/novel-corona-virus-2019-dataset/covid_19_data.csv")
 # (Optional) The number of cases in Japan
-jpn_data = cs.CountryData("/kaggle/input/covid19-dataset-in-japan/covid_jpn_total.csv", country="Japan")
-jpn_data.set_variables(
+japan_data = cs.CountryData("/kaggle/input/covid19-dataset-in-japan/covid_jpn_total.csv", country="Japan")
+japan_data.set_variables(
     date="Date", confirmed="Positive", fatal="Fatal", recovered="Discharged", province=None
 )
 # Population in each country
-pop_data = cs.Population(
+population_data = cs.PopulationData(
     "/kaggle/input/covid19-global-forecasting-locations-population/locations_population.csv"
 )
 ```
