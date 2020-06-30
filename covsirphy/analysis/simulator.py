@@ -143,7 +143,7 @@ class ODESimulator(Word):
         self._taufree_df = pd.DataFrame()
         for setting in self.settings:
             # Initial values
-            y0_dict = setting["y0_dict"]
+            y0_dict = setting["y0_dict"].copy()
             if None in y0_dict.values():
                 keys_with_none = [k for (k, v) in y0_dict.items() if v is None]
                 if keys_with_none and self._taufree_df.empty:
