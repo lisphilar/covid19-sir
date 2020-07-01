@@ -253,8 +253,8 @@ Please refer to [LICENSE](https://github.com/lisphilar/covid19-sir/blob/master/L
 CovsirPhy development team (2020), GitHub repository, CovsirPhy, Python package for COVID-19 data with SIR model, https://github.com/lisphilar/covid19-sir
 
 ## Related works
-Method of analysis in CovsirPhy:
+Method of analysis in CovsirPhy:  
 Lisphilar (2020), Kaggle notebook, COVID-19 data with SIR model, https://www.kaggle.com/lisphilar/covid-19-data-with-sir-model
 
-Reproduction number evolution in each country:
+Reproduction number evolution in each country:  
 Ilyass Tabiai and Houda Kaddioui (2020), GitHub pages, COVID19 R0 tracker, https://ilylabs.github.io/projects/COVID-trackers/

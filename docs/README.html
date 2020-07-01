@@ -107,6 +107,7 @@
 </li>
 <li class="toctree-l2"><a class="reference internal" href="#apache-license-2-0">Apache License 2.0</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#citation">Citation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#related-works">Related works</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="covsirphy.html">covsirphy package</a></li>
@@ -502,10 +503,10 @@ install dependencies with pipenv.</p>
 <code class="docutils literal notranslate"><span class="pre">pipenv</span> <span class="pre">run</span> <span class="pre">pytest</span> <span class="pre">-v</span> <span class="pre">--durations=0</span> <span class="pre">--profile-svg</span></code> and call graph will
 be saved as SVG file (prof/combined.svg).</p>
 <ul class="simple">
-<li><p>Windows user need to install <a class="reference external" href="https://graphviz.org/_pages/Download/Download_windows.html">Graphviz for
+<li><p>Windows users need to install <a class="reference external" href="https://graphviz.org/_pages/Download/Download_windows.html">Graphviz for
 Windows</a>
 in advance.</p></li>
-<li><p>Debian/Ubuntu user need to install Graphviz with
+<li><p>Debian/Ubuntu users need to install Graphviz with
 <code class="docutils literal notranslate"><span class="pre">sudo</span> <span class="pre">apt</span> <span class="pre">install</span> <span class="pre">graphviz</span></code> in advance.</p></li>
 </ul>
 <p>If you can run <code class="docutils literal notranslate"><span class="pre">make</span></code> command,</p>
@@ -752,12 +753,12 @@ filenames.</p>
 <span class="c1"># The number of cases (JHU)</span>
 <span class="n">jhu_data</span> <span class="o">=</span> <span class="n">cs</span><span class="o">.</span><span class="n">JHUData</span><span class="p">(</span><span class="s2">&quot;/kaggle/input/novel-corona-virus-2019-dataset/covid_19_data.csv&quot;</span><span class="p">)</span>
 <span class="c1"># (Optional) The number of cases in Japan</span>
-<span class="n">jpn_data</span> <span class="o">=</span> <span class="n">cs</span><span class="o">.</span><span class="n">CountryData</span><span class="p">(</span><span class="s2">&quot;/kaggle/input/covid19-dataset-in-japan/covid_jpn_total.csv&quot;</span><span class="p">,</span> <span class="n">country</span><span class="o">=</span><span class="s2">&quot;Japan&quot;</span><span class="p">)</span>
-<span class="n">jpn_data</span><span class="o">.</span><span class="n">set_variables</span><span class="p">(</span>
+<span class="n">japan_data</span> <span class="o">=</span> <span class="n">cs</span><span class="o">.</span><span class="n">CountryData</span><span class="p">(</span><span class="s2">&quot;/kaggle/input/covid19-dataset-in-japan/covid_jpn_total.csv&quot;</span><span class="p">,</span> <span class="n">country</span><span class="o">=</span><span class="s2">&quot;Japan&quot;</span><span class="p">)</span>
+<span class="n">japan_data</span><span class="o">.</span><span class="n">set_variables</span><span class="p">(</span>
     <span class="n">date</span><span class="o">=</span><span class="s2">&quot;Date&quot;</span><span class="p">,</span> <span class="n">confirmed</span><span class="o">=</span><span class="s2">&quot;Positive&quot;</span><span class="p">,</span> <span class="n">fatal</span><span class="o">=</span><span class="s2">&quot;Fatal&quot;</span><span class="p">,</span> <span class="n">recovered</span><span class="o">=</span><span class="s2">&quot;Discharged&quot;</span><span class="p">,</span> <span class="n">province</span><span class="o">=</span><span class="kc">None</span>
 <span class="p">)</span>
 <span class="c1"># Population in each country</span>
-<span class="n">pop_data</span> <span class="o">=</span> <span class="n">cs</span><span class="o">.</span><span class="n">Population</span><span class="p">(</span>
+<span class="n">population_data</span> <span class="o">=</span> <span class="n">cs</span><span class="o">.</span><span class="n">PopulationData</span><span class="p">(</span>
     <span class="s2">&quot;/kaggle/input/covid19-global-forecasting-locations-population/locations_population.csv&quot;</span>
 <span class="p">)</span>
 </pre></div>
@@ -868,11 +869,22 @@ file.</p>
 </div>
 <div class="section" id="citation">
 <h2>Citation<a class="headerlink" href="#citation" title="Permalink to this headline">¶</a></h2>
-<p>Lisphilar, 2020, Kaggle notebook, COVID-19 data with SIR model,
-<a class="reference external" href="https://www.kaggle.com/lisphilar/covid-19-data-with-sir-model">https://www.kaggle.com/lisphilar/covid-19-data-with-sir-model</a></p>
-<p>CovsirPhy development team, 2020, GitHub repository, CovsirPhy, Python
+<p>CovsirPhy development team (2020), GitHub repository, CovsirPhy, Python
 package for COVID-19 data with SIR model,
 <a class="reference external" href="https://github.com/lisphilar/covid19-sir">https://github.com/lisphilar/covid19-sir</a></p>
+</div>
+<div class="section" id="related-works">
+<h2>Related works<a class="headerlink" href="#related-works" title="Permalink to this headline">¶</a></h2>
+<div class="line-block">
+<div class="line">Method of analysis in CovsirPhy:</div>
+<div class="line">Lisphilar (2020), Kaggle notebook, COVID-19 data with SIR model,
+<a class="reference external" href="https://www.kaggle.com/lisphilar/covid-19-data-with-sir-model">https://www.kaggle.com/lisphilar/covid-19-data-with-sir-model</a></div>
+</div>
+<div class="line-block">
+<div class="line">Reproduction number evolution in each country:</div>
+<div class="line">Ilyass Tabiai and Houda Kaddioui (2020), GitHub pages, COVID19 R0
+tracker, <a class="reference external" href="https://ilylabs.github.io/projects/COVID-trackers/">https://ilylabs.github.io/projects/COVID-trackers/</a></div>
+</div>
 </div>
 </div>
 
