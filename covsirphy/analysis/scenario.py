@@ -5,7 +5,6 @@ import copy
 from datetime import timedelta
 from inspect import signature
 import sys
-import warnings
 import matplotlib
 if not hasattr(sys, "ps1"):
     matplotlib.use("Agg")
@@ -18,6 +17,7 @@ from covsirphy.util import line_plot, box_plot
 from covsirphy.analysis.phase_series import PhaseSeries
 from covsirphy.analysis.simulator import ODESimulator
 from covsirphy.analysis.sr_change import ChangeFinder
+from covsirphy.util.error import deprecate
 
 
 class Scenario(Word):
@@ -388,21 +388,8 @@ class Scenario(Word):
             )
         estimator.accuracy(**kwargs)
 
+    @deprecate(old="Scenario.predict()", new="Scenario.simulate()")
     def predict(self, **kwargs):
-        """
-        Old method. Please use Scenario.simulate().
-
-        Args:
-            kwargs: keyword arguments of Scenario.simulate()
-
-        Returns:
-            (pandas.DataFrame)
-        """
-        warnings.warn(
-            "Please use Scenario simulate() rather than Scenario.predict()",
-            DeprecationWarning,
-            stacklevel=2
-        )
         return self.simulate(**kwargs)
 
     def simulate(self, name="Main", y0_dict=None, show_figure=True, filename=None):

@@ -1,10 +1,10 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-import warnings
 import numpy as np
 import pandas as pd
 from covsirphy.cleaning.cbase import CleaningBase
+from covsirphy.util.error import deprecate
 
 
 class PopulationData(CleaningBase):
@@ -170,14 +170,6 @@ class PopulationData(CleaningBase):
 
 
 class Population(PopulationData):
-    """
-    This is deprecated and please use PopulationData class.
-    """
-
+    @deprecate(old="Population()", new="PopulationData()")
     def __init__(self, filename):
         super().__init__(filename)
-        warnings.warn(
-            "Please use PopulationData() class rather than Population()",
-            DeprecationWarning,
-            stacklevel=2
-        )
