@@ -255,3 +255,6 @@ CovsirPhy development team (2020), GitHub repository, CovsirPhy, Python package 
 ## Related works
 Method of analysis in CovsirPhy:
 Lisphilar (2020), Kaggle notebook, COVID-19 data with SIR model, https://www.kaggle.com/lisphilar/covid-19-data-with-sir-model
+
+Reproduction number evolution in each country:
+Ilyass Tabiai and Houda Kaddioui (2020), GitHub pages, COVID19 R0 tracker, https://ilylabs.github.io/projects/COVID-trackers/
