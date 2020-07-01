@@ -159,7 +159,10 @@ class DataLoader(Word):
         df = self.validate_dataframe(dataframe, name="dataframe")
         if filename is None:
             return None
-        df.to_csv(filename, index=False)
+        try:
+            df.to_csv(filename, index=False)
+        except OSError:
+            pass
         return filename
 
     def _last_updated_remote(self, url):
