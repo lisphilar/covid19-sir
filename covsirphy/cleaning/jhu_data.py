@@ -78,6 +78,11 @@ class JHUData(CleaningBase):
             },
             axis=1
         )
+        # Confirm the expected columns are in raw data
+        expected_cols = [
+            self.DATE, self.COUNTRY, self.PROVINCE, self.C, self.F, self.R
+        ]
+        self.validate_dataframe(df, name="the raw data", columns=expected_cols)
         # Datetime columns
         df[self.DATE] = pd.to_datetime(df[self.DATE])
         # Country
@@ -131,7 +136,8 @@ class JHUData(CleaningBase):
             self
         """
         if not isinstance(country_data, CountryData):
-            raise TypeError("Type of @country_data must be <covsirphy.CountryData>.")
+            raise TypeError(
+                "Type of @country_data must be <covsirphy.CountryData>.")
         # Read new dataset
         country = country_data.country
         new = country_data.cleaned()

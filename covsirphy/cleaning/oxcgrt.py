@@ -42,7 +42,7 @@ class OxCGRTData(CleaningBase):
                     - Date (pd.TimeStamp): Observation date
                     - Country (str): country/region name
                     - ISO3 (str): ISO 3166-1 alpha-3, like JPN
-                    - other column names are defined by OxCGRT.COL_DICT
+                    - other column names are defined by OxCGRTData.COL_DICT
         """
         df = self._raw.copy()
         # Rename the columns
@@ -50,6 +50,10 @@ class OxCGRTData(CleaningBase):
         df = df.rename(
             {"CountryName": self.COUNTRY, "Date": self.DATE, "CountryCode": self.ISO3},
             axis=1
+        )
+        # Confirm the expected columns are in raw data
+        self.validate_dataframe(
+            df, name="the raw data", columns=self.OXCGRT_COLS
         )
         # Read date records
         df[self.DATE] = pd.to_datetime(df[self.DATE], format="%Y%m%d")
@@ -85,7 +89,7 @@ class OxCGRTData(CleaningBase):
                     reset index
                 Columns:
                     - Date (pd.TimeStamp): Observation date
-                    - other column names are defined by OxCGRT.COL_DICT
+                    - other column names are defined by OxCGRTData.COL_DICT
         """
         df = self._cleaned_df.copy()
         if country is None and iso3 is None:
