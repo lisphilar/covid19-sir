@@ -54,6 +54,7 @@ example:
 
 pypi:
 	@make test
+	@read -p "Hit any keys: "
 	@make docs
 	@# sudo apt install pandoc
 	@pandoc --from markdown --to rst README.md -o README.rst
@@ -65,6 +66,7 @@ pypi:
 
 test-pypi:
 	@make test
+	@read -p "Hit any keys: "
 	@make docs
 	@# sudo apt install pandoc
 	@pandoc --from markdown --to rst README.md -o README.rst
