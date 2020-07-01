@@ -96,8 +96,8 @@ pipenv install --dev
 ```
 Developers can perform tests with `pipenv run pytest -v --durations=0 --profile-svg` and call graph will be saved as SVG file (prof/combined.svg).
 
-- Windows user need to install [Graphviz for Windows](https://graphviz.org/_pages/Download/Download_windows.html) in advance.
-- Debian/Ubuntu user need to install Graphviz with `sudo apt install graphviz` in advance.
+- Windows users need to install [Graphviz for Windows](https://graphviz.org/_pages/Download/Download_windows.html) in advance.
+- Debian/Ubuntu users need to install Graphviz with `sudo apt install graphviz` in advance.
 
 If you can run `make` command,
 
@@ -250,6 +250,8 @@ print(ita_scenario.describe())
 Please refer to [LICENSE](https://github.com/lisphilar/covid19-sir/blob/master/LICENSE) file.
 
 ## Citation
-Lisphilar, 2020, Kaggle notebook, COVID-19 data with SIR model, https://www.kaggle.com/lisphilar/covid-19-data-with-sir-model
+CovsirPhy development team (2020), GitHub repository, CovsirPhy, Python package for COVID-19 data with SIR model, https://github.com/lisphilar/covid19-sir
 
-CovsirPhy development team, 2020, GitHub repository, CovsirPhy, Python package for COVID-19 data with SIR model, https://github.com/lisphilar/covid19-sir
+## Related works
+Method of analysis in CovsirPhy:
+Lisphilar (2020), Kaggle notebook, COVID-19 data with SIR model, https://www.kaggle.com/lisphilar/covid-19-data-with-sir-model
