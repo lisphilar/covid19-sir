@@ -136,7 +136,7 @@ class Word(object):
             target (pandas.DataFrame): the dataframe to validate
             name (str): argument name of the dataframe
             time_index (bool): if True, the dataframe must has DatetimeIndex
-            columns (list[str]/None): the columns the dataframe must have
+            columns (list[str] or None): the columns the dataframe must have
             df (pandas.DataFrame): as-is the target
         """
         df = target.copy()
@@ -151,7 +151,9 @@ class Word(object):
             cols_str = ', '.join(
                 [col for col in columns if col not in df.columns]
             )
-            raise KeyError(f"@{name} must have {cols_str}, but not included.")
+            raise KeyError(
+                f"Expected columns were not included in {name}. {cols_str} must be included."
+            )
         return df
 
     @staticmethod

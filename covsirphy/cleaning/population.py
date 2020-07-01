@@ -45,6 +45,11 @@ class PopulationData(CleaningBase):
             },
             axis=1
         )
+        # Confirm the expected columns are in raw data
+        expected_cols = [
+            self.COUNTRY, self.PROVINCE, self.N
+        ]
+        self.validate_dataframe(df, name="the raw data", columns=expected_cols)
         # ISO3
         if self.ISO3 not in df.columns:
             df[self.ISO3] = "-"

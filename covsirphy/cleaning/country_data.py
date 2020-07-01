@@ -84,6 +84,11 @@ class CountryData(CleaningBase):
         df = self._raw.copy()
         # Rename the columns
         df = df.rename(self.var_dict, axis=1)
+        # Confirm the expected columns are in raw data
+        expected_cols = [
+            self.DATE, self.C, self.F, self.R
+        ]
+        self.validate_dataframe(df, name="the raw data", columns=expected_cols)
         # Add province column
         if self.province_col:
             df = df.rename({self.province_col: self.PROVINCE}, axis=1)
