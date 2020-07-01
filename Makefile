@@ -53,6 +53,8 @@ example:
 	@pipenv run python -m example.scenario_analysis
 
 pypi:
+	@make test
+	@make docs
 	@# sudo apt install pandoc
 	@pandoc --from markdown --to rst README.md -o README.rst
 	@rm -rf covsirphy.egg-info/*
@@ -62,6 +64,8 @@ pypi:
 
 
 test-pypi:
+	@make test
+	@make docs
 	@# sudo apt install pandoc
 	@pandoc --from markdown --to rst README.md -o README.rst
 	@rm -rf covsirphy.egg-info/*
