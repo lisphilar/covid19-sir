@@ -17,7 +17,7 @@ from covsirphy.ode import ModelBaseCommon, ModelBase
 from covsirphy.ode import SIR, SIRD, SIRF, SIRFV, SEWIRF
 from covsirphy.phase import PhaseData, ODEData, Estimator
 from covsirphy.phase import SRData, Trend
-from covsirphy.util import line_plot, jpn_map, StopWatch
+from covsirphy.util import line_plot, jpn_map, StopWatch, error
 # Deprecated
 from covsirphy.cleaning import Population
 
@@ -37,7 +37,7 @@ __all__ = [
     "ModelBaseCommon", "ModelBase",
     "SIR", "SIRD", "SIRF", "SIRFV", "SEWIRF",
     "PhaseData", "ODEData", "Estimator", "SRData", "Trend",
-    "line_plot", "jpn_map", "StopWatch",
+    "line_plot", "jpn_map", "StopWatch", "error",
     # Deprecated
     "Population",
 ]
