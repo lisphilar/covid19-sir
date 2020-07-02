@@ -34,7 +34,7 @@ The author is trying to add the following functionalities.
 - Find relationship of reproductive number and measures automatically
 
 If you have ideas or need new functionalities, please join this project.
-Any suggestions with [Github Issues](https://github.com/lisphilar/covid19-sir/issues/new/choose) are always welcomed.
+Any suggestions with [Github Issues](https://github.com/lisphilar/covid19-sir/issues/new/choose) are always welcomed. Please read [Guideline of contribution](https://github.com/lisphilar/covid19-sir/blob/master/.github/CONTRIBUTING.md) in advance.
 
 ## Installation and dataset preparation
 We have the following options to start analysis with CovsirPhy. Datasets are not included in this package, but we can prepare them with `DataLoader` class.
@@ -252,7 +252,7 @@ Please refer to [LICENSE](https://github.com/lisphilar/covid19-sir/blob/master/L
 ## Citation
 CovsirPhy development team (2020), GitHub repository, CovsirPhy, Python package for COVID-19 data with SIR model, https://github.com/lisphilar/covid19-sir
 
-## Related works
+## Related work
 Method of analysis in CovsirPhy:  
 Lisphilar (2020), Kaggle notebook, COVID-19 data with SIR model, https://www.kaggle.com/lisphilar/covid-19-data-with-sir-model
 
