@@ -14,7 +14,7 @@ SIR-F is a customized SIR-derived ODE model. To evaluate the effect of measures,
     - Epidemic data: the number of confirmed/fatal/recovered cases
     - Population data: raw data must include country, (province), values of population
 - Data visualization with Matplotlib
-- S-R Trend analysis with Optuna and scipy.optimize.curve_fit
+- S-R Trend analysis to determine the change points of parameters
 - Numerical simulation of ODE models with scipy.integrate.solve_ivp
 - Description of ODE models
     - Basic class of ODE models
@@ -195,16 +195,10 @@ See the records as a figure.
 ita_record_df = ita_scenario.records()
 ```
 #### S-R trend analysis
-Show S-R trend to determine the number of change points.
+Perform S-R trend analysis and set phases to the scenario.
+The number of change points will be determined automatically (CovserPhy > 2.4.0).
 ```Python
-ita_scenario.trend()
-```
-As an example, set the number of change points as 4.
-```Python
-ita_scenario.trend(n_points=4, set_phases=True)
-```
-Start/end date of the four phase were automatically determined. Let's see.
-```Python
+ita_scenario.trend(set_phases=True)
 print(ita_scenario.summary())
 ```
 #### Hyperparameter estimation of ODE models

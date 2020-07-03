@@ -234,7 +234,6 @@ class Scenario(Word):
         Returns:
             None
         """
-        # TODO: This method must be revised for issue3
         finder = ChangeFinder(
             self.clean_df, self.population,
             country=self.country, province=self.province

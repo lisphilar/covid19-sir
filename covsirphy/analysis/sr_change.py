@@ -53,7 +53,6 @@ class ChangeFinder(Word):
         )
         self.population = population
         # Dataset for analysis
-        # Index: Date(pd.TimeStamp, Columns: Recovered (int) and Susceptible_actual (int)
         sr_data = SRData(clean_df, country=country, province=province)
         self.sr_df = sr_data.make(population)
         # Setting for optimization
@@ -66,14 +65,10 @@ class ChangeFinder(Word):
         Returns:
             self
         """
-        # TODO: This method must be revised for issue3
-        # Dataset for analysis
-        # Index: Date(pd.TimeStamp, Columns: Recovered (int) and Susceptible_actual (int)
-        # As defined in Word class,
-        # 'Date' == self.DATE, 'Recovered' == self.R, 'Susceptible_actual' == f'{self.S}{self.A}'
-        # TODO: Convert the dataframe for S-R analysis
+        # Convert the dataset, index: Recovered, column: SUsceptible
         sr_df = self.sr_df.rename({f"{self.S}{self.A}": self.S}, axis=1)
         df = sr_df.pivot_table(index=self.R, values=self.S, aggfunc="last")
+        # Convert index to serial numbers
         serial_df = pd.DataFrame(np.arange(1, df.index.max() + 1, 1))
         serial_df.index += 1
         df = pd.merge(
@@ -82,23 +77,25 @@ class ChangeFinder(Word):
         series = df.reset_index(drop=True).iloc[:, 0]
         series = series.interpolate(limit_direction="both")
         series = series.astype(np.int64)
+        # Sampling to reduce run-time of Ruptures
         samples = np.linspace(
             0, series.index.max(), len(self.sr_df), dtype=np.int64
         )
         series = series[samples]
-        # Detection
-        # TODO: Revise parameters
+        # Detection with Ruptures
         algorithm = rpt.Pelt(model="rbf", jump=2, min_size=6)
         results = algorithm.fit_predict(series.values, pen=0.5)
+        # Convert index values to Susceptible values
         reset_series = series.reset_index(drop=True)
         reset_series.index += 1
         susceptible_df = reset_series[results].reset_index()
+        # Convert Susceptible values to dates
         df = pd.merge_asof(
             susceptible_df.sort_values(self.S),
             sr_df.reset_index().sort_values(self.S),
             on=self.S, direction="nearest"
         )
-        # TODO: Set change points
+        # Set change points
         change_dates = df["Date"].sort_values()[:-1].dt.strftime("%d%b%Y")
         self.change_dates = change_dates.tolist()
         return self
@@ -159,7 +156,7 @@ class ChangeFinder(Word):
             title = f"{self.area}: S-R trend without change points"
         else:
             change_str = ", ".join(self.change_dates)
-            title = f"{self.area}: S-R trend changed on\n {change_str}"
+            title = f"{self.area}: S-R trend changed on\n{change_str}"
         Trend.show_with_many(
             result_df=comp_df,
             predicted_cols=pred_cols,
