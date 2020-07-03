@@ -2,7 +2,9 @@
 # -*- coding: utf-8 -*-
 
 from datetime import datetime, timedelta
+import numpy as np
 from matplotlib import pyplot as plt
+import pandas as pd
 import ruptures as rpt
 from covsirphy.analysis.phase_series import PhaseSeries
 from covsirphy.cleaning.word import Word
@@ -69,16 +71,36 @@ class ChangeFinder(Word):
         # Index: Date(pd.TimeStamp, Columns: Recovered (int) and Susceptible_actual (int)
         # As defined in Word class,
         # 'Date' == self.DATE, 'Recovered' == self.R, 'Susceptible_actual' == f'{self.S}{self.A}'
-        df = self.sr_df.copy()
         # TODO: Convert the dataframe for S-R analysis
-        self.sr_df_for_analysis = df.copy()
+        sr_df = self.sr_df.rename({f"{self.S}{self.A}": self.S}, axis=1)
+        df = sr_df.pivot_table(index=self.R, values=self.S, aggfunc="last")
+        serial_df = pd.DataFrame(np.arange(1, df.index.max() + 1, 1))
+        serial_df.index += 1
+        df = pd.merge(
+            df, serial_df, left_index=True, right_index=True, how="outer"
+        )
+        series = df.reset_index(drop=True).iloc[:, 0]
+        series = series.interpolate(limit_direction="both")
+        series = series.astype(np.int64)
+        samples = np.linspace(
+            0, series.index.max(), len(self.sr_df), dtype=np.int64
+        )
+        series = series[samples]
         # Detection
         # TODO: Revise parameters
-        algorithm = rpt.Pelt(model="rbf", jump=2,
-                             min_size=6).fit(df.to_numpy())
-        self.result = algorithm.predict(pen=0.5)
+        algorithm = rpt.Pelt(model="rbf", jump=2, min_size=6)
+        results = algorithm.fit_predict(series.values, pen=0.5)
+        reset_series = series.reset_index(drop=True)
+        reset_series.index += 1
+        susceptible_df = reset_series[results].reset_index()
+        df = pd.merge_asof(
+            susceptible_df.sort_values(self.S),
+            sr_df.reset_index().sort_values(self.S),
+            on=self.S, direction="nearest"
+        )
         # TODO: Set change points
-        self.change_dates = list()
+        change_dates = df["Date"].sort_values()[:-1].dt.strftime("%d%b%Y")
+        self.change_dates = change_dates.tolist()
         return self
 
     def show(self, show_figure=True, filename=None):
@@ -87,7 +109,7 @@ class ChangeFinder(Word):
 
         Args:
             @show_figure (bool): if True, show the result as a figure.
-            @filename (str): filename of the figure, or None (show figure)
+            @filename (str): filename of the figure, or None (display figure)
 
         Returns:
             (covsirphy.PhaseSeries)
@@ -96,8 +118,9 @@ class ChangeFinder(Word):
         phase_series = self._create_phases()
         # Show figure or save figure
         if show_figure and filename is None:
-            rpt.display(self.sr_df_for_analysis, self.result)
-            plt.show()
+            # rpt.display(self.sr_df_for_analysis, self.result)
+            # plt.show()
+            pass
         return phase_series
 
     def get_dates(self, clean_df, population, country, province):
