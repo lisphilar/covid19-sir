@@ -159,7 +159,7 @@ class ChangeFinder(Word):
             title = f"{self.area}: S-R trend without change points"
         else:
             change_str = ", ".join(self.change_dates)
-            title = f"{self.area}: S-R trend changed on {change_str}"
+            title = f"{self.area}: S-R trend changed on\n {change_str}"
         Trend.show_with_many(
             result_df=comp_df,
             predicted_cols=pred_cols,
