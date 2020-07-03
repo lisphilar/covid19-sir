@@ -3,12 +3,12 @@
 
 from datetime import datetime, timedelta
 import numpy as np
-from matplotlib import pyplot as plt
 import pandas as pd
 import ruptures as rpt
 from covsirphy.analysis.phase_series import PhaseSeries
 from covsirphy.cleaning.word import Word
 from covsirphy.phase.sr_data import SRData
+from covsirphy.phase.trend import Trend
 
 
 class ChangeFinder(Word):
@@ -108,19 +108,65 @@ class ChangeFinder(Word):
         show the result as a figure and return a dictionary of phases.
 
         Args:
-            @show_figure (bool): if True, show the result as a figure.
-            @filename (str): filename of the figure, or None (display figure)
+        @show_figure (bool): if True, show the result as a figure.
+        @filename (str): filename of the figure, or None (display figure)
 
         Returns:
             (covsirphy.PhaseSeries)
         """
-        # TODO: This method must be revised for issue3
+        # Create phase dictionary
         phase_series = self._create_phases()
-        # Show figure or save figure
-        if show_figure and filename is None:
-            # rpt.display(self.sr_df_for_analysis, self.result)
-            # plt.show()
-            pass
+        phase_dict = phase_series.to_dict()
+        # Curve fitting
+        df_list = list()
+        vlines = list()
+        for (phase, info) in phase_dict.items():
+            start_date = info[self.START]
+            end_date = info[self.END]
+            population = info[self.N]
+            trend = Trend(
+                self.clean_df, population, self.country, province=self.province,
+                start_date=start_date, end_date=end_date
+            )
+            trend.analyse()
+            df = trend.result()
+            # Get min value for vline
+            vlines.append(df[self.R].min())
+            # Rename the columns
+            phase = phase.replace("0th", self.INITIAL)
+            df = df.rename({f"{self.S}{self.P}": f"{phase}{self.P}"}, axis=1)
+            df = df.rename({f"{self.S}{self.A}": f"{phase}{self.A}"}, axis=1)
+            df = df.rename({f"{self.R}": f"{phase}_{self.R}"}, axis=1)
+            df_list.append(df)
+        comp_df = pd.concat(df_list[1:], axis=1)
+        comp_df[self.R] = comp_df.fillna(0).loc[
+            :, comp_df.columns.str.endswith(self.R)
+        ].sum(axis=1)
+        comp_df[f"{self.S}{self.A}"] = comp_df.fillna(0).loc[
+            :, comp_df.columns.str.endswith(self.A)
+        ].sum(axis=1)
+        comp_df = comp_df.apply(
+            lambda x: pd.to_numeric(x, errors="coerce", downcast="integer"),
+            axis=0
+        )
+        # Show figure
+        if not show_figure:
+            return phase_series
+        pred_cols = comp_df.loc[
+            :, comp_df.columns.str.endswith(self.P)
+        ].columns.tolist()
+        if len(pred_cols) == 1:
+            title = f"{self.area}: S-R trend without change points"
+        else:
+            change_str = ", ".join(self.change_dates)
+            title = f"{self.area}: S-R trend changed on {change_str}"
+        Trend.show_with_many(
+            result_df=comp_df,
+            predicted_cols=pred_cols,
+            title=title,
+            vlines=vlines[2:],
+            filename=filename
+        )
         return phase_series
 
     def get_dates(self, clean_df, population, country, province):
