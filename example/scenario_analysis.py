@@ -28,10 +28,6 @@ def main():
     # Show S-R trend
     ita_scenario.trend(filename=output_dir.joinpath("ita_trend.png"))
     # Find change points
-    ita_scenario.trend(
-        n_points=4,
-        filename=output_dir.joinpath("ita_change_points.png")
-    )
     print(ita_scenario.summary())
     # Hyperparameter estimation
     ita_scenario.estimate(cs.SIRF)
