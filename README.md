@@ -196,7 +196,7 @@ ita_record_df = ita_scenario.records()
 ```
 #### S-R trend analysis
 Perform S-R trend analysis and set phases to the scenario.
-The number of change points will be determined automatically (CovserPhy > 2.4.0).
+The number of change points will be determined automatically (> 2.4.0).
 ```Python
 ita_scenario.trend(set_phases=True)
 print(ita_scenario.summary())
