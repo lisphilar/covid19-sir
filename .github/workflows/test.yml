@@ -31,7 +31,9 @@ jobs:
 
     # Installation of pipenv and dependencies of CovsirPhy
     - name: Installation of pipenv and dependencies of CovsirPhy
-      run: ls
+      env:
+        TOKEN: ${{ secrets.TOKEN }}
+      run: make install
     
     # Run tests
     - name: Run tests
