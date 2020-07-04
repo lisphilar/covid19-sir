@@ -19,20 +19,20 @@ jobs:
 
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
-      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
-      - name: Checkout
-      - uses: actions/checkout@v2
+    # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
+    - name: Checkout
+    - uses: actions/checkout@v2
 
-      # Set up Python
-      - name: Set up Python ${{ matrix.python-version }}
-      - uses: actions/setup-python@v1
-      - with:
-          python-version: ${{ matrix.python-version }}
+    # Set up Python
+    - name: Set up Python ${{ matrix.python-version }}
+    - uses: actions/setup-python@v1
+    - with:
+        python-version: ${{ matrix.python-version }}
 
-      # Installation of pipenv and dependencies of COvsirPhy
-      - name: Installation of pipenv and dependencies of COvsirPhy
-      - run: make install
-      
-      # Run tests
-      - name: Run tests
-      - run: make test
+    # Installation of pipenv and dependencies of COvsirPhy
+    - name: Installation of pipenv and dependencies of COvsirPhy
+      run: make install
+    
+    # Run tests
+    - name: Run tests
+      run: make test
