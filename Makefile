@@ -9,7 +9,7 @@ install:
 
 
 test:
-	@pipenv run pytest -v --durations=0 --profile-svg
+	@pipenv run pytest -v --durations=0 --maxfail=1 --failed-first --profile-svg
 
 
 # https://github.com/sphinx-doc/sphinx/issues/3382
