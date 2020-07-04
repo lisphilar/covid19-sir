@@ -224,7 +224,7 @@ class Scenario(Word):
         Args:
             set_phases (bool): if True, set phases automatically
             include_init_phase (bool): whether use initial phase or not
-            show_figure (bool): if True, show the records as a line-plot.
+            show_figure (bool): if True, show the result as a figure
             filename (str): filename of the figure, or None (show figure)
             kwargs: the other keyword arguments of ChangeFinder().run()
 
