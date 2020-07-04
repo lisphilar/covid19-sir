@@ -8,13 +8,13 @@ from covsirphy import Word, SIRF
 
 class TestScenario(object):
     def test_records(self, jhu_data, population_data):
-        scenario = Scenario(jhu_data, population_data, country="India")
+        scenario = Scenario(jhu_data, population_data, country="Italy")
         record_df = scenario.records(show_figure=False)
         assert isinstance(record_df, pd.DataFrame)
         assert set(record_df.columns) == set(Word.NLOC_COLUMNS)
 
     def test_analysis(self, jhu_data, population_data):
-        scenario = Scenario(jhu_data, population_data, country="India")
+        scenario = Scenario(jhu_data, population_data, country="Italy")
         # S-R trend analysis
         scenario.trend(show_figure=False)
         # Parameter estimation of SIR-F model
