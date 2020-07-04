@@ -65,8 +65,9 @@ class ChangeFinder(Word):
         Returns:
             self
         """
-        # Convert the dataset, index: Recovered, column: SUsceptible
+        # Convert the dataset, index: Recovered, column: Susceptible
         sr_df = self.sr_df.rename({f"{self.S}{self.A}": self.S}, axis=1)
+        sr_df[self.S] = np.log10(sr_df[self.S])
         df = sr_df.pivot_table(index=self.R, values=self.S, aggfunc="last")
         # Convert index to serial numbers
         serial_df = pd.DataFrame(np.arange(1, df.index.max() + 1, 1))
@@ -76,7 +77,6 @@ class ChangeFinder(Word):
         )
         series = df.reset_index(drop=True).iloc[:, 0]
         series = series.interpolate(limit_direction="both")
-        series = series.astype(np.int64)
         # Sampling to reduce run-time of Ruptures
         samples = np.linspace(
             0, series.index.max(), len(self.sr_df), dtype=np.int64
