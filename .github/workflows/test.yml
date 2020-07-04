@@ -22,7 +22,6 @@ jobs:
     # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
     - name: Checkout
       uses: actions/checkout@v2
-      path: "../../"
 
     # Set up Python
     - name: Set up Python ${{ matrix.python-version }}
@@ -32,8 +31,8 @@ jobs:
 
     # Installation of pipenv and dependencies of CovsirPhy
     - name: Installation of pipenv and dependencies of CovsirPhy
-      run: make install
+      run: cd ../../; make install
     
     # Run tests
     - name: Run tests
-      run: make test
+      run: cd ../../; make test
