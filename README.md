@@ -177,7 +177,7 @@ cs.__version__
 Please load the datasets as explained in the previous section.
 
 (Optional) We can replace a part of JHU data with country-specific datasets.
-As an example, we will the records in Japan, because values of JHU dataset sometimes differ from government-announced values as shown in [COVID-19: Government/JHU data in Japan](https://www.kaggle.com/lisphilar/covid-19-government-jhu-data-in-japan).
+As an example, we will use the records in Japan here because values of JHU dataset sometimes differ from government-announced values as shown in [COVID-19: Government/JHU data in Japan](https://www.kaggle.com/lisphilar/covid-19-government-jhu-data-in-japan).
 
 ```Python
 jhu_data.replace(japan_data)
