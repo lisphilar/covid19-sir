@@ -30,6 +30,17 @@ class SIR(ModelBase):
     PRIORITIES = np.array([1, 1, 1])
     # Variables that increases monotonically
     VARS_INCLEASE = [ModelBase.FR]
+    # Example set of parameters and initial values
+    EXAMPLE = {
+        "step_n": 180,
+        "population": 1_000_000,
+        "param_dict": {
+            "rho": 0.2, "sigma": 0.075,
+        },
+        "y0_dict": {
+            "Susceptible": 999_000, "Infected": 1000, "Fatal or Recovered": 0,
+        },
+    }
 
     def __init__(self, population, rho, sigma):
         # Total population

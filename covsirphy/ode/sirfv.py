@@ -38,6 +38,19 @@ class SIRFV(ModelBase):
     PRIORITIES = np.array([0, 10, 10, 2, 0])
     # Variables that increases monotonically
     VARS_INCLEASE = [ModelBase.R, ModelBase.F]
+    # Example set of parameters and initial values
+    EXAMPLE = {
+        "step_n": 180,
+        "population": 1_000_000,
+        "param_dict": {
+            "theta": 0.002, "kappa": 0.005, "rho": 0.2, "sigma": 0.075,
+            "omega": 0.001,
+        },
+        "y0_dict": {
+            "Susceptible": 999_000, "Infected": 1000, "Recovered": 0, "Fatal": 0,
+            "Vaccinated": 0,
+        },
+    }
 
     def __init__(self, population, theta, kappa, rho, sigma,
                  omega=None, v_per_day=None):

@@ -21,6 +21,13 @@ class ModelBase(ModelBaseCommon):
     PRIORITIES = np.array(list())
     # Variables that increases monotonically
     VARS_INCLEASE = list()
+    # Example set of parameters and initial values
+    EXAMPLE = {
+        "step_n": 180,
+        "population": 1_000_000,
+        "param_dict": dict(),
+        "y0_dict": dict(),
+    }
 
     def __init__(self, population):
         """
