@@ -100,7 +100,7 @@ class Estimator(Optimizer):
 
     def run(self, timeout=60, reset_n_max=3,
             timeout_iteration=10, allowance=(0.8, 1.2),
-            seed=0, **kwargs):
+            seed=0, stdout=True, **kwargs):
         """
         Run optimization.
         If the result satisfied the following conditions, optimization ends.
@@ -114,6 +114,7 @@ class Estimator(Optimizer):
             timeout_iteration (int): time-out of one iteration
             allowance (tuple(float, float)): the allowance of the predicted value
             seed (int or None): random seed of hyperparameter optimization
+            stdout (bool): whether show the status of progress or not
 
         Notes:
             @n_jobs was obsoleted because this is not effective for Optuna.
@@ -125,7 +126,8 @@ class Estimator(Optimizer):
             raise KeyError("@n_jobs of Estimator.run() was obsoleted.")
         if self.study is None:
             self._init_study(seed=seed)
-        print("\tRunning optimization...")
+        if stdout:
+            print("\tRunning optimization...")
         stopwatch = StopWatch()
         reset_n = 0
         while True:
@@ -136,10 +138,11 @@ class Estimator(Optimizer):
             # Time-out
             if self.run_time >= timeout:
                 break
-            print(
-                f"\r\tPerformed {self.total_trials} trials in {stopwatch.show()}.",
-                end=str()
-            )
+            if stdout:
+                print(
+                    f"\r\tPerformed {self.total_trials} trials in {stopwatch.show()}.",
+                    end=str()
+                )
             # Create a table to compare observed/estimated values
             tau = super().param()[self.TAU]
             train_df = self.divide_minutes(tau)
@@ -159,11 +162,12 @@ class Estimator(Optimizer):
             # Need additional trials when the values are not in allowance
             if self._is_in_allowance(comp_df, allowance):
                 break
-        stopwatch.stop()
-        print(
-            f"\r\tFinished {self.total_trials} trials in {stopwatch.show()}.\n",
-            end=str()
-        )
+        if stdout:
+            stopwatch.stop()
+            print(
+                f"\r\tFinished {self.total_trials} trials in {stopwatch.show()}.\n",
+                end=str()
+            )
         return None
 
     def _is_in_allowance(self, comp_df, allowance):
