@@ -1,4 +1,4 @@
-# CovsirPhy: COVID-19 data with SIR model
+# CovsirPhy: COVID-19 with SIR-derived ODE models
 [![PyPI version](https://badge.fury.io/py/covsirphy.svg)](https://badge.fury.io/py/covsirphy)
 [![Downloads](https://pepy.tech/badge/covsirphy)](https://pepy.tech/project/covsirphy)
 [![PyPI - Python Version](https://img.shields.io/pypi/pyversions/covsirphy)](https://badge.fury.io/py/covsirphy)  
