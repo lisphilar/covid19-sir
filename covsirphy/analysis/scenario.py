@@ -154,7 +154,6 @@ class Scenario(Word):
             end_date = end_obj.strftime(self.DATE_FORMAT)
         population = population or self.population
         summary_df = self.series_dict[name].summary()
-        print(summary_df)
         if model is None:
             if self.ODE not in summary_df.columns:
                 self.series_dict[name].add(start_date, end_date, population)
@@ -393,7 +392,7 @@ class Scenario(Word):
             raise KeyError(
                 f"{future_phases[0]} is not a past phase or not registered.")
         print(f"\n<{name} scenario: perform parameter estimation>")
-        print("\tRunning optimization...")
+        print("Running optimization...")
         # The number of parallel jobs
         n_jobs = cpu_count() if n_jobs == -1 else n_jobs
         # Estimation of the last phase will be done to determine tau value
@@ -406,6 +405,7 @@ class Scenario(Word):
             result_nest = p.map(est_f, phases)
         for result_tuple in result_nest:
             self._update_self(*result_tuple)
+        print("Completed optimization.")
 
     def estimate_history(self, phase, name="Main", **kwargs):
         """
