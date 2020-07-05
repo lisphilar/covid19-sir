@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>CovsirPhy: COVID-19 data with SIR model &mdash; CovsirPhy  documentation</title>
+  <title>CovsirPhy: COVID-19 with SIR-derived ODE models &mdash; CovsirPhy  documentation</title>
   
 
   
@@ -37,7 +37,7 @@
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
     <link rel="next" title="covsirphy package" href="covsirphy.html" />
-    <link rel="prev" title="CovsirPhy: COVID-19 data with SIR model" href="index.html" /> 
+    <link rel="prev" title="CovsirPhy: COVID-19 with SIR-derived ODE models" href="index.html" /> 
 </head>
 
 <body class="wy-body-for-nav">
@@ -84,10 +84,9 @@
             
               <p class="caption"><span class="caption-text">Contents:</span></p>
 <ul class="current">
-<li class="toctree-l1 current"><a class="current reference internal" href="#">CovsirPhy: COVID-19 data with SIR model</a><ul>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">CovsirPhy: COVID-19 with SIR-derived ODE models</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#functionalities">Functionalities</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#inspiration">Inspiration</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#trying-now">Trying now</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#installation-and-dataset-preparation">Installation and dataset preparation</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#standard-users">1. Standard users</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#developers">2. Developers</a></li>
@@ -107,7 +106,7 @@
 </li>
 <li class="toctree-l2"><a class="reference internal" href="#apache-license-2-0">Apache License 2.0</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#citation">Citation</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#related-works">Related works</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#related-work">Related work</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="covsirphy.html">covsirphy package</a></li>
@@ -157,7 +156,7 @@
     
       <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
         
-      <li>CovsirPhy: COVID-19 data with SIR model</li>
+      <li>CovsirPhy: COVID-19 with SIR-derived ODE models</li>
     
     
       <li class="wy-breadcrumbs-aside">
@@ -176,43 +175,34 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
             
-  <div class="section" id="covsirphy-covid-19-data-with-sir-model">
-<h1>CovsirPhy: COVID-19 data with SIR model<a class="headerlink" href="#covsirphy-covid-19-data-with-sir-model" title="Permalink to this headline">¶</a></h1>
+  <div class="section" id="covsirphy-covid-19-with-sir-derived-ode-models">
+<h1>CovsirPhy: COVID-19 with SIR-derived ODE models<a class="headerlink" href="#covsirphy-covid-19-with-sir-derived-ode-models" title="Permalink to this headline">¶</a></h1>
 <div class="line-block">
 <div class="line"><a class="reference external" href="https://badge.fury.io/py/covsirphy"><img alt="PyPI version" src="https://badge.fury.io/py/covsirphy.svg" /></a> <a class="reference external" href="https://pepy.tech/project/covsirphy"><img alt="Downloads" src="https://pepy.tech/badge/covsirphy" /></a> <a class="reference external" href="https://badge.fury.io/py/covsirphy"><img alt="PyPI - Python Version" src="https://img.shields.io/pypi/pyversions/covsirphy" /></a></div>
-<div class="line"><a class="reference external" href="https://github.com/lisphilar/covid19-sir/blob/master/LICENSE"><img alt="GitHub license" src="https://img.shields.io/github/license/lisphilar/covid19-sir" /></a> <a class="reference external" href="https://codeclimate.com/github/lisphilar/covid19-sir/maintainability"><img alt="Maintainability" src="https://api.codeclimate.com/v1/badges/eb97eaf9804f436062b9/maintainability" /></a></div>
+<div class="line"><a class="reference external" href="https://github.com/lisphilar/covid19-sir/blob/master/LICENSE"><img alt="GitHub license" src="https://img.shields.io/github/license/lisphilar/covid19-sir" /></a> <a class="reference external" href="https://codeclimate.com/github/lisphilar/covid19-sir/maintainability"><img alt="Maintainability" src="https://api.codeclimate.com/v1/badges/eb97eaf9804f436062b9/maintainability" /></a> <a class="reference external" href="https://github.com/lisphilar/covid19-sir/actions"><img alt="test" src="https://github.com/lisphilar/covid19-sir/workflows/test/badge.svg" /></a></div>
 </div>
 <p>CovsirPhy is a Python package for COVID-19 (Coronavirus disease 2019)
-data analysis with SIR-derived models. Please refer to “Method” part of
-<a class="reference external" href="https://www.kaggle.com/lisphilar/covid-19-data-with-sir-model">COVID-19 data with SIR
+data analysis with SIR-derived ODE models. Please refer to “Method” part
+of <a class="reference external" href="https://www.kaggle.com/lisphilar/covid-19-data-with-sir-model">COVID-19 data with SIR
 model</a>
 notebook in Kaggle to understand the methods.</p>
-<p>SIR-F is a customized SIR-derived ODE model. To evaluate the effect of
-measures, parameter estimation of SIR-F will be applied to subsets of
-time series data in each country. Parameter change points will be
-determined by S-R trend analysis.</p>
 <div class="section" id="functionalities">
 <h2>Functionalities<a class="headerlink" href="#functionalities" title="Permalink to this headline">¶</a></h2>
 <ul class="simple">
-<li><p>Downloading and cleaning data</p>
-<ul>
-<li><p>Epidemic data: the number of confirmed/fatal/recovered cases</p></li>
-<li><p>Population data: raw data must include country, (province), values
-of population</p></li>
-</ul>
-</li>
-<li><p>Data visualization with Matplotlib</p></li>
-<li><p>S-R Trend analysis with Optuna and scipy.optimize.curve_fit</p></li>
-<li><p>Numerical simulation of ODE models with scipy.integrate.solve_ivp</p></li>
+<li><p>Downloading and cleaning data: refer to “Installation and dataset
+preparation” section</p></li>
+<li><p>Data visualization</p></li>
+<li><p>S-R Trend analysis to determine the change points of parameters</p></li>
+<li><p>Numerical simulation of ODE models</p></li>
 <li><p>Description of ODE models</p>
 <ul>
 <li><p>Basic class of ODE models</p></li>
 <li><p>SIR, SIR-D, SIR-F, SIR-FV and SEWIR-F model</p></li>
 </ul>
 </li>
-<li><p>Parameter Estimation of ODE models with Optuna and numerical
-simulation</p></li>
-<li><p>Simulate the number of cases with user-defined parameter values</p></li>
+<li><p>Parameter Estimation of ODE models</p></li>
+<li><p>Scenario analysis: Simulate the number of cases with user-defined
+parameter values</p></li>
 </ul>
 </div>
 <div class="section" id="inspiration">
@@ -224,18 +214,12 @@ country/province</p></li>
 <li><p>Find the relationship of reproductive number and measures taken in
 each country/province</p></li>
 </ul>
-</div>
-<div class="section" id="trying-now">
-<h2>Trying now<a class="headerlink" href="#trying-now" title="Permalink to this headline">¶</a></h2>
-<p>The author is trying to add the following functionalities. - Speed-up
-S-R trend analysis and hyperparameter estimation of ODE models - Keep
-track parameter values/reproductive number of all countries with a
-simple code - Find relationship of reproductive number and measures
-automatically</p>
 <p>If you have ideas or need new functionalities, please join this project.
 Any suggestions with <a class="reference external" href="https://github.com/lisphilar/covid19-sir/issues/new/choose">Github
 Issues</a>
-are always welcomed.</p>
+are always welcomed. Please read <a class="reference external" href="https://github.com/lisphilar/covid19-sir/blob/master/.github/CONTRIBUTING.md">Guideline of
+contribution</a>
+in advance.</p>
 </div>
 <div class="section" id="installation-and-dataset-preparation">
 <h2>Installation and dataset preparation<a class="headerlink" href="#installation-and-dataset-preparation" title="Permalink to this headline">¶</a></h2>
@@ -273,7 +257,12 @@ are not included in this package, but we can prepare them with
 </tr>
 </tbody>
 </table>
-<p>We will use the following datasets.</p>
+<p>We will use the following datasets (CovsirPhy &gt;= 2.4.0). Standard users
+and developers will retrieve main datasets from <a class="reference external" href="https://covid19datahub.io/">COVID-19 Data
+Hub</a> using <code class="docutils literal notranslate"><span class="pre">covid19dh</span></code> Python package.
+We can get the citation list of primary source via <a class="reference external" href="https://covid19datahub.io/articles/data.html">COVID-19 Data Hub:
+Dataset</a> and
+<code class="docutils literal notranslate"><span class="pre">covsirphy.DataLoader</span></code> class (refer to “Standard users” subsection).</p>
 <table class="docutils align-default">
 <colgroup>
 <col style="width: 33%" />
@@ -294,43 +283,38 @@ numbe
 r
 of
 cases
-(JHU)</p></td>
-<td><p>COVID
--19
+(JHU
+style
+)</p></td>
+<td><p>Guido
+tti,
+E.,
+Ardia
+,
+D.,
+(2020
+),
+“COVI
+D-19
 Data
-Repos
-itory
-by
-the
-Cente
-r
-for
-Syste
-ms
-Scien
-ce
-and
-Engin
-eerin
-g
-(CSSE
-)
-at
-Johns
-Hopki
-ns
-Unive
-rsity
-.</p></td>
+Hub”,
+Worki
+ng
+paper
+,
+doi:
+10.13
+140/R
+G.2.2
+.1164
+9.817
+63.</p></td>
 <td><p>https
-://gi
-thub.
-com/C
-SSEGI
-SandD
-ata/C
-OVID-
-19</p></td>
+://co
+vid19
+datah
+ub.io
+/</p></td>
 </tr>
 <tr class="row-odd"><td><p>The
 numbe
@@ -369,30 +353,35 @@ in
 each
 count
 ry</p></td>
-<td><p>The
-World
-Bank
-Group
+<td><p>Guido
+tti,
+E.,
+Ardia
+,
+D.,
 (2020
 ),
-THE
-WORLD
-BANK,
-Popul
-ation
+“COVI
+D-19
+Data
+Hub”,
+Worki
+ng
+paper
 ,
-total
-.</p></td>
+doi:
+10.13
+140/R
+G.2.2
+.1164
+9.817
+63.</p></td>
 <td><p>https
-://da
-ta.wo
-rldba
-nk.or
-g/ind
-icato
-r/SP.
-POP.T
-OTL</p></td>
+://co
+vid19
+datah
+ub.io
+/</p></td>
 </tr>
 <tr class="row-odd"><td><p>Gover
 nment
@@ -402,52 +391,35 @@ Track
 er
 (OxCG
 RT)</p></td>
-<td><p>Thoma
-s
-Hale,
-Sam
-Webst
-er,
-Anna
-Pethe
-rick,
-Toby
-Phill
-ips,
-and
-Beatr
-iz
-Kira.
+<td><p>Guido
+tti,
+E.,
+Ardia
+,
+D.,
 (2020
-).
-Oxfor
-d
-COVID
--19
-Gover
-nment
-Respo
-nse
-Track
-er.
-Blava
-tnik
-Schoo
-l
-of
-Gover
-nment
-.</p></td>
+),
+“COVI
+D-19
+Data
+Hub”,
+Worki
+ng
+paper
+,
+doi:
+10.13
+140/R
+G.2.2
+.1164
+9.817
+63.</p></td>
 <td><p>https
-://gi
-thub.
-com/O
-xCGRT
-/covi
-d-pol
-icy-t
-racke
-r</p></td>
+://co
+vid19
+datah
+ub.io
+/</p></td>
 </tr>
 </tbody>
 </table>
@@ -486,6 +458,11 @@ As an example, JHU dataset will be used here.</p>
 <span class="n">jhu_data</span><span class="o">.</span><span class="n">cleaned</span><span class="p">()</span>
 </pre></div>
 </div>
+<p>We can get COVID-19 Data Hub citation list of primary sources as
+follows.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">data_loader</span><span class="o">.</span><span class="n">covid19dh_citation</span>
+</pre></div>
+</div>
 </div>
 <div class="section" id="developers">
 <h3>2. Developers<a class="headerlink" href="#developers" title="Permalink to this headline">¶</a></h3>
@@ -500,8 +477,8 @@ install dependencies with pipenv.</p>
 </pre></div>
 </div>
 <p>Developers can perform tests with
-<code class="docutils literal notranslate"><span class="pre">pipenv</span> <span class="pre">run</span> <span class="pre">pytest</span> <span class="pre">-v</span> <span class="pre">--durations=0</span> <span class="pre">--profile-svg</span></code> and call graph will
-be saved as SVG file (prof/combined.svg).</p>
+<code class="docutils literal notranslate"><span class="pre">pipenv</span> <span class="pre">run</span> <span class="pre">pytest</span> <span class="pre">-v</span> <span class="pre">--durations=0</span> <span class="pre">--failed-first</span> <span class="pre">--profile-svg</span></code> and
+call graph will be saved as SVG file (prof/combined.svg).</p>
 <ul class="simple">
 <li><p>Windows users need to install <a class="reference external" href="https://graphviz.org/_pages/Download/Download_windows.html">Graphviz for
 Windows</a>
@@ -534,7 +511,7 @@ in advance.</p></li>
 </tbody>
 </table>
 <p>We can prepare the dataset with the same codes as that was explained in
-“1.Preferred” subsection.</p>
+“1. Standard users” subsection.</p>
 </div>
 <div class="section" id="kagglers-local-environment">
 <h3>3. Kagglers (local environment)<a class="headerlink" href="#kagglers-local-environment" title="Permalink to this headline">¶</a></h3>
@@ -782,9 +759,9 @@ in the top directory of this repository.</p>
 </div>
 <p>Please load the datasets as explained in the previous section.</p>
 <p>(Optional) We can replace a part of JHU data with country-specific
-datasets. As an example, we will the records in Japan, because values of
-JHU dataset sometimes differ from government-announced values as shown
-in <a class="reference external" href="https://www.kaggle.com/lisphilar/covid-19-government-jhu-data-in-japan">COVID-19: Government/JHU data in
+datasets. As an example, we will use the records in Japan here because
+values of JHU dataset sometimes differ from government-announced values
+as shown in <a class="reference external" href="https://www.kaggle.com/lisphilar/covid-19-government-jhu-data-in-japan">COVID-19: Government/JHU data in
 Japan</a>.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">jhu_data</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="n">japan_data</span><span class="p">)</span>
 <span class="n">ncov_df</span> <span class="o">=</span> <span class="n">jhu_data</span><span class="o">.</span><span class="n">cleaned</span><span class="p">()</span>
@@ -803,17 +780,10 @@ Japan</a>.</p>
 </div>
 <div class="section" id="s-r-trend-analysis">
 <h4>S-R trend analysis<a class="headerlink" href="#s-r-trend-analysis" title="Permalink to this headline">¶</a></h4>
-<p>Show S-R trend to determine the number of change points.</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">ita_scenario</span><span class="o">.</span><span class="n">trend</span><span class="p">()</span>
-</pre></div>
-</div>
-<p>As an example, set the number of change points as 4.</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">ita_scenario</span><span class="o">.</span><span class="n">trend</span><span class="p">(</span><span class="n">n_points</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span> <span class="n">set_phases</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-</pre></div>
-</div>
-<p>Start/end date of the four phase were automatically determined. Let’s
-see.</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="n">ita_scenario</span><span class="o">.</span><span class="n">summary</span><span class="p">())</span>
+<p>Perform S-R trend analysis and set phases to the scenario. The number of
+change points will be determined automatically (&gt;= 2.4.0).</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">ita_scenario</span><span class="o">.</span><span class="n">trend</span><span class="p">(</span><span class="n">set_phases</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">ita_scenario</span><span class="o">.</span><span class="n">summary</span><span class="p">())</span>
 </pre></div>
 </div>
 </div>
@@ -869,12 +839,12 @@ file.</p>
 </div>
 <div class="section" id="citation">
 <h2>Citation<a class="headerlink" href="#citation" title="Permalink to this headline">¶</a></h2>
-<p>CovsirPhy development team (2020), GitHub repository, CovsirPhy, Python
-package for COVID-19 data with SIR model,
+<p>CovsirPhy Development Team (2020), CovsirPhy, Python package for
+COVID-19 analysis with SIR-derived ODE models,
 <a class="reference external" href="https://github.com/lisphilar/covid19-sir">https://github.com/lisphilar/covid19-sir</a></p>
 </div>
-<div class="section" id="related-works">
-<h2>Related works<a class="headerlink" href="#related-works" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="related-work">
+<h2>Related work<a class="headerlink" href="#related-work" title="Permalink to this headline">¶</a></h2>
 <div class="line-block">
 <div class="line">Method of analysis in CovsirPhy:</div>
 <div class="line">Lisphilar (2020), Kaggle notebook, COVID-19 data with SIR model,
@@ -899,7 +869,7 @@ tracker, <a class="reference external" href="https://ilylabs.github.io/projects/
         <a href="covsirphy.html" class="btn btn-neutral float-right" title="covsirphy package" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
       
       
-        <a href="index.html" class="btn btn-neutral float-left" title="CovsirPhy: COVID-19 data with SIR model" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+        <a href="index.html" class="btn btn-neutral float-left" title="CovsirPhy: COVID-19 with SIR-derived ODE models" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
       
     </div>
   

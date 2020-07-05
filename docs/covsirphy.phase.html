@@ -84,7 +84,7 @@
             
               <p class="caption"><span class="caption-text">Contents:</span></p>
 <ul class="current">
-<li class="toctree-l1"><a class="reference internal" href="README.html">CovsirPhy: COVID-19 data with SIR model</a></li>
+<li class="toctree-l1"><a class="reference internal" href="README.html">CovsirPhy: COVID-19 with SIR-derived ODE models</a></li>
 <li class="toctree-l1 current"><a class="reference internal" href="covsirphy.html">covsirphy package</a><ul class="current">
 <li class="toctree-l2 current"><a class="reference internal" href="covsirphy.html#subpackages">Subpackages</a><ul class="current">
 <li class="toctree-l3"><a class="reference internal" href="covsirphy.analysis.html">covsirphy.analysis package</a></li>
@@ -238,11 +238,14 @@
 </dl>
 <dl class="py method">
 <dt id="covsirphy.phase.estimator.Estimator.accuracy">
-<code class="sig-name descname">accuracy</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">filename</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/phase/estimator.html#Estimator.accuracy"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#covsirphy.phase.estimator.Estimator.accuracy" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">accuracy</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">show_figure</span><span class="o">=</span><span class="default_value">True</span></em>, <em class="sig-param"><span class="n">filename</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/phase/estimator.html#Estimator.accuracy"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#covsirphy.phase.estimator.Estimator.accuracy" title="Permalink to this definition">¶</a></dt>
 <dd><p>Show the accuracy as a figure.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>filename</strong> (<em>str</em>) – filename of the figure, or None (show figure)</p>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>show_figure</strong> (<em>bool</em>) – if True, show the result as a figure</p></li>
+<li><p><strong>filename</strong> (<em>str</em>) – filename of the figure, or None (show figure)</p></li>
+</ul>
 </dd>
 </dl>
 </dd></dl>
@@ -336,9 +339,9 @@ This defines the parameter values using Optuna.</p>
 
 <dl class="py method">
 <dt id="covsirphy.phase.estimator.Estimator.run">
-<code class="sig-name descname">run</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">timeout</span><span class="o">=</span><span class="default_value">60</span></em>, <em class="sig-param"><span class="n">reset_n_max</span><span class="o">=</span><span class="default_value">3</span></em>, <em class="sig-param"><span class="n">timeout_iteration</span><span class="o">=</span><span class="default_value">10</span></em>, <em class="sig-param"><span class="n">allowance</span><span class="o">=</span><span class="default_value">0.8, 1.2</span></em>, <em class="sig-param"><span class="n">n_jobs</span><span class="o">=</span><span class="default_value">- 1</span></em>, <em class="sig-param"><span class="n">seed</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/phase/estimator.html#Estimator.run"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#covsirphy.phase.estimator.Estimator.run" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">run</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">timeout</span><span class="o">=</span><span class="default_value">60</span></em>, <em class="sig-param"><span class="n">reset_n_max</span><span class="o">=</span><span class="default_value">3</span></em>, <em class="sig-param"><span class="n">timeout_iteration</span><span class="o">=</span><span class="default_value">10</span></em>, <em class="sig-param"><span class="n">allowance</span><span class="o">=</span><span class="default_value">0.8, 1.2</span></em>, <em class="sig-param"><span class="n">seed</span><span class="o">=</span><span class="default_value">0</span></em>, <em class="sig-param"><span class="n">stdout</span><span class="o">=</span><span class="default_value">True</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/phase/estimator.html#Estimator.run"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#covsirphy.phase.estimator.Estimator.run" title="Permalink to this definition">¶</a></dt>
 <dd><p>Run optimization.
-If the result satisfied all conditions, optimization ends.</p>
+If the result satisfied the following conditions, optimization ends.</p>
 <blockquote>
 <div><ul class="simple">
 <li><p>all values are not under than 0</p></li>
@@ -353,13 +356,13 @@ If the result satisfied all conditions, optimization ends.</p>
 <li><p><strong>reset_n_max</strong> (<em>int</em>) – if study was reset &#64;reset_n_max times, will not be reset anymore</p></li>
 <li><p><strong>timeout_iteration</strong> (<em>int</em>) – time-out of one iteration</p></li>
 <li><p><strong>allowance</strong> (<em>tuple</em><em>(</em><em>float</em><em>, </em><em>float</em><em>)</em>) – the allowance of the predicted value</p></li>
-<li><p><strong>n_jobs</strong> (<em>int</em>) – the number of parallel jobs or -1 (CPU count)</p></li>
 <li><p><strong>seed</strong> (<em>int</em><em> or </em><em>None</em>) – random seed of hyperparameter optimization</p></li>
+<li><p><strong>stdout</strong> (<em>bool</em>) – whether show the status of progress or not</p></li>
 </ul>
 </dd>
 </dl>
 <p class="rubric">Notes</p>
-<p>&#64;seed will effective when &#64;n_jobs is 1</p>
+<p>&#64;n_jobs was obsoleted because this is not effective for Optuna.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns</dt>
 <dd class="field-odd"><p>None</p>
@@ -565,7 +568,7 @@ This function should be overwritten in subclass.</p>
 </dl>
 <dl class="py method">
 <dt id="covsirphy.phase.optimize.Optimizer.accuracy">
-<code class="sig-name descname">accuracy</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">train_df</span></em>, <em class="sig-param"><span class="n">variables</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">filename</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/phase/optimize.html#Optimizer.accuracy"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#covsirphy.phase.optimize.Optimizer.accuracy" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">accuracy</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">train_df</span></em>, <em class="sig-param"><span class="n">variables</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">show_figure</span><span class="o">=</span><span class="default_value">True</span></em>, <em class="sig-param"><span class="n">filename</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/phase/optimize.html#Optimizer.accuracy"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#covsirphy.phase.optimize.Optimizer.accuracy" title="Permalink to this definition">¶</a></dt>
 <dd><p>Show the accuracy as a figure.
 This method can be overwritten in child class.</p>
 <dl class="field-list simple">
@@ -583,6 +586,7 @@ This method can be overwritten in child class.</p>
 </dl>
 </p></li>
 <li><p><strong>variables</strong> (<em>list</em><em>[</em><em>str</em><em>]</em>) – variables to compare or None (all variables)</p></li>
+<li><p><strong>show_figure</strong> (<em>bool</em>) – if True, show the result as a figure</p></li>
 <li><p><strong>filename</strong> (<em>str</em>) – filename of the figure, or None (show figure)</p></li>
 </ul>
 </dd>
@@ -968,8 +972,8 @@ This method must be overwritten in child class.</p>
 <dt>Index:</dt><dd><p>Date (pd.TimeStamp): Observation date</p>
 </dd>
 <dt>Columns:</dt><dd><ul class="simple">
-<li><p>Recovered: The number of recovered cases</p></li>
-<li><p>Susceptible_actual: Actual values of Susceptible (&gt; 0)</p></li>
+<li><p>Recovered (int): The number of recovered cases</p></li>
+<li><p>Susceptible_actual (int): Actual values of Susceptible (&gt; 0)</p></li>
 </ul>
 </dd>
 </dl>

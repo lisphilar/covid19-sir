@@ -84,7 +84,7 @@
             
               <p class="caption"><span class="caption-text">Contents:</span></p>
 <ul class="current">
-<li class="toctree-l1"><a class="reference internal" href="README.html">CovsirPhy: COVID-19 data with SIR model</a></li>
+<li class="toctree-l1"><a class="reference internal" href="README.html">CovsirPhy: COVID-19 with SIR-derived ODE models</a></li>
 <li class="toctree-l1 current"><a class="reference internal" href="covsirphy.html">covsirphy package</a><ul class="current">
 <li class="toctree-l2 current"><a class="reference internal" href="covsirphy.html#subpackages">Subpackages</a><ul class="current">
 <li class="toctree-l3"><a class="reference internal" href="covsirphy.analysis.html">covsirphy.analysis package</a></li>
@@ -461,8 +461,40 @@ updating will be forced when updating is not prevented by the methods.</p>
 <span class="gp">...</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">oxcgrt_data</span><span class="o">.</span><span class="n">cleaned</span><span class="p">()))</span>
 <span class="go">&lt;class &#39;pandas.core.frame.DataFrame&#39;&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">data_loader</span><span class="o">.</span><span class="n">covid19dh_citation</span><span class="p">)</span>
+<span class="gp">...</span>
 </pre></div>
 </div>
+<dl class="py method">
+<dt id="covsirphy.cleaning.dataloader.DataLoader.covid19dh">
+<code class="sig-name descname">covid19dh</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">basename</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">local_file</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">verbose</span><span class="o">=</span><span class="default_value">True</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/cleaning/dataloader.html#DataLoader.covid19dh"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#covsirphy.cleaning.dataloader.DataLoader.covid19dh" title="Permalink to this definition">¶</a></dt>
+<dd><p>Load the dataset of COVID-19 Dta Hub.
+<a class="reference external" href="https://covid19datahub.io/">https://covid19datahub.io/</a></p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>basename</strong> (<em>str</em><em> or </em><em>None</em>) – basename of the file to save the data</p></li>
+<li><p><strong>local_file</strong> (<em>str</em><em> or </em><em>None</em>) – if not None, load the data from this file</p></li>
+<li><p><strong>verbose</strong> (<em>bool</em>) – if True, detailed citation list will be shown when downloading</p></li>
+</ul>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<p>Regardless the value of &#64;local_file, the data will be save in the directory.
+If &#64;basename is None, the value of DataLoader.DH_BASENAME will be used.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>(pandas.DataFrame)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="covsirphy.cleaning.dataloader.DataLoader.covid19dh_citation">
+<em class="property">property </em><code class="sig-name descname">covid19dh_citation</code><a class="headerlink" href="#covsirphy.cleaning.dataloader.DataLoader.covid19dh_citation" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the citation list.</p>
+</dd></dl>
+
 <dl class="py method">
 <dt id="covsirphy.cleaning.dataloader.DataLoader.japan">
 <code class="sig-name descname">japan</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">basename</span><span class="o">=</span><span class="default_value">'covid_jpn_total.csv'</span></em>, <em class="sig-param"><span class="n">local_file</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/cleaning/dataloader.html#DataLoader.japan"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#covsirphy.cleaning.dataloader.DataLoader.japan" title="Permalink to this definition">¶</a></dt>
@@ -490,19 +522,21 @@ updating will be forced when updating is not prevented by the methods.</p>
 
 <dl class="py method">
 <dt id="covsirphy.cleaning.dataloader.DataLoader.jhu">
-<code class="sig-name descname">jhu</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">basename</span><span class="o">=</span><span class="default_value">'covid_19_data.csv'</span></em>, <em class="sig-param"><span class="n">local_file</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/cleaning/dataloader.html#DataLoader.jhu"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#covsirphy.cleaning.dataloader.DataLoader.jhu" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">jhu</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">basename</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">local_file</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">verbose</span><span class="o">=</span><span class="default_value">True</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/cleaning/dataloader.html#DataLoader.jhu"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#covsirphy.cleaning.dataloader.DataLoader.jhu" title="Permalink to this definition">¶</a></dt>
 <dd><p>Load JHU dataset (the number of cases).
 <a class="reference external" href="https://github.com/CSSEGISandData/COVID-19/">https://github.com/CSSEGISandData/COVID-19/</a></p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>basename</strong> (<em>str</em>) – basename of the file to save the data</p></li>
+<li><p><strong>basename</strong> (<em>str</em><em> or </em><em>None</em>) – basename of the file to save the data</p></li>
 <li><p><strong>local_file</strong> (<em>str</em><em> or </em><em>None</em>) – if not None, load the data from this file</p></li>
+<li><p><strong>verbose</strong> (<em>bool</em>) – if True, detailed citation list will be shown when downloading</p></li>
 </ul>
 </dd>
 </dl>
 <p class="rubric">Notes</p>
-<p>Regardless the value of &#64;local_file, the data will be save in the directory.</p>
+<p>Regardless the value of &#64;local_file, the data will be save in the directory.
+If &#64;basename is None, the value of DataLoader.DH_BASENAME will be used.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns</dt>
 <dd class="field-odd"><p>JHU dataset</p>
@@ -515,19 +549,21 @@ updating will be forced when updating is not prevented by the methods.</p>
 
 <dl class="py method">
 <dt id="covsirphy.cleaning.dataloader.DataLoader.oxcgrt">
-<code class="sig-name descname">oxcgrt</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">basename</span><span class="o">=</span><span class="default_value">'OxCGRT_latest.csv'</span></em>, <em class="sig-param"><span class="n">local_file</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/cleaning/dataloader.html#DataLoader.oxcgrt"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#covsirphy.cleaning.dataloader.DataLoader.oxcgrt" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">oxcgrt</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">basename</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">local_file</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">verbose</span><span class="o">=</span><span class="default_value">True</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/cleaning/dataloader.html#DataLoader.oxcgrt"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#covsirphy.cleaning.dataloader.DataLoader.oxcgrt" title="Permalink to this definition">¶</a></dt>
 <dd><p>Load OxCGRT dataset.
 <a class="reference external" href="https://github.com/OxCGRT/covid-policy-tracker">https://github.com/OxCGRT/covid-policy-tracker</a></p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>basename</strong> (<em>str</em>) – basename of the file to save the data</p></li>
+<li><p><strong>basename</strong> (<em>str</em><em> or </em><em>None</em>) – basename of the file to save the data</p></li>
 <li><p><strong>local_file</strong> (<em>str</em><em> or </em><em>None</em>) – if not None, load the data from this file</p></li>
+<li><p><strong>verbose</strong> (<em>bool</em>) – if True, detailed citation list will be shown when downloading</p></li>
 </ul>
 </dd>
 </dl>
 <p class="rubric">Notes</p>
-<p>Regardless the value of &#64;local_file, the data will be save in the directory.</p>
+<p>Regardless the value of &#64;local_file, the data will be save in the directory.
+If &#64;basename is None, the value of DataLoader.DH_BASENAME will be used.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns</dt>
 <dd class="field-odd"><p>OxCGRT dataset</p>
@@ -540,19 +576,21 @@ updating will be forced when updating is not prevented by the methods.</p>
 
 <dl class="py method">
 <dt id="covsirphy.cleaning.dataloader.DataLoader.population">
-<code class="sig-name descname">population</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">basename</span><span class="o">=</span><span class="default_value">'locations_population.csv'</span></em>, <em class="sig-param"><span class="n">local_file</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/cleaning/dataloader.html#DataLoader.population"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#covsirphy.cleaning.dataloader.DataLoader.population" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">population</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">basename</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">local_file</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">verbose</span><span class="o">=</span><span class="default_value">True</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/cleaning/dataloader.html#DataLoader.population"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#covsirphy.cleaning.dataloader.DataLoader.population" title="Permalink to this definition">¶</a></dt>
 <dd><p>Load Population dataset from THE WORLD BANK, Population, total.
 <a class="reference external" href="https://data.worldbank.org/indicator/SP.POP.TOTL">https://data.worldbank.org/indicator/SP.POP.TOTL</a></p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>basename</strong> (<em>str</em>) – basename of the file to save the data</p></li>
+<li><p><strong>basename</strong> (<em>str</em><em> or </em><em>None</em>) – basename of the file to save the data</p></li>
 <li><p><strong>local_file</strong> (<em>str</em><em> or </em><em>None</em>) – if not None, load the data from this file</p></li>
+<li><p><strong>verbose</strong> (<em>bool</em>) – if True, detailed citation list will be shown when downloading</p></li>
 </ul>
 </dd>
 </dl>
 <p class="rubric">Notes</p>
-<p>Regardless the value of &#64;local_file, the data will be save in the directory.</p>
+<p>Regardless the value of &#64;local_file, the data will be save in the directory.
+If &#64;basename is None, the value of DataLoader.DH_BASENAME will be used.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns</dt>
 <dd class="field-odd"><p>Population dataset</p>
@@ -706,18 +744,23 @@ This method overwrite super().cleaning() method.</p>
 <dd><p>Bases: <a class="reference internal" href="#covsirphy.cleaning.cbase.CleaningBase" title="covsirphy.cleaning.cbase.CleaningBase"><code class="xref py py-class docutils literal notranslate"><span class="pre">covsirphy.cleaning.cbase.CleaningBase</span></code></a></p>
 <p>Data cleaning of OxCGRT dataset.</p>
 <dl class="py attribute">
-<dt id="covsirphy.cleaning.oxcgrt.OxCGRTData.COL_DICT">
-<code class="sig-name descname">COL_DICT</code><em class="property"> = {'ContainmentHealthIndexForDisplay': 'Containment and health index', 'EconomicSupportIndexForDisplay': 'Economic support index', 'GovernmentResponseIndexForDisplay': 'Government response index', 'StringencyIndexForDisplay': 'Stringency index'}</em><a class="headerlink" href="#covsirphy.cleaning.oxcgrt.OxCGRTData.COL_DICT" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
 <dt id="covsirphy.cleaning.oxcgrt.OxCGRTData.OXCGRT_COLS">
-<code class="sig-name descname">OXCGRT_COLS</code><em class="property"> = ['Date', 'Country', 'ISO3', 'Government response index', 'Containment and health index', 'Stringency index', 'Economic support index']</em><a class="headerlink" href="#covsirphy.cleaning.oxcgrt.OxCGRTData.OXCGRT_COLS" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">OXCGRT_COLS</code><em class="property"> = ['Date', 'Country', 'ISO3', 'School_closing', 'Workplace_closing', 'Cancel_events', 'Gatherings_restrictions', 'Transport_closing', 'Stay_home_restrictions', 'Internal_movement_restrictions', 'International_movement_restrictions', 'Information_campaigns', 'Testing_policy', 'Contact_tracing', 'Stringency_index']</em><a class="headerlink" href="#covsirphy.cleaning.oxcgrt.OxCGRTData.OXCGRT_COLS" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="py attribute">
 <dt id="covsirphy.cleaning.oxcgrt.OxCGRTData.OXCGRT_COLS_WITHOUT_COUNTRY">
-<code class="sig-name descname">OXCGRT_COLS_WITHOUT_COUNTRY</code><em class="property"> = ['Date', 'Government response index', 'Containment and health index', 'Stringency index', 'Economic support index']</em><a class="headerlink" href="#covsirphy.cleaning.oxcgrt.OxCGRTData.OXCGRT_COLS_WITHOUT_COUNTRY" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">OXCGRT_COLS_WITHOUT_COUNTRY</code><em class="property"> = ['Date', 'School_closing', 'Workplace_closing', 'Cancel_events', 'Gatherings_restrictions', 'Transport_closing', 'Stay_home_restrictions', 'Internal_movement_restrictions', 'International_movement_restrictions', 'Information_campaigns', 'Testing_policy', 'Contact_tracing', 'Stringency_index']</em><a class="headerlink" href="#covsirphy.cleaning.oxcgrt.OxCGRTData.OXCGRT_COLS_WITHOUT_COUNTRY" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="covsirphy.cleaning.oxcgrt.OxCGRTData.OXCGRT_COL_DICT">
+<code class="sig-name descname">OXCGRT_COL_DICT</code><em class="property"> = {'cancel_events': 'Cancel_events', 'contact_tracing': 'Contact_tracing', 'gatherings_restrictions': 'Gatherings_restrictions', 'information_campaigns': 'Information_campaigns', 'internal_movement_restrictions': 'Internal_movement_restrictions', 'international_movement_restrictions': 'International_movement_restrictions', 'school_closing': 'School_closing', 'stay_home_restrictions': 'Stay_home_restrictions', 'stringency_index': 'Stringency_index', 'testing_policy': 'Testing_policy', 'transport_closing': 'Transport_closing', 'workplace_closing': 'Workplace_closing'}</em><a class="headerlink" href="#covsirphy.cleaning.oxcgrt.OxCGRTData.OXCGRT_COL_DICT" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="covsirphy.cleaning.oxcgrt.OxCGRTData.OXCGRT_VARIABLES">
+<code class="sig-name descname">OXCGRT_VARIABLES</code><em class="property"> = ['school_closing', 'workplace_closing', 'cancel_events', 'gatherings_restrictions', 'transport_closing', 'stay_home_restrictions', 'internal_movement_restrictions', 'international_movement_restrictions', 'information_campaigns', 'testing_policy', 'contact_tracing', 'stringency_index']</em><a class="headerlink" href="#covsirphy.cleaning.oxcgrt.OxCGRTData.OXCGRT_VARIABLES" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="py method">

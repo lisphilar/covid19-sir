@@ -84,7 +84,7 @@
             
               <p class="caption"><span class="caption-text">Contents:</span></p>
 <ul class="current">
-<li class="toctree-l1"><a class="reference internal" href="README.html">CovsirPhy: COVID-19 data with SIR model</a></li>
+<li class="toctree-l1"><a class="reference internal" href="README.html">CovsirPhy: COVID-19 with SIR-derived ODE models</a></li>
 <li class="toctree-l1 current"><a class="reference internal" href="covsirphy.html">covsirphy package</a><ul class="current">
 <li class="toctree-l2 current"><a class="reference internal" href="covsirphy.html#subpackages">Subpackages</a><ul class="current">
 <li class="toctree-l3 current"><a class="current reference internal" href="#">covsirphy.analysis package</a><ul>
@@ -338,7 +338,7 @@
 <li><p><strong>jhu_data</strong> (<a class="reference internal" href="covsirphy.html#covsirphy.JHUData" title="covsirphy.JHUData"><em>covsirphy.JHUData</em></a>) – object of records</p></li>
 <li><p><strong>population_data</strong> (<a class="reference internal" href="covsirphy.html#covsirphy.PopulationData" title="covsirphy.PopulationData"><em>covsirphy.PopulationData</em></a>) – PopulationData object</p></li>
 <li><p><strong>country</strong> (<em>str</em>) – country name</p></li>
-<li><p><strong>province</strong> (<em>str</em>) – province name</p></li>
+<li><p><strong>province</strong> (<em>str</em><em> or </em><em>None</em>) – province name</p></li>
 </ul>
 </dd>
 </dl>
@@ -362,7 +362,7 @@ The start date is the next date of the last registered phase.</p>
 <blockquote>
 <div><ul>
 <li><p>if model is not the same, None</p></li>
-<li><p>tau is fixed as the last phase’s value or 1440</p></li>
+<li><p>tau is fixed as the last phase’s value</p></li>
 </ul>
 </div></blockquote>
 </p></li>
@@ -437,20 +437,25 @@ The start date is the next date of the last registered phase.</p>
 
 <dl class="py method">
 <dt id="covsirphy.analysis.scenario.Scenario.estimate">
-<code class="sig-name descname">estimate</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">model</span></em>, <em class="sig-param"><span class="n">series_list</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">phases</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/analysis/scenario.html#Scenario.estimate"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#covsirphy.analysis.scenario.Scenario.estimate" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">estimate</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">model</span></em>, <em class="sig-param"><span class="n">name</span><span class="o">=</span><span class="default_value">'Main'</span></em>, <em class="sig-param"><span class="n">phases</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">n_jobs</span><span class="o">=</span><span class="default_value">- 1</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/analysis/scenario.html#Scenario.estimate"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#covsirphy.analysis.scenario.Scenario.estimate" title="Permalink to this definition">¶</a></dt>
 <dd><p>Estimate the parameters of the model using the records.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>series_list</strong> (<em>list</em><em>[</em><em>str</em><em>]</em>) – list of phase series name
-- if None, all phase series will be used</p></li>
-<li><p><strong>phases</strong> (<em>list</em><em>[</em><em>str</em><em>]</em>) – list of phase names, like 1st, 2nd…
-- if None, all past phase will be used</p></li>
 <li><p><strong>model</strong> (<a class="reference internal" href="covsirphy.html#covsirphy.ModelBase" title="covsirphy.ModelBase"><em>covsirphy.ModelBase</em></a>) – ODE model</p></li>
+<li><p><strong>name</strong> (<em>str</em>) – phase series name</p></li>
+<li><p><strong>phases</strong> (<em>list</em><em>[</em><em>str</em><em>]</em>) – list of phase names, like 1st, 2nd…</p></li>
+<li><p><strong>n_jobs</strong> (<em>int</em>) – the number of parallel jobs or -1 (CPU count)</p></li>
 <li><p><strong>kwargs</strong> – keyword arguments of model parameters and covsirphy.Estimator.run()</p></li>
 </ul>
 </dd>
 </dl>
+<p class="rubric">Notes</p>
+<ul class="simple">
+<li><p>If ‘Main’ was used as &#64;name, main PhaseSeries will be used.</p></li>
+<li><p>If &#64;name phase was not registered, new PhaseSeries will be created.</p></li>
+<li><p>If &#64;phases is None, all past phase will be used.</p></li>
+</ul>
 </dd></dl>
 
 <dl class="py method">
@@ -518,8 +523,8 @@ The start date is the next date of the last registered phase.</p>
 <li><p><strong>targets</strong> (<em>list</em><em>[</em><em>str</em><em>]</em><em>/str</em>) – parameters to show (Rt etc.)</p></li>
 <li><p><strong>name</strong> (<em>str</em>) – phase series name</p></li>
 <li><p><strong>divide_by_first</strong> (<em>bool</em>) – if True, divide the values by 1st phase’s values</p></li>
-<li><p><strong>show_box_plot</strong> (<em>bool</em>) – if True, box plot. if False, line plot.</p></li>
-<li><p><strong>show_figure</strong> (<em>bool</em>) – If True, show the result as a figure.</p></li>
+<li><p><strong>show_box_plot</strong> (<em>bool</em>) – if True, box plot. if False, line plot</p></li>
+<li><p><strong>show_figure</strong> (<em>bool</em>) – If True, show the result as a figure</p></li>
 <li><p><strong>filename</strong> (<em>str</em>) – filename of the figure, or None (show figure)</p></li>
 <li><p><strong>kwargs</strong> – keword arguments of pd.DataFrame.plot or line_plot()</p></li>
 </ul>
@@ -548,7 +553,27 @@ The start date is the next date of the last registered phase.</p>
 <li><p><strong>filename</strong> (<em>str</em>) – filename of the figure, or None (show figure)</p></li>
 </ul>
 </dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><dl class="simple">
+<dt>(pandas.DataFrame)</dt><dd><dl class="simple">
+<dt>Index:</dt><dd><p>reset index</p>
+</dd>
+<dt>Columns:</dt><dd><ul class="simple">
+<li><p>Date (pd.TimeStamp): Observation date</p></li>
+<li><p>Confirmed (int): the number of confirmed cases</p></li>
+<li><p>Infected (int): the number of currently infected cases</p></li>
+<li><p>Fatal (int): the number of fatal cases</p></li>
+<li><p>Recovered (int): the number of recovered cases (&gt; 0)</p></li>
+</ul>
+</dd>
 </dl>
+</dd>
+</dl>
+</p>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<p>Records with Recovered &gt; 0 will be selected.</p>
 </dd></dl>
 
 <dl class="py method">
@@ -620,22 +645,14 @@ The start date is the next date of the last registered phase.</p>
 
 <dl class="py method">
 <dt id="covsirphy.analysis.scenario.Scenario.trend">
-<code class="sig-name descname">trend</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">n_points</span><span class="o">=</span><span class="default_value">0</span></em>, <em class="sig-param"><span class="n">set_phases</span><span class="o">=</span><span class="default_value">True</span></em>, <em class="sig-param"><span class="n">include_init_phase</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">show_figure</span><span class="o">=</span><span class="default_value">True</span></em>, <em class="sig-param"><span class="n">filename</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/analysis/scenario.html#Scenario.trend"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#covsirphy.analysis.scenario.Scenario.trend" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">trend</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">set_phases</span><span class="o">=</span><span class="default_value">True</span></em>, <em class="sig-param"><span class="n">include_init_phase</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">show_figure</span><span class="o">=</span><span class="default_value">True</span></em>, <em class="sig-param"><span class="n">filename</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/analysis/scenario.html#Scenario.trend"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#covsirphy.analysis.scenario.Scenario.trend" title="Permalink to this definition">¶</a></dt>
 <dd><p>Perform S-R trend analysis and set phases.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>n_points</strong> (<em>int</em>) – the number of change points</p></li>
-<li><p><strong>set_phases</strong> (<em>bool</em>) – <ul>
-<li><p>if True and n_points is not 0, set phases automatically</p></li>
-<li><p>if &#64;include_init_phase is False, initial phase will not be used</p></li>
-</ul>
-</p></li>
+<li><p><strong>set_phases</strong> (<em>bool</em>) – if True, set phases automatically</p></li>
 <li><p><strong>include_init_phase</strong> (<em>bool</em>) – whether use initial phase or not</p></li>
-<li><p><strong>show_figure</strong> (<em>bool</em>) – <ul>
-<li><p>if True, show the records as a line-plot.</p></li>
-</ul>
-</p></li>
+<li><p><strong>show_figure</strong> (<em>bool</em>) – if True, show the result as a figure</p></li>
 <li><p><strong>filename</strong> (<em>str</em>) – filename of the figure, or None (show figure)</p></li>
 <li><p><strong>kwargs</strong> – the other keyword arguments of ChangeFinder().run()</p></li>
 </ul>
@@ -644,6 +661,8 @@ The start date is the next date of the last registered phase.</p>
 <dd class="field-even"><p>None</p>
 </dd>
 </dl>
+<p class="rubric">Notes</p>
+<p>If &#64;set_phase is True <a class="reference external" href="mailto:and&#37;&#52;&#48;include_init_phase">and<span>&#64;</span>include_init_phase</a> is False, initial phase will not be included.</p>
 </dd></dl>
 
 </dd></dl>
@@ -795,45 +814,6 @@ The start date is the next date of the last registered phase.</p>
 <em class="property">class </em><code class="sig-prename descclassname">covsirphy.analysis.sr_change.</code><code class="sig-name descname">ChangeFinder</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">clean_df</span></em>, <em class="sig-param"><span class="n">population</span></em>, <em class="sig-param"><span class="n">country</span></em>, <em class="sig-param"><span class="n">province</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">population_change_dict</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/analysis/sr_change.html#ChangeFinder"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#covsirphy.analysis.sr_change.ChangeFinder" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="covsirphy.cleaning.html#covsirphy.cleaning.word.Word" title="covsirphy.cleaning.word.Word"><code class="xref py py-class docutils literal notranslate"><span class="pre">covsirphy.cleaning.word.Word</span></code></a></p>
 <p>Find change points of S-R trend.</p>
-<dl class="py method">
-<dt id="covsirphy.analysis.sr_change.ChangeFinder.add_trial">
-<code class="sig-name descname">add_trial</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">n_trials_iteration</span><span class="o">=</span><span class="default_value">10</span></em>, <em class="sig-param"><span class="n">n_jobs</span><span class="o">=</span><span class="default_value">- 1</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/analysis/sr_change.html#ChangeFinder.add_trial"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#covsirphy.analysis.sr_change.ChangeFinder.add_trial" title="Permalink to this definition">¶</a></dt>
-<dd><p>Run trial.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>n_trials_iteration</strong> (<em>int</em>) – the number of trials in one iteration</p></li>
-<li><p><strong>n_jobs</strong> (<em>int</em>) – the number of parallel jobs or -1 (CPU count)</p></li>
-</ul>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt id="covsirphy.analysis.sr_change.ChangeFinder.error_f">
-<code class="sig-name descname">error_f</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">start_dates</span></em>, <em class="sig-param"><span class="n">end_dates</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/analysis/sr_change.html#ChangeFinder.error_f"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#covsirphy.analysis.sr_change.ChangeFinder.error_f" title="Permalink to this definition">¶</a></dt>
-<dd><p>Definition of error score to minimize in the study.
-This is weighted average of RMSLE scores.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>start_dates</strong> (<em>list</em><em>[</em><em>str</em><em>]</em>) – list of start date of phases (candidates)</p></li>
-<li><p><strong>end_dates</strong> (<em>list</em><em>[</em><em>str</em><em>]</em>) – list of end date of phases (candidates)</p></li>
-</ul>
-</dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p>score of the error function to minimize</p>
-</dd>
-<dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>(float)</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt id="covsirphy.analysis.sr_change.ChangeFinder.get_dates">
-<code class="sig-name descname">get_dates</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">clean_df</span></em>, <em class="sig-param"><span class="n">population</span></em>, <em class="sig-param"><span class="n">country</span></em>, <em class="sig-param"><span class="n">province</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/analysis/sr_change.html#ChangeFinder.get_dates"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#covsirphy.analysis.sr_change.ChangeFinder.get_dates" title="Permalink to this definition">¶</a></dt>
-<dd><p>Get dates from the dataset.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
@@ -856,6 +836,39 @@ This is weighted average of RMSLE scores.</p>
 <li><p><strong>population</strong> (<em>int</em>) – initial value of total population in the place</p></li>
 <li><p><strong>country</strong> (<em>str</em>) – country name</p></li>
 <li><p><strong>province</strong> (<em>str</em>) – province name</p></li>
+<li><p><strong>population_change_dict</strong> (<em>dict</em>) – dictionary of total population
+- key (str): start date of population change
+- value (int or None): total population</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py method">
+<dt id="covsirphy.analysis.sr_change.ChangeFinder.get_dates">
+<code class="sig-name descname">get_dates</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">clean_df</span></em>, <em class="sig-param"><span class="n">population</span></em>, <em class="sig-param"><span class="n">country</span></em>, <em class="sig-param"><span class="n">province</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/analysis/sr_change.html#ChangeFinder.get_dates"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#covsirphy.analysis.sr_change.ChangeFinder.get_dates" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get dates from the dataset.
+:param clean_df: cleaned data</p>
+<blockquote>
+<div><dl class="simple">
+<dt>Index:</dt><dd><p>reset index</p>
+</dd>
+<dt>Columns:</dt><dd><ul class="simple">
+<li><p>Date (pd.TimeStamp): Observation date</p></li>
+<li><p>Country (str): country/region name</p></li>
+<li><p>Province (str): province/prefecture/sstate name</p></li>
+<li><p>Confirmed (int): the number of confirmed cases</p></li>
+<li><p>Infected (int): the number of currently infected cases</p></li>
+<li><p>Fatal (int): the number of fatal cases</p></li>
+<li><p>Recovered (int): the number of recovered cases</p></li>
+</ul>
+</dd>
+</dl>
+</div></blockquote>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>population</strong> (<em>int</em>) – initial value of total population in the place</p></li>
+<li><p><strong>country</strong> (<em>str</em>) – country name</p></li>
+<li><p><strong>province</strong> (<em>str</em>) – province name</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
@@ -868,64 +881,12 @@ This is weighted average of RMSLE scores.</p>
 </dd></dl>
 
 <dl class="py method">
-<dt id="covsirphy.analysis.sr_change.ChangeFinder.objective">
-<code class="sig-name descname">objective</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">trial</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/analysis/sr_change.html#ChangeFinder.objective"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#covsirphy.analysis.sr_change.ChangeFinder.objective" title="Permalink to this definition">¶</a></dt>
-<dd><p>Objective function of Optuna study.
-This defines the parameter values using Optuna.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>trial</strong> (<em>optuna.trial</em>) – a trial of the study</p>
-</dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p>score of the error function to minimize</p>
-</dd>
-<dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>(float)</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt id="covsirphy.analysis.sr_change.ChangeFinder.phase_range">
-<code class="sig-name descname">phase_range</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">change_dates</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/analysis/sr_change.html#ChangeFinder.phase_range"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#covsirphy.analysis.sr_change.ChangeFinder.phase_range" title="Permalink to this definition">¶</a></dt>
-<dd><p>Return the start date and end date of the phases.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>change_dates</strong> (<em>list</em><em>[</em><em>str</em><em>]</em>) – list of change points, like 22Jan2020</p>
-</dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p><dl class="simple">
-<dt>(tuple)</dt><dd><p>list[str]: list of start dates
-list[str]: list of end dates</p>
-</dd>
-</dl>
-</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
 <dt id="covsirphy.analysis.sr_change.ChangeFinder.run">
-<code class="sig-name descname">run</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">n_points</span></em>, <em class="sig-param"><span class="n">min_duration</span><span class="o">=</span><span class="default_value">7</span></em>, <em class="sig-param"><span class="n">allowance</span><span class="o">=</span><span class="default_value">3</span></em>, <em class="sig-param"><span class="n">timeout</span><span class="o">=</span><span class="default_value">60</span></em>, <em class="sig-param"><span class="n">n_trials_iteration</span><span class="o">=</span><span class="default_value">10</span></em>, <em class="sig-param"><span class="n">n_jobs</span><span class="o">=</span><span class="default_value">- 1</span></em>, <em class="sig-param"><span class="n">seed</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/analysis/sr_change.html#ChangeFinder.run"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#covsirphy.analysis.sr_change.ChangeFinder.run" title="Permalink to this definition">¶</a></dt>
-<dd><p>Run optimization.</p>
+<code class="sig-name descname">run</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/analysis/sr_change.html#ChangeFinder.run"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#covsirphy.analysis.sr_change.ChangeFinder.run" title="Permalink to this definition">¶</a></dt>
+<dd><p>Run optimization and find change points.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>n_points</strong> (<em>int</em>) – the number of change points</p></li>
-<li><p><strong>min_duration</strong> (<em>int</em>) – minimum duration of one phase [days]
-- must be over 2</p></li>
-<li><p><strong>allowance</strong> (<em>int</em>) – allowance of change points [days]
-- if the estimated change points was equal to previous iteration
-with this allowance, stop running.</p></li>
-<li><p><strong>timeout</strong> (<em>int</em>) – time-out of run</p></li>
-<li><p><strong>n_trials_iteration</strong> (<em>int</em>) – the number of trials in one iteration</p></li>
-<li><p><strong>n_jobs</strong> (<em>int</em>) – the number of parallel jobs or -1 (CPU count)</p></li>
-<li><p><strong>seed</strong> (<em>int</em><em> or </em><em>None</em>) – random seed of hyperparameter optimization
-- this will effective when &#64;n_jobs is 1</p></li>
-</ul>
-</dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p>self</p>
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>self</p>
 </dd>
 </dl>
 </dd></dl>
@@ -935,13 +896,8 @@ with this allowance, stop running.</p></li>
 <code class="sig-name descname">show</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">show_figure</span><span class="o">=</span><span class="default_value">True</span></em>, <em class="sig-param"><span class="n">filename</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/analysis/sr_change.html#ChangeFinder.show"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#covsirphy.analysis.sr_change.ChangeFinder.show" title="Permalink to this definition">¶</a></dt>
 <dd><p>show the result as a figure and return a dictionary of phases.</p>
 <p>Args:
-&#64;show_figure (bool):</p>
-<blockquote>
-<div><ul class="simple">
-<li><p>if True, show the result as a figure.</p></li>
-</ul>
-</div></blockquote>
-<p>&#64;filename (str): filename of the figure, or None (show figure)</p>
+&#64;show_figure (bool): if True, show the result as a figure.
+&#64;filename (str): filename of the figure, or None (display figure)</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns</dt>
 <dd class="field-odd"><p>(covsirphy.PhaseSeries)</p>
