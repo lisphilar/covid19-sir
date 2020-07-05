@@ -63,8 +63,8 @@ class SRData(PhaseData):
                 Index:
                     Date (pd.TimeStamp): Observation date
                 Columns:
-                    - Recovered: The number of recovered cases
-                    - Susceptible_actual: Actual values of Susceptible (> 0)
+                    - Recovered (int): The number of recovered cases
+                    - Susceptible_actual (int): Actual values of Susceptible (> 0)
         """
         df = self.all_df.copy()
         series = df.index.copy()

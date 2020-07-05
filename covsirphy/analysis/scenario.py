@@ -216,37 +216,42 @@ class Scenario(Word):
             raise KeyError(f"@name {name} has not been registered.")
         return series.summary()
 
-    def trend(self, n_points=0,
-              set_phases=True, include_init_phase=False,
+    def trend(self, set_phases=True, include_init_phase=False,
               show_figure=True, filename=None, **kwargs):
         """
         Perform S-R trend analysis and set phases.
 
         Args:
-            n_points (int): the number of change points
-            set_phases (bool):
-                - if True and n_points is not 0, set phases automatically
-                - if @include_init_phase is False, initial phase will not be used
+            set_phases (bool): if True, set phases automatically
             include_init_phase (bool): whether use initial phase or not
-            show_figure (bool):
-                - if True, show the records as a line-plot.
+            show_figure (bool): if True, show the records as a line-plot.
             filename (str): filename of the figure, or None (show figure)
             kwargs: the other keyword arguments of ChangeFinder().run()
 
         Returns:
             None
+
+        Notes:
+            If @set_phase is True and@include_init_phase is False, initial phase will not be included.
         """
         finder = ChangeFinder(
             self.clean_df, self.population,
             country=self.country, province=self.province
         )
-        finder.run(n_points=n_points, **kwargs)
+        if "n_points" in kwargs.keys():
+            raise ValueError(
+                "@n_points argument is un-necessary"
+                " because the number of change points will be automatically determined."
+            )
+        finder.run(**kwargs)
         phase_series = finder.show(show_figure=show_figure, filename=filename)
-        if n_points != 0 and set_phases:
-            for name in self.series_dict.keys():
-                self.series_dict[name] = phase_series
-                if not include_init_phase:
-                    self.series_dict[name].delete("0th")
+        if not set_phases:
+            return None
+        if not include_init_phase:
+            phase_series.delete("0th")
+        self.series_dict = {
+            name: copy.deepcopy(phase_series) for name in self.series_dict.keys()
+        }
 
     def _estimate(self, model, phase, name="Main", **kwargs):
         """
