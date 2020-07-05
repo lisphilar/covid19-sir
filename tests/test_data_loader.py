@@ -18,7 +18,7 @@ class TestDataLoader(object):
         assert set(df.columns) == set(Word.COLUMNS)
 
     def test_jhu_local_file(self, data_loader):
-        local_path = Path("input") / "covid_19_data.csv"
+        local_path = Path("input") / "covid19dh.csv"
         data_loader.jhu(local_file=local_path)
         local_file = str(local_path)
         data_loader.jhu(local_file=local_file)
@@ -44,7 +44,7 @@ class TestDataLoader(object):
 
     def test_japan_cases_local_file_unexpected(self):
         data_loader = DataLoader("input")
-        local_path = Path("input") / "covid_19_data.csv"
+        local_path = Path("input") / "covid19dh.csv"
         with pytest.raises(Exception):
             data_loader.japan(local_file=local_path)
 
@@ -75,7 +75,7 @@ class TestDataLoader(object):
         population_data.update(10_000, "Example")
 
     def test_population_local_file(self, data_loader):
-        local_path = Path("input") / "locations_population.csv"
+        local_path = Path("input") / "covid19dh.csv"
         data_loader.population(local_file=local_path)
         local_file = str(local_path)
         data_loader.population(local_file=local_file)
@@ -109,7 +109,7 @@ class TestDataLoader(object):
         assert set(subset_df_iso.columns) == subset_cols_set
 
     def test_oxcgrt_local_file(self, data_loader):
-        local_path = Path("input") / "OxCGRT_latest.csv"
+        local_path = Path("input") / "covid19dh.csv"
         data_loader.oxcgrt(local_file=local_path)
         local_file = str(local_path)
         data_loader.oxcgrt(local_file=local_file)

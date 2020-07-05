@@ -9,18 +9,27 @@ class OxCGRTData(CleaningBase):
     """
     Data cleaning of OxCGRT dataset.
     """
-    COL_DICT = {
-        "GovernmentResponseIndexForDisplay": "Government response index",
-        "ContainmentHealthIndexForDisplay": "Containment and health index",
-        "StringencyIndexForDisplay": "Stringency index",
-        "EconomicSupportIndexForDisplay": "Economic support index"
-    }
+    OXCGRT_VARIABLES = [
+        "school_closing",
+        "workplace_closing",
+        "cancel_events",
+        "gatherings_restrictions",
+        "transport_closing",
+        "stay_home_restrictions",
+        "internal_movement_restrictions",
+        "international_movement_restrictions",
+        "information_campaigns",
+        "testing_policy",
+        "contact_tracing",
+        "stringency_index"
+    ]
+    OXCGRT_COL_DICT = {v: v.capitalize() for v in OXCGRT_VARIABLES}
     OXCGRT_COLS = [
         CleaningBase.DATE, CleaningBase.COUNTRY, CleaningBase.ISO3,
-        *list(COL_DICT.values())
+        *list(OXCGRT_COL_DICT.values())
     ]
     OXCGRT_COLS_WITHOUT_COUNTRY = [
-        CleaningBase.DATE, *list(COL_DICT.values())
+        CleaningBase.DATE, *list(OXCGRT_COL_DICT.values())
     ]
 
     def __init__(self, filename):
@@ -46,9 +55,12 @@ class OxCGRTData(CleaningBase):
         """
         df = self._raw.copy()
         # Rename the columns
-        df = df.rename(self.COL_DICT, axis=1)
+        df = df.rename(self.OXCGRT_COL_DICT, axis=1)
         df = df.rename(
-            {"CountryName": self.COUNTRY, "Date": self.DATE, "CountryCode": self.ISO3},
+            {
+                "CountryName": self.COUNTRY, "Date": self.DATE, "CountryCode": self.ISO3,
+                "Country/Region": self.COUNTRY, "ObservationDate": self.DATE,
+            },
             axis=1
         )
         # Confirm the expected columns are in raw data
@@ -56,9 +68,12 @@ class OxCGRTData(CleaningBase):
             df, name="the raw data", columns=self.OXCGRT_COLS
         )
         # Read date records
-        df[self.DATE] = pd.to_datetime(df[self.DATE], format="%Y%m%d")
+        try:
+            df[self.DATE] = pd.to_datetime(df[self.DATE], format="%Y%m%d")
+        except ValueError:
+            df[self.DATE] = pd.to_datetime(df[self.DATE], format="%Y-%m-%d")
         # Confirm float type
-        float_cols = list(self.COL_DICT.values())
+        float_cols = list(self.OXCGRT_COL_DICT.values())
         for col in float_cols:
             df[col] = pd.to_numeric(df[col], errors="coerce")
             df[col] = df[col].fillna(method="ffill")

@@ -40,7 +40,9 @@ class PopulationData(CleaningBase):
         df = df.rename(
             {
                 "Country.Region": self.COUNTRY,
+                "Country/Region": self.COUNTRY,
                 "Province.State": self.PROVINCE,
+                "Province/State": self.PROVINCE,
                 "Population": self.N
             },
             axis=1

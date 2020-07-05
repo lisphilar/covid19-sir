@@ -17,7 +17,9 @@ class CleaningBase(Word):
     """
 
     def __init__(self, filename):
-        self._raw = dd.read_csv(filename).compute()
+        self._raw = dd.read_csv(
+            filename, dtype={"Province/State": "object"}
+        ).compute()
         self._cleaned_df = self.cleaning()
         self._citation = str()
 
