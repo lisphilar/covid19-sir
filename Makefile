@@ -9,7 +9,7 @@ install:
 
 
 test:
-	@pipenv run pytest -v --durations=0 --profile-svg
+	@pipenv run pytest -v --durations=0 --failed-first --profile-svg
 
 
 # https://github.com/sphinx-doc/sphinx/issues/3382
@@ -43,10 +43,6 @@ example:
 	@# Long ODE simulation with SIR-F model
 	@echo "<Long ODE simulation with SIR-F model>"
 	@pipenv run python -m example.long_simulation
-
-	@# Reproductive hyperparameter estimation
-	@echo "<Reproductive hyperparameter estimation>"
-	@pipenv run python -m example.reproductive_optimization
 
 	@# Scenario analysis
 	@echo "<Scenario analysis>"

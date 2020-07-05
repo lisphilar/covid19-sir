@@ -3,6 +3,7 @@
 
 from pathlib import Path
 from datetime import datetime, timezone, timedelta
+import covid19dh
 from dask import dataframe as dd
 import pandas as pd
 import requests
@@ -51,6 +52,8 @@ class DataLoader(Word):
         ...
         >>> print(type(oxcgrt_data.cleaned()))
         <class 'pandas.core.frame.DataFrame'>
+        >>> print(data_loader.covid19dh_citation)
+        ...
     """
 
     def __init__(self, directory, update_interval=12):
@@ -67,11 +70,10 @@ class DataLoader(Word):
         # JHU dataset: the number of cases
         self.jhu_url = "https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master" \
             "/csse_covid_19_data/csse_covid_19_time_series"
-        self.jhu_citation = "COVID-19 Data Repository" \
-            " by the Center for Systems Science and Engineering (CSSE)" \
-            " at Johns Hopkins University (2020)," \
-            " GitHub repository," \
-            " https://github.com/CSSEGISandData/COVID-19"
+        self.jhu_citation = '(Secondary source)' \
+            ' Guidotti, E., Ardia, D., (2020), "COVID-19 Data Hub",' \
+            ' Working paper, doi: 10.13140/RG.2.2.11649.81763.' \
+            '\nWe can get Citation list of primary sources with DataLoader(...).covid19dh_citation'
         self.jhu_date_col = "ObservationDate"
         self.jhu_p_col = "Province/State"
         self.jhu_c_col = "Country/Region"
@@ -81,15 +83,16 @@ class DataLoader(Word):
             "https://github.com/lisphilar/covid19-sir/data/japan"
         # Population dataset: THE WORLD BANK
         self.population_url = "http://api.worldbank.org/v2/country/all/indicator/SP.POP.TOTL?"
-        self.population_citation = "The World Bank Group (2020), THE WORLD BANK, Population, total," \
-            " https://data.worldbank.org/indicator/SP.POP.TOTL," \
-            " licensed under CC BY-4.0."
+        self.population_citation = '(Secondary source)' \
+            ' Guidotti, E., Ardia, D., (2020), "COVID-19 Data Hub",' \
+            ' Working paper, doi: 10.13140/RG.2.2.11649.81763.' \
+            '\nWe can get Citation list of primary sources with DataLoader(...).covid19dh_citation'
         # OxCGRT dataset: Oxford Covid-19 Government Response Tracker
         self.oxcgrt_url = "https://raw.githubusercontent.com/OxCGRT/covid-policy-tracker/master/data"
-        self.oxcgrt_citation = "Thomas Hale, Sam Webster, Anna Petherick, Toby Phillips, and Beatriz Kira." \
-            " (2020). Oxford COVID-19 Government Response Tracker. Blavatnik School of Government," \
-            " https://github.com/OxCGRT/covid-policy-tracker," \
-            " licensed under CC BY-4.0"
+        self.oxcgrt_citation = '(Secondary source)' \
+            ' Guidotti, E., Ardia, D., (2020), "COVID-19 Data Hub",' \
+            ' Working paper, doi: 10.13140/RG.2.2.11649.81763.' \
+            '\nWe can get Citation list of primary sources with DataLoader(...).covid19dh_citation'
         # Dictionary of datasets
         self.dataset_dict = {
             "JHU": {
@@ -105,6 +108,9 @@ class DataLoader(Word):
                 "class": OxCGRTData, "url": self.oxcgrt_url, "citation": self.oxcgrt_citation
             },
         }
+        # COVID-19 Data Hub
+        self._covid19dh_citation = None
+        self._covid19dh_basename = "covid19dh.csv"
 
     @staticmethod
     def _get_raw(url, is_json=False):
@@ -232,7 +238,7 @@ class DataLoader(Word):
         data_instance.citation = citation
         return data_instance
 
-    def _needs_pull(self, filename, url):
+    def _needs_pull(self, filename, url=None):
         """
         Return whether we need to get the data from remote servers or not,
         comparing the last update of the files.
@@ -246,33 +252,39 @@ class DataLoader(Word):
 
         Notes:
             If the last updated date is unknown, returns True.
-            IF @self.update_interval hours have passed and the remote file was updated, return True.
+            If @self.update_interval hours have passed and the remote file was updated, return True.
+            If @url is None, the modified date of the remote server will not be referenced.
         """
         if filename is None or (not Path(filename).exists()):
             return True
         date_local = self._last_updated_local(filename)
         time_limit = date_local + timedelta(hours=self.update_interval)
         if datetime.now() > time_limit:
+            if url is None:
+                return True
             date_remote = self._last_updated_remote(url)
             if date_remote is None or date_remote > date_local:
                 return True
         return False
 
-    def jhu(self, basename="covid_19_data.csv", local_file=None):
+    def jhu(self, basename=None, local_file=None, verbose=True):
         """
         Load JHU dataset (the number of cases).
         https://github.com/CSSEGISandData/COVID-19/
 
         Args:
-            basename (str): basename of the file to save the data
+            basename (str or None): basename of the file to save the data
             local_file (str or None): if not None, load the data from this file
+            verbose (bool): if True, detailed citation list will be shown when downloading
 
         Notes:
             Regardless the value of @local_file, the data will be save in the directory.
+            If @basename is None, the value of DataLoader.DH_BASENAME will be used.
 
         Returns:
             (covsirphy.JHUData): JHU dataset
         """
+        basename = basename or self._covid19dh_basename
         filename = self._resolve_filename(basename)
         if local_file is not None:
             if Path(local_file).exists():
@@ -283,78 +295,11 @@ class DataLoader(Word):
         if not self._needs_pull(filename, self.jhu_url):
             return self._create_dataset("JHU", filename)
         # Retrieve and combine the raw data
-        df = self._jhu_get()
+        dh_file = self.dir_path / self._covid19dh_basename
+        df = self.covid19dh(local_file=dh_file, verbose=verbose)
         # Save the dataset and return dataset
         self._save(df, filename)
         return self._create_dataset("JHU", filename)
-
-    def _jhu_get(self):
-        """
-        Get the raw data of the variable from JHU repository.
-
-        Args:
-            variable (str): confirmed, deaths or recovered
-
-        Returns:
-            (pandas.DataFrame) : JHU data with all variables to use
-               Index:
-                    reset index
-                Columns:
-                    - SNo
-                    - Province/State
-                    - Country/Region
-                    - Updated
-                    - Confirmed
-                    - Deaths
-                    - Recovered
-        """
-        # Retrieve and combine the raw data
-        df = self._jhu_get_separately("confirmed")
-        deaths_df = self._jhu_get_separately("deaths")
-        recovered_df = self._jhu_get_separately("recovered")
-        df = pd.merge(df, deaths_df.loc[:, ["SNo", "Deaths"]], on="SNo")
-        df = pd.merge(df, recovered_df.loc[:, ["SNo", "Recovered"]], on="SNo")
-        # Columns will match that of Kaggle dataset
-        date_stamps = pd.to_datetime(df[self.jhu_date_col])
-        df[self.jhu_date_col] = date_stamps.dt.strftime("%m/%d/%Y")
-        df[self.jhu_p_col] = df[self.jhu_p_col].fillna(str())
-        updated_col = "Last Update"
-        df[updated_col] = date_stamps.dt.strftime("%m/%d/%Y %H:%M")
-        key_cols = [self.jhu_date_col, self.jhu_p_col, self.jhu_c_col]
-        df = df.loc[
-            :, ["SNo", *key_cols, updated_col, "Confirmed", "Deaths", "Recovered"]
-        ]
-        return df
-
-    def _jhu_get_separately(self, variable):
-        """
-        Get the raw data of the variable from JHU repository.
-
-        Args:
-            variable (str): confirmed, deaths or recovered
-
-        Returns:
-            (pandas.DataFrame): data of the variable
-                Index:
-                    reset index
-                Columns:
-                    - Province/State
-                    - Country/Region
-                    - @variable
-                    - SNo
-        """
-        # Retrieve the data
-        url = f"{self.jhu_url}/time_series_covid19_{variable}_global.csv"
-        df = self._get_raw(url)
-        # Arrange the data
-        df = df.drop(["Lat", "Long"], axis=1)
-        df = df.set_index([self.jhu_c_col, self.jhu_p_col]).stack()
-        df = df.reset_index()
-        df.columns = [
-            *df.columns.tolist()[:2], self.jhu_date_col, variable.capitalize()
-        ]
-        df["SNo"] = df.index + 1
-        return df
 
     def japan(self, basename="covid_jpn_total.csv", local_file=None):
         """
@@ -428,21 +373,24 @@ class DataLoader(Word):
         )
         return country_data
 
-    def population(self, basename="locations_population.csv", local_file=None):
+    def population(self, basename=None, local_file=None, verbose=True):
         """
         Load Population dataset from THE WORLD BANK, Population, total.
         https://data.worldbank.org/indicator/SP.POP.TOTL
 
         Args:
-            basename (str): basename of the file to save the data
+            basename (str or None): basename of the file to save the data
             local_file (str or None): if not None, load the data from this file
+            verbose (bool): if True, detailed citation list will be shown when downloading
 
         Notes:
             Regardless the value of @local_file, the data will be save in the directory.
+            If @basename is None, the value of DataLoader.DH_BASENAME will be used.
 
         Returns:
             (covsirphy.Population): Population dataset
         """
+        basename = basename or self._covid19dh_basename
         filename = self._resolve_filename(basename)
         if local_file is not None:
             if Path(local_file).exists():
@@ -454,61 +402,30 @@ class DataLoader(Word):
         if not self._needs_pull(filename, self.population_url):
             return self._create_dataset("Population", filename)
         # Retrieve the raw data
-        df = self._population_get()
+        dh_file = self.dir_path / self._covid19dh_basename
+        df = self.covid19dh(local_file=dh_file, verbose=verbose)
         # Save the dataset and return dataset
         self._save(df, filename)
         return self._create_dataset("Population", filename)
 
-    def _population_get(self):
-        """
-        Get the raw data using the following Web API.
-        http://api.worldbank.org/v2/country/all/indicator/SP.POP.TOTL?format=json&mrv=1&per_page=1000
-
-        Returns:
-            (pandas.DataFrame) : the raw data
-               Index:
-                    reset index
-                Columns:
-                    ISO3 (str): ISO3 code
-                    Province.State (str): "-"
-                    Country.Region (str): country name
-                    Population (int): population value
-                    Provenance (str): "https://data.worldbank.org/indicator/SP.POP.TOTL"
-        """
-        url = f"{self.population_url}format=json&mrv=1&per_page=1000"
-        df = self._get_raw(url, is_json=True)
-        # Change columns names
-        df = df.rename(
-            {
-                "countryiso3code": self.ISO3,
-                "country.value": "Country.Region",
-                "value": "Population"
-            },
-            axis=1
-        )
-        df["Province.State"] = "-"
-        df["Provenance"] = "https://data.worldbank.org/indicator/SP.POP.TOTL"
-        df = df.loc[~df["Population"].isna(), :].reset_index()
-        df = df.loc[
-            :, [self.ISO3, "Province.State", "Country.Region", "Population", "Provenance"]
-        ]
-        return df
-
-    def oxcgrt(self, basename="OxCGRT_latest.csv", local_file=None):
+    def oxcgrt(self, basename=None, local_file=None, verbose=True):
         """
         Load OxCGRT dataset.
         https://github.com/OxCGRT/covid-policy-tracker
 
         Args:
-            basename (str): basename of the file to save the data
+            basename (str or None): basename of the file to save the data
             local_file (str or None): if not None, load the data from this file
+            verbose (bool): if True, detailed citation list will be shown when downloading
 
         Notes:
             Regardless the value of @local_file, the data will be save in the directory.
+            If @basename is None, the value of DataLoader.DH_BASENAME will be used.
 
         Returns:
             (covsirphy.OxCGRTData): OxCGRT dataset
         """
+        basename = basename or self._covid19dh_basename
         filename = self._resolve_filename(basename)
         if local_file is not None:
             if Path(local_file).exists():
@@ -519,23 +436,145 @@ class DataLoader(Word):
         if not self._needs_pull(filename, self.oxcgrt_url):
             return self._create_dataset("OxCGRT", filename)
         # Retrieve the raw data
-        df = self._oxcgrt_get()
+        dh_file = self.dir_path / self._covid19dh_basename
+        df = self.covid19dh(local_file=dh_file, verbose=verbose)
         # Save the dataset and return dataset
         self._save(df, filename)
         return self._create_dataset("OxCGRT", filename)
 
-    def _oxcgrt_get(self):
+    def covid19dh(self, basename=None, local_file=None, verbose=True):
         """
-        Get the raw data from the following repository.
-        https://github.com/OxCGRT/covid-policy-tracker
+        Load the dataset of COVID-19 Dta Hub.
+        https://covid19datahub.io/
+
+        Args:
+            basename (str or None): basename of the file to save the data
+            local_file (str or None): if not None, load the data from this file
+            verbose (bool): if True, detailed citation list will be shown when downloading
+
+        Notes:
+            Regardless the value of @local_file, the data will be save in the directory.
+            If @basename is None, the value of DataLoader.DH_BASENAME will be used.
 
         Returns:
-            (pandas.DataFrame) : the raw data
-               Index:
-                    reset index
-                Columns:
-                    as-is the repository
+            (pandas.DataFrame)
         """
-        url = f"{self.oxcgrt_url}/OxCGRT_latest.csv"
-        df = self._get_raw(url)
+        basename = basename or self._covid19dh_basename
+        filename = self._resolve_filename(basename)
+        # Use local data
+        if local_file is not None and Path(local_file).exists():
+            df = dd.read_csv(
+                local_file, dtype={"Province/State": "object"}
+            ).compute()
+            self._save(df, filename)
+            return df
+        # Use the file saved in the directory
+        if Path(filename).exists() and not self._needs_pull(filename):
+            df = dd.read_csv(
+                filename, dtype={"Province/State": "object"}
+            ).compute()
+            return df
+        # Use the dataset of remote server
+        df = self._covid19dh_get(verbose=verbose)
+        self._save(df, filename)
         return df
+
+    def _covid19dh_get(self, verbose=True):
+        """
+        Retrieve datasets from COVID-19 Data Hub.
+        Level 1 (country) and level2 (province) will be used and combined to a dataframe.
+
+        Args:
+            verbose (bool): if True, detailed citation list will be shown when downloading
+        """
+        # Country level
+        if verbose:
+            print(
+                "Retrieving datasets from COVID-19 Data Hub: https://covid19datahub.io/")
+        c_df = covid19dh.covid19(country=None, level=1, verbose=False)
+        c_citations = covid19dh.cite(c_df)
+        # For some countries, province-level data is included
+        p_df = covid19dh.covid19(country=None, level=2, verbose=False)
+        p_citations = covid19dh.cite(p_df)
+        # Citation
+        citations = list(dict.fromkeys(c_citations + p_citations))
+        self._covid19dh_citation = "\n".join(citations)
+        # Change column names and select columns to use
+        # All columns: https://covid19datahub.io/articles/doc/data.html
+        col_dict = {
+            "date": "ObservationDate",
+            "confirmed": "Confirmed",
+            "recovered": "Recovered",
+            "deaths": "Deaths",
+            "population": "Population",
+            "iso_alpha_3": "ISO3",
+            "administrative_area_level_2": "Province/State",
+            "administrative_area_level_1": "Country/Region",
+        }
+        columns = list(col_dict.values()) + OxCGRTData.OXCGRT_VARIABLES
+        c_df = c_df.rename(col_dict, axis=1).loc[:, columns]
+        p_df = p_df.rename(col_dict, axis=1).loc[:, columns]
+        v_cols = ["Confirmed", "Recovered", "Deaths"]
+        c_col = "Country/Region"
+        date_col = "ObservationDate"
+        # Merge the datasets
+        c_series = c_df[c_col].unique()
+        p_series = p_df[c_col].unique()
+        dates = c_df[date_col].unique().tolist()
+        common_countries = list(set(c_series) & set(p_series))
+        c_dict = {
+            country: [
+                c_df.loc[
+                    (c_df[date_col] == date) & (c_df[c_col] == country), v_cols
+                ].values
+                for date in dates
+            ]
+            for country in common_countries
+        }
+        p_dict = {
+            country: [
+                p_df.loc[
+                    (p_df[date_col] == date) & (p_df[c_col] == country), v_cols
+                ].sum(axis=1).values
+                for date in dates
+            ]
+            for country in common_countries
+        }
+        df = c_df.copy()
+        for country in common_countries:
+            # Remove data from level 1 dataset
+            df = df.loc[df[c_col] != country, :]
+            # Add data of level 2 dataset
+            df = pd.concat(
+                [df, p_df.loc[p_df[c_col] == country, :]], axis=0, ignore_index=True
+            )
+            # Register the difference of level 1 data and total value of level 2 data
+            _df = c_df.loc[c_df[c_col] == country, :]
+            c_nest, p_nest = c_dict[country], p_dict[country]
+            for (date, c_list, p_list) in zip(dates, c_nest, p_nest):
+                for (i, (c, p)) in enumerate(zip(c_list, p_list)):
+                    diff = c - p
+                    _df.loc[_df[date_col] == date, v_cols[i]] = diff
+            df = pd.concat([df, _df], axis=0, ignore_index=True)
+        df = df.reset_index(drop=True)
+        if verbose:
+            print("\nDetailed citaition list:")
+            print(self._covid19dh_citation)
+            print("\n\n")
+        return df
+
+    @property
+    def covid19dh_citation(self):
+        """
+        Return the citation list.
+        """
+        if self._covid19dh_citation is None:
+            c_df = covid19dh.covid19(country=None, level=1, verbose=False)
+            c_citations = covid19dh.cite(c_df)
+            # For some countries, province-level data is included
+            p_df = covid19dh.covid19(country=None, level=2, verbose=False)
+            p_citations = covid19dh.cite(p_df)
+            # Citation
+            citations = list(dict.fromkeys(c_citations + p_citations))
+            self._covid19dh_citation = "\n".join(citations)
+        return self._covid19dh_citation

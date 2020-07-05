@@ -32,6 +32,19 @@ class SEWIRF(ModelBase):
     PRIORITIES = np.array([0, 10, 10, 2, 0, 0])
     # Variables that increases monotonically
     VARS_INCLEASE = [ModelBase.R, ModelBase.F]
+    # Example set of parameters and initial values
+    EXAMPLE = {
+        "step_n": 180,
+        "population": 1_000_000,
+        "param_dict": {
+            "theta": 0.002, "kappa": 0.005, "rho1": 0.2, "sigma": 0.075,
+            "rho2": 0.167, "rho3": 0.167,
+        },
+        "y0_dict": {
+            "Susceptible": 994_000, "Exposed": 3000, "Waiting": 0.002,
+            "Infected": 1000, "Recovered": 0, "Fatal": 0,
+        },
+    }
 
     def __init__(self, population, theta, kappa, rho1, rho2, rho3, sigma):
         """

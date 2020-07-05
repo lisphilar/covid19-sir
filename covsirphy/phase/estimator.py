@@ -85,26 +85,25 @@ class Estimator(Optimizer):
         # step_n will be defined in divide_minutes()
         self.step_n = None
 
-    def _run_trial(self, n_jobs, timeout_iteration):
+    def _run_trial(self, timeout_iteration):
         """
         Run trial.
 
         Args:
-            n_jobs (int): the number of parallel jobs or -1 (CPU count)
             timeout_iteration (int): time-out of one iteration
         """
         self.study.optimize(
             lambda x: self.objective(x),
-            n_jobs=n_jobs,
+            n_jobs=1,
             timeout=timeout_iteration
         )
 
     def run(self, timeout=60, reset_n_max=3,
             timeout_iteration=10, allowance=(0.8, 1.2),
-            n_jobs=-1, seed=None):
+            seed=0, stdout=True, **kwargs):
         """
         Run optimization.
-        If the result satisfied all conditions, optimization ends.
+        If the result satisfied the following conditions, optimization ends.
             - all values are not under than 0
             - values of monotonic increasing variables increases monotonically
             - predicted values are in the allowance when each actual value shows max value
@@ -114,35 +113,36 @@ class Estimator(Optimizer):
             reset_n_max (int): if study was reset @reset_n_max times, will not be reset anymore
             timeout_iteration (int): time-out of one iteration
             allowance (tuple(float, float)): the allowance of the predicted value
-            n_jobs (int): the number of parallel jobs or -1 (CPU count)
             seed (int or None): random seed of hyperparameter optimization
+            stdout (bool): whether show the status of progress or not
 
         Notes:
-            @seed will effective when @n_jobs is 1
+            @n_jobs was obsoleted because this is not effective for Optuna.
 
         Returns:
             None
         """
-        if seed is not None and n_jobs != 1:
-            raise ValueError(
-                "@seed must be None when @n_jobs is not equal to 1.")
+        if "n_jobs" in kwargs.keys():
+            raise KeyError("@n_jobs of Estimator.run() was obsoleted.")
         if self.study is None:
             self._init_study(seed=seed)
-        print("\tRunning optimization...")
+        if stdout:
+            print("\tRunning optimization...")
         stopwatch = StopWatch()
         reset_n = 0
         while True:
             # Perform optimization
-            self._run_trial(n_jobs=n_jobs, timeout_iteration=timeout_iteration)
+            self._run_trial(timeout_iteration=timeout_iteration)
             self.run_time = stopwatch.stop()
             self.total_trials = len(self.study.trials)
             # Time-out
             if self.run_time >= timeout:
                 break
-            print(
-                f"\r\tPerformed {self.total_trials} trials in {stopwatch.show()}.",
-                end=str()
-            )
+            if stdout:
+                print(
+                    f"\r\tPerformed {self.total_trials} trials in {stopwatch.show()}.",
+                    end=str()
+                )
             # Create a table to compare observed/estimated values
             tau = super().param()[self.TAU]
             train_df = self.divide_minutes(tau)
@@ -162,11 +162,12 @@ class Estimator(Optimizer):
             # Need additional trials when the values are not in allowance
             if self._is_in_allowance(comp_df, allowance):
                 break
-        stopwatch.stop()
-        print(
-            f"\r\tFinished {self.total_trials} trials in {stopwatch.show()}.\n",
-            end=str()
-        )
+        if stdout:
+            stopwatch.stop()
+            print(
+                f"\r\tFinished {self.total_trials} trials in {stopwatch.show()}.\n",
+                end=str()
+            )
         return None
 
     def _is_in_allowance(self, comp_df, allowance):
@@ -373,11 +374,12 @@ class Estimator(Optimizer):
         )
         return score
 
-    def accuracy(self, filename=None):
+    def accuracy(self, show_figure=True, filename=None):
         """
         Show the accuracy as a figure.
 
         Args:
+            show_figure (bool): if True, show the result as a figure
             filename (str): filename of the figure, or None (show figure)
         """
         tau = super().param()[self.TAU]
@@ -390,6 +392,7 @@ class Estimator(Optimizer):
         df = super().accuracy(
             train_df=train_df,
             variables=use_variables,
+            show_figure=show_figure,
             filename=filename
         )
         return df

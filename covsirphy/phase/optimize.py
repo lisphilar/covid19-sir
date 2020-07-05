@@ -303,7 +303,7 @@ class Optimizer(Word):
         plt.clf()
         return df
 
-    def accuracy(self, train_df, variables=None, filename=None):
+    def accuracy(self, train_df, variables=None, show_figure=True, filename=None):
         """
         Show the accuracy as a figure.
         This method can be overwritten in child class.
@@ -318,11 +318,14 @@ class Optimizer(Word):
                     - includes columns defined by self.y_list
 
             variables (list[str]): variables to compare or None (all variables)
+            show_figure (bool): if True, show the result as a figure
             filename (str): filename of the figure, or None (show figure)
         """
         # Create a table to compare observed/estimated values
         predicted_df = self.predict()
         df = self.compare(train_df, predicted_df)
+        if not show_figure:
+            return df
         # Prepare figure object
         val_len = len(variables) + 1
         fig, axes = plt.subplots(

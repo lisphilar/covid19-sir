@@ -3,7 +3,9 @@
 
 import copy
 from datetime import timedelta
+import functools
 from inspect import signature
+from multiprocessing import cpu_count, Pool
 import sys
 import matplotlib
 if not hasattr(sys, "ps1"):
@@ -18,6 +20,7 @@ from covsirphy.analysis.phase_series import PhaseSeries
 from covsirphy.analysis.simulator import ODESimulator
 from covsirphy.analysis.sr_change import ChangeFinder
 from covsirphy.util.error import deprecate
+from covsirphy.util.stopwatch import StopWatch
 
 
 class Scenario(Word):
@@ -28,7 +31,7 @@ class Scenario(Word):
         jhu_data (covsirphy.JHUData): object of records
         population_data (covsirphy.PopulationData): PopulationData object
         country (str): country name
-        province (str): province name
+        province (str or None): province name
     """
 
     def __init__(self, jhu_data, population_data, country, province=None):
@@ -82,6 +85,20 @@ class Scenario(Word):
         Args:
             show_figure (bool): if True, show the records as a line-plot.
             filename (str): filename of the figure, or None (show figure)
+
+        Returns:
+            (pandas.DataFrame)
+                Index:
+                    reset index
+                Columns:
+                    - Date (pd.TimeStamp): Observation date
+                    - Confirmed (int): the number of confirmed cases
+                    - Infected (int): the number of currently infected cases
+                    - Fatal (int): the number of fatal cases
+                    - Recovered (int): the number of recovered cases (> 0)
+
+        Notes:
+            Records with Recovered > 0 will be selected.
         """
         df = self.jhu_data.subset(self.country, province=self.province)
         if not show_figure:
@@ -111,7 +128,7 @@ class Scenario(Word):
             kwargs: keyword arguments of ODE model parameters
                 - un-included parameters will be the same as the last phase
                     - if model is not the same, None
-                    - tau is fixed as the last phase's value or 1440
+                    - tau is fixed as the last phase's value
 
         Notes:
             If the phases series has not been registered, new phase series will be created.
@@ -124,8 +141,7 @@ class Scenario(Word):
         if not isinstance(name, str):
             raise TypeError(
                 f"@name must be a string, but {type(name)} was applied.")
-        if name == "Main":
-            name = self.MAIN
+        name = self.MAIN if name == "Main" else name
         if name not in self.series_dict.keys():
             self.series_dict[name] = copy.deepcopy(self.series_dict[self.MAIN])
             self.series_dict[name].clear()
@@ -216,44 +232,49 @@ class Scenario(Word):
             raise KeyError(f"@name {name} has not been registered.")
         return series.summary()
 
-    def trend(self, n_points=0,
-              set_phases=True, include_init_phase=False,
+    def trend(self, set_phases=True, include_init_phase=False,
               show_figure=True, filename=None, **kwargs):
         """
         Perform S-R trend analysis and set phases.
 
         Args:
-            n_points (int): the number of change points
-            set_phases (bool):
-                - if True and n_points is not 0, set phases automatically
-                - if @include_init_phase is False, initial phase will not be used
+            set_phases (bool): if True, set phases automatically
             include_init_phase (bool): whether use initial phase or not
-            show_figure (bool):
-                - if True, show the records as a line-plot.
+            show_figure (bool): if True, show the result as a figure
             filename (str): filename of the figure, or None (show figure)
             kwargs: the other keyword arguments of ChangeFinder().run()
 
         Returns:
             None
+
+        Notes:
+            If @set_phase is True and@include_init_phase is False, initial phase will not be included.
         """
         finder = ChangeFinder(
             self.clean_df, self.population,
             country=self.country, province=self.province
         )
-        finder.run(n_points=n_points, **kwargs)
+        if "n_points" in kwargs.keys():
+            raise ValueError(
+                "@n_points argument is un-necessary"
+                " because the number of change points will be automatically determined."
+            )
+        finder.run(**kwargs)
         phase_series = finder.show(show_figure=show_figure, filename=filename)
-        if n_points != 0 and set_phases:
-            for name in self.series_dict.keys():
-                self.series_dict[name] = phase_series
-                if not include_init_phase:
-                    self.series_dict[name].delete("0th")
+        if not set_phases:
+            return None
+        if not include_init_phase:
+            phase_series.delete("0th")
+        self.series_dict = {
+            name: copy.deepcopy(phase_series) for name in self.series_dict.keys()
+        }
 
-    def _estimate(self, model, phase, name="Main", **kwargs):
+    def _estimate(self, model, phase=None, name="Main", **kwargs):
         """
         Estimate the parameters of the model using the records.
 
         Args:
-            phase (str): phase name, like 1st, 2nd...
+            phase (str or None): phase name, like 1st, 2nd...
             model (covsirphy.ModelBase): ODE model
             name (str): phase series name
             kwargs:
@@ -262,26 +283,27 @@ class Scenario(Word):
                 - keyword arguments of covsirphy.Estimator.run()
 
         Returns:
-            self
+            (tuple): arguments of self._update_self
+
+        Raises:
+            ValueError: if @phase is None
 
         Notes:
             If 'Main' was used as @name, main PhaseSeries will be used.
             If @name phase was not registered, new PhaseSeries will be created.
         """
+        # Phase name
+        if phase is None:
+            raise ValueError("Estimator._estimate(): @phase must not be None.")
         name = self.MAIN if name == "Main" else name
         if name not in self.series_dict.keys():
             self.series_dict[name] = copy.deepcopy(self.series_dict[self.MAIN])
         # Set parameters
-        try:
-            setting_dict = self.series_dict[name].to_dict()[phase]
-        except KeyError:
-            raise KeyError(
-                f"{phase} phase has not been registered for @name {name}.")
+        setting_dict = self.series_dict[name].to_dict()[phase]
         start_date = setting_dict[self.START]
         end_date = setting_dict[self.END]
         population = setting_dict[self.N]
-        # Run estimation
-        print(f"{phase} phase with {model.NAME} model:")
+        # Set tau value
         est_kwargs = {
             p: kwargs[p] for p in model.PARAMETERS if p in kwargs.keys()
         }
@@ -289,6 +311,7 @@ class Scenario(Word):
             if self.TAU in kwargs.keys():
                 raise ValueError(f"{self.TAU} cannot be changed.")
             est_kwargs[self.TAU] = self.tau
+        # Run estimation
         estimator = Estimator(
             self.clean_df, model, population,
             country=self.country, province=self.province,
@@ -298,49 +321,96 @@ class Scenario(Word):
         sign = signature(Estimator.run)
         run_params = list(sign.parameters.keys())
         run_kwargs = {k: v for (k, v) in kwargs.items() if k in run_params}
-        estimator.run(**run_kwargs)
+        estimator.run(stdout=False, **run_kwargs)
+        # Get the summary of estimation
         est_df = estimator.summary(phase)
         phase_est_dict = {self.ODE: model.NAME}
         phase_est_dict.update(est_df.to_dict(orient="index")[phase])
+        # Show the number of trials and runtime
+        trials = phase_est_dict["Trials"]
+        runtime = phase_est_dict["Runtime"]
+        print(
+            f"\t{phase} phase with {model.NAME} model finished {trials} in {runtime}."
+        )
+        # Return the dictionary of the result of estimation
+        return (model, name, phase, estimator, phase_est_dict)
+
+    def _update_self(self, model, name, phase, estimator, phase_est_dict):
+        """
+        Update self with the result of estimation.
+
+        Args:
+            model (covsirphy.ModelBase): ODE model
+            name (str): phase series name
+            phase (str or None): phase name, like 1st, 2nd...
+            estimator (covsirphy.Estimator): instance of estimator class
+            phase_est_dict (dict): dictionary of the result of estimation
+
+        Returns:
+            self
+        """
         self.tau = phase_est_dict[self.TAU]
         self.series_dict[name].update(phase, **phase_est_dict)
         if name not in self.estimator_dict.keys():
             self.estimator_dict[name] = dict()
         self.estimator_dict[name][phase] = estimator
         self.model_dict[model.NAME] = model
+        return self
 
-    def estimate(self, model, series_list=None, phases=None, **kwargs):
+    def estimate(self, model, name="Main", phases=None, n_jobs=-1, **kwargs):
         """
         Estimate the parameters of the model using the records.
 
         Args:
-            series_list (list[str]): list of phase series name
-                - if None, all phase series will be used
-            phases (list[str]): list of phase names, like 1st, 2nd...
-                - if None, all past phase will be used
             model (covsirphy.ModelBase): ODE model
+            name (str): phase series name
+            phases (list[str]): list of phase names, like 1st, 2nd...
+            n_jobs (int): the number of parallel jobs or -1 (CPU count)
             kwargs: keyword arguments of model parameters and covsirphy.Estimator.run()
+
+        Notes:
+            - If 'Main' was used as @name, main PhaseSeries will be used.
+            - If @name phase was not registered, new PhaseSeries will be created.
+            - If @phases is None, all past phase will be used.
         """
         # Check model
         model = self.validate_subclass(model, ModelBase, "model")
-        # Phase names
-        if series_list is None:
-            series_list = list(self.series_dict.keys())
-        for name in series_list:
-            try:
-                phase_dict = self.series_dict[name].to_dict()
-            except KeyError:
-                raise KeyError(f"{name} has not been defined.")
-            if len(series_list) > 1:
-                print(f"<{name} scenario>")
-            past_phases = [k for (k, v) in phase_dict.items()]
-            phases = past_phases[:] if phases is None else phases
-            future_phases = list(set(phases) - set(past_phases))
-            if future_phases:
-                raise KeyError(f"{future_phases[0]} is not a past phase.")
-            # Run hyperparameter estimation
-            for phase in phases:
-                self._estimate(model, phase, **kwargs)
+        # Only one phase series will be used
+        if "series_list" in kwargs.keys():
+            raise KeyError(
+                "Because @series_list was obsoleted in Scenario.estimate(),"
+                " please specify the phase name using @name argument."
+            )
+        # Validate the phases
+        try:
+            phase_dict = self.series_dict[name].to_dict()
+        except KeyError:
+            raise KeyError(f"{name} has not been defined.")
+        past_phases = list(phase_dict.keys())
+        phases = past_phases[:] if phases is None else phases
+        future_phases = list(set(phases) - set(past_phases))
+        if future_phases:
+            raise KeyError(
+                f"{future_phases[0]} is not a past phase or not registered.")
+        # The number of parallel jobs
+        n_jobs = cpu_count() if n_jobs == -1 else n_jobs
+        # Start optimization
+        print(f"\n<{name} scenario: perform parameter estimation>")
+        print(f"Running optimization with {n_jobs} CPUs...")
+        stopwatch = StopWatch()
+        # Estimation of the last phase will be done to determine tau value
+        phase_sel, phases = phases[-1], phases[:-1]
+        result_tuple_sel = self._estimate(model, phase=phase_sel, **kwargs)
+        self._update_self(*result_tuple_sel)
+        # Estimation of each phase
+        est_f = functools.partial(self._estimate, model, **kwargs)
+        with Pool(n_jobs) as p:
+            result_nest = p.map(est_f, phases)
+        for result_tuple in result_nest:
+            self._update_self(*result_tuple)
+        # Completion
+        stopwatch.stop()
+        print(f"Completed optimization. Total: {stopwatch.show()}")
 
     def estimate_history(self, phase, name="Main", **kwargs):
         """
@@ -545,8 +615,8 @@ class Scenario(Word):
             targets (list[str]/str): parameters to show (Rt etc.)
             name (str): phase series name
             divide_by_first (bool): if True, divide the values by 1st phase's values
-            show_box_plot (bool): if True, box plot. if False, line plot.
-            show_figure (bool): If True, show the result as a figure.
+            show_box_plot (bool): if True, box plot. if False, line plot
+            show_figure (bool): If True, show the result as a figure
             filename (str): filename of the figure, or None (show figure)
             kwargs: keword arguments of pd.DataFrame.plot or line_plot()
 
@@ -581,6 +651,8 @@ class Scenario(Word):
             title = f"{self.area}: Ratio to 1st phase parameters ({name} scenario)"
         else:
             title = f"{self.area}: History of parameter values ({name} scenario)"
+        if not show_figure:
+            return df
         if show_box_plot:
             h_values = [1.0] if divide_by_first or self.RT in targets else None
             box_plot(df, title, h=h_values, filename=filename)
@@ -612,7 +684,7 @@ class Scenario(Word):
         _dict = dict()
         for (name, _) in self.series_dict.items():
             # Predict the number of cases
-            df = self.predict(name=name, show_figure=False)
+            df = self.simulate(name=name, show_figure=False)
             df = df.set_index(self.DATE)
             last_date = df.index[-1]
             # Max value of Infected
