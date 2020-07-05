@@ -6,33 +6,23 @@
 [![Maintainability](https://api.codeclimate.com/v1/badges/eb97eaf9804f436062b9/maintainability)](https://codeclimate.com/github/lisphilar/covid19-sir/maintainability)
 [![test](https://github.com/lisphilar/covid19-sir/workflows/test/badge.svg)](https://github.com/lisphilar/covid19-sir/actions)
 
-<strong>CovsirPhy is a Python package for COVID-19 (Coronavirus disease 2019) data analysis with SIR-derived models. Please refer to "Method" part of [COVID-19 data with SIR model](https://www.kaggle.com/lisphilar/covid-19-data-with-sir-model) notebook in Kaggle to understand the methods.</strong>
-
-SIR-F is a customized SIR-derived ODE model. To evaluate the effect of measures, parameter estimation of SIR-F will be applied to subsets of time series data in each country. Parameter change points will be determined by S-R trend analysis.
+<strong>CovsirPhy is a Python package for COVID-19 (Coronavirus disease 2019) data analysis with SIR-derived ODE models. Please refer to "Method" part of [COVID-19 data with SIR model](https://www.kaggle.com/lisphilar/covid-19-data-with-sir-model) notebook in Kaggle to understand the methods.</strong>
 
 ## Functionalities
-- Downloading and cleaning data
-    - Epidemic data: the number of confirmed/fatal/recovered cases
-    - Population data: raw data must include country, (province), values of population
-- Data visualization with Matplotlib
+- Downloading and cleaning data: refer to "Installation and dataset preparation" section
+- Data visualization
 - S-R Trend analysis to determine the change points of parameters
-- Numerical simulation of ODE models with scipy.integrate.solve_ivp
+- Numerical simulation of ODE models
 - Description of ODE models
     - Basic class of ODE models
     - SIR, SIR-D, SIR-F, SIR-FV and SEWIR-F model
-- Parameter Estimation of ODE models with Optuna and numerical simulation
-- Simulate the number of cases with user-defined parameter values
+- Parameter Estimation of ODE models
+- Scenario analysis: Simulate the number of cases with user-defined parameter values
 
 ## Inspiration
 - Monitor the spread of COVID-19
 - Keep track parameter values/reproductive number in each country/province
 - Find the relationship of reproductive number and measures taken in each country/province
-
-## Trying now
-The author is trying to add the following functionalities.
-- Speed-up S-R trend analysis and hyperparameter estimation of ODE models
-- Keep track parameter values/reproductive number of all countries with a simple code
-- Find relationship of reproductive number and measures automatically
 
 If you have ideas or need new functionalities, please join this project.
 Any suggestions with [Github Issues](https://github.com/lisphilar/covid19-sir/issues/new/choose) are always welcomed. Please read [Guideline of contribution](https://github.com/lisphilar/covid19-sir/blob/master/.github/CONTRIBUTING.md) in advance.
@@ -47,14 +37,14 @@ We have the following options to start analysis with CovsirPhy. Datasets are not
 |Kagglers (local environment)|git-cloning|Kaggle API and Python script|
 |Kagglers (Kaggle platform)|pip|Kaggle Datasets|
 
-We will use the following datasets.
+We will use the following datasets (CovsirPhy >= 2.4.0). Standard users and developers will retrieve main datasets from [COVID-19 Data Hub](https://covid19datahub.io/) using `covid19dh` Python package. We can get the citation list of primary source via [COVID-19 Data Hub: Dataset](https://covid19datahub.io/articles/data.html) and `covsirphy.DataLoader` class (refer to "Standard users" subsection).
 
 ||Description|URL|
 |:---|:---|:---|
-|The number of cases (JHU)|COVID-19 Data Repository by the Center for Systems Science and Engineering (CSSE) at Johns Hopkins University.|https://github.com/CSSEGISandData/COVID-19|
+|The number of cases (JHU style)|Guidotti, E., Ardia, D., (2020), "COVID-19 Data Hub", Working paper, doi: 10.13140/RG.2.2.11649.81763.|https://covid19datahub.io/|
 |The number of cases in Japan|Lisphilar (2020), COVID-19 dataset in Japan.|https://github.com/lisphilar/covid19-sir/tree/master/data|
-|Population in each country|The World Bank Group (2020), THE WORLD BANK, Population, total.|https://data.worldbank.org/indicator/SP.POP.TOTL|
-|Government Response Tracker (OxCGRT)|Thomas Hale, Sam Webster, Anna Petherick, Toby Phillips, and Beatriz Kira. (2020). Oxford COVID-19 Government Response Tracker. Blavatnik School of Government.|https://github.com/OxCGRT/covid-policy-tracker|
+|Population in each country|Guidotti, E., Ardia, D., (2020), "COVID-19 Data Hub", Working paper, doi: 10.13140/RG.2.2.11649.81763.|https://covid19datahub.io/|
+|Government Response Tracker (OxCGRT)|Guidotti, E., Ardia, D., (2020), "COVID-19 Data Hub", Working paper, doi: 10.13140/RG.2.2.11649.81763.|https://covid19datahub.io/|
 
 If you want to use a new dataset for your analysis, please kindly inform us via [GitHub Issues](https://github.com/lisphilar/covid19-sir/issues/new/choose) with "Request new method of DataLoader class" template.
 
@@ -84,6 +74,11 @@ jhu_data.raw
 # Cleaned data (pandas.DataFrame)
 jhu_data.cleaned()
 ```
+We can get COVID-19 Data Hub citation list of primary sources as follows.
+```Python
+data_loader.covid19dh_citation
+```
+
 
 ### 2. Developers
 Developers will clone this repository with `git clone` command and install dependencies with pipenv.
@@ -95,7 +90,7 @@ export PIPENV_VENV_IN_PROJECT=true
 export PIPENV_TIMEOUT=7200
 pipenv install --dev
 ```
-Developers can perform tests with `pipenv run pytest -v --durations=0 --profile-svg` and call graph will be saved as SVG file (prof/combined.svg).
+Developers can perform tests with `pipenv run pytest -v --durations=0 --failed-first --profile-svg` and call graph will be saved as SVG file (prof/combined.svg).
 
 - Windows users need to install [Graphviz for Windows](https://graphviz.org/_pages/Download/Download_windows.html) in advance.
 - Debian/Ubuntu users need to install Graphviz with `sudo apt install graphviz` in advance.
@@ -110,7 +105,7 @@ If you can run `make` command,
 |`make example`|Run example codes|
 |`make clean`|Clean-up output files and pipenv environment|
 
-We can prepare the dataset with the same codes as that was explained in "1.Preferred" subsection.
+We can prepare the dataset with the same codes as that was explained in "1. Standard users" subsection.
 
 ### 3. Kagglers (local environment)
 As explained in "2. Developers" subsection, we need to git-clone this repository and install the dependencies when you want to uses this package with Kaggle API in your local environment.
@@ -197,7 +192,7 @@ ita_record_df = ita_scenario.records()
 ```
 #### S-R trend analysis
 Perform S-R trend analysis and set phases to the scenario.
-The number of change points will be determined automatically (> 2.4.0).
+The number of change points will be determined automatically (>= 2.4.0).
 ```Python
 ita_scenario.trend(set_phases=True)
 print(ita_scenario.summary())
@@ -245,7 +240,7 @@ print(ita_scenario.describe())
 Please refer to [LICENSE](https://github.com/lisphilar/covid19-sir/blob/master/LICENSE) file.
 
 ## Citation
-CovsirPhy development team (2020), GitHub repository, CovsirPhy, Python package for COVID-19 data with SIR model, https://github.com/lisphilar/covid19-sir
+CovsirPhy Development Team (2020), CovsirPhy, Python package for COVID-19 analysis with SIR-derived ODE models, https://github.com/lisphilar/covid19-sir
 
 ## Related work
 Method of analysis in CovsirPhy:  
