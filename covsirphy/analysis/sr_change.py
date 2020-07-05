@@ -155,7 +155,11 @@ class ChangeFinder(Word):
         if len(pred_cols) == 1:
             title = f"{self.area}: S-R trend without change points"
         else:
-            change_str = ", ".join(self.change_dates)
+            _list = self.change_dates[:]
+            strings = [
+                ", ".join(_list[i: i + 6]) for i in range(0, len(_list), 6)
+            ]
+            change_str = ",\n".join(strings)
             title = f"{self.area}: S-R trend changed on\n{change_str}"
         Trend.show_with_many(
             result_df=comp_df,

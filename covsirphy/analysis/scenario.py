@@ -20,6 +20,7 @@ from covsirphy.analysis.phase_series import PhaseSeries
 from covsirphy.analysis.simulator import ODESimulator
 from covsirphy.analysis.sr_change import ChangeFinder
 from covsirphy.util.error import deprecate
+from covsirphy.util.stopwatch import StopWatch
 
 
 class Scenario(Word):
@@ -391,10 +392,12 @@ class Scenario(Word):
         if future_phases:
             raise KeyError(
                 f"{future_phases[0]} is not a past phase or not registered.")
-        print(f"\n<{name} scenario: perform parameter estimation>")
-        print("Running optimization...")
         # The number of parallel jobs
         n_jobs = cpu_count() if n_jobs == -1 else n_jobs
+        # Start optimization
+        print(f"\n<{name} scenario: perform parameter estimation>")
+        print(f"Running optimization with {n_jobs} CPUs...")
+        stopwatch = StopWatch()
         # Estimation of the last phase will be done to determine tau value
         phase_sel, phases = phases[-1], phases[:-1]
         result_tuple_sel = self._estimate(model, phase=phase_sel, **kwargs)
@@ -405,7 +408,9 @@ class Scenario(Word):
             result_nest = p.map(est_f, phases)
         for result_tuple in result_nest:
             self._update_self(*result_tuple)
-        print("Completed optimization.")
+        # Completion
+        stopwatch.stop()
+        print(f"Completed optimization. Total: {stopwatch.show()}")
 
     def estimate_history(self, phase, name="Main", **kwargs):
         """
