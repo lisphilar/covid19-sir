@@ -28,7 +28,7 @@ class Scenario(Word):
         jhu_data (covsirphy.JHUData): object of records
         population_data (covsirphy.PopulationData): PopulationData object
         country (str): country name
-        province (str): province name
+        province (str or None): province name
     """
 
     def __init__(self, jhu_data, population_data, country, province=None):
@@ -82,6 +82,20 @@ class Scenario(Word):
         Args:
             show_figure (bool): if True, show the records as a line-plot.
             filename (str): filename of the figure, or None (show figure)
+
+        Returns:
+            (pandas.DataFrame)
+                Index:
+                    reset index
+                Columns:
+                    - Date (pd.TimeStamp): Observation date
+                    - Confirmed (int): the number of confirmed cases
+                    - Infected (int): the number of currently infected cases
+                    - Fatal (int): the number of fatal cases
+                    - Recovered (int): the number of recovered cases (> 0)
+
+        Notes:
+            Records with Recovered > 0 will be selected.
         """
         df = self.jhu_data.subset(self.country, province=self.province)
         if not show_figure:
@@ -224,7 +238,7 @@ class Scenario(Word):
         Args:
             set_phases (bool): if True, set phases automatically
             include_init_phase (bool): whether use initial phase or not
-            show_figure (bool): if True, show the records as a line-plot.
+            show_figure (bool): if True, show the result as a figure
             filename (str): filename of the figure, or None (show figure)
             kwargs: the other keyword arguments of ChangeFinder().run()
 
@@ -550,8 +564,8 @@ class Scenario(Word):
             targets (list[str]/str): parameters to show (Rt etc.)
             name (str): phase series name
             divide_by_first (bool): if True, divide the values by 1st phase's values
-            show_box_plot (bool): if True, box plot. if False, line plot.
-            show_figure (bool): If True, show the result as a figure.
+            show_box_plot (bool): if True, box plot. if False, line plot
+            show_figure (bool): If True, show the result as a figure
             filename (str): filename of the figure, or None (show figure)
             kwargs: keword arguments of pd.DataFrame.plot or line_plot()
 
@@ -586,6 +600,8 @@ class Scenario(Word):
             title = f"{self.area}: Ratio to 1st phase parameters ({name} scenario)"
         else:
             title = f"{self.area}: History of parameter values ({name} scenario)"
+        if not show_figure:
+            return df
         if show_box_plot:
             h_values = [1.0] if divide_by_first or self.RT in targets else None
             box_plot(df, title, h=h_values, filename=filename)
@@ -617,7 +633,7 @@ class Scenario(Word):
         _dict = dict()
         for (name, _) in self.series_dict.items():
             # Predict the number of cases
-            df = self.predict(name=name, show_figure=False)
+            df = self.simulate(name=name, show_figure=False)
             df = df.set_index(self.DATE)
             last_date = df.index[-1]
             # Max value of Infected

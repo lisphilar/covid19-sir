@@ -373,11 +373,12 @@ class Estimator(Optimizer):
         )
         return score
 
-    def accuracy(self, filename=None):
+    def accuracy(self, show_figure=True, filename=None):
         """
         Show the accuracy as a figure.
 
         Args:
+            show_figure (bool): if True, show the result as a figure
             filename (str): filename of the figure, or None (show figure)
         """
         tau = super().param()[self.TAU]
@@ -390,6 +391,7 @@ class Estimator(Optimizer):
         df = super().accuracy(
             train_df=train_df,
             variables=use_variables,
+            show_figure=show_figure,
             filename=filename
         )
         return df
