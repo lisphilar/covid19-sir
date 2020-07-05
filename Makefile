@@ -49,11 +49,6 @@ example:
 	@pipenv run python -m example.scenario_analysis
 
 pypi:
-	@make test
-	@read -p "Hit any keys: "
-	@make docs
-	@# sudo apt install pandoc
-	@pandoc --from markdown --to rst README.md -o README.rst
 	@rm -rf covsirphy.egg-info/*
 	@rm -rf dist/*
 	@pipenv run python setup.py sdist bdist_wheel
@@ -61,10 +56,6 @@ pypi:
 
 
 test-pypi:
-	@make test
-	@read -p "Hit any keys: "
-	@make docs
-	@# sudo apt install pandoc
 	@pandoc --from markdown --to rst README.md -o README.rst
 	@rm -rf covsirphy.egg-info/*
 	@rm -rf dist/*
