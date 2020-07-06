@@ -65,6 +65,11 @@ class ChangeFinder(Word):
         Returns:
             self
         """
+        delta_days = timedelta(days=2)
+        first_obj = self.to_date_obj(self.dates[0])
+        last_obj = self.to_date_obj(self.dates[-1])
+        if first_obj >= last_obj - delta_days:
+            raise ValueError("More than 2 records must be included.")
         # Convert the dataset, index: Recovered, column: Susceptible
         sr_df = self.sr_df.rename({f"{self.S}{self.A}": self.S}, axis=1)
         sr_df[self.S] = np.log10(sr_df[self.S])
@@ -95,9 +100,19 @@ class ChangeFinder(Word):
             sr_df.reset_index().sort_values(self.S),
             on=self.S, direction="nearest"
         )
+        found_list = df[self.DATE].sort_values()[:-1]
+        # Only use dates when the previous phase has more than 3 days
+        effective_list = [first_obj]
+        for found in found_list:
+            if effective_list[-1] + delta_days < found:
+                effective_list.append(found)
+        # The last change date must be under the last date of records - 2 days
+        if effective_list[-1] >= last_obj - delta_days:
+            effective_list = effective_list[:-1]
         # Set change points
-        change_dates = df["Date"].sort_values()[:-1].dt.strftime("%d%b%Y")
-        self.change_dates = change_dates.tolist()
+        self.change_dates = [
+            date.strftime("%d%b%Y") for date in effective_list[1:]
+        ]
         return self
 
     def show(self, show_figure=True, filename=None):

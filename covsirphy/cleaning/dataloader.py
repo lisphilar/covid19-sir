@@ -67,13 +67,17 @@ class DataLoader(Word):
         )
         # Create the directory if not exist
         self.dir_path.mkdir(parents=True, exist_ok=True)
-        # JHU dataset: the number of cases
-        self.jhu_url = "https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master" \
-            "/csse_covid_19_data/csse_covid_19_time_series"
-        self.jhu_citation = '(Secondary source)' \
+        # COVID-19 Data Hub
+        self._covid19dh_citation = None
+        self._covid19dh_basename = "covid19dh.csv"
+        self._covid19dh_citation_secondary = '(Secondary source)' \
             ' Guidotti, E., Ardia, D., (2020), "COVID-19 Data Hub",' \
             ' Working paper, doi: 10.13140/RG.2.2.11649.81763.' \
             '\nWe can get Citation list of primary sources with DataLoader(...).covid19dh_citation'
+        # JHU dataset: the number of cases
+        self.jhu_url = "https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master" \
+            "/csse_covid_19_data/csse_covid_19_time_series"
+        self.jhu_citation = self._covid19dh_citation_secondary
         self.jhu_date_col = "ObservationDate"
         self.jhu_p_col = "Province/State"
         self.jhu_c_col = "Country/Region"
@@ -83,16 +87,10 @@ class DataLoader(Word):
             "https://github.com/lisphilar/covid19-sir/data/japan"
         # Population dataset: THE WORLD BANK
         self.population_url = "http://api.worldbank.org/v2/country/all/indicator/SP.POP.TOTL?"
-        self.population_citation = '(Secondary source)' \
-            ' Guidotti, E., Ardia, D., (2020), "COVID-19 Data Hub",' \
-            ' Working paper, doi: 10.13140/RG.2.2.11649.81763.' \
-            '\nWe can get Citation list of primary sources with DataLoader(...).covid19dh_citation'
+        self.population_citation = self._covid19dh_citation_secondary
         # OxCGRT dataset: Oxford Covid-19 Government Response Tracker
         self.oxcgrt_url = "https://raw.githubusercontent.com/OxCGRT/covid-policy-tracker/master/data"
-        self.oxcgrt_citation = '(Secondary source)' \
-            ' Guidotti, E., Ardia, D., (2020), "COVID-19 Data Hub",' \
-            ' Working paper, doi: 10.13140/RG.2.2.11649.81763.' \
-            '\nWe can get Citation list of primary sources with DataLoader(...).covid19dh_citation'
+        self.oxcgrt_citation = self._covid19dh_citation_secondary
         # Dictionary of datasets
         self.dataset_dict = {
             "JHU": {
@@ -108,9 +106,6 @@ class DataLoader(Word):
                 "class": OxCGRTData, "url": self.oxcgrt_url, "citation": self.oxcgrt_citation
             },
         }
-        # COVID-19 Data Hub
-        self._covid19dh_citation = None
-        self._covid19dh_basename = "covid19dh.csv"
 
     @staticmethod
     def _get_raw(url, is_json=False):
@@ -292,13 +287,8 @@ class DataLoader(Word):
                 self._save(jhu_data.raw, filename)
                 return jhu_data
             raise FileNotFoundError(f"{local_file} does not exist.")
-        if not self._needs_pull(filename, self.jhu_url):
-            return self._create_dataset("JHU", filename)
-        # Retrieve and combine the raw data
-        dh_file = self.dir_path / self._covid19dh_basename
-        df = self.covid19dh(local_file=dh_file, verbose=verbose)
-        # Save the dataset and return dataset
-        self._save(df, filename)
+        # Create th dataset using the data of COVID-19 Data Hub
+        self.covid19dh(verbose=verbose)
         return self._create_dataset("JHU", filename)
 
     def japan(self, basename="covid_jpn_total.csv", local_file=None):
@@ -401,11 +391,8 @@ class DataLoader(Word):
             raise FileNotFoundError(f"{local_file} does not exist.")
         if not self._needs_pull(filename, self.population_url):
             return self._create_dataset("Population", filename)
-        # Retrieve the raw data
-        dh_file = self.dir_path / self._covid19dh_basename
-        df = self.covid19dh(local_file=dh_file, verbose=verbose)
-        # Save the dataset and return dataset
-        self._save(df, filename)
+        # Create th dataset using the data of COVID-19 Data Hub
+        self.covid19dh(verbose=verbose)
         return self._create_dataset("Population", filename)
 
     def oxcgrt(self, basename=None, local_file=None, verbose=True):
@@ -433,23 +420,17 @@ class DataLoader(Word):
                 self._save(oxcgrt_data.raw, filename)
                 return oxcgrt_data
             raise FileNotFoundError(f"{local_file} does not exist.")
-        if not self._needs_pull(filename, self.oxcgrt_url):
-            return self._create_dataset("OxCGRT", filename)
-        # Retrieve the raw data
-        dh_file = self.dir_path / self._covid19dh_basename
-        df = self.covid19dh(local_file=dh_file, verbose=verbose)
-        # Save the dataset and return dataset
-        self._save(df, filename)
+        # Create th dataset using the data of COVID-19 Data Hub
+        self.covid19dh(verbose=verbose)
         return self._create_dataset("OxCGRT", filename)
 
-    def covid19dh(self, basename=None, local_file=None, verbose=True):
+    def covid19dh(self, basename=None, verbose=True):
         """
-        Load the dataset of COVID-19 Dta Hub.
+        Load the dataset of COVID-19 Data Hub.
         https://covid19datahub.io/
 
         Args:
             basename (str or None): basename of the file to save the data
-            local_file (str or None): if not None, load the data from this file
             verbose (bool): if True, detailed citation list will be shown when downloading
 
         Notes:
@@ -461,13 +442,6 @@ class DataLoader(Word):
         """
         basename = basename or self._covid19dh_basename
         filename = self._resolve_filename(basename)
-        # Use local data
-        if local_file is not None and Path(local_file).exists():
-            df = dd.read_csv(
-                local_file, dtype={"Province/State": "object"}
-            ).compute()
-            self._save(df, filename)
-            return df
         # Use the file saved in the directory
         if Path(filename).exists() and not self._needs_pull(filename):
             df = dd.read_csv(
