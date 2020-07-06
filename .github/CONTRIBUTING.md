@@ -9,7 +9,7 @@ Terms:
 - 'Developers' create pull requests.
 - 'Users' uses this package (and create issues).
 
-Currently, 'maintainer(s)' is/are the author (Lisphilar/@lisphilar) in this document.
+Currently, 'maintainer(s)' is/are the author (@lisphilar) in this document.
 
 ## Issues
 All users can [create an issue](https://github.com/lisphilar/covid19-sir/issues) when you want to

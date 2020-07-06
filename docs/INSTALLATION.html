@@ -1,0 +1,746 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Installation and dataset preparation &mdash; CovsirPhy  documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+
+  
+  
+  
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/underscore.js"></script>
+        <script src="_static/doctools.js"></script>
+        <script src="_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Guideline of contribution" href="CONTRIBUTING.html" />
+    <link rel="prev" title="CovsirPhy: COVID-19 with SIR-derived ODE models" href="README.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="index.html" class="icon icon-home" alt="Documentation Home"> CovsirPhy
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="README.html">CovsirPhy: COVID-19 with SIR-derived ODE models</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Installation and dataset preparation</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#standard-users">1. Standard users</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#developers">2. Developers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#kagglers-local-environment">3. Kagglers (local environment)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#kagglers-kaggle-platform">4. Kagglers (Kaggle platform)</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="CONTRIBUTING.html">Guideline of contribution</a></li>
+<li class="toctree-l1"><a class="reference internal" href="covsirphy.html">covsirphy package</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">CovsirPhy</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
+        
+      <li>Installation and dataset preparation</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="_sources/INSTALLATION.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="installation-and-dataset-preparation">
+<h1>Installation and dataset preparation<a class="headerlink" href="#installation-and-dataset-preparation" title="Permalink to this headline">¶</a></h1>
+<p>We have the following options to start analysis with CovsirPhy. Datasets
+are not included in this package, but we can prepare them with
+<code class="docutils literal notranslate"><span class="pre">DataLoader</span></code> class.</p>
+<table class="docutils align-default">
+<colgroup>
+<col style="width: 37%" />
+<col style="width: 18%" />
+<col style="width: 45%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"></th>
+<th class="head"><p>Installation</p></th>
+<th class="head"><p>Dataset preparation</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>Standard users</p></td>
+<td><p>pip/pipenv</p></td>
+<td><p>Automated with <code class="docutils literal notranslate"><span class="pre">DataLoader</span></code> class</p></td>
+</tr>
+<tr class="row-odd"><td><p>Developers</p></td>
+<td><p>git-cloning</p></td>
+<td><p>Automated with <code class="docutils literal notranslate"><span class="pre">DataLoader</span></code> class</p></td>
+</tr>
+<tr class="row-even"><td><p>Kagglers (local environment)</p></td>
+<td><p>git-cloning</p></td>
+<td><p>Kaggle API and Python script</p></td>
+</tr>
+<tr class="row-odd"><td><p>Kagglers (Kaggle platform)</p></td>
+<td><p>pip</p></td>
+<td><p>Kaggle Datasets</p></td>
+</tr>
+</tbody>
+</table>
+<p>We will use the following datasets (CovsirPhy &gt;= 2.4.0). Standard users
+and developers will retrieve main datasets from <a class="reference external" href="https://covid19datahub.io/">COVID-19 Data
+Hub</a> using <code class="docutils literal notranslate"><span class="pre">covid19dh</span></code> Python package.
+We can get the citation list of primary source via <a class="reference external" href="https://covid19datahub.io/articles/data.html">COVID-19 Data Hub:
+Dataset</a> and
+<code class="docutils literal notranslate"><span class="pre">covsirphy.DataLoader</span></code> class (refer to “Standard users” subsection).</p>
+<table class="docutils align-default">
+<colgroup>
+<col style="width: 33%" />
+<col style="width: 33%" />
+<col style="width: 33%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"></th>
+<th class="head"><p>Descr
+iptio
+n</p></th>
+<th class="head"><p>URL</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>The
+numbe
+r
+of
+cases
+(JHU
+style
+)</p></td>
+<td><p>Guido
+tti,
+E.,
+Ardia
+,
+D.,
+(2020
+),
+“COVI
+D-19
+Data
+Hub”,
+Worki
+ng
+paper
+,
+doi:
+10.13
+140/R
+G.2.2
+.1164
+9.817
+63.</p></td>
+<td><p>https
+://co
+vid19
+datah
+ub.io
+/</p></td>
+</tr>
+<tr class="row-odd"><td><p>The
+numbe
+r
+of
+cases
+in
+Japan</p></td>
+<td><p>Lisph
+ilar
+(2020
+),
+COVID
+-19
+datas
+et
+in
+Japan
+.</p></td>
+<td><p>https
+://gi
+thub.
+com/l
+isphi
+lar/c
+ovid1
+9-sir
+/tree
+/mast
+er/da
+ta</p></td>
+</tr>
+<tr class="row-even"><td><p>Popul
+ation
+in
+each
+count
+ry</p></td>
+<td><p>Guido
+tti,
+E.,
+Ardia
+,
+D.,
+(2020
+),
+“COVI
+D-19
+Data
+Hub”,
+Worki
+ng
+paper
+,
+doi:
+10.13
+140/R
+G.2.2
+.1164
+9.817
+63.</p></td>
+<td><p>https
+://co
+vid19
+datah
+ub.io
+/</p></td>
+</tr>
+<tr class="row-odd"><td><p>Gover
+nment
+Respo
+nse
+Track
+er
+(OxCG
+RT)</p></td>
+<td><p>Guido
+tti,
+E.,
+Ardia
+,
+D.,
+(2020
+),
+“COVI
+D-19
+Data
+Hub”,
+Worki
+ng
+paper
+,
+doi:
+10.13
+140/R
+G.2.2
+.1164
+9.817
+63.</p></td>
+<td><p>https
+://co
+vid19
+datah
+ub.io
+/</p></td>
+</tr>
+</tbody>
+</table>
+<p>If you want to use a new dataset for your analysis, please kindly inform
+us via <a class="reference external" href="https://github.com/lisphilar/covid19-sir/issues/new/choose">GitHub
+Issues</a>
+with “Request new method of DataLoader class” template. Please read
+<a class="reference external" href="../../../.github/CONTRIBUTING.html">Guideline of contribution</a> in
+advance.</p>
+<div class="section" id="standard-users">
+<h2>1. Standard users<a class="headerlink" href="#standard-users" title="Permalink to this headline">¶</a></h2>
+<p>Covsirphy is available at <a class="reference external" href="https://pypi.org/project/covsirphy/">PyPI (The Python Package Index):
+covsirphy</a> and supports Python
+3.7 or newer versions.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">pip</span> <span class="n">install</span> <span class="n">covsirphy</span>
+</pre></div>
+</div>
+<p>Then, download the datasets with the following codes, when you want to
+save the data in <code class="docutils literal notranslate"><span class="pre">input</span></code> directory.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">covsirphy</span> <span class="k">as</span> <span class="nn">cs</span>
+<span class="n">data_loader</span> <span class="o">=</span> <span class="n">cs</span><span class="o">.</span><span class="n">DataLoader</span><span class="p">(</span><span class="s2">&quot;input&quot;</span><span class="p">)</span>
+<span class="n">jhu_data</span> <span class="o">=</span> <span class="n">data_loader</span><span class="o">.</span><span class="n">jhu</span><span class="p">()</span>
+<span class="n">japan_data</span> <span class="o">=</span> <span class="n">data_loader</span><span class="o">.</span><span class="n">japan</span><span class="p">()</span>
+<span class="n">population_data</span> <span class="o">=</span> <span class="n">data_loader</span><span class="o">.</span><span class="n">population</span><span class="p">()</span>
+<span class="n">oxcgrt_data</span> <span class="o">=</span> <span class="n">data_loader</span><span class="o">.</span><span class="n">oxcgrt</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>If <code class="docutils literal notranslate"><span class="pre">input</span></code> directory has the datasets, <code class="docutils literal notranslate"><span class="pre">DataLoader</span></code> will load the
+local files. If the datasets were updated in remote servers,
+<code class="docutils literal notranslate"><span class="pre">DataLoader</span></code> will update the local files automatically.</p>
+<p>We can get descriptions of the datasets and raw/cleaned datasets easily.
+As an example, JHU dataset will be used here.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Description (string)</span>
+<span class="n">jhu_data</span><span class="o">.</span><span class="n">citation</span>
+<span class="c1"># Raw data (pandas.DataFrame)</span>
+<span class="n">jhu_data</span><span class="o">.</span><span class="n">raw</span>
+<span class="c1"># Cleaned data (pandas.DataFrame)</span>
+<span class="n">jhu_data</span><span class="o">.</span><span class="n">cleaned</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>We can get COVID-19 Data Hub citation list of primary sources as
+follows.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">data_loader</span><span class="o">.</span><span class="n">covid19dh_citation</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="developers">
+<h2>2. Developers<a class="headerlink" href="#developers" title="Permalink to this headline">¶</a></h2>
+<p>Developers will clone this repository with <code class="docutils literal notranslate"><span class="pre">git</span> <span class="pre">clone</span></code> command and
+install dependencies with pipenv.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">git</span> <span class="n">clone</span> <span class="n">https</span><span class="p">:</span><span class="o">//</span><span class="n">github</span><span class="o">.</span><span class="n">com</span><span class="o">/</span><span class="n">lisphilar</span><span class="o">/</span><span class="n">covid19</span><span class="o">-</span><span class="n">sir</span><span class="o">.</span><span class="n">git</span>
+<span class="n">cd</span> <span class="n">covid19</span><span class="o">-</span><span class="n">sir</span>
+<span class="n">pip</span> <span class="n">install</span> <span class="n">wheel</span><span class="p">;</span> <span class="n">pip</span> <span class="n">install</span> <span class="o">--</span><span class="n">upgrade</span> <span class="n">pip</span><span class="p">;</span> <span class="n">pip</span> <span class="n">install</span> <span class="n">pipenv</span>
+<span class="n">export</span> <span class="n">PIPENV_VENV_IN_PROJECT</span><span class="o">=</span><span class="n">true</span>
+<span class="n">export</span> <span class="n">PIPENV_TIMEOUT</span><span class="o">=</span><span class="mi">7200</span>
+<span class="n">pipenv</span> <span class="n">install</span> <span class="o">--</span><span class="n">dev</span>
+</pre></div>
+</div>
+<p>Developers can perform tests with
+<code class="docutils literal notranslate"><span class="pre">pipenv</span> <span class="pre">run</span> <span class="pre">pytest</span> <span class="pre">-v</span> <span class="pre">--durations=0</span> <span class="pre">--failed-first</span> <span class="pre">--profile-svg</span></code> and
+call graph will be saved as SVG file (prof/combined.svg).</p>
+<ul class="simple">
+<li><p>Windows users need to install <a class="reference external" href="https://graphviz.org/_pages/Download/Download_windows.html">Graphviz for
+Windows</a>
+in advance.</p></li>
+<li><p>Debian/Ubuntu users need to install Graphviz with
+<code class="docutils literal notranslate"><span class="pre">sudo</span> <span class="pre">apt</span> <span class="pre">install</span> <span class="pre">graphviz</span></code> in advance.</p></li>
+</ul>
+<p>If you can run <code class="docutils literal notranslate"><span class="pre">make</span></code> command,</p>
+<table class="docutils align-default">
+<colgroup>
+<col style="width: 28%" />
+<col style="width: 72%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">make</span> <span class="pre">install</span></code></p></td>
+<td><p>Install pipenv and the dependencies of CovsirPhy</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">make</span> <span class="pre">test</span></code></p></td>
+<td><p>Run tests using Pytest</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">make</span> <span class="pre">docs</span></code></p></td>
+<td><p>Update sphinx document</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">make</span> <span class="pre">example</span></code></p></td>
+<td><p>Run example codes</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">make</span> <span class="pre">clean</span></code></p></td>
+<td><p>Clean-up output files and pipenv environment</p></td>
+</tr>
+</tbody>
+</table>
+<p>We can prepare the dataset with the same codes as that was explained in
+“1. Standard users” subsection.</p>
+</div>
+<div class="section" id="kagglers-local-environment">
+<h2>3. Kagglers (local environment)<a class="headerlink" href="#kagglers-local-environment" title="Permalink to this headline">¶</a></h2>
+<p>As explained in “2. Developers” subsection, we need to git-clone this
+repository and install the dependencies when you want to uses this
+package with Kaggle API in your local environment.</p>
+<p>Then, please move to account page and download “kaggle.json” by
+selecting “API &gt; Create New API Token” button. Copy the json file to the
+top directory of the local repository. Please refer to <a class="reference external" href="https://www.kaggle.com/docs/api">How to Use
+Kaggle: Public API</a> and
+<a class="reference external" href="https://stackoverflow.com/questions/55934733/documentation-for-kaggle-api-within-python#:~:text=Here%20are%20the%20steps%20involved%20in%20using%20the%20Kaggle%20API%20from%20Python.&amp;text=Go%20to%20your%20Kaggle%20account,json%20will%20be%20downloaded">stackoverflow: documentation for Kaggle API *within*
+python?</a></p>
+<p>We can download datasets with <code class="docutils literal notranslate"><span class="pre">pipenv</span> <span class="pre">run</span> <span class="pre">./input.py</span></code> command.
+Modification of environment variables is un-necessary. Files will be
+saved in <code class="docutils literal notranslate"><span class="pre">input</span></code> directory of your local repository.</p>
+<div class="line-block">
+<div class="line">Note:</div>
+<div class="line">Except for OxCGRT dataset, the datasets downloaded with <code class="docutils literal notranslate"><span class="pre">input.py</span></code>
+scripts are different from that explained in the previous subsections.
+URLs are shown in the next table.</div>
+</div>
+<table class="docutils align-default">
+<colgroup>
+<col style="width: 33%" />
+<col style="width: 33%" />
+<col style="width: 33%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"></th>
+<th class="head"><p>Descr
+iptio
+n</p></th>
+<th class="head"><p>URL</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>The
+numbe
+r
+of
+cases
+(JHU)</p></td>
+<td><p>Novel
+Coron
+a
+Virus
+2019
+Datas
+et
+by
+SRK</p></td>
+<td><p>https
+://ww
+w.kag
+gle.c
+om/su
+dalai
+rajku
+mar/n
+ovel-
+coron
+a-vir
+us-20
+19-da
+taset</p></td>
+</tr>
+<tr class="row-odd"><td><p>The
+numbe
+r
+of
+cases
+in
+Japan</p></td>
+<td><p>COVID
+-19
+datas
+et
+in
+Japan
+by
+Lisph
+ilar</p></td>
+<td><p>https
+://ww
+w.kag
+gle.c
+om/li
+sphil
+ar/co
+vid19
+-data
+set-i
+n-jap
+an</p></td>
+</tr>
+<tr class="row-even"><td><p>Popul
+ation
+in
+each
+count
+ry</p></td>
+<td><p>covid
+19
+globa
+l
+forec
+astin
+g:
+locat
+ions
+popul
+ation
+by
+Dmitr
+y
+A.
+Grech
+ka</p></td>
+<td><p>https
+://ww
+w.kag
+gle.c
+om/dg
+rechk
+a/cov
+id19-
+globa
+l-for
+ecast
+ing-l
+ocati
+ons-p
+opula
+tion</p></td>
+</tr>
+<tr class="row-odd"><td><p>Gover
+nment
+Respo
+nse
+Track
+er
+(OxCG
+RT)</p></td>
+<td><p>Thoma
+s
+Hale,
+Sam
+Webst
+er,
+Anna
+Pethe
+rick,
+Toby
+Phill
+ips,
+and
+Beatr
+iz
+Kira.
+(2020
+).
+Oxfor
+d
+COVID
+-19
+Gover
+nment
+Respo
+nse
+Track
+er.
+Blava
+tnik
+Schoo
+l
+of
+Gover
+nment
+.</p></td>
+<td><p>https
+://gi
+thub.
+com/O
+xCGRT
+/covi
+d-pol
+icy-t
+racke
+r</p></td>
+</tr>
+</tbody>
+</table>
+<p>Usage of <code class="docutils literal notranslate"><span class="pre">DataLoader</span></code> class is as follows. Please specify
+<code class="docutils literal notranslate"><span class="pre">local_file</span></code> argument in the methods.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">covsirphy</span> <span class="k">as</span> <span class="nn">cs</span>
+<span class="n">data_loader</span> <span class="o">=</span> <span class="n">cs</span><span class="o">.</span><span class="n">DataLoader</span><span class="p">(</span><span class="s2">&quot;input&quot;</span><span class="p">)</span>
+<span class="n">jhu_data</span> <span class="o">=</span> <span class="n">data_loader</span><span class="o">.</span><span class="n">jhu</span><span class="p">(</span><span class="n">local_file</span><span class="o">=</span><span class="s2">&quot;covid_19_data.csv&quot;</span><span class="p">)</span>
+<span class="n">japan_data</span> <span class="o">=</span> <span class="n">data_loader</span><span class="o">.</span><span class="n">japan</span><span class="p">(</span><span class="n">local_file</span><span class="o">=</span><span class="s2">&quot;covid_jpn_total.csv&quot;</span><span class="p">)</span>
+<span class="n">population_data</span> <span class="o">=</span> <span class="n">data_loader</span><span class="o">.</span><span class="n">population</span><span class="p">(</span><span class="n">local_file</span><span class="o">=</span><span class="s2">&quot;locations_population.csv&quot;</span><span class="p">)</span>
+<span class="n">oxcgrt_data</span> <span class="o">=</span> <span class="n">data_loader</span><span class="o">.</span><span class="n">oxcgrt</span><span class="p">(</span><span class="n">local_file</span><span class="o">=</span><span class="s2">&quot;OxCGRT_latest.csv&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="kagglers-kaggle-platform">
+<h2>4. Kagglers (Kaggle platform)<a class="headerlink" href="#kagglers-kaggle-platform" title="Permalink to this headline">¶</a></h2>
+<p>When you want to use this package in Kaggle notebook, please turn on
+Internet option in notebook setting and download the datasets explained
+in the previous section.</p>
+<p>Then, install this package with pip command.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>!pip install covsirphy
+</pre></div>
+</div>
+<p>Then, please load the datasets with the following codes, specifying the
+filenames.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">covsirphy</span> <span class="k">as</span> <span class="nn">cs</span>
+<span class="c1"># The number of cases (JHU)</span>
+<span class="n">jhu_data</span> <span class="o">=</span> <span class="n">cs</span><span class="o">.</span><span class="n">JHUData</span><span class="p">(</span><span class="s2">&quot;/kaggle/input/novel-corona-virus-2019-dataset/covid_19_data.csv&quot;</span><span class="p">)</span>
+<span class="c1"># (Optional) The number of cases in Japan</span>
+<span class="n">japan_data</span> <span class="o">=</span> <span class="n">cs</span><span class="o">.</span><span class="n">CountryData</span><span class="p">(</span><span class="s2">&quot;/kaggle/input/covid19-dataset-in-japan/covid_jpn_total.csv&quot;</span><span class="p">,</span> <span class="n">country</span><span class="o">=</span><span class="s2">&quot;Japan&quot;</span><span class="p">)</span>
+<span class="n">japan_data</span><span class="o">.</span><span class="n">set_variables</span><span class="p">(</span>
+    <span class="n">date</span><span class="o">=</span><span class="s2">&quot;Date&quot;</span><span class="p">,</span> <span class="n">confirmed</span><span class="o">=</span><span class="s2">&quot;Positive&quot;</span><span class="p">,</span> <span class="n">fatal</span><span class="o">=</span><span class="s2">&quot;Fatal&quot;</span><span class="p">,</span> <span class="n">recovered</span><span class="o">=</span><span class="s2">&quot;Discharged&quot;</span><span class="p">,</span> <span class="n">province</span><span class="o">=</span><span class="kc">None</span>
+<span class="p">)</span>
+<span class="c1"># Population in each country</span>
+<span class="n">population_data</span> <span class="o">=</span> <span class="n">cs</span><span class="o">.</span><span class="n">PopulationData</span><span class="p">(</span>
+    <span class="s2">&quot;/kaggle/input/covid19-global-forecasting-locations-population/locations_population.csv&quot;</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+<div class="line-block">
+<div class="line">Note:</div>
+<div class="line">Currently, OxCGRT dataset is not supported.</div>
+</div>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="CONTRIBUTING.html" class="btn btn-neutral float-right" title="Guideline of contribution" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="README.html" class="btn btn-neutral float-left" title="CovsirPhy: COVID-19 with SIR-derived ODE models" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        
+        &copy; Copyright 2020, CovsirPhy Development Team
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

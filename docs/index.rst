@@ -10,6 +10,8 @@
    :caption: Contents:
 
    README
+   INSTALLATION
+   CONTRIBUTING
    covsirphy
 
 
