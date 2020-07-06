@@ -119,8 +119,9 @@ If you want to use a new dataset for your analysis, please kindly inform
 us via `GitHub
 Issues <https://github.com/lisphilar/covid19-sir/issues/new/choose>`__
 with "Request new method of DataLoader class" template. Please read
-`Guideline of contribution <../../../.github/CONTRIBUTING.html>`__ in
-advance.
+`Guideline of
+contribution <https://lisphilar.github.io/covid19-sir/CONTRIBUTING.html>`__
+in advance.
 
 1. Standard users
 ~~~~~~~~~~~~~~~~~

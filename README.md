@@ -1,4 +1,4 @@
-# CovsirPhy: COVID-19 with SIR-derived ODE models
+# CovsirPhy: COVID-19 with SIRs
 [![PyPI version](https://badge.fury.io/py/covsirphy.svg)](https://badge.fury.io/py/covsirphy)
 [![Downloads](https://pepy.tech/badge/covsirphy)](https://pepy.tech/project/covsirphy)
 [![PyPI - Python Version](https://img.shields.io/pypi/pyversions/covsirphy)](https://badge.fury.io/py/covsirphy)  
@@ -25,7 +25,7 @@
 - Find the relationship of reproductive number and measures taken in each country/province
 
 If you have ideas or need new functionalities, please join this project.
-Any suggestions with [Github Issues](https://github.com/lisphilar/covid19-sir/issues/new/choose) are always welcomed. Please read [Guideline of contribution](/.github/CONTRIBUTING.html) in advance.
+Any suggestions with [Github Issues](https://github.com/lisphilar/covid19-sir/issues/new/choose) are always welcomed. Please read [Guideline of contribution](https://lisphilar.github.io/covid19-sir/CONTRIBUTING.html) in advance.
 
 ## Installation and dataset preparation
 We have the following options to start analysis with CovsirPhy. Datasets are not included in this package, but we can prepare them with `DataLoader` class.
@@ -37,7 +37,7 @@ We have the following options to start analysis with CovsirPhy. Datasets are not
 |Kagglers (local environment)|git-cloning|Kaggle API and Python script|
 |Kagglers (Kaggle platform)|pip|Kaggle Datasets|
 
-[Installation and dataset preparation](/docs/markdown/INSTALLATION.html) explains how to install and prepare datasets for all users.
+<strong>[Installation and dataset preparation](https://lisphilar.github.io/covid19-sir/INSTALLATION.html) explains how to install and prepare datasets for all users.</strong>
 
 ### Standard users
 Covsirphy is available at [PyPI (The Python Package Index): covsirphy](https://pypi.org/project/covsirphy/) and supports Python 3.7 or newer versions.

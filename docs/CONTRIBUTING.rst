@@ -12,9 +12,9 @@ this guideline, please inform the author via issue page.
 
 Terms: - 'Maintainers' maintain this repository and merge the pull
 requests, update `sphinx
-document <https://lisphilar.github.io/covid19-sir/>`__ version number. -
-'Developers' create pull requests. - 'Users' uses this package (and
-create issues).
+document <https://lisphilar.github.io/covid19-sir/>`__ and version
+number. - 'Developers' create pull requests. - 'Users' uses this package
+(and create issues).
 
 Currently, 'maintainer(s)' is/are the author (@lisphilar) in this
 document.
@@ -51,8 +51,8 @@ latest version of CovsirPhy, - the codes are readable, - (if needed)
 test codes are added, - tests were successfully completed, and - the
 revision is well documented in docstring/README and so on.
 
-Test command is explained in
-`README <https://github.com/lisphilar/covid19-sir/blob/master/README.md>`__
+Test command is explained in `Installation and dataset
+preparation <https://lisphilar.github.io/covid19-sir/INSTALLATION.html>`__
 for developers.
 
 Please use appropriate template if available, and specify the related

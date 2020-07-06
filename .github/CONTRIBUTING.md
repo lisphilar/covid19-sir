@@ -5,7 +5,7 @@ We hope this project contribute to COVID-19 outbreak research and we will overco
 When you contribute to covid-sir repository including CovsirPhy package, please kindly follow CODE_OF_CONDUCT.md and the steps explained in this document. If you have any questions or any request to change about this guideline, please inform the author via issue page.
 
 Terms:
-- 'Maintainers' maintain this repository and merge the pull requests, update [sphinx document](https://lisphilar.github.io/covid19-sir/) version number.
+- 'Maintainers' maintain this repository and merge the pull requests, update [sphinx document](https://lisphilar.github.io/covid19-sir/) and version number.
 - 'Developers' create pull requests.
 - 'Users' uses this package (and create issues).
 
@@ -39,7 +39,7 @@ Please ensure that
 - tests were successfully completed, and
 - the revision is well documented in docstring/README and so on.
 
-Test command is explained in [README](https://github.com/lisphilar/covid19-sir/blob/master/README.md) for developers.
+Test command is explained in [Installation and dataset preparation](https://lisphilar.github.io/covid19-sir/INSTALLATION.html) for developers.
 
 Please use appropriate template if available, and specify the related issues and the change.
 

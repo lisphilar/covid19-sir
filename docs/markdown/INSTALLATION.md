@@ -17,7 +17,7 @@ We will use the following datasets (CovsirPhy >= 2.4.0). Standard users and deve
 |Population in each country|Guidotti, E., Ardia, D., (2020), "COVID-19 Data Hub", Working paper, doi: 10.13140/RG.2.2.11649.81763.|https://covid19datahub.io/|
 |Government Response Tracker (OxCGRT)|Guidotti, E., Ardia, D., (2020), "COVID-19 Data Hub", Working paper, doi: 10.13140/RG.2.2.11649.81763.|https://covid19datahub.io/|
 
-If you want to use a new dataset for your analysis, please kindly inform us via [GitHub Issues](https://github.com/lisphilar/covid19-sir/issues/new/choose) with "Request new method of DataLoader class" template. Please read [Guideline of contribution](../../../.github/CONTRIBUTING.html) in advance.
+If you want to use a new dataset for your analysis, please kindly inform us via [GitHub Issues](https://github.com/lisphilar/covid19-sir/issues/new/choose) with "Request new method of DataLoader class" template. Please read [Guideline of contribution](https://lisphilar.github.io/covid19-sir/CONTRIBUTING.html) in advance.
 
 ### 1. Standard users
 Covsirphy is available at [PyPI (The Python Package Index): covsirphy](https://pypi.org/project/covsirphy/) and supports Python 3.7 or newer versions.
