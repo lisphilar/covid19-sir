@@ -146,9 +146,11 @@ class PhaseSeries(Word):
         start_obj = self.date_obj(start_date)
         end_obj = self.date_obj(end_date)
         min_end_obj = start_obj + timedelta(days=2)
-        if end_obj <= min_end_obj:
+        if end_obj < min_end_obj:
             min_end_date = min_end_obj.strftime(self.DATE_FORMAT)
-            raise ValueError(f"@end_date must be over {min_end_date}.")
+            raise ValueError(
+                f"@end_date must be the same or over {min_end_date}, but {end_date} was applied."
+            )
         # Add new phase
         for date_obj in date_series:
             if date_obj in self.phase_dict.keys():
