@@ -31,10 +31,18 @@ jobs:
       with:
         python-version: ${{ matrix.python-version }}
 
+    # Use cache of pip in Ubuntu
+    - uses: actions/cache@v2
+      with:
+        path: ~/.cache/pip
+        key: ${{ runner.os }}-pip-${{ hashFiles('**/Pipfile.lock') }}
+        restore-keys: |
+          ${{ runner.os }}-pip-
+
     # Installation of pipenv and dependencies of CovsirPhy
     - name: Installation of pipenv and dependencies of CovsirPhy
       run: make install
     
     # Run tests
     - name: Run tests
-      run: make test
+      run: make test-nosvg

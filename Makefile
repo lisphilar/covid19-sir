@@ -1,4 +1,4 @@
-.PHONY: test docs example pypi test-pypi clean
+.PHONY: install test-nosvg test docs example pypi test-pypi clean
 
 install:
 	@pip install wheel; pip install --upgrade pip
@@ -10,7 +10,11 @@ install:
 
 
 test:
+	@# sudo apt install graphviz
 	@pipenv run pytest -v --durations=0 --failed-first --maxfail=1 --profile-svg
+
+test-nosvg:
+	@pipenv run pytest -v --durations=0 --failed-first --maxfail=1
 
 
 # https://github.com/sphinx-doc/sphinx/issues/3382
