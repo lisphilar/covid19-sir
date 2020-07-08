@@ -1,10 +1,9 @@
-covsirphy.analysis package
+covsirphy.analysis
 ==========================
+Interface for analysis.
 
-Submodules
-----------
 
-covsirphy.analysis.phase\_series module
+covsirphy.analysis.phase\_series
 ---------------------------------------
 
 .. automodule:: covsirphy.analysis.phase_series
@@ -12,7 +11,7 @@ covsirphy.analysis.phase\_series module
    :undoc-members:
    :show-inheritance:
 
-covsirphy.analysis.scenario module
+covsirphy.analysis.scenario
 ----------------------------------
 
 .. automodule:: covsirphy.analysis.scenario
@@ -20,7 +19,7 @@ covsirphy.analysis.scenario module
    :undoc-members:
    :show-inheritance:
 
-covsirphy.analysis.simulator module
+covsirphy.analysis.simulator
 -----------------------------------
 
 .. automodule:: covsirphy.analysis.simulator
@@ -28,19 +27,10 @@ covsirphy.analysis.simulator module
    :undoc-members:
    :show-inheritance:
 
-covsirphy.analysis.sr\_change module
+covsirphy.analysis.sr\_change
 ------------------------------------
 
 .. automodule:: covsirphy.analysis.sr_change
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
-
-Module contents
----------------
-
-.. automodule:: covsirphy.analysis
    :members:
    :undoc-members:
    :show-inheritance:

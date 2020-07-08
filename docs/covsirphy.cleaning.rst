@@ -1,10 +1,8 @@
-covsirphy.cleaning package
+covsirphy.cleaning
 ==========================
+Data loading and cleaning.
 
-Submodules
-----------
-
-covsirphy.cleaning.cbase module
+covsirphy.cleaning.cbase
 -------------------------------
 
 .. automodule:: covsirphy.cleaning.cbase
@@ -12,7 +10,7 @@ covsirphy.cleaning.cbase module
    :undoc-members:
    :show-inheritance:
 
-covsirphy.cleaning.country\_data module
+covsirphy.cleaning.country\_data
 ---------------------------------------
 
 .. automodule:: covsirphy.cleaning.country_data
@@ -20,7 +18,7 @@ covsirphy.cleaning.country\_data module
    :undoc-members:
    :show-inheritance:
 
-covsirphy.cleaning.dataloader module
+covsirphy.cleaning.dataloader
 ------------------------------------
 
 .. automodule:: covsirphy.cleaning.dataloader
@@ -28,7 +26,7 @@ covsirphy.cleaning.dataloader module
    :undoc-members:
    :show-inheritance:
 
-covsirphy.cleaning.jhu\_data module
+covsirphy.cleaning.jhu\_data
 -----------------------------------
 
 .. automodule:: covsirphy.cleaning.jhu_data
@@ -36,7 +34,7 @@ covsirphy.cleaning.jhu\_data module
    :undoc-members:
    :show-inheritance:
 
-covsirphy.cleaning.oxcgrt module
+covsirphy.cleaning.oxcgrt
 --------------------------------
 
 .. automodule:: covsirphy.cleaning.oxcgrt
@@ -44,7 +42,7 @@ covsirphy.cleaning.oxcgrt module
    :undoc-members:
    :show-inheritance:
 
-covsirphy.cleaning.population module
+covsirphy.cleaning.population
 ------------------------------------
 
 .. automodule:: covsirphy.cleaning.population
@@ -52,19 +50,10 @@ covsirphy.cleaning.population module
    :undoc-members:
    :show-inheritance:
 
-covsirphy.cleaning.word module
+covsirphy.cleaning.word
 ------------------------------
 
 .. automodule:: covsirphy.cleaning.word
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
-
-Module contents
----------------
-
-.. automodule:: covsirphy.cleaning
    :members:
    :undoc-members:
    :show-inheritance:

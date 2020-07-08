@@ -19,7 +19,7 @@ class ChangeFinder(Word):
         clean_df (pandas.DataFrame): cleaned data
 
             Index:
-                reset index
+                - reset index
             Columns:
                 - Date (pd.TimeStamp): Observation date
                 - Country (str): country/region name
@@ -188,21 +188,25 @@ class ChangeFinder(Word):
     def get_dates(self, clean_df, population, country, province):
         """
         Get dates from the dataset.
+
         Args:
             clean_df (pandas.DataFrame): cleaned data
-                        Index:
-                            reset index
-                        Columns:
-                            - Date (pd.TimeStamp): Observation date
-                            - Country (str): country/region name
-                            - Province (str): province/prefecture/sstate name
-                            - Confirmed (int): the number of confirmed cases
-                            - Infected (int): the number of currently infected cases
-                            - Fatal (int): the number of fatal cases
-                            - Recovered (int): the number of recovered cases
+                Index:
+                - reset index
+
+                Columns:
+                    - Date (pd.TimeStamp): Observation date
+                    - Country (str): country/region name
+                    - Province (str): province/prefecture/sstate name
+                    - Confirmed (int): the number of confirmed cases
+                    - Infected (int): the number of currently infected cases
+                    - Fatal (int): the number of fatal cases
+                    - Recovered (int): the number of recovered cases
+
             population (int): initial value of total population in the place
             country (str): country name
             province (str): province name
+
         Returns:
             (list[str]): list of dates, like 22Jan2020
         """
@@ -214,12 +218,14 @@ class ChangeFinder(Word):
     def _read_population_data(self, dates, population, change_dict=None):
         """
         Make population dictionary easy to use in this class.
+
         Args:
             dates (list[str]): list of dates, like 22Jan2020
             population (int): initial value of total population in the place
             change_dict (dict): dictionary of total population
                     - key (str): start date of population change
                     - value (int or None): total population
+
         Returns:
             (dict)
                 - key (str): date, like 22Jan2020

@@ -11,8 +11,8 @@
 
    README
    INSTALLATION
-   CONTRIBUTING
    covsirphy
+   CONTRIBUTING
 
 
 Indices and tables

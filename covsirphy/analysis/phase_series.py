@@ -122,11 +122,13 @@ class PhaseSeries(Word):
             start_date (str): start date of the new phase
             end_date (str): end date of the new phase
             population (int): population value of the start date
-                - if None, initial value will be used
             kwargs: keyword arguments to save as phase information
 
         Returns:
             self
+
+        Notes:
+            if @population is None, initial value will be used.
         """
         # Arguments
         if population is None:
@@ -213,15 +215,14 @@ class PhaseSeries(Word):
         Summarize the series of phase in a dictionary.
 
         Returns:
-            (dict)
+            (dict): nested dictionary of phase information
                 - key (str): phase number, like 1th, 2nd,...
-                - value (str): {
-                    'Type': (str) 'Past' or 'Future'
-                    'Start': (str) start date of the phase,
-                    'End': (str) end date of the phase,
-                    'Population': (int) population value at the start date
-                    - values added by self.update()
-                }
+                - value (dict): phase information
+                    - 'Type': (str) 'Past' or 'Future'
+                    - 'Start': (str) start date of the phase,
+                    - 'End': (str) end date of the phase,
+                    - 'Population': (int) population value at the start date
+                    - values added by PhaseSeries.update()
         """
         # Convert phase ID to phase name
         info_dict = {
@@ -238,10 +239,12 @@ class PhaseSeries(Word):
         Args:
             target_date (str): target date, like 22Jan2020
             ref_date (str or None): reference date
-                - if None, will use last date of the records
 
         Returns:
             (str): 'Past' or 'Future'
+
+        Notes:
+            If @ref_date is None, the last date of the records will be used.
         """
         target_obj = datetime.strptime(target_date, self.DATE_FORMAT)
         ref_date = self.last_record_date if ref_date is None else ref_date

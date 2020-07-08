@@ -121,21 +121,17 @@ class Scenario(Word):
             name (str): phase series name, 'Main' or user-defined name
             end_date (str): end date of the new phase
             days (int): the number of days to add
-            population (int): population value of the start date
-                - if None, the same as initial value
-            model (covsirphy.ModelBase): ODE model
-                - if None, the model of the last phase will be used
-            kwargs: keyword arguments of ODE model parameters
-                - un-included parameters will be the same as the last phase
-                    - if model is not the same, None
-                    - tau is fixed as the last phase's value
+            population (int or None): population value of the start date
+            model (covsirphy.ModelBase orNone): ODE model
+            kwargs: optional, keyword arguments of ODE model parameters, not including tau value.
 
         Notes:
-            If the phases series has not been registered, new phase series will be created.
-            @end_date or @days must be specified.
-
-        Returns:
-            None
+            - If the phases series has not been registered, new phase series will be created.
+            - @end_date or @days must be specified.
+            - If @popultion is None, initial value will be used.
+            - If @model is None, the model of the last phase will be used.
+            - Tau will be fixed as the last phase's value.
+            - kwargs: Default values are the parameter values of the last phase.
         """
         # Parse arguments
         if not isinstance(name, str):
@@ -612,7 +608,7 @@ class Scenario(Word):
         Return subset of summary.
 
         Args:
-            targets (list[str]/str): parameters to show (Rt etc.)
+            targets (list[str] or str): parameters to show (Rt etc.)
             name (str): phase series name
             divide_by_first (bool): if True, divide the values by 1st phase's values
             show_box_plot (bool): if True, box plot. if False, line plot

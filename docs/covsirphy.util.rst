@@ -1,10 +1,8 @@
-covsirphy.util package
+covsirphy.util
 ======================
+Useful tools.
 
-Submodules
-----------
-
-covsirphy.util.map module
+covsirphy.util.map
 -------------------------
 
 .. automodule:: covsirphy.util.map
@@ -12,7 +10,7 @@ covsirphy.util.map module
    :undoc-members:
    :show-inheritance:
 
-covsirphy.util.plotting module
+covsirphy.util.plotting
 ------------------------------
 
 .. automodule:: covsirphy.util.plotting
@@ -20,19 +18,10 @@ covsirphy.util.plotting module
    :undoc-members:
    :show-inheritance:
 
-covsirphy.util.stopwatch module
+covsirphy.util.stopwatch
 -------------------------------
 
 .. automodule:: covsirphy.util.stopwatch
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
-
-Module contents
----------------
-
-.. automodule:: covsirphy.util
    :members:
    :undoc-members:
    :show-inheritance:

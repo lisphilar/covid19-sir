@@ -1,10 +1,8 @@
-covsirphy.phase package
+covsirphy.phase
 =======================
+Analysis of each phase.
 
-Submodules
-----------
-
-covsirphy.phase.estimator module
+covsirphy.phase.estimator
 --------------------------------
 
 .. automodule:: covsirphy.phase.estimator
@@ -12,7 +10,7 @@ covsirphy.phase.estimator module
    :undoc-members:
    :show-inheritance:
 
-covsirphy.phase.ode\_data module
+covsirphy.phase.ode\_data
 --------------------------------
 
 .. automodule:: covsirphy.phase.ode_data
@@ -20,7 +18,7 @@ covsirphy.phase.ode\_data module
    :undoc-members:
    :show-inheritance:
 
-covsirphy.phase.optimize module
+covsirphy.phase.optimize
 -------------------------------
 
 .. automodule:: covsirphy.phase.optimize
@@ -28,7 +26,7 @@ covsirphy.phase.optimize module
    :undoc-members:
    :show-inheritance:
 
-covsirphy.phase.phase\_data module
+covsirphy.phase.phase\_data
 ----------------------------------
 
 .. automodule:: covsirphy.phase.phase_data
@@ -36,7 +34,7 @@ covsirphy.phase.phase\_data module
    :undoc-members:
    :show-inheritance:
 
-covsirphy.phase.sr\_data module
+covsirphy.phase.sr\_data
 -------------------------------
 
 .. automodule:: covsirphy.phase.sr_data
@@ -44,19 +42,10 @@ covsirphy.phase.sr\_data module
    :undoc-members:
    :show-inheritance:
 
-covsirphy.phase.trend module
+covsirphy.phase.trend
 ----------------------------
 
 .. automodule:: covsirphy.phase.trend
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
-
-Module contents
----------------
-
-.. automodule:: covsirphy.phase
    :members:
    :undoc-members:
    :show-inheritance:

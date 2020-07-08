@@ -34,7 +34,7 @@ class ModelBase(ModelBaseCommon):
         This method should be overwritten in subclass.
 
         Args:
-        @population (int): total population
+            population (int): total population
         """
         # Total population
         if not isinstance(population, int):
@@ -59,13 +59,13 @@ class ModelBase(ModelBaseCommon):
         This method should be overwritten in subclass.
 
         Args:
-        @taufree_df (pandas.DataFrame):
-                    Index:
-                        reset index
-                    Columns:
-                        - t (int): time steps (tau-free)
-                        - columns with dimensional variables
-        @population (int): total population
+            taufree_df (pandas.DataFrame):
+                Index:
+                    reset index
+                Columns:
+                    - t (int): time steps (tau-free)
+                    - columns with dimensional variables
+            population (int): total population
 
         Returns:
             (dict)
@@ -82,24 +82,24 @@ class ModelBase(ModelBaseCommon):
         This method should be overwritten in subclass.
 
         Args:
-        @data_df (pandas.DataFrame):
-                    Index:
-                        reset index
-                    Columns:
-                        - Confirmed (int): the number of confirmed cases
-                        - Infected (int): the number of currently infected cases
-                        - Fatal (int): the number of fatal cases
-                        - Recovered (int): the number of recovered cases
-                        - any columns
-        @population (int): total population in the place
+            data_df (pandas.DataFrame):
+                Index:
+                    reset index
+                Columns:
+                    - Confirmed (int): the number of confirmed cases
+                    - Infected (int): the number of currently infected cases
+                    - Fatal (int): the number of fatal cases
+                    - Recovered (int): the number of recovered cases
+                    - any columns
+            population (int): total population in the place
 
         Returns:
             (pandas.DataFrame):
-                    Index:
-                        reset index
-                    Columns:
-                        - any columns @data_df has
-                        - columns with dimensional variables
+                Index:
+                    reset index
+                Columns:
+                    - any columns @data_df has
+                    - columns with dimensional variables
         """
         df = cls.validate_dataframe(
             data_df, name="data_df", columns=cls.VALUE_COLUMNS
@@ -109,8 +109,7 @@ class ModelBase(ModelBaseCommon):
     @classmethod
     def restore(cls, specialized_df):
         """
-        Restore Confirmed/Infected/Recovered/Fatal.
-         using a dataframe with the variables of the model.
+        Restore Confirmed/Infected/Recovered/Fatal using a dataframe with the variables of the model.
         This method should be overwritten in subclass.
 
         Args:

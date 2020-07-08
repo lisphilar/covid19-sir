@@ -1,8 +1,5 @@
-covsirphy package
+API reference
 =================
-
-Subpackages
------------
 
 .. toctree::
    :maxdepth: 4
@@ -12,11 +9,3 @@ Subpackages
    covsirphy.ode
    covsirphy.phase
    covsirphy.util
-
-Module contents
----------------
-
-.. automodule:: covsirphy
-   :members:
-   :undoc-members:
-   :show-inheritance:

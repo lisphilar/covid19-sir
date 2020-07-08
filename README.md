@@ -71,28 +71,20 @@ data_loader.covid19dh_citation
 ```
 
 
-## Quick usage for analysis
+# Quick usage for analysis
 Example Python codes are in `example` directory. With Pipenv environment, we can run the Python codes with Bash code `example.sh` in the top directory of this repository.
 
-### Preparation
+## Preparation
 ```Python
 import covsirphy as cs
 cs.__version__
 ```
 Please load the datasets as explained in the previous section.
 
-(Optional) We can replace a part of JHU data with country-specific datasets.
-As an example, we will use the records in Japan here because values of JHU dataset sometimes differ from government-announced values as shown in [COVID-19: Government/JHU data in Japan](https://www.kaggle.com/lisphilar/covid-19-government-jhu-data-in-japan).
-
-```Python
-jhu_data.replace(japan_data)
-ncov_df = jhu_data.cleaned()
-```
-
-### Scenario analysis
+## Scenario analysis
 As an example, use dataset in Italy.
 
-#### Check records
+### Check records
 ```Python
 ita_scenario = cs.Scenario(jhu_data, population_data, country="Italy", province=None)
 ```
@@ -100,14 +92,14 @@ See the records as a figure.
 ```Python
 ita_record_df = ita_scenario.records()
 ```
-#### S-R trend analysis
+### S-R trend analysis
 Perform S-R trend analysis and set phases to the scenario.
 The number of change points will be determined automatically (>= 2.4.0).
 ```Python
 ita_scenario.trend(set_phases=True)
 print(ita_scenario.summary())
 ```
-#### Hyperparameter estimation of ODE models
+### Hyperparameter estimation of ODE models
 As an example, use SIR-F model.
 ```Python
 ita_scenario.estimate(cs.SIRF)
@@ -123,7 +115,7 @@ ita_scenario.get("Rt", phase="4th")
 ita_scenario.param_history(targets=["Rt"], divide_by_first=False, box_plot=False)
 ita_scenario.param_history(targets=["rho", "sigma"])
 ```
-#### Prediction of the number of cases
+### Prediction of the number of cases
 we can add some future phases.
 ```Python
 # if needed, clear the registered future phases
@@ -145,6 +137,8 @@ sim_df = ita_scenario.simulate(name="Main")
 # Describe representative values
 print(ita_scenario.describe())
 ```
+
+# Information
 
 ## Apache License 2.0
 Please refer to [LICENSE](https://github.com/lisphilar/covid19-sir/blob/master/LICENSE) file.

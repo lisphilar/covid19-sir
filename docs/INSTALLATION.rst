@@ -1,6 +1,9 @@
 Installation and dataset preparation
 ====================================
 
+Options of installation
+-----------------------
+
 We have the following options to start analysis with CovsirPhy. Datasets
 are not included in this package, but we can prepare them with
 ``DataLoader`` class.
@@ -17,114 +20,43 @@ are not included in this package, but we can prepare them with
 | Kagglers (Kaggle platform)     | pip            | Kaggle Datasets                       |
 +--------------------------------+----------------+---------------------------------------+
 
+Datasets to load
+----------------
+
 We will use the following datasets (CovsirPhy >= 2.4.0). Standard users
 and developers will retrieve main datasets from `COVID-19 Data
 Hub <https://covid19datahub.io/>`__ using ``covid19dh`` Python package.
-We can get the citation list of primary source via `COVID-19 Data Hub:
-Dataset <https://covid19datahub.io/articles/data.html>`__ and
-``covsirphy.DataLoader`` class (refer to "Standard users" subsection).
+We can get the citation list of primary source ``covsirphy.DataLoader``
+class (refer to "Standard users" subsection). This description is from
+`COVID-19 Data Hub:
+Dataset <https://covid19datahub.io/articles/data.html>`__.
 
-+-------+-------+-------+
-|       | Descr | URL   |
-|       | iptio |       |
-|       | n     |       |
-+=======+=======+=======+
-| The   | Guido | https |
-| numbe | tti,  | ://co |
-| r     | E.,   | vid19 |
-| of    | Ardia | datah |
-| cases | ,     | ub.io |
-| (JHU  | D.,   | /     |
-| style | (2020 |       |
-| )     | ),    |       |
-|       | "COVI |       |
-|       | D-19  |       |
-|       | Data  |       |
-|       | Hub", |       |
-|       | Worki |       |
-|       | ng    |       |
-|       | paper |       |
-|       | ,     |       |
-|       | doi:  |       |
-|       | 10.13 |       |
-|       | 140/R |       |
-|       | G.2.2 |       |
-|       | .1164 |       |
-|       | 9.817 |       |
-|       | 63.   |       |
-+-------+-------+-------+
-| The   | Lisph | https |
-| numbe | ilar  | ://gi |
-| r     | (2020 | thub. |
-| of    | ),    | com/l |
-| cases | COVID | isphi |
-| in    | -19   | lar/c |
-| Japan | datas | ovid1 |
-|       | et    | 9-sir |
-|       | in    | /tree |
-|       | Japan | /mast |
-|       | .     | er/da |
-|       |       | ta    |
-+-------+-------+-------+
-| Popul | Guido | https |
-| ation | tti,  | ://co |
-| in    | E.,   | vid19 |
-| each  | Ardia | datah |
-| count | ,     | ub.io |
-| ry    | D.,   | /     |
-|       | (2020 |       |
-|       | ),    |       |
-|       | "COVI |       |
-|       | D-19  |       |
-|       | Data  |       |
-|       | Hub", |       |
-|       | Worki |       |
-|       | ng    |       |
-|       | paper |       |
-|       | ,     |       |
-|       | doi:  |       |
-|       | 10.13 |       |
-|       | 140/R |       |
-|       | G.2.2 |       |
-|       | .1164 |       |
-|       | 9.817 |       |
-|       | 63.   |       |
-+-------+-------+-------+
-| Gover | Guido | https |
-| nment | tti,  | ://co |
-| Respo | E.,   | vid19 |
-| nse   | Ardia | datah |
-| Track | ,     | ub.io |
-| er    | D.,   | /     |
-| (OxCG | (2020 |       |
-| RT)   | ),    |       |
-|       | "COVI |       |
-|       | D-19  |       |
-|       | Data  |       |
-|       | Hub", |       |
-|       | Worki |       |
-|       | ng    |       |
-|       | paper |       |
-|       | ,     |       |
-|       | doi:  |       |
-|       | 10.13 |       |
-|       | 140/R |       |
-|       | G.2.2 |       |
-|       | .1164 |       |
-|       | 9.817 |       |
-|       | 63.   |       |
-+-------+-------+-------+
+`COVID-19 Data Hub <https://covid19datahub.io/>`__
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+| Guidotti, E., Ardia, D., (2020), "COVID-19 Data Hub", Working paper,
+  doi: 10.13140/RG.2.2.11649.81763.
+| - The number of cases (JHU style) - Population in each country -
+  Government Response Tracker (OxCGRT)
+
+`Datasets for CovsirPhy <https://github.com/lisphilar/covid19-sir/tree/master/data>`__
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+| Lisphilar (2020), GitHub repository, COVID-19 dataset in Japan.
+| - The number of cases in Japan
+
+How to request new data loader
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 If you want to use a new dataset for your analysis, please kindly inform
-us via `GitHub
-Issues <https://github.com/lisphilar/covid19-sir/issues/new/choose>`__
-with "Request new method of DataLoader class" template. Please read
-`Guideline of
+us via `GitHub Issues: Request new method of DataLoader
+class <https://github.com/lisphilar/covid19-sir/issues/new/?template=request-new-method-of-dataloader-class.md>`__.
+Please read `Guideline of
 contribution <https://lisphilar.github.io/covid19-sir/CONTRIBUTING.html>`__
 in advance.
 
 1. Standard users
-~~~~~~~~~~~~~~~~~
+-----------------
 
 Covsirphy is available at `PyPI (The Python Package Index):
 covsirphy <https://pypi.org/project/covsirphy/>`__ and supports Python
@@ -134,8 +66,7 @@ covsirphy <https://pypi.org/project/covsirphy/>`__ and supports Python
 
     pip install covsirphy
 
-Then, download the datasets with the following codes, when you want to
-save the data in ``input`` directory.
+Then, download the datasets and save the data in ``input`` directory.
 
 .. code:: python
 
@@ -170,7 +101,7 @@ follows.
     data_loader.covid19dh_citation
 
 2. Developers
-~~~~~~~~~~~~~
+-------------
 
 Developers will clone this repository with ``git clone`` command and
 install dependencies with pipenv.
@@ -212,7 +143,7 @@ We can prepare the dataset with the same codes as that was explained in
 "1. Standard users" subsection.
 
 3. Kagglers (local environment)
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+-------------------------------
 
 As explained in "2. Developers" subsection, we need to git-clone this
 repository and install the dependencies when you want to uses this
@@ -231,97 +162,20 @@ saved in ``input`` directory of your local repository.
 
 | Note:
 | Except for OxCGRT dataset, the datasets downloaded with ``input.py``
-  scripts are different from that explained in the previous subsections.
-  URLs are shown in the next table.
+  scripts are different from that explained in the previous subsections
+  as follows.
 
-+-------+-------+-------+
-|       | Descr | URL   |
-|       | iptio |       |
-|       | n     |       |
-+=======+=======+=======+
-| The   | Novel | https |
-| numbe | Coron | ://ww |
-| r     | a     | w.kag |
-| of    | Virus | gle.c |
-| cases | 2019  | om/su |
-| (JHU) | Datas | dalai |
-|       | et    | rajku |
-|       | by    | mar/n |
-|       | SRK   | ovel- |
-|       |       | coron |
-|       |       | a-vir |
-|       |       | us-20 |
-|       |       | 19-da |
-|       |       | taset |
-+-------+-------+-------+
-| The   | COVID | https |
-| numbe | -19   | ://ww |
-| r     | datas | w.kag |
-| of    | et    | gle.c |
-| cases | in    | om/li |
-| in    | Japan | sphil |
-| Japan | by    | ar/co |
-|       | Lisph | vid19 |
-|       | ilar  | -data |
-|       |       | set-i |
-|       |       | n-jap |
-|       |       | an    |
-+-------+-------+-------+
-| Popul | covid | https |
-| ation | 19    | ://ww |
-| in    | globa | w.kag |
-| each  | l     | gle.c |
-| count | forec | om/dg |
-| ry    | astin | rechk |
-|       | g:    | a/cov |
-|       | locat | id19- |
-|       | ions  | globa |
-|       | popul | l-for |
-|       | ation | ecast |
-|       | by    | ing-l |
-|       | Dmitr | ocati |
-|       | y     | ons-p |
-|       | A.    | opula |
-|       | Grech | tion  |
-|       | ka    |       |
-+-------+-------+-------+
-| Gover | Thoma | https |
-| nment | s     | ://gi |
-| Respo | Hale, | thub. |
-| nse   | Sam   | com/O |
-| Track | Webst | xCGRT |
-| er    | er,   | /covi |
-| (OxCG | Anna  | d-pol |
-| RT)   | Pethe | icy-t |
-|       | rick, | racke |
-|       | Toby  | r     |
-|       | Phill |       |
-|       | ips,  |       |
-|       | and   |       |
-|       | Beatr |       |
-|       | iz    |       |
-|       | Kira. |       |
-|       | (2020 |       |
-|       | ).    |       |
-|       | Oxfor |       |
-|       | d     |       |
-|       | COVID |       |
-|       | -19   |       |
-|       | Gover |       |
-|       | nment |       |
-|       | Respo |       |
-|       | nse   |       |
-|       | Track |       |
-|       | er.   |       |
-|       | Blava |       |
-|       | tnik  |       |
-|       | Schoo |       |
-|       | l     |       |
-|       | of    |       |
-|       | Gover |       |
-|       | nment |       |
-|       | .     |       |
-+-------+-------+-------+
+-  The number of cases (JHU): `Novel Corona Virus 2019 Dataset by
+   SRK <https://www.kaggle.com/sudalairajkumar/novel-corona-virus-2019-dataset>`__
+-  The number of cases in Japan: `COVID-19 dataset in Japan by
+   Lisphilar <https://www.kaggle.com/lisphilar/covid19-dataset-in-japan>`__
+-  Population in each country: `covid19 global forecasting: locations
+   population by Dmitry A.
+   Grechka <https://www.kaggle.com/dgrechka/covid19-global-forecasting-locations-population>`__
+-  Government Response Tracker (OxCGRT): `Thomas Hale, Sam Webster, Anna
+   Petherick, Toby Phillips, and Beatriz Kira. (2020). Oxford COVID-19
+   Government Response Tracker. Blavatnik School of
+   Government. <https://github.com/OxCGRT/covid-policy-tracker>`__
 
 Usage of ``DataLoader`` class is as follows. Please specify
 ``local_file`` argument in the methods.
@@ -335,12 +189,23 @@ Usage of ``DataLoader`` class is as follows. Please specify
     population_data = data_loader.population(local_file="locations_population.csv")
     oxcgrt_data = data_loader.oxcgrt(local_file="OxCGRT_latest.csv")
 
+(Optional) We can replace a part of JHU data with country-specific
+datasets. As an example, we will use the records in Japan here because
+values of JHU dataset sometimes differ from government-announced values
+as shown in `COVID-19: Government/JHU data in
+Japan <https://www.kaggle.com/lisphilar/covid-19-government-jhu-data-in-japan>`__.
+
+.. code:: python
+
+    jhu_data.replace(japan_data)
+    ncov_df = jhu_data.cleaned()
+
 4. Kagglers (Kaggle platform)
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+-----------------------------
 
 When you want to use this package in Kaggle notebook, please turn on
 Internet option in notebook setting and download the datasets explained
-in the previous section.
+in the previous subsection "3. Kagglers (Kaggle platform)".
 
 Then, install this package with pip command.
 
@@ -368,3 +233,14 @@ filenames.
 
 | Note:
 | Currently, OxCGRT dataset is not supported.
+
+(Optional) We can replace a part of JHU data with country-specific
+datasets. As an example, we will use the records in Japan here because
+values of JHU dataset sometimes differ from government-announced values
+as shown in `COVID-19: Government/JHU data in
+Japan <https://www.kaggle.com/lisphilar/covid-19-government-jhu-data-in-japan>`__.
+
+.. code:: python
+
+    jhu_data.replace(japan_data)
+    ncov_df = jhu_data.cleaned()

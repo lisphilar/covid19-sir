@@ -104,9 +104,9 @@ class Estimator(Optimizer):
         """
         Run optimization.
         If the result satisfied the following conditions, optimization ends.
-            - all values are not under than 0
-            - values of monotonic increasing variables increases monotonically
-            - predicted values are in the allowance when each actual value shows max value
+        - all values are not under than 0
+        - values of monotonic increasing variables increases monotonically
+        - predicted values are in the allowance when each actual value shows max value
 
         Args:
             timeout (int): time-out of run

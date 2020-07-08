@@ -91,25 +91,28 @@
 <li class="toctree-l3"><a class="reference internal" href="#standard-users">Standard users</a></li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference internal" href="#quick-usage-for-analysis">Quick usage for analysis</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="#preparation">Preparation</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#scenario-analysis">Scenario analysis</a><ul>
-<li class="toctree-l4"><a class="reference internal" href="#check-records">Check records</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#s-r-trend-analysis">S-R trend analysis</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#hyperparameter-estimation-of-ode-models">Hyperparameter estimation of ODE models</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#prediction-of-the-number-of-cases">Prediction of the number of cases</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="#quick-usage-for-analysis">Quick usage for analysis</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#preparation">Preparation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#scenario-analysis">Scenario analysis</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#check-records">Check records</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#s-r-trend-analysis">S-R trend analysis</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#hyperparameter-estimation-of-ode-models">Hyperparameter estimation of ODE models</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#prediction-of-the-number-of-cases">Prediction of the number of cases</a></li>
 </ul>
 </li>
 </ul>
 </li>
+<li class="toctree-l1"><a class="reference internal" href="#information">Information</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#apache-license-2-0">Apache License 2.0</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#citation">Citation</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#related-work">Related work</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="INSTALLATION.html">Installation and dataset preparation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="covsirphy.html">API reference</a></li>
 <li class="toctree-l1"><a class="reference internal" href="CONTRIBUTING.html">Guideline of contribution</a></li>
-<li class="toctree-l1"><a class="reference internal" href="covsirphy.html">covsirphy package</a></li>
 </ul>
 
             
@@ -298,33 +301,25 @@ follows.</p>
 </div>
 </div>
 </div>
+</div>
 <div class="section" id="quick-usage-for-analysis">
-<h2>Quick usage for analysis<a class="headerlink" href="#quick-usage-for-analysis" title="Permalink to this headline">¶</a></h2>
+<h1>Quick usage for analysis<a class="headerlink" href="#quick-usage-for-analysis" title="Permalink to this headline">¶</a></h1>
 <p>Example Python codes are in <code class="docutils literal notranslate"><span class="pre">example</span></code> directory. With Pipenv
 environment, we can run the Python codes with Bash code <code class="docutils literal notranslate"><span class="pre">example.sh</span></code>
 in the top directory of this repository.</p>
 <div class="section" id="preparation">
-<h3>Preparation<a class="headerlink" href="#preparation" title="Permalink to this headline">¶</a></h3>
+<h2>Preparation<a class="headerlink" href="#preparation" title="Permalink to this headline">¶</a></h2>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">covsirphy</span> <span class="k">as</span> <span class="nn">cs</span>
 <span class="n">cs</span><span class="o">.</span><span class="n">__version__</span>
 </pre></div>
 </div>
 <p>Please load the datasets as explained in the previous section.</p>
-<p>(Optional) We can replace a part of JHU data with country-specific
-datasets. As an example, we will use the records in Japan here because
-values of JHU dataset sometimes differ from government-announced values
-as shown in <a class="reference external" href="https://www.kaggle.com/lisphilar/covid-19-government-jhu-data-in-japan">COVID-19: Government/JHU data in
-Japan</a>.</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">jhu_data</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="n">japan_data</span><span class="p">)</span>
-<span class="n">ncov_df</span> <span class="o">=</span> <span class="n">jhu_data</span><span class="o">.</span><span class="n">cleaned</span><span class="p">()</span>
-</pre></div>
-</div>
 </div>
 <div class="section" id="scenario-analysis">
-<h3>Scenario analysis<a class="headerlink" href="#scenario-analysis" title="Permalink to this headline">¶</a></h3>
+<h2>Scenario analysis<a class="headerlink" href="#scenario-analysis" title="Permalink to this headline">¶</a></h2>
 <p>As an example, use dataset in Italy.</p>
 <div class="section" id="check-records">
-<h4>Check records<a class="headerlink" href="#check-records" title="Permalink to this headline">¶</a></h4>
+<h3>Check records<a class="headerlink" href="#check-records" title="Permalink to this headline">¶</a></h3>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">ita_scenario</span> <span class="o">=</span> <span class="n">cs</span><span class="o">.</span><span class="n">Scenario</span><span class="p">(</span><span class="n">jhu_data</span><span class="p">,</span> <span class="n">population_data</span><span class="p">,</span> <span class="n">country</span><span class="o">=</span><span class="s2">&quot;Italy&quot;</span><span class="p">,</span> <span class="n">province</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
 </pre></div>
 </div>
@@ -334,7 +329,7 @@ Japan</a>.</p>
 </div>
 </div>
 <div class="section" id="s-r-trend-analysis">
-<h4>S-R trend analysis<a class="headerlink" href="#s-r-trend-analysis" title="Permalink to this headline">¶</a></h4>
+<h3>S-R trend analysis<a class="headerlink" href="#s-r-trend-analysis" title="Permalink to this headline">¶</a></h3>
 <p>Perform S-R trend analysis and set phases to the scenario. The number of
 change points will be determined automatically (&gt;= 2.4.0).</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">ita_scenario</span><span class="o">.</span><span class="n">trend</span><span class="p">(</span><span class="n">set_phases</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
@@ -343,7 +338,7 @@ change points will be determined automatically (&gt;= 2.4.0).</p>
 </div>
 </div>
 <div class="section" id="hyperparameter-estimation-of-ode-models">
-<h4>Hyperparameter estimation of ODE models<a class="headerlink" href="#hyperparameter-estimation-of-ode-models" title="Permalink to this headline">¶</a></h4>
+<h3>Hyperparameter estimation of ODE models<a class="headerlink" href="#hyperparameter-estimation-of-ode-models" title="Permalink to this headline">¶</a></h3>
 <p>As an example, use SIR-F model.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">ita_scenario</span><span class="o">.</span><span class="n">estimate</span><span class="p">(</span><span class="n">cs</span><span class="o">.</span><span class="n">SIRF</span><span class="p">)</span>
 <span class="nb">print</span><span class="p">(</span><span class="n">ita_scenario</span><span class="o">.</span><span class="n">summary</span><span class="p">())</span>
@@ -361,7 +356,7 @@ change points will be determined automatically (&gt;= 2.4.0).</p>
 </div>
 </div>
 <div class="section" id="prediction-of-the-number-of-cases">
-<h4>Prediction of the number of cases<a class="headerlink" href="#prediction-of-the-number-of-cases" title="Permalink to this headline">¶</a></h4>
+<h3>Prediction of the number of cases<a class="headerlink" href="#prediction-of-the-number-of-cases" title="Permalink to this headline">¶</a></h3>
 <p>we can add some future phases.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># if needed, clear the registered future phases</span>
 <span class="n">ita_scenario</span><span class="o">.</span><span class="n">clear</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;Main&quot;</span><span class="p">)</span>
@@ -386,6 +381,8 @@ change points will be determined automatically (&gt;= 2.4.0).</p>
 </div>
 </div>
 </div>
+<div class="section" id="information">
+<h1>Information<a class="headerlink" href="#information" title="Permalink to this headline">¶</a></h1>
 <div class="section" id="apache-license-2-0">
 <h2>Apache License 2.0<a class="headerlink" href="#apache-license-2-0" title="Permalink to this headline">¶</a></h2>
 <p>Please refer to

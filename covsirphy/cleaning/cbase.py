@@ -11,9 +11,6 @@ class CleaningBase(Word):
 
     Args:
         filename (str): CSV filename of the dataset
-
-    Attributes:
-        citation (str): citation fo the dataset
     """
 
     def __init__(self, filename):
@@ -88,21 +85,12 @@ class CleaningBase(Word):
     @property
     def citation(self):
         """
-        Return citation.
-
-        Returns:
-            (str): citation of the datset
+        str: citation/description of the dataset
         """
         return self._citation
 
     @citation.setter
     def citation(self, description):
-        """
-        Set citation of the dataset.
-
-        Args:
-            description (str): citation of the dataset
-        """
         if not isinstance(description, str):
             raise TypeError("@description must be a string.")
         self._citation = description
