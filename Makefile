@@ -5,6 +5,7 @@ install:
 	@pip install pipenv
 	@export PIPENV_VENV_IN_PROJECT=true
 	@export PIPENV_TIMEOUT=7200
+	@pipenv lock
 	@pipenv install --dev
 
 
