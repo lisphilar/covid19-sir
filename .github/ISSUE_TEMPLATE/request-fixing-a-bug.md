@@ -19,6 +19,11 @@ Related classes:
 
 Codes and outputs:
 ```Python
+import covsirphy as cs
+# Dataset preparation
+data_loader = cs.DataLoader("input")
+jhu_data = data_loader.jhu()
+population_data = data_loader.population()
 ```
 This code returns 
 
