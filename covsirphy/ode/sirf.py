@@ -1,8 +1,29 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
+from numba import njit
 import numpy as np
 from covsirphy.ode.mbase import ModelBase
+
+
+@njit
+def ode_sirf(X, n, theta, kappa, rho, sigma):
+    """
+        Return the list of dS/dt (tau-free) etc.
+
+        Args:
+            t (int): time steps
+            X (numpy.array): values of th model variables
+
+        Returns:
+            (np.array)
+        """
+    s, i, = X[0], X[1]
+    dsdt = 0 - rho * s * i / n
+    drdt = sigma * i
+    dfdt = kappa * i + (0 - dsdt) * theta
+    didt = 0 - dsdt - drdt - dfdt
+    return np.array([dsdt, didt, drdt, dfdt])
 
 
 class SIRF(ModelBase):
@@ -69,13 +90,7 @@ class SIRF(ModelBase):
         Returns:
             (np.array)
         """
-        n = self.population
-        s, i, *_ = X
-        dsdt = 0 - self.rho * s * i / n
-        drdt = self.sigma * i
-        dfdt = self.kappa * i + (0 - dsdt) * self.theta
-        didt = 0 - dsdt - drdt - dfdt
-        return np.array([dsdt, didt, drdt, dfdt])
+        return ode_sirf(X, self.population, self.theta, self.kappa, self.rho, self.sigma)
 
     @classmethod
     def param_range(cls, taufree_df, population):
