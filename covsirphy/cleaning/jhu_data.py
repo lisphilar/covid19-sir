@@ -171,19 +171,19 @@ class JHUData(CleaningBase):
         Notes:
             Records with Recovered > 0 will be selected.
         """
+        province = province or "-"
         df = self._cleaned_df.copy()
         df = df.loc[df[self.COUNTRY] == country, :]
-        if province:
-            df = df.loc[df[self.PROVINCE] == province, :]
-        df = df.groupby(self.DATE).last().reset_index()
-        df = df.drop([self.COUNTRY, self.PROVINCE], axis=1)
-        df = df.loc[df[self.R] > 0, :]
         if df.empty:
-            if province is None:
-                raise KeyError(
-                    f"@country {country} is not included in the dataset."
-                )
             raise KeyError(
-                f"({country}, {province}) is not included in the dataset."
+                f"Records of {country} is not registered."
             )
-        return df
+        if province in df[self.PROVINCE].unique():
+            df = df.loc[df[self.PROVINCE] == province, :]
+            df = df.groupby(self.DATE).last().reset_index()
+            return df.loc[df[self.R] > 0, :]
+        if province == "-":
+            df = df.groupby(self.DATE).sum().reset_index()
+            return df.loc[df[self.R] > 0, :]
+        raise KeyError(
+            f"Records of {province} in {country} is not registered.")
