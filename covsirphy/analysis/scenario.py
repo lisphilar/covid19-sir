@@ -238,7 +238,7 @@ class Scenario(Word):
             include_init_phase (bool): whether use initial phase or not
             show_figure (bool): if True, show the result as a figure
             filename (str): filename of the figure, or None (show figure)
-            kwargs: the other keyword arguments of ChangeFinder().run()
+            kwargs: the other keyword arguments will be ignored.
 
         Returns:
             None
@@ -255,7 +255,7 @@ class Scenario(Word):
                 "@n_points argument is un-necessary"
                 " because the number of change points will be automatically determined."
             )
-        finder.run(**kwargs)
+        finder.run()
         phase_series = finder.show(show_figure=show_figure, filename=filename)
         if not set_phases:
             return None
@@ -572,7 +572,7 @@ class Scenario(Word):
                 y0_dict=y0_dict_phase
             )
         simulator.run()
-        first_date = df.loc[self.num2str(1), self.START]
+        first_date = start_objects[0].strftime(self.DATE_FORMAT)
         dim_df = simulator.dim(self.tau, first_date)
         return dim_df, start_objects
 
