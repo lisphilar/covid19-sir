@@ -202,7 +202,6 @@ class Estimator(Optimizer):
             tau = fixed_dict.pop(self.TAU)
         else:
             tau = trial.suggest_categorical(self.TAU, self.tau_candidates)
-        tau = self.validate_natural_int(tau, name=self.TAU)
         taufree_df = self.divide_minutes(tau)
         # Set parameters of the models
         model_param_dict = self.model.param_range(
@@ -231,7 +230,6 @@ class Estimator(Optimizer):
                         - t (int): Elapsed time divided by tau value [-]
                         - columns with dimensional variables
         """
-        tau = self.validate_natural_int(tau, name="tau")
         taufree_df = self.ode_data.make(
             model=self.model,
             population=self.population,
@@ -274,14 +272,14 @@ class Estimator(Optimizer):
         diffs = [df[f"{v}{self.A}"] - df[f"{v}{self.P}"] for v in v_list]
         numerators = [df[f"{v}{self.A}"] + 1 for v in v_list]
         try:
-            scores = [
+            score = sum(
                 p * np.average(diff.abs() / numerator, weights=df.index)
                 for (p, diff, numerator)
                 in zip(self.model.PRIORITIES, diffs, numerators)
-            ]
+            )
         except ZeroDivisionError:
             return np.inf
-        return sum(scores)
+        return score
 
     def simulate(self, step_n, param_dict):
         """
