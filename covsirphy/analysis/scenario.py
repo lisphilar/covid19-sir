@@ -326,7 +326,7 @@ class Scenario(Word):
         trials = phase_est_dict["Trials"]
         runtime = phase_est_dict["Runtime"]
         print(
-            f"\t{phase} phase with {model.NAME} model finished {trials} in {runtime}."
+            f"\t{phase} phase with {model.NAME} model finished {trials} trials in {runtime}."
         )
         # Return the dictionary of the result of estimation
         return (model, name, phase, estimator, phase_est_dict)
