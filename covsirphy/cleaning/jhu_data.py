@@ -175,7 +175,8 @@ class JHUData(CleaningBase):
         df = df.loc[df[self.COUNTRY] == country, :]
         if province:
             df = df.loc[df[self.PROVINCE] == province, :]
-        df = df.groupby(self.DATE).sum().reset_index()
+        df = df.groupby(self.DATE).last().reset_index()
+        df = df.drop([self.COUNTRY, self.PROVINCE], axis=1)
         df = df.loc[df[self.R] > 0, :]
         if df.empty:
             if province is None:

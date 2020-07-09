@@ -46,9 +46,9 @@ class SIRD(ModelBase):
 
     def __init__(self, population, kappa, rho, sigma):
         # Total population
-        if not isinstance(population, int):
-            raise TypeError("@population must be an integer.")
-        self.population = population
+        self.population = self.validate_natural_int(
+            population, name="population"
+        )
         # Non-dim parameters
         self.kappa = kappa
         self.rho = rho

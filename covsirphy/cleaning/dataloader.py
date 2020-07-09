@@ -486,51 +486,10 @@ class DataLoader(Word):
             "administrative_area_level_1": "Country/Region",
         }
         columns = list(col_dict.values()) + OxCGRTData.OXCGRT_VARIABLES
+        # Merge the datasets
         c_df = c_df.rename(col_dict, axis=1).loc[:, columns]
         p_df = p_df.rename(col_dict, axis=1).loc[:, columns]
-        v_cols = ["Confirmed", "Recovered", "Deaths"]
-        c_col = "Country/Region"
-        date_col = "ObservationDate"
-        # Merge the datasets
-        c_series = c_df[c_col].unique()
-        p_series = p_df[c_col].unique()
-        dates = c_df[date_col].unique().tolist()
-        common_countries = list(set(c_series) & set(p_series))
-        c_dict = {
-            country: [
-                c_df.loc[
-                    (c_df[date_col] == date) & (c_df[c_col] == country), v_cols
-                ].values
-                for date in dates
-            ]
-            for country in common_countries
-        }
-        p_dict = {
-            country: [
-                p_df.loc[
-                    (p_df[date_col] == date) & (p_df[c_col] == country), v_cols
-                ].sum(axis=1).values
-                for date in dates
-            ]
-            for country in common_countries
-        }
-        df = c_df.copy()
-        for country in common_countries:
-            # Remove data from level 1 dataset
-            df = df.loc[df[c_col] != country, :]
-            # Add data of level 2 dataset
-            df = pd.concat(
-                [df, p_df.loc[p_df[c_col] == country, :]], axis=0, ignore_index=True
-            )
-            # Register the difference of level 1 data and total value of level 2 data
-            _df = c_df.loc[c_df[c_col] == country, :]
-            c_nest, p_nest = c_dict[country], p_dict[country]
-            for (date, c_list, p_list) in zip(dates, c_nest, p_nest):
-                for (i, (c, p)) in enumerate(zip(c_list, p_list)):
-                    diff = c - p
-                    _df.loc[_df[date_col] == date, v_cols[i]] = diff
-            df = pd.concat([df, _df], axis=0, ignore_index=True)
-        df = df.reset_index(drop=True)
+        df = pd.concat([c_df, p_df], axis=0, ignore_index=True)
         if verbose:
             print("\nDetailed citaition list:")
             print(self._covid19dh_citation)
