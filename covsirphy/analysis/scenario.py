@@ -659,7 +659,7 @@ class Scenario(Word):
         line_plot(
             _df, title=title,
             xlabel="Phase", ylabel=str(), math_scale=False, h=h,
-            show_figure=show_figure, filename=filename
+            filename=filename
         )
         return df
 
