@@ -4,6 +4,7 @@
 from pathlib import Path
 import pandas as pd
 import pytest
+import warnings
 from covsirphy import DataLoader
 from covsirphy import Word, JHUData, CountryData, PopulationData, OxCGRTData
 
@@ -46,6 +47,7 @@ class TestDataLoader(object):
         data_loader = DataLoader("input")
         local_path = Path("input") / "covid19dh.csv"
         with pytest.raises(Exception):
+            warnings.filterwarnings("ignore", pd.errors.DtypeWarning)
             data_loader.japan(local_file=local_path)
 
     def test_subset(self, data_loader):
