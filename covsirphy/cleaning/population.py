@@ -170,12 +170,20 @@ class PopulationData(CleaningBase):
         country (str): country name
         province (str): province name
         """
+        value = self.validate_natural_int(value, "value")
+        df = self._cleaned_df.copy()
+        c_series = df[self.COUNTRY]
+        p_series = df[self.PROVINCE]
+        if country in c_series.unique() and province in p_series.unique():
+            sel = (c_series == country) & (p_series == province)
+            df.loc[sel, self.N] = value
+            self._cleaned_df = df.copy()
+            return self
         series = pd.Series(
-            [country, province, value],
-            index=[self.COUNTRY, self.PROVINCE, self.N]
+            ["-", country, province, value],
+            index=[self.ISO3, self.COUNTRY, self.PROVINCE, self.N]
         )
-        df = self._cleaned_df.append(series, ignore_index=True)
-        self._cleaned_df = df.copy()
+        self._cleaned_df = df.append(series, ignore_index=True)
         return self
 
 
