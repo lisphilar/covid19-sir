@@ -136,9 +136,6 @@ class Scenario(Word):
             - kwargs: Default values are the parameter values of the last phase.
         """
         # Parse arguments
-        if not isinstance(name, str):
-            raise TypeError(
-                f"@name must be a string, but {type(name)} was applied.")
         name = self.MAIN if name == "Main" else name
         if name not in self.series_dict.keys():
             self.series_dict[name] = copy.deepcopy(self.series_dict[self.MAIN])

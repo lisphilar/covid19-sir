@@ -180,16 +180,17 @@ class JHUData(CleaningBase):
         # Check the country was registered
         if df.empty:
             raise KeyError(
-                f"Records of {country} is not registered."
+                f"Records of {country} were not registered."
             )
         # Select the province data if the province was registered
         if province in df[self.PROVINCE].unique():
             df = df.loc[df[self.PROVINCE] == province, :]
             df = df.groupby(self.DATE).last().reset_index()
+            df = df.drop([self.COUNTRY, self.PROVINCE], axis=1)
             return df.loc[df[self.R] > 0, :]
         # Total value in the country
         if province == "-":
             df = df.groupby(self.DATE).sum().reset_index()
             return df.loc[df[self.R] > 0, :]
         raise KeyError(
-            f"Records of {province} in {country} is not registered.")
+            f"Records of {province} in {country} were not registered.")
