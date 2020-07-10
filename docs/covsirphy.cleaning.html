@@ -85,6 +85,8 @@
               <p class="caption"><span class="caption-text">Contents:</span></p>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="README.html">CovsirPhy: COVID-19 with SIRs</a></li>
+<li class="toctree-l1"><a class="reference internal" href="README.html#quick-usage-for-analysis">Quick usage for analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="README.html#information">Information</a></li>
 <li class="toctree-l1"><a class="reference internal" href="INSTALLATION.html">Installation and dataset preparation</a></li>
 <li class="toctree-l1 current"><a class="reference internal" href="covsirphy.html">API reference</a><ul class="current">
 <li class="toctree-l2"><a class="reference internal" href="covsirphy.analysis.html">covsirphy.analysis</a></li>
@@ -592,7 +594,7 @@ If &#64;basename is None, the value of DataLoader.DH_BASENAME will be used.</p>
 <p>Data cleaning of JHU-style dataset.</p>
 <dl class="py method">
 <dt id="covsirphy.cleaning.jhu_data.JHUData.cleaned">
-<code class="sig-name descname">cleaned</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">population</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/cleaning/jhu_data.html#JHUData.cleaned"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#covsirphy.cleaning.jhu_data.JHUData.cleaned" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">cleaned</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/cleaning/jhu_data.html#JHUData.cleaned"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#covsirphy.cleaning.jhu_data.JHUData.cleaned" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return the cleaned dataset.</p>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
@@ -600,10 +602,7 @@ If &#64;basename is None, the value of DataLoader.DH_BASENAME will be used.</p>
 </div>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>population</strong> (<em>int</em>) – <ul class="simple">
-<li><p>if this is not None, Susceptible will be calculated.</p></li>
-</ul>
-</p>
+<dd class="field-odd"><p><strong>kwargs</strong> – keword arguments will be ignored.</p>
 </dd>
 <dt class="field-even">Returns</dt>
 <dd class="field-even"><p><dl class="simple">
@@ -618,13 +617,6 @@ If &#64;basename is None, the value of DataLoader.DH_BASENAME will be used.</p>
 <li><p>Infected (int): the number of currently infected cases</p></li>
 <li><p>Fatal (int): the number of fatal cases</p></li>
 <li><p>Recovered (int): the number of recovered cases</p></li>
-<li><dl class="simple">
-<dt>if &#64;population is not None:</dt><dd><ul>
-<li><p>Susceptible (int): the number of susceptible cases</p></li>
-</ul>
-</dd>
-</dl>
-</li>
 </ul>
 </dd>
 </dl>
@@ -680,13 +672,14 @@ This method overwrite super().cleaning() method.</p>
 
 <dl class="py method">
 <dt id="covsirphy.cleaning.jhu_data.JHUData.subset">
-<code class="sig-name descname">subset</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">country</span></em>, <em class="sig-param"><span class="n">province</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/cleaning/jhu_data.html#JHUData.subset"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#covsirphy.cleaning.jhu_data.JHUData.subset" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">subset</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">country</span></em>, <em class="sig-param"><span class="n">province</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">population</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/cleaning/jhu_data.html#JHUData.subset"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#covsirphy.cleaning.jhu_data.JHUData.subset" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return the subset in the area.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>country</strong> (<em>str</em>) – country name</p></li>
 <li><p><strong>province</strong> (<em>str</em>) – province name</p></li>
+<li><p><strong>population</strong> (<em>int</em><em> or </em><em>None</em>) – population value</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
@@ -700,6 +693,7 @@ This method overwrite super().cleaning() method.</p>
 <li><p>Infected (int): the number of currently infected cases</p></li>
 <li><p>Fatal (int): the number of fatal cases</p></li>
 <li><p>Recovered (int): the number of recovered cases (&gt; 0)</p></li>
+<li><p>Susceptible (int): the number of susceptible cases, if calculated</p></li>
 </ul>
 </dd>
 </dl>
@@ -709,7 +703,8 @@ This method overwrite super().cleaning() method.</p>
 </dd>
 </dl>
 <p class="rubric">Notes</p>
-<p>Records with Recovered &gt; 0 will be selected.</p>
+<p>If &#64;population is not None, the number of susceptible cases will be calculated.
+Records with Recovered &gt; 0 will be selected.</p>
 </dd></dl>
 
 </dd></dl>

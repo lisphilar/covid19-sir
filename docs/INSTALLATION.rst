@@ -34,10 +34,12 @@ Dataset <https://covid19datahub.io/articles/data.html>`__.
 `COVID-19 Data Hub <https://covid19datahub.io/>`__
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-| Guidotti, E., Ardia, D., (2020), "COVID-19 Data Hub", Working paper,
-  doi: 10.13140/RG.2.2.11649.81763.
-| - The number of cases (JHU style) - Population in each country -
-  Government Response Tracker (OxCGRT)
+Guidotti, E., Ardia, D., (2020), "COVID-19 Data Hub", Working paper,
+doi: 10.13140/RG.2.2.11649.81763.
+
+-  The number of cases (JHU style)
+-  Population in each country
+-  Government Response Tracker (OxCGRT)
 
 `Datasets for CovsirPhy <https://github.com/lisphilar/covid19-sir/tree/master/data>`__
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -219,7 +221,7 @@ filenames.
 .. code:: python
 
     import covsirphy as cs
-    # The number of cases (JHU)
+    # The number of cases (JHU style)
     jhu_data = cs.JHUData("/kaggle/input/novel-corona-virus-2019-dataset/covid_19_data.csv")
     # (Optional) The number of cases in Japan
     japan_data = cs.CountryData("/kaggle/input/covid19-dataset-in-japan/covid_jpn_total.csv", country="Japan")
