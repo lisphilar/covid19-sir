@@ -42,7 +42,9 @@ class Scenario(Word):
         # Records
         jhu_data = self.validate_instance(jhu_data, JHUData, name="jhu_data")
         self.jhu_data = jhu_data
-        self.clean_df = jhu_data.cleaned(population=self.population)
+        self.clean_df = jhu_data.subset(
+            country, province=province, population=self.population
+        )
         # Area name
         self.country = country
         self.province = province

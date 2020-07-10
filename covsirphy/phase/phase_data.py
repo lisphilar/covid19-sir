@@ -175,4 +175,5 @@ class PhaseData(Word):
         end_obj = self.to_date_obj(date_str=end_date, default=series.max())
         # Subset
         df = df.loc[(start_obj <= series) & (series <= end_obj), :]
+        df = df.reset_index().groupby(self.DATE).last()
         return df
