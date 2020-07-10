@@ -75,6 +75,9 @@ class TestDataLoader(object):
         assert set(df.columns) == set(PopulationData.POPULATION_COLS)
         assert isinstance(population_data.to_dict(), dict)
         population_data.update(10_000, "Example")
+        assert population_data.value("Example") == 10_000
+        population_data.update(15_000, "Example")
+        assert population_data.value("Example") == 15_000
 
     def test_population_local_file(self, data_loader):
         local_path = Path("input") / "covid19dh.csv"
