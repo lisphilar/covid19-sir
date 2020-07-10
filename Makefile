@@ -1,4 +1,4 @@
-.PHONY: install test-nosvg test docs example pypi test-pypi clean
+.PHONY: install install-dependencies test-nosvg test docs example pypi test-pypi clean
 
 install:
 	@pip install wheel; pip install --upgrade pip
@@ -8,6 +8,11 @@ install:
 	@pipenv lock
 	@pipenv install --dev
 
+install-dependencies:
+	@export PIPENV_VENV_IN_PROJECT=true
+	@export PIPENV_TIMEOUT=7200
+	@pipenv lock
+	@pipenv install --dev
 
 test:
 	@# sudo apt install graphviz
