@@ -192,6 +192,7 @@ class Trend(Word):
             filename (str): filename of the figure, or None (show figure)
         """
         df = result_df.copy()
+        df = df.replace(np.inf, np.nan)
         if df is None:
             raise NameError("Must perform Trend().analyse() in advance.")
         x_series = df[cls.R]
@@ -203,11 +204,8 @@ class Trend(Word):
             marker=".", markeredgewidth=0, linewidth=0
         )
         # Plot the predicted values
-        if len(predicted_cols) == 1:
-            plt.plot(x_series, df[predicted_cols[0]], label="Regression")
-        else:
-            for col in predicted_cols:
-                plt.plot(x_series, df[col], label=col.replace(cls.P, str()))
+        for col in predicted_cols:
+            plt.plot(x_series, df[col], label=col.replace(cls.P, str()))
         # x-axis
         plt.xlabel(cls.R)
         plt.xlim(0, None)

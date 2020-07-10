@@ -16,7 +16,7 @@ class JHUData(CleaningBase):
     def __init__(self, filename):
         super().__init__(filename)
 
-    def cleaned(self, population=None):
+    def cleaned(self, **kwargs):
         """
         Return the cleaned dataset.
 
@@ -24,8 +24,7 @@ class JHUData(CleaningBase):
             Cleaning method is defined by self.cleaning() method.
 
         Args:
-            population (int):
-                - if this is not None, Susceptible will be calculated.
+            kwargs: keword arguments will be ignored.
 
         Returns:
             (pandas.DataFrame)
@@ -39,15 +38,11 @@ class JHUData(CleaningBase):
                     - Infected (int): the number of currently infected cases
                     - Fatal (int): the number of fatal cases
                     - Recovered (int): the number of recovered cases
-                    - if @population is not None:
-                        - Susceptible (int): the number of susceptible cases
         """
-        df = self._cleaned_df.copy()
-        if population is None:
-            return df
-        population = self.validate_natural_int(population, name="population")
-        df[self.S] = population - df[self.C]
-        return df
+        if "population" in kwargs.keys():
+            raise KeyError(
+                "@population was removed in JHUData.cleaned(). Please use JHUData.subset()")
+        return self._cleaned_df
 
     def cleaning(self):
         """
@@ -149,13 +144,14 @@ class JHUData(CleaningBase):
         self._cleaned_df = df.copy()
         return self
 
-    def subset(self, country, province=None):
+    def subset(self, country, province=None, population=None):
         """
         Return the subset in the area.
 
         Args:
             country (str): country name
             province (str): province name
+            population (int or None): population value
 
         Returns:
             (pandas.DataFrame)
@@ -167,22 +163,34 @@ class JHUData(CleaningBase):
                     - Infected (int): the number of currently infected cases
                     - Fatal (int): the number of fatal cases
                     - Recovered (int): the number of recovered cases (> 0)
+                    - Susceptible (int): the number of susceptible cases, if calculated
 
         Notes:
+            If @population is not None, the number of susceptible cases will be calculated.
             Records with Recovered > 0 will be selected.
         """
+        province = province or "-"
         df = self._cleaned_df.copy()
         df = df.loc[df[self.COUNTRY] == country, :]
-        if province:
-            df = df.loc[df[self.PROVINCE] == province, :]
-        df = df.groupby(self.DATE).sum().reset_index()
-        df = df.loc[df[self.R] > 0, :]
+        # Calculate Susceptible if population value was applied
+        if population is not None:
+            population = self.validate_natural_int(
+                population, name="population")
+            df[self.S] = population - df[self.C]
+        # Check the country was registered
         if df.empty:
-            if province is None:
-                raise KeyError(
-                    f"@country {country} is not included in the dataset."
-                )
             raise KeyError(
-                f"({country}, {province}) is not included in the dataset."
+                f"Records of {country} were not registered."
             )
-        return df
+        # Select the province data if the province was registered
+        if province in df[self.PROVINCE].unique():
+            df = df.loc[df[self.PROVINCE] == province, :]
+            df = df.groupby(self.DATE).last().reset_index()
+            df = df.drop([self.COUNTRY, self.PROVINCE], axis=1)
+            return df.loc[df[self.R] > 0, :]
+        # Total value in the country
+        if province == "-":
+            df = df.groupby(self.DATE).sum().reset_index()
+            return df.loc[df[self.R] > 0, :]
+        raise KeyError(
+            f"Records of {province} in {country} were not registered.")

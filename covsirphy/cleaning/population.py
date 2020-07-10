@@ -93,6 +93,8 @@ class PopulationData(CleaningBase):
         df[self.N] = df[self.N].astype(np.int64)
         # Columns to use
         df = df.loc[:, [self.ISO3, self.COUNTRY, self.PROVINCE, self.N]]
+        # Remove duplicates
+        df = df.drop_duplicates().reset_index(drop=True)
         return df
 
     def total(self):
@@ -150,13 +152,14 @@ class PopulationData(CleaningBase):
                     f"{country} is not registered. Please use registered country name.")
             raise KeyError(
                 f"{country} is not registered. Please use ISO3 code as @country, like JPN.")
-        if province is not None:
-            df = df.loc[df[self.PROVINCE] == province, :]
-            if df.empty:
-                raise KeyError(
-                    f"{province} is not registered as a province of {country}.")
-        total_population = int(df[self.N].sum())
-        return total_population
+        if province is None:
+            values = df.loc[df[self.PROVINCE] == "-", self.N].values
+            return int(values[0])
+        if province not in df[self.PROVINCE].unique():
+            raise KeyError(
+                f"{province} is not registered as a province of {country}.")
+        values = df.loc[df[self.PROVINCE] == province, self.N].values
+        return int(values[0])
 
     def update(self, value, country, province="-"):
         """

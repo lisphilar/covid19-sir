@@ -60,9 +60,9 @@ class SEWIRF(ModelBase):
             - @sigma (float)
         """
         # Total population
-        if not isinstance(population, int):
-            raise TypeError("@population must be an integer.")
-        self.population = population
+        self.population = self.validate_natural_int(
+            population, name="population"
+        )
         # Non-dim parameters
         self.theta = theta
         self.kappa = kappa
