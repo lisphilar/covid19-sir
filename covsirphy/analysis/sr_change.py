@@ -145,7 +145,7 @@ class ChangeFinder(Word):
             # Get min value for vline
             vlines.append(df[self.R].min())
             # Rename the columns
-            phase = phase.replace("0th", self.INITIAL)
+            phase = self.INITIAL if phase == "0th" else phase
             df = df.rename({f"{self.S}{self.P}": f"{phase}{self.P}"}, axis=1)
             df = df.rename({f"{self.S}{self.A}": f"{phase}{self.A}"}, axis=1)
             df = df.rename({f"{self.R}": f"{phase}_{self.R}"}, axis=1)
