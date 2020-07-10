@@ -207,13 +207,14 @@ class DataLoader(Word):
         date = date.astimezone(timezone.utc).replace(tzinfo=None)
         return date
 
-    def _create_dataset(self, data_key, filename, **kwargs):
+    def _create_dataset(self, data_key, filename, set_citation=True, **kwargs):
         """
         Return dataset class with citation.
 
         Args:
             data_key (str): key of self.dataset_dict
             filename (str): filename of the local dataset
+            set_citation (str): if True, set citation
             kwargs: keyword arguments of @data_class
 
         Returns:
@@ -230,7 +231,8 @@ class DataLoader(Word):
         data_class = self.validate_subclass(data_class, CleaningBase)
         # Create instance and set citation
         data_instance = data_class(filename=filename, **kwargs)
-        data_instance.citation = citation
+        if set_citation:
+            data_instance.citation = citation
         return data_instance
 
     def _needs_pull(self, filename, url=None):
@@ -283,7 +285,9 @@ class DataLoader(Word):
         filename = self._resolve_filename(basename)
         if local_file is not None:
             if Path(local_file).exists():
-                jhu_data = self._create_dataset("JHU", local_file)
+                jhu_data = self._create_dataset(
+                    "JHU", local_file, set_citation=False
+                )
                 self._save(jhu_data.raw, filename)
                 return jhu_data
             raise FileNotFoundError(f"{local_file} does not exist.")
@@ -309,7 +313,8 @@ class DataLoader(Word):
         filename = self._resolve_filename(basename)
         if local_file is not None:
             if Path(local_file).exists():
-                japan_data = self._create_dataset_japan_cases(local_file)
+                japan_data = self._create_dataset_japan_cases(
+                    local_file, set_citation=False)
                 df = japan_data.cleaned()
                 if set(df[self.COUNTRY].unique()) != set(["Japan"]):
                     raise TypeError(
@@ -342,18 +347,21 @@ class DataLoader(Word):
         df = self._get_raw(url)
         return df
 
-    def _create_dataset_japan_cases(self, filename):
+    def _create_dataset_japan_cases(self, filename, set_citation=True):
         """
         Create a dataset for Japan with a local file.
 
         Args:
             filename (str): filename of the local file
+            set_citation (str): if True, set citation
 
         Returns:
             (covsirphy.CountryData): dataset at country level
         """
         country_data = self._create_dataset(
-            "Japan_cases", filename, country="Japan")
+            "Japan_cases", filename, country="Japan",
+            set_citation=set_citation
+        )
         country_data.set_variables(
             date="Date",
             confirmed="Positive",
@@ -385,7 +393,7 @@ class DataLoader(Word):
         if local_file is not None:
             if Path(local_file).exists():
                 population_data = self._create_dataset(
-                    "Population", local_file)
+                    "Population", local_file, set_citation=False)
                 self._save(population_data.raw, filename)
                 return population_data
             raise FileNotFoundError(f"{local_file} does not exist.")
@@ -416,7 +424,8 @@ class DataLoader(Word):
         filename = self._resolve_filename(basename)
         if local_file is not None:
             if Path(local_file).exists():
-                oxcgrt_data = self._create_dataset("OxCGRT", local_file)
+                oxcgrt_data = self._create_dataset(
+                    "OxCGRT", local_file, set_citation=False)
                 self._save(oxcgrt_data.raw, filename)
                 return oxcgrt_data
             raise FileNotFoundError(f"{local_file} does not exist.")

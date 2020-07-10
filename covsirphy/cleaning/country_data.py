@@ -22,6 +22,7 @@ class CountryData(CleaningBase):
         self.province_col = None
         self.var_dict = dict()
         self._cleaned_df = pd.DataFrame()
+        self._citation = str()
 
     @property
     def country(self):
@@ -94,7 +95,7 @@ class CountryData(CleaningBase):
         if self.province_col:
             df = df.rename({self.province_col: self.PROVINCE}, axis=1)
         else:
-            df[self.PROVINCE] = "-"
+            df[self.PROVINCE] = self.UNKNOWN
         # Values
         df[self.CI] = df[self.C] - df[self.F] - df[self.R]
         df[self.VALUE_COLUMNS] = df[self.VALUE_COLUMNS].astype(np.int64)
