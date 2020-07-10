@@ -106,7 +106,7 @@ class JHUData(CleaningBase):
             }
         )
         # Province
-        df[self.PROVINCE] = df[self.PROVINCE].fillna("-").replace(
+        df[self.PROVINCE] = df[self.PROVINCE].fillna(self.UNKNOWN).replace(
             {
                 "Cruise Ship": "Diamond Princess",
                 "Diamond Princess cruise ship": "Diamond Princess"
@@ -169,7 +169,7 @@ class JHUData(CleaningBase):
             If @population is not None, the number of susceptible cases will be calculated.
             Records with Recovered > 0 will be selected.
         """
-        province = province or "-"
+        province = province or self.UNKNOWN
         df = self._cleaned_df.copy()
         df = df.loc[df[self.COUNTRY] == country, :]
         # Calculate Susceptible if population value was applied
@@ -189,7 +189,7 @@ class JHUData(CleaningBase):
             df = df.drop([self.COUNTRY, self.PROVINCE], axis=1)
             return df.loc[df[self.R] > 0, :]
         # Total value in the country
-        if province == "-":
+        if province == self.UNKNOWN:
             df = df.groupby(self.DATE).sum().reset_index()
             return df.loc[df[self.R] > 0, :]
         raise KeyError(

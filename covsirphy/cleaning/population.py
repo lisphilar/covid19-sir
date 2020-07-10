@@ -54,7 +54,7 @@ class PopulationData(CleaningBase):
         self.validate_dataframe(df, name="the raw data", columns=expected_cols)
         # ISO3
         if self.ISO3 not in df.columns:
-            df[self.ISO3] = "-"
+            df[self.ISO3] = self.UNKNOWN
         # Country
         df[self.COUNTRY] = df[self.COUNTRY].replace(
             {
@@ -81,7 +81,7 @@ class PopulationData(CleaningBase):
             }
         )
         # Province
-        df[self.PROVINCE] = df[self.PROVINCE].fillna("-").replace(
+        df[self.PROVINCE] = df[self.PROVINCE].fillna(self.UNKNOWN).replace(
             {
                 "Cruise Ship": "Diamond Princess",
                 "Diamond Princess cruise ship": "Diamond Princess"
@@ -121,10 +121,10 @@ class PopulationData(CleaningBase):
         """
         df = self._cleaned_df.copy()
         if country_level:
-            df = df.loc[df[self.PROVINCE] == "-", :]
+            df = df.loc[df[self.PROVINCE] == self.UNKNOWN, :]
             df["key"] = df[self.COUNTRY]
         else:
-            df = df.loc[df[self.PROVINCE] != "-", :]
+            df = df.loc[df[self.PROVINCE] != self.UNKNOWN, :]
             df["key"] = df[self.COUNTRY].str.cat(
                 df[self.PROVINCE], sep=self.SEP
             )
@@ -147,13 +147,13 @@ class PopulationData(CleaningBase):
         c_df = cleaned_df.loc[cleaned_df[self.COUNTRY] == country, :]
         df = pd.concat([iso_df, c_df], axis=0)
         if df.empty:
-            if (cleaned_df[self.ISO3].unique()) == ["-"]:
+            if (cleaned_df[self.ISO3].unique()) == [self.UNKNOWN]:
                 raise KeyError(
                     f"{country} is not registered. Please use registered country name.")
             raise KeyError(
                 f"{country} is not registered. Please use ISO3 code as @country, like JPN.")
         if province is None:
-            values = df.loc[df[self.PROVINCE] == "-", self.N].values
+            values = df.loc[df[self.PROVINCE] == self.UNKNOWN, self.N].values
             return int(values[0])
         if province not in df[self.PROVINCE].unique():
             raise KeyError(
@@ -180,7 +180,7 @@ class PopulationData(CleaningBase):
             self._cleaned_df = df.copy()
             return self
         series = pd.Series(
-            ["-", country, province, value],
+            [self.UNKNOWN, country, province, value],
             index=[self.ISO3, self.COUNTRY, self.PROVINCE, self.N]
         )
         self._cleaned_df = df.append(series, ignore_index=True)

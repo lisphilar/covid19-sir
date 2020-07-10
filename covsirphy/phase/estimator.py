@@ -350,7 +350,7 @@ class Estimator(Optimizer):
         param_dict["Runtime"] = f"{minutes} min {seconds} sec"
         # Convert to dataframe
         df = pd.DataFrame.from_dict({name: param_dict}, orient="index")
-        return df.fillna("-")
+        return df.fillna(self.UNKNOWN)
 
     def rmsle(self, tau):
         """

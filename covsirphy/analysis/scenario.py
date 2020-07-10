@@ -540,7 +540,7 @@ class Scenario(Word):
         df = self.series_dict[name].summary()
         simulator = ODESimulator(
             self.country,
-            province="-" if self.province is None else self.province
+            province=self.UNKNOWN if self.province is None else self.province
         )
         start_objects = list()
         for phase in df.index:
