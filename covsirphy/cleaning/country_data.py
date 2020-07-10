@@ -22,6 +22,7 @@ class CountryData(CleaningBase):
         self.province_col = None
         self.var_dict = dict()
         self._cleaned_df = pd.DataFrame()
+        self._citation = str()
 
     @property
     def country(self):

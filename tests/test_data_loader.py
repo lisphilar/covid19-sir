@@ -22,7 +22,8 @@ class TestDataLoader(object):
         local_path = Path("input") / "covid19dh.csv"
         data_loader.jhu(local_file=local_path)
         local_file = str(local_path)
-        data_loader.jhu(local_file=local_file)
+        jhu_data = data_loader.jhu(local_file=local_file)
+        assert jhu_data.citation == str()
 
     def test_jhu_local_file_unexpected(self, data_loader):
         local_path = Path("input") / "covid_jpn_total.csv"
@@ -41,7 +42,8 @@ class TestDataLoader(object):
         local_path = Path("input") / "covid_jpn_total.csv"
         data_loader.japan(local_file=local_path)
         local_file = str(local_path)
-        data_loader.japan(local_file=local_file)
+        japan_data = data_loader.japan(local_file=local_file)
+        assert japan_data.citation == str()
 
     def test_japan_cases_local_file_unexpected(self):
         data_loader = DataLoader("input")
@@ -83,7 +85,8 @@ class TestDataLoader(object):
         local_path = Path("input") / "covid19dh.csv"
         data_loader.population(local_file=local_path)
         local_file = str(local_path)
-        data_loader.population(local_file=local_file)
+        population_data = data_loader.population(local_file=local_file)
+        assert population_data.citation == str()
 
     def test_population_local_file_unexpected(self, data_loader):
         local_path = Path("input") / "covid_jpn_total.csv"
@@ -117,7 +120,8 @@ class TestDataLoader(object):
         local_path = Path("input") / "covid19dh.csv"
         data_loader.oxcgrt(local_file=local_path)
         local_file = str(local_path)
-        data_loader.oxcgrt(local_file=local_file)
+        oxcgrt_data = data_loader.oxcgrt(local_file=local_file)
+        assert oxcgrt_data.citation == str()
 
     def test_oxcgrt_local_file_unexpected(self, data_loader):
         local_path = Path("input") / "covid_jpn_total.csv"
