@@ -4,6 +4,7 @@
 from pathlib import Path
 import pandas as pd
 import pytest
+import warnings
 from covsirphy import DataLoader
 from covsirphy import Word, JHUData, CountryData, PopulationData, OxCGRTData
 
@@ -21,7 +22,8 @@ class TestDataLoader(object):
         local_path = Path("input") / "covid19dh.csv"
         data_loader.jhu(local_file=local_path)
         local_file = str(local_path)
-        data_loader.jhu(local_file=local_file)
+        jhu_data = data_loader.jhu(local_file=local_file)
+        assert jhu_data.citation == str()
 
     def test_jhu_local_file_unexpected(self, data_loader):
         local_path = Path("input") / "covid_jpn_total.csv"
@@ -40,12 +42,14 @@ class TestDataLoader(object):
         local_path = Path("input") / "covid_jpn_total.csv"
         data_loader.japan(local_file=local_path)
         local_file = str(local_path)
-        data_loader.japan(local_file=local_file)
+        japan_data = data_loader.japan(local_file=local_file)
+        assert japan_data.citation == str()
 
     def test_japan_cases_local_file_unexpected(self):
         data_loader = DataLoader("input")
         local_path = Path("input") / "covid19dh.csv"
         with pytest.raises(Exception):
+            warnings.filterwarnings("ignore", pd.errors.DtypeWarning)
             data_loader.japan(local_file=local_path)
 
     def test_subset(self, data_loader):
@@ -73,12 +77,16 @@ class TestDataLoader(object):
         assert set(df.columns) == set(PopulationData.POPULATION_COLS)
         assert isinstance(population_data.to_dict(), dict)
         population_data.update(10_000, "Example")
+        assert population_data.value("Example") == 10_000
+        population_data.update(15_000, "Example")
+        assert population_data.value("Example") == 15_000
 
     def test_population_local_file(self, data_loader):
         local_path = Path("input") / "covid19dh.csv"
         data_loader.population(local_file=local_path)
         local_file = str(local_path)
-        data_loader.population(local_file=local_file)
+        population_data = data_loader.population(local_file=local_file)
+        assert population_data.citation == str()
 
     def test_population_local_file_unexpected(self, data_loader):
         local_path = Path("input") / "covid_jpn_total.csv"
@@ -112,7 +120,8 @@ class TestDataLoader(object):
         local_path = Path("input") / "covid19dh.csv"
         data_loader.oxcgrt(local_file=local_path)
         local_file = str(local_path)
-        data_loader.oxcgrt(local_file=local_file)
+        oxcgrt_data = data_loader.oxcgrt(local_file=local_file)
+        assert oxcgrt_data.citation == str()
 
     def test_oxcgrt_local_file_unexpected(self, data_loader):
         local_path = Path("input") / "covid_jpn_total.csv"

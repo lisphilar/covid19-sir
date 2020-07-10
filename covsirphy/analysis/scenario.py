@@ -42,7 +42,9 @@ class Scenario(Word):
         # Records
         jhu_data = self.validate_instance(jhu_data, JHUData, name="jhu_data")
         self.jhu_data = jhu_data
-        self.clean_df = jhu_data.cleaned(population=self.population)
+        self.clean_df = jhu_data.subset(
+            country, province=province, population=self.population
+        )
         # Area name
         self.country = country
         self.province = province
@@ -134,9 +136,6 @@ class Scenario(Word):
             - kwargs: Default values are the parameter values of the last phase.
         """
         # Parse arguments
-        if not isinstance(name, str):
-            raise TypeError(
-                f"@name must be a string, but {type(name)} was applied.")
         name = self.MAIN if name == "Main" else name
         if name not in self.series_dict.keys():
             self.series_dict[name] = copy.deepcopy(self.series_dict[self.MAIN])
@@ -238,7 +237,7 @@ class Scenario(Word):
             include_init_phase (bool): whether use initial phase or not
             show_figure (bool): if True, show the result as a figure
             filename (str): filename of the figure, or None (show figure)
-            kwargs: the other keyword arguments of ChangeFinder().run()
+            kwargs: the other keyword arguments will be ignored.
 
         Returns:
             None
@@ -255,7 +254,7 @@ class Scenario(Word):
                 "@n_points argument is un-necessary"
                 " because the number of change points will be automatically determined."
             )
-        finder.run(**kwargs)
+        finder.run()
         phase_series = finder.show(show_figure=show_figure, filename=filename)
         if not set_phases:
             return None
@@ -326,7 +325,7 @@ class Scenario(Word):
         trials = phase_est_dict["Trials"]
         runtime = phase_est_dict["Runtime"]
         print(
-            f"\t{phase} phase with {model.NAME} model finished {trials} in {runtime}."
+            f"\t{phase} phase with {model.NAME} model finished {trials} trials in {runtime}."
         )
         # Return the dictionary of the result of estimation
         return (model, name, phase, estimator, phase_est_dict)
@@ -541,7 +540,7 @@ class Scenario(Word):
         df = self.series_dict[name].summary()
         simulator = ODESimulator(
             self.country,
-            province="-" if self.province is None else self.province
+            province=self.UNKNOWN if self.province is None else self.province
         )
         start_objects = list()
         for phase in df.index:
@@ -572,7 +571,7 @@ class Scenario(Word):
                 y0_dict=y0_dict_phase
             )
         simulator.run()
-        first_date = df.loc[self.num2str(1), self.START]
+        first_date = start_objects[0].strftime(self.DATE_FORMAT)
         dim_df = simulator.dim(self.tau, first_date)
         return dim_df, start_objects
 
@@ -659,7 +658,7 @@ class Scenario(Word):
         line_plot(
             _df, title=title,
             xlabel="Phase", ylabel=str(), math_scale=False, h=h,
-            show_figure=show_figure, filename=filename
+            filename=filename
         )
         return df
 

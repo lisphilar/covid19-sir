@@ -154,13 +154,20 @@ class PhaseSeries(Word):
                 f"@end_date must be the same or over {min_end_date}, but {end_date} was applied."
             )
         # Add new phase
-        for date_obj in date_series:
-            if date_obj in self.phase_dict.keys():
-                if self.phase_dict[date_obj] != 0:
-                    date_str = date_obj.strftime(self.DATE_FORMAT)
-                    raise KeyError(
-                        f"Phase has been registered for {date_str}.")
-            self.phase_dict[date_obj] = new_id
+        new_phase_dict = {
+            date_obj: new_id
+            for date_obj in date_series
+        }
+        free_date_set = set(k for (k, v) in self.phase_dict.items() if v)
+        intersection = set(new_phase_dict.keys()) & free_date_set
+        if intersection:
+            date_strings = [
+                date_obj.strftime(self.DATE_FORMAT) for date_obj in intersection
+            ]
+            dates_str = ", ".join(date_strings)
+            raise KeyError(
+                f"Phases have been registered for {dates_str}.")
+        self.phase_dict.update(new_phase_dict)
         # Add phase information
         self.info_dict[new_id] = {
             self.TENSE: start_tense,
@@ -261,7 +268,7 @@ class PhaseSeries(Word):
             phase (str): phase name
             kwargs: keyword arguments to add
         """
-        phase_id = phase_id = self._phase_name2id(phase)
+        phase_id = self._phase_name2id(phase)
         self.info_dict[phase_id].update(kwargs)
         return self
 

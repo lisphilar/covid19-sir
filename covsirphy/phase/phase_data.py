@@ -28,8 +28,12 @@ class PhaseData(Word):
 
     def __init__(self, clean_df, country=None, province=None):
         df = self.validate_dataframe(
-            clean_df, name="clean_df", columns=self.COLUMNS
+            clean_df, name="clean_df", columns=self.NLOC_COLUMNS
         )
+        self.country = country
+        self.province = province
+        df[self.COUNTRY] = self.country
+        df[self.PROVINCE] = self.province
         df = self._set_place(
             df, country=country, province=province
         )
@@ -175,4 +179,5 @@ class PhaseData(Word):
         end_obj = self.to_date_obj(date_str=end_date, default=series.max())
         # Subset
         df = df.loc[(start_obj <= series) & (series <= end_obj), :]
+        df = df.reset_index().groupby(self.DATE).last()
         return df

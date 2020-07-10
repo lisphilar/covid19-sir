@@ -37,9 +37,11 @@ class SRData(PhaseData):
                     - Recovered: The number of recovered cases
                     - Susceptible_actual: Actual data of Susceptible
         """
+        df = grouped_df.copy()
+        df[self.COUNTRY] = self.country
+        df[self.PROVINCE] = self.province
         df = self.validate_dataframe(
-            grouped_df,
-            name="grouped_df", time_index=True, columns=self.VALUE_COLUMNS
+            df, name="grouped_df", time_index=True, columns=self.VALUE_COLUMNS
         )
         df[f"{self.S}{self.A}"] = population - df[self.C]
         df = df.loc[:, [self.R, f"{self.S}{self.A}"]]

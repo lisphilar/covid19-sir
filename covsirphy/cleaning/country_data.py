@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
+from dask import dataframe as dd
 import numpy as np
 import pandas as pd
 from covsirphy.cleaning.cbase import CleaningBase
@@ -16,11 +17,12 @@ class CountryData(CleaningBase):
     """
 
     def __init__(self, filename, country):
-        self._raw = pd.read_csv(filename)
+        self._raw = dd.read_csv(filename).compute()
         self._country = country
         self.province_col = None
         self.var_dict = dict()
         self._cleaned_df = pd.DataFrame()
+        self._citation = str()
 
     @property
     def country(self):
@@ -93,7 +95,7 @@ class CountryData(CleaningBase):
         if self.province_col:
             df = df.rename({self.province_col: self.PROVINCE}, axis=1)
         else:
-            df[self.PROVINCE] = "-"
+            df[self.PROVINCE] = self.UNKNOWN
         # Values
         df[self.CI] = df[self.C] - df[self.F] - df[self.R]
         df[self.VALUE_COLUMNS] = df[self.VALUE_COLUMNS].astype(np.int64)

@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
+import math
 import numpy as np
 import optuna
 import pandas as pd
@@ -99,7 +100,7 @@ class Estimator(Optimizer):
         )
 
     def run(self, timeout=60, reset_n_max=3,
-            timeout_iteration=10, allowance=(0.8, 1.2),
+            timeout_iteration=5, allowance=(0.8, 1.2),
             seed=0, stdout=True, **kwargs):
         """
         Run optimization.
@@ -124,51 +125,43 @@ class Estimator(Optimizer):
         """
         if "n_jobs" in kwargs.keys():
             raise KeyError("@n_jobs of Estimator.run() was obsoleted.")
+        # Create a study of optuna
         if self.study is None:
             self._init_study(seed=seed)
+        reset_n = 0
+        iteration_n = math.ceil(timeout / timeout_iteration)
+        increasing_cols = [f"{v}{self.P}" for v in self.model.VARS_INCLEASE]
         if stdout:
             print("\tRunning optimization...")
         stopwatch = StopWatch()
-        reset_n = 0
-        while True:
+        for _ in range(iteration_n):
             # Perform optimization
             self._run_trial(timeout_iteration=timeout_iteration)
-            self.run_time = stopwatch.stop()
-            self.total_trials = len(self.study.trials)
-            # Time-out
-            if self.run_time >= timeout:
-                break
-            if stdout:
-                print(
-                    f"\r\tPerformed {self.total_trials} trials in {stopwatch.show()}.",
-                    end=str()
-                )
             # Create a table to compare observed/estimated values
             tau = super().param()[self.TAU]
             train_df = self.divide_minutes(tau)
             comp_df = self.compare(train_df, self.predict())
             # Check monotonic variables
             mono_ok_list = [
-                comp_df[f"{v}{self.P}"].is_monotonic_increasing
-                for v in self.model.VARS_INCLEASE
+                comp_df[col].is_monotonic_increasing for col in increasing_cols
             ]
             if not all(mono_ok_list):
+                if reset_n == reset_n_max - 1:
+                    break
+                # Initialize the study
+                self._init_study()
                 reset_n += 1
-                if reset_n <= reset_n_max:
-                    # Initialize the study
-                    self._init_study()
-                    stopwatch = StopWatch()
-                    continue
+                continue
             # Need additional trials when the values are not in allowance
             if self._is_in_allowance(comp_df, allowance):
                 break
+        # Calculate run-time and the number of trials
+        self.run_time = stopwatch.stop()
+        self.total_trials = len(self.study.trials)
         if stdout:
-            stopwatch.stop()
             print(
-                f"\r\tFinished {self.total_trials} trials in {stopwatch.show()}.\n",
-                end=str()
+                f"\tFinished {self.total_trials} trials in {stopwatch.show()}.",
             )
-        return None
 
     def _is_in_allowance(self, comp_df, allowance):
         """
@@ -209,7 +202,6 @@ class Estimator(Optimizer):
             tau = fixed_dict.pop(self.TAU)
         else:
             tau = trial.suggest_categorical(self.TAU, self.tau_candidates)
-        tau = self.validate_natural_int(tau, name=self.TAU)
         taufree_df = self.divide_minutes(tau)
         # Set parameters of the models
         model_param_dict = self.model.param_range(
@@ -238,7 +230,6 @@ class Estimator(Optimizer):
                         - t (int): Elapsed time divided by tau value [-]
                         - columns with dimensional variables
         """
-        tau = self.validate_natural_int(tau, name="tau")
         taufree_df = self.ode_data.make(
             model=self.model,
             population=self.population,
@@ -281,14 +272,14 @@ class Estimator(Optimizer):
         diffs = [df[f"{v}{self.A}"] - df[f"{v}{self.P}"] for v in v_list]
         numerators = [df[f"{v}{self.A}"] + 1 for v in v_list]
         try:
-            scores = [
+            score = sum(
                 p * np.average(diff.abs() / numerator, weights=df.index)
                 for (p, diff, numerator)
                 in zip(self.model.PRIORITIES, diffs, numerators)
-            ]
+            )
         except ZeroDivisionError:
             return np.inf
-        return sum(scores)
+        return score
 
     def simulate(self, step_n, param_dict):
         """
@@ -359,7 +350,7 @@ class Estimator(Optimizer):
         param_dict["Runtime"] = f"{minutes} min {seconds} sec"
         # Convert to dataframe
         df = pd.DataFrame.from_dict({name: param_dict}, orient="index")
-        return df.fillna("-")
+        return df.fillna(self.UNKNOWN)
 
     def rmsle(self, tau):
         """
