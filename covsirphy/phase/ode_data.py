@@ -56,9 +56,11 @@ class ODEData(PhaseData):
                     - Recovered (int): the number of recovered cases
                     - Elapsed (int): Elapsed time from the first date [min]
         """
+        df = grouped_df.copy()
+        df[self.COUNTRY] = self.country
+        df[self.PROVINCE] = self.province
         df = self.validate_dataframe(
-            grouped_df,
-            name="grouped_df", time_index=True, columns=self.VALUE_COLUMNS
+            df, name="grouped_df", time_index=True, columns=self.VALUE_COLUMNS
         )
         # Calculate elapsed time from the first date [min]
         df[self.T] = (df.index - df.index.min()).total_seconds()

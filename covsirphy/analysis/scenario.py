@@ -42,7 +42,9 @@ class Scenario(Word):
         # Records
         jhu_data = self.validate_instance(jhu_data, JHUData, name="jhu_data")
         self.jhu_data = jhu_data
-        self.clean_df = jhu_data.cleaned(population=self.population)
+        self.clean_df = jhu_data.subset(
+            country, province=province, population=self.population
+        )
         # Area name
         self.country = country
         self.province = province
@@ -134,9 +136,6 @@ class Scenario(Word):
             - kwargs: Default values are the parameter values of the last phase.
         """
         # Parse arguments
-        if not isinstance(name, str):
-            raise TypeError(
-                f"@name must be a string, but {type(name)} was applied.")
         name = self.MAIN if name == "Main" else name
         if name not in self.series_dict.keys():
             self.series_dict[name] = copy.deepcopy(self.series_dict[self.MAIN])
