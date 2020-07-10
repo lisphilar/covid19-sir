@@ -152,7 +152,6 @@ class PopulationData(CleaningBase):
                     f"{country} is not registered. Please use registered country name.")
             raise KeyError(
                 f"{country} is not registered. Please use ISO3 code as @country, like JPN.")
-        df = df.loc[df[self.COUNTRY] == country, :]
         if province is None:
             values = df.loc[df[self.PROVINCE] == "-", self.N].values
             return int(values[0])
@@ -181,6 +180,6 @@ class PopulationData(CleaningBase):
 
 
 class Population(PopulationData):
-    @ deprecate(old="Population()", new="PopulationData()")
+    @deprecate(old="Population()", new="PopulationData()")
     def __init__(self, filename):
         super().__init__(filename)

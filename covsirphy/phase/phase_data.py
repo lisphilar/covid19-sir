@@ -28,8 +28,12 @@ class PhaseData(Word):
 
     def __init__(self, clean_df, country=None, province=None):
         df = self.validate_dataframe(
-            clean_df, name="clean_df", columns=self.COLUMNS
+            clean_df, name="clean_df", columns=self.NLOC_COLUMNS
         )
+        self.country = country
+        self.province = province
+        df[self.COUNTRY] = self.country
+        df[self.PROVINCE] = self.province
         df = self._set_place(
             df, country=country, province=province
         )
