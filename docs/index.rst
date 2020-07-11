@@ -11,6 +11,8 @@
 
    README
    INSTALLATION
+   usage_quickest
+   usage_quick
    covsirphy
    CONTRIBUTING
 
