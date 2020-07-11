@@ -30,6 +30,9 @@
         <script src="_static/underscore.js"></script>
         <script src="_static/doctools.js"></script>
         <script src="_static/language_data.js"></script>
+        <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+        <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+        <script type="text/x-mathjax-config">MathJax.Hub.Config({"tex2jax": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "processEscapes": true, "ignoreClass": "document", "processClass": "math|output_area"}})</script>
     
     <script type="text/javascript" src="_static/js/theme.js"></script>
 
@@ -87,6 +90,8 @@
 <li class="toctree-l1"><a class="reference internal" href="README.html#quick-usage-for-analysis">Quick usage for analysis</a></li>
 <li class="toctree-l1"><a class="reference internal" href="README.html#information">Information</a></li>
 <li class="toctree-l1"><a class="reference internal" href="INSTALLATION.html">Installation and dataset preparation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="usage_quickest.html">Usage (quickest version)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="usage_quick.html">Usage (quick version)</a></li>
 <li class="toctree-l1"><a class="reference internal" href="covsirphy.html">API reference</a></li>
 <li class="toctree-l1"><a class="reference internal" href="CONTRIBUTING.html">Guideline of contribution</a></li>
 </ul>
@@ -154,7 +159,31 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
             
-  <div class="section" id="covsirphy-covid-19-with-sirs">
+  
+<style>
+/* CSS overrides for sphinx_rtd_theme */
+
+/* 24px margin */
+.nbinput.nblast.container,
+.nboutput.nblast.container {
+    margin-bottom: 19px;  /* padding has already 5px */
+}
+
+/* ... except between code cells! */
+.nblast.container + .nbinput.container {
+    margin-top: -19px;
+}
+
+.admonition > p:before {
+    margin-right: 4px;  /* make room for the exclamation icon */
+}
+
+/* Fix math alignment, see https://github.com/rtfd/sphinx_rtd_theme/pull/686 */
+.math {
+    text-align: unset;
+}
+</style>
+<div class="section" id="covsirphy-covid-19-with-sirs">
 <h1>CovsirPhy: COVID-19 with SIRs<a class="headerlink" href="#covsirphy-covid-19-with-sirs" title="Permalink to this headline">¶</a></h1>
 <div class="line-block">
 <div class="line"><a class="reference external" href="https://badge.fury.io/py/covsirphy"><img alt="PyPI version" src="https://badge.fury.io/py/covsirphy.svg" /></a> <a class="reference external" href="https://pepy.tech/project/covsirphy"><img alt="Downloads" src="https://pepy.tech/badge/covsirphy" /></a> <a class="reference external" href="https://badge.fury.io/py/covsirphy"><img alt="PyPI - Python Version" src="https://img.shields.io/pypi/pyversions/covsirphy" /></a></div>
@@ -424,6 +453,41 @@ tracker, <a class="reference external" href="https://ilylabs.github.io/projects/
 <li class="toctree-l2"><a class="reference internal" href="INSTALLATION.html#developers">2. Developers</a></li>
 <li class="toctree-l2"><a class="reference internal" href="INSTALLATION.html#kagglers-local-environment">3. Kagglers (local environment)</a></li>
 <li class="toctree-l2"><a class="reference internal" href="INSTALLATION.html#kagglers-kaggle-platform">4. Kagglers (Kaggle platform)</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="usage_quickest.html">Usage (quickest version)</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="usage_quickest.html#Preparation">Preparation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="usage_quickest.html#Dataset-preparation">Dataset preparation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="usage_quickest.html#Start-scenario-analysis">Start scenario analysis</a></li>
+<li class="toctree-l2"><a class="reference internal" href="usage_quickest.html#Check-records">Check records</a></li>
+<li class="toctree-l2"><a class="reference internal" href="usage_quickest.html#S-R-trend-analysis">S-R trend analysis</a></li>
+<li class="toctree-l2"><a class="reference internal" href="usage_quickest.html#Hyperparameter-estimation-of-ODE-models">Hyperparameter estimation of ODE models</a></li>
+<li class="toctree-l2"><a class="reference internal" href="usage_quickest.html#Show-the-history-of-reproduction-number">Show the history of reproduction number</a></li>
+<li class="toctree-l2"><a class="reference internal" href="usage_quickest.html#Simulate-the-number-of-cases">Simulate the number of cases</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="usage_quick.html">Usage (quick version)</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="usage_quick.html#Preparation">Preparation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="usage_quick.html#Dataset-preparation">Dataset preparation</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="usage_quick.html#The-number-of-cases-(JHU-style)">The number of cases (JHU style)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="usage_quick.html#(Optional)-Replace-the-dataset-in-Japan">(Optional) Replace the dataset in Japan</a></li>
+<li class="toctree-l3"><a class="reference internal" href="usage_quick.html#Population-in-each-country">Population in each country</a></li>
+<li class="toctree-l3"><a class="reference internal" href="usage_quick.html#Government-Response-Tracker-(OxCGRT)">Government Response Tracker (OxCGRT)</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="usage_quick.html#Scenario-analysis">Scenario analysis</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="usage_quick.html#Check-records">Check records</a></li>
+<li class="toctree-l3"><a class="reference internal" href="usage_quick.html#S-R-trend-analysis">S-R trend analysis</a></li>
+<li class="toctree-l3"><a class="reference internal" href="usage_quick.html#Hyperparameter-estimation-of-ODE-models">Hyperparameter estimation of ODE models</a></li>
+<li class="toctree-l3"><a class="reference internal" href="usage_quick.html#Accuracy-of-estimation">Accuracy of estimation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="usage_quick.html#Get-parameter-value">Get parameter value</a></li>
+<li class="toctree-l3"><a class="reference internal" href="usage_quick.html#Show-parameter-history">Show parameter history</a></li>
+<li class="toctree-l3"><a class="reference internal" href="usage_quick.html#Show-the-history-of-reproduction-number">Show the history of reproduction number</a></li>
+<li class="toctree-l3"><a class="reference internal" href="usage_quick.html#Simulate-the-number-of-cases">Simulate the number of cases</a></li>
+<li class="toctree-l3"><a class="reference internal" href="usage_quick.html#Simulate-another-scenario">Simulate another scenario</a></li>
+<li class="toctree-l3"><a class="reference internal" href="usage_quick.html#Compare-the-scenarios">Compare the scenarios</a></li>
+</ul>
+</li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="covsirphy.html">API reference</a><ul>

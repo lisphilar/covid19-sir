@@ -23,6 +23,9 @@ docs:
 	@pandoc --from markdown --to rst README.md -o docs/README.rst
 	@pandoc --from markdown --to rst docs/markdown/INSTALLATION.md -o docs/INSTALLATION.rst
 	@pandoc --from markdown --to rst .github/CONTRIBUTING.md -o docs/CONTRIBUTING.rst
+	@rm -f docs/*ipynb
+	@pipenv run runipy example/usage_quick.ipynb docs/usage_quick.ipynb
+	@pipenv run runipy example/usage_quickest.ipynb docs/usage_quickest.ipynb
 	@sphinx-apidoc -o docs covsirphy
 	@cd docs; pipenv run make html; cp -a _build/html/. ../docs
 	@rm -rf docs/_modules
