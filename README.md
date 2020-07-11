@@ -43,7 +43,7 @@ We have the following options to start analysis with CovsirPhy. Datasets are not
 
 Covsirphy is available at [PyPI (The Python Package Index): covsirphy](https://pypi.org/project/covsirphy/) and supports Python 3.7 or newer versions.
 ```
-pip install covsirphy
+pip install covsirphy --upgrade
 ```
 Main datasets will be retrieved via [COVID-19 Data Hub](https://covid19datahub.io/https://covid19datahub.io/) and the citation is  
 Guidotti, E., Ardia, D., (2020), "COVID-19 Data Hub", Working paper, doi: 10.13140/RG.2.2.11649.81763.

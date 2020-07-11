@@ -66,7 +66,7 @@ covsirphy <https://pypi.org/project/covsirphy/>`__ and supports Python
 
 ::
 
-    pip install covsirphy
+    pip install covsirphy --upgrade
 
 Then, download the datasets and save the data in ``input`` directory.
 

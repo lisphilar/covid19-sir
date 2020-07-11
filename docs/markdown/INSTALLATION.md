@@ -31,7 +31,7 @@ If you want to use a new dataset for your analysis, please kindly inform us via 
 ## 1. Standard users
 Covsirphy is available at [PyPI (The Python Package Index): covsirphy](https://pypi.org/project/covsirphy/) and supports Python 3.7 or newer versions.
 ```
-pip install covsirphy
+pip install covsirphy --upgrade
 ```
 
 Then, download the datasets and save the data in `input` directory.
