@@ -13,10 +13,8 @@ def main():
     output_dir.mkdir(exist_ok=True, parents=True)
     # Create data loader instance
     data_loader = cs.DataLoader(input_dir)
-    # Load JHU dataset and replace Japan data with government-announced data
+    # Load JHU-stype dataset
     jhu_data = data_loader.jhu()
-    japan_data = data_loader.japan()
-    jhu_data.replace(japan_data)
     # Load Population dataset
     population_data = data_loader.population()
     # Start scenario analysis
