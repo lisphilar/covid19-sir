@@ -288,3 +288,15 @@ class PhaseSeries(Word):
             last_end_date_obj = un_date_objects[-1]
         next_date_obj = last_end_date_obj + timedelta(days=1)
         return next_date_obj.strftime(self.DATE_FORMAT)
+
+    def start_objects(self):
+        """
+        Return the list of start dates as datetime.datetime objects.
+
+        Returns:
+            (list[datetime.datetime]): list of start dates
+        """
+        start_objects = [
+            self.date_obj(v[self.START]) for v in self.info_dict.values()
+        ]
+        return start_objects

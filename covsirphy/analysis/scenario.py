@@ -537,18 +537,18 @@ class Scenario(Word):
                         - variables of the models (int): Confirmed (int) etc.
                 (list[pd.TimeStamp]): list of start dates
         """
+        phase_series = copy.deepcopy(self.series_dict[name])
+        start_objects = phase_series.start_objects()
         df = self.series_dict[name].summary()
         simulator = ODESimulator(
             self.country,
             province=self.UNKNOWN if self.province is None else self.province
         )
-        start_objects = list()
         for phase in df.index:
             model_name = df.loc[phase, self.ODE]
             model = self.model_dict[model_name]
             start_date = df.loc[phase, self.START]
             start_obj = self.date_obj(start_date)
-            start_objects.append(start_obj)
             end_obj = self.date_obj(df.loc[phase, self.END])
             phase_seconds = (end_obj - start_obj).total_seconds() + 1
             step_n = round(phase_seconds / (60 * self.tau))
