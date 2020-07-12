@@ -19,7 +19,6 @@ from covsirphy.util import line_plot, box_plot
 from covsirphy.analysis.phase_series import PhaseSeries
 from covsirphy.analysis.simulator import ODESimulator
 from covsirphy.analysis.sr_change import ChangeFinder
-from covsirphy.util.error import deprecate
 from covsirphy.util.stopwatch import StopWatch
 
 
@@ -47,7 +46,7 @@ class Scenario(Word):
         )
         # Area name
         self.country = country
-        self.province = province
+        self.province = province or self.UNKNOWN
         if province is None:
             self.area = country
         else:
@@ -453,10 +452,6 @@ class Scenario(Word):
             )
         estimator.accuracy(**kwargs)
 
-    @deprecate(old="Scenario.predict()", new="Scenario.simulate()")
-    def predict(self, **kwargs):
-        return self.simulate(**kwargs)
-
     def simulate(self, name="Main", y0_dict=None, show_figure=True, filename=None):
         """
         Simulate ODE models with setted parameter values and show it as a figure.
@@ -514,7 +509,7 @@ class Scenario(Word):
 
     def _simulate(self, name, y0_dict):
         """
-        Simulate ODE models with setted parameter values.
+        Simulate ODE models with set parameter values.
 
         Args:
             name (str): phase series name
@@ -538,21 +533,24 @@ class Scenario(Word):
                 (list[pd.TimeStamp]): list of start dates
         """
         phase_series = copy.deepcopy(self.series_dict[name])
+        # Dates and the number of steps
+        last_object = phase_series.last_object()
         start_objects = phase_series.start_objects()
-        df = self.series_dict[name].summary()
-        simulator = ODESimulator(
-            self.country,
-            province=self.UNKNOWN if self.province is None else self.province
-        )
-        for phase in df.index:
-            model_name = df.loc[phase, self.ODE]
-            model = self.model_dict[model_name]
-            start_date = df.loc[phase, self.START]
-            start_obj = self.date_obj(start_date)
-            end_obj = self.date_obj(df.loc[phase, self.END])
-            phase_seconds = (end_obj - start_obj).total_seconds() + 1
-            step_n = round(phase_seconds / (60 * self.tau))
-            population = df.loc[phase, self.N]
+        step_n_list = phase_series.number_of_steps(
+            start_objects, last_object, self.tau)
+        first_date = start_objects[0].strftime(self.DATE_FORMAT)
+        # Information of models
+        models = [
+            self.model_dict[name] for name in phase_series.model_names()
+        ]
+        # Population values
+        population_values = phase_series.population_values()
+        # Create simulator
+        simulator = ODESimulator(self.country, province=self.province)
+        # Add phases to the simulator
+        df = phase_series.summary()
+        zip_iter = zip(df.index, models, step_n_list, population_values)
+        for (phase, model, step_n, population) in zip_iter:
             param_dict = df[model.PARAMETERS].to_dict(orient="index")[phase]
             if phase == self.num2str(1):
                 # Calculate initial values
@@ -561,17 +559,20 @@ class Scenario(Word):
                     province=self.province
                 )
                 y0_dict_phase = ode_data.y0(
-                    model, population, start_date=start_date
+                    model, population, start_date=first_date
                 )
             else:
-                y0_dict_phase = y0_dict.copy() if y0_dict is not None else None
+                if y0_dict is None:
+                    y0_dict_phase = None
+                else:
+                    y0_dict_phase = y0_dict.copy()
             simulator.add(
                 model, step_n, population,
                 param_dict=param_dict,
                 y0_dict=y0_dict_phase
             )
+        # Run simulation
         simulator.run()
-        first_date = start_objects[0].strftime(self.DATE_FORMAT)
         dim_df = simulator.dim(self.tau, first_date)
         return dim_df, start_objects
 
