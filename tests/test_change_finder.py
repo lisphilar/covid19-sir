@@ -24,7 +24,7 @@ class TestChangeFinder(object):
     def test_find_with_dataframe(self, jhu_data, population_data):
         population = population_data.value("Italy")
         clean_df = jhu_data.cleaned()
-        warnings.filterwarnings("ignore", DeprecationWarning)
+        warnings.filterwarnings("ignore", category=DeprecationWarning)
         change_finder = ChangeFinder(
             clean_df, population, country="Italy"
         )
