@@ -39,7 +39,9 @@ class ChangeFinder(Term):
                 df, name="jhu_data", columns=self.COLUMNS
             )
             jhu_data = ExampleData(df)
-        jhu_data = self.validate_instance(jhu_data, JHUData, name="jhu_data")
+        self.jhu_data = self.validate_instance(
+            jhu_data, JHUData, name="jhu_data"
+        )
         # Dataset for analysis
         # Index: Date(pd.TimeStamp): Observation date
         # Columns: Recovered (int), Susceptible_actual (int)
@@ -142,7 +144,7 @@ class ChangeFinder(Term):
             end_date = info[self.END]
             population = info[self.N]
             trend = Trend(
-                self.clean_df, population, self.country, province=self.province,
+                self.jhu_data, population, self.country, province=self.province,
                 start_date=start_date, end_date=end_date
             )
             trend.analyse()
