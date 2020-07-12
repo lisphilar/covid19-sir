@@ -144,7 +144,23 @@ class JHUData(CleaningBase):
         self._cleaned_df = df.copy()
         return self
 
-    def subset(self, country, province=None, population=None):
+    @classmethod
+    def area_name(cls, country, province=None):
+        """
+        Return area name of the country/province.
+
+        Args:
+            country (str): country name
+            province (str): province name
+
+        Returns:
+            (str): area name
+        """
+        if province is None:
+            return country
+        return f"{country}{cls.SEP}{province}"
+
+    def _subset_area(self, country, province=None, population=None):
         """
         Return the subset in the area.
 
@@ -194,3 +210,42 @@ class JHUData(CleaningBase):
             return df.loc[df[self.R] > 0, :]
         raise KeyError(
             f"Records of {province} in {country} were not registered.")
+
+    def subset(self, country, province=None,
+               start_date=None, end_date=None, population=None):
+        """
+        Return the subset of dataset.
+
+        Args:
+            country (str): country name
+            province (str): province name
+            start_date (str or None): start date, like 22Jan2020
+            end_date (str or None): end date, like 01Feb2020
+            population (int or None): population value
+
+        Returns:
+            (pandas.DataFrame)
+                Index:
+                    reset index
+                Columns:
+                    - Date (pd.TimeStamp): Observation date
+                    - Confirmed (int): the number of confirmed cases
+                    - Infected (int): the number of currently infected cases
+                    - Fatal (int): the number of fatal cases
+                    - Recovered (int): the number of recovered cases (> 0)
+                    - Susceptible (int): the number of susceptible cases, if calculated
+
+        Notes:
+            If @population is not None, the number of susceptible cases will be calculated.
+            Records with Recovered > 0 will be selected.
+        """
+        # Subset with area
+        df = self._subset_area(
+            country, province=province, population=population
+        )
+        # Subset with Start/end date
+        series = df[self.DATE].copy()
+        start_obj = self.to_date_obj(date_str=start_date, default=series.min())
+        end_obj = self.to_date_obj(date_str=end_date, default=series.max())
+        df = df.loc[(start_obj <= series) & (series <= end_obj), :]
+        return df

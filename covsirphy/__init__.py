@@ -12,11 +12,11 @@ from covsirphy.__version__ import __version__
 from covsirphy.analysis import ODESimulator, ChangeFinder
 from covsirphy.analysis import PhaseSeries, Scenario
 from covsirphy.cleaning import Term, CleaningBase, DataLoader
-from covsirphy.cleaning import JHUData, CountryData, PopulationData, OxCGRTData
+from covsirphy.cleaning import JHUData, ExampleData
+from covsirphy.cleaning import CountryData, PopulationData, OxCGRTData
 from covsirphy.ode import ModelBaseCommon, ModelBase
 from covsirphy.ode import SIR, SIRD, SIRF, SIRFV, SEWIRF
-from covsirphy.phase import PhaseData, ODEData, Estimator
-from covsirphy.phase import SRData, Trend
+from covsirphy.phase import PhaseData, ODEData, Estimator, Trend
 from covsirphy.util import line_plot, jpn_map, StopWatch, error
 # Deprecated
 from covsirphy.cleaning import Population, Word
@@ -33,13 +33,13 @@ __all__ = [
     "ODESimulator", "ChangeFinder",
     "PhaseSeries", "Scenario",
     "Term", "CleaningBase", "DataLoader",
-    "JHUData", "CountryData", "PopulationData", "OxCGRTData",
+    "JHUData", "ExampleData", "CountryData", "PopulationData", "OxCGRTData",
     "ModelBaseCommon", "ModelBase",
     "SIR", "SIRD", "SIRF", "SIRFV", "SEWIRF",
-    "PhaseData", "ODEData", "Estimator", "SRData", "Trend",
+    "PhaseData", "ODEData", "Estimator", "Trend",
     "line_plot", "jpn_map", "StopWatch", "error",
     # Deprecated
-    "Population", "Word"
+    "Population", "Word",
 ]
 
 # Check duplication

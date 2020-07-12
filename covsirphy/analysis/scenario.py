@@ -14,7 +14,7 @@ import numpy as np
 import pandas as pd
 from covsirphy.ode import ModelBase
 from covsirphy.cleaning import JHUData, PopulationData, Term
-from covsirphy.phase import Estimator, SRData, ODEData
+from covsirphy.phase import Estimator, ODEData
 from covsirphy.util import line_plot, box_plot
 from covsirphy.analysis.phase_series import PhaseSeries
 from covsirphy.analysis.simulator import ODESimulator
@@ -41,21 +41,18 @@ class Scenario(Term):
         # Records
         jhu_data = self.validate_instance(jhu_data, JHUData, name="jhu_data")
         self.jhu_data = jhu_data
+        # TODO: remove self.clean_df
         self.clean_df = jhu_data.subset(
             country, province=province, population=self.population
         )
         # Area name
         self.country = country
         self.province = province or self.UNKNOWN
-        if province is None:
-            self.area = country
-        else:
-            self.area = f"{country}{self.SEP}{province}"
+        self.area = JHUData.area_name(country, province)
         # First/last date of the area
-        sr_data = SRData(self.clean_df, country=country, province=province)
-        df = sr_data.make(self.population)
-        self.first_date = df.index.min().strftime(self.DATE_FORMAT)
-        self.last_date = df.index.max().strftime(self.DATE_FORMAT)
+        df = jhu_data.subset(country, province=province)
+        self.first_date = df[self.DATE].min().strftime(self.DATE_FORMAT)
+        self.last_date = df[self.DATE].max().strftime(self.DATE_FORMAT)
         # Init
         self.tau = None
         # {model_name: model_class}
@@ -245,7 +242,7 @@ class Scenario(Term):
             If @set_phase is True and@include_init_phase is False, initial phase will not be included.
         """
         finder = ChangeFinder(
-            self.clean_df, self.population,
+            self.jhu_data, self.population,
             country=self.country, province=self.province
         )
         if "n_points" in kwargs.keys():
