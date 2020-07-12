@@ -47,8 +47,8 @@ class SIRFV(ModelBase):
             "omega": 0.001,
         },
         "y0_dict": {
-            "Susceptible": 999_000, "Infected": 1000, "Recovered": 0, "Fatal": 0,
-            "Vaccinated": 0,
+            ModelBase.S: 999_000, ModelBase.CI: 1000, ModelBase.R: 0, ModelBase.F: 0,
+            ModelBase.V: 0,
         },
     }
 

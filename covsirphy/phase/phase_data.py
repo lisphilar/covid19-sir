@@ -1,10 +1,10 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-from covsirphy.cleaning.word import Word
+from covsirphy.cleaning.term import Term
 
 
-class PhaseData(Word):
+class PhaseData(Term):
     """
     Basic class to create dataset for Trend/ODE analysis.
 

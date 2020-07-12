@@ -6,7 +6,7 @@ import pandas as pd
 import pytest
 import warnings
 from covsirphy import DataLoader
-from covsirphy import Word, JHUData, CountryData, PopulationData, OxCGRTData
+from covsirphy import Term, JHUData, CountryData, PopulationData, OxCGRTData
 
 
 class TestDataLoader(object):
@@ -16,7 +16,7 @@ class TestDataLoader(object):
         assert isinstance(jhu_data.citation, str)
         df = jhu_data.cleaned()
         assert isinstance(df, pd.DataFrame)
-        assert set(df.columns) == set(Word.COLUMNS)
+        assert set(df.columns) == set(Term.COLUMNS)
 
     def test_jhu_local_file(self, data_loader):
         local_path = Path("input") / "covid19dh.csv"
@@ -36,7 +36,7 @@ class TestDataLoader(object):
         assert isinstance(japan_data.citation, str)
         df = japan_data.cleaned()
         assert isinstance(df, pd.DataFrame)
-        assert set(df.columns) == set(Word.COLUMNS)
+        assert set(df.columns) == set(Term.COLUMNS)
 
     def test_japan_cases_local_file(self, data_loader):
         local_path = Path("input") / "covid_jpn_total.csv"
@@ -56,7 +56,7 @@ class TestDataLoader(object):
         jhu_data = data_loader.jhu()
         df = jhu_data.subset("Japan")
         assert isinstance(df, pd.DataFrame)
-        assert set(df.columns) == set(Word.NLOC_COLUMNS)
+        assert set(df.columns) == set(Term.NLOC_COLUMNS)
 
     def test_replace(self, data_loader):
         jhu_data = data_loader.jhu()
@@ -65,7 +65,7 @@ class TestDataLoader(object):
         assert isinstance(jhu_data, JHUData)
         replaced_df = jhu_data.subset("Japan")
         japan_df = japan_data.cleaned()
-        assert set(replaced_df.columns) == set(Word.NLOC_COLUMNS)
+        assert set(replaced_df.columns) == set(Term.NLOC_COLUMNS)
         assert len(replaced_df) == len(japan_df)
 
     def test_population(self, data_loader):

@@ -40,7 +40,7 @@ class SIRD(ModelBase):
             "kappa": 0.005, "rho": 0.2, "sigma": 0.075,
         },
         "y0_dict": {
-            "Susceptible": 999_000, "Infected": 1000, "Recovered": 0, "Fatal": 0,
+            ModelBase.S: 999_000, ModelBase.CI: 1000, ModelBase.R: 0, ModelBase.F: 0,
         },
     }
 

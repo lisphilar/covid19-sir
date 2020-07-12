@@ -5,11 +5,11 @@ from datetime import datetime, timedelta
 import numpy as np
 import pandas as pd
 from scipy.integrate import solve_ivp
-from covsirphy.cleaning.word import Word
+from covsirphy.cleaning.term import Term
 from covsirphy.ode.mbase import ModelBase
 
 
-class ODESimulator(Word):
+class ODESimulator(Term):
     """
     Simulation of an ODE model.
     """

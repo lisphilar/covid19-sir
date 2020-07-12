@@ -3,7 +3,7 @@
 
 import pandas as pd
 import pytest
-from covsirphy import Estimator, ODESimulator, Word
+from covsirphy import Estimator, ODESimulator, Term
 from covsirphy import SIR, SIRD, SIRF  # , SIRFV, SEWIRF
 
 
@@ -25,11 +25,11 @@ class TestODESimulator(object):
         simulator.run()
         nondim_df = simulator.non_dim()
         assert isinstance(nondim_df, pd.DataFrame)
-        nondim_cols = [Word.TS, *list(model.VAR_DICT.keys())]
+        nondim_cols = [Term.TS, *list(model.VAR_DICT.keys())]
         assert set(nondim_df.columns) == set(nondim_cols)
         dim_df = simulator.dim(tau=eg_tau, start_date=start_date)
         assert isinstance(dim_df, pd.DataFrame)
-        dim_cols = [*Word.STR_COLUMNS, *model.VARIABLES]
+        dim_cols = [*Term.STR_COLUMNS, *model.VARIABLES]
         assert set(dim_df.columns) == set(dim_cols)
         # Estimation
         population = model.EXAMPLE["population"]

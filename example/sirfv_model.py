@@ -61,7 +61,7 @@ def main():
     )
     estimator.run()
     estimated_df = estimator.summary(name=model.NAME)
-    estimated_df.loc["Setted"] = pd.Series(
+    estimated_df.loc["set"] = pd.Series(
         {**set_param_dict, "tau": eg_tau}
     )
     estimated_df["tau"] = estimated_df["tau"].astype(np.int64)

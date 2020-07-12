@@ -5,10 +5,10 @@ from datetime import datetime, timedelta
 import itertools
 import numpy as np
 import pandas as pd
-from covsirphy.cleaning.word import Word
+from covsirphy.cleaning.term import Term
 
 
-class PhaseSeries(Word):
+class PhaseSeries(Term):
     """
     A series of phases.
 

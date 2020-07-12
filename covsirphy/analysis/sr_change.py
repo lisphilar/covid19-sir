@@ -6,12 +6,12 @@ import numpy as np
 import pandas as pd
 import ruptures as rpt
 from covsirphy.analysis.phase_series import PhaseSeries
-from covsirphy.cleaning.word import Word
+from covsirphy.cleaning.term import Term
 from covsirphy.phase.sr_data import SRData
 from covsirphy.phase.trend import Trend
 
 
-class ChangeFinder(Word):
+class ChangeFinder(Term):
     """
     Find change points of S-R trend.
 

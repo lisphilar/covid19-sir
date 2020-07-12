@@ -1,10 +1,10 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-from covsirphy.cleaning.word import Word
+from covsirphy.cleaning.term import Term
 
 
-class ModelBaseCommon(Word):
+class ModelBaseCommon(Term):
     # Quartile range of the parametes when setting initial values
     QUANTILE_RANGE = [0.3, 0.7]
     # Model name

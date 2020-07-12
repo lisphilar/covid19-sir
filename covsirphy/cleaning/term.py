@@ -5,11 +5,12 @@ from collections import defaultdict
 from datetime import datetime
 import numpy as np
 import pandas as pd
+from covsirphy.util.error import deprecate
 
 
-class Word(object):
+class Term(object):
     """
-    Word definition.
+    Term definition.
     """
     # Variables of SIR-like model
     N = "Population"
@@ -255,3 +256,9 @@ class Word(object):
             return default
         date_obj = datetime.strptime(date_str, cls.DATE_FORMAT)
         return date_obj
+
+
+class Word(Term):
+    @deprecate(old="Word()", new="Term()")
+    def __init__(self):
+        super().__init__()

@@ -3,7 +3,7 @@
 
 import pandas as pd
 from covsirphy import Scenario
-from covsirphy import Word, SIRF
+from covsirphy import Term, SIRF
 
 
 class TestScenario(object):
@@ -11,7 +11,7 @@ class TestScenario(object):
         scenario = Scenario(jhu_data, population_data, country="Italy")
         record_df = scenario.records(show_figure=False)
         assert isinstance(record_df, pd.DataFrame)
-        assert set(record_df.columns) == set(Word.NLOC_COLUMNS)
+        assert set(record_df.columns) == set(Term.NLOC_COLUMNS)
 
     def test_analysis(self, jhu_data, population_data):
         scenario = Scenario(jhu_data, population_data, country="Italy")

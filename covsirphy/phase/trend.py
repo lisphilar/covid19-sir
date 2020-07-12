@@ -11,11 +11,11 @@ if not hasattr(sys, "ps1"):
 import matplotlib.pyplot as plt
 import numpy as np
 from scipy.optimize import curve_fit, OptimizeWarning
-from covsirphy.cleaning.word import Word
+from covsirphy.cleaning.term import Term
 from covsirphy.phase.sr_data import SRData
 
 
-class Trend(Word):
+class Trend(Term):
     """
     S-R trend analysis in a phase.
 

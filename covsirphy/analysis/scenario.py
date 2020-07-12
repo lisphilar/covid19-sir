@@ -13,7 +13,7 @@ if not hasattr(sys, "ps1"):
 import numpy as np
 import pandas as pd
 from covsirphy.ode import ModelBase
-from covsirphy.cleaning import JHUData, PopulationData, Word
+from covsirphy.cleaning import JHUData, PopulationData, Term
 from covsirphy.phase import Estimator, SRData, ODEData
 from covsirphy.util import line_plot, box_plot
 from covsirphy.analysis.phase_series import PhaseSeries
@@ -22,7 +22,7 @@ from covsirphy.analysis.sr_change import ChangeFinder
 from covsirphy.util.stopwatch import StopWatch
 
 
-class Scenario(Word):
+class Scenario(Term):
     """
     Scenario analysis.
 
@@ -454,7 +454,7 @@ class Scenario(Word):
 
     def simulate(self, name="Main", y0_dict=None, show_figure=True, filename=None):
         """
-        Simulate ODE models with setted parameter values and show it as a figure.
+        Simulate ODE models with set parameter values and show it as a figure.
 
         Args:
             name (str): phase series name. If 'Main', main PhaseSeries will be used
