@@ -34,7 +34,7 @@ class TestODESimulator(object):
         # Estimation
         population = model.EXAMPLE["population"]
         estimator = Estimator(
-            clean_df=dim_df, model=model, population=population,
+            dim_df, model=model, population=population,
             country="Example", province=model.NAME, tau=eg_tau
         )
         estimator.run()
@@ -42,3 +42,22 @@ class TestODESimulator(object):
         assert isinstance(estimated_df, pd.DataFrame)
         estimator.history(show_figure=False)
         estimator.accuracy(show_figure=False)
+
+    @pytest.mark.parametrize("model", [SIR])
+    def test_ode_with_dataframe(self, model):
+        # Setting
+        eg_tau = 1440
+        start_date = "22Jan2020"
+        # Simulation
+        simulator = ODESimulator(country="Example", province=model.NAME)
+        simulator.add(model=model, **model.EXAMPLE)
+        simulator.run()
+        dim_df = simulator.dim(tau=eg_tau, start_date=start_date)
+        # Estimation
+        population = model.EXAMPLE["population"]
+        warnings.filterwarnings("ignore", category=DeprecationWarning)
+        estimator = Estimator(
+            dim_df, model=model, population=population,
+            country="Example", province=model.NAME, tau=eg_tau
+        )
+        estimator.run()

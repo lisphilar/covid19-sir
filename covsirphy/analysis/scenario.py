@@ -14,7 +14,7 @@ import numpy as np
 import pandas as pd
 from covsirphy.ode import ModelBase
 from covsirphy.cleaning import JHUData, PopulationData, Term
-from covsirphy.phase import Estimator, ODEData
+from covsirphy.phase import Estimator
 from covsirphy.util import line_plot, box_plot
 from covsirphy.analysis.phase_series import PhaseSeries
 from covsirphy.analysis.simulator import ODESimulator
@@ -39,10 +39,10 @@ class Scenario(Term):
             population_data, PopulationData, name="population_data")
         self.population = population_data.value(country, province=province)
         # Records
-        jhu_data = self.validate_instance(jhu_data, JHUData, name="jhu_data")
-        self.jhu_data = jhu_data
+        self.jhu_data = self.validate_instance(
+            jhu_data, JHUData, name="jhu_data")
         # TODO: remove self.clean_df
-        self.clean_df = jhu_data.subset(
+        self.clean_df = self.jhu_data.subset(
             country, province=province, population=self.population
         )
         # Area name
@@ -304,7 +304,7 @@ class Scenario(Term):
             est_kwargs[self.TAU] = self.tau
         # Run estimation
         estimator = Estimator(
-            self.clean_df, model, population,
+            self.jhu_data, model, population,
             country=self.country, province=self.province,
             start_date=start_date, end_date=end_date,
             **est_kwargs
@@ -551,13 +551,14 @@ class Scenario(Term):
             param_dict = df[model.PARAMETERS].to_dict(orient="index")[phase]
             if phase == self.num2str(1):
                 # Calculate initial values
-                ode_data = ODEData(
-                    self.clean_df, country=self.country,
-                    province=self.province
+                subset_df = self.jhu_data.subset(
+                    country=self.country, province=self.province,
+                    start_date=first_date
                 )
-                y0_dict_phase = ode_data.y0(
-                    model, population, start_date=first_date
-                )
+                subset_df = model.tau_free(subset_df, population, tau=None)
+                y0_dict_phase = {
+                    k: subset_df.loc[subset_df.index[0], k] for k in model.VARIABLES
+                }
             else:
                 if y0_dict is None:
                     y0_dict_phase = None

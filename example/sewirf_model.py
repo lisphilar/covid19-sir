@@ -55,7 +55,7 @@ def main():
     )
     # Hyperparameter estimation of example data
     estimator = cs.Estimator(
-        clean_df=dim_df, model=model, population=eg_population,
+        dim_df, model=model, population=eg_population,
         country="Example", province=model.NAME, tau=eg_tau,
         rho2=0.167, rho3=0.167
     )
