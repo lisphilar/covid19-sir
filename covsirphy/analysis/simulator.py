@@ -12,15 +12,13 @@ from covsirphy.ode.mbase import ModelBase
 class ODESimulator(Term):
     """
     Simulation of an ODE model.
+
+    Args:
+        country (str): country name
+        province (str): province name
     """
 
     def __init__(self, country, province="-"):
-        """
-
-        Args:
-        @country (str): country name
-        @province (str): province name
-        """
         self.country = country
         self.province = province
         # list of dictionary
@@ -173,11 +171,11 @@ class ODESimulator(Term):
 
         Returns:
             (pandas.DataFrame):
-                    Index:
-                        reset index
-                    Columns:
-                        - t (int): Elapsed time divided by tau value [-]
-                        - columns with dimensionalized variables
+                Index:
+                    reset index
+                Columns:
+                    - t (int): Elapsed time divided by tau value [-]
+                    - columns with dimensionalized variables
         """
         df = self._taufree_df.copy()
         if df.empty:

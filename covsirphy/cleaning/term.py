@@ -184,6 +184,26 @@ class Term(object):
             raise ValueError(f"{s}. This value is under {min_value}")
         return number
 
+    @classmethod
+    def validate_date(cls, target, name="date"):
+        """
+        Validate the format of the string.
+
+        Args:
+            target (str): string to validate
+            name (str): argument name of the string
+
+        Returns:
+            (str): as-is the target
+        """
+        try:
+            cls.date_obj(target)
+        except ValueError:
+            raise ValueError(
+                f"@{name} must be a natural number, but {target} was applied"
+            )
+        return target
+
     @staticmethod
     def validate_subclass(target, parent, name="target"):
         """
