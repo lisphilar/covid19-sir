@@ -185,7 +185,6 @@ class JHUData(CleaningBase):
             If @population is not None, the number of susceptible cases will be calculated.
             Records with Recovered > 0 will be selected.
         """
-        province = province or self.UNKNOWN
         df = self._cleaned_df.copy()
         df = df.loc[df[self.COUNTRY] == country, :]
         # Calculate Susceptible if population value was applied
@@ -198,18 +197,28 @@ class JHUData(CleaningBase):
             raise KeyError(
                 f"Records of {country} were not registered."
             )
-        # Select the province data if the province was registered
-        if province in df[self.PROVINCE].unique():
-            df = df.loc[df[self.PROVINCE] == province, :]
+        # Province was selected
+        if province is not None:
+            if province in df[self.PROVINCE].unique():
+                df = df.loc[df[self.PROVINCE] == province, :]
+                df = df.groupby(self.DATE).last().reset_index()
+                df = df.drop([self.COUNTRY, self.PROVINCE], axis=1)
+                return df.loc[df[self.R] > 0, :]
+            raise KeyError(
+                f"Records of {province} in {country} were not registered.")
+        # Province was not selected and COVID-19 Data Hub dataset
+        c_level_set = set(
+            df.loc[df[self.PROVINCE] == self.UNKNOWN, self.DATE].unique()
+        )
+        all_date_set = set(df[self.DATE].unique())
+        if c_level_set == all_date_set:
+            df = df.loc[df[self.PROVINCE] == self.UNKNOWN, :]
             df = df.groupby(self.DATE).last().reset_index()
             df = df.drop([self.COUNTRY, self.PROVINCE], axis=1)
             return df.loc[df[self.R] > 0, :]
-        # Total value in the country
-        if province == self.UNKNOWN:
-            df = df.groupby(self.DATE).sum().reset_index()
-            return df.loc[df[self.R] > 0, :]
-        raise KeyError(
-            f"Records of {province} in {country} were not registered.")
+        # Province was not selected and Kaggle dataset
+        df = df.groupby(self.DATE).sum().reset_index()
+        return df.loc[df[self.R] > 0, :]
 
     def subset(self, country, province=None,
                start_date=None, end_date=None, population=None):
