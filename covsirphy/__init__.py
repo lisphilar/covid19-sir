@@ -16,7 +16,7 @@ from covsirphy.cleaning import JHUData, ExampleData
 from covsirphy.cleaning import CountryData, PopulationData, OxCGRTData
 from covsirphy.ode import ModelBaseCommon, ModelBase
 from covsirphy.ode import SIR, SIRD, SIRF, SIRFV, SEWIRF
-from covsirphy.phase import PhaseData, ODEData, Estimator, Trend
+from covsirphy.phase import ODEData, Estimator, Trend
 from covsirphy.util import line_plot, jpn_map, StopWatch, error
 # Deprecated
 from covsirphy.cleaning import Population, Word
@@ -36,7 +36,7 @@ __all__ = [
     "JHUData", "ExampleData", "CountryData", "PopulationData", "OxCGRTData",
     "ModelBaseCommon", "ModelBase",
     "SIR", "SIRD", "SIRF", "SIRFV", "SEWIRF",
-    "PhaseData", "ODEData", "Estimator", "Trend",
+    "ODEData", "Estimator", "Trend",
     "line_plot", "jpn_map", "StopWatch", "error",
     # Deprecated
     "Population", "Word",
