@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
+import warnings
 import pandas as pd
 import pytest
 from covsirphy import Estimator, ODESimulator, Term
