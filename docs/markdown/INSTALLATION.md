@@ -106,10 +106,10 @@ Usage of `DataLoader` class is as follows. Please specify `local_file` argument 
 ```Python
 import covsirphy as cs
 data_loader = cs.DataLoader("input")
-jhu_data = data_loader.jhu(local_file="covid_19_data.csv")
-japan_data = data_loader.japan(local_file="covid_jpn_total.csv")
-population_data = data_loader.population(local_file="locations_population.csv")
-oxcgrt_data = data_loader.oxcgrt(local_file="OxCGRT_latest.csv")
+jhu_data = data_loader.jhu(local_file="./input/covid_19_data.csv")
+japan_data = data_loader.japan(local_file="./input/covid_jpn_total.csv")
+population_data = data_loader.population(local_file="./input/locations_population.csv")
+oxcgrt_data = data_loader.oxcgrt(local_file="./input/OxCGRT_latest.csv")
 ```
 
 (Optional) We can replace a part of JHU data with country-specific datasets.
