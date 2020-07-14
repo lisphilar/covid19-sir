@@ -36,7 +36,7 @@ def main():
     dim_df = example_data.cleaned()
     dim_df.to_csv(output_dir.joinpath(f"{model.NAME}_dim.csv"), index=False)
     cs.line_plot(
-        dim_df.set_index("Date"),
+        dim_df.set_index("Date").drop("Confirmed", axis=1),
         title=f"{model.NAME}: Example data (dimensional)",
         h=eg_population,
         y_integer=True,
