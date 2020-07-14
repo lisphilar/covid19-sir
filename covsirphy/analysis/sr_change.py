@@ -7,7 +7,8 @@ import numpy as np
 import pandas as pd
 import ruptures as rpt
 from covsirphy.analysis.phase_series import PhaseSeries
-from covsirphy.cleaning import Term, JHUData, ExampleData
+from covsirphy.analysis.example_data import ExampleData
+from covsirphy.cleaning import Term, JHUData
 from covsirphy.phase.trend import Trend
 
 

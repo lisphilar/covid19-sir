@@ -7,7 +7,8 @@ import numpy as np
 import optuna
 import pandas as pd
 from covsirphy.analysis.simulator import ODESimulator
-from covsirphy.cleaning import JHUData, ExampleData
+from covsirphy.analysis.example_data import ExampleData
+from covsirphy.cleaning import JHUData
 from covsirphy.ode.mbase import ModelBase
 from covsirphy.phase.optimize import Optimizer
 from covsirphy.util.stopwatch import StopWatch
