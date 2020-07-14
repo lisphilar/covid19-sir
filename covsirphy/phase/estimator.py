@@ -116,9 +116,6 @@ class Estimator(Optimizer):
 
         Notes:
             @n_jobs was obsoleted because this is not effective for Optuna.
-
-        Returns:
-            None
         """
         if "n_jobs" in kwargs.keys():
             raise KeyError("@n_jobs of Estimator.run() was obsoleted.")
