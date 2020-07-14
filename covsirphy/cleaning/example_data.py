@@ -61,15 +61,23 @@ class ExampleData(JHUData):
         arg_dict.update(kwargs)
         country = country or model.NAME
         province = province or self.UNKNOWN
-        # Start date
+        try:
+            population = arg_dict["population"]
+        except KeyError:
+            raise KeyError("@population must be specified.")
+        # Start date and y0 values
         df = self._cleaned_df.copy()
         df = df.loc[
-            (df[self.COUNTRY] == country) & (df[self.PROVINCE] == province), :
+            (df[self.COUNTRY] == country) & (df[self.PROVINCE] == province)
         ]
         if df.empty:
             start_date = self.start_date
         else:
             start_date = df.loc[df.index[-1], self.DATE]
+            df = model.tau_free(df, population, tau=None)
+            arg_dict["y0_dict"] = {
+                k: df.loc[df.index[0], k] for k in model.VARIABLES
+            }
         # Simulation
         simulator = ODESimulator(country=country, province=province)
         simulator.add(model=model, **arg_dict)
@@ -86,7 +94,11 @@ class ExampleData(JHUData):
         # Set non-dimensional data
         if country not in self.nondim_dict.keys():
             self.nondim_dict[country] = dict()
-        self.nondim_dict[country][province] = simulator.non_dim()
+        nondim_df = simulator.non_dim()
+        if province in self.nondim_dict[country].keys():
+            nondim_df_old = self.nondim_dict[country][province].copy()
+            nondim_df = pd.concat([nondim_df_old, nondim_df], axis=0)
+        self.nondim_dict[country][province] = nondim_df.copy()
 
     def non_dim(self, model=None, country=None, province=None):
         """

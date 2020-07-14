@@ -41,16 +41,12 @@ class Scenario(Term):
         # Records
         self.jhu_data = self.validate_instance(
             jhu_data, JHUData, name="jhu_data")
-        # TODO: remove self.clean_df
-        self.clean_df = self.jhu_data.subset(
-            country, province=province, population=self.population
-        )
         # Area name
         self.country = country
         self.province = province or self.UNKNOWN
         self.area = JHUData.area_name(country, province)
         # First/last date of the area
-        df = jhu_data.subset(country, province=province)
+        df = jhu_data.subset(country=country, province=province)
         self.first_date = df[self.DATE].min().strftime(self.DATE_FORMAT)
         self.last_date = df[self.DATE].max().strftime(self.DATE_FORMAT)
         # Init
@@ -98,7 +94,7 @@ class Scenario(Term):
         Notes:
             Records with Recovered > 0 will be selected.
         """
-        df = self.jhu_data.subset(self.country, province=self.province)
+        df = self.jhu_data.subset(country=self.country, province=self.province)
         if not show_figure:
             return df
         line_plot(

@@ -4,7 +4,7 @@
 import warnings
 import pandas as pd
 import pytest
-from covsirphy import Estimator, ODESimulator, Term, ExampleData
+from covsirphy import Estimator, ODESimulator, Term, ExampleData, Scenario
 from covsirphy import SIR, SIRD, SIRF  # , SIRFV, SEWIRF
 
 
@@ -41,6 +41,29 @@ class TestODESimulator(object):
         assert isinstance(estimated_df, pd.DataFrame)
         estimator.history(show_figure=False)
         estimator.accuracy(show_figure=False)
+
+    def test_ode_two_phases(self, population_data):
+        # Setting
+        eg_tau = 1440
+        # Simulation
+        example_data = ExampleData(tau=eg_tau)
+        example_data.add(SIRF, step_n=30)
+        example_data.add(SIRD, step_n=30)
+        nondim_df = example_data.non_dim(SIRF)
+        assert isinstance(nondim_df, pd.DataFrame)
+        nondim_cols = [Term.TS, *list(SIRF.VAR_DICT.keys())]
+        assert set(nondim_df.columns) == set(nondim_cols)
+        clean_df = example_data.cleaned()
+        assert isinstance(clean_df, pd.DataFrame)
+        assert set(clean_df.columns) == set(Term.COLUMNS)
+        dim_df = example_data.subset(SIRF)
+        assert isinstance(dim_df, pd.DataFrame)
+        assert set(dim_df.columns) == set(Term.NLOC_COLUMNS)
+        # Scenario analysis
+        population = SIRF.EXAMPLE["population"]
+        population_data.update(population, country=SIRF.NAME)
+        scenario = Scenario(example_data, population_data, country=SIRF.NAME)
+        scenario.trend()
 
     @pytest.mark.parametrize("model", [SIR])
     def test_ode_with_dataframe(self, model):

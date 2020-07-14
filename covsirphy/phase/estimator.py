@@ -42,11 +42,11 @@ class Estimator(Optimizer):
                 stacklevel=2
             )
             df = jhu_data.copy()
-            df = self.validate_dataframe(
-                df, name="jhu_data", columns=model.VARIABLES
-            )
-            if set(self.VALUE_COLUMNS) not in set(df.columns):
+            if not set(self.VALUE_COLUMNS).issubset(set(df.columns)):
                 df = model.restore(df)
+            df = self.validate_dataframe(
+                df, name="jhu_data", columns=self.COLUMNS
+            )
             jhu_data = ExampleData(df)
         jhu_data = self.validate_instance(jhu_data, JHUData, name="jhu_data")
         # Read arguments

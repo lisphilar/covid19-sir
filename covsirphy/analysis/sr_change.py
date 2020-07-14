@@ -54,7 +54,6 @@ class ChangeFinder(Term):
         self.sr_df = sr_df.copy()
         self.dates = self.get_dates(self.sr_df)
         # Arguments
-        self.clean_df = jhu_data.cleaned()
         self.country = country
         self.province = province
         self.area = JHUData.area_name(country, province)
