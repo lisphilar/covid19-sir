@@ -385,6 +385,51 @@ This method should be overwritten in subclass.</p>
 </dl>
 </dd></dl>
 
+<dl class="py method">
+<dt id="covsirphy.ode.mbase.ModelBase.tau_free">
+<em class="property">classmethod </em><code class="sig-name descname">tau_free</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">subset_df</span></em>, <em class="sig-param"><span class="n">population</span></em>, <em class="sig-param"><span class="n">tau</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/ode/mbase.html#ModelBase.tau_free"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#covsirphy.ode.mbase.ModelBase.tau_free" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create a dataframe specialized to the model.
+If tau is not None, Date column will be converted to ‘(Date - start date) / tau’
+and saved in t column.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>subset_df</strong> (<em>pandas.DataFrame</em>) – <dl class="simple">
+<dt>Index:</dt><dd><p>reset index</p>
+</dd>
+<dt>Columns:</dt><dd><ul>
+<li><p>Date (pd.TimeStamp): Observation date</p></li>
+<li><p>Confirmed (int): the number of confirmed cases</p></li>
+<li><p>Infected (int): the number of currently infected cases</p></li>
+<li><p>Fatal (int): the number of fatal cases</p></li>
+<li><p>Recovered (int): the number of recovered cases</p></li>
+<li><p>any columns</p></li>
+</ul>
+</dd>
+</dl>
+</p></li>
+<li><p><strong>population</strong> (<em>int</em>) – population value</p></li>
+<li><p><strong>tau</strong> (<em>int</em><em> or </em><em>None</em>) – tau value [min], 0 &lt;= tau &lt;= 1440</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><dl class="simple">
+<dt>Index:</dt><dd><p>reset index</p>
+</dd>
+<dt>Columns:</dt><dd><ul class="simple">
+<li><p>t (int): if tau is not None</p></li>
+<li><p>columns with dimensional variables</p></li>
+</ul>
+</dd>
+</dl>
+</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>(pandas.DataFrame)</p>
+</dd>
+</dl>
+</dd></dl>
+
 </dd></dl>
 
 </div>
@@ -393,7 +438,7 @@ This method should be overwritten in subclass.</p>
 <dl class="py class">
 <dt id="covsirphy.ode.mbasecom.ModelBaseCommon">
 <em class="property">class </em><code class="sig-prename descclassname">covsirphy.ode.mbasecom.</code><code class="sig-name descname">ModelBaseCommon</code><a class="reference internal" href="_modules/covsirphy/ode/mbasecom.html#ModelBaseCommon"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#covsirphy.ode.mbasecom.ModelBaseCommon" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference internal" href="covsirphy.cleaning.html#covsirphy.cleaning.word.Word" title="covsirphy.cleaning.word.Word"><code class="xref py py-class docutils literal notranslate"><span class="pre">covsirphy.cleaning.word.Word</span></code></a></p>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">covsirphy.cleaning.term.Term</span></code></p>
 <dl class="py attribute">
 <dt id="covsirphy.ode.mbasecom.ModelBaseCommon.NAME">
 <code class="sig-name descname">NAME</code><em class="property"> = 'ModelBaseCommon'</em><a class="headerlink" href="#covsirphy.ode.mbasecom.ModelBaseCommon.NAME" title="Permalink to this definition">¶</a></dt>

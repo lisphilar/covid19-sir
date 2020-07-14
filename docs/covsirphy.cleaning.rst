@@ -50,10 +50,10 @@ covsirphy.cleaning.population
    :undoc-members:
    :show-inheritance:
 
-covsirphy.cleaning.word
+covsirphy.cleaning.term
 ------------------------------
 
-.. automodule:: covsirphy.cleaning.word
+.. automodule:: covsirphy.cleaning.term
    :members:
    :undoc-members:
    :show-inheritance:

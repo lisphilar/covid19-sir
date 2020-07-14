@@ -97,10 +97,7 @@
 <li class="toctree-l2"><a class="reference internal" href="covsirphy.ode.html">covsirphy.ode</a></li>
 <li class="toctree-l2 current"><a class="current reference internal" href="#">covsirphy.phase</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#module-covsirphy.phase.estimator">covsirphy.phase.estimator</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#module-covsirphy.phase.ode_data">covsirphy.phase.ode_data</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#module-covsirphy.phase.optimize">covsirphy.phase.optimize</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#module-covsirphy.phase.phase_data">covsirphy.phase.phase_data</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#module-covsirphy.phase.sr_data">covsirphy.phase.sr_data</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#module-covsirphy.phase.trend">covsirphy.phase.trend</a></li>
 </ul>
 </li>
@@ -206,49 +203,13 @@
 <span id="covsirphy-phase-estimator"></span><h2>covsirphy.phase.estimator<a class="headerlink" href="#module-covsirphy.phase.estimator" title="Permalink to this headline">¶</a></h2>
 <dl class="py class">
 <dt id="covsirphy.phase.estimator.Estimator">
-<em class="property">class </em><code class="sig-prename descclassname">covsirphy.phase.estimator.</code><code class="sig-name descname">Estimator</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">clean_df</span></em>, <em class="sig-param"><span class="n">model</span></em>, <em class="sig-param"><span class="n">population</span></em>, <em class="sig-param"><span class="n">country</span></em>, <em class="sig-param"><span class="n">province</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">start_date</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">end_date</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/phase/estimator.html#Estimator"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#covsirphy.phase.estimator.Estimator" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">covsirphy.phase.estimator.</code><code class="sig-name descname">Estimator</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">jhu_data</span></em>, <em class="sig-param"><span class="n">model</span></em>, <em class="sig-param"><span class="n">population</span></em>, <em class="sig-param"><span class="n">country</span></em>, <em class="sig-param"><span class="n">province</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">start_date</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">end_date</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/phase/estimator.html#Estimator"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#covsirphy.phase.estimator.Estimator" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#covsirphy.phase.optimize.Optimizer" title="covsirphy.phase.optimize.Optimizer"><code class="xref py py-class docutils literal notranslate"><span class="pre">covsirphy.phase.optimize.Optimizer</span></code></a></p>
 <p>Hyperparameter optimization of an ODE model.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>clean_df</strong> (<em>pandas.DataFrame</em>) – <ul>
-<li><p>cleaned observed data or simulated data</p></li>
-<li><dl class="simple">
-<dt>observed data</dt><dd><dl class="simple">
-<dt>Index:</dt><dd><p>reset index</p>
-</dd>
-<dt>Columns:</dt><dd><ul>
-<li><p>Date (pd.TimeStamp): Observation date</p></li>
-<li><p>Country (str): country/region name</p></li>
-<li><p>Province (str): province/prefecture/sstate name</p></li>
-<li><p>Confirmed (int): the number of confirmed cases</p></li>
-<li><p>Infected (int): the number of currently infected cases</p></li>
-<li><p>Fatal (int): the number of fatal cases</p></li>
-<li><p>Recovered (int): the number of recovered cases</p></li>
-</ul>
-</dd>
-</dl>
-</dd>
-</dl>
-</li>
-<li><dl class="simple">
-<dt>simulated data</dt><dd><dl class="simple">
-<dt>Index:</dt><dd><p>reset index</p>
-</dd>
-<dt>Columns:</dt><dd><ul>
-<li><p>Date (pd.TimeStamp): Observation date</p></li>
-<li><p>Country (str): country/region name</p></li>
-<li><p>Province (str): province/prefecture/state name</p></li>
-<li><p>variables of the models (int)</p></li>
-</ul>
-</dd>
-</dl>
-</dd>
-</dl>
-</li>
-</ul>
-</p></li>
+<li><p><strong>jhu_data</strong> (<em>covsirphy.JHUData</em>) – object of records</p></li>
 <li><p><strong>model</strong> (<em>covsirphy.ModelBase</em>) – ODE model</p></li>
 <li><p><strong>population</strong> (<em>int</em>) – total population in the place</p></li>
 <li><p><strong>country</strong> (<em>str</em>) – country name</p></li>
@@ -382,11 +343,6 @@ If the result satisfied the following conditions, optimization ends.
 </dl>
 <p class="rubric">Notes</p>
 <p>&#64;n_jobs was obsoleted because this is not effective for Optuna.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Returns</dt>
-<dd class="field-odd"><p>None</p>
-</dd>
-</dl>
 </dd></dl>
 
 <dl class="py method">
@@ -455,117 +411,12 @@ This function should be overwritten in subclass.</p>
 </dd></dl>
 
 </div>
-<div class="section" id="module-covsirphy.phase.ode_data">
-<span id="covsirphy-phase-ode-data"></span><h2>covsirphy.phase.ode_data<a class="headerlink" href="#module-covsirphy.phase.ode_data" title="Permalink to this headline">¶</a></h2>
-<dl class="py class">
-<dt id="covsirphy.phase.ode_data.ODEData">
-<em class="property">class </em><code class="sig-prename descclassname">covsirphy.phase.ode_data.</code><code class="sig-name descname">ODEData</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">clean_df</span></em>, <em class="sig-param"><span class="n">country</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">province</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/phase/ode_data.html#ODEData"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#covsirphy.phase.ode_data.ODEData" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference internal" href="#covsirphy.phase.phase_data.PhaseData" title="covsirphy.phase.phase_data.PhaseData"><code class="xref py py-class docutils literal notranslate"><span class="pre">covsirphy.phase.phase_data.PhaseData</span></code></a></p>
-<p>Dataset for ODE analysis.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>clean_df</strong> (<em>pandas.DataFrame</em>) – <p>cleaned data</p>
-<dl class="simple">
-<dt>Index:</dt><dd><p>reset index</p>
-</dd>
-<dt>Columns:</dt><dd><ul>
-<li><p>Date (pd.TimeStamp): Observation date</p></li>
-<li><p>Country (str): country/region name</p></li>
-<li><p>Province (str): province/prefecture/sstate name</p></li>
-<li><p>Confirmed (int): the number of confirmed cases</p></li>
-<li><p>Infected (int): the number of currently infected cases</p></li>
-<li><p>Fatal (int): the number of fatal cases</p></li>
-<li><p>Recovered (int): the number of recovered cases</p></li>
-</ul>
-</dd>
-</dl>
-</p></li>
-<li><p><strong>country</strong> (<em>str</em>) – country name</p></li>
-<li><p><strong>province</strong> (<em>str</em>) – province name</p></li>
-</ul>
-</dd>
-</dl>
-<dl class="py method">
-<dt id="covsirphy.phase.ode_data.ODEData.make">
-<code class="sig-name descname">make</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">model</span></em>, <em class="sig-param"><span class="n">population</span></em>, <em class="sig-param"><span class="n">start_date</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">end_date</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">tau</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/phase/ode_data.html#ODEData.make"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#covsirphy.phase.ode_data.ODEData.make" title="Permalink to this definition">¶</a></dt>
-<dd><p>Make a dataset for ODE analysis.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>model</strong> (<em>covsirphy.ModelBase</em>) – ODE model</p></li>
-<li><p><strong>population</strong> (<em>int</em>) – total population</p></li>
-<li><p><strong>start_date</strong> (<em>str</em><em> or </em><em>None</em>) – start date, like 22Jan2020</p></li>
-<li><p><strong>end_date</strong> (<em>str</em><em> or </em><em>None</em>) – end date, like 01Feb2020</p></li>
-<li><p><strong>tau</strong> (<em>int</em><em> or </em><em>None</em>) – tau value [min] or None (un-set)</p></li>
-</ul>
-</dd>
-</dl>
-<p class="rubric">Notes</p>
-<ul class="simple">
-<li><p>When &#64;start_date is None, the first date of the records will be used</p></li>
-<li><p>When &#64;end_date is None, the last date of the records will be used</p></li>
-</ul>
-<dl class="field-list simple">
-<dt class="field-odd">Returns</dt>
-<dd class="field-odd"><p><dl class="simple">
-<dt>Index:</dt><dd><p>reset index</p>
-</dd>
-<dt>Columns:</dt><dd><ul class="simple">
-<li><p>Elapsed (int): if tau is None</p></li>
-<li><p>t (int): if tau is not None</p></li>
-<li><p>columns with dimensional variables</p></li>
-</ul>
-</dd>
-</dl>
-</p>
-</dd>
-<dt class="field-even">Return type</dt>
-<dd class="field-even"><p>(pandas.DataFrame)</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt id="covsirphy.phase.ode_data.ODEData.y0">
-<code class="sig-name descname">y0</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">model</span></em>, <em class="sig-param"><span class="n">population</span></em>, <em class="sig-param"><span class="n">start_date</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/phase/ode_data.html#ODEData.y0"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#covsirphy.phase.ode_data.ODEData.y0" title="Permalink to this definition">¶</a></dt>
-<dd><p>Return the initial values of the model.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>model</strong> (<em>covsirphy.ModelBase</em>) – ODE model</p></li>
-<li><p><strong>population</strong> (<em>int</em>) – total population</p></li>
-<li><p><strong>start_date</strong> (<em>str</em>) – start date, like 22Jan2020</p></li>
-</ul>
-</dd>
-</dl>
-<p class="rubric">Notes</p>
-<ul class="simple">
-<li><p>When &#64;start_date is None, the first date of the records will be used</p></li>
-</ul>
-<dl class="field-list simple">
-<dt class="field-odd">Returns</dt>
-<dd class="field-odd"><p><dl class="simple">
-<dt>(dict)</dt><dd><ul class="simple">
-<li><p>key (str): dimensional variables</p></li>
-<li><p>value (int): the number of cases</p></li>
-</ul>
-</dd>
-</dl>
-</p>
-</dd>
-</dl>
-</dd></dl>
-
-</dd></dl>
-
-</div>
 <div class="section" id="module-covsirphy.phase.optimize">
 <span id="covsirphy-phase-optimize"></span><h2>covsirphy.phase.optimize<a class="headerlink" href="#module-covsirphy.phase.optimize" title="Permalink to this headline">¶</a></h2>
 <dl class="py class">
 <dt id="covsirphy.phase.optimize.Optimizer">
 <em class="property">class </em><code class="sig-prename descclassname">covsirphy.phase.optimize.</code><code class="sig-name descname">Optimizer</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">train_df</span></em>, <em class="sig-param"><span class="n">x</span><span class="o">=</span><span class="default_value">'t'</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">params</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/phase/optimize.html#Optimizer"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#covsirphy.phase.optimize.Optimizer" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference internal" href="covsirphy.cleaning.html#covsirphy.cleaning.word.Word" title="covsirphy.cleaning.word.Word"><code class="xref py py-class docutils literal notranslate"><span class="pre">covsirphy.cleaning.word.Word</span></code></a></p>
+<dd><p>Bases: <a class="reference internal" href="covsirphy.cleaning.html#covsirphy.cleaning.term.Term" title="covsirphy.cleaning.term.Term"><code class="xref py py-class docutils literal notranslate"><span class="pre">covsirphy.cleaning.term.Term</span></code></a></p>
 <p>Hyperparameter optimization with Optuna package.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -874,164 +725,17 @@ This method should be overwritten in subclass.</p>
 </dd></dl>
 
 </div>
-<div class="section" id="module-covsirphy.phase.phase_data">
-<span id="covsirphy-phase-phase-data"></span><h2>covsirphy.phase.phase_data<a class="headerlink" href="#module-covsirphy.phase.phase_data" title="Permalink to this headline">¶</a></h2>
-<dl class="py class">
-<dt id="covsirphy.phase.phase_data.PhaseData">
-<em class="property">class </em><code class="sig-prename descclassname">covsirphy.phase.phase_data.</code><code class="sig-name descname">PhaseData</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">clean_df</span></em>, <em class="sig-param"><span class="n">country</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">province</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/phase/phase_data.html#PhaseData"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#covsirphy.phase.phase_data.PhaseData" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference internal" href="covsirphy.cleaning.html#covsirphy.cleaning.word.Word" title="covsirphy.cleaning.word.Word"><code class="xref py py-class docutils literal notranslate"><span class="pre">covsirphy.cleaning.word.Word</span></code></a></p>
-<p>Basic class to create dataset for Trend/ODE analysis.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>clean_df</strong> (<em>pandas.DataFrame</em>) – <p>cleaned data</p>
-<dl class="simple">
-<dt>Index:</dt><dd><p>reset index</p>
-</dd>
-<dt>Columns:</dt><dd><ul>
-<li><p>Date (pd.TimeStamp): Observation date</p></li>
-<li><p>Country (str): country/region name</p></li>
-<li><p>Province (str): province/prefecture/sstate name</p></li>
-<li><p>Confirmed (int): the number of confirmed cases</p></li>
-<li><p>Infected (int): the number of currently infected cases</p></li>
-<li><p>Fatal (int): the number of fatal cases</p></li>
-<li><p>Recovered (int): the number of recovered cases</p></li>
-</ul>
-</dd>
-</dl>
-</p></li>
-<li><p><strong>country</strong> (<em>str</em>) – country name</p></li>
-<li><p><strong>province</strong> (<em>str</em>) – province name</p></li>
-</ul>
-</dd>
-</dl>
-<dl class="py method">
-<dt id="covsirphy.phase.phase_data.PhaseData.make">
-<code class="sig-name descname">make</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">start_date</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">end_date</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/phase/phase_data.html#PhaseData.make"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#covsirphy.phase.phase_data.PhaseData.make" title="Permalink to this definition">¶</a></dt>
-<dd><p>Make a dataset using the cleaned dataset.
-This method must be overwritten in child class.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>start_date</strong> (<em>str</em>) – start date, like 22Jan2020</p></li>
-<li><p><strong>end_date</strong> (<em>str</em>) – end date, like 01Feb2020</p></li>
-</ul>
-</dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p>(pandas.DataFrame)</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt id="covsirphy.phase.phase_data.PhaseData.subset">
-<code class="sig-name descname">subset</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">start_date</span></em>, <em class="sig-param"><span class="n">end_date</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/phase/phase_data.html#PhaseData.subset"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#covsirphy.phase.phase_data.PhaseData.subset" title="Permalink to this definition">¶</a></dt>
-<dd><p>Return the subset of the data with start/end date.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>start_date</strong> (<em>str</em>) – start date, like 22Jan2020</p></li>
-<li><p><strong>end_date</strong> (<em>str</em>) – end date, like 01Feb2020</p></li>
-</ul>
-</dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p><dl class="simple">
-<dt>Index:</dt><dd><ul class="simple">
-<li><p>Date (pd.TimeStamp): Observation date</p></li>
-</ul>
-</dd>
-<dt>Columns:</dt><dd><ul class="simple">
-<li><p>Confirmed (int): the number of confirmed cases</p></li>
-<li><p>Infected (int): the number of currently infected cases</p></li>
-<li><p>Fatal (int): the number of fatal cases</p></li>
-<li><p>Recovered (int): the number of recovered cases</p></li>
-</ul>
-</dd>
-</dl>
-</p>
-</dd>
-<dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>(pandas.DataFrame)</p>
-</dd>
-</dl>
-</dd></dl>
-
-</dd></dl>
-
-</div>
-<div class="section" id="module-covsirphy.phase.sr_data">
-<span id="covsirphy-phase-sr-data"></span><h2>covsirphy.phase.sr_data<a class="headerlink" href="#module-covsirphy.phase.sr_data" title="Permalink to this headline">¶</a></h2>
-<dl class="py class">
-<dt id="covsirphy.phase.sr_data.SRData">
-<em class="property">class </em><code class="sig-prename descclassname">covsirphy.phase.sr_data.</code><code class="sig-name descname">SRData</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">clean_df</span></em>, <em class="sig-param"><span class="n">country</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">province</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/phase/sr_data.html#SRData"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#covsirphy.phase.sr_data.SRData" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference internal" href="#covsirphy.phase.phase_data.PhaseData" title="covsirphy.phase.phase_data.PhaseData"><code class="xref py py-class docutils literal notranslate"><span class="pre">covsirphy.phase.phase_data.PhaseData</span></code></a></p>
-<p>Create dataset for S-R trend analysis.</p>
-<dl class="py method">
-<dt id="covsirphy.phase.sr_data.SRData.make">
-<code class="sig-name descname">make</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">population</span></em>, <em class="sig-param"><span class="n">start_date</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">end_date</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/phase/sr_data.html#SRData.make"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#covsirphy.phase.sr_data.SRData.make" title="Permalink to this definition">¶</a></dt>
-<dd><p>Make dataset for S-R trend analysis.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>population</strong> (<em>int</em>) – total population in the place</p></li>
-<li><p><strong>start_date</strong> (<em>str</em><em> or </em><em>None</em>) – start date, like 22Jan2020</p></li>
-<li><p><strong>end_date</strong> (<em>str</em><em> or </em><em>None</em>) – end date, like 01Feb2020</p></li>
-</ul>
-</dd>
-</dl>
-<p class="rubric">Notes</p>
-<ul class="simple">
-<li><p>When &#64;start_date is None, the first date of the records will be used</p></li>
-<li><p>When &#64;end_date is None, the last date of the records will be used</p></li>
-</ul>
-<dl class="field-list simple">
-<dt class="field-odd">Returns</dt>
-<dd class="field-odd"><p><dl class="simple">
-<dt>(pandas.DataFrame)</dt><dd><dl class="simple">
-<dt>Index:</dt><dd><p>Date (pd.TimeStamp): Observation date</p>
-</dd>
-<dt>Columns:</dt><dd><ul class="simple">
-<li><p>Recovered (int): The number of recovered cases</p></li>
-<li><p>Susceptible_actual (int): Actual values of Susceptible (&gt; 0)</p></li>
-</ul>
-</dd>
-</dl>
-</dd>
-</dl>
-</p>
-</dd>
-</dl>
-</dd></dl>
-
-</dd></dl>
-
-</div>
 <div class="section" id="module-covsirphy.phase.trend">
 <span id="covsirphy-phase-trend"></span><h2>covsirphy.phase.trend<a class="headerlink" href="#module-covsirphy.phase.trend" title="Permalink to this headline">¶</a></h2>
 <dl class="py class">
 <dt id="covsirphy.phase.trend.Trend">
-<em class="property">class </em><code class="sig-prename descclassname">covsirphy.phase.trend.</code><code class="sig-name descname">Trend</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">clean_df</span></em>, <em class="sig-param"><span class="n">population</span></em>, <em class="sig-param"><span class="n">country</span></em>, <em class="sig-param"><span class="n">province</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">start_date</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">end_date</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/phase/trend.html#Trend"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#covsirphy.phase.trend.Trend" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference internal" href="covsirphy.cleaning.html#covsirphy.cleaning.word.Word" title="covsirphy.cleaning.word.Word"><code class="xref py py-class docutils literal notranslate"><span class="pre">covsirphy.cleaning.word.Word</span></code></a></p>
+<em class="property">class </em><code class="sig-prename descclassname">covsirphy.phase.trend.</code><code class="sig-name descname">Trend</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">jhu_data</span></em>, <em class="sig-param"><span class="n">population</span></em>, <em class="sig-param"><span class="n">country</span></em>, <em class="sig-param"><span class="n">province</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">start_date</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">end_date</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/phase/trend.html#Trend"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#covsirphy.phase.trend.Trend" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="covsirphy.cleaning.html#covsirphy.cleaning.term.Term" title="covsirphy.cleaning.term.Term"><code class="xref py py-class docutils literal notranslate"><span class="pre">covsirphy.cleaning.term.Term</span></code></a></p>
 <p>S-R trend analysis in a phase.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>clean_df</strong> (<em>pandas.DataFrame</em>) – <p>cleaned data</p>
-<dl class="simple">
-<dt>Index:</dt><dd><p>reset index</p>
-</dd>
-<dt>Columns:</dt><dd><ul>
-<li><p>Date (pd.TimeStamp): Observation date</p></li>
-<li><p>Country (str): country/region name</p></li>
-<li><p>Province (str): province/prefecture/sstate name</p></li>
-<li><p>Confirmed (int): the number of confirmed cases</p></li>
-<li><p>Infected (int): the number of currently infected cases</p></li>
-<li><p>Fatal (int): the number of fatal cases</p></li>
-<li><p>Recovered (int): the number of recovered cases</p></li>
-</ul>
-</dd>
-</dl>
-</p></li>
+<li><p><strong>jhu_data</strong> (<em>covsirphy.JHUData</em>) – object of records</p></li>
 <li><p><strong>population</strong> (<em>int</em>) – total population in the place</p></li>
 <li><p><strong>country</strong> (<em>str</em>) – country name</p></li>
 <li><p><strong>province</strong> (<em>str</em>) – province name</p></li>
