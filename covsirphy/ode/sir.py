@@ -38,7 +38,7 @@ class SIR(ModelBase):
             "rho": 0.2, "sigma": 0.075,
         },
         "y0_dict": {
-            "Susceptible": 999_000, "Infected": 1000, "Fatal or Recovered": 0,
+            ModelBase.S: 999_000, ModelBase.CI: 1000, ModelBase.FR: 0,
         },
     }
 

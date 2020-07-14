@@ -3,11 +3,12 @@
 
 from datetime import datetime, timedelta
 import itertools
+import numpy as np
 import pandas as pd
-from covsirphy.cleaning.word import Word
+from covsirphy.cleaning.term import Term
 
 
-class PhaseSeries(Word):
+class PhaseSeries(Term):
     """
     A series of phases.
 
@@ -272,19 +273,86 @@ class PhaseSeries(Word):
         self.info_dict[phase_id].update(kwargs)
         return self
 
-    def next_date(self):
+    def last_object(self):
         """
-        Return the next date of the end date of the last registered phase.
+        Return the end date of the last registered phase.
+
         Returns:
-            (str): like 01Feb2020
+            (datetime.datetime): the end date of the last registered phase
         """
         un_date_objects = [
             k for (k, v) in self.phase_dict.items()
             if v != 0
         ]
         if not un_date_objects:
-            last_end_date_obj = list(self.phase_dict.keys())[-1]
-        else:
-            last_end_date_obj = un_date_objects[-1]
+            return list(self.phase_dict.keys())[-1]
+        return un_date_objects[-1]
+
+    def next_date(self):
+        """
+        Return the next date of the end date of the last registered phase.
+        Returns:
+            (str): like 01Feb2020
+        """
+        last_end_date_obj = self.last_object()
         next_date_obj = last_end_date_obj + timedelta(days=1)
         return next_date_obj.strftime(self.DATE_FORMAT)
+
+    def start_objects(self):
+        """
+        Return the list of start dates as datetime.datetime objects of phases.
+
+        Returns:
+            (list[datetime.datetime]): list of start dates
+        """
+        start_objects = [
+            self.date_obj(v[self.START]) for v in self.info_dict.values()
+        ]
+        return start_objects
+
+    @staticmethod
+    def number_of_steps(start_objects, last_object, tau):
+        """
+        Return the list of the number of steps of phases.
+
+        Args:
+            start_objects (list[datetime.datetime]): list of start dates
+            last_object (datetime.datetime): the end date of the last registered phase
+            tau (int): tau value
+
+        Returns:
+            (list[int]): list of the number of steps
+        """
+        date_array = np.array([*start_objects, last_object])
+        step_n_list = [
+            round(diff.total_seconds() / 60 / tau) for diff
+            in date_array[1:] - date_array[:-1]
+        ]
+        return step_n_list
+
+    def model_names(self):
+        """
+        Return the names of the registered models if available.
+
+        Returns:
+            (list[str]): list of model names
+        """
+        try:
+            names = [
+                v[self.ODE] for v in self.info_dict.values()
+            ]
+        except KeyError:
+            names = list()
+        return names
+
+    def population_values(self):
+        """
+        Return the list of population values.
+
+        Returns:
+            (list[int]): list of population values
+        """
+        values = [
+            v[self.N] for v in self.info_dict.values()
+        ]
+        return values

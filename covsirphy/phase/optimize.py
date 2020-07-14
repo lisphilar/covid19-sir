@@ -8,10 +8,10 @@ import numpy as np
 import optuna
 import pandas as pd
 import seaborn as sns
-from covsirphy.cleaning.word import Word
+from covsirphy.cleaning.term import Term
 
 
-class Optimizer(Word):
+class Optimizer(Term):
     """
     Hyperparameter optimization with Optuna package.
 

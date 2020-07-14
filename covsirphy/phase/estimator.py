@@ -2,12 +2,13 @@
 # -*- coding: utf-8 -*-
 
 import math
+import warnings
 import numpy as np
 import optuna
 import pandas as pd
 from covsirphy.analysis.simulator import ODESimulator
+from covsirphy.cleaning import JHUData, ExampleData
 from covsirphy.ode.mbase import ModelBase
-from covsirphy.phase.ode_data import ODEData
 from covsirphy.phase.optimize import Optimizer
 from covsirphy.util.stopwatch import StopWatch
 
@@ -17,27 +18,7 @@ class Estimator(Optimizer):
     Hyperparameter optimization of an ODE model.
 
     Args:
-        clean_df (pandas.DataFrame):
-            - cleaned observed data or simulated data
-            - observed data
-                Index:
-                    reset index
-                Columns:
-                    - Date (pd.TimeStamp): Observation date
-                    - Country (str): country/region name
-                    - Province (str): province/prefecture/sstate name
-                    - Confirmed (int): the number of confirmed cases
-                    - Infected (int): the number of currently infected cases
-                    - Fatal (int): the number of fatal cases
-                    - Recovered (int): the number of recovered cases
-            - simulated data
-                Index:
-                    reset index
-                Columns:
-                    - Date (pd.TimeStamp): Observation date
-                    - Country (str): country/region name
-                    - Province (str): province/prefecture/state name
-                    - variables of the models (int)
+        jhu_data (covsirphy.JHUData): object of records
         model (covsirphy.ModelBase): ODE model
         population (int): total population in the place
         country (str): country name
@@ -48,11 +29,27 @@ class Estimator(Optimizer):
     """
     np.seterr(divide="raise")
 
-    def __init__(self, clean_df, model, population,
+    def __init__(self, jhu_data, model, population,
                  country, province=None,
                  start_date=None, end_date=None, **kwargs):
-        # Read arguments
+        # Check type of model
         model = self.validate_subclass(model, ModelBase, name="model")
+        # Dataset
+        if isinstance(jhu_data, pd.DataFrame):
+            warnings.warn(
+                "Please use instance of JHUData as the first argument of Trend class.",
+                DeprecationWarning,
+                stacklevel=2
+            )
+            df = jhu_data.copy()
+            if not set(self.VALUE_COLUMNS).issubset(set(df.columns)):
+                df = model.restore(df)
+            df = self.validate_dataframe(
+                df, name="jhu_data", columns=self.COLUMNS
+            )
+            jhu_data = ExampleData(df)
+        jhu_data = self.validate_instance(jhu_data, JHUData, name="jhu_data")
+        # Read arguments
         self.model = model
         self.population = population
         self.country = country
@@ -65,14 +62,14 @@ class Estimator(Optimizer):
                 self.fixed_dict[self.TAU], name="tau"
             )
         # Training dataset
-        df = self.validate_dataframe(
-            clean_df, name="clean_df", columns=model.VARIABLES
+        self.subset_df = jhu_data.subset(
+            country=country, province=province,
+            start_date=start_date, end_date=end_date
         )
-        if set(self.VALUE_COLUMNS) not in set(df.columns):
-            df = model.restore(df)
-        self.ode_data = ODEData(df, country=country, province=province)
-        self.y0_dict = self.ode_data.y0(
-            model, population, start_date=start_date)
+        df = model.tau_free(self.subset_df, population, tau=None)
+        self.y0_dict = {
+            k: df.loc[df.index[0], k] for k in model.VARIABLES
+        }
         # For optimization
         optuna.logging.disable_default_handler()
         self.x = self.TS
@@ -119,9 +116,6 @@ class Estimator(Optimizer):
 
         Notes:
             @n_jobs was obsoleted because this is not effective for Optuna.
-
-        Returns:
-            None
         """
         if "n_jobs" in kwargs.keys():
             raise KeyError("@n_jobs of Estimator.run() was obsoleted.")
@@ -224,21 +218,15 @@ class Estimator(Optimizer):
 
         Returns:
             (pandas.DataFrame):
-                    Index:
-                        reset index
-                    Columns:
-                        - t (int): Elapsed time divided by tau value [-]
-                        - columns with dimensional variables
+                Index:
+                    reset index
+                Columns:
+                    - t (int): Elapsed time divided by tau value [-]
+                    - columns with dimensional variables
         """
-        taufree_df = self.ode_data.make(
-            model=self.model,
-            population=self.population,
-            start_date=self.start_date,
-            end_date=self.end_date,
-            tau=tau
-        )
-        self.step_n = int(taufree_df[self.TS].max())
-        return taufree_df
+        df = self.model.tau_free(self.subset_df, self.population, tau=tau)
+        self.step_n = int(df[self.TS].max())
+        return df
 
     def error_f(self, param_dict, taufree_df):
         """

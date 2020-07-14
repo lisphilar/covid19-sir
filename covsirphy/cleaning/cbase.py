@@ -2,10 +2,10 @@
 # -*- coding: utf-8 -*-
 
 from dask import dataframe as dd
-from covsirphy.cleaning.word import Word
+from covsirphy.cleaning.term import Term
 
 
-class CleaningBase(Word):
+class CleaningBase(Term):
     """
     Basic class for data cleaning.
 

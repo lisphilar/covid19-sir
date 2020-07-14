@@ -12,10 +12,10 @@ from covsirphy.cleaning.jhu_data import JHUData
 from covsirphy.cleaning.country_data import CountryData
 from covsirphy.cleaning.oxcgrt import OxCGRTData
 from covsirphy.cleaning.population import PopulationData
-from covsirphy.cleaning.word import Word
+from covsirphy.cleaning.term import Term
 
 
-class DataLoader(Word):
+class DataLoader(Term):
     """
     Download the dataset and perform data cleaning.
 
@@ -281,7 +281,10 @@ class DataLoader(Word):
         Returns:
             (covsirphy.JHUData): JHU dataset
         """
-        basename = basename or self._covid19dh_basename
+        if local_file is not None:
+            basename = Path(local_file).name
+        else:
+            basename = basename or self._covid19dh_basename
         filename = self._resolve_filename(basename)
         if local_file is not None:
             if Path(local_file).exists():
@@ -388,7 +391,10 @@ class DataLoader(Word):
         Returns:
             (covsirphy.Population): Population dataset
         """
-        basename = basename or self._covid19dh_basename
+        if local_file is not None:
+            basename = Path(local_file).name
+        else:
+            basename = basename or self._covid19dh_basename
         filename = self._resolve_filename(basename)
         if local_file is not None:
             if Path(local_file).exists():
@@ -420,7 +426,10 @@ class DataLoader(Word):
         Returns:
             (covsirphy.OxCGRTData): OxCGRT dataset
         """
-        basename = basename or self._covid19dh_basename
+        if local_file is not None:
+            basename = Path(local_file).name
+        else:
+            basename = basename or self._covid19dh_basename
         filename = self._resolve_filename(basename)
         if local_file is not None:
             if Path(local_file).exists():

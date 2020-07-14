@@ -11,15 +11,14 @@ except ImportError:
 from covsirphy.__version__ import __version__
 from covsirphy.analysis import ODESimulator, ChangeFinder
 from covsirphy.analysis import PhaseSeries, Scenario
-from covsirphy.cleaning import Word, CleaningBase, DataLoader
-from covsirphy.cleaning import JHUData, CountryData, PopulationData, OxCGRTData
-from covsirphy.ode import ModelBaseCommon, ModelBase
-from covsirphy.ode import SIR, SIRD, SIRF, SIRFV, SEWIRF
-from covsirphy.phase import PhaseData, ODEData, Estimator
-from covsirphy.phase import SRData, Trend
+from covsirphy.cleaning import Term, CleaningBase, DataLoader
+from covsirphy.cleaning import JHUData, ExampleData
+from covsirphy.cleaning import CountryData, PopulationData, OxCGRTData
+from covsirphy.ode import ModelBase, SIR, SIRD, SIRF, SIRFV, SEWIRF
+from covsirphy.phase import Estimator, Trend
 from covsirphy.util import line_plot, jpn_map, StopWatch, error
 # Deprecated
-from covsirphy.cleaning import Population
+from covsirphy.cleaning import Population, Word
 
 
 def get_version():
@@ -32,14 +31,13 @@ def get_version():
 __all__ = [
     "ODESimulator", "ChangeFinder",
     "PhaseSeries", "Scenario",
-    "Word", "CleaningBase", "DataLoader",
-    "JHUData", "CountryData", "PopulationData", "OxCGRTData",
-    "ModelBaseCommon", "ModelBase",
-    "SIR", "SIRD", "SIRF", "SIRFV", "SEWIRF",
-    "PhaseData", "ODEData", "Estimator", "SRData", "Trend",
+    "Term", "CleaningBase", "DataLoader",
+    "JHUData", "ExampleData", "CountryData", "PopulationData", "OxCGRTData",
+    "ModelBase", "SIR", "SIRD", "SIRF", "SIRFV", "SEWIRF",
+    "Estimator", "Trend",
     "line_plot", "jpn_map", "StopWatch", "error",
     # Deprecated
-    "Population",
+    "Population", "Word",
 ]
 
 # Check duplication

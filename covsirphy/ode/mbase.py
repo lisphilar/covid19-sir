@@ -156,3 +156,49 @@ class ModelBase(ModelBaseCommon):
             param tau (int): tau value [min]
         """
         return dict()
+
+    @classmethod
+    def tau_free(cls, subset_df, population, tau=None):
+        """
+        Create a dataframe specialized to the model.
+        If tau is not None, Date column will be converted to '(Date - start date) / tau'
+        and saved in t column.
+
+        Args:
+            subset_df (pandas.DataFrame):
+                Index:
+                    reset index
+                Columns:
+                    - Date (pd.TimeStamp): Observation date
+                    - Confirmed (int): the number of confirmed cases
+                    - Infected (int): the number of currently infected cases
+                    - Fatal (int): the number of fatal cases
+                    - Recovered (int): the number of recovered cases
+                    - any columns
+            population (int): population value
+            tau (int or None): tau value [min], 0 <= tau <= 1440
+
+        Returns:
+            (pandas.DataFrame):
+                Index:
+                    reset index
+                Columns:
+                    - t (int): if tau is not None
+                    - columns with dimensional variables
+        """
+        df = subset_df.copy()
+        if tau is not None:
+            tau = cls.validate_natural_int(tau, name="tau")
+            if tau > 1440:
+                raise ValueError(
+                    f"@tau must be 1440 or lower, but {tau} was applied.")
+            df = cls.validate_dataframe(
+                df, name="data_df", columns=cls.NLOC_COLUMNS)
+            # Calculate elapsed time from the first date [min]
+            df[cls.T] = (df[cls.DATE] - df[cls.DATE].min()).dt.total_seconds()
+            df[cls.T] = df[cls.T] // 60
+            # Convert to tau-free
+            df[cls.TS] = (df[cls.T] / tau).astype(np.int64)
+            df = df.drop(cls.T, axis=1)
+        df = df.drop(cls.DATE, axis=1)
+        return cls.specialize(df, population)

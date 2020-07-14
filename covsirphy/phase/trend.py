@@ -10,28 +10,17 @@ if not hasattr(sys, "ps1"):
     matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 import numpy as np
+import pandas as pd
 from scipy.optimize import curve_fit, OptimizeWarning
-from covsirphy.cleaning.word import Word
-from covsirphy.phase.sr_data import SRData
+from covsirphy.cleaning import Term, JHUData, ExampleData
 
 
-class Trend(Word):
+class Trend(Term):
     """
     S-R trend analysis in a phase.
 
     Args:
-        clean_df (pandas.DataFrame): cleaned data
-
-            Index:
-                reset index
-            Columns:
-                - Date (pd.TimeStamp): Observation date
-                - Country (str): country/region name
-                - Province (str): province/prefecture/sstate name
-                - Confirmed (int): the number of confirmed cases
-                - Infected (int): the number of currently infected cases
-                - Fatal (int): the number of fatal cases
-                - Recovered (int): the number of recovered cases
+        jhu_data (covsirphy.JHUData): object of records
         population (int): total population in the place
         country (str): country name
         province (str): province name
@@ -39,22 +28,38 @@ class Trend(Word):
         end_date (str): end date, like 01Feb2020
     """
 
-    def __init__(self, clean_df, population,
+    def __init__(self, jhu_data, population,
                  country, province=None, start_date=None, end_date=None):
+        # Dataset
+        if isinstance(jhu_data, pd.DataFrame):
+            warnings.warn(
+                "Please use instance of JHUData as the first argument of Trend class.",
+                DeprecationWarning,
+                stacklevel=2
+            )
+            df = jhu_data.copy()
+            df = self.validate_dataframe(
+                df, name="jhu_data", columns=self.COLUMNS
+            )
+            jhu_data = ExampleData(df)
+        jhu_data = self.validate_instance(jhu_data, JHUData, name="jhu_data")
+        # Dataset for analysis
+        # Index: Date(pd.TimeStamp): Observation date
+        # Columns: Recovered (int), Susceptible_actual (int)
+        sr_df = jhu_data.subset(
+            country=country, province=province, population=population,
+            start_date=start_date, end_date=end_date
+        )
+        sr_df = sr_df.set_index(self.DATE)
+        sr_df = sr_df.loc[:, [self.R, self.S]]
+        sr_df = sr_df.rename({self.S: f"{self.S}{self.A}"}, axis=1)
+        self.sr_df = sr_df.copy()
+        # Arguments
         self.population = population
-        if province is None:
-            self.area = country
-        else:
-            self.area = f"{country}{self.SEP}{province}"
-        sr_data = SRData(
-            clean_df, country=country, province=province
-        )
-        self.train_df = sr_data.make(
-            population, start_date=start_date, end_date=end_date
-        )
+        self.area = JHUData.area_name(country, province)
         self.result_df = None
         # Start date
-        self.start_date = self.train_df.index.min()
+        self.start_date = self.sr_df.index.min()
         if start_date is not None:
             self.start_date = max(
                 self.start_date,
@@ -62,7 +67,7 @@ class Trend(Word):
             )
         self.start_date = self.start_date.strftime(self.DATE_FORMAT)
         # End date
-        self.end_date = self.train_df.index.max()
+        self.end_date = self.sr_df.index.max()
         if end_date is not None:
             self.end_date = min(
                 self.end_date,
@@ -74,7 +79,7 @@ class Trend(Word):
         """
         Perform curve fitting of S-R trend with negative exponential function and save the result.
         """
-        self.result_df = self._fitting(self.train_df)
+        self.result_df = self._fitting(self.sr_df)
 
     def _fitting(self, train_df):
         """

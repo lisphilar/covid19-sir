@@ -147,7 +147,7 @@ class PopulationData(CleaningBase):
         c_df = cleaned_df.loc[cleaned_df[self.COUNTRY] == country, :]
         df = pd.concat([iso_df, c_df], axis=0)
         if df.empty:
-            if (cleaned_df[self.ISO3].unique()) == [self.UNKNOWN]:
+            if list(cleaned_df[self.ISO3].unique()) == [self.UNKNOWN]:
                 raise KeyError(
                     f"{country} is not registered. Please use registered country name.")
             raise KeyError(

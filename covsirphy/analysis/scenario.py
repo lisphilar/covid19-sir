@@ -13,17 +13,16 @@ if not hasattr(sys, "ps1"):
 import numpy as np
 import pandas as pd
 from covsirphy.ode import ModelBase
-from covsirphy.cleaning import JHUData, PopulationData, Word
-from covsirphy.phase import Estimator, SRData, ODEData
+from covsirphy.cleaning import JHUData, PopulationData, Term
+from covsirphy.phase import Estimator
 from covsirphy.util import line_plot, box_plot
 from covsirphy.analysis.phase_series import PhaseSeries
 from covsirphy.analysis.simulator import ODESimulator
 from covsirphy.analysis.sr_change import ChangeFinder
-from covsirphy.util.error import deprecate
 from covsirphy.util.stopwatch import StopWatch
 
 
-class Scenario(Word):
+class Scenario(Term):
     """
     Scenario analysis.
 
@@ -40,23 +39,16 @@ class Scenario(Word):
             population_data, PopulationData, name="population_data")
         self.population = population_data.value(country, province=province)
         # Records
-        jhu_data = self.validate_instance(jhu_data, JHUData, name="jhu_data")
-        self.jhu_data = jhu_data
-        self.clean_df = jhu_data.subset(
-            country, province=province, population=self.population
-        )
+        self.jhu_data = self.validate_instance(
+            jhu_data, JHUData, name="jhu_data")
         # Area name
         self.country = country
-        self.province = province
-        if province is None:
-            self.area = country
-        else:
-            self.area = f"{country}{self.SEP}{province}"
+        self.province = province or self.UNKNOWN
+        self.area = JHUData.area_name(country, province)
         # First/last date of the area
-        sr_data = SRData(self.clean_df, country=country, province=province)
-        df = sr_data.make(self.population)
-        self.first_date = df.index.min().strftime(self.DATE_FORMAT)
-        self.last_date = df.index.max().strftime(self.DATE_FORMAT)
+        df = jhu_data.subset(country=country, province=province)
+        self.first_date = df[self.DATE].min().strftime(self.DATE_FORMAT)
+        self.last_date = df[self.DATE].max().strftime(self.DATE_FORMAT)
         # Init
         self.tau = None
         # {model_name: model_class}
@@ -102,7 +94,7 @@ class Scenario(Word):
         Notes:
             Records with Recovered > 0 will be selected.
         """
-        df = self.jhu_data.subset(self.country, province=self.province)
+        df = self.jhu_data.subset(country=self.country, province=self.province)
         if not show_figure:
             return df
         line_plot(
@@ -246,7 +238,7 @@ class Scenario(Word):
             If @set_phase is True and@include_init_phase is False, initial phase will not be included.
         """
         finder = ChangeFinder(
-            self.clean_df, self.population,
+            self.jhu_data, self.population,
             country=self.country, province=self.province
         )
         if "n_points" in kwargs.keys():
@@ -308,7 +300,7 @@ class Scenario(Word):
             est_kwargs[self.TAU] = self.tau
         # Run estimation
         estimator = Estimator(
-            self.clean_df, model, population,
+            self.jhu_data, model, population,
             country=self.country, province=self.province,
             start_date=start_date, end_date=end_date,
             **est_kwargs
@@ -453,13 +445,9 @@ class Scenario(Word):
             )
         estimator.accuracy(**kwargs)
 
-    @deprecate(old="Scenario.predict()", new="Scenario.simulate()")
-    def predict(self, **kwargs):
-        return self.simulate(**kwargs)
-
     def simulate(self, name="Main", y0_dict=None, show_figure=True, filename=None):
         """
-        Simulate ODE models with setted parameter values and show it as a figure.
+        Simulate ODE models with set parameter values and show it as a figure.
 
         Args:
             name (str): phase series name. If 'Main', main PhaseSeries will be used
@@ -514,7 +502,7 @@ class Scenario(Word):
 
     def _simulate(self, name, y0_dict):
         """
-        Simulate ODE models with setted parameter values.
+        Simulate ODE models with set parameter values.
 
         Args:
             name (str): phase series name
@@ -537,41 +525,48 @@ class Scenario(Word):
                         - variables of the models (int): Confirmed (int) etc.
                 (list[pd.TimeStamp]): list of start dates
         """
-        df = self.series_dict[name].summary()
-        simulator = ODESimulator(
-            self.country,
-            province=self.UNKNOWN if self.province is None else self.province
-        )
-        start_objects = list()
-        for phase in df.index:
-            model_name = df.loc[phase, self.ODE]
-            model = self.model_dict[model_name]
-            start_date = df.loc[phase, self.START]
-            start_obj = self.date_obj(start_date)
-            start_objects.append(start_obj)
-            end_obj = self.date_obj(df.loc[phase, self.END])
-            phase_seconds = (end_obj - start_obj).total_seconds() + 1
-            step_n = round(phase_seconds / (60 * self.tau))
-            population = df.loc[phase, self.N]
+        phase_series = copy.deepcopy(self.series_dict[name])
+        # Dates and the number of steps
+        last_object = phase_series.last_object()
+        start_objects = phase_series.start_objects()
+        step_n_list = phase_series.number_of_steps(
+            start_objects, last_object, self.tau)
+        first_date = start_objects[0].strftime(self.DATE_FORMAT)
+        # Information of models
+        models = [
+            self.model_dict[name] for name in phase_series.model_names()
+        ]
+        # Population values
+        population_values = phase_series.population_values()
+        # Create simulator
+        simulator = ODESimulator(self.country, province=self.province)
+        # Add phases to the simulator
+        df = phase_series.summary()
+        zip_iter = zip(df.index, models, step_n_list, population_values)
+        for (phase, model, step_n, population) in zip_iter:
             param_dict = df[model.PARAMETERS].to_dict(orient="index")[phase]
             if phase == self.num2str(1):
                 # Calculate initial values
-                ode_data = ODEData(
-                    self.clean_df, country=self.country,
-                    province=self.province
+                subset_df = self.jhu_data.subset(
+                    country=self.country, province=self.province,
+                    start_date=first_date
                 )
-                y0_dict_phase = ode_data.y0(
-                    model, population, start_date=start_date
-                )
+                subset_df = model.tau_free(subset_df, population, tau=None)
+                y0_dict_phase = {
+                    k: subset_df.loc[subset_df.index[0], k] for k in model.VARIABLES
+                }
             else:
-                y0_dict_phase = y0_dict.copy() if y0_dict is not None else None
+                if y0_dict is None:
+                    y0_dict_phase = None
+                else:
+                    y0_dict_phase = y0_dict.copy()
             simulator.add(
                 model, step_n, population,
                 param_dict=param_dict,
                 y0_dict=y0_dict_phase
             )
+        # Run simulation
         simulator.run()
-        first_date = start_objects[0].strftime(self.DATE_FORMAT)
         dim_df = simulator.dim(self.tau, first_date)
         return dim_df, start_objects
 
