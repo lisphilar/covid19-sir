@@ -12,15 +12,13 @@ from covsirphy.ode.mbase import ModelBase
 class ODESimulator(Term):
     """
     Simulation of an ODE model.
+
+    Args:
+        country (str): country name
+        province (str): province name
     """
 
     def __init__(self, country, province="-"):
-        """
-
-        Args:
-        @country (str): country name
-        @province (str): province name
-        """
         self.country = country
         self.province = province
         # list of dictionary
@@ -78,7 +76,7 @@ class ODESimulator(Term):
             if (not self.settings) or (var not in self.settings[-1]["model"].VARIABLES):
                 s = f"Initial value of {var} must be specified in @y0_dict."
                 raise NameError(s)
-            # Will use the last values the last phase
+            # Will use the last values of the last phase
             y0_dict[var] = None
         # Register the setting
         self.settings.append(
@@ -160,7 +158,7 @@ class ODESimulator(Term):
             new_df = self._solve_ode(**setting)
             taufree_df = pd.concat(
                 [self._taufree_df.iloc[:-1, :], new_df],
-                axis=0, ignore_index=True, sort=True
+                axis=0, ignore_index=True
             )
             taufree_df = taufree_df.fillna(0)
             taufree_df[self.TS] = taufree_df.index
@@ -173,11 +171,11 @@ class ODESimulator(Term):
 
         Returns:
             (pandas.DataFrame):
-                    Index:
-                        reset index
-                    Columns:
-                        - t (int): Elapsed time divided by tau value [-]
-                        - columns with dimensionalized variables
+                Index:
+                    reset index
+                Columns:
+                    - t (int): Elapsed time divided by tau value [-]
+                    - columns with dimensionalized variables
         """
         df = self._taufree_df.copy()
         if df.empty:

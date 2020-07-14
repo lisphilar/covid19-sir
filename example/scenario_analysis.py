@@ -13,7 +13,7 @@ def main():
     output_dir.mkdir(exist_ok=True, parents=True)
     # Create data loader instance
     data_loader = cs.DataLoader(input_dir)
-    # Load JHU-stype dataset
+    # Load JHU-style dataset
     jhu_data = data_loader.jhu()
     # Load Population dataset
     population_data = data_loader.population()
@@ -34,9 +34,13 @@ def main():
         phase="1st", filename=output_dir.joinpath("ita_estimate_history_1st.png")
     )
     # Show the accuracy as a figure
-    ita_scenario.estimate_accuracy(
-        phase="1st", filename=output_dir.joinpath("ita_estimate_accuracy_1st.png")
-    )
+    df = ita_scenario.summary()
+    for phase in df.index:
+        ita_scenario.estimate_accuracy(
+            phase=phase, filename=output_dir.joinpath(
+                f"ita_estimate_accuracy_{phase}.png"
+            )
+        )
     # Add future phase to main scenario
     ita_scenario.add_phase(name="Main", end_date="01Aug2020")
     ita_scenario.add_phase(name="Main", end_date="31Dec2020")

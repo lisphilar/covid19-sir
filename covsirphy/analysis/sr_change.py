@@ -2,12 +2,12 @@
 # -*- coding: utf-8 -*-
 
 from datetime import datetime, timedelta
+import warnings
 import numpy as np
 import pandas as pd
 import ruptures as rpt
 from covsirphy.analysis.phase_series import PhaseSeries
-from covsirphy.cleaning.term import Term
-from covsirphy.phase.sr_data import SRData
+from covsirphy.cleaning import Term, JHUData, ExampleData
 from covsirphy.phase.trend import Trend
 
 
@@ -16,19 +16,7 @@ class ChangeFinder(Term):
     Find change points of S-R trend.
 
     Args:
-        clean_df (pandas.DataFrame): cleaned data
-
-            Index:
-                - reset index
-            Columns:
-                - Date (pd.TimeStamp): Observation date
-                - Country (str): country/region name
-                - Province (str): province/prefecture/sstate name
-                - Confirmed (int): the number of confirmed cases
-                - Infected (int): the number of currently infected cases
-                - Fatal (int): the number of fatal cases
-                - Recovered (int): the number of recovered cases
-
+        jhu_data (covsirphy.JHUData): object of records
         population (int): initial value of total population in the place
         country (str): country name
         province (str): province name
@@ -37,24 +25,42 @@ class ChangeFinder(Term):
             - value (int or None): total population
     """
 
-    def __init__(self, clean_df, population, country, province=None,
+    def __init__(self, jhu_data, population, country, province=None,
                  population_change_dict=None):
+        # Dataset
+        if isinstance(jhu_data, pd.DataFrame):
+            warnings.warn(
+                "Please use instance of JHUData as the first argument of ChangeFinder class.",
+                DeprecationWarning,
+                stacklevel=2
+            )
+            df = jhu_data.copy()
+            df = self.validate_dataframe(
+                df, name="jhu_data", columns=self.COLUMNS
+            )
+            jhu_data = ExampleData(df)
+        self.jhu_data = self.validate_instance(
+            jhu_data, JHUData, name="jhu_data"
+        )
+        # Dataset for analysis
+        # Index: Date(pd.TimeStamp): Observation date
+        # Columns: Recovered (int), Susceptible_actual (int)
+        sr_df = jhu_data.subset(
+            country=country, province=province, population=population
+        )
+        sr_df = sr_df.set_index(self.DATE)
+        sr_df = sr_df.loc[:, [self.R, self.S]]
+        sr_df = sr_df.rename({self.S: f"{self.S}{self.A}"}, axis=1)
+        self.sr_df = sr_df.copy()
+        self.dates = self.get_dates(self.sr_df)
         # Arguments
-        self.clean_df = clean_df.copy()
         self.country = country
         self.province = province
-        if province is None:
-            self.area = country
-        else:
-            self.area = f"{country}{self.SEP}{province}"
-        self.dates = self.get_dates(clean_df, population, country, province)
+        self.area = JHUData.area_name(country, province)
         self.pop_dict = self._read_population_data(
             self.dates, population, population_change_dict
         )
         self.population = population
-        # Dataset for analysis
-        sr_data = SRData(clean_df, country=country, province=province)
-        self.sr_df = sr_data.make(population)
         # Setting for optimization
         self.change_dates = list()
 
@@ -137,7 +143,7 @@ class ChangeFinder(Term):
             end_date = info[self.END]
             population = info[self.N]
             trend = Trend(
-                self.clean_df, population, self.country, province=self.province,
+                self.jhu_data, population, self.country, province=self.province,
                 start_date=start_date, end_date=end_date
             )
             trend.analyse()
@@ -185,34 +191,24 @@ class ChangeFinder(Term):
         )
         return phase_series
 
-    def get_dates(self, clean_df, population, country, province):
+    def get_dates(self, sr_df):
         """
         Get dates from the dataset.
 
         Args:
-            clean_df (pandas.DataFrame): cleaned data
+            sr_df (pandas.DataFrame)
                 Index:
-                - reset index
-
+                    Date (pd.TimeStamp): Observation date
                 Columns:
-                    - Date (pd.TimeStamp): Observation date
-                    - Country (str): country/region name
-                    - Province (str): province/prefecture/sstate name
-                    - Confirmed (int): the number of confirmed cases
-                    - Infected (int): the number of currently infected cases
-                    - Fatal (int): the number of fatal cases
-                    - Recovered (int): the number of recovered cases
-
-            population (int): initial value of total population in the place
-            country (str): country name
-            province (str): province name
+                    - Recovered: The number of recovered cases
+                    - Susceptible_actual: Actual data of Susceptible
 
         Returns:
             (list[str]): list of dates, like 22Jan2020
         """
-        sr_data = SRData(clean_df, country=country, province=province)
-        df = sr_data.make(population)
-        dates = [date_obj.strftime(self.DATE_FORMAT) for date_obj in df.index]
+        dates = [
+            date_obj.strftime(self.DATE_FORMAT) for date_obj in sr_df.index
+        ]
         return dates
 
     def _read_population_data(self, dates, population, change_dict=None):

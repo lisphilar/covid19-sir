@@ -13,25 +13,16 @@ def main():
     output_dir = code_path.with_name("output").joinpath(code_path.stem)
     output_dir.mkdir(exist_ok=True, parents=True)
     # Setting
-    eg_population = 1_000_000
     eg_tau = 1440
-    start_date = "22Jan2020"
+    eg_population = 1_000_000
     model = cs.SIRD
-    set_param_dict = {
-        "kappa": 0.005, "rho": 0.2, "sigma": 0.075
-    }
-    y0_dict = {
-        "Susceptible": 999_000, "Infected": 1000, "Recovered": 0, "Fatal": 0
-    }
+    eg_population = model.EXAMPLE["population"]
+    set_param_dict = model.EXAMPLE["param_dict"]
     # Simulation
-    simulator = cs.ODESimulator(country="Example", province=model.NAME)
-    simulator.add(
-        model=model, step_n=180, population=eg_population,
-        param_dict=set_param_dict, y0_dict=y0_dict
-    )
-    simulator.run()
+    example_data = cs.ExampleData(tau=eg_tau)
+    example_data.add(model)
     # Non-dimensional
-    nondim_df = simulator.non_dim()
+    nondim_df = example_data.non_dim(model)
     nondim_df.to_csv(output_dir.joinpath(
         f"{model.NAME}_non_dim.csv"), index=False)
     cs.line_plot(
@@ -42,10 +33,10 @@ def main():
         filename=output_dir.joinpath(f"{model.NAME}_non_dim.png")
     )
     # Dimensional
-    dim_df = simulator.dim(tau=eg_tau, start_date=start_date)
+    dim_df = example_data.cleaned()
     dim_df.to_csv(output_dir.joinpath(f"{model.NAME}_dim.csv"), index=False)
     cs.line_plot(
-        dim_df.set_index("Date"),
+        dim_df.set_index("Date").drop("Confirmed", axis=1),
         title=f"{model.NAME}: Example data (dimensional)",
         h=eg_population,
         y_integer=True,
@@ -53,8 +44,8 @@ def main():
     )
     # Hyperparameter estimation of example data
     estimator = cs.Estimator(
-        clean_df=dim_df, model=model, population=eg_population,
-        country="Example", province=model.NAME, tau=eg_tau
+        example_data, model=model, population=eg_population,
+        country=model.NAME, province=None, tau=eg_tau
     )
     estimator.run()
     estimated_df = estimator.summary(name=model.NAME)
