@@ -11,7 +11,7 @@
 <img src="./docs/gif/covsirphy_demo.gif" width="600">
 
 ## Functionalities
-- Downloading and cleaning data: refer to "Installation and dataset preparation" section
+- Downloading and cleaning data
 - Data visualization
 - S-R Trend analysis to determine the change points of parameters
 - Numerical simulation of ODE models
