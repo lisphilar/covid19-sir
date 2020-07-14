@@ -14,7 +14,7 @@ import numpy as np
 import pandas as pd
 from covsirphy.ode import ModelBase
 from covsirphy.cleaning import JHUData, PopulationData, Term
-from covsirphy.phase import Estimator, SRData, ODEData
+from covsirphy.phase import Estimator
 from covsirphy.util import line_plot, box_plot
 from covsirphy.analysis.phase_series import PhaseSeries
 from covsirphy.analysis.simulator import ODESimulator
@@ -39,23 +39,16 @@ class Scenario(Term):
             population_data, PopulationData, name="population_data")
         self.population = population_data.value(country, province=province)
         # Records
-        jhu_data = self.validate_instance(jhu_data, JHUData, name="jhu_data")
-        self.jhu_data = jhu_data
-        self.clean_df = jhu_data.subset(
-            country, province=province, population=self.population
-        )
+        self.jhu_data = self.validate_instance(
+            jhu_data, JHUData, name="jhu_data")
         # Area name
         self.country = country
         self.province = province or self.UNKNOWN
-        if province is None:
-            self.area = country
-        else:
-            self.area = f"{country}{self.SEP}{province}"
+        self.area = JHUData.area_name(country, province)
         # First/last date of the area
-        sr_data = SRData(self.clean_df, country=country, province=province)
-        df = sr_data.make(self.population)
-        self.first_date = df.index.min().strftime(self.DATE_FORMAT)
-        self.last_date = df.index.max().strftime(self.DATE_FORMAT)
+        df = jhu_data.subset(country=country, province=province)
+        self.first_date = df[self.DATE].min().strftime(self.DATE_FORMAT)
+        self.last_date = df[self.DATE].max().strftime(self.DATE_FORMAT)
         # Init
         self.tau = None
         # {model_name: model_class}
@@ -101,7 +94,7 @@ class Scenario(Term):
         Notes:
             Records with Recovered > 0 will be selected.
         """
-        df = self.jhu_data.subset(self.country, province=self.province)
+        df = self.jhu_data.subset(country=self.country, province=self.province)
         if not show_figure:
             return df
         line_plot(
@@ -245,7 +238,7 @@ class Scenario(Term):
             If @set_phase is True and@include_init_phase is False, initial phase will not be included.
         """
         finder = ChangeFinder(
-            self.clean_df, self.population,
+            self.jhu_data, self.population,
             country=self.country, province=self.province
         )
         if "n_points" in kwargs.keys():
@@ -307,7 +300,7 @@ class Scenario(Term):
             est_kwargs[self.TAU] = self.tau
         # Run estimation
         estimator = Estimator(
-            self.clean_df, model, population,
+            self.jhu_data, model, population,
             country=self.country, province=self.province,
             start_date=start_date, end_date=end_date,
             **est_kwargs
@@ -554,13 +547,14 @@ class Scenario(Term):
             param_dict = df[model.PARAMETERS].to_dict(orient="index")[phase]
             if phase == self.num2str(1):
                 # Calculate initial values
-                ode_data = ODEData(
-                    self.clean_df, country=self.country,
-                    province=self.province
+                subset_df = self.jhu_data.subset(
+                    country=self.country, province=self.province,
+                    start_date=first_date
                 )
-                y0_dict_phase = ode_data.y0(
-                    model, population, start_date=first_date
-                )
+                subset_df = model.tau_free(subset_df, population, tau=None)
+                y0_dict_phase = {
+                    k: subset_df.loc[subset_df.index[0], k] for k in model.VARIABLES
+                }
             else:
                 if y0_dict is None:
                     y0_dict_phase = None

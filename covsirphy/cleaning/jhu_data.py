@@ -144,7 +144,23 @@ class JHUData(CleaningBase):
         self._cleaned_df = df.copy()
         return self
 
-    def subset(self, country, province=None, population=None):
+    @classmethod
+    def area_name(cls, country, province=None):
+        """
+        Return area name of the country/province.
+
+        Args:
+            country (str): country name
+            province (str): province name
+
+        Returns:
+            (str): area name
+        """
+        if province is None:
+            return country
+        return f"{country}{cls.SEP}{province}"
+
+    def _subset_area(self, country, province=None, population=None):
         """
         Return the subset in the area.
 
@@ -169,7 +185,6 @@ class JHUData(CleaningBase):
             If @population is not None, the number of susceptible cases will be calculated.
             Records with Recovered > 0 will be selected.
         """
-        province = province or self.UNKNOWN
         df = self._cleaned_df.copy()
         df = df.loc[df[self.COUNTRY] == country, :]
         # Calculate Susceptible if population value was applied
@@ -182,15 +197,64 @@ class JHUData(CleaningBase):
             raise KeyError(
                 f"Records of {country} were not registered."
             )
-        # Select the province data if the province was registered
-        if province in df[self.PROVINCE].unique():
-            df = df.loc[df[self.PROVINCE] == province, :]
+        # Province was selected
+        if province is not None:
+            if province in df[self.PROVINCE].unique():
+                df = df.loc[df[self.PROVINCE] == province, :]
+                df = df.groupby(self.DATE).last().reset_index()
+                df = df.drop([self.COUNTRY, self.PROVINCE], axis=1)
+                return df.loc[df[self.R] > 0, :]
+            raise KeyError(
+                f"Records of {province} in {country} were not registered.")
+        # Province was not selected and COVID-19 Data Hub dataset
+        c_level_set = set(
+            df.loc[df[self.PROVINCE] == self.UNKNOWN, self.DATE].unique()
+        )
+        all_date_set = set(df[self.DATE].unique())
+        if c_level_set == all_date_set:
+            df = df.loc[df[self.PROVINCE] == self.UNKNOWN, :]
             df = df.groupby(self.DATE).last().reset_index()
             df = df.drop([self.COUNTRY, self.PROVINCE], axis=1)
             return df.loc[df[self.R] > 0, :]
-        # Total value in the country
-        if province == self.UNKNOWN:
-            df = df.groupby(self.DATE).sum().reset_index()
-            return df.loc[df[self.R] > 0, :]
-        raise KeyError(
-            f"Records of {province} in {country} were not registered.")
+        # Province was not selected and Kaggle dataset
+        df = df.groupby(self.DATE).sum().reset_index()
+        return df.loc[df[self.R] > 0, :]
+
+    def subset(self, country, province=None,
+               start_date=None, end_date=None, population=None):
+        """
+        Return the subset of dataset.
+
+        Args:
+            country (str): country name
+            province (str): province name
+            start_date (str or None): start date, like 22Jan2020
+            end_date (str or None): end date, like 01Feb2020
+            population (int or None): population value
+
+        Returns:
+            (pandas.DataFrame)
+                Index:
+                    reset index
+                Columns:
+                    - Date (pd.TimeStamp): Observation date
+                    - Confirmed (int): the number of confirmed cases
+                    - Infected (int): the number of currently infected cases
+                    - Fatal (int): the number of fatal cases
+                    - Recovered (int): the number of recovered cases (> 0)
+                    - Susceptible (int): the number of susceptible cases, if calculated
+
+        Notes:
+            If @population is not None, the number of susceptible cases will be calculated.
+            Records with Recovered > 0 will be selected.
+        """
+        # Subset with area
+        df = self._subset_area(
+            country, province=province, population=population
+        )
+        # Subset with Start/end date
+        series = df[self.DATE].copy()
+        start_obj = self.to_date_obj(date_str=start_date, default=series.min())
+        end_obj = self.to_date_obj(date_str=end_date, default=series.max())
+        df = df.loc[(start_obj <= series) & (series <= end_obj), :]
+        return df
