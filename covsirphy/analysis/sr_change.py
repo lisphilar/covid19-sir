@@ -68,7 +68,6 @@ class ChangeFinder(Term):
     def run(self):
         """
         Run optimization and find change points.
-
         Returns:
             self
         """
@@ -122,6 +121,42 @@ class ChangeFinder(Term):
         ]
         return self
 
+    def _curve_fitting(self, phase, info):
+        """
+        Perform curve fitting for the phase.
+
+        Args:
+            phase (str): phase name
+            info (dict[str]): start date, end date and population
+
+        Returns:
+            (tuple)
+                (pandas.DataFrame): Result of curve fitting
+                    Index: reset index
+                    Columns:
+                        - (phase name)_predicted: predicted value of Susceptible
+                        - (phase_name)_actual: actual value of Susceptible
+                        - (phase_name)_Recovered: Recovered
+                (int): minimum value of R, which is the change point of the curve
+        """
+        start_date = info[self.START]
+        end_date = info[self.END]
+        population = info[self.N]
+        trend = Trend(
+            self.jhu_data, population, self.country, province=self.province,
+            start_date=start_date, end_date=end_date
+        )
+        trend.analyse()
+        df = trend.result()
+        # Get min value for vline
+        r_value = int(df[self.R].min())
+        # Rename the columns
+        phase = self.INITIAL if phase == "0th" else phase
+        df = df.rename({f"{self.S}{self.P}": f"{phase}{self.P}"}, axis=1)
+        df = df.rename({f"{self.S}{self.A}": f"{phase}{self.A}"}, axis=1)
+        df = df.rename({f"{self.R}": f"{phase}_{self.R}"}, axis=1)
+        return (df, r_value)
+
     def show(self, show_figure=True, filename=None):
         """
         show the result as a figure and return a dictionary of phases.
@@ -137,26 +172,11 @@ class ChangeFinder(Term):
         phase_series = self._create_phases()
         phase_dict = phase_series.to_dict()
         # Curve fitting
-        df_list = list()
-        vlines = list()
-        for (phase, info) in phase_dict.items():
-            start_date = info[self.START]
-            end_date = info[self.END]
-            population = info[self.N]
-            trend = Trend(
-                self.jhu_data, population, self.country, province=self.province,
-                start_date=start_date, end_date=end_date
-            )
-            trend.analyse()
-            df = trend.result()
-            # Get min value for vline
-            vlines.append(df[self.R].min())
-            # Rename the columns
-            phase = self.INITIAL if phase == "0th" else phase
-            df = df.rename({f"{self.S}{self.P}": f"{phase}{self.P}"}, axis=1)
-            df = df.rename({f"{self.S}{self.A}": f"{phase}{self.A}"}, axis=1)
-            df = df.rename({f"{self.R}": f"{phase}_{self.R}"}, axis=1)
-            df_list.append(df)
+        nested = [
+            self._curve_fitting(phase, info)
+            for (phase, info) in phase_dict.items()
+        ]
+        df_list, vlines = zip(*nested)
         comp_df = pd.concat(df_list[1:], axis=1)
         comp_df[self.R] = comp_df.fillna(0).loc[
             :, comp_df.columns.str.endswith(self.R)

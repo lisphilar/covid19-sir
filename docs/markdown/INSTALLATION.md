@@ -70,7 +70,7 @@ export PIPENV_VENV_IN_PROJECT=true
 export PIPENV_TIMEOUT=7200
 pipenv install --dev
 ```
-Developers can perform tests with `pipenv run pytest -v --durations=0 --failed-first --profile-svg` and call graph will be saved as SVG file (prof/combined.svg).
+Developers can perform tests with `pipenv run pytest -v --durations=0 --failed-first --maxfail=1 --cov=covsirphy --cov-report=term-missing --profile-svg` and call graph will be saved as SVG file (prof/combined.svg).
 
 - Windows users need to install [Graphviz for Windows](https://graphviz.org/_pages/Download/Download_windows.html) in advance.
 - Debian/Ubuntu users need to install Graphviz with `sudo apt install graphviz` in advance.

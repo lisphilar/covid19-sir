@@ -11,10 +11,12 @@ install:
 
 test:
 	@# sudo apt install graphviz
-	@pipenv run pytest -v --durations=0 --failed-first --maxfail=1 --profile-svg
+	@pipenv run pytest -v --durations=0 --failed-first --maxfail=1 \
+	 --cov=covsirphy --cov-report=term-missing --profile-svg
 
 test-nosvg:
-	@pipenv run pytest -v --durations=0 --failed-first --maxfail=1
+	@pipenv run pytest -v --durations=0 --failed-first --maxfail=1 \
+	 --cov=covsirphy --cov-report=term-missing
 
 
 # https://github.com/sphinx-doc/sphinx/issues/3382
@@ -80,6 +82,6 @@ clean:
 	@rm -rf .pytest_cache
 	@rm -rf covsirphy/__pycache__
 	@rm -rf example/output
-	@rm -rf dist CovsirPhy.egg-info
+	@rm -rf dist covsirphy.egg-info
 	@rm -f README.rst
 	@pipenv clean || true

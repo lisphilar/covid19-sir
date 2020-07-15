@@ -281,11 +281,7 @@ class DataLoader(Term):
         Returns:
             (covsirphy.JHUData): JHU dataset
         """
-        if local_file is not None:
-            basename = Path(local_file).name
-        else:
-            basename = basename or self._covid19dh_basename
-        filename = self._resolve_filename(basename)
+        filename = self._covid19dh_filename(basename, local_file)
         if local_file is not None:
             if Path(local_file).exists():
                 jhu_data = self._create_dataset(
@@ -391,11 +387,7 @@ class DataLoader(Term):
         Returns:
             (covsirphy.Population): Population dataset
         """
-        if local_file is not None:
-            basename = Path(local_file).name
-        else:
-            basename = basename or self._covid19dh_basename
-        filename = self._resolve_filename(basename)
+        filename = self._covid19dh_filename(basename, local_file)
         if local_file is not None:
             if Path(local_file).exists():
                 population_data = self._create_dataset(
@@ -426,11 +418,7 @@ class DataLoader(Term):
         Returns:
             (covsirphy.OxCGRTData): OxCGRT dataset
         """
-        if local_file is not None:
-            basename = Path(local_file).name
-        else:
-            basename = basename or self._covid19dh_basename
-        filename = self._resolve_filename(basename)
+        filename = self._covid19dh_filename(basename, local_file)
         if local_file is not None:
             if Path(local_file).exists():
                 oxcgrt_data = self._create_dataset(
@@ -483,14 +471,7 @@ class DataLoader(Term):
         if verbose:
             print(
                 "Retrieving datasets from COVID-19 Data Hub: https://covid19datahub.io/")
-        c_df = covid19dh.covid19(country=None, level=1, verbose=False)
-        c_citations = covid19dh.cite(c_df)
-        # For some countries, province-level data is included
-        p_df = covid19dh.covid19(country=None, level=2, verbose=False)
-        p_citations = covid19dh.cite(p_df)
-        # Citation
-        citations = list(dict.fromkeys(c_citations + p_citations))
-        self._covid19dh_citation = "\n".join(citations)
+        c_df, p_df = self._covid19dh_retrieve()
         # Change column names and select columns to use
         # All columns: https://covid19datahub.io/articles/doc/data.html
         col_dict = {
@@ -514,18 +495,49 @@ class DataLoader(Term):
             print("\n\n")
         return df
 
+    def _covid19dh_filename(self, basename, local_file):
+        """
+        Return the filename to save the dataset of COVID-19 Data Hub.
+
+        Args:
+            basename (str or None): basename of the file to save the data
+            local_file (str or None): if not None, load the data from this file
+
+        Returns:
+            (str): absolute path of the file
+        """
+        if local_file is not None:
+            basename = Path(local_file).name
+        else:
+            basename = basename or self._covid19dh_basename
+        filename = self._resolve_filename(basename)
+        return filename
+
     @property
     def covid19dh_citation(self):
         """
         Return the citation list.
         """
         if self._covid19dh_citation is None:
-            c_df = covid19dh.covid19(country=None, level=1, verbose=False)
-            c_citations = covid19dh.cite(c_df)
-            # For some countries, province-level data is included
-            p_df = covid19dh.covid19(country=None, level=2, verbose=False)
-            p_citations = covid19dh.cite(p_df)
-            # Citation
-            citations = list(dict.fromkeys(c_citations + p_citations))
-            self._covid19dh_citation = "\n".join(citations)
+            self._covid19dh_retrieve()
         return self._covid19dh_citation
+
+    def _covid19dh_retrieve(self):
+        """
+        Retrieve dataset and citation list from COVID-19 Data Hub.
+        Citation list will be saved to self.
+
+        Returns:
+            (tuple):
+                (pandas.DataFrame): dataset at country level
+                (pandas.DataFrame): dataset at province level
+        """
+        c_df = covid19dh.covid19(country=None, level=1, verbose=False)
+        c_citations = covid19dh.cite(c_df)
+        # For some countries, province-level data is included
+        p_df = covid19dh.covid19(country=None, level=2, verbose=False)
+        p_citations = covid19dh.cite(p_df)
+        # Citation
+        citations = list(dict.fromkeys(c_citations + p_citations))
+        self._covid19dh_citation = "\n".join(citations)
+        return (c_df, p_df)

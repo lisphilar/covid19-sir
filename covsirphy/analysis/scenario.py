@@ -149,7 +149,7 @@ class Scenario(Term):
             last_model_name = summary_df.loc[summary_df.index[-1], self.ODE]
             model = self.model_dict[last_model_name]
         model = self.validate_subclass(model, ModelBase, name="model")
-        # Phase information
+        # Set phase information
         param_dict = {self.TAU: self.tau, self.ODE: model.NAME}
         model_param_dict = {
             param: summary_df.loc[summary_df.index[-1], param]
@@ -596,6 +596,37 @@ class Scenario(Term):
             phase = df.index[-1]
         return df.loc[phase, param]
 
+    def _param_history(self, targets, name):
+        """
+        Return the subset of summary dataframe to select the target of parameter history.
+
+        Args:
+            targets (list[str] or str): parameters to show (Rt etc.)
+            name (str): phase series name
+
+        Returns:
+            (pandas.DataFrame): selected summary dataframe
+
+        Raises:
+            KeyError: targets are not in the columns of summary dataframe
+        """
+        df = self.series_dict[name].summary()
+        model_param_nest = [m.PARAMETERS for m in self.model_dict.values()]
+        model_day_nest = [m.DAY_PARAMETERS for m in self.model_dict.values()]
+        model_parameters = self.flatten(model_param_nest)
+        model_day_params = self.flatten(model_day_nest)
+        selectable_cols = [
+            self.N, *model_parameters, self.RT, *model_day_params
+        ]
+        targets = [targets] if isinstance(targets, str) else targets
+        targets = targets or selectable_cols
+        if not set(targets).issubset(set(selectable_cols)):
+            raise KeyError(
+                f"@targets must be selected in {', '.join(selectable_cols)}."
+            )
+        df = df.loc[:, targets]
+        return df
+
     def param_history(self, targets=None, name="Main", divide_by_first=True,
                       show_figure=True, filename=None, show_box_plot=True, **kwargs):
         """
@@ -616,26 +647,15 @@ class Scenario(Term):
         Notes:
             If 'Main' was used as @name, main PhaseSeries will be used.
         """
+        # Check arguments
         if "box_plot" in kwargs.keys():
             raise KeyError("Please use 'show_box_plot', not 'box_plot'")
         name = self.MAIN if name == "Main" else name
         if name not in self.series_dict.keys():
             raise KeyError(f"@name {name} scenario has not been registered.")
-        df = self.series_dict[name].summary()
-        model_param_nest = [m.PARAMETERS for m in self.model_dict.values()]
-        model_day_nest = [m.DAY_PARAMETERS for m in self.model_dict.values()]
-        model_parameters = self.flatten(model_param_nest)
-        model_day_params = self.flatten(model_day_nest)
-        selectable_cols = [
-            self.N, *model_parameters, self.RT, *model_day_params
-        ]
-        targets = [targets] if isinstance(targets, str) else targets
-        targets = selectable_cols if targets is None else targets
-        if not set(targets).issubset(set(selectable_cols)):
-            raise KeyError(
-                f"@targets must be a subset of {', '.join(selectable_cols)}."
-            )
-        df = df.loc[:, targets]
+        # Select target to show
+        df = self._param_history(targets, name)
+        # Divide by the first phase parameters
         if divide_by_first:
             df = df / df.iloc[0, :]
             title = f"{self.area}: Ratio to 1st phase parameters ({name} scenario)"
