@@ -115,6 +115,33 @@ class PhaseSeries(Term):
         grouped_ids = list(itertools.groupby(self.phase_dict.values()))
         return grouped_ids[num][0]
 
+    def _add(self, new_id, start_date, end_date):
+        """
+        Add new phase to self.
+
+        Args:
+            new_id (int): ID number of the new phase
+            start_date (str): start date of the new phase
+            end_date (str): end date of the new phase
+        """
+        date_series = pd.date_range(
+            start=start_date, end=end_date, freq="D"
+        )
+        new_phase_dict = {
+            date_obj: new_id
+            for date_obj in date_series
+        }
+        free_date_set = set(k for (k, v) in self.phase_dict.items() if v)
+        intersection = set(new_phase_dict.keys()) & free_date_set
+        if intersection:
+            date_strings = [
+                date_obj.strftime(self.DATE_FORMAT) for date_obj in intersection
+            ]
+            dates_str = ", ".join(date_strings)
+            raise KeyError(
+                f"Phases have been registered for {dates_str}.")
+        self.phase_dict.update(new_phase_dict)
+
     def add(self, start_date, end_date, population=None, **kwargs):
         """
         Add a new phase.
@@ -132,13 +159,9 @@ class PhaseSeries(Term):
             if @population is None, initial value will be used.
         """
         # Arguments
-        if population is None:
-            population = self.population
-        date_series = pd.date_range(
-            start=start_date, end=end_date, freq="D"
-        )
+        population = population or self.population
         new_id = max(self.phase_dict.values()) + 1
-        # Tense of dates
+        # Check tense of dates
         start_tense = self._tense(start_date)
         end_tense = self._tense(end_date)
         if start_tense != end_tense:
@@ -155,20 +178,7 @@ class PhaseSeries(Term):
                 f"@end_date must be the same or over {min_end_date}, but {end_date} was applied."
             )
         # Add new phase
-        new_phase_dict = {
-            date_obj: new_id
-            for date_obj in date_series
-        }
-        free_date_set = set(k for (k, v) in self.phase_dict.items() if v)
-        intersection = set(new_phase_dict.keys()) & free_date_set
-        if intersection:
-            date_strings = [
-                date_obj.strftime(self.DATE_FORMAT) for date_obj in intersection
-            ]
-            dates_str = ", ".join(date_strings)
-            raise KeyError(
-                f"Phases have been registered for {dates_str}.")
-        self.phase_dict.update(new_phase_dict)
+        self._add(new_id, start_date, end_date)
         # Add phase information
         self.info_dict[new_id] = {
             self.TENSE: start_tense,

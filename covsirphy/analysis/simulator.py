@@ -69,15 +69,7 @@ class ODESimulator(Term):
                 raise NameError(s)
             param_dict[param] = self.settings[-1]["param_dict"][param]
         # Check initial values
-        y0_dict = y0_dict or dict()
-        for var in model.VARIABLES:
-            if var in y0_dict.keys():
-                continue
-            if (not self.settings) or (var not in self.settings[-1]["model"].VARIABLES):
-                s = f"Initial value of {var} must be specified in @y0_dict."
-                raise NameError(s)
-            # Will use the last values of the last phase
-            y0_dict[var] = None
+        y0_dict = self._validate_initial_values(model, y0_dict)
         # Register the setting
         self.settings.append(
             {
@@ -91,6 +83,33 @@ class ODESimulator(Term):
         # Update variable dictionary
         self.var_dict.update(model.VAR_DICT)
         return self
+
+    def _validate_initial_values(self, model, y0_dict):
+        """
+        Validate the dictionary of initial values.
+
+        Args:
+            model (subclass of cs.ModelBase): the ODE model
+            y0_dict (dict): dictionary of initial values
+                - key (str): dimensional variable name
+                - value (int):initial value of the variable
+
+        Raises:
+            NameError: [description]
+
+        Returns:
+            [type]: [description]
+        """
+        y0_dict = y0_dict or dict()
+        for var in model.VARIABLES:
+            if var in y0_dict.keys():
+                continue
+            if (not self.settings) or (var not in self.settings[-1]["model"].VARIABLES):
+                s = f"Initial value of {var} must be specified in @y0_dict."
+                raise NameError(s)
+            # Will use the last values of the last phase
+            y0_dict[var] = None
+        return y0_dict
 
     def _solve_ode(self, model, step_n, param_dict, y0_dict, population):
         """
