@@ -118,8 +118,8 @@ install dependencies with pipenv.
     pipenv install --dev
 
 Developers can perform tests with
-``pipenv run pytest -v --durations=0 --failed-first --profile-svg`` and
-call graph will be saved as SVG file (prof/combined.svg).
+``pipenv run pytest -v --durations=0 --failed-first --maxfail=1 --cov=covsirphy --cov-report=term-missing --profile-svg``
+and call graph will be saved as SVG file (prof/combined.svg).
 
 -  Windows users need to install `Graphviz for
    Windows <https://graphviz.org/_pages/Download/Download_windows.html>`__
