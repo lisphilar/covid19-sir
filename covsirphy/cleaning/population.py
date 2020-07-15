@@ -3,8 +3,8 @@
 
 import numpy as np
 import pandas as pd
-from covsirphy.cleaning.cbase import CleaningBase
 from covsirphy.util.error import deprecate
+from covsirphy.cleaning.cbase import CleaningBase
 
 
 class PopulationData(CleaningBase):

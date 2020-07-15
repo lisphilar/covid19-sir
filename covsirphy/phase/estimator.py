@@ -6,12 +6,12 @@ import warnings
 import numpy as np
 import optuna
 import pandas as pd
+from covsirphy.cleaning.jhu_data import JHUData
+from covsirphy.ode.mbase import ModelBase
+from covsirphy.util.stopwatch import StopWatch
 from covsirphy.analysis.simulator import ODESimulator
 from covsirphy.analysis.example_data import ExampleData
-from covsirphy.cleaning import JHUData
-from covsirphy.ode.mbase import ModelBase
 from covsirphy.phase.optimize import Optimizer
-from covsirphy.util.stopwatch import StopWatch
 
 
 class Estimator(Optimizer):
