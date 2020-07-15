@@ -12,8 +12,8 @@ import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 from scipy.optimize import curve_fit, OptimizeWarning
-from covsirphy.analysis.example_data import ExampleData
 from covsirphy.cleaning import Term, JHUData
+from covsirphy.analysis.example_data import ExampleData
 
 
 class Trend(Term):

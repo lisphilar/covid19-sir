@@ -3,8 +3,8 @@
 
 import pandas as pd
 from covsirphy.cleaning.jhu_data import JHUData
-from covsirphy.analysis.simulator import ODESimulator
 from covsirphy.ode.mbase import ModelBase
+from covsirphy.analysis.simulator import ODESimulator
 
 
 class ExampleData(JHUData):
