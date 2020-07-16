@@ -12,8 +12,8 @@ import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 from scipy.optimize import curve_fit, OptimizeWarning
-from covsirphy.cleaning import Term, JHUData
-from covsirphy.analysis.example_data import ExampleData
+from covsirphy.cleaning.term import Term
+from covsirphy.cleaning.jhu_data import JHUData
 
 
 class Trend(Term):
@@ -38,11 +38,7 @@ class Trend(Term):
                 DeprecationWarning,
                 stacklevel=2
             )
-            df = jhu_data.copy()
-            df = self.validate_dataframe(
-                df, name="jhu_data", columns=self.COLUMNS
-            )
-            jhu_data = ExampleData(df)
+            jhu_data = JHUData.from_dataframe(jhu_data)
         jhu_data = self.validate_instance(jhu_data, JHUData, name="jhu_data")
         # Dataset for analysis
         # Index: Date(pd.TimeStamp): Observation date

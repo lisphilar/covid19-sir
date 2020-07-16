@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*-
 
 from dask import dataframe as dd
+import pandas as pd
 from covsirphy.cleaning.term import Term
 
 
@@ -14,10 +15,14 @@ class CleaningBase(Term):
     """
 
     def __init__(self, filename):
-        self._raw = dd.read_csv(
-            filename, dtype={"Province/State": "object"}
-        ).compute()
-        self._cleaned_df = self.cleaning()
+        if filename is None:
+            self._raw = pd.DataFrame()
+            self._cleaned_df = pd.DataFrame()
+        else:
+            self._raw = dd.read_csv(
+                filename, dtype={"Province/State": "object"}
+            ).compute()
+            self._cleaned_df = self.cleaning()
         self._citation = str()
 
     @property

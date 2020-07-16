@@ -9,9 +9,8 @@ import pandas as pd
 from covsirphy.cleaning.jhu_data import JHUData
 from covsirphy.util.stopwatch import StopWatch
 from covsirphy.ode.mbase import ModelBase
-from covsirphy.phase.optimize import Optimizer
-from covsirphy.analysis.simulator import ODESimulator
-from covsirphy.analysis.example_data import ExampleData
+from covsirphy.simulation.optimize import Optimizer
+from covsirphy.simulation.simulator import ODESimulator
 
 
 class Estimator(Optimizer):
@@ -42,13 +41,7 @@ class Estimator(Optimizer):
                 DeprecationWarning,
                 stacklevel=2
             )
-            df = jhu_data.copy()
-            if not set(self.VALUE_COLUMNS).issubset(set(df.columns)):
-                df = model.restore(df)
-            df = self.validate_dataframe(
-                df, name="jhu_data", columns=self.COLUMNS
-            )
-            jhu_data = ExampleData(df)
+            jhu_data = JHUData.from_dataframe(jhu_data)
         jhu_data = self.validate_instance(jhu_data, JHUData, name="jhu_data")
         # Read arguments
         self.model = model

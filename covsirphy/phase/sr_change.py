@@ -6,10 +6,10 @@ import warnings
 import numpy as np
 import pandas as pd
 import ruptures as rpt
-from covsirphy.cleaning import Term, JHUData
+from covsirphy.cleaning.term import Term
+from covsirphy.cleaning.jhu_data import JHUData
 from covsirphy.phase.trend import Trend
-from covsirphy.analysis.phase_series import PhaseSeries
-from covsirphy.analysis.example_data import ExampleData
+from covsirphy.phase.phase_series import PhaseSeries
 
 
 class ChangeFinder(Term):
@@ -35,11 +35,7 @@ class ChangeFinder(Term):
                 DeprecationWarning,
                 stacklevel=2
             )
-            df = jhu_data.copy()
-            df = self.validate_dataframe(
-                df, name="jhu_data", columns=self.COLUMNS
-            )
-            jhu_data = ExampleData(df)
+            jhu_data = JHUData.from_dataframe(jhu_data)
         self.jhu_data = self.validate_instance(
             jhu_data, JHUData, name="jhu_data"
         )
