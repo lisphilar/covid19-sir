@@ -204,8 +204,6 @@ class JHUData(CleaningBase):
                 df = df.groupby(self.DATE).last().reset_index()
                 df = df.drop([self.COUNTRY, self.PROVINCE], axis=1)
                 return df.loc[df[self.R] > 0, :]
-            raise KeyError(
-                f"Records of {province} in {country} were not registered.")
         # Province was not selected and COVID-19 Data Hub dataset
         c_level_set = set(
             df.loc[df[self.PROVINCE] == self.UNKNOWN, self.DATE].unique()
@@ -213,6 +211,9 @@ class JHUData(CleaningBase):
         all_date_set = set(df[self.DATE].unique())
         if c_level_set == all_date_set:
             df = df.loc[df[self.PROVINCE] == self.UNKNOWN, :]
+            if df.empty:
+                raise KeyError(
+                    f"Records of {province} in {country} were not registered.")
             df = df.groupby(self.DATE).last().reset_index()
             df = df.drop([self.COUNTRY, self.PROVINCE], axis=1)
             return df.loc[df[self.R] > 0, :]
