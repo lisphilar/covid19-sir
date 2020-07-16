@@ -80,7 +80,7 @@ clean:
 	@rm -rf input
 	@rm -rf prof
 	@rm -rf .pytest_cache
-	@rm -rf covsirphy/__pycache__
+	@find -name __pycache__ | xargs rm -r
 	@rm -rf example/output
 	@rm -rf dist covsirphy.egg-info
 	@rm -f README.rst
