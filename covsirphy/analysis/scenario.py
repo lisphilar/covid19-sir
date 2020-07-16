@@ -14,8 +14,8 @@ import numpy as np
 import pandas as pd
 from covsirphy.ode import ModelBase
 from covsirphy.cleaning import JHUData, PopulationData, Term
-from covsirphy.phase import Estimator
-from covsirphy.util import line_plot, box_plot
+from covsirphy.phase.estimator import Estimator
+from covsirphy.util.plotting import line_plot, box_plot
 from covsirphy.util.stopwatch import StopWatch
 from covsirphy.analysis.phase_series import PhaseSeries
 from covsirphy.analysis.simulator import ODESimulator
