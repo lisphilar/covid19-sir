@@ -1,4 +1,4 @@
-.PHONY: install test-nosvg test docs example pypi test-pypi clean
+.PHONY: install test-nosvg test docs only-sphinx example pypi test-pypi clean
 
 install:
 	@pip install wheel; pip install --upgrade pip
@@ -29,6 +29,14 @@ docs:
 	@rm -f docs/*ipynb
 	@pipenv run runipy example/usage_quick.ipynb docs/usage_quick.ipynb
 	@pipenv run runipy example/usage_quickest.ipynb docs/usage_quickest.ipynb
+	@sphinx-apidoc -o docs covsirphy
+	@cd docs; pipenv run make html; cp -a _build/html/. ../docs
+	@rm -rf docs/_modules
+	@rm -rf docs/_sources
+
+
+# https://github.com/sphinx-doc/sphinx/issues/3382
+only-sphinx:
 	@sphinx-apidoc -o docs covsirphy
 	@cd docs; pipenv run make html; cp -a _build/html/. ../docs
 	@rm -rf docs/_modules
