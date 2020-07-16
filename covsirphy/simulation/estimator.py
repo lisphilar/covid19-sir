@@ -41,7 +41,10 @@ class Estimator(Optimizer):
                 DeprecationWarning,
                 stacklevel=2
             )
-            jhu_data = JHUData.from_dataframe(jhu_data)
+            df = jhu_data.copy()
+            if not set(self.VALUE_COLUMNS).issubset(set(df.columns)):
+                df = model.restore(df)
+            jhu_data = JHUData.from_dataframe(df)
         jhu_data = self.validate_instance(jhu_data, JHUData, name="jhu_data")
         # Read arguments
         self.model = model
