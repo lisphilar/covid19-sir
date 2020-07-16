@@ -9,14 +9,14 @@ try:
 except ImportError:
     better_exceptions_installed = False
 from covsirphy.__version__ import __version__
-from covsirphy.analysis import ODESimulator, ChangeFinder
-from covsirphy.analysis import PhaseSeries, Scenario, ExampleData
 from covsirphy.cleaning import Term, CleaningBase, DataLoader
 from covsirphy.cleaning import JHUData
 from covsirphy.cleaning import CountryData, PopulationData, OxCGRTData
 from covsirphy.ode import ModelBase, SIR, SIRD, SIRF, SIRFV, SEWIRF
 from covsirphy.phase import Estimator, Trend
 from covsirphy.util import line_plot, jpn_map, StopWatch, error
+from covsirphy.analysis import ODESimulator, ChangeFinder
+from covsirphy.analysis import PhaseSeries, Scenario, ExampleData
 # Deprecated
 from covsirphy.cleaning import Population, Word
 
