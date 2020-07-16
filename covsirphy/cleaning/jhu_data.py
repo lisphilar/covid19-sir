@@ -259,3 +259,19 @@ class JHUData(CleaningBase):
         end_obj = self.to_date_obj(date_str=end_date, default=series.max())
         df = df.loc[(start_obj <= series) & (series <= end_obj), :]
         return df
+
+    @classmethod
+    def from_dataframe(cls, dataframe):
+        """
+        Create JHUData instance using a pandas dataframe.
+
+        Args:
+            dataframe (pd.DataFrame): Cleaned dataset
+
+        Returns:
+            (covsirphy.JHUData): JHU-style dataset
+        """
+        instance = cls(filename=None)
+        instance._cleaned_df = cls.validate_dataframe(
+            dataframe, name="dataframe", columns=cls.COLUMNS)
+        return instance
