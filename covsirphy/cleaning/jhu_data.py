@@ -204,8 +204,6 @@ class JHUData(CleaningBase):
                 df = df.groupby(self.DATE).last().reset_index()
                 df = df.drop([self.COUNTRY, self.PROVINCE], axis=1)
                 return df.loc[df[self.R] > 0, :]
-            raise KeyError(
-                f"Records of {province} in {country} were not registered.")
         # Province was not selected and COVID-19 Data Hub dataset
         c_level_set = set(
             df.loc[df[self.PROVINCE] == self.UNKNOWN, self.DATE].unique()
@@ -213,6 +211,9 @@ class JHUData(CleaningBase):
         all_date_set = set(df[self.DATE].unique())
         if c_level_set == all_date_set:
             df = df.loc[df[self.PROVINCE] == self.UNKNOWN, :]
+            if df.empty:
+                raise KeyError(
+                    f"Records of {province} in {country} were not registered.")
             df = df.groupby(self.DATE).last().reset_index()
             df = df.drop([self.COUNTRY, self.PROVINCE], axis=1)
             return df.loc[df[self.R] > 0, :]
@@ -258,3 +259,19 @@ class JHUData(CleaningBase):
         end_obj = self.to_date_obj(date_str=end_date, default=series.max())
         df = df.loc[(start_obj <= series) & (series <= end_obj), :]
         return df
+
+    @classmethod
+    def from_dataframe(cls, dataframe):
+        """
+        Create JHUData instance using a pandas dataframe.
+
+        Args:
+            dataframe (pd.DataFrame): Cleaned dataset
+
+        Returns:
+            (covsirphy.JHUData): JHU-style dataset
+        """
+        instance = cls(filename=None)
+        instance._cleaned_df = cls.validate_dataframe(
+            dataframe, name="dataframe", columns=cls.COLUMNS)
+        return instance

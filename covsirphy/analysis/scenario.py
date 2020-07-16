@@ -12,14 +12,16 @@ if not hasattr(sys, "ps1"):
     matplotlib.use("Agg")
 import numpy as np
 import pandas as pd
-from covsirphy.ode import ModelBase
-from covsirphy.cleaning import JHUData, PopulationData, Term
-from covsirphy.phase import Estimator
-from covsirphy.util import line_plot, box_plot
+from covsirphy.util.plotting import line_plot, box_plot
 from covsirphy.util.stopwatch import StopWatch
-from covsirphy.analysis.phase_series import PhaseSeries
-from covsirphy.analysis.simulator import ODESimulator
-from covsirphy.analysis.sr_change import ChangeFinder
+from covsirphy.cleaning.term import Term
+from covsirphy.cleaning.jhu_data import JHUData
+from covsirphy.cleaning.population import PopulationData
+from covsirphy.ode.mbase import ModelBase
+from covsirphy.phase.phase_series import PhaseSeries
+from covsirphy.phase.sr_change import ChangeFinder
+from covsirphy.simulation.estimator import Estimator
+from covsirphy.simulation.simulator import ODESimulator
 
 
 class Scenario(Term):
