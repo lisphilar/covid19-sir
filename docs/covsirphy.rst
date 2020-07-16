@@ -8,4 +8,5 @@ API reference
    covsirphy.cleaning
    covsirphy.ode
    covsirphy.phase
+   covsirphy.simulation
    covsirphy.util

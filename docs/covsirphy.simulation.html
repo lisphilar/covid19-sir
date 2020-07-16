@@ -1,0 +1,934 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>covsirphy.simulation &mdash; CovsirPhy  documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+
+  
+  
+  
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/underscore.js"></script>
+        <script src="_static/doctools.js"></script>
+        <script src="_static/language_data.js"></script>
+        <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+        <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+        <script type="text/x-mathjax-config">MathJax.Hub.Config({"tex2jax": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "processEscapes": true, "ignoreClass": "document", "processClass": "math|output_area"}})</script>
+    
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="covsirphy.util" href="covsirphy.util.html" />
+    <link rel="prev" title="covsirphy.phase" href="covsirphy.phase.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="index.html" class="icon icon-home" alt="Documentation Home"> CovsirPhy
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="README.html">CovsirPhy: COVID-19 analysis with SIRs</a></li>
+<li class="toctree-l1"><a class="reference internal" href="INSTALLATION.html">Installation and dataset preparation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="usage_quickest.html">Usage (quickest version)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="usage_quick.html">Usage (quick version)</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="covsirphy.html">API reference</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="covsirphy.analysis.html">covsirphy.analysis</a></li>
+<li class="toctree-l2"><a class="reference internal" href="covsirphy.cleaning.html">covsirphy.cleaning</a></li>
+<li class="toctree-l2"><a class="reference internal" href="covsirphy.ode.html">covsirphy.ode</a></li>
+<li class="toctree-l2"><a class="reference internal" href="covsirphy.phase.html">covsirphy.phase</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">covsirphy.simulation</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#module-covsirphy.simulation.estimator">covsirphy.simulation.estimator</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#module-covsirphy.simulation.optimize">covsirphy.simulation.optimize</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#module-covsirphy.simulation.simulator">covsirphy.simulation.simulator</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="covsirphy.util.html">covsirphy.util</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="CONTRIBUTING.html">Guideline of contribution</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">CovsirPhy</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
+        
+          <li><a href="covsirphy.html">API reference</a> &raquo;</li>
+        
+      <li>covsirphy.simulation</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="_sources/covsirphy.simulation.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  
+<style>
+/* CSS overrides for sphinx_rtd_theme */
+
+/* 24px margin */
+.nbinput.nblast.container,
+.nboutput.nblast.container {
+    margin-bottom: 19px;  /* padding has already 5px */
+}
+
+/* ... except between code cells! */
+.nblast.container + .nbinput.container {
+    margin-top: -19px;
+}
+
+.admonition > p:before {
+    margin-right: 4px;  /* make room for the exclamation icon */
+}
+
+/* Fix math alignment, see https://github.com/rtfd/sphinx_rtd_theme/pull/686 */
+.math {
+    text-align: unset;
+}
+</style>
+<div class="section" id="covsirphy-simulation">
+<h1>covsirphy.simulation<a class="headerlink" href="#covsirphy-simulation" title="Permalink to this headline">¶</a></h1>
+<p>Perform ODE simulation and estimation of ODE parameters.</p>
+<div class="section" id="module-covsirphy.simulation.estimator">
+<span id="covsirphy-simulation-estimator"></span><h2>covsirphy.simulation.estimator<a class="headerlink" href="#module-covsirphy.simulation.estimator" title="Permalink to this headline">¶</a></h2>
+<dl class="py class">
+<dt id="covsirphy.simulation.estimator.Estimator">
+<em class="property">class </em><code class="sig-prename descclassname">covsirphy.simulation.estimator.</code><code class="sig-name descname">Estimator</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">jhu_data</span></em>, <em class="sig-param"><span class="n">model</span></em>, <em class="sig-param"><span class="n">population</span></em>, <em class="sig-param"><span class="n">country</span></em>, <em class="sig-param"><span class="n">province</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">start_date</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">end_date</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/simulation/estimator.html#Estimator"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#covsirphy.simulation.estimator.Estimator" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#covsirphy.simulation.optimize.Optimizer" title="covsirphy.simulation.optimize.Optimizer"><code class="xref py py-class docutils literal notranslate"><span class="pre">covsirphy.simulation.optimize.Optimizer</span></code></a></p>
+<p>Hyperparameter optimization of an ODE model.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>jhu_data</strong> (<em>covsirphy.JHUData</em>) – object of records</p></li>
+<li><p><strong>model</strong> (<em>covsirphy.ModelBase</em>) – ODE model</p></li>
+<li><p><strong>population</strong> (<em>int</em>) – total population in the place</p></li>
+<li><p><strong>country</strong> (<em>str</em>) – country name</p></li>
+<li><p><strong>province</strong> (<em>str</em>) – province name</p></li>
+<li><p><strong>start_date</strong> (<em>str</em>) – start date, like 22Jan2020</p></li>
+<li><p><strong>end_date</strong> (<em>str</em>) – end date, like 01Feb2020</p></li>
+<li><p><strong>kwargs</strong> – parameter values of the model</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py method">
+<dt id="covsirphy.simulation.estimator.Estimator.accuracy">
+<code class="sig-name descname">accuracy</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">show_figure</span><span class="o">=</span><span class="default_value">True</span></em>, <em class="sig-param"><span class="n">filename</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/simulation/estimator.html#Estimator.accuracy"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#covsirphy.simulation.estimator.Estimator.accuracy" title="Permalink to this definition">¶</a></dt>
+<dd><p>Show the accuracy as a figure.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>show_figure</strong> (<em>bool</em>) – if True, show the result as a figure</p></li>
+<li><p><strong>filename</strong> (<em>str</em>) – filename of the figure, or None (show figure)</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="covsirphy.simulation.estimator.Estimator.divide_minutes">
+<code class="sig-name descname">divide_minutes</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">tau</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/simulation/estimator.html#Estimator.divide_minutes"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#covsirphy.simulation.estimator.Estimator.divide_minutes" title="Permalink to this definition">¶</a></dt>
+<dd><p>Divide T by tau in the training dataset.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>tau</strong> (<em>int</em>) – tau value [min]</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><dl class="simple">
+<dt>Index:</dt><dd><p>reset index</p>
+</dd>
+<dt>Columns:</dt><dd><ul class="simple">
+<li><p>t (int): Elapsed time divided by tau value [-]</p></li>
+<li><p>columns with dimensional variables</p></li>
+</ul>
+</dd>
+</dl>
+</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>(pandas.DataFrame)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="covsirphy.simulation.estimator.Estimator.error_f">
+<code class="sig-name descname">error_f</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">param_dict</span></em>, <em class="sig-param"><span class="n">taufree_df</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/simulation/estimator.html#Estimator.error_f"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#covsirphy.simulation.estimator.Estimator.error_f" title="Permalink to this definition">¶</a></dt>
+<dd><p>Definition of error score to minimize in the study.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>param_dict</strong> (<em>dict</em>) – estimated parameter values
+- key (str): parameter name
+- value (int or float): parameter value</p></li>
+<li><p><strong>taufree_df</strong> (<em>pandas.DataFrame</em>) – <p>training dataset</p>
+<dl class="simple">
+<dt>Index:</dt><dd><p>reset index</p>
+</dd>
+<dt>Columns:</dt><dd><ul>
+<li><p>t: time steps [-]</p></li>
+<li><p>columns with dimensional variables</p></li>
+</ul>
+</dd>
+</dl>
+</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>score of the error function to minimize</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>(float)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="covsirphy.simulation.estimator.Estimator.objective">
+<code class="sig-name descname">objective</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">trial</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/simulation/estimator.html#Estimator.objective"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#covsirphy.simulation.estimator.Estimator.objective" title="Permalink to this definition">¶</a></dt>
+<dd><p>Objective function of Optuna study.
+This defines the parameter values using Optuna.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>trial</strong> (<em>optuna.trial</em>) – a trial of the study</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>score of the error function to minimize</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>(float)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="covsirphy.simulation.estimator.Estimator.rmsle">
+<code class="sig-name descname">rmsle</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">tau</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/simulation/estimator.html#Estimator.rmsle"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#covsirphy.simulation.estimator.Estimator.rmsle" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return RMSLE score.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>tau</strong> (<em>int</em>) – tau value</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="covsirphy.simulation.estimator.Estimator.run">
+<code class="sig-name descname">run</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">timeout</span><span class="o">=</span><span class="default_value">60</span></em>, <em class="sig-param"><span class="n">reset_n_max</span><span class="o">=</span><span class="default_value">3</span></em>, <em class="sig-param"><span class="n">timeout_iteration</span><span class="o">=</span><span class="default_value">5</span></em>, <em class="sig-param"><span class="n">allowance</span><span class="o">=</span><span class="default_value">0.8, 1.2</span></em>, <em class="sig-param"><span class="n">seed</span><span class="o">=</span><span class="default_value">0</span></em>, <em class="sig-param"><span class="n">stdout</span><span class="o">=</span><span class="default_value">True</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/simulation/estimator.html#Estimator.run"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#covsirphy.simulation.estimator.Estimator.run" title="Permalink to this definition">¶</a></dt>
+<dd><p>Run optimization.
+If the result satisfied the following conditions, optimization ends.
+- all values are not under than 0
+- values of monotonic increasing variables increases monotonically
+- predicted values are in the allowance when each actual value shows max value</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>timeout</strong> (<em>int</em>) – time-out of run</p></li>
+<li><p><strong>reset_n_max</strong> (<em>int</em>) – if study was reset &#64;reset_n_max times, will not be reset anymore</p></li>
+<li><p><strong>timeout_iteration</strong> (<em>int</em>) – time-out of one iteration</p></li>
+<li><p><strong>allowance</strong> (<em>tuple</em><em>(</em><em>float</em><em>, </em><em>float</em><em>)</em>) – the allowance of the predicted value</p></li>
+<li><p><strong>seed</strong> (<em>int</em><em> or </em><em>None</em>) – random seed of hyperparameter optimization</p></li>
+<li><p><strong>stdout</strong> (<em>bool</em>) – whether show the status of progress or not</p></li>
+</ul>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<p>&#64;n_jobs was obsoleted because this is not effective for Optuna.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="covsirphy.simulation.estimator.Estimator.simulate">
+<code class="sig-name descname">simulate</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">step_n</span></em>, <em class="sig-param"><span class="n">param_dict</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/simulation/estimator.html#Estimator.simulate"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#covsirphy.simulation.estimator.Estimator.simulate" title="Permalink to this definition">¶</a></dt>
+<dd><p>Simulate the values with the parameters.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>step_n</strong> (<em>int</em>) – number of iteration</p></li>
+<li><p><strong>param_dict</strong> (<em>dict</em>) – estimated parameter values
+- key (str): parameter name
+- value (int or float): parameter value</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><dl class="simple">
+<dt>Index:</dt><dd><p>reset index</p>
+</dd>
+<dt>Columns:</dt><dd><ul class="simple">
+<li><p>t (int): Elapsed time divided by tau value [-]</p></li>
+<li><p>columns with dimensionalized variables</p></li>
+</ul>
+</dd>
+</dl>
+</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>(pandas.DataFrame)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="covsirphy.simulation.estimator.Estimator.summary">
+<code class="sig-name descname">summary</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">name</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/simulation/estimator.html#Estimator.summary"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#covsirphy.simulation.estimator.Estimator.summary" title="Permalink to this definition">¶</a></dt>
+<dd><p>Summarize the results of optimization.
+This function should be overwritten in subclass.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>name</strong> (<em>str</em>) – index of the dataframe</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><dl class="simple">
+<dt>Index:</dt><dd><p>reset index</p>
+</dd>
+<dt>Columns:</dt><dd><ul class="simple">
+<li><p>(parameters of the model)</p></li>
+<li><p>tau</p></li>
+<li><p>Rt: basic or phase-dependent reproduction number</p></li>
+<li><p>(dimensional parameters [day])</p></li>
+<li><p>RMSLE: Root Mean Squared Log Error</p></li>
+<li><p>Trials: the number of trials</p></li>
+<li><p>Runtime: run time of estimation</p></li>
+</ul>
+</dd>
+</dl>
+</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>(pandas.DataFrame)</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-covsirphy.simulation.optimize">
+<span id="covsirphy-simulation-optimize"></span><h2>covsirphy.simulation.optimize<a class="headerlink" href="#module-covsirphy.simulation.optimize" title="Permalink to this headline">¶</a></h2>
+<dl class="py class">
+<dt id="covsirphy.simulation.optimize.Optimizer">
+<em class="property">class </em><code class="sig-prename descclassname">covsirphy.simulation.optimize.</code><code class="sig-name descname">Optimizer</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">train_df</span></em>, <em class="sig-param"><span class="n">x</span><span class="o">=</span><span class="default_value">'t'</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">params</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/simulation/optimize.html#Optimizer"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#covsirphy.simulation.optimize.Optimizer" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="covsirphy.cleaning.html#covsirphy.cleaning.term.Term" title="covsirphy.cleaning.term.Term"><code class="xref py py-class docutils literal notranslate"><span class="pre">covsirphy.cleaning.term.Term</span></code></a></p>
+<p>Hyperparameter optimization with Optuna package.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>train_df</strong> (<em>pandas.DataFrame</em>) – <p>training dataset</p>
+<dl class="simple">
+<dt>Index:</dt><dd><p>reset index</p>
+</dd>
+<dt>Columns:</dt><dd><ul>
+<li><p>Explanatory variable defined by &#64;x</p></li>
+<li><p>Response variables which is not &#64;x</p></li>
+</ul>
+</dd>
+</dl>
+</p></li>
+<li><p><strong>param</strong> (<em>keyword arguments</em>) – fixed parameter values</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py method">
+<dt id="covsirphy.simulation.optimize.Optimizer.accuracy">
+<code class="sig-name descname">accuracy</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">train_df</span></em>, <em class="sig-param"><span class="n">variables</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">show_figure</span><span class="o">=</span><span class="default_value">True</span></em>, <em class="sig-param"><span class="n">filename</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/simulation/optimize.html#Optimizer.accuracy"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#covsirphy.simulation.optimize.Optimizer.accuracy" title="Permalink to this definition">¶</a></dt>
+<dd><p>Show the accuracy as a figure.
+This method can be overwritten in child class.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>train_df</strong> (<em>pandas.DataFrame</em>) – <p>actual data</p>
+<dl class="simple">
+<dt>Index:</dt><dd><p>reset index</p>
+</dd>
+<dt>Columns:</dt><dd><ul>
+<li><p>t: time step, 0, 1, 2,…</p></li>
+<li><p>includes columns defined by self.y_list</p></li>
+</ul>
+</dd>
+</dl>
+</p></li>
+<li><p><strong>variables</strong> (<em>list</em><em>[</em><em>str</em><em>]</em>) – variables to compare or None (all variables)</p></li>
+<li><p><strong>show_figure</strong> (<em>bool</em>) – if True, show the result as a figure</p></li>
+<li><p><strong>filename</strong> (<em>str</em>) – filename of the figure, or None (show figure)</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="covsirphy.simulation.optimize.Optimizer.compare">
+<code class="sig-name descname">compare</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">actual_df</span></em>, <em class="sig-param"><span class="n">predicted_df</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/simulation/optimize.html#Optimizer.compare"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#covsirphy.simulation.optimize.Optimizer.compare" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return comparison table.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>actual_df</strong> (<em>pandas.DataFrame</em>) – <p>actual data</p>
+<dl class="simple">
+<dt>Index:</dt><dd><p>reset index</p>
+</dd>
+<dt>Columns:</dt><dd><ul>
+<li><p>t: time step, 0, 1, 2,…</p></li>
+<li><p>includes columns defined by self.y_list</p></li>
+</ul>
+</dd>
+</dl>
+</p></li>
+<li><p><strong>predicted_df</strong> (<em>pandas.DataFrame</em>) – <p>predicted data</p>
+<dl class="simple">
+<dt>Index:</dt><dd><p>reset index</p>
+</dd>
+<dt>Columns:</dt><dd><ul>
+<li><p>t: time step, 0, 1, 2,…</p></li>
+<li><p>includes columns defined by self.y_list</p></li>
+</ul>
+</dd>
+</dl>
+</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><dl class="simple">
+<dt>Index:</dt><dd><p>(str): time step</p>
+</dd>
+<dt>Index:</dt><dd><p>reset index</p>
+</dd>
+<dt>Columns:</dt><dd><ul class="simple">
+<li><p>columns with “_actual”</p></li>
+<li><p>columns with “_predicted:</p></li>
+<li><p>columns are defined by self.y_list</p></li>
+</ul>
+</dd>
+</dl>
+</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>(pandas.DataFrame)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="covsirphy.simulation.optimize.Optimizer.error_f">
+<code class="sig-name descname">error_f</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">param_dict</span></em>, <em class="sig-param"><span class="n">train_df</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/simulation/optimize.html#Optimizer.error_f"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#covsirphy.simulation.optimize.Optimizer.error_f" title="Permalink to this definition">¶</a></dt>
+<dd><p>Definition of error score to minimize in the study.
+This method should be overwritten in subclass.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>param_dict</strong> (<em>dict</em>) – estimated parameter values
+- key (str): parameter name
+- value (int or float): parameter value</p></li>
+<li><p><strong>train_df</strong> (<em>pandas.DataFrame</em>) – <p>actual data</p>
+<dl class="simple">
+<dt>Index:</dt><dd><p>reset index</p>
+</dd>
+<dt>Columns:</dt><dd><ul>
+<li><p>t: time step, 0, 1, 2,…</p></li>
+<li><p>includes columns defined by &#64;variables</p></li>
+</ul>
+</dd>
+</dl>
+</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>score of the error function to minimize</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>(float)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="covsirphy.simulation.optimize.Optimizer.history">
+<code class="sig-name descname">history</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">show_figure</span><span class="o">=</span><span class="default_value">True</span></em>, <em class="sig-param"><span class="n">filename</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/simulation/optimize.html#Optimizer.history"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#covsirphy.simulation.optimize.Optimizer.history" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="simple">
+<dt>Show the history of optimization as a figure</dt><dd><p>and return it as dataframe.</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>show_figure</strong> (<em>bool</em>) – if True, show the history as a pair-plot of parameters.</p></li>
+<li><p><strong>filename</strong> (<em>str</em>) – filename of the figure, or None (show figure)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>the history</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>(pandas.DataFrame)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="covsirphy.simulation.optimize.Optimizer.objective">
+<code class="sig-name descname">objective</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">trial</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/simulation/optimize.html#Optimizer.objective"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#covsirphy.simulation.optimize.Optimizer.objective" title="Permalink to this definition">¶</a></dt>
+<dd><p>Objective function of Optuna study.
+This defines the parameter values using Optuna.
+This method should be overwritten in subclass.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>trial</strong> (<em>optuna.trial</em>) – a trial of the study</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>score of the error function to minimize</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>(float)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="covsirphy.simulation.optimize.Optimizer.param">
+<code class="sig-name descname">param</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/simulation/optimize.html#Optimizer.param"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#covsirphy.simulation.optimize.Optimizer.param" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the estimated parameters as a dictionary.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p><dl class="simple">
+<dt>(dict)</dt><dd><ul class="simple">
+<li><p>key (str): parameter name</p></li>
+<li><p>value (int or float): parameter value</p></li>
+</ul>
+</dd>
+</dl>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="covsirphy.simulation.optimize.Optimizer.predict">
+<code class="sig-name descname">predict</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/simulation/optimize.html#Optimizer.predict"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#covsirphy.simulation.optimize.Optimizer.predict" title="Permalink to this definition">¶</a></dt>
+<dd><p>Predict the values with the calculated values.
+This method can be overwritten in subclass.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="covsirphy.simulation.optimize.Optimizer.result">
+<code class="sig-name descname">result</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">name</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/simulation/optimize.html#Optimizer.result"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#covsirphy.simulation.optimize.Optimizer.result" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the estimated parameters as a dataframe.
+This method should be overwritten in subclass.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>name</strong> (<em>str</em>) – index of the dataframe</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><dl class="simple">
+<dt>Index:</dt><dd><p>reset index</p>
+</dd>
+<dt>Columns:</dt><dd><ul class="simple">
+<li><p>(estimated parameters)</p></li>
+<li><p>Trials: the number of trials</p></li>
+<li><p>Runtime: run time of estimation</p></li>
+</ul>
+</dd>
+</dl>
+</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>(pandas.DataFrame)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="covsirphy.simulation.optimize.Optimizer.rmsle">
+<code class="sig-name descname">rmsle</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">train_df</span></em>, <em class="sig-param"><span class="n">dim</span><span class="o">=</span><span class="default_value">1</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/simulation/optimize.html#Optimizer.rmsle"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#covsirphy.simulation.optimize.Optimizer.rmsle" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculate RMSLE score.
+This method can be overwritten in child class.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>train_df</strong> (<em>pandas.DataFrame</em>) – <p>actual data</p>
+<dl class="simple">
+<dt>Index:</dt><dd><p>reset index</p>
+</dd>
+<dt>Columns:</dt><dd><ul>
+<li><p>t: time step, 0, 1, 2,…</p></li>
+<li><p>includes columns defined by self.y_list</p></li>
+</ul>
+</dd>
+</dl>
+</p></li>
+<li><p><strong>dim</strong> (<em>int</em><em> or </em><em>float</em>) – dimension where comparison will be performed</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>RMSLE score</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>(float)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="covsirphy.simulation.optimize.Optimizer.run">
+<code class="sig-name descname">run</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">n_trials</span></em>, <em class="sig-param"><span class="n">timeout</span></em>, <em class="sig-param"><span class="n">n_jobs</span><span class="o">=</span><span class="default_value">- 1</span></em>, <em class="sig-param"><span class="n">seed</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/simulation/optimize.html#Optimizer.run"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#covsirphy.simulation.optimize.Optimizer.run" title="Permalink to this definition">¶</a></dt>
+<dd><p>Run optimization.
+This method can be overwritten in subclass.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>timeout</strong> (<em>int</em>) – time-out of run</p></li>
+<li><p><strong>n_trials</strong> (<em>int</em>) – the number of trials</p></li>
+<li><p><strong>n_jobs</strong> (<em>int</em>) – the number of parallel jobs or -1 (CPU count)</p></li>
+<li><p><strong>seed</strong> (<em>int</em><em> or </em><em>None</em>) – random seed of hyperparameter optimization</p></li>
+</ul>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<p>&#64;seed will effective when &#64;n_jobs is 1</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="covsirphy.simulation.optimize.Optimizer.simulate">
+<code class="sig-name descname">simulate</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">param_dict</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/simulation/optimize.html#Optimizer.simulate"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#covsirphy.simulation.optimize.Optimizer.simulate" title="Permalink to this definition">¶</a></dt>
+<dd><p>Simulate the values with the parameters.
+This method should be overwritten in subclass.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>param_dict</strong> (<em>dict</em>) – estimated parameter values
+- key (str): parameter name
+- value (int or float): parameter value</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><dl class="simple">
+<dt>Index:</dt><dd><p>reset index</p>
+</dd>
+<dt>Columns:</dt><dd><ul class="simple">
+<li><p>Explanatory variable defined by self.x</p></li>
+<li><p>Response variables which defined by self.y_list</p></li>
+</ul>
+</dd>
+</dl>
+</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>(pandas.DataFrame)</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-covsirphy.simulation.simulator">
+<span id="covsirphy-simulation-simulator"></span><h2>covsirphy.simulation.simulator<a class="headerlink" href="#module-covsirphy.simulation.simulator" title="Permalink to this headline">¶</a></h2>
+<dl class="py class">
+<dt id="covsirphy.simulation.simulator.ODESimulator">
+<em class="property">class </em><code class="sig-prename descclassname">covsirphy.simulation.simulator.</code><code class="sig-name descname">ODESimulator</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">country</span></em>, <em class="sig-param"><span class="n">province</span><span class="o">=</span><span class="default_value">'-'</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/simulation/simulator.html#ODESimulator"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#covsirphy.simulation.simulator.ODESimulator" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="covsirphy.cleaning.html#covsirphy.cleaning.term.Term" title="covsirphy.cleaning.term.Term"><code class="xref py py-class docutils literal notranslate"><span class="pre">covsirphy.cleaning.term.Term</span></code></a></p>
+<p>Simulation of an ODE model.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>country</strong> (<em>str</em>) – country name</p></li>
+<li><p><strong>province</strong> (<em>str</em>) – province name</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py method">
+<dt id="covsirphy.simulation.simulator.ODESimulator.add">
+<code class="sig-name descname">add</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">model</span></em>, <em class="sig-param"><span class="n">step_n</span></em>, <em class="sig-param"><span class="n">population</span></em>, <em class="sig-param"><span class="n">param_dict</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">y0_dict</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/simulation/simulator.html#ODESimulator.add"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#covsirphy.simulation.simulator.ODESimulator.add" title="Permalink to this definition">¶</a></dt>
+<dd><p>Add models to the simulator.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>model</strong> (<em>subclass of cs.ModelBase</em>) – the first ODE model</p></li>
+<li><p><strong>step_n</strong> (<em>int</em>) – the number of steps</p></li>
+<li><p><strong>population</strong> (<em>int</em>) – population in the place</p></li>
+<li><p><strong>param_dict</strong> (<em>dict</em>) – <ul>
+<li><p>key (str): parameter name</p></li>
+<li><p>value (float): parameter value</p></li>
+<li><p>dictionary of parameter values or None</p></li>
+<li><dl class="simple">
+<dt>if not include some params, the last values will be used</dt><dd><ul>
+<li><p>NameError when the model is the first model</p></li>
+<li><p>NameError if new params are included</p></li>
+</ul>
+</dd>
+</dl>
+</li>
+</ul>
+</p></li>
+<li><p><strong>y0_dict</strong> (<em>dict</em>) – <ul>
+<li><p>key (str): variable name</p></li>
+<li><p>value (float): initial value</p></li>
+<li><p>dictionary of dimensional initial values or None</p></li>
+<li><dl class="simple">
+<dt>None or if not include some variables, the last values will be used</dt><dd><ul>
+<li><p>NameError when the model is the first model</p></li>
+<li><p>NameError if new variable are included</p></li>
+</ul>
+</dd>
+</dl>
+</li>
+</ul>
+</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>self</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="covsirphy.simulation.simulator.ODESimulator.dim">
+<code class="sig-name descname">dim</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">tau</span></em>, <em class="sig-param"><span class="n">start_date</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/simulation/simulator.html#ODESimulator.dim"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#covsirphy.simulation.simulator.ODESimulator.dim" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the dimensionalized results.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>tau</strong> (<em>int</em>) – tau value [min]</p></li>
+<li><p><strong>start_date</strong> (<em>str</em>) – start date of the records, like 22Jan2020</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><dl class="simple">
+<dt>(pandas.DataFrame)</dt><dd><dl class="simple">
+<dt>Index:</dt><dd><p>reset index</p>
+</dd>
+<dt>Columns:</dt><dd><ul class="simple">
+<li><p>Date (pd.TimeStamp): Observation date</p></li>
+<li><p>Country (str): country/region name</p></li>
+<li><p>Province (str): province/prefecture/state name</p></li>
+<li><p>variables of the models (int)</p></li>
+</ul>
+</dd>
+</dl>
+</dd>
+</dl>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="covsirphy.simulation.simulator.ODESimulator.non_dim">
+<code class="sig-name descname">non_dim</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/simulation/simulator.html#ODESimulator.non_dim"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#covsirphy.simulation.simulator.ODESimulator.non_dim" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the non-dimensionalized results.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p><dl class="simple">
+<dt>Index:</dt><dd><p>reset index</p>
+</dd>
+<dt>Columns:</dt><dd><ul class="simple">
+<li><p>t (int): Elapsed time divided by tau value [-]</p></li>
+<li><p>non-dimensionalized variables of Susceptible etc.</p></li>
+</ul>
+</dd>
+</dl>
+</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>(pandas.DataFrame)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="covsirphy.simulation.simulator.ODESimulator.run">
+<code class="sig-name descname">run</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/simulation/simulator.html#ODESimulator.run"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#covsirphy.simulation.simulator.ODESimulator.run" title="Permalink to this definition">¶</a></dt>
+<dd><p>Run the simulator.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="covsirphy.simulation.simulator.ODESimulator.taufree">
+<code class="sig-name descname">taufree</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/simulation/simulator.html#ODESimulator.taufree"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#covsirphy.simulation.simulator.ODESimulator.taufree" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return tau-free results.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p><dl class="simple">
+<dt>Index:</dt><dd><p>reset index</p>
+</dd>
+<dt>Columns:</dt><dd><ul class="simple">
+<li><p>t (int): Elapsed time divided by tau value [-]</p></li>
+<li><p>columns with dimensionalized variables</p></li>
+</ul>
+</dd>
+</dl>
+</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>(pandas.DataFrame)</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="covsirphy.util.html" class="btn btn-neutral float-right" title="covsirphy.util" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="covsirphy.phase.html" class="btn btn-neutral float-left" title="covsirphy.phase" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        
+        &copy; Copyright 2020, CovsirPhy Development Team
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>
