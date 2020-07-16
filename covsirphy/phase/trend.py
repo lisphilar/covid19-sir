@@ -12,8 +12,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 from scipy.optimize import curve_fit, OptimizeWarning
-from covsirphy.cleaning.term import Term
-from covsirphy.cleaning.jhu_data import JHUData
+from covsirphy.cleaning import Term, JHUData
 from covsirphy.analysis.example_data import ExampleData
 
 
