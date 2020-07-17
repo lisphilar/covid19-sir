@@ -38,7 +38,7 @@ api.dataset_download_files('lisphilar/covid19-dataset-in-japan',
                            path=path_ + "/",
                            unzip=True)
 
-# Removing files that will not be neccessary
+# Removing files that will not be necessary
 file_list = glob.glob(path_ + '/*')
 file_list_keep = file_list
 file_list_keep = [
