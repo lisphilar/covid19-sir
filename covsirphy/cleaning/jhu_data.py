@@ -156,7 +156,7 @@ class JHUData(CleaningBase):
         Returns:
             (str): area name
         """
-        if province is None:
+        if province is None or province == cls.UNKNOWN:
             return country
         return f"{country}{cls.SEP}{province}"
 
