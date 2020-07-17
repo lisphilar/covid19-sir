@@ -177,7 +177,7 @@ class ODESimulator(Term):
             new_df = self._solve_ode(**setting)
             taufree_df = pd.concat(
                 [self._taufree_df.iloc[:-1, :], new_df],
-                axis=0, ignore_index=True
+                axis=0, ignore_index=True, sort=True
             )
             taufree_df = taufree_df.fillna(0)
             taufree_df[self.TS] = taufree_df.index
