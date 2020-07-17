@@ -213,7 +213,7 @@ class Trend(Term):
         plt.xlim(0, None)
         # y-axis
         plt.ylabel(cls.S)
-        plt.yscale("log", basey=10)
+        plt.yscale("log", base=10)
         # Delete y-labels of log-scale (minor) axis
         plt.setp(plt.gca().get_yticklabels(minor=True), visible=False)
         plt.gca().tick_params(left=False, which="minor")
