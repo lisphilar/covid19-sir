@@ -151,11 +151,11 @@ As explained in "2. Developers" subsection, we need to git-clone this
 repository and install the dependencies when you want to uses this
 package with Kaggle API in your local environment.
 
-Then, please move to account page and download "kaggle.json" by
-selecting "API > Create New API Token" button. Copy the json file to the
-top directory of the local repository. Please refer to `How to Use
-Kaggle: Public API <https://www.kaggle.com/docs/api>`__ and
-`stackoverflow: documentation for Kaggle API *within*
+Then, please move to account page of Kaggle and download "kaggle.json"
+by selecting "API > Create New API Token" button. Copy the json file to
+the top directory of the local repository or "~/.kaggle". Please refer
+to `How to Use Kaggle: Public API <https://www.kaggle.com/docs/api>`__
+and `stackoverflow: documentation for Kaggle API *within*
 python? <https://stackoverflow.com/questions/55934733/documentation-for-kaggle-api-within-python#:~:text=Here%20are%20the%20steps%20involved%20in%20using%20the%20Kaggle%20API%20from%20Python.&text=Go%20to%20your%20Kaggle%20account,json%20will%20be%20downloaded>`__
 
 We can download datasets with ``pipenv run ./input.py`` command.
