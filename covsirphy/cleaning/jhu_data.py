@@ -166,7 +166,7 @@ class JHUData(CleaningBase):
 
         Args:
             country (str): country name
-            province (str or None): province name
+            province (str): province name
             population (int or None): population value
 
         Returns:
@@ -187,7 +187,6 @@ class JHUData(CleaningBase):
         """
         df = self._cleaned_df.copy()
         df = df.loc[df[self.COUNTRY] == country, :]
-        province = province or self.UNKNOWN
         # Calculate Susceptible if population value was applied
         if population is not None:
             population = self.validate_natural_int(
@@ -199,7 +198,7 @@ class JHUData(CleaningBase):
                 f"Records of {country} were not registered."
             )
         # Province was selected
-        if province != self.UNKNOWN:
+        if province is not None:
             if province in df[self.PROVINCE].unique():
                 df = df.loc[df[self.PROVINCE] == province, :]
                 df = df.groupby(self.DATE).last().reset_index()
