@@ -4,15 +4,21 @@
 import os
 import glob
 import shutil
+from pathlib import Path
 import requests
 
 # The KAGGLE_CONFIG_DIR env var must be setup before loading KaggleApi
 cwd = os.getcwd()
-os.environ["KAGGLE_CONFIG_DIR"] = cwd + "/"
-from kaggle.api.kaggle_api_extended import KaggleApi
+if Path("./kaggle.json").exists():
+    os.environ["KAGGLE_CONFIG_DIR"] = cwd + "/"
 
-# Put your kaggle.json in the same folder as input.py
-print(os.environ["KAGGLE_CONFIG_DIR"])
+try:
+    from kaggle.api.kaggle_api_extended import KaggleApi
+except Exception:
+    # Put your kaggle.json in the same folder as input.py
+    raise FileNotFoundError(
+        f"Please save kaggle.json in {os.environ['KAGGLE_CONFIG_DIR']} or ~/.kaggle")
+
 api = KaggleApi()
 api.authenticate()
 path_ = cwd + "/input/"
