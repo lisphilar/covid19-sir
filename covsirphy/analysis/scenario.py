@@ -48,7 +48,7 @@ class Scenario(Term):
         self.province = province or self.UNKNOWN
         self.area = JHUData.area_name(country, province)
         # First/last date of the area
-        df = jhu_data.subset(country=country, province=province)
+        df = jhu_data.subset(country=country, province=self.province)
         self.first_date = df[self.DATE].min().strftime(self.DATE_FORMAT)
         self.last_date = df[self.DATE].max().strftime(self.DATE_FORMAT)
         # Init
