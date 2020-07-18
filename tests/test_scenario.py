@@ -38,8 +38,8 @@ class TestScenario(object):
         scenario.remove()
         scenario.add_phase(end_date="01May2020")
         scenario.add_phase(end_date="01Jun2020")
-        date_df = scenario.summary()
         scenario.add_phase()
+        date_df = scenario.summary()
         assert len(date_df) == 3
         # with specified length of the phase
         scenario.remove()
