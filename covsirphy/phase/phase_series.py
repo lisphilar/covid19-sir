@@ -226,7 +226,11 @@ class PhaseSeries(Term):
         info_dict = self.to_dict()
         # Convert to dataframe
         df = pd.DataFrame.from_dict(info_dict, orient="index")
-        return df.fillna(self.UNKNOWN)
+        df = df.fillna(self.UNKNOWN)
+        # If empty, add column names
+        if df.empty:
+            return pd.DataFrame(columns=[self.TENSE, self.START, self.END, self.N])
+        return df
 
     def to_dict(self):
         """
@@ -295,7 +299,7 @@ class PhaseSeries(Term):
             if v != 0
         ]
         if not un_date_objects:
-            return list(self.phase_dict.keys())[-1]
+            return list(self.phase_dict.keys())[0]
         return un_date_objects[-1]
 
     def next_date(self):
