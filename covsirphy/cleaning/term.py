@@ -165,9 +165,9 @@ class Term(object):
     @staticmethod
     def validate_natural_int(target, name="number", include_zero=False):
         """
-        Validate the natural (non-negative) number.
-        If the value is natural number and the type was float,
-        will be converted to an integer.
+        Validate a natural (non-negative) number.
+        If the value is a natural number and the type was float or string,
+        it will be converted to an integer.
 
         Args:
             target (int or float or str): value to validate
@@ -188,6 +188,27 @@ class Term(object):
         if number < min_value:
             raise ValueError(f"{s}. This value is under {min_value}")
         return number
+
+    @staticmethod
+    def validate_float(target, name="value"):
+        """
+        Validate a float value.
+        If the value is a float value and the type was string,
+        it will be converted to a float.
+
+        Args:
+            target (float or str): value to validate
+            name (str): argument name of the value
+
+        Returns:
+            (float): as-is the target
+        """
+        s = f"@{name} must be a float value, but {target} was applied"
+        try:
+            value = float(target)
+        except TypeError:
+            raise TypeError(f"{s} and not converted to float.")
+        return value
 
     @classmethod
     def validate_date(cls, target, name="date"):

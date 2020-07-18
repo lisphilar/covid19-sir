@@ -25,10 +25,14 @@ class ChangeFinder(Term):
             - key (str): start date of population change
             - value (int or None): total population
         min_size (int): minimum value of phase length [days], over 2
+        max_rmsle (float): minmum value of RMSLE score
+
+    Notes:
+        When RMSLE score > max_rmsle, predicted values will be None
     """
 
     def __init__(self, jhu_data, population, country, province=None,
-                 population_change_dict=None, min_size=7):
+                 population_change_dict=None, min_size=7, max_rmsle=20.0):
         # Dataset
         if isinstance(jhu_data, pd.DataFrame):
             warnings.warn(
@@ -64,10 +68,12 @@ class ChangeFinder(Term):
         self.pop_dict = self._read_population_data(
             self.dates, self.population, population_change_dict
         )
+        # Minimum value of RMSLE score
+        self.max_rmsle = self.validate_float(max_rmsle)
         # Setting for optimization
         self.change_dates = list()
 
-    def run(self, min_size=7):
+    def run(self):
         """
         Run optimization and find change points.
 
@@ -149,6 +155,8 @@ class ChangeFinder(Term):
         )
         trend.analyse()
         df = trend.result()
+        if trend.rmsle() > self.max_rmsle:
+            df[f"{self.S}{self.P}"] = None
         # Get min value for vline
         r_value = int(df[self.R].min())
         # Rename the columns

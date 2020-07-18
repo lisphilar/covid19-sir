@@ -209,7 +209,7 @@ class Trend(Term):
         plt.ylabel(cls.S)
         try:
             plt.yscale("log", base=10)
-        except ValueError:
+        except TypeError:
             plt.yscale("log", basey=10)
         # Delete y-labels of log-scale (minor) axis
         plt.setp(plt.gca().get_yticklabels(minor=True), visible=False)
