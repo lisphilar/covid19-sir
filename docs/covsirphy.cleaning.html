@@ -774,6 +774,40 @@ This method overwrite super().cleaning() method.</p>
 Records with Recovered &gt; 0 will be selected.</p>
 </dd></dl>
 
+<dl class="py method">
+<dt id="covsirphy.cleaning.jhu_data.JHUData.to_sr">
+<code class="sig-name descname">to_sr</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">country</span></em>, <em class="sig-param"><span class="n">province</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">start_date</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">end_date</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">population</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/cleaning/jhu_data.html#JHUData.to_sr"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#covsirphy.cleaning.jhu_data.JHUData.to_sr" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>country</strong> (<em>str</em>) – country name</p></li>
+<li><p><strong>province</strong> (<em>str</em>) – province name</p></li>
+<li><p><strong>start_date</strong> (<em>str</em><em> or </em><em>None</em>) – start date, like 22Jan2020</p></li>
+<li><p><strong>end_date</strong> (<em>str</em><em> or </em><em>None</em>) – end date, like 01Feb2020</p></li>
+<li><p><strong>population</strong> (<em>int</em>) – population value</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><dl class="simple">
+<dt>(pandas.DataFrame)</dt><dd><dl class="simple">
+<dt>Index:</dt><dd><p>Date (pd.TimeStamp): Observation date</p>
+</dd>
+<dt>Columns:</dt><dd><ul class="simple">
+<li><p>Recovered (int): the number of recovered cases (&gt; 0)</p></li>
+<li><p>Susceptible (int): the number of susceptible cases, if calculated</p></li>
+</ul>
+</dd>
+</dl>
+</dd>
+</dl>
+</p>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<p>&#64;population must be specified.
+Records with Recovered &gt; 0 will be used.</p>
+</dd></dl>
+
 </dd></dl>
 
 </div>
@@ -1198,12 +1232,17 @@ province (str): province name</p>
 <dd><p>Convert a string to a datetime object.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>date_str</strong> (<em>str</em>) – date, like 22Jan2020</p>
+<dd class="field-odd"><p><strong>date_str</strong> (<em>str</em><em> or </em><em>None</em>) – date, like 22Jan2020</p>
 </dd>
 <dt class="field-even">Returns</dt>
-<dd class="field-even"><p>(datetime.datetime)</p>
+<dd class="field-even"><p>datetime object</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>(datetime.datetime or None)</p>
 </dd>
 </dl>
+<p class="rubric">Notes</p>
+<p>If &#64;date_str is None, None will be returned.</p>
 </dd></dl>
 
 <dl class="py method">
@@ -1325,6 +1364,28 @@ province (str): province name</p>
 </dd></dl>
 
 <dl class="py method">
+<dt id="covsirphy.cleaning.term.Term.validate_float">
+<em class="property">static </em><code class="sig-name descname">validate_float</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">target</span></em>, <em class="sig-param"><span class="n">name</span><span class="o">=</span><span class="default_value">'value'</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/cleaning/term.html#Term.validate_float"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#covsirphy.cleaning.term.Term.validate_float" title="Permalink to this definition">¶</a></dt>
+<dd><p>Validate a float value.
+If the value is a float value and the type was string,
+it will be converted to a float.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>target</strong> (<em>float</em><em> or </em><em>str</em>) – value to validate</p></li>
+<li><p><strong>name</strong> (<em>str</em>) – argument name of the value</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>as-is the target</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>(float)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
 <dt id="covsirphy.cleaning.term.Term.validate_instance">
 <em class="property">static </em><code class="sig-name descname">validate_instance</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">target</span></em>, <em class="sig-param"><span class="n">class_obj</span></em>, <em class="sig-param"><span class="n">name</span><span class="o">=</span><span class="default_value">'target'</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/cleaning/term.html#Term.validate_instance"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#covsirphy.cleaning.term.Term.validate_instance" title="Permalink to this definition">¶</a></dt>
 <dd><p>Validate the target is a instance of the class object.</p>
@@ -1348,9 +1409,9 @@ province (str): province name</p>
 <dl class="py method">
 <dt id="covsirphy.cleaning.term.Term.validate_natural_int">
 <em class="property">static </em><code class="sig-name descname">validate_natural_int</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">target</span></em>, <em class="sig-param"><span class="n">name</span><span class="o">=</span><span class="default_value">'number'</span></em>, <em class="sig-param"><span class="n">include_zero</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/cleaning/term.html#Term.validate_natural_int"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#covsirphy.cleaning.term.Term.validate_natural_int" title="Permalink to this definition">¶</a></dt>
-<dd><p>Validate the natural (non-negative) number.
-If the value is natural number and the type was float,
-will be converted to an integer.</p>
+<dd><p>Validate a natural (non-negative) number.
+If the value is a natural number and the type was float or string,
+it will be converted to an integer.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">

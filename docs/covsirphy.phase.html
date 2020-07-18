@@ -434,7 +434,7 @@
 <span id="covsirphy-phase-sr-change"></span><h2>covsirphy.phase.sr_change<a class="headerlink" href="#module-covsirphy.phase.sr_change" title="Permalink to this headline">¶</a></h2>
 <dl class="py class">
 <dt id="covsirphy.phase.sr_change.ChangeFinder">
-<em class="property">class </em><code class="sig-prename descclassname">covsirphy.phase.sr_change.</code><code class="sig-name descname">ChangeFinder</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">jhu_data</span></em>, <em class="sig-param"><span class="n">population</span></em>, <em class="sig-param"><span class="n">country</span></em>, <em class="sig-param"><span class="n">province</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">population_change_dict</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/phase/sr_change.html#ChangeFinder"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#covsirphy.phase.sr_change.ChangeFinder" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">covsirphy.phase.sr_change.</code><code class="sig-name descname">ChangeFinder</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">jhu_data</span></em>, <em class="sig-param"><span class="n">population</span></em>, <em class="sig-param"><span class="n">country</span></em>, <em class="sig-param"><span class="n">province</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">population_change_dict</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">min_size</span><span class="o">=</span><span class="default_value">7</span></em>, <em class="sig-param"><span class="n">max_rmsle</span><span class="o">=</span><span class="default_value">20.0</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/phase/sr_change.html#ChangeFinder"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#covsirphy.phase.sr_change.ChangeFinder" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="covsirphy.cleaning.html#covsirphy.cleaning.term.Term" title="covsirphy.cleaning.term.Term"><code class="xref py py-class docutils literal notranslate"><span class="pre">covsirphy.cleaning.term.Term</span></code></a></p>
 <p>Find change points of S-R trend.</p>
 <dl class="field-list simple">
@@ -447,9 +447,13 @@
 <li><p><strong>population_change_dict</strong> (<em>dict</em>) – dictionary of total population
 - key (str): start date of population change
 - value (int or None): total population</p></li>
+<li><p><strong>min_size</strong> (<em>int</em>) – minimum value of phase length [days], over 2</p></li>
+<li><p><strong>max_rmsle</strong> (<em>float</em>) – minmum value of RMSLE score</p></li>
 </ul>
 </dd>
 </dl>
+<p class="rubric">Notes</p>
+<p>When RMSLE score &gt; max_rmsle, predicted values will be None</p>
 <dl class="py method">
 <dt id="covsirphy.phase.sr_change.ChangeFinder.get_dates">
 <code class="sig-name descname">get_dates</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">sr_df</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/phase/sr_change.html#ChangeFinder.get_dates"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#covsirphy.phase.sr_change.ChangeFinder.get_dates" title="Permalink to this definition">¶</a></dt>
@@ -479,8 +483,12 @@
 <dl class="py method">
 <dt id="covsirphy.phase.sr_change.ChangeFinder.run">
 <code class="sig-name descname">run</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/phase/sr_change.html#ChangeFinder.run"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#covsirphy.phase.sr_change.ChangeFinder.run" title="Permalink to this definition">¶</a></dt>
-<dd><p>Run optimization and find change points.
-:returns: self</p>
+<dd><p>Run optimization and find change points.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>self</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py method">
@@ -529,6 +537,29 @@
 <dt id="covsirphy.phase.trend.Trend.result">
 <code class="sig-name descname">result</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/phase/trend.html#Trend.result"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#covsirphy.phase.trend.Trend.result" title="Permalink to this definition">¶</a></dt>
 <dd><p>Show the result as a dataframe.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p><p>results of fitting</p>
+<blockquote>
+<div><dl class="simple">
+<dt>Index:</dt><dd><ul class="simple">
+<li><p>index (Date) (pd.TimeStamp): Observation date</p></li>
+</ul>
+</dd>
+<dt>Columns:</dt><dd><ul class="simple">
+<li><p>Recovered: The number of recovered cases</p></li>
+<li><p>Susceptible_actual: Actual values of Susceptible</p></li>
+<li><p>columns defined by &#64;columns</p></li>
+</ul>
+</dd>
+</dl>
+</div></blockquote>
+</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>(pandas.DataFrame)</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py method">
@@ -566,7 +597,7 @@
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>result_df</strong> (<em>pandas.DataFrame</em>) – <p>training dataset</p>
+<li><p><strong>result_df</strong> (<em>pandas.DataFrame</em>) – <p>results of fitting</p>
 <dl class="simple">
 <dt>Index:</dt><dd><ul>
 <li><p>index (Date) (pd.TimeStamp): Observation date</p></li>
@@ -575,7 +606,7 @@
 <dt>Columns:</dt><dd><ul>
 <li><p>Recovered: The number of recovered cases</p></li>
 <li><p>Susceptible_actual: Actual values of Susceptible</p></li>
-<li><p>columns defined by &#64;columns</p></li>
+<li><p>columns defined by &#64;predicted_cols</p></li>
 </ul>
 </dd>
 </dl>

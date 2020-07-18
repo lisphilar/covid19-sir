@@ -354,6 +354,7 @@ The start date is the next date of the last registered phase.</p>
 <li><p>If &#64;model is None, the model of the last phase will be used.</p></li>
 <li><p>Tau will be fixed as the last phase’s value.</p></li>
 <li><p>kwargs: Default values are the parameter values of the last phase.</p></li>
+<li><p>If &#64;end_date and &#64;days are None, the end date will be the last date of the records.</p></li>
 </ul>
 </dd></dl>
 
@@ -550,6 +551,26 @@ The start date is the next date of the last registered phase.</p>
 </dd></dl>
 
 <dl class="py method">
+<dt id="covsirphy.analysis.scenario.Scenario.remove">
+<code class="sig-name descname">remove</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">name</span><span class="o">=</span><span class="default_value">'Main'</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/analysis/scenario.html#Scenario.remove"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#covsirphy.analysis.scenario.Scenario.remove" title="Permalink to this definition">¶</a></dt>
+<dd><p>Remove phase information.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>name</strong> (<em>str</em>) – phase series name
+- if ‘Main’, main phase series will be used
+- if not registered, new phaseseries will be created</p></li>
+<li><p><strong>include_past</strong> (<em>bool</em>) – <ul>
+<li><p>if True, include past phases.</p></li>
+<li><p>future phase are always included</p></li>
+</ul>
+</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
 <dt id="covsirphy.analysis.scenario.Scenario.simulate">
 <code class="sig-name descname">simulate</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">name</span><span class="o">=</span><span class="default_value">'Main'</span></em>, <em class="sig-param"><span class="n">y0_dict</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">show_figure</span><span class="o">=</span><span class="default_value">True</span></em>, <em class="sig-param"><span class="n">filename</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/analysis/scenario.html#Scenario.simulate"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#covsirphy.analysis.scenario.Scenario.simulate" title="Permalink to this definition">¶</a></dt>
 <dd><p>Simulate ODE models with set parameter values and show it as a figure.</p>
@@ -627,7 +648,7 @@ The start date is the next date of the last registered phase.</p>
 <li><p><strong>include_init_phase</strong> (<em>bool</em>) – whether use initial phase or not</p></li>
 <li><p><strong>show_figure</strong> (<em>bool</em>) – if True, show the result as a figure</p></li>
 <li><p><strong>filename</strong> (<em>str</em>) – filename of the figure, or None (show figure)</p></li>
-<li><p><strong>kwargs</strong> – the other keyword arguments will be ignored.</p></li>
+<li><p><strong>kwargs</strong> – keyword arguments of ChangeFinder()</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
