@@ -185,6 +185,22 @@ class Scenario(Term):
             self.series_dict[name] = copy.deepcopy(self.series_dict[self.MAIN])
         self.series_dict[name].clear(include_past=include_past)
 
+    def remove(self, name="Main"):
+        """
+        Clear phase information.
+
+        Args:
+            name (str): phase series name
+                - if 'Main', main phase series will be used
+                - if not registered, new phaseseries will be created
+            include_past (bool):
+                - if True, include past phases.
+                - future phase are always included
+        """
+        self.clear(name=name, include_past=True)
+        # Delete 0th phase
+        self.series_dict[name].delete(phase="0th")
+
     def summary(self, name=None):
         """
         Summarize the series of phases and return a dataframe.
