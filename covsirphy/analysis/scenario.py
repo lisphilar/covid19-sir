@@ -249,7 +249,7 @@ class Scenario(Term):
             include_init_phase (bool): whether use initial phase or not
             show_figure (bool): if True, show the result as a figure
             filename (str): filename of the figure, or None (show figure)
-            kwargs: the other keyword arguments will be ignored.
+            kwargs: keyword arguments of ChangeFinder()
 
         Returns:
             None
@@ -259,7 +259,8 @@ class Scenario(Term):
         """
         finder = ChangeFinder(
             self.jhu_data, self.population,
-            country=self.country, province=self.province
+            country=self.country, province=self.province,
+            **kwargs
         )
         if "n_points" in kwargs.keys():
             raise ValueError(
