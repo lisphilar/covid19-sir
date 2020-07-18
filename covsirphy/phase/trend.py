@@ -40,37 +40,25 @@ class Trend(Term):
             )
             jhu_data = JHUData.from_dataframe(jhu_data)
         jhu_data = self.validate_instance(jhu_data, JHUData, name="jhu_data")
+        # Arguments
+        self.population = self.validate_natural_int(population, "population")
+        self.area = JHUData.area_name(country, province)
         # Dataset for analysis
-        # Index: Date(pd.TimeStamp): Observation date
-        # Columns: Recovered (int), Susceptible_actual (int)
-        sr_df = jhu_data.subset(
+        self.sr_df = jhu_data.to_sr(
             country=country, province=province, population=population,
             start_date=start_date, end_date=end_date
         )
-        sr_df = sr_df.set_index(self.DATE)
-        sr_df = sr_df.loc[:, [self.R, self.S]]
-        sr_df = sr_df.rename({self.S: f"{self.S}{self.A}"}, axis=1)
-        self.sr_df = sr_df.copy()
-        # Arguments
-        self.population = population
-        self.area = JHUData.area_name(country, province)
+        # Start/end date
+        date_objects = self.sr_df.index.copy()
+        first_obj, last_obj = date_objects.min(), date_objects.max()
+        self.start_date = (
+            self.date_obj(start_date) or first_obj
+        ).strftime(self.DATE_FORMAT)
+        self.end_date = (
+            self.date_obj(end_date) or last_obj
+        ).strftime(self.DATE_FORMAT)
+        # Setting for analysis
         self.result_df = None
-        # Start date
-        self.start_date = self.sr_df.index.min()
-        if start_date is not None:
-            self.start_date = max(
-                self.start_date,
-                datetime.strptime(start_date, self.DATE_FORMAT)
-            )
-        self.start_date = self.start_date.strftime(self.DATE_FORMAT)
-        # End date
-        self.end_date = self.sr_df.index.max()
-        if end_date is not None:
-            self.end_date = min(
-                self.end_date,
-                datetime.strptime(end_date, self.DATE_FORMAT)
-            )
-        self.end_date = self.end_date.strftime(self.DATE_FORMAT)
 
     def analyse(self):
         """
@@ -78,38 +66,36 @@ class Trend(Term):
         """
         self.result_df = self._fitting(self.sr_df)
 
-    def _fitting(self, train_df):
+    def _fitting(self, sr_df):
         """
         Perform curve fitting of S-R trend
             with negative exponential function.
 
         Args:
-        @train_df (pandas.DataFrame): training dataset
-
-            Index:
-                - index (Date) (pd.TimeStamp): Observation date
-            Columns:
-                - Recovered: The number of recovered cases
-                - Susceptible_actual: Actual data of Susceptible
+            sr_df (pandas.DataFrame): training dataset
+                Index:
+                    - index (Date) (pd.TimeStamp): Observation date
+                Columns:
+                    - Recovered: The number of recovered cases
+                    - Susceptible: Actual data of Susceptible
 
         Returns:
             (pandas.DataFrame)
                 Index:
                     - index (Date) (pd.TimeStamp): Observation date
                 Columns:
-                    - Recovered: The number of recovered cases
-                    - Susceptible_actual: Actual values of Susceptible
-                    - Susceptible_predicted: Predicted values of Susceptible
+                    - Recovered (int): The number of recovered cases
+                    - Susceptible_actual (int): Actual values of Susceptible
+                    - Susceptible_predicted (int): Predicted values of Susceptible
         """
-        df = train_df.copy()
+        if len(sr_df) < 2:
+            raise ValueError("The length of @sr_df must be over 2.")
+        df = sr_df.rename({self.S: f"{self.S}{self.A}"}, axis=1)
         # Calculate initial values of parameters
         x_series = df[self.R]
         y_series = df[f"{self.S}{self.A}"]
         a_ini = y_series.max()
-        try:
-            b_ini = y_series.diff().reset_index(drop=True)[1] / a_ini
-        except KeyError:
-            raise KeyError("The length of @train_df must be over 2.")
+        b_ini = y_series.diff().reset_index(drop=True)[1] / a_ini
         # Curve fitting with negative exponential function
         warnings.simplefilter("ignore", OptimizeWarning)
         warnings.simplefilter("ignore", RuntimeWarning)
@@ -121,9 +107,7 @@ class Trend(Term):
         f_partial = functools.partial(
             self.negative_exp, a=param[0], b=param[1]
         )
-        df[f"{self.S}{self.P}"] = x_series.apply(
-            lambda x: f_partial(x)
-        )
+        df[f"{self.S}{self.P}"] = x_series.apply(lambda x: f_partial(x))
         df = df.astype(np.int64, errors="ignore")
         return df
 

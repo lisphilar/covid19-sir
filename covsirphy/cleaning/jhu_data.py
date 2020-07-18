@@ -160,14 +160,13 @@ class JHUData(CleaningBase):
             return country
         return f"{country}{cls.SEP}{province}"
 
-    def _subset_area(self, country, province=None, population=None):
+    def _subset_area(self, country, province=None):
         """
         Return the subset in the area.
 
         Args:
             country (str): country name
             province (str or None): province name
-            population (int or None): population value
 
         Returns:
             (pandas.DataFrame)
@@ -179,20 +178,13 @@ class JHUData(CleaningBase):
                     - Infected (int): the number of currently infected cases
                     - Fatal (int): the number of fatal cases
                     - Recovered (int): the number of recovered cases (> 0)
-                    - Susceptible (int): the number of susceptible cases, if calculated
 
         Notes:
-            If @population is not None, the number of susceptible cases will be calculated.
             Records with Recovered > 0 will be selected.
         """
         df = self._cleaned_df.copy()
         df = df.loc[df[self.COUNTRY] == country, :]
         province = province or self.UNKNOWN
-        # Calculate Susceptible if population value was applied
-        if population is not None:
-            population = self.validate_natural_int(
-                population, name="population")
-            df[self.S] = population - df[self.C]
         # Check the country was registered
         if df.empty:
             raise KeyError(
@@ -251,15 +243,49 @@ class JHUData(CleaningBase):
             Records with Recovered > 0 will be selected.
         """
         # Subset with area
-        df = self._subset_area(
-            country, province=province, population=population
-        )
+        df = self._subset_area(country, province=province)
         # Subset with Start/end date
         series = df[self.DATE].copy()
         start_obj = self.to_date_obj(date_str=start_date, default=series.min())
         end_obj = self.to_date_obj(date_str=end_date, default=series.max())
         df = df.loc[(start_obj <= series) & (series <= end_obj), :]
+        # Calculate Susceptible if population value was applied
+        if population is not None:
+            population = self.validate_natural_int(
+                population, name="population")
+            df[self.S] = population - df[self.C]
         return df
+
+    def to_sr(self, country, province=None,
+              start_date=None, end_date=None, population=None):
+        """
+
+        Args:
+            country (str): country name
+            province (str): province name
+            start_date (str or None): start date, like 22Jan2020
+            end_date (str or None): end date, like 01Feb2020
+            population (int): population value
+
+        Returns:
+            (pandas.DataFrame)
+                Index:
+                    Date (pd.TimeStamp): Observation date
+                Columns:
+                    - Recovered (int): the number of recovered cases (> 0)
+                    - Susceptible (int): the number of susceptible cases, if calculated
+
+        Notes:
+            @population must be specified.
+            Records with Recovered > 0 will be used.
+        """
+        population = self.validate_natural_int(population, "population")
+        subset_df = self.subset(
+            country=country, province=province,
+            start_date=start_date, end_date=end_date, population=population
+        )
+        sr_df = subset_df.set_index(self.DATE).loc[:, [self.R, self.S]]
+        return sr_df
 
     @classmethod
     def from_dataframe(cls, dataframe):

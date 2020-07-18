@@ -39,41 +39,45 @@ class ChangeFinder(Term):
         self.jhu_data = self.validate_instance(
             jhu_data, JHUData, name="jhu_data"
         )
-        # Dataset for analysis
-        # Index: Date(pd.TimeStamp): Observation date
-        # Columns: Recovered (int), Susceptible_actual (int)
-        sr_df = jhu_data.subset(
-            country=country, province=province, population=population
-        )
-        sr_df = sr_df.set_index(self.DATE)
-        sr_df = sr_df.loc[:, [self.R, self.S]]
-        sr_df = sr_df.rename({self.S: f"{self.S}{self.A}"}, axis=1)
-        self.sr_df = sr_df.copy()
-        self.dates = self.get_dates(self.sr_df)
-        # Arguments
+        # Area
         self.country = country
-        self.province = province
-        self.area = JHUData.area_name(country, province)
-        self.pop_dict = self._read_population_data(
-            self.dates, population, population_change_dict
+        self.province = province or self.UNKNOWN
+        self.area = JHUData.area_name(country, self.province)
+        # Dataset for analysis
+        self.population = self.validate_natural_int(
+            population, name="population")
+        self.sr_df = jhu_data.to_sr(
+            country=self.country, province=self.province, population=self.population
         )
-        self.population = population
+        self.dates = self.get_dates(self.sr_df)
+        if len(self.dates) <= 6:
+            raise ValueError("More than 6 records must be included.")
+        # Population
+        self.pop_dict = self._read_population_data(
+            self.dates, self.population, population_change_dict
+        )
         # Setting for optimization
         self.change_dates = list()
 
-    def run(self):
+    def run(self, min_size=7):
         """
         Run optimization and find change points.
+
+        Args:
+            min_size (int): minimum value of phase length [days], over 2
+
         Returns:
             self
         """
-        delta_days = timedelta(days=2)
-        first_obj = self.to_date_obj(self.dates[0])
-        last_obj = self.to_date_obj(self.dates[-1])
-        if first_obj >= last_obj - delta_days:
-            raise ValueError("More than 2 records must be included.")
-        # Convert the dataset, index: Recovered, column: Susceptible
-        sr_df = self.sr_df.rename({f"{self.S}{self.A}": self.S}, axis=1)
+        min_size = self.validate_natural_int(min_size, "min_size")
+        if min_size < 3:
+            raise ValueError(
+                f"@min_size must be over 2, but {min_size} was applied.")
+        if len(self.dates) < min_size * 2:
+            raise ValueError(
+                f"More than {min_size * 2} records must be included.")
+        # Convert the dataset, index: Recovered, column: log10(Susceptible)
+        sr_df = self.sr_df.copy()
         sr_df[self.S] = np.log10(sr_df[self.S])
         df = sr_df.pivot_table(index=self.R, values=self.S, aggfunc="last")
         # Convert index to serial numbers
@@ -103,12 +107,15 @@ class ChangeFinder(Term):
             on=self.S, direction="nearest"
         )
         found_list = df[self.DATE].sort_values()[:-1]
-        # Only use dates when the previous phase has more than 3 days
+        # Only use dates when the previous phase has more than {min_size + 1} days
+        delta_days = timedelta(days=min_size)
+        first_obj = self.to_date_obj(self.dates[0])
+        last_obj = self.to_date_obj(self.dates[-1])
         effective_list = [first_obj]
         for found in found_list:
             if effective_list[-1] + delta_days < found:
                 effective_list.append(found)
-        # The last change date must be under the last date of records - 2 days
+        # The last change date must be under the last date of records {- min_size} days
         if effective_list[-1] >= last_obj - delta_days:
             effective_list = effective_list[:-1]
         # Set change points

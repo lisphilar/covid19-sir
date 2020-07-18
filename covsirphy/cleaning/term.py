@@ -103,11 +103,16 @@ class Term(object):
         Convert a string to a datetime object.
 
         Args:
-            date_str (str): date, like 22Jan2020
+            date_str (str or None): date, like 22Jan2020
 
         Returns:
-            (datetime.datetime)
+            (datetime.datetime or None): datetime object
+
+        Notes:
+            If @date_str is None, None will be returned.
         """
+        if date_str is None:
+            return None
         obj = datetime.strptime(date_str, cls.DATE_FORMAT)
         return obj
 
