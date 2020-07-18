@@ -24,10 +24,11 @@ class ChangeFinder(Term):
         population_change_dict (dict): dictionary of total population
             - key (str): start date of population change
             - value (int or None): total population
+        min_size (int): minimum value of phase length [days], over 2
     """
 
     def __init__(self, jhu_data, population, country, province=None,
-                 population_change_dict=None):
+                 population_change_dict=None, min_size=7):
         # Dataset
         if isinstance(jhu_data, pd.DataFrame):
             warnings.warn(
@@ -43,6 +44,8 @@ class ChangeFinder(Term):
         self.country = country
         self.province = province or self.UNKNOWN
         self.area = JHUData.area_name(country, self.province)
+        # Minimum size of records
+        self.min_size = self.validate_natural_int(min_size, "min_size")
         # Dataset for analysis
         self.population = self.validate_natural_int(
             population, name="population")
@@ -50,8 +53,13 @@ class ChangeFinder(Term):
             country=self.country, province=self.province, population=self.population
         )
         self.dates = self.get_dates(self.sr_df)
-        if len(self.dates) <= 6:
-            raise ValueError("More than 6 records must be included.")
+        # Check length of records
+        if self.min_size < 3:
+            raise ValueError(
+                f"@min_size must be over 2, but {min_size} was applied.")
+        if len(self.dates) < self.min_size * 2:
+            raise ValueError(
+                f"More than {min_size * 2} records must be included.")
         # Population
         self.pop_dict = self._read_population_data(
             self.dates, self.population, population_change_dict
@@ -63,19 +71,9 @@ class ChangeFinder(Term):
         """
         Run optimization and find change points.
 
-        Args:
-            min_size (int): minimum value of phase length [days], over 2
-
         Returns:
             self
         """
-        min_size = self.validate_natural_int(min_size, "min_size")
-        if min_size < 3:
-            raise ValueError(
-                f"@min_size must be over 2, but {min_size} was applied.")
-        if len(self.dates) < min_size * 2:
-            raise ValueError(
-                f"More than {min_size * 2} records must be included.")
         # Convert the dataset, index: Recovered, column: log10(Susceptible)
         sr_df = self.sr_df.copy()
         sr_df[self.S] = np.log10(sr_df[self.S])
@@ -94,7 +92,7 @@ class ChangeFinder(Term):
         )
         series = series[samples]
         # Detection with Ruptures
-        algorithm = rpt.Pelt(model="rbf", jump=2, min_size=min_size)
+        algorithm = rpt.Pelt(model="rbf", jump=2, min_size=self.min_size)
         results = algorithm.fit_predict(series.values, pen=0.5)
         # Convert index values to Susceptible values
         reset_series = series.reset_index(drop=True)
@@ -108,7 +106,7 @@ class ChangeFinder(Term):
         )
         found_list = df[self.DATE].sort_values()[:-1]
         # Only use dates when the previous phase has more than {min_size + 1} days
-        delta_days = timedelta(days=min_size)
+        delta_days = timedelta(days=self.min_size)
         first_obj = self.to_date_obj(self.dates[0])
         last_obj = self.to_date_obj(self.dates[-1])
         effective_list = [first_obj]
@@ -252,13 +250,12 @@ class ChangeFinder(Term):
                 - value (int): total population on the date
         """
         change_dict = dict() if change_dict is None else change_dict.copy()
-        population_now = population
-        pop_dict = dict()
-        for date in dates:
-            if date in change_dict.keys():
-                population_now = change_dict[date]
-            pop_dict[date] = population_now
-        return pop_dict
+        population_dict = {
+            date: change_dict[date] if date in change_dict.keys(
+            ) else population
+            for date in dates
+        }
+        return population_dict
 
     def _phase_range(self, change_dates):
         """
