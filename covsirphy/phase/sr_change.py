@@ -94,7 +94,7 @@ class ChangeFinder(Term):
         )
         series = series[samples]
         # Detection with Ruptures
-        algorithm = rpt.Pelt(model="rbf", jump=2, min_size=6)
+        algorithm = rpt.Pelt(model="rbf", jump=2, min_size=min_size)
         results = algorithm.fit_predict(series.values, pen=0.5)
         # Convert index values to Susceptible values
         reset_series = series.reset_index(drop=True)
