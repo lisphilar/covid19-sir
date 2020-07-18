@@ -128,6 +128,7 @@ class Scenario(Term):
             - If @model is None, the model of the last phase will be used.
             - Tau will be fixed as the last phase's value.
             - kwargs: Default values are the parameter values of the last phase.
+            - If @end_date and @days are None, the end date will be the last date of the records.
         """
         # Parse arguments
         name = self.MAIN if name == "Main" else name
@@ -137,11 +138,12 @@ class Scenario(Term):
         start_date = self.series_dict[name].next_date()
         if end_date is None:
             if days is None:
-                raise NameError("@end_date or @days must be specified.")
-            if not isinstance(days, int):
+                end_date = self.last_date
+            elif not isinstance(days, int):
                 raise TypeError("@days must be an integer.")
-            end_obj = self.date_obj(start_date) + timedelta(days=days)
-            end_date = end_obj.strftime(self.DATE_FORMAT)
+            else:
+                end_obj = self.date_obj(start_date) + timedelta(days=days)
+                end_date = end_obj.strftime(self.DATE_FORMAT)
         population = population or self.population
         summary_df = self.series_dict[name].summary()
         if model is None:
@@ -187,7 +189,7 @@ class Scenario(Term):
 
     def remove(self, name="Main"):
         """
-        Clear phase information.
+        Remove phase information.
 
         Args:
             name (str): phase series name

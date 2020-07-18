@@ -31,3 +31,20 @@ class TestScenario(object):
         assert isinstance(summary_df, pd.DataFrame)
         desc_df = scenario.describe()
         assert isinstance(desc_df, pd.DataFrame)
+
+    def test_add_past_phases(self, jhu_data, population_data):
+        scenario = Scenario(jhu_data, population_data, country="Italy")
+        # With specified end date
+        scenario.remove()
+        scenario.add_phase(end_date="01May2020")
+        scenario.add_phase(end_date="01Jun2020")
+        date_df = scenario.summary()
+        scenario.add_phase()
+        assert len(date_df) == 3
+        # with specified length of the phase
+        scenario.remove()
+        scenario.add_phase(days=30)
+        scenario.add_phase(days=30)
+        scenario.add_phase()
+        length_df = scenario.summary()
+        assert len(length_df) == 3
