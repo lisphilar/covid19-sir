@@ -47,6 +47,8 @@ class Trend(Term):
             country=country, province=province, population=population,
             start_date=start_date, end_date=end_date
         )
+        if len(self.sr_df) < 3:
+            raise ValueError("The length of @sr_df must be over 2.")
         # Start/end date
         date_objects = self.sr_df.index.copy()
         first_obj, last_obj = date_objects.min(), date_objects.max()
@@ -87,8 +89,6 @@ class Trend(Term):
                     - Susceptible_actual (int): Actual values of Susceptible
                     - Susceptible_predicted (int): Predicted values of Susceptible
         """
-        if len(sr_df) < 2:
-            raise ValueError("The length of @sr_df must be over 2.")
         df = sr_df.rename({self.S: f"{self.S}{self.A}"}, axis=1)
         # Calculate initial values of parameters
         x_series = df[self.R]
@@ -117,14 +117,11 @@ class Trend(Term):
         Returns:
             (float): RMSLE score
         """
-        df = self.result_df.copy()
-        if df is None:
+        if self.result_df is None:
             raise NameError("Must perform Trend().analyse() in advance.")
-        df = df.replace(np.inf, 0)
+        df = self.result_df.replace(np.inf, 0)
         df = df.loc[df[f"{self.S}{self.A}"] > 0, :]
         df = df.loc[df[f"{self.S}{self.P}"] > 0, :]
-        if df.empty:
-            return np.inf
         actual = df[f"{self.S}{self.A}"]
         predicted = df[f"{self.S}{self.P}"]
         # Calculate RMSLE score
@@ -136,6 +133,17 @@ class Trend(Term):
     def result(self):
         """
         Show the result as a dataframe.
+
+        Returns:
+            (pandas.DataFrame): results of fitting
+
+                Index:
+                    - index (Date) (pd.TimeStamp): Observation date
+                Columns:
+                    - Recovered: The number of recovered cases
+                    - Susceptible_actual: Actual values of Susceptible
+                    - columns defined by @columns
+
         """
         return self.result_df
 
@@ -148,6 +156,8 @@ class Trend(Term):
             filename (str): filename of the figure, or None (show figure)
         """
         df = self.result()
+        if df is None:
+            raise NameError("Must perform Trend().analyse() in advance.")
         df["Predicted"] = df[f"{self.S}{self.P}"]
         title = f"{self.area}: S-R trend from {self.start_date} to {self.end_date}"
         self.show_with_many(
@@ -163,23 +173,24 @@ class Trend(Term):
         show the result as a figure.
 
         Args:
-            result_df (pandas.DataFrame): training dataset
+            result_df (pandas.DataFrame): results of fitting
 
                 Index:
                     - index (Date) (pd.TimeStamp): Observation date
                 Columns:
                     - Recovered: The number of recovered cases
                     - Susceptible_actual: Actual values of Susceptible
-                    - columns defined by @columns
+                    - columns defined by @predicted_cols
             predicted_cols (list[str]): list of columns which have predicted values
             title (str): title of the figure
             vlines (list[int]): list of Recovered values to show vertical lines
             filename (str): filename of the figure, or None (show figure)
         """
-        df = result_df.copy()
-        df = df.replace(np.inf, np.nan)
-        if df is None:
-            raise NameError("Must perform Trend().analyse() in advance.")
+        result_df = cls.validate_dataframe(
+            result_df, name="result_df", time_index=True,
+            columns=[cls.R, f"{cls.S}{cls.A}", *predicted_cols]
+        )
+        df = result_df.replace(np.inf, np.nan)
         x_series = df[cls.R]
         actual = df[f"{cls.S}{cls.A}"]
         # Plot the actual values
