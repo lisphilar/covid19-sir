@@ -92,4 +92,5 @@ clean:
 	@rm -rf example/output
 	@rm -rf dist covsirphy.egg-info
 	@rm -f README.rst
+	@rm -f .coverage*
 	@pipenv clean || true
