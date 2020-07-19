@@ -262,7 +262,7 @@ class Estimator(Optimizer):
                 for (p, diff, numerator)
                 in zip(self.model.PRIORITIES, diffs, numerators)
             )
-        except ZeroDivisionError:
+        except (ZeroDivisionError, TypeError):
             return np.inf
         return score
 
