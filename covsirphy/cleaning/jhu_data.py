@@ -42,7 +42,9 @@ class JHUData(CleaningBase):
         if "population" in kwargs.keys():
             raise KeyError(
                 "@population was removed in JHUData.cleaned(). Please use JHUData.subset()")
-        return self._cleaned_df
+        df = self._cleaned_df.copy()
+        df = df.loc[:, self.COLUMNS]
+        return df
 
     def cleaning(self):
         """
@@ -55,6 +57,7 @@ class JHUData(CleaningBase):
                     reset index
                 Columns:
                     - Date (pd.TimeStamp): Observation date
+                    - ISO3 (str): ISO3 code
                     - Country (str): country/region name
                     - Province (str): province/prefecture/state name
                     - Confirmed (int): the number of confirmed cases
@@ -62,7 +65,7 @@ class JHUData(CleaningBase):
                     - Fatal (int): the number of fatal cases
                     - Recovered (int): the number of recovered cases
         """
-        df = self._raw.copy()
+        df = super().cleaning()
         # Rename the columns
         df = df.rename(
             {
@@ -73,9 +76,12 @@ class JHUData(CleaningBase):
             },
             axis=1
         )
+        # ISO3 code
+        if self.ISO3 not in df.columns:
+            df[self.ISO3] = self.UNKNOWN
         # Confirm the expected columns are in raw data
         expected_cols = [
-            self.DATE, self.COUNTRY, self.PROVINCE, self.C, self.F, self.R
+            self.DATE, self.ISO3, self.COUNTRY, self.PROVINCE, self.C, self.F, self.R
         ]
         self.validate_dataframe(df, name="the raw data", columns=expected_cols)
         # Datetime columns
@@ -117,7 +123,7 @@ class JHUData(CleaningBase):
         # Values
         df[self.CI] = df[self.C] - df[self.F] - df[self.R]
         df[self.VALUE_COLUMNS] = df[self.VALUE_COLUMNS].astype(np.int64)
-        df = df.loc[:, self.COLUMNS].reset_index(drop=True)
+        df = df.loc[:, [self.ISO3, *self.COLUMNS]].reset_index(drop=True)
         return df
 
     def replace(self, country_data):
@@ -136,6 +142,7 @@ class JHUData(CleaningBase):
         # Read new dataset
         country = country_data.country
         new = country_data.cleaned()
+        new[self.ISO3] = self.country_to_iso3(country)
         # Remove the data in the country from JHU dataset
         df = self._cleaned_df.copy()
         df = df.loc[df[self.COUNTRY] != country, :]
@@ -144,84 +151,14 @@ class JHUData(CleaningBase):
         self._cleaned_df = df.copy()
         return self
 
-    @classmethod
-    def area_name(cls, country, province=None):
-        """
-        Return area name of the country/province.
-
-        Args:
-            country (str): country name
-            province (str): province name
-
-        Returns:
-            (str): area name
-        """
-        if province is None or province == cls.UNKNOWN:
-            return country
-        return f"{country}{cls.SEP}{province}"
-
-    def _subset_area(self, country, province=None):
-        """
-        Return the subset in the area.
-
-        Args:
-            country (str): country name
-            province (str or None): province name
-
-        Returns:
-            (pandas.DataFrame)
-                Index:
-                    reset index
-                Columns:
-                    - Date (pd.TimeStamp): Observation date
-                    - Confirmed (int): the number of confirmed cases
-                    - Infected (int): the number of currently infected cases
-                    - Fatal (int): the number of fatal cases
-                    - Recovered (int): the number of recovered cases (> 0)
-
-        Notes:
-            Records with Recovered > 0 will be selected.
-        """
-        df = self._cleaned_df.copy()
-        df = df.loc[df[self.COUNTRY] == country, :]
-        province = province or self.UNKNOWN
-        # Check the country was registered
-        if df.empty:
-            raise KeyError(
-                f"Records of {country} were not registered."
-            )
-        # Province was selected
-        if province != self.UNKNOWN:
-            if province in df[self.PROVINCE].unique():
-                df = df.loc[df[self.PROVINCE] == province, :]
-                df = df.groupby(self.DATE).last().reset_index()
-                df = df.drop([self.COUNTRY, self.PROVINCE], axis=1)
-                return df.loc[df[self.R] > 0, :]
-        # Province was not selected and COVID-19 Data Hub dataset
-        c_level_set = set(
-            df.loc[df[self.PROVINCE] == self.UNKNOWN, self.DATE].unique()
-        )
-        all_date_set = set(df[self.DATE].unique())
-        if c_level_set == all_date_set:
-            df = df.loc[df[self.PROVINCE] == self.UNKNOWN, :]
-            if df.empty:
-                raise KeyError(
-                    f"Records of {province} in {country} were not registered.")
-            df = df.groupby(self.DATE).last().reset_index()
-            df = df.drop([self.COUNTRY, self.PROVINCE], axis=1)
-            return df.loc[df[self.R] > 0, :]
-        # Province was not selected and Kaggle dataset
-        df = df.groupby(self.DATE).sum().reset_index()
-        return df.loc[df[self.R] > 0, :]
-
     def subset(self, country, province=None,
                start_date=None, end_date=None, population=None):
         """
         Return the subset of dataset.
 
         Args:
-            country (str): country name
-            province (str): province name
+            country (str): country name or ISO3 code
+            province (str or None): province name
             start_date (str or None): start date, like 22Jan2020
             end_date (str or None): end date, like 01Feb2020
             population (int or None): population value
@@ -242,13 +179,11 @@ class JHUData(CleaningBase):
             If @population is not None, the number of susceptible cases will be calculated.
             Records with Recovered > 0 will be selected.
         """
-        # Subset with area
-        df = self._subset_area(country, province=province)
-        # Subset with Start/end date
-        series = df[self.DATE].copy()
-        start_obj = self.to_date_obj(date_str=start_date, default=series.min())
-        end_obj = self.to_date_obj(date_str=end_date, default=series.max())
-        df = df.loc[(start_obj <= series) & (series <= end_obj), :]
+        # Subset with area and start/end date
+        df = super().subset(
+            country=country, province=province, start_date=start_date, end_date=end_date)
+        # Select records where Recovered > 0
+        df = df.loc[df[self.R] > 0, :]
         # Calculate Susceptible if population value was applied
         if population is not None:
             population = self.validate_natural_int(
@@ -302,3 +237,29 @@ class JHUData(CleaningBase):
         instance._cleaned_df = cls.validate_dataframe(
             dataframe, name="dataframe", columns=cls.COLUMNS)
         return instance
+
+    def total(self):
+        """
+        Return a dataframe to show chronological change of number and rates.
+
+        Returns:
+            (pandas.DataFrame): group-by Date, sum of the values
+
+                Index:
+                    Date (pd.TimeStamp): Observation date
+                Columns:
+                    - Confirmed (int): the number of confirmed cases
+                    - Infected (int): the number of currently infected cases
+                    - Fatal (int): the number of fatal cases
+                    - Recovered (int): the number of recovered cases
+                    - Fatal per Confirmed (int)
+                    - Recovered per Confirmed (int)
+                    - Fatal per (Fatal or Recovered) (int)
+        """
+        df = super().total()
+        total_series = df.sum(axis=1)
+        r_cols = self.RATE_COLUMNS[:]
+        df[r_cols[0]] = df[self.F] / total_series
+        df[r_cols[1]] = df[self.R] / total_series
+        df[r_cols[2]] = df[self.F] / (df[self.F] + df[self.R])
+        return df.loc[:, [*self.VALUE_COLUMNS, *r_cols]]
