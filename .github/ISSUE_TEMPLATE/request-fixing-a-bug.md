@@ -7,17 +7,15 @@ assignees: ''
 
 ---
 
-Summary:
+## Summary
 Please edit this to explain the summary of the bug.
 `` needs to return ... but returns ...
 
-CovsirPhy version 
-
-Related classes:
+## Related classes
 - `covsirphy.`
 (optional)
 
-Codes and outputs:
+## Codes and outputs:
 ```Python
 import covsirphy as cs
 # Dataset preparation
@@ -27,5 +25,8 @@ population_data = data_loader.population()
 ```
 This code returns 
 
-Environment:
-Python 3.8, pipenv, WSL.
+## Environment
+- CovsirPhy version: 
+- Python version; 3.8
+- Installation: pipenv
+- OS: Windows/WSL/Linux/MAC/Kaggle Notebook
