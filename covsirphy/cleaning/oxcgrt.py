@@ -81,12 +81,6 @@ class OxCGRTData(CleaningBase):
         df = df.loc[:, [self.DATE, self.COUNTRY, self.ISO3, *float_cols]]
         return df
 
-    def total(self):
-        """
-        Cannot be used.
-        """
-        raise AttributeError("This method is not defined.")
-
     def subset(self, country=None, iso3=None):
         """
         Create a subset for a country.
@@ -125,3 +119,12 @@ class OxCGRTData(CleaningBase):
         if not df.empty:
             return df
         raise KeyError(f"@country {country} is not included in the dataset.")
+
+    def total(self):
+        """
+        This is not defined for this child class.
+
+        Raises:
+            AttributeError: if called
+        """
+        raise AttributeError("OxCGRTData.total() is not defined.")

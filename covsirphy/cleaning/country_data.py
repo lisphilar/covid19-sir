@@ -110,8 +110,7 @@ class CountryData(CleaningBase):
     def cleaned(self):
         """
         Return the cleaned dataset.
-        Cleaning method is defined by self.cleaning() method.
-
+        Cleaning method is defined by CountryData.cleaning() method.
         Returns:
             (pandas.DataFrame):
                 Index:
@@ -127,3 +126,38 @@ class CountryData(CleaningBase):
         """
         self._cleaned_df = self.cleaning()
         return self._cleaned_df
+
+    def total(self):
+        """
+        Return a dataframe to show chronological change of number and rates.
+
+        Returns:
+            (pandas.DataFrame): group-by Date, sum of the values
+
+                Index:
+                    Date (pd.TimeStamp): Observation date
+                Columns:
+                    - Confirmed (int): the number of confirmed cases
+                    - Infected (int): the number of currently infected cases
+                    - Fatal (int): the number of fatal cases
+                    - Recovered (int): the number of recovered cases
+                    - Fatal per Confirmed (int)
+                    - Recovered per Confirmed (int)
+                    - Fatal per (Fatal or Recovered) (int)
+        """
+        df = self.cleaned()
+        # Calculate total values at country level if not registered
+        c_level_df = df.groupby(self.DATE).sum().reset_index()
+        c_level_df[self.PROVINCE] = self.UNKNOWN
+        df = pd.concat([df, c_level_df], axis=0, ignore_index=True)
+        df = df.drop_duplicates(subset=[self.DATE, self.PROVINCE])
+        df = df.loc[df[self.PROVINCE] == self.UNKNOWN, :]
+        df = df.drop([self.COUNTRY, self.PROVINCE], axis=1)
+        df = df.set_index(self.DATE)
+        # Calculate rates
+        total_series = df.sum(axis=1)
+        r_cols = self.RATE_COLUMNS[:]
+        df[r_cols[0]] = df[self.F] / total_series
+        df[r_cols[1]] = df[self.R] / total_series
+        df[r_cols[2]] = df[self.F] / (df[self.F] + df[self.R])
+        return df.loc[:, [*self.VALUE_COLUMNS, *r_cols]]

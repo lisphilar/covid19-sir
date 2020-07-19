@@ -82,7 +82,7 @@ class ChangeFinder(Term):
         """
         # Convert the dataset, index: Recovered, column: log10(Susceptible)
         sr_df = self.sr_df.copy()
-        sr_df[self.S] = np.log10(sr_df[self.S])
+        sr_df[self.S] = np.log10(sr_df[self.S].astype(np.float64))
         df = sr_df.pivot_table(index=self.R, values=self.S, aggfunc="last")
         # Convert index to serial numbers
         serial_df = pd.DataFrame(np.arange(1, df.index.max() + 1, 1))

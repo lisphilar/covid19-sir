@@ -24,15 +24,15 @@ class TestJHUData(object):
         local_file = str(local_path)
         jhu_data = data_loader.jhu(local_file=local_file)
         assert jhu_data.citation == str()
+        jhu_data.citation = "citation"
+        assert jhu_data.citation == "citation"
 
     def test_jhu_local_file_unexpected(self, data_loader):
         local_path = Path("input") / "covid_jpn_total.csv"
         with pytest.raises(Exception):
             data_loader.jhu(local_file=local_path)
 
-    def test_replace(self, data_loader):
-        jhu_data = data_loader.jhu()
-        japan_data = data_loader.japan()
+    def test_replace(self, jhu_data, japan_data):
         jhu_data.replace(japan_data)
         assert isinstance(jhu_data, JHUData)
         replaced_df = jhu_data.subset("Japan")
@@ -40,14 +40,28 @@ class TestJHUData(object):
         assert set(replaced_df.columns) == set(Term.NLOC_COLUMNS)
         assert len(replaced_df) == len(japan_df)
 
+    def test_cleaned(self, jhu_data):
+        with pytest.raises(ValueError):
+            jhu_data.cleaned(population=10000)
+
+    def test_iso3_to_country(self, jhu_data):
+        assert jhu_data.iso3_to_country("JPN") == "Japan"
+        assert jhu_data.iso3_to_country("Japan") == "Japan"
+        assert jhu_data.iso3_to_country("AAA") == "AAA"
+
+    def test_country_to_iso3(self, jhu_data):
+        assert jhu_data.country_to_iso3("Japan") == "JPN"
+        with pytest.raises(KeyError):
+            jhu_data.country_to_iso3("Country")
+
     def test_area_name(self, jhu_data):
         name_country = jhu_data.area_name("Japan")
         assert name_country == "Japan"
         name_with_province = jhu_data.area_name("Japan", province="Tokyo")
         assert name_with_province == "Japan/Tokyo"
 
-    def test_subset(self, data_loader):
-        jhu_data = data_loader.jhu()
+    def test_subset(self, jhu_data):
+        # With country name
         df = jhu_data.subset("Japan")
         assert isinstance(df, pd.DataFrame)
         assert set(df.columns) == set(Term.NLOC_COLUMNS)
@@ -63,6 +77,15 @@ class TestJHUData(object):
         # Calculate Susceptible with population value
         df = jhu_data.subset("Japan", population=125000000)
         assert set(df.columns) == set([*Term.NLOC_COLUMNS, Term.S])
+
+    def test_countries(self, jhu_data):
+        countries = jhu_data.countries()
+        assert isinstance(countries, list)
+
+    def test_total(self, jhu_data):
+        df = jhu_data.total()
+        assert set(df.columns) == set(
+            [*Term.VALUE_COLUMNS, *Term.RATE_COLUMNS])
 
 
 class TestJapanData(object):
@@ -88,6 +111,11 @@ class TestJapanData(object):
             warnings.filterwarnings("ignore", category=pd.errors.DtypeWarning)
             data_loader.japan(local_file=local_path)
 
+    def test_total(self, japan_data):
+        df = japan_data.total()
+        assert set(df.columns) == set(
+            [*Term.VALUE_COLUMNS, *Term.RATE_COLUMNS])
+
 
 class TestPopulationData(object):
     def test_population(self, data_loader):
@@ -98,6 +126,7 @@ class TestPopulationData(object):
         assert isinstance(df, pd.DataFrame)
         assert set(df.columns) == set(PopulationData.POPULATION_COLS)
         assert isinstance(population_data.to_dict(), dict)
+        assert isinstance(population_data.to_dict(country_level=False), dict)
         population_data.update(10_000, "Example")
         assert population_data.value("Example") == 10_000
         population_data.update(15_000, "Example")
@@ -115,8 +144,7 @@ class TestPopulationData(object):
         with pytest.raises(Exception):
             data_loader.population(local_file=local_path)
 
-    def test_population_value(self, data_loader):
-        population_data = data_loader.population()
+    def test_population_value(self, population_data):
         df = population_data.cleaned()
         if "JPN" in df["ISO3"].unique():
             assert isinstance(population_data.value("JPN"), int)
@@ -124,6 +152,10 @@ class TestPopulationData(object):
             with pytest.raises(KeyError):
                 population_data.value("JPN")
         assert isinstance(population_data.value("Japan"), int)
+
+    def test_total(self, population_data):
+        value = population_data.total()
+        assert isinstance(value, int)
 
 
 class TestOxCGRTData(object):
@@ -151,3 +183,7 @@ class TestOxCGRTData(object):
         local_path = Path("input") / "covid_jpn_total.csv"
         with pytest.raises(Exception):
             data_loader.oxcgrt(local_file=local_path)
+
+    def test_total(self, oxcgrt_data):
+        with pytest.raises(AttributeError):
+            oxcgrt_data.total()

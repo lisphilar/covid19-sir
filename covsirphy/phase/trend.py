@@ -90,6 +90,7 @@ class Trend(Term):
                     - Susceptible_predicted (int): Predicted values of Susceptible
         """
         df = sr_df.rename({self.S: f"{self.S}{self.A}"}, axis=1)
+        df = df.astype(np.float64)
         # Calculate initial values of parameters
         x_series = df[self.R]
         y_series = df[f"{self.S}{self.A}"]

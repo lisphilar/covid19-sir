@@ -47,7 +47,7 @@ Covsirphy is available at [PyPI (The Python Package Index): covsirphy](https://p
 ```
 pip install covsirphy --upgrade
 ```
-Main datasets will be retrieved via [COVID-19 Data Hub](https://covid19datahub.io/https://covid19datahub.io/) and the citation is  
+Main datasets will be retrieved via [COVID-19 Data Hub](https://covid19datahub.io/) and the citation is  
 Guidotti, E., Ardia, D., (2020), "COVID-19 Data Hub", Working paper, doi: 10.13140/RG.2.2.11649.81763.
 
 
