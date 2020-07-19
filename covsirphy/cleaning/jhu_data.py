@@ -40,7 +40,7 @@ class JHUData(CleaningBase):
                     - Recovered (int): the number of recovered cases
         """
         if "population" in kwargs.keys():
-            raise KeyError(
+            raise ValueError(
                 "@population was removed in JHUData.cleaned(). Please use JHUData.subset()")
         df = self._cleaned_df.copy()
         df = df.loc[:, self.COLUMNS]
@@ -136,9 +136,7 @@ class JHUData(CleaningBase):
         Returns:
             self
         """
-        if not isinstance(country_data, CountryData):
-            raise TypeError(
-                "Type of @country_data must be <covsirphy.CountryData>.")
+        self.validate_instance(country_data, CountryData, name="country_data")
         # Read new dataset
         country = country_data.country
         new = country_data.cleaned()

@@ -142,24 +142,8 @@ class PopulationData(CleaningBase):
         Returns:
             (int): population in the place
         """
-        cleaned_df = self._cleaned_df.copy()
-        iso_df = cleaned_df.loc[cleaned_df[self.ISO3] == country, :]
-        c_df = cleaned_df.loc[cleaned_df[self.COUNTRY] == country, :]
-        df = pd.concat([iso_df, c_df], axis=0)
-        if df.empty:
-            if list(cleaned_df[self.ISO3].unique()) == [self.UNKNOWN]:
-                raise KeyError(
-                    f"{country} is not registered. Please use registered country name.")
-            raise KeyError(
-                f"{country} is not registered. Please use ISO3 code as @country, like JPN.")
-        if province is None:
-            values = df.loc[df[self.PROVINCE] == self.UNKNOWN, self.N].values
-            return int(values[0])
-        if province not in df[self.PROVINCE].unique():
-            raise KeyError(
-                f"{province} is not registered as a province of {country}.")
-        values = df.loc[df[self.PROVINCE] == province, self.N].values
-        return int(values[0])
+        cell = self.subset(country=country, province=province)
+        return int(cell.values)
 
     def update(self, value, country, province="-"):
         """
