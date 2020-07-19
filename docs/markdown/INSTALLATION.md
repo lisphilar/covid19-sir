@@ -68,7 +68,7 @@ cd covid19-sir
 pip install wheel; pip install --upgrade pip; pip install pipenv
 export PIPENV_VENV_IN_PROJECT=true
 export PIPENV_TIMEOUT=7200
-pipenv install --dev
+pipenv sync --dev
 ```
 Developers can perform tests with `pipenv run pytest -v --durations=0 --failed-first --maxfail=1 --cov=covsirphy --cov-report=term-missing --profile-svg` and call graph will be saved as SVG file (prof/combined.svg).
 

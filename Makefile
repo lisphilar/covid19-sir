@@ -1,34 +1,41 @@
-.PHONY: install test-nosvg test docs only-sphinx example pypi test-pypi clean
-
+.PHONY: install
 install:
 	@pip install wheel; pip install --upgrade pip
 	@pip install pipenv
 	@export PIPENV_VENV_IN_PROJECT=true
 	@export PIPENV_TIMEOUT=7200
-	@pipenv lock
+	@pipenv sync --dev
+
+
+.PHONY: install-lock
+install-lock:
+	@pip install wheel; pip install --upgrade pip
+	@pip install pipenv
+	@export PIPENV_VENV_IN_PROJECT=true
+	@export PIPENV_TIMEOUT=7200
 	@pipenv install --dev
 
 
+.PHONY: test
 test:
 	@# sudo apt install graphviz
 	@pipenv run pytest -v --durations=0 --failed-first --maxfail=1 \
 	 --cov=covsirphy --cov-report=term-missing --profile-svg
 
+
+.PHONY: test-nosvg
 test-nosvg:
 	@pipenv run pytest -v --durations=0 --failed-first --maxfail=1 \
 	 --cov=covsirphy --cov-report=term-missing
 
 
 # https://github.com/sphinx-doc/sphinx/issues/3382
-docs:
+.PHONY: sphinx
+sphinx:
 	@# sudo apt install pandoc
 	@pandoc --from markdown --to rst README.md -o docs/README.rst
-	@pandoc --from markdown --to rst docs/markdown/INSTALLATION.md -o docs/INSTALLATION.rst
 	@pandoc --from markdown --to rst .github/CONTRIBUTING.md -o docs/CONTRIBUTING.rst
-	@rm -rf docs/_images
-	@rm -f docs/*ipynb
-	@pipenv run runipy example/usage_quick.ipynb docs/usage_quick.ipynb
-	@pipenv run runipy example/usage_quickest.ipynb docs/usage_quickest.ipynb
+	@pandoc --from markdown --to rst docs/markdown/INSTALLATION.md -o docs/INSTALLATION.rst
 	@sphinx-apidoc -o docs covsirphy
 	@cd docs; pipenv run make html; cp -a _build/html/. ../docs
 	@rm -rf docs/_modules
@@ -36,13 +43,16 @@ docs:
 
 
 # https://github.com/sphinx-doc/sphinx/issues/3382
-only-sphinx:
-	@sphinx-apidoc -o docs covsirphy
-	@cd docs; pipenv run make html; cp -a _build/html/. ../docs
-	@rm -rf docs/_modules
-	@rm -rf docs/_sources
+.PHONY: docs
+docs:
+	@rm -rf docs/_images
+	@rm -f docs/*ipynb
+	@pipenv run runipy example/usage_quick.ipynb docs/usage_quick.ipynb
+	@pipenv run runipy example/usage_quickest.ipynb docs/usage_quickest.ipynb
+	@make sphinx
 
 
+.PHONY: example
 example:
 	@# Data cleaning
 	@echo "<Data loading>"
@@ -69,6 +79,8 @@ example:
 	@echo "<Scenario analysis>"
 	@pipenv run python -m example.scenario_analysis
 
+
+.PHONY: pypi
 pypi:
 	@rm -rf covsirphy.egg-info/*
 	@rm -rf dist/*
@@ -76,6 +88,7 @@ pypi:
 	@pipenv run twine upload --repository pypi dist/*
 
 
+.PHONY: test-pypi
 test-pypi:
 	@pandoc --from markdown --to rst README.md -o README.rst
 	@rm -rf covsirphy.egg-info/*
@@ -84,6 +97,7 @@ test-pypi:
 	@pipenv run twine upload --repository testpypi dist/*
 
 
+.PHONY: clean
 clean:
 	@rm -rf input
 	@rm -rf prof
@@ -94,3 +108,8 @@ clean:
 	@rm -f README.rst
 	@rm -f .coverage*
 	@pipenv clean || true
+
+
+.PHONY: update
+update:
+	@pipenv update
