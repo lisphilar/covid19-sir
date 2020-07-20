@@ -49,6 +49,7 @@ docs:
 	@rm -f docs/*ipynb
 	@pipenv run runipy example/usage_quick.ipynb docs/usage_quick.ipynb
 	@pipenv run runipy example/usage_quickest.ipynb docs/usage_quickest.ipynb
+	@pipenv run runipy example/usage_set_phases.ipynb docs/usage_set_phases.ipynb
 	@make sphinx
 
 
