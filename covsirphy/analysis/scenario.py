@@ -48,20 +48,60 @@ class Scenario(Term):
         self.province = province or self.UNKNOWN
         self.area = JHUData.area_name(country, province)
         # First/last date of the area
-        df = jhu_data.subset(country=country, province=self.province)
-        self.first_date = df[self.DATE].min().strftime(self.DATE_FORMAT)
-        self.last_date = df[self.DATE].max().strftime(self.DATE_FORMAT)
+        df = jhu_data.subset(country=self.country, province=self.province)
+        self._first_date = df[self.DATE].min().strftime(self.DATE_FORMAT)
+        self._last_date = df[self.DATE].max().strftime(self.DATE_FORMAT)
         # Init
         self.tau = None
         # {model_name: model_class}
         self.model_dict = dict()
         # {scenario_name: PhaseSeries}
-        self.series_dict = dict()
-        self.series_dict[self.MAIN] = PhaseSeries(
-            self.first_date, self.last_date, self.population
-        )
+        self._init_phase_series()
         # {scenario: {phase: Estimator}}
         self.estimator_dict = dict()
+
+    def _init_phase_series(self):
+        """
+        Initialize dictionary of phase series.
+        """
+        self.series_dict = dict()
+        self.series_dict[self.MAIN] = PhaseSeries(
+            self._first_date, self._last_date, self.population
+        )
+
+    @property
+    def first_date(self):
+        """
+        str: the first date of the records
+        """
+        return self._first_date
+
+    @first_date.setter
+    def first_date(self, date):
+        date = self.validate_date(date, "date")
+        df = self.jhu_data.subset(
+            country=self.country, province=self.province, start_date=date)
+        if df.empty:
+            raise ValueError(f"Record is not registered on {date}.")
+        self._first_date = date
+        self._init_phase_series()
+
+    @property
+    def last_date(self):
+        """
+        str: the last date of the records
+        """
+        return self._last_date
+
+    @last_date.setter
+    def last_date(self, date):
+        date = self.validate_date(date, "date")
+        df = self.jhu_data.subset(
+            country=self.country, province=self.province, end_date=date)
+        if df.empty:
+            raise ValueError(f"Record is not registered on {date}.")
+        self._last_date = date
+        self._init_phase_series()
 
     def delete(self, name):
         """
@@ -138,7 +178,7 @@ class Scenario(Term):
         start_date = self.series_dict[name].next_date()
         if end_date is None:
             if days is None:
-                end_date = self.last_date
+                end_date = self._last_date
             elif not isinstance(days, int):
                 raise TypeError("@days must be an integer.")
             else:
