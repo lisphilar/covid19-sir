@@ -325,6 +325,18 @@ class PhaseSeries(Term):
         ]
         return start_objects
 
+    def end_objects(self):
+        """
+        Return the list of end dates as datetime.datetime objects of phases.
+
+        Returns:
+            (list[datetime.datetime]): list of end dates
+        """
+        end_objects = [
+            self.date_obj(v[self.END]) for v in self.info_dict.values()
+        ]
+        return end_objects
+
     def reset_phase_names(self):
         """
         Reset phase names.

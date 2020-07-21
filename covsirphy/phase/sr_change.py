@@ -26,13 +26,16 @@ class ChangeFinder(Term):
             - value (int or None): total population
         min_size (int): minimum value of phase length [days], over 2
         max_rmsle (float): minmum value of RMSLE score
+        start_date (str or None): start date, like 22Jan2020
+        end_date (str or None): end date, like 01Feb2020
 
     Notes:
         When RMSLE score > max_rmsle, predicted values will be None
     """
 
     def __init__(self, jhu_data, population, country, province=None,
-                 population_change_dict=None, min_size=7, max_rmsle=20.0):
+                 population_change_dict=None, min_size=7, max_rmsle=20.0,
+                 start_date=None, end_date=None):
         # Dataset
         if isinstance(jhu_data, pd.DataFrame):
             warnings.warn(
@@ -54,7 +57,8 @@ class ChangeFinder(Term):
         self.population = self.validate_natural_int(
             population, name="population")
         self.sr_df = jhu_data.to_sr(
-            country=self.country, province=self.province, population=self.population
+            country=self.country, province=self.province, population=self.population,
+            start_date=start_date, end_date=end_date
         )
         self.dates = self.get_dates(self.sr_df)
         # Check length of records
@@ -71,7 +75,7 @@ class ChangeFinder(Term):
         # Minimum value of RMSLE score
         self.max_rmsle = self.validate_float(max_rmsle)
         # Setting for optimization
-        self.change_dates = list()
+        self._change_dates = list()
 
     def run(self):
         """
@@ -123,10 +127,23 @@ class ChangeFinder(Term):
         if effective_list[-1] >= last_obj - delta_days:
             effective_list = effective_list[:-1]
         # Set change points
-        self.change_dates = [
-            date.strftime("%d%b%Y") for date in effective_list[1:]
+        self._change_dates = [
+            date.strftime(self.DATE_FORMAT) for date in effective_list[1:]
         ]
         return self
+
+    @property
+    def change_dates(self):
+        """
+        list[str]: list of change points (01Feb2020 etc.)
+        """
+        return self._change_dates
+
+    @change_dates.setter
+    def change_dates(self, dates):
+        self._change_dates = [
+            date.strftime(self.DATE_FORMAT) for date in dates
+        ]
 
     def _curve_fitting(self, phase, info):
         """
@@ -206,7 +223,7 @@ class ChangeFinder(Term):
         if len(pred_cols) == 1:
             title = f"{self.area}: S-R trend without change points"
         else:
-            _list = self.change_dates[:]
+            _list = self._change_dates[:]
             strings = [
                 ", ".join(_list[i: i + 6]) for i in range(0, len(_list), 6)
             ]
@@ -294,7 +311,7 @@ class ChangeFinder(Term):
         Returns:
             (covsirphy.PhaseSeries)
         """
-        start_dates, end_dates = self._phase_range(self.change_dates)
+        start_dates, end_dates = self._phase_range(self._change_dates)
         pop_list = [self.pop_dict[date] for date in start_dates]
         phases = [self.num2str(num) for num in range(len(start_dates))]
         phase_series = PhaseSeries(

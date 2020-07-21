@@ -305,14 +305,15 @@ class Scenario(Term):
             raise KeyError(f"@name {name} has not been registered.")
         return series.summary()
 
-    def trend(self, set_phases=True, include_init_phase=False,
+    def trend(self, set_phases=True, include_init_phase=False, name="Main",
               show_figure=True, filename=None, **kwargs):
         """
         Perform S-R trend analysis and set phases.
 
         Args:
-            set_phases (bool): if True, set phases automatically
+            set_phases (bool): if True, set phases automatically with S-R trend analysis
             include_init_phase (bool): whether use initial phase or not
+            name (str): phase series name
             show_figure (bool): if True, show the result as a figure
             filename (str): filename of the figure, or None (show figure)
             kwargs: keyword arguments of ChangeFinder()
@@ -326,6 +327,7 @@ class Scenario(Term):
         finder = ChangeFinder(
             self.jhu_data, self.population,
             country=self.country, province=self.province,
+            start_date=self._first_date, end_date=self._last_date,
             **kwargs
         )
         if "n_points" in kwargs.keys():
@@ -333,15 +335,15 @@ class Scenario(Term):
                 "@n_points argument is un-necessary"
                 " because the number of change points will be automatically determined."
             )
+        if not set_phases:
+            finder.change_dates = self.series_dict[name].end_objects()[:-1]
+            finder.show(show_figure=show_figure, filename=filename)
+            return None
         finder.run()
         phase_series = finder.show(show_figure=show_figure, filename=filename)
-        if not set_phases:
-            return None
         if not include_init_phase:
             phase_series.delete("0th")
-        self.series_dict = {
-            name: copy.deepcopy(phase_series) for name in self.series_dict.keys()
-        }
+        self.series_dict[name] = copy.deepcopy(phase_series)
 
     def _estimate(self, model, phase=None, name="Main", **kwargs):
         """
