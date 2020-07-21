@@ -252,7 +252,18 @@ class PhaseSeries(Term):
             self.num2str(num): self.info_dict[num]
             for num in self.info_dict.keys()
         }
-        # Convert to dataframe
+        # Calculate the end date of 0th phase
+        if "0th" in info_dict.keys():
+            dates_0th = [
+                date_obj for (date_obj, phase_id)
+                in self.phase_dict.items() if not phase_id
+            ]
+            try:
+                date = dates_0th[-1].strftime(self.DATE_FORMAT)
+                info_dict["0th"][self.END] = date
+            except IndexError:
+                info_dict.pop("0th")
+        # Return the dictionary
         return info_dict
 
     def _tense(self, target_date, ref_date=None):
@@ -351,7 +362,10 @@ class PhaseSeries(Term):
             phase_id: int(rank)
             for (phase_id, rank) in zip(self.info_dict.keys(), ascending)
         }
-        corres_dict[0] = 0
+        if 0 in self.phase_dict.values():
+            ascending = ascending - 1
+        else:
+            corres_dict[0] = 0
         self.phase_dict = {
             date_obj: corres_dict[phase_id]
             for (date_obj, phase_id) in self.phase_dict.items()

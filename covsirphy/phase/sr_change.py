@@ -196,6 +196,8 @@ class ChangeFinder(Term):
         """
         # Create phase dictionary
         phase_series = self._create_phases()
+        if not show_figure:
+            return phase_series
         phase_dict = phase_series.to_dict()
         # Curve fitting
         nested = [
@@ -203,23 +205,16 @@ class ChangeFinder(Term):
             for (phase, info) in phase_dict.items()
         ]
         df_list, vlines = zip(*nested)
-        comp_df = pd.concat(df_list[1:], axis=1)
-        comp_df[self.R] = comp_df.fillna(0).loc[
-            :, comp_df.columns.str.endswith(self.R)
-        ].sum(axis=1)
-        comp_df[f"{self.S}{self.A}"] = comp_df.fillna(0).loc[
-            :, comp_df.columns.str.endswith(self.A)
-        ].sum(axis=1)
+        comp_df = pd.concat([self.sr_df, *df_list], axis=1)
+        comp_df = comp_df.rename({self.S: f"{self.S}{self.A}"}, axis=1)
         comp_df = comp_df.apply(
             lambda x: pd.to_numeric(x, errors="coerce", downcast="integer"),
             axis=0
         )
         # Show figure
-        if not show_figure:
-            return phase_series
-        pred_cols = comp_df.loc[
-            :, comp_df.columns.str.endswith(self.P)
-        ].columns.tolist()
+        pred_cols = [
+            col for col in comp_df.columns if col.endswith(self.P)
+        ]
         if len(pred_cols) == 1:
             title = f"{self.area}: S-R trend without change points"
         else:
@@ -233,7 +228,7 @@ class ChangeFinder(Term):
             result_df=comp_df,
             predicted_cols=pred_cols,
             title=title,
-            vlines=vlines[2:],
+            vlines=vlines[1:],
             filename=filename
         )
         return phase_series
@@ -319,8 +314,6 @@ class ChangeFinder(Term):
         )
         phase_itr = enumerate(zip(start_dates, end_dates, pop_list, phases))
         for (i, (start_date, end_date, population, phase)) in phase_itr:
-            if i == 0:
-                continue
             phase_series.add(
                 start_date=start_date,
                 end_date=end_date,
