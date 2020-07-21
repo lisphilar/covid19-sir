@@ -105,7 +105,7 @@ class Scenario(Term):
 
     def delete(self, name):
         """
-        Delete a PhaseSeries.
+        Delete a phase series.
 
         Args:
             name (str): PhaseSeries name
@@ -171,7 +171,6 @@ class Scenario(Term):
             - If @end_date and @days are None, the end date will be the last date of the records.
         """
         # Parse arguments
-        name = self.MAIN if name == "Main" else name
         if name not in self.series_dict.keys():
             self.series_dict[name] = copy.deepcopy(self.series_dict[self.MAIN])
             self.series_dict[name].clear()
@@ -221,8 +220,6 @@ class Scenario(Term):
                 - if True, include past phases.
                 - future phase are always included
         """
-        if name == "Main":
-            name = self.MAIN
         if name not in self.series_dict.keys():
             self.series_dict[name] = copy.deepcopy(self.series_dict[self.MAIN])
         self.series_dict[name].clear(include_past=include_past)
@@ -242,6 +239,35 @@ class Scenario(Term):
         self.clear(name=name, include_past=True)
         # Delete 0th phase
         self.series_dict[name].delete(phase="0th")
+
+    def combine(self, phases, name="Main", population=None, **kwargs):
+        """
+        Combine the sequential phases as one phase.
+        New phase name will be automatically determined.
+
+        Args:
+            phases (list[str]): list of sequential phases
+            name (str, optional): name of phase series
+            population (int): population value of the start date
+            kwargs: keyword arguments to save as phase information
+
+        Raises:
+            TypeError: @phases is not a list
+
+        Returns:
+            self: instance of covsirphy.Scenario
+        """
+        if not isinstance(phases, list):
+            raise TypeError("@phases mut be a list of phase names.")
+        start_date = self.get(self.START, name=name, phase=phases[0])
+        end_date = self.get(self.END, name=name, phase=phases[-1])
+        for phase in phases:
+            self.series_dict[name].delete(phase)
+        self.series_dict[name].add(
+            start_date, end_date, population=population, **kwargs
+        )
+        self.series_dict[name].reset_phase_names()
+        return self
 
     def summary(self, name=None):
         """
@@ -271,7 +297,7 @@ class Scenario(Term):
             summary_df = pd.concat(dataframes, axis=0, ignore_index=True)
             summary_df = summary_df.set_index([self.SERIES, self.PHASE])
             return summary_df
-        if name == "Main" or len(self.series_dict.keys()) == 1:
+        if len(self.series_dict.keys()) == 1:
             name = self.MAIN
         try:
             series = self.series_dict[name]
@@ -343,7 +369,6 @@ class Scenario(Term):
         # Phase name
         if phase is None:
             raise ValueError("Estimator._estimate(): @phase must not be None.")
-        name = self.MAIN if name == "Main" else name
         if name not in self.series_dict.keys():
             self.series_dict[name] = copy.deepcopy(self.series_dict[self.MAIN])
         # Set parameters
@@ -472,7 +497,6 @@ class Scenario(Term):
         Notes:
             If 'Main' was used as @name, main PhaseSeries will be used.
         """
-        name = self.MAIN if name == "Main" else name
         if name not in self.series_dict.keys():
             raise KeyError(f"@name {name} has not been defined.")
         try:
@@ -495,7 +519,6 @@ class Scenario(Term):
         Notes:
             If 'Main' was used as @name, main PhaseSeries will be used.
         """
-        name = self.MAIN if name == "Main" else name
         if name not in self.series_dict.keys():
             raise KeyError(f"@name {name} is not defined.")
         try:
@@ -531,7 +554,6 @@ class Scenario(Term):
                     - Province (str): province/prefecture/state name
                     - variables of the models (int): Confirmed (int) etc.
         """
-        name = self.MAIN if name == "Main" else name
         df = self.series_dict[name].summary()
         # Future phases must be added in advance
         if self.FUTURE not in df[self.TENSE].unique():
@@ -647,7 +669,6 @@ class Scenario(Term):
         Notes:
             If 'Main' was used as @name, main PhaseSeries will be used.
         """
-        name = self.MAIN if name == "Main" else name
         if name not in self.series_dict.keys():
             raise KeyError(f"@name {name} scenario has not been registered.")
         df = self.series_dict[name].summary()
@@ -711,7 +732,6 @@ class Scenario(Term):
         # Check arguments
         if "box_plot" in kwargs.keys():
             raise KeyError("Please use 'show_box_plot', not 'box_plot'")
-        name = self.MAIN if name == "Main" else name
         if name not in self.series_dict.keys():
             raise KeyError(f"@name {name} scenario has not been registered.")
         # Select target to show

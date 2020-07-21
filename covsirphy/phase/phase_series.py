@@ -5,6 +5,7 @@ from datetime import datetime, timedelta
 import itertools
 import numpy as np
 import pandas as pd
+import scipy
 from covsirphy.cleaning.term import Term
 
 
@@ -50,14 +51,14 @@ class PhaseSeries(Term):
                 - future phase are always included
 
         Returns:
-            (dict)
-                - key (pd.TImeStamp): dates from the first date to the last date of the records
+            dict
+                - key (pd.TimeStamp): dates from the first date to the last date of the records
                 - value (int): 0 (phase ID)
         """
-        past_date_objects = pd.date_range(
-            start=self.first_date, end=self.last_record_date, freq="D"
-        )
         if include_past:
+            past_date_objects = pd.date_range(
+                start=self.first_date, end=self.last_record_date, freq="D"
+            )
             return dict.fromkeys(past_date_objects, 0)
         last_date_obj = self.date_obj(self.last_record_date)
         phase_dict = {
@@ -76,10 +77,10 @@ class PhaseSeries(Term):
                 - future phase are always included
 
         Returns:
-            (dict)
-            - 'Start': the first date of the records
-            - 'End': the last date of the records
-            - 'Population': initial value of total population
+            dict
+                - 'Start': the first date of the records
+                - 'End': the last date of the records
+                - 'Population': initial value of total population
         """
         if include_past:
             info_dict = {
@@ -106,7 +107,7 @@ class PhaseSeries(Term):
             phase (str): phase name, like 1st, 2nd, 3rd,...
 
         Returns:
-            (int)
+            int
         """
         try:
             num = int(phase[:-2])
@@ -159,7 +160,7 @@ class PhaseSeries(Term):
             if @population is None, initial value will be used.
         """
         # Arguments
-        population = population or self.population
+        population = population or self.init_population
         new_id = max(self.phase_dict.values()) + 1
         # Check tense of dates
         start_tense = self._tense(start_date)
@@ -323,6 +324,32 @@ class PhaseSeries(Term):
             self.date_obj(v[self.START]) for v in self.info_dict.values()
         ]
         return start_objects
+
+    def reset_phase_names(self):
+        """
+        Reset phase names.
+        eg. 1st, 4th, 2nd,.. to 1st, 2nd, 3rd, 4th,...
+
+        Returns:
+            self: instance of covsirphy.PhaseSeries
+        """
+        start_objects = np.array(self.start_objects())
+        ascending = scipy.stats.rankdata(start_objects)
+        corres_dict = {
+            phase_id: int(rank)
+            for (phase_id, rank) in zip(self.info_dict.keys(), ascending)
+        }
+        corres_dict[0] = 0
+        self.phase_dict = {
+            date_obj: corres_dict[phase_id]
+            for (date_obj, phase_id) in self.phase_dict.items()
+        }
+        info_dict = {
+            corres_dict[phase_id]: info
+            for (phase_id, info) in self.info_dict.items()
+        }
+        self.info_dict = dict(sorted(info_dict.items()))
+        return self
 
     @staticmethod
     def number_of_steps(start_objects, last_object, tau):
