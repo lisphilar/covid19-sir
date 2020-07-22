@@ -90,7 +90,7 @@ class PopulationData(CleaningBase):
         df.loc[df[self.COUNTRY] == "Diamond Princess", [
             self.COUNTRY, self.PROVINCE]] = ["Others", "Diamond Princess"]
         # Values
-        df[self.N] = df[self.N].astype(np.int64)
+        df[self.N] = df[self.N].fillna(0).astype(np.int64)
         # Columns to use
         df = df.loc[:, [self.ISO3, self.COUNTRY, self.PROVINCE, self.N]]
         # Remove duplicates
