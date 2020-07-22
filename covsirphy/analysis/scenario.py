@@ -213,22 +213,36 @@ class Scenario(Term):
             self.series_dict[name] = copy.deepcopy(self.series_dict[self.MAIN])
         self.series_dict[name].clear(include_past=include_past)
 
-    def delete(self, phase=None, name="Main"):
+    def delete(self, phases=None, name="Main"):
         """
         Delete a phase of the phase series.
 
         Args:
-            phase (str or None): phase name
+            phase (list[str] or None): phase name
             name (str): name of phase series
 
+        Returns:
+            tuple
+                - (str): the first date of the phases
+                - (str): the last date of the phases
+
         Notes:
-            If @phase is None, the phase series will be deleted.
+            If @phases is None, the phase series will be deleted.
         """
-        if phase is None:
+        if not isinstance(phases, list):
+            raise TypeError("@phases mut be a list of phase names.")
+        # Get information
+        first_date = self.get(self.START, name=name, phase=phases[0])
+        last_date = self.get(self.END, name=name, phase=phases[-1])
+        if phases is None:
             if name == self.MAIN:
-                return self.clear(name=name, include_past=True)
-            return self.series_dict.pop(name)
-        self.series_dict[name].delete(phase)
+                self.clear(name=name, include_past=True)
+            else:
+                self.series_dict.pop(name)
+        else:
+            for phase in phases:
+                self.series_dict[name].delete(phase)
+        return (first_date, last_date)
 
     def combine(self, phases, name="Main", population=None, **kwargs):
         """
@@ -247,15 +261,42 @@ class Scenario(Term):
         Returns:
             self: instance of covsirphy.Scenario
         """
-        if not isinstance(phases, list):
-            raise TypeError("@phases mut be a list of phase names.")
-        start_date = self.get(self.START, name=name, phase=phases[0])
-        end_date = self.get(self.END, name=name, phase=phases[-1])
-        for phase in phases:
-            self.series_dict[name].delete(phase)
+        first_date, last_date = self.delete(phases=phases, name=name)
         self.series_dict[name].add(
-            start_date, end_date, population=population, **kwargs
+            first_date, last_date, population=population, **kwargs
         )
+        self.series_dict[name].reset_phase_names()
+        return self
+
+    def separate(self, date, phase, name="Main", population=None, **kwargs):
+        """
+        Create a new phase with the change point.
+        New phase name will be automatically determined.
+
+        Args:
+            date (str): change point, i.e. start date of the new phase
+            phases (list[str]): list of sequential phases
+            name (str, optional): name of phase series
+            population (int): population value of the change point
+            kwargs: keyword arguments to save as phase information
+
+        Returns:
+            self: instance of covsirphy.Scenario
+        """
+        population_old_phase = self.get(self.N, name=name, phase=phase)
+        # Delete the phase that will be separated
+        first_date, last_date = self.delete(phases=[phase], name=name)
+        # Re-registration of the old phase
+        end_obj = self.to_date_obj(date) - timedelta(days=1)
+        self.series_dict[name].add(
+            first_date, end_obj.strftime(self.DATE_FORMAT),
+            population=population_old_phase, **kwargs
+        )
+        # Add new phase
+        self.series_dict[name].add(
+            date, last_date, population=population, **kwargs
+        )
+        # Reset phase names
         self.series_dict[name].reset_phase_names()
         return self
 
