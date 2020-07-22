@@ -355,22 +355,34 @@ class Scenario(Term):
         Notes:
             If @set_phase is True and@include_init_phase is False, initial phase will not be included.
         """
-        finder = ChangeFinder(
-            self.jhu_data, self.population,
-            country=self.country, province=self.province,
-            start_date=self._first_date, end_date=self._last_date,
-            **kwargs
-        )
         if "n_points" in kwargs.keys():
             raise ValueError(
                 "@n_points argument is un-necessary"
                 " because the number of change points will be automatically determined."
             )
         if not set_phases:
-            finder.use_0th = "0th" in self.series_dict[name].phases()
+            use_0th = "0th" in self.series_dict[name].phases()
+            if use_0th:
+                first_date = self._first_date
+            else:
+                first_date = self.get(self.START, name=name, phase="1st")
+            finder = ChangeFinder(
+                self.jhu_data, self.population,
+                country=self.country, province=self.province,
+                start_date=first_date,
+                end_date=self._last_date,
+                **kwargs
+            )
+            finder.use_0th = use_0th
             finder.change_dates = self.series_dict[name].end_objects()[:-1]
             finder.show(show_figure=show_figure, filename=filename)
             return None
+        finder = ChangeFinder(
+            self.jhu_data, self.population,
+            country=self.country, province=self.province,
+            start_date=self._first_date, end_date=self._last_date,
+            **kwargs
+        )
         finder.run()
         phase_series = finder.show(show_figure=show_figure, filename=filename)
         if not include_init_phase:
