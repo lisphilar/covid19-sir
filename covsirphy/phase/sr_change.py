@@ -76,6 +76,8 @@ class ChangeFinder(Term):
         self.max_rmsle = self.validate_float(max_rmsle)
         # Setting for optimization
         self._change_dates = list()
+        # Whether use 0th phase or not
+        self._use_0th = True
 
     def run(self):
         """
@@ -144,6 +146,17 @@ class ChangeFinder(Term):
         self._change_dates = [
             date.strftime(self.DATE_FORMAT) for date in dates
         ]
+
+    @property
+    def use_0th(self):
+        """
+        bool: if True, phase names will be 0th, 1st,... If False, 1st, 2nd,...
+        """
+        return self._use_0th
+
+    @use_0th.setter
+    def use_0th(self, should_use_0th):
+        self._use_0th = True if should_use_0th else False
 
     def _curve_fitting(self, phase, info):
         """
@@ -308,12 +321,11 @@ class ChangeFinder(Term):
         """
         start_dates, end_dates = self._phase_range(self._change_dates)
         pop_list = [self.pop_dict[date] for date in start_dates]
-        phases = [self.num2str(num) for num in range(len(start_dates))]
         phase_series = PhaseSeries(
-            self.dates[0], self.dates[-1], self.population
+            self.dates[0], self.dates[-1], self.population, use_0th=self._use_0th
         )
-        phase_itr = enumerate(zip(start_dates, end_dates, pop_list, phases))
-        for (i, (start_date, end_date, population, phase)) in phase_itr:
+        phase_itr = enumerate(zip(start_dates, end_dates, pop_list))
+        for (i, (start_date, end_date, population)) in phase_itr:
             phase_series.add(
                 start_date=start_date,
                 end_date=end_date,

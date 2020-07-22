@@ -103,17 +103,6 @@ class Scenario(Term):
         self._last_date = date
         self._init_phase_series()
 
-    def delete(self, name):
-        """
-        Delete a phase series.
-
-        Args:
-            name (str): PhaseSeries name
-        """
-        if name == self.MAIN:
-            raise ValueError(f"@name {name} cannot be deleted.")
-        self.series_dict.pop(name)
-
     def records(self, show_figure=True, filename=None):
         """
         Return the records as a dataframe.
@@ -192,7 +181,7 @@ class Scenario(Term):
             last_model_name = summary_df.loc[summary_df.index[-1], self.ODE]
             model = self.model_dict[last_model_name]
         model = self.validate_subclass(model, ModelBase, name="model")
-        # Set phase information
+        # Set phase information with ODE models
         param_dict = {self.TAU: self.tau, self.ODE: model.NAME}
         model_param_dict = {
             param: summary_df.loc[summary_df.index[-1], param]
@@ -224,21 +213,22 @@ class Scenario(Term):
             self.series_dict[name] = copy.deepcopy(self.series_dict[self.MAIN])
         self.series_dict[name].clear(include_past=include_past)
 
-    def remove(self, name="Main"):
+    def delete(self, phase=None, name="Main"):
         """
-        Remove phase information.
+        Delete a phase of the phase series.
 
         Args:
-            name (str): phase series name
-                - if 'Main', main phase series will be used
-                - if not registered, new phaseseries will be created
-            include_past (bool):
-                - if True, include past phases.
-                - future phase are always included
+            phase (str or None): phase name
+            name (str): name of phase series
+
+        Notes:
+            If @phase is None, the phase series will be deleted.
         """
-        self.clear(name=name, include_past=True)
-        # Delete 0th phase
-        self.series_dict[name].delete(phase="0th")
+        if phase is None:
+            if name == self.MAIN:
+                return self.clear(name=name, include_past=True)
+            return self.series_dict.pop(name)
+        self.series_dict[name].delete(phase)
 
     def combine(self, phases, name="Main", population=None, **kwargs):
         """
@@ -336,6 +326,7 @@ class Scenario(Term):
                 " because the number of change points will be automatically determined."
             )
         if not set_phases:
+            finder.use_0th = "0th" in self.series_dict[name].phases()
             finder.change_dates = self.series_dict[name].end_objects()[:-1]
             finder.show(show_figure=show_figure, filename=filename)
             return None
