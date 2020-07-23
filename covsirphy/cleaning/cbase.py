@@ -168,7 +168,7 @@ class CleaningBase(Term):
                 Index:
                     reset index
                 Columns:
-                    without ISO3 column and Province column
+                    without ISO3 column and Country column
             province (str or None): province name
 
         Raises:
@@ -179,7 +179,7 @@ class CleaningBase(Term):
                 Index:
                     reset index
                 Columns:
-                    without ISO3, Country, Province column
+                    without ISO3, Country and Province column
         """
         province = province or self.UNKNOWN
         df = record_df.copy()
@@ -194,15 +194,20 @@ class CleaningBase(Term):
                 df = df.groupby(self.DATE).last().reset_index()
             return df.drop(self.PROVINCE, axis=1)
         # Calculate total values at country level if not registered
-        if self.DATE not in df.columns:
-            df = df.loc[df[self.PROVINCE] == self.UNKNOWN, :]
-            df = df.reset_index(drop=True)
-            return df.drop(self.PROVINCE, axis=1)
-        total_df = df.loc[df[self.PROVINCE] != self.UNKNOWN]
-        total_df = total_df.groupby(self.DATE).sum().reset_index()
-        total_df[self.PROVINCE] = self.UNKNOWN
+        total_df = df.loc[p_series != self.UNKNOWN]
+        if self.DATE in df.columns:
+            total_df = total_df.groupby(self.DATE).sum().reset_index()
+            if not total_df.empty:
+                total_df.loc[:, self.PROVINCE] = self.UNKNOWN
+        else:
+            sum_dict = total_df.sum(axis=0, numeric_only=True).to_dict()
+            sum_dict[self.PROVINCE] = self.UNKNOWN
+            total_df = total_df.append(pd.Series(sum_dict), ignore_index=True)
         df = pd.concat([df, total_df], axis=0, ignore_index=True)
-        df = df.groupby([self.PROVINCE, self.DATE]).max().reset_index()
+        if self.DATE in df.columns:
+            df = df.groupby([self.PROVINCE, self.DATE]).max().reset_index()
+        else:
+            df = df.groupby(self.PROVINCE).max().reset_index()
         # Return country-level records
         df = df.loc[df[self.PROVINCE] == self.UNKNOWN, :]
         df = df.reset_index(drop=True)
