@@ -56,7 +56,7 @@ class DataLoader(Term):
         ...
     """
 
-    def __init__(self, directory, update_interval=12):
+    def __init__(self, directory="input", update_interval=12):
         if not isinstance(directory, (str, Path)):
             raise TypeError(
                 f"@directory must be a string or a path but {directory} was applied."
