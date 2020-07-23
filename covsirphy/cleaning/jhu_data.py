@@ -181,7 +181,6 @@ class JHUData(CleaningBase):
         df = super().subset(
             country=country, province=province, start_date=start_date, end_date=end_date)
         # Select records where Recovered > 0
-        print(df)
         df = df.loc[df[self.R] > 0, :]
         if df.empty:
             s1 = "Records with Recovered > 0 are not registered."

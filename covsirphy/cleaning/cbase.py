@@ -190,7 +190,8 @@ class CleaningBase(Term):
             if df.empty:
                 raise KeyError(
                     f"@province {province} has not been registered.")
-            df = df.groupby(self.DATE).last().reset_index()
+            if self.DATE in df.columns:
+                df = df.groupby(self.DATE).last().reset_index()
             return df.drop(self.PROVINCE, axis=1)
         # Calculate total values at country level if not registered
         if self.DATE not in df.columns:
