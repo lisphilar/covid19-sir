@@ -261,3 +261,15 @@ class JHUData(CleaningBase):
         df[r_cols[1]] = df[self.R] / total_series
         df[r_cols[2]] = df[self.F] / (df[self.F] + df[self.R])
         return df.loc[:, [*self.VALUE_COLUMNS, *r_cols]]
+
+    def countries(self):
+        """
+        Return names of countries where records with Recovered > 0 are registered.
+
+        Returns:
+            (list[str]): list of country names
+        """
+        df = self._cleaned_df.copy()
+        df = df.loc[df[self.R] > 0, :]
+        country_list = list(df[self.COUNTRY].unique())
+        return country_list

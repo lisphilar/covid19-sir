@@ -116,6 +116,10 @@ class TestJapanData(object):
         assert set(df.columns) == set(
             [*Term.VALUE_COLUMNS, *Term.RATE_COLUMNS])
 
+    def test_countries(self, japan_data):
+        countries = japan_data.countries()
+        assert countries == ["Japan"]
+
 
 class TestPopulationData(object):
     def test_population(self, data_loader):
@@ -157,6 +161,10 @@ class TestPopulationData(object):
         value = population_data.total()
         assert isinstance(value, int)
 
+    def test_countries(self, population_data):
+        countries = population_data.countries()
+        assert isinstance(countries, list)
+
 
 class TestOxCGRTData(object):
     def test_oxcgrt(self, data_loader):
@@ -187,3 +195,7 @@ class TestOxCGRTData(object):
     def test_total(self, oxcgrt_data):
         with pytest.raises(AttributeError):
             oxcgrt_data.total()
+
+    def test_countries(self, oxcgrt_data):
+        countries = oxcgrt_data.countries()
+        assert isinstance(countries, list)

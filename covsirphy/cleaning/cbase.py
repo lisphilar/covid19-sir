@@ -275,7 +275,7 @@ class CleaningBase(Term):
 
     def countries(self):
         """
-        Return country names if the dataset.
+        Return names of countries where records are registered.
 
         Raises:
             KeyError: Country names are not registered in this dataset
