@@ -144,7 +144,12 @@ class PopulationData(CleaningBase):
             (int): population in the place
         """
         cell = self.subset(country=country, province=province)
-        return int(cell.values)
+        value = int(cell.values)
+        if value:
+            return value
+        raise KeyError(
+            f"Please register population value for (country={country}, province={province})"
+        )
 
     def update(self, value, country, province="-"):
         """
@@ -170,6 +175,24 @@ class PopulationData(CleaningBase):
         )
         self._cleaned_df = df.append(series, ignore_index=True)
         return self
+
+    def countries(self):
+        """
+        Return names of countries where records are registered.
+
+        Raises:
+            KeyError: Country names are not registered in this dataset
+
+        Returns:
+            (list[str]): list of country names
+
+        Notes:
+            Country 'Others' will be removed.
+        """
+        country_list = super().countries()
+        removed_countries = ["Others"]
+        country_list = list(set(country_list) - set(removed_countries))
+        return country_list
 
 
 class Population(PopulationData):

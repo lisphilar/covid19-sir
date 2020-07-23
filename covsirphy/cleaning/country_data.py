@@ -162,3 +162,12 @@ class CountryData(CleaningBase):
         df[r_cols[1]] = df[self.R] / total_series
         df[r_cols[2]] = df[self.F] / (df[self.F] + df[self.R])
         return df.loc[:, [*self.VALUE_COLUMNS, *r_cols]]
+
+    def countries(self):
+        """
+        Return names of countries where records are registered.
+
+        Returns:
+            (list[str]): list of country names
+        """
+        return [self._country]

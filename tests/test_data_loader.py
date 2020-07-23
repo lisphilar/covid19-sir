@@ -81,6 +81,8 @@ class TestJHUData(object):
     def test_countries(self, jhu_data):
         countries = jhu_data.countries()
         assert isinstance(countries, list)
+        for country in countries:
+            assert len(jhu_data.subset(country)) > 0
 
     def test_total(self, jhu_data):
         df = jhu_data.total()
@@ -115,6 +117,10 @@ class TestJapanData(object):
         df = japan_data.total()
         assert set(df.columns) == set(
             [*Term.VALUE_COLUMNS, *Term.RATE_COLUMNS])
+
+    def test_countries(self, japan_data):
+        countries = japan_data.countries()
+        assert countries == ["Japan"]
 
 
 class TestPopulationData(object):
@@ -152,10 +158,18 @@ class TestPopulationData(object):
             with pytest.raises(KeyError):
                 population_data.value("JPN")
         assert isinstance(population_data.value("Japan"), int)
+        with pytest.raises(KeyError):
+            population_data.value("Example")
 
     def test_total(self, population_data):
         value = population_data.total()
         assert isinstance(value, int)
+
+    def test_countries(self, population_data):
+        countries = population_data.countries()
+        assert isinstance(countries, list)
+        for country in countries:
+            population_data.value(country)
 
 
 class TestOxCGRTData(object):
@@ -187,3 +201,9 @@ class TestOxCGRTData(object):
     def test_total(self, oxcgrt_data):
         with pytest.raises(AttributeError):
             oxcgrt_data.total()
+
+    def test_countries(self, oxcgrt_data):
+        countries = oxcgrt_data.countries()
+        assert isinstance(countries, list)
+        for country in countries:
+            assert len(oxcgrt_data.subset(country)) > 0

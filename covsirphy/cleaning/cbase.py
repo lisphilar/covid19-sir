@@ -168,7 +168,7 @@ class CleaningBase(Term):
                 Index:
                     reset index
                 Columns:
-                    without ISO3 column and Province column
+                    without ISO3 column and Country column
             province (str or None): province name
 
         Raises:
@@ -179,7 +179,7 @@ class CleaningBase(Term):
                 Index:
                     reset index
                 Columns:
-                    without ISO3, Country, Province column
+                    without ISO3, Country and Province column
         """
         province = province or self.UNKNOWN
         df = record_df.copy()
@@ -190,17 +190,24 @@ class CleaningBase(Term):
             if df.empty:
                 raise KeyError(
                     f"@province {province} has not been registered.")
-            df = df.groupby(self.DATE).last().reset_index()
+            if self.DATE in df.columns:
+                df = df.groupby(self.DATE).last().reset_index()
             return df.drop(self.PROVINCE, axis=1)
         # Calculate total values at country level if not registered
-        if self.DATE not in df.columns:
-            df = df.loc[df[self.PROVINCE] == self.UNKNOWN, :]
-            df = df.reset_index(drop=True)
-            return df.drop(self.PROVINCE, axis=1)
-        total_df = df.groupby(self.DATE).sum().reset_index()
-        total_df[self.PROVINCE] = self.UNKNOWN
+        total_df = df.loc[p_series != self.UNKNOWN]
+        if self.DATE in df.columns:
+            total_df = total_df.groupby(self.DATE).sum().reset_index()
+            if not total_df.empty:
+                total_df.loc[:, self.PROVINCE] = self.UNKNOWN
+        else:
+            sum_dict = total_df.sum(axis=0, numeric_only=True).to_dict()
+            sum_dict[self.PROVINCE] = self.UNKNOWN
+            total_df = total_df.append(pd.Series(sum_dict), ignore_index=True)
         df = pd.concat([df, total_df], axis=0, ignore_index=True)
-        df = df.drop_duplicates(subset=[self.PROVINCE, self.DATE])
+        if self.DATE in df.columns:
+            df = df.groupby([self.PROVINCE, self.DATE]).max().reset_index()
+        else:
+            df = df.groupby(self.PROVINCE).max().reset_index()
         # Return country-level records
         df = df.loc[df[self.PROVINCE] == self.UNKNOWN, :]
         df = df.reset_index(drop=True)
@@ -269,13 +276,14 @@ class CleaningBase(Term):
         df = df.loc[(start_obj <= series) & (series <= end_obj), :]
         df = df.reset_index(drop=True)
         if df.empty:
+            s1 = f"Records from {start_date} to {end_date} were not registered."
             raise KeyError(
-                f"Records from {start_date} to {end_date} were not registered.")
+                f"{s1} (country={country}, province={province})")
         return df
 
     def countries(self):
         """
-        Return country names if the dataset.
+        Return names of countries where records are registered.
 
         Raises:
             KeyError: Country names are not registered in this dataset
