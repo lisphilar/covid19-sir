@@ -12,6 +12,7 @@ if not hasattr(sys, "ps1"):
     matplotlib.use("Agg")
 import numpy as np
 import pandas as pd
+from covsirphy.util.error import deprecate
 from covsirphy.util.plotting import line_plot, box_plot
 from covsirphy.util.stopwatch import StopWatch
 from covsirphy.cleaning.term import Term
@@ -136,8 +137,12 @@ class Scenario(Term):
         )
         return df
 
-    def add_phase(self, name="Main", end_date=None, days=None,
-                  population=None, model=None, **kwargs):
+    @deprecate(old="Scenario.add_phase()", new="Scenario.add()")
+    def add_phase(self, **kwargs):
+        return self.add(**kwargs)
+
+    def add(self, name="Main", end_date=None, days=None,
+            population=None, model=None, **kwargs):
         """
         Add a new phase.
         The start date is the next date of the last registered phase.
