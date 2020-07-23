@@ -158,6 +158,8 @@ class TestPopulationData(object):
             with pytest.raises(KeyError):
                 population_data.value("JPN")
         assert isinstance(population_data.value("Japan"), int)
+        with pytest.raises(KeyError):
+            population_data.value("Example")
 
     def test_total(self, population_data):
         value = population_data.total()

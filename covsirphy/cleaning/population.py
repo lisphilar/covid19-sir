@@ -144,12 +144,12 @@ class PopulationData(CleaningBase):
             (int): population in the place
         """
         cell = self.subset(country=country, province=province)
-        try:
-            return int(cell.values)
-        except TypeError:
-            raise KeyError(
-                f"Please register population value for (country={country}, province={province})"
-            )
+        value = int(cell.values)
+        if value:
+            return value
+        raise KeyError(
+            f"Please register population value for (country={country}, province={province})"
+        )
 
     def update(self, value, country, province="-"):
         """
