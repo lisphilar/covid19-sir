@@ -339,7 +339,7 @@ class Scenario(Term):
 
         Args:
             name (str): phase series name
-                - name of alternative phase series registered by self.add_phase()
+                - name of alternative phase series registered by self.add()
                 - if None, all phase series will be shown
 
         Returns:
@@ -375,7 +375,7 @@ class Scenario(Term):
 
         Args:
             name (str): phase series name
-                - name of alternative phase series registered by self.add_phase()
+                - name of alternative phase series registered by self.add()
                 - if None, all phase series will be shown
             columns (list[str] or None): columns to show
 
@@ -665,7 +665,7 @@ class Scenario(Term):
         # Future phases must be added in advance
         if self.FUTURE not in df[self.TENSE].unique():
             raise KeyError(
-                f"Future phases of {name} scenario must be registered by Scenario.add_phase() in advance."
+                f"Future phases of {name} scenario must be registered by Scenario.add() in advance."
             )
         # Simulation
         dim_df, start_objects = self._simulate(name=name, y0_dict=y0_dict)
