@@ -21,7 +21,7 @@ class JHUData(CleaningBase):
         Return the cleaned dataset.
 
         Note:
-            Cleaning method is defined by self.cleaning() method.
+            Cleaning method is defined by self._cleaning() method.
 
         Args:
             kwargs: keword arguments will be ignored.
@@ -46,10 +46,10 @@ class JHUData(CleaningBase):
         df = df.loc[:, self.COLUMNS]
         return df
 
-    def cleaning(self):
+    def _cleaning(self):
         """
         Perform data cleaning of the raw data.
-        This method overwrite super().cleaning() method.
+        This method overwrite super()._cleaning() method.
 
         Returns:
             (pandas.DataFrame)
@@ -65,7 +65,7 @@ class JHUData(CleaningBase):
                     - Fatal (int): the number of fatal cases
                     - Recovered (int): the number of recovered cases
         """
-        df = super().cleaning()
+        df = super()._cleaning()
         # Rename the columns
         df = df.rename(
             {

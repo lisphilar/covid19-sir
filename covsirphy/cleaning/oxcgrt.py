@@ -35,10 +35,10 @@ class OxCGRTData(CleaningBase):
     def __init__(self, filename):
         super().__init__(filename)
 
-    def cleaning(self):
+    def _cleaning(self):
         """
         Perform data cleaning of the raw data.
-        This method overwrite super().cleaning() method.
+        This method overwrite super()._cleaning() method.
         Policy indices (Overall etc.) are from
         README.md and documentation/index_methodology.md in
         https://github.com/OxCGRT/covid-policy-tracker/

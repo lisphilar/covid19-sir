@@ -62,10 +62,10 @@ class CountryData(CleaningBase):
             recovered: self.R
         }
 
-    def cleaning(self):
+    def _cleaning(self):
         """
         Perform data cleaning of the raw data.
-        This method overwrite super().cleaning() method.
+        This method overwrite super()._cleaning() method.
 
         Returns:
             (pandas.DataFrame):
@@ -110,7 +110,8 @@ class CountryData(CleaningBase):
     def cleaned(self):
         """
         Return the cleaned dataset.
-        Cleaning method is defined by CountryData.cleaning() method.
+        Cleaning method is defined by CountryData._cleaning() method.
+
         Returns:
             (pandas.DataFrame):
                 Index:
@@ -124,7 +125,7 @@ class CountryData(CleaningBase):
                     - Fatal (int): the number of fatal cases
                     - Recovered (int): the number of recovered cases
         """
-        self._cleaned_df = self.cleaning()
+        self._cleaned_df = self._cleaning()
         return self._cleaned_df
 
     def total(self):

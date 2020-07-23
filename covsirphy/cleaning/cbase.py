@@ -22,7 +22,7 @@ class CleaningBase(Term):
             self._raw = dd.read_csv(
                 filename, dtype={"Province/State": "object"}
             ).compute()
-            self._cleaned_df = self.cleaning()
+            self._cleaned_df = self._cleaning()
         self._citation = str()
 
     @property
@@ -40,19 +40,19 @@ class CleaningBase(Term):
         Return the cleaned dataset.
 
         Notes:
-            Cleaning method is defined by self.cleaning() method.
+            Cleaning method is defined by self._cleaning() method.
 
         Returns:
             (pandas.DataFrame): cleaned data
         """
         return self._cleaned_df
 
-    def cleaning(self):
+    def _cleaning(self):
         """
         Perform data cleaning of the raw data.
 
         Notes:
-            Cleaning method is defined by self.cleaning() method.
+            Cleaning method is defined by self._cleaning() method.
 
         Returns:
             (pandas.DataFrame): cleaned data

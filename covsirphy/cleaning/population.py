@@ -21,7 +21,7 @@ class PopulationData(CleaningBase):
     def __init__(self, filename):
         super().__init__(filename)
 
-    def cleaning(self):
+    def _cleaning(self):
         """
         Perform data cleaning of the raw data.
 
