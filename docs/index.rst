@@ -13,6 +13,7 @@
    INSTALLATION
    usage_quickest
    usage_quick
+   usage_phases
    covsirphy
    CONTRIBUTING
 

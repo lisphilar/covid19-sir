@@ -26,13 +26,16 @@ class ChangeFinder(Term):
             - value (int or None): total population
         min_size (int): minimum value of phase length [days], over 2
         max_rmsle (float): minmum value of RMSLE score
+        start_date (str or None): start date, like 22Jan2020
+        end_date (str or None): end date, like 01Feb2020
 
     Notes:
         When RMSLE score > max_rmsle, predicted values will be None
     """
 
     def __init__(self, jhu_data, population, country, province=None,
-                 population_change_dict=None, min_size=7, max_rmsle=20.0):
+                 population_change_dict=None, min_size=7, max_rmsle=20.0,
+                 start_date=None, end_date=None):
         # Dataset
         if isinstance(jhu_data, pd.DataFrame):
             warnings.warn(
@@ -54,7 +57,8 @@ class ChangeFinder(Term):
         self.population = self.validate_natural_int(
             population, name="population")
         self.sr_df = jhu_data.to_sr(
-            country=self.country, province=self.province, population=self.population
+            country=self.country, province=self.province, population=self.population,
+            start_date=start_date, end_date=end_date
         )
         self.dates = self.get_dates(self.sr_df)
         # Check length of records
@@ -71,7 +75,9 @@ class ChangeFinder(Term):
         # Minimum value of RMSLE score
         self.max_rmsle = self.validate_float(max_rmsle)
         # Setting for optimization
-        self.change_dates = list()
+        self._change_dates = list()
+        # Whether use 0th phase or not
+        self._use_0th = True
 
     def run(self):
         """
@@ -123,10 +129,34 @@ class ChangeFinder(Term):
         if effective_list[-1] >= last_obj - delta_days:
             effective_list = effective_list[:-1]
         # Set change points
-        self.change_dates = [
-            date.strftime("%d%b%Y") for date in effective_list[1:]
+        self._change_dates = [
+            date.strftime(self.DATE_FORMAT) for date in effective_list[1:]
         ]
         return self
+
+    @property
+    def change_dates(self):
+        """
+        list[str]: list of change points (01Feb2020 etc.)
+        """
+        return self._change_dates
+
+    @change_dates.setter
+    def change_dates(self, dates):
+        self._change_dates = [
+            date.strftime(self.DATE_FORMAT) for date in dates
+        ]
+
+    @property
+    def use_0th(self):
+        """
+        bool: if True, phase names will be 0th, 1st,... If False, 1st, 2nd,...
+        """
+        return self._use_0th
+
+    @use_0th.setter
+    def use_0th(self, should_use_0th):
+        self._use_0th = True if should_use_0th else False
 
     def _curve_fitting(self, phase, info):
         """
@@ -179,6 +209,8 @@ class ChangeFinder(Term):
         """
         # Create phase dictionary
         phase_series = self._create_phases()
+        if not show_figure:
+            return phase_series
         phase_dict = phase_series.to_dict()
         # Curve fitting
         nested = [
@@ -186,27 +218,20 @@ class ChangeFinder(Term):
             for (phase, info) in phase_dict.items()
         ]
         df_list, vlines = zip(*nested)
-        comp_df = pd.concat(df_list[1:], axis=1)
-        comp_df[self.R] = comp_df.fillna(0).loc[
-            :, comp_df.columns.str.endswith(self.R)
-        ].sum(axis=1)
-        comp_df[f"{self.S}{self.A}"] = comp_df.fillna(0).loc[
-            :, comp_df.columns.str.endswith(self.A)
-        ].sum(axis=1)
+        comp_df = pd.concat([self.sr_df, *df_list], axis=1)
+        comp_df = comp_df.rename({self.S: f"{self.S}{self.A}"}, axis=1)
         comp_df = comp_df.apply(
             lambda x: pd.to_numeric(x, errors="coerce", downcast="integer"),
             axis=0
         )
         # Show figure
-        if not show_figure:
-            return phase_series
-        pred_cols = comp_df.loc[
-            :, comp_df.columns.str.endswith(self.P)
-        ].columns.tolist()
+        pred_cols = [
+            col for col in comp_df.columns if col.endswith(self.P)
+        ]
         if len(pred_cols) == 1:
             title = f"{self.area}: S-R trend without change points"
         else:
-            _list = self.change_dates[:]
+            _list = self._change_dates[:]
             strings = [
                 ", ".join(_list[i: i + 6]) for i in range(0, len(_list), 6)
             ]
@@ -216,7 +241,7 @@ class ChangeFinder(Term):
             result_df=comp_df,
             predicted_cols=pred_cols,
             title=title,
-            vlines=vlines[2:],
+            vlines=vlines[1:],
             filename=filename
         )
         return phase_series
@@ -294,16 +319,13 @@ class ChangeFinder(Term):
         Returns:
             (covsirphy.PhaseSeries)
         """
-        start_dates, end_dates = self._phase_range(self.change_dates)
+        start_dates, end_dates = self._phase_range(self._change_dates)
         pop_list = [self.pop_dict[date] for date in start_dates]
-        phases = [self.num2str(num) for num in range(len(start_dates))]
         phase_series = PhaseSeries(
-            self.dates[0], self.dates[-1], self.population
+            self.dates[0], self.dates[-1], self.population, use_0th=self._use_0th
         )
-        phase_itr = enumerate(zip(start_dates, end_dates, pop_list, phases))
-        for (i, (start_date, end_date, population, phase)) in phase_itr:
-            if i == 0:
-                continue
+        phase_itr = enumerate(zip(start_dates, end_dates, pop_list))
+        for (i, (start_date, end_date, population)) in phase_itr:
             phase_series.add(
                 start_date=start_date,
                 end_date=end_date,

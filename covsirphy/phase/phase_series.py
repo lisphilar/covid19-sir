@@ -1,10 +1,11 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-from datetime import datetime, timedelta
+from datetime import timedelta
 import itertools
 import numpy as np
 import pandas as pd
+import scipy
 from covsirphy.cleaning.term import Term
 
 
@@ -14,15 +15,18 @@ class PhaseSeries(Term):
 
     Args:
         first_date (str): the first date of the series, like 22Jan2020
-        last_record_date (str): the last date of the records, like 25May2020
+        last_date (str): the last date of the records, like 25May2020
         population (int): initial value of total population in the place
+        use_0th (bool): if True, phase names will be 0th, 1st,... If False, 1st, 2nd,...
     """
 
-    def __init__(self, first_date, last_record_date, population):
+    def __init__(self, first_date, last_date, population, use_0th=True):
         self.first_date = first_date
-        self.last_record_date = last_record_date
+        self.last_date = last_date
         self.init_population = population
         self.clear(include_past=True)
+        # Whether use 0th phase or not
+        self.use_0th = use_0th
 
     def clear(self, include_past=False):
         """
@@ -50,16 +54,16 @@ class PhaseSeries(Term):
                 - future phase are always included
 
         Returns:
-            (dict)
-                - key (pd.TImeStamp): dates from the first date to the last date of the records
-                - value (int): 0 (phase ID)
+            dict
+                - key (pd.TimeStamp): dates from the first date to the last date of the records
+                - value (int): -1 (phase ID)
         """
-        past_date_objects = pd.date_range(
-            start=self.first_date, end=self.last_record_date, freq="D"
-        )
-        if include_past:
-            return dict.fromkeys(past_date_objects, 0)
-        last_date_obj = self.date_obj(self.last_record_date)
+        if include_past or not hasattr(self, "phase_dict"):
+            past_date_objects = pd.date_range(
+                start=self.first_date, end=self.last_date, freq="D"
+            )
+            return dict.fromkeys(past_date_objects, -1)
+        last_date_obj = self.date_obj(self.last_date)
         phase_dict = {
             k: v for (k, v) in self.phase_dict.items()
             if k <= last_date_obj
@@ -75,23 +79,16 @@ class PhaseSeries(Term):
                 - if True, include past phases.
                 - future phase are always included
 
-        Returns:
-            (dict)
-            - 'Start': the first date of the records
-            - 'End': the last date of the records
-            - 'Population': initial value of total population
+        Attributes:
+            info_dict (dict)
+                - 'Start': the first date of the records
+                - 'End': the last date of the records
+                - 'Population': initial value of total population
         """
-        if include_past:
-            info_dict = {
-                0: {
-                    self.TENSE: self.PAST,
-                    self.START: self.first_date,
-                    self.END: self.last_record_date,
-                    self.N: self.init_population
-                }
-            }
+        if include_past or not hasattr(self, "info_dict"):
+            info_dict = dict()
             return info_dict
-        last_date_obj = self.date_obj(self.last_record_date)
+        last_date_obj = self.date_obj(self.last_date)
         info_dict = {
             k: v for (k, v) in self.info_dict.items()
             if self.date_obj(v[self.END]) <= last_date_obj
@@ -106,12 +103,13 @@ class PhaseSeries(Term):
             phase (str): phase name, like 1st, 2nd, 3rd,...
 
         Returns:
-            (int)
+            int
         """
         try:
             num = int(phase[:-2])
         except ValueError:
-            raise ValueError("@phase is phase name, like 0th, 1st, 2nd...")
+            raise ValueError(
+                "@phase must be a phase name, like 0th, 1st, 2nd...")
         grouped_ids = list(itertools.groupby(self.phase_dict.values()))
         return grouped_ids[num][0]
 
@@ -128,11 +126,10 @@ class PhaseSeries(Term):
             start=start_date, end=end_date, freq="D"
         )
         new_phase_dict = {
-            date_obj: new_id
-            for date_obj in date_series
+            date_obj: new_id for date_obj in date_series
         }
-        free_date_set = set(k for (k, v) in self.phase_dict.items() if v)
-        intersection = set(new_phase_dict.keys()) & free_date_set
+        unfree_set = set(k for (k, v) in self.phase_dict.items() if v != -1)
+        intersection = set(new_phase_dict.keys()) & unfree_set
         if intersection:
             date_strings = [
                 date_obj.strftime(self.DATE_FORMAT) for date_obj in intersection
@@ -159,8 +156,11 @@ class PhaseSeries(Term):
             if @population is None, initial value will be used.
         """
         # Arguments
-        population = population or self.population
+        population = population or self.init_population
+        # Phase ID
         new_id = max(self.phase_dict.values()) + 1
+        if new_id == 0 and not self.use_0th:
+            new_id = 1
         # Check tense of dates
         start_tense = self._tense(start_date)
         end_tense = self._tense(end_date)
@@ -201,10 +201,12 @@ class PhaseSeries(Term):
         """
         phase_id = self._phase_name2id(phase)
         self.phase_dict = {
-            k: 0 if v is phase_id else v
+            k: -1 if v == phase_id else v
             for (k, v) in self.phase_dict.items()
         }
         self.info_dict.pop(phase_id)
+        if not phase_id:
+            self.use_0th = False
         return self
 
     def summary(self):
@@ -222,6 +224,7 @@ class PhaseSeries(Term):
                     - Population: population value of the start date
                     - values added by self.update()
         """
+        self.reset_phase_names()
         # Convert phase ID to phase name
         info_dict = self.to_dict()
         # Convert to dataframe
@@ -249,9 +252,9 @@ class PhaseSeries(Term):
         # Convert phase ID to phase name
         info_dict = {
             self.num2str(num): self.info_dict[num]
-            for num in self.info_dict.keys()
+            for num in self.info_dict.keys() if num != -1
         }
-        # Convert to dataframe
+        # Return the dictionary
         return info_dict
 
     def _tense(self, target_date, ref_date=None):
@@ -268,9 +271,8 @@ class PhaseSeries(Term):
         Notes:
             If @ref_date is None, the last date of the records will be used.
         """
-        target_obj = datetime.strptime(target_date, self.DATE_FORMAT)
-        ref_date = self.last_record_date if ref_date is None else ref_date
-        ref_obj = datetime.strptime(ref_date, self.DATE_FORMAT)
+        target_obj = self.date_obj(target_date)
+        ref_obj = self.date_obj(ref_date or self.last_date)
         if target_obj <= ref_obj:
             return self.PAST
         return self.FUTURE
@@ -296,10 +298,10 @@ class PhaseSeries(Term):
         """
         un_date_objects = [
             k for (k, v) in self.phase_dict.items()
-            if v != 0
+            if v != -1
         ]
         if not un_date_objects:
-            return list(self.phase_dict.keys())[0]
+            return self.to_date_obj(self.first_date) - timedelta(days=1)
         return un_date_objects[-1]
 
     def next_date(self):
@@ -308,8 +310,8 @@ class PhaseSeries(Term):
         Returns:
             (str): like 01Feb2020
         """
-        last_end_date_obj = self.last_object()
-        next_date_obj = last_end_date_obj + timedelta(days=1)
+        last_date_obj = self.last_object()
+        next_date_obj = last_date_obj + timedelta(days=1)
         return next_date_obj.strftime(self.DATE_FORMAT)
 
     def start_objects(self):
@@ -323,6 +325,46 @@ class PhaseSeries(Term):
             self.date_obj(v[self.START]) for v in self.info_dict.values()
         ]
         return start_objects
+
+    def end_objects(self):
+        """
+        Return the list of end dates as datetime.datetime objects of phases.
+
+        Returns:
+            (list[datetime.datetime]): list of end dates
+        """
+        end_objects = [
+            self.date_obj(v[self.END]) for v in self.info_dict.values()
+        ]
+        return end_objects
+
+    def reset_phase_names(self):
+        """
+        Reset phase names.
+        eg. 1st, 4th, 2nd,.. to 1st, 2nd, 3rd, 4th,...
+
+        Returns:
+            self: instance of covsirphy.PhaseSeries
+        """
+        start_objects = np.array(self.start_objects())
+        ascending = scipy.stats.rankdata(start_objects)
+        if 0 in self.phase_dict.values():
+            ascending = ascending - 1
+        corres_dict = {
+            phase_id: int(rank)
+            for (phase_id, rank) in zip(self.info_dict.keys(), ascending)
+        }
+        corres_dict[-1] = -1
+        self.phase_dict = {
+            date_obj: corres_dict[phase_id]
+            for (date_obj, phase_id) in self.phase_dict.items()
+        }
+        info_dict = {
+            corres_dict[phase_id]: info
+            for (phase_id, info) in self.info_dict.items()
+        }
+        self.info_dict = dict(sorted(info_dict.items()))
+        return self
 
     @staticmethod
     def number_of_steps(start_objects, last_object, tau):
@@ -370,3 +412,16 @@ class PhaseSeries(Term):
             v[self.N] for v in self.info_dict.values()
         ]
         return values
+
+    def phases(self):
+        """
+        Return the list of phase names.
+
+        Returns:
+            (list[int]): list of phase names
+        """
+        phase_list = [
+            self.num2str(num) for num
+            in self.info_dict.keys() if num != -1
+        ]
+        return phase_list
