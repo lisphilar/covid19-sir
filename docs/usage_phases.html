@@ -596,14 +596,11 @@ We can get Citation list of primary sources with DataLoader(...).covid19dh_citat
 <div class="section" id="Set-phases-with-S-R-trend-analysis">
 <h2>Set phases with S-R trend analysis<a class="headerlink" href="#Set-phases-with-S-R-trend-analysis" title="Permalink to this headline">¶</a></h2>
 <p>How can we set phases?</p>
+<p>Here, we will use “S-R trend analysis” explained in <a class="reference external" href="https://www.kaggle.com/lisphilar/covid-19-data-with-sir-model#S-R-trend-analysis">S-R trend analysis section in “Kaggle: COVID-19 data with SIR model”</a>. <span class="math notranslate nohighlight">\(S\)</span> (Susceptible) and <span class="math notranslate nohighlight">\(R\)</span> (Recovered) show the following relationship in SIR-derived models. <span class="math notranslate nohighlight">\(S_{(R)}\)</span> means <span class="math notranslate nohighlight">\(S\)</span> as a function of <span class="math notranslate nohighlight">\(R\)</span>.</p>
+<div class="math notranslate nohighlight">
+\[S_{(R)} = N e^{-a R}\]</div>
 <div class="line-block">
-<div class="line">Here, we will use “S-R trend analysis” explained in <a class="reference external" href="https://www.kaggle.com/lisphilar/covid-19-data-with-sir-model#S-R-trend-analysis">S-R trend analysis section in “Kaggle: COVID-19 data with SIR model”</a>. <span class="math notranslate nohighlight">\(S\)</span> (Susceptible) and <span class="math notranslate nohighlight">\(R\)</span> (Recovered) show the following relationship in SIR-derived models. <span class="math notranslate nohighlight">\(S_{(R)}\)</span> means <span class="math notranslate nohighlight">\(S\)</span> as a function of <span class="math notranslate nohighlight">\(R\)</span>.</div>
-</div>
-<blockquote>
-<div><div class="math notranslate nohighlight">
-\[ \begin{align}\begin{aligned}S_{(R)} = N e^{-a R}\\where :math:`N` is total population and :math:`a=\cfrac{\beta}{N \gamma}` is a constant.\end{aligned}\end{align} \]</div>
-</div></blockquote>
-<div class="line-block">
+<div class="line">where <span class="math notranslate nohighlight">\(N\)</span> is total population and <span class="math notranslate nohighlight">\(a=\cfrac{\beta}{N \gamma}\)</span> is a constant.</div>
 <div class="line">This leads to</div>
 </div>
 <blockquote>
@@ -638,7 +635,7 @@ We can get Citation list of primary sources with DataLoader(...).covid19dh_citat
 </div>
 <div class="output_area docutils container">
 <div class="highlight"><pre>
-&lt;covsirphy.analysis.scenario.Scenario at 0x7f07ab2e9790&gt;
+&lt;covsirphy.analysis.scenario.Scenario at 0x7f220712a430&gt;
 </pre></div></div>
 </div>
 <p>We found five change points from 01May2020 to 20Jul2020. This means that there 6 phases (Initial, 1st, 2nd,…5th). Here, we removed Initial (0th) phase because the number of cases is small in 0th phase and may not show SIR-like trend.</p>
@@ -1158,11 +1155,11 @@ We can get Citation list of primary sources with DataLoader(...).covid19dh_citat
 
 &lt;Main scenario: perform parameter estimation&gt;
 Running optimization with 8 CPUs...
-        4th phase with SIR-F model finished 532 trials in 0 min 45 sec.
-        1st phase with SIR-F model finished 182 trials in 0 min 20 sec.
-        2nd phase with SIR-F model finished 181 trials in 0 min 20 sec.
-        3rd phase with SIR-F model finished 179 trials in 0 min 20 sec.
-Completed optimization. Total: 1 min 8 sec
+        4th phase with SIR-F model finished 531 trials in 0 min 45 sec.
+        1st phase with SIR-F model finished 159 trials in 0 min 15 sec.
+        2nd phase with SIR-F model finished 201 trials in 0 min 20 sec.
+        3rd phase with SIR-F model finished 224 trials in 0 min 20 sec.
+Completed optimization. Total: 1 min 41 sec
 </pre></div></div>
 </div>
 </div>
@@ -1220,11 +1217,11 @@ Completed optimization. Total: 1 min 8 sec
       <th>1st</th>
       <td>30May2020</td>
       <td>05Jun2020</td>
-      <td>0.021563</td>
-      <td>0.000071</td>
-      <td>0.014422</td>
-      <td>0.006719</td>
-      <td>2.08</td>
+      <td>0.003965</td>
+      <td>0.000079</td>
+      <td>0.014502</td>
+      <td>0.006734</td>
+      <td>2.12</td>
     </tr>
     <tr>
       <th>2nd</th>
@@ -1352,11 +1349,11 @@ Completed optimization. Total: 1 min 8 sec
       <th>1st</th>
       <td>30May2020</td>
       <td>05Jun2020</td>
-      <td>0.021563</td>
-      <td>0.000071</td>
-      <td>0.014422</td>
-      <td>0.006719</td>
-      <td>2.08</td>
+      <td>0.003965</td>
+      <td>0.000079</td>
+      <td>0.014502</td>
+      <td>0.006734</td>
+      <td>2.12</td>
     </tr>
     <tr>
       <th>2nd</th>
@@ -1413,11 +1410,11 @@ Completed optimization. Total: 1 min 8 sec
       <th>1st</th>
       <td>30May2020</td>
       <td>05Jun2020</td>
-      <td>0.021563</td>
-      <td>0.000071</td>
-      <td>0.014422</td>
-      <td>0.006719</td>
-      <td>2.08</td>
+      <td>0.003965</td>
+      <td>0.000079</td>
+      <td>0.014502</td>
+      <td>0.006734</td>
+      <td>2.12</td>
     </tr>
     <tr>
       <th>2nd</th>
@@ -1518,17 +1515,17 @@ Completed optimization. Total: 1 min 8 sec
   <tbody>
     <tr>
       <th>Main</th>
-      <td>6459208</td>
+      <td>6539025</td>
       <td>10Nov2020</td>
-      <td>6459208</td>
-      <td>620466</td>
+      <td>6539025</td>
+      <td>627152</td>
     </tr>
     <tr>
       <th>Medicine</th>
-      <td>329720</td>
+      <td>334043</td>
       <td>16Jul2020</td>
-      <td>3304</td>
-      <td>48353</td>
+      <td>3347</td>
+      <td>47819</td>
     </tr>
   </tbody>
 </table>
