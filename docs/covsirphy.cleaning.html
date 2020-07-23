@@ -91,6 +91,7 @@
 <li class="toctree-l1"><a class="reference internal" href="INSTALLATION.html">Installation and dataset preparation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="usage_quickest.html">Usage (quickest version)</a></li>
 <li class="toctree-l1"><a class="reference internal" href="usage_quick.html">Usage (quick version)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="usage_phases.html">Usage (details: phases)</a></li>
 <li class="toctree-l1 current"><a class="reference internal" href="covsirphy.html">API reference</a><ul class="current">
 <li class="toctree-l2"><a class="reference internal" href="covsirphy.analysis.html">covsirphy.analysis</a></li>
 <li class="toctree-l2 current"><a class="current reference internal" href="#">covsirphy.cleaning</a><ul>
@@ -217,6 +218,29 @@
 </dd>
 </dl>
 <dl class="py method">
+<dt id="covsirphy.cleaning.cbase.CleaningBase.area_name">
+<em class="property">classmethod </em><code class="sig-name descname">area_name</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">country</span></em>, <em class="sig-param"><span class="n">province</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/cleaning/cbase.html#CleaningBase.area_name"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#covsirphy.cleaning.cbase.CleaningBase.area_name" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return area name of the country/province.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>country</strong> (<em>str</em>) – country name or ISO3 code</p></li>
+<li><p><strong>province</strong> (<em>str</em>) – province name</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>area name</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>(str)</p>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<p>If province is None or ‘-‘, return country name.
+If not, return the area name, like ‘Japan/Tokyo’</p>
+</dd></dl>
+
+<dl class="py method">
 <dt id="covsirphy.cleaning.cbase.CleaningBase.citation">
 <em class="property">property </em><code class="sig-name descname">citation</code><a class="headerlink" href="#covsirphy.cleaning.cbase.CleaningBase.citation" title="Permalink to this definition">¶</a></dt>
 <dd><p>citation/description of the dataset</p>
@@ -232,7 +256,7 @@
 <code class="sig-name descname">cleaned</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/cleaning/cbase.html#CleaningBase.cleaned"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#covsirphy.cleaning.cbase.CleaningBase.cleaned" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return the cleaned dataset.</p>
 <p class="rubric">Notes</p>
-<p>Cleaning method is defined by self.cleaning() method.</p>
+<p>Cleaning method is defined by self._cleaning() method.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns</dt>
 <dd class="field-odd"><p>cleaned data</p>
@@ -244,19 +268,59 @@
 </dd></dl>
 
 <dl class="py method">
-<dt id="covsirphy.cleaning.cbase.CleaningBase.cleaning">
-<code class="sig-name descname">cleaning</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/cleaning/cbase.html#CleaningBase.cleaning"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#covsirphy.cleaning.cbase.CleaningBase.cleaning" title="Permalink to this definition">¶</a></dt>
-<dd><p>Perform data cleaning of the raw data.</p>
-<p class="rubric">Notes</p>
-<p>Cleaning method is defined by self.cleaning() method.</p>
+<dt id="covsirphy.cleaning.cbase.CleaningBase.countries">
+<code class="sig-name descname">countries</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/cleaning/cbase.html#CleaningBase.countries"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#covsirphy.cleaning.cbase.CleaningBase.countries" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return country names if the dataset.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Returns</dt>
-<dd class="field-odd"><p>cleaned data</p>
+<dt class="field-odd">Raises</dt>
+<dd class="field-odd"><p><strong>KeyError</strong> – Country names are not registered in this dataset</p>
 </dd>
-<dt class="field-even">Return type</dt>
-<dd class="field-even"><p>(pandas.DataFrame)</p>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>list of country names</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>(list[str])</p>
 </dd>
 </dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="covsirphy.cleaning.cbase.CleaningBase.country_to_iso3">
+<code class="sig-name descname">country_to_iso3</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">country</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/cleaning/cbase.html#CleaningBase.country_to_iso3"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#covsirphy.cleaning.cbase.CleaningBase.country_to_iso3" title="Permalink to this definition">¶</a></dt>
+<dd><p>Convert country name to ISO3 code if records are available.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>country</strong> (<em>str</em>) – country name</p>
+</dd>
+<dt class="field-even">Raises</dt>
+<dd class="field-even"><p><strong>KeyError</strong> – ISO3 code of the country is not registered</p>
+</dd>
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>ISO3 code</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>(str)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="covsirphy.cleaning.cbase.CleaningBase.iso3_to_country">
+<code class="sig-name descname">iso3_to_country</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">iso3_code</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/cleaning/cbase.html#CleaningBase.iso3_to_country"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#covsirphy.cleaning.cbase.CleaningBase.iso3_to_country" title="Permalink to this definition">¶</a></dt>
+<dd><p>Convert ISO3 code to country name if records are available.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>iso3_code</strong> (<em>str</em>) – ISO3 code</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>country name</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>(str)</p>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<p>If ISO3 codes are not registered, return the string as-si &#64;iso3_code.</p>
 </dd></dl>
 
 <dl class="py method">
@@ -274,32 +338,55 @@
 </dd></dl>
 
 <dl class="py method">
-<dt id="covsirphy.cleaning.cbase.CleaningBase.total">
-<code class="sig-name descname">total</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/cleaning/cbase.html#CleaningBase.total"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#covsirphy.cleaning.cbase.CleaningBase.total" title="Permalink to this definition">¶</a></dt>
-<dd><p>Return a dataframe to show chronological change of number and rates.</p>
+<dt id="covsirphy.cleaning.cbase.CleaningBase.subset">
+<code class="sig-name descname">subset</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">country</span></em>, <em class="sig-param"><span class="n">province</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">start_date</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">end_date</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/cleaning/cbase.html#CleaningBase.subset"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#covsirphy.cleaning.cbase.CleaningBase.subset" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return subset of the country/province and start/end date.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Returns</dt>
-<dd class="field-odd"><p><p>group-by Date, sum of the values</p>
-<blockquote>
-<div><dl class="simple">
-<dt>Index:</dt><dd><p>(Date) (pd.TimeStamp): Observation date</p>
-</dd>
-<dt>Columns:</dt><dd><ul class="simple">
-<li><p>Confirmed (int): the number of confirmed cases</p></li>
-<li><p>Infected (int): the number of currently infected cases</p></li>
-<li><p>Fatal (int): the number of fatal cases</p></li>
-<li><p>Recovered (int): the number of recovered cases</p></li>
-<li><p>Fatal per Confirmed (int)</p></li>
-<li><p>Recovered per Confirmed (int)</p></li>
-<li><p>Fatal per (Fatal or Recovered) (int)</p></li>
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>country</strong> (<em>str</em>) – country name or ISO3 code</p></li>
+<li><p><strong>province</strong> (<em>str</em><em> or </em><em>None</em>) – province name</p></li>
+<li><p><strong>start_date</strong> (<em>str</em><em> or </em><em>None</em>) – start date, like 22Jan2020</p></li>
+<li><p><strong>end_date</strong> (<em>str</em><em> or </em><em>None</em>) – end date, like 01Feb2020</p></li>
 </ul>
 </dd>
+<dt class="field-even">Raises</dt>
+<dd class="field-even"><ul class="simple">
+<li><p><strong>ValueError</strong> – <ul>
+<li><p>&#64;country was None
+    - &#64;province is not None, but the dataset does not have Province column</p></li>
+</ul>
+</p></li>
+<li><p><strong>KeyError</strong> – selected records are not registered</p></li>
+</ul>
+</dd>
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p><dl class="simple">
+<dt>(pandas.DataFrame)</dt><dd><dl class="simple">
+<dt>Index:</dt><dd><p>reset index</p>
+</dd>
+<dt>Columns:</dt><dd><p>without ISO3, Country, Province column</p>
+</dd>
 </dl>
-</div></blockquote>
+</dd>
+</dl>
 </p>
 </dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="covsirphy.cleaning.cbase.CleaningBase.total">
+<code class="sig-name descname">total</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/cleaning/cbase.html#CleaningBase.total"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#covsirphy.cleaning.cbase.CleaningBase.total" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculate total values of the cleaned dataset.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>Index: ‘Date’ (pandas.TimeStamp) or not exist (pandas.Series)
+Columns: column names of the cleaned dataset (dtype=int or float)
+Values: total values</p>
+</dd>
 <dt class="field-even">Return type</dt>
-<dd class="field-even"><p>(pandas.DataFrame)</p>
+<dd class="field-even"><p>(pandas.DataFrame or pandas.Series or float)</p>
 </dd>
 </dl>
 </dd></dl>
@@ -326,7 +413,7 @@
 <dt id="covsirphy.cleaning.country_data.CountryData.cleaned">
 <code class="sig-name descname">cleaned</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/cleaning/country_data.html#CountryData.cleaned"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#covsirphy.cleaning.country_data.CountryData.cleaned" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return the cleaned dataset.
-Cleaning method is defined by self.cleaning() method.</p>
+Cleaning method is defined by CountryData._cleaning() method.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns</dt>
 <dd class="field-odd"><p><dl class="simple">
@@ -336,35 +423,6 @@ Cleaning method is defined by self.cleaning() method.</p>
 <li><p>Date (pd.TimeStamp): Observation date</p></li>
 <li><p>Country (str): country/region name</p></li>
 <li><p>Province (str): province/prefecture/sstate name</p></li>
-<li><p>Confirmed (int): the number of confirmed cases</p></li>
-<li><p>Infected (int): the number of currently infected cases</p></li>
-<li><p>Fatal (int): the number of fatal cases</p></li>
-<li><p>Recovered (int): the number of recovered cases</p></li>
-</ul>
-</dd>
-</dl>
-</p>
-</dd>
-<dt class="field-even">Return type</dt>
-<dd class="field-even"><p>(pandas.DataFrame)</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt id="covsirphy.cleaning.country_data.CountryData.cleaning">
-<code class="sig-name descname">cleaning</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/cleaning/country_data.html#CountryData.cleaning"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#covsirphy.cleaning.country_data.CountryData.cleaning" title="Permalink to this definition">¶</a></dt>
-<dd><p>Perform data cleaning of the raw data.
-This method overwrite super().cleaning() method.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Returns</dt>
-<dd class="field-odd"><p><dl class="simple">
-<dt>Index:</dt><dd><p>reset index</p>
-</dd>
-<dt>Columns:</dt><dd><ul class="simple">
-<li><p>Date (pd.TimeStamp): Observation date</p></li>
-<li><p>Country (str): country/region name</p></li>
-<li><p>Province (str): province/prefecture/state name</p></li>
 <li><p>Confirmed (int): the number of confirmed cases</p></li>
 <li><p>Infected (int): the number of currently infected cases</p></li>
 <li><p>Fatal (int): the number of fatal cases</p></li>
@@ -421,6 +479,37 @@ This method overwrite super().cleaning() method.</p>
 <li><p><strong>recovered</strong> (<em>str</em>) – column name for Confirmed</p></li>
 <li><p><strong>province</strong> (<em>str</em>) – (optional) column name for Province</p></li>
 </ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="covsirphy.cleaning.country_data.CountryData.total">
+<code class="sig-name descname">total</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/cleaning/country_data.html#CountryData.total"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#covsirphy.cleaning.country_data.CountryData.total" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return a dataframe to show chronological change of number and rates.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p><p>group-by Date, sum of the values</p>
+<blockquote>
+<div><dl class="simple">
+<dt>Index:</dt><dd><p>Date (pd.TimeStamp): Observation date</p>
+</dd>
+<dt>Columns:</dt><dd><ul class="simple">
+<li><p>Confirmed (int): the number of confirmed cases</p></li>
+<li><p>Infected (int): the number of currently infected cases</p></li>
+<li><p>Fatal (int): the number of fatal cases</p></li>
+<li><p>Recovered (int): the number of recovered cases</p></li>
+<li><p>Fatal per Confirmed (int)</p></li>
+<li><p>Recovered per Confirmed (int)</p></li>
+<li><p>Fatal per (Fatal or Recovered) (int)</p></li>
+</ul>
+</dd>
+</dl>
+</div></blockquote>
+</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>(pandas.DataFrame)</p>
 </dd>
 </dl>
 </dd></dl>
@@ -621,32 +710,12 @@ If &#64;basename is None, the value of DataLoader.DH_BASENAME will be used.</p>
 <dd><p>Bases: <a class="reference internal" href="#covsirphy.cleaning.cbase.CleaningBase" title="covsirphy.cleaning.cbase.CleaningBase"><code class="xref py py-class docutils literal notranslate"><span class="pre">covsirphy.cleaning.cbase.CleaningBase</span></code></a></p>
 <p>Data cleaning of JHU-style dataset.</p>
 <dl class="py method">
-<dt id="covsirphy.cleaning.jhu_data.JHUData.area_name">
-<em class="property">classmethod </em><code class="sig-name descname">area_name</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">country</span></em>, <em class="sig-param"><span class="n">province</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/cleaning/jhu_data.html#JHUData.area_name"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#covsirphy.cleaning.jhu_data.JHUData.area_name" title="Permalink to this definition">¶</a></dt>
-<dd><p>Return area name of the country/province.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>country</strong> (<em>str</em>) – country name</p></li>
-<li><p><strong>province</strong> (<em>str</em>) – province name</p></li>
-</ul>
-</dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p>area name</p>
-</dd>
-<dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>(str)</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
 <dt id="covsirphy.cleaning.jhu_data.JHUData.cleaned">
 <code class="sig-name descname">cleaned</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/cleaning/jhu_data.html#JHUData.cleaned"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#covsirphy.cleaning.jhu_data.JHUData.cleaned" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return the cleaned dataset.</p>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
-<p>Cleaning method is defined by self.cleaning() method.</p>
+<p>Cleaning method is defined by self._cleaning() method.</p>
 </div>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -654,35 +723,6 @@ If &#64;basename is None, the value of DataLoader.DH_BASENAME will be used.</p>
 </dd>
 <dt class="field-even">Returns</dt>
 <dd class="field-even"><p><dl class="simple">
-<dt>(pandas.DataFrame)</dt><dd><dl class="simple">
-<dt>Index:</dt><dd><p>reset index</p>
-</dd>
-<dt>Columns:</dt><dd><ul class="simple">
-<li><p>Date (pd.TimeStamp): Observation date</p></li>
-<li><p>Country (str): country/region name</p></li>
-<li><p>Province (str): province/prefecture/state name</p></li>
-<li><p>Confirmed (int): the number of confirmed cases</p></li>
-<li><p>Infected (int): the number of currently infected cases</p></li>
-<li><p>Fatal (int): the number of fatal cases</p></li>
-<li><p>Recovered (int): the number of recovered cases</p></li>
-</ul>
-</dd>
-</dl>
-</dd>
-</dl>
-</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt id="covsirphy.cleaning.jhu_data.JHUData.cleaning">
-<code class="sig-name descname">cleaning</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/cleaning/jhu_data.html#JHUData.cleaning"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#covsirphy.cleaning.jhu_data.JHUData.cleaning" title="Permalink to this definition">¶</a></dt>
-<dd><p>Perform data cleaning of the raw data.
-This method overwrite super().cleaning() method.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Returns</dt>
-<dd class="field-odd"><p><dl class="simple">
 <dt>(pandas.DataFrame)</dt><dd><dl class="simple">
 <dt>Index:</dt><dd><p>reset index</p>
 </dd>
@@ -742,8 +782,8 @@ This method overwrite super().cleaning() method.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>country</strong> (<em>str</em>) – country name</p></li>
-<li><p><strong>province</strong> (<em>str</em>) – province name</p></li>
+<li><p><strong>country</strong> (<em>str</em>) – country name or ISO3 code</p></li>
+<li><p><strong>province</strong> (<em>str</em><em> or </em><em>None</em>) – province name</p></li>
 <li><p><strong>start_date</strong> (<em>str</em><em> or </em><em>None</em>) – start date, like 22Jan2020</p></li>
 <li><p><strong>end_date</strong> (<em>str</em><em> or </em><em>None</em>) – end date, like 01Feb2020</p></li>
 <li><p><strong>population</strong> (<em>int</em><em> or </em><em>None</em>) – population value</p></li>
@@ -808,6 +848,37 @@ Records with Recovered &gt; 0 will be selected.</p>
 Records with Recovered &gt; 0 will be used.</p>
 </dd></dl>
 
+<dl class="py method">
+<dt id="covsirphy.cleaning.jhu_data.JHUData.total">
+<code class="sig-name descname">total</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/cleaning/jhu_data.html#JHUData.total"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#covsirphy.cleaning.jhu_data.JHUData.total" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return a dataframe to show chronological change of number and rates.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p><p>group-by Date, sum of the values</p>
+<blockquote>
+<div><dl class="simple">
+<dt>Index:</dt><dd><p>Date (pd.TimeStamp): Observation date</p>
+</dd>
+<dt>Columns:</dt><dd><ul class="simple">
+<li><p>Confirmed (int): the number of confirmed cases</p></li>
+<li><p>Infected (int): the number of currently infected cases</p></li>
+<li><p>Fatal (int): the number of fatal cases</p></li>
+<li><p>Recovered (int): the number of recovered cases</p></li>
+<li><p>Fatal per Confirmed (int)</p></li>
+<li><p>Recovered per Confirmed (int)</p></li>
+<li><p>Fatal per (Fatal or Recovered) (int)</p></li>
+</ul>
+</dd>
+</dl>
+</div></blockquote>
+</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>(pandas.DataFrame)</p>
+</dd>
+</dl>
+</dd></dl>
+
 </dd></dl>
 
 </div>
@@ -837,35 +908,6 @@ Records with Recovered &gt; 0 will be used.</p>
 <dt id="covsirphy.cleaning.oxcgrt.OxCGRTData.OXCGRT_VARIABLES">
 <code class="sig-name descname">OXCGRT_VARIABLES</code><em class="property"> = ['school_closing', 'workplace_closing', 'cancel_events', 'gatherings_restrictions', 'transport_closing', 'stay_home_restrictions', 'internal_movement_restrictions', 'international_movement_restrictions', 'information_campaigns', 'testing_policy', 'contact_tracing', 'stringency_index']</em><a class="headerlink" href="#covsirphy.cleaning.oxcgrt.OxCGRTData.OXCGRT_VARIABLES" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
-
-<dl class="py method">
-<dt id="covsirphy.cleaning.oxcgrt.OxCGRTData.cleaning">
-<code class="sig-name descname">cleaning</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/cleaning/oxcgrt.html#OxCGRTData.cleaning"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#covsirphy.cleaning.oxcgrt.OxCGRTData.cleaning" title="Permalink to this definition">¶</a></dt>
-<dd><p>Perform data cleaning of the raw data.
-This method overwrite super().cleaning() method.
-Policy indices (Overall etc.) are from
-README.md and documentation/index_methodology.md in
-<a class="reference external" href="https://github.com/OxCGRT/covid-policy-tracker/">https://github.com/OxCGRT/covid-policy-tracker/</a></p>
-<dl class="field-list simple">
-<dt class="field-odd">Returns</dt>
-<dd class="field-odd"><p><dl class="simple">
-<dt>(pandas.DataFrame)</dt><dd><dl class="simple">
-<dt>Index:</dt><dd><p>reset index</p>
-</dd>
-<dt>Columns:</dt><dd><ul class="simple">
-<li><p>Date (pd.TimeStamp): Observation date</p></li>
-<li><p>Country (str): country/region name</p></li>
-<li><p>ISO3 (str): ISO 3166-1 alpha-3, like JPN</p></li>
-<li><p>other column names are defined by OxCGRTData.COL_DICT</p></li>
-</ul>
-</dd>
-</dl>
-</dd>
-</dl>
-</p>
-</dd>
-</dl>
-</dd></dl>
 
 <dl class="py method">
 <dt id="covsirphy.cleaning.oxcgrt.OxCGRTData.subset">
@@ -901,7 +943,12 @@ README.md and documentation/index_methodology.md in
 <dl class="py method">
 <dt id="covsirphy.cleaning.oxcgrt.OxCGRTData.total">
 <code class="sig-name descname">total</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/cleaning/oxcgrt.html#OxCGRTData.total"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#covsirphy.cleaning.oxcgrt.OxCGRTData.total" title="Permalink to this definition">¶</a></dt>
-<dd><p>Cannot be used.</p>
+<dd><p>This is not defined for this child class.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Raises</dt>
+<dd class="field-odd"><p><strong>AttributeError</strong> – if called</p>
+</dd>
+</dl>
 </dd></dl>
 
 </dd></dl>
@@ -924,31 +971,6 @@ README.md and documentation/index_methodology.md in
 <dt id="covsirphy.cleaning.population.PopulationData.POPULATION_COLS">
 <code class="sig-name descname">POPULATION_COLS</code><em class="property"> = ['ISO3', 'Country', 'Province', 'Population']</em><a class="headerlink" href="#covsirphy.cleaning.population.PopulationData.POPULATION_COLS" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
-
-<dl class="py method">
-<dt id="covsirphy.cleaning.population.PopulationData.cleaning">
-<code class="sig-name descname">cleaning</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/cleaning/population.html#PopulationData.cleaning"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#covsirphy.cleaning.population.PopulationData.cleaning" title="Permalink to this definition">¶</a></dt>
-<dd><p>Perform data cleaning of the raw data.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Returns</dt>
-<dd class="field-odd"><p><dl class="simple">
-<dt>(pandas.DataFrame)</dt><dd><dl class="simple">
-<dt>Index:</dt><dd><p>reset index</p>
-</dd>
-<dt>Columns:</dt><dd><ul class="simple">
-<li><p>ISO3 (str): ISO3 code or “-“</p></li>
-<li><p>Country (str): country/region name</p></li>
-<li><p>Province (str): province/prefecture/state name</p></li>
-<li><p>Population (int): total population</p></li>
-</ul>
-</dd>
-</dl>
-</dd>
-</dl>
-</p>
-</dd>
-</dl>
-</dd></dl>
 
 <dl class="py method">
 <dt id="covsirphy.cleaning.population.PopulationData.to_dict">

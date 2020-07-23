@@ -56,6 +56,7 @@ Please read the following documents.
 
 - [Usage (quickest version)](https://lisphilar.github.io/covid19-sir/usage_quickest.html)
 - [Usage (quick version)](https://lisphilar.github.io/covid19-sir/usage_quick.html)
+- [Usage (details: phases)](https://lisphilar.github.io/covid19-sir/usage_phases.html)
 - Example codes in ["example" directory of this repository](https://github.com/lisphilar/covid19-sir/tree/master/example)
 - [Kaggle: COVID-19 data with SIR model](https://www.kaggle.com/lisphilar/covid-19-data-with-sir-model)
 

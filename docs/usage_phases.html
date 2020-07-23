@@ -1,0 +1,1596 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Usage (details: phases) &mdash; CovsirPhy  documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+
+  
+  
+  
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/underscore.js"></script>
+        <script src="_static/doctools.js"></script>
+        <script src="_static/language_data.js"></script>
+        <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+        <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+        <script type="text/x-mathjax-config">MathJax.Hub.Config({"tex2jax": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "processEscapes": true, "ignoreClass": "document", "processClass": "math|output_area"}})</script>
+    
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="API reference" href="covsirphy.html" />
+    <link rel="prev" title="Usage (quick version)" href="usage_quick.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="index.html" class="icon icon-home" alt="Documentation Home"> CovsirPhy
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="README.html">CovsirPhy: COVID-19 analysis with SIRs</a></li>
+<li class="toctree-l1"><a class="reference internal" href="INSTALLATION.html">Installation and dataset preparation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="usage_quickest.html">Usage (quickest version)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="usage_quick.html">Usage (quick version)</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Usage (details: phases)</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#Preperation">Preperation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#Set-phases-with-S-R-trend-analysis">Set phases with S-R trend analysis</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#(Optional)-Remove-un-necessary-change-points-manually">(Optional) Remove un-necessary change points manually</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#(Optional)-Separate-phases-manually">(Optional) Separate phases manually</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#(Optional)-Delete-phases-manually">(Optional) Delete phases manually</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#(Optional)-Add-phases-one-by-one">(Optional) Add phases one by one</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#Parameter-estimation-of-ODE-models">Parameter estimation of ODE models</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#Main-scenario">Main scenario</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#Medicine-scenario">Medicine scenario</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#Compare-the-scenarios">Compare the scenarios</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="covsirphy.html">API reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="CONTRIBUTING.html">Guideline of contribution</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">CovsirPhy</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
+        
+      <li>Usage (details: phases)</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="_sources/usage_phases.ipynb.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  
+<style>
+/* CSS for nbsphinx extension */
+
+/* remove conflicting styling from Sphinx themes */
+div.nbinput.container,
+div.nbinput.container div.prompt,
+div.nbinput.container div.input_area,
+div.nbinput.container div[class*=highlight],
+div.nbinput.container div[class*=highlight] pre,
+div.nboutput.container,
+div.nboutput.container div.prompt,
+div.nboutput.container div.output_area,
+div.nboutput.container div[class*=highlight],
+div.nboutput.container div[class*=highlight] pre {
+    background: none;
+    border: none;
+    padding: 0 0;
+    margin: 0;
+    box-shadow: none;
+}
+
+/* avoid gaps between output lines */
+div.nboutput.container div[class*=highlight] pre {
+    line-height: normal;
+}
+
+/* input/output containers */
+div.nbinput.container,
+div.nboutput.container {
+    display: -webkit-flex;
+    display: flex;
+    align-items: flex-start;
+    margin: 0;
+    width: 100%;
+}
+@media (max-width: 540px) {
+    div.nbinput.container,
+    div.nboutput.container {
+        flex-direction: column;
+    }
+}
+
+/* input container */
+div.nbinput.container {
+    padding-top: 5px;
+}
+
+/* last container */
+div.nblast.container {
+    padding-bottom: 5px;
+}
+
+/* input prompt */
+div.nbinput.container div.prompt pre {
+    color: #307FC1;
+}
+
+/* output prompt */
+div.nboutput.container div.prompt pre {
+    color: #BF5B3D;
+}
+
+/* all prompts */
+div.nbinput.container div.prompt,
+div.nboutput.container div.prompt {
+    width: 4.5ex;
+    padding-top: 5px;
+    position: relative;
+    user-select: none;
+}
+
+div.nbinput.container div.prompt > div,
+div.nboutput.container div.prompt > div {
+    position: absolute;
+    right: 0;
+    margin-right: 0.3ex;
+}
+
+@media (max-width: 540px) {
+    div.nbinput.container div.prompt,
+    div.nboutput.container div.prompt {
+        width: unset;
+        text-align: left;
+        padding: 0.4em;
+    }
+    div.nboutput.container div.prompt.empty {
+        padding: 0;
+    }
+
+    div.nbinput.container div.prompt > div,
+    div.nboutput.container div.prompt > div {
+        position: unset;
+    }
+}
+
+/* disable scrollbars on prompts */
+div.nbinput.container div.prompt pre,
+div.nboutput.container div.prompt pre {
+    overflow: hidden;
+}
+
+/* input/output area */
+div.nbinput.container div.input_area,
+div.nboutput.container div.output_area {
+    -webkit-flex: 1;
+    flex: 1;
+    overflow: auto;
+}
+@media (max-width: 540px) {
+    div.nbinput.container div.input_area,
+    div.nboutput.container div.output_area {
+        width: 100%;
+    }
+}
+
+/* input area */
+div.nbinput.container div.input_area {
+    border: 1px solid #e0e0e0;
+    border-radius: 2px;
+    background: #f5f5f5;
+}
+
+/* override MathJax center alignment in output cells */
+div.nboutput.container div[class*=MathJax] {
+    text-align: left !important;
+}
+
+/* override sphinx.ext.imgmath center alignment in output cells */
+div.nboutput.container div.math p {
+    text-align: left;
+}
+
+/* standard error */
+div.nboutput.container div.output_area.stderr {
+    background: #fdd;
+}
+
+/* ANSI colors */
+.ansi-black-fg { color: #3E424D; }
+.ansi-black-bg { background-color: #3E424D; }
+.ansi-black-intense-fg { color: #282C36; }
+.ansi-black-intense-bg { background-color: #282C36; }
+.ansi-red-fg { color: #E75C58; }
+.ansi-red-bg { background-color: #E75C58; }
+.ansi-red-intense-fg { color: #B22B31; }
+.ansi-red-intense-bg { background-color: #B22B31; }
+.ansi-green-fg { color: #00A250; }
+.ansi-green-bg { background-color: #00A250; }
+.ansi-green-intense-fg { color: #007427; }
+.ansi-green-intense-bg { background-color: #007427; }
+.ansi-yellow-fg { color: #DDB62B; }
+.ansi-yellow-bg { background-color: #DDB62B; }
+.ansi-yellow-intense-fg { color: #B27D12; }
+.ansi-yellow-intense-bg { background-color: #B27D12; }
+.ansi-blue-fg { color: #208FFB; }
+.ansi-blue-bg { background-color: #208FFB; }
+.ansi-blue-intense-fg { color: #0065CA; }
+.ansi-blue-intense-bg { background-color: #0065CA; }
+.ansi-magenta-fg { color: #D160C4; }
+.ansi-magenta-bg { background-color: #D160C4; }
+.ansi-magenta-intense-fg { color: #A03196; }
+.ansi-magenta-intense-bg { background-color: #A03196; }
+.ansi-cyan-fg { color: #60C6C8; }
+.ansi-cyan-bg { background-color: #60C6C8; }
+.ansi-cyan-intense-fg { color: #258F8F; }
+.ansi-cyan-intense-bg { background-color: #258F8F; }
+.ansi-white-fg { color: #C5C1B4; }
+.ansi-white-bg { background-color: #C5C1B4; }
+.ansi-white-intense-fg { color: #A1A6B2; }
+.ansi-white-intense-bg { background-color: #A1A6B2; }
+
+.ansi-default-inverse-fg { color: #FFFFFF; }
+.ansi-default-inverse-bg { background-color: #000000; }
+
+.ansi-bold { font-weight: bold; }
+.ansi-underline { text-decoration: underline; }
+
+
+div.nbinput.container div.input_area div[class*=highlight] > pre,
+div.nboutput.container div.output_area div[class*=highlight] > pre,
+div.nboutput.container div.output_area div[class*=highlight].math,
+div.nboutput.container div.output_area.rendered_html,
+div.nboutput.container div.output_area > div.output_javascript,
+div.nboutput.container div.output_area:not(.rendered_html) > img{
+    padding: 5px;
+}
+
+/* fix copybtn overflow problem in chromium (needed for 'sphinx_copybutton') */
+div.nbinput.container div.input_area > div[class^='highlight'],
+div.nboutput.container div.output_area > div[class^='highlight']{
+    overflow-y: hidden;
+}
+
+/* hide copybtn icon on prompts (needed for 'sphinx_copybutton') */
+.prompt a.copybtn {
+    display: none;
+}
+
+/* Some additional styling taken form the Jupyter notebook CSS */
+div.rendered_html table {
+  border: none;
+  border-collapse: collapse;
+  border-spacing: 0;
+  color: black;
+  font-size: 12px;
+  table-layout: fixed;
+}
+div.rendered_html thead {
+  border-bottom: 1px solid black;
+  vertical-align: bottom;
+}
+div.rendered_html tr,
+div.rendered_html th,
+div.rendered_html td {
+  text-align: right;
+  vertical-align: middle;
+  padding: 0.5em 0.5em;
+  line-height: normal;
+  white-space: normal;
+  max-width: none;
+  border: none;
+}
+div.rendered_html th {
+  font-weight: bold;
+}
+div.rendered_html tbody tr:nth-child(odd) {
+  background: #f5f5f5;
+}
+div.rendered_html tbody tr:hover {
+  background: rgba(66, 165, 245, 0.2);
+}
+
+/* CSS overrides for sphinx_rtd_theme */
+
+/* 24px margin */
+.nbinput.nblast.container,
+.nboutput.nblast.container {
+    margin-bottom: 19px;  /* padding has already 5px */
+}
+
+/* ... except between code cells! */
+.nblast.container + .nbinput.container {
+    margin-top: -19px;
+}
+
+.admonition > p:before {
+    margin-right: 4px;  /* make room for the exclamation icon */
+}
+
+/* Fix math alignment, see https://github.com/rtfd/sphinx_rtd_theme/pull/686 */
+.math {
+    text-align: unset;
+}
+</style>
+<div class="section" id="Usage-(details:-phases)">
+<h1>Usage (details: phases)<a class="headerlink" href="#Usage-(details:-phases)" title="Permalink to this headline">¶</a></h1>
+<p>Here, how to set phases in scenario analysis will be explained. As an example, use the records in India.</p>
+<div class="section" id="Preperation">
+<h2>Preperation<a class="headerlink" href="#Preperation" title="Permalink to this headline">¶</a></h2>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[1]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="c1"># Standard users</span>
+<span class="c1"># !pip install covsirphy</span>
+<span class="c1"># Developers (Note: this notebook is in example directory)</span>
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="n">os</span><span class="o">.</span><span class="n">chdir</span><span class="p">(</span><span class="s2">&quot;../&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[2]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">covsirphy</span> <span class="k">as</span> <span class="nn">cs</span>
+<span class="n">cs</span><span class="o">.</span><span class="n">__version__</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[2]:
+</pre></div>
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+&#39;2.5.4-gamma.new.75.126.fix.130&#39;
+</pre></div></div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[3]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="c1"># Load datasets</span>
+<span class="n">data_loader</span> <span class="o">=</span> <span class="n">cs</span><span class="o">.</span><span class="n">DataLoader</span><span class="p">(</span><span class="s2">&quot;input&quot;</span><span class="p">)</span>
+<span class="n">jhu_data</span> <span class="o">=</span> <span class="n">data_loader</span><span class="o">.</span><span class="n">jhu</span><span class="p">(</span><span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<span class="n">population_data</span> <span class="o">=</span> <span class="n">data_loader</span><span class="o">.</span><span class="n">population</span><span class="p">(</span><span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">jhu_data</span><span class="o">.</span><span class="n">citation</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+(Secondary source) Guidotti, E., Ardia, D., (2020), &#34;COVID-19 Data Hub&#34;, Working paper, doi: 10.13140/RG.2.2.11649.81763.
+We can get Citation list of primary sources with DataLoader(...).covid19dh_citation
+</pre></div></div>
+</div>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[4]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="c1"># Create instance of `Scenario` class</span>
+<span class="n">scenario</span> <span class="o">=</span> <span class="n">cs</span><span class="o">.</span><span class="n">Scenario</span><span class="p">(</span><span class="n">jhu_data</span><span class="p">,</span> <span class="n">population_data</span><span class="p">,</span> <span class="n">country</span><span class="o">=</span><span class="s2">&quot;India&quot;</span><span class="p">,</span> <span class="n">province</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[5]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="c1"># Summarize main scenario</span>
+<span class="n">scenario</span><span class="o">.</span><span class="n">summary</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[5]:
+</pre></div>
+</div>
+<div class="output_area rendered_html docutils container">
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>Type</th>
+      <th>Start</th>
+      <th>End</th>
+      <th>Population</th>
+    </tr>
+  </thead>
+  <tbody>
+  </tbody>
+</table>
+</div></div>
+</div>
+<div class="line-block">
+<div class="line">Note:</div>
+<div class="line">This is empty because no phases are registered. Term “phase” means a sequential dates in which the parameters of SIR-derived models are fixed. The details will be explained later.</div>
+</div>
+<p>Just for demonstration, we will fix the first/end date of the records here. This is un-necessary for your analysis.</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[6]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="c1"># Fix the first date of records</span>
+<span class="n">scenario</span><span class="o">.</span><span class="n">first_date</span> <span class="o">=</span> <span class="s2">&quot;01Mar2020&quot;</span>
+<span class="c1"># Fix the last date of records</span>
+<span class="n">scenario</span><span class="o">.</span><span class="n">last_date</span> <span class="o">=</span> <span class="s2">&quot;16Jul2020&quot;</span>
+<span class="c1"># Summarize (Empty because no phases are registered)</span>
+<span class="n">scenario</span><span class="o">.</span><span class="n">summary</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[6]:
+</pre></div>
+</div>
+<div class="output_area rendered_html docutils container">
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>Type</th>
+      <th>Start</th>
+      <th>End</th>
+      <th>Population</th>
+    </tr>
+  </thead>
+  <tbody>
+  </tbody>
+</table>
+</div></div>
+</div>
+</div>
+<div class="section" id="Set-phases-with-S-R-trend-analysis">
+<h2>Set phases with S-R trend analysis<a class="headerlink" href="#Set-phases-with-S-R-trend-analysis" title="Permalink to this headline">¶</a></h2>
+<p>How can we set phases?</p>
+<div class="line-block">
+<div class="line">Here, we will use “S-R trend analysis” explained in <a class="reference external" href="https://www.kaggle.com/lisphilar/covid-19-data-with-sir-model#S-R-trend-analysis">S-R trend analysis section in “Kaggle: COVID-19 data with SIR model”</a>. <span class="math notranslate nohighlight">\(S\)</span> (Susceptible) and <span class="math notranslate nohighlight">\(R\)</span> (Recovered) show the following relationship in SIR-derived models. <span class="math notranslate nohighlight">\(S_{(R)}\)</span> means <span class="math notranslate nohighlight">\(S\)</span> as a function of <span class="math notranslate nohighlight">\(R\)</span>.</div>
+</div>
+<blockquote>
+<div><div class="math notranslate nohighlight">
+\[ \begin{align}\begin{aligned}S_{(R)} = N e^{-a R}\\where :math:`N` is total population and :math:`a=\cfrac{\beta}{N \gamma}` is a constant.\end{aligned}\end{align} \]</div>
+</div></blockquote>
+<div class="line-block">
+<div class="line">This leads to</div>
+</div>
+<blockquote>
+<div><div class="math notranslate nohighlight">
+\[\log S_{(R)} = - a R + \log N\]</div>
+</div></blockquote>
+<p><span class="math notranslate nohighlight">\(\log S\)</span> decreases constantly with increase of <span class="math notranslate nohighlight">\(R\)</span>, when the records follow a SIR-derived model and the parameter values of the model are constant. With logarithmic y-axis scale, plot of <span class="math notranslate nohighlight">\((x, y) = (R, S)\)</span> shows a line.</p>
+<p>The slope of the line may change when the parameter values (<span class="math notranslate nohighlight">\(\beta\)</span> and <span class="math notranslate nohighlight">\(\gamma\)</span>) are changed. To detect the dates when the parameter values were changed, we will find the change points of <span class="math notranslate nohighlight">\(\log S\)</span> as a function of <span class="math notranslate nohighlight">\(R\)</span>, using <a class="reference external" href="https://github.com/deepcharles/ruptures">ruptures: change point detection in Python</a>. We call the period from a change point to the next change point as a “phase” in this analysis.</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[7]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="c1"># Set phase with S-R trend analysis and delete initial (0th) phase</span>
+<span class="n">scenario</span><span class="o">.</span><span class="n">trend</span><span class="p">(</span><span class="n">set_phases</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="c1"># This is the same as</span>
+<span class="c1"># scenario.trend(set_phases=True, include_init_phase=True)</span>
+<span class="c1"># scenario.delete(phases=[&quot;0th&quot;])</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="_images/usage_phases_13_0.png" src="_images/usage_phases_13_0.png" />
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[7]:
+</pre></div>
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+&lt;covsirphy.analysis.scenario.Scenario at 0x7f07ab2e9790&gt;
+</pre></div></div>
+</div>
+<p>We found five change points from 01May2020 to 20Jul2020. This means that there 6 phases (Initial, 1st, 2nd,…5th). Here, we removed Initial (0th) phase because the number of cases is small in 0th phase and may not show SIR-like trend.</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[8]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">scenario</span><span class="o">.</span><span class="n">summary</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[8]:
+</pre></div>
+</div>
+<div class="output_area rendered_html docutils container">
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>Type</th>
+      <th>Start</th>
+      <th>End</th>
+      <th>Population</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>1st</th>
+      <td>Past</td>
+      <td>22May2020</td>
+      <td>03Jun2020</td>
+      <td>1352617328</td>
+    </tr>
+    <tr>
+      <th>2nd</th>
+      <td>Past</td>
+      <td>04Jun2020</td>
+      <td>12Jun2020</td>
+      <td>1352617328</td>
+    </tr>
+    <tr>
+      <th>3rd</th>
+      <td>Past</td>
+      <td>13Jun2020</td>
+      <td>25Jun2020</td>
+      <td>1352617328</td>
+    </tr>
+    <tr>
+      <th>4th</th>
+      <td>Past</td>
+      <td>26Jun2020</td>
+      <td>04Jul2020</td>
+      <td>1352617328</td>
+    </tr>
+    <tr>
+      <th>5th</th>
+      <td>Past</td>
+      <td>05Jul2020</td>
+      <td>16Jul2020</td>
+      <td>1352617328</td>
+    </tr>
+  </tbody>
+</table>
+</div></div>
+</div>
+</div>
+<div class="section" id="(Optional)-Remove-un-necessary-change-points-manually">
+<h2>(Optional) Remove un-necessary change points manually<a class="headerlink" href="#(Optional)-Remove-un-necessary-change-points-manually" title="Permalink to this headline">¶</a></h2>
+<p>The slope of 4th seems to equal to that of 3rd phase. Here, we will combine 3rd phase and 4th phase here and reset phase names.</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[9]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="c1"># Before: 3rd is 16Jun2020-23Jun2020, 4th is 24Jun2020-04Jul2020</span>
+<span class="c1"># After: 3rd is 16Jun2020-04Jul2020, 4th is the same as old 5th</span>
+<span class="n">scenario</span><span class="o">.</span><span class="n">combine</span><span class="p">(</span><span class="n">phases</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;3rd&quot;</span><span class="p">,</span> <span class="s2">&quot;4th&quot;</span><span class="p">])</span>
+<span class="n">scenario</span><span class="o">.</span><span class="n">summary</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[9]:
+</pre></div>
+</div>
+<div class="output_area rendered_html docutils container">
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>Type</th>
+      <th>Start</th>
+      <th>End</th>
+      <th>Population</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>1st</th>
+      <td>Past</td>
+      <td>22May2020</td>
+      <td>03Jun2020</td>
+      <td>1352617328</td>
+    </tr>
+    <tr>
+      <th>2nd</th>
+      <td>Past</td>
+      <td>04Jun2020</td>
+      <td>12Jun2020</td>
+      <td>1352617328</td>
+    </tr>
+    <tr>
+      <th>3rd</th>
+      <td>Past</td>
+      <td>13Jun2020</td>
+      <td>04Jul2020</td>
+      <td>1352617328</td>
+    </tr>
+    <tr>
+      <th>4th</th>
+      <td>Past</td>
+      <td>05Jul2020</td>
+      <td>16Jul2020</td>
+      <td>1352617328</td>
+    </tr>
+  </tbody>
+</table>
+</div></div>
+</div>
+<p>Show the trend with manually set change points.</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[10]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">scenario</span><span class="o">.</span><span class="n">trend</span><span class="p">(</span><span class="n">set_phases</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="_images/usage_phases_19_0.png" src="_images/usage_phases_19_0.png" />
+</div>
+</div>
+</div>
+<div class="section" id="(Optional)-Separate-phases-manually">
+<h2>(Optional) Separate phases manually<a class="headerlink" href="#(Optional)-Separate-phases-manually" title="Permalink to this headline">¶</a></h2>
+<p>Because point of <span class="math notranslate nohighlight">\((x, y) = (S, R)\)</span> jumped on 30May2020, we will separete the 1st phase with this change point and reset phase names.</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[11]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="c1"># Before: 1st is 20May2020-05Jun2020</span>
+<span class="c1"># After: 1st is 20May2020-29May2020, 2nd is 30May2020-05Jun2020</span>
+<span class="n">scenario</span><span class="o">.</span><span class="n">separate</span><span class="p">(</span><span class="n">date</span><span class="o">=</span><span class="s2">&quot;30May2020&quot;</span><span class="p">,</span> <span class="n">phase</span><span class="o">=</span><span class="s2">&quot;1st&quot;</span><span class="p">)</span>
+<span class="n">scenario</span><span class="o">.</span><span class="n">summary</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[11]:
+</pre></div>
+</div>
+<div class="output_area rendered_html docutils container">
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>Type</th>
+      <th>Start</th>
+      <th>End</th>
+      <th>Population</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>1st</th>
+      <td>Past</td>
+      <td>22May2020</td>
+      <td>29May2020</td>
+      <td>1352617328</td>
+    </tr>
+    <tr>
+      <th>2nd</th>
+      <td>Past</td>
+      <td>30May2020</td>
+      <td>03Jun2020</td>
+      <td>1352617328</td>
+    </tr>
+    <tr>
+      <th>3rd</th>
+      <td>Past</td>
+      <td>04Jun2020</td>
+      <td>12Jun2020</td>
+      <td>1352617328</td>
+    </tr>
+    <tr>
+      <th>4th</th>
+      <td>Past</td>
+      <td>13Jun2020</td>
+      <td>04Jul2020</td>
+      <td>1352617328</td>
+    </tr>
+    <tr>
+      <th>5th</th>
+      <td>Past</td>
+      <td>05Jul2020</td>
+      <td>16Jul2020</td>
+      <td>1352617328</td>
+    </tr>
+  </tbody>
+</table>
+</div></div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[12]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">scenario</span><span class="o">.</span><span class="n">trend</span><span class="p">(</span><span class="n">set_phases</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="_images/usage_phases_22_0.png" src="_images/usage_phases_22_0.png" />
+</div>
+</div>
+</div>
+<div class="section" id="(Optional)-Delete-phases-manually">
+<h2>(Optional) Delete phases manually<a class="headerlink" href="#(Optional)-Delete-phases-manually" title="Permalink to this headline">¶</a></h2>
+<p>Because 1st phase seems un-stable, delete the 1st phase and reset the phase names.</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[13]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="c1"># Remove 1st phase</span>
+<span class="n">scenario</span><span class="o">.</span><span class="n">delete</span><span class="p">(</span><span class="n">phases</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;1st&quot;</span><span class="p">])</span>
+<span class="n">scenario</span><span class="o">.</span><span class="n">summary</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[13]:
+</pre></div>
+</div>
+<div class="output_area rendered_html docutils container">
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>Type</th>
+      <th>Start</th>
+      <th>End</th>
+      <th>Population</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>1st</th>
+      <td>Past</td>
+      <td>30May2020</td>
+      <td>03Jun2020</td>
+      <td>1352617328</td>
+    </tr>
+    <tr>
+      <th>2nd</th>
+      <td>Past</td>
+      <td>04Jun2020</td>
+      <td>12Jun2020</td>
+      <td>1352617328</td>
+    </tr>
+    <tr>
+      <th>3rd</th>
+      <td>Past</td>
+      <td>13Jun2020</td>
+      <td>04Jul2020</td>
+      <td>1352617328</td>
+    </tr>
+    <tr>
+      <th>4th</th>
+      <td>Past</td>
+      <td>05Jul2020</td>
+      <td>16Jul2020</td>
+      <td>1352617328</td>
+    </tr>
+  </tbody>
+</table>
+</div></div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[14]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">scenario</span><span class="o">.</span><span class="n">trend</span><span class="p">(</span><span class="n">set_phases</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="_images/usage_phases_25_0.png" src="_images/usage_phases_25_0.png" />
+</div>
+</div>
+</div>
+<div class="section" id="(Optional)-Add-phases-one-by-one">
+<h2>(Optional) Add phases one by one<a class="headerlink" href="#(Optional)-Add-phases-one-by-one" title="Permalink to this headline">¶</a></h2>
+<p>In the previous sections, we started with S-R trend analysis. We can create phases without this analysis when you have a new idea to find change points.</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[15]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="c1"># Clear all phases</span>
+<span class="n">scenario</span><span class="o">.</span><span class="n">clear</span><span class="p">(</span><span class="n">include_past</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span><span class="o">.</span><span class="n">summary</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[15]:
+</pre></div>
+</div>
+<div class="output_area rendered_html docutils container">
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>Type</th>
+      <th>Start</th>
+      <th>End</th>
+      <th>Population</th>
+    </tr>
+  </thead>
+  <tbody>
+  </tbody>
+</table>
+</div></div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[16]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="c1"># Set 0th phase to set the start date of 1st phase</span>
+<span class="n">scenario</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">end_date</span><span class="o">=</span><span class="s2">&quot;29May2020&quot;</span><span class="p">)</span>
+<span class="c1"># Add 1st phase and delete 0th phase</span>
+<span class="n">scenario</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">end_date</span><span class="o">=</span><span class="s2">&quot;05Jun2020&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">delete</span><span class="p">(</span><span class="n">phases</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;0th&quot;</span><span class="p">])</span>
+<span class="c1"># Add 2nd phase</span>
+<span class="n">scenario</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">end_date</span><span class="o">=</span><span class="s2">&quot;15Jun2020&quot;</span><span class="p">)</span>
+<span class="c1"># Add 3rd phase</span>
+<span class="n">scenario</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">end_date</span><span class="o">=</span><span class="s2">&quot;04Jul2020&quot;</span><span class="p">)</span>
+<span class="c1"># Add 4th phase to the last of the records</span>
+<span class="n">scenario</span><span class="o">.</span><span class="n">add</span><span class="p">()</span><span class="o">.</span><span class="n">summary</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[16]:
+</pre></div>
+</div>
+<div class="output_area rendered_html docutils container">
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>Type</th>
+      <th>Start</th>
+      <th>End</th>
+      <th>Population</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>1st</th>
+      <td>Past</td>
+      <td>30May2020</td>
+      <td>05Jun2020</td>
+      <td>1352617328</td>
+    </tr>
+    <tr>
+      <th>2nd</th>
+      <td>Past</td>
+      <td>06Jun2020</td>
+      <td>15Jun2020</td>
+      <td>1352617328</td>
+    </tr>
+    <tr>
+      <th>3rd</th>
+      <td>Past</td>
+      <td>16Jun2020</td>
+      <td>04Jul2020</td>
+      <td>1352617328</td>
+    </tr>
+    <tr>
+      <th>4th</th>
+      <td>Past</td>
+      <td>05Jul2020</td>
+      <td>16Jul2020</td>
+      <td>1352617328</td>
+    </tr>
+  </tbody>
+</table>
+</div></div>
+</div>
+</div>
+<div class="section" id="Parameter-estimation-of-ODE-models">
+<h2>Parameter estimation of ODE models<a class="headerlink" href="#Parameter-estimation-of-ODE-models" title="Permalink to this headline">¶</a></h2>
+<p>Here, we will use SIR-F model.</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[17]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">scenario</span><span class="o">.</span><span class="n">estimate</span><span class="p">(</span><span class="n">cs</span><span class="o">.</span><span class="n">SIRF</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+
+&lt;Main scenario: perform parameter estimation&gt;
+Running optimization with 8 CPUs...
+        4th phase with SIR-F model finished 532 trials in 0 min 45 sec.
+        1st phase with SIR-F model finished 182 trials in 0 min 20 sec.
+        2nd phase with SIR-F model finished 181 trials in 0 min 20 sec.
+        3rd phase with SIR-F model finished 179 trials in 0 min 20 sec.
+Completed optimization. Total: 1 min 8 sec
+</pre></div></div>
+</div>
+</div>
+<div class="section" id="Main-scenario">
+<h2>Main scenario<a class="headerlink" href="#Main-scenario" title="Permalink to this headline">¶</a></h2>
+<p>To investigate the effect of parameter changes, we will perform scenario analysis. In the main scenario, we will assume that the parameter values do not change after the last past phase.</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[18]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="c1"># Add 5th phase with the parameter values of 4th phase (until 01Aug2020)</span>
+<span class="n">scenario</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">end_date</span><span class="o">=</span><span class="s2">&quot;01Aug2020&quot;</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;Main&quot;</span><span class="p">)</span>
+<span class="c1"># Add 6th phase with the parameter values of 4th phase (100 days)</span>
+<span class="n">scenario</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">days</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;Main&quot;</span><span class="p">)</span>
+<span class="c1"># Show the parameter values of SIR-F model and reproduction number</span>
+<span class="n">scenario</span><span class="o">.</span><span class="n">summary</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;Start&quot;</span><span class="p">,</span> <span class="s2">&quot;End&quot;</span><span class="p">,</span> <span class="o">*</span><span class="n">cs</span><span class="o">.</span><span class="n">SIRF</span><span class="o">.</span><span class="n">PARAMETERS</span><span class="p">,</span> <span class="s2">&quot;Rt&quot;</span><span class="p">])</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[18]:
+</pre></div>
+</div>
+<div class="output_area rendered_html docutils container">
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>Start</th>
+      <th>End</th>
+      <th>theta</th>
+      <th>kappa</th>
+      <th>rho</th>
+      <th>sigma</th>
+      <th>Rt</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>1st</th>
+      <td>30May2020</td>
+      <td>05Jun2020</td>
+      <td>0.021563</td>
+      <td>0.000071</td>
+      <td>0.014422</td>
+      <td>0.006719</td>
+      <td>2.08</td>
+    </tr>
+    <tr>
+      <th>2nd</th>
+      <td>06Jun2020</td>
+      <td>15Jun2020</td>
+      <td>0.003006</td>
+      <td>0.000463</td>
+      <td>0.012804</td>
+      <td>0.007297</td>
+      <td>1.65</td>
+    </tr>
+    <tr>
+      <th>3rd</th>
+      <td>16Jun2020</td>
+      <td>04Jul2020</td>
+      <td>0.004011</td>
+      <td>0.000301</td>
+      <td>0.014728</td>
+      <td>0.010877</td>
+      <td>1.31</td>
+    </tr>
+    <tr>
+      <th>4th</th>
+      <td>05Jul2020</td>
+      <td>16Jul2020</td>
+      <td>0.023629</td>
+      <td>0.000038</td>
+      <td>0.015707</td>
+      <td>0.010960</td>
+      <td>1.39</td>
+    </tr>
+    <tr>
+      <th>5th</th>
+      <td>17Jul2020</td>
+      <td>01Aug2020</td>
+      <td>0.023629</td>
+      <td>0.000038</td>
+      <td>0.015707</td>
+      <td>0.010960</td>
+      <td>1.39</td>
+    </tr>
+    <tr>
+      <th>6th</th>
+      <td>02Aug2020</td>
+      <td>10Nov2020</td>
+      <td>0.023629</td>
+      <td>0.000038</td>
+      <td>0.015707</td>
+      <td>0.010960</td>
+      <td>1.39</td>
+    </tr>
+  </tbody>
+</table>
+</div></div>
+</div>
+</div>
+<div class="section" id="Medicine-scenario">
+<h2>Medicine scenario<a class="headerlink" href="#Medicine-scenario" title="Permalink to this headline">¶</a></h2>
+<p>To investigate the effect of new medicines, we will assume that <span class="math notranslate nohighlight">\(\sigma\)</span> will be double in the future phases in Medicine scenario.</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[19]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="c1"># Initialize Medicine scenario</span>
+<span class="n">scenario</span><span class="o">.</span><span class="n">clear</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;Medicine&quot;</span><span class="p">)</span>
+<span class="c1"># Calculate double value of sigma (baseline: 4th phase)</span>
+<span class="n">sigma_opt</span> <span class="o">=</span> <span class="n">scenario</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;sigma&quot;</span><span class="p">,</span> <span class="n">phase</span><span class="o">=</span><span class="s2">&quot;4th&quot;</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;Main&quot;</span><span class="p">)</span> <span class="o">*</span> <span class="mi">2</span>
+<span class="c1"># Add 5th phase (until 01Aug2020, sigma: double)</span>
+<span class="n">scenario</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">end_date</span><span class="o">=</span><span class="s2">&quot;01Aug2020&quot;</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;Medicine&quot;</span><span class="p">,</span> <span class="n">sigma</span><span class="o">=</span><span class="n">sigma_opt</span><span class="p">)</span>
+<span class="c1"># Add 6th phase (100 days, sigma: double)</span>
+<span class="n">scenario</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">days</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;Medicine&quot;</span><span class="p">,</span> <span class="n">sigma</span><span class="o">=</span><span class="n">sigma_opt</span><span class="p">)</span>
+<span class="c1"># Show the parameter values of SIR-F model and reproduction number</span>
+<span class="n">scenario</span><span class="o">.</span><span class="n">summary</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;Start&quot;</span><span class="p">,</span> <span class="s2">&quot;End&quot;</span><span class="p">,</span> <span class="o">*</span><span class="n">cs</span><span class="o">.</span><span class="n">SIRF</span><span class="o">.</span><span class="n">PARAMETERS</span><span class="p">,</span> <span class="s2">&quot;Rt&quot;</span><span class="p">])</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[19]:
+</pre></div>
+</div>
+<div class="output_area rendered_html docutils container">
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th></th>
+      <th>Start</th>
+      <th>End</th>
+      <th>theta</th>
+      <th>kappa</th>
+      <th>rho</th>
+      <th>sigma</th>
+      <th>Rt</th>
+    </tr>
+    <tr>
+      <th>Scenario</th>
+      <th>Phase</th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th rowspan="6" valign="top">Main</th>
+      <th>1st</th>
+      <td>30May2020</td>
+      <td>05Jun2020</td>
+      <td>0.021563</td>
+      <td>0.000071</td>
+      <td>0.014422</td>
+      <td>0.006719</td>
+      <td>2.08</td>
+    </tr>
+    <tr>
+      <th>2nd</th>
+      <td>06Jun2020</td>
+      <td>15Jun2020</td>
+      <td>0.003006</td>
+      <td>0.000463</td>
+      <td>0.012804</td>
+      <td>0.007297</td>
+      <td>1.65</td>
+    </tr>
+    <tr>
+      <th>3rd</th>
+      <td>16Jun2020</td>
+      <td>04Jul2020</td>
+      <td>0.004011</td>
+      <td>0.000301</td>
+      <td>0.014728</td>
+      <td>0.010877</td>
+      <td>1.31</td>
+    </tr>
+    <tr>
+      <th>4th</th>
+      <td>05Jul2020</td>
+      <td>16Jul2020</td>
+      <td>0.023629</td>
+      <td>0.000038</td>
+      <td>0.015707</td>
+      <td>0.010960</td>
+      <td>1.39</td>
+    </tr>
+    <tr>
+      <th>5th</th>
+      <td>17Jul2020</td>
+      <td>01Aug2020</td>
+      <td>0.023629</td>
+      <td>0.000038</td>
+      <td>0.015707</td>
+      <td>0.010960</td>
+      <td>1.39</td>
+    </tr>
+    <tr>
+      <th>6th</th>
+      <td>02Aug2020</td>
+      <td>10Nov2020</td>
+      <td>0.023629</td>
+      <td>0.000038</td>
+      <td>0.015707</td>
+      <td>0.010960</td>
+      <td>1.39</td>
+    </tr>
+    <tr>
+      <th rowspan="6" valign="top">Medicine</th>
+      <th>1st</th>
+      <td>30May2020</td>
+      <td>05Jun2020</td>
+      <td>0.021563</td>
+      <td>0.000071</td>
+      <td>0.014422</td>
+      <td>0.006719</td>
+      <td>2.08</td>
+    </tr>
+    <tr>
+      <th>2nd</th>
+      <td>06Jun2020</td>
+      <td>15Jun2020</td>
+      <td>0.003006</td>
+      <td>0.000463</td>
+      <td>0.012804</td>
+      <td>0.007297</td>
+      <td>1.65</td>
+    </tr>
+    <tr>
+      <th>3rd</th>
+      <td>16Jun2020</td>
+      <td>04Jul2020</td>
+      <td>0.004011</td>
+      <td>0.000301</td>
+      <td>0.014728</td>
+      <td>0.010877</td>
+      <td>1.31</td>
+    </tr>
+    <tr>
+      <th>4th</th>
+      <td>05Jul2020</td>
+      <td>16Jul2020</td>
+      <td>0.023629</td>
+      <td>0.000038</td>
+      <td>0.015707</td>
+      <td>0.010960</td>
+      <td>1.39</td>
+    </tr>
+    <tr>
+      <th>5th</th>
+      <td>17Jul2020</td>
+      <td>01Aug2020</td>
+      <td>0.023629</td>
+      <td>0.000038</td>
+      <td>0.015707</td>
+      <td>0.021920</td>
+      <td>0.70</td>
+    </tr>
+    <tr>
+      <th>6th</th>
+      <td>02Aug2020</td>
+      <td>10Nov2020</td>
+      <td>0.023629</td>
+      <td>0.000038</td>
+      <td>0.015707</td>
+      <td>0.021920</td>
+      <td>0.70</td>
+    </tr>
+  </tbody>
+</table>
+</div></div>
+</div>
+</div>
+<div class="section" id="Compare-the-scenarios">
+<h2>Compare the scenarios<a class="headerlink" href="#Compare-the-scenarios" title="Permalink to this headline">¶</a></h2>
+<p>Currently. we can compare the scenarios with the following indexes. - max(Infected): max value of Infected - argmax(Infected): the date when Infected shows max value - Infected on …: Infected on the end date of the last phase - Fatal on …: Fatal on the end date of the last phase</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[20]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">scenario</span><span class="o">.</span><span class="n">describe</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[20]:
+</pre></div>
+</div>
+<div class="output_area rendered_html docutils container">
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>max(Infected)</th>
+      <th>argmax(Infected)</th>
+      <th>Infected on 10Nov2020</th>
+      <th>Fatal on 10Nov2020</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>Main</th>
+      <td>6459208</td>
+      <td>10Nov2020</td>
+      <td>6459208</td>
+      <td>620466</td>
+    </tr>
+    <tr>
+      <th>Medicine</th>
+      <td>329720</td>
+      <td>16Jul2020</td>
+      <td>3304</td>
+      <td>48353</td>
+    </tr>
+  </tbody>
+</table>
+</div></div>
+</div>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="covsirphy.html" class="btn btn-neutral float-right" title="API reference" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="usage_quick.html" class="btn btn-neutral float-left" title="Usage (quick version)" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        
+        &copy; Copyright 2020, CovsirPhy Development Team
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>
