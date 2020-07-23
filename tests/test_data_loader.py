@@ -81,6 +81,8 @@ class TestJHUData(object):
     def test_countries(self, jhu_data):
         countries = jhu_data.countries()
         assert isinstance(countries, list)
+        for country in countries:
+            assert len(jhu_data.subset(country)) > 0
 
     def test_total(self, jhu_data):
         df = jhu_data.total()
@@ -164,6 +166,8 @@ class TestPopulationData(object):
     def test_countries(self, population_data):
         countries = population_data.countries()
         assert isinstance(countries, list)
+        for country in countries:
+            population_data.value(country)
 
 
 class TestOxCGRTData(object):
@@ -199,3 +203,5 @@ class TestOxCGRTData(object):
     def test_countries(self, oxcgrt_data):
         countries = oxcgrt_data.countries()
         assert isinstance(countries, list)
+        for country in countries:
+            assert len(oxcgrt_data.subset(country)) > 0
