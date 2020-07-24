@@ -205,8 +205,6 @@ class PhaseSeries(Term):
             for (k, v) in self.phase_dict.items()
         }
         self.info_dict.pop(phase_id)
-        if not phase_id:
-            self.use_0th = False
         return self
 
     def summary(self):
@@ -348,7 +346,7 @@ class PhaseSeries(Term):
         """
         start_objects = np.array(self.start_objects())
         ascending = scipy.stats.rankdata(start_objects)
-        if 0 in self.phase_dict.values():
+        if self.use_0th:
             ascending = ascending - 1
         corres_dict = {
             phase_id: int(rank)

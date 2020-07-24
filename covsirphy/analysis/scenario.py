@@ -311,8 +311,6 @@ class Scenario(Term):
         last_date = self.get(self.END, name=name, phase=phases[-1])
         for phase in phases:
             self.series_dict[name].delete(phase)
-        if "0th" in phases:
-            self.series_dict[name].use_0th = False
         return (first_date, last_date)
 
     def delete(self, phases=None, name="Main"):
@@ -331,6 +329,9 @@ class Scenario(Term):
         """
         self._ensure_name(name)
         self._delete(phases=phases, name=name)
+        if "0th" in phases:
+            self.series_dict[name].use_0th = False
+        self.series_dict[name].reset_phase_names()
         return self
 
     def combine(self, phases, name="Main", population=None, **kwargs):
