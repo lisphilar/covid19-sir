@@ -316,7 +316,7 @@ class CleaningBase(Term):
         if self.PROVINCE in df.columns:
             c_level_df[self.PROVINCE] = self.UNKNOWN
             cols = [*cols, self.PROVINCE]
-        df = pd.concat([df, c_level_df], axis=0, ignore_index=True)
+        df = pd.concat([df, c_level_df], axis=0, ignore_index=True, sort=False)
         df = df.drop_duplicates(subset=cols)
         if self.PROVINCE in df.columns:
             df = df.loc[df[self.PROVINCE] == self.UNKNOWN, :]

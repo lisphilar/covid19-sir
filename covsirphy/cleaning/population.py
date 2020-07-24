@@ -51,7 +51,7 @@ class PopulationData(CleaningBase):
         expected_cols = [
             self.COUNTRY, self.PROVINCE, self.N
         ]
-        self.validate_dataframe(df, name="the raw data", columns=expected_cols)
+        self.ensure_dataframe(df, name="the raw data", columns=expected_cols)
         # ISO3
         if self.ISO3 not in df.columns:
             df[self.ISO3] = self.UNKNOWN
@@ -160,7 +160,7 @@ class PopulationData(CleaningBase):
         country (str): country name
         province (str): province name
         """
-        value = self.validate_natural_int(value, "value")
+        value = self.ensure_natural_int(value, "value")
         df = self._cleaned_df.copy()
         c_series = df[self.COUNTRY]
         p_series = df[self.PROVINCE]

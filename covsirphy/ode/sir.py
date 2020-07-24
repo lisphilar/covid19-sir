@@ -44,7 +44,7 @@ class SIR(ModelBase):
 
     def __init__(self, population, rho, sigma):
         # Total population
-        self.population = self.validate_natural_int(
+        self.population = self.ensure_natural_int(
             population, name="population"
         )
         # Non-dim parameters
@@ -88,7 +88,7 @@ class SIR(ModelBase):
                 - key (str): parameter name
                 - value (tuple(float, float)): min value and max value
         """
-        df = cls.validate_dataframe(
+        df = cls.ensure_dataframe(
             taufree_df, name="taufree_df", columns=[cls.TS, *cls.VARIABLES]
         )
         n, t, s, i, r = population, df[cls.TS], df[cls.S], df[cls.CI], df[cls.FR]

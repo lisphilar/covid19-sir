@@ -35,8 +35,8 @@ class ExampleData(JHUData):
         self._raw = clean_df.copy()
         self._cleaned_df = clean_df.copy()
         self._citation = str()
-        self.tau = self.validate_natural_int(tau, name="tau")
-        self.start_date = self.validate_date(start_date, name="start_date")
+        self.tau = self.ensure_natural_int(tau, name="tau")
+        self.start_date = self.ensure_date(start_date, name="start_date")
         self.nondim_dict = dict()
 
     def add(self, model, country=None, province=None, **kwargs):
@@ -56,7 +56,7 @@ class ExampleData(JHUData):
             If province is None, '-' will be used.
         """
         # Arguments
-        model = self.validate_subclass(model, ModelBase, name="model")
+        model = self.ensure_subclass(model, ModelBase, name="model")
         arg_dict = model.EXAMPLE.copy()
         arg_dict.update(kwargs)
         country = country or model.NAME
@@ -114,7 +114,7 @@ class ExampleData(JHUData):
             If province is None, '-' will be used.
         """
         if model is not None:
-            model = self.validate_subclass(model, ModelBase, name="model")
+            model = self.ensure_subclass(model, ModelBase, name="model")
             country = country or model.NAME
             province = province or self.UNKNOWN
         if country is None:
@@ -155,6 +155,6 @@ class ExampleData(JHUData):
         if "country" not in kwargs.keys():
             if model is None:
                 raise KeyError("@model or @country must be applied.")
-            model = self.validate_subclass(model, ModelBase, name="model")
+            model = self.ensure_subclass(model, ModelBase, name="model")
             kwargs["country"] = model.NAME
         return super().subset(**kwargs)

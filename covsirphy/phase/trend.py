@@ -38,9 +38,9 @@ class Trend(Term):
                 stacklevel=2
             )
             jhu_data = JHUData.from_dataframe(jhu_data)
-        jhu_data = self.validate_instance(jhu_data, JHUData, name="jhu_data")
+        jhu_data = self.ensure_instance(jhu_data, JHUData, name="jhu_data")
         # Arguments
-        self.population = self.validate_natural_int(population, "population")
+        self.population = self.ensure_natural_int(population, "population")
         self.area = JHUData.area_name(country, province)
         # Dataset for analysis
         self.sr_df = jhu_data.to_sr(
@@ -187,7 +187,7 @@ class Trend(Term):
             vlines (list[int]): list of Recovered values to show vertical lines
             filename (str): filename of the figure, or None (show figure)
         """
-        result_df = cls.validate_dataframe(
+        result_df = cls.ensure_dataframe(
             result_df, name="result_df", time_index=True,
             columns=[cls.R, f"{cls.S}{cls.A}", *predicted_cols]
         )

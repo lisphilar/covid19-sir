@@ -37,7 +37,7 @@ class ModelBase(ModelBaseCommon):
             population (int): total population
         """
         # Total population
-        self.population = self.validate_natural_int(
+        self.population = self.ensure_natural_int(
             population, name="population"
         )
         # Non-dim parameters
@@ -101,7 +101,7 @@ class ModelBase(ModelBaseCommon):
                     - any columns @data_df has
                     - columns with dimensional variables
         """
-        df = cls.validate_dataframe(
+        df = cls.ensure_dataframe(
             data_df, name="data_df", columns=cls.VALUE_COLUMNS
         )
         return df
@@ -188,11 +188,11 @@ class ModelBase(ModelBaseCommon):
         """
         df = subset_df.copy()
         if tau is not None:
-            tau = cls.validate_natural_int(tau, name="tau")
+            tau = cls.ensure_natural_int(tau, name="tau")
             if tau > 1440:
                 raise ValueError(
                     f"@tau must be 1440 or lower, but {tau} was applied.")
-            df = cls.validate_dataframe(
+            df = cls.ensure_dataframe(
                 df, name="data_df", columns=cls.NLOC_COLUMNS)
             # Calculate elapsed time from the first date [min]
             df[cls.T] = (df[cls.DATE] - df[cls.DATE].min()).dt.total_seconds()

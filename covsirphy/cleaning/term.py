@@ -134,12 +134,12 @@ class Term(object):
         return flattened
 
     @staticmethod
-    def validate_dataframe(target, name="df", time_index=False, columns=None):
+    def ensure_dataframe(target, name="df", time_index=False, columns=None):
         """
-        Validate the dataframe has the columns.
+        Ensure the dataframe has the columns.
 
         Args:
-            target (pandas.DataFrame): the dataframe to validate
+            target (pandas.DataFrame): the dataframe to ensure
             name (str): argument name of the dataframe
             time_index (bool): if True, the dataframe must has DatetimeIndex
             columns (list[str] or None): the columns the dataframe must have
@@ -163,14 +163,14 @@ class Term(object):
         return df
 
     @staticmethod
-    def validate_natural_int(target, name="number", include_zero=False):
+    def ensure_natural_int(target, name="number", include_zero=False):
         """
-        Validate a natural (non-negative) number.
+        Ensure a natural (non-negative) number.
         If the value is a natural number and the type was float or string,
         it will be converted to an integer.
 
         Args:
-            target (int or float or str): value to validate
+            target (int or float or str): value to ensure
             name (str): argument name of the value
             include_zero (bool): include 0 or not
 
@@ -190,14 +190,14 @@ class Term(object):
         return number
 
     @staticmethod
-    def validate_float(target, name="value"):
+    def ensure_float(target, name="value"):
         """
-        Validate a float value.
+        Ensure a float value.
         If the value is a float value and the type was string,
         it will be converted to a float.
 
         Args:
-            target (float or str): value to validate
+            target (float or str): value to ensure
             name (str): argument name of the value
 
         Returns:
@@ -211,12 +211,12 @@ class Term(object):
         return value
 
     @classmethod
-    def validate_date(cls, target, name="date"):
+    def ensure_date(cls, target, name="date"):
         """
-        Validate the format of the string.
+        Ensure the format of the string.
 
         Args:
-            target (str): string to validate
+            target (str): string to ensure
             name (str): argument name of the string
 
         Returns:
@@ -231,12 +231,12 @@ class Term(object):
         return target
 
     @staticmethod
-    def validate_subclass(target, parent, name="target"):
+    def ensure_subclass(target, parent, name="target"):
         """
-        Validate the target is a subclass of the parent class.
+        Ensure the target is a subclass of the parent class.
 
         Args:
-            target (object): target to validate
+            target (object): target to ensure
             parent (object): parent class
             name (str): argument name of the target
 
@@ -249,12 +249,12 @@ class Term(object):
         return target
 
     @staticmethod
-    def validate_instance(target, class_obj, name="target"):
+    def ensure_instance(target, class_obj, name="target"):
         """
-        Validate the target is a instance of the class object.
+        Ensure the target is a instance of the class object.
 
         Args:
-            target (instance): target to validate
+            target (instance): target to ensure
             parent (class): class object
             name (str): argument name of the target
 
@@ -277,7 +277,7 @@ class Term(object):
         Returns:
             (list[int]): the list of divisors
         """
-        value = cls.validate_natural_int(value)
+        value = cls.ensure_natural_int(value)
         divisors = [
             i for i in range(1, value + 1) if value % i == 0
         ]

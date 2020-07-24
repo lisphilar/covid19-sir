@@ -83,7 +83,7 @@ class JHUData(CleaningBase):
         expected_cols = [
             self.DATE, self.ISO3, self.COUNTRY, self.PROVINCE, self.C, self.F, self.R
         ]
-        self.validate_dataframe(df, name="the raw data", columns=expected_cols)
+        self.ensure_dataframe(df, name="the raw data", columns=expected_cols)
         # Datetime columns
         df[self.DATE] = pd.to_datetime(df[self.DATE])
         # Country
@@ -136,7 +136,7 @@ class JHUData(CleaningBase):
         Returns:
             self
         """
-        self.validate_instance(country_data, CountryData, name="country_data")
+        self.ensure_instance(country_data, CountryData, name="country_data")
         # Read new dataset
         country = country_data.country
         new = country_data.cleaned()
@@ -145,7 +145,7 @@ class JHUData(CleaningBase):
         df = self._cleaned_df.copy()
         df = df.loc[df[self.COUNTRY] != country, :]
         # Combine JHU data and the new data
-        df = pd.concat([df, new], axis=0)
+        df = pd.concat([df, new], axis=0, sort=False)
         self._cleaned_df = df.copy()
         return self
 
@@ -190,7 +190,7 @@ class JHUData(CleaningBase):
             )
         # Calculate Susceptible if population value was applied
         if population is not None:
-            population = self.validate_natural_int(
+            population = self.ensure_natural_int(
                 population, name="population")
             df[self.S] = population - df[self.C]
         return df
@@ -218,7 +218,7 @@ class JHUData(CleaningBase):
             @population must be specified.
             Records with Recovered > 0 will be used.
         """
-        population = self.validate_natural_int(population, "population")
+        population = self.ensure_natural_int(population, "population")
         subset_df = self.subset(
             country=country, province=province,
             start_date=start_date, end_date=end_date, population=population
@@ -238,7 +238,7 @@ class JHUData(CleaningBase):
             (covsirphy.JHUData): JHU-style dataset
         """
         instance = cls(filename=None)
-        instance._cleaned_df = cls.validate_dataframe(
+        instance._cleaned_df = cls.ensure_dataframe(
             dataframe, name="dataframe", columns=cls.COLUMNS)
         return instance
 
