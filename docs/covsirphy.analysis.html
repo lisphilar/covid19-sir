@@ -334,7 +334,7 @@ Records with Recovered &gt; 0 will be selected.</p>
 <dt id="covsirphy.analysis.scenario.Scenario.add">
 <code class="sig-name descname">add</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">name</span><span class="o">=</span><span class="default_value">'Main'</span></em>, <em class="sig-param"><span class="n">end_date</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">days</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">population</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">model</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/analysis/scenario.html#Scenario.add"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#covsirphy.analysis.scenario.Scenario.add" title="Permalink to this definition">¶</a></dt>
 <dd><p>Add a new phase.
-The start date is the next date of the last registered phase.</p>
+The start date will be the next date of the last registered phase.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
@@ -353,12 +353,13 @@ The start date is the next date of the last registered phase.</p>
 <p class="rubric">Notes</p>
 <ul class="simple">
 <li><p>If the phases series has not been registered, new phase series will be created.</p></li>
-<li><p>&#64;end_date or &#64;days must be specified.</p></li>
+<li><p>Either &#64;end_date or &#64;days must be specified.</p></li>
+<li><p>If &#64;end_date and &#64;days are None, the end date will be the last date of the records.</p></li>
+<li><p>If both of &#64;end_date and &#64;days were specified, &#64;end_date will be used.</p></li>
 <li><p>If &#64;popultion is None, initial value will be used.</p></li>
 <li><p>If &#64;model is None, the model of the last phase will be used.</p></li>
 <li><p>Tau will be fixed as the last phase’s value.</p></li>
 <li><p>kwargs: Default values are the parameter values of the last phase.</p></li>
-<li><p>If &#64;end_date and &#64;days are None, the end date will be the last date of the records.</p></li>
 </ul>
 </dd></dl>
 
@@ -462,14 +463,14 @@ New phase name will be automatically determined.</p>
 
 <dl class="py method">
 <dt id="covsirphy.analysis.scenario.Scenario.estimate">
-<code class="sig-name descname">estimate</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">model</span></em>, <em class="sig-param"><span class="n">name</span><span class="o">=</span><span class="default_value">'Main'</span></em>, <em class="sig-param"><span class="n">phases</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">n_jobs</span><span class="o">=</span><span class="default_value">- 1</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/analysis/scenario.html#Scenario.estimate"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#covsirphy.analysis.scenario.Scenario.estimate" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">estimate</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">model</span></em>, <em class="sig-param"><span class="n">phases</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">name</span><span class="o">=</span><span class="default_value">'Main'</span></em>, <em class="sig-param"><span class="n">n_jobs</span><span class="o">=</span><span class="default_value">- 1</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/analysis/scenario.html#Scenario.estimate"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#covsirphy.analysis.scenario.Scenario.estimate" title="Permalink to this definition">¶</a></dt>
 <dd><p>Estimate the parameters of the model using the records.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>model</strong> (<em>covsirphy.ModelBase</em>) – ODE model</p></li>
-<li><p><strong>name</strong> (<em>str</em>) – phase series name</p></li>
 <li><p><strong>phases</strong> (<em>list</em><em>[</em><em>str</em><em>]</em>) – list of phase names, like 1st, 2nd…</p></li>
+<li><p><strong>name</strong> (<em>str</em>) – phase series name</p></li>
 <li><p><strong>n_jobs</strong> (<em>int</em>) – the number of parallel jobs or -1 (CPU count)</p></li>
 <li><p><strong>kwargs</strong> – keyword arguments of model parameters and covsirphy.Estimator.run()</p></li>
 </ul>
