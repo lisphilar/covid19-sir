@@ -1,8 +1,8 @@
-# Related issues
+## Related issues
 This is related to 
 
-# Fix bugs
+## Fix bugs
 (optional)
 
-# New features
+## New features
 (optional)
