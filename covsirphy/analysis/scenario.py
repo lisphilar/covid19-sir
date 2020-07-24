@@ -187,6 +187,11 @@ class Scenario(Term):
                 self.series_dict[name].add(start_date, end_date, population)
                 return self
             last_model_name = summary_df.loc[summary_df.index[-1], self.ODE]
+            if last_model_name == self.UNKNOWN:
+                last_phase = summary_df.index[-1]
+                raise ValueError(
+                    f"Scenario.estimate(model, phases=[{last_phase}], name={name}) must be done in advance."
+                )
             model = self.model_dict[last_model_name]
         model = self.validate_subclass(model, ModelBase, name="model")
         # Set phase information with ODE models
@@ -537,14 +542,14 @@ class Scenario(Term):
         self.model_dict[model.NAME] = model
         return self
 
-    def estimate(self, model, name="Main", phases=None, n_jobs=-1, **kwargs):
+    def estimate(self, model, phases=None, name="Main", n_jobs=-1, **kwargs):
         """
         Estimate the parameters of the model using the records.
 
         Args:
             model (covsirphy.ModelBase): ODE model
-            name (str): phase series name
             phases (list[str]): list of phase names, like 1st, 2nd...
+            name (str): phase series name
             n_jobs (int): the number of parallel jobs or -1 (CPU count)
             kwargs: keyword arguments of model parameters and covsirphy.Estimator.run()
 
@@ -568,10 +573,16 @@ class Scenario(Term):
             raise KeyError(f"{name} has not been defined.")
         past_phases = list(phase_dict.keys())
         phases = past_phases[:] if phases is None else phases
+        if not isinstance(phases, list):
+            raise TypeError("@phases must be None or a list of phase names.")
         future_phases = list(set(phases) - set(past_phases))
         if future_phases:
             raise KeyError(
                 f"{future_phases[0]} is not a past phase or not registered.")
+        # Confirm that phases are registered
+        if not phases:
+            raise ValueError(
+                "Scenario.trend(set_phases=True) or Scenario.add() must be done in advance.")
         # The number of parallel jobs
         n_jobs = cpu_count() if n_jobs == -1 else n_jobs
         # Start optimization
@@ -610,7 +621,7 @@ class Scenario(Term):
             estimator = self.estimator_dict[name][phase]
         except KeyError:
             raise KeyError(
-                f"Estimator of {phase} phase in {name} has not been registered."
+                f"Scenario.estimate(model, phases=[{phase}], name={name}) must be done in advance."
             )
         estimator.history(**kwargs)
 
@@ -632,7 +643,7 @@ class Scenario(Term):
             estimator = self.estimator_dict[name][phase]
         except KeyError:
             raise KeyError(
-                f"Estimator of {phase} phase in {name} has not been registered."
+                f"Scenario.estimate(model, phases=[{phase}], name={name}) must be done in advance."
             )
         estimator.accuracy(**kwargs)
 
@@ -807,11 +818,15 @@ class Scenario(Term):
         selectable_cols = [
             self.N, *model_parameters, self.RT, *model_day_params
         ]
+        selectable_set = set(selectable_cols)
+        if not selectable_set.issubset(set(df.columns)):
+            raise ValueError(
+                f"Scenario.estimate(model, phases=None, name={name}) must be done in advance.")
         targets = [targets] if isinstance(targets, str) else targets
         targets = targets or selectable_cols
-        if not set(targets).issubset(set(selectable_cols)):
+        if not set(targets).issubset(selectable_set):
             raise KeyError(
-                f"@targets must be selected in {', '.join(selectable_cols)}."
+                f"@targets must be selected from {', '.join(selectable_cols)}."
             )
         df = df.loc[:, targets]
         return df
