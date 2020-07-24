@@ -137,6 +137,63 @@ class Scenario(Term):
         )
         return df
 
+    def _new_phase_dates(self, end_date=None, days=None, name="Main"):
+        """
+        Decide start/end date of the new phase.
+
+        Args:
+            end_date (str or None): end date of the new phase
+            days (int or None): the number of days to add
+            name (str): phase series name, 'Main' or user-defined name
+
+        Returns:
+            self
+
+        Notes:
+            - If the phases series has not been registered, new phase series will be created.
+            - @end_date or @days must be specified.
+            - If @end_date and @days are None, the end date will be the last date of the records.
+        """
+        # Confirm phase series
+        if name not in self.series_dict.keys():
+            # If not exits, create the phase series
+            self.series_dict[name] = copy.deepcopy(self.series_dict[self.MAIN])
+            self.series_dict[name].clear()
+        # Calculate start date
+        start_date = self.series_dict[name].next_date()
+        # Calculate end date
+        if end_date is None:
+            if days is None:
+                end_date = self._last_date
+            elif not isinstance(days, int):
+                raise TypeError("@days must be an integer.")
+            else:
+                end_obj = self.date_obj(start_date) + timedelta(days=days)
+                end_date = end_obj.strftime(self.DATE_FORMAT)
+        return (start_date, end_date)
+
+    def _last_model(self, name="Main"):
+        """
+        Return the model of the last phase.
+
+        Raises:
+            ValueError: model has not been registered
+
+        Returns:
+            covsirphy.ModelBase: ODE model
+        """
+        # Get name of the last model
+        df = self.series_dict[name].summary()
+        model_name = df.loc[df.index[-1], self.ODE]
+        if model_name == self.UNKNOWN:
+            last_phase = df.index[-1]
+            raise ValueError(
+                f"Scenario.estimate(model, phases=[{last_phase}], name={name}) must be done in advance."
+            )
+        # Return model class
+        model = self.model_dict[model_name]
+        return model
+
     @deprecate(old="Scenario.add_phase()", new="Scenario.add()")
     def add_phase(self, **kwargs):
         return self.add(**kwargs)
@@ -145,7 +202,7 @@ class Scenario(Term):
             population=None, model=None, **kwargs):
         """
         Add a new phase.
-        The start date is the next date of the last registered phase.
+        The start date will be the next date of the last registered phase.
 
         Args:
             name (str): phase series name, 'Main' or user-defined name
@@ -160,53 +217,38 @@ class Scenario(Term):
 
         Notes:
             - If the phases series has not been registered, new phase series will be created.
-            - @end_date or @days must be specified.
+            - If @end_date and @days are None, the end date will be the last date of the records.
             - If @popultion is None, initial value will be used.
             - If @model is None, the model of the last phase will be used.
             - Tau will be fixed as the last phase's value.
             - kwargs: Default values are the parameter values of the last phase.
-            - If @end_date and @days are None, the end date will be the last date of the records.
         """
-        # Parse arguments
-        if name not in self.series_dict.keys():
-            self.series_dict[name] = copy.deepcopy(self.series_dict[self.MAIN])
-            self.series_dict[name].clear()
-        start_date = self.series_dict[name].next_date()
-        if end_date is None:
-            if days is None:
-                end_date = self._last_date
-            elif not isinstance(days, int):
-                raise TypeError("@days must be an integer.")
-            else:
-                end_obj = self.date_obj(start_date) + timedelta(days=days)
-                end_date = end_obj.strftime(self.DATE_FORMAT)
-        population = population or self.population
+        # Start/end date
+        start_date, end_date = self._new_phase_dates(
+            end_date=end_date, days=days, name=name)
+        # Population
+        population = self.validate_natural_int(
+            population or self.population, "population")
+        # Model information is unnecessary if models are not registered in the old phases
         summary_df = self.series_dict[name].summary()
-        if model is None:
-            if self.ODE not in summary_df.columns:
-                self.series_dict[name].add(start_date, end_date, population)
-                return self
-            last_model_name = summary_df.loc[summary_df.index[-1], self.ODE]
-            if last_model_name == self.UNKNOWN:
-                last_phase = summary_df.index[-1]
-                raise ValueError(
-                    f"Scenario.estimate(model, phases=[{last_phase}], name={name}) must be done in advance."
-                )
-            model = self.model_dict[last_model_name]
+        if model is None and self.ODE not in summary_df.columns:
+            self.series_dict[name].add(start_date, end_date, population)
+            return self
+        # Model
+        model = model or self._last_model(name=name)
         model = self.validate_subclass(model, ModelBase, name="model")
-        # Set phase information with ODE models
-        param_dict = {self.TAU: self.tau, self.ODE: model.NAME}
         model_param_dict = {
             param: summary_df.loc[summary_df.index[-1], param]
             for param in model.PARAMETERS
         }
         model_param_dict.update(kwargs)
+        model_instance = model(population=population, **model_param_dict)
+        # Set phase information with model information
+        param_dict = {self.TAU: self.tau, self.ODE: model.NAME}
         param_dict.update(model_param_dict)
-        model_instance = model(
-            population=population, **model_param_dict
-        )
         param_dict[self.RT] = model_instance.calc_r0()
         param_dict.update(model_instance.calc_days_dict(self.tau))
+        # Add phase with model information
         self.series_dict[name].add(
             start_date, end_date, population, **param_dict)
         return self
