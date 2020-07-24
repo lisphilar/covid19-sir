@@ -493,7 +493,7 @@ class Scenario(Term):
                 **kwargs
             )
             finder.use_0th = use_0th
-            finder.change_dates = self.series_dict[name].end_objects()[:-1]
+            finder.change_dates = self.series_dict[name].start_objects()[1:]
             finder.show(show_figure=show_figure, filename=filename)
             return None
         finder = ChangeFinder(
