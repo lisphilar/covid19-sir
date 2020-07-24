@@ -62,7 +62,7 @@ class DataLoader(Term):
                 f"@directory must be a string or a path but {directory} was applied."
             )
         self.dir_path = Path(directory)
-        self.update_interval = self.validate_natural_int(
+        self.update_interval = self.ensure_natural_int(
             update_interval, name="update_interval", include_zero=True
         )
         # Create the directory if not exist
@@ -157,7 +157,7 @@ class DataLoader(Term):
             CSV file will be created in @self.dirpath directory.
             If @self.dirpath is None, the dataframe will not be saved
         """
-        df = self.validate_dataframe(dataframe, name="dataframe")
+        df = self.ensure_dataframe(dataframe, name="dataframe")
         if filename is None:
             return None
         try:
@@ -228,7 +228,7 @@ class DataLoader(Term):
         data_class = target_dict["class"]
         citation = target_dict["citation"]
         # Validate the data class
-        data_class = self.validate_subclass(data_class, CleaningBase)
+        data_class = self.ensure_subclass(data_class, CleaningBase)
         # Create instance and set citation
         data_instance = data_class(filename=filename, **kwargs)
         if set_citation:

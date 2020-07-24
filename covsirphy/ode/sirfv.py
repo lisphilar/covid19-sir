@@ -55,7 +55,7 @@ class SIRFV(ModelBase):
     def __init__(self, population, theta, kappa, rho, sigma,
                  omega=None, v_per_day=None):
         # Total population
-        self.population = self.validate_natural_int(
+        self.population = self.ensure_natural_int(
             population, name="population"
         )
         # Non-dim parameters
@@ -113,7 +113,7 @@ class SIRFV(ModelBase):
                 - key (str): parameter name
                 - value (tuple(float, float)): min value and max value
         """
-        df = cls.validate_dataframe(
+        df = cls.ensure_dataframe(
             taufree_df, name="taufree_df", columns=[cls.TS, *cls.VARIABLES]
         )
         n, t = population, df[cls.TS]

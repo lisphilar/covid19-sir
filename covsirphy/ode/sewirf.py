@@ -60,7 +60,7 @@ class SEWIRF(ModelBase):
             - @sigma (float)
         """
         # Total population
-        self.population = self.validate_natural_int(
+        self.population = self.ensure_natural_int(
             population, name="population"
         )
         # Non-dim parameters
@@ -112,7 +112,7 @@ class SEWIRF(ModelBase):
                 - key (str): parameter name
                 - value (tuple(float, float)): min value and max value
         """
-        df = cls.validate_dataframe(
+        df = cls.ensure_dataframe(
             taufree_df, name="taufree_df", columns=[cls.TS, *cls.VARIABLES]
         )
         _, t, i, r = population, df[cls.TS], df[cls.CI], df[cls.R]

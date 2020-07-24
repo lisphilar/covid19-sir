@@ -64,7 +64,7 @@ class OxCGRTData(CleaningBase):
             axis=1
         )
         # Confirm the expected columns are in raw data
-        self.validate_dataframe(
+        self.ensure_dataframe(
             df, name="the raw data", columns=self.OXCGRT_COLS
         )
         # Read date records

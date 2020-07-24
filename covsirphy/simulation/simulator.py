@@ -56,9 +56,9 @@ class ODESimulator(Term):
             self
         """
         # Validate the arguments
-        model = self.validate_subclass(model, ModelBase, name="model")
-        step_n = self.validate_natural_int(step_n, name="step_n")
-        population = self.validate_natural_int(population, name="population")
+        model = self.ensure_subclass(model, ModelBase, name="model")
+        step_n = self.ensure_natural_int(step_n, name="step_n")
+        population = self.ensure_natural_int(population, name="population")
         # Check param values
         param_dict = param_dict or dict()
         for param in model.PARAMETERS:
@@ -69,7 +69,7 @@ class ODESimulator(Term):
                 raise NameError(s)
             param_dict[param] = self.settings[-1]["param_dict"][param]
         # Check initial values
-        y0_dict = self._validate_initial_values(model, y0_dict)
+        y0_dict = self._ensure_initial_values(model, y0_dict)
         # Register the setting
         self.settings.append(
             {
@@ -84,7 +84,7 @@ class ODESimulator(Term):
         self.var_dict.update(model.VAR_DICT)
         return self
 
-    def _validate_initial_values(self, model, y0_dict):
+    def _ensure_initial_values(self, model, y0_dict):
         """
         Validate the dictionary of initial values.
 
@@ -134,9 +134,9 @@ class ODESimulator(Term):
                     - t (int): Elapsed time divided by tau value [-]
                     - columns with dimensional variables
         """
-        step_n = self.validate_natural_int(step_n, name="step_n")
-        population = self.validate_natural_int(population, name="population")
-        model = self.validate_subclass(model, ModelBase, name="model")
+        step_n = self.ensure_natural_int(step_n, name="step_n")
+        population = self.ensure_natural_int(population, name="population")
+        model = self.ensure_subclass(model, ModelBase, name="model")
         tstart, dt, tend = 0, 1, step_n
         variables = model.VARIABLES[:]
         initials = [y0_dict[var] for var in variables]

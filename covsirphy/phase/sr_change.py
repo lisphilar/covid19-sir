@@ -44,7 +44,7 @@ class ChangeFinder(Term):
                 stacklevel=2
             )
             jhu_data = JHUData.from_dataframe(jhu_data)
-        self.jhu_data = self.validate_instance(
+        self.jhu_data = self.ensure_instance(
             jhu_data, JHUData, name="jhu_data"
         )
         # Area
@@ -52,9 +52,9 @@ class ChangeFinder(Term):
         self.province = province or self.UNKNOWN
         self.area = JHUData.area_name(country, self.province)
         # Minimum size of records
-        self.min_size = self.validate_natural_int(min_size, "min_size")
+        self.min_size = self.ensure_natural_int(min_size, "min_size")
         # Dataset for analysis
-        self.population = self.validate_natural_int(
+        self.population = self.ensure_natural_int(
             population, name="population")
         self.sr_df = jhu_data.to_sr(
             country=self.country, province=self.province, population=self.population,
@@ -73,7 +73,7 @@ class ChangeFinder(Term):
             self.dates, self.population, population_change_dict
         )
         # Minimum value of RMSLE score
-        self.max_rmsle = self.validate_float(max_rmsle)
+        self.max_rmsle = self.ensure_float(max_rmsle)
         # Setting for optimization
         self._change_dates = list()
         # Whether use 0th phase or not

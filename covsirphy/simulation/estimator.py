@@ -33,7 +33,7 @@ class Estimator(Optimizer):
                  country, province=None,
                  start_date=None, end_date=None, **kwargs):
         # Check type of model
-        model = self.validate_subclass(model, ModelBase, name="model")
+        model = self.ensure_subclass(model, ModelBase, name="model")
         # Dataset
         if isinstance(jhu_data, pd.DataFrame):
             warnings.warn(
@@ -45,7 +45,7 @@ class Estimator(Optimizer):
             if not set(self.VALUE_COLUMNS).issubset(set(df.columns)):
                 df = model.restore(df)
             jhu_data = JHUData.from_dataframe(df)
-        jhu_data = self.validate_instance(jhu_data, JHUData, name="jhu_data")
+        jhu_data = self.ensure_instance(jhu_data, JHUData, name="jhu_data")
         # Read arguments
         self.model = model
         self.population = population
@@ -55,7 +55,7 @@ class Estimator(Optimizer):
         self.end_date = end_date
         self.fixed_dict = kwargs.copy()
         if self.TAU in self.fixed_dict.keys():
-            self.fixed_dict[self.TAU] = self.validate_natural_int(
+            self.fixed_dict[self.TAU] = self.ensure_natural_int(
                 self.fixed_dict[self.TAU], name="tau"
             )
         # Training dataset
@@ -165,7 +165,7 @@ class Estimator(Optimizer):
         Returns:
             (bool): True when all max values of predicted values are in allowance
         """
-        df = self.validate_dataframe(comp_df, name="comp_df")
+        df = self.ensure_dataframe(comp_df, name="comp_df")
         variables = self.model.VARIABLES[:]
         a_max_values = [df[f"{v}{self.A}"].max() for v in variables]
         p_max_values = [df[f"{v}{self.P}"].max() for v in variables]
