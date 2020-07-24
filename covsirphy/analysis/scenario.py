@@ -355,6 +355,8 @@ class Scenario(Term):
         self.series_dict[name].add(
             first_date, last_date, population=population, **kwargs
         )
+        if "0th" in phases:
+            self.series_dict[name].use_0th = True
         self.series_dict[name].reset_phase_names()
         return self
 
@@ -388,6 +390,8 @@ class Scenario(Term):
             date, last_date, population=population, **kwargs
         )
         # Reset phase names
+        if phase == "0th":
+            self.series_dict[name].use_0th = True
         self.series_dict[name].reset_phase_names()
         return self
 
@@ -479,11 +483,9 @@ class Scenario(Term):
                 " because the number of change points will be automatically determined."
             )
         if not set_phases:
-            use_0th = "0th" in self.series_dict[name].phases()
-            if use_0th:
-                first_date = self._first_date
-            else:
-                first_date = self.get(self.START, name=name, phase="1st")
+            use_0th = self.series_dict[name].use_0th
+            init_phase = "0th" if use_0th else "1st"
+            first_date = self.get(self.START, name=name, phase=init_phase)
             finder = ChangeFinder(
                 self.jhu_data, self.population,
                 country=self.country, province=self.province,

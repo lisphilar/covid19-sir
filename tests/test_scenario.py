@@ -111,6 +111,8 @@ class TestScenario(object):
         one_df = scenario.summary()
         assert len(one_df) == 4
         # With 0th phase
+        scenario.use_0th = True
+        scenario.trend(set_phases=False, include_init_phase=True)
         scenario.use_0th = False
         scenario.trend(set_phases=True, include_init_phase=True)
         scenario.delete(phases=["0th"])

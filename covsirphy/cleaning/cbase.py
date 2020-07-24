@@ -203,7 +203,7 @@ class CleaningBase(Term):
             sum_dict = total_df.sum(axis=0, numeric_only=True).to_dict()
             sum_dict[self.PROVINCE] = self.UNKNOWN
             total_df = total_df.append(pd.Series(sum_dict), ignore_index=True)
-        df = pd.concat([df, total_df], axis=0, ignore_index=True)
+        df = pd.concat([df, total_df], axis=0, ignore_index=True, sort=False)
         if self.DATE in df.columns:
             df = df.groupby([self.PROVINCE, self.DATE]).max().reset_index()
         else:

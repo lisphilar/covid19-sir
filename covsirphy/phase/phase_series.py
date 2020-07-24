@@ -348,7 +348,7 @@ class PhaseSeries(Term):
         """
         start_objects = np.array(self.start_objects())
         ascending = scipy.stats.rankdata(start_objects)
-        if 0 in self.phase_dict.values():
+        if self.use_0th:
             ascending = ascending - 1
         corres_dict = {
             phase_id: int(rank)
