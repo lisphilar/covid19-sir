@@ -791,9 +791,9 @@ class Scenario(Term):
         # Add phases to the simulator
         df = phase_series.summary()
         zip_iter = zip(df.index, models, step_n_list, population_values)
-        for (phase, model, step_n, population) in zip_iter:
+        for (i, (phase, model, step_n, population)) in enumerate(zip_iter):
             param_dict = df[model.PARAMETERS].to_dict(orient="index")[phase]
-            if phase == self.num2str(1):
+            if i == 0:
                 # Calculate initial values
                 subset_df = self.jhu_data.subset(
                     country=self.country, province=self.province,
