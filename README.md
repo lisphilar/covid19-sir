@@ -46,12 +46,12 @@ We have the following options to start analysis with CovsirPhy. Datasets are not
 
 <strong>[Installation and dataset preparation](https://lisphilar.github.io/covid19-sir/INSTALLATION.html) explains how to install and prepare datasets for all users.</strong>
 
-Stable version of Covsirphy is available at [PyPI (The Python Package Index): covsirphy](https://pypi.org/project/covsirphy/) and supports Python 3.7 or newer versions.
+Stable versions of Covsirphy are available at [PyPI (The Python Package Index): covsirphy](https://pypi.org/project/covsirphy/) and supports Python 3.7 or newer versions.
 ```
 pip install covsirphy --upgrade
 ```
 
-We can install development version from GitHub repository.
+Development versions are in [GitHub repository: CovsirPhy](https://github.com/lisphilar/covid19-sir).
 ```
 !pip install "git+https://github.com/lisphilar/covid19-sir.git#egg=covsirphy"
 ```

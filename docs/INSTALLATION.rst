@@ -60,7 +60,7 @@ in advance.
 1. Standard users
 -----------------
 
-Stable version of Covsirphy is available at `PyPI (The Python Package
+Stable versions of Covsirphy are available at `PyPI (The Python Package
 Index): covsirphy <https://pypi.org/project/covsirphy/>`__ and supports
 Python 3.7 or newer versions.
 
@@ -68,7 +68,8 @@ Python 3.7 or newer versions.
 
     pip install covsirphy --upgrade
 
-We can install development version from GitHub repository.
+Development versions are in `GitHub repository:
+CovsirPhy <https://github.com/lisphilar/covid19-sir>`__.
 
 ::
 
