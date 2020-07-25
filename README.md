@@ -8,10 +8,10 @@
 [![Maintainability](https://api.codeclimate.com/v1/badges/eb97eaf9804f436062b9/maintainability)](https://codeclimate.com/github/lisphilar/covid19-sir/maintainability)
 [![BCH compliance](https://bettercodehub.com/edge/badge/lisphilar/covid19-sir?branch=master)](https://bettercodehub.com/)
 
-[**Documentation**](https://lisphilar.github.io/covid19-sir/index.html)
-| [**Installation/Dataset preparation**](https://lisphilar.github.io/covid19-sir/INSTALLATION.html)
-| [**Quickest usage**](https://lisphilar.github.io/covid19-sir/usage_quickest.html)
-| [**API reference**](https://lisphilar.github.io/covid19-sir/covsirphy.html)
+[<strong>Documentation</strong>](https://lisphilar.github.io/covid19-sir/index.html)
+| [<strong>Installation/Dataset preparation</strong>](https://lisphilar.github.io/covid19-sir/INSTALLATION.html)
+| [<strong>Quickest usage</strong>](https://lisphilar.github.io/covid19-sir/usage_quickest.html)
+| [<strong>API reference</strong>](https://lisphilar.github.io/covid19-sir/covsirphy.html)
 
 <strong>CovsirPhy is a Python package for COVID-19 (Coronavirus disease 2019) data analysis with SIR-derived ODE models. Please refer to "Method" part of [COVID-19 data with SIR model](https://www.kaggle.com/lisphilar/covid-19-data-with-sir-model) notebook in Kaggle to understand the methods.</strong>
 
