@@ -3,7 +3,6 @@
 
 import numpy as np
 import pandas as pd
-
 from covsirphy.cleaning.cbase import CleaningBase
 from covsirphy.cleaning.country_data import CountryData
 

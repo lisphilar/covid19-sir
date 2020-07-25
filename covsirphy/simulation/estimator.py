@@ -208,7 +208,7 @@ class Estimator(Optimizer):
 
     def divide_minutes(self, tau):
         """
-        Divide T by tau in the training dataset.
+        Divide T by tau in the training dataset and calculate the number of steps.
 
         Args:
             tau (int): tau value [min]
