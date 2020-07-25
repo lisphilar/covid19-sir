@@ -21,8 +21,8 @@ class PopulationData(CleaningBase):
     ]
 
     def __init__(self, filename):
-        super().__init__(filename)
         self.created_time = datetime.now()
+        super().__init__(filename)
 
     def _cleaning(self):
         """
