@@ -997,7 +997,7 @@ Records with Recovered &gt; 0 will be used.</p>
 <p>Data cleaning of total population dataset.</p>
 <dl class="py attribute">
 <dt id="covsirphy.cleaning.population.PopulationData.POPULATION_COLS">
-<code class="sig-name descname">POPULATION_COLS</code><em class="property"> = ['ISO3', 'Country', 'Province', 'Population']</em><a class="headerlink" href="#covsirphy.cleaning.population.PopulationData.POPULATION_COLS" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">POPULATION_COLS</code><em class="property"> = ['ISO3', 'Country', 'Province', 'Date', 'Population']</em><a class="headerlink" href="#covsirphy.cleaning.population.PopulationData.POPULATION_COLS" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="py method">
@@ -1052,23 +1052,32 @@ country_level (str): whether key is country name or not</p>
 
 <dl class="py method">
 <dt id="covsirphy.cleaning.population.PopulationData.update">
-<code class="sig-name descname">update</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">value</span></em>, <em class="sig-param"><span class="n">country</span></em>, <em class="sig-param"><span class="n">province</span><span class="o">=</span><span class="default_value">'-'</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/cleaning/population.html#PopulationData.update"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#covsirphy.cleaning.population.PopulationData.update" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">update</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">value</span></em>, <em class="sig-param"><span class="n">country</span></em>, <em class="sig-param"><span class="n">province</span><span class="o">=</span><span class="default_value">'-'</span></em>, <em class="sig-param"><span class="n">date</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/cleaning/population.html#PopulationData.update"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#covsirphy.cleaning.population.PopulationData.update" title="Permalink to this definition">¶</a></dt>
 <dd><p>Update the value of a new place.</p>
-<p>Args:
-value (int): population in the place
-country (str): country name
-province (str): province name</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>value</strong> (<em>int</em>) – population in the place</p></li>
+<li><p><strong>country</strong> (<em>str</em>) – country name</p></li>
+<li><p><strong>province</strong> (<em>str</em>) – province name</p></li>
+<li><p><strong>date</strong> (<em>str</em><em> or </em><em>None</em>) – observation date, like 01Jun2020</p></li>
+</ul>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<p>If &#64;date is None, the created date of the instancewill be used</p>
 </dd></dl>
 
 <dl class="py method">
 <dt id="covsirphy.cleaning.population.PopulationData.value">
-<code class="sig-name descname">value</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">country</span></em>, <em class="sig-param"><span class="n">province</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/cleaning/population.html#PopulationData.value"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#covsirphy.cleaning.population.PopulationData.value" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">value</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">country</span></em>, <em class="sig-param"><span class="n">province</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">date</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/cleaning/population.html#PopulationData.value"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#covsirphy.cleaning.population.PopulationData.value" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return the value of population in the place.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>country</strong> (<em>str</em>) – country name or ISO3 code</p></li>
 <li><p><strong>province</strong> (<em>str</em>) – province name</p></li>
+<li><p><strong>date</strong> (<em>str</em><em> or </em><em>None</em>) – observation date, like 01Jun2020</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
@@ -1078,6 +1087,8 @@ province (str): province name</p>
 <dd class="field-odd"><p>(int)</p>
 </dd>
 </dl>
+<p class="rubric">Notes</p>
+<p>If &#64;date is None, the created date of the instancewill be used</p>
 </dd></dl>
 
 </dd></dl>
@@ -1295,41 +1306,15 @@ province (str): province name</p>
 <code class="sig-name descname">W</code><em class="property"> = 'Waiting'</em><a class="headerlink" href="#covsirphy.cleaning.term.Term.W" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
-<dl class="py method">
+<dl class="py attribute">
 <dt id="covsirphy.cleaning.term.Term.date_obj">
-<em class="property">classmethod </em><code class="sig-name descname">date_obj</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">date_str</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/cleaning/term.html#Term.date_obj"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#covsirphy.cleaning.term.Term.date_obj" title="Permalink to this definition">¶</a></dt>
-<dd><p>Convert a string to a datetime object.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>date_str</strong> (<em>str</em><em> or </em><em>None</em>) – date, like 22Jan2020</p>
-</dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p>datetime object</p>
-</dd>
-<dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>(datetime.datetime or None)</p>
-</dd>
-</dl>
-<p class="rubric">Notes</p>
-<p>If &#64;date_str is None, None will be returned.</p>
-</dd></dl>
+<code class="sig-name descname">date_obj</code><em class="property"> = &lt;methodtools._LruCacheWire object&gt;</em><a class="reference internal" href="_modules/covsirphy/cleaning/term.html#Term.date_obj"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#covsirphy.cleaning.term.Term.date_obj" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
 
-<dl class="py method">
+<dl class="py attribute">
 <dt id="covsirphy.cleaning.term.Term.divisors">
-<em class="property">classmethod </em><code class="sig-name descname">divisors</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">value</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/cleaning/term.html#Term.divisors"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#covsirphy.cleaning.term.Term.divisors" title="Permalink to this definition">¶</a></dt>
-<dd><p>Return the list of divisors of the value.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>value</strong> (<em>int</em>) – target value</p>
-</dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p>the list of divisors</p>
-</dd>
-<dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>(list[int])</p>
-</dd>
-</dl>
-</dd></dl>
+<code class="sig-name descname">divisors</code><em class="property"> = &lt;methodtools._LruCacheWire object&gt;</em><a class="reference internal" href="_modules/covsirphy/cleaning/term.html#Term.divisors"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#covsirphy.cleaning.term.Term.divisors" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
 
 <dl class="py method">
 <dt id="covsirphy.cleaning.term.Term.ensure_dataframe">
@@ -1487,37 +1472,15 @@ it will be converted to an integer.</p>
 </dl>
 </dd></dl>
 
-<dl class="py method">
+<dl class="py attribute">
 <dt id="covsirphy.cleaning.term.Term.num2str">
-<em class="property">classmethod </em><code class="sig-name descname">num2str</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">num</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/cleaning/term.html#Term.num2str"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#covsirphy.cleaning.term.Term.num2str" title="Permalink to this definition">¶</a></dt>
-<dd><p>Convert numbers to 1st, 2nd etc.</p>
-<p>Args:
-&#64;num (int): number</p>
-<dl class="field-list simple">
-<dt class="field-odd">Returns</dt>
-<dd class="field-odd"><p>(str)</p>
-</dd>
-</dl>
-</dd></dl>
+<code class="sig-name descname">num2str</code><em class="property"> = &lt;methodtools._LruCacheWire object&gt;</em><a class="reference internal" href="_modules/covsirphy/cleaning/term.html#Term.num2str"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#covsirphy.cleaning.term.Term.num2str" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
 
-<dl class="py method">
+<dl class="py attribute">
 <dt id="covsirphy.cleaning.term.Term.to_date_obj">
-<em class="property">classmethod </em><code class="sig-name descname">to_date_obj</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">date_str</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">default</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/cleaning/term.html#Term.to_date_obj"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#covsirphy.cleaning.term.Term.to_date_obj" title="Permalink to this definition">¶</a></dt>
-<dd><p>Convert a string to a datatime object.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>date_str</strong> (<em>str</em><em> or </em><em>None</em><em>, </em><em>optional</em>) – string, like 22Jan2020</p></li>
-<li><p><strong>default</strong> (<em>datetime.datetime</em><em> or </em><em>None</em><em>, </em><em>optional</em>) – default value to return</p></li>
-</ul>
-</dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p>(datetime.datetime or None)</p>
-</dd>
-</dl>
-<p class="rubric">Notes</p>
-<p>If &#64;date_str is None, returns &#64;default value</p>
-</dd></dl>
+<code class="sig-name descname">to_date_obj</code><em class="property"> = &lt;methodtools._LruCacheWire object&gt;</em><a class="reference internal" href="_modules/covsirphy/cleaning/term.html#Term.to_date_obj"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#covsirphy.cleaning.term.Term.to_date_obj" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
 
 </dd></dl>
 
