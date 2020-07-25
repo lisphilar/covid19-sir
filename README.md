@@ -18,14 +18,12 @@
 <img src="./docs/gif/covsirphy_demo.gif" width="600">
 
 ## Functionalities
-- Downloading and cleaning data
-- Data visualization
-- S-R Trend analysis to determine the change points of parameters
+- Data preparation and data visualization
+- [Phase setting with S-R Trend analysis](https://lisphilar.github.io/covid19-sir/usage_phases.html)
 - Numerical simulation of ODE models
-- Description of ODE models
-    - Basic class of ODE models
-    - SIR, SIR-D, SIR-F, SIR-FV and SEWIR-F model
-- Parameter Estimation of ODE models
+    - Stable: SIR, SIR-D and SIR-F model
+    - Development: SIR-FV and SEWIR-F model
+- Phase-dependent parameter estimation of ODE models
 - Scenario analysis: Simulate the number of cases with user-defined parameter values
 
 ## Inspiration
@@ -33,8 +31,8 @@
 - Keep track parameter values/reproductive number in each country/province
 - Find the relationship of reproductive number and measures taken in each country/province
 
-If you have ideas or need new functionalities, please join this project.
-Any suggestions with [Github Issues](https://github.com/lisphilar/covid19-sir/issues/new/choose) are always welcomed. Please read [Guideline of contribution](https://lisphilar.github.io/covid19-sir/CONTRIBUTING.html) in advance.
+<strong>If you have ideas or need new functionalities, please join this project.
+Any suggestions with [Github Issues](https://github.com/lisphilar/covid19-sir/issues/new/choose) are always welcomed. Please read [Guideline of contribution](https://lisphilar.github.io/covid19-sir/CONTRIBUTING.html) in advance.</strong>
 
 ## Installation and dataset preparation
 We have the following options to start analysis with CovsirPhy. Datasets are not included in this package, but we can prepare them with `DataLoader` class.
@@ -48,10 +46,16 @@ We have the following options to start analysis with CovsirPhy. Datasets are not
 
 <strong>[Installation and dataset preparation](https://lisphilar.github.io/covid19-sir/INSTALLATION.html) explains how to install and prepare datasets for all users.</strong>
 
-Covsirphy is available at [PyPI (The Python Package Index): covsirphy](https://pypi.org/project/covsirphy/) and supports Python 3.7 or newer versions.
+Stable version of Covsirphy is available at [PyPI (The Python Package Index): covsirphy](https://pypi.org/project/covsirphy/) and supports Python 3.7 or newer versions.
 ```
 pip install covsirphy --upgrade
 ```
+
+We can install development version from GitHub repository.
+```
+!pip install "git+https://github.com/lisphilar/covid19-sir.git#egg=covsirphy"
+```
+
 Main datasets will be retrieved via [COVID-19 Data Hub](https://covid19datahub.io/) and the citation is  
 Guidotti, E., Ardia, D., (2020), "COVID-19 Data Hub", Working paper, doi: 10.13140/RG.2.2.11649.81763.
 

@@ -29,9 +29,14 @@ Lisphilar (2020), GitHub repository, COVID-19 dataset in Japan.
 If you want to use a new dataset for your analysis, please kindly inform us via [GitHub Issues: Request new method of DataLoader class](https://github.com/lisphilar/covid19-sir/issues/new/?template=request-new-method-of-dataloader-class.md). Please read [Guideline of contribution](https://lisphilar.github.io/covid19-sir/CONTRIBUTING.html) in advance.
 
 ## 1. Standard users
-Covsirphy is available at [PyPI (The Python Package Index): covsirphy](https://pypi.org/project/covsirphy/) and supports Python 3.7 or newer versions.
+Stable version of Covsirphy is available at [PyPI (The Python Package Index): covsirphy](https://pypi.org/project/covsirphy/) and supports Python 3.7 or newer versions.
 ```
 pip install covsirphy --upgrade
+```
+
+We can install development version from GitHub repository.
+```
+!pip install "git+https://github.com/lisphilar/covid19-sir.git#egg=covsirphy"
 ```
 
 Then, download the datasets and save the data in `input` directory.
@@ -70,6 +75,9 @@ export PIPENV_VENV_IN_PROJECT=true
 export PIPENV_TIMEOUT=7200
 pipenv sync --dev
 ```
+
+Shell will be started with `pipenv shell` and `python` command.
+
 Developers can perform tests with `pipenv run pytest -v --durations=0 --failed-first --maxfail=1 --cov=covsirphy --cov-report=term-missing --profile-svg` and call graph will be saved as SVG file (prof/combined.svg).
 
 - Windows users need to install [Graphviz for Windows](https://graphviz.org/_pages/Download/Download_windows.html) in advance.
