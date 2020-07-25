@@ -3,6 +3,7 @@
 
 from collections import defaultdict
 from datetime import datetime
+from methodtools import lru_cache
 import numpy as np
 import pandas as pd
 from covsirphy.util.error import deprecate
@@ -68,6 +69,7 @@ class Term(object):
     # Flag
     UNKNOWN = "-"
 
+    @lru_cache(maxsize=None)
     @classmethod
     def num2str(cls, num):
         """
@@ -97,6 +99,7 @@ class Term(object):
         """
         return a * np.exp(-b * x)
 
+    @lru_cache(maxsize=None)
     @classmethod
     def date_obj(cls, date_str):
         """
@@ -266,6 +269,7 @@ class Term(object):
             raise TypeError(s)
         return target
 
+    @lru_cache(maxsize=None)
     @classmethod
     def divisors(cls, value):
         """
@@ -283,6 +287,7 @@ class Term(object):
         ]
         return divisors
 
+    @lru_cache(maxsize=None)
     @classmethod
     def to_date_obj(cls, date_str=None, default=None):
         """
