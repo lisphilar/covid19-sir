@@ -232,11 +232,22 @@ class CleaningBase(Term):
                 Columns:
                     without ISO3, Country, Province column
         """
+        # Country level
         df = self._subset_by_country(country=country)
+        if df.empty:
+            raise KeyError(
+                f"Please register population value for country={country}"
+            )
+        # Province level
         if self.PROVINCE not in df.columns:
             raise ValueError(
                 "@province was specified, but the dataset does not have Province column.")
-        return self._subset_by_province(df, province=province)
+        df = self._subset_by_province(df, province=province)
+        if df.empty:
+            raise KeyError(
+                f"Please register population value for (country={country}, province={province})"
+            )
+        return df
 
     def subset(self, country, province=None, start_date=None, end_date=None):
         """
