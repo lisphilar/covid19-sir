@@ -3,6 +3,12 @@
 
 from collections import Counter
 import sys
+import warnings
+try:
+    # Surpress warnings of traitlets
+    warnings.filterwarnings("ignore", category=SyntaxWarning)
+except Exception:
+    pass
 try:
     import better_exceptions
     better_exceptions_installed = True
