@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
+from datetime import datetime
 import numpy as np
 import pandas as pd
 from covsirphy.util.error import deprecate
@@ -15,10 +16,12 @@ class PopulationData(CleaningBase):
         CleaningBase.ISO3,
         CleaningBase.COUNTRY,
         CleaningBase.PROVINCE,
+        CleaningBase.DATE,
         CleaningBase.N
     ]
 
     def __init__(self, filename):
+        self.created_time = datetime.now()
         super().__init__(filename)
 
     def _cleaning(self):
@@ -33,6 +36,7 @@ class PopulationData(CleaningBase):
                     - ISO3 (str): ISO3 code or "-"
                     - Country (str): country/region name
                     - Province (str): province/prefecture/state name
+                    - Date (pd.TimeStamp): date of the records (if available) or today
                     - Population (int): total population
         """
         df = self._raw.copy()
@@ -43,7 +47,8 @@ class PopulationData(CleaningBase):
                 "Country/Region": self.COUNTRY,
                 "Province.State": self.PROVINCE,
                 "Province/State": self.PROVINCE,
-                "Population": self.N
+                "Population": self.N,
+                "ObservationDate": self.DATE
             },
             axis=1
         )
@@ -55,6 +60,11 @@ class PopulationData(CleaningBase):
         # ISO3
         if self.ISO3 not in df.columns:
             df[self.ISO3] = self.UNKNOWN
+        # Date
+        if self.DATE in df.columns:
+            df[self.DATE] = pd.to_datetime(df[self.DATE])
+        else:
+            df[self.DATE] = self._created_date()
         # Country
         df[self.COUNTRY] = df[self.COUNTRY].replace(
             {
@@ -93,10 +103,20 @@ class PopulationData(CleaningBase):
         df = df.dropna(subset=[self.N]).reset_index(drop=True)
         df[self.N] = df[self.N].astype(np.int64)
         # Columns to use
-        df = df.loc[:, [self.ISO3, self.COUNTRY, self.PROVINCE, self.N]]
+        df = df.loc[:, [self.ISO3, self.COUNTRY,
+                        self.PROVINCE, self.DATE, self.N]]
         # Remove duplicates
         df = df.drop_duplicates().reset_index(drop=True)
         return df
+
+    def _created_date(self):
+        """
+        Return 0:00 AM of the created date.
+
+        Returns:
+            datetime.datetime
+        """
+        return self.created_time.replace(hour=0, minute=0, second=0, microsecond=0)
 
     def total(self):
         """
@@ -132,46 +152,62 @@ class PopulationData(CleaningBase):
         pop_dict = df.set_index("key").to_dict()[self.N]
         return pop_dict
 
-    def value(self, country, province=None):
+    def value(self, country, province=None, date=None):
         """
         Return the value of population in the place.
 
         Args:
             country (str): country name or ISO3 code
             province (str): province name
+            date (str or None): observation date, like 01Jun2020
 
         Returns:
             (int): population in the place
-        """
-        cell = self.subset(country=country, province=province)
-        value = int(cell.values)
-        if value:
-            return value
-        raise KeyError(
-            f"Please register population value for (country={country}, province={province})"
-        )
 
-    def update(self, value, country, province="-"):
+        Notes:
+            If @date is None, the created date of the instancewill be used
+        """
+        df = self.subset(country=country, province=province)
+        if date is None:
+            df = df.sort_values(self.DATE)
+            df = df.loc[df.index[-1], [self.N]]
+        else:
+            df = df.loc[df[self.DATE] == pd.to_datetime(date), [self.N]]
+            if df.empty:
+                raise KeyError("Record on {date} was not registered.")
+        return int(df.values[0])
+
+    def update(self, value, country, province="-", date=None):
         """
         Update the value of a new place.
 
         Args:
-        value (int): population in the place
-        country (str): country name
-        province (str): province name
+            value (int): population in the place
+            country (str): country name
+            province (str): province name
+            date (str or None): observation date, like 01Jun2020
+
+        Notes:
+            If @date is None, the created date of the instancewill be used
         """
         value = self.ensure_natural_int(value, "value")
+        if date is None:
+            date_stamp = pd.to_datetime(self._created_date())
+        else:
+            date_stamp = pd.to_datetime(date)
         df = self._cleaned_df.copy()
         c_series = df[self.COUNTRY]
         p_series = df[self.PROVINCE]
-        if country in c_series.unique() and province in p_series.unique():
-            sel = (c_series == country) & (p_series == province)
+        d_series = df[self.DATE]
+        sel = (c_series == country) & (
+            p_series == province) & (d_series == date_stamp)
+        if not df.loc[sel, :].empty:
             df.loc[sel, self.N] = value
             self._cleaned_df = df.copy()
             return self
         series = pd.Series(
-            [self.UNKNOWN, country, province, value],
-            index=[self.ISO3, self.COUNTRY, self.PROVINCE, self.N]
+            [self.UNKNOWN, country, province, date_stamp, value],
+            index=[self.ISO3, self.COUNTRY, self.PROVINCE, self.DATE, self.N]
         )
         self._cleaned_df = df.append(series, ignore_index=True)
         return self
