@@ -1,4 +1,4 @@
-# Workflow to test in Python 3.8
+# Workflow to test in Python 3.7
 
 name: test
 
@@ -6,7 +6,6 @@ on:
   push:
     branches:
       - master
-  pull_request:
 
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
@@ -17,7 +16,7 @@ jobs:
     # Python version
     strategy:
       matrix:
-        python-version: [3.8]
+        python-version: [3.7]
 
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
@@ -42,8 +41,8 @@ jobs:
     - name: Installation of pipenv and dependencies of CovsirPhy
       uses: VaultVulp/action-pipenv@v2.0.1
       with:
-        command: sync
-
+        command: install --dev
+    
     # Run tests
     - name: Run tests
       run: make test-nosvg
