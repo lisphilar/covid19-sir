@@ -20,7 +20,7 @@ class CountryData(CleaningBase):
         self._raw = dd.read_csv(filename).compute()
         self._country = country
         self.province_col = None
-        self.var_dict = dict()
+        self.var_dict = {}
         self._cleaned_df = pd.DataFrame()
         self._citation = str()
 

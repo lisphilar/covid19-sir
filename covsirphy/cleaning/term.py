@@ -116,8 +116,7 @@ class Term(object):
         """
         if date_str is None:
             return None
-        obj = datetime.strptime(date_str, cls.DATE_FORMAT)
-        return obj
+        return datetime.strptime(date_str, cls.DATE_FORMAT)
 
     @staticmethod
     def flatten(nested_list, unique=True):
@@ -282,10 +281,9 @@ class Term(object):
             (list[int]): the list of divisors
         """
         value = cls.ensure_natural_int(value)
-        divisors = [
+        return [
             i for i in range(1, value + 1) if value % i == 0
         ]
-        return divisors
 
     @lru_cache(maxsize=None)
     @classmethod
@@ -305,8 +303,7 @@ class Term(object):
         """
         if date_str is None:
             return default
-        date_obj = datetime.strptime(date_str, cls.DATE_FORMAT)
-        return date_obj
+        return datetime.strptime(date_str, cls.DATE_FORMAT)
 
 
 class Word(Term):

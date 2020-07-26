@@ -37,7 +37,7 @@ class ExampleData(JHUData):
         self._citation = str()
         self.tau = self.ensure_natural_int(tau, name="tau")
         self.start_date = self.ensure_date(start_date, name="start_date")
-        self.nondim_dict = dict()
+        self.nondim_dict = {}
 
     def add(self, model, country=None, province=None, **kwargs):
         """
@@ -93,7 +93,7 @@ class ExampleData(JHUData):
         )
         # Set non-dimensional data
         if country not in self.nondim_dict.keys():
-            self.nondim_dict[country] = dict()
+            self.nondim_dict[country] = {}
         nondim_df = simulator.non_dim()
         if province in self.nondim_dict[country].keys():
             nondim_df_old = self.nondim_dict[country][province].copy()

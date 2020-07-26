@@ -23,11 +23,11 @@ class ODESimulator(Term):
         self.province = province
         # list of dictionary
         # keys: model, step_n, population, param_dict, y0_dict
-        self.settings = list()
+        self.settings = []
         # tau-free data: reset index, 't', columns with dimensional variables
         self._taufree_df = pd.DataFrame()
         # key: non-dim variable name, value: dimensional variable name
-        self.var_dict = dict()
+        self.var_dict = {}
 
     def add(self, model, step_n, population, param_dict=None, y0_dict=None):
         """
@@ -150,8 +150,7 @@ class ODESimulator(Term):
         t_df = pd.Series(data=sol["t"], name=self.TS)
         y_df = pd.DataFrame(data=sol["y"].T.copy(), columns=variables)
         y_df = y_df.round()
-        sim_df = pd.concat([t_df, y_df], axis=1)
-        return sim_df
+        return pd.concat([t_df, y_df], axis=1)
 
     def run(self):
         """

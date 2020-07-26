@@ -57,8 +57,7 @@ class CleaningBase(Term):
         Returns:
             (pandas.DataFrame): cleaned data
         """
-        df = self._raw.copy()
-        return df
+        return self._raw.copy()
 
     @property
     def citation(self):
@@ -305,8 +304,7 @@ class CleaningBase(Term):
         df = self._cleaned_df.copy()
         if self.COUNTRY not in df.columns:
             raise KeyError("Country names are not registered in this dataset.")
-        country_list = list(df[self.COUNTRY].unique())
-        return country_list
+        return list(df[self.COUNTRY].unique())
 
     def total(self):
         """

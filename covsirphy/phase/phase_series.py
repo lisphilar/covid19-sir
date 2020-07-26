@@ -64,11 +64,10 @@ class PhaseSeries(Term):
             )
             return dict.fromkeys(past_date_objects, -1)
         last_date_obj = self.date_obj(self.last_date)
-        phase_dict = {
+        return {
             k: v for (k, v) in self.phase_dict.items()
             if k <= last_date_obj
         }
-        return phase_dict
 
     def _init_info_dict(self, include_past=False):
         """
@@ -86,7 +85,7 @@ class PhaseSeries(Term):
                 - 'Population': initial value of total population
         """
         if include_past or not hasattr(self, "info_dict"):
-            info_dict = dict()
+            info_dict = {}
             return info_dict
         last_date_obj = self.date_obj(self.last_date)
         info_dict = {
@@ -128,7 +127,7 @@ class PhaseSeries(Term):
         new_phase_dict = {
             date_obj: new_id for date_obj in date_series
         }
-        unfree_set = set(k for (k, v) in self.phase_dict.items() if v != -1)
+        unfree_set = {k for (k, v) in self.phase_dict.items() if v != -1}
         intersection = set(new_phase_dict.keys()) & unfree_set
         if intersection:
             date_strings = [
@@ -321,10 +320,9 @@ class PhaseSeries(Term):
         Returns:
             (list[datetime.datetime]): list of start dates
         """
-        start_objects = [
+        return [
             self.date_obj(v[self.START]) for v in self.info_dict.values()
         ]
-        return start_objects
 
     def end_objects(self):
         """
@@ -333,10 +331,9 @@ class PhaseSeries(Term):
         Returns:
             (list[datetime.datetime]): list of end dates
         """
-        end_objects = [
+        return [
             self.date_obj(v[self.END]) for v in self.info_dict.values()
         ]
-        return end_objects
 
     def reset_phase_names(self):
         """
@@ -380,11 +377,10 @@ class PhaseSeries(Term):
             (list[int]): list of the number of steps
         """
         date_array = np.array([*start_objects, last_object])
-        step_n_list = [
+        return [
             round(diff.total_seconds() / 60 / tau) for diff
             in date_array[1:] - date_array[:-1]
         ]
-        return step_n_list
 
     def model_names(self):
         """
@@ -398,7 +394,7 @@ class PhaseSeries(Term):
                 v[self.ODE] for v in self.info_dict.values()
             ]
         except KeyError:
-            names = list()
+            names = []
         return names
 
     def population_values(self):
@@ -408,10 +404,9 @@ class PhaseSeries(Term):
         Returns:
             (list[int]): list of population values
         """
-        values = [
+        return [
             v[self.N] for v in self.info_dict.values()
         ]
-        return values
 
     def phases(self):
         """
@@ -420,8 +415,7 @@ class PhaseSeries(Term):
         Returns:
             (list[int]): list of phase names
         """
-        phase_list = [
+        return [
             self.num2str(num) for num
             in self.info_dict.keys() if num != -1
         ]
-        return phase_list

@@ -95,7 +95,7 @@ class Optimizer(Term):
         Returns:
             (float): score of the error function to minimize
         """
-        param_dict = dict()
+        param_dict = {}
         return self.error_f(param_dict, self.train_df)
 
     def error_f(self, param_dict, train_df):
@@ -142,8 +142,7 @@ class Optimizer(Term):
                     - Response variables which defined by self.y_list
         """
         _ = param_dict.copy()
-        df = pd.DataFrame(columns=[self.x, *self.y_list])
-        return df
+        return pd.DataFrame(columns=[self.x, *self.y_list])
 
     def compare(self, actual_df, predicted_df):
         """
@@ -253,8 +252,7 @@ class Optimizer(Term):
         a_list = [np.log10(df[f"{v}{self.A}"]) for v in self.y_list]
         p_list = [np.log10(df[f"{v}{self.P}"]) for v in self.y_list]
         diffs = [((a - p) ** 2).sum() for (a, p) in zip(a_list, p_list)]
-        score = np.sqrt(sum(diffs) / len(diffs))
-        return score
+        return np.sqrt(sum(diffs) / len(diffs))
 
     def predict(self):
         """

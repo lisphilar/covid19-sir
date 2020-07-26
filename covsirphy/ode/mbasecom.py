@@ -12,7 +12,7 @@ class ModelBaseCommon(Term):
 
     def __init__(self):
         # Dictionary of non-dim parameters: {name: value}
-        self.non_param_dict = dict()
+        self.non_param_dict = {}
 
     def __str__(self):
         return self.NAME

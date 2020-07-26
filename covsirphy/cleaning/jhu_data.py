@@ -222,8 +222,7 @@ class JHUData(CleaningBase):
             country=country, province=province,
             start_date=start_date, end_date=end_date, population=population
         )
-        sr_df = subset_df.set_index(self.DATE).loc[:, [self.R, self.S]]
-        return sr_df
+        return subset_df.set_index(self.DATE).loc[:, [self.R, self.S]]
 
     @classmethod
     def from_dataframe(cls, dataframe):
@@ -276,5 +275,4 @@ class JHUData(CleaningBase):
         """
         df = self._cleaned_df.copy()
         df = df.loc[df[self.R] > 0, :]
-        country_list = list(df[self.COUNTRY].unique())
-        return country_list
+        return list(df[self.COUNTRY].unique())

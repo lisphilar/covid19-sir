@@ -149,8 +149,7 @@ class PopulationData(CleaningBase):
             df["key"] = df[self.COUNTRY].str.cat(
                 df[self.PROVINCE], sep=self.SEP
             )
-        pop_dict = df.set_index("key").to_dict()[self.N]
-        return pop_dict
+        return df.set_index("key").to_dict()[self.N]
 
     def value(self, country, province=None, date=None):
         """

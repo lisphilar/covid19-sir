@@ -72,8 +72,7 @@ class ModelBase(ModelBaseCommon):
                 - key (str): parameter name
                 - value (tuple(float, float)): min value and max value
         """
-        _dict = dict()
-        return _dict
+        return dict()
 
     @classmethod
     def specialize(cls, data_df, population):
@@ -101,10 +100,9 @@ class ModelBase(ModelBaseCommon):
                     - any columns @data_df has
                     - columns with dimensional variables
         """
-        df = cls.ensure_dataframe(
+        return cls.ensure_dataframe(
             data_df, name="data_df", columns=cls.VALUE_COLUMNS
         )
-        return df
 
     @classmethod
     def restore(cls, specialized_df):
