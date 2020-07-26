@@ -55,7 +55,7 @@ class Scenario(Term):
         # Init
         self.tau = None
         # {model_name: model_class}
-        self.model_dict = dict()
+        self.model_dict = {}
         # {scenario_name: PhaseSeries}
         self._init_phase_series()
         # {scenario: {phase: Estimator}}
@@ -65,10 +65,11 @@ class Scenario(Term):
         """
         Initialize dictionary of phase series.
         """
-        self.series_dict = dict()
-        self.series_dict[self.MAIN] = PhaseSeries(
-            self._first_date, self._last_date, self.population
-        )
+        self.series_dict = {
+            self.MAIN: PhaseSeries(
+                self._first_date, self._last_date, self.population
+            )
+        }
 
     @property
     def first_date(self):
@@ -413,7 +414,7 @@ class Scenario(Term):
             If 'Main' was used as @name, main PhaseSeries will be used.
         """
         if name is None and len(self.series_dict.keys()) > 1:
-            dataframes = list()
+            dataframes = []
             for (_name, series) in self.series_dict.items():
                 df = series.summary()
                 df[self.PHASE] = df.index
@@ -936,7 +937,7 @@ class Scenario(Term):
                     - Infected({date}): Infected on the end date of the last phase
                     - Fatal({date}): Fatal on the end date of the last phase
         """
-        _dict = dict()
+        _dict = {}
         for (name, _) in self.series_dict.items():
             # Predict the number of cases
             df = self.simulate(name=name, show_figure=False)

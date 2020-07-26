@@ -142,8 +142,7 @@ class DataLoader(Term):
             (str): absolute path of the file
         """
         file_path = self.dir_path / basename
-        filename = str(file_path.resolve())
-        return filename
+        return str(file_path.resolve())
 
     def _save(self, dataframe, filename):
         """
@@ -188,8 +187,7 @@ class DataLoader(Term):
             date_str = response.headers["Last-Modified"]
         except KeyError:
             return None
-        date = pd.to_datetime(date_str).tz_convert(None)
-        return date
+        return pd.to_datetime(date_str).tz_convert(None)
 
     def _last_updated_local(self, path):
         """
@@ -343,8 +341,7 @@ class DataLoader(Term):
                     as-is the repository
         """
         url = f"{self.japan_cases_url}/covid_jpn_total.csv"
-        df = self._get_raw(url)
-        return df
+        return self._get_raw(url)
 
     def _create_dataset_japan_cases(self, filename, set_citation=True):
         """
@@ -510,8 +507,7 @@ class DataLoader(Term):
             basename = Path(local_file).name
         else:
             basename = basename or self._covid19dh_basename
-        filename = self._resolve_filename(basename)
-        return filename
+        return self._resolve_filename(basename)
 
     @property
     def covid19dh_citation(self):

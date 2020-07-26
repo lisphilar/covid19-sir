@@ -192,10 +192,9 @@ class SIRF(ModelBase):
         Args:
             param tau (int): tau value [min]
         """
-        _dict = {
+        return {
             "alpha1 [-]": round(self.theta, 3),
             "1/alpha2 [day]": int(tau / 24 / 60 / self.kappa),
             "1/beta [day]": int(tau / 24 / 60 / self.rho),
             "1/gamma [day]": int(tau / 24 / 60 / self.sigma)
         }
-        return _dict

@@ -75,7 +75,7 @@ class ChangeFinder(Term):
         # Minimum value of RMSLE score
         self.max_rmsle = self.ensure_float(max_rmsle)
         # Setting for optimization
-        self._change_dates = list()
+        self._change_dates = []
         # Whether use 0th phase or not
         self._use_0th = True
 
@@ -261,10 +261,9 @@ class ChangeFinder(Term):
         Returns:
             (list[str]): list of dates, like 22Jan2020
         """
-        dates = [
+        return [
             date_obj.strftime(self.DATE_FORMAT) for date_obj in sr_df.index
         ]
-        return dates
 
     def _read_population_data(self, dates, population, change_dict=None):
         """
@@ -283,12 +282,11 @@ class ChangeFinder(Term):
                 - value (int): total population on the date
         """
         change_dict = dict() if change_dict is None else change_dict.copy()
-        population_dict = {
+        return {
             date: change_dict[date] if date in change_dict.keys(
             ) else population
             for date in dates
         }
-        return population_dict
 
     def _phase_range(self, change_dates):
         """

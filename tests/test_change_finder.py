@@ -33,11 +33,11 @@ class TestChangeFinder(object):
         assert isinstance(phase_series, PhaseSeries)
 
     def test_find_with_small_min_size(self, jhu_data, population_data):
-        min_size = 2
         population = population_data.value("Italy")
         clean_df = jhu_data.cleaned()
         warnings.filterwarnings("ignore", category=DeprecationWarning)
         with pytest.raises(ValueError):
+            min_size = 2
             change_finder = ChangeFinder(
                 clean_df, population, country="Italy",
                 min_size=min_size

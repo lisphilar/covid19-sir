@@ -344,11 +344,10 @@ class Estimator(Optimizer):
         Args:
             tau (int): tau value
         """
-        score = super().rmsle(
+        return super().rmsle(
             train_df=self.divide_minutes(tau),
             dim=1
         )
-        return score
 
     def accuracy(self, show_figure=True, filename=None):
         """
@@ -365,10 +364,9 @@ class Estimator(Optimizer):
             in enumerate(zip(self.model.PRIORITIES, self.model.VARIABLES))
             if p != 0 and i != 0
         ]
-        df = super().accuracy(
+        return super().accuracy(
             train_df=train_df,
             variables=use_variables,
             show_figure=show_figure,
             filename=filename
         )
-        return df
