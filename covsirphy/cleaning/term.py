@@ -7,6 +7,7 @@ from methodtools import lru_cache
 import numpy as np
 import pandas as pd
 from covsirphy.util.error import deprecate
+from covsirphy.util.cache import show_info
 
 
 class Term(object):
@@ -69,6 +70,7 @@ class Term(object):
     # Flag
     UNKNOWN = "-"
 
+    @show_info
     @lru_cache(maxsize=None)
     @classmethod
     def num2str(cls, num):
@@ -99,6 +101,7 @@ class Term(object):
         """
         return a * np.exp(-b * x)
 
+    @show_info
     @lru_cache(maxsize=None)
     @classmethod
     def date_obj(cls, date_str):
@@ -268,6 +271,7 @@ class Term(object):
             raise TypeError(s)
         return target
 
+    @show_info
     @lru_cache(maxsize=None)
     @classmethod
     def divisors(cls, value):
@@ -285,6 +289,7 @@ class Term(object):
             i for i in range(1, value + 1) if value % i == 0
         ]
 
+    @show_info
     @lru_cache(maxsize=None)
     @classmethod
     def to_date_obj(cls, date_str=None, default=None):
