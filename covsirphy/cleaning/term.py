@@ -7,7 +7,7 @@ from methodtools import lru_cache
 import numpy as np
 import pandas as pd
 from covsirphy.util.error import deprecate
-from covsirphy.util.cache import show_info
+from covsirphy.util.cache import show_docstring
 
 
 class Term(object):
@@ -70,7 +70,7 @@ class Term(object):
     # Flag
     UNKNOWN = "-"
 
-    @show_info
+    @show_docstring
     @lru_cache(maxsize=None)
     @classmethod
     def num2str(cls, num):
@@ -81,7 +81,7 @@ class Term(object):
         @num (int): number
 
         Returns:
-            (str)
+            str
         """
         if not isinstance(num, int):
             raise TypeError("@num must be an integer.")
@@ -101,7 +101,7 @@ class Term(object):
         """
         return a * np.exp(-b * x)
 
-    @show_info
+    @show_docstring
     @lru_cache(maxsize=None)
     @classmethod
     def date_obj(cls, date_str):
@@ -112,7 +112,7 @@ class Term(object):
             date_str (str or None): date, like 22Jan2020
 
         Returns:
-            (datetime.datetime or None): datetime object
+            datetime.datetime or None: datetime object
 
         Notes:
             If @date_str is None, None will be returned.
@@ -131,7 +131,7 @@ class Term(object):
             unique (bool): if True, only unique values will remain
 
         Returns:
-            (list[object])
+            list[object]
         """
         flattened = sum(nested_list, list())
         if unique:
@@ -180,7 +180,7 @@ class Term(object):
             include_zero (bool): include 0 or not
 
         Returns:
-            (int): as-is the target
+            int: as-is the target
         """
         s = f"@{name} must be a natural number, but {target} was applied"
         try:
@@ -206,7 +206,7 @@ class Term(object):
             name (str): argument name of the value
 
         Returns:
-            (float): as-is the target
+            float: as-is the target
         """
         s = f"@{name} must be a float value, but {target} was applied"
         try:
@@ -225,7 +225,7 @@ class Term(object):
             name (str): argument name of the string
 
         Returns:
-            (str): as-is the target
+            str: as-is the target
         """
         try:
             cls.date_obj(target)
@@ -246,7 +246,7 @@ class Term(object):
             name (str): argument name of the target
 
         Returns:
-            (int): as-is the target
+            int: as-is the target
         """
         s = f"@{name} must be an sub class of {type(parent)}, but {type(target)} was applied."
         if not issubclass(target, parent):
@@ -264,14 +264,14 @@ class Term(object):
             name (str): argument name of the target
 
         Returns:
-            (instance): as-is target
+            instance: as-is target
         """
         s = f"@{name} must be an instance of {type(class_obj)}, but {type(target)} was applied."
         if not isinstance(target, class_obj):
             raise TypeError(s)
         return target
 
-    @show_info
+    @show_docstring
     @lru_cache(maxsize=None)
     @classmethod
     def divisors(cls, value):
@@ -282,14 +282,14 @@ class Term(object):
             value (int): target value
 
         Returns:
-            (list[int]): the list of divisors
+            list[int]: the list of divisors
         """
         value = cls.ensure_natural_int(value)
         return [
             i for i in range(1, value + 1) if value % i == 0
         ]
 
-    @show_info
+    @show_docstring
     @lru_cache(maxsize=None)
     @classmethod
     def to_date_obj(cls, date_str=None, default=None):
@@ -301,7 +301,7 @@ class Term(object):
             default (datetime.datetime or None, optional): default value to return
 
         Returns:
-            (datetime.datetime or None)
+            datetime.datetime or None
 
         Notes:
             If @date_str is None, returns @default value
