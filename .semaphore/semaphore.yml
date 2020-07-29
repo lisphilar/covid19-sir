@@ -1,0 +1,39 @@
+version: v1.1
+name: Python 3.8 test
+agent:
+ machine:
+   type: e1-standard-2
+   os_image: ubuntu1804
+
+blocks:
+ - name: Install dependencies
+   task:
+     env_vars:
+       - name: PIPENV_VENV_IN_PROJECT
+         value: "true"
+     prologue:
+       commands:
+         - sudo pip install pipenv
+         - checkout
+     jobs:
+       - name: Install and cache dependencies
+         commands:
+           - cache restore pipenv-$SEMAPHORE_GIT_BRANCH-$(checksum Pipfile.lock),pipenv-$SEMAPHORE_GIT_BRANCH,pipenv-master
+           # --deploy also checks python version requirements
+           - pipenv install --dev --deploy
+           - cache store pipenv-$SEMAPHORE_GIT_BRANCH-$(checksum Pipfile.lock) .venv
+ - name: Tests
+   task:
+     env_vars:
+       - name: PIPENV_VENV_IN_PROJECT
+         value: "true"
+     prologue:
+       commands:
+         - sudo pip install pipenv
+         - checkout
+         - cache restore cache restore pipenv-$SEMAPHORE_GIT_BRANCH-$(checksum Pipfile.lock),pipenv-$SEMAPHORE_GIT_BRANCH,pipenv-master
+     jobs:
+       - name: Everything
+         commands:
+           # assuming you have "test_nosvg" in your Pipfile scripts
+           - pipenv run test_nosvg
