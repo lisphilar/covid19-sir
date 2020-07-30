@@ -91,6 +91,8 @@ class CountryData(CleaningBase):
             self.DATE, self.C, self.F, self.R
         ]
         self.ensure_dataframe(df, name="the raw data", columns=expected_cols)
+        # Remove empty rows
+        df = df.dropna(subset=[self.DATE])
         # Add province column
         if self.province_col:
             df = df.rename({self.province_col: self.PROVINCE}, axis=1)
@@ -98,7 +100,8 @@ class CountryData(CleaningBase):
             df[self.PROVINCE] = self.UNKNOWN
         # Values
         df[self.CI] = df[self.C] - df[self.F] - df[self.R]
-        df[self.VALUE_COLUMNS] = df[self.VALUE_COLUMNS].astype(np.int64)
+        v_cols = self.VALUE_COLUMNS[:]
+        df[v_cols] = df[v_cols].fillna(0).astype(np.int64)
         # Groupby date and province
         df[self.DATE] = pd.to_datetime(df[self.DATE])
         df = df.groupby([self.DATE, self.PROVINCE]).sum().reset_index()
