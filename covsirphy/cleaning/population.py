@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*-
 
 from datetime import datetime
+from dask import dataframe as dd
 import numpy as np
 import pandas as pd
 from covsirphy.util.error import deprecate
@@ -20,9 +21,17 @@ class PopulationData(CleaningBase):
         CleaningBase.N
     ]
 
-    def __init__(self, filename):
+    def __init__(self, filename=None):
         self.created_time = datetime.now()
-        super().__init__(filename)
+        if filename is None:
+            self._raw = pd.DataFrame()
+            self._cleaned_df = pd.DataFrame(columns=self.POPULATION_COLS)
+        else:
+            self._raw = dd.read_csv(
+                filename, dtype={"Province/State": "object"}
+            ).compute()
+            self._cleaned_df = self._cleaning()
+        self._citation = str()
 
     def _cleaning(self):
         """
