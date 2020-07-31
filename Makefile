@@ -48,9 +48,11 @@ sphinx:
 docs:
 	@rm -rf docs/_images
 	@rm -f docs/*ipynb
+	# docs/index.rst must be updated to include the notebooks
 	@pipenv run runipy example/usage_quick.ipynb docs/usage_quick.ipynb
 	@pipenv run runipy example/usage_quickest.ipynb docs/usage_quickest.ipynb
 	@pipenv run runipy example/usage_phases.ipynb docs/usage_phases.ipynb
+	@pipenv run runipy example/usage_theoretical.ipynb docs/usage_theoretical.ipynb
 	@make sphinx
 
 

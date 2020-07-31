@@ -14,6 +14,7 @@
    usage_quickest
    usage_quick
    usage_phases
+   usage_theoretical
    covsirphy
    CONTRIBUTING
 
