@@ -22,7 +22,7 @@ class SIRFV(ModelBase):
     # names of parameters
     PARAMETERS = ["theta", "kappa", "rho", "sigma", "omega"]
     DAY_PARAMETERS = [
-        "alpha1", "1/alpha2 [day]", "1/beta [day]", "1/gamma [day]",
+        "alpha1 [-]", "1/alpha2 [day]", "1/beta [day]", "1/gamma [day]",
         "Vaccinated [persons]"
     ]
     # Variable names in (non-dim, dimensional) ODEs

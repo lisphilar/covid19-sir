@@ -5,7 +5,7 @@ import warnings
 import pandas as pd
 import pytest
 from covsirphy import Scenario
-from covsirphy import Term, SIRF
+from covsirphy import Term, PopulationData, SIRF, SIRFV, ExampleData
 
 
 class TestScenario(object):
@@ -119,3 +119,38 @@ class TestScenario(object):
         assert len(scenario.summary()) == 5
         with pytest.raises(TypeError):
             scenario.delete(phases="1st")
+
+    def test_scenario_with_model_change(self):
+        # Instance to save population values
+        population_data = PopulationData(filename=None)
+        # Set tau value and start date of records
+        example_data = ExampleData(tau=1440, start_date="01Jan2020")
+        # Preset of SIR-F parameters
+        preset_dict = SIRF.EXAMPLE["param_dict"]
+        # Create dataset from 01Jan2020 to 31Jan2020
+        area = {"country": "Theoretical"}
+        example_data.add(SIRF, step_n=30, **area)
+        # Register population value
+        population_data.update(SIRF.EXAMPLE["population"], **area)
+        # Create Scenario class
+        snl = Scenario(example_data, population_data, tau=1440, **area)
+        # Set 0th phase from 02Jan2020 to 31Jan2020 with preset parameter values
+        snl.clear(include_past=True)
+        snl.add(end_date="31Jan2020", model=SIRF, **preset_dict)
+        # Add main scenario
+        snl.add(end_date="31Dec2020", name="Main")
+        # Add lockdown scenario
+        rho_lock = snl.get("rho", phase="0th") / 2
+        snl.add(end_date="31Dec2020", name="Lockdown", rho=rho_lock)
+        # Add medicine scenario
+        kappa_med = snl.get("kappa", phase="0th") / 2
+        sigma_med = snl.get("sigma", phase="0th") * 2
+        snl.add(end_date="31Dec2020", name="Medicine",
+                kappa=kappa_med, sigma=sigma_med)
+        # Add vaccine scenario
+        snl.add(end_date="31Dec2020", name="Vaccine",
+                model=SIRFV, omega=0.001)
+        # Summarize
+        snl.summary()
+        # Compare scenarios
+        snl.describe(y0_dict={"Vaccinated": 0})

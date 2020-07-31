@@ -34,9 +34,10 @@ class Scenario(Term):
         population_data (covsirphy.PopulationData): PopulationData object
         country (str): country name
         province (str or None): province name
+        tau (int or None): tau value
     """
 
-    def __init__(self, jhu_data, population_data, country, province=None):
+    def __init__(self, jhu_data, population_data, country, province=None, tau=None):
         # Population
         population_data = self.ensure_instance(
             population_data, PopulationData, name="population_data")
@@ -53,7 +54,7 @@ class Scenario(Term):
         self._first_date = df[self.DATE].min().strftime(self.DATE_FORMAT)
         self._last_date = df[self.DATE].max().strftime(self.DATE_FORMAT)
         # Init
-        self.tau = None
+        self.tau = tau
         # {model_name: model_class}
         self.model_dict = {}
         # {scenario_name: PhaseSeries}
@@ -197,7 +198,7 @@ class Scenario(Term):
             end_date (str): end date of the new phase
             days (int): the number of days to add
             population (int or None): population value of the start date
-            model (covsirphy.ModelBase orNone): ODE model
+            model (covsirphy.ModelBase or None): ODE model
             kwargs: optional, keyword arguments of ODE model parameters, not including tau value.
 
         Returns:
@@ -228,9 +229,10 @@ class Scenario(Term):
         # Model
         model = model or self._last_model(name=name)
         model = self.ensure_subclass(model, ModelBase, name="model")
+        self.model_dict[model.NAME] = model
         model_param_dict = {
             param: summary_df.loc[summary_df.index[-1], param]
-            for param in model.PARAMETERS
+            for param in set(model.PARAMETERS) & set(summary_df.columns)
         }
         model_param_dict.update(kwargs)
         model_instance = model(population=population, **model_param_dict)
@@ -700,7 +702,7 @@ class Scenario(Term):
 
         Args:
             name (str): phase series name. If 'Main', main PhaseSeries will be used
-            y0_dict (dict):
+            y0_dict (dict or None):
                 - key (str): variable name
                 - value (float): initial value
                 - dictionary of initial values or None
@@ -742,7 +744,7 @@ class Scenario(Term):
         fig_cols = [col for col in self.FIG_COLUMNS if col in fig_cols_set]
         line_plot(
             fig_df[fig_cols],
-            title=f"{self.area}: Predicted number of cases",
+            title=f"{self.area}: Predicted number of cases ({name} scenario)",
             filename=filename,
             y_integer=True,
             v=start_objects[1:]
@@ -923,7 +925,7 @@ class Scenario(Term):
         )
         return df
 
-    def describe(self):
+    def describe(self, y0_dict=None):
         """
         Describe representative values.
 
@@ -936,11 +938,16 @@ class Scenario(Term):
                     - argmax(Infected): the date when Infected shows max value
                     - Infected({date}): Infected on the end date of the last phase
                     - Fatal({date}): Fatal on the end date of the last phase
+            y0_dict (dict or None):
+                - key (str): variable name
+                - value (float): initial value
+                - dictionary of initial values or None
+                - if model will be changed in the later phase, must be specified
         """
         _dict = {}
         for (name, _) in self.series_dict.items():
             # Predict the number of cases
-            df = self.simulate(name=name, show_figure=False)
+            df = self.simulate(name=name, y0_dict=y0_dict, show_figure=False)
             df = df.set_index(self.DATE)
             cols = df.columns[:]
             last_date = df.index[-1]
