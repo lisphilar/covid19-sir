@@ -2,7 +2,7 @@
 [![PyPI version](https://badge.fury.io/py/covsirphy.svg)](https://badge.fury.io/py/covsirphy)
 [![Downloads](https://pepy.tech/badge/covsirphy)](https://pepy.tech/project/covsirphy)
 [![PyPI - Python Version](https://img.shields.io/pypi/pyversions/covsirphy)](https://badge.fury.io/py/covsirphy)
-[![test](https://github.com/lisphilar/covid19-sir/workflows/test/badge.svg)](https://github.com/lisphilar/covid19-sir/actions)
+[![Build Status](https://semaphoreci.com/api/v1/lisphilar/covid19-sir/branches/master/badge.svg)](https://semaphoreci.com/lisphilar/covid19-sir)
 
 [![GitHub license](https://img.shields.io/github/license/lisphilar/covid19-sir)](https://github.com/lisphilar/covid19-sir/blob/master/LICENSE)
 [![Maintainability](https://api.codeclimate.com/v1/badges/eb97eaf9804f436062b9/maintainability)](https://codeclimate.com/github/lisphilar/covid19-sir/maintainability)
