@@ -53,6 +53,7 @@ docs:
 	@pipenv run runipy example/usage_quickest.ipynb docs/usage_quickest.ipynb
 	@pipenv run runipy example/usage_phases.ipynb docs/usage_phases.ipynb
 	@pipenv run runipy example/usage_theoretical.ipynb docs/usage_theoretical.ipynb
+	@pipenv run runipy example/usage_policy.ipynb docs/usage_policy.ipynb
 	@make sphinx
 
 

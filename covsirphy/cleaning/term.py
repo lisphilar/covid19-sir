@@ -168,17 +168,22 @@ class Term(object):
     def ensure_natural_int(target, name="number", include_zero=False):
         """
         Ensure a natural (non-negative) number.
-        If the value is a natural number and the type was float or string,
-        it will be converted to an integer.
 
         Args:
-            target (int or float or str): value to ensure
+            target (int or float or str or None): value to ensure
             name (str): argument name of the value
             include_zero (bool): include 0 or not
 
         Returns:
             (int): as-is the target
+
+        Notes:
+            When @target is None, None will be returned.
+            If the value is a natural number and the type was float or string,
+            it will be converted to an integer.
         """
+        if target is None:
+            return None
         s = f"@{name} must be a natural number, but {target} was applied"
         try:
             number = int(target)

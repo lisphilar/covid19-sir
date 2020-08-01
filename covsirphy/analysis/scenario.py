@@ -53,8 +53,8 @@ class Scenario(Term):
         df = jhu_data.subset(country=self.country, province=self.province)
         self._first_date = df[self.DATE].min().strftime(self.DATE_FORMAT)
         self._last_date = df[self.DATE].max().strftime(self.DATE_FORMAT)
-        # Init
-        self.tau = tau
+        # tau value must be shared
+        self.tau = self.ensure_natural_int(tau, name="tau")
         # {model_name: model_class}
         self.model_dict = {}
         # {scenario_name: PhaseSeries}
