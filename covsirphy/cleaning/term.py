@@ -165,20 +165,26 @@ class Term(object):
         return df
 
     @staticmethod
-    def ensure_natural_int(target, name="number", include_zero=False):
+    def ensure_natural_int(target, name="number", include_zero=False, none_ok=False):
         """
         Ensure a natural (non-negative) number.
-        If the value is a natural number and the type was float or string,
-        it will be converted to an integer.
 
         Args:
-            target (int or float or str): value to ensure
+            target (int or float or str or None): value to ensure
             name (str): argument name of the value
             include_zero (bool): include 0 or not
+            none_ok (bool): None value can be applied or not.
 
         Returns:
             (int): as-is the target
+
+        Notes:
+            When @target is None and @none_ok is True, None will be returned.
+            If the value is a natural number and the type was float or string,
+            it will be converted to an integer.
         """
+        if target is None and none_ok:
+            return None
         s = f"@{name} must be a natural number, but {target} was applied"
         try:
             number = int(target)

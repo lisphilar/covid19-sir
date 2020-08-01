@@ -15,6 +15,7 @@
    usage_quick
    usage_phases
    usage_theoretical
+   usage_policy
    covsirphy
    CONTRIBUTING
 

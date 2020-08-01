@@ -53,8 +53,8 @@ class Scenario(Term):
         df = jhu_data.subset(country=self.country, province=self.province)
         self._first_date = df[self.DATE].min().strftime(self.DATE_FORMAT)
         self._last_date = df[self.DATE].max().strftime(self.DATE_FORMAT)
-        # Init
-        self.tau = tau
+        # tau value must be shared
+        self.tau = self.ensure_natural_int(tau, name="tau", none_ok=True)
         # {model_name: model_class}
         self.model_dict = {}
         # {scenario_name: PhaseSeries}
@@ -443,7 +443,7 @@ class Scenario(Term):
             columns (list[str] or None): columns to show
 
         Returns:
-            (pandas.DataFrame):
+            pandas.DataFrame:
             - if @name not None, as the same as PhaseSeries().summary()
             - if @name is None, index will be phase series name and phase name
 
@@ -880,7 +880,7 @@ class Scenario(Term):
     def param_history(self, targets=None, name="Main", divide_by_first=True,
                       show_figure=True, filename=None, show_box_plot=True, **kwargs):
         """
-        Return subset of summary.
+        Return subset of summary and show a figure to show the history.
 
         Args:
             targets (list[str] or str): parameters to show (Rt etc.)
@@ -892,7 +892,7 @@ class Scenario(Term):
             kwargs: keword arguments of pd.DataFrame.plot or line_plot()
 
         Returns:
-            (pandas.DataFrame)
+            pandas.DataFrame
 
         Notes:
             If 'Main' was used as @name, main PhaseSeries will be used.
@@ -966,3 +966,16 @@ class Scenario(Term):
                 f"{self.F} on {last_date}": last_f,
             }
         return pd.DataFrame.from_dict(_dict, orient="index")
+
+    def phases(self, name="Main"):
+        """
+        Return the list of phase names.
+
+        Args:
+            name (str): phase series name
+
+        Returns:
+            (list[int]): list of phase names
+        """
+        self._ensure_name(name)
+        return self.series_dict[name].phases()
