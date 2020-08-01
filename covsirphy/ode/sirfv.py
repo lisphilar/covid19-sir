@@ -210,9 +210,9 @@ class SIRFV(ModelBase):
             param tau (int): tau value [min]
         """
         return {
-            "alpha1": round(self.theta, 3),
+            "alpha1 [-]": round(self.theta, 3),
             "1/alpha2 [day]": int(tau / 24 / 60 / self.kappa),
             "1/beta [day]": int(tau / 24 / 60 / self.rho),
             "1/gamma [day]": int(tau / 24 / 60 / self.sigma),
-            "Vaccinated [persons]": int(self.omega * self.population)
+            "Vaccinated [persons/day]": int(self.omega * self.population)
         }
