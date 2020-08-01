@@ -44,7 +44,7 @@ class SIRFV(ModelBase):
         "population": 1_000_000,
         "param_dict": {
             "theta": 0.002, "kappa": 0.005, "rho": 0.2, "sigma": 0.075,
-            "omega": 0.001,
+            "omega": 0.01,
         },
         "y0_dict": {
             ModelBase.S: 999_000, ModelBase.CI: 1000, ModelBase.R: 0, ModelBase.F: 0,
