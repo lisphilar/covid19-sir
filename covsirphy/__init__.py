@@ -22,6 +22,7 @@ from covsirphy.phase import Trend, ChangeFinder, PhaseSeries
 from covsirphy.simulation import Optimizer, ODESimulator, Estimator
 from covsirphy.util import line_plot, jpn_map, StopWatch, error
 from covsirphy.analysis import ExampleData, Scenario
+from covsirphy.wordwide import PolicyMeasures
 # Deprecated
 from covsirphy.cleaning import Population, Word
 
@@ -41,6 +42,7 @@ __all__ = [
     "ModelBase", "SIR", "SIRD", "SIRF", "SIRFV", "SEWIRF",
     "Estimator", "Trend", "Optimizer",
     "line_plot", "jpn_map", "StopWatch", "error",
+    "PolicyMeasures",
     # Deprecated
     "Population", "Word",
 ]

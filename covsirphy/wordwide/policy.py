@@ -21,14 +21,29 @@ class PolicyMeasures(Term):
         tau (int or None): tau value
     """
 
-    def __init__(self, jhu_data, population_data, model, tau=None):
-        # Population
-        population_data = self.ensure_instance(
-            population_data, PopulationData, name="population_data")
+    def __init__(self, jhu_data, population_data, oxcgrt_data, model, tau=None):
         # Records
         self.jhu_data = self.ensure_instance(
             jhu_data, JHUData, name="jhu_data")
+        # Population
+        self.population_data = self.ensure_instance(
+            population_data, PopulationData, name="population_data")
+        # OxCGRT
+        self.oxcgrt_data = self.ensure_instance(
+            oxcgrt_data, OxCGRTData, name="oxcgrt_data")
         # Model
         self.model = self.ensure_subclass(model, ModelBase)
         # tau value must be shared
         self.tau = self.ensure_natural_int(tau, name="tau")
+
+    def countries(self):
+        """
+        Return names of countries where records are registered.
+
+        Returns:
+            (list[str]): list of country names
+        """
+        j_list = self.jhu_data.countries()
+        p_list = self.population_data.countries()
+        o_list = self.oxcgrt_data.countries()
+        return list(set(j_list) & set(p_list) & set(o_list))
