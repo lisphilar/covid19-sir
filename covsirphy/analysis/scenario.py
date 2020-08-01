@@ -459,7 +459,7 @@ class Scenario(Term):
             raise KeyError(
                 "Un-registered columns were selected as @columns. Please use {', '.join(df.columns)}."
             )
-        return df.loc[:, columns]
+        return df.loc[:, columns].fillna(self.UNKNOWN)
 
     def trend(self, set_phases=True, include_init_phase=False, name="Main",
               show_figure=True, filename=None, **kwargs):

@@ -87,8 +87,8 @@ class SIRFV(ModelBase):
         n = self.population
         s, i, *_ = X
         beta_si = self.rho * s * i / n
-        dvdt = self.omega * n
-        dsdt = 0 - beta_si - dvdt
+        dsdt = max(0 - beta_si - self.omega * n, - s)
+        dvdt = 0 - dsdt - beta_si
         drdt = self.sigma * i
         dfdt = self.kappa * i + (0 - beta_si) * self.theta
         didt = 0 - dsdt - drdt - dfdt - dvdt
@@ -210,9 +210,9 @@ class SIRFV(ModelBase):
             param tau (int): tau value [min]
         """
         return {
-            "alpha1": round(self.theta, 3),
+            "alpha1 [-]": round(self.theta, 3),
             "1/alpha2 [day]": int(tau / 24 / 60 / self.kappa),
             "1/beta [day]": int(tau / 24 / 60 / self.rho),
             "1/gamma [day]": int(tau / 24 / 60 / self.sigma),
-            "Vaccinated [persons]": int(self.omega * self.population)
+            "Vaccinated [persons/day]": int(self.omega * self.population)
         }
