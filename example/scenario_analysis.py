@@ -42,7 +42,7 @@ def main():
             )
         )
     # Add future phase to main scenario
-    ita_scenario.add(name="Main", end_date="01Aug2020")
+    ita_scenario.add(name="Main", end_date="01Oct2020")
     ita_scenario.add(name="Main", end_date="31Dec2020")
     ita_scenario.add(name="Main", days=100)
     # Add future phase to alternative scenario
