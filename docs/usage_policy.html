@@ -1,0 +1,1678 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Usage (details: policy measures) &mdash; CovsirPhy  documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+
+  
+  
+  
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/underscore.js"></script>
+        <script src="_static/doctools.js"></script>
+        <script src="_static/language_data.js"></script>
+        <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+        <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+        <script type="text/x-mathjax-config">MathJax.Hub.Config({"tex2jax": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "processEscapes": true, "ignoreClass": "document", "processClass": "math|output_area"}})</script>
+    
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="API reference" href="covsirphy.html" />
+    <link rel="prev" title="Usage (details: theoretical datasets)" href="usage_theoretical.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="index.html" class="icon icon-home" alt="Documentation Home"> CovsirPhy
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="README.html">CovsirPhy: COVID-19 analysis with SIRs</a></li>
+<li class="toctree-l1"><a class="reference internal" href="INSTALLATION.html">Installation and dataset preparation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="usage_quickest.html">Usage (quickest version)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="usage_quick.html">Usage (quick version)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="usage_phases.html">Usage (details: phases)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="usage_theoretical.html">Usage (details: theoretical datasets)</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Usage (details: policy measures)</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#Preparation">Preparation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#Class-for-policy-measure-analysis">Class for policy measure analysis</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#Set-phases-with-S-R-trend-analysis">Set phases with S-R trend analysis</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#Parameter-estimation">Parameter estimation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#Compare-the-history-of-parameters">Compare the history of parameters</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#Rt:-Reprodcution-number-\mathrm{[-]}"><span class="math notranslate nohighlight">\(Rt\)</span>: Reprodcution number <span class="math notranslate nohighlight">\(\mathrm{[-]}\)</span></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#\rho:-Effective-contact-rate-\mathrm{[-]}"><span class="math notranslate nohighlight">\(\rho\)</span>: Effective contact rate <span class="math notranslate nohighlight">\(\mathrm{[-]}\)</span></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#\sigma:-Recovery-rate-\mathrm{[-]}"><span class="math notranslate nohighlight">\(\sigma\)</span>: Recovery rate <span class="math notranslate nohighlight">\(\mathrm{[-]}\)</span></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#\kappa:-Mortality-rate-of-infected-cases-\mathrm{[-]}"><span class="math notranslate nohighlight">\(\kappa\)</span>: Mortality rate of infected cases <span class="math notranslate nohighlight">\(\mathrm{[-]}\)</span></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="covsirphy.html">API reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="CONTRIBUTING.html">Guideline of contribution</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">CovsirPhy</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
+        
+      <li>Usage (details: policy measures)</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="_sources/usage_policy.ipynb.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  
+<style>
+/* CSS for nbsphinx extension */
+
+/* remove conflicting styling from Sphinx themes */
+div.nbinput.container,
+div.nbinput.container div.prompt,
+div.nbinput.container div.input_area,
+div.nbinput.container div[class*=highlight],
+div.nbinput.container div[class*=highlight] pre,
+div.nboutput.container,
+div.nboutput.container div.prompt,
+div.nboutput.container div.output_area,
+div.nboutput.container div[class*=highlight],
+div.nboutput.container div[class*=highlight] pre {
+    background: none;
+    border: none;
+    padding: 0 0;
+    margin: 0;
+    box-shadow: none;
+}
+
+/* avoid gaps between output lines */
+div.nboutput.container div[class*=highlight] pre {
+    line-height: normal;
+}
+
+/* input/output containers */
+div.nbinput.container,
+div.nboutput.container {
+    display: -webkit-flex;
+    display: flex;
+    align-items: flex-start;
+    margin: 0;
+    width: 100%;
+}
+@media (max-width: 540px) {
+    div.nbinput.container,
+    div.nboutput.container {
+        flex-direction: column;
+    }
+}
+
+/* input container */
+div.nbinput.container {
+    padding-top: 5px;
+}
+
+/* last container */
+div.nblast.container {
+    padding-bottom: 5px;
+}
+
+/* input prompt */
+div.nbinput.container div.prompt pre {
+    color: #307FC1;
+}
+
+/* output prompt */
+div.nboutput.container div.prompt pre {
+    color: #BF5B3D;
+}
+
+/* all prompts */
+div.nbinput.container div.prompt,
+div.nboutput.container div.prompt {
+    width: 4.5ex;
+    padding-top: 5px;
+    position: relative;
+    user-select: none;
+}
+
+div.nbinput.container div.prompt > div,
+div.nboutput.container div.prompt > div {
+    position: absolute;
+    right: 0;
+    margin-right: 0.3ex;
+}
+
+@media (max-width: 540px) {
+    div.nbinput.container div.prompt,
+    div.nboutput.container div.prompt {
+        width: unset;
+        text-align: left;
+        padding: 0.4em;
+    }
+    div.nboutput.container div.prompt.empty {
+        padding: 0;
+    }
+
+    div.nbinput.container div.prompt > div,
+    div.nboutput.container div.prompt > div {
+        position: unset;
+    }
+}
+
+/* disable scrollbars on prompts */
+div.nbinput.container div.prompt pre,
+div.nboutput.container div.prompt pre {
+    overflow: hidden;
+}
+
+/* input/output area */
+div.nbinput.container div.input_area,
+div.nboutput.container div.output_area {
+    -webkit-flex: 1;
+    flex: 1;
+    overflow: auto;
+}
+@media (max-width: 540px) {
+    div.nbinput.container div.input_area,
+    div.nboutput.container div.output_area {
+        width: 100%;
+    }
+}
+
+/* input area */
+div.nbinput.container div.input_area {
+    border: 1px solid #e0e0e0;
+    border-radius: 2px;
+    background: #f5f5f5;
+}
+
+/* override MathJax center alignment in output cells */
+div.nboutput.container div[class*=MathJax] {
+    text-align: left !important;
+}
+
+/* override sphinx.ext.imgmath center alignment in output cells */
+div.nboutput.container div.math p {
+    text-align: left;
+}
+
+/* standard error */
+div.nboutput.container div.output_area.stderr {
+    background: #fdd;
+}
+
+/* ANSI colors */
+.ansi-black-fg { color: #3E424D; }
+.ansi-black-bg { background-color: #3E424D; }
+.ansi-black-intense-fg { color: #282C36; }
+.ansi-black-intense-bg { background-color: #282C36; }
+.ansi-red-fg { color: #E75C58; }
+.ansi-red-bg { background-color: #E75C58; }
+.ansi-red-intense-fg { color: #B22B31; }
+.ansi-red-intense-bg { background-color: #B22B31; }
+.ansi-green-fg { color: #00A250; }
+.ansi-green-bg { background-color: #00A250; }
+.ansi-green-intense-fg { color: #007427; }
+.ansi-green-intense-bg { background-color: #007427; }
+.ansi-yellow-fg { color: #DDB62B; }
+.ansi-yellow-bg { background-color: #DDB62B; }
+.ansi-yellow-intense-fg { color: #B27D12; }
+.ansi-yellow-intense-bg { background-color: #B27D12; }
+.ansi-blue-fg { color: #208FFB; }
+.ansi-blue-bg { background-color: #208FFB; }
+.ansi-blue-intense-fg { color: #0065CA; }
+.ansi-blue-intense-bg { background-color: #0065CA; }
+.ansi-magenta-fg { color: #D160C4; }
+.ansi-magenta-bg { background-color: #D160C4; }
+.ansi-magenta-intense-fg { color: #A03196; }
+.ansi-magenta-intense-bg { background-color: #A03196; }
+.ansi-cyan-fg { color: #60C6C8; }
+.ansi-cyan-bg { background-color: #60C6C8; }
+.ansi-cyan-intense-fg { color: #258F8F; }
+.ansi-cyan-intense-bg { background-color: #258F8F; }
+.ansi-white-fg { color: #C5C1B4; }
+.ansi-white-bg { background-color: #C5C1B4; }
+.ansi-white-intense-fg { color: #A1A6B2; }
+.ansi-white-intense-bg { background-color: #A1A6B2; }
+
+.ansi-default-inverse-fg { color: #FFFFFF; }
+.ansi-default-inverse-bg { background-color: #000000; }
+
+.ansi-bold { font-weight: bold; }
+.ansi-underline { text-decoration: underline; }
+
+
+div.nbinput.container div.input_area div[class*=highlight] > pre,
+div.nboutput.container div.output_area div[class*=highlight] > pre,
+div.nboutput.container div.output_area div[class*=highlight].math,
+div.nboutput.container div.output_area.rendered_html,
+div.nboutput.container div.output_area > div.output_javascript,
+div.nboutput.container div.output_area:not(.rendered_html) > img{
+    padding: 5px;
+}
+
+/* fix copybtn overflow problem in chromium (needed for 'sphinx_copybutton') */
+div.nbinput.container div.input_area > div[class^='highlight'],
+div.nboutput.container div.output_area > div[class^='highlight']{
+    overflow-y: hidden;
+}
+
+/* hide copybtn icon on prompts (needed for 'sphinx_copybutton') */
+.prompt a.copybtn {
+    display: none;
+}
+
+/* Some additional styling taken form the Jupyter notebook CSS */
+div.rendered_html table {
+  border: none;
+  border-collapse: collapse;
+  border-spacing: 0;
+  color: black;
+  font-size: 12px;
+  table-layout: fixed;
+}
+div.rendered_html thead {
+  border-bottom: 1px solid black;
+  vertical-align: bottom;
+}
+div.rendered_html tr,
+div.rendered_html th,
+div.rendered_html td {
+  text-align: right;
+  vertical-align: middle;
+  padding: 0.5em 0.5em;
+  line-height: normal;
+  white-space: normal;
+  max-width: none;
+  border: none;
+}
+div.rendered_html th {
+  font-weight: bold;
+}
+div.rendered_html tbody tr:nth-child(odd) {
+  background: #f5f5f5;
+}
+div.rendered_html tbody tr:hover {
+  background: rgba(66, 165, 245, 0.2);
+}
+
+/* CSS overrides for sphinx_rtd_theme */
+
+/* 24px margin */
+.nbinput.nblast.container,
+.nboutput.nblast.container {
+    margin-bottom: 19px;  /* padding has already 5px */
+}
+
+/* ... except between code cells! */
+.nblast.container + .nbinput.container {
+    margin-top: -19px;
+}
+
+.admonition > p:before {
+    margin-right: 4px;  /* make room for the exclamation icon */
+}
+
+/* Fix math alignment, see https://github.com/rtfd/sphinx_rtd_theme/pull/686 */
+.math {
+    text-align: unset;
+}
+</style>
+<div class="section" id="Usage-(details:-policy-measures)">
+<h1>Usage (details: policy measures)<a class="headerlink" href="#Usage-(details:-policy-measures)" title="Permalink to this headline">¶</a></h1>
+<p>Here, we will analyse the relationship of policy measures and parameter values of SIR-derived ODE models. Policy measures are tracked by <a class="reference external" href="https://github.com/OxCGRT/covid-policy-tracker">Oxford Covid-19 Government Response Tracker (OxCGRT)</a>.</p>
+<div class="section" id="Preparation">
+<h2>Preparation<a class="headerlink" href="#Preparation" title="Permalink to this headline">¶</a></h2>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[1]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="c1"># Standard users</span>
+<span class="c1"># !pip install covsirphy</span>
+<span class="c1"># Developers (Note: this notebook is in example directory)</span>
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="n">os</span><span class="o">.</span><span class="n">chdir</span><span class="p">(</span><span class="s2">&quot;../&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[2]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="kn">from</span> <span class="nn">pprint</span> <span class="kn">import</span> <span class="n">pprint</span>
+</pre></div>
+</div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[3]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">covsirphy</span> <span class="k">as</span> <span class="nn">cs</span>
+<span class="n">cs</span><span class="o">.</span><span class="n">__version__</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[3]:
+</pre></div>
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+&#39;2.6.0-delta.new.72.fix.120.155.157&#39;
+</pre></div></div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[4]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="c1"># Standard users and developers</span>
+<span class="n">data_loader</span> <span class="o">=</span> <span class="n">cs</span><span class="o">.</span><span class="n">DataLoader</span><span class="p">(</span><span class="s2">&quot;input&quot;</span><span class="p">)</span>
+<span class="c1"># The number of cases (JHU style)</span>
+<span class="n">jhu_data</span> <span class="o">=</span> <span class="n">data_loader</span><span class="o">.</span><span class="n">jhu</span><span class="p">(</span><span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<span class="c1"># Population in each country</span>
+<span class="n">population_data</span> <span class="o">=</span> <span class="n">data_loader</span><span class="o">.</span><span class="n">population</span><span class="p">(</span><span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<span class="c1"># Government Response Tracker (OxCGRT)</span>
+<span class="n">oxcgrt_data</span> <span class="o">=</span> <span class="n">data_loader</span><span class="o">.</span><span class="n">oxcgrt</span><span class="p">(</span><span class="n">verbose</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="c1"># Description/citation</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">oxcgrt_data</span><span class="o">.</span><span class="n">citation</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+(Secondary source) Guidotti, E., Ardia, D., (2020), &#34;COVID-19 Data Hub&#34;, Working paper, doi: 10.13140/RG.2.2.11649.81763.
+We can get Citation list of primary sources with DataLoader(...).covid19dh_citation
+</pre></div></div>
+</div>
+</div>
+<div class="section" id="Class-for-policy-measure-analysis">
+<h2>Class for policy measure analysis<a class="headerlink" href="#Class-for-policy-measure-analysis" title="Permalink to this headline">¶</a></h2>
+<p>We will <code class="docutils literal notranslate"><span class="pre">PolicyMeasures</span></code> class to find relationship of policy measures and parameter values of SIR-derived ODE models.</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[5]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="c1"># Create analyser with tau value 360 [min] (can be changed)</span>
+<span class="n">analyser</span> <span class="o">=</span> <span class="n">cs</span><span class="o">.</span><span class="n">PolicyMeasures</span><span class="p">(</span><span class="n">jhu_data</span><span class="p">,</span> <span class="n">population_data</span><span class="p">,</span> <span class="n">oxcgrt_data</span><span class="p">,</span> <span class="n">tau</span><span class="o">=</span><span class="mi">360</span><span class="p">)</span>
+<span class="c1"># The number of registerd countries</span>
+<span class="nb">len</span><span class="p">(</span><span class="n">analyser</span><span class="o">.</span><span class="n">countries</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[5]:
+</pre></div>
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+185
+</pre></div></div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[6]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="c1"># We can get Scenario instance for detailed scenario analysis</span>
+<span class="nb">type</span><span class="p">(</span><span class="n">analyser</span><span class="o">.</span><span class="n">scenario</span><span class="p">(</span><span class="s2">&quot;Japan&quot;</span><span class="p">))</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[6]:
+</pre></div>
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+covsirphy.analysis.scenario.Scenario
+</pre></div></div>
+</div>
+</div>
+<div class="section" id="Set-phases-with-S-R-trend-analysis">
+<h2>Set phases with S-R trend analysis<a class="headerlink" href="#Set-phases-with-S-R-trend-analysis" title="Permalink to this headline">¶</a></h2>
+<p>We will perform S-R trend analysis to set phases in all countries. Countries which do not have <strong>9th phases</strong> will be un-registered for the next analysis. This number will be adjusted for your analysis.</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[7]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="c1"># Set phases with S-R trend analysis</span>
+<span class="n">analyser</span><span class="o">.</span><span class="n">trend</span><span class="p">(</span><span class="n">min_len</span><span class="o">=</span><span class="mi">9</span><span class="p">)</span>
+<span class="c1"># The number of countries</span>
+<span class="nb">len</span><span class="p">(</span><span class="n">analyser</span><span class="o">.</span><span class="n">countries</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[7]:
+</pre></div>
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+5
+</pre></div></div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[8]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">phase_len_dict</span> <span class="o">=</span> <span class="n">analyser</span><span class="o">.</span><span class="n">phase_len</span><span class="p">()</span>
+<span class="n">pprint</span><span class="p">(</span><span class="n">phase_len_dict</span><span class="p">,</span> <span class="n">compact</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+{9: [&#39;Romania&#39;, &#39;Guinea&#39;, &#39;Senegal&#39;, &#39;Iran&#39;], 10: [&#39;Poland&#39;]}
+</pre></div></div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[9]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="c1"># Here, only show the countries which have the most phases</span>
+<span class="n">countries_show</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">phase_len_dict</span><span class="o">.</span><span class="n">items</span><span class="p">(),</span> <span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">])[</span><span class="mi">1</span><span class="p">]</span>
+<span class="c1"># Show summary</span>
+<span class="n">analyser</span><span class="o">.</span><span class="n">summary</span><span class="p">(</span><span class="n">countries</span><span class="o">=</span><span class="n">countries_show</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[9]:
+</pre></div>
+</div>
+<div class="output_area rendered_html docutils container">
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th></th>
+      <th>Type</th>
+      <th>Start</th>
+      <th>End</th>
+      <th>Population</th>
+    </tr>
+    <tr>
+      <th>Country</th>
+      <th>Phase</th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th rowspan="10" valign="top">Poland</th>
+      <th>1st</th>
+      <td>Past</td>
+      <td>23Apr2020</td>
+      <td>03May2020</td>
+      <td>37974750</td>
+    </tr>
+    <tr>
+      <th>2nd</th>
+      <td>Past</td>
+      <td>04May2020</td>
+      <td>13May2020</td>
+      <td>37974750</td>
+    </tr>
+    <tr>
+      <th>3rd</th>
+      <td>Past</td>
+      <td>14May2020</td>
+      <td>23May2020</td>
+      <td>37974750</td>
+    </tr>
+    <tr>
+      <th>4th</th>
+      <td>Past</td>
+      <td>24May2020</td>
+      <td>02Jun2020</td>
+      <td>37974750</td>
+    </tr>
+    <tr>
+      <th>5th</th>
+      <td>Past</td>
+      <td>03Jun2020</td>
+      <td>12Jun2020</td>
+      <td>37974750</td>
+    </tr>
+    <tr>
+      <th>6th</th>
+      <td>Past</td>
+      <td>13Jun2020</td>
+      <td>22Jun2020</td>
+      <td>37974750</td>
+    </tr>
+    <tr>
+      <th>7th</th>
+      <td>Past</td>
+      <td>23Jun2020</td>
+      <td>01Jul2020</td>
+      <td>37974750</td>
+    </tr>
+    <tr>
+      <th>8th</th>
+      <td>Past</td>
+      <td>02Jul2020</td>
+      <td>12Jul2020</td>
+      <td>37974750</td>
+    </tr>
+    <tr>
+      <th>9th</th>
+      <td>Past</td>
+      <td>13Jul2020</td>
+      <td>21Jul2020</td>
+      <td>37974750</td>
+    </tr>
+    <tr>
+      <th>10th</th>
+      <td>Past</td>
+      <td>22Jul2020</td>
+      <td>01Aug2020</td>
+      <td>37974750</td>
+    </tr>
+  </tbody>
+</table>
+</div></div>
+</div>
+</div>
+<div class="section" id="Parameter-estimation">
+<h2>Parameter estimation<a class="headerlink" href="#Parameter-estimation" title="Permalink to this headline">¶</a></h2>
+<p>we will estimate the parameter values with SIR-derived ODE models in each country.</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[10]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="c1"># Parameter estimation with SIR-F model</span>
+<span class="n">analyser</span><span class="o">.</span><span class="n">estimate</span><span class="p">(</span><span class="n">cs</span><span class="o">.</span><span class="n">SIRF</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+
+--------------------Romania--------------------
+
+&lt;Main scenario: perform parameter estimation&gt;
+Running optimization with 8 CPUs...
+        9th phase with SIR-F model finished 193 trials in 0 min 5 sec.
+        2nd phase with SIR-F model finished 132 trials in 0 min 10 sec.
+        3rd phase with SIR-F model finished 136 trials in 0 min 10 sec.
+        7th phase with SIR-F model finished 67 trials in 0 min 5 sec.
+        4th phase with SIR-F model finished 124 trials in 0 min 10 sec.
+        8th phase with SIR-F model finished 70 trials in 0 min 5 sec.
+        5th phase with SIR-F model finished 139 trials in 0 min 10 sec.
+        1st phase with SIR-F model finished 221 trials in 0 min 15 sec.
+        6th phase with SIR-F model finished 149 trials in 0 min 10 sec.
+Completed optimization. Total: 0 min 22 sec
+
+--------------------Guinea--------------------
+
+&lt;Main scenario: perform parameter estimation&gt;
+Running optimization with 8 CPUs...
+        9th phase with SIR-F model finished 118 trials in 0 min 5 sec.
+        3rd phase with SIR-F model finished 148 trials in 0 min 10 sec.
+        1st phase with SIR-F model finished 222 trials in 0 min 15 sec.
+        7th phase with SIR-F model finished 139 trials in 0 min 10 sec.
+        2nd phase with SIR-F model finished 211 trials in 0 min 15 sec.
+        8th phase with SIR-F model finished 132 trials in 0 min 10 sec.
+        4th phase with SIR-F model finished 218 trials in 0 min 15 sec.
+        5th phase with SIR-F model finished 218 trials in 0 min 15 sec.
+        6th phase with SIR-F model finished 327 trials in 0 min 20 sec.
+Completed optimization. Total: 0 min 32 sec
+
+--------------------Senegal--------------------
+
+&lt;Main scenario: perform parameter estimation&gt;
+Running optimization with 8 CPUs...
+        9th phase with SIR-F model finished 309 trials in 0 min 10 sec.
+        2nd phase with SIR-F model finished 163 trials in 0 min 10 sec.
+        6th phase with SIR-F model finished 138 trials in 0 min 10 sec.
+        1st phase with SIR-F model finished 233 trials in 0 min 15 sec.
+        3rd phase with SIR-F model finished 215 trials in 0 min 15 sec.
+        4th phase with SIR-F model finished 212 trials in 0 min 15 sec.
+        5th phase with SIR-F model finished 203 trials in 0 min 15 sec.
+        7th phase with SIR-F model finished 211 trials in 0 min 15 sec.
+        8th phase with SIR-F model finished 227 trials in 0 min 15 sec.
+Completed optimization. Total: 0 min 34 sec
+
+--------------------Iran--------------------
+
+&lt;Main scenario: perform parameter estimation&gt;
+Running optimization with 8 CPUs...
+        9th phase with SIR-F model finished 119 trials in 0 min 5 sec.
+        3rd phase with SIR-F model finished 82 trials in 0 min 5 sec.
+        5th phase with SIR-F model finished 70 trials in 0 min 5 sec.
+        6th phase with SIR-F model finished 70 trials in 0 min 5 sec.
+        7th phase with SIR-F model finished 65 trials in 0 min 5 sec.
+        2nd phase with SIR-F model finished 155 trials in 0 min 10 sec.
+        8th phase with SIR-F model finished 71 trials in 0 min 5 sec.
+        4th phase with SIR-F model finished 144 trials in 0 min 10 sec.
+        1st phase with SIR-F model finished 1467 trials in 1 min 0 sec.
+Completed optimization. Total: 1 min 8 sec
+
+--------------------Poland--------------------
+
+&lt;Main scenario: perform parameter estimation&gt;
+Running optimization with 8 CPUs...
+        10th phase with SIR-F model finished 130 trials in 0 min 5 sec.
+        1st phase with SIR-F model finished 158 trials in 0 min 10 sec.
+        2nd phase with SIR-F model finished 149 trials in 0 min 10 sec.
+        6th phase with SIR-F model finished 138 trials in 0 min 10 sec.
+        7th phase with SIR-F model finished 129 trials in 0 min 10 sec.
+        3rd phase with SIR-F model finished 214 trials in 0 min 15 sec.
+        4th phase with SIR-F model finished 207 trials in 0 min 15 sec.
+        5th phase with SIR-F model finished 201 trials in 0 min 15 sec.
+        9th phase with SIR-F model finished 152 trials in 0 min 10 sec.
+        8th phase with SIR-F model finished 222 trials in 0 min 15 sec.
+Completed optimization. Total: 0 min 29 sec
+</pre></div></div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[11]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="c1"># Show summary</span>
+<span class="n">analyser</span><span class="o">.</span><span class="n">summary</span><span class="p">(</span><span class="n">countries</span><span class="o">=</span><span class="n">countries_show</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[11]:
+</pre></div>
+</div>
+<div class="output_area rendered_html docutils container">
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th></th>
+      <th>Type</th>
+      <th>Start</th>
+      <th>End</th>
+      <th>Population</th>
+      <th>ODE</th>
+      <th>rho</th>
+      <th>sigma</th>
+      <th>theta</th>
+      <th>kappa</th>
+      <th>tau</th>
+      <th>Rt</th>
+      <th>alpha1 [-]</th>
+      <th>1/alpha2 [day]</th>
+      <th>1/beta [day]</th>
+      <th>1/gamma [day]</th>
+      <th>RMSLE</th>
+      <th>Trials</th>
+      <th>Runtime</th>
+    </tr>
+    <tr>
+      <th>Country</th>
+      <th>Phase</th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th rowspan="10" valign="top">Poland</th>
+      <th>1st</th>
+      <td>Past</td>
+      <td>23Apr2020</td>
+      <td>03May2020</td>
+      <td>37974750</td>
+      <td>SIR-F</td>
+      <td>0.009761</td>
+      <td>0.006304</td>
+      <td>0.051764</td>
+      <td>0.000482</td>
+      <td>360</td>
+      <td>1.36</td>
+      <td>0.052</td>
+      <td>518</td>
+      <td>25</td>
+      <td>39</td>
+      <td>0.062845</td>
+      <td>158</td>
+      <td>0 min 10 sec</td>
+    </tr>
+    <tr>
+      <th>2nd</th>
+      <td>Past</td>
+      <td>04May2020</td>
+      <td>13May2020</td>
+      <td>37974750</td>
+      <td>SIR-F</td>
+      <td>0.008475</td>
+      <td>0.007261</td>
+      <td>0.061668</td>
+      <td>0.000109</td>
+      <td>360</td>
+      <td>1.08</td>
+      <td>0.062</td>
+      <td>2287</td>
+      <td>29</td>
+      <td>34</td>
+      <td>0.034631</td>
+      <td>149</td>
+      <td>0 min 10 sec</td>
+    </tr>
+    <tr>
+      <th>3rd</th>
+      <td>Past</td>
+      <td>14May2020</td>
+      <td>23May2020</td>
+      <td>37974750</td>
+      <td>SIR-F</td>
+      <td>0.009503</td>
+      <td>0.006406</td>
+      <td>0.023906</td>
+      <td>0.000014</td>
+      <td>360</td>
+      <td>1.44</td>
+      <td>0.024</td>
+      <td>17575</td>
+      <td>26</td>
+      <td>39</td>
+      <td>0.016598</td>
+      <td>214</td>
+      <td>0 min 15 sec</td>
+    </tr>
+    <tr>
+      <th>4th</th>
+      <td>Past</td>
+      <td>24May2020</td>
+      <td>02Jun2020</td>
+      <td>37974750</td>
+      <td>SIR-F</td>
+      <td>0.007224</td>
+      <td>0.006363</td>
+      <td>0.048136</td>
+      <td>0.000014</td>
+      <td>360</td>
+      <td>1.08</td>
+      <td>0.048</td>
+      <td>17635</td>
+      <td>34</td>
+      <td>39</td>
+      <td>0.025189</td>
+      <td>207</td>
+      <td>0 min 15 sec</td>
+    </tr>
+    <tr>
+      <th>5th</th>
+      <td>Past</td>
+      <td>03Jun2020</td>
+      <td>12Jun2020</td>
+      <td>37974750</td>
+      <td>SIR-F</td>
+      <td>0.009647</td>
+      <td>0.004337</td>
+      <td>0.023906</td>
+      <td>0.000014</td>
+      <td>360</td>
+      <td>2.16</td>
+      <td>0.024</td>
+      <td>17575</td>
+      <td>25</td>
+      <td>57</td>
+      <td>0.010449</td>
+      <td>201</td>
+      <td>0 min 15 sec</td>
+    </tr>
+    <tr>
+      <th>6th</th>
+      <td>Past</td>
+      <td>13Jun2020</td>
+      <td>22Jun2020</td>
+      <td>37974750</td>
+      <td>SIR-F</td>
+      <td>0.006882</td>
+      <td>0.005802</td>
+      <td>0.001911</td>
+      <td>0.000093</td>
+      <td>360</td>
+      <td>1.17</td>
+      <td>0.002</td>
+      <td>2698</td>
+      <td>36</td>
+      <td>43</td>
+      <td>0.032513</td>
+      <td>138</td>
+      <td>0 min 10 sec</td>
+    </tr>
+    <tr>
+      <th>7th</th>
+      <td>Past</td>
+      <td>23Jun2020</td>
+      <td>01Jul2020</td>
+      <td>37974750</td>
+      <td>SIR-F</td>
+      <td>0.005648</td>
+      <td>0.010500</td>
+      <td>0.011309</td>
+      <td>0.000692</td>
+      <td>360</td>
+      <td>0.50</td>
+      <td>0.011</td>
+      <td>361</td>
+      <td>44</td>
+      <td>23</td>
+      <td>0.051499</td>
+      <td>129</td>
+      <td>0 min 10 sec</td>
+    </tr>
+    <tr>
+      <th>8th</th>
+      <td>Past</td>
+      <td>02Jul2020</td>
+      <td>12Jul2020</td>
+      <td>37974750</td>
+      <td>SIR-F</td>
+      <td>0.006856</td>
+      <td>0.011620</td>
+      <td>0.039107</td>
+      <td>0.000191</td>
+      <td>360</td>
+      <td>0.56</td>
+      <td>0.039</td>
+      <td>1305</td>
+      <td>36</td>
+      <td>21</td>
+      <td>0.032140</td>
+      <td>222</td>
+      <td>0 min 15 sec</td>
+    </tr>
+    <tr>
+      <th>9th</th>
+      <td>Past</td>
+      <td>13Jul2020</td>
+      <td>21Jul2020</td>
+      <td>37974750</td>
+      <td>SIR-F</td>
+      <td>0.008754</td>
+      <td>0.012755</td>
+      <td>0.002107</td>
+      <td>0.000079</td>
+      <td>360</td>
+      <td>0.68</td>
+      <td>0.002</td>
+      <td>3152</td>
+      <td>28</td>
+      <td>19</td>
+      <td>0.017659</td>
+      <td>152</td>
+      <td>0 min 10 sec</td>
+    </tr>
+    <tr>
+      <th>10th</th>
+      <td>Past</td>
+      <td>22Jul2020</td>
+      <td>01Aug2020</td>
+      <td>37974750</td>
+      <td>SIR-F</td>
+      <td>0.013705</td>
+      <td>0.009471</td>
+      <td>0.001229</td>
+      <td>0.000528</td>
+      <td>360</td>
+      <td>1.37</td>
+      <td>0.001</td>
+      <td>473</td>
+      <td>18</td>
+      <td>26</td>
+      <td>0.034256</td>
+      <td>130</td>
+      <td>0 min 5 sec</td>
+    </tr>
+  </tbody>
+</table>
+</div></div>
+</div>
+</div>
+<div class="section" id="Compare-the-history-of-parameters">
+<h2>Compare the history of parameters<a class="headerlink" href="#Compare-the-history-of-parameters" title="Permalink to this headline">¶</a></h2>
+<p>Here, compare the history of parameter values if countries.</p>
+<div class="section" id="Rt:-Reprodcution-number-\mathrm{[-]}">
+<h3><span class="math notranslate nohighlight">\(Rt\)</span>: Reprodcution number <span class="math notranslate nohighlight">\(\mathrm{[-]}\)</span><a class="headerlink" href="#Rt:-Reprodcution-number-\mathrm{[-]}" title="Permalink to this headline">¶</a></h3>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[12]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">analyser</span><span class="o">.</span><span class="n">param_history</span><span class="p">(</span><span class="s2">&quot;Rt&quot;</span><span class="p">,</span> <span class="n">roll_window</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span><span class="o">.</span><span class="n">tail</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="_images/usage_policy_18_0.png" src="_images/usage_policy_18_0.png" />
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[12]:
+</pre></div>
+</div>
+<div class="output_area rendered_html docutils container">
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th>Country</th>
+      <th>Guinea</th>
+      <th>Iran</th>
+      <th>Poland</th>
+      <th>Romania</th>
+      <th>Senegal</th>
+    </tr>
+    <tr>
+      <th>Date</th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>2020-07-28</th>
+      <td>1.07</td>
+      <td>1.11</td>
+      <td>1.37</td>
+      <td>4.11</td>
+      <td>1.73</td>
+    </tr>
+    <tr>
+      <th>2020-07-29</th>
+      <td>1.07</td>
+      <td>1.11</td>
+      <td>1.37</td>
+      <td>4.11</td>
+      <td>1.73</td>
+    </tr>
+    <tr>
+      <th>2020-07-30</th>
+      <td>1.07</td>
+      <td>1.11</td>
+      <td>1.37</td>
+      <td>4.11</td>
+      <td>1.73</td>
+    </tr>
+    <tr>
+      <th>2020-07-31</th>
+      <td>1.07</td>
+      <td>1.11</td>
+      <td>1.37</td>
+      <td>4.11</td>
+      <td>1.73</td>
+    </tr>
+    <tr>
+      <th>2020-08-01</th>
+      <td>1.07</td>
+      <td>1.11</td>
+      <td>1.37</td>
+      <td>4.11</td>
+      <td>1.73</td>
+    </tr>
+  </tbody>
+</table>
+</div></div>
+</div>
+</div>
+<div class="section" id="\rho:-Effective-contact-rate-\mathrm{[-]}">
+<h3><span class="math notranslate nohighlight">\(\rho\)</span>: Effective contact rate <span class="math notranslate nohighlight">\(\mathrm{[-]}\)</span><a class="headerlink" href="#\rho:-Effective-contact-rate-\mathrm{[-]}" title="Permalink to this headline">¶</a></h3>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[13]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">analyser</span><span class="o">.</span><span class="n">param_history</span><span class="p">(</span><span class="s2">&quot;rho&quot;</span><span class="p">,</span> <span class="n">roll_window</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span><span class="o">.</span><span class="n">tail</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="_images/usage_policy_20_0.png" src="_images/usage_policy_20_0.png" />
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[13]:
+</pre></div>
+</div>
+<div class="output_area rendered_html docutils container">
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th>Country</th>
+      <th>Guinea</th>
+      <th>Iran</th>
+      <th>Poland</th>
+      <th>Romania</th>
+      <th>Senegal</th>
+    </tr>
+    <tr>
+      <th>Date</th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>2020-07-28</th>
+      <td>0.020272</td>
+      <td>0.028676</td>
+      <td>0.013705</td>
+      <td>0.017005</td>
+      <td>0.009959</td>
+    </tr>
+    <tr>
+      <th>2020-07-29</th>
+      <td>0.020272</td>
+      <td>0.028676</td>
+      <td>0.013705</td>
+      <td>0.017005</td>
+      <td>0.009959</td>
+    </tr>
+    <tr>
+      <th>2020-07-30</th>
+      <td>0.020272</td>
+      <td>0.028676</td>
+      <td>0.013705</td>
+      <td>0.017005</td>
+      <td>0.009959</td>
+    </tr>
+    <tr>
+      <th>2020-07-31</th>
+      <td>0.020272</td>
+      <td>0.028676</td>
+      <td>0.013705</td>
+      <td>0.017005</td>
+      <td>0.009959</td>
+    </tr>
+    <tr>
+      <th>2020-08-01</th>
+      <td>0.020272</td>
+      <td>0.028676</td>
+      <td>0.013705</td>
+      <td>0.017005</td>
+      <td>0.009959</td>
+    </tr>
+  </tbody>
+</table>
+</div></div>
+</div>
+</div>
+<div class="section" id="\sigma:-Recovery-rate-\mathrm{[-]}">
+<h3><span class="math notranslate nohighlight">\(\sigma\)</span>: Recovery rate <span class="math notranslate nohighlight">\(\mathrm{[-]}\)</span><a class="headerlink" href="#\sigma:-Recovery-rate-\mathrm{[-]}" title="Permalink to this headline">¶</a></h3>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[14]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">analyser</span><span class="o">.</span><span class="n">param_history</span><span class="p">(</span><span class="s2">&quot;sigma&quot;</span><span class="p">,</span> <span class="n">roll_window</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span><span class="o">.</span><span class="n">tail</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="_images/usage_policy_22_0.png" src="_images/usage_policy_22_0.png" />
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[14]:
+</pre></div>
+</div>
+<div class="output_area rendered_html docutils container">
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th>Country</th>
+      <th>Guinea</th>
+      <th>Iran</th>
+      <th>Poland</th>
+      <th>Romania</th>
+      <th>Senegal</th>
+    </tr>
+    <tr>
+      <th>Date</th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>2020-07-28</th>
+      <td>0.018604</td>
+      <td>0.022464</td>
+      <td>0.009471</td>
+      <td>0.003661</td>
+      <td>0.005501</td>
+    </tr>
+    <tr>
+      <th>2020-07-29</th>
+      <td>0.018604</td>
+      <td>0.022464</td>
+      <td>0.009471</td>
+      <td>0.003661</td>
+      <td>0.005501</td>
+    </tr>
+    <tr>
+      <th>2020-07-30</th>
+      <td>0.018604</td>
+      <td>0.022464</td>
+      <td>0.009471</td>
+      <td>0.003661</td>
+      <td>0.005501</td>
+    </tr>
+    <tr>
+      <th>2020-07-31</th>
+      <td>0.018604</td>
+      <td>0.022464</td>
+      <td>0.009471</td>
+      <td>0.003661</td>
+      <td>0.005501</td>
+    </tr>
+    <tr>
+      <th>2020-08-01</th>
+      <td>0.018604</td>
+      <td>0.022464</td>
+      <td>0.009471</td>
+      <td>0.003661</td>
+      <td>0.005501</td>
+    </tr>
+  </tbody>
+</table>
+</div></div>
+</div>
+</div>
+<div class="section" id="\kappa:-Mortality-rate-of-infected-cases-\mathrm{[-]}">
+<h3><span class="math notranslate nohighlight">\(\kappa\)</span>: Mortality rate of infected cases <span class="math notranslate nohighlight">\(\mathrm{[-]}\)</span><a class="headerlink" href="#\kappa:-Mortality-rate-of-infected-cases-\mathrm{[-]}" title="Permalink to this headline">¶</a></h3>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[15]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">analyser</span><span class="o">.</span><span class="n">param_history</span><span class="p">(</span><span class="s2">&quot;kappa&quot;</span><span class="p">,</span> <span class="n">roll_window</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span><span class="o">.</span><span class="n">tail</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="_images/usage_policy_24_0.png" src="_images/usage_policy_24_0.png" />
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[15]:
+</pre></div>
+</div>
+<div class="output_area rendered_html docutils container">
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th>Country</th>
+      <th>Guinea</th>
+      <th>Iran</th>
+      <th>Poland</th>
+      <th>Romania</th>
+      <th>Senegal</th>
+    </tr>
+    <tr>
+      <th>Date</th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>2020-07-28</th>
+      <td>0.000309</td>
+      <td>0.001571</td>
+      <td>0.000528</td>
+      <td>0.0004</td>
+      <td>0.000059</td>
+    </tr>
+    <tr>
+      <th>2020-07-29</th>
+      <td>0.000309</td>
+      <td>0.001571</td>
+      <td>0.000528</td>
+      <td>0.0004</td>
+      <td>0.000059</td>
+    </tr>
+    <tr>
+      <th>2020-07-30</th>
+      <td>0.000309</td>
+      <td>0.001571</td>
+      <td>0.000528</td>
+      <td>0.0004</td>
+      <td>0.000059</td>
+    </tr>
+    <tr>
+      <th>2020-07-31</th>
+      <td>0.000309</td>
+      <td>0.001571</td>
+      <td>0.000528</td>
+      <td>0.0004</td>
+      <td>0.000059</td>
+    </tr>
+    <tr>
+      <th>2020-08-01</th>
+      <td>0.000309</td>
+      <td>0.001571</td>
+      <td>0.000528</td>
+      <td>0.0004</td>
+      <td>0.000059</td>
+    </tr>
+  </tbody>
+</table>
+</div></div>
+</div>
+<p>### <span class="math notranslate nohighlight">\(\theta\)</span>: Mortality rate of S<span class="math notranslate nohighlight">\(^\ast\)</span> cases <span class="math notranslate nohighlight">\(\mathrm{[-]}\)</span></p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[16]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">analyser</span><span class="o">.</span><span class="n">param_history</span><span class="p">(</span><span class="s2">&quot;theta&quot;</span><span class="p">,</span> <span class="n">roll_window</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span><span class="o">.</span><span class="n">tail</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="_images/usage_policy_26_0.png" src="_images/usage_policy_26_0.png" />
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[16]:
+</pre></div>
+</div>
+<div class="output_area rendered_html docutils container">
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th>Country</th>
+      <th>Guinea</th>
+      <th>Iran</th>
+      <th>Poland</th>
+      <th>Romania</th>
+      <th>Senegal</th>
+    </tr>
+    <tr>
+      <th>Date</th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>2020-07-28</th>
+      <td>0.003232</td>
+      <td>0.071322</td>
+      <td>0.001229</td>
+      <td>0.019125</td>
+      <td>0.033798</td>
+    </tr>
+    <tr>
+      <th>2020-07-29</th>
+      <td>0.003232</td>
+      <td>0.071322</td>
+      <td>0.001229</td>
+      <td>0.019125</td>
+      <td>0.033798</td>
+    </tr>
+    <tr>
+      <th>2020-07-30</th>
+      <td>0.003232</td>
+      <td>0.071322</td>
+      <td>0.001229</td>
+      <td>0.019125</td>
+      <td>0.033798</td>
+    </tr>
+    <tr>
+      <th>2020-07-31</th>
+      <td>0.003232</td>
+      <td>0.071322</td>
+      <td>0.001229</td>
+      <td>0.019125</td>
+      <td>0.033798</td>
+    </tr>
+    <tr>
+      <th>2020-08-01</th>
+      <td>0.003232</td>
+      <td>0.071322</td>
+      <td>0.001229</td>
+      <td>0.019125</td>
+      <td>0.033798</td>
+    </tr>
+  </tbody>
+</table>
+</div></div>
+</div>
+</div>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="covsirphy.html" class="btn btn-neutral float-right" title="API reference" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="usage_theoretical.html" class="btn btn-neutral float-left" title="Usage (details: theoretical datasets)" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        
+        &copy; Copyright 2020, CovsirPhy Development Team
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

@@ -93,6 +93,7 @@
 <li class="toctree-l1"><a class="reference internal" href="usage_quick.html">Usage (quick version)</a></li>
 <li class="toctree-l1"><a class="reference internal" href="usage_phases.html">Usage (details: phases)</a></li>
 <li class="toctree-l1"><a class="reference internal" href="usage_theoretical.html">Usage (details: theoretical datasets)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="usage_policy.html">Usage (details: policy measures)</a></li>
 <li class="toctree-l1 current"><a class="reference internal" href="covsirphy.html">API reference</a><ul class="current">
 <li class="toctree-l2"><a class="reference internal" href="covsirphy.analysis.html">covsirphy.analysis</a></li>
 <li class="toctree-l2 current"><a class="current reference internal" href="#">covsirphy.cleaning</a><ul>
@@ -1399,16 +1400,15 @@ it will be converted to a float.</p>
 
 <dl class="py method">
 <dt id="covsirphy.cleaning.term.Term.ensure_natural_int">
-<em class="property">static </em><code class="sig-name descname">ensure_natural_int</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">target</span></em>, <em class="sig-param"><span class="n">name</span><span class="o">=</span><span class="default_value">'number'</span></em>, <em class="sig-param"><span class="n">include_zero</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/cleaning/term.html#Term.ensure_natural_int"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#covsirphy.cleaning.term.Term.ensure_natural_int" title="Permalink to this definition">¶</a></dt>
-<dd><p>Ensure a natural (non-negative) number.
-If the value is a natural number and the type was float or string,
-it will be converted to an integer.</p>
+<em class="property">static </em><code class="sig-name descname">ensure_natural_int</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">target</span></em>, <em class="sig-param"><span class="n">name</span><span class="o">=</span><span class="default_value">'number'</span></em>, <em class="sig-param"><span class="n">include_zero</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">none_ok</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/cleaning/term.html#Term.ensure_natural_int"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#covsirphy.cleaning.term.Term.ensure_natural_int" title="Permalink to this definition">¶</a></dt>
+<dd><p>Ensure a natural (non-negative) number.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>target</strong> (<em>int</em><em> or </em><em>float</em><em> or </em><em>str</em>) – value to ensure</p></li>
+<li><p><strong>target</strong> (<em>int</em><em> or </em><em>float</em><em> or </em><em>str</em><em> or </em><em>None</em>) – value to ensure</p></li>
 <li><p><strong>name</strong> (<em>str</em>) – argument name of the value</p></li>
 <li><p><strong>include_zero</strong> (<em>bool</em>) – include 0 or not</p></li>
+<li><p><strong>none_ok</strong> (<em>bool</em>) – None value can be applied or not.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
@@ -1418,6 +1418,10 @@ it will be converted to an integer.</p>
 <dd class="field-odd"><p>(int)</p>
 </dd>
 </dl>
+<p class="rubric">Notes</p>
+<p>When &#64;target is None and &#64;none_ok is True, None will be returned.
+If the value is a natural number and the type was float or string,
+it will be converted to an integer.</p>
 </dd></dl>
 
 <dl class="py method">

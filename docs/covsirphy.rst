@@ -10,3 +10,4 @@ API reference
    covsirphy.phase
    covsirphy.simulation
    covsirphy.util
+   covsirphy.worldwide
