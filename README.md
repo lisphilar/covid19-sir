@@ -1,4 +1,6 @@
-# CovsirPhy: COVID-19 analysis with SIRs
+
+<img src="./docs/logo/covsirphy_headline.png" width="390">
+
 [![PyPI version](https://badge.fury.io/py/covsirphy.svg)](https://badge.fury.io/py/covsirphy)
 [![Downloads](https://pepy.tech/badge/covsirphy)](https://pepy.tech/project/covsirphy)
 [![PyPI - Python Version](https://img.shields.io/pypi/pyversions/covsirphy)](https://badge.fury.io/py/covsirphy)
@@ -13,7 +15,7 @@
 | [<strong>Quickest usage</strong>](https://lisphilar.github.io/covid19-sir/usage_quickest.html)
 | [<strong>API reference</strong>](https://lisphilar.github.io/covid19-sir/covsirphy.html)
 
-<strong>CovsirPhy is a Python package for COVID-19 (Coronavirus disease 2019) data analysis with SIR-derived ODE models. We can download datasets and analyse it easily. This will be a helpful tool for data-informed decision making. Please refer to "Method" part of [Kaggle Notebook: COVID-19 data with SIR model](https://www.kaggle.com/lisphilar/covid-19-data-with-sir-model) to understand the methods.</strong>
+<strong>CovsirPhy is a Python package for COVID-19 (Coronavirus disease 2019) data analysis with phase-dependent SIR-derived ODE models. We can download datasets and analyse it easily. This will be a helpful tool for data-informed decision making. Please refer to "Method" part of [Kaggle Notebook: COVID-19 data with SIR model](https://www.kaggle.com/lisphilar/covid-19-data-with-sir-model) to understand the methods.</strong>
 
 <img src="./docs/gif/covsirphy_demo.gif" width="600">
 
