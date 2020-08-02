@@ -3,7 +3,7 @@ CovsirPhy: COVID-19 analysis with SIRs
 
 |PyPI version| |Downloads| |PyPI - Python Version| |Build Status|
 
-|GitHub license| |Maintainability| |BCH compliance|
+|GitHub license| |Maintainability| |Test Coverage|
 
 `Documentation <https://lisphilar.github.io/covid19-sir/index.html>`__
 \| `Installation/Dataset
@@ -76,7 +76,7 @@ preparation <https://lisphilar.github.io/covid19-sir/INSTALLATION.html>`__
 explains how to install and prepare datasets for all users.
 
 Stable versions of Covsirphy are available at `PyPI (The Python Package
-Index): covsirphy <https://pypi.org/project/covsirphy/>`__ and supports
+Index): covsirphy <https://pypi.org/project/covsirphy/>`__ and support
 Python 3.7 or newer versions.
 
 ::
@@ -142,11 +142,11 @@ Related work
    :target: https://pepy.tech/project/covsirphy
 .. |PyPI - Python Version| image:: https://img.shields.io/pypi/pyversions/covsirphy
    :target: https://badge.fury.io/py/covsirphy
-.. |Build Status| image:: https://semaphoreci.com/api/v1/lisphilar/covid19-sir/branches/master/badge.svg
+.. |Build Status| image:: https://semaphoreci.com/api/v1/lisphilar/covid19-sir/branches/master/shields_badge.svg
    :target: https://semaphoreci.com/lisphilar/covid19-sir
 .. |GitHub license| image:: https://img.shields.io/github/license/lisphilar/covid19-sir
    :target: https://github.com/lisphilar/covid19-sir/blob/master/LICENSE
 .. |Maintainability| image:: https://api.codeclimate.com/v1/badges/eb97eaf9804f436062b9/maintainability
    :target: https://codeclimate.com/github/lisphilar/covid19-sir/maintainability
-.. |BCH compliance| image:: https://bettercodehub.com/edge/badge/lisphilar/covid19-sir?branch=master
-   :target: https://bettercodehub.com/
+.. |Test Coverage| image:: https://api.codeclimate.com/v1/badges/eb97eaf9804f436062b9/test_coverage
+   :target: https://codeclimate.com/github/lisphilar/covid19-sir/test_coverage
