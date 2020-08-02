@@ -162,7 +162,7 @@
 <span class="c1"># -*- coding: utf-8 -*-</span>
 
 <span class="kn">from</span> <span class="nn">collections</span> <span class="kn">import</span> <span class="n">defaultdict</span>
-<span class="kn">from</span> <span class="nn">datetime</span> <span class="kn">import</span> <span class="n">datetime</span>
+<span class="kn">from</span> <span class="nn">datetime</span> <span class="kn">import</span> <span class="n">datetime</span><span class="p">,</span> <span class="n">timedelta</span>
 <span class="kn">from</span> <span class="nn">methodtools</span> <span class="kn">import</span> <span class="n">lru_cache</span>
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
@@ -239,7 +239,7 @@
 <span class="sd">        @num (int): number</span>
 
 <span class="sd">        Returns:</span>
-<span class="sd">            (str)</span>
+<span class="sd">            str</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">num</span><span class="p">,</span> <span class="nb">int</span><span class="p">):</span>
             <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">&quot;@num must be an integer.&quot;</span><span class="p">)</span>
@@ -256,6 +256,9 @@
 <span class="sd">            x (float): x values</span>
 <span class="sd">            a (float): the first parameters of the function</span>
 <span class="sd">            b (float): the second parameters of the function</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            float</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="n">a</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="n">b</span> <span class="o">*</span> <span class="n">x</span><span class="p">)</span></div>
 
@@ -269,7 +272,7 @@
 <span class="sd">            date_str (str or None): date, like 22Jan2020</span>
 
 <span class="sd">        Returns:</span>
-<span class="sd">            (datetime.datetime or None): datetime object</span>
+<span class="sd">            datetime.datetime or None: datetime object</span>
 
 <span class="sd">        Notes:</span>
 <span class="sd">            If @date_str is None, None will be returned.</span>
@@ -288,7 +291,7 @@
 <span class="sd">            unique (bool): if True, only unique values will remain</span>
 
 <span class="sd">        Returns:</span>
-<span class="sd">            (list[object])</span>
+<span class="sd">            list[object]</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">flattened</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span><span class="n">nested_list</span><span class="p">,</span> <span class="nb">list</span><span class="p">())</span>
         <span class="k">if</span> <span class="n">unique</span><span class="p">:</span>
@@ -336,7 +339,7 @@
 <span class="sd">            none_ok (bool): None value can be applied or not.</span>
 
 <span class="sd">        Returns:</span>
-<span class="sd">            (int): as-is the target</span>
+<span class="sd">            int: as-is the target</span>
 
 <span class="sd">        Notes:</span>
 <span class="sd">            When @target is None and @none_ok is True, None will be returned.</span>
@@ -369,7 +372,7 @@
 <span class="sd">            name (str): argument name of the value</span>
 
 <span class="sd">        Returns:</span>
-<span class="sd">            (float): as-is the target</span>
+<span class="sd">            float: as-is the target</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">s</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;@</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2"> must be a float value, but </span><span class="si">{</span><span class="n">target</span><span class="si">}</span><span class="s2"> was applied&quot;</span>
         <span class="k">try</span><span class="p">:</span>
@@ -388,7 +391,7 @@
 <span class="sd">            name (str): argument name of the string</span>
 
 <span class="sd">        Returns:</span>
-<span class="sd">            (str): as-is the target</span>
+<span class="sd">            str: as-is the target</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">try</span><span class="p">:</span>
             <span class="bp">cls</span><span class="o">.</span><span class="n">date_obj</span><span class="p">(</span><span class="n">target</span><span class="p">)</span>
@@ -409,7 +412,7 @@
 <span class="sd">            name (str): argument name of the target</span>
 
 <span class="sd">        Returns:</span>
-<span class="sd">            (int): as-is the target</span>
+<span class="sd">            int: as-is the target</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">s</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;@</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2"> must be an sub class of </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">parent</span><span class="p">)</span><span class="si">}</span><span class="s2">, but </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">target</span><span class="p">)</span><span class="si">}</span><span class="s2"> was applied.&quot;</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="nb">issubclass</span><span class="p">(</span><span class="n">target</span><span class="p">,</span> <span class="n">parent</span><span class="p">):</span>
@@ -427,7 +430,7 @@
 <span class="sd">            name (str): argument name of the target</span>
 
 <span class="sd">        Returns:</span>
-<span class="sd">            (instance): as-is target</span>
+<span class="sd">            object: as-is target</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">s</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;@</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2"> must be an instance of </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">class_obj</span><span class="p">)</span><span class="si">}</span><span class="s2">, but </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">target</span><span class="p">)</span><span class="si">}</span><span class="s2"> was applied.&quot;</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">target</span><span class="p">,</span> <span class="n">class_obj</span><span class="p">):</span>
@@ -444,7 +447,7 @@
 <span class="sd">            value (int): target value</span>
 
 <span class="sd">        Returns:</span>
-<span class="sd">            (list[int]): the list of divisors</span>
+<span class="sd">            list[int]: the list of divisors</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">value</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">ensure_natural_int</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
         <span class="k">return</span> <span class="p">[</span>
@@ -462,14 +465,28 @@
 <span class="sd">            default (datetime.datetime or None, optional): default value to return</span>
 
 <span class="sd">        Returns:</span>
-<span class="sd">            (datetime.datetime or None)</span>
+<span class="sd">            datetime.datetime or None</span>
 
 <span class="sd">        Notes:</span>
 <span class="sd">            If @date_str is None, returns @default value</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="n">date_str</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">return</span> <span class="n">default</span>
-        <span class="k">return</span> <span class="n">datetime</span><span class="o">.</span><span class="n">strptime</span><span class="p">(</span><span class="n">date_str</span><span class="p">,</span> <span class="bp">cls</span><span class="o">.</span><span class="n">DATE_FORMAT</span><span class="p">)</span></div></div>
+        <span class="k">return</span> <span class="n">datetime</span><span class="o">.</span><span class="n">strptime</span><span class="p">(</span><span class="n">date_str</span><span class="p">,</span> <span class="bp">cls</span><span class="o">.</span><span class="n">DATE_FORMAT</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Term.tomorrow"><a class="viewcode-back" href="../../../covsirphy.cleaning.html#covsirphy.cleaning.term.Term.tomorrow">[docs]</a>    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">tomorrow</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">date_str</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Tomorrow of the date.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            date_str (str): today</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            str: tomorrow</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">tomorrow</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">to_date_obj</span><span class="p">(</span><span class="n">date_str</span><span class="p">)</span> <span class="o">+</span> <span class="n">timedelta</span><span class="p">(</span><span class="n">days</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">tomorrow</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="bp">cls</span><span class="o">.</span><span class="n">DATE_FORMAT</span><span class="p">)</span></div></div>
 
 
 <div class="viewcode-block" id="Word"><a class="viewcode-back" href="../../../covsirphy.cleaning.html#covsirphy.cleaning.term.Word">[docs]</a><span class="k">class</span> <span class="nc">Word</span><span class="p">(</span><span class="n">Term</span><span class="p">):</span>
