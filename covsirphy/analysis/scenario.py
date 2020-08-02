@@ -541,7 +541,7 @@ class Scenario(Term):
         # Set parameters
         setting_dict = self.series_dict[name].to_dict()[phase]
         start_date = setting_dict[self.START]
-        end_date = setting_dict[self.END]
+        end_date = self.tomorrow(setting_dict[self.END])
         population = setting_dict[self.N]
         # Set tau value
         est_kwargs = {

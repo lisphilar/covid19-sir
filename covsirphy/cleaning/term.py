@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 from collections import defaultdict
-from datetime import datetime
+from datetime import datetime, timedelta
 from methodtools import lru_cache
 import numpy as np
 import pandas as pd
@@ -79,7 +79,7 @@ class Term(object):
         @num (int): number
 
         Returns:
-            (str)
+            str
         """
         if not isinstance(num, int):
             raise TypeError("@num must be an integer.")
@@ -96,6 +96,9 @@ class Term(object):
             x (float): x values
             a (float): the first parameters of the function
             b (float): the second parameters of the function
+
+        Returns:
+            float
         """
         return a * np.exp(-b * x)
 
@@ -109,7 +112,7 @@ class Term(object):
             date_str (str or None): date, like 22Jan2020
 
         Returns:
-            (datetime.datetime or None): datetime object
+            datetime.datetime or None: datetime object
 
         Notes:
             If @date_str is None, None will be returned.
@@ -128,7 +131,7 @@ class Term(object):
             unique (bool): if True, only unique values will remain
 
         Returns:
-            (list[object])
+            list[object]
         """
         flattened = sum(nested_list, list())
         if unique:
@@ -176,7 +179,7 @@ class Term(object):
             none_ok (bool): None value can be applied or not.
 
         Returns:
-            (int): as-is the target
+            int: as-is the target
 
         Notes:
             When @target is None and @none_ok is True, None will be returned.
@@ -209,7 +212,7 @@ class Term(object):
             name (str): argument name of the value
 
         Returns:
-            (float): as-is the target
+            float: as-is the target
         """
         s = f"@{name} must be a float value, but {target} was applied"
         try:
@@ -228,7 +231,7 @@ class Term(object):
             name (str): argument name of the string
 
         Returns:
-            (str): as-is the target
+            str: as-is the target
         """
         try:
             cls.date_obj(target)
@@ -249,7 +252,7 @@ class Term(object):
             name (str): argument name of the target
 
         Returns:
-            (int): as-is the target
+            int: as-is the target
         """
         s = f"@{name} must be an sub class of {type(parent)}, but {type(target)} was applied."
         if not issubclass(target, parent):
@@ -267,7 +270,7 @@ class Term(object):
             name (str): argument name of the target
 
         Returns:
-            (instance): as-is target
+            object: as-is target
         """
         s = f"@{name} must be an instance of {type(class_obj)}, but {type(target)} was applied."
         if not isinstance(target, class_obj):
@@ -284,7 +287,7 @@ class Term(object):
             value (int): target value
 
         Returns:
-            (list[int]): the list of divisors
+            list[int]: the list of divisors
         """
         value = cls.ensure_natural_int(value)
         return [
@@ -302,7 +305,7 @@ class Term(object):
             default (datetime.datetime or None, optional): default value to return
 
         Returns:
-            (datetime.datetime or None)
+            datetime.datetime or None
 
         Notes:
             If @date_str is None, returns @default value
@@ -310,6 +313,20 @@ class Term(object):
         if date_str is None:
             return default
         return datetime.strptime(date_str, cls.DATE_FORMAT)
+
+    @classmethod
+    def tomorrow(cls, date_str):
+        """
+        Tomorrow of the date.
+
+        Args:
+            date_str (str): today
+
+        Returns:
+            str: tomorrow
+        """
+        tomorrow = cls.to_date_obj(date_str) + timedelta(days=1)
+        return tomorrow.strftime(cls.DATE_FORMAT)
 
 
 class Word(Term):
