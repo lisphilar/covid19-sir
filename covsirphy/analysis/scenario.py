@@ -729,6 +729,7 @@ class Scenario(Term):
                 f"Future phases of {name} scenario must be registered by Scenario.add() in advance."
             )
         # Simulation
+        y0_dict = y0_dict or {}
         dim_df, start_objects = self._simulate(name=name, y0_dict=y0_dict)
         dim_df = dim_df.set_index(self.DATE).resample("D").mean()
         dim_df = dim_df.astype(np.int64)
@@ -780,6 +781,7 @@ class Scenario(Term):
         # Dates and the number of steps
         last_object = phase_series.last_object()
         start_objects = phase_series.start_objects()
+        tenses = phase_series.tenses()
         step_n_list = phase_series.number_of_steps(
             start_objects, last_object, self.tau)
         first_date = start_objects[0].strftime(self.DATE_FORMAT)
@@ -793,21 +795,22 @@ class Scenario(Term):
         simulator = ODESimulator(self.country, province=self.province)
         # Add phases to the simulator
         df = phase_series.summary()
-        zip_iter = zip(df.index, models, step_n_list, population_values)
-        for (i, (phase, model, step_n, population)) in enumerate(zip_iter):
+        zip_iter = zip(
+            df.index, models, step_n_list, population_values, tenses, start_objects)
+        for (phase, model, step_n, population, tense, sta) in zip_iter:
             param_dict = df[model.PARAMETERS].to_dict(orient="index")[phase]
-            if i == 0:
+            y0_dict_phase = y0_dict.copy()
+            if tense == self.PAST:
                 # Calculate initial values
                 subset_df = self.jhu_data.subset(
                     country=self.country, province=self.province,
-                    start_date=first_date
+                    start_date=sta.strftime(self.DATE_FORMAT)
                 )
                 subset_df = model.tau_free(subset_df, population, tau=None)
-                y0_dict_phase = {
+                y0_dict_record = {
                     k: subset_df.loc[subset_df.index[0], k] for k in model.VARIABLES
                 }
-            else:
-                y0_dict_phase = None if y0_dict is None else y0_dict.copy()
+                y0_dict_phase.update(y0_dict_record)
             simulator.add(
                 model, step_n, population,
                 param_dict=param_dict,
