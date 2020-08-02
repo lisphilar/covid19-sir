@@ -335,6 +335,17 @@ class PhaseSeries(Term):
             self.date_obj(v[self.END]) for v in self.info_dict.values()
         ]
 
+    def tenses(self):
+        """
+        Return the list of tense of start dates, 'Past' or 'Future'.
+
+        Returns:
+            list[str]: list of tenses
+        """
+        return [
+            self._tense(v[self.START]) for v in self.info_dict.values()
+        ]
+
     def reset_phase_names(self):
         """
         Reset phase names.

@@ -94,7 +94,7 @@ class Estimator(Optimizer):
         )
 
     def run(self, timeout=60, reset_n_max=3,
-            timeout_iteration=5, allowance=(0.8, 1.2),
+            timeout_iteration=5, allowance=(0.98, 1.02),
             seed=0, stdout=True, **kwargs):
         """
         Run optimization.
