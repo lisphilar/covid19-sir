@@ -1,0 +1,748 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>covsirphy.cleaning.dataloader &mdash; CovsirPhy  documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+
+  
+  
+  
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
+        <script src="../../../_static/jquery.js"></script>
+        <script src="../../../_static/underscore.js"></script>
+        <script src="../../../_static/doctools.js"></script>
+        <script src="../../../_static/language_data.js"></script>
+        <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+        <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+        <script type="text/x-mathjax-config">MathJax.Hub.Config({"tex2jax": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "processEscapes": true, "ignoreClass": "document", "processClass": "math|output_area"}})</script>
+    
+    <script type="text/javascript" src="../../../_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../../../index.html" class="icon icon-home" alt="Documentation Home"> CovsirPhy
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../README.html">CovsirPhy: COVID-19 analysis with SIRs</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../INSTALLATION.html">Installation and dataset preparation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../usage_quickest.html">Usage (quickest version)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../usage_quick.html">Usage (quick version)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../usage_phases.html">Usage (details: phases)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../usage_theoretical.html">Usage (details: theoretical datasets)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../usage_policy.html">Usage (details: policy measures)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../covsirphy.html">API reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../CONTRIBUTING.html">Guideline of contribution</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">CovsirPhy</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../../index.html" class="icon icon-home"></a> &raquo;</li>
+        
+          <li><a href="../../index.html">Module code</a> &raquo;</li>
+        
+      <li>covsirphy.cleaning.dataloader</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for covsirphy.cleaning.dataloader</h1><div class="highlight"><pre>
+<span></span><span class="ch">#!/usr/bin/env python</span>
+<span class="c1"># -*- coding: utf-8 -*-</span>
+
+<span class="kn">from</span> <span class="nn">pathlib</span> <span class="kn">import</span> <span class="n">Path</span>
+<span class="kn">from</span> <span class="nn">datetime</span> <span class="kn">import</span> <span class="n">datetime</span><span class="p">,</span> <span class="n">timezone</span><span class="p">,</span> <span class="n">timedelta</span>
+<span class="kn">import</span> <span class="nn">covid19dh</span>
+<span class="kn">from</span> <span class="nn">dask</span> <span class="kn">import</span> <span class="n">dataframe</span> <span class="k">as</span> <span class="n">dd</span>
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<span class="kn">import</span> <span class="nn">requests</span>
+<span class="kn">from</span> <span class="nn">covsirphy.cleaning.cbase</span> <span class="kn">import</span> <span class="n">CleaningBase</span>
+<span class="kn">from</span> <span class="nn">covsirphy.cleaning.jhu_data</span> <span class="kn">import</span> <span class="n">JHUData</span>
+<span class="kn">from</span> <span class="nn">covsirphy.cleaning.country_data</span> <span class="kn">import</span> <span class="n">CountryData</span>
+<span class="kn">from</span> <span class="nn">covsirphy.cleaning.oxcgrt</span> <span class="kn">import</span> <span class="n">OxCGRTData</span>
+<span class="kn">from</span> <span class="nn">covsirphy.cleaning.population</span> <span class="kn">import</span> <span class="n">PopulationData</span>
+<span class="kn">from</span> <span class="nn">covsirphy.cleaning.term</span> <span class="kn">import</span> <span class="n">Term</span>
+
+
+<div class="viewcode-block" id="DataLoader"><a class="viewcode-back" href="../../../covsirphy.cleaning.html#covsirphy.cleaning.dataloader.DataLoader">[docs]</a><span class="k">class</span> <span class="nc">DataLoader</span><span class="p">(</span><span class="n">Term</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Download the dataset and perform data cleaning.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        directory (str or pathlib.Path): directory to save the downloaded datasets</span>
+<span class="sd">        update_interval (int): update interval of the local datasets</span>
+
+<span class="sd">    Notes:</span>
+<span class="sd">        GitHub datasets will be always updated because headers of GET response</span>
+<span class="sd">        does not have &#39;Last-Modified&#39; keys.</span>
+<span class="sd">        If @update_interval hours have passed since the last update of local datasets,</span>
+<span class="sd">        updating will be forced when updating is not prevented by the methods.</span>
+
+<span class="sd">    Examples:</span>
+<span class="sd">        &gt;&gt;&gt; import covsirphy as cs</span>
+<span class="sd">        &gt;&gt;&gt; data_loader = cs.DataLoader(&quot;input&quot;)</span>
+<span class="sd">        &gt;&gt;&gt; jhu_data = data_loader.jhu()</span>
+<span class="sd">        &gt;&gt;&gt; print(jhu_data.citation)</span>
+<span class="sd">        ...</span>
+<span class="sd">        &gt;&gt;&gt; print(type(jhu_data.cleaned()))</span>
+<span class="sd">        &lt;class &#39;pandas.core.frame.DataFrame&#39;&gt;</span>
+<span class="sd">        &gt;&gt;&gt; jpn_data = data_loader.japan()</span>
+<span class="sd">        &gt;&gt;&gt; print(jpn_data.citation)</span>
+<span class="sd">        ...</span>
+<span class="sd">        &gt;&gt;&gt; print(type(jpn_data.cleaned()))</span>
+<span class="sd">        &lt;class &#39;pandas.core.frame.DataFrame&#39;&gt;</span>
+<span class="sd">        &gt;&gt;&gt; population_data = data_loader.population()</span>
+<span class="sd">        &gt;&gt;&gt; print(population_data.citation)</span>
+<span class="sd">        ...</span>
+<span class="sd">        &gt;&gt;&gt; print(type(population_data.cleaned()))</span>
+<span class="sd">        &lt;class &#39;pandas.core.frame.DataFrame&#39;&gt;</span>
+<span class="sd">        &gt;&gt;&gt; oxcgrt_data = data_loader.oxcgrt()</span>
+<span class="sd">        &gt;&gt;&gt; print(oxcgrt_data.citation)</span>
+<span class="sd">        ...</span>
+<span class="sd">        &gt;&gt;&gt; print(type(oxcgrt_data.cleaned()))</span>
+<span class="sd">        &lt;class &#39;pandas.core.frame.DataFrame&#39;&gt;</span>
+<span class="sd">        &gt;&gt;&gt; print(data_loader.covid19dh_citation)</span>
+<span class="sd">        ...</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">directory</span><span class="o">=</span><span class="s2">&quot;input&quot;</span><span class="p">,</span> <span class="n">update_interval</span><span class="o">=</span><span class="mi">12</span><span class="p">):</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">directory</span><span class="p">,</span> <span class="p">(</span><span class="nb">str</span><span class="p">,</span> <span class="n">Path</span><span class="p">)):</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;@directory must be a string or a path but </span><span class="si">{</span><span class="n">directory</span><span class="si">}</span><span class="s2"> was applied.&quot;</span>
+            <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">dir_path</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">directory</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">update_interval</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ensure_natural_int</span><span class="p">(</span>
+            <span class="n">update_interval</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;update_interval&quot;</span><span class="p">,</span> <span class="n">include_zero</span><span class="o">=</span><span class="kc">True</span>
+        <span class="p">)</span>
+        <span class="c1"># Create the directory if not exist</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">dir_path</span><span class="o">.</span><span class="n">mkdir</span><span class="p">(</span><span class="n">parents</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="c1"># COVID-19 Data Hub</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_covid19dh_citation</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_covid19dh_basename</span> <span class="o">=</span> <span class="s2">&quot;covid19dh.csv&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_covid19dh_citation_secondary</span> <span class="o">=</span> <span class="s1">&#39;(Secondary source)&#39;</span> \
+            <span class="s1">&#39; Guidotti, E., Ardia, D., (2020), &quot;COVID-19 Data Hub&quot;,&#39;</span> \
+            <span class="s1">&#39; Working paper, doi: 10.13140/RG.2.2.11649.81763.&#39;</span> \
+            <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">We can get Citation list of primary sources with DataLoader(...).covid19dh_citation&#39;</span>
+        <span class="c1"># JHU dataset: the number of cases</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">jhu_url</span> <span class="o">=</span> <span class="s2">&quot;https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master&quot;</span> \
+            <span class="s2">&quot;/csse_covid_19_data/csse_covid_19_time_series&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">jhu_citation</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_covid19dh_citation_secondary</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">jhu_date_col</span> <span class="o">=</span> <span class="s2">&quot;ObservationDate&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">jhu_p_col</span> <span class="o">=</span> <span class="s2">&quot;Province/State&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">jhu_c_col</span> <span class="o">=</span> <span class="s2">&quot;Country/Region&quot;</span>
+        <span class="c1"># The number of cases in Japan</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">japan_cases_url</span> <span class="o">=</span> <span class="s2">&quot;https://raw.githubusercontent.com/lisphilar/covid19-sir/master/data/japan&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">japan_cases_citation</span> <span class="o">=</span> <span class="s2">&quot;Lisphilar (2020), COVID-19 dataset in Japan, GitHub repository, &quot;</span> \
+            <span class="s2">&quot;https://github.com/lisphilar/covid19-sir/data/japan&quot;</span>
+        <span class="c1"># Population dataset: THE WORLD BANK</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">population_url</span> <span class="o">=</span> <span class="s2">&quot;http://api.worldbank.org/v2/country/all/indicator/SP.POP.TOTL?&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">population_citation</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_covid19dh_citation_secondary</span>
+        <span class="c1"># OxCGRT dataset: Oxford Covid-19 Government Response Tracker</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">oxcgrt_url</span> <span class="o">=</span> <span class="s2">&quot;https://raw.githubusercontent.com/OxCGRT/covid-policy-tracker/master/data&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">oxcgrt_citation</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_covid19dh_citation_secondary</span>
+        <span class="c1"># Dictionary of datasets</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">dataset_dict</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s2">&quot;JHU&quot;</span><span class="p">:</span> <span class="p">{</span>
+                <span class="s2">&quot;class&quot;</span><span class="p">:</span> <span class="n">JHUData</span><span class="p">,</span> <span class="s2">&quot;url&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">jhu_url</span><span class="p">,</span> <span class="s2">&quot;citation&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">jhu_citation</span>
+            <span class="p">},</span>
+            <span class="s2">&quot;Japan_cases&quot;</span><span class="p">:</span> <span class="p">{</span>
+                <span class="s2">&quot;class&quot;</span><span class="p">:</span> <span class="n">CountryData</span><span class="p">,</span> <span class="s2">&quot;url&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">japan_cases_url</span><span class="p">,</span> <span class="s2">&quot;citation&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">japan_cases_citation</span>
+            <span class="p">},</span>
+            <span class="s2">&quot;Population&quot;</span><span class="p">:</span> <span class="p">{</span>
+                <span class="s2">&quot;class&quot;</span><span class="p">:</span> <span class="n">PopulationData</span><span class="p">,</span> <span class="s2">&quot;url&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">population_url</span><span class="p">,</span> <span class="s2">&quot;citation&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">population_citation</span>
+            <span class="p">},</span>
+            <span class="s2">&quot;OxCGRT&quot;</span><span class="p">:</span> <span class="p">{</span>
+                <span class="s2">&quot;class&quot;</span><span class="p">:</span> <span class="n">OxCGRTData</span><span class="p">,</span> <span class="s2">&quot;url&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">oxcgrt_url</span><span class="p">,</span> <span class="s2">&quot;citation&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">oxcgrt_citation</span>
+            <span class="p">},</span>
+        <span class="p">}</span>
+
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">_get_raw</span><span class="p">(</span><span class="n">url</span><span class="p">,</span> <span class="n">is_json</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Get raw dataset from the URL.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            url (str): URL to get raw dataset</span>
+<span class="sd">            is_json (bool): if True, parse the response as Json data.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            (pandas.DataFrame): raw dataset</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">is_json</span><span class="p">:</span>
+            <span class="n">r</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">url</span><span class="p">)</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">json_data</span> <span class="o">=</span> <span class="n">r</span><span class="o">.</span><span class="n">json</span><span class="p">()[</span><span class="mi">1</span><span class="p">]</span>
+            <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span>
+                    <span class="sa">f</span><span class="s2">&quot;Unknown data format was used in Web API </span><span class="si">{</span><span class="n">url</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">json_normalize</span><span class="p">(</span><span class="n">json_data</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">df</span>
+        <span class="n">df</span> <span class="o">=</span> <span class="n">dd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">url</span><span class="p">)</span><span class="o">.</span><span class="n">compute</span><span class="p">()</span>
+        <span class="k">return</span> <span class="n">df</span>
+
+    <span class="k">def</span> <span class="nf">_resolve_filename</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">basename</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Return the absolute path of the file in the @self.dir_path directory.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            basename (str): basename of the file, like covid_19_data.csv</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            (str): absolute path of the file</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">file_path</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dir_path</span> <span class="o">/</span> <span class="n">basename</span>
+        <span class="k">return</span> <span class="nb">str</span><span class="p">(</span><span class="n">file_path</span><span class="o">.</span><span class="n">resolve</span><span class="p">())</span>
+
+    <span class="k">def</span> <span class="nf">_save</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dataframe</span><span class="p">,</span> <span class="n">filename</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Save the dataframe to the local environment.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            dataframe (pandas.DataFrame): dataframe to save</span>
+<span class="sd">            filename (str or None): filename to save</span>
+
+<span class="sd">        Notes:</span>
+<span class="sd">            CSV file will be created in @self.dirpath directory.</span>
+<span class="sd">            If @self.dirpath is None, the dataframe will not be saved</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">df</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ensure_dataframe</span><span class="p">(</span><span class="n">dataframe</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;dataframe&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">filename</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">None</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">df</span><span class="o">.</span><span class="n">to_csv</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">OSError</span><span class="p">:</span>
+            <span class="k">pass</span>
+        <span class="k">return</span> <span class="n">filename</span>
+
+    <span class="k">def</span> <span class="nf">_last_updated_remote</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">url</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Return the date last updated of remote file/directory.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            url (str): URL</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            (pandas.Timestamp or None): time last updated (UTC)</span>
+
+<span class="sd">        Notes:</span>
+<span class="sd">            If &quot;Last-Modified&quot; key is not in the header, returns None.</span>
+<span class="sd">            If failed in connection with remote direcotry, returns None.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">response</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">url</span><span class="p">)</span>
+        <span class="k">except</span> <span class="n">requests</span><span class="o">.</span><span class="n">ConnectionError</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">False</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">date_str</span> <span class="o">=</span> <span class="n">response</span><span class="o">.</span><span class="n">headers</span><span class="p">[</span><span class="s2">&quot;Last-Modified&quot;</span><span class="p">]</span>
+        <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">None</span>
+        <span class="k">return</span> <span class="n">pd</span><span class="o">.</span><span class="n">to_datetime</span><span class="p">(</span><span class="n">date_str</span><span class="p">)</span><span class="o">.</span><span class="n">tz_convert</span><span class="p">(</span><span class="kc">None</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_last_updated_local</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Return the date last updated of local file/directory.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            path (str or pathlibPath): name of the file/directory</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            (datetime.datetime): time last updated (UTC)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">path</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
+        <span class="n">m_time</span> <span class="o">=</span> <span class="n">path</span><span class="o">.</span><span class="n">stat</span><span class="p">()</span><span class="o">.</span><span class="n">st_mtime</span>
+        <span class="n">date</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">fromtimestamp</span><span class="p">(</span><span class="n">m_time</span><span class="p">)</span>
+        <span class="n">date</span> <span class="o">=</span> <span class="n">date</span><span class="o">.</span><span class="n">astimezone</span><span class="p">(</span><span class="n">timezone</span><span class="o">.</span><span class="n">utc</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="n">tzinfo</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">date</span>
+
+    <span class="k">def</span> <span class="nf">_create_dataset</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data_key</span><span class="p">,</span> <span class="n">filename</span><span class="p">,</span> <span class="n">set_citation</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Return dataset class with citation.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            data_key (str): key of self.dataset_dict</span>
+<span class="sd">            filename (str): filename of the local dataset</span>
+<span class="sd">            set_citation (str): if True, set citation</span>
+<span class="sd">            kwargs: keyword arguments of @data_class</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            (covsirphy.JHUData): the dataset</span>
+
+<span class="sd">        Notes:</span>
+<span class="sd">            &quot;.citation&quot; attribute will returns the citation</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Get information from self.dataset_dict</span>
+        <span class="n">target_dict</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dataset_dict</span><span class="p">[</span><span class="n">data_key</span><span class="p">]</span>
+        <span class="n">data_class</span> <span class="o">=</span> <span class="n">target_dict</span><span class="p">[</span><span class="s2">&quot;class&quot;</span><span class="p">]</span>
+        <span class="n">citation</span> <span class="o">=</span> <span class="n">target_dict</span><span class="p">[</span><span class="s2">&quot;citation&quot;</span><span class="p">]</span>
+        <span class="c1"># Validate the data class</span>
+        <span class="n">data_class</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ensure_subclass</span><span class="p">(</span><span class="n">data_class</span><span class="p">,</span> <span class="n">CleaningBase</span><span class="p">)</span>
+        <span class="c1"># Create instance and set citation</span>
+        <span class="n">data_instance</span> <span class="o">=</span> <span class="n">data_class</span><span class="p">(</span><span class="n">filename</span><span class="o">=</span><span class="n">filename</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">set_citation</span><span class="p">:</span>
+            <span class="n">data_instance</span><span class="o">.</span><span class="n">citation</span> <span class="o">=</span> <span class="n">citation</span>
+        <span class="k">return</span> <span class="n">data_instance</span>
+
+    <span class="k">def</span> <span class="nf">_needs_pull</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="p">,</span> <span class="n">url</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Return whether we need to get the data from remote servers or not,</span>
+<span class="sd">        comparing the last update of the files.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            filename (str): filename of the local file</span>
+<span class="sd">            url (str): URL of the remote server</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            (bool): whether we need to get the data from remote servers or not</span>
+
+<span class="sd">        Notes:</span>
+<span class="sd">            If the last updated date is unknown, returns True.</span>
+<span class="sd">            If @self.update_interval hours have passed and the remote file was updated, return True.</span>
+<span class="sd">            If @url is None, the modified date of the remote server will not be referenced.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">filename</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="p">(</span><span class="ow">not</span> <span class="n">Path</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span><span class="o">.</span><span class="n">exists</span><span class="p">()):</span>
+            <span class="k">return</span> <span class="kc">True</span>
+        <span class="n">date_local</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_last_updated_local</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span>
+        <span class="n">time_limit</span> <span class="o">=</span> <span class="n">date_local</span> <span class="o">+</span> <span class="n">timedelta</span><span class="p">(</span><span class="n">hours</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">update_interval</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">()</span> <span class="o">&gt;</span> <span class="n">time_limit</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">url</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="k">return</span> <span class="kc">True</span>
+            <span class="n">date_remote</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_last_updated_remote</span><span class="p">(</span><span class="n">url</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">date_remote</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">date_remote</span> <span class="o">&gt;</span> <span class="n">date_local</span><span class="p">:</span>
+                <span class="k">return</span> <span class="kc">True</span>
+        <span class="k">return</span> <span class="kc">False</span>
+
+<div class="viewcode-block" id="DataLoader.jhu"><a class="viewcode-back" href="../../../covsirphy.cleaning.html#covsirphy.cleaning.dataloader.DataLoader.jhu">[docs]</a>    <span class="k">def</span> <span class="nf">jhu</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">basename</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">local_file</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Load JHU dataset (the number of cases).</span>
+<span class="sd">        https://github.com/CSSEGISandData/COVID-19/</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            basename (str or None): basename of the file to save the data</span>
+<span class="sd">            local_file (str or None): if not None, load the data from this file</span>
+<span class="sd">            verbose (bool): if True, detailed citation list will be shown when downloading</span>
+
+<span class="sd">        Notes:</span>
+<span class="sd">            Regardless the value of @local_file, the data will be save in the directory.</span>
+<span class="sd">            If @basename is None, the value of DataLoader.DH_BASENAME will be used.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            (covsirphy.JHUData): JHU dataset</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">filename</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_covid19dh_filename</span><span class="p">(</span><span class="n">basename</span><span class="p">,</span> <span class="n">local_file</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">local_file</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">Path</span><span class="p">(</span><span class="n">local_file</span><span class="p">)</span><span class="o">.</span><span class="n">exists</span><span class="p">():</span>
+                <span class="n">jhu_data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_create_dataset</span><span class="p">(</span>
+                    <span class="s2">&quot;JHU&quot;</span><span class="p">,</span> <span class="n">local_file</span><span class="p">,</span> <span class="n">set_citation</span><span class="o">=</span><span class="kc">False</span>
+                <span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_save</span><span class="p">(</span><span class="n">jhu_data</span><span class="o">.</span><span class="n">raw</span><span class="p">,</span> <span class="n">filename</span><span class="p">)</span>
+                <span class="k">return</span> <span class="n">jhu_data</span>
+            <span class="k">raise</span> <span class="ne">FileNotFoundError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">local_file</span><span class="si">}</span><span class="s2"> does not exist.&quot;</span><span class="p">)</span>
+        <span class="c1"># Create th dataset using the data of COVID-19 Data Hub</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">covid19dh</span><span class="p">(</span><span class="n">verbose</span><span class="o">=</span><span class="n">verbose</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_create_dataset</span><span class="p">(</span><span class="s2">&quot;JHU&quot;</span><span class="p">,</span> <span class="n">filename</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="DataLoader.japan"><a class="viewcode-back" href="../../../covsirphy.cleaning.html#covsirphy.cleaning.dataloader.DataLoader.japan">[docs]</a>    <span class="k">def</span> <span class="nf">japan</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">basename</span><span class="o">=</span><span class="s2">&quot;covid_jpn_total.csv&quot;</span><span class="p">,</span> <span class="n">local_file</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Load the datset of the number of cases in Japan.</span>
+<span class="sd">        https://github.com/lisphilar/covid19-sir/tree/master/data</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            basename (str): basename of the file to save the data</span>
+<span class="sd">            local_file (str or None): if not None, load the data from this file</span>
+
+<span class="sd">        Notes:</span>
+<span class="sd">            Regardless the value of @local_file, the data will be save in the directory.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            (covsirphy.CountryData): dataset at country level</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">filename</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_resolve_filename</span><span class="p">(</span><span class="n">basename</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">local_file</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">Path</span><span class="p">(</span><span class="n">local_file</span><span class="p">)</span><span class="o">.</span><span class="n">exists</span><span class="p">():</span>
+                <span class="n">japan_data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_create_dataset_japan_cases</span><span class="p">(</span>
+                    <span class="n">local_file</span><span class="p">,</span> <span class="n">set_citation</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+                <span class="n">df</span> <span class="o">=</span> <span class="n">japan_data</span><span class="o">.</span><span class="n">cleaned</span><span class="p">()</span>
+                <span class="k">if</span> <span class="nb">set</span><span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">COUNTRY</span><span class="p">]</span><span class="o">.</span><span class="n">unique</span><span class="p">())</span> <span class="o">!=</span> <span class="nb">set</span><span class="p">([</span><span class="s2">&quot;Japan&quot;</span><span class="p">]):</span>
+                    <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span>
+                        <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">local_file</span><span class="si">}</span><span class="s2"> does not have Japan dataset.&quot;</span>
+                    <span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_save</span><span class="p">(</span><span class="n">japan_data</span><span class="o">.</span><span class="n">raw</span><span class="p">,</span> <span class="n">filename</span><span class="p">)</span>
+                <span class="k">return</span> <span class="n">japan_data</span>
+            <span class="k">raise</span> <span class="ne">FileNotFoundError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">local_file</span><span class="si">}</span><span class="s2"> does not exist.&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_needs_pull</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">japan_cases_url</span><span class="p">):</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_create_dataset_japan_cases</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span>
+        <span class="c1"># Retrieve the raw data</span>
+        <span class="n">df</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_japan_cases_get</span><span class="p">()</span>
+        <span class="c1"># Save the dataset and return dataset</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_save</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">filename</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_create_dataset_japan_cases</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span></div>
+
+    <span class="k">def</span> <span class="nf">_japan_cases_get</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Get the raw data from the following repository.</span>
+<span class="sd">        https://github.com/lisphilar/covid19-sir/tree/master/data/japan</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            (pandas.DataFrame) : the raw data</span>
+<span class="sd">               Index:</span>
+<span class="sd">                    reset index</span>
+<span class="sd">                Columns:</span>
+<span class="sd">                    as-is the repository</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">url</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">japan_cases_url</span><span class="si">}</span><span class="s2">/covid_jpn_total.csv&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_raw</span><span class="p">(</span><span class="n">url</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_create_dataset_japan_cases</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="p">,</span> <span class="n">set_citation</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Create a dataset for Japan with a local file.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            filename (str): filename of the local file</span>
+<span class="sd">            set_citation (str): if True, set citation</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            (covsirphy.CountryData): dataset at country level</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">country_data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_create_dataset</span><span class="p">(</span>
+            <span class="s2">&quot;Japan_cases&quot;</span><span class="p">,</span> <span class="n">filename</span><span class="p">,</span> <span class="n">country</span><span class="o">=</span><span class="s2">&quot;Japan&quot;</span><span class="p">,</span>
+            <span class="n">set_citation</span><span class="o">=</span><span class="n">set_citation</span>
+        <span class="p">)</span>
+        <span class="n">country_data</span><span class="o">.</span><span class="n">set_variables</span><span class="p">(</span>
+            <span class="n">date</span><span class="o">=</span><span class="s2">&quot;Date&quot;</span><span class="p">,</span>
+            <span class="n">confirmed</span><span class="o">=</span><span class="s2">&quot;Positive&quot;</span><span class="p">,</span>
+            <span class="n">fatal</span><span class="o">=</span><span class="s2">&quot;Fatal&quot;</span><span class="p">,</span>
+            <span class="n">recovered</span><span class="o">=</span><span class="s2">&quot;Discharged&quot;</span><span class="p">,</span>
+            <span class="n">province</span><span class="o">=</span><span class="kc">None</span>
+        <span class="p">)</span>
+        <span class="k">return</span> <span class="n">country_data</span>
+
+<div class="viewcode-block" id="DataLoader.population"><a class="viewcode-back" href="../../../covsirphy.cleaning.html#covsirphy.cleaning.dataloader.DataLoader.population">[docs]</a>    <span class="k">def</span> <span class="nf">population</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">basename</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">local_file</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Load Population dataset from THE WORLD BANK, Population, total.</span>
+<span class="sd">        https://data.worldbank.org/indicator/SP.POP.TOTL</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            basename (str or None): basename of the file to save the data</span>
+<span class="sd">            local_file (str or None): if not None, load the data from this file</span>
+<span class="sd">            verbose (bool): if True, detailed citation list will be shown when downloading</span>
+
+<span class="sd">        Notes:</span>
+<span class="sd">            Regardless the value of @local_file, the data will be save in the directory.</span>
+<span class="sd">            If @basename is None, the value of DataLoader.DH_BASENAME will be used.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            (covsirphy.Population): Population dataset</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">filename</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_covid19dh_filename</span><span class="p">(</span><span class="n">basename</span><span class="p">,</span> <span class="n">local_file</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">local_file</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">Path</span><span class="p">(</span><span class="n">local_file</span><span class="p">)</span><span class="o">.</span><span class="n">exists</span><span class="p">():</span>
+                <span class="n">population_data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_create_dataset</span><span class="p">(</span>
+                    <span class="s2">&quot;Population&quot;</span><span class="p">,</span> <span class="n">local_file</span><span class="p">,</span> <span class="n">set_citation</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_save</span><span class="p">(</span><span class="n">population_data</span><span class="o">.</span><span class="n">raw</span><span class="p">,</span> <span class="n">filename</span><span class="p">)</span>
+                <span class="k">return</span> <span class="n">population_data</span>
+            <span class="k">raise</span> <span class="ne">FileNotFoundError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">local_file</span><span class="si">}</span><span class="s2"> does not exist.&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_needs_pull</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">population_url</span><span class="p">):</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_create_dataset</span><span class="p">(</span><span class="s2">&quot;Population&quot;</span><span class="p">,</span> <span class="n">filename</span><span class="p">)</span>
+        <span class="c1"># Create th dataset using the data of COVID-19 Data Hub</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">covid19dh</span><span class="p">(</span><span class="n">verbose</span><span class="o">=</span><span class="n">verbose</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_create_dataset</span><span class="p">(</span><span class="s2">&quot;Population&quot;</span><span class="p">,</span> <span class="n">filename</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="DataLoader.oxcgrt"><a class="viewcode-back" href="../../../covsirphy.cleaning.html#covsirphy.cleaning.dataloader.DataLoader.oxcgrt">[docs]</a>    <span class="k">def</span> <span class="nf">oxcgrt</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">basename</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">local_file</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Load OxCGRT dataset.</span>
+<span class="sd">        https://github.com/OxCGRT/covid-policy-tracker</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            basename (str or None): basename of the file to save the data</span>
+<span class="sd">            local_file (str or None): if not None, load the data from this file</span>
+<span class="sd">            verbose (bool): if True, detailed citation list will be shown when downloading</span>
+
+<span class="sd">        Notes:</span>
+<span class="sd">            Regardless the value of @local_file, the data will be save in the directory.</span>
+<span class="sd">            If @basename is None, the value of DataLoader.DH_BASENAME will be used.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            (covsirphy.OxCGRTData): OxCGRT dataset</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">filename</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_covid19dh_filename</span><span class="p">(</span><span class="n">basename</span><span class="p">,</span> <span class="n">local_file</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">local_file</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">Path</span><span class="p">(</span><span class="n">local_file</span><span class="p">)</span><span class="o">.</span><span class="n">exists</span><span class="p">():</span>
+                <span class="n">oxcgrt_data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_create_dataset</span><span class="p">(</span>
+                    <span class="s2">&quot;OxCGRT&quot;</span><span class="p">,</span> <span class="n">local_file</span><span class="p">,</span> <span class="n">set_citation</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_save</span><span class="p">(</span><span class="n">oxcgrt_data</span><span class="o">.</span><span class="n">raw</span><span class="p">,</span> <span class="n">filename</span><span class="p">)</span>
+                <span class="k">return</span> <span class="n">oxcgrt_data</span>
+            <span class="k">raise</span> <span class="ne">FileNotFoundError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">local_file</span><span class="si">}</span><span class="s2"> does not exist.&quot;</span><span class="p">)</span>
+        <span class="c1"># Create th dataset using the data of COVID-19 Data Hub</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">covid19dh</span><span class="p">(</span><span class="n">verbose</span><span class="o">=</span><span class="n">verbose</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_create_dataset</span><span class="p">(</span><span class="s2">&quot;OxCGRT&quot;</span><span class="p">,</span> <span class="n">filename</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="DataLoader.covid19dh"><a class="viewcode-back" href="../../../covsirphy.cleaning.html#covsirphy.cleaning.dataloader.DataLoader.covid19dh">[docs]</a>    <span class="k">def</span> <span class="nf">covid19dh</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">basename</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Load the dataset of COVID-19 Data Hub.</span>
+<span class="sd">        https://covid19datahub.io/</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            basename (str or None): basename of the file to save the data</span>
+<span class="sd">            verbose (bool): if True, detailed citation list will be shown when downloading</span>
+
+<span class="sd">        Notes:</span>
+<span class="sd">            Regardless the value of @local_file, the data will be save in the directory.</span>
+<span class="sd">            If @basename is None, the value of DataLoader.DH_BASENAME will be used.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            (pandas.DataFrame)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">basename</span> <span class="o">=</span> <span class="n">basename</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">_covid19dh_basename</span>
+        <span class="n">filename</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_resolve_filename</span><span class="p">(</span><span class="n">basename</span><span class="p">)</span>
+        <span class="c1"># Use the file saved in the directory</span>
+        <span class="k">if</span> <span class="n">Path</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span><span class="o">.</span><span class="n">exists</span><span class="p">()</span> <span class="ow">and</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_needs_pull</span><span class="p">(</span><span class="n">filename</span><span class="p">):</span>
+            <span class="n">df</span> <span class="o">=</span> <span class="n">dd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span>
+                <span class="n">filename</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;Province/State&quot;</span><span class="p">:</span> <span class="s2">&quot;object&quot;</span><span class="p">}</span>
+            <span class="p">)</span><span class="o">.</span><span class="n">compute</span><span class="p">()</span>
+            <span class="k">return</span> <span class="n">df</span>
+        <span class="c1"># Use the dataset of remote server</span>
+        <span class="n">df</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_covid19dh_get</span><span class="p">(</span><span class="n">verbose</span><span class="o">=</span><span class="n">verbose</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_save</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">filename</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">df</span></div>
+
+    <span class="k">def</span> <span class="nf">_covid19dh_get</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Retrieve datasets from COVID-19 Data Hub.</span>
+<span class="sd">        Level 1 (country) and level2 (province) will be used and combined to a dataframe.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            verbose (bool): if True, detailed citation list will be shown when downloading</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Country level</span>
+        <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span>
+                <span class="s2">&quot;Retrieving datasets from COVID-19 Data Hub: https://covid19datahub.io/&quot;</span><span class="p">)</span>
+        <span class="n">c_df</span><span class="p">,</span> <span class="n">p_df</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_covid19dh_retrieve</span><span class="p">()</span>
+        <span class="c1"># Change column names and select columns to use</span>
+        <span class="c1"># All columns: https://covid19datahub.io/articles/doc/data.html</span>
+        <span class="n">col_dict</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s2">&quot;date&quot;</span><span class="p">:</span> <span class="s2">&quot;ObservationDate&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;confirmed&quot;</span><span class="p">:</span> <span class="s2">&quot;Confirmed&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;recovered&quot;</span><span class="p">:</span> <span class="s2">&quot;Recovered&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;deaths&quot;</span><span class="p">:</span> <span class="s2">&quot;Deaths&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;population&quot;</span><span class="p">:</span> <span class="s2">&quot;Population&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;iso_alpha_3&quot;</span><span class="p">:</span> <span class="s2">&quot;ISO3&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;administrative_area_level_2&quot;</span><span class="p">:</span> <span class="s2">&quot;Province/State&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;administrative_area_level_1&quot;</span><span class="p">:</span> <span class="s2">&quot;Country/Region&quot;</span><span class="p">,</span>
+        <span class="p">}</span>
+        <span class="n">columns</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">col_dict</span><span class="o">.</span><span class="n">values</span><span class="p">())</span> <span class="o">+</span> <span class="n">OxCGRTData</span><span class="o">.</span><span class="n">OXCGRT_VARIABLES</span>
+        <span class="c1"># Merge the datasets</span>
+        <span class="n">c_df</span> <span class="o">=</span> <span class="n">c_df</span><span class="o">.</span><span class="n">rename</span><span class="p">(</span><span class="n">col_dict</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">loc</span><span class="p">[:,</span> <span class="n">columns</span><span class="p">]</span>
+        <span class="n">p_df</span> <span class="o">=</span> <span class="n">p_df</span><span class="o">.</span><span class="n">rename</span><span class="p">(</span><span class="n">col_dict</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">loc</span><span class="p">[:,</span> <span class="n">columns</span><span class="p">]</span>
+        <span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">([</span><span class="n">c_df</span><span class="p">,</span> <span class="n">p_df</span><span class="p">],</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">ignore_index</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">Detailed citaition list:&quot;</span><span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_covid19dh_citation</span><span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n\n</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">df</span>
+
+    <span class="k">def</span> <span class="nf">_covid19dh_filename</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">basename</span><span class="p">,</span> <span class="n">local_file</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Return the filename to save the dataset of COVID-19 Data Hub.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            basename (str or None): basename of the file to save the data</span>
+<span class="sd">            local_file (str or None): if not None, load the data from this file</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            (str): absolute path of the file</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">local_file</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">basename</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">local_file</span><span class="p">)</span><span class="o">.</span><span class="n">name</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">basename</span> <span class="o">=</span> <span class="n">basename</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">_covid19dh_basename</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_resolve_filename</span><span class="p">(</span><span class="n">basename</span><span class="p">)</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">covid19dh_citation</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Return the citation list.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_covid19dh_citation</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_covid19dh_retrieve</span><span class="p">()</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_covid19dh_citation</span>
+
+    <span class="k">def</span> <span class="nf">_covid19dh_retrieve</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Retrieve dataset and citation list from COVID-19 Data Hub.</span>
+<span class="sd">        Citation list will be saved to self.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            (tuple):</span>
+<span class="sd">                (pandas.DataFrame): dataset at country level</span>
+<span class="sd">                (pandas.DataFrame): dataset at province level</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">c_df</span> <span class="o">=</span> <span class="n">covid19dh</span><span class="o">.</span><span class="n">covid19</span><span class="p">(</span><span class="n">country</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">level</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+        <span class="n">c_citations</span> <span class="o">=</span> <span class="n">covid19dh</span><span class="o">.</span><span class="n">cite</span><span class="p">(</span><span class="n">c_df</span><span class="p">)</span>
+        <span class="c1"># For some countries, province-level data is included</span>
+        <span class="n">p_df</span> <span class="o">=</span> <span class="n">covid19dh</span><span class="o">.</span><span class="n">covid19</span><span class="p">(</span><span class="n">country</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">level</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+        <span class="n">p_citations</span> <span class="o">=</span> <span class="n">covid19dh</span><span class="o">.</span><span class="n">cite</span><span class="p">(</span><span class="n">p_df</span><span class="p">)</span>
+        <span class="c1"># Citation</span>
+        <span class="n">citations</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">dict</span><span class="o">.</span><span class="n">fromkeys</span><span class="p">(</span><span class="n">c_citations</span> <span class="o">+</span> <span class="n">p_citations</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_covid19dh_citation</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">citations</span><span class="p">)</span>
+        <span class="k">return</span> <span class="p">(</span><span class="n">c_df</span><span class="p">,</span> <span class="n">p_df</span><span class="p">)</span></div>
+</pre></div>
+
+           </div>
+           
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        
+        &copy; Copyright 2020, CovsirPhy Development Team
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>
