@@ -6,7 +6,7 @@
 
 [![GitHub license](https://img.shields.io/github/license/lisphilar/covid19-sir)](https://github.com/lisphilar/covid19-sir/blob/master/LICENSE)
 [![Maintainability](https://api.codeclimate.com/v1/badges/eb97eaf9804f436062b9/maintainability)](https://codeclimate.com/github/lisphilar/covid19-sir/maintainability)
-[![BCH compliance](https://bettercodehub.com/edge/badge/lisphilar/covid19-sir?branch=master)](https://bettercodehub.com/)
+[![Test Coverage](https://api.codeclimate.com/v1/badges/eb97eaf9804f436062b9/test_coverage)](https://codeclimate.com/github/lisphilar/covid19-sir/test_coverage)
 
 [<strong>Documentation</strong>](https://lisphilar.github.io/covid19-sir/index.html)
 | [<strong>Installation/Dataset preparation</strong>](https://lisphilar.github.io/covid19-sir/INSTALLATION.html)
