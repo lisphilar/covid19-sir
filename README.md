@@ -1,4 +1,6 @@
-# CovsirPhy: COVID-19 analysis with SIRs
+
+<img src="./docs/logo/covsirphy_headline.png" width="390">
+
 [![PyPI version](https://badge.fury.io/py/covsirphy.svg)](https://badge.fury.io/py/covsirphy)
 [![Downloads](https://pepy.tech/badge/covsirphy)](https://pepy.tech/project/covsirphy)
 [![PyPI - Python Version](https://img.shields.io/pypi/pyversions/covsirphy)](https://badge.fury.io/py/covsirphy)
