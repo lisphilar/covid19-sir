@@ -567,10 +567,9 @@ class Scenario(Term):
         phase_est_dict = {self.ODE: model.NAME}
         phase_est_dict.update(est_df.to_dict(orient="index")[phase])
         # Show the number of trials and runtime
-        trials = phase_est_dict["Trials"]
-        runtime = phase_est_dict["Runtime"]
+        trials, runtime = estimator.total_trials, estimator.run_time_show
         print(
-            f"\t{phase} phase with {model.NAME} model finished {trials} trials in {runtime}."
+            f"\t{phase} phase with {model.NAME} model: finished {trials} trials in {runtime}"
         )
         # Return the dictionary of the result of estimation
         return (model, name, phase, estimator, phase_est_dict)
@@ -595,7 +594,7 @@ class Scenario(Term):
         self.model_dict[model.NAME] = model
         return self
 
-    def estimate(self, model, phases=None, name="Main", n_jobs=-1, **kwargs):
+    def estimate(self, model, phases=None, name="Main", n_jobs=-1, stdout=True, **kwargs):
         """
         Estimate the parameters of the model using the records.
 
@@ -604,6 +603,7 @@ class Scenario(Term):
             phases (list[str]): list of phase names, like 1st, 2nd...
             name (str): phase series name
             n_jobs (int): the number of parallel jobs or -1 (CPU count)
+            stdout (bool): whether show the status of progress or not
             kwargs: keyword arguments of model parameters and covsirphy.Estimator.run()
 
         Notes:
@@ -631,13 +631,15 @@ class Scenario(Term):
         # The number of parallel jobs
         n_jobs = cpu_count() if n_jobs == -1 else n_jobs
         # Start optimization
-        print(f"\n<{name} scenario: perform parameter estimation>")
-        print(f"Running optimization with {n_jobs} CPUs...")
-        stopwatch = StopWatch()
+        if stdout:
+            print(f"\n<{name} scenario: parameter estimation>")
+            print(f"Running optimization with {n_jobs} CPUs...")
+            stopwatch = StopWatch()
         # Estimation of the last phase will be done to determine tau value
-        phase_sel, phases = phases[-1], phases[:-1]
-        result_tuple_sel = self._estimate(model, phase=phase_sel, **kwargs)
-        self._update_self(*result_tuple_sel)
+        if self.tau is None:
+            phase_sel, phases = phases[-1], phases[:-1]
+            result_tuple_sel = self._estimate(model, phase=phase_sel, **kwargs)
+            self._update_self(*result_tuple_sel)
         # Estimation of each phase
         est_f = functools.partial(self._estimate, model, **kwargs)
         with Pool(n_jobs) as p:
@@ -645,10 +647,11 @@ class Scenario(Term):
         for result_tuple in result_nest:
             self._update_self(*result_tuple)
         # Completion
-        stopwatch.stop()
-        print(f"Completed optimization. Total: {stopwatch.show()}")
+        if stdout:
+            stopwatch.stop()
+            print(f"Completed optimization. Total: {stopwatch.show()}")
 
-    def _phase_estimator(self, phase, name):
+    def phase_estimator(self, phase, name="Main"):
         """
         Return the estimator of the phase.
 
@@ -678,7 +681,7 @@ class Scenario(Term):
         Notes:
             If 'Main' was used as @name, main PhaseSeries will be used.
         """
-        estimator = self._phase_estimator(phase=phase, name=name)
+        estimator = self.phase_estimator(phase=phase, name=name)
         estimator.history(**kwargs)
 
     def estimate_accuracy(self, phase, name="Main", **kwargs):
@@ -693,7 +696,7 @@ class Scenario(Term):
         Notes:
             If 'Main' was used as @name, main PhaseSeries will be used.
         """
-        estimator = self._phase_estimator(phase=phase, name=name)
+        estimator = self.phase_estimator(phase=phase, name=name)
         estimator.accuracy(**kwargs)
 
     def simulate(self, name="Main", y0_dict=None, show_figure=True, filename=None):

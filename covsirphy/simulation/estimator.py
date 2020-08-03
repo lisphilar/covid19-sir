@@ -148,6 +148,7 @@ class Estimator(Optimizer):
                 break
         # Calculate run-time and the number of trials
         self.run_time = stopwatch.stop()
+        self.run_time_show = stopwatch.show()
         self.total_trials = len(self.study.trials)
         if stdout:
             print(
