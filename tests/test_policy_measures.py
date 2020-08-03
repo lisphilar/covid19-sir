@@ -22,7 +22,8 @@ class TestPolicyMeasures(object):
             analyser.scenario("Moon")
         assert isinstance(analyser.countries, list)
         # S-R trend analysis
-        min_len = 10
+        analyser.trend()
+        min_len = max(analyser.phase_len().keys())
         analyser.trend(min_len=min_len)
         # Summarize
         assert isinstance(analyser.summary(), pd.DataFrame)
