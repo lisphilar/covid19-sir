@@ -85,6 +85,10 @@ example:
 	@echo "<Scenario analysis>"
 	@pipenv run python -m example.scenario_analysis
 
+	@# Worldwide analysis
+	@echo "<Worldwide analysis>"
+	@pipenv run python -m example.worldwide
+
 
 .PHONY: pypi
 pypi:
@@ -119,3 +123,12 @@ clean:
 .PHONY: update
 update:
 	@pipenv update
+
+
+.PHONY: cache_clear
+cache_clear:
+	@# Try this command when failed in locking
+	@# https://pipenv.kennethreitz.org/en/latest/diagnose/
+	@export PIPENV_VENV_IN_PROJECT=true
+	@export PIPENV_TIMEOUT=7200
+	@pipenv lock --clear
