@@ -727,10 +727,9 @@
         <span class="n">phase_est_dict</span> <span class="o">=</span> <span class="p">{</span><span class="bp">self</span><span class="o">.</span><span class="n">ODE</span><span class="p">:</span> <span class="n">model</span><span class="o">.</span><span class="n">NAME</span><span class="p">}</span>
         <span class="n">phase_est_dict</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">est_df</span><span class="o">.</span><span class="n">to_dict</span><span class="p">(</span><span class="n">orient</span><span class="o">=</span><span class="s2">&quot;index&quot;</span><span class="p">)[</span><span class="n">phase</span><span class="p">])</span>
         <span class="c1"># Show the number of trials and runtime</span>
-        <span class="n">trials</span> <span class="o">=</span> <span class="n">phase_est_dict</span><span class="p">[</span><span class="s2">&quot;Trials&quot;</span><span class="p">]</span>
-        <span class="n">runtime</span> <span class="o">=</span> <span class="n">phase_est_dict</span><span class="p">[</span><span class="s2">&quot;Runtime&quot;</span><span class="p">]</span>
+        <span class="n">trials</span><span class="p">,</span> <span class="n">runtime</span> <span class="o">=</span> <span class="n">estimator</span><span class="o">.</span><span class="n">total_trials</span><span class="p">,</span> <span class="n">estimator</span><span class="o">.</span><span class="n">run_time_show</span>
         <span class="nb">print</span><span class="p">(</span>
-            <span class="sa">f</span><span class="s2">&quot;</span><span class="se">\t</span><span class="si">{</span><span class="n">phase</span><span class="si">}</span><span class="s2"> phase with </span><span class="si">{</span><span class="n">model</span><span class="o">.</span><span class="n">NAME</span><span class="si">}</span><span class="s2"> model finished </span><span class="si">{</span><span class="n">trials</span><span class="si">}</span><span class="s2"> trials in </span><span class="si">{</span><span class="n">runtime</span><span class="si">}</span><span class="s2">.&quot;</span>
+            <span class="sa">f</span><span class="s2">&quot;</span><span class="se">\t</span><span class="si">{</span><span class="n">phase</span><span class="si">}</span><span class="s2"> phase with </span><span class="si">{</span><span class="n">model</span><span class="o">.</span><span class="n">NAME</span><span class="si">}</span><span class="s2"> model: finished </span><span class="si">{</span><span class="n">trials</span><span class="si">}</span><span class="s2"> trials in </span><span class="si">{</span><span class="n">runtime</span><span class="si">}</span><span class="s2">&quot;</span>
         <span class="p">)</span>
         <span class="c1"># Return the dictionary of the result of estimation</span>
         <span class="k">return</span> <span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">phase</span><span class="p">,</span> <span class="n">estimator</span><span class="p">,</span> <span class="n">phase_est_dict</span><span class="p">)</span>
@@ -755,7 +754,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">model_dict</span><span class="p">[</span><span class="n">model</span><span class="o">.</span><span class="n">NAME</span><span class="p">]</span> <span class="o">=</span> <span class="n">model</span>
         <span class="k">return</span> <span class="bp">self</span>
 
-<div class="viewcode-block" id="Scenario.estimate"><a class="viewcode-back" href="../../../covsirphy.analysis.html#covsirphy.analysis.scenario.Scenario.estimate">[docs]</a>    <span class="k">def</span> <span class="nf">estimate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model</span><span class="p">,</span> <span class="n">phases</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;Main&quot;</span><span class="p">,</span> <span class="n">n_jobs</span><span class="o">=-</span><span class="mi">1</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<div class="viewcode-block" id="Scenario.estimate"><a class="viewcode-back" href="../../../covsirphy.analysis.html#covsirphy.analysis.scenario.Scenario.estimate">[docs]</a>    <span class="k">def</span> <span class="nf">estimate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model</span><span class="p">,</span> <span class="n">phases</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;Main&quot;</span><span class="p">,</span> <span class="n">n_jobs</span><span class="o">=-</span><span class="mi">1</span><span class="p">,</span> <span class="n">stdout</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Estimate the parameters of the model using the records.</span>
 
@@ -764,6 +763,7 @@
 <span class="sd">            phases (list[str]): list of phase names, like 1st, 2nd...</span>
 <span class="sd">            name (str): phase series name</span>
 <span class="sd">            n_jobs (int): the number of parallel jobs or -1 (CPU count)</span>
+<span class="sd">            stdout (bool): whether show the status of progress or not</span>
 <span class="sd">            kwargs: keyword arguments of model parameters and covsirphy.Estimator.run()</span>
 
 <span class="sd">        Notes:</span>
@@ -791,13 +791,15 @@
         <span class="c1"># The number of parallel jobs</span>
         <span class="n">n_jobs</span> <span class="o">=</span> <span class="n">cpu_count</span><span class="p">()</span> <span class="k">if</span> <span class="n">n_jobs</span> <span class="o">==</span> <span class="o">-</span><span class="mi">1</span> <span class="k">else</span> <span class="n">n_jobs</span>
         <span class="c1"># Start optimization</span>
-        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&lt;</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2"> scenario: perform parameter estimation&gt;&quot;</span><span class="p">)</span>
-        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Running optimization with </span><span class="si">{</span><span class="n">n_jobs</span><span class="si">}</span><span class="s2"> CPUs...&quot;</span><span class="p">)</span>
-        <span class="n">stopwatch</span> <span class="o">=</span> <span class="n">StopWatch</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">stdout</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&lt;</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2"> scenario: parameter estimation&gt;&quot;</span><span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Running optimization with </span><span class="si">{</span><span class="n">n_jobs</span><span class="si">}</span><span class="s2"> CPUs...&quot;</span><span class="p">)</span>
+            <span class="n">stopwatch</span> <span class="o">=</span> <span class="n">StopWatch</span><span class="p">()</span>
         <span class="c1"># Estimation of the last phase will be done to determine tau value</span>
-        <span class="n">phase_sel</span><span class="p">,</span> <span class="n">phases</span> <span class="o">=</span> <span class="n">phases</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="n">phases</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
-        <span class="n">result_tuple_sel</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_estimate</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">phase</span><span class="o">=</span><span class="n">phase_sel</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_update_self</span><span class="p">(</span><span class="o">*</span><span class="n">result_tuple_sel</span><span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">tau</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">phase_sel</span><span class="p">,</span> <span class="n">phases</span> <span class="o">=</span> <span class="n">phases</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="n">phases</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+            <span class="n">result_tuple_sel</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_estimate</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">phase</span><span class="o">=</span><span class="n">phase_sel</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_update_self</span><span class="p">(</span><span class="o">*</span><span class="n">result_tuple_sel</span><span class="p">)</span>
         <span class="c1"># Estimation of each phase</span>
         <span class="n">est_f</span> <span class="o">=</span> <span class="n">functools</span><span class="o">.</span><span class="n">partial</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_estimate</span><span class="p">,</span> <span class="n">model</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
         <span class="k">with</span> <span class="n">Pool</span><span class="p">(</span><span class="n">n_jobs</span><span class="p">)</span> <span class="k">as</span> <span class="n">p</span><span class="p">:</span>
@@ -805,10 +807,11 @@
         <span class="k">for</span> <span class="n">result_tuple</span> <span class="ow">in</span> <span class="n">result_nest</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_update_self</span><span class="p">(</span><span class="o">*</span><span class="n">result_tuple</span><span class="p">)</span>
         <span class="c1"># Completion</span>
-        <span class="n">stopwatch</span><span class="o">.</span><span class="n">stop</span><span class="p">()</span>
-        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Completed optimization. Total: </span><span class="si">{</span><span class="n">stopwatch</span><span class="o">.</span><span class="n">show</span><span class="p">()</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span></div>
+        <span class="k">if</span> <span class="n">stdout</span><span class="p">:</span>
+            <span class="n">stopwatch</span><span class="o">.</span><span class="n">stop</span><span class="p">()</span>
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Completed optimization. Total: </span><span class="si">{</span><span class="n">stopwatch</span><span class="o">.</span><span class="n">show</span><span class="p">()</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span></div>
 
-    <span class="k">def</span> <span class="nf">_phase_estimator</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">phase</span><span class="p">,</span> <span class="n">name</span><span class="p">):</span>
+<div class="viewcode-block" id="Scenario.phase_estimator"><a class="viewcode-back" href="../../../covsirphy.analysis.html#covsirphy.analysis.scenario.Scenario.phase_estimator">[docs]</a>    <span class="k">def</span> <span class="nf">phase_estimator</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">phase</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;Main&quot;</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Return the estimator of the phase.</span>
 
@@ -824,7 +827,7 @@
         <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">KeyError</span><span class="p">(</span>
                 <span class="sa">f</span><span class="s1">&#39;Scenario.estimate(model, phases=[&quot;</span><span class="si">{</span><span class="n">phase</span><span class="si">}</span><span class="s1">&quot;], name=</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s1">) must be done in advance.&#39;</span>
-            <span class="p">)</span>
+            <span class="p">)</span></div>
 
 <div class="viewcode-block" id="Scenario.estimate_history"><a class="viewcode-back" href="../../../covsirphy.analysis.html#covsirphy.analysis.scenario.Scenario.estimate_history">[docs]</a>    <span class="k">def</span> <span class="nf">estimate_history</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">phase</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;Main&quot;</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
@@ -838,7 +841,7 @@
 <span class="sd">        Notes:</span>
 <span class="sd">            If &#39;Main&#39; was used as @name, main PhaseSeries will be used.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">estimator</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_phase_estimator</span><span class="p">(</span><span class="n">phase</span><span class="o">=</span><span class="n">phase</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">)</span>
+        <span class="n">estimator</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">phase_estimator</span><span class="p">(</span><span class="n">phase</span><span class="o">=</span><span class="n">phase</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">)</span>
         <span class="n">estimator</span><span class="o">.</span><span class="n">history</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="Scenario.estimate_accuracy"><a class="viewcode-back" href="../../../covsirphy.analysis.html#covsirphy.analysis.scenario.Scenario.estimate_accuracy">[docs]</a>    <span class="k">def</span> <span class="nf">estimate_accuracy</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">phase</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;Main&quot;</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
@@ -853,7 +856,7 @@
 <span class="sd">        Notes:</span>
 <span class="sd">            If &#39;Main&#39; was used as @name, main PhaseSeries will be used.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">estimator</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_phase_estimator</span><span class="p">(</span><span class="n">phase</span><span class="o">=</span><span class="n">phase</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">)</span>
+        <span class="n">estimator</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">phase_estimator</span><span class="p">(</span><span class="n">phase</span><span class="o">=</span><span class="n">phase</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">)</span>
         <span class="n">estimator</span><span class="o">.</span><span class="n">accuracy</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="Scenario.simulate"><a class="viewcode-back" href="../../../covsirphy.analysis.html#covsirphy.analysis.scenario.Scenario.simulate">[docs]</a>    <span class="k">def</span> <span class="nf">simulate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;Main&quot;</span><span class="p">,</span> <span class="n">y0_dict</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">show_figure</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">filename</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
