@@ -14,13 +14,13 @@ class ODESimulator(Term):
     Simulation of an ODE model.
 
     Args:
-        country (str): country name
-        province (str): province name
+        country (str or None): country name
+        province (str or None): province name
     """
 
-    def __init__(self, country, province="-"):
-        self.country = country
-        self.province = province
+    def __init__(self, country=None, province=None):
+        self.country = country or self.UNKNOWN
+        self.province = province or self.UNKNOWN
         # list of dictionary
         # keys: model, step_n, population, param_dict, y0_dict
         self.settings = []

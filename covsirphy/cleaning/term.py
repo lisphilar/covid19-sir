@@ -159,11 +159,13 @@ class Term(object):
         if columns is None:
             return df
         if not set(columns).issubset(set(df.columns)):
-            cols_str = ', '.join(
+            cols_str = ", ".join(
                 [col for col in columns if col not in df.columns]
             )
+            included = ", ".join(df.columns.tolist())
+            s1 = f"Expected columns were not included in {name} with {included}."
             raise KeyError(
-                f"Expected columns were not included in {name}. {cols_str} must be included."
+                f"{s1} However, {cols_str} must be included."
             )
         return df
 
@@ -199,6 +201,26 @@ class Term(object):
         if number < min_value:
             raise ValueError(f"{s}. This value is under {min_value}")
         return number
+
+    @classmethod
+    def ensure_tau(cls, tau):
+        """
+        Ensure that the value can be used as tau value [min].
+
+        Args:
+            tau (int or None): value to use
+
+        Returns:
+            int or None: as-is
+        """
+        if tau is None:
+            return None
+        tau = cls.ensure_natural_int(tau, name="tau")
+        if tau in set(cls.divisors(1440)):
+            return tau
+        raise ValueError(
+            f"@tau must be a divisor of 1440 [min], but {tau} was applied."
+        )
 
     @staticmethod
     def ensure_float(target, name="value"):

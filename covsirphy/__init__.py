@@ -18,9 +18,9 @@ from covsirphy.__version__ import __version__
 from covsirphy.cleaning import Term, CleaningBase, DataLoader
 from covsirphy.cleaning import JHUData, CountryData, PopulationData, OxCGRTData
 from covsirphy.ode import ModelBase, SIR, SIRD, SIRF, SIRFV, SEWIRF
-from covsirphy.phase import Trend, ChangeFinder, PhaseSeries
+from covsirphy.phase import Trend, ChangeFinder, PhaseSeries, PhaseUnit
 from covsirphy.simulation import Optimizer, ODESimulator, Estimator
-from covsirphy.util import line_plot, jpn_map, StopWatch, error
+from covsirphy.util import line_plot, jpn_map, StopWatch, error, find_args
 from covsirphy.analysis import ExampleData, Scenario
 from covsirphy.worldwide import PolicyMeasures
 # Deprecated
@@ -36,12 +36,12 @@ def get_version():
 
 __all__ = [
     "ODESimulator", "ChangeFinder",
-    "PhaseSeries", "Scenario", "ExampleData",
+    "PhaseSeries", "Scenario", "ExampleData", "PhaseUnit",
     "Term", "CleaningBase", "DataLoader",
     "JHUData", "CountryData", "PopulationData", "OxCGRTData",
     "ModelBase", "SIR", "SIRD", "SIRF", "SIRFV", "SEWIRF",
     "Estimator", "Trend", "Optimizer",
-    "line_plot", "jpn_map", "StopWatch", "error",
+    "line_plot", "jpn_map", "StopWatch", "error", "find_args",
     "PolicyMeasures",
     # Deprecated
     "Population", "Word",

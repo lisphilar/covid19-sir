@@ -2,10 +2,10 @@
 # -*- coding: utf-8 -*-
 
 import math
-import warnings
 import numpy as np
 import optuna
 import pandas as pd
+from covsirphy.util.argument import find_args
 from covsirphy.cleaning.jhu_data import JHUData
 from covsirphy.util.stopwatch import StopWatch
 from covsirphy.ode.mbase import ModelBase
@@ -18,55 +18,51 @@ class Estimator(Optimizer):
     Hyperparameter optimization of an ODE model.
 
     Args:
-        jhu_data (covsirphy.JHUData): object of records
+        record_df (pandas.DataFrame)
+            Index:
+                reset index
+            Columns:
+                - Date (pd.TimeStamp): Observation date
+                - Confirmed (int): the number of confirmed cases
+                - Infected (int): the number of currently infected cases
+                - Fatal (int): the number of fatal cases
+                - Recovered (int): the number of recovered cases
+                - any other columns will be ignored
         model (covsirphy.ModelBase): ODE model
         population (int): total population in the place
-        country (str): country name
-        province (str): province name
-        start_date (str): start date, like 22Jan2020
-        end_date (str): end date, like 01Feb2020
-        kwargs: parameter values of the model
+        kwargs: parameter values of the model and data subseting
     """
     np.seterr(divide="raise")
 
-    def __init__(self, jhu_data, model, population,
-                 country, province=None,
-                 start_date=None, end_date=None, **kwargs):
-        # Check type of model
-        model = self.ensure_subclass(model, ModelBase, name="model")
-        # Dataset
-        if isinstance(jhu_data, pd.DataFrame):
-            warnings.warn(
-                "Please use instance of JHUData as the first argument of Trend class.",
-                DeprecationWarning,
-                stacklevel=2
-            )
-            df = jhu_data.copy()
-            if not set(self.VALUE_COLUMNS).issubset(set(df.columns)):
-                df = model.restore(df)
-            jhu_data = JHUData.from_dataframe(df)
-        jhu_data = self.ensure_instance(jhu_data, JHUData, name="jhu_data")
-        # Read arguments
-        self.model = model
-        self.population = population
-        self.country = country
-        self.province = province
-        self.start_date = start_date
-        self.end_date = end_date
-        self.fixed_dict = kwargs.copy()
-        if self.TAU in self.fixed_dict.keys():
-            self.fixed_dict[self.TAU] = self.ensure_natural_int(
-                self.fixed_dict[self.TAU], name="tau"
-            )
-        # Training dataset
-        self.subset_df = jhu_data.subset(
-            country=country, province=province,
-            start_date=start_date, end_date=end_date
+    def __init__(self, record_df, model, population, **kwargs):
+        # Arguments
+        self.population = self.ensure_natural_int(
+            population, name="population"
         )
-        df = model.tau_free(self.subset_df, population, tau=None)
+        self.model = self.ensure_subclass(model, ModelBase, name="model")
+        # Dataset
+        if isinstance(record_df, JHUData):
+            subset_arg_dict = find_args(
+                [JHUData.subset, record_df.subset], **kwargs)
+            record_df = record_df.subset(
+                population=population, **subset_arg_dict)
+        else:
+            record_df = model.restore(record_df)
+        self.record_df = self.ensure_dataframe(
+            record_df, name="record_df", columns=self.NLOC_COLUMNS
+        )
+        # Initial values
+        df = model.tau_free(self.record_df, population, tau=None)
         self.y0_dict = {
             k: df.loc[df.index[0], k] for k in model.VARIABLES
         }
+        # Fixed parameter values
+        fixable_set = set(model.PARAMETERS) & set([self.TAU])
+        self.fixed_dict = {
+            k: v for (k, v) in kwargs.items() if k in fixable_set
+        }
+        if self.TAU in self.fixed_dict.keys():
+            self.ensure_tau(self.fixed_dict[self.TAU])
         # For optimization
         optuna.logging.disable_default_handler()
         self.x = self.TS
@@ -110,12 +106,11 @@ class Estimator(Optimizer):
             allowance (tuple(float, float)): the allowance of the predicted value
             seed (int or None): random seed of hyperparameter optimization
             stdout (bool): whether show the status of progress or not
+            kwargs: other keyword arguments will be ignored
 
         Notes:
             @n_jobs was obsoleted because this is not effective for Optuna.
         """
-        if "n_jobs" in kwargs.keys():
-            raise KeyError("@n_jobs of Estimator.run() was obsoleted.")
         # Create a study of optuna
         if self.study is None:
             self._init_study(seed=seed)
@@ -222,7 +217,7 @@ class Estimator(Optimizer):
                     - t (int): Elapsed time divided by tau value [-]
                     - columns with dimensional variables
         """
-        df = self.model.tau_free(self.subset_df, self.population, tau=tau)
+        df = self.model.tau_free(self.record_df, self.population, tau=tau)
         self.step_n = int(df[self.TS].max())
         return df
 
@@ -285,7 +280,7 @@ class Estimator(Optimizer):
                     - t (int): Elapsed time divided by tau value [-]
                     - columns with dimensionalized variables
         """
-        simulator = ODESimulator(country=self.country, province=self.province)
+        simulator = ODESimulator()
         simulator.add(
             model=self.model,
             step_n=step_n,
@@ -296,18 +291,18 @@ class Estimator(Optimizer):
         simulator.run()
         return simulator.taufree()
 
-    def summary(self, name):
+    def summary(self, name=None):
         """
         Summarize the results of optimization.
         This function should be overwritten in subclass.
 
         Args:
-            name (str): index of the dataframe
+            name (str or None): index of the dataframe
 
         Returns:
             (pandas.DataFrame):
                 Index:
-                    reset index
+                    name or reset index (when name is None)
                 Columns:
                     - (parameters of the model)
                     - tau
@@ -335,7 +330,9 @@ class Estimator(Optimizer):
         minutes, seconds = divmod(int(self.run_time), 60)
         param_dict["Runtime"] = f"{minutes} min {seconds} sec"
         # Convert to dataframe
-        df = pd.DataFrame.from_dict({name: param_dict}, orient="index")
+        df = pd.DataFrame.from_dict({str(name): param_dict}, orient="index")
+        if name is None:
+            df = df.reset_index(drop=True)
         return df.fillna(self.UNKNOWN)
 
     def rmsle(self, tau):
