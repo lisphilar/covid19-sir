@@ -61,7 +61,7 @@ class Estimator(Optimizer):
         self.fixed_dict = {
             k: v for (k, v) in kwargs.items() if k in fixable_set
         }
-        if self.TAU in self.fixed_dict.keys():
+        if self.TAU in self.fixed_dict:
             self.ensure_tau(self.fixed_dict[self.TAU])
         # For optimization
         optuna.logging.disable_default_handler()
