@@ -3,6 +3,7 @@
 
 from collections import defaultdict
 from datetime import datetime, timedelta
+import math
 from methodtools import lru_cache
 import numpy as np
 import pandas as pd
@@ -56,12 +57,16 @@ class Term(object):
     # Phase name
     SUFFIX_DICT = defaultdict(lambda: "th")
     SUFFIX_DICT.update({1: "st", 2: "nd", 3: "rd"})
+    # Summary of phases
     TENSE = "Type"
     PAST = "Past"
     FUTURE = "Future"
     INITIAL = "Initial"
     ODE = "ODE"
     RT = "Rt"
+    RMSLE = "RMSLE"
+    TRIALS = "Trials"
+    RUNTIME = "Runtime"
     # Scenario analysis
     PHASE = "Phase"
     SERIES = "Scenario"
@@ -349,6 +354,19 @@ class Term(object):
         """
         tomorrow = cls.to_date_obj(date_str) + timedelta(days=1)
         return tomorrow.strftime(cls.DATE_FORMAT)
+
+    @classmethod
+    def days(cls, start_date, end_date):
+        """
+        Return the number of days (round up).
+
+        Args:
+            start_date (str): start date, like 01Jan2020
+            end_date (str): end date, like 01Jan2020
+        """
+        sta = cls.to_date_obj(start_date)
+        end = cls.to_date_obj(end_date)
+        return math.ceil((sta - end) / timedelta(days=1))
 
 
 class Word(Term):

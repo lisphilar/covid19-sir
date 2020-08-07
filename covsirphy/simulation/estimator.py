@@ -319,16 +319,16 @@ class Estimator(Optimizer):
             population=self.population, **model_params
         )
         # Rt
-        param_dict["Rt"] = model_instance.calc_r0()
+        param_dict[self.RT] = model_instance.calc_r0()
         # dimensional parameters [day]
         param_dict.update(model_instance.calc_days_dict(tau))
         # RMSLE
-        param_dict["RMSLE"] = self.rmsle(tau)
+        param_dict[self.RMSLE] = self.rmsle(tau)
         # The number of trials
-        param_dict["Trials"] = self.total_trials
+        param_dict[self.TRIALS] = self.total_trials
         # Runtime
         minutes, seconds = divmod(int(self.run_time), 60)
-        param_dict["Runtime"] = f"{minutes} min {seconds} sec"
+        param_dict[self.RUNTIME] = f"{minutes} min {seconds} sec"
         # Convert to dataframe
         df = pd.DataFrame.from_dict({str(name): param_dict}, orient="index")
         if name is None:

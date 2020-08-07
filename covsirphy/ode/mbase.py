@@ -199,4 +199,4 @@ class ModelBase(ModelBaseCommon):
             df[cls.TS] = (df[cls.T] / tau).astype(np.int64)
             df = df.drop(cls.T, axis=1)
         df = df.drop(cls.DATE, axis=1)
-        return cls.specialize(df, population)
+        return cls.specialize(df, population).reset_index(drop=True)
