@@ -319,11 +319,13 @@
         <span class="k">if</span> <span class="n">columns</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">return</span> <span class="n">df</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="nb">set</span><span class="p">(</span><span class="n">columns</span><span class="p">)</span><span class="o">.</span><span class="n">issubset</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">df</span><span class="o">.</span><span class="n">columns</span><span class="p">)):</span>
-            <span class="n">cols_str</span> <span class="o">=</span> <span class="s1">&#39;, &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span>
+            <span class="n">cols_str</span> <span class="o">=</span> <span class="s2">&quot;, &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span>
                 <span class="p">[</span><span class="n">col</span> <span class="k">for</span> <span class="n">col</span> <span class="ow">in</span> <span class="n">columns</span> <span class="k">if</span> <span class="n">col</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">df</span><span class="o">.</span><span class="n">columns</span><span class="p">]</span>
             <span class="p">)</span>
+            <span class="n">included</span> <span class="o">=</span> <span class="s2">&quot;, &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">df</span><span class="o">.</span><span class="n">columns</span><span class="o">.</span><span class="n">tolist</span><span class="p">())</span>
+            <span class="n">s1</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;Expected columns were not included in </span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2"> with </span><span class="si">{</span><span class="n">included</span><span class="si">}</span><span class="s2">.&quot;</span>
             <span class="k">raise</span> <span class="ne">KeyError</span><span class="p">(</span>
-                <span class="sa">f</span><span class="s2">&quot;Expected columns were not included in </span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2">. </span><span class="si">{</span><span class="n">cols_str</span><span class="si">}</span><span class="s2"> must be included.&quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">s1</span><span class="si">}</span><span class="s2"> However, </span><span class="si">{</span><span class="n">cols_str</span><span class="si">}</span><span class="s2"> must be included.&quot;</span>
             <span class="p">)</span>
         <span class="k">return</span> <span class="n">df</span></div>
 
@@ -359,6 +361,26 @@
         <span class="k">if</span> <span class="n">number</span> <span class="o">&lt;</span> <span class="n">min_value</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">s</span><span class="si">}</span><span class="s2">. This value is under </span><span class="si">{</span><span class="n">min_value</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">number</span></div>
+
+<div class="viewcode-block" id="Term.ensure_tau"><a class="viewcode-back" href="../../../covsirphy.cleaning.html#covsirphy.cleaning.term.Term.ensure_tau">[docs]</a>    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">ensure_tau</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">tau</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Ensure that the value can be used as tau value [min].</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            tau (int or None): value to use</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            int or None: as-is</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">tau</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">None</span>
+        <span class="n">tau</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">ensure_natural_int</span><span class="p">(</span><span class="n">tau</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;tau&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">tau</span> <span class="ow">in</span> <span class="nb">set</span><span class="p">(</span><span class="bp">cls</span><span class="o">.</span><span class="n">divisors</span><span class="p">(</span><span class="mi">1440</span><span class="p">)):</span>
+            <span class="k">return</span> <span class="n">tau</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;@tau must be a divisor of 1440 [min], but </span><span class="si">{</span><span class="n">tau</span><span class="si">}</span><span class="s2"> was applied.&quot;</span>
+        <span class="p">)</span></div>
 
 <div class="viewcode-block" id="Term.ensure_float"><a class="viewcode-back" href="../../../covsirphy.cleaning.html#covsirphy.cleaning.term.Term.ensure_float">[docs]</a>    <span class="nd">@staticmethod</span>
     <span class="k">def</span> <span class="nf">ensure_float</span><span class="p">(</span><span class="n">target</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;value&quot;</span><span class="p">):</span>

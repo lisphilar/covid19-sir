@@ -174,13 +174,13 @@
 <span class="sd">    Simulation of an ODE model.</span>
 
 <span class="sd">    Args:</span>
-<span class="sd">        country (str): country name</span>
-<span class="sd">        province (str): province name</span>
+<span class="sd">        country (str or None): country name</span>
+<span class="sd">        province (str or None): province name</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">country</span><span class="p">,</span> <span class="n">province</span><span class="o">=</span><span class="s2">&quot;-&quot;</span><span class="p">):</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">country</span> <span class="o">=</span> <span class="n">country</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">province</span> <span class="o">=</span> <span class="n">province</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">country</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">province</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">country</span> <span class="o">=</span> <span class="n">country</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">UNKNOWN</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">province</span> <span class="o">=</span> <span class="n">province</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">UNKNOWN</span>
         <span class="c1"># list of dictionary</span>
         <span class="c1"># keys: model, step_n, population, param_dict, y0_dict</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">settings</span> <span class="o">=</span> <span class="p">[]</span>

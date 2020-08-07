@@ -208,20 +208,29 @@
 <span id="covsirphy-simulation-estimator"></span><h2>covsirphy.simulation.estimator<a class="headerlink" href="#module-covsirphy.simulation.estimator" title="Permalink to this headline">¶</a></h2>
 <dl class="py class">
 <dt id="covsirphy.simulation.estimator.Estimator">
-<em class="property">class </em><code class="sig-prename descclassname">covsirphy.simulation.estimator.</code><code class="sig-name descname">Estimator</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">jhu_data</span></em>, <em class="sig-param"><span class="n">model</span></em>, <em class="sig-param"><span class="n">population</span></em>, <em class="sig-param"><span class="n">country</span></em>, <em class="sig-param"><span class="n">province</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">start_date</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">end_date</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/simulation/estimator.html#Estimator"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#covsirphy.simulation.estimator.Estimator" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">covsirphy.simulation.estimator.</code><code class="sig-name descname">Estimator</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">record_df</span></em>, <em class="sig-param"><span class="n">model</span></em>, <em class="sig-param"><span class="n">population</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/simulation/estimator.html#Estimator"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#covsirphy.simulation.estimator.Estimator" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#covsirphy.simulation.optimize.Optimizer" title="covsirphy.simulation.optimize.Optimizer"><code class="xref py py-class docutils literal notranslate"><span class="pre">covsirphy.simulation.optimize.Optimizer</span></code></a></p>
 <p>Hyperparameter optimization of an ODE model.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>jhu_data</strong> (<em>covsirphy.JHUData</em>) – object of records</p></li>
+<li><p><strong>record_df</strong> (<em>pandas.DataFrame</em>) – <dl class="simple">
+<dt>Index:</dt><dd><p>reset index</p>
+</dd>
+<dt>Columns:</dt><dd><ul>
+<li><p>Date (pd.TimeStamp): Observation date</p></li>
+<li><p>Confirmed (int): the number of confirmed cases</p></li>
+<li><p>Infected (int): the number of currently infected cases</p></li>
+<li><p>Fatal (int): the number of fatal cases</p></li>
+<li><p>Recovered (int): the number of recovered cases</p></li>
+<li><p>any other columns will be ignored</p></li>
+</ul>
+</dd>
+</dl>
+</p></li>
 <li><p><strong>model</strong> (<em>covsirphy.ModelBase</em>) – ODE model</p></li>
 <li><p><strong>population</strong> (<em>int</em>) – total population in the place</p></li>
-<li><p><strong>country</strong> (<em>str</em>) – country name</p></li>
-<li><p><strong>province</strong> (<em>str</em>) – province name</p></li>
-<li><p><strong>start_date</strong> (<em>str</em>) – start date, like 22Jan2020</p></li>
-<li><p><strong>end_date</strong> (<em>str</em>) – end date, like 01Feb2020</p></li>
-<li><p><strong>kwargs</strong> – parameter values of the model</p></li>
+<li><p><strong>kwargs</strong> – parameter values of the model and data subseting</p></li>
 </ul>
 </dd>
 </dl>
@@ -343,6 +352,7 @@ If the result satisfied the following conditions, optimization ends.
 <li><p><strong>allowance</strong> (<em>tuple</em><em>(</em><em>float</em><em>, </em><em>float</em><em>)</em>) – the allowance of the predicted value</p></li>
 <li><p><strong>seed</strong> (<em>int</em><em> or </em><em>None</em>) – random seed of hyperparameter optimization</p></li>
 <li><p><strong>stdout</strong> (<em>bool</em>) – whether show the status of progress or not</p></li>
+<li><p><strong>kwargs</strong> – other keyword arguments will be ignored</p></li>
 </ul>
 </dd>
 </dl>
@@ -383,16 +393,16 @@ If the result satisfied the following conditions, optimization ends.
 
 <dl class="py method">
 <dt id="covsirphy.simulation.estimator.Estimator.summary">
-<code class="sig-name descname">summary</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">name</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/simulation/estimator.html#Estimator.summary"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#covsirphy.simulation.estimator.Estimator.summary" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">summary</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">name</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/simulation/estimator.html#Estimator.summary"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#covsirphy.simulation.estimator.Estimator.summary" title="Permalink to this definition">¶</a></dt>
 <dd><p>Summarize the results of optimization.
 This function should be overwritten in subclass.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>name</strong> (<em>str</em>) – index of the dataframe</p>
+<dd class="field-odd"><p><strong>name</strong> (<em>str</em><em> or </em><em>None</em>) – index of the dataframe</p>
 </dd>
 <dt class="field-even">Returns</dt>
 <dd class="field-even"><p><dl class="simple">
-<dt>Index:</dt><dd><p>reset index</p>
+<dt>Index:</dt><dd><p>name or reset index (when name is None)</p>
 </dd>
 <dt>Columns:</dt><dd><ul class="simple">
 <li><p>(parameters of the model)</p></li>
@@ -734,14 +744,14 @@ This method should be overwritten in subclass.</p>
 <span id="covsirphy-simulation-simulator"></span><h2>covsirphy.simulation.simulator<a class="headerlink" href="#module-covsirphy.simulation.simulator" title="Permalink to this headline">¶</a></h2>
 <dl class="py class">
 <dt id="covsirphy.simulation.simulator.ODESimulator">
-<em class="property">class </em><code class="sig-prename descclassname">covsirphy.simulation.simulator.</code><code class="sig-name descname">ODESimulator</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">country</span></em>, <em class="sig-param"><span class="n">province</span><span class="o">=</span><span class="default_value">'-'</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/simulation/simulator.html#ODESimulator"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#covsirphy.simulation.simulator.ODESimulator" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">covsirphy.simulation.simulator.</code><code class="sig-name descname">ODESimulator</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">country</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">province</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/simulation/simulator.html#ODESimulator"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#covsirphy.simulation.simulator.ODESimulator" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="covsirphy.cleaning.html#covsirphy.cleaning.term.Term" title="covsirphy.cleaning.term.Term"><code class="xref py py-class docutils literal notranslate"><span class="pre">covsirphy.cleaning.term.Term</span></code></a></p>
 <p>Simulation of an ODE model.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>country</strong> (<em>str</em>) – country name</p></li>
-<li><p><strong>province</strong> (<em>str</em>) – province name</p></li>
+<li><p><strong>country</strong> (<em>str</em><em> or </em><em>None</em>) – country name</p></li>
+<li><p><strong>province</strong> (<em>str</em><em> or </em><em>None</em>) – province name</p></li>
 </ul>
 </dd>
 </dl>
