@@ -119,9 +119,8 @@ class PhaseSeries(Term):
             phase_id = self.num2str(0) if self.use_0th else self.num2str(1)
             start_date = self.first_date
             population = population or self.init_population
-            last_id = 0 if self.use_0th else 1
         else:
-            phase_id = self.num2str(len(self._phase_dict) + 1)
+            phase_id = self.num2str(self.str2num(last_id) + 1)
             last_dict = last_phase.to_dict()
             start_date = self.tomorrow(last_dict[self.END])
             population = population or last_dict[self.N]
@@ -130,7 +129,6 @@ class PhaseSeries(Term):
         if "model" in kwargs:
             model = kwargs.pop("model")
             phase.set_ode(model=model, **kwargs)
-        phase_id = self.num2str(self.str2num(last_id) + 1)
         self._phase_dict[phase_id] = phase
 
     def phase(self, phase):
