@@ -158,7 +158,7 @@ class PhaseSeries(Term):
         # Calculate order
         start_objects = np.array(
             [
-                self.to_date_obj(phase.start_date) for phase in phase_dict.value()
+                self.to_date_obj(phase.start_date) for phase in phase_dict.values()
             ]
         )
         ascending = scipy.stats.rankdata(start_objects)
