@@ -81,7 +81,7 @@ class Term(object):
         Convert numbers to 1st, 2nd etc.
 
         Args:
-        @num (int): number
+            num (int): number
 
         Returns:
             str
@@ -91,6 +91,24 @@ class Term(object):
         q, mod = divmod(num, 10)
         suffix = "th" if q == 1 else cls.SUFFIX_DICT[mod]
         return f"{num}{suffix}"
+
+    @staticmethod
+    def str2num(string, name="phase names"):
+        """
+        Convert 1st to 1 and so on.
+
+        Args:
+            string (str): like 1st, 2nd, 3rd,...
+            name (str): name of the string
+
+        Returns:
+            int
+        """
+        try:
+            return int(string[:-2])
+        except ValueError:
+            raise ValueError(
+                f"Examples of {name} are 0th, 1st, 2nd..., but {string} was applied.")
 
     @staticmethod
     def negative_exp(x, a, b):
@@ -227,6 +245,21 @@ class Term(object):
             f"@tau must be a divisor of 1440 [min], but {tau} was applied."
         )
 
+    @classmethod
+    def ensure_population(cls, population):
+        """
+        Ensure that the population value is valid.
+
+        Args:
+            population (int or float or str): population value
+
+        Returns:
+            int: as-is
+        """
+        return cls.ensure_natural_int(
+            population, name="population", include_zero=False, none_ok=False
+        )
+
     @staticmethod
     def ensure_float(target, name="value"):
         """
@@ -356,17 +389,19 @@ class Term(object):
         return tomorrow.strftime(cls.DATE_FORMAT)
 
     @classmethod
-    def days(cls, start_date, end_date):
+    def steps(cls, start_date, end_date, tau):
         """
         Return the number of days (round up).
 
         Args:
             start_date (str): start date, like 01Jan2020
             end_date (str): end date, like 01Jan2020
+            tau (int): tau value [min]
         """
         sta = cls.to_date_obj(start_date)
         end = cls.to_date_obj(end_date)
-        return math.ceil((sta - end) / timedelta(days=1))
+        tau = cls.ensure_tau(tau)
+        return math.ceil((sta - end) / timedelta(minutes=tau))
 
 
 class Word(Term):

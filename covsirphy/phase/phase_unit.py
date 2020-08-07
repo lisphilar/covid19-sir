@@ -19,15 +19,14 @@ class PhaseUnit(Term):
     """
 
     def __init__(self, start_date, end_date, population):
-        start = self.date_obj(start_date)
+        sta = self.date_obj(start_date)
         end = self.date_obj(end_date)
-        if start >= end:
+        if sta >= end:
             raise ValueError(
                 f"@end_date ({end_date}) must be over @start_date ({start_date}).")
-        self.start_date = start_date
-        self.end_date = end_date
-        self.population = self.ensure_natural_int(
-            population, name="population")
+        self._start_date = start_date
+        self._end_date = end_date
+        self._population = self.ensure_population(population)
         # Summary of information
         self.info_dict = {
             self.START: start_date,
@@ -46,6 +45,27 @@ class PhaseUnit(Term):
         # Init
         self.model = None
         self.y0_dict = {}
+
+    @property
+    def start_date(self):
+        """
+        str: start date
+        """
+        return self._start_date
+
+    @property
+    def end_date(self):
+        """
+        str: end date
+        """
+        return self._end_date
+
+    @property
+    def population(self):
+        """
+        str: population value
+        """
+        return self._population
 
     def to_dict(self):
         """
@@ -141,7 +161,7 @@ class PhaseUnit(Term):
             record_df, name="record_df", columns=self.NLOC_COLUMNS)
         # Parameter estimation of ODE model
         estimator = Estimator(
-            record_df, self.model, self.population, **self.ode_dict)
+            record_df, self.model, self._population, **self.ode_dict)
         estimator.run(**kwargs)
         # Reproduction number
         est_dict = estimator.summary().to_dict()
@@ -155,7 +175,7 @@ class PhaseUnit(Term):
         self.est_dict.update(other_dict)
         # Initial values
         tau = ode_dict[self.TAU]
-        taufree_df = self.model.tau_free(record_df, self.population, tau=tau)
+        taufree_df = self.model.tau_free(record_df, self._population, tau=tau)
         var_set = set(self.model.VARIABLES)
         self.y0_dict = {
             k: v for (k, v) in taufree_df.iloc[0].to_dict() if k in var_set
@@ -176,19 +196,22 @@ class PhaseUnit(Term):
                     - Fatal (int): the number of fatal cases
                     - Recovered (int): the number of recovered cases
         """
+        if not self.y0_dict:
+            raise ValueError(
+                "PhaseUnit.estimate(record_df) must be done in advance.")
         param_dict = self.ode_dict.copy()
         tau = param_dict.pop(param_dict)
         # Simulation
         simulator = ODESimulator()
         simulator.add(
             model=self.model,
-            step_n=self.days(self.start_date, self.end_date),
-            population=self.population,
+            step_n=self.steps(self._start_date, self._end_date, tau),
+            population=self._population,
             param_dict=param_dict,
             y0_dict=self.y0_dict
         )
         simulator.run()
         # Return dimensionalized values
-        df = simulator.dim(tau=tau, start_date=self.start_date)
+        df = simulator.dim(tau=tau, start_date=self._start_date)
         df = self.model.restore(df)
         return df.loc[:, self.NLOC_COLUMNS]
