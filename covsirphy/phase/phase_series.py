@@ -28,7 +28,14 @@ class PhaseSeries(Term):
         # Whether use 0th phase or not
         self.use_0th = use_0th
         # {phase name: PhaseUnit}
-        self.phase_dict = {}
+        self._phase_dict = {}
+
+    @property
+    def phase_dict(self):
+        """
+        dict(str, covsirphy.PhaseUnit): dictionary of phase
+        """
+        return self._phase_dict
 
     def clear(self, include_past=False):
         """
@@ -44,9 +51,9 @@ class PhaseSeries(Term):
             Future phases will be always deleted.
         """
         if include_past:
-            self.phase_dict = {}
-        self.phase_dict = {
-            name: instance for (name, instance) in self.phase_dict.items()
+            self._phase_dict = {}
+        self._phase_dict = {
+            name: instance for (name, instance) in self._phase_dict.items()
             if self._tense(instance.start_date) == self.PAST
         }
         return self
@@ -81,13 +88,13 @@ class PhaseSeries(Term):
         Notes:
             if no phases were registered, return None.
         """
-        if not self.phase_dict:
+        if not self._phase_dict:
             return (None, None)
-        last_num = len(self.phase_dict)
+        last_num = len(self._phase_dict)
         if self.use_0th:
             last_num -= 1
         last_id = self.num2str(last_num)
-        return (last_id, self.phase_dict[last_id])
+        return (last_id, self._phase_dict[last_id])
 
     def add(self, end_date, population=None, **kwargs):
         """
@@ -112,8 +119,9 @@ class PhaseSeries(Term):
             phase_id = self.num2str(0) if self.use_0th else self.num2str(1)
             start_date = self.first_date
             population = population or self.init_population
+            last_id = 0 if self.use_0th else 1
         else:
-            phase_id = self.num2str(len(self.phase_dict) + 1)
+            phase_id = self.num2str(len(self._phase_dict) + 1)
             last_dict = last_phase.to_dict()
             start_date = self.tomorrow(last_dict[self.END])
             population = population or last_dict[self.N]
@@ -123,7 +131,7 @@ class PhaseSeries(Term):
             model = kwargs.pop("model")
             phase.set_ode(model=model, **kwargs)
         phase_id = self.num2str(self.str2num(last_id) + 1)
-        self.phase_dict[phase_id] = phase
+        self._phase_dict[phase_id] = phase
 
     def phase(self, phase):
         """
@@ -136,7 +144,7 @@ class PhaseSeries(Term):
             covsirphy.PhaseSeries: self
         """
         try:
-            return self.phase_dict[phase]
+            return self._phase_dict[phase]
         except KeyError:
             raise KeyError(f"{phase} phase is not registered.")
 
@@ -148,7 +156,7 @@ class PhaseSeries(Term):
         Returns:
             covsirphy.PhaseSeries: self
         """
-        phase_dict = self.phase_dict.copy()
+        phase_dict = self._phase_dict.copy()
         # Calculate order
         start_objects = np.array(
             [
@@ -168,7 +176,7 @@ class PhaseSeries(Term):
         }
         # Reorder
         sort_nest = sorted(phase_dict.items(), key=lambda x: x[0])
-        self.phase_dict = {self.num2str(k): v for (k, v) in sort_nest}
+        self._phase_dict = {self.num2str(k): v for (k, v) in sort_nest}
         return self
 
     def delete(self, phase):
@@ -183,10 +191,10 @@ class PhaseSeries(Term):
         """
         phase_new = self.num2str(self.str2num(phase) - 1)
         # Delete phases
-        pre_phase = self.phase_dict.pop(phase_new)
-        post_phase = self.phase_dict.pop(phase)
+        pre_phase = self._phase_dict.pop(phase_new)
+        post_phase = self._phase_dict.pop(phase)
         # Register new phase
-        self.phase_dict[phase_new] = PhaseUnit(
+        self._phase_dict[phase_new] = PhaseUnit(
             start_date=pre_phase.start_date,
             end_date=post_phase.end_date,
             population=pre_phase.population
@@ -209,7 +217,7 @@ class PhaseSeries(Term):
                     - Population: population value of the start date
                     - other information registered to the phases
         """
-        if not self.phase_dict:
+        if not self._phase_dict:
             return pd.DataFrame(columns=[self.TENSE, self.START, self.END, self.N])
         # Convert to dataframe
         info_dict = self.to_dict()
@@ -237,7 +245,7 @@ class PhaseSeries(Term):
                 self.TENSE: self._tense(phase.start_date),
                 **phase.to_dict()
             }
-            for (phase_id, phase) in self.phase_dict.items()
+            for (phase_id, phase) in self._phase_dict.items()
         }
 
     def last_object(self):
@@ -270,7 +278,7 @@ class PhaseSeries(Term):
             (list[datetime.datetime]): list of start dates
         """
         return [
-            self.date_obj(phase.start_date) for phase in self.phase_dict.values()
+            self.date_obj(phase.start_date) for phase in self._phase_dict.values()
         ]
 
     def end_objects(self):
@@ -281,7 +289,7 @@ class PhaseSeries(Term):
             (list[datetime.datetime]): list of end dates
         """
         return [
-            self.date_obj(phase.end_date) for phase in self.phase_dict.values()
+            self.date_obj(phase.end_date) for phase in self._phase_dict.values()
         ]
 
     def tenses(self):
@@ -292,7 +300,7 @@ class PhaseSeries(Term):
             list[str]: list of tenses
         """
         return [
-            self._tense(phase.end_date) for phase in self.phase_dict.values()
+            self._tense(phase.end_date) for phase in self._phase_dict.values()
         ]
 
     @staticmethod
@@ -323,7 +331,7 @@ class PhaseSeries(Term):
         """
         try:
             names = [
-                phase.to_dict[self.ODE] for phase in self.phase_dict.values()
+                phase.to_dict[self.ODE] for phase in self._phase_dict.values()
             ]
         except KeyError:
             names = []
@@ -337,7 +345,7 @@ class PhaseSeries(Term):
             (list[int]): list of population values
         """
         return [
-            phase.population for phase in self.phase_dict.values()
+            phase.population for phase in self._phase_dict.values()
         ]
 
     def phases(self):
@@ -347,7 +355,7 @@ class PhaseSeries(Term):
         Returns:
             (list[str]): list of phase names
         """
-        return list(self.phase_dict.keys())
+        return list(self._phase_dict.keys())
 
     def replace(self, phase, new):
         """
@@ -357,13 +365,13 @@ class PhaseSeries(Term):
             phase (str): phase name, like 0th, 1st, 2nd...
             new (covsirphy.PhaseUnit): new phase object
         """
-        if phase not in self.phase_dict:
+        if phase not in self._phase_dict:
             raise KeyError(f"{phase} phase is not registered.")
-        old = self.phase_dict[phase]
+        old = self._phase_dict[phase]
         if old.start_date != new.start_date:
             raise ValueError(
                 f"Start date is different from {old.start_date}, {new.start_date} was applied.")
         if old.end_date != new.end_date:
             raise ValueError(
                 f"Start date is different from {old.start_date}, {new.start_date} was applied.")
-        self.phase_dict[phase] = new
+        self._phase_dict[phase] = new
