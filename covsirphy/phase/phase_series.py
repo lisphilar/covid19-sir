@@ -76,13 +76,13 @@ class PhaseSeries(Term):
         Return PhaseUnit instance of the last phase.
 
         Returns:
-            tuple(str, covsirphy.PhaseUnit or None): phase name and phase information
+            tuple(str or None, covsirphy.PhaseUnit or None): phase name and phase information
 
         Notes:
             if no phases were registered, return None.
         """
         if not self.phase_dict:
-            return None
+            return (None, None)
         last_num = len(self.phase_dict)
         if self.use_0th:
             last_num -= 1
