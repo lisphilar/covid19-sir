@@ -119,7 +119,9 @@ class PhaseSeries(Term):
             population = population or last_dict[self.N]
         # Register PhaseUnit
         phase = PhaseUnit(start_date, end_date, population)
-        phase.set_ode(**kwargs)
+        if "model" in kwargs:
+            model = kwargs.pop("model")
+            phase.set_ode(model=model, **kwargs)
         phase_id = self.num2str(self.str2num(last_id) + 1)
         self.phase_dict[phase_id] = phase
 
@@ -346,3 +348,22 @@ class PhaseSeries(Term):
             (list[str]): list of phase names
         """
         return list(self.phase_dict.keys())
+
+    def replace(self, phase, new):
+        """
+        Replace phase object.
+
+        Args:
+            phase (str): phase name, like 0th, 1st, 2nd...
+            new (covsirphy.PhaseUnit): new phase object
+        """
+        if phase not in self.phase_dict:
+            raise KeyError(f"{phase} phase is not registered.")
+        old = self.phase_dict[phase]
+        if old.start_date != new.start_date:
+            raise ValueError(
+                f"Start date is different from {old.start_date}, {new.start_date} was applied.")
+        if old.end_date != new.end_date:
+            raise ValueError(
+                f"Start date is different from {old.start_date}, {new.start_date} was applied.")
+        self.phase_dict[phase] = new
