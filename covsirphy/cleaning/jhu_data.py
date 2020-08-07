@@ -188,10 +188,10 @@ class JHUData(CleaningBase):
                 f"{s1} {s2}"
             )
         # Calculate Susceptible if population value was applied
-        if population is not None:
-            population = self.ensure_natural_int(
-                population, name="population")
-            df[self.S] = population - df[self.C]
+        if population is None:
+            return df
+        population = self.ensure_natural_int(population, name="population")
+        df[self.S] = population - df[self.C]
         return df
 
     def to_sr(self, country, province=None,
