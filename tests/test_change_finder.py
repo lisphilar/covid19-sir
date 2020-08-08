@@ -78,4 +78,4 @@ class TestTrend(object):
         )
         trend = Trend(sr_df)
         with pytest.raises(NameError):
-            trend.show()
+            trend.show(area=jhu_data.area_name(country="Italy"))
