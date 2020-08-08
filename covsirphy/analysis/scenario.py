@@ -705,9 +705,7 @@ class Scenario(Term):
             KeyError: targets are not in the columns of summary dataframe
         """
         series = self.series_dict[name]
-        model_set = set(
-            [series.phase(phase).model for phase in series.phases()]
-        )
+        model_set = {series.phase(phase).model for phase in series.phases()}
         parameters = self.flatten([m.PARAMETERS for m in model_set])
         day_params = self.flatten([m.DAY_PARAMETERS for m in model_set])
         selectable_cols = [self.N, *parameters, self.RT, *day_params]
