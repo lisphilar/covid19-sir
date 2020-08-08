@@ -163,6 +163,25 @@ class PhaseUnit(Term):
         estimator = Estimator(
             record_df, self.model, self._population, **self.ode_dict)
         estimator.run(**kwargs)
+        self._read_estimator(estimator, record_df)
+
+    def _read_estimator(self, estimator, record_df):
+        """
+        Read the result of parameter estimation and update the summary of phase.
+
+        Args:
+            estimator (covsirphy.Estimator): estimator which finished estimation
+            record_df (pandas.DataFrame)
+                Index:
+                    reset index
+                Columns:
+                    - Date (pd.TimeStamp): Observation date
+                    - Confirmed (int): the number of confirmed cases
+                    - Infected (int): the number of currently infected cases
+                    - Fatal (int): the number of fatal cases
+                    - Recovered (int): the number of recovered cases
+                    - any other columns will be ignored
+        """
         # Reproduction number
         est_dict = estimator.summary().to_dict()
         self.info_dict[self.RT] = est_dict.pop(self.RT)
