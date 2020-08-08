@@ -192,7 +192,7 @@ class PhaseSeries(Term):
         # Whether the previous phase exists or not
         pre_phase_id = self.num2str(self.str2num(phase) - 1)
         if pre_phase_id not in self.phase_dict:
-            self.reset_phase_name()
+            self.reset_phase_names()
             return self
         # Delete the previous phase
         pre_phase = self._phase_dict.pop(pre_phase_id)
