@@ -104,9 +104,7 @@ class Trend(Term):
         Returns:
             (float): RMSLE score
         """
-        if self.result_df is None:
-            raise NameError("Must perform Trend().run() in advance.")
-        df = self.result_df.replace(np.inf, 0)
+        df = self.run().replace(np.inf, 0)
         df = df.loc[df[f"{self.S}{self.A}"] > 0, :]
         df = df.loc[df[f"{self.S}{self.P}"] > 0, :]
         actual = df[f"{self.S}{self.A}"]

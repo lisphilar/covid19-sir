@@ -59,13 +59,3 @@ class TestTrend(object):
         with pytest.raises(ValueError):
             trend = Trend(sr_df)
             trend.run()
-
-    def test_one_phase_rmsle_without_analyse(self, jhu_data, population_data):
-        population = population_data.value("Italy")
-        sr_df = jhu_data.to_sr(
-            country="Italy", population=population,
-            start_date="25Mar2020", end_date="02Apr2020"
-        )
-        trend = Trend(sr_df)
-        with pytest.raises(NameError):
-            trend.rmsle()
