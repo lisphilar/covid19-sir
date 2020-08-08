@@ -16,7 +16,8 @@ class TestChangeFinder(object):
         sr_df = jhu_data.to_sr(country=country, population=population)
         change_finder = ChangeFinder(sr_df)
         change_finder.run()
-        change_finder.show()
+        warnings.filterwarnings("ignore", category=UserWarning)
+        change_finder.show(area=jhu_data.area_name(country="Italy"))
         assert isinstance(change_finder.date_range(), tuple)
 
     def test_find_with_small_min_size(self, jhu_data, population_data):
@@ -30,7 +31,6 @@ class TestChangeFinder(object):
         population = population_data.value("Italy")
         sr_df = jhu_data.to_sr(
             country="Italy", population=population, end_date="23Jan2020")
-        warnings.filterwarnings("ignore", category=DeprecationWarning)
         with pytest.raises(ValueError):
             min_size = 7
             change_finder = ChangeFinder(sr_df, min_size=min_size)
@@ -47,7 +47,8 @@ class TestTrend(object):
         trend = Trend(sr_df)
         trend.run()
         assert isinstance(trend.rmsle(), float)
-        trend.show()
+        warnings.filterwarnings("ignore", category=UserWarning)
+        trend.show(area=jhu_data.area_name(country="Italy"))
 
     def test_one_phase_with_few_records(self, jhu_data, population_data):
         population = population_data.value("Italy")
