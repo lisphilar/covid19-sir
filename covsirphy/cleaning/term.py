@@ -67,6 +67,7 @@ class Term(object):
     RMSLE = "RMSLE"
     TRIALS = "Trials"
     RUNTIME = "Runtime"
+    EST_COLS = [RMSLE, TRIALS, RUNTIME]
     # Scenario analysis
     PHASE = "Phase"
     SERIES = "Scenario"
@@ -124,25 +125,6 @@ class Term(object):
             float
         """
         return a * np.exp(-b * x)
-
-    @lru_cache(maxsize=None)
-    @classmethod
-    def date_obj(cls, date_str):
-        """
-        Convert a string to a datetime object.
-
-        Args:
-            date_str (str or None): date, like 22Jan2020
-
-        Returns:
-            datetime.datetime or None: datetime object
-
-        Notes:
-            If @date_str is None, None will be returned.
-        """
-        if date_str is None:
-            return None
-        return datetime.strptime(date_str, cls.DATE_FORMAT)
 
     @staticmethod
     def flatten(nested_list, unique=True):
@@ -356,7 +338,7 @@ class Term(object):
 
     @lru_cache(maxsize=None)
     @classmethod
-    def to_date_obj(cls, date_str=None, default=None):
+    def date_obj(cls, date_str=None, default=None):
         """
         Convert a string to a datatime object.
 
@@ -385,8 +367,22 @@ class Term(object):
         Returns:
             str: tomorrow
         """
-        tomorrow = cls.to_date_obj(date_str) + timedelta(days=1)
-        return tomorrow.strftime(cls.DATE_FORMAT)
+        date = cls.date_obj(date_str) + timedelta(days=1)
+        return date.strftime(cls.DATE_FORMAT)
+
+    @classmethod
+    def yesterday(cls, date_str):
+        """
+        Yesterday of the date.
+
+        Args:
+            date_str (str): today
+
+        Returns:
+            str: yesterday
+        """
+        date = cls.date_obj(date_str) - timedelta(days=1)
+        return date.strftime(cls.DATE_FORMAT)
 
     @classmethod
     def steps(cls, start_date, end_date, tau):
@@ -398,10 +394,10 @@ class Term(object):
             end_date (str): end date, like 01Jan2020
             tau (int): tau value [min]
         """
-        sta = cls.to_date_obj(start_date)
-        end = cls.to_date_obj(end_date)
+        sta = cls.date_obj(start_date)
+        end = cls.date_obj(end_date)
         tau = cls.ensure_tau(tau)
-        return math.ceil((sta - end) / timedelta(minutes=tau))
+        return math.ceil((end - sta) / timedelta(minutes=tau))
 
 
 class Word(Term):

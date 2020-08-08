@@ -185,18 +185,16 @@ class ModelBase(ModelBaseCommon):
                     - columns with dimensional variables
         """
         df = subset_df.copy()
-        if tau is not None:
-            tau = cls.ensure_natural_int(tau, name="tau")
-            if tau > 1440:
-                raise ValueError(
-                    f"@tau must be 1440 or lower, but {tau} was applied.")
-            df = cls.ensure_dataframe(
-                df, name="data_df", columns=cls.NLOC_COLUMNS)
-            # Calculate elapsed time from the first date [min]
-            df[cls.T] = (df[cls.DATE] - df[cls.DATE].min()).dt.total_seconds()
-            df[cls.T] = df[cls.T] // 60
-            # Convert to tau-free
-            df[cls.TS] = (df[cls.T] / tau).astype(np.int64)
-            df = df.drop(cls.T, axis=1)
-        df = df.drop(cls.DATE, axis=1)
+        if tau is None:
+            df = df.drop(cls.DATE, axis=1)
+            return cls.specialize(df, population=population).reset_index(drop=True)
+        tau = cls.ensure_tau(tau)
+        df = cls.ensure_dataframe(
+            df, name="data_df", columns=cls.NLOC_COLUMNS)
+        # Calculate elapsed time from the first date [min]
+        df[cls.T] = (df[cls.DATE] - df[cls.DATE].min()).dt.total_seconds()
+        df[cls.T] = df[cls.T] // 60
+        # Convert to tau-free
+        df[cls.TS] = (df[cls.T] / tau).astype(np.int64)
+        df = df.drop([cls.T, cls.DATE], axis=1)
         return cls.specialize(df, population).reset_index(drop=True)

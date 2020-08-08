@@ -57,9 +57,10 @@ class Estimator(Optimizer):
             k: df.loc[df.index[0], k] for k in model.VARIABLES
         }
         # Fixed parameter values
-        fixable_set = set(model.PARAMETERS) & set([self.TAU])
+        fixable_set = set(model.PARAMETERS) | set([self.TAU])
         self.fixed_dict = {
-            k: v for (k, v) in kwargs.items() if k in fixable_set
+            k: v for (k, v) in kwargs.items()
+            if k in fixable_set and v is not None
         }
         if self.TAU in self.fixed_dict:
             self.ensure_tau(self.fixed_dict[self.TAU])

@@ -35,7 +35,7 @@ class PhaseUnit(Term):
             self.ODE: None,
             self.RT: None
         }
-        self.ode_dict = {self.TAU: None}
+        self._ode_dict = {self.TAU: None}
         self.day_param_dict = {}
         self.est_dict = {
             self.RMSLE: None,
@@ -43,8 +43,10 @@ class PhaseUnit(Term):
             self.RUNTIME: None
         }
         # Init
-        self.model = None
+        self._model = None
+        self._record_df = pd.DataFrame()
         self.y0_dict = {}
+        self._estimator = None
 
     @property
     def start_date(self):
@@ -67,6 +69,34 @@ class PhaseUnit(Term):
         """
         return self._population
 
+    @property
+    def tau(self):
+        """
+        int or None: tau value [min]
+        """
+        return self._ode_dict[self.TAU]
+
+    @property
+    def model(self):
+        """
+        covsirphy.ModelBase: model description
+        """
+        return self._model
+
+    @property
+    def estimator(self):
+        """
+        covsirphy.Estimator or None: estimator object
+        """
+        return self._estimator
+
+    @property
+    def ode_dict(self):
+        """
+        dict: parameter values and tau value
+        """
+        return self._ode_dict
+
     def to_dict(self):
         """
         Summarize phase information and return as a dictionary.
@@ -87,7 +117,7 @@ class PhaseUnit(Term):
                     - Runtime: runtime of estimation
         """
         summary_dict = self.info_dict.copy()
-        summary_dict.update(self.ode_dict)
+        summary_dict.update(self._ode_dict)
         summary_dict.update(self.day_param_dict)
         summary_dict.update(self.est_dict)
         return summary_dict
@@ -116,7 +146,7 @@ class PhaseUnit(Term):
         """
         summary_dict = self.to_dict()
         df = pd.DataFrame(summary_dict, orient="index")
-        return df.dropna(how="all", axis=1)
+        return df.dropna(how="all", axis=1).fillna(self.UNKNOWN)
 
     def set_ode(self, model, tau=None, **kwargs):
         """
@@ -125,23 +155,66 @@ class PhaseUnit(Term):
         Args:
             model (covsirphy.ModelBase): ODE model
             tau (int or None): tau value [min], a divisor of 1440
+            kwargs: keyword arguments of model parameters
         """
         # Model
-        self.ensure_subclass(model, ModelBase, name="model")
+        self._model = self.ensure_subclass(model, ModelBase, name="model")
         self.info_dict[self.ODE] = model.NAME
         # Parameter values
-        ode_dict = dict.fromkeys(model.PARAMETERS, value=None)
+        ode_dict = dict.fromkeys(model.PARAMETERS)
         applied_dict = {k: v for (k, v) in kwargs.items() if k in ode_dict}
         ode_dict.update(applied_dict)
+        param_dict = ode_dict.copy()
         ode_dict[self.TAU] = self.ensure_tau(tau)
-        self.ode_dict = ode_dict
+        self._ode_dict = ode_dict.copy()
+        # Reproduction number and day parameters
+        if None not in ode_dict.values():
+            model_instance = model(population=self._population, **param_dict)
+            self.info_dict[self.RT] = model_instance.calc_r0()
+            self.day_param_dict = model_instance.calc_days_dict(tau)
 
-    def estimate(self, record_df, **kwargs):
+    @property
+    def record_df(self):
+        """
+        pandas.DataFrame: records of the phase
+            Index:
+                reset index
+            Columns:
+                - Date (pd.TimeStamp): Observation date
+                - Confirmed (int): the number of confirmed cases
+                - Infected (int): the number of currently infected cases
+                - Fatal (int): the number of fatal cases
+                - Recovered (int): the number of recovered cases
+                - any other columns will be ignored
+        """
+        return self._record_df
+
+    @record_df.setter
+    def record_df(self, df):
+        self._record_df = self.ensure_dataframe(
+            df, name="df", columns=self.NLOC_COLUMNS
+        )
+        if self._model is None or self._ode_dict[self.TAU] is None:
+            return True
+        self.set_y0(df)
+
+    def _model_is_registered(self):
+        """
+        Ensure that model was set.
+
+        Raises:
+            NameError: ODE model is not registered
+        """
+        if self._model is None:
+            raise ValueError(
+                "PhaseUnit.set_ode(model) must be done in advance.")
+
+    def estimate(self, record_df=None, **kwargs):
         """
         Perform parameter estimation.
 
         Args:
-            record_df (pandas.DataFrame)
+            record_df (pandas.DataFrame or None)
                 Index:
                     reset index
                 Columns:
@@ -152,18 +225,35 @@ class PhaseUnit(Term):
                     - Recovered (int): the number of recovered cases
                     - any other columns will be ignored
             **kwargs: keyword arguments of Estimator.run()
+
+        Raises:
+            NameError: PhaseUnit.set_ode(model) was not done in advance.
+            ValueError: @record_df is None and PhaseUnit.record_df = ... was not done in advance.
+
+        Notes:
+            If @record_df is None, registered records will be used.
         """
-        if self.model is None:
-            raise ValueError(
-                "PhaseUnit.set_ode(model) must be done in advance.")
+        self._model_is_registered()
         # Records
+        if record_df is None:
+            record_df = self._record_df.copy()
+        if record_df.empty:
+            raise ValueError(
+                "@record_df must be specified or PhaseUnit.record_df = ... must be done in advance.")
         self.ensure_dataframe(
             record_df, name="record_df", columns=self.NLOC_COLUMNS)
+        # Check dates
+        sta = self.date_obj(self.start_date)
+        end = self.date_obj(self.end_date)
+        series = record_df[self.DATE]
+        record_df = record_df.loc[(series >= sta) & (series <= end), :]
         # Parameter estimation of ODE model
         estimator = Estimator(
-            record_df, self.model, self._population, **self.ode_dict)
+            record_df, self._model, self._population, **self._ode_dict, **kwargs)
         estimator.run(**kwargs)
         self._read_estimator(estimator, record_df)
+        # Set estimator
+        self._estimator = estimator
 
     def _read_estimator(self, estimator, record_df):
         """
@@ -183,26 +273,54 @@ class PhaseUnit(Term):
                     - any other columns will be ignored
         """
         # Reproduction number
-        est_dict = estimator.summary().to_dict()
+        est_dict = estimator.summary().to_dict(orient="index")[0]
         self.info_dict[self.RT] = est_dict.pop(self.RT)
         # Get parameter values and tau value
         ode_dict = {
-            k: v for (k, v) in est_dict.items() if k in self.ode_dict}
-        self.ode_dict.update(ode_dict)
+            k: v for (k, v) in est_dict.items() if k in self._ode_dict}
+        self._ode_dict.update(ode_dict)
         # Other information of estimation
         other_dict = dict(est_dict.items() - ode_dict.items())
         self.est_dict.update(other_dict)
         # Initial values
-        tau = ode_dict[self.TAU]
-        taufree_df = self.model.tau_free(record_df, self._population, tau=tau)
-        var_set = set(self.model.VARIABLES)
+        self.set_y0(record_df=record_df)
+
+    def set_y0(self, record_df):
+        """
+        Set initial values.
+
+        Args:
+            record_df (pandas.DataFrame)
+                Index:
+                    reset index
+                Columns:
+                    - Date (pd.TimeStamp): Observation date
+                    - Confirmed (int): the number of confirmed cases
+                    - Infected (int): the number of currently infected cases
+                    - Fatal (int): the number of fatal cases
+                    - Recovered (int): the number of recovered cases
+                    - any other columns will be ignored
+        """
+        self._model_is_registered()
+        tau = self._ode_dict[self.TAU]
+        if tau is None:
+            raise ValueError(
+                "tau value must be registered by PhaseUnit.set_ode() or calculated by PhaseUnit.estimate()")
+        df = record_df.loc[record_df[self.DATE] >= self.start_date, :]
+        df = self._model.tau_free(df, self._population, tau=tau)
         self.y0_dict = {
-            k: v for (k, v) in taufree_df.iloc[0].to_dict() if k in var_set
+            k: v for (k, v) in df.iloc[0].to_dict().items()
+            if k in set(self._model.VARIABLES)
         }
 
-    def simulate(self):
+    def simulate(self, y0_dict=None):
         """
         Perform simulation with the set/estimated parameter values.
+
+        Args:
+            y0_dict (dict or None):
+                - key (str): variable name
+                - value (float): initial value
 
         Returns:
             pandas.DataFrame
@@ -214,23 +332,36 @@ class PhaseUnit(Term):
                     - Infected (int): the number of currently infected cases
                     - Fatal (int): the number of fatal cases
                     - Recovered (int): the number of recovered cases
+
+        Notes:
+            Simulation starts at the start date of the phase.
+            Simulation end at the next date of the end date of the phase.
         """
-        if not self.y0_dict:
-            raise ValueError(
-                "PhaseUnit.estimate(record_df) must be done in advance.")
-        param_dict = self.ode_dict.copy()
-        tau = param_dict.pop(param_dict)
+        # Initial values
+        y0_dict = y0_dict or {}
+        y0_dict.update(self.y0_dict)
+        diff_set = y0_dict.keys() - set(self._model.VARIABLES)
+        if diff_set:
+            raise KeyError(
+                "Initial value(s) of {', '.join} must be specified by @y0_dict or PhaseUnit.set_y0()")
+        # Conditions
+        param_dict = self._ode_dict.copy()
+        tau = param_dict.pop(self.TAU)
+        last_date = self.tomorrow(self._end_date)
         # Simulation
         simulator = ODESimulator()
         simulator.add(
-            model=self.model,
-            step_n=self.steps(self._start_date, self._end_date, tau),
+            model=self._model,
+            step_n=self.steps(self._start_date, last_date, tau),
             population=self._population,
             param_dict=param_dict,
-            y0_dict=self.y0_dict
+            y0_dict=y0_dict
         )
         simulator.run()
-        # Return dimensionalized values
+        # Dimensionalized values
         df = simulator.dim(tau=tau, start_date=self._start_date)
-        df = self.model.restore(df)
-        return df.loc[:, self.NLOC_COLUMNS]
+        df = self._model.restore(df)
+        # Return day-level data
+        df = df.set_index(self.DATE).resample("D").first()
+        df = df.loc[df.index <= self.date_obj(last_date), :]
+        return df.reset_index().loc[:, self.NLOC_COLUMNS]

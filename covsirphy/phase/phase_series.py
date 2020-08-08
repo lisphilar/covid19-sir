@@ -7,6 +7,7 @@ import pandas as pd
 import scipy
 from covsirphy.cleaning.term import Term
 from covsirphy.phase.phase_unit import PhaseUnit
+from covsirphy.phase.sr_change import ChangeFinder
 
 
 class PhaseSeries(Term):
@@ -96,34 +97,57 @@ class PhaseSeries(Term):
         last_id = self.num2str(last_num)
         return (last_id, self._phase_dict[last_id])
 
-    def add(self, end_date, population=None, **kwargs):
+    @classmethod
+    def _calc_end_date(cls, start_date, days):
+        """
+        Return the end date of a phase with the number of days.
+
+        Returns:
+            str: end date
+        """
+        days = cls.ensure_natural_int(days, name="days", none_ok=False)
+        sta = cls.date_obj(start_date)
+        end = sta + timedelta(days=days)
+        return end.strftime(cls.DATE_FORMAT)
+
+    def add(self, start_date=None, end_date=None, days=None, population=None, **kwargs):
         """
         Add a past phase.
 
         Args:
+            start_date (str): start date of the phase
             end_date (str): end date of the past phase, like 22Jan2020
+            days (int or None): the number of days to add
             population (int or None): population value
             **kwargs: keyword arguments of PhaseUnit.set_ode()
 
         Notes:
             If @population is None, the previous initial value will be used.
         """
+        # Phase information
         last_id, last_phase = self._last_phase()
-        end_date = self.ensure_date(end_date)
         if last_phase is None:
             # Initial phase
-            if self._tense(end_date) != self.PAST:
-                raise ValueError(
-                    f"@end_date must be under {self.last_date} (the last date of records), but {end_date} was applied."
-                )
             phase_id = self.num2str(0) if self.use_0th else self.num2str(1)
-            start_date = self.first_date
+            start_date = start_date or self.first_date
             population = population or self.init_population
         else:
             phase_id = self.num2str(self.str2num(last_id) + 1)
             last_dict = last_phase.to_dict()
-            start_date = self.tomorrow(last_dict[self.END])
+            start_date = start_date or self.tomorrow(last_dict[self.END])
             population = population or last_dict[self.N]
+        # End date
+        if end_date is None:
+            if days is None:
+                raise ValueError(
+                    "Either @end_date or @days must be specified.")
+            end_date = self._calc_end_date(start_date=start_date, days=days)
+        else:
+            end_date = self.ensure_date(end_date)
+        if self._tense(start_date) != self._tense(end_date):
+            raise ValueError(
+                f"@start_date={start_date} is past, but @end_date={end_date} is future."
+            )
         # Register PhaseUnit
         phase = PhaseUnit(start_date, end_date, population)
         if "model" in kwargs:
@@ -131,7 +155,7 @@ class PhaseSeries(Term):
             phase.set_ode(model=model, **kwargs)
         self._phase_dict[phase_id] = phase
 
-    def phase(self, phase):
+    def phase(self, name="last"):
         """
         Return the phase as a instance of PhaseUnit.
 
@@ -141,10 +165,14 @@ class PhaseSeries(Term):
         Returns:
             covsirphy.PhaseSeries: self
         """
+        if name == "last":
+            phase_numbers = [
+                self.str2num(ph) for ph in self._phase_dict.keys()]
+            name = self.num2str(max(phase_numbers))
         try:
-            return self._phase_dict[phase]
+            return self._phase_dict[name]
         except KeyError:
-            raise KeyError(f"{phase} phase is not registered.")
+            raise KeyError(f"{name} phase is not registered.")
 
     def reset_phase_names(self):
         """
@@ -158,7 +186,7 @@ class PhaseSeries(Term):
         # Calculate order
         start_objects = np.array(
             [
-                self.to_date_obj(phase.start_date) for phase in phase_dict.values()
+                self.date_obj(phase.start_date) for phase in phase_dict.values()
             ]
         )
         ascending = scipy.stats.rankdata(start_objects)
@@ -225,8 +253,7 @@ class PhaseSeries(Term):
         # Convert to dataframe
         info_dict = self.to_dict()
         df = pd.DataFrame.from_dict(info_dict, orient="index")
-        df = df.fillna(self.UNKNOWN)
-        return df
+        return df.dropna(how="all", axis=1).fillna(self.UNKNOWN)
 
     def to_dict(self):
         """
@@ -237,10 +264,7 @@ class PhaseSeries(Term):
                 - key (str): phase number, like 1th, 2nd,...
                 - value (dict): phase information
                     - 'Type': (str) 'Past' or 'Future'
-                    - 'Start': (str) start date of the phase,
-                    - 'End': (str) end date of the phase,
-                    - 'Population': (int) population value at the start date
-                    - values added by PhaseSeries.update()
+                    - values of PhaseUnit.to_dict()
         """
         self.reset_phase_names()
         return {
@@ -306,7 +330,7 @@ class PhaseSeries(Term):
             self._tense(phase.end_date) for phase in self._phase_dict.values()
         ]
 
-    @staticmethod
+    @ staticmethod
     def number_of_steps(start_objects, last_object, tau):
         """
         Return the list of the number of steps of phases.
@@ -351,14 +375,22 @@ class PhaseSeries(Term):
             phase.population for phase in self._phase_dict.values()
         ]
 
-    def phases(self):
+    def phases(self, include_future=True):
         """
         Return the list of phase names.
+
+        Args:
+            include_future (bool): include future phases or not
 
         Returns:
             (list[str]): list of phase names
         """
-        return list(self._phase_dict.keys())
+        if include_future:
+            return list(self._phase_dict.keys())
+        return [
+            phase for (phase, unit) in self._phase_dict.items()
+            if self._tense(unit.start_date) == self.PAST
+        ]
 
     def replace(self, phase, new):
         """
@@ -378,3 +410,51 @@ class PhaseSeries(Term):
             raise ValueError(
                 f"Start date is different from {old.start_date}, {new.start_date} was applied.")
         self._phase_dict[phase] = new
+
+    def trend(self, sr_df, set_phases=True, area=None, show_figure=True, filename=None, **kwargs):
+        """
+        Perform S-R trend analysis.
+
+        Args:
+            sr_df (pandas.DataFrame)
+                Index:
+                    Date (pd.TimeStamp): Observation date
+                Columns:
+                    - Recovered (int): the number of recovered cases (> 0)
+                    - Susceptible (int): the number of susceptible cases
+                    - any other columns will be ignored
+            set_phases (bool): if True, update phases
+            area (str or None): area name
+            show_figure (bool): if True, show the result as a figure
+            filename (str): filename of the figure, or None (show figure)
+            kwargs: keyword arguments of ChangeFinder()
+
+        Returns:
+            covsirphy.PhaseSeries: self
+        """
+        finder = ChangeFinder(sr_df, **kwargs)
+        if not set_phases:
+            if show_figure:
+                start_dates = [
+                    date.strftime(self.DATE_FORMAT) for date in self.start_objects]
+                finder.show(
+                    area or self.UNKNOWN,
+                    change_dates=start_dates[1:],
+                    use_0th=self.use_0th,
+                    filename=filename
+                )
+            return self
+        # Find change points
+        finder.run()
+        # Show trends
+        if show_figure:
+            finder.show(
+                area=area or self.UNKNOWN, use_0th=True, filename=filename)
+        # Register phases
+        self.clear(include_past=True)
+        _, end_dates = finder.date_range()
+        use_0th, self.use_0th = self.use_0th, True
+        [self.add(end_date=end_date) for end_date in end_dates]
+        self.delete("0th")
+        self.use_0th = use_0th
+        return self
