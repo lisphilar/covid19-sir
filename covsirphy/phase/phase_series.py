@@ -187,12 +187,17 @@ class PhaseSeries(Term):
         Returns:
             covsirphy.PhaseSeries: self
         """
-        phase_new = self.num2str(self.str2num(phase) - 1)
-        # Delete phases
-        pre_phase = self._phase_dict.pop(phase_new)
+        # Delete the target phase
         post_phase = self._phase_dict.pop(phase)
+        # Whether the previous phase exists or not
+        pre_phase_id = self.num2str(self.str2num(phase) - 1)
+        if pre_phase_id not in self.phase_dict:
+            self._reset_phase_name()
+            return self
+        # Delete the previous phase
+        pre_phase = self._phase_dict.pop(pre_phase_id)
         # Register new phase
-        self._phase_dict[phase_new] = PhaseUnit(
+        self._phase_dict[pre_phase_id] = PhaseUnit(
             start_date=pre_phase.start_date,
             end_date=post_phase.end_date,
             population=pre_phase.population
