@@ -125,9 +125,7 @@ class Trend(Term):
             area (str): area name
             filename (str): filename of the figure, or None (display)
         """
-        df = self.result()
-        if df is None:
-            raise NameError("Must perform Trend().analyse() in advance.")
+        df = self.run()
         df["Predicted"] = df[f"{self.S}{self.P}"]
         start_date = self.sr_df.index.min().strftime(self.DATE_FORMAT)
         end_date = self.sr_df.index.max().strftime(self.DATE_FORMAT)
