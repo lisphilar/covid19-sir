@@ -18,6 +18,7 @@ from covsirphy.cleaning.term import Term
 from covsirphy.cleaning.jhu_data import JHUData
 from covsirphy.cleaning.population import PopulationData
 from covsirphy.ode.mbase import ModelBase
+from covsirphy.phase.phase_unit import PhaseUnit
 from covsirphy.phase.phase_series import PhaseSeries
 
 
@@ -170,7 +171,11 @@ class Scenario(Term):
             - kwargs: Default values are the parameter values of the last phase.
         """
         self._ensure_name(name)
-        last_phase_unit = self.last_phase(name=name)
+        try:
+            last_phase_unit = self.last_phase(name=name)
+        except KeyError:
+            last_phase_unit = PhaseUnit(
+                self._first_date, self._last_date, self.population)
         # Population
         if population is None:
             population = last_phase_unit.population
