@@ -262,7 +262,7 @@ class Scenario(Term):
         for phase in phases:
             self.series_dict[name].delete(phase)
         if "0th" in phases:
-            self.series_dict[name].use_0th = False
+            self.series_dict[name].use_0th = True
         return (first_date, last_date)
 
     def delete(self, phases=None, name="Main"):

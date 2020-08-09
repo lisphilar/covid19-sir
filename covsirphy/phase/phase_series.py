@@ -139,9 +139,10 @@ class PhaseSeries(Term):
         # End date
         if end_date is None:
             if days is None:
-                raise ValueError(
-                    "Either @end_date or @days must be specified.")
-            end_date = self._calc_end_date(start_date=start_date, days=days)
+                end_date = self._last_phase
+            else:
+                end_date = self._calc_end_date(
+                    start_date=start_date, days=days)
         else:
             end_date = self.ensure_date(end_date)
         if self._tense(start_date) != self._tense(end_date):
@@ -192,7 +193,7 @@ class PhaseSeries(Term):
         )
         ascending = scipy.stats.rankdata(start_objects)
         if self.use_0th:
-            ascending = ascending - 1
+            ascending -= 1
         corres_dict = {
             old_id: int(rank) for (old_id, rank)
             in zip(phase_dict.keys(), ascending)
@@ -221,8 +222,7 @@ class PhaseSeries(Term):
         # Whether the previous phase exists or not
         pre_phase_id = self.num2str(self.str2num(phase) - 1)
         if pre_phase_id not in self.phase_dict:
-            self.reset_phase_names()
-            return self
+            return self.reset_phase_names()
         # Delete the previous phase
         pre_phase = self._phase_dict.pop(pre_phase_id)
         # Register new phase
@@ -231,8 +231,7 @@ class PhaseSeries(Term):
             end_date=post_phase.end_date,
             population=pre_phase.population
         )
-        self.reset_phase_names()
-        return self
+        return self.reset_phase_names()
 
     def summary(self):
         """
