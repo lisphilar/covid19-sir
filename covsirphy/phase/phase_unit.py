@@ -52,9 +52,7 @@ class PhaseUnit(Term):
             return NotImplemented
         if self._start_date != other.start_date:
             return False
-        if self._end_date != other.end_date:
-            return False
-        return True
+        return self._end_date == other.end_date
 
     def __ne__(self, other):
         return not self.__eq__(other)
