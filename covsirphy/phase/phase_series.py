@@ -434,6 +434,9 @@ class PhaseSeries(Term):
             covsirphy.PhaseSeries: self
         """
         area = area or self.UNKNOWN
+        sta = self.date_obj(self.first_date)
+        end = self.date_obj(self.last_date)
+        sr_df = sr_df.loc[(sr_df.index >= sta) & (sr_df.index <= end), :]
         finder = ChangeFinder(sr_df, **kwargs)
         if not set_phases:
             if show_figure:
