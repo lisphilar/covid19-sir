@@ -120,11 +120,12 @@ class PhaseUnit(Term):
                     - Trials: the number of trials in estimation
                     - Runtime: runtime of estimation
         """
-        summary_dict = self.info_dict.copy()
-        summary_dict.update(self._ode_dict)
-        summary_dict.update(self.day_param_dict)
-        summary_dict.update(self.est_dict)
-        return summary_dict
+        return {
+            **self.info_dict,
+            **self._ode_dict,
+            **self.day_param_dict,
+            **self.est_dict
+        }
 
     def summary(self):
         """
@@ -278,7 +279,7 @@ class PhaseUnit(Term):
                     - any other columns will be ignored
         """
         # Reproduction number
-        est_dict = estimator.summary().to_dict(orient="index")[0]
+        est_dict = estimator.to_dict()
         self.info_dict[self.RT] = est_dict.pop(self.RT)
         # Get parameter values and tau value
         ode_dict = {

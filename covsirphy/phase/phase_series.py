@@ -97,18 +97,30 @@ class PhaseSeries(Term):
         last_id = self.num2str(last_num)
         return (last_id, self._phase_dict[last_id])
 
-    @classmethod
-    def _calc_end_date(cls, start_date, days):
+    def _calc_end_date(self, start_date, end_date=None, days=None):
         """
-        Return the end date of a phase with the number of days.
+        Return the end date.
+
+        Args:
+            start_date (str): start date of the phase
+            end_date (str): end date of the past phase, like 22Jan2020
+            days (int or None): the number of days to add
 
         Returns:
             str: end date
         """
-        days = cls.ensure_natural_int(days, name="days", none_ok=False)
-        sta = cls.date_obj(start_date)
-        end = sta + timedelta(days=days)
-        return end.strftime(cls.DATE_FORMAT)
+        if end_date is not None:
+            sta = self.date_obj(start_date)
+            end = self.date_obj(end_date)
+            if sta < end:
+                return end_date
+            raise ValueError(
+                f"@end_date(={end_date}) must be over @start_date={start_date}.")
+        if days is None:
+            return self.last_date
+        days = self.ensure_natural_int(days, name="days", none_ok=False)
+        end = self.date_obj(start_date) + timedelta(days=days)
+        return end.strftime(self.DATE_FORMAT)
 
     def add(self, start_date=None, end_date=None, days=None, population=None, **kwargs):
         """
@@ -139,17 +151,11 @@ class PhaseSeries(Term):
             population = population or last_dict[self.N]
             param_dict = {param: value for (param, value) in last_dict.items()}
         # End date
-        if end_date is None:
-            if days is None:
-                end_date = self.last_date
-            else:
-                end_date = self._calc_end_date(
-                    start_date=start_date, days=days)
-        else:
-            end_date = self.ensure_date(end_date)
+        end_date = self._calc_end_date(
+            start_date, end_date=end_date, days=days)
         if self._tense(start_date) != self._tense(end_date):
             raise ValueError(
-                f"@start_date={start_date} is past, but @end_date={end_date} is future."
+                f"@end_date({end_date}) must be under the last date of the records ({self._last_phase})."
             )
         # Register PhaseUnit
         phase = PhaseUnit(start_date, end_date, population)

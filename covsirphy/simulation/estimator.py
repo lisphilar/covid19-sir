@@ -122,8 +122,7 @@ class Estimator(Optimizer):
             # Perform optimization
             self._run_trial(timeout_iteration=timeout_iteration)
             # Create a table to compare observed/estimated values
-            tau = self.tau or super().param()[self.TAU]
-            train_df = self.divide_minutes(tau)
+            train_df = self.divide_minutes(self.tau)
             comp_df = self.compare(train_df, self.predict())
             # Check monotonic variables
             mono_ok_list = [
@@ -183,9 +182,9 @@ class Estimator(Optimizer):
         """
         fixed_dict = self.fixed_dict.copy()
         # Convert T to t using tau
-        tau = self.tau or trial.suggest_categorical(
-            self.TAU, self.tau_candidates)
-        taufree_df = self.divide_minutes(tau)
+        if self.tau is None:
+            self.tau = trial.suggest_categorical(self.TAU, self.tau_candidates)
+        taufree_df = self.divide_minutes(self.tau)
         # Set parameters of the models
         model_param_dict = self.model.param_range(
             taufree_df, self.population
@@ -276,6 +275,8 @@ class Estimator(Optimizer):
                     - t (int): Elapsed time divided by tau value [-]
                     - columns with dimensionalized variables
         """
+        if self.TAU in param_dict:
+            param_dict.pop(self.TAU)
         simulator = ODESimulator()
         simulator.add(
             model=self.model,
@@ -287,10 +288,9 @@ class Estimator(Optimizer):
         simulator.run()
         return simulator.taufree()
 
-    def summary(self, name=None):
+    def to_dict(self):
         """
         Summarize the results of optimization.
-        This function should be overwritten in subclass.
 
         Args:
             name (str or None): index of the dataframe
@@ -308,38 +308,54 @@ class Estimator(Optimizer):
                     - Trials: the number of trials
                     - Runtime: run time of estimation
         """
-        param_dict = super().param()
-        model_params = param_dict.copy()
-        tau = self.tau or model_params.pop(self.TAU)
+        summary_dict = super().param()
+        summary_dict[self.TAU] = self.tau
         model_instance = self.model(
-            population=self.population, **model_params
+            population=self.population,
+            **{k: v for (k, v) in summary_dict.items() if k != self.TAU}
         )
-        # Rt
-        param_dict[self.RT] = model_instance.calc_r0()
-        # dimensional parameters [day]
-        param_dict.update(model_instance.calc_days_dict(tau))
-        # RMSLE
-        param_dict[self.RMSLE] = self.rmsle(tau)
-        # The number of trials
-        param_dict[self.TRIALS] = self.total_trials
-        # Runtime
         minutes, seconds = divmod(int(self.run_time), 60)
-        param_dict[self.RUNTIME] = f"{minutes} min {seconds} sec"
-        # Convert to dataframe
-        df = pd.DataFrame.from_dict({str(name): param_dict}, orient="index")
+        return {
+            **summary_dict,
+            self.RT: model_instance.calc_r0(),
+            **model_instance.calc_days_dict(self.tau),
+            self.RMSLE: self.rmsle(),
+            self.TRIALS: self.total_trials,
+            self.RUNTIME: f"{minutes} min {seconds} sec"
+        }
+
+    def summary(self, name=None):
+        """
+        Summarize the results of optimization.
+
+        Args:
+            name (str or None): index of the dataframe
+
+        Returns:
+            (pandas.DataFrame):
+                Index:
+                    name or reset index (when name is None)
+                Columns:
+                    - (parameters of the model)
+                    - tau
+                    - Rt: basic or phase-dependent reproduction number
+                    - (dimensional parameters [day])
+                    - RMSLE: Root Mean Squared Log Error
+                    - Trials: the number of trials
+                    - Runtime: run time of estimation
+        """
+        summary_dict = self.to_dict()
+        df = pd.DataFrame.from_dict({str(name): summary_dict}, orient="index")
         if name is None:
             df = df.reset_index(drop=True)
         return df.fillna(self.UNKNOWN)
 
-    def rmsle(self, tau):
+    def rmsle(self):
         """
         Return RMSLE score.
-
-        Args:
-            tau (int): tau value
         """
         return super().rmsle(
-            train_df=self.divide_minutes(tau),
+            train_df=self.divide_minutes(self.tau),
             dim=1
         )
 
@@ -351,8 +367,7 @@ class Estimator(Optimizer):
             show_figure (bool): if True, show the result as a figure
             filename (str): filename of the figure, or None (show figure)
         """
-        tau = super().param()[self.TAU]
-        train_df = self.divide_minutes(tau)
+        train_df = self.divide_minutes(self.tau)
         use_variables = [
             v for (i, (p, v))
             in enumerate(zip(self.model.PRIORITIES, self.model.VARIABLES))
