@@ -503,6 +503,7 @@ class Scenario(Term):
             - If 'Main' was used as @name, main PhaseSeries will be used.
             - If @name phase was not registered, new PhaseSeries will be created.
             - If @phases is None, all past phase will be used.
+            - In kwargs, tau value cannot be included.
         """
         # Check model
         model = self.ensure_subclass(model, ModelBase, "model")
@@ -526,6 +527,10 @@ class Scenario(Term):
         if not phases:
             raise ValueError(
                 "Scenario.trend(set_phases=True) or Scenario.add() must be done in advance.")
+        # tau value must be specified in Scenario.__init__
+        if self.TAU in kwargs:
+            raise ValueError(
+                "@tau must be specified when scenario = Scenario(), and cannot be specified here.")
         # The number of parallel jobs
         n_jobs = cpu_count() if n_jobs == -1 else n_jobs
         # Start optimization
