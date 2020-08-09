@@ -4,7 +4,7 @@
 import copy
 from datetime import timedelta
 import functools
-from multiprocessing import cpu_count, Pool
+from multiprocessing import cpu_count, get_context
 import sys
 import matplotlib
 if not hasattr(sys, "ps1"):
@@ -543,7 +543,7 @@ class Scenario(Term):
         # Estimation of each phase
         est_f = functools.partial(
             self._estimate, model=model, series=series, stdout=False, **kwargs)
-        with Pool(n_jobs) as p:
+        with get_context("spawn").Pool(n_jobs) as p:
             units = p.map(est_f, phases)
         for (phase, phase_unit) in zip(phases, units):
             self.series_dict[name].replace(phase, phase_unit)
@@ -706,6 +706,7 @@ class Scenario(Term):
         """
         series = self.series_dict[name]
         model_set = {series.phase(phase).model for phase in series.phases()}
+        model_set = model_set - set([None])
         parameters = self.flatten([m.PARAMETERS for m in model_set])
         day_params = self.flatten([m.DAY_PARAMETERS for m in model_set])
         selectable_cols = [self.N, *parameters, self.RT, *day_params]
