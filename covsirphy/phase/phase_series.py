@@ -383,7 +383,7 @@ class PhaseSeries(Term):
             include_future (bool): include future phases or not
 
         Returns:
-            (list[str]): list of phase names
+            list[str]: list of phase names
         """
         if include_future:
             return list(self._phase_dict.keys())

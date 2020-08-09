@@ -135,8 +135,7 @@ class Scenario(Term):
         Args:
             name (str): phase series name, 'Main' or user-defined name
         """
-        self._ensure_name(name)
-        phase_series = self.series_dict[name]
+        phase_series = self._ensure_name(name)
         return phase_series.phase("last")
 
     @deprecate(old="Scenario.add_phase()", new="Scenario.add()")
@@ -170,7 +169,6 @@ class Scenario(Term):
             - Tau will be fixed as the last phase's value.
             - kwargs: Default values are the parameter values of the last phase.
         """
-        self._ensure_name(name)
         try:
             last_phase_unit = self.last_phase(name=name)
         except KeyError:
@@ -210,6 +208,7 @@ class Scenario(Term):
         series = copy.deepcopy(self.series_dict[self.MAIN])
         series.clear(include_past=False)
         self.series_dict[name] = series
+        return series
 
     def clear(self, name="Main", include_past=False):
         """
@@ -247,6 +246,7 @@ class Scenario(Term):
         Notes:
             If @phases is None, the phase series will be deleted and returns None.
         """
+        self._ensure_name(name)
         # Clear main series or delete sub phase series
         if phases is None:
             if name == self.MAIN:
@@ -279,7 +279,6 @@ class Scenario(Term):
         Notes:
             If @phases is None, the phase series will be deleted.
         """
-        self._ensure_name(name)
         self._delete(phases=phases, name=name)
         return self
 
@@ -300,7 +299,6 @@ class Scenario(Term):
         Returns:
             self: instance of covsirphy.Scenario
         """
-        self._ensure_name(name)
         first_date, last_date = self._delete(phases=phases, name=name)
         self.series_dict[name].add(
             start_date=first_date, end_date=last_date, population=population, **kwargs
@@ -375,8 +373,7 @@ class Scenario(Term):
             return df.set_index([self.SERIES, self.PHASE])
         if not name and len(self.series_dict.keys()) == 1:
             name = self.MAIN
-        self._ensure_name(name)
-        series = self.series_dict[name]
+        series = self._ensure_name(name)
         return series.summary()
 
     def summary(self, columns=None, name=None):
@@ -492,6 +489,35 @@ class Scenario(Term):
         )
         return phase_unit
 
+    def _ensure_past_phases(self, phases=None, name="Main"):
+        """
+        Ensure that the phases are past phases.
+
+        Args:
+            phases (list[str]): list of phase names, like 1st, 2nd...
+            name (str): phase series name
+
+        Returns:
+            tuple(covsirphy.PhaseSeries, list[str]): phase series and list of past phase names
+
+        Notes:
+            If @phases is None, return the all past phases.
+        """
+        series = self._ensure_name(name)
+        past_phases = series.phases(include_future=False)
+        if not past_phases:
+            raise ValueError(
+                "Scenario.trend(set_phases=True) or Scenario.add() must be done in advance.")
+        if phases is None:
+            return past_phases
+        if not isinstance(phases, list):
+            raise TypeError("@phases must be None or a list of phase names.")
+        future_phases = list(set(phases) - set(past_phases))
+        if future_phases:
+            raise KeyError(
+                f"{future_phases[0]} is not a past phase or not registered.")
+        return (series, phases)
+
     def estimate(self, model, phases=None, name="Main", n_jobs=-1, stdout=True, **kwargs):
         """
         Estimate the parameters of the model using the records.
@@ -510,28 +536,8 @@ class Scenario(Term):
             - If @phases is None, all past phase will be used.
             - In kwargs, tau value cannot be included.
         """
-        # Check model
         model = self.ensure_subclass(model, ModelBase, "model")
-        # Validate the phase series
-        self._ensure_name(name)
-        series = self.series_dict[name]
-        # Validate the phases
-        past_phases = [
-            phase for (phase, phase_dict)
-            in self.series_dict[name].to_dict().items()
-            if phase_dict[self.TENSE] == self.PAST
-        ]
-        phases = phases or past_phases[:]
-        if not isinstance(phases, list):
-            raise TypeError("@phases must be None or a list of phase names.")
-        future_phases = list(set(phases) - set(past_phases))
-        if future_phases:
-            raise KeyError(
-                f"{future_phases[0]} is not a past phase or not registered.")
-        # Confirm that phases are registered
-        if not phases:
-            raise ValueError(
-                "Scenario.trend(set_phases=True) or Scenario.add() must be done in advance.")
+        series, phases = self._ensure_past_phases(phases=phases, name=name)
         # tau value must be specified in Scenario.__init__
         if self.TAU in kwargs:
             raise ValueError(
@@ -635,8 +641,7 @@ class Scenario(Term):
                     - Province (str): province/prefecture/state name
                     - variables of the models (int): Confirmed (int) etc.
         """
-        self._ensure_name(name)
-        series = self.series_dict[name]
+        series = self._ensure_name(name)
         # Future phases must be added in advance
         if self.FUTURE not in series.summary()[self.TENSE].unique():
             raise KeyError(
@@ -692,8 +697,7 @@ class Scenario(Term):
         Notes:
             If 'Main' was used as @name, main PhaseSeries will be used.
         """
-        self._ensure_name(name)
-        df = self.series_dict[name].summary()
+        df = self._ensure_name(name).summary()
         if param not in df.columns:
             raise KeyError(f"@param must be in {', '.join(df.columns)}.")
         if phase == "last":
@@ -834,5 +838,4 @@ class Scenario(Term):
         Returns:
             (list[int]): list of phase names
         """
-        self._ensure_name(name)
-        return self.series_dict[name].phases()
+        return self._ensure_name(name).phases()
