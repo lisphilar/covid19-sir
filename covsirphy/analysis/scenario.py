@@ -515,7 +515,7 @@ class Scenario(Term):
             raise ValueError(
                 "Scenario.trend(set_phases=True) or Scenario.add() must be done in advance.")
         if phases is None:
-            return past_phases
+            return (series, past_phases)
         if not isinstance(phases, list):
             raise TypeError("@phases must be None or a list of phase names.")
         future_phases = list(set(phases) - set(past_phases))
