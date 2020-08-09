@@ -812,3 +812,16 @@ class Scenario(Term):
                 f"{self.F} on {last_date}": last_f,
             }
         return pd.DataFrame.from_dict(_dict, orient="index")
+
+    def phases(self, name="Main"):
+        """
+        Return the list of phase names.
+
+        Args:
+            name (str): phase series name
+
+        Returns:
+            (list[int]): list of phase names
+        """
+        self._ensure_name(name)
+        return self.series_dict[name].phases()

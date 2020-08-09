@@ -276,7 +276,7 @@ class CleaningBase(Term):
         df = self._subset_by_area(country=country, province=province)
         # Subset with Start/end date
         if start_date is None and end_date is None:
-            return df
+            return df.reset_index(drop=True)
         if self.DATE not in df.columns:
             raise KeyError(
                 "@start_date or @end_date was specified, but the dataset does not have Date column.")

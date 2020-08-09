@@ -35,7 +35,7 @@ class PolicyMeasures(Term):
         self.oxcgrt_data = self.ensure_instance(
             oxcgrt_data, OxCGRTData, name="oxcgrt_data")
         # tau value must be shared
-        self.tau = self.ensure_natural_int(tau, name="tau")
+        self.tau = self.ensure_tau(tau)
         # Init
         self._countries = self._all_countries()
         self._init_scenario()
@@ -225,6 +225,7 @@ class PolicyMeasures(Term):
         line_plot(
             df, title=f"History of {param} in each country",
             ylabel=param,
-            h=1 if param == self.RT else None
+            h=1 if param == self.RT else None,
+            filename=filename
         )
         return df

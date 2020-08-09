@@ -432,13 +432,14 @@ class PhaseSeries(Term):
         Returns:
             covsirphy.PhaseSeries: self
         """
+        area = area or self.UNKNOWN
         finder = ChangeFinder(sr_df, **kwargs)
         if not set_phases:
             if show_figure:
                 start_dates = [
                     date.strftime(self.DATE_FORMAT) for date in self.start_objects]
                 finder.show(
-                    area or self.UNKNOWN,
+                    area=area,
                     change_dates=start_dates[1:],
                     use_0th=self.use_0th,
                     filename=filename
@@ -448,8 +449,7 @@ class PhaseSeries(Term):
         finder.run()
         # Show trends
         if show_figure:
-            finder.show(
-                area=area or self.UNKNOWN, use_0th=True, filename=filename)
+            finder.show(area=area, use_0th=True, filename=filename)
         # Register phases
         self.clear(include_past=True)
         _, end_dates = finder.date_range()

@@ -162,8 +162,7 @@ class ChangeFinder(Term):
         """
         change_dates = change_dates or self._change_dates[:]
         if not change_dates:
-            raise ValueError(
-                "@change_dates must be specified because ChangeFinder.run() was not done.")
+            return([self.dates[0]], [self.dates[-1]])
         # Start dates
         start_dates = [self.dates[0], *change_dates]
         # End dates
