@@ -168,7 +168,8 @@ class PhaseSeries(Term):
         if name == "last":
             phase_numbers = [
                 self.str2num(ph) for ph in self._phase_dict.keys()]
-            name = self.num2str(max(phase_numbers))
+            name = self.num2str(
+                max(phase_numbers, default="0th" if self.use_0th else "1st"))
         try:
             return self._phase_dict[name]
         except KeyError:

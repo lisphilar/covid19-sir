@@ -74,7 +74,7 @@ class TestScenario(object):
         scenario.delete()
         # Phase series
         scenario.clear(name="Medicine")
-        scenario.add(days=100)
+        scenario.add(days=100, name="Medicine")
         scenario.delete(name="Medicine")
         with pytest.raises(TypeError):
             scenario.delete(phase="0th")
