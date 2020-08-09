@@ -39,7 +39,7 @@ class TestScenario(object):
         scenario.estimate_accuracy(phase="1st")
         with pytest.raises(KeyError):
             scenario.estimate_accuracy(phase="0th")
-        # Prediction
+        # Simulation
         scenario.add(name="Main", days=100)
         scenario.simulate(name="Main", show_figure=False)
         scenario.simulate(name="Main", show_figure=True)

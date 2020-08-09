@@ -260,7 +260,8 @@ class Optimizer(Term):
         This method can be overwritten in subclass.
         """
         param_dict = self.param()
-        param_dict.pop(self.TAU)
+        if self.TAU in param_dict:
+            param_dict.pop(self.TAU)
         return self.simulate(self.step_n, param_dict)
 
     def history(self, show_figure=True, filename=None):

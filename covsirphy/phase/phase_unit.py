@@ -172,10 +172,11 @@ class PhaseUnit(Term):
         ode_dict[self.TAU] = self.ensure_tau(tau)
         self._ode_dict = ode_dict.copy()
         # Reproduction number and day parameters
-        if None not in ode_dict.values():
+        if None not in param_dict.values():
             model_instance = model(population=self._population, **param_dict)
             self.info_dict[self.RT] = model_instance.calc_r0()
-            self.day_param_dict = model_instance.calc_days_dict(tau)
+            if tau is not None:
+                self.day_param_dict = model_instance.calc_days_dict(tau)
 
     @property
     def record_df(self):

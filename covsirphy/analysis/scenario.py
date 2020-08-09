@@ -9,6 +9,7 @@ import sys
 import matplotlib
 if not hasattr(sys, "ps1"):
     matplotlib.use("Agg")
+import numpy as np
 import pandas as pd
 from covsirphy.util.error import deprecate
 from covsirphy.util.plotting import line_plot, box_plot
@@ -163,7 +164,7 @@ class Scenario(Term):
             kwargs: keyword arguments of ODE model parameters, not including tau value.
 
         Returns:
-            self
+            covsirphy.Scenario: self
 
         Notes:
             - If the phases series has not been registered, new phase series will be created.
@@ -194,6 +195,7 @@ class Scenario(Term):
         model = self.ensure_subclass(model, ModelBase, name="model")
         ode_dict = last_phase_unit.ode_dict.copy()
         ode_dict.update(kwargs)
+        ode_dict[self.TAU] = self.tau
         self.series_dict[name].add(
             end_date=end_date, days=days, population=population,
             model=model, **ode_dict
@@ -709,7 +711,7 @@ class Scenario(Term):
         day_params = self.flatten([m.DAY_PARAMETERS for m in model_set])
         selectable_cols = [self.N, *parameters, self.RT, *day_params]
         selectable_set = set(selectable_cols)
-        df = series.summary()
+        df = series.summary().replace(self.UNKNOWN, None)
         if not selectable_set.issubset(set(df.columns)):
             raise ValueError(
                 f"Scenario.estimate(model, phases=None, name={name}) must be done in advance.")
@@ -719,8 +721,8 @@ class Scenario(Term):
             raise KeyError(
                 f"@targets must be selected from {', '.join(selectable_cols)}."
             )
-        df = df.loc[:, targets]
-        return df
+        df = df.loc[:, targets].dropna(how="any", axis=0)
+        return df.astype(np.float64)
 
     def param_history(self, targets=None, name="Main", divide_by_first=True,
                       show_figure=True, filename=None, show_box_plot=True, **kwargs):

@@ -124,7 +124,6 @@ class PhaseSeries(Term):
         Notes:
             If @population is None, the previous initial value will be used.
         """
-        param_dict = kwargs.copy()
         # Phase information
         last_id, last_phase = self._last_phase()
         if last_phase is None:
@@ -132,14 +131,13 @@ class PhaseSeries(Term):
             phase_id = self.num2str(0) if self.use_0th else self.num2str(1)
             start_date = start_date or self.first_date
             population = population or self.init_population
+            param_dict = {}
         else:
             phase_id = self.num2str(self.str2num(last_id) + 1)
             last_dict = last_phase.to_dict()
             start_date = start_date or self.tomorrow(last_dict[self.END])
             population = population or last_dict[self.N]
-            param_dict.update(
-                {param: value for (param, value) in last_dict.items()}
-            )
+            param_dict = {param: value for (param, value) in last_dict.items()}
         # End date
         if end_date is None:
             if days is None:
@@ -157,9 +155,11 @@ class PhaseSeries(Term):
         phase = PhaseUnit(start_date, end_date, population)
         if "model" in kwargs:
             model = kwargs.pop("model")
+            tau = kwargs.pop(self.TAU) if self.TAU in kwargs else None
+            param_dict.update(kwargs)
             param_dict = {
                 k: v for (k, v) in param_dict.items() if k in model.PARAMETERS}
-            phase.set_ode(model=model, **param_dict)
+            phase.set_ode(model=model, tau=tau, **param_dict)
         self._phase_dict[phase_id] = phase
 
     def phase(self, name="last"):

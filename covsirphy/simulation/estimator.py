@@ -30,16 +30,16 @@ class Estimator(Optimizer):
                 - any other columns will be ignored
         model (covsirphy.ModelBase): ODE model
         population (int): total population in the place
+        tau (int): tau value [min], a divisor of 1440
         kwargs: parameter values of the model and data subseting
     """
     np.seterr(divide="raise")
 
-    def __init__(self, record_df, model, population, **kwargs):
+    def __init__(self, record_df, model, population, tau=None, **kwargs):
         # Arguments
-        self.population = self.ensure_natural_int(
-            population, name="population"
-        )
+        self.population = self.ensure_population(population)
         self.model = self.ensure_subclass(model, ModelBase, name="model")
+        self.tau = self.ensure_tau(tau)
         # Dataset
         if isinstance(record_df, JHUData):
             subset_arg_dict = find_args(
@@ -57,13 +57,10 @@ class Estimator(Optimizer):
             k: df.loc[df.index[0], k] for k in model.VARIABLES
         }
         # Fixed parameter values
-        fixable_set = set(model.PARAMETERS) | set([self.TAU])
         self.fixed_dict = {
             k: v for (k, v) in kwargs.items()
-            if k in fixable_set and v is not None
+            if k in set(model.PARAMETERS) and v is not None
         }
-        if self.TAU in self.fixed_dict:
-            self.ensure_tau(self.fixed_dict[self.TAU])
         # For optimization
         optuna.logging.disable_default_handler()
         self.x = self.TS
@@ -125,7 +122,7 @@ class Estimator(Optimizer):
             # Perform optimization
             self._run_trial(timeout_iteration=timeout_iteration)
             # Create a table to compare observed/estimated values
-            tau = super().param()[self.TAU]
+            tau = self.tau or super().param()[self.TAU]
             train_df = self.divide_minutes(tau)
             comp_df = self.compare(train_df, self.predict())
             # Check monotonic variables
@@ -186,10 +183,8 @@ class Estimator(Optimizer):
         """
         fixed_dict = self.fixed_dict.copy()
         # Convert T to t using tau
-        if self.TAU in fixed_dict.keys():
-            tau = fixed_dict.pop(self.TAU)
-        else:
-            tau = trial.suggest_categorical(self.TAU, self.tau_candidates)
+        tau = self.tau or trial.suggest_categorical(
+            self.TAU, self.tau_candidates)
         taufree_df = self.divide_minutes(tau)
         # Set parameters of the models
         model_param_dict = self.model.param_range(
@@ -315,7 +310,7 @@ class Estimator(Optimizer):
         """
         param_dict = super().param()
         model_params = param_dict.copy()
-        tau = model_params.pop(self.TAU)
+        tau = self.tau or model_params.pop(self.TAU)
         model_instance = self.model(
             population=self.population, **model_params
         )
