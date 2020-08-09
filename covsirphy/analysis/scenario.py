@@ -4,7 +4,7 @@
 import copy
 from datetime import timedelta
 import functools
-from multiprocessing import cpu_count, get_context
+from multiprocessing import cpu_count, Pool
 import sys
 import matplotlib
 if not hasattr(sys, "ps1"):
@@ -18,7 +18,6 @@ from covsirphy.cleaning.term import Term
 from covsirphy.cleaning.jhu_data import JHUData
 from covsirphy.cleaning.population import PopulationData
 from covsirphy.ode.mbase import ModelBase
-from covsirphy.phase.phase_unit import PhaseUnit
 from covsirphy.phase.phase_series import PhaseSeries
 
 
@@ -135,16 +134,6 @@ class Scenario(Term):
         )
         return df
 
-    def last_phase(self, name="Main"):
-        """
-        Return the last phase unit of the phase series.
-
-        Args:
-            name (str): phase series name, 'Main' or user-defined name
-        """
-        phase_series = self._ensure_name(name)
-        return phase_series.phase("last")
-
     @deprecate(old="Scenario.add_phase()", new="Scenario.add()")
     def add_phase(self, **kwargs):
         return self.add(**kwargs)
@@ -176,29 +165,18 @@ class Scenario(Term):
             - Tau will be fixed as the last phase's value.
             - kwargs: Default values are the parameter values of the last phase.
         """
-        try:
-            last_phase_unit = self.last_phase(name=name)
-        except KeyError:
-            last_phase_unit = PhaseUnit(
-                self._first_date, self._last_date, self.population)
-        # Population
-        if population is None:
-            population = last_phase_unit.population
-        population = self.ensure_population(population)
-        # Model information is unnecessary if models are not registered in the old phases
-        model = model or last_phase_unit.model
+        series = self._ensure_name(name)
+        if model is None and series.phase_dict:
+            model = series.phase(name="last").model
+        # When model is not specified and not registered for the last phase
         if model is None:
             self.series_dict[name].add(
                 end_date=end_date, days=days, population=population)
             return self
-        # Model
-        model = self.ensure_subclass(model, ModelBase, name="model")
-        ode_dict = last_phase_unit.ode_dict.copy()
-        ode_dict.update(kwargs)
-        ode_dict[self.TAU] = self.tau
+        # With model
         self.series_dict[name].add(
             end_date=end_date, days=days, population=population,
-            model=model, **ode_dict
+            model=model, tau=self.tau, **kwargs
         )
         return self
 
@@ -567,7 +545,7 @@ class Scenario(Term):
         # Estimation of each phase
         est_f = functools.partial(
             self._estimate, model=model, series=series, stdout=False, **kwargs)
-        with get_context("spawn").Pool(n_jobs) as p:
+        with Pool(n_jobs) as p:
             units = p.map(est_f, phases)
         for (phase, phase_unit) in zip(phases, units):
             self.series_dict[name].replace(phase, phase_unit)
@@ -656,10 +634,11 @@ class Scenario(Term):
         if not show_figure:
             return sim_df
         # Show figure
-        fig_cols_set = set(sim_df.columns) & set(self.FIG_COLUMNS)
+        df = sim_df.set_index(self.DATE)
+        fig_cols_set = set(df.columns) & set(self.FIG_COLUMNS)
         fig_cols = [col for col in self.FIG_COLUMNS if col in fig_cols_set]
         line_plot(
-            sim_df[fig_cols],
+            df[fig_cols],
             title=f"{self.area}: Predicted number of cases ({name} scenario)",
             filename=filename,
             y_integer=True,
@@ -809,8 +788,8 @@ class Scenario(Term):
             _dict[name] = {
                 f"max({self.CI})": max_ci,
                 f"argmax({self.CI})": argmax_ci,
-                f"{self.CI} on {last_date}": last_ci,
-                f"{self.F} on {last_date}": last_f,
+                f"{self.CI} on {last_date.strftime(self.DATE_FORMAT)}": last_ci,
+                f"{self.F} on {last_date.strftime(self.DATE_FORMAT)}": last_f,
             }
         return pd.DataFrame.from_dict(_dict, orient="index")
 

@@ -122,7 +122,8 @@ class Estimator(Optimizer):
             # Perform optimization
             self._run_trial(timeout_iteration=timeout_iteration)
             # Create a table to compare observed/estimated values
-            train_df = self.divide_minutes(self.tau)
+            tau = self.tau or super().param()[self.TAU]
+            train_df = self.divide_minutes(tau)
             comp_df = self.compare(train_df, self.predict())
             # Check monotonic variables
             mono_ok_list = [
@@ -180,21 +181,20 @@ class Estimator(Optimizer):
         Returns:
             (float): score of the error function to minimize
         """
-        fixed_dict = self.fixed_dict.copy()
         # Convert T to t using tau
-        if self.tau is None:
-            self.tau = trial.suggest_categorical(self.TAU, self.tau_candidates)
-        taufree_df = self.divide_minutes(self.tau)
+        tau = self.tau
+        if tau is None:
+            tau = trial.suggest_categorical(self.TAU, self.tau_candidates)
+        taufree_df = self.divide_minutes(tau)
         # Set parameters of the models
         model_param_dict = self.model.param_range(
-            taufree_df, self.population
-        )
+            taufree_df, self.population)
         p_dict = {
             k: trial.suggest_uniform(k, *v)
             for (k, v) in model_param_dict.items()
             if k not in self.fixed_dict.keys()
         }
-        p_dict.update(fixed_dict)
+        p_dict.update(self.fixed_dict)
         return self.error_f(p_dict, taufree_df)
 
     def divide_minutes(self, tau):
@@ -275,8 +275,6 @@ class Estimator(Optimizer):
                     - t (int): Elapsed time divided by tau value [-]
                     - columns with dimensionalized variables
         """
-        if self.TAU in param_dict:
-            param_dict.pop(self.TAU)
         simulator = ODESimulator()
         simulator.add(
             model=self.model,
@@ -308,18 +306,19 @@ class Estimator(Optimizer):
                     - Trials: the number of trials
                     - Runtime: run time of estimation
         """
-        summary_dict = super().param()
-        summary_dict[self.TAU] = self.tau
+        est_dict = super().param()
+        if self.TAU not in est_dict:
+            est_dict[self.TAU] = self.tau
         model_instance = self.model(
             population=self.population,
-            **{k: v for (k, v) in summary_dict.items() if k != self.TAU}
+            **{k: v for (k, v) in est_dict.items() if k != self.TAU}
         )
         minutes, seconds = divmod(int(self.run_time), 60)
         return {
-            **summary_dict,
+            **est_dict,
             self.RT: model_instance.calc_r0(),
-            **model_instance.calc_days_dict(self.tau),
-            self.RMSLE: self.rmsle(),
+            **model_instance.calc_days_dict(est_dict[self.TAU]),
+            self.RMSLE: self._rmsle(est_dict[self.TAU]),
             self.TRIALS: self.total_trials,
             self.RUNTIME: f"{minutes} min {seconds} sec"
         }
@@ -350,12 +349,15 @@ class Estimator(Optimizer):
             df = df.reset_index(drop=True)
         return df.fillna(self.UNKNOWN)
 
-    def rmsle(self):
+    def _rmsle(self, tau):
         """
         Return RMSLE score.
+
+        Args:
+            tau (int): tau value [min]
         """
         return super().rmsle(
-            train_df=self.divide_minutes(self.tau),
+            train_df=self.divide_minutes(tau),
             dim=1
         )
 
@@ -367,7 +369,10 @@ class Estimator(Optimizer):
             show_figure (bool): if True, show the result as a figure
             filename (str): filename of the figure, or None (show figure)
         """
-        train_df = self.divide_minutes(self.tau)
+        est_dict = super().param()
+        if self.TAU not in est_dict:
+            est_dict[self.TAU] = self.tau
+        train_df = self.divide_minutes(est_dict[self.TAU])
         use_variables = [
             v for (i, (p, v))
             in enumerate(zip(self.model.PRIORITIES, self.model.VARIABLES))

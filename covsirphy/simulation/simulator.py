@@ -53,36 +53,50 @@ class ODESimulator(Term):
                     - NameError if new variable are included
 
         Returns:
-            self
+            covsirphy.ODESimulator: self
         """
-        # Validate the arguments
-        model = self.ensure_subclass(model, ModelBase, name="model")
-        step_n = self.ensure_natural_int(step_n, name="step_n")
-        population = self.ensure_natural_int(population, name="population")
-        # Check param values
-        param_dict = param_dict or dict()
-        for param in model.PARAMETERS:
-            if param in param_dict.keys():
-                continue
-            if (not self.settings) or (param not in self.settings[-1]["model"].PARAMETERS):
-                s = f"{param} value must be specified in @param_dict."
-                raise NameError(s)
-            param_dict[param] = self.settings[-1]["param_dict"][param]
-        # Check initial values
-        y0_dict = self._ensure_initial_values(model, y0_dict)
         # Register the setting
         self.settings.append(
             {
-                "model": model,
-                "step_n": step_n,
-                "population": population,
-                "param_dict": param_dict.copy(),
-                "y0_dict": y0_dict.copy(),
+                "model": self.ensure_subclass(model, ModelBase, name="model"),
+                "step_n": self.ensure_natural_int(step_n, name="step_n"),
+                "population": self.ensure_population(population),
+                "param_dict": self._ensure_parameters(model, param_dict),
+                "y0_dict": self._ensure_initial_values(model, y0_dict),
             }
         )
         # Update variable dictionary
         self.var_dict.update(model.VAR_DICT)
         return self
+
+    def _ensure_parameters(self, model, param_dict):
+        """
+        Validate the dictionary of parameters.
+
+        Args:
+            model (subclass of cs.ModelBase): the ODE model
+            param_dict (dict):
+                - key (str): parameter name
+                - value (float): parameter value
+
+        Returns:
+            dict(str, str): dictionary of parameters
+
+        Notes:
+            If a parameter value is not registered, None will be registered.
+        """
+        param_dict = param_dict or {}
+        usable_dict = {
+            p: param_dict[p] if p in param_dict else None for p in model.PARAMETERS}
+        if self.settings:
+            usable_dict.update(self.settings[-1]["param_dict"])
+        if None not in usable_dict.values():
+            return usable_dict
+        none_params = [k for (k, v) in usable_dict.items() if v is None]
+        s = "s" if len(none_params) > 1 else ""
+        raise NameError(
+            f"Parameter value{s} of {', '.join(none_params)} must be specified by @param_dict."
+        )
 
     def _ensure_initial_values(self, model, y0_dict):
         """
@@ -94,22 +108,25 @@ class ODESimulator(Term):
                 - key (str): dimensional variable name
                 - value (int):initial value of the variable
 
-        Raises:
-            NameError: [description]
-
         Returns:
-            [type]: [description]
+            dict(str, str): dictionary of initial values
+
+        Notes:
+            If initial value of a variable is not registered, None will be registered.
         """
-        y0_dict = y0_dict or dict()
-        for var in model.VARIABLES:
-            if var in y0_dict.keys():
-                continue
-            if (not self.settings) or (var not in self.settings[-1]["model"].VARIABLES):
-                s = f"Initial value of {var} must be specified in @y0_dict."
-                raise NameError(s)
-            # Will use the last values of the last phase
-            y0_dict[var] = None
-        return y0_dict
+        y0_dict = y0_dict or {}
+        usable_dict = {
+            v: y0_dict[v] if v in y0_dict else None for v in model.VARIABLES}
+        if None not in usable_dict.values():
+            return usable_dict
+        none_vars = [k for (k, v) in usable_dict.items() if v is None]
+        last_vars = self.settings[-1]["model"].VARIABLES[:]
+        if self.settings and set(none_vars).issubset(set(last_vars)):
+            return usable_dict
+        s = "s" if len(none_vars) > 1 else ""
+        raise NameError(
+            f"Initial value{s} of {', '.join(none_vars)} must be specified by @y0_dict."
+        )
 
     def _solve_ode(self, model, step_n, param_dict, y0_dict, population):
         """
@@ -134,9 +151,6 @@ class ODESimulator(Term):
                     - t (int): Elapsed time divided by tau value [-]
                     - columns with dimensional variables
         """
-        step_n = self.ensure_natural_int(step_n, name="step_n")
-        population = self.ensure_natural_int(population, name="population")
-        model = self.ensure_subclass(model, ModelBase, name="model")
         tstart, dt, tend = 0, 1, step_n
         variables = model.VARIABLES[:]
         initials = [y0_dict[var] for var in variables]
@@ -156,32 +170,26 @@ class ODESimulator(Term):
         """
         Run the simulator.
         """
-        self._taufree_df = pd.DataFrame()
-        for setting in self.settings:
+        if len(self.settings) == 1:
+            df = self._solve_ode(**self.settings[0])
+            df[self.TS] = df.index
+            self._taufree_df = df.copy()
+            return None
+        dataframes = []
+        last_row_dict = {}
+        for setting in self.settings[:]:
             # Initial values
-            y0_dict = setting["y0_dict"].copy()
-            if None in y0_dict.values():
-                keys_with_none = [k for (k, v) in y0_dict.items() if v is None]
-                if keys_with_none and self._taufree_df.empty:
-                    raise NameError(
-                        "Initial values of simulation must be specified in advance."
-                    )
-                last_value_dict = {
-                    k: self._taufree_df.loc[self._taufree_df.index[-1], k]
-                    for k in keys_with_none
-                }
-                y0_dict.update(last_value_dict)
-            setting["y0_dict"] = y0_dict.copy()
+            setting["y0_dict"].update(last_row_dict)
             # Solve ODEs
-            new_df = self._solve_ode(**setting)
-            taufree_df = pd.concat(
-                [self._taufree_df.iloc[:-1, :], new_df],
-                axis=0, ignore_index=True, sort=True
-            )
-            taufree_df = taufree_df.fillna(0)
-            taufree_df[self.TS] = taufree_df.index
-            self._taufree_df = taufree_df.copy()
-        return self
+            sim_df = self._solve_ode(**setting)
+            last_row_dict = sim_df.iloc[-1, :].to_dict()
+            dataframes.append(sim_df.iloc[:-1, :])
+        df = pd.concat(
+            [*dataframes, pd.Series(last_row_dict)], ignore_index=True, sort=True)
+        df = df.fillna(0)
+        df[self.TS] = df.index
+        self._taufree_df = df.copy()
+        return None
 
     def taufree(self):
         """
@@ -198,8 +206,7 @@ class ODESimulator(Term):
         df = self._taufree_df.copy()
         if df.empty:
             raise Exception("ODESimulator.run() must be done in advance.")
-        df = df.reset_index(drop=True)
-        return df
+        return df.reset_index(drop=True)
 
     def non_dim(self):
         """

@@ -79,24 +79,6 @@ class PhaseSeries(Term):
             return self.PAST
         return self.FUTURE
 
-    def _last_phase(self):
-        """
-        Return PhaseUnit instance of the last phase.
-
-        Returns:
-            tuple(str or None, covsirphy.PhaseUnit or None): phase name and phase information
-
-        Notes:
-            if no phases were registered, return None.
-        """
-        if not self._phase_dict:
-            return (None, None)
-        last_num = len(self._phase_dict)
-        if self.use_0th:
-            last_num -= 1
-        last_id = self.num2str(last_num)
-        return (last_id, self._phase_dict[last_id])
-
     def _calc_end_date(self, start_date, end_date=None, days=None):
         """
         Return the end date.
@@ -110,12 +92,8 @@ class PhaseSeries(Term):
             str: end date
         """
         if end_date is not None:
-            sta = self.date_obj(start_date)
-            end = self.date_obj(end_date)
-            if sta < end:
-                return end_date
-            raise ValueError(
-                f"@end_date(={end_date}) must be over @start_date={start_date}.")
+            self.ensure_date_order(start_date, end_date, name="end_date")
+            return end_date
         if days is None:
             return self.last_date
         days = self.ensure_natural_int(days, name="days", none_ok=False)
@@ -137,34 +115,34 @@ class PhaseSeries(Term):
             If @population is None, the previous initial value will be used.
         """
         # Phase information
-        last_id, last_phase = self._last_phase()
-        if last_phase is None:
+        if not self._phase_dict:
             # Initial phase
             phase_id = self.num2str(0) if self.use_0th else self.num2str(1)
             start_date = start_date or self.first_date
             population = population or self.init_population
-            param_dict = {}
+            summary_dict = {}
         else:
+            last_id, last_phase = list(self._phase_dict.items())[-1]
             phase_id = self.num2str(self.str2num(last_id) + 1)
             last_dict = last_phase.to_dict()
             start_date = start_date or self.tomorrow(last_dict[self.END])
             population = population or last_dict[self.N]
-            param_dict = {param: value for (param, value) in last_dict.items()}
+            summary_dict = last_phase.to_dict()
         # End date
         end_date = self._calc_end_date(
             start_date, end_date=end_date, days=days)
         if self._tense(start_date) != self._tense(end_date):
             raise ValueError(
-                f"@end_date({end_date}) must be under the last date of the records ({self._last_phase})."
+                f"@end_date({end_date}) must be under the last date of the records ({self.last_phase})."
             )
         # Register PhaseUnit
         phase = PhaseUnit(start_date, end_date, population)
         if "model" in kwargs:
-            model = kwargs.pop("model")
-            tau = kwargs.pop(self.TAU) if self.TAU in kwargs else None
-            param_dict.update(kwargs)
+            model = kwargs["model"]
+            summary_dict.update(kwargs)
+            tau = summary_dict[self.TAU] if self.TAU in summary_dict else None
             param_dict = {
-                k: v for (k, v) in param_dict.items() if k in model.PARAMETERS}
+                k: v for (k, v) in summary_dict.items() if k in model.PARAMETERS}
             phase.set_ode(model=model, tau=tau, **param_dict)
         self._phase_dict[phase_id] = phase
 
@@ -287,28 +265,6 @@ class PhaseSeries(Term):
             for (phase_id, phase) in self._phase_dict.items()
         }
 
-    def last_object(self):
-        """
-        Return the end date of the last registered phase.
-
-        Returns:
-            (datetime.datetime): the end date of the last registered phase
-        """
-        _, last_phase = self._last_phase()
-        if last_phase is None:
-            return self.date_obj(self.first_date)
-        return last_phase.end_date
-
-    def next_date(self):
-        """
-        Return the next date of the end date of the last registered phase.
-        Returns:
-            (str): like 01Feb2020
-        """
-        last_date_obj = self.last_object()
-        next_date_obj = last_date_obj + timedelta(days=1)
-        return next_date_obj.strftime(self.DATE_FORMAT)
-
     def start_objects(self):
         """
         Return the list of start dates as datetime.datetime objects of phases.
@@ -340,25 +296,6 @@ class PhaseSeries(Term):
         """
         return [
             self._tense(phase.end_date) for phase in self._phase_dict.values()
-        ]
-
-    @ staticmethod
-    def number_of_steps(start_objects, last_object, tau):
-        """
-        Return the list of the number of steps of phases.
-
-        Args:
-            start_objects (list[datetime.datetime]): list of start dates
-            last_object (datetime.datetime): the end date of the last registered phase
-            tau (int): tau value
-
-        Returns:
-            (list[int]): list of the number of steps
-        """
-        date_array = np.array([*start_objects, last_object])
-        return [
-            round(diff.total_seconds() / 60 / tau) for diff
-            in date_array[1:] - date_array[:-1]
         ]
 
     def model_names(self):
@@ -412,15 +349,10 @@ class PhaseSeries(Term):
             phase (str): phase name, like 0th, 1st, 2nd...
             new (covsirphy.PhaseUnit): new phase object
         """
-        if phase not in self._phase_dict:
-            raise KeyError(f"{phase} phase is not registered.")
-        old = self._phase_dict[phase]
-        if old.start_date != new.start_date:
+        old = self.phase(name=phase)
+        if old != new:
             raise ValueError(
-                f"Start date is different from {old.start_date}, {new.start_date} was applied.")
-        if old.end_date != new.end_date:
-            raise ValueError(
-                f"Start date is different from {old.start_date}, {new.start_date} was applied.")
+                "Combination of start/end date is different. old: {old}, new: {new}")
         self._phase_dict[phase] = new
 
     def trend(self, sr_df, set_phases=True, area=None, show_figure=True, filename=None, **kwargs):

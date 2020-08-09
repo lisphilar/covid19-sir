@@ -19,11 +19,7 @@ class PhaseUnit(Term):
     """
 
     def __init__(self, start_date, end_date, population):
-        sta = self.date_obj(start_date)
-        end = self.date_obj(end_date)
-        if sta >= end:
-            raise ValueError(
-                f"@end_date ({end_date}) must be over @start_date ({start_date}).")
+        self.ensure_date_order(start_date, end_date, name="end_date")
         self._start_date = start_date
         self._end_date = end_date
         self._population = self.ensure_population(population)
@@ -47,6 +43,21 @@ class PhaseUnit(Term):
         self._record_df = pd.DataFrame()
         self.y0_dict = {}
         self._estimator = None
+
+    def __str__(self):
+        return f"Phase ({self._start_date} - {self._end_date})"
+
+    def __eq__(self, other):
+        if not isinstance(other, PhaseUnit):
+            return NotImplemented
+        if self._start_date != other.start_date:
+            return False
+        if self._end_date != other.end_date:
+            return False
+        return True
+
+    def __ne__(self, other):
+        return not self.__eq__(other)
 
     @property
     def start_date(self):
@@ -150,7 +161,7 @@ class PhaseUnit(Term):
                         - Runtime: runtime of estimation
         """
         summary_dict = self.to_dict()
-        df = pd.DataFrame(summary_dict, orient="index")
+        df = pd.DataFrame.from_dict(summary_dict, orient="index").T
         return df.dropna(how="all", axis=1).fillna(self.UNKNOWN)
 
     def set_ode(self, model, tau=None, **kwargs):
@@ -162,18 +173,19 @@ class PhaseUnit(Term):
             tau (int or None): tau value [min], a divisor of 1440
             kwargs: keyword arguments of model parameters
         """
+        tau = self.ensure_tau(tau) or self._ode_dict[self.TAU]
         # Model
         self._model = self.ensure_subclass(model, ModelBase, name="model")
         self.info_dict[self.ODE] = model.NAME
         # Parameter values
-        ode_dict = dict.fromkeys(model.PARAMETERS)
-        applied_dict = {k: v for (k, v) in kwargs.items() if k in ode_dict}
-        ode_dict.update(applied_dict)
-        param_dict = ode_dict.copy()
-        ode_dict[self.TAU] = self.ensure_tau(tau)
-        self._ode_dict = ode_dict.copy()
+        param_dict = self._ode_dict.copy()
+        param_dict.update(kwargs)
+        param_dict = {
+            k: v for (k, v) in param_dict.items() if k in model.PARAMETERS}
+        self._ode_dict = param_dict.copy()
+        self._ode_dict[self.TAU] = tau
         # Reproduction number and day parameters
-        if None not in param_dict.values():
+        if param_dict.keys() == set(model.PARAMETERS):
             model_instance = model(population=self._population, **param_dict)
             self.info_dict[self.RT] = model_instance.calc_r0()
             if tau is not None:
@@ -198,10 +210,7 @@ class PhaseUnit(Term):
     @record_df.setter
     def record_df(self, df):
         self._record_df = self.ensure_dataframe(
-            df, name="df", columns=self.NLOC_COLUMNS
-        )
-        if self._model is None or self._ode_dict[self.TAU] is None:
-            return None
+            df, name="df", columns=self.NLOC_COLUMNS)
         self.set_y0(df)
 
     def _model_is_registered(self):
@@ -282,8 +291,9 @@ class PhaseUnit(Term):
         est_dict = estimator.to_dict()
         self.info_dict[self.RT] = est_dict.pop(self.RT)
         # Get parameter values and tau value
+        ode_set = set([*self._model.PARAMETERS, self.TAU])
         ode_dict = {
-            k: v for (k, v) in est_dict.items() if k in self._ode_dict}
+            k: v for (k, v) in est_dict.items() if k in ode_set}
         self._ode_dict.update(ode_dict)
         # Other information of estimation
         other_dict = dict(est_dict.items() - ode_dict.items())
@@ -308,14 +318,10 @@ class PhaseUnit(Term):
                     - any other columns will be ignored
         """
         self._model_is_registered()
-        tau = self._ode_dict[self.TAU]
-        if tau is None:
-            raise ValueError(
-                "tau value must be registered by PhaseUnit.set_ode() or calculated by PhaseUnit.estimate()")
-        df = record_df.loc[record_df[self.DATE] >= self.start_date, :]
-        df = self._model.tau_free(df, self._population, tau=tau)
-        y0_dict = df.iloc[0].to_dict()
-        y0_dict.update(self.y0_dict)
+        df = record_df.loc[
+            record_df[self.DATE] >= self.date_obj(self.start_date), :]
+        df = self._model.tau_free(df, self._population, tau=None)
+        y0_dict = df.iloc[0, :].to_dict()
         self.y0_dict = {
             k: v for (k, v) in y0_dict.items() if k in set(self._model.VARIABLES)
         }
@@ -350,7 +356,7 @@ class PhaseUnit(Term):
         diff_set = set(self._model.VARIABLES) - y0_dict.keys()
         if diff_set:
             diff_str = ", ".join(list(diff_set))
-            s = "s" if len(diff_set) > 2 else ""
+            s = "s" if len(diff_set) > 1 else ""
             raise KeyError(
                 f"Initial value{s} of {diff_str} must be specified by @y0_dict or PhaseUnit.set_y0()")
         # Conditions

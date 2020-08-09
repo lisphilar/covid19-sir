@@ -399,8 +399,29 @@ class Term(object):
         tau = cls.ensure_tau(tau)
         return math.ceil((end - sta) / timedelta(minutes=tau))
 
+    @classmethod
+    def ensure_date_order(cls, previous_date, following_date, name="following_date"):
+        """
+        Ensure that the order of dates.
+
+        Args:
+            previous_date (str): previous date
+            following_date (str): following date
+            name (str): name of @following_date
+
+        Raises:
+            ValueError: @previous_date >= @following_date
+        """
+        previous = cls.date_obj(previous_date)
+        following = cls.date_obj(following_date)
+        if previous < following:
+            return None
+        raise ValueError(
+            f"@{name} must be over {previous_date}, but {following_date} was applied."
+        )
+
 
 class Word(Term):
-    @deprecate(old="Word()", new="Term()")
+    @ deprecate(old="Word()", new="Term()")
     def __init__(self):
         super().__init__()
