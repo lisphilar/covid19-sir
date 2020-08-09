@@ -441,7 +441,7 @@ class PhaseSeries(Term):
         if not set_phases:
             if show_figure:
                 start_dates = [
-                    date.strftime(self.DATE_FORMAT) for date in self.start_objects]
+                    date.strftime(self.DATE_FORMAT) for date in self.start_objects()]
                 finder.show(
                     area=area,
                     change_dates=start_dates[1:],
