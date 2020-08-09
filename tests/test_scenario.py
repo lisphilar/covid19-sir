@@ -110,13 +110,6 @@ class TestScenario(object):
         scenario.add()
         one_df = scenario.summary()
         assert len(one_df) == 4
-        # With 0th phase
-        scenario.trend(set_phases=False, include_init_phase=True)
-        scenario.trend(set_phases=True, include_init_phase=True)
-        scenario.delete(phases=["0th"])
-        assert len(scenario.summary()) == 5
-        with pytest.raises(TypeError):
-            scenario.delete(phases="1st")
 
     def test_scenario_with_model_change(self):
         # Instance to save population values

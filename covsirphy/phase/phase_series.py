@@ -139,7 +139,7 @@ class PhaseSeries(Term):
         # End date
         if end_date is None:
             if days is None:
-                end_date = self._last_phase
+                end_date = self.last_date
             else:
                 end_date = self._calc_end_date(
                     start_date=start_date, days=days)
