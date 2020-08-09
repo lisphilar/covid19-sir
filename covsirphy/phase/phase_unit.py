@@ -76,6 +76,10 @@ class PhaseUnit(Term):
         """
         return self._ode_dict[self.TAU]
 
+    @tau.setter
+    def tau(self, value):
+        self._ode_dict[self.TAU] = self.ensure_tau(value)
+
     @property
     def model(self):
         """
@@ -195,7 +199,7 @@ class PhaseUnit(Term):
             df, name="df", columns=self.NLOC_COLUMNS
         )
         if self._model is None or self._ode_dict[self.TAU] is None:
-            return True
+            return None
         self.set_y0(df)
 
     def _model_is_registered(self):
@@ -308,9 +312,10 @@ class PhaseUnit(Term):
                 "tau value must be registered by PhaseUnit.set_ode() or calculated by PhaseUnit.estimate()")
         df = record_df.loc[record_df[self.DATE] >= self.start_date, :]
         df = self._model.tau_free(df, self._population, tau=tau)
+        y0_dict = df.iloc[0].to_dict()
+        y0_dict.update(self.y0_dict)
         self.y0_dict = {
-            k: v for (k, v) in df.iloc[0].to_dict().items()
-            if k in set(self._model.VARIABLES)
+            k: v for (k, v) in y0_dict.items() if k in set(self._model.VARIABLES)
         }
 
     def simulate(self, y0_dict=None):
@@ -340,10 +345,12 @@ class PhaseUnit(Term):
         # Initial values
         y0_dict = y0_dict or {}
         y0_dict.update(self.y0_dict)
-        diff_set = y0_dict.keys() - set(self._model.VARIABLES)
+        diff_set = set(self._model.VARIABLES) - y0_dict.keys()
         if diff_set:
+            diff_str = ", ".join(list(diff_set))
+            s = "s" if len(diff_set) > 2 else ""
             raise KeyError(
-                "Initial value(s) of {', '.join} must be specified by @y0_dict or PhaseUnit.set_y0()")
+                f"Initial value{s} of {diff_str} must be specified by @y0_dict or PhaseUnit.set_y0()")
         # Conditions
         param_dict = self._ode_dict.copy()
         tau = param_dict.pop(self.TAU)

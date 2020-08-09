@@ -9,7 +9,6 @@ import sys
 import matplotlib
 if not hasattr(sys, "ps1"):
     matplotlib.use("Agg")
-import numpy as np
 import pandas as pd
 from covsirphy.util.error import deprecate
 from covsirphy.util.plotting import line_plot, box_plot
@@ -64,6 +63,13 @@ class Scenario(Term):
                 self._first_date, self._last_date, self.population, use_0th=False
             )
         }
+        self.record_df = self.jhu_data.subset(
+            country=self.country,
+            province=self.province,
+            start_date=self._first_date,
+            end_date=self._last_date,
+            population=self.population
+        )
 
     @property
     def first_date(self):
@@ -203,7 +209,7 @@ class Scenario(Term):
             name (str): phase series name
         """
         if name in self.series_dict.keys():
-            return None
+            return self.series_dict[name]
         # Phase series
         series = copy.deepcopy(self.series_dict[self.MAIN])
         series.clear(include_past=False)
@@ -636,48 +642,26 @@ class Scenario(Term):
                 Index:
                     reset index
                 Columns:
-                    - Date (str): date, like 31Dec2020
+                    - Date (pd.TimeStamp): Observation date
                     - Country (str): country/region name
                     - Province (str): province/prefecture/state name
                     - variables of the models (int): Confirmed (int) etc.
         """
         series = self._ensure_name(name)
-        # Future phases must be added in advance
-        if self.FUTURE not in series.summary()[self.TENSE].unique():
-            raise KeyError(
-                f"Future phases of {name} scenario must be registered by Scenario.add() in advance."
-            )
         # Simulation
-        y0_dict = y0_dict or {}
-        dataframes = []
-        past_set = set(series.phases(include_future=False))
-        for (phase, phase_unit) in series.phase_dict.items():
-            if phase not in past_set:
-                phase_unit.record_df = dataframes[-1]
-            df = phase_unit.simulate(y0_dict)
-            dataframes.append(df)
-        sim_df = pd.concat(dataframes, ignore_index=True, sort=True)
-        sim_df = sim_df.set_index(self.DATE).resample("D").last()
-        sim_df = sim_df.astype(np.int64)
-        fig_df = sim_df.copy()
-        sim_df[self.DATE] = sim_df.index.strftime(self.DATE_FORMAT)
-        sim_df = sim_df.reset_index(drop=True)
-        sim_df = sim_df.loc[:, [self.DATE, *sim_df.columns.tolist()[:-1]]]
-        # Return dataframe if figure is not needed
+        sim_df = series.simulate(
+            record_df=self.record_df, tau=self.tau, y0_dict=y0_dict)
         if not show_figure:
             return sim_df
         # Show figure
-        fig_cols_set = set(fig_df.columns) & set(self.FIG_COLUMNS)
+        fig_cols_set = set(sim_df.columns) & set(self.FIG_COLUMNS)
         fig_cols = [col for col in self.FIG_COLUMNS if col in fig_cols_set]
-        start_objects = [
-            self.date_obj(phase_unit.start_date) for phase_unit in series.phase_dict.values()
-        ]
         line_plot(
-            fig_df[fig_cols],
+            sim_df[fig_cols],
             title=f"{self.area}: Predicted number of cases ({name} scenario)",
             filename=filename,
             y_integer=True,
-            v=start_objects[1:]
+            v=series.start_objects()[1:]
         )
         return sim_df
 
@@ -814,7 +798,7 @@ class Scenario(Term):
             last_date = df.index[-1]
             # Max value of Infected
             max_ci = df[self.CI].max()
-            argmax_ci = df[self.CI].idxmax()
+            argmax_ci = df[self.CI].idxmax().strftime(self.DATE_FORMAT)
             # Infected on the end date of the last phase
             last_ci = df.loc[last_date, self.CI]
             # Fatal on the end date of the last phase

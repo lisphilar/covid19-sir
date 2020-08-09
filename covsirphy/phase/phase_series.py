@@ -124,6 +124,7 @@ class PhaseSeries(Term):
         Notes:
             If @population is None, the previous initial value will be used.
         """
+        param_dict = kwargs.copy()
         # Phase information
         last_id, last_phase = self._last_phase()
         if last_phase is None:
@@ -136,6 +137,9 @@ class PhaseSeries(Term):
             last_dict = last_phase.to_dict()
             start_date = start_date or self.tomorrow(last_dict[self.END])
             population = population or last_dict[self.N]
+            param_dict.update(
+                {param: value for (param, value) in last_dict.items()}
+            )
         # End date
         if end_date is None:
             if days is None:
@@ -153,7 +157,9 @@ class PhaseSeries(Term):
         phase = PhaseUnit(start_date, end_date, population)
         if "model" in kwargs:
             model = kwargs.pop("model")
-            phase.set_ode(model=model, **kwargs)
+            param_dict = {
+                k: v for (k, v) in param_dict.items() if k in model.PARAMETERS}
+            phase.set_ode(model=model, **param_dict)
         self._phase_dict[phase_id] = phase
 
     def phase(self, name="last"):
@@ -461,3 +467,49 @@ class PhaseSeries(Term):
         self.delete("0th")
         self.use_0th = use_0th
         return self
+
+    def simulate(self, record_df, tau, y0_dict=None):
+        """
+        Simulate ODE models with set parameter values.
+
+        Args:
+            record_df (pandas.DataFrame):
+                Index:
+                    reset index
+                Columns:
+                    - Date (pd.TimeStamp): Observation date
+                    - Confirmed (int): the number of confirmed cases
+                    - Infected (int): the number of currently infected cases
+                    - Fatal (int): the number of fatal cases
+                    - Recovered (int): the number of recovered cases (> 0)
+                    - Susceptible (int): the number of susceptible cases
+            tau (int): tau value [min]
+            y0_dict (dict or None):
+                - key (str): variable name
+                - value (float): initial value
+                - dictionary of initial values or None
+                - if model will be changed in the later phase, must be specified
+
+        Returns:
+            (pandas.DataFrame)
+                Index:
+                    reset index
+                Columns:
+                    - Date (pd.TimeStamp): Observation date
+                    - Country (str): country/region name
+                    - Province (str): province/prefecture/state name
+                    - variables of the models (int): Confirmed (int) etc.
+        """
+        dataframes = []
+        for (phase, phase_unit) in self.phase_dict.items():
+            phase_unit.tau = tau
+            try:
+                phase_unit.record_df = dataframes[-1]
+            except IndexError:
+                phase_unit.record_df = record_df
+            df = phase_unit.simulate(y0_dict)
+            dataframes.append(df)
+        sim_df = pd.concat(dataframes, ignore_index=True, sort=True)
+        sim_df = sim_df.set_index(self.DATE).resample("D").last()
+        sim_df = sim_df.astype(np.int64)
+        return sim_df.reset_index()

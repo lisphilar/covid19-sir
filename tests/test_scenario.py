@@ -19,8 +19,6 @@ class TestScenario(object):
 
     def test_analysis(self, jhu_data, population_data):
         scenario = Scenario(jhu_data, population_data, country="Italy")
-        with pytest.raises(KeyError):
-            scenario.simulate(name="Main", show_figure=False)
         with pytest.raises(ValueError):
             scenario.estimate(model=SIRF)
         # S-R trend analysis
@@ -136,11 +134,11 @@ class TestScenario(object):
         # Add medicine scenario
         kappa_med = snl.get("kappa", phase="0th") / 2
         sigma_med = snl.get("sigma", phase="0th") * 2
-        snl.add(end_date="31Dec2020", name="Medicine",
-                kappa=kappa_med, sigma=sigma_med)
+        snl.add(
+            end_date="31Dec2020", name="Medicine", kappa=kappa_med, sigma=sigma_med)
         # Add vaccine scenario
-        snl.add(end_date="31Dec2020", name="Vaccine",
-                model=SIRFV, omega=0.001)
+        snl.add(
+            end_date="31Dec2020", name="Vaccine", model=SIRFV, omega=0.001)
         # Summarize
         snl.summary()
         # Compare scenarios
