@@ -123,7 +123,9 @@ class Scenario(Term):
         Notes:
             Records with Recovered > 0 will be selected.
         """
-        df = self.jhu_data.subset(country=self.country, province=self.province)
+        df = self.jhu_data.subset(
+            country=self.country, province=self.province,
+            start_date=self._first_date, end_date=self._last_date)
         if not show_figure:
             return df
         line_plot(

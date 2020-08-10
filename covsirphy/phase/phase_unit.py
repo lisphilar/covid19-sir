@@ -39,6 +39,7 @@ class PhaseUnit(Term):
             self.RUNTIME: None
         }
         # Init
+        self._enabled = True
         self._model = None
         self._record_df = pd.DataFrame()
         self.y0_dict = {}
@@ -56,6 +57,17 @@ class PhaseUnit(Term):
 
     def __ne__(self, other):
         return not self.__eq__(other)
+
+    @property
+    def enabled(self):
+        """
+        bool: enabled (True) or disabled (False)
+        """
+        return self._enabled
+
+    @enabled.setter
+    def enabled(self, flag):
+        self._enabled = bool(flag)
 
     @property
     def start_date(self):
@@ -87,12 +99,15 @@ class PhaseUnit(Term):
 
     @tau.setter
     def tau(self, value):
-        self._ode_dict[self.TAU] = self.ensure_tau(value)
+        if self._ode_dict[self.TAU] is None:
+            self._ode_dict[self.TAU] = self.ensure_tau(value)
+        raise AttributeError(
+            "PhaseUnit.tau is not None and cannot be changed.")
 
     @property
     def model(self):
         """
-        covsirphy.ModelBase: model description
+        covsirphy.ModelBase or None: model description
         """
         return self._model
 
@@ -102,13 +117,6 @@ class PhaseUnit(Term):
         covsirphy.Estimator or None: estimator object
         """
         return self._estimator
-
-    @property
-    def ode_dict(self):
-        """
-        dict: parameter values and tau value
-        """
-        return self._ode_dict
 
     def to_dict(self):
         """
@@ -160,7 +168,7 @@ class PhaseUnit(Term):
         """
         summary_dict = self.to_dict()
         df = pd.DataFrame.from_dict(summary_dict, orient="index").T
-        return df.dropna(how="all", axis=1).fillna(self.UNKNOWN)
+        return df.dropna(how="all", axis=1)
 
     def set_ode(self, model, tau=None, **kwargs):
         """
@@ -219,7 +227,7 @@ class PhaseUnit(Term):
             NameError: ODE model is not registered
         """
         if self._model is None:
-            raise ValueError(
+            raise NameError(
                 "PhaseUnit.set_ode(model) must be done in advance.")
 
     def estimate(self, record_df=None, **kwargs):
@@ -348,6 +356,7 @@ class PhaseUnit(Term):
             Simulation starts at the start date of the phase.
             Simulation end at the next date of the end date of the phase.
         """
+        self._model_is_registered()
         # Initial values
         y0_dict = y0_dict or {}
         y0_dict.update(self.y0_dict)
@@ -355,10 +364,13 @@ class PhaseUnit(Term):
         if diff_set:
             diff_str = ", ".join(list(diff_set))
             s = "s" if len(diff_set) > 1 else ""
-            raise KeyError(
-                f"Initial value{s} of {diff_str} must be specified by @y0_dict or PhaseUnit.set_y0()")
+            raise ValueError(
+                f"Initial value{s} of {diff_str} must be specified by @y0_dict or PhaseUnit.set_y0(record_df)")
         # Conditions
         param_dict = self._ode_dict.copy()
+        if None in param_dict.values():
+            raise KeyError(
+                "Tau and parameter values must be specified in advance with PhaseUnit.set_ode().")
         tau = param_dict.pop(self.TAU)
         last_date = self.tomorrow(self._end_date)
         # Simulation

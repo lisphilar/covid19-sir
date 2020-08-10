@@ -18,7 +18,6 @@ class PhaseSeries(Term):
         first_date (str): the first date of the series, like 22Jan2020
         last_date (str): the last date of the records, like 25May2020
         population (int): initial value of total population in the place
-        use_0th (bool): if True, phase names will be 0th, 1st,... If False, 1st, 2nd,...
     """
 
     def __init__(self, first_date, last_date, population, use_0th=True):
@@ -26,8 +25,6 @@ class PhaseSeries(Term):
         self.last_date = self.ensure_date(last_date, "last_date")
         self.init_population = self.ensure_population(population)
         self.clear(include_past=True)
-        # Whether use 0th phase or not
-        self.use_0th = use_0th
         # {phase name: PhaseUnit}
         self._phase_dict = {}
 

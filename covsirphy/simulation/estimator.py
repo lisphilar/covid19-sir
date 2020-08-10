@@ -44,13 +44,14 @@ class Estimator(Optimizer):
         if isinstance(record_df, JHUData):
             subset_arg_dict = find_args(
                 [JHUData.subset, record_df.subset], **kwargs)
-            record_df = record_df.subset(
+            self.record_df = record_df.subset(
                 population=population, **subset_arg_dict)
         else:
-            record_df = model.restore(record_df)
-        self.record_df = self.ensure_dataframe(
-            record_df, name="record_df", columns=self.NLOC_COLUMNS
-        )
+            if not set(self.NLOC_COLUMNS).issubset(record_df.columns):
+                record_df = model.restore(record_df)
+            self.record_df = self.ensure_dataframe(
+                record_df, name="record_df", columns=self.NLOC_COLUMNS
+            )
         # Initial values
         df = model.tau_free(self.record_df, population, tau=None)
         self.y0_dict = {

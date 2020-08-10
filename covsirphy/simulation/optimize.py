@@ -282,10 +282,8 @@ class Optimizer(Term):
             ["datetime_complete", "datetime_start"],
             axis=1
         )
-        try:
+        if "system_attrs__number" in df.columns:
             df = df.drop("system_attrs__number", axis=1)
-        except KeyError:
-            pass
         # Show figure
         if not show_figure:
             return df

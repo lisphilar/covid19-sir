@@ -1,7 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-import warnings
 import pandas as pd
 import pytest
 from covsirphy import Estimator, ODESimulator, Term, ExampleData, Scenario
@@ -76,7 +75,6 @@ class TestODESimulator(object):
         dim_df = simulator.dim(tau=eg_tau, start_date=start_date)
         # Estimation
         population = model.EXAMPLE["population"]
-        warnings.filterwarnings("ignore", category=DeprecationWarning)
         estimator = Estimator(
             dim_df, model=model, population=population,
             country="Example", province=model.NAME, tau=eg_tau
