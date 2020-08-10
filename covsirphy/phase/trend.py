@@ -93,9 +93,8 @@ class Trend(Term):
         f_partial = functools.partial(
             self.negative_exp, a=param[0], b=param[1]
         )
-        df[f"{self.S}{self.P}"] = x_series.apply(lambda x: f_partial(x))
-        df = df.astype(np.int64, errors="ignore")
-        return df
+        df[f"{self.S}{self.P}"] = f_partial(x_series)
+        return df.astype(np.int64, errors="ignore")
 
     def rmsle(self):
         """
@@ -124,12 +123,13 @@ class Trend(Term):
             filename (str): filename of the figure, or None (display)
         """
         df = self.run()
-        df["Predicted"] = df[f"{self.S}{self.P}"]
+        df = df.rename({f"{self.S}{self.P}", "Predicted"}, axis=1)
         start_date = self.sr_df.index.min().strftime(self.DATE_FORMAT)
         end_date = self.sr_df.index.max().strftime(self.DATE_FORMAT)
         title = f"{area}: S-R trend from {start_date} to {end_date}"
         self.show_with_many(
-            result_df=df, predicted_cols=["Predicted"],
+            result_df=df,
+            predicted_cols=["Predicted"],
             title=title,
             filename=filename
         )

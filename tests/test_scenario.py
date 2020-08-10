@@ -82,9 +82,9 @@ class TestScenario(object):
             scenario.summary(columns=["Value"])
         # Range of past phases
         scenario.first_date = "01Mar2020"
-        scenario.first_date
+        assert scenario.first_date == "01Mar2020"
         scenario.last_date = "16Jul2020"
-        scenario.last_date
+        assert scenario.last_date == "16Jul2020"
         with pytest.raises(ValueError):
             scenario.first_date = "01Aug2020"
         with pytest.raises(ValueError):

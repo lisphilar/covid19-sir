@@ -121,7 +121,7 @@ class Optimizer(Term):
         sim_df = self.simulate(self.step_n, param_dict)
         comp_df = self.compare(self.train_df, sim_df)
         _ = (sim_df, comp_df)
-        return None
+        return 0
 
     def simulate(self, param_dict):
         """

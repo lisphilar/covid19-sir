@@ -74,19 +74,6 @@ class Estimator(Optimizer):
         # step_n will be defined in divide_minutes()
         self.step_n = None
 
-    def _run_trial(self, timeout_iteration):
-        """
-        Run trial.
-
-        Args:
-            timeout_iteration (int): time-out of one iteration
-        """
-        self.study.optimize(
-            lambda x: self.objective(x),
-            n_jobs=1,
-            timeout=timeout_iteration
-        )
-
     def run(self, timeout=60, reset_n_max=3,
             timeout_iteration=5, allowance=(0.98, 1.02),
             seed=0, stdout=True, **kwargs):
@@ -120,7 +107,8 @@ class Estimator(Optimizer):
         stopwatch = StopWatch()
         for _ in range(iteration_n):
             # Perform optimization
-            self._run_trial(timeout_iteration=timeout_iteration)
+            self.study.optimize(
+                self.objective, n_jobs=1, timeout=timeout_iteration)
             # Create a table to compare observed/estimated values
             tau = self.tau or super().param()[self.TAU]
             train_df = self.divide_minutes(tau)
@@ -235,8 +223,6 @@ class Estimator(Optimizer):
         Returns:
             (float): score of the error function to minimize
         """
-        if self.step_n is None:
-            raise ValueError("self.step_n must be defined in advance.")
         sim_df = self.simulate(self.step_n, param_dict)
         df = self.compare(taufree_df, sim_df)
         # Calculate error score
@@ -248,14 +234,13 @@ class Estimator(Optimizer):
         diffs = [df[f"{v}{self.A}"] - df[f"{v}{self.P}"] for v in v_list]
         numerators = [df[f"{v}{self.A}"] + 1 for v in v_list]
         try:
-            score = sum(
+            return sum(
                 p * np.average(diff.abs() / numerator, weights=df.index)
                 for (p, diff, numerator)
                 in zip(self.model.PRIORITIES, diffs, numerators)
             )
         except (ZeroDivisionError, TypeError):
             return np.inf
-        return score
 
     def simulate(self, step_n, param_dict):
         """
@@ -343,10 +328,8 @@ class Estimator(Optimizer):
                     - Trials: the number of trials
                     - Runtime: run time of estimation
         """
-        summary_dict = self.to_dict()
-        df = pd.DataFrame.from_dict({str(name): summary_dict}, orient="index")
-        if name is None:
-            df = df.reset_index(drop=True)
+        summary_dict = {name or 0: self.to_dict()}
+        df = pd.DataFrame.from_dict(summary_dict, orient="index")
         return df.fillna(self.UNKNOWN)
 
     def _rmsle(self, tau):

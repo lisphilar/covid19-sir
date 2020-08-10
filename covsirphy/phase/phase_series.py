@@ -298,21 +298,6 @@ class PhaseSeries(Term):
             self._tense(phase.end_date) for phase in self._phase_dict.values()
         ]
 
-    def model_names(self):
-        """
-        Return the names of the registered models if available.
-
-        Returns:
-            (list[str]): list of model names
-        """
-        try:
-            names = [
-                phase.to_dict[self.ODE] for phase in self._phase_dict.values()
-            ]
-        except KeyError:
-            names = []
-        return names
-
     def population_values(self):
         """
         Return the list of population values.

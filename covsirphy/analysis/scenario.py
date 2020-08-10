@@ -350,10 +350,10 @@ class Scenario(Term):
         """
         if name is None and len(self.series_dict.keys()) > 1:
             dataframes = []
-            for (name, series) in self.series_dict.items():
+            for (_name, series) in self.series_dict.items():
                 summary_df = series.summary()
                 summary_df = summary_df.rename_axis(self.PHASE)
-                summary_df[self.SERIES] = name
+                summary_df[self.SERIES] = _name
                 dataframes.append(summary_df.reset_index())
             df = pd.concat(dataframes, ignore_index=True, sort=False)
             return df.set_index([self.SERIES, self.PHASE])
