@@ -268,7 +268,6 @@ class Estimator(Optimizer):
             param_dict=param_dict,
             y0_dict=self.y0_dict
         )
-        simulator.run()
         return simulator.taufree()
 
     def to_dict(self):

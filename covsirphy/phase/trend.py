@@ -123,7 +123,7 @@ class Trend(Term):
             filename (str): filename of the figure, or None (display)
         """
         df = self.run()
-        df = df.rename({f"{self.S}{self.P}", "Predicted"}, axis=1)
+        df = df.rename({f"{self.S}{self.P}": "Predicted"}, axis=1)
         start_date = self.sr_df.index.min().strftime(self.DATE_FORMAT)
         end_date = self.sr_df.index.max().strftime(self.DATE_FORMAT)
         title = f"{area}: S-R trend from {start_date} to {end_date}"

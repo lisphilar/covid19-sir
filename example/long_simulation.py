@@ -27,7 +27,6 @@ def main():
         model=cs.SIRF, step_n=1000, population=eg_population,
         param_dict=set_param_dict, y0_dict=y0_dict
     )
-    simulator.run()
     # Non-dimensional
     nondim_df = simulator.non_dim()
     nondim_df.to_csv(output_dir.joinpath("non_dim.csv"), index=False)

@@ -370,7 +370,6 @@ class PhaseUnit(Term):
             param_dict=param_dict,
             y0_dict=y0_dict
         )
-        simulator.run()
         # Dimensionalized values
         df = simulator.dim(tau=tau, start_date=self._start_date)
         df = self._model.restore(df)

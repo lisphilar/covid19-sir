@@ -5,13 +5,14 @@ from datetime import datetime, timedelta
 import numpy as np
 import pandas as pd
 from scipy.integrate import solve_ivp
+from covsirphy.util.error import deprecate
 from covsirphy.cleaning.term import Term
 from covsirphy.ode.mbase import ModelBase
 
 
 class ODESimulator(Term):
     """
-    Simulation of an ODE model.
+    Simulation of an ODE model for one phase.
 
     Args:
         country (str or None): country name
@@ -21,11 +22,8 @@ class ODESimulator(Term):
     def __init__(self, country=None, province=None):
         self.country = country or self.UNKNOWN
         self.province = province or self.UNKNOWN
-        # list of dictionary
         # keys: model, step_n, population, param_dict, y0_dict
-        self.settings = []
-        # tau-free data: reset index, 't', columns with dimensional variables
-        self._taufree_df = pd.DataFrame()
+        self.setting = {}
         # key: non-dim variable name, value: dimensional variable name
         self.var_dict = {}
 
@@ -51,23 +49,20 @@ class ODESimulator(Term):
                 - None or if not include some variables, the last values will be used
                     - NameError when the model is the first model
                     - NameError if new variable are included
-
-        Returns:
-            covsirphy.ODESimulator: self
         """
+        if self.setting:
+            raise ValueError(
+                "Simulation for two phases is not supported from version 2.7.0")
         # Register the setting
-        self.settings.append(
-            {
-                "model": self.ensure_subclass(model, ModelBase, name="model"),
-                "step_n": self.ensure_natural_int(step_n, name="step_n"),
-                "population": self.ensure_population(population),
-                "param_dict": self._ensure_parameters(model, param_dict),
-                "y0_dict": self._ensure_initial_values(model, y0_dict),
-            }
-        )
+        self.setting = {
+            "model": self.ensure_subclass(model, ModelBase, name="model"),
+            "step_n": self.ensure_natural_int(step_n, name="step_n"),
+            "population": self.ensure_population(population),
+            "param_dict": self._ensure_parameters(model, param_dict),
+            "y0_dict": self._ensure_initial_values(model, y0_dict),
+        }
         # Update variable dictionary
         self.var_dict.update(model.VAR_DICT)
-        return self
 
     def _ensure_parameters(self, model, param_dict):
         """
@@ -88,8 +83,6 @@ class ODESimulator(Term):
         param_dict = param_dict or {}
         usable_dict = {
             p: param_dict[p] if p in param_dict else None for p in model.PARAMETERS}
-        if self.settings:
-            usable_dict.update(self.settings[-1]["param_dict"])
         if None not in usable_dict.values():
             return usable_dict
         none_params = [k for (k, v) in usable_dict.items() if v is None]
@@ -120,9 +113,6 @@ class ODESimulator(Term):
         if None not in usable_dict.values():
             return usable_dict
         none_vars = [k for (k, v) in usable_dict.items() if v is None]
-        last_vars = self.settings[-1]["model"].VARIABLES[:]
-        if self.settings and set(none_vars).issubset(set(last_vars)):
-            return usable_dict
         s = "s" if len(none_vars) > 1 else ""
         raise NameError(
             f"Initial value{s} of {', '.join(none_vars)} must be specified by @y0_dict."
@@ -166,30 +156,15 @@ class ODESimulator(Term):
         y_df = y_df.round()
         return pd.concat([t_df, y_df], axis=1)
 
+    @deprecate(
+        old="ODESimulator.run()",
+        new="ODESimulator.taufree(), .non_dim() or .dim(tau, start_date) directly")
     def run(self):
         """
-        Run the simulator.
+        From version 2.7.0, it is not necessary to perform ODESimulator.run().
+        Please directory use ODESimulator.taufree(), .non_dim() or .dim(tau, start_date)
         """
-        if len(self.settings) == 1:
-            df = self._solve_ode(**self.settings[0])
-            df[self.TS] = df.index
-            self._taufree_df = df.copy()
-            return None
-        dataframes = []
-        last_row_dict = {}
-        for setting in self.settings[:]:
-            # Initial values
-            setting["y0_dict"].update(last_row_dict)
-            # Solve ODEs
-            sim_df = self._solve_ode(**setting)
-            last_row_dict = sim_df.iloc[-1, :].to_dict()
-            dataframes.append(sim_df.iloc[:-1, :])
-        df = pd.concat(
-            [*dataframes, pd.Series(last_row_dict)], ignore_index=True, sort=True)
-        df = df.fillna(0)
-        df[self.TS] = df.index
-        self._taufree_df = df.copy()
-        return None
+        return self.taufree()
 
     def taufree(self):
         """
@@ -203,9 +178,8 @@ class ODESimulator(Term):
                     - t (int): Elapsed time divided by tau value [-]
                     - columns with dimensionalized variables
         """
-        df = self._taufree_df.copy()
-        if df.empty:
-            raise Exception("ODESimulator.run() must be done in advance.")
+        df = self._solve_ode(**self.setting)
+        df[self.TS] = df.index
         return df.reset_index(drop=True)
 
     def non_dim(self):
@@ -247,8 +221,7 @@ class ODESimulator(Term):
                     - variables of the models (int)
         """
         df = self.taufree()
-        df = df.drop(self.TS, axis=1)
-        df = df.reset_index(drop=True)
+        df = df.drop(self.TS, axis=1).reset_index(drop=True)
         var_cols = df.columns.tolist()
         df = df.astype(np.int64)
         # Date

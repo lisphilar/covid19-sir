@@ -81,7 +81,6 @@ class ExampleData(JHUData):
         # Simulation
         simulator = ODESimulator(country=country, province=province)
         simulator.add(model=model, **arg_dict)
-        simulator.run()
         # Add the simulated records to self
         dim_df = simulator.dim(tau=self.tau, start_date=start_date)
         restored_df = model.restore(dim_df)
