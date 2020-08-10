@@ -121,7 +121,7 @@ class Optimizer(Term):
         sim_df = self.simulate(self.step_n, param_dict)
         comp_df = self.compare(self.train_df, sim_df)
         _ = (sim_df, comp_df)
-        return None
+        return 0
 
     def simulate(self, param_dict):
         """
@@ -260,7 +260,6 @@ class Optimizer(Term):
         This method can be overwritten in subclass.
         """
         param_dict = self.param()
-        param_dict.pop(self.TAU)
         return self.simulate(self.step_n, param_dict)
 
     def history(self, show_figure=True, filename=None):

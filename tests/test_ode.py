@@ -73,7 +73,6 @@ class TestODESimulator(object):
         # Simulation
         simulator = ODESimulator(country="Example", province=model.NAME)
         simulator.add(model=model, **model.EXAMPLE)
-        simulator.run()
         dim_df = simulator.dim(tau=eg_tau, start_date=start_date)
         # Estimation
         population = model.EXAMPLE["population"]

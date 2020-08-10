@@ -32,23 +32,23 @@ def main():
     analyser.estimate(cs.SIRF)
     # Parameter history of Rt
     rt_df = analyser.param_history(
-        "Rt", roll_window=None, filename="history_rt.png")
+        "Rt", roll_window=None, filename=output_dir.joinpath("history_rt.png"))
     rt_df.to_csv(output_dir.joinpath("history_rt.csv"), index=False)
     # Parameter history of rho
     rho_df = analyser.param_history(
-        "rho", roll_window=14, filename="history_rho.jpg")
+        "rho", roll_window=14, filename=output_dir.joinpath("history_rho.jpg"))
     rho_df.to_csv(output_dir.joinpath("history_rho.csv"), index=False)
     # Parameter history of sigma
     sigma_df = analyser.param_history(
-        "sigma", roll_window=14, filename="history_sigma.jpg")
+        "sigma", roll_window=14, filename=output_dir.joinpath("history_sigma.jpg"))
     sigma_df.to_csv(output_dir.joinpath("history_sigma.csv"), index=False)
     # Parameter history of kappa
     kappa_df = analyser.param_history(
-        "kappa", roll_window=14, filename="history_kappa.jpg")
+        "kappa", roll_window=14, filename=output_dir.joinpath("history_kappa.jpg"))
     kappa_df.to_csv(output_dir.joinpath("history_kappa.csv"), index=False)
     # Parameter history of theta
     theta_df = analyser.param_history(
-        "theta", roll_window=14, filename="history_theta.jpg")
+        "theta", roll_window=14, filename=output_dir.joinpath("history_theta.jpg"))
     theta_df.to_csv(output_dir.joinpath("history_theta.csv"), index=False)
 
 

@@ -9,10 +9,8 @@ if not hasattr(sys, "ps1"):
     matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 import numpy as np
-import pandas as pd
 from scipy.optimize import curve_fit, OptimizeWarning
 from covsirphy.cleaning.term import Term
-from covsirphy.cleaning.jhu_data import JHUData
 
 
 class Trend(Term):
@@ -20,52 +18,40 @@ class Trend(Term):
     S-R trend analysis in a phase.
 
     Args:
-        jhu_data (covsirphy.JHUData): object of records
-        population (int): total population in the place
-        country (str): country name
-        province (str): province name
-        start_date (str): start date, like 22Jan2020
-        end_date (str): end date, like 01Feb2020
+        sr_df (pandas.DataFrame)
+            Index:
+                Date (pd.TimeStamp): Observation date
+            Columns:
+                - Recovered (int): the number of recovered cases (> 0)
+                - Susceptible (int): the number of susceptible cases
+                - any other columns will be ignored
     """
 
-    def __init__(self, jhu_data, population,
-                 country, province=None, start_date=None, end_date=None):
+    def __init__(self, sr_df):
         # Dataset
-        if isinstance(jhu_data, pd.DataFrame):
-            warnings.warn(
-                "Please use instance of JHUData as the first argument of Trend class.",
-                DeprecationWarning,
-                stacklevel=2
-            )
-            jhu_data = JHUData.from_dataframe(jhu_data)
-        jhu_data = self.ensure_instance(jhu_data, JHUData, name="jhu_data")
-        # Arguments
-        self.population = self.ensure_natural_int(population, "population")
-        self.area = JHUData.area_name(country, province)
+        self.sr_df = self.ensure_dataframe(
+            sr_df, name="sr_df", time_index=True, columns=[self.S, self.R])
         # Dataset for analysis
-        self.sr_df = jhu_data.to_sr(
-            country=country, province=province, population=population,
-            start_date=start_date, end_date=end_date
-        )
         if len(self.sr_df) < 3:
             raise ValueError("The length of @sr_df must be over 2.")
-        # Start/end date
-        date_objects = self.sr_df.index.copy()
-        first_obj, last_obj = date_objects.min(), date_objects.max()
-        self.start_date = (
-            self.date_obj(start_date) or first_obj
-        ).strftime(self.DATE_FORMAT)
-        self.end_date = (
-            self.date_obj(end_date) or last_obj
-        ).strftime(self.DATE_FORMAT)
         # Setting for analysis
         self.result_df = None
 
-    def analyse(self):
+    def run(self):
         """
         Perform curve fitting of S-R trend with negative exponential function and save the result.
+
+        Returns:
+            (pandas.DataFrame): results of fitting
+                Index:
+                    - index (Date) (pd.TimeStamp): Observation date
+                Columns:
+                    - Recovered: The number of recovered cases
+                    - Susceptible_actual: Actual values of Susceptible
+                    - columns defined by @columns
         """
         self.result_df = self._fitting(self.sr_df)
+        return self.result_df
 
     def _fitting(self, sr_df):
         """
@@ -107,9 +93,8 @@ class Trend(Term):
         f_partial = functools.partial(
             self.negative_exp, a=param[0], b=param[1]
         )
-        df[f"{self.S}{self.P}"] = x_series.apply(lambda x: f_partial(x))
-        df = df.astype(np.int64, errors="ignore")
-        return df
+        df[f"{self.S}{self.P}"] = f_partial(x_series)
+        return df.astype(np.int64, errors="ignore")
 
     def rmsle(self):
         """
@@ -118,9 +103,7 @@ class Trend(Term):
         Returns:
             (float): RMSLE score
         """
-        if self.result_df is None:
-            raise NameError("Must perform Trend().analyse() in advance.")
-        df = self.result_df.replace(np.inf, 0)
+        df = self.run().replace(np.inf, 0)
         df = df.loc[df[f"{self.S}{self.A}"] > 0, :]
         df = df.loc[df[f"{self.S}{self.P}"] > 0, :]
         actual = df[f"{self.S}{self.A}"]
@@ -131,38 +114,22 @@ class Trend(Term):
         )
         return scores.sum()
 
-    def result(self):
-        """
-        Show the result as a dataframe.
-
-        Returns:
-            (pandas.DataFrame): results of fitting
-
-                Index:
-                    - index (Date) (pd.TimeStamp): Observation date
-                Columns:
-                    - Recovered: The number of recovered cases
-                    - Susceptible_actual: Actual values of Susceptible
-                    - columns defined by @columns
-
-        """
-        return self.result_df
-
-    def show(self, filename=None):
+    def show(self, area, filename=None):
         """
         show the result as a figure.
 
         Args:
-            show_figure (bool): if True, show the history as a pair-plot of parameters.
-            filename (str): filename of the figure, or None (show figure)
+            area (str): area name
+            filename (str): filename of the figure, or None (display)
         """
-        df = self.result()
-        if df is None:
-            raise NameError("Must perform Trend().analyse() in advance.")
-        df["Predicted"] = df[f"{self.S}{self.P}"]
-        title = f"{self.area}: S-R trend from {self.start_date} to {self.end_date}"
+        df = self.run()
+        df = df.rename({f"{self.S}{self.P}": "Predicted"}, axis=1)
+        start_date = self.sr_df.index.min().strftime(self.DATE_FORMAT)
+        end_date = self.sr_df.index.max().strftime(self.DATE_FORMAT)
+        title = f"{area}: S-R trend from {start_date} to {end_date}"
         self.show_with_many(
-            result_df=df, predicted_cols=["Predicted"],
+            result_df=df,
+            predicted_cols=["Predicted"],
             title=title,
             filename=filename
         )
@@ -175,7 +142,6 @@ class Trend(Term):
 
         Args:
             result_df (pandas.DataFrame): results of fitting
-
                 Index:
                     - index (Date) (pd.TimeStamp): Observation date
                 Columns:

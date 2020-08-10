@@ -211,7 +211,7 @@ class JHUData(CleaningBase):
                     Date (pd.TimeStamp): Observation date
                 Columns:
                     - Recovered (int): the number of recovered cases (> 0)
-                    - Susceptible (int): the number of susceptible cases, if calculated
+                    - Susceptible (int): the number of susceptible cases
 
         Notes:
             @population must be specified.

@@ -3,6 +3,7 @@
 
 from collections import defaultdict
 from datetime import datetime, timedelta
+import math
 from methodtools import lru_cache
 import numpy as np
 import pandas as pd
@@ -56,12 +57,17 @@ class Term(object):
     # Phase name
     SUFFIX_DICT = defaultdict(lambda: "th")
     SUFFIX_DICT.update({1: "st", 2: "nd", 3: "rd"})
+    # Summary of phases
     TENSE = "Type"
     PAST = "Past"
     FUTURE = "Future"
     INITIAL = "Initial"
     ODE = "ODE"
     RT = "Rt"
+    RMSLE = "RMSLE"
+    TRIALS = "Trials"
+    RUNTIME = "Runtime"
+    EST_COLS = [RMSLE, TRIALS, RUNTIME]
     # Scenario analysis
     PHASE = "Phase"
     SERIES = "Scenario"
@@ -76,7 +82,7 @@ class Term(object):
         Convert numbers to 1st, 2nd etc.
 
         Args:
-        @num (int): number
+            num (int): number
 
         Returns:
             str
@@ -86,6 +92,24 @@ class Term(object):
         q, mod = divmod(num, 10)
         suffix = "th" if q == 1 else cls.SUFFIX_DICT[mod]
         return f"{num}{suffix}"
+
+    @staticmethod
+    def str2num(string, name="phase names"):
+        """
+        Convert 1st to 1 and so on.
+
+        Args:
+            string (str): like 1st, 2nd, 3rd,...
+            name (str): name of the string
+
+        Returns:
+            int
+        """
+        try:
+            return int(string[:-2])
+        except ValueError:
+            raise ValueError(
+                f"Examples of {name} are 0th, 1st, 2nd..., but {string} was applied.")
 
     @staticmethod
     def negative_exp(x, a, b):
@@ -101,25 +125,6 @@ class Term(object):
             float
         """
         return a * np.exp(-b * x)
-
-    @lru_cache(maxsize=None)
-    @classmethod
-    def date_obj(cls, date_str):
-        """
-        Convert a string to a datetime object.
-
-        Args:
-            date_str (str or None): date, like 22Jan2020
-
-        Returns:
-            datetime.datetime or None: datetime object
-
-        Notes:
-            If @date_str is None, None will be returned.
-        """
-        if date_str is None:
-            return None
-        return datetime.strptime(date_str, cls.DATE_FORMAT)
 
     @staticmethod
     def flatten(nested_list, unique=True):
@@ -222,6 +227,21 @@ class Term(object):
             f"@tau must be a divisor of 1440 [min], but {tau} was applied."
         )
 
+    @classmethod
+    def ensure_population(cls, population):
+        """
+        Ensure that the population value is valid.
+
+        Args:
+            population (int or float or str): population value
+
+        Returns:
+            int: as-is
+        """
+        return cls.ensure_natural_int(
+            population, name="population", include_zero=False, none_ok=False
+        )
+
     @staticmethod
     def ensure_float(target, name="value"):
         """
@@ -318,7 +338,7 @@ class Term(object):
 
     @lru_cache(maxsize=None)
     @classmethod
-    def to_date_obj(cls, date_str=None, default=None):
+    def date_obj(cls, date_str=None, default=None):
         """
         Convert a string to a datatime object.
 
@@ -347,11 +367,61 @@ class Term(object):
         Returns:
             str: tomorrow
         """
-        tomorrow = cls.to_date_obj(date_str) + timedelta(days=1)
-        return tomorrow.strftime(cls.DATE_FORMAT)
+        date = cls.date_obj(date_str) + timedelta(days=1)
+        return date.strftime(cls.DATE_FORMAT)
+
+    @classmethod
+    def yesterday(cls, date_str):
+        """
+        Yesterday of the date.
+
+        Args:
+            date_str (str): today
+
+        Returns:
+            str: yesterday
+        """
+        date = cls.date_obj(date_str) - timedelta(days=1)
+        return date.strftime(cls.DATE_FORMAT)
+
+    @classmethod
+    def steps(cls, start_date, end_date, tau):
+        """
+        Return the number of days (round up).
+
+        Args:
+            start_date (str): start date, like 01Jan2020
+            end_date (str): end date, like 01Jan2020
+            tau (int): tau value [min]
+        """
+        sta = cls.date_obj(start_date)
+        end = cls.date_obj(end_date)
+        tau = cls.ensure_tau(tau)
+        return math.ceil((end - sta) / timedelta(minutes=tau))
+
+    @classmethod
+    def ensure_date_order(cls, previous_date, following_date, name="following_date"):
+        """
+        Ensure that the order of dates.
+
+        Args:
+            previous_date (str): previous date
+            following_date (str): following date
+            name (str): name of @following_date
+
+        Raises:
+            ValueError: @previous_date >= @following_date
+        """
+        previous = cls.date_obj(previous_date)
+        following = cls.date_obj(following_date)
+        if previous < following:
+            return None
+        raise ValueError(
+            f"@{name} must be over {previous_date}, but {following_date} was applied."
+        )
 
 
 class Word(Term):
-    @deprecate(old="Word()", new="Term()")
+    @ deprecate(old="Word()", new="Term()")
     def __init__(self):
         super().__init__()

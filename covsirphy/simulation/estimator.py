@@ -30,16 +30,16 @@ class Estimator(Optimizer):
                 - any other columns will be ignored
         model (covsirphy.ModelBase): ODE model
         population (int): total population in the place
+        tau (int): tau value [min], a divisor of 1440
         kwargs: parameter values of the model and data subseting
     """
     np.seterr(divide="raise")
 
-    def __init__(self, record_df, model, population, **kwargs):
+    def __init__(self, record_df, model, population, tau=None, **kwargs):
         # Arguments
-        self.population = self.ensure_natural_int(
-            population, name="population"
-        )
+        self.population = self.ensure_population(population)
         self.model = self.ensure_subclass(model, ModelBase, name="model")
+        self.tau = self.ensure_tau(tau)
         # Dataset
         if isinstance(record_df, JHUData):
             subset_arg_dict = find_args(
@@ -57,12 +57,10 @@ class Estimator(Optimizer):
             k: df.loc[df.index[0], k] for k in model.VARIABLES
         }
         # Fixed parameter values
-        fixable_set = set(model.PARAMETERS) & set([self.TAU])
         self.fixed_dict = {
-            k: v for (k, v) in kwargs.items() if k in fixable_set
+            k: v for (k, v) in kwargs.items()
+            if k in set(model.PARAMETERS) and v is not None
         }
-        if self.TAU in self.fixed_dict:
-            self.ensure_tau(self.fixed_dict[self.TAU])
         # For optimization
         optuna.logging.disable_default_handler()
         self.x = self.TS
@@ -75,19 +73,6 @@ class Estimator(Optimizer):
         self.train_df = None
         # step_n will be defined in divide_minutes()
         self.step_n = None
-
-    def _run_trial(self, timeout_iteration):
-        """
-        Run trial.
-
-        Args:
-            timeout_iteration (int): time-out of one iteration
-        """
-        self.study.optimize(
-            lambda x: self.objective(x),
-            n_jobs=1,
-            timeout=timeout_iteration
-        )
 
     def run(self, timeout=60, reset_n_max=3,
             timeout_iteration=5, allowance=(0.98, 1.02),
@@ -122,9 +107,10 @@ class Estimator(Optimizer):
         stopwatch = StopWatch()
         for _ in range(iteration_n):
             # Perform optimization
-            self._run_trial(timeout_iteration=timeout_iteration)
+            self.study.optimize(
+                self.objective, n_jobs=1, timeout=timeout_iteration)
             # Create a table to compare observed/estimated values
-            tau = super().param()[self.TAU]
+            tau = self.tau or super().param()[self.TAU]
             train_df = self.divide_minutes(tau)
             comp_df = self.compare(train_df, self.predict())
             # Check monotonic variables
@@ -183,23 +169,20 @@ class Estimator(Optimizer):
         Returns:
             (float): score of the error function to minimize
         """
-        fixed_dict = self.fixed_dict.copy()
         # Convert T to t using tau
-        if self.TAU in fixed_dict.keys():
-            tau = fixed_dict.pop(self.TAU)
-        else:
+        tau = self.tau
+        if tau is None:
             tau = trial.suggest_categorical(self.TAU, self.tau_candidates)
         taufree_df = self.divide_minutes(tau)
         # Set parameters of the models
         model_param_dict = self.model.param_range(
-            taufree_df, self.population
-        )
+            taufree_df, self.population)
         p_dict = {
             k: trial.suggest_uniform(k, *v)
             for (k, v) in model_param_dict.items()
             if k not in self.fixed_dict.keys()
         }
-        p_dict.update(fixed_dict)
+        p_dict.update(self.fixed_dict)
         return self.error_f(p_dict, taufree_df)
 
     def divide_minutes(self, tau):
@@ -240,8 +223,6 @@ class Estimator(Optimizer):
         Returns:
             (float): score of the error function to minimize
         """
-        if self.step_n is None:
-            raise ValueError("self.step_n must be defined in advance.")
         sim_df = self.simulate(self.step_n, param_dict)
         df = self.compare(taufree_df, sim_df)
         # Calculate error score
@@ -253,14 +234,13 @@ class Estimator(Optimizer):
         diffs = [df[f"{v}{self.A}"] - df[f"{v}{self.P}"] for v in v_list]
         numerators = [df[f"{v}{self.A}"] + 1 for v in v_list]
         try:
-            score = sum(
+            return sum(
                 p * np.average(diff.abs() / numerator, weights=df.index)
                 for (p, diff, numerator)
                 in zip(self.model.PRIORITIES, diffs, numerators)
             )
         except (ZeroDivisionError, TypeError):
             return np.inf
-        return score
 
     def simulate(self, step_n, param_dict):
         """
@@ -288,13 +268,11 @@ class Estimator(Optimizer):
             param_dict=param_dict,
             y0_dict=self.y0_dict
         )
-        simulator.run()
         return simulator.taufree()
 
-    def summary(self, name=None):
+    def to_dict(self):
         """
         Summarize the results of optimization.
-        This function should be overwritten in subclass.
 
         Args:
             name (str or None): index of the dataframe
@@ -312,35 +290,53 @@ class Estimator(Optimizer):
                     - Trials: the number of trials
                     - Runtime: run time of estimation
         """
-        param_dict = super().param()
-        model_params = param_dict.copy()
-        tau = model_params.pop(self.TAU)
+        est_dict = super().param()
+        if self.TAU not in est_dict:
+            est_dict[self.TAU] = self.tau
         model_instance = self.model(
-            population=self.population, **model_params
+            population=self.population,
+            **{k: v for (k, v) in est_dict.items() if k != self.TAU}
         )
-        # Rt
-        param_dict["Rt"] = model_instance.calc_r0()
-        # dimensional parameters [day]
-        param_dict.update(model_instance.calc_days_dict(tau))
-        # RMSLE
-        param_dict["RMSLE"] = self.rmsle(tau)
-        # The number of trials
-        param_dict["Trials"] = self.total_trials
-        # Runtime
         minutes, seconds = divmod(int(self.run_time), 60)
-        param_dict["Runtime"] = f"{minutes} min {seconds} sec"
-        # Convert to dataframe
-        df = pd.DataFrame.from_dict({str(name): param_dict}, orient="index")
-        if name is None:
-            df = df.reset_index(drop=True)
+        return {
+            **est_dict,
+            self.RT: model_instance.calc_r0(),
+            **model_instance.calc_days_dict(est_dict[self.TAU]),
+            self.RMSLE: self._rmsle(est_dict[self.TAU]),
+            self.TRIALS: self.total_trials,
+            self.RUNTIME: f"{minutes} min {seconds} sec"
+        }
+
+    def summary(self, name=None):
+        """
+        Summarize the results of optimization.
+
+        Args:
+            name (str or None): index of the dataframe
+
+        Returns:
+            (pandas.DataFrame):
+                Index:
+                    name or reset index (when name is None)
+                Columns:
+                    - (parameters of the model)
+                    - tau
+                    - Rt: basic or phase-dependent reproduction number
+                    - (dimensional parameters [day])
+                    - RMSLE: Root Mean Squared Log Error
+                    - Trials: the number of trials
+                    - Runtime: run time of estimation
+        """
+        summary_dict = {name or 0: self.to_dict()}
+        df = pd.DataFrame.from_dict(summary_dict, orient="index")
         return df.fillna(self.UNKNOWN)
 
-    def rmsle(self, tau):
+    def _rmsle(self, tau):
         """
         Return RMSLE score.
 
         Args:
-            tau (int): tau value
+            tau (int): tau value [min]
         """
         return super().rmsle(
             train_df=self.divide_minutes(tau),
@@ -355,8 +351,10 @@ class Estimator(Optimizer):
             show_figure (bool): if True, show the result as a figure
             filename (str): filename of the figure, or None (show figure)
         """
-        tau = super().param()[self.TAU]
-        train_df = self.divide_minutes(tau)
+        est_dict = super().param()
+        if self.TAU not in est_dict:
+            est_dict[self.TAU] = self.tau
+        train_df = self.divide_minutes(est_dict[self.TAU])
         use_variables = [
             v for (i, (p, v))
             in enumerate(zip(self.model.PRIORITIES, self.model.VARIABLES))

@@ -2,11 +2,12 @@
 # -*- coding: utf-8 -*-
 
 from datetime import timedelta
-import itertools
 import numpy as np
 import pandas as pd
 import scipy
 from covsirphy.cleaning.term import Term
+from covsirphy.phase.phase_unit import PhaseUnit
+from covsirphy.phase.sr_change import ChangeFinder
 
 
 class PhaseSeries(Term):
@@ -21,240 +22,42 @@ class PhaseSeries(Term):
     """
 
     def __init__(self, first_date, last_date, population, use_0th=True):
-        self.first_date = first_date
-        self.last_date = last_date
-        self.init_population = population
+        self.first_date = self.ensure_date(first_date, "first_date")
+        self.last_date = self.ensure_date(last_date, "last_date")
+        self.init_population = self.ensure_population(population)
         self.clear(include_past=True)
         # Whether use 0th phase or not
         self.use_0th = use_0th
+        # {phase name: PhaseUnit}
+        self._phase_dict = {}
+
+    @property
+    def phase_dict(self):
+        """
+        dict(str, covsirphy.PhaseUnit): dictionary of phase
+        """
+        return self._phase_dict
 
     def clear(self, include_past=False):
         """
         Clear phase information.
 
         Args:
-            include_past (bool):
-                - if True, include past phases.
-                - future phase are always included
-
-        Returns:
-            self
-        """
-        self.phase_dict = self._init_phase_dict(include_past=include_past)
-        self.info_dict = self._init_info_dict(include_past=include_past)
-        return self
-
-    def _init_phase_dict(self, include_past=False):
-        """
-        Return initialized dictionary which is to remember phase ID of each date.
-
-        Args:
-            include_past (bool):
-                - if True, include past phases.
-                - future phase are always included
-
-        Returns:
-            dict
-                - key (pd.TimeStamp): dates from the first date to the last date of the records
-                - value (int): -1 (phase ID)
-        """
-        if include_past or not hasattr(self, "phase_dict"):
-            past_date_objects = pd.date_range(
-                start=self.first_date, end=self.last_date, freq="D"
-            )
-            return dict.fromkeys(past_date_objects, -1)
-        last_date_obj = self.date_obj(self.last_date)
-        return {
-            k: v for (k, v) in self.phase_dict.items()
-            if k <= last_date_obj
-        }
-
-    def _init_info_dict(self, include_past=False):
-        """
-        Return initialized dictionary which is to remember phase information.
-
-        Args:
-            include_past (bool):
-                - if True, include past phases.
-                - future phase are always included
-
-        Attributes:
-            info_dict (dict)
-                - 'Start': the first date of the records
-                - 'End': the last date of the records
-                - 'Population': initial value of total population
-        """
-        if include_past or not hasattr(self, "info_dict"):
-            info_dict = {}
-            return info_dict
-        last_date_obj = self.date_obj(self.last_date)
-        info_dict = {
-            k: v for (k, v) in self.info_dict.items()
-            if self.date_obj(v[self.END]) <= last_date_obj
-        }
-        return info_dict
-
-    def _phase_name2id(self, phase):
-        """
-        Return phase ID of the phase.
-
-        Args:
-            phase (str): phase name, like 1st, 2nd, 3rd,...
-
-        Returns:
-            int
-        """
-        try:
-            num = int(phase[:-2])
-        except ValueError:
-            raise ValueError(
-                "@phase must be a phase name, like 0th, 1st, 2nd...")
-        grouped_ids = list(itertools.groupby(self.phase_dict.values()))
-        return grouped_ids[num][0]
-
-    def _add(self, new_id, start_date, end_date):
-        """
-        Add new phase to self.
-
-        Args:
-            new_id (int): ID number of the new phase
-            start_date (str): start date of the new phase
-            end_date (str): end date of the new phase
-        """
-        date_series = pd.date_range(
-            start=start_date, end=end_date, freq="D"
-        )
-        new_phase_dict = {
-            date_obj: new_id for date_obj in date_series
-        }
-        unfree_set = {k for (k, v) in self.phase_dict.items() if v != -1}
-        intersection = set(new_phase_dict.keys()) & unfree_set
-        if intersection:
-            date_strings = [
-                date_obj.strftime(self.DATE_FORMAT) for date_obj in intersection
-            ]
-            dates_str = ", ".join(date_strings)
-            raise KeyError(
-                f"Phases have been registered for {dates_str}.")
-        self.phase_dict.update(new_phase_dict)
-
-    def add(self, start_date, end_date, population=None, **kwargs):
-        """
-        Add a new phase.
-
-        Args:
-            start_date (str): start date of the new phase
-            end_date (str): end date of the new phase
-            population (int): population value of the start date
-            kwargs: keyword arguments to save as phase information
+            include_past (bool): if True, include past phases.
 
         Returns:
             self
 
         Notes:
-            if @population is None, initial value will be used.
+            Future phases will be always deleted.
         """
-        # Arguments
-        population = population or self.init_population
-        # Phase ID
-        new_id = max(self.phase_dict.values()) + 1
-        if new_id == 0 and not self.use_0th:
-            new_id = 1
-        # Check tense of dates
-        start_tense = self._tense(start_date)
-        end_tense = self._tense(end_date)
-        if start_tense != end_tense:
-            raise ValueError(
-                f"@start_date is {start_tense}, but @end_date is {end_tense}."
-            )
-        # end_date must be over start_date - 2
-        start_obj = self.date_obj(start_date)
-        end_obj = self.date_obj(end_date)
-        min_end_obj = start_obj + timedelta(days=2)
-        if end_obj < min_end_obj:
-            min_end_date = min_end_obj.strftime(self.DATE_FORMAT)
-            raise ValueError(
-                f"@end_date must be the same or over {min_end_date}, but {end_date} was applied."
-            )
-        # Add new phase
-        self._add(new_id, start_date, end_date)
-        # Add phase information
-        self.info_dict[new_id] = {
-            self.TENSE: start_tense,
-            self.START: start_date,
-            self.END: end_date,
-            self.N: population
+        if include_past:
+            self._phase_dict = {}
+        self._phase_dict = {
+            name: instance for (name, instance) in self._phase_dict.items()
+            if self._tense(instance.start_date) == self.PAST
         }
-        self.info_dict[new_id].update(**kwargs)
         return self
-
-    def delete(self, phase):
-        """
-        Delete a phase.
-
-        Args:
-            phase (str): phase name, like 0th, 1st, 2nd...
-
-        Returns:
-            self
-        """
-        phase_id = self._phase_name2id(phase)
-        self.phase_dict = {
-            k: -1 if v == phase_id else v
-            for (k, v) in self.phase_dict.items()
-        }
-        self.info_dict.pop(phase_id)
-        if not phase_id:
-            self.use_0th = False
-        return self
-
-    def summary(self):
-        """
-        Summarize the series of phases in a dataframe.
-
-        Returns:
-            (pandas.DataFrame):
-                Index:
-                    - phase name, like 1st, 2nd, 3rd...
-                Columns:
-                    - Type: 'Past' or 'Future'
-                    - Start: start date of the phase
-                    - End: end date of the phase
-                    - Population: population value of the start date
-                    - values added by self.update()
-        """
-        self.reset_phase_names()
-        # Convert phase ID to phase name
-        info_dict = self.to_dict()
-        # Convert to dataframe
-        df = pd.DataFrame.from_dict(info_dict, orient="index")
-        df = df.fillna(self.UNKNOWN)
-        # If empty, add column names
-        if df.empty:
-            return pd.DataFrame(columns=[self.TENSE, self.START, self.END, self.N])
-        return df
-
-    def to_dict(self):
-        """
-        Summarize the series of phase in a dictionary.
-
-        Returns:
-            (dict): nested dictionary of phase information
-                - key (str): phase number, like 1th, 2nd,...
-                - value (dict): phase information
-                    - 'Type': (str) 'Past' or 'Future'
-                    - 'Start': (str) start date of the phase,
-                    - 'End': (str) end date of the phase,
-                    - 'Population': (int) population value at the start date
-                    - values added by PhaseSeries.update()
-        """
-        # Convert phase ID to phase name
-        info_dict = {
-            self.num2str(num): self.info_dict[num]
-            for num in self.info_dict.keys() if num != -1
-        }
-        # Return the dictionary
-        return info_dict
 
     def _tense(self, target_date, ref_date=None):
         """
@@ -276,42 +79,191 @@ class PhaseSeries(Term):
             return self.PAST
         return self.FUTURE
 
-    def update(self, phase, **kwargs):
+    def _calc_end_date(self, start_date, end_date=None, days=None):
         """
-        Update information of the phase.
+        Return the end date.
 
         Args:
-            phase (str): phase name
-            kwargs: keyword arguments to add
+            start_date (str): start date of the phase
+            end_date (str): end date of the past phase, like 22Jan2020
+            days (int or None): the number of days to add
+
+        Returns:
+            str: end date
         """
-        phase_id = self._phase_name2id(phase)
-        self.info_dict[phase_id].update(kwargs)
+        if end_date is not None:
+            self.ensure_date_order(start_date, end_date, name="end_date")
+            return end_date
+        if days is None:
+            return self.last_date
+        days = self.ensure_natural_int(days, name="days", none_ok=False)
+        end = self.date_obj(start_date) + timedelta(days=days)
+        return end.strftime(self.DATE_FORMAT)
+
+    def add(self, start_date=None, end_date=None, days=None, population=None, **kwargs):
+        """
+        Add a past phase.
+
+        Args:
+            start_date (str): start date of the phase
+            end_date (str): end date of the past phase, like 22Jan2020
+            days (int or None): the number of days to add
+            population (int or None): population value
+            **kwargs: keyword arguments of PhaseUnit.set_ode()
+
+        Notes:
+            If @population is None, the previous initial value will be used.
+        """
+        # Phase information
+        if not self._phase_dict:
+            # Initial phase
+            phase_id = self.num2str(0) if self.use_0th else self.num2str(1)
+            start_date = start_date or self.first_date
+            population = population or self.init_population
+            summary_dict = {}
+        else:
+            last_id, last_phase = list(self._phase_dict.items())[-1]
+            phase_id = self.num2str(self.str2num(last_id) + 1)
+            last_dict = last_phase.to_dict()
+            start_date = start_date or self.tomorrow(last_dict[self.END])
+            population = population or last_dict[self.N]
+            summary_dict = last_phase.to_dict()
+        # End date
+        end_date = self._calc_end_date(
+            start_date, end_date=end_date, days=days)
+        if self._tense(start_date) != self._tense(end_date):
+            raise ValueError(
+                f"@end_date({end_date}) must be under the last date of the records ({self.last_phase})."
+            )
+        # Register PhaseUnit
+        phase = PhaseUnit(start_date, end_date, population)
+        if "model" in kwargs:
+            model = kwargs["model"]
+            summary_dict.update(kwargs)
+            tau = summary_dict[self.TAU] if self.TAU in summary_dict else None
+            param_dict = {
+                k: v for (k, v) in summary_dict.items() if k in model.PARAMETERS}
+            phase.set_ode(model=model, tau=tau, **param_dict)
+        self._phase_dict[phase_id] = phase
+
+    def phase(self, name="last"):
+        """
+        Return the phase as a instance of PhaseUnit.
+
+        Args:
+            phase (str): phase name, like 0th, 1st, 2nd...
+
+        Returns:
+            covsirphy.PhaseSeries: self
+        """
+        if name == "last":
+            phase_numbers = [
+                self.str2num(ph) for ph in self._phase_dict.keys()]
+            name = self.num2str(
+                max(phase_numbers, default=0 if self.use_0th else 1))
+        try:
+            return self._phase_dict[name]
+        except KeyError:
+            raise KeyError(f"{name} phase is not registered.")
+
+    def reset_phase_names(self):
+        """
+        Reset phase names.
+        eg. 1st, 4th, 2nd,.. to 1st, 2nd, 3rd, 4th,...
+
+        Returns:
+            covsirphy.PhaseSeries: self
+        """
+        phase_dict = self._phase_dict.copy()
+        # Calculate order
+        start_objects = np.array(
+            [
+                self.date_obj(phase.start_date) for phase in phase_dict.values()
+            ]
+        )
+        ascending = scipy.stats.rankdata(start_objects)
+        if self.use_0th:
+            ascending -= 1
+        corres_dict = {
+            old_id: int(rank) for (old_id, rank)
+            in zip(phase_dict.keys(), ascending)
+        }
+        # Renumber
+        phase_dict = {
+            corres_dict[k]: v for (k, v) in phase_dict.items()
+        }
+        # Reorder
+        sort_nest = sorted(phase_dict.items(), key=lambda x: x[0])
+        self._phase_dict = {self.num2str(k): v for (k, v) in sort_nest}
         return self
 
-    def last_object(self):
+    def delete(self, phase):
         """
-        Return the end date of the last registered phase.
+        Delete a phase. The phase included in the previous phase.
+
+        Args:
+            phase (str): phase name, like 0th, 1st, 2nd...
 
         Returns:
-            (datetime.datetime): the end date of the last registered phase
+            covsirphy.PhaseSeries: self
         """
-        un_date_objects = [
-            k for (k, v) in self.phase_dict.items()
-            if v != -1
-        ]
-        if not un_date_objects:
-            return self.to_date_obj(self.first_date) - timedelta(days=1)
-        return un_date_objects[-1]
+        # Delete the target phase
+        post_phase = self._phase_dict.pop(phase)
+        # Whether the previous phase exists or not
+        pre_phase_id = self.num2str(self.str2num(phase) - 1)
+        if pre_phase_id not in self.phase_dict:
+            return self.reset_phase_names()
+        # Delete the previous phase
+        pre_phase = self._phase_dict.pop(pre_phase_id)
+        # Register new phase
+        self._phase_dict[pre_phase_id] = PhaseUnit(
+            start_date=pre_phase.start_date,
+            end_date=post_phase.end_date,
+            population=pre_phase.population
+        )
+        return self.reset_phase_names()
 
-    def next_date(self):
+    def summary(self):
         """
-        Return the next date of the end date of the last registered phase.
+        Summarize the series of phases in a dataframe.
+
         Returns:
-            (str): like 01Feb2020
+            (pandas.DataFrame):
+                Index:
+                    - phase name, like 1st, 2nd, 3rd...
+                Columns:
+                    - Type: 'Past' or 'Future'
+                    - Start: start date of the phase
+                    - End: end date of the phase
+                    - Population: population value of the start date
+                    - other information registered to the phases
         """
-        last_date_obj = self.last_object()
-        next_date_obj = last_date_obj + timedelta(days=1)
-        return next_date_obj.strftime(self.DATE_FORMAT)
+        if not self._phase_dict:
+            return pd.DataFrame(columns=[self.TENSE, self.START, self.END, self.N])
+        # Convert to dataframe
+        info_dict = self.to_dict()
+        df = pd.DataFrame.from_dict(info_dict, orient="index")
+        return df.dropna(how="all", axis=1).fillna(self.UNKNOWN)
+
+    def to_dict(self):
+        """
+        Summarize the series of phase in a dictionary.
+
+        Returns:
+            (dict): nested dictionary of phase information
+                - key (str): phase number, like 1th, 2nd,...
+                - value (dict): phase information
+                    - 'Type': (str) 'Past' or 'Future'
+                    - values of PhaseUnit.to_dict()
+        """
+        self.reset_phase_names()
+        return {
+            phase_id: {
+                self.TENSE: self._tense(phase.start_date),
+                **phase.to_dict()
+            }
+            for (phase_id, phase) in self._phase_dict.items()
+        }
 
     def start_objects(self):
         """
@@ -321,7 +273,7 @@ class PhaseSeries(Term):
             (list[datetime.datetime]): list of start dates
         """
         return [
-            self.date_obj(v[self.START]) for v in self.info_dict.values()
+            self.date_obj(phase.start_date) for phase in self._phase_dict.values()
         ]
 
     def end_objects(self):
@@ -332,7 +284,7 @@ class PhaseSeries(Term):
             (list[datetime.datetime]): list of end dates
         """
         return [
-            self.date_obj(v[self.END]) for v in self.info_dict.values()
+            self.date_obj(phase.end_date) for phase in self._phase_dict.values()
         ]
 
     def tenses(self):
@@ -343,70 +295,8 @@ class PhaseSeries(Term):
             list[str]: list of tenses
         """
         return [
-            self._tense(v[self.START]) for v in self.info_dict.values()
+            self._tense(phase.end_date) for phase in self._phase_dict.values()
         ]
-
-    def reset_phase_names(self):
-        """
-        Reset phase names.
-        eg. 1st, 4th, 2nd,.. to 1st, 2nd, 3rd, 4th,...
-
-        Returns:
-            self: instance of covsirphy.PhaseSeries
-        """
-        start_objects = np.array(self.start_objects())
-        ascending = scipy.stats.rankdata(start_objects)
-        if self.use_0th:
-            ascending = ascending - 1
-        corres_dict = {
-            phase_id: int(rank)
-            for (phase_id, rank) in zip(self.info_dict.keys(), ascending)
-        }
-        corres_dict[-1] = -1
-        self.phase_dict = {
-            date_obj: corres_dict[phase_id]
-            for (date_obj, phase_id) in self.phase_dict.items()
-        }
-        info_dict = {
-            corres_dict[phase_id]: info
-            for (phase_id, info) in self.info_dict.items()
-        }
-        self.info_dict = dict(sorted(info_dict.items()))
-        return self
-
-    @staticmethod
-    def number_of_steps(start_objects, last_object, tau):
-        """
-        Return the list of the number of steps of phases.
-
-        Args:
-            start_objects (list[datetime.datetime]): list of start dates
-            last_object (datetime.datetime): the end date of the last registered phase
-            tau (int): tau value
-
-        Returns:
-            (list[int]): list of the number of steps
-        """
-        date_array = np.array([*start_objects, last_object])
-        return [
-            round(diff.total_seconds() / 60 / tau) for diff
-            in date_array[1:] - date_array[:-1]
-        ]
-
-    def model_names(self):
-        """
-        Return the names of the registered models if available.
-
-        Returns:
-            (list[str]): list of model names
-        """
-        try:
-            names = [
-                v[self.ODE] for v in self.info_dict.values()
-            ]
-        except KeyError:
-            names = []
-        return names
 
     def population_values(self):
         """
@@ -416,17 +306,133 @@ class PhaseSeries(Term):
             (list[int]): list of population values
         """
         return [
-            v[self.N] for v in self.info_dict.values()
+            phase.population for phase in self._phase_dict.values()
         ]
 
-    def phases(self):
+    def phases(self, include_future=True):
         """
         Return the list of phase names.
 
+        Args:
+            include_future (bool): include future phases or not
+
         Returns:
-            (list[int]): list of phase names
+            list[str]: list of phase names
         """
+        if include_future:
+            return list(self._phase_dict.keys())
         return [
-            self.num2str(num) for num
-            in self.info_dict.keys() if num != -1
+            phase for (phase, unit) in self._phase_dict.items()
+            if self._tense(unit.start_date) == self.PAST
         ]
+
+    def replace(self, phase, new):
+        """
+        Replace phase object.
+
+        Args:
+            phase (str): phase name, like 0th, 1st, 2nd...
+            new (covsirphy.PhaseUnit): new phase object
+        """
+        old = self.phase(name=phase)
+        if old != new:
+            raise ValueError(
+                "Combination of start/end date is different. old: {old}, new: {new}")
+        self._phase_dict[phase] = new
+
+    def trend(self, sr_df, set_phases=True, area=None, show_figure=True, filename=None, **kwargs):
+        """
+        Perform S-R trend analysis.
+
+        Args:
+            sr_df (pandas.DataFrame)
+                Index:
+                    Date (pd.TimeStamp): Observation date
+                Columns:
+                    - Recovered (int): the number of recovered cases (> 0)
+                    - Susceptible (int): the number of susceptible cases
+                    - any other columns will be ignored
+            set_phases (bool): if True, update phases
+            area (str or None): area name
+            show_figure (bool): if True, show the result as a figure
+            filename (str): filename of the figure, or None (show figure)
+            kwargs: keyword arguments of ChangeFinder()
+
+        Returns:
+            covsirphy.PhaseSeries: self
+        """
+        area = area or self.UNKNOWN
+        sta = self.date_obj(self.first_date)
+        end = self.date_obj(self.last_date)
+        sr_df = sr_df.loc[(sr_df.index >= sta) & (sr_df.index <= end), :]
+        finder = ChangeFinder(sr_df, **kwargs)
+        if not set_phases:
+            if show_figure:
+                start_dates = [
+                    date.strftime(self.DATE_FORMAT) for date in self.start_objects()]
+                finder.show(
+                    area=area,
+                    change_dates=start_dates[1:],
+                    use_0th=self.use_0th,
+                    filename=filename
+                )
+            return self
+        # Find change points
+        finder.run()
+        # Show trends
+        if show_figure:
+            finder.show(area=area, use_0th=True, filename=filename)
+        # Register phases
+        self.clear(include_past=True)
+        _, end_dates = finder.date_range()
+        use_0th, self.use_0th = self.use_0th, True
+        [self.add(end_date=end_date) for end_date in end_dates]
+        self.delete("0th")
+        self.use_0th = use_0th
+        return self
+
+    def simulate(self, record_df, tau, y0_dict=None):
+        """
+        Simulate ODE models with set parameter values.
+
+        Args:
+            record_df (pandas.DataFrame):
+                Index:
+                    reset index
+                Columns:
+                    - Date (pd.TimeStamp): Observation date
+                    - Confirmed (int): the number of confirmed cases
+                    - Infected (int): the number of currently infected cases
+                    - Fatal (int): the number of fatal cases
+                    - Recovered (int): the number of recovered cases (> 0)
+                    - Susceptible (int): the number of susceptible cases
+            tau (int): tau value [min]
+            y0_dict (dict or None):
+                - key (str): variable name
+                - value (float): initial value
+                - dictionary of initial values or None
+                - if model will be changed in the later phase, must be specified
+
+        Returns:
+            (pandas.DataFrame)
+                Index:
+                    reset index
+                Columns:
+                    - Date (pd.TimeStamp): Observation date
+                    - Country (str): country/region name
+                    - Province (str): province/prefecture/state name
+                    - variables of the models (int): Confirmed (int) etc.
+        """
+        dataframes = []
+        for (phase, phase_unit) in self.phase_dict.items():
+            phase_unit.tau = tau
+            try:
+                phase_unit.record_df = dataframes[-1]
+            except IndexError:
+                phase_unit.record_df = record_df
+            df = phase_unit.simulate(y0_dict)
+            dataframes.append(df)
+        sim_df = pd.concat(dataframes, ignore_index=True, sort=True)
+        sim_df = sim_df.set_index(self.DATE).resample("D").last()
+        sim_df = sim_df.astype(np.int64)
+        return sim_df.reset_index()
