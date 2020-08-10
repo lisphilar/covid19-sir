@@ -170,14 +170,13 @@ class ChangeFinder(Term):
         end_dates.append(self.dates[-1])
         return (start_dates, end_dates)
 
-    def show(self, area, change_dates=None, use_0th=True, filename=None):
+    def show(self, area, change_dates=None, filename=None):
         """
         show the S-R trend in a figure.
 
         Args:
             area (str): area name
             change_dates (list[str] or None): list of change points
-            use_0th (bool): whether use initial phase or not
             filename (str): filename of the figure, or None (display)
 
         Notes:
@@ -185,11 +184,10 @@ class ChangeFinder(Term):
         """
         # Curve fitting
         start_dates, end_dates = self.date_range(change_dates)
-        first_phase_num = 0 if use_0th else 1
         nested = [
             self._curve_fitting(self.num2str(num), start_date, end_date)
             for (num, (start_date, end_date))
-            in enumerate(zip(start_dates, end_dates), start=first_phase_num)
+            in enumerate(zip(start_dates, end_dates))
         ]
         df_list, vlines = zip(*nested)
         comp_df = pd.concat([self.sr_df, *df_list], axis=1)

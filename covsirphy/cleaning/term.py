@@ -410,14 +410,14 @@ class Term(object):
             name (str): name of @following_date
 
         Raises:
-            ValueError: @previous_date >= @following_date
+            ValueError: @previous_date > @following_date
         """
         previous = cls.date_obj(previous_date)
         following = cls.date_obj(following_date)
-        if previous < following:
+        if previous <= following:
             return None
         raise ValueError(
-            f"@{name} must be over {previous_date}, but {following_date} was applied."
+            f"@{name} must be the same as/over {previous_date}, but {following_date} was applied."
         )
 
 

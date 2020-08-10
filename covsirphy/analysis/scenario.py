@@ -2,7 +2,6 @@
 # -*- coding: utf-8 -*-
 
 import copy
-from datetime import timedelta
 import functools
 from multiprocessing import cpu_count, Pool
 import sys
@@ -18,6 +17,7 @@ from covsirphy.cleaning.term import Term
 from covsirphy.cleaning.jhu_data import JHUData
 from covsirphy.cleaning.population import PopulationData
 from covsirphy.ode.mbase import ModelBase
+from covsirphy.phase.phase_unit import PhaseUnit
 from covsirphy.phase.phase_series import PhaseSeries
 
 
@@ -47,6 +47,7 @@ class Scenario(Term):
         self.area = JHUData.area_name(country, province)
         # First/last date of the area
         df = jhu_data.subset(country=self.country, province=self.province)
+        self.subset_df = df.copy()
         self._first_date = df[self.DATE].min().strftime(self.DATE_FORMAT)
         self._last_date = df[self.DATE].max().strftime(self.DATE_FORMAT)
         # tau value must be shared
@@ -60,7 +61,7 @@ class Scenario(Term):
         """
         self.series_dict = {
             self.MAIN: PhaseSeries(
-                self._first_date, self._last_date, self.population, use_0th=False
+                self._first_date, self._last_date, self.population, name=self.MAIN
             )
         }
         self.record_df = self.jhu_data.subset(
@@ -167,15 +168,7 @@ class Scenario(Term):
             - Tau will be fixed as the last phase's value.
             - kwargs: Default values are the parameter values of the last phase.
         """
-        series = self._ensure_name(name)
-        if model is None and series.phase_dict:
-            model = series.phase(name="last").model
-        # When model is not specified and not registered for the last phase
-        if model is None:
-            self.series_dict[name].add(
-                end_date=end_date, days=days, population=population)
-            return self
-        # With model
+        self._ensure_name(name)
         self.series_dict[name].add(
             end_date=end_date, days=days, population=population,
             model=model, tau=self.tau, **kwargs
@@ -211,28 +204,25 @@ class Scenario(Term):
                 - future phase are always included
 
         Returns:
-            self
+            covsirphy.Scenario: self
         """
         self._ensure_name(name)
         self.series_dict[name].clear(include_past=include_past)
-        self.series_dict[name].use_0th = True
         return self
 
-    def _delete(self, phases=None, name="Main"):
+    def delete(self, phases=None, name="Main"):
         """
-        Delete a phase of the phase series.
+        Delete a phase. The phase will be combined to the previous phase.
 
         Args:
-            phase (list[str] or None): phase name
+            phase (list[str] or None): phase names
             name (str): name of phase series
 
         Returns:
-            tuple or None
-                - (str): the first date of the phases
-                - (str): the last date of the phases
+            covsirphy.Scenario: self
 
         Notes:
-            If @phases is None, the phase series will be deleted and returns None.
+            If @phases is None, the phase series will be deleted.
         """
         self._ensure_name(name)
         # Clear main series or delete sub phase series
@@ -245,29 +235,43 @@ class Scenario(Term):
         # Delete phases
         if not isinstance(phases, list):
             raise TypeError("@phases mut be a list of phase names.")
-        first_date = self.get(self.START, name=name, phase=phases[0])
-        last_date = self.get(self.END, name=name, phase=phases[-1])
+        phases = sorted(phases, key=self.str2num, reverse=True)
         for phase in phases:
             self.series_dict[name].delete(phase)
-        if "0th" in phases:
-            self.series_dict[name].use_0th = True
-        return (first_date, last_date)
+        return self
 
-    def delete(self, phases=None, name="Main"):
+    def disable(self, phases, name="Main"):
         """
-        Delete a phase of the phase series.
+        The phases will be disabled and removed from summary.
 
         Args:
-            phase (list[str] or None): phase name
+            phase (list[str] or None): phase names
             name (str): name of phase series
 
         Returns:
-            self
-
-        Notes:
-            If @phases is None, the phase series will be deleted.
+            covsirphy.Scenario: self
         """
-        self._delete(phases=phases, name=name)
+        if not isinstance(phases, list):
+            raise TypeError("@phases must be a list of phase names.")
+        for phase in phases:
+            self.series_dict[name].disable(phase)
+        return self
+
+    def enable(self, phases, name="Main"):
+        """
+        The phases will be enabled and appear in summary.
+
+        Args:
+            phase (list[str] or None): phase names
+            name (str): name of phase series
+
+        Returns:
+            covsirphy.Scenario: self
+        """
+        if not isinstance(phases, list):
+            raise TypeError("@phases must be a list of phase names.")
+        for phase in phases:
+            self.series_dict[name].enable(phase)
         return self
 
     def combine(self, phases, name="Main", population=None, **kwargs):
@@ -285,15 +289,16 @@ class Scenario(Term):
             TypeError: @phases is not a list
 
         Returns:
-            self: instance of covsirphy.Scenario
+            covsirphy.Scenario: self
         """
-        first_date, last_date = self._delete(phases=phases, name=name)
-        self.series_dict[name].add(
-            start_date=first_date, end_date=last_date, population=population, **kwargs
-        )
-        if "0th" in phases:
-            self.series_dict[name].use_0th = True
-        self.series_dict[name].reset_phase_names()
+        phases = sorted(phases, key=self.str2num, reverse=True)
+        self.delete(phases=phases[:-1], name=name)
+        if population is not None:
+            unit_old = self.series_dict[name].unit(phases[-1])
+            unit = PhaseUnit(
+                unit_old.start_date, unit_old.end_date, population)
+            unit.set_ode(**kwargs)
+            self.series_dict[name].replace(phases[-1], unit)
         return self
 
     def separate(self, date, phase, name="Main", population=None, **kwargs):
@@ -309,28 +314,16 @@ class Scenario(Term):
             kwargs: keyword arguments to save as phase information
 
         Returns:
-            self: instance of covsirphy.Scenario
+            covsirphy.Scenario: self
         """
-        self._ensure_name(name)
-        population_old_phase = self.get(self.N, name=name, phase=phase)
-        # Delete the phase that will be separated
-        first_date, last_date = self._delete(phases=[phase], name=name)
-        # Re-registration of the old phase
-        end_obj = self.date_obj(date) - timedelta(days=1)
-        self.series_dict[name].add(
-            start_date=first_date,
-            end_date=end_obj.strftime(self.DATE_FORMAT),
-            population=population_old_phase,
-            **kwargs
-        )
-        # Add new phase
-        self.series_dict[name].add(
-            start_date=date, end_date=last_date, population=population, **kwargs
-        )
-        # Reset phase names
-        if phase == "0th":
-            self.series_dict[name].use_0th = True
-        self.series_dict[name].reset_phase_names()
+        series = self._ensure_name(name)
+        old = series.unit(phase)
+        new_pre = PhaseUnit(
+            old.start_date, self.yesterday(date), old.population)
+        new_pre.set_ode(**old.to_dict())
+        new_fol = PhaseUnit(date, old.end_date, population or old.population)
+        new_fol.set_ode(**kwargs)
+        self.series_dict[name].replaces(phase, [new_pre, new_fol])
         return self
 
     def _summary(self, name=None):
@@ -426,7 +419,6 @@ class Scenario(Term):
         sr_df = self.jhu_data.to_sr(
             country=self.country, province=self.province, population=self.population
         )
-        self.series_dict[name].use_0th = include_init_phase
         self.series_dict[name].trend(
             sr_df=sr_df,
             set_phases=set_phases,
@@ -435,6 +427,8 @@ class Scenario(Term):
             filename=filename,
             **kwargs
         )
+        if include_init_phase:
+            self.series_dict[name].enable("0th")
         return self
 
     def _estimate(self, phase, model, series, **kwargs):
@@ -457,25 +451,17 @@ class Scenario(Term):
             If 'Main' was used as @name, main PhaseSeries will be used.
             If @name phase was not registered, new PhaseSeries will be created.
         """
-        # Set parameters
-        phase_unit = series.phase(phase)
-        phase_unit.set_ode(model=model, tau=self.tau, **kwargs)
-        # Records
-        record_df = self.jhu_data.subset(
-            country=self.country,
-            province=self.province,
-            start_date=phase_unit.start_date,
-            end_date=self.tomorrow(phase_unit.end_date)
-        )
-        # Estimation
-        phase_unit.estimate(record_df=record_df, **kwargs)
+        # Parameter estimation
+        unit = series.unit(phase)
+        unit.set_ode(model=model, tau=self.tau, **kwargs)
+        unit.estimate(record_df=self.subset_df, **kwargs)
         # Show the number of trials and runtime
-        trials = phase_unit.estimator.total_trials
-        runtime = phase_unit.estimator.run_time_show
+        unit_dict = unit.to_dict()
+        trials, runtime = unit_dict[self.TRIALS], unit_dict[self.RUNTIME]
         print(
             f"\t{phase} phase with {model.NAME} model: finished {trials} trials in {runtime}"
         )
-        return phase_unit
+        return unit
 
     def _ensure_past_phases(self, phases=None, name="Main"):
         """
@@ -492,7 +478,7 @@ class Scenario(Term):
             If @phases is None, return the all past phases.
         """
         series = self._ensure_name(name)
-        past_phases = series.phases(include_future=False)
+        past_phases = [unit for unit in series if unit <= self._last_date]
         if not past_phases:
             raise ValueError(
                 "Scenario.trend(set_phases=True) or Scenario.add() must be done in advance.")
@@ -568,7 +554,7 @@ class Scenario(Term):
             covsirphy.Estimator: estimator of the phase
         """
         try:
-            return self.series_dict[name].phase(phase).estimator
+            return self.series_dict[name].unit(phase).estimator
         except KeyError:
             raise KeyError(
                 f'Scenario.estimate(model, phases=["{phase}"], name={name}) must be done in advance.'
@@ -631,20 +617,21 @@ class Scenario(Term):
         """
         series = self._ensure_name(name)
         # Simulation
-        sim_df = series.simulate(
-            record_df=self.record_df, tau=self.tau, y0_dict=y0_dict)
+        sim_df = series.simulate(record_df=self.record_df, y0_dict=y0_dict)
         if not show_figure:
             return sim_df
         # Show figure
         df = sim_df.set_index(self.DATE)
         fig_cols_set = set(df.columns) & set(self.FIG_COLUMNS)
         fig_cols = [col for col in self.FIG_COLUMNS if col in fig_cols_set]
+        change_dates = [
+            unit.start_date for unit in series._units[1:] if unit < self.last_date]
         line_plot(
             df[fig_cols],
             title=f"{self.area}: Predicted number of cases ({name} scenario)",
             filename=filename,
             y_integer=True,
-            v=series.start_objects()[1:]
+            v=change_dates
         )
         return sim_df
 
@@ -686,7 +673,7 @@ class Scenario(Term):
             KeyError: targets are not in the columns of summary dataframe
         """
         series = self.series_dict[name]
-        model_set = {series.phase(phase).model for phase in series.phases()}
+        model_set = {unit.model for unit in series}
         model_set = model_set - set([None])
         parameters = self.flatten([m.PARAMETERS for m in model_set])
         day_params = self.flatten([m.DAY_PARAMETERS for m in model_set])
@@ -794,15 +781,3 @@ class Scenario(Term):
                 f"{self.F} on {last_date.strftime(self.DATE_FORMAT)}": last_f,
             }
         return pd.DataFrame.from_dict(_dict, orient="index")
-
-    def phases(self, name="Main"):
-        """
-        Return the list of phase names.
-
-        Args:
-            name (str): phase series name
-
-        Returns:
-            (list[int]): list of phase names
-        """
-        return self._ensure_name(name).phases()

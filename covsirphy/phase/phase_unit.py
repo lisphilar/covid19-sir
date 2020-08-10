@@ -16,6 +16,45 @@ class PhaseUnit(Term):
         start_date (str): start date of the phase
         end_date (str): end date of the phase
         population (int): population value
+
+    Examples:
+        >>> unit1 = PhaseUnit("01Jan2020", "01Feb2020", 1000)
+        >>> unit2 = PhaseUnit("02Feb2020", "01Mar2020", 1000)
+        >>> unit3 = PhaseUnit("02Mar2020", "01Apr2020", 1000)
+        >>> unit4 = PhaseUnit("02Mar2020", "01Apr2020", 1000)
+        >>> unit5 = PhaseUnit("01Jan2020", "01Apr2020", 1000)
+            >>> str(unit1)
+        'Phase (01Jan2020 - 01Feb2020)'
+        >>> unit4 == unit4
+        True
+        >>> unit1 != unit2
+        True
+        >>> unit1 < unit2
+        True
+        >>> unit3 > unit1
+        True
+        >>> unit3 < unit4
+        False
+        >>> unit3 <= unit4
+        True
+        >>> unit1 < "02Feb2020"
+        True
+        >>> unit1 <= "01Feb2020"
+        True
+        >>> unit1 > "31Dec2019"
+        True
+        >>> unit1 >= "01Jan2020"
+        True
+        >>> sorted([unit3, unit1, unit2]) == [unit1, unit2, unit3]
+        True
+        >>> str(unit1 + unit2)
+        'Phase (01Jan2020 - 01Mar2020)'
+        >>> str(unit5 - unit1)
+        'Phase (02Feb2020 - 01Apr2020)'
+        >>> str(unit5 - unit4)
+        'Phase (01Jan2020 - 01Mar2020)'
+        >>> set([unit1, unit3, unit4]) == set([unit1, unit3])
+        True
     """
 
     def __init__(self, start_date, end_date, population):
@@ -48,26 +87,96 @@ class PhaseUnit(Term):
     def __str__(self):
         return f"Phase ({self._start_date} - {self._end_date})"
 
+    def __hash__(self):
+        return hash((self._start_date, self._end_date))
+
     def __eq__(self, other):
-        if not isinstance(other, PhaseUnit):
-            return NotImplemented
-        if self._start_date != other.start_date:
-            return False
-        return self._end_date == other.end_date
+        return self._start_date == other.start_date and self._end_date == other.end_date
 
     def __ne__(self, other):
         return not self.__eq__(other)
 
-    @property
-    def enabled(self):
-        """
-        bool: enabled (True) or disabled (False)
-        """
-        return self._enabled
+    def __lt__(self, other):
+        end = self.date_obj(self._end_date)
+        if isinstance(other, str):
+            sta_other = self.date_obj(other)
+        elif isinstance(other, PhaseUnit):
+            sta_other = self.date_obj(other.start_date)
+        else:
+            raise NotImplementedError
+        return end < sta_other
 
-    @enabled.setter
-    def enabled(self, flag):
-        self._enabled = bool(flag)
+    def __le__(self, other):
+        end = self.date_obj(self._end_date)
+        if isinstance(other, str):
+            sta_other = self.date_obj(other)
+        elif isinstance(other, PhaseUnit):
+            sta_other = self.date_obj(other.start_date)
+        else:
+            raise NotImplementedError
+        return end <= sta_other
+
+    def __gt__(self, other):
+        sta = self.date_obj(self._start_date)
+        if isinstance(other, str):
+            end_other = self.date_obj(other)
+        elif isinstance(other, PhaseUnit):
+            end_other = self.date_obj(other.end_date)
+        else:
+            raise NotImplementedError
+        return end_other < sta
+
+    def __ge__(self, other):
+        sta = self.date_obj(self._start_date)
+        if isinstance(other, str):
+            end_other = self.date_obj(other)
+        elif isinstance(other, PhaseUnit):
+            end_other = self.date_obj(other.end_date)
+        else:
+            raise NotImplementedError
+        return end_other <= sta
+
+    def __add__(self, other):
+        if self < other:
+            return PhaseUnit(self._start_date, other.end_date, self._population)
+        raise NotImplementedError
+
+    def __sub__(self, other):
+        sta = self.date_obj(self._start_date)
+        end = self.date_obj(self._end_date)
+        sta_other = self.date_obj(other.start_date)
+        end_other = self.date_obj(other.end_date)
+        if sta < sta_other and end == end_other:
+            end_date = self.yesterday(other.start_date)
+            return PhaseUnit(self._start_date, end_date, self._population)
+        if sta == sta_other and end > end_other:
+            start_date = self.tomorrow(other.end_date)
+            return PhaseUnit(start_date, self._end_date, self._population)
+
+    def enable(self):
+        """
+        Enable the phase.
+
+        Examples:
+            >>> unit.enable
+            >>> bool(unit)
+            True
+        """
+        self._enabled = True
+
+    def disable(self):
+        """
+        Disable the phase.
+
+        Examples:
+            >>> unit.disable
+            >>> bool(unit)
+            False
+        """
+        self._enabled = False
+
+    def __bool__(self):
+        return self._enabled
 
     @property
     def start_date(self):
@@ -179,8 +288,13 @@ class PhaseUnit(Term):
             tau (int or None): tau value [min], a divisor of 1440
             kwargs: keyword arguments of model parameters
         """
+        # Tau value
         tau = self.ensure_tau(tau) or self._ode_dict[self.TAU]
         # Model
+        model = model or self._model
+        if model is None:
+            self._ode_dict[self.TAU] = tau
+            return None
         self._model = self.ensure_subclass(model, ModelBase, name="model")
         self.info_dict[self.ODE] = model.NAME
         # Parameter values

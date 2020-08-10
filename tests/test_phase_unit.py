@@ -12,7 +12,7 @@ class TestPhaseUnit(object):
         assert str(unit) == "Phase (01Jan2020 - 01Feb2020)"
         summary_dict = unit.to_dict()
         assert summary_dict["Start"] == "01Jan2020"
-        assert summary_dict["End"] == "01Jan2020"
+        assert summary_dict["End"] == "01Feb2020"
         assert summary_dict["Population"] == 1000
         summary_df = unit.summary()
         assert summary_df.columns == ["Start", "End", "Population"]
@@ -23,11 +23,35 @@ class TestPhaseUnit(object):
         unit3 = PhaseUnit("01Jan2020", "01Mar2020", 1000)
         assert unit != unit3
 
+    def test_sort(self):
+        unit1 = PhaseUnit("01Jan2020", "01Feb2020", 1000)
+        unit2 = PhaseUnit("02Feb2020", "01Mar2020", 1000)
+        unit3 = PhaseUnit("02Mar2020", "01Apr2020", 1000)
+        unit4 = PhaseUnit("02Mar2020", "01Apr2020", 1000)
+        unit5 = PhaseUnit("01Jan2020", "01Apr2020", 1000)
+        assert unit3 == unit4
+        assert unit1 != unit2
+        assert unit1 < unit2
+        assert unit3 > unit1
+        assert not unit3 > unit4
+        assert unit3 <= unit4
+        assert unit1 < "02Feb2020"
+        assert unit1 <= "01Feb2020"
+        assert unit1 > "31Dec2019"
+        assert unit1 >= "01Jan2020"
+        assert sorted([unit3, unit1, unit2]) == [unit1, unit2, unit3]
+        assert str(unit1 + unit2) == "Phase (01Jan2020 - 01Mar2020)"
+        assert str(unit5 - unit1) == "Phase (02Feb2020 - 01Apr2020)"
+        assert str(unit5 - unit4) == "Phase (01Jan2020 - 01Mar2020)"
+        assert set([unit1, unit3, unit4]) == set([unit1, unit3])
+
     def test_enable(self):
         unit = PhaseUnit("01Jan2020", "01Feb2020", 1000)
-        assert unit.enabled
-        unit.enabled = False
-        assert not unit.enabled
+        assert bool(unit)
+        unit.disable()
+        assert not bool(unit)
+        unit.enable()
+        assert bool(unit)
 
     def test_definition_property(self):
         unit = PhaseUnit("01Jan2020", "01Feb2020", 1000)
@@ -60,6 +84,13 @@ class TestPhaseUnit(object):
         assert summary_dict[Term.ODE] == SIR.NAME
         assert summary_dict["rho"] == 0.2
         assert summary_dict["sigma"] is None
+
+    def test_set_tau(self):
+        unit = PhaseUnit("01Jan2020", "01Feb2020", 1000)
+        unit.set_ode(model=None, tau=240, rho=0.006)
+        assert unit.tau == 240
+        with pytest.raises(KeyError):
+            unit.to_dict()["rho"]
 
     @pytest.mark.parametrize("country", ["Japan"])
     def test_estimate(self, jhu_data, population_data, country):
