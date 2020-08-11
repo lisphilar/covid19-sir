@@ -309,7 +309,7 @@ class PhaseUnit(Term):
         self._ode_dict = param_dict.copy()
         self._ode_dict[self.TAU] = tau
         # Reproduction number and day parameters
-        if set(v for v in param_dict.values() if v) == set(model.PARAMETERS):
+        if {v for v in param_dict.values() if v} == set(model.PARAMETERS):
             model_instance = model(population=self._population, **param_dict)
             self.info_dict[self.RT] = model_instance.calc_r0()
             if tau is not None:
