@@ -17,7 +17,7 @@ class TestPhaseUnit(object):
         summary_df = unit.summary()
         assert summary_df.columns == ["Start", "End", "Population"]
         with pytest.raises(NotImplementedError):
-            unit == "phase"
+            assert unit == "phase"
         unit2 = PhaseUnit("01Jan2020", "01Feb2020", 100000)
         assert unit == unit2
         unit3 = PhaseUnit("01Jan2020", "01Mar2020", 1000)
@@ -89,8 +89,7 @@ class TestPhaseUnit(object):
         unit = PhaseUnit("01Jan2020", "01Feb2020", 1000)
         unit.set_ode(model=None, tau=240, rho=0.006)
         assert unit.tau == 240
-        with pytest.raises(KeyError):
-            unit.to_dict()["rho"]
+        assert "rho" not in unit.to_dict()
 
     @pytest.mark.parametrize("country", ["Japan"])
     def test_estimate(self, jhu_data, population_data, country):
