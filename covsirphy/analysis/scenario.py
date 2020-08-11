@@ -61,7 +61,7 @@ class Scenario(Term):
         """
         self.series_dict = {
             self.MAIN: PhaseSeries(
-                self._first_date, self._last_date, self.population, name=self.MAIN
+                self._first_date, self._last_date, self.population
             )
         }
         self.record_df = self.jhu_data.subset(

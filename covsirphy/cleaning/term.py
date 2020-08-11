@@ -357,6 +357,24 @@ class Term(object):
         return datetime.strptime(date_str, cls.DATE_FORMAT)
 
     @classmethod
+    def date_change(cls, date_str, days=0):
+        """
+        Return @days days ago or @days days later.
+
+        Args:
+            date_str (str): today
+            days (int): (negative) days ago or (positive) days later
+
+        Returns:
+            str: the date
+        """
+        if not isinstance(days, int):
+            raise TypeError(
+                f"@days must be integer, but {type(days)} was applied.")
+        date = cls.date_obj(date_str) + timedelta(days=days)
+        return date.strftime(cls.DATE_FORMAT)
+
+    @classmethod
     def tomorrow(cls, date_str):
         """
         Tomorrow of the date.
@@ -367,8 +385,7 @@ class Term(object):
         Returns:
             str: tomorrow
         """
-        date = cls.date_obj(date_str) + timedelta(days=1)
-        return date.strftime(cls.DATE_FORMAT)
+        return cls.date_change(cls, date_str, days=-1)
 
     @classmethod
     def yesterday(cls, date_str):
@@ -381,8 +398,7 @@ class Term(object):
         Returns:
             str: yesterday
         """
-        date = cls.date_obj(date_str) - timedelta(days=1)
-        return date.strftime(cls.DATE_FORMAT)
+        return cls.date_change(cls, date_str, days=1)
 
     @classmethod
     def steps(cls, start_date, end_date, tau):

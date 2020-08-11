@@ -37,6 +37,7 @@ class TestScenario(object):
 
     @pytest.mark.parametrize("country", ["Japan"])
     def test_records(self, jhu_data, population_data, country):
+        warnings.filterwarnings("ignore", category=UserWarning)
         # Setting
         snl = Scenario(jhu_data, population_data, country)
         snl.first_date = "01Apr2020"
@@ -48,7 +49,6 @@ class TestScenario(object):
         dates = df[Term.DATE]
         assert dates.min() == Term.date_obj(snl.first_date)
         assert dates.max() == Term.date_obj(snl.last_date)
-        warnings.filterwarnings("ignore", category=UserWarning)
         df2 = snl.record(show_figure=True)
         assert isinstance(df2, pd.DataFrame)
         assert df2.columns == Term.NLOC_COLUMNS

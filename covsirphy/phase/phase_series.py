@@ -19,7 +19,7 @@ class PhaseSeries(Term):
         population (int): initial value of total population in the place
     """
 
-    def __init__(self, first_date, last_date, population, name="Main"):
+    def __init__(self, first_date, last_date, population):
         self.first_date = self.ensure_date(first_date, "first_date")
         self.last_date = self.ensure_date(last_date, "last_date")
         self.init_population = self.ensure_population(population)
@@ -27,16 +27,13 @@ class PhaseSeries(Term):
         self._units = []
         self.clear(include_past=True)
 
-    def __str__(self):
-        return f"{self.name} scenario"
-
-    def __bool__(self):
-        return self._units
-
     def __iter__(self):
         for unit in self._unit:
             yield unit
         raise StopIteration()
+
+    def __len__(self):
+        return len([unit for unit in self._units if unit])
 
     def unit(self, phase="last"):
         """
@@ -60,7 +57,7 @@ class PhaseSeries(Term):
         num = self.str2num(phase)
         try:
             return self._units[num]
-        except KeyError:
+        except IndexError:
             raise KeyError(f"{phase} phase is not registered.")
 
     def clear(self, include_past=False):
@@ -126,9 +123,15 @@ class PhaseSeries(Term):
         population = self.ensure_population(population or last_unit.population)
         model = model or last_unit.model
         tau = last_unit.tau or tau
+        if model is None:
+            param_dict = {}
+        else:
+            param_dict = {
+                k: v for (k, v) in {**last_unit.to_dict(), **kwargs}.items()
+                if k in model.PARAMETERS}
         # Create PhaseUnit
         unit = PhaseUnit(start_date, end_date, population)
-        unit.set_ode(model=model, tau=tau, **kwargs)
+        unit.set_ode(model=model, tau=tau, **param_dict)
         # Add phase if past
         if unit <= self.last_date:
             self._units.append(unit)
@@ -136,11 +139,11 @@ class PhaseSeries(Term):
         # Fill in the blank
         if last_unit < self.last_date:
             filling = PhaseUnit(start_date, self.last_date, population)
-            filling.set_ode(model=model, tau=tau, **kwargs)
+            filling.set_ode(model=model, tau=tau, **param_dict)
             self._units.append(filling)
             unit = PhaseUnit(
                 self.tomorrow(self.last_date), end_date, population)
-            unit.set_ode(model=model, tau=tau, **kwargs)
+            unit.set_ode(model=model, tau=tau, **param_dict)
         # Add new phase
         self._units.append(unit)
 
@@ -158,19 +161,34 @@ class PhaseSeries(Term):
             self._units = self._units[1:]
             return self
         phase_pre = self.num2str(self.str2num(phase) - 1)
-        unit_pre, unit = self.unit(phase_pre), self.unit(phase)
+        unit_pre, unit_fol = self.unit(phase_pre), self.unit(phase)
+        if unit_pre <= self.last_date and unit_fol >= self.last_date:
+            if unit_fol == self.unit("last"):
+                units = [unit for unit in self._units if unit != unit_fol]
+                self._units = sorted(units)
+                return self
+            phase_next = self.num2str(self.str2num(phase) + 1)
+            unit_next = self.unit(phase_next)
+            model = unit_next.model
+            param_dict = {
+                k: v for (k, v) in unit_next.to_dict() if k in model.PARAMETERS}
+            unit_new = PhaseUnit(
+                unit_fol.start_date, unit_next.end_date, unit_next.population)
+            unit_new.set_ode(model=model, tau=unit_next.tau, **param_dict)
+            return self
         unit_new = PhaseUnit(
-            unit_pre.start_date, unit.end_date, unit_pre.population)
+            unit_pre.start_date, unit_fol.end_date, unit_pre.population)
         model = unit_pre.model
-        if unit_pre <= self.last_date or model is None:
+        if model is None:
             param_dict = {}
         else:
             param_dict = {
                 k: v for (k, v) in unit_pre.to_dict().items() if k in model.PARAMETERS}
         unit_new.set_ode(model=model, tau=unit_pre.tau, **param_dict)
         units = [
-            unit for unit in [unit_new, *self._units] if unit not in [unit_pre, unit]]
+            unit for unit in [unit_new, *self._units] if unit not in [unit_pre, unit_fol]]
         self._units = sorted(units)
+        return self
 
     def disable(self, phase):
         """
@@ -256,21 +274,39 @@ class PhaseSeries(Term):
         units = [unit for unit in [new, *self._unit] if unit != old]
         self._units = sorted(units)
 
-    def replaces(self, phase, new_list):
+    def replaces(self, phase=None, new_list=None):
         """
         Replace phase object.
 
         Args:
-            phase (str): phase name, like 0th, 1st, 2nd...
+            phase (str or None): phase name, like 0th, 1st, 2nd...
             new_list (list[covsirphy.PhaseUnit]): new phase objects
+
+        Notes:
+            If @phase is None, no phases will be deleted.
+            If @phase is not None, the phase will be deleted.
+            @new_list must be specified.
         """
-        old = self.unit(phase)
         type_ok = all(isinstance(unit, PhaseUnit) for unit in new_list)
         if not isinstance(new_list, list) or len(new_list) < 2 or not type_ok:
             raise TypeError(
                 "@new_list must be a list of covsirphy.PhaseUnit and length must be 2 or over.")
+        if phase is None:
+            self._units = sorted(self._units + new_list)
+        old = self.unit(phase)
         units = [unit for unit in self._units if unit != old]
-        self._units = sorted(units + new_list)
+        sorted_units = sorted(units + new_list)
+        for (i, unit) in enumerate(sorted_units):
+            if i == 0 or len(sorted_units):
+                continue
+            sta_app = unit.start_date
+            end_app = unit.end_date
+            sta = self.tomorrow(sorted_units[i - 1].start_date)
+            end = self.yesterday(sorted_units[i + 1].end_date)
+            if sta != sta_app or end != end_app:
+                raise ValueError(
+                    f"Start/end date of new {self.num2str(i)} must be ({sta}, {end}), but ({sta_app}, {end_app}) was applied.")
+        self._units = sorted_units
 
     def trend(self, sr_df, set_phases=True, area=None, show_figure=True, filename=None, **kwargs):
         """
@@ -354,7 +390,7 @@ class PhaseSeries(Term):
                 unit.set_y0(dataframes[-1])
             except IndexError:
                 unit.set_y0(record_df)
-            df = unit.simulate(y0_dict)
+            df = unit.simulate(y0_dict=y0_dict)
             dataframes.append(df)
         sim_df = pd.concat(dataframes, ignore_index=True, sort=True)
         sim_df = sim_df.set_index(self.DATE).resample("D").last()
