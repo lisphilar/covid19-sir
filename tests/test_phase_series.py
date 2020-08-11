@@ -26,26 +26,27 @@ class TestPhaseSeries(object):
         # Last phase when empty
         empty_phase = PhaseUnit("31Mar2020", "31Mar2020", population)
         assert series.unit(phase="last") == empty_phase
-        # Add a phase with specified end date
+        # Add a phase with specified end date: 0th
         series.add(end_date="22Apr2020")
-        # Add a phase with specified population value
-        series.add(end_date="22Apr2020")
+        # Add a phase with specified population value: 1st
+        with pytest.raises(ValueError):
+            series.add(end_date="22Apr2020")
         series.add(end_date="05May2020", population=population * 0.98)
-        # Add a phase with specified the number of days
+        # Add a phase with specified the number of days: 2nd
         series.add(days=21)
-        # Filling past phases and add a future phase
+        # Filling past phases and add a future phase: 3rd, 4th, 5th
         series.add(end_date="01Sep2020")
-        # Add a future phase
+        # Add a future phase: 6th
         series.add(days=30)
         # Summary
         df = series.summary()
         base_cols = [Term.TENSE, Term.START, Term.END, Term.N]
         assert set(df.columns) == set(base_cols)
-        assert series.to_dict["0th"]["Type"] == Term.PAST
+        assert series.to_dict()["0th"]["Type"] == Term.PAST
         assert len(df) == 6
         assert set(df.loc["3rd", :].tolist()) == set(
             [Term.PAST, "28May2020", "01Aug2020", 123998518])
-        assert set(df.loc["4ht", :].tolist()) == set(
+        assert set(df.loc["4th", :].tolist()) == set(
             [Term.FUTURE, "02Aug2020", "01Sep2020", 123998518])
         # Disable/enable a phase
         series.disable("0th")
@@ -56,18 +57,18 @@ class TestPhaseSeries(object):
         series.enable("0th")
         assert "0th" in series.to_dict()
         assert len(series) == 6
-        # Clear future phases
+        # Clear future phases: 5th and 6th will be deleted
         series.clear(include_past=False)
         assert "4th" not in series.to_dict()
-        assert len(series) == 5
-        assert bool(series)
+        assert len(series) == 4
+        assert series
         # Clear all phases
         series.clear(include_past=True)
         assert len(series) == 0
         assert not series
-        # Filling past phases
+        # Filling past phases: 0th
         series.add()
-        assert len(series) == 2
+        assert len(series) == 1
 
     @pytest.mark.parametrize("country", ["Japan"])
     def test_trend(self, jhu_data, population_data, country):
@@ -113,7 +114,7 @@ class TestPhaseSeries(object):
         assert series.to_dict()["7th"][Term.TAU] == 360
         series.add(end_date="01Nov2020", rho=0.006)
         series.add(end_date="01Dec2020", sigma=0.011)
-        assert series.to_dict()["9th"][self.RT] == 0.55
+        assert series.to_dict()["9th"][Term.RT] == 0.55
         assert series.to_dict()["9th"]["1/beta [day]"] == 41
 
     @pytest.mark.parametrize("country", ["Japan"])
@@ -154,32 +155,34 @@ class TestPhaseSeries(object):
         # Replace one old phase with one new phase
         unit_old = series.unit("2nd")
         unit_new = PhaseUnit(
-            unit_old.start_date, unit_old.end_date, population, tau=360
+            unit_old.start_date, unit_old.end_date, population
         )
+        unit_new.set_ode(tau=360)
         series.replace("2nd", unit_new)
         assert series.unit("2nd") == unit_new
         # Replace one old phase with two new phases
+        unit_old = series.unit("2nd")
         change_date = Term.date_change(unit_old.end_date, days=-7)
         unit_pre = PhaseUnit(
-            unit_old.start_date, Term.tomorrow(change_date), population, tau=360
-        )
-        unit_fol = PhaseUnit(
-            change_date, unit_old.end_date, population, tau=360
-        )
-        series.replace(phase="2nd", new_list=[unit_pre, unit_fol])
+            unit_old.start_date, Term.yesterday(change_date), population)
+        unit_pre.set_ode(tau=360)
+        unit_fol = PhaseUnit(change_date, unit_old.end_date, population)
+        unit_fol.set_ode(tau=360)
+        series.replaces(phase="2nd", new_list=[unit_pre, unit_fol])
+        print(series.unit("2nd"), unit_pre)
         assert series.unit("2nd") == unit_pre
         assert series.unit("3rd") == unit_fol
         # TypeError of new_list
         with pytest.raises(TypeError):
-            series.replace(phase="2nd", new_list=[unit_pre, Term])
+            series.replaces(phase="2nd", new_list=[unit_pre, Term])
         # ValueError with tense
         with pytest.raises(ValueError):
             future_unit = PhaseUnit("01Sep2020", "01Dec2020", population)
-            series.replace(phase="2nd", new_list=[future_unit])
+            series.replaces(phase="2nd", new_list=[future_unit])
         # Add phase without deletion of any phases
         new1 = PhaseUnit("02Aug2020", "01Sep2020", population)
         new2 = PhaseUnit("02Sep2020", "01Oct2020", population)
-        series.replace(phase=None, new_list=[new1, new2])
+        series.replaces(phase=None, new_list=[new1, new2])
         assert series.unit("last") == new2
 
     @pytest.mark.parametrize("country", ["Japan"])
@@ -192,4 +195,4 @@ class TestPhaseSeries(object):
         series.add(
             end_date="22Apr2020", model=SIR, tau=360, rho=0.006, sigma=0.011)
         df = series.simulate(record_df=record_df)
-        assert set(df.columns) == Term.NLOC_COLUMNS
+        assert set(df.columns) == set(Term.NLOC_COLUMNS)

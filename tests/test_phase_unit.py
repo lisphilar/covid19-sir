@@ -11,11 +11,11 @@ class TestPhaseUnit(object):
         unit = PhaseUnit("01Jan2020", "01Feb2020", 1000)
         assert str(unit) == "Phase (01Jan2020 - 01Feb2020)"
         summary_dict = unit.to_dict()
-        assert summary_dict["Start"] == "01Jan2020"
-        assert summary_dict["End"] == "01Feb2020"
-        assert summary_dict["Population"] == 1000
+        assert summary_dict[Term.START] == "01Jan2020"
+        assert summary_dict[Term.END] == "01Feb2020"
+        assert summary_dict[Term.N] == 1000
         summary_df = unit.summary()
-        assert summary_df.columns == ["Start", "End", "Population"]
+        assert set(summary_df.columns) == set([Term.START, Term.END, Term.N])
         with pytest.raises(NotImplementedError):
             assert unit == "phase"
         unit2 = PhaseUnit("01Jan2020", "01Feb2020", 100000)
@@ -58,7 +58,7 @@ class TestPhaseUnit(object):
         assert unit.start_date == "01Jan2020"
         with pytest.raises(AttributeError):
             unit.start_date = "10Jan2020"
-        assert unit.end_date == "01Jan2020"
+        assert unit.end_date == "01Feb2020"
         with pytest.raises(AttributeError):
             unit.end_date = "10Jan2020"
         assert unit.population == 1000
@@ -67,13 +67,13 @@ class TestPhaseUnit(object):
 
     def test_tau(self):
         unit = PhaseUnit("01Jan2020", "01Feb2020", 1000)
-        assert self.tau is None
+        assert unit.tau is None
         with pytest.raises(ValueError):
             unit.tau = 1000
         unit.tau = 1440
-        assert self.tau == 1440
+        assert unit.tau == 1440
         with pytest.raises(AttributeError):
-            self.tau = 720
+            unit.tau = 720
 
     def test_set_ode(self):
         unit = PhaseUnit("01Jan2020", "01Feb2020", 1000)
@@ -104,7 +104,7 @@ class TestPhaseUnit(object):
         with pytest.raises(ValueError):
             unit.estimate()
         unit.record_df = record_df
-        assert unit.record_df.columns == Term.NLOC_COLUMNS
+        assert set(unit.record_df.columns) == set(Term.SUB_COLUMNS)
         unit.estimate()
         # Check results
         assert isinstance(unit.estimator, Estimator)
@@ -124,7 +124,7 @@ class TestPhaseUnit(object):
         unit.set_ode(model=SIR, tau=360, rho=0.01)
         # Parameter estimation
         unit.estimate(record_df=record_df)
-        assert unit.tau == unit.to_dict()["tau"] == 360
+        assert unit.tau == unit.to_dict()[Term.TAU] == 360
         assert unit.to_dict()["rho"] == 0.01
 
     @pytest.mark.parametrize("country", ["Japan"])
@@ -155,7 +155,7 @@ class TestPhaseUnit(object):
         unit.set_y0(record_df)
         # Simulation
         sim_df = unit.simulate()
-        assert sim_df.columns == Term.NLOC_COLUMNS
+        assert set(sim_df.columns) == set(Term.NLOC_COLUMNS)
 
     @pytest.mark.parametrize("country", ["Japan"])
     def test_simulate_y0_direct(self, jhu_data, population_data, country):
@@ -169,4 +169,4 @@ class TestPhaseUnit(object):
             "Susceptible": 126512455, "Infected": 1806, "Fatal or Recovered": 14839
         }
         sim_df = unit.simulate(y0_dict=y0_dict)
-        assert sim_df.columns == Term.NLOC_COLUMNS
+        assert set(sim_df.columns) == set(Term.NLOC_COLUMNS)

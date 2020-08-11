@@ -201,7 +201,7 @@ class ChangeFinder(Term):
             col for col in comp_df.columns if col.endswith(self.P)
         ]
         if len(pred_cols) == 1:
-            title = f"{self.area}: S-R trend without change points"
+            title = f"{area}: S-R trend without change points"
         else:
             _list = self._change_dates[:]
             strings = [

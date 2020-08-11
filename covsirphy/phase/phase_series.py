@@ -28,8 +28,7 @@ class PhaseSeries(Term):
         self.clear(include_past=True)
 
     def __iter__(self):
-        yield from self._unit
-        raise StopIteration()
+        yield from self._units
 
     def __len__(self):
         return len([unit for unit in self._units if unit])
@@ -265,13 +264,17 @@ class PhaseSeries(Term):
         Args:
             phase (str): phase name, like 0th, 1st, 2nd...
             new (covsirphy.PhaseUnit): new phase object
+
+        Returns:
+            covsirphy.PhaseSeries: self
         """
         old = self.unit(phase)
         if old != new:
             raise ValueError(
                 "Combination of start/end date is different. old: {old}, new: {new}")
-        units = [unit for unit in [new, *self._unit] if unit != old]
-        self._units = sorted(units)
+        units = [unit for unit in self._units if unit != old]
+        self._units = sorted(units + [new])
+        return self
 
     def replaces(self, phase=None, new_list=None):
         """
@@ -281,31 +284,51 @@ class PhaseSeries(Term):
             phase (str or None): phase name, like 0th, 1st, 2nd...
             new_list (list[covsirphy.PhaseUnit]): new phase objects
 
+        Returns:
+            covsirphy.PhaseSeries: self
+
         Notes:
             If @phase is None, no phases will be deleted.
             If @phase is not None, the phase will be deleted.
             @new_list must be specified.
         """
         type_ok = all(isinstance(unit, PhaseUnit) for unit in new_list)
-        if not isinstance(new_list, list) or len(new_list) < 2 or not type_ok:
-            raise TypeError(
-                "@new_list must be a list of covsirphy.PhaseUnit and length must be 2 or over.")
+        if (not isinstance(new_list, list)) or (not type_ok):
+            raise TypeError("@new_list must be a list of covsirphy.PhaseUnit.")
         if phase is None:
-            self._units = sorted(self._units + new_list)
-        old = self.unit(phase)
-        units = [unit for unit in self._units if unit != old]
-        sorted_units = sorted(units + new_list)
+            units = self._units + new_list
+        else:
+            old = self.unit(phase)
+            units = [unit for unit in self._units if unit != old] + new_list
+        self._units = self._ensure_series(units)
+
+    @classmethod
+    def _ensure_series(cls, units):
+        """
+        Ensure that the list is a series of phases.
+
+        Args:
+            units (list[covsirphy.PhaseUnit]): list of units
+
+        Returns:
+            list[covsirphy.PhaseUnit]: sorted list of units
+
+        Raises:
+            ValueError: Phases are not series.
+        """
+        sorted_units = sorted(units)
+        s = ", ".join([str(unit) for unit in sorted_units])
         for (i, unit) in enumerate(sorted_units):
-            if i in [0, len(sorted_units)]:
+            if i in [0, len(sorted_units) - 1]:
                 continue
             sta_app = unit.start_date
             end_app = unit.end_date
-            sta = self.tomorrow(sorted_units[i - 1].start_date)
-            end = self.yesterday(sorted_units[i + 1].end_date)
+            sta = cls.tomorrow(sorted_units[i - 1].end_date)
+            end = cls.yesterday(sorted_units[i + 1].start_date)
             if sta != sta_app or end != end_app:
                 raise ValueError(
-                    f"Start/end date of new {self.num2str(i)} must be ({sta}, {end}), but ({sta_app}, {end_app}) was applied.")
-        self._units = sorted_units
+                    f"The list of units does not a series of phases. Applied: {s}")
+        return sorted_units
 
     def trend(self, sr_df, set_phases=True, area=None, show_figure=True, filename=None, **kwargs):
         """

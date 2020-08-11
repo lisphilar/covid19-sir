@@ -1,11 +1,12 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
+from datetime import datetime
 import warnings
 import pandas as pd
 import pytest
 from covsirphy import Scenario
-from covsirphy import Term, PopulationData, SIRF, SIRFV, ExampleData
+from covsirphy import Term
 
 
 class TestScenario(object):
@@ -13,7 +14,12 @@ class TestScenario(object):
     @pytest.mark.parametrize("province", [None, "Tokyo"])
     @pytest.mark.parametrize("tau", [None, 720, 1000])
     def test_start(self, jhu_data, population_data, country, province, tau):
-        if tau == 1000 or (country == "Italy" and province == "Tokyo"):
+        if country == "Italy" and province == "Tokyo":
+            with pytest.raises(KeyError):
+                Scenario(
+                    jhu_data, population_data, country, province=province)
+            return
+        if tau == 1000:
             with pytest.raises(ValueError):
                 Scenario(
                     jhu_data, population_data, country, province=province, tau=tau)
@@ -27,13 +33,14 @@ class TestScenario(object):
         snl = Scenario(jhu_data, population_data, country)
         # Test
         snl.first_date = "01Apr2020"
-        assert snl.first_date == "01APr2020"
+        assert snl.first_date == "01Apr2020"
         snl.last_date = "01May2020"
         assert snl.last_date == "01May2020"
         with pytest.raises(ValueError):
-            snl.first_date = "01Mar2020"
+            snl.first_date = "01Jan2019"
         with pytest.raises(ValueError):
-            snl.last_date = "01Jun2020"
+            tomorrow = Term.tomorrow(datetime.now().strftime(Term.DATE_FORMAT))
+            snl.last_date = tomorrow
 
     @pytest.mark.parametrize("country", ["Japan"])
     def test_records(self, jhu_data, population_data, country):
@@ -45,13 +52,13 @@ class TestScenario(object):
         # Test
         df = snl.records(show_figure=False)
         assert isinstance(df, pd.DataFrame)
-        assert df.columns == Term.NLOC_COLUMNS
+        assert set(df.columns) == set(Term.NLOC_COLUMNS)
         dates = df[Term.DATE]
         assert dates.min() == Term.date_obj(snl.first_date)
         assert dates.max() == Term.date_obj(snl.last_date)
-        df2 = snl.record(show_figure=True)
+        df2 = snl.records(show_figure=True)
         assert isinstance(df2, pd.DataFrame)
-        assert df2.columns == Term.NLOC_COLUMNS
+        assert set(df2.columns) == set(Term.NLOC_COLUMNS)
 
     @pytest.mark.parametrize("country", ["Japan"])
     def test_add(self, jhu_data, population_data, country):

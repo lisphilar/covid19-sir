@@ -81,9 +81,8 @@ class Scenario(Term):
 
     @first_date.setter
     def first_date(self, date):
-        if self.date_obj(date) >= self.date_obj(self._last_date):
-            raise ValueError(
-                f"@date must be under {self._last_date}, but {date} was applied.")
+        self.ensure_date_order(self._first_date, date, name="date")
+        self.ensure_date_order(date, self._last_date, name="date")
         self._first_date = date
         self._init_phase_series()
 
@@ -96,9 +95,8 @@ class Scenario(Term):
 
     @last_date.setter
     def last_date(self, date):
-        if self.date_obj(date) <= self.date_obj(self._first_date):
-            raise ValueError(
-                f"@date must be under {self._first_date}, but {date} was applied.")
+        self.ensure_date_order(self._first_date, date, name="date")
+        self.ensure_date_order(date, self._last_date, name="date")
         self._last_date = date
         self._init_phase_series()
 

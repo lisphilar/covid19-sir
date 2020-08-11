@@ -91,6 +91,8 @@ class PhaseUnit(Term):
         return hash((self._start_date, self._end_date))
 
     def __eq__(self, other):
+        if not isinstance(other, PhaseUnit):
+            raise NotImplementedError
         return self._start_date == other.start_date and self._end_date == other.end_date
 
     def __ne__(self, other):
@@ -136,12 +138,12 @@ class PhaseUnit(Term):
             raise NotImplementedError
         return end_other <= sta
 
-    def __add__(self, other):
+    def __iadd__(self, other):
         if self < other:
             return PhaseUnit(self._start_date, other.end_date, self._population)
         raise NotImplementedError
 
-    def __sub__(self, other):
+    def __isub__(self, other):
         sta = self.date_obj(self._start_date)
         end = self.date_obj(self._end_date)
         sta_other = self.date_obj(other.start_date)
@@ -210,8 +212,9 @@ class PhaseUnit(Term):
     def tau(self, value):
         if self._ode_dict[self.TAU] is None:
             self._ode_dict[self.TAU] = self.ensure_tau(value)
+            return
         raise AttributeError(
-            "PhaseUnit.tau is not None and cannot be changed.")
+            f"PhaseUnit.tau is not None ({self._ode_dict[self.TAU]}) and cannot be changed.")
 
     @property
     def model(self):
@@ -279,12 +282,12 @@ class PhaseUnit(Term):
         df = pd.DataFrame.from_dict(summary_dict, orient="index").T
         return df.dropna(how="all", axis=1)
 
-    def set_ode(self, model, tau=None, **kwargs):
+    def set_ode(self, model=None, tau=None, **kwargs):
         """
         Set ODE model, tau value and parameter values, if necessary.
 
         Args:
-            model (covsirphy.ModelBase): ODE model
+            model (covsirphy.ModelBase or None): ODE model
             tau (int or None): tau value [min], a divisor of 1440
             kwargs: keyword arguments of model parameters
         """
@@ -301,11 +304,12 @@ class PhaseUnit(Term):
         param_dict = self._ode_dict.copy()
         param_dict.update(kwargs)
         param_dict = {
-            k: v for (k, v) in param_dict.items() if k in model.PARAMETERS}
+            p: param_dict[p] if p in param_dict else None for p in model.PARAMETERS
+        }
         self._ode_dict = param_dict.copy()
         self._ode_dict[self.TAU] = tau
         # Reproduction number and day parameters
-        if param_dict.keys() == set(model.PARAMETERS):
+        if set(v for v in param_dict.values() if v) == set(model.PARAMETERS):
             model_instance = model(population=self._population, **param_dict)
             self.info_dict[self.RT] = model_instance.calc_r0()
             if tau is not None:
@@ -323,7 +327,7 @@ class PhaseUnit(Term):
                 - Infected (int): the number of currently infected cases
                 - Fatal (int): the number of fatal cases
                 - Recovered (int): the number of recovered cases
-                - any other columns will be ignored
+                - Susceptible (int): the number of susceptible cases
         """
         return self._record_df
 

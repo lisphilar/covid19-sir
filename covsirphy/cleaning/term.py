@@ -39,6 +39,7 @@ class Term(object):
     STR_COLUMNS = [DATE, *AREA_COLUMNS]
     COLUMNS = [*STR_COLUMNS, C, CI, F, R]
     NLOC_COLUMNS = [DATE, C, CI, F, R]
+    SUB_COLUMNS = [DATE, C, CI, F, R, S]
     VALUE_COLUMNS = [C, CI, F, R]
     FIG_COLUMNS = [CI, F, R, FR, V, E, W]
     # Date format: 22Jan2020 etc.
@@ -385,7 +386,7 @@ class Term(object):
         Returns:
             str: tomorrow
         """
-        return cls.date_change(date_str, days=-1)
+        return cls.date_change(date_str, days=1)
 
     @classmethod
     def yesterday(cls, date_str):
@@ -398,7 +399,7 @@ class Term(object):
         Returns:
             str: yesterday
         """
-        return cls.date_change(date_str, days=1)
+        return cls.date_change(date_str, days=-1)
 
     @classmethod
     def steps(cls, start_date, end_date, tau):
