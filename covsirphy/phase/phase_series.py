@@ -28,8 +28,7 @@ class PhaseSeries(Term):
         self.clear(include_past=True)
 
     def __iter__(self):
-        for unit in self._unit:
-            yield unit
+        yield from self._unit
         raise StopIteration()
 
     def __len__(self):
