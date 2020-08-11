@@ -296,7 +296,7 @@ class PhaseSeries(Term):
         units = [unit for unit in self._units if unit != old]
         sorted_units = sorted(units + new_list)
         for (i, unit) in enumerate(sorted_units):
-            if i == 0 or i == len(sorted_units):
+            if i in [0, len(sorted_units)]:
                 continue
             sta_app = unit.start_date
             end_app = unit.end_date
