@@ -13,7 +13,7 @@ from covsirphy.phase.phase_unit import PhaseUnit
 
 class MPEstimator(Term):
     """
-    Perform parallel jobs of Phaseunit.estimate()
+    Perform multiprocessing of Phaseunit.estimate()
 
     Args:
         model (covsirphy.ModelBase or None): ODE model
@@ -99,12 +99,12 @@ class MPEstimator(Term):
         # Parameter estimation
         if self.from_dataset:
             try:
-                country = unit.id_dict[self.COUNTRY]
+                country = unit.id_dict["country"]
             except KeyError:
                 raise KeyError(
-                    "PhaseUnit.id_dict must have country name.")
+                    "PhaseUnit.id_dict['country'] must have country name.")
             if self.PROVINCE in unit.id_dict:
-                province = unit.id_dict[self.PROVINCE]
+                province = unit.id_dict["province"]
             else:
                 province = None
             population = self.population_data.value(
