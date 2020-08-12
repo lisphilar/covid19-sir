@@ -103,10 +103,7 @@ class MPEstimator(Term):
             except KeyError:
                 raise KeyError(
                     "PhaseUnit.id_dict['country'] must have country name.")
-            if self.PROVINCE in unit.id_dict:
-                province = unit.id_dict["province"]
-            else:
-                province = None
+            province = unit.id_dict["province"] if self.PROVINCE in unit.id_dict else None
             population = self.population_data.value(
                 country=country, province=province)
             record_df = self.jhu_data.subset(
