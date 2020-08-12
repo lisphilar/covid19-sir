@@ -85,7 +85,7 @@ class MPEstimator(Term):
         self._units.extend(units)
         return self
 
-    def _run(self, unit, record_df, tau, **kwargs):
+    def _run(self, unit, tau, **kwargs):
         """
         Run estimation for one phase.
 
