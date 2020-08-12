@@ -99,6 +99,7 @@ class PhaseUnit(Term):
         return not self.__eq__(other)
 
     def __lt__(self, other):
+        # self < other
         end = self.date_obj(self._end_date)
         if isinstance(other, str):
             sta_other = self.date_obj(other)
@@ -109,41 +110,37 @@ class PhaseUnit(Term):
         return end < sta_other
 
     def __le__(self, other):
+        # self <= other
         end = self.date_obj(self._end_date)
         if isinstance(other, str):
             sta_other = self.date_obj(other)
         elif isinstance(other, PhaseUnit):
+            if self.__eq__(other):
+                return True
             sta_other = self.date_obj(other.start_date)
         else:
             raise NotImplementedError
         return end <= sta_other
 
     def __gt__(self, other):
-        sta = self.date_obj(self._start_date)
-        if isinstance(other, str):
-            end_other = self.date_obj(other)
-        elif isinstance(other, PhaseUnit):
-            end_other = self.date_obj(other.end_date)
-        else:
-            raise NotImplementedError
-        return end_other < sta
+        # self > other
+        if isinstance(other, PhaseUnit) and self.__eq__(other):
+            return False
+        return not self.__le__(other)
 
     def __ge__(self, other):
-        sta = self.date_obj(self._start_date)
-        if isinstance(other, str):
-            end_other = self.date_obj(other)
-        elif isinstance(other, PhaseUnit):
-            end_other = self.date_obj(other.end_date)
-        else:
-            raise NotImplementedError
-        return end_other <= sta
+        # self >= other
+        return not self.__lt__(other)
 
-    def __iadd__(self, other):
+    def __add__(self, other):
         if self < other:
             return PhaseUnit(self._start_date, other.end_date, self._population)
         raise NotImplementedError
 
-    def __isub__(self, other):
+    def __iadd__(self, other):
+        return self.__add__(other)
+
+    def __sub__(self, other):
         sta = self.date_obj(self._start_date)
         end = self.date_obj(self._end_date)
         sta_other = self.date_obj(other.start_date)
@@ -154,6 +151,15 @@ class PhaseUnit(Term):
         if sta == sta_other and end > end_other:
             start_date = self.tomorrow(other.end_date)
             return PhaseUnit(start_date, self._end_date, self._population)
+
+    def __isub__(self, other):
+        return self.__sub__(other)
+
+    def __contains__(self, date):
+        sta = self.date_obj(self._start_date)
+        end = self.date_obj(self._end_date)
+        date = self.date_obj(date)
+        return sta <= date <= end
 
     def enable(self):
         """
@@ -290,6 +296,9 @@ class PhaseUnit(Term):
             model (covsirphy.ModelBase or None): ODE model
             tau (int or None): tau value [min], a divisor of 1440
             kwargs: keyword arguments of model parameters
+
+        Returns:
+            covsirphy.PhaseUnit: self
         """
         # Tau value
         tau = self.ensure_tau(tau) or self._ode_dict[self.TAU]
@@ -297,7 +306,7 @@ class PhaseUnit(Term):
         model = model or self._model
         if model is None:
             self._ode_dict[self.TAU] = tau
-            return None
+            return self
         self._model = self.ensure_subclass(model, ModelBase, name="model")
         self.info_dict[self.ODE] = model.NAME
         # Parameter values
@@ -310,12 +319,13 @@ class PhaseUnit(Term):
         self._ode_dict[self.TAU] = tau
         # Day parameters
         if None in param_dict.values():
-            return
+            return self
         model_instance = model(population=self._population, **param_dict)
         self.info_dict[self.RT] = model_instance.calc_r0()
         # Reproduction number
         if tau is not None:
             self.day_param_dict = model_instance.calc_days_dict(tau)
+        return self
 
     @property
     def record_df(self):

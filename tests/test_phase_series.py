@@ -34,9 +34,9 @@ class TestPhaseSeries(object):
         series.add(end_date="05May2020", population=population * 0.98)
         # Add a phase with specified the number of days: 2nd
         series.add(days=21)
-        # Filling past phases and add a future phase: 3rd, 4th, 5th
+        # Filling past phases and add a future phase: 3rd, 4th
         series.add(end_date="01Sep2020")
-        # Add a future phase: 6th
+        # Add a future phase: 5th
         series.add(days=30)
         # Summary
         df = series.summary()
@@ -57,7 +57,7 @@ class TestPhaseSeries(object):
         series.enable("0th")
         assert "0th" in series.to_dict()
         assert len(series) == 6
-        # Clear future phases: 5th and 6th will be deleted
+        # Clear future phases: 4th and 5th will be deleted
         series.clear(include_past=False)
         assert "4th" not in series.to_dict()
         assert len(series) == 4
@@ -125,25 +125,25 @@ class TestPhaseSeries(object):
         series = PhaseSeries("01Apr2020", "01Aug2020", population)
         series.trend(sr_df, show_figure=False)
         assert len(series) == 5
-        # Delete 0th phase
+        # Deletion of 0th phase is the same as disabling 0th phase
+        series.enable("0th")
         series.delete("0th")
-        with pytest.raises(KeyError):
-            series.unit("5th")
         assert len(series) == 5
-        # Delete phase
-        new_third = PhaseUnit(
+        assert "5th" in series.to_dict()
+        assert not series.unit("0th")
+        # Delete phase (not the last registered phase)
+        new_second = PhaseUnit(
             series.unit("2nd").start_date,
             series.unit("3rd").end_date,
             series.unit("2nd").population)
         series.delete("3rd")
         assert len(series) == 4
-        assert series.unit("2nd") == new_third
-        # Add phase with a model
-        series.add(end_date="01Sep2020", model=SIR, rho=0.006)
-        series.delete("4th")
-        assert series.unit("3rd").end_date == "01Aug2020"
-        series.add(end_date="01Sep2020", model=SIR, rho=0.006)
-        assert len(series) == 5
+        assert series.unit("2nd") == new_second
+        # Delete the last phase
+        old_last = series.unit("last")
+        series.delete("last")
+        series.add()
+        assert series.unit("last").start_date == old_last.start_date
 
     @pytest.mark.parametrize("country", ["Japan"])
     def test_replace(self, jhu_data, population_data, country):

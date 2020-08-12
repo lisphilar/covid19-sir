@@ -117,7 +117,7 @@ class PolicyMeasures(Term):
                 set_phases=True, show_figure=False)
         countries = [
             country for country in self._countries
-            if len(self.scenario_dict[country].phases()) >= min_len
+            if len(self.scenario_dict[country][self.MAIN]) >= min_len
         ]
         self.countries = countries
         return self
@@ -156,7 +156,7 @@ class PolicyMeasures(Term):
             dict(int, list[str]): list of countries with the length of phases
         """
         len_nest = [
-            (country, len(self.scenario_dict[country].phases()))
+            (country, len(self.scenario_dict[country][self.MAIN]))
             for country in self._countries
         ]
         sorted_nest = sorted(len_nest, key=itemgetter(1), reverse=True)

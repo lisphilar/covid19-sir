@@ -1,7 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-from datetime import timedelta
 import numpy as np
 import pandas as pd
 from covsirphy.cleaning.term import Term
@@ -90,9 +89,7 @@ class PhaseSeries(Term):
             return end_date
         if days is None:
             return self.last_date
-        days = self.ensure_natural_int(days, name="days", none_ok=False)
-        end = self.date_obj(start_date) + timedelta(days=days)
-        return end.strftime(self.DATE_FORMAT)
+        return self.date_change(start_date, days=days)
 
     def add(self, end_date=None, days=None, population=None, model=None, tau=None, **kwargs):
         """
@@ -129,47 +126,49 @@ class PhaseSeries(Term):
                 if k in model.PARAMETERS}
         # Create PhaseUnit
         unit = PhaseUnit(start_date, end_date, population)
-        unit.set_ode(model=model, tau=tau, **param_dict)
-        # Add phase if past
-        if unit <= self.last_date:
+        # Add phase if the last date is not included
+        if self.last_date not in unit or unit <= self.last_date:
+            unit.set_ode(model=model, tau=tau, **param_dict)
             self._units.append(unit)
             return self
-        # Fill in the blank
-        if last_unit < self.last_date:
-            filling = PhaseUnit(start_date, self.last_date, population)
-            filling.set_ode(model=model, tau=tau, **param_dict)
-            self._units.append(filling)
-            unit = PhaseUnit(
-                self.tomorrow(self.last_date), end_date, population)
-            unit.set_ode(model=model, tau=tau, **param_dict)
+        # Fill in the blank of past dates
+        filling = PhaseUnit(start_date, self.last_date, population)
+        filling.set_ode(model=model, tau=tau, **param_dict)
+        target = PhaseUnit(
+            self.tomorrow(self.last_date), end_date, population)
+        target.set_ode(model=model, tau=tau, **param_dict)
         # Add new phase
-        self._units.append(unit)
+        self._units.extend([filling, target])
+        return self
 
-    def delete(self, phase):
+    def delete(self, phase="last"):
         """
         Delete a phase. The phase will be combined to the previous phase.
 
         Args:
-            phase (str): phase name, like 0th, 1st, 2nd...
+            phase (str): phase name, like 0th, 1st, 2nd... or 'last'
 
         Returns:
             covsirphy.PhaseSeries: self
+
+        Notes:
+            When @phase is '0th', disable 0th phase. 0th phase will not be deleted.
+            When @phase is 'last', the last phase will be deleted.
         """
         if phase == "0th":
-            self._units = self._units[1:]
+            self.disable("0th")
+            return self
+        if self.unit(phase) == self.unit("last"):
+            self._units = self._units[:-1]
             return self
         phase_pre = self.num2str(self.str2num(phase) - 1)
         unit_pre, unit_fol = self.unit(phase_pre), self.unit(phase)
         if unit_pre <= self.last_date and unit_fol >= self.last_date:
-            if unit_fol == self.unit("last"):
-                units = [unit for unit in self._units if unit != unit_fol]
-                self._units = sorted(units)
-                return self
             phase_next = self.num2str(self.str2num(phase) + 1)
             unit_next = self.unit(phase_next)
             model = unit_next.model
             param_dict = {
-                k: v for (k, v) in unit_next.to_dict() if k in model.PARAMETERS}
+                k: v for (k, v) in unit_next.to_dict().items() if k in model.PARAMETERS}
             unit_new = PhaseUnit(
                 unit_fol.start_date, unit_next.end_date, unit_next.population)
             unit_new.set_ode(model=model, tau=unit_next.tau, **param_dict)
@@ -292,8 +291,10 @@ class PhaseSeries(Term):
             If @phase is not None, the phase will be deleted.
             @new_list must be specified.
         """
+        if not isinstance(new_list, list):
+            raise TypeError("@new_list must be a list of covsirphy.PhaseUnit.")
         type_ok = all(isinstance(unit, PhaseUnit) for unit in new_list)
-        if (not isinstance(new_list, list)) or (not type_ok):
+        if not type_ok:
             raise TypeError("@new_list must be a list of covsirphy.PhaseUnit.")
         if phase is None:
             units = self._units + new_list

@@ -22,6 +22,11 @@ class TestPhaseUnit(object):
         assert unit == unit2
         unit3 = PhaseUnit("01Jan2020", "01Mar2020", 1000)
         assert unit != unit3
+        assert "31Dec2019" not in unit
+        assert "01Jan2020" in unit
+        assert "15Jan2020" in unit
+        assert "01Feb2020" in unit
+        assert "01Mar2020" not in unit
 
     def test_sort(self):
         unit1 = PhaseUnit("01Jan2020", "01Feb2020", 1000)
@@ -136,11 +141,11 @@ class TestPhaseUnit(object):
         unit = PhaseUnit("27May2020", "27Jun2020", population)
         with pytest.raises(NameError):
             unit.simulate()
-        with pytest.raises(KeyError):
+        with pytest.raises(ValueError):
             unit2 = PhaseUnit("27May2020", "27Jun2020", population)
             unit2.set_ode(model=SIR)
             unit2.simulate()
-        with pytest.raises(KeyError):
+        with pytest.raises(ValueError):
             unit3 = PhaseUnit("27May2020", "27Jun2020", population)
             unit3.set_ode(model=SIR, tau=240, rho=0.006)
             unit3.simulate()
