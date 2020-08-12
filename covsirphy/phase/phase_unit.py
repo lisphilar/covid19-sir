@@ -78,6 +78,7 @@ class PhaseUnit(Term):
             self.RUNTIME: None
         }
         # Init
+        self._id_dict = None
         self._enabled = True
         self._model = None
         self._record_df = pd.DataFrame()
@@ -85,7 +86,11 @@ class PhaseUnit(Term):
         self._estimator = None
 
     def __str__(self):
-        return f"Phase ({self._start_date} - {self._end_date})"
+        if self._id_dict is None:
+            header = "Phase"
+        else:
+            header = f"{', '.join(list(self._id_dict.values()))} phase"
+        return f"{header} ({self._start_date} - {self._end_date})"
 
     def __hash__(self):
         return hash((self._start_date, self._end_date))
@@ -160,6 +165,29 @@ class PhaseUnit(Term):
         end = self.date_obj(self._end_date)
         date = self.date_obj(date)
         return sta <= date <= end
+
+    @property
+    def id_dict(self):
+        """
+        tuple(str): id_dict of the phase
+        """
+        return self._id_dict
+
+    @id_dict.setter
+    def id_dict(self, value):
+        self.set_id(value)
+
+    def set_id(self, **kwargs):
+        """
+        Set identifiers.
+
+        Args:
+            id_dict (dict[str, str]): dictionary of identifiers
+        """
+        if self._id_dict is not None:
+            raise AttributeError("@id_dict cannot be overwritten.")
+        self._id_dict = kwargs
+        return self
 
     def enable(self):
         """

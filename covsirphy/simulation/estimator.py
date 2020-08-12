@@ -76,8 +76,7 @@ class Estimator(Optimizer):
         self.step_n = None
 
     def run(self, timeout=60, reset_n_max=3,
-            timeout_iteration=5, allowance=(0.98, 1.02),
-            seed=0, stdout=True, **kwargs):
+            timeout_iteration=5, allowance=(0.98, 1.02), seed=0, **kwargs):
         """
         Run optimization.
         If the result satisfied the following conditions, optimization ends.
@@ -91,7 +90,6 @@ class Estimator(Optimizer):
             timeout_iteration (int): time-out of one iteration
             allowance (tuple(float, float)): the allowance of the predicted value
             seed (int or None): random seed of hyperparameter optimization
-            stdout (bool): whether show the status of progress or not
             kwargs: other keyword arguments will be ignored
 
         Notes:
@@ -103,8 +101,6 @@ class Estimator(Optimizer):
         reset_n = 0
         iteration_n = math.ceil(timeout / timeout_iteration)
         increasing_cols = [f"{v}{self.P}" for v in self.model.VARS_INCLEASE]
-        if stdout:
-            print("\tRunning optimization...")
         stopwatch = StopWatch()
         for _ in range(iteration_n):
             # Perform optimization
@@ -132,10 +128,6 @@ class Estimator(Optimizer):
         self.run_time = stopwatch.stop()
         self.run_time_show = stopwatch.show()
         self.total_trials = len(self.study.trials)
-        if stdout:
-            print(
-                f"\tFinished {self.total_trials} trials in {stopwatch.show()}.",
-            )
 
     def _is_in_allowance(self, comp_df, allowance):
         """

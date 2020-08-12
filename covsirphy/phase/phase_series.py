@@ -287,7 +287,7 @@ class PhaseSeries(Term):
             covsirphy.PhaseSeries: self
 
         Notes:
-            If @phase is None, no phases will be deleted.
+            If @phase is None, all old phases will be deleted.
             If @phase is not None, the phase will be deleted.
             @new_list must be specified.
         """
@@ -297,7 +297,7 @@ class PhaseSeries(Term):
         if not type_ok:
             raise TypeError("@new_list must be a list of covsirphy.PhaseUnit.")
         if phase is None:
-            units = self._units + new_list
+            units = sorted(new_list)
         else:
             old = self.unit(phase)
             units = [unit for unit in self._units if unit != old] + new_list

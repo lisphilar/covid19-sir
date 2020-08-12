@@ -10,6 +10,7 @@ from covsirphy.cleaning.population import PopulationData
 from covsirphy.cleaning.oxcgrt import OxCGRTData
 from covsirphy.cleaning.term import Term
 from covsirphy.ode.mbase import ModelBase
+from covsirphy.phase.phase_estimator import MPEstimator
 from covsirphy.analysis.scenario import Scenario
 
 
@@ -21,10 +22,10 @@ class PolicyMeasures(Term):
     Args:
         jhu_data (covsirphy.JHUData): object of records
         population_data (covsirphy.PopulationData): PopulationData object
-        tau (int): tau value [min]
+        tau (int or None): tau value [min]
     """
 
-    def __init__(self, jhu_data, population_data, oxcgrt_data, tau=1440):
+    def __init__(self, jhu_data, population_data, oxcgrt_data, tau=None):
         # Records
         self.jhu_data = self.ensure_instance(
             jhu_data, JHUData, name="jhu_data")
@@ -165,18 +166,37 @@ class PolicyMeasures(Term):
             for (length, records) in groupby(sorted_nest, key=itemgetter(1))
         }
 
-    def estimate(self, model):
+    def estimate(self, model, n_jobs=-1, **kwargs):
         """
         Estimate the parameter values of phases in the registered countries.
 
         Args:
             model (covsirphy.ModelBase): ODE model
+            n_jobs (int): the number of parallel jobs or -1 (CPU count)
+            kwargs: keyword arguments of model parameters and covsirphy.Estimator.run()
         """
         model = self.ensure_subclass(model, ModelBase)
+        unit_nest = [
+            [unit.set_id(country=country, phase=self.num2str(num))
+             for (num, unit) in enumerate(self.scenario_dict[country][self.MAIN]) if unit]
+            for country in self._countries
+        ]
+        units = self.flatten(unit_nest)
+        # Parameter estimation
+        mp_estimator = MPEstimator(
+            jhu_data=self.jhu_data, population_data=self.population_data,
+            model=model, tau=self.tau, **kwargs
+        )
+        mp_estimator.add(units)
+        results = mp_estimator.run(n_jobs=n_jobs, **kwargs)
+        # Register the results
         for country in self._countries:
-            print(f"\n{'-' * 20}{country}{'-' * 20}")
-            self.scenario_dict[country].estimate(model)
+            new_units = [
+                unit for unit in results if unit.id_dict["country"] == country]
+            self._scenario_dict[country][self.MAIN].replaces(
+                phase=None, new_list=new_units)
         self.model = model
+        self.tau = mp_estimator.tau
 
     def param_history(self, param, roll_window=None, show_figure=True, filename=None, **kwargs):
         """

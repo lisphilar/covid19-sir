@@ -5,6 +5,8 @@ import functools
 from multiprocessing import cpu_count, Pool
 from covsirphy.util.stopwatch import StopWatch
 from covsirphy.cleaning.term import Term
+from covsirphy.cleaning.jhu_data import JHUData
+from covsirphy.cleaning.population import PopulationData
 from covsirphy.ode.mbase import ModelBase
 from covsirphy.phase.phase_unit import PhaseUnit
 
@@ -14,6 +16,9 @@ class MPEstimator(Term):
     Perform parallel jobs of Phaseunit.estimate()
 
     Args:
+        model (covsirphy.ModelBase or None): ODE model
+        jhu_data (covsirphy.JHUData): object of records
+        population_data (covsirphy.PopulationData): PopulationData object
         record_df (pandas.DataFrame)
             Index:
                 reset index
@@ -24,14 +29,28 @@ class MPEstimator(Term):
                 - Fatal (int): the number of fatal cases
                 - Recovered (int): the number of recovered cases
                 - any other columns will be ignored
-        model (covsirphy.ModelBase or None): ODE model
         tau (int or None): tau value [min], a divisor of 1440
         kwargs: keyword arguments of model parameters
+
+    Notes:
+        When @record_df is None, @jhu_data and @population_data must be specified.
     """
 
-    def __int__(self, record_df, model, tau=None, **kwargs):
-        self.record_df = self.ensure_dataframe(
-            record_df, name="record_df", columns=self.NLOC_COLUMNS)
+    def __init__(self, model, jhu_data=None, population_data=None,
+                 record_df=None, tau=None, **kwargs):
+        # Records
+        if jhu_data is not None and population_data is not None:
+            self.jhu_data = self.ensure_instance(
+                jhu_data, JHUData, name="jhu_data")
+            # Population
+            self.population_data = self.ensure_instance(
+                population_data, PopulationData, name="population_data")
+            self.from_dataset = True
+        else:
+            self.record_df = self.ensure_dataframe(
+                record_df, name="record_df", columns=self.NLOC_COLUMNS)
+            self.from_dataset = False
+        # Arguments
         self.model = self.ensure_subclass(model, ModelBase, "model")
         self._tau = self.ensure_tau(tau)
         self.param_dict = {
@@ -63,7 +82,7 @@ class MPEstimator(Term):
         units = [
             unit.set_ode(model=self.model, **self.param_dict) for unit in units
         ]
-        self._units.append(units)
+        self._units.extend(units)
         return self
 
     def _run(self, unit, record_df, tau, **kwargs):
@@ -72,27 +91,35 @@ class MPEstimator(Term):
 
         Args:
             unit (covsirphy.PhaseUnit): unit of one phase
-        record_df (pandas.DataFrame)
-            Index:
-                reset index
-            Columns:
-                - Date (pd.TimeStamp): Observation date
-                - Confirmed (int): the number of confirmed cases
-                - Infected (int): the number of currently infected cases
-                - Fatal (int): the number of fatal cases
-                - Recovered (int): the number of recovered cases
-                - any other columns will be ignored
             tau (int or None): tau value [min], a divisor of 1440
             kwargs: keyword arguments of model parameters and covsirphy.Estimator.run()
         """
-        # Set tau and estimation
-        unit.set_ode(tau=tau).estimate(record_df=record_df, **kwargs)
+        # Set tau
+        unit.set_ode(tau=tau)
+        # Parameter estimation
+        if self.from_dataset:
+            try:
+                country = unit.id_dict[self.COUNTRY]
+            except KeyError:
+                raise KeyError(
+                    "PhaseUnit.id_dict must have country name.")
+            if self.PROVINCE in unit.id_dict:
+                province = unit.id_dict[self.PROVINCE]
+            else:
+                province = None
+            population = self.population_data.value(
+                country=country, province=province)
+            record_df = self.jhu_data.subset(
+                population=population,
+                **unit.id_dict
+            )
+        else:
+            record_df = self.record_df.copy()
+        unit.estimate(record_df=record_df, **kwargs)
         # Show the number of trials and runtime
         unit_dict = unit.to_dict()
         trials, runtime = unit_dict[self.TRIALS], unit_dict[self.RUNTIME]
-        print(
-            f"\t{unit}: finished {trials} trials in {runtime}"
-        )
+        print(f"\t{unit}: finished {trials} trials in {runtime}")
         return unit
 
     def run(self, n_jobs=-1, **kwargs):
@@ -119,8 +146,7 @@ class MPEstimator(Term):
             self._tau = unit_est.tau
             results = [unit_est]
         # Estimation of each phase
-        est_f = functools.partial(
-            self._run, record_df=self.record_df, tau=self._tau, **kwargs)
+        est_f = functools.partial(self._run, tau=self._tau, **kwargs)
         with Pool(n_jobs) as p:
             units_est = p.map(est_f, units)
         results.extend(units_est)
