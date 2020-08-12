@@ -193,7 +193,7 @@ class PolicyMeasures(Term):
         for country in self._countries:
             new_units = [
                 unit for unit in results if unit.id_dict["country"] == country]
-            self._scenario_dict[country][self.MAIN].replaces(
+            self.scenario_dict[country][self.MAIN].replaces(
                 phase=None, new_list=new_units)
         self.model = model
         self.tau = mp_estimator.tau
