@@ -98,17 +98,17 @@ class MPEstimator(Term):
         unit.set_ode(tau=tau)
         # Parameter estimation
         if self.from_dataset:
+            id_dict = unit.id_dict.copy()
             try:
-                country = unit.id_dict["country"]
+                country = id_dict["country"]
             except KeyError:
                 raise KeyError(
                     "PhaseUnit.id_dict['country'] must have country name.")
-            province = unit.id_dict["province"] if self.PROVINCE in unit.id_dict else None
+            province = id_dict["province"] if "province" in id_dict else None
             population = self.population_data.value(
                 country=country, province=province)
             record_df = self.jhu_data.subset(
-                population=population,
-                **unit.id_dict
+                country=country, province=province, population=population
             )
         else:
             record_df = self.record_df.copy()
