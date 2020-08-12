@@ -141,8 +141,7 @@ class MPEstimator(Term):
         # Estimation of the last phase will be done to determine tau value
         if self._tau is None:
             unit_sel, units = units[-1], units[:-1]
-            unit_est = self._run(
-                unit=unit_sel, record_df=self.record_df, tau=None, **kwargs)
+            unit_est = self._run(unit=unit_sel, tau=None, **kwargs)
             self._tau = unit_est.tau
             results = [unit_est]
         # Estimation of each phase
