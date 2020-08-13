@@ -16,6 +16,45 @@ class PhaseUnit(Term):
         start_date (str): start date of the phase
         end_date (str): end date of the phase
         population (int): population value
+
+    Examples:
+        >>> unit1 = PhaseUnit("01Jan2020", "01Feb2020", 1000)
+        >>> unit2 = PhaseUnit("02Feb2020", "01Mar2020", 1000)
+        >>> unit3 = PhaseUnit("02Mar2020", "01Apr2020", 1000)
+        >>> unit4 = PhaseUnit("02Mar2020", "01Apr2020", 1000)
+        >>> unit5 = PhaseUnit("01Jan2020", "01Apr2020", 1000)
+            >>> str(unit1)
+        'Phase (01Jan2020 - 01Feb2020)'
+        >>> unit4 == unit4
+        True
+        >>> unit1 != unit2
+        True
+        >>> unit1 < unit2
+        True
+        >>> unit3 > unit1
+        True
+        >>> unit3 < unit4
+        False
+        >>> unit3 <= unit4
+        True
+        >>> unit1 < "02Feb2020"
+        True
+        >>> unit1 <= "01Feb2020"
+        True
+        >>> unit1 > "31Dec2019"
+        True
+        >>> unit1 >= "01Jan2020"
+        True
+        >>> sorted([unit3, unit1, unit2]) == [unit1, unit2, unit3]
+        True
+        >>> str(unit1 + unit2)
+        'Phase (01Jan2020 - 01Mar2020)'
+        >>> str(unit5 - unit1)
+        'Phase (02Feb2020 - 01Apr2020)'
+        >>> str(unit5 - unit4)
+        'Phase (01Jan2020 - 01Mar2020)'
+        >>> set([unit1, unit3, unit4]) == set([unit1, unit3])
+        True
     """
 
     def __init__(self, start_date, end_date, population):
@@ -39,76 +78,192 @@ class PhaseUnit(Term):
             self.RUNTIME: None
         }
         # Init
+        self._id_dict = None
+        self._enabled = True
         self._model = None
         self._record_df = pd.DataFrame()
         self.y0_dict = {}
         self._estimator = None
 
     def __str__(self):
-        return f"Phase ({self._start_date} - {self._end_date})"
+        if self._id_dict is None:
+            header = "Phase"
+        else:
+            id_str = ', '.join(list(self._id_dict.values()))
+            header = f"{id_str} phase"
+        return f"{header} ({self._start_date} - {self._end_date})"
+
+    def __hash__(self):
+        return hash((self._start_date, self._end_date))
 
     def __eq__(self, other):
         if not isinstance(other, PhaseUnit):
-            return NotImplemented
-        if self._start_date != other.start_date:
-            return False
-        return self._end_date == other.end_date
+            raise NotImplementedError
+        return self._start_date == other.start_date and self._end_date == other.end_date
 
     def __ne__(self, other):
         return not self.__eq__(other)
 
-    @property
+    def __lt__(self, other):
+        # self < other
+        end = self.date_obj(self._end_date)
+        if isinstance(other, str):
+            sta_other = self.date_obj(other)
+        elif isinstance(other, PhaseUnit):
+            sta_other = self.date_obj(other.start_date)
+        else:
+            raise NotImplementedError
+        return end < sta_other
+
+    def __le__(self, other):
+        # self <= other
+        end = self.date_obj(self._end_date)
+        if isinstance(other, str):
+            sta_other = self.date_obj(other)
+        elif isinstance(other, PhaseUnit):
+            if self.__eq__(other):
+                return True
+            sta_other = self.date_obj(other.start_date)
+        else:
+            raise NotImplementedError
+        return end <= sta_other
+
+    def __gt__(self, other):
+        # self > other
+        if isinstance(other, PhaseUnit) and self.__eq__(other):
+            return False
+        return not self.__le__(other)
+
+    def __ge__(self, other):
+        # self >= other
+        return not self.__lt__(other)
+
+    def __add__(self, other):
+        if self < other:
+            return PhaseUnit(self._start_date, other.end_date, self._population)
+        raise NotImplementedError
+
+    def __iadd__(self, other):
+        return self.__add__(other)
+
+    def __sub__(self, other):
+        sta = self.date_obj(self._start_date)
+        end = self.date_obj(self._end_date)
+        sta_other = self.date_obj(other.start_date)
+        end_other = self.date_obj(other.end_date)
+        if sta < sta_other and end == end_other:
+            end_date = self.yesterday(other.start_date)
+            return PhaseUnit(self._start_date, end_date, self._population)
+        if sta == sta_other and end > end_other:
+            start_date = self.tomorrow(other.end_date)
+            return PhaseUnit(start_date, self._end_date, self._population)
+
+    def __isub__(self, other):
+        return self.__sub__(other)
+
+    def __contains__(self, date):
+        sta = self.date_obj(self._start_date)
+        end = self.date_obj(self._end_date)
+        date = self.date_obj(date)
+        return sta <= date <= end
+
+    @ property
+    def id_dict(self):
+        """
+        tuple(str): id_dict of the phase
+        """
+        return self._id_dict
+
+    @ id_dict.setter
+    def id_dict(self, value):
+        self.set_id(value)
+
+    def set_id(self, **kwargs):
+        """
+        Set identifiers.
+
+        Args:
+            id_dict (dict[str, str]): dictionary of identifiers
+        """
+        if self._id_dict is not None:
+            raise AttributeError("@id_dict cannot be overwritten.")
+        self._id_dict = kwargs
+        return self
+
+    def enable(self):
+        """
+        Enable the phase.
+
+        Examples:
+            >>> unit.enable
+            >>> bool(unit)
+            True
+        """
+        self._enabled = True
+
+    def disable(self):
+        """
+        Disable the phase.
+
+        Examples:
+            >>> unit.disable
+            >>> bool(unit)
+            False
+        """
+        self._enabled = False
+
+    def __bool__(self):
+        return self._enabled
+
+    @ property
     def start_date(self):
         """
         str: start date
         """
         return self._start_date
 
-    @property
+    @ property
     def end_date(self):
         """
         str: end date
         """
         return self._end_date
 
-    @property
+    @ property
     def population(self):
         """
         str: population value
         """
         return self._population
 
-    @property
+    @ property
     def tau(self):
         """
         int or None: tau value [min]
         """
         return self._ode_dict[self.TAU]
 
-    @tau.setter
+    @ tau.setter
     def tau(self, value):
-        self._ode_dict[self.TAU] = self.ensure_tau(value)
+        if self._ode_dict[self.TAU] is None:
+            self._ode_dict[self.TAU] = self.ensure_tau(value)
+            return
+        raise AttributeError(
+            f"PhaseUnit.tau is not None ({self._ode_dict[self.TAU]}) and cannot be changed.")
 
-    @property
+    @ property
     def model(self):
         """
-        covsirphy.ModelBase: model description
+        covsirphy.ModelBase or None: model description
         """
         return self._model
 
-    @property
+    @ property
     def estimator(self):
         """
         covsirphy.Estimator or None: estimator object
         """
         return self._estimator
-
-    @property
-    def ode_dict(self):
-        """
-        dict: parameter values and tau value
-        """
-        return self._ode_dict
 
     def to_dict(self):
         """
@@ -160,36 +315,48 @@ class PhaseUnit(Term):
         """
         summary_dict = self.to_dict()
         df = pd.DataFrame.from_dict(summary_dict, orient="index").T
-        return df.dropna(how="all", axis=1).fillna(self.UNKNOWN)
+        return df.dropna(how="all", axis=1)
 
-    def set_ode(self, model, tau=None, **kwargs):
+    def set_ode(self, model=None, tau=None, **kwargs):
         """
         Set ODE model, tau value and parameter values, if necessary.
 
         Args:
-            model (covsirphy.ModelBase): ODE model
+            model (covsirphy.ModelBase or None): ODE model
             tau (int or None): tau value [min], a divisor of 1440
             kwargs: keyword arguments of model parameters
+
+        Returns:
+            covsirphy.PhaseUnit: self
         """
+        # Tau value
         tau = self.ensure_tau(tau) or self._ode_dict[self.TAU]
         # Model
+        model = model or self._model
+        if model is None:
+            self._ode_dict[self.TAU] = tau
+            return self
         self._model = self.ensure_subclass(model, ModelBase, name="model")
         self.info_dict[self.ODE] = model.NAME
         # Parameter values
         param_dict = self._ode_dict.copy()
         param_dict.update(kwargs)
         param_dict = {
-            k: v for (k, v) in param_dict.items() if k in model.PARAMETERS}
+            p: param_dict[p] if p in param_dict else None for p in model.PARAMETERS
+        }
         self._ode_dict = param_dict.copy()
         self._ode_dict[self.TAU] = tau
-        # Reproduction number and day parameters
-        if param_dict.keys() == set(model.PARAMETERS):
-            model_instance = model(population=self._population, **param_dict)
-            self.info_dict[self.RT] = model_instance.calc_r0()
-            if tau is not None:
-                self.day_param_dict = model_instance.calc_days_dict(tau)
+        # Day parameters
+        if None in param_dict.values():
+            return self
+        model_instance = model(population=self._population, **param_dict)
+        self.info_dict[self.RT] = model_instance.calc_r0()
+        # Reproduction number
+        if tau is not None:
+            self.day_param_dict = model_instance.calc_days_dict(tau)
+        return self
 
-    @property
+    @ property
     def record_df(self):
         """
         pandas.DataFrame: records of the phase
@@ -201,11 +368,11 @@ class PhaseUnit(Term):
                 - Infected (int): the number of currently infected cases
                 - Fatal (int): the number of fatal cases
                 - Recovered (int): the number of recovered cases
-                - any other columns will be ignored
+                - Susceptible (int): the number of susceptible cases
         """
         return self._record_df
 
-    @record_df.setter
+    @ record_df.setter
     def record_df(self, df):
         self._record_df = self.ensure_dataframe(
             df, name="df", columns=self.NLOC_COLUMNS)
@@ -219,7 +386,7 @@ class PhaseUnit(Term):
             NameError: ODE model is not registered
         """
         if self._model is None:
-            raise ValueError(
+            raise NameError(
                 "PhaseUnit.set_ode(model) must be done in advance.")
 
     def estimate(self, record_df=None, **kwargs):
@@ -348,6 +515,7 @@ class PhaseUnit(Term):
             Simulation starts at the start date of the phase.
             Simulation end at the next date of the end date of the phase.
         """
+        self._model_is_registered()
         # Initial values
         y0_dict = y0_dict or {}
         y0_dict.update(self.y0_dict)
@@ -355,10 +523,13 @@ class PhaseUnit(Term):
         if diff_set:
             diff_str = ", ".join(list(diff_set))
             s = "s" if len(diff_set) > 1 else ""
-            raise KeyError(
-                f"Initial value{s} of {diff_str} must be specified by @y0_dict or PhaseUnit.set_y0()")
+            raise ValueError(
+                f"Initial value{s} of {diff_str} must be specified by @y0_dict or PhaseUnit.set_y0(record_df)")
         # Conditions
         param_dict = self._ode_dict.copy()
+        if None in param_dict.values():
+            raise KeyError(
+                "Tau and parameter values must be specified in advance with PhaseUnit.set_ode().")
         tau = param_dict.pop(self.TAU)
         last_date = self.tomorrow(self._end_date)
         # Simulation

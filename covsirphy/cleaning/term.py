@@ -4,7 +4,6 @@
 from collections import defaultdict
 from datetime import datetime, timedelta
 import math
-from methodtools import lru_cache
 import numpy as np
 import pandas as pd
 from covsirphy.util.error import deprecate
@@ -39,6 +38,7 @@ class Term(object):
     STR_COLUMNS = [DATE, *AREA_COLUMNS]
     COLUMNS = [*STR_COLUMNS, C, CI, F, R]
     NLOC_COLUMNS = [DATE, C, CI, F, R]
+    SUB_COLUMNS = [DATE, C, CI, F, R, S]
     VALUE_COLUMNS = [C, CI, F, R]
     FIG_COLUMNS = [CI, F, R, FR, V, E, W]
     # Date format: 22Jan2020 etc.
@@ -75,7 +75,6 @@ class Term(object):
     # Flag
     UNKNOWN = "-"
 
-    @lru_cache(maxsize=None)
     @classmethod
     def num2str(cls, num):
         """
@@ -319,7 +318,6 @@ class Term(object):
             raise TypeError(s)
         return target
 
-    @lru_cache(maxsize=None)
     @classmethod
     def divisors(cls, value):
         """
@@ -336,7 +334,6 @@ class Term(object):
             i for i in range(1, value + 1) if value % i == 0
         ]
 
-    @lru_cache(maxsize=None)
     @classmethod
     def date_obj(cls, date_str=None, default=None):
         """
@@ -357,6 +354,24 @@ class Term(object):
         return datetime.strptime(date_str, cls.DATE_FORMAT)
 
     @classmethod
+    def date_change(cls, date_str, days=0):
+        """
+        Return @days days ago or @days days later.
+
+        Args:
+            date_str (str): today
+            days (int): (negative) days ago or (positive) days later
+
+        Returns:
+            str: the date
+        """
+        if not isinstance(days, int):
+            raise TypeError(
+                f"@days must be integer, but {type(days)} was applied.")
+        date = cls.date_obj(date_str) + timedelta(days=days)
+        return date.strftime(cls.DATE_FORMAT)
+
+    @classmethod
     def tomorrow(cls, date_str):
         """
         Tomorrow of the date.
@@ -367,8 +382,7 @@ class Term(object):
         Returns:
             str: tomorrow
         """
-        date = cls.date_obj(date_str) + timedelta(days=1)
-        return date.strftime(cls.DATE_FORMAT)
+        return cls.date_change(date_str, days=1)
 
     @classmethod
     def yesterday(cls, date_str):
@@ -381,8 +395,7 @@ class Term(object):
         Returns:
             str: yesterday
         """
-        date = cls.date_obj(date_str) - timedelta(days=1)
-        return date.strftime(cls.DATE_FORMAT)
+        return cls.date_change(date_str, days=-1)
 
     @classmethod
     def steps(cls, start_date, end_date, tau):
@@ -410,14 +423,14 @@ class Term(object):
             name (str): name of @following_date
 
         Raises:
-            ValueError: @previous_date >= @following_date
+            ValueError: @previous_date > @following_date
         """
         previous = cls.date_obj(previous_date)
         following = cls.date_obj(following_date)
-        if previous < following:
+        if previous <= following:
             return None
         raise ValueError(
-            f"@{name} must be over {previous_date}, but {following_date} was applied."
+            f"@{name} must be the same as/over {previous_date}, but {following_date} was applied."
         )
 
 

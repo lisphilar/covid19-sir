@@ -1,5 +1,6 @@
 .PHONY: install
 install:
+	@export PIP_DEFAULT_TIMEOUT=7200
 	@pip install wheel; pip install --upgrade pip
 	@pip install pipenv
 	@export PIPENV_VENV_IN_PROJECT=true
@@ -9,6 +10,7 @@ install:
 
 .PHONY: install-lock
 install-lock:
+	@export PIP_DEFAULT_TIMEOUT=7200
 	@pip install wheel; pip install --upgrade pip
 	@pip install pipenv
 	@export PIPENV_VENV_IN_PROJECT=true

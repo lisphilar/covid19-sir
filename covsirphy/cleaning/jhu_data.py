@@ -107,6 +107,7 @@ class JHUData(CleaningBase):
                 "('St. Martin',)": "Saint Martin",
                 "Congo (Kinshasa)": "Congo",
                 "Congo (Brazzaville)": "Congo",
+                "Congo, the Democratic Republic of the": "Congo",
                 "The, Bahamas": "Bahamas",
             }
         )
