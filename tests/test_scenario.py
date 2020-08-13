@@ -162,7 +162,7 @@ class TestScenario(object):
         assert set(snl.summary().columns) == set(
             [Term.TENSE, Term.START, Term.END, Term.N])
         # Show two scenarios
-        snl.add(name="New")
+        snl.clear(name="New")
         cols = snl.summary().reset_index().columns
         assert set([Term.SERIES, Term.PHASE]).issubset(set(cols))
         # Show selected scenario
