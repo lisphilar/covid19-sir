@@ -169,12 +169,12 @@ class TestScenario(object):
         cols_sel = snl.summary(name="New").reset_index().columns
         assert not set([Term.SERIES, Term.PHASE]).issubset(set(cols_sel))
         # Columns to show
-        show_cols = [Term.N, Term.RT]
+        show_cols = [Term.N, Term.START]
         assert set(snl.summary(columns=show_cols).columns) == set(show_cols)
         with pytest.raises(TypeError):
-            snl.summary(columns=Term.RT)
+            snl.summary(columns=Term.N)
         with pytest.raises(KeyError):
-            snl.summary(columns=[Term.RT, "Temperature"])
+            snl.summary(columns=[Term.N, "Temperature"])
 
     @pytest.mark.parametrize("country", ["Japan"])
     def test_estimate(self, jhu_data, population_data, country):
