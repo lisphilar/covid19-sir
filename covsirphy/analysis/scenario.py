@@ -453,7 +453,8 @@ class Scenario(Term):
         series = self._ensure_name(name)
         past_units = [
             unit.set_id(phase=self.num2str(num))
-            for (num, unit) in enumerate(series) if unit and unit <= self.last_date
+            for (num, unit) in enumerate(series)
+            if unit and unit <= self.last_date and unit.id_dict is None
         ]
         if not past_units:
             raise ValueError(

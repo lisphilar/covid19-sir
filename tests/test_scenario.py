@@ -212,8 +212,8 @@ class TestScenario(object):
         snl.last_date = "01Aug2020"
         snl.trend(show_figure=False)
         # Parameter estimation
-        snl.estimate(SIR, phase=["1st", "2nd"])
-        with pytest.raises(KeyError):
+        snl.estimate(SIR, phases=["2nd", "5th"])
+        with pytest.raises(ValueError):
             snl.simulate()
         snl.estimate(SIR)
         # Simulation
