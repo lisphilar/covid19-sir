@@ -50,7 +50,7 @@ class ModelBase(ModelBaseCommon):
         Returns:
             (np.array)
         """
-        return np.array(list())
+        raise NotImplementedError
 
     @classmethod
     def param_range(cls, taufree_df, population):
@@ -72,7 +72,7 @@ class ModelBase(ModelBaseCommon):
                 - key (str): parameter name
                 - value (tuple(float, float)): min value and max value
         """
-        return dict()
+        raise NotImplementedError
 
     @classmethod
     def specialize(cls, data_df, population):
@@ -100,9 +100,7 @@ class ModelBase(ModelBaseCommon):
                     - any columns @data_df has
                     - columns with dimensional variables
         """
-        return cls.ensure_dataframe(
-            data_df, name="data_df", columns=cls.VALUE_COLUMNS
-        )
+        raise NotImplementedError
 
     @classmethod
     def restore(cls, specialized_df):
@@ -142,8 +140,11 @@ class ModelBase(ModelBaseCommon):
         """
         Calculate (basic) reproduction number.
         This method should be overwritten in subclass.
+
+        Returns:
+            float
         """
-        return None
+        raise NotImplementedError
 
     def calc_days_dict(self, tau):
         """
@@ -152,8 +153,11 @@ class ModelBase(ModelBaseCommon):
 
         Args:
             param tau (int): tau value [min]
+
+        Returns:
+            dict[str, int]
         """
-        return dict()
+        raise NotImplementedError
 
     @classmethod
     def tau_free(cls, subset_df, population, tau=None):

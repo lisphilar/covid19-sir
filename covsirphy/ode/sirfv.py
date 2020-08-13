@@ -154,7 +154,8 @@ class SIRFV(ModelBase):
                     - Susceptible (int): 0
                     - Vactinated (int): 0
         """
-        df = super().specialize(data_df, population)
+        df = cls.ensure_dataframe(
+            data_df, name="data_df", columns=cls.VALUE_COLUMNS)
         # Calculate dimensional variables
         df[cls.S] = 0
         df[cls.V] = 0
@@ -198,8 +199,14 @@ class SIRFV(ModelBase):
     def calc_r0(self):
         """
         Calculate (basic) reproduction number.
+
+        Returns:
+            float
         """
-        rt = self.rho * (1 - self.theta) / (self.sigma + self.kappa)
+        try:
+            rt = self.rho * (1 - self.theta) / (self.sigma + self.kappa)
+        except ZeroDivisionError:
+            return None
         return round(rt, 2)
 
     def calc_days_dict(self, tau):
@@ -208,11 +215,17 @@ class SIRFV(ModelBase):
 
         Args:
             param tau (int): tau value [min]
+
+        Returns:
+            dict[str, int]
         """
-        return {
-            "alpha1 [-]": round(self.theta, 3),
-            "1/alpha2 [day]": int(tau / 24 / 60 / self.kappa),
-            "1/beta [day]": int(tau / 24 / 60 / self.rho),
-            "1/gamma [day]": int(tau / 24 / 60 / self.sigma),
-            "Vaccinated [persons/day]": int(self.omega * self.population)
-        }
+        try:
+            return {
+                "alpha1 [-]": round(self.theta, 3),
+                "1/alpha2 [day]": int(tau / 24 / 60 / self.kappa),
+                "1/beta [day]": int(tau / 24 / 60 / self.rho),
+                "1/gamma [day]": int(tau / 24 / 60 / self.sigma),
+                "Vaccinated [persons/day]": int(self.omega * self.population)
+            }
+        except ZeroDivisionError:
+            return {p: None for p in self.DAY_PARAMETERS}
