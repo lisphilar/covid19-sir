@@ -150,7 +150,8 @@ class SEWIRF(ModelBase):
                     - Exposed (int): 0
                     - Waiting (int): 0
         """
-        df = super().specialize(data_df, population)
+        df = cls.ensure_dataframe(
+            data_df, name="data_df", columns=cls.VALUE_COLUMNS)
         # Calculate dimensional variables
         df[cls.S] = population - df[cls.C]
         df[cls.E] = 0
@@ -196,9 +197,15 @@ class SEWIRF(ModelBase):
     def calc_r0(self):
         """
         Calculate (basic) reproduction number.
+
+        Returns:
+            float
         """
-        rho = self.rho1 / self.rho2 * self.rho3
-        rt = rho * (1 - self.theta) / (self.sigma + self.kappa)
+        try:
+            rho = self.rho1 / self.rho2 * self.rho3
+            rt = rho * (1 - self.theta) / (self.sigma + self.kappa)
+        except ZeroDivisionError:
+            return None
         return round(rt, 2)
 
     def calc_days_dict(self, tau):
@@ -207,12 +214,18 @@ class SEWIRF(ModelBase):
 
         Args:
             param tau (int): tau value [min]
+
+        Returns:
+            dict[str, int]
         """
-        return {
-            "alpha1 [-]": round(self.theta, 3),
-            "1/alpha2 [day]": int(tau / 24 / 60 / self.kappa),
-            "1/beta1 [day]": int(tau / 24 / 60 / self.rho1),
-            "1/beta2 [day]": int(tau / 24 / 60 / self.rho2),
-            "1/beta3 [day]": int(tau / 24 / 60 / self.rho3),
-            "1/gamma [day]": int(tau / 24 / 60 / self.sigma)
-        }
+        try:
+            return {
+                "alpha1 [-]": round(self.theta, 3),
+                "1/alpha2 [day]": int(tau / 24 / 60 / self.kappa),
+                "1/beta1 [day]": int(tau / 24 / 60 / self.rho1),
+                "1/beta2 [day]": int(tau / 24 / 60 / self.rho2),
+                "1/beta3 [day]": int(tau / 24 / 60 / self.rho3),
+                "1/gamma [day]": int(tau / 24 / 60 / self.sigma)
+            }
+        except ZeroDivisionError:
+            return {p: None for p in self.DAY_PARAMETERS}

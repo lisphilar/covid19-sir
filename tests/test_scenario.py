@@ -176,7 +176,7 @@ class TestScenario(object):
         with pytest.raises(KeyError):
             snl.summary(columns=[Term.N, "Temperature"])
 
-    @pytest.mark.parametrize("country", ["Japan"])
+    @pytest.mark.parametrize("country", ["Japan", "Greece"])
     def test_estimate(self, jhu_data, population_data, country):
         warnings.filterwarnings("ignore", category=UserWarning)
         # Setting
