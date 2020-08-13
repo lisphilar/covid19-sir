@@ -458,7 +458,7 @@ class Scenario(Term):
         ]
         if not past_units:
             raise ValueError(
-                "Scenario.trend(set_phases=True) or Scenario.add() must be done in advance.")
+                "Scenario.trend(), Scenario.enable() or Scenario.add() must be done in advance.")
         if phases is None:
             return past_units
         if not isinstance(phases, list):
