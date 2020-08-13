@@ -391,7 +391,7 @@ class Scenario(Term):
             raise TypeError("@columns must be None or a list of strings.")
         if not set(columns).issubset(set(df.columns)):
             raise KeyError(
-                "Un-registered columns were selected as @columns. Please use {', '.join(df.columns)}."
+                f"Un-registered columns were selected as @columns. Please use {', '.join(df.columns)}."
             )
         df = df.loc[:, columns]
         return df.dropna(how="all", axis=1).fillna(self.UNKNOWN)

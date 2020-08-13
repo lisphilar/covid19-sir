@@ -170,7 +170,7 @@ class TestScenario(object):
         assert not set([Term.SERIES, Term.PHASE]).issubset(set(cols_sel))
         # Columns to show
         show_cols = [Term.N, Term.RT]
-        assert (snl.summary(columns=show_cols).columns) == set(show_cols)
+        assert set(snl.summary(columns=show_cols).columns) == set(show_cols)
         with pytest.raises(TypeError):
             snl.summary(columns=Term.RT)
         with pytest.raises(KeyError):
