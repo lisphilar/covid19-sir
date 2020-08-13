@@ -166,7 +166,8 @@ class TestScenario(object):
         cols = snl.summary().reset_index().columns
         assert set([Term.SERIES, Term.PHASE]).issubset(set(cols))
         # Show selected scenario
-        assert Term.PHASE in set(snl.summary(name="New").reset_index().columns)
+        cols_sel = snl.summary(name="New").reset_index().columns
+        assert not set([Term.SERIES, Term.PHASE]).issubset(set(cols))
         # Columns to show
         show_cols = [Term.N, Term.RT]
         assert (snl.summary(columns=show_cols).columns) == set(show_cols)
