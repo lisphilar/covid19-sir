@@ -188,12 +188,13 @@ class TestScenario(object):
         snl.trend(show_figure=False)
         with pytest.raises(AttributeError):
             snl.estimate_history(phase="1th")
-            # Parameter estimation
+        # Parameter estimation
         with pytest.raises(TypeError):
             snl.estimate(model=SIR, phases="1st")
         with pytest.raises(ValueError):
             snl.estimate(SIR, phases=["0th"])
         snl.clear(include_past=True)
+        snl.trend(show_figure=False)
         snl.estimate(SIR)
         # Estimation history
         snl.estimate_history(phase="1st")
