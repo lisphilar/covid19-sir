@@ -216,7 +216,7 @@ class Scenario(Term):
         Delete a phase. The phase will be combined to the previous phase.
 
         Args:
-            phase (list[str] or None): phase names
+            phase (list[str] or None): phase names, or ['last']
             name (str): name of phase series
 
         Returns:
@@ -231,9 +231,9 @@ class Scenario(Term):
         if phases is None:
             if name == self.MAIN:
                 self.clear(name=name, include_past=True)
-                return None
+                return self
             self._series_dict.pop(name)
-            return None
+            return self
         # Delete phases
         if not isinstance(phases, list):
             raise TypeError("@phases mut be a list of phase names.")
@@ -303,23 +303,26 @@ class Scenario(Term):
             self._series_dict[name].replace(phases[-1], unit)
         return self
 
-    def separate(self, date, phase, name="Main", population=None, **kwargs):
+    def separate(self, date, name="Main", population=None, **kwargs):
         """
         Create a new phase with the change point.
         New phase name will be automatically determined.
 
         Args:
             date (str): change point, i.e. start date of the new phase
-            phases (list[str]): list of sequential phases
             name (str, optional): name of phase series
             population (int): population value of the change point
-            kwargs: keyword arguments to save as phase information
+            kwargs: keyword arguments of PhaseUnit.set_ode()
 
         Returns:
             covsirphy.Scenario: self
         """
         series = self._ensure_name(name)
-        old = series.unit(phase)
+        try:
+            phase, old = [
+                (self.num2str(i), unit) for (i, unit) in enumerate(series) if date in unit][0]
+        except IndexError:
+            raise IndexError(f"Phase on @date ({date}) is not registered.")
         new_pre = PhaseUnit(
             old.start_date, self.yesterday(date), old.population)
         new_pre.set_ode(**old.to_dict())
@@ -345,16 +348,16 @@ class Scenario(Term):
         Notes:
             If 'Main' was used as @name, main PhaseSeries will be used.
         """
-        if name is None and len(self._series_dict.keys()) > 1:
-            dataframes = []
-            for (_name, series) in self._series_dict.items():
-                summary_df = series.summary()
-                summary_df = summary_df.rename_axis(self.PHASE)
-                summary_df[self.SERIES] = _name
-                dataframes.append(summary_df.reset_index())
-            df = pd.concat(dataframes, ignore_index=True, sort=False)
-            return df.set_index([self.SERIES, self.PHASE])
-        if not name and len(self._series_dict.keys()) == 1:
+        if name is None:
+            if len(self._series_dict.keys()) > 1:
+                dataframes = []
+                for (_name, series) in self._series_dict.items():
+                    summary_df = series.summary()
+                    summary_df = summary_df.rename_axis(self.PHASE)
+                    summary_df[self.SERIES] = _name
+                    dataframes.append(summary_df.reset_index())
+                df = pd.concat(dataframes, ignore_index=True, sort=False)
+                return df.set_index([self.SERIES, self.PHASE])
             name = self.MAIN
         series = self._ensure_name(name)
         return series.summary()
@@ -463,7 +466,7 @@ class Scenario(Term):
         future_units = list(set(selected_units) - set(past_units))
         if not future_units:
             return selected_units
-        raise KeyError("Future phases or un-registered phases were selected.")
+        raise KeyError("Future/un-registered/disabled phases were selected.")
 
     def estimate(self, model, phases=None, name="Main", n_jobs=-1, **kwargs):
         """

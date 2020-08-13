@@ -177,8 +177,12 @@ class PolicyMeasures(Term):
         """
         model = self.ensure_subclass(model, ModelBase)
         unit_nest = [
-            [unit.set_id(country=country, phase=self.num2str(num))
-             for (num, unit) in enumerate(self.scenario_dict[country][self.MAIN]) if unit]
+            [
+                unit.set_id(
+                    country=self.jhu_data.country_to_iso3(country),
+                    phase=f"{self.num2str(num):>4}"
+                )
+                for (num, unit) in enumerate(self.scenario_dict[country][self.MAIN]) if unit]
             for country in self._countries
         ]
         units = self.flatten(unit_nest)
@@ -192,7 +196,8 @@ class PolicyMeasures(Term):
         # Register the results
         for country in self._countries:
             new_units = [
-                unit for unit in results if unit.id_dict["country"] == country]
+                unit for unit in results
+                if unit.id_dict["country"] == self.jhu_data.country_to_iso3(country)]
             self.scenario_dict[country][self.MAIN].replaces(
                 phase=None, new_list=new_units)
         self.model = model

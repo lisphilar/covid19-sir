@@ -297,7 +297,7 @@ class Estimator(Optimizer):
             **model_instance.calc_days_dict(est_dict[self.TAU]),
             self.RMSLE: self._rmsle(est_dict[self.TAU]),
             self.TRIALS: self.total_trials,
-            self.RUNTIME: f"{minutes} min {seconds} sec"
+            self.RUNTIME: f"{minutes} min {seconds:>2} sec"
         }
 
     def summary(self, name=None):

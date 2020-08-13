@@ -75,9 +75,6 @@ class Term(object):
     # Flag
     UNKNOWN = "-"
 
-    def __init__(self):
-        self.divisor_dict = {}
-
     @classmethod
     def num2str(cls, num):
         """
@@ -321,7 +318,8 @@ class Term(object):
             raise TypeError(s)
         return target
 
-    def divisors(self, value):
+    @classmethod
+    def divisors(cls, value):
         """
         Return the list of divisors of the value.
 
@@ -331,9 +329,7 @@ class Term(object):
         Returns:
             list[int]: the list of divisors
         """
-        if value in self.divisor_dict:
-            return self.divisor_dict[value]
-        value = self.ensure_natural_int(value)
+        value = cls.ensure_natural_int(value)
         return [
             i for i in range(1, value + 1) if value % i == 0
         ]

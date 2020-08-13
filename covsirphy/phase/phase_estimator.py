@@ -116,7 +116,7 @@ class MPEstimator(Term):
         # Show the number of trials and runtime
         unit_dict = unit.to_dict()
         trials, runtime = unit_dict[self.TRIALS], unit_dict[self.RUNTIME]
-        print(f"\t{unit}: finished {trials} trials in {runtime}")
+        print(f"\t{unit}: finished {trials:>4} trials in {runtime}")
         return unit
 
     def run(self, n_jobs=-1, **kwargs):

@@ -89,7 +89,8 @@ class PhaseUnit(Term):
         if self._id_dict is None:
             header = "Phase"
         else:
-            header = f"{', '.join(list(self._id_dict.values()))} phase"
+            id_str = ', '.join(list(self._id_dict.values()))
+            header = f"{id_str} phase"
         return f"{header} ({self._start_date} - {self._end_date})"
 
     def __hash__(self):
@@ -166,14 +167,14 @@ class PhaseUnit(Term):
         date = self.date_obj(date)
         return sta <= date <= end
 
-    @property
+    @ property
     def id_dict(self):
         """
         tuple(str): id_dict of the phase
         """
         return self._id_dict
 
-    @id_dict.setter
+    @ id_dict.setter
     def id_dict(self, value):
         self.set_id(value)
 
@@ -214,35 +215,35 @@ class PhaseUnit(Term):
     def __bool__(self):
         return self._enabled
 
-    @property
+    @ property
     def start_date(self):
         """
         str: start date
         """
         return self._start_date
 
-    @property
+    @ property
     def end_date(self):
         """
         str: end date
         """
         return self._end_date
 
-    @property
+    @ property
     def population(self):
         """
         str: population value
         """
         return self._population
 
-    @property
+    @ property
     def tau(self):
         """
         int or None: tau value [min]
         """
         return self._ode_dict[self.TAU]
 
-    @tau.setter
+    @ tau.setter
     def tau(self, value):
         if self._ode_dict[self.TAU] is None:
             self._ode_dict[self.TAU] = self.ensure_tau(value)
@@ -250,14 +251,14 @@ class PhaseUnit(Term):
         raise AttributeError(
             f"PhaseUnit.tau is not None ({self._ode_dict[self.TAU]}) and cannot be changed.")
 
-    @property
+    @ property
     def model(self):
         """
         covsirphy.ModelBase or None: model description
         """
         return self._model
 
-    @property
+    @ property
     def estimator(self):
         """
         covsirphy.Estimator or None: estimator object
@@ -355,7 +356,7 @@ class PhaseUnit(Term):
             self.day_param_dict = model_instance.calc_days_dict(tau)
         return self
 
-    @property
+    @ property
     def record_df(self):
         """
         pandas.DataFrame: records of the phase
@@ -371,7 +372,7 @@ class PhaseUnit(Term):
         """
         return self._record_df
 
-    @record_df.setter
+    @ record_df.setter
     def record_df(self, df):
         self._record_df = self.ensure_dataframe(
             df, name="df", columns=self.NLOC_COLUMNS)
