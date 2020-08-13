@@ -197,9 +197,9 @@ class TestScenario(object):
         snl.clear(include_past=True)
         snl.estimate(SIR)
         # Estimation history
-        snl.estimate_history()
+        snl.estimate_history(phase="1st")
         # Estimation accuracy
-        snl.estimate_accuracy()
+        snl.estimate_accuracy(phase="1st")
         # Get a value
         snl.get(Term.RT)
 
