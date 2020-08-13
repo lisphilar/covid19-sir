@@ -40,7 +40,7 @@ class TestScenario(object):
         snl["New"] = series
         # Get scenario
         assert snl["New"] == series
-        assert (snl["New"]) == len(series)
+        assert len(snl["New"]) == len(series)
 
     @pytest.mark.parametrize("country", ["Japan"])
     def test_start_record_range(self, jhu_data, population_data, country):
@@ -100,7 +100,7 @@ class TestScenario(object):
         assert len(snl["New"]) == 1
         snl.delete(name="New")
         with pytest.raises(KeyError):
-            snl["New"]
+            assert len(snl["New"]) == 1
 
     @pytest.mark.parametrize("country", ["Japan"])
     def test_add_phase_dep(self, jhu_data, population_data, country):
