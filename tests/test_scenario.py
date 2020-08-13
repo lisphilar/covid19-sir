@@ -6,7 +6,7 @@ import warnings
 import pandas as pd
 import pytest
 from covsirphy import Scenario
-from covsirphy import Term, PhaseSeries, SIR, SIRD
+from covsirphy import Term, PhaseSeries, SIR
 
 
 class TestScenario(object):
@@ -212,22 +212,10 @@ class TestScenario(object):
         snl.last_date = "01Aug2020"
         snl.trend(show_figure=False)
         # Parameter estimation
-        snl.estimate(SIR, phases=["2nd", "5th"])
-        with pytest.raises(ValueError):
-            snl.simulate()
         snl.estimate(SIR)
         # Simulation
         snl.simulate()
-        # Add a phase with different model
-        snl.add(days=30, model=SIRD)
-        with pytest.raises(ValueError):
-            snl.simulate()
-        snl.delete(phases=["last"])
-        snl.add(days=30, model=SIRD, kappa=0.03)
-        with pytest.raises(KeyError):
-            snl.simulate()
-        snl.simulate(y0_dict={Term.R: 0, Term.F: 0})
         # Parameter histpry
         snl.param_history([Term.RT])
         # Comparison of scenarios
-        snl.describe(y0_dict={Term.R: 0, Term.F: 0})
+        snl.describe()
