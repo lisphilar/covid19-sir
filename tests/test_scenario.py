@@ -193,7 +193,6 @@ class TestScenario(object):
             snl.estimate(model=SIR, phases="1st")
         with pytest.raises(ValueError):
             snl.estimate(SIR, phases=["0th"])
-        snl.estimate(SIR, phases=["1st"])
         snl.clear(include_past=True)
         snl.estimate(SIR)
         # Estimation history
