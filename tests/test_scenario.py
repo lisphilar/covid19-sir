@@ -159,13 +159,13 @@ class TestScenario(object):
         snl.last_date = "01Aug2020"
         snl.trend(show_figure=False)
         # One scenario
-        assert Term.PHASE in snl.summary().reset_index().columns
+        assert Term.PHASE in set(snl.summary().reset_index().columns)
         # Show two scenarios
         snl.add(name="New")
         cols = snl.summary().reset_index().columns
         assert set([Term.SERIES, Term.PHASE]).issubset(set(cols))
         # Show selected scenario
-        assert Term.PHASE in snl.summary(name="New").reset_index().columns
+        assert Term.PHASE in set(snl.summary(name="New").reset_index().columns)
         # Columns to show
         show_cols = [Term.N, Term.RT]
         assert (snl.summary(columns=show_cols).columns) == set(show_cols)
