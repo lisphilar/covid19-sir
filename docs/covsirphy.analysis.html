@@ -347,11 +347,14 @@ The start date will be the next date of the last registered phase.</p>
 <li><p><strong>days</strong> (<em>int</em>) – the number of days to add</p></li>
 <li><p><strong>population</strong> (<em>int</em><em> or </em><em>None</em>) – population value of the start date</p></li>
 <li><p><strong>model</strong> (<em>covsirphy.ModelBase</em><em> or </em><em>None</em>) – ODE model</p></li>
-<li><p><strong>kwargs</strong> – optional, keyword arguments of ODE model parameters, not including tau value.</p></li>
+<li><p><strong>kwargs</strong> – keyword arguments of ODE model parameters, not including tau value.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
 <dd class="field-even"><p>self</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>covsirphy.Scenario</p>
 </dd>
 </dl>
 <p class="rubric">Notes</p>
@@ -392,6 +395,9 @@ The start date will be the next date of the last registered phase.</p>
 <dt class="field-even">Returns</dt>
 <dd class="field-even"><p>self</p>
 </dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>covsirphy.Scenario</p>
+</dd>
 </dl>
 </dd></dl>
 
@@ -413,10 +419,10 @@ New phase name will be automatically determined.</p>
 <dd class="field-even"><p><strong>TypeError</strong> – &#64;phases is not a list</p>
 </dd>
 <dt class="field-odd">Returns</dt>
-<dd class="field-odd"><p>instance of covsirphy.Scenario</p>
+<dd class="field-odd"><p>self</p>
 </dd>
 <dt class="field-even">Return type</dt>
-<dd class="field-even"><p>self</p>
+<dd class="field-even"><p>covsirphy.Scenario</p>
 </dd>
 </dl>
 </dd></dl>
@@ -424,20 +430,24 @@ New phase name will be automatically determined.</p>
 <dl class="py method">
 <dt id="covsirphy.analysis.scenario.Scenario.delete">
 <code class="sig-name descname">delete</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">phases</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">name</span><span class="o">=</span><span class="default_value">'Main'</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/analysis/scenario.html#Scenario.delete"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#covsirphy.analysis.scenario.Scenario.delete" title="Permalink to this definition">¶</a></dt>
-<dd><p>Delete a phase of the phase series.</p>
+<dd><p>Delete a phase. The phase will be combined to the previous phase.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>phase</strong> (<em>list</em><em>[</em><em>str</em><em>] or </em><em>None</em>) – phase name</p></li>
+<li><p><strong>phase</strong> (<em>list</em><em>[</em><em>str</em><em>] or </em><em>None</em>) – phase names, or [‘last’]</p></li>
 <li><p><strong>name</strong> (<em>str</em>) – name of phase series</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
 <dd class="field-even"><p>self</p>
 </dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>covsirphy.Scenario</p>
+</dd>
 </dl>
 <p class="rubric">Notes</p>
-<p>If &#64;phases is None, the phase series will be deleted.</p>
+<p>If &#64;phases is None, the phase series will be deleted.
+When &#64;phase is ‘0th’, disable 0th phase. 0th phase will not be deleted.</p>
 </dd></dl>
 
 <dl class="py method">
@@ -473,8 +483,48 @@ New phase name will be automatically determined.</p>
 </dd></dl>
 
 <dl class="py method">
+<dt id="covsirphy.analysis.scenario.Scenario.disable">
+<code class="sig-name descname">disable</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">phases</span></em>, <em class="sig-param"><span class="n">name</span><span class="o">=</span><span class="default_value">'Main'</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/analysis/scenario.html#Scenario.disable"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#covsirphy.analysis.scenario.Scenario.disable" title="Permalink to this definition">¶</a></dt>
+<dd><p>The phases will be disabled and removed from summary.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>phase</strong> (<em>list</em><em>[</em><em>str</em><em>] or </em><em>None</em>) – phase names</p></li>
+<li><p><strong>name</strong> (<em>str</em>) – name of phase series</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>self</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>covsirphy.Scenario</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="covsirphy.analysis.scenario.Scenario.enable">
+<code class="sig-name descname">enable</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">phases</span></em>, <em class="sig-param"><span class="n">name</span><span class="o">=</span><span class="default_value">'Main'</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/analysis/scenario.html#Scenario.enable"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#covsirphy.analysis.scenario.Scenario.enable" title="Permalink to this definition">¶</a></dt>
+<dd><p>The phases will be enabled and appear in summary.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>phase</strong> (<em>list</em><em>[</em><em>str</em><em>] or </em><em>None</em>) – phase names</p></li>
+<li><p><strong>name</strong> (<em>str</em>) – name of phase series</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>self</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>covsirphy.Scenario</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
 <dt id="covsirphy.analysis.scenario.Scenario.estimate">
-<code class="sig-name descname">estimate</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">model</span></em>, <em class="sig-param"><span class="n">phases</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">name</span><span class="o">=</span><span class="default_value">'Main'</span></em>, <em class="sig-param"><span class="n">n_jobs</span><span class="o">=</span><span class="default_value">- 1</span></em>, <em class="sig-param"><span class="n">stdout</span><span class="o">=</span><span class="default_value">True</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/analysis/scenario.html#Scenario.estimate"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#covsirphy.analysis.scenario.Scenario.estimate" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">estimate</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">model</span></em>, <em class="sig-param"><span class="n">phases</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">name</span><span class="o">=</span><span class="default_value">'Main'</span></em>, <em class="sig-param"><span class="n">n_jobs</span><span class="o">=</span><span class="default_value">- 1</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/analysis/scenario.html#Scenario.estimate"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#covsirphy.analysis.scenario.Scenario.estimate" title="Permalink to this definition">¶</a></dt>
 <dd><p>Estimate the parameters of the model using the records.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -483,7 +533,6 @@ New phase name will be automatically determined.</p>
 <li><p><strong>phases</strong> (<em>list</em><em>[</em><em>str</em><em>]</em>) – list of phase names, like 1st, 2nd…</p></li>
 <li><p><strong>name</strong> (<em>str</em>) – phase series name</p></li>
 <li><p><strong>n_jobs</strong> (<em>int</em>) – the number of parallel jobs or -1 (CPU count)</p></li>
-<li><p><strong>stdout</strong> (<em>bool</em>) – whether show the status of progress or not</p></li>
 <li><p><strong>kwargs</strong> – keyword arguments of model parameters and covsirphy.Estimator.run()</p></li>
 </ul>
 </dd>
@@ -493,6 +542,7 @@ New phase name will be automatically determined.</p>
 <li><p>If ‘Main’ was used as &#64;name, main PhaseSeries will be used.</p></li>
 <li><p>If &#64;name phase was not registered, new PhaseSeries will be created.</p></li>
 <li><p>If &#64;phases is None, all past phase will be used.</p></li>
+<li><p>In kwargs, tau value cannot be included.</p></li>
 </ul>
 </dd></dl>
 
@@ -586,7 +636,7 @@ New phase name will be automatically determined.</p>
 <li><p><strong>show_box_plot</strong> (<em>bool</em>) – if True, box plot. if False, line plot</p></li>
 <li><p><strong>show_figure</strong> (<em>bool</em>) – If True, show the result as a figure</p></li>
 <li><p><strong>filename</strong> (<em>str</em>) – filename of the figure, or None (show figure)</p></li>
-<li><p><strong>kwargs</strong> – keword arguments of pd.DataFrame.plot or line_plot()</p></li>
+<li><p><strong>kwargs</strong> – keyword arguments of pd.DataFrame.plot or line_plot()</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
@@ -613,23 +663,6 @@ New phase name will be automatically determined.</p>
 </dd>
 <dt class="field-odd">Return type</dt>
 <dd class="field-odd"><p>covsirphy.Estimator</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt id="covsirphy.analysis.scenario.Scenario.phases">
-<code class="sig-name descname">phases</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">name</span><span class="o">=</span><span class="default_value">'Main'</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/analysis/scenario.html#Scenario.phases"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#covsirphy.analysis.scenario.Scenario.phases" title="Permalink to this definition">¶</a></dt>
-<dd><p>Return the list of phase names.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>name</strong> (<em>str</em>) – phase series name</p>
-</dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p>list of phase names</p>
-</dd>
-<dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>(list[int])</p>
 </dd>
 </dl>
 </dd></dl>
@@ -670,24 +703,23 @@ New phase name will be automatically determined.</p>
 
 <dl class="py method">
 <dt id="covsirphy.analysis.scenario.Scenario.separate">
-<code class="sig-name descname">separate</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">date</span></em>, <em class="sig-param"><span class="n">phase</span></em>, <em class="sig-param"><span class="n">name</span><span class="o">=</span><span class="default_value">'Main'</span></em>, <em class="sig-param"><span class="n">population</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/analysis/scenario.html#Scenario.separate"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#covsirphy.analysis.scenario.Scenario.separate" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">separate</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">date</span></em>, <em class="sig-param"><span class="n">name</span><span class="o">=</span><span class="default_value">'Main'</span></em>, <em class="sig-param"><span class="n">population</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/analysis/scenario.html#Scenario.separate"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#covsirphy.analysis.scenario.Scenario.separate" title="Permalink to this definition">¶</a></dt>
 <dd><p>Create a new phase with the change point.
 New phase name will be automatically determined.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>date</strong> (<em>str</em>) – change point, i.e. start date of the new phase</p></li>
-<li><p><strong>phases</strong> (<em>list</em><em>[</em><em>str</em><em>]</em>) – list of sequential phases</p></li>
 <li><p><strong>name</strong> (<em>str</em><em>, </em><em>optional</em>) – name of phase series</p></li>
 <li><p><strong>population</strong> (<em>int</em>) – population value of the change point</p></li>
-<li><p><strong>kwargs</strong> – keyword arguments to save as phase information</p></li>
+<li><p><strong>kwargs</strong> – keyword arguments of PhaseUnit.set_ode()</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
-<dd class="field-even"><p>instance of covsirphy.Scenario</p>
+<dd class="field-even"><p>self</p>
 </dd>
 <dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>self</p>
+<dd class="field-odd"><p>covsirphy.Scenario</p>
 </dd>
 </dl>
 </dd></dl>
@@ -720,7 +752,7 @@ New phase name will be automatically determined.</p>
 <dt>Index:</dt><dd><p>reset index</p>
 </dd>
 <dt>Columns:</dt><dd><ul class="simple">
-<li><p>Date (str): date, like 31Dec2020</p></li>
+<li><p>Date (pd.TimeStamp): Observation date</p></li>
 <li><p>Country (str): country/region name</p></li>
 <li><p>Province (str): province/prefecture/state name</p></li>
 <li><p>variables of the models (int): Confirmed (int) etc.</p></li>
@@ -742,7 +774,7 @@ New phase name will be automatically determined.</p>
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>name</strong> (<em>str</em>) – phase series name
-- name of alternative phase series registered by self.add()
+- name of alternative phase series registered by Scenario.add()
 - if None, all phase series will be shown</p></li>
 <li><p><strong>columns</strong> (<em>list</em><em>[</em><em>str</em><em>] or </em><em>None</em>) – columns to show</p></li>
 </ul>
@@ -780,6 +812,9 @@ If &#64;columns is None, all columns will be shown.</p>
 </dd>
 <dt class="field-even">Returns</dt>
 <dd class="field-even"><p>self</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>covsirphy.Scenario</p>
 </dd>
 </dl>
 <p class="rubric">Notes</p>

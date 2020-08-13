@@ -161,15 +161,12 @@
 <span></span><span class="ch">#!/usr/bin/env python</span>
 <span class="c1"># -*- coding: utf-8 -*-</span>
 
-<span class="kn">from</span> <span class="nn">datetime</span> <span class="kn">import</span> <span class="n">datetime</span><span class="p">,</span> <span class="n">timedelta</span>
-<span class="kn">import</span> <span class="nn">warnings</span>
+<span class="kn">from</span> <span class="nn">datetime</span> <span class="kn">import</span> <span class="n">timedelta</span>
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
 <span class="kn">import</span> <span class="nn">ruptures</span> <span class="k">as</span> <span class="nn">rpt</span>
 <span class="kn">from</span> <span class="nn">covsirphy.cleaning.term</span> <span class="kn">import</span> <span class="n">Term</span>
-<span class="kn">from</span> <span class="nn">covsirphy.cleaning.jhu_data</span> <span class="kn">import</span> <span class="n">JHUData</span>
 <span class="kn">from</span> <span class="nn">covsirphy.phase.trend</span> <span class="kn">import</span> <span class="n">Trend</span>
-<span class="kn">from</span> <span class="nn">covsirphy.phase.phase_series</span> <span class="kn">import</span> <span class="n">PhaseSeries</span>
 
 
 <div class="viewcode-block" id="ChangeFinder"><a class="viewcode-back" href="../../../covsirphy.phase.html#covsirphy.phase.sr_change.ChangeFinder">[docs]</a><span class="k">class</span> <span class="nc">ChangeFinder</span><span class="p">(</span><span class="n">Term</span><span class="p">):</span>
@@ -177,50 +174,29 @@
 <span class="sd">    Find change points of S-R trend.</span>
 
 <span class="sd">    Args:</span>
-<span class="sd">        jhu_data (covsirphy.JHUData): object of records</span>
-<span class="sd">        population (int): initial value of total population in the place</span>
-<span class="sd">        country (str): country name</span>
-<span class="sd">        province (str): province name</span>
-<span class="sd">        population_change_dict (dict): dictionary of total population</span>
-<span class="sd">            - key (str): start date of population change</span>
-<span class="sd">            - value (int or None): total population</span>
+<span class="sd">        sr_df (pandas.DataFrame)</span>
+<span class="sd">            Index:</span>
+<span class="sd">                Date (pd.TimeStamp): Observation date</span>
+<span class="sd">            Columns:</span>
+<span class="sd">                - Recovered (int): the number of recovered cases (&gt; 0)</span>
+<span class="sd">                - Susceptible (int): the number of susceptible cases</span>
+<span class="sd">                - any other columns will be ignored</span>
 <span class="sd">        min_size (int): minimum value of phase length [days], over 2</span>
 <span class="sd">        max_rmsle (float): minmum value of RMSLE score</span>
-<span class="sd">        start_date (str or None): start date, like 22Jan2020</span>
-<span class="sd">        end_date (str or None): end date, like 01Feb2020</span>
 
 <span class="sd">    Notes:</span>
 <span class="sd">        When RMSLE score &gt; max_rmsle, predicted values will be None</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">jhu_data</span><span class="p">,</span> <span class="n">population</span><span class="p">,</span> <span class="n">country</span><span class="p">,</span> <span class="n">province</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-                 <span class="n">population_change_dict</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">min_size</span><span class="o">=</span><span class="mi">7</span><span class="p">,</span> <span class="n">max_rmsle</span><span class="o">=</span><span class="mf">20.0</span><span class="p">,</span>
-                 <span class="n">start_date</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">end_date</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sr_df</span><span class="p">,</span> <span class="n">min_size</span><span class="o">=</span><span class="mi">7</span><span class="p">,</span> <span class="n">max_rmsle</span><span class="o">=</span><span class="mf">20.0</span><span class="p">):</span>
         <span class="c1"># Dataset</span>
-        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">jhu_data</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">):</span>
-            <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span>
-                <span class="s2">&quot;Please use instance of JHUData as the first argument of ChangeFinder class.&quot;</span><span class="p">,</span>
-                <span class="ne">DeprecationWarning</span><span class="p">,</span>
-                <span class="n">stacklevel</span><span class="o">=</span><span class="mi">2</span>
-            <span class="p">)</span>
-            <span class="n">jhu_data</span> <span class="o">=</span> <span class="n">JHUData</span><span class="o">.</span><span class="n">from_dataframe</span><span class="p">(</span><span class="n">jhu_data</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">jhu_data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ensure_instance</span><span class="p">(</span>
-            <span class="n">jhu_data</span><span class="p">,</span> <span class="n">JHUData</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;jhu_data&quot;</span>
-        <span class="p">)</span>
-        <span class="c1"># Area</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">country</span> <span class="o">=</span> <span class="n">country</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">province</span> <span class="o">=</span> <span class="n">province</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">UNKNOWN</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">area</span> <span class="o">=</span> <span class="n">JHUData</span><span class="o">.</span><span class="n">area_name</span><span class="p">(</span><span class="n">country</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">province</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">sr_df</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ensure_dataframe</span><span class="p">(</span>
+            <span class="n">sr_df</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;sr_df&quot;</span><span class="p">,</span> <span class="n">time_index</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">S</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">R</span><span class="p">])</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">dates</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="n">date_obj</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">DATE_FORMAT</span><span class="p">)</span> <span class="k">for</span> <span class="n">date_obj</span> <span class="ow">in</span> <span class="n">sr_df</span><span class="o">.</span><span class="n">index</span>
+        <span class="p">]</span>
         <span class="c1"># Minimum size of records</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">min_size</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ensure_natural_int</span><span class="p">(</span><span class="n">min_size</span><span class="p">,</span> <span class="s2">&quot;min_size&quot;</span><span class="p">)</span>
-        <span class="c1"># Dataset for analysis</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">population</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ensure_natural_int</span><span class="p">(</span>
-            <span class="n">population</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;population&quot;</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">sr_df</span> <span class="o">=</span> <span class="n">jhu_data</span><span class="o">.</span><span class="n">to_sr</span><span class="p">(</span>
-            <span class="n">country</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">country</span><span class="p">,</span> <span class="n">province</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">province</span><span class="p">,</span> <span class="n">population</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">population</span><span class="p">,</span>
-            <span class="n">start_date</span><span class="o">=</span><span class="n">start_date</span><span class="p">,</span> <span class="n">end_date</span><span class="o">=</span><span class="n">end_date</span>
-        <span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">dates</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_dates</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">sr_df</span><span class="p">)</span>
         <span class="c1"># Check length of records</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">min_size</span> <span class="o">&lt;</span> <span class="mi">3</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
@@ -228,16 +204,17 @@
         <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dates</span><span class="p">)</span> <span class="o">&lt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">min_size</span> <span class="o">*</span> <span class="mi">2</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
                 <span class="sa">f</span><span class="s2">&quot;More than </span><span class="si">{</span><span class="n">min_size</span> <span class="o">*</span> <span class="mi">2</span><span class="si">}</span><span class="s2"> records must be included.&quot;</span><span class="p">)</span>
-        <span class="c1"># Population</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">pop_dict</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_read_population_data</span><span class="p">(</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">dates</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">population</span><span class="p">,</span> <span class="n">population_change_dict</span>
-        <span class="p">)</span>
         <span class="c1"># Minimum value of RMSLE score</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">max_rmsle</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ensure_float</span><span class="p">(</span><span class="n">max_rmsle</span><span class="p">)</span>
         <span class="c1"># Setting for optimization</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_change_dates</span> <span class="o">=</span> <span class="p">[]</span>
-        <span class="c1"># Whether use 0th phase or not</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_use_0th</span> <span class="o">=</span> <span class="kc">True</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">change_dates</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        list[str]: list of change points</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_change_dates</span>
 
 <div class="viewcode-block" id="ChangeFinder.run"><a class="viewcode-back" href="../../../covsirphy.phase.html#covsirphy.phase.sr_change.ChangeFinder.run">[docs]</a>    <span class="k">def</span> <span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
@@ -279,8 +256,8 @@
         <span class="n">found_list</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">DATE</span><span class="p">]</span><span class="o">.</span><span class="n">sort_values</span><span class="p">()[:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
         <span class="c1"># Only use dates when the previous phase has more than {min_size + 1} days</span>
         <span class="n">delta_days</span> <span class="o">=</span> <span class="n">timedelta</span><span class="p">(</span><span class="n">days</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">min_size</span><span class="p">)</span>
-        <span class="n">first_obj</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">to_date_obj</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dates</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
-        <span class="n">last_obj</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">to_date_obj</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dates</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
+        <span class="n">first_obj</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">date_obj</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dates</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+        <span class="n">last_obj</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">date_obj</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dates</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
         <span class="n">effective_list</span> <span class="o">=</span> <span class="p">[</span><span class="n">first_obj</span><span class="p">]</span>
         <span class="k">for</span> <span class="n">found</span> <span class="ow">in</span> <span class="n">found_list</span><span class="p">:</span>
             <span class="k">if</span> <span class="n">effective_list</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="n">delta_days</span> <span class="o">&lt;</span> <span class="n">found</span><span class="p">:</span>
@@ -294,40 +271,17 @@
         <span class="p">]</span>
         <span class="k">return</span> <span class="bp">self</span></div>
 
-    <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">change_dates</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        list[str]: list of change points (01Feb2020 etc.)</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_change_dates</span>
-
-    <span class="nd">@change_dates</span><span class="o">.</span><span class="n">setter</span>
-    <span class="k">def</span> <span class="nf">change_dates</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dates</span><span class="p">):</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_change_dates</span> <span class="o">=</span> <span class="p">[</span>
-            <span class="n">date</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">DATE_FORMAT</span><span class="p">)</span> <span class="k">for</span> <span class="n">date</span> <span class="ow">in</span> <span class="n">dates</span>
-        <span class="p">]</span>
-
-    <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">use_0th</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        bool: if True, phase names will be 0th, 1st,... If False, 1st, 2nd,...</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_use_0th</span>
-
-    <span class="nd">@use_0th</span><span class="o">.</span><span class="n">setter</span>
-    <span class="k">def</span> <span class="nf">use_0th</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">should_use_0th</span><span class="p">):</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_use_0th</span> <span class="o">=</span> <span class="kc">True</span> <span class="k">if</span> <span class="n">should_use_0th</span> <span class="k">else</span> <span class="kc">False</span>
-
-    <span class="k">def</span> <span class="nf">_curve_fitting</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">phase</span><span class="p">,</span> <span class="n">info</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">_curve_fitting</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">phase</span><span class="p">,</span> <span class="n">start_date</span><span class="p">,</span> <span class="n">end_date</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Perform curve fitting for the phase.</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            phase (str): phase name</span>
-<span class="sd">            info (dict[str]): start date, end date and population</span>
+<span class="sd">            start_date (str): start date of the phase</span>
+<span class="sd">            end_date (str): end date of the phase</span>
 
 <span class="sd">        Returns:</span>
-<span class="sd">            (tuple)</span>
+<span class="sd">            tuple</span>
 <span class="sd">                (pandas.DataFrame): Result of curve fitting</span>
 <span class="sd">                    Index: reset index</span>
 <span class="sd">                    Columns:</span>
@@ -336,15 +290,12 @@
 <span class="sd">                        - (phase_name)_Recovered: Recovered</span>
 <span class="sd">                (int): minimum value of R, which is the change point of the curve</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">start_date</span> <span class="o">=</span> <span class="n">info</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">START</span><span class="p">]</span>
-        <span class="n">end_date</span> <span class="o">=</span> <span class="n">info</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">END</span><span class="p">]</span>
-        <span class="n">population</span> <span class="o">=</span> <span class="n">info</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">N</span><span class="p">]</span>
-        <span class="n">trend</span> <span class="o">=</span> <span class="n">Trend</span><span class="p">(</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">jhu_data</span><span class="p">,</span> <span class="n">population</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">country</span><span class="p">,</span> <span class="n">province</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">province</span><span class="p">,</span>
-            <span class="n">start_date</span><span class="o">=</span><span class="n">start_date</span><span class="p">,</span> <span class="n">end_date</span><span class="o">=</span><span class="n">end_date</span>
-        <span class="p">)</span>
-        <span class="n">trend</span><span class="o">.</span><span class="n">analyse</span><span class="p">()</span>
-        <span class="n">df</span> <span class="o">=</span> <span class="n">trend</span><span class="o">.</span><span class="n">result</span><span class="p">()</span>
+        <span class="n">sr_df</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">sr_df</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+        <span class="n">sta</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">date_obj</span><span class="p">(</span><span class="n">start_date</span><span class="p">)</span>
+        <span class="n">end</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">date_obj</span><span class="p">(</span><span class="n">end_date</span><span class="p">)</span>
+        <span class="n">sr_df</span> <span class="o">=</span> <span class="n">sr_df</span><span class="o">.</span><span class="n">loc</span><span class="p">[(</span><span class="n">sr_df</span><span class="o">.</span><span class="n">index</span> <span class="o">&gt;=</span> <span class="n">sta</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">sr_df</span><span class="o">.</span><span class="n">index</span> <span class="o">&lt;=</span> <span class="n">end</span><span class="p">),</span> <span class="p">:]</span>
+        <span class="n">trend</span> <span class="o">=</span> <span class="n">Trend</span><span class="p">(</span><span class="n">sr_df</span><span class="p">)</span>
+        <span class="n">df</span> <span class="o">=</span> <span class="n">trend</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
         <span class="k">if</span> <span class="n">trend</span><span class="o">.</span><span class="n">rmsle</span><span class="p">()</span> <span class="o">&gt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">max_rmsle</span><span class="p">:</span>
             <span class="n">df</span><span class="p">[</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">S</span><span class="si">}{</span><span class="bp">self</span><span class="o">.</span><span class="n">P</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="c1"># Get min value for vline</span>
@@ -356,26 +307,47 @@
         <span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">rename</span><span class="p">({</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">R</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">:</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">phase</span><span class="si">}</span><span class="s2">_</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">R</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">},</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
         <span class="k">return</span> <span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">r_value</span><span class="p">)</span>
 
-<div class="viewcode-block" id="ChangeFinder.show"><a class="viewcode-back" href="../../../covsirphy.phase.html#covsirphy.phase.sr_change.ChangeFinder.show">[docs]</a>    <span class="k">def</span> <span class="nf">show</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">show_figure</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">filename</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<div class="viewcode-block" id="ChangeFinder.date_range"><a class="viewcode-back" href="../../../covsirphy.phase.html#covsirphy.phase.sr_change.ChangeFinder.date_range">[docs]</a>    <span class="k">def</span> <span class="nf">date_range</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">change_dates</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        show the result as a figure and return a dictionary of phases.</span>
+<span class="sd">        Calculate the list of start/end dates with the list of change dates.</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">        @show_figure (bool): if True, show the result as a figure.</span>
-<span class="sd">        @filename (str): filename of the figure, or None (display figure)</span>
+<span class="sd">            change_dates (list[str] or None): list of change points</span>
 
 <span class="sd">        Returns:</span>
-<span class="sd">            (covsirphy.PhaseSeries)</span>
+<span class="sd">            tuple(list[str], list[str]): list of start/end dates</span>
+
+<span class="sd">        Notes:</span>
+<span class="sd">            @change_dates must be specified if ChangeFinder.run() was not done.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="c1"># Create phase dictionary</span>
-        <span class="n">phase_series</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_create_phases</span><span class="p">()</span>
-        <span class="k">if</span> <span class="ow">not</span> <span class="n">show_figure</span><span class="p">:</span>
-            <span class="k">return</span> <span class="n">phase_series</span>
-        <span class="n">phase_dict</span> <span class="o">=</span> <span class="n">phase_series</span><span class="o">.</span><span class="n">to_dict</span><span class="p">()</span>
+        <span class="n">change_dates</span> <span class="o">=</span> <span class="n">change_dates</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">_change_dates</span><span class="p">[:]</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">change_dates</span><span class="p">:</span>
+            <span class="k">return</span><span class="p">([</span><span class="bp">self</span><span class="o">.</span><span class="n">dates</span><span class="p">[</span><span class="mi">0</span><span class="p">]],</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">dates</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]])</span>
+        <span class="c1"># Start dates</span>
+        <span class="n">start_dates</span> <span class="o">=</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">dates</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="o">*</span><span class="n">change_dates</span><span class="p">]</span>
+        <span class="c1"># End dates</span>
+        <span class="n">end_dates</span> <span class="o">=</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">yesterday</span><span class="p">(</span><span class="n">date</span><span class="p">)</span> <span class="k">for</span> <span class="n">date</span> <span class="ow">in</span> <span class="n">change_dates</span><span class="p">]</span>
+        <span class="n">end_dates</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dates</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
+        <span class="k">return</span> <span class="p">(</span><span class="n">start_dates</span><span class="p">,</span> <span class="n">end_dates</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="ChangeFinder.show"><a class="viewcode-back" href="../../../covsirphy.phase.html#covsirphy.phase.sr_change.ChangeFinder.show">[docs]</a>    <span class="k">def</span> <span class="nf">show</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">area</span><span class="p">,</span> <span class="n">change_dates</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">filename</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        show the S-R trend in a figure.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            area (str): area name</span>
+<span class="sd">            change_dates (list[str] or None): list of change points</span>
+<span class="sd">            filename (str): filename of the figure, or None (display)</span>
+
+<span class="sd">        Notes:</span>
+<span class="sd">            @change_dates must be specified if ChangeFinder.run() was not done.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="c1"># Curve fitting</span>
+        <span class="n">start_dates</span><span class="p">,</span> <span class="n">end_dates</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">date_range</span><span class="p">(</span><span class="n">change_dates</span><span class="p">)</span>
         <span class="n">nested</span> <span class="o">=</span> <span class="p">[</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_curve_fitting</span><span class="p">(</span><span class="n">phase</span><span class="p">,</span> <span class="n">info</span><span class="p">)</span>
-            <span class="k">for</span> <span class="p">(</span><span class="n">phase</span><span class="p">,</span> <span class="n">info</span><span class="p">)</span> <span class="ow">in</span> <span class="n">phase_dict</span><span class="o">.</span><span class="n">items</span><span class="p">()</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_curve_fitting</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">num2str</span><span class="p">(</span><span class="n">num</span><span class="p">),</span> <span class="n">start_date</span><span class="p">,</span> <span class="n">end_date</span><span class="p">)</span>
+            <span class="k">for</span> <span class="p">(</span><span class="n">num</span><span class="p">,</span> <span class="p">(</span><span class="n">start_date</span><span class="p">,</span> <span class="n">end_date</span><span class="p">))</span>
+            <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="n">start_dates</span><span class="p">,</span> <span class="n">end_dates</span><span class="p">))</span>
         <span class="p">]</span>
         <span class="n">df_list</span><span class="p">,</span> <span class="n">vlines</span> <span class="o">=</span> <span class="nb">zip</span><span class="p">(</span><span class="o">*</span><span class="n">nested</span><span class="p">)</span>
         <span class="n">comp_df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">([</span><span class="bp">self</span><span class="o">.</span><span class="n">sr_df</span><span class="p">,</span> <span class="o">*</span><span class="n">df_list</span><span class="p">],</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
@@ -389,107 +361,21 @@
             <span class="n">col</span> <span class="k">for</span> <span class="n">col</span> <span class="ow">in</span> <span class="n">comp_df</span><span class="o">.</span><span class="n">columns</span> <span class="k">if</span> <span class="n">col</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">P</span><span class="p">)</span>
         <span class="p">]</span>
         <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">pred_cols</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
-            <span class="n">title</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">area</span><span class="si">}</span><span class="s2">: S-R trend without change points&quot;</span>
+            <span class="n">title</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">area</span><span class="si">}</span><span class="s2">: S-R trend without change points&quot;</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="n">_list</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_change_dates</span><span class="p">[:]</span>
             <span class="n">strings</span> <span class="o">=</span> <span class="p">[</span>
                 <span class="s2">&quot;, &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">_list</span><span class="p">[</span><span class="n">i</span><span class="p">:</span> <span class="n">i</span> <span class="o">+</span> <span class="mi">6</span><span class="p">])</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">_list</span><span class="p">),</span> <span class="mi">6</span><span class="p">)</span>
             <span class="p">]</span>
             <span class="n">change_str</span> <span class="o">=</span> <span class="s2">&quot;,</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">strings</span><span class="p">)</span>
-            <span class="n">title</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">area</span><span class="si">}</span><span class="s2">: S-R trend changed on</span><span class="se">\n</span><span class="si">{</span><span class="n">change_str</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="n">title</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">area</span><span class="si">}</span><span class="s2">: S-R trend changed on</span><span class="se">\n</span><span class="si">{</span><span class="n">change_str</span><span class="si">}</span><span class="s2">&quot;</span>
         <span class="n">Trend</span><span class="o">.</span><span class="n">show_with_many</span><span class="p">(</span>
             <span class="n">result_df</span><span class="o">=</span><span class="n">comp_df</span><span class="p">,</span>
             <span class="n">predicted_cols</span><span class="o">=</span><span class="n">pred_cols</span><span class="p">,</span>
             <span class="n">title</span><span class="o">=</span><span class="n">title</span><span class="p">,</span>
             <span class="n">vlines</span><span class="o">=</span><span class="n">vlines</span><span class="p">[</span><span class="mi">1</span><span class="p">:],</span>
             <span class="n">filename</span><span class="o">=</span><span class="n">filename</span>
-        <span class="p">)</span>
-        <span class="k">return</span> <span class="n">phase_series</span></div>
-
-<div class="viewcode-block" id="ChangeFinder.get_dates"><a class="viewcode-back" href="../../../covsirphy.phase.html#covsirphy.phase.sr_change.ChangeFinder.get_dates">[docs]</a>    <span class="k">def</span> <span class="nf">get_dates</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sr_df</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Get dates from the dataset.</span>
-
-<span class="sd">        Args:</span>
-<span class="sd">            sr_df (pandas.DataFrame)</span>
-<span class="sd">                Index:</span>
-<span class="sd">                    Date (pd.TimeStamp): Observation date</span>
-<span class="sd">                Columns:</span>
-<span class="sd">                    - Recovered: The number of recovered cases</span>
-<span class="sd">                    - Susceptible_actual: Actual data of Susceptible</span>
-
-<span class="sd">        Returns:</span>
-<span class="sd">            (list[str]): list of dates, like 22Jan2020</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="p">[</span>
-            <span class="n">date_obj</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">DATE_FORMAT</span><span class="p">)</span> <span class="k">for</span> <span class="n">date_obj</span> <span class="ow">in</span> <span class="n">sr_df</span><span class="o">.</span><span class="n">index</span>
-        <span class="p">]</span></div>
-
-    <span class="k">def</span> <span class="nf">_read_population_data</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dates</span><span class="p">,</span> <span class="n">population</span><span class="p">,</span> <span class="n">change_dict</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Make population dictionary easy to use in this class.</span>
-
-<span class="sd">        Args:</span>
-<span class="sd">            dates (list[str]): list of dates, like 22Jan2020</span>
-<span class="sd">            population (int): initial value of total population in the place</span>
-<span class="sd">            change_dict (dict): dictionary of total population</span>
-<span class="sd">                    - key (str): start date of population change</span>
-<span class="sd">                    - value (int or None): total population</span>
-
-<span class="sd">        Returns:</span>
-<span class="sd">            (dict)</span>
-<span class="sd">                - key (str): date, like 22Jan2020</span>
-<span class="sd">                - value (int): total population on the date</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">change_dict</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span> <span class="k">if</span> <span class="n">change_dict</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">change_dict</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
-        <span class="k">return</span> <span class="p">{</span>
-            <span class="n">date</span><span class="p">:</span> <span class="n">change_dict</span><span class="p">[</span><span class="n">date</span><span class="p">]</span> <span class="k">if</span> <span class="n">date</span> <span class="ow">in</span> <span class="n">change_dict</span><span class="o">.</span><span class="n">keys</span><span class="p">(</span>
-            <span class="p">)</span> <span class="k">else</span> <span class="n">population</span>
-            <span class="k">for</span> <span class="n">date</span> <span class="ow">in</span> <span class="n">dates</span>
-        <span class="p">}</span>
-
-    <span class="k">def</span> <span class="nf">_phase_range</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">change_dates</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Return the start date and end date of the phases.</span>
-
-<span class="sd">        Args:</span>
-<span class="sd">            change_dates (list[str]): list of change points, like 22Jan2020</span>
-
-<span class="sd">        Returns:</span>
-<span class="sd">            (tuple)</span>
-<span class="sd">                list[str]: list of start dates</span>
-<span class="sd">                list[str]: list of end dates</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">start_dates</span> <span class="o">=</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">dates</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="o">*</span><span class="n">change_dates</span><span class="p">]</span>
-        <span class="n">end_dates_without_last</span> <span class="o">=</span> <span class="p">[</span>
-            <span class="p">(</span>
-                <span class="n">datetime</span><span class="o">.</span><span class="n">strptime</span><span class="p">(</span><span class="n">date</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">DATE_FORMAT</span><span class="p">)</span> <span class="o">-</span> <span class="n">timedelta</span><span class="p">(</span><span class="n">days</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
-            <span class="p">)</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">DATE_FORMAT</span><span class="p">)</span>
-            <span class="k">for</span> <span class="n">date</span> <span class="ow">in</span> <span class="n">change_dates</span>
-        <span class="p">]</span>
-        <span class="n">end_dates</span> <span class="o">=</span> <span class="p">[</span><span class="o">*</span><span class="n">end_dates_without_last</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">dates</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]]</span>
-        <span class="k">return</span> <span class="p">(</span><span class="n">start_dates</span><span class="p">,</span> <span class="n">end_dates</span><span class="p">)</span>
-
-    <span class="k">def</span> <span class="nf">_create_phases</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Create a dictionary of phases.</span>
-
-<span class="sd">        Returns:</span>
-<span class="sd">            (covsirphy.PhaseSeries)</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">start_dates</span><span class="p">,</span> <span class="n">end_dates</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_phase_range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_change_dates</span><span class="p">)</span>
-        <span class="n">pop_list</span> <span class="o">=</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">pop_dict</span><span class="p">[</span><span class="n">date</span><span class="p">]</span> <span class="k">for</span> <span class="n">date</span> <span class="ow">in</span> <span class="n">start_dates</span><span class="p">]</span>
-        <span class="n">phase_series</span> <span class="o">=</span> <span class="n">PhaseSeries</span><span class="p">(</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">dates</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">dates</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">population</span><span class="p">,</span> <span class="n">use_0th</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_use_0th</span>
-        <span class="p">)</span>
-        <span class="n">phase_itr</span> <span class="o">=</span> <span class="nb">enumerate</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="n">start_dates</span><span class="p">,</span> <span class="n">end_dates</span><span class="p">,</span> <span class="n">pop_list</span><span class="p">))</span>
-        <span class="k">for</span> <span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="p">(</span><span class="n">start_date</span><span class="p">,</span> <span class="n">end_date</span><span class="p">,</span> <span class="n">population</span><span class="p">))</span> <span class="ow">in</span> <span class="n">phase_itr</span><span class="p">:</span>
-            <span class="n">phase_series</span><span class="o">.</span><span class="n">add</span><span class="p">(</span>
-                <span class="n">start_date</span><span class="o">=</span><span class="n">start_date</span><span class="p">,</span>
-                <span class="n">end_date</span><span class="o">=</span><span class="n">end_date</span><span class="p">,</span>
-                <span class="n">population</span><span class="o">=</span><span class="n">population</span>
-            <span class="p">)</span>
-        <span class="k">return</span> <span class="n">phase_series</span></div>
+        <span class="p">)</span></div></div>
 </pre></div>
 
            </div>

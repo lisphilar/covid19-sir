@@ -190,39 +190,38 @@
 <span class="sd">                - any other columns will be ignored</span>
 <span class="sd">        model (covsirphy.ModelBase): ODE model</span>
 <span class="sd">        population (int): total population in the place</span>
+<span class="sd">        tau (int): tau value [min], a divisor of 1440</span>
 <span class="sd">        kwargs: parameter values of the model and data subseting</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">np</span><span class="o">.</span><span class="n">seterr</span><span class="p">(</span><span class="n">divide</span><span class="o">=</span><span class="s2">&quot;raise&quot;</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">record_df</span><span class="p">,</span> <span class="n">model</span><span class="p">,</span> <span class="n">population</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">record_df</span><span class="p">,</span> <span class="n">model</span><span class="p">,</span> <span class="n">population</span><span class="p">,</span> <span class="n">tau</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="c1"># Arguments</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">population</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ensure_natural_int</span><span class="p">(</span>
-            <span class="n">population</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;population&quot;</span>
-        <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">population</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ensure_population</span><span class="p">(</span><span class="n">population</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">model</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ensure_subclass</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">ModelBase</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;model&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">tau</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ensure_tau</span><span class="p">(</span><span class="n">tau</span><span class="p">)</span>
         <span class="c1"># Dataset</span>
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">record_df</span><span class="p">,</span> <span class="n">JHUData</span><span class="p">):</span>
             <span class="n">subset_arg_dict</span> <span class="o">=</span> <span class="n">find_args</span><span class="p">(</span>
                 <span class="p">[</span><span class="n">JHUData</span><span class="o">.</span><span class="n">subset</span><span class="p">,</span> <span class="n">record_df</span><span class="o">.</span><span class="n">subset</span><span class="p">],</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
-            <span class="n">record_df</span> <span class="o">=</span> <span class="n">record_df</span><span class="o">.</span><span class="n">subset</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">record_df</span> <span class="o">=</span> <span class="n">record_df</span><span class="o">.</span><span class="n">subset</span><span class="p">(</span>
                 <span class="n">population</span><span class="o">=</span><span class="n">population</span><span class="p">,</span> <span class="o">**</span><span class="n">subset_arg_dict</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="n">record_df</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">restore</span><span class="p">(</span><span class="n">record_df</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">record_df</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ensure_dataframe</span><span class="p">(</span>
-            <span class="n">record_df</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;record_df&quot;</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">NLOC_COLUMNS</span>
-        <span class="p">)</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="nb">set</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">NLOC_COLUMNS</span><span class="p">)</span><span class="o">.</span><span class="n">issubset</span><span class="p">(</span><span class="n">record_df</span><span class="o">.</span><span class="n">columns</span><span class="p">):</span>
+                <span class="n">record_df</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">restore</span><span class="p">(</span><span class="n">record_df</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">record_df</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ensure_dataframe</span><span class="p">(</span>
+                <span class="n">record_df</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;record_df&quot;</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">NLOC_COLUMNS</span>
+            <span class="p">)</span>
         <span class="c1"># Initial values</span>
         <span class="n">df</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">tau_free</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">record_df</span><span class="p">,</span> <span class="n">population</span><span class="p">,</span> <span class="n">tau</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">y0_dict</span> <span class="o">=</span> <span class="p">{</span>
             <span class="n">k</span><span class="p">:</span> <span class="n">df</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">df</span><span class="o">.</span><span class="n">index</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">k</span><span class="p">]</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">model</span><span class="o">.</span><span class="n">VARIABLES</span>
         <span class="p">}</span>
         <span class="c1"># Fixed parameter values</span>
-        <span class="n">fixable_set</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">model</span><span class="o">.</span><span class="n">PARAMETERS</span><span class="p">)</span> <span class="o">&amp;</span> <span class="nb">set</span><span class="p">([</span><span class="bp">self</span><span class="o">.</span><span class="n">TAU</span><span class="p">])</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">fixed_dict</span> <span class="o">=</span> <span class="p">{</span>
-            <span class="n">k</span><span class="p">:</span> <span class="n">v</span> <span class="k">for</span> <span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="n">v</span><span class="p">)</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">items</span><span class="p">()</span> <span class="k">if</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">fixable_set</span>
+            <span class="n">k</span><span class="p">:</span> <span class="n">v</span> <span class="k">for</span> <span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="n">v</span><span class="p">)</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">items</span><span class="p">()</span>
+            <span class="k">if</span> <span class="n">k</span> <span class="ow">in</span> <span class="nb">set</span><span class="p">(</span><span class="n">model</span><span class="o">.</span><span class="n">PARAMETERS</span><span class="p">)</span> <span class="ow">and</span> <span class="n">v</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
         <span class="p">}</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">TAU</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">fixed_dict</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">ensure_tau</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">fixed_dict</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">TAU</span><span class="p">])</span>
         <span class="c1"># For optimization</span>
         <span class="n">optuna</span><span class="o">.</span><span class="n">logging</span><span class="o">.</span><span class="n">disable_default_handler</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">x</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">TS</span>
@@ -236,22 +235,8 @@
         <span class="c1"># step_n will be defined in divide_minutes()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">step_n</span> <span class="o">=</span> <span class="kc">None</span>
 
-    <span class="k">def</span> <span class="nf">_run_trial</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">timeout_iteration</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Run trial.</span>
-
-<span class="sd">        Args:</span>
-<span class="sd">            timeout_iteration (int): time-out of one iteration</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">study</span><span class="o">.</span><span class="n">optimize</span><span class="p">(</span>
-            <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">objective</span><span class="p">(</span><span class="n">x</span><span class="p">),</span>
-            <span class="n">n_jobs</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
-            <span class="n">timeout</span><span class="o">=</span><span class="n">timeout_iteration</span>
-        <span class="p">)</span>
-
 <div class="viewcode-block" id="Estimator.run"><a class="viewcode-back" href="../../../covsirphy.simulation.html#covsirphy.simulation.estimator.Estimator.run">[docs]</a>    <span class="k">def</span> <span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">timeout</span><span class="o">=</span><span class="mi">60</span><span class="p">,</span> <span class="n">reset_n_max</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span>
-            <span class="n">timeout_iteration</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span> <span class="n">allowance</span><span class="o">=</span><span class="p">(</span><span class="mf">0.98</span><span class="p">,</span> <span class="mf">1.02</span><span class="p">),</span>
-            <span class="n">seed</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">stdout</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+            <span class="n">timeout_iteration</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span> <span class="n">allowance</span><span class="o">=</span><span class="p">(</span><span class="mf">0.98</span><span class="p">,</span> <span class="mf">1.02</span><span class="p">),</span> <span class="n">seed</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Run optimization.</span>
 <span class="sd">        If the result satisfied the following conditions, optimization ends.</span>
@@ -265,7 +250,6 @@
 <span class="sd">            timeout_iteration (int): time-out of one iteration</span>
 <span class="sd">            allowance (tuple(float, float)): the allowance of the predicted value</span>
 <span class="sd">            seed (int or None): random seed of hyperparameter optimization</span>
-<span class="sd">            stdout (bool): whether show the status of progress or not</span>
 <span class="sd">            kwargs: other keyword arguments will be ignored</span>
 
 <span class="sd">        Notes:</span>
@@ -277,14 +261,13 @@
         <span class="n">reset_n</span> <span class="o">=</span> <span class="mi">0</span>
         <span class="n">iteration_n</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">ceil</span><span class="p">(</span><span class="n">timeout</span> <span class="o">/</span> <span class="n">timeout_iteration</span><span class="p">)</span>
         <span class="n">increasing_cols</span> <span class="o">=</span> <span class="p">[</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">v</span><span class="si">}{</span><span class="bp">self</span><span class="o">.</span><span class="n">P</span><span class="si">}</span><span class="s2">&quot;</span> <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">VARS_INCLEASE</span><span class="p">]</span>
-        <span class="k">if</span> <span class="n">stdout</span><span class="p">:</span>
-            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\t</span><span class="s2">Running optimization...&quot;</span><span class="p">)</span>
         <span class="n">stopwatch</span> <span class="o">=</span> <span class="n">StopWatch</span><span class="p">()</span>
         <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">iteration_n</span><span class="p">):</span>
             <span class="c1"># Perform optimization</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_run_trial</span><span class="p">(</span><span class="n">timeout_iteration</span><span class="o">=</span><span class="n">timeout_iteration</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">study</span><span class="o">.</span><span class="n">optimize</span><span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">objective</span><span class="p">,</span> <span class="n">n_jobs</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">timeout</span><span class="o">=</span><span class="n">timeout_iteration</span><span class="p">)</span>
             <span class="c1"># Create a table to compare observed/estimated values</span>
-            <span class="n">tau</span> <span class="o">=</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">param</span><span class="p">()[</span><span class="bp">self</span><span class="o">.</span><span class="n">TAU</span><span class="p">]</span>
+            <span class="n">tau</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">tau</span> <span class="ow">or</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">param</span><span class="p">()[</span><span class="bp">self</span><span class="o">.</span><span class="n">TAU</span><span class="p">]</span>
             <span class="n">train_df</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">divide_minutes</span><span class="p">(</span><span class="n">tau</span><span class="p">)</span>
             <span class="n">comp_df</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">compare</span><span class="p">(</span><span class="n">train_df</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">predict</span><span class="p">())</span>
             <span class="c1"># Check monotonic variables</span>
@@ -304,11 +287,7 @@
         <span class="c1"># Calculate run-time and the number of trials</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">run_time</span> <span class="o">=</span> <span class="n">stopwatch</span><span class="o">.</span><span class="n">stop</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">run_time_show</span> <span class="o">=</span> <span class="n">stopwatch</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">total_trials</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">study</span><span class="o">.</span><span class="n">trials</span><span class="p">)</span>
-        <span class="k">if</span> <span class="n">stdout</span><span class="p">:</span>
-            <span class="nb">print</span><span class="p">(</span>
-                <span class="sa">f</span><span class="s2">&quot;</span><span class="se">\t</span><span class="s2">Finished </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">total_trials</span><span class="si">}</span><span class="s2"> trials in </span><span class="si">{</span><span class="n">stopwatch</span><span class="o">.</span><span class="n">show</span><span class="p">()</span><span class="si">}</span><span class="s2">.&quot;</span><span class="p">,</span>
-            <span class="p">)</span></div>
+        <span class="bp">self</span><span class="o">.</span><span class="n">total_trials</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">study</span><span class="o">.</span><span class="n">trials</span><span class="p">)</span></div>
 
     <span class="k">def</span> <span class="nf">_is_in_allowance</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">comp_df</span><span class="p">,</span> <span class="n">allowance</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
@@ -343,23 +322,20 @@
 <span class="sd">        Returns:</span>
 <span class="sd">            (float): score of the error function to minimize</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">fixed_dict</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">fixed_dict</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
         <span class="c1"># Convert T to t using tau</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">TAU</span> <span class="ow">in</span> <span class="n">fixed_dict</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
-            <span class="n">tau</span> <span class="o">=</span> <span class="n">fixed_dict</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">TAU</span><span class="p">)</span>
-        <span class="k">else</span><span class="p">:</span>
+        <span class="n">tau</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">tau</span>
+        <span class="k">if</span> <span class="n">tau</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">tau</span> <span class="o">=</span> <span class="n">trial</span><span class="o">.</span><span class="n">suggest_categorical</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">TAU</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">tau_candidates</span><span class="p">)</span>
         <span class="n">taufree_df</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">divide_minutes</span><span class="p">(</span><span class="n">tau</span><span class="p">)</span>
         <span class="c1"># Set parameters of the models</span>
         <span class="n">model_param_dict</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">param_range</span><span class="p">(</span>
-            <span class="n">taufree_df</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">population</span>
-        <span class="p">)</span>
+            <span class="n">taufree_df</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">population</span><span class="p">)</span>
         <span class="n">p_dict</span> <span class="o">=</span> <span class="p">{</span>
             <span class="n">k</span><span class="p">:</span> <span class="n">trial</span><span class="o">.</span><span class="n">suggest_uniform</span><span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="o">*</span><span class="n">v</span><span class="p">)</span>
             <span class="k">for</span> <span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="n">v</span><span class="p">)</span> <span class="ow">in</span> <span class="n">model_param_dict</span><span class="o">.</span><span class="n">items</span><span class="p">()</span>
             <span class="k">if</span> <span class="n">k</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">fixed_dict</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span>
         <span class="p">}</span>
-        <span class="n">p_dict</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">fixed_dict</span><span class="p">)</span>
+        <span class="n">p_dict</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">fixed_dict</span><span class="p">)</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">error_f</span><span class="p">(</span><span class="n">p_dict</span><span class="p">,</span> <span class="n">taufree_df</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="Estimator.divide_minutes"><a class="viewcode-back" href="../../../covsirphy.simulation.html#covsirphy.simulation.estimator.Estimator.divide_minutes">[docs]</a>    <span class="k">def</span> <span class="nf">divide_minutes</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tau</span><span class="p">):</span>
@@ -400,8 +376,6 @@
 <span class="sd">        Returns:</span>
 <span class="sd">            (float): score of the error function to minimize</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">step_n</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;self.step_n must be defined in advance.&quot;</span><span class="p">)</span>
         <span class="n">sim_df</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">simulate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">step_n</span><span class="p">,</span> <span class="n">param_dict</span><span class="p">)</span>
         <span class="n">df</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">compare</span><span class="p">(</span><span class="n">taufree_df</span><span class="p">,</span> <span class="n">sim_df</span><span class="p">)</span>
         <span class="c1"># Calculate error score</span>
@@ -413,14 +387,13 @@
         <span class="n">diffs</span> <span class="o">=</span> <span class="p">[</span><span class="n">df</span><span class="p">[</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">v</span><span class="si">}{</span><span class="bp">self</span><span class="o">.</span><span class="n">A</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">]</span> <span class="o">-</span> <span class="n">df</span><span class="p">[</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">v</span><span class="si">}{</span><span class="bp">self</span><span class="o">.</span><span class="n">P</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">]</span> <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">v_list</span><span class="p">]</span>
         <span class="n">numerators</span> <span class="o">=</span> <span class="p">[</span><span class="n">df</span><span class="p">[</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">v</span><span class="si">}{</span><span class="bp">self</span><span class="o">.</span><span class="n">A</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">]</span> <span class="o">+</span> <span class="mi">1</span> <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">v_list</span><span class="p">]</span>
         <span class="k">try</span><span class="p">:</span>
-            <span class="n">score</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span>
+            <span class="k">return</span> <span class="nb">sum</span><span class="p">(</span>
                 <span class="n">p</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">average</span><span class="p">(</span><span class="n">diff</span><span class="o">.</span><span class="n">abs</span><span class="p">()</span> <span class="o">/</span> <span class="n">numerator</span><span class="p">,</span> <span class="n">weights</span><span class="o">=</span><span class="n">df</span><span class="o">.</span><span class="n">index</span><span class="p">)</span>
                 <span class="k">for</span> <span class="p">(</span><span class="n">p</span><span class="p">,</span> <span class="n">diff</span><span class="p">,</span> <span class="n">numerator</span><span class="p">)</span>
                 <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">PRIORITIES</span><span class="p">,</span> <span class="n">diffs</span><span class="p">,</span> <span class="n">numerators</span><span class="p">)</span>
             <span class="p">)</span>
         <span class="k">except</span> <span class="p">(</span><span class="ne">ZeroDivisionError</span><span class="p">,</span> <span class="ne">TypeError</span><span class="p">):</span>
-            <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">inf</span>
-        <span class="k">return</span> <span class="n">score</span></div>
+            <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">inf</span></div>
 
 <div class="viewcode-block" id="Estimator.simulate"><a class="viewcode-back" href="../../../covsirphy.simulation.html#covsirphy.simulation.estimator.Estimator.simulate">[docs]</a>    <span class="k">def</span> <span class="nf">simulate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">step_n</span><span class="p">,</span> <span class="n">param_dict</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
@@ -448,13 +421,11 @@
             <span class="n">param_dict</span><span class="o">=</span><span class="n">param_dict</span><span class="p">,</span>
             <span class="n">y0_dict</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">y0_dict</span>
         <span class="p">)</span>
-        <span class="n">simulator</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
         <span class="k">return</span> <span class="n">simulator</span><span class="o">.</span><span class="n">taufree</span><span class="p">()</span></div>
 
-<div class="viewcode-block" id="Estimator.summary"><a class="viewcode-back" href="../../../covsirphy.simulation.html#covsirphy.simulation.estimator.Estimator.summary">[docs]</a>    <span class="k">def</span> <span class="nf">summary</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<div class="viewcode-block" id="Estimator.to_dict"><a class="viewcode-back" href="../../../covsirphy.simulation.html#covsirphy.simulation.estimator.Estimator.to_dict">[docs]</a>    <span class="k">def</span> <span class="nf">to_dict</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Summarize the results of optimization.</span>
-<span class="sd">        This function should be overwritten in subclass.</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            name (str or None): index of the dataframe</span>
@@ -472,40 +443,58 @@
 <span class="sd">                    - Trials: the number of trials</span>
 <span class="sd">                    - Runtime: run time of estimation</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">param_dict</span> <span class="o">=</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">param</span><span class="p">()</span>
-        <span class="n">model_params</span> <span class="o">=</span> <span class="n">param_dict</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
-        <span class="n">tau</span> <span class="o">=</span> <span class="n">model_params</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">TAU</span><span class="p">)</span>
+        <span class="n">est_dict</span> <span class="o">=</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">param</span><span class="p">()</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">TAU</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">est_dict</span><span class="p">:</span>
+            <span class="n">est_dict</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">TAU</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">tau</span>
         <span class="n">model_instance</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="p">(</span>
-            <span class="n">population</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">population</span><span class="p">,</span> <span class="o">**</span><span class="n">model_params</span>
+            <span class="n">population</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">population</span><span class="p">,</span>
+            <span class="o">**</span><span class="p">{</span><span class="n">k</span><span class="p">:</span> <span class="n">v</span> <span class="k">for</span> <span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="n">v</span><span class="p">)</span> <span class="ow">in</span> <span class="n">est_dict</span><span class="o">.</span><span class="n">items</span><span class="p">()</span> <span class="k">if</span> <span class="n">k</span> <span class="o">!=</span> <span class="bp">self</span><span class="o">.</span><span class="n">TAU</span><span class="p">}</span>
         <span class="p">)</span>
-        <span class="c1"># Rt</span>
-        <span class="n">param_dict</span><span class="p">[</span><span class="s2">&quot;Rt&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">model_instance</span><span class="o">.</span><span class="n">calc_r0</span><span class="p">()</span>
-        <span class="c1"># dimensional parameters [day]</span>
-        <span class="n">param_dict</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">model_instance</span><span class="o">.</span><span class="n">calc_days_dict</span><span class="p">(</span><span class="n">tau</span><span class="p">))</span>
-        <span class="c1"># RMSLE</span>
-        <span class="n">param_dict</span><span class="p">[</span><span class="s2">&quot;RMSLE&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">rmsle</span><span class="p">(</span><span class="n">tau</span><span class="p">)</span>
-        <span class="c1"># The number of trials</span>
-        <span class="n">param_dict</span><span class="p">[</span><span class="s2">&quot;Trials&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">total_trials</span>
-        <span class="c1"># Runtime</span>
         <span class="n">minutes</span><span class="p">,</span> <span class="n">seconds</span> <span class="o">=</span> <span class="nb">divmod</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">run_time</span><span class="p">),</span> <span class="mi">60</span><span class="p">)</span>
-        <span class="n">param_dict</span><span class="p">[</span><span class="s2">&quot;Runtime&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">minutes</span><span class="si">}</span><span class="s2"> min </span><span class="si">{</span><span class="n">seconds</span><span class="si">}</span><span class="s2"> sec&quot;</span>
-        <span class="c1"># Convert to dataframe</span>
-        <span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="o">.</span><span class="n">from_dict</span><span class="p">({</span><span class="nb">str</span><span class="p">(</span><span class="n">name</span><span class="p">):</span> <span class="n">param_dict</span><span class="p">},</span> <span class="n">orient</span><span class="o">=</span><span class="s2">&quot;index&quot;</span><span class="p">)</span>
-        <span class="k">if</span> <span class="n">name</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">reset_index</span><span class="p">(</span><span class="n">drop</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="k">return</span> <span class="p">{</span>
+            <span class="o">**</span><span class="n">est_dict</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">RT</span><span class="p">:</span> <span class="n">model_instance</span><span class="o">.</span><span class="n">calc_r0</span><span class="p">(),</span>
+            <span class="o">**</span><span class="n">model_instance</span><span class="o">.</span><span class="n">calc_days_dict</span><span class="p">(</span><span class="n">est_dict</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">TAU</span><span class="p">]),</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">RMSLE</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_rmsle</span><span class="p">(</span><span class="n">est_dict</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">TAU</span><span class="p">]),</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">TRIALS</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">total_trials</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">RUNTIME</span><span class="p">:</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">minutes</span><span class="si">}</span><span class="s2"> min </span><span class="si">{</span><span class="n">seconds</span><span class="si">:</span><span class="s2">&gt;2</span><span class="si">}</span><span class="s2"> sec&quot;</span>
+        <span class="p">}</span></div>
+
+<div class="viewcode-block" id="Estimator.summary"><a class="viewcode-back" href="../../../covsirphy.simulation.html#covsirphy.simulation.estimator.Estimator.summary">[docs]</a>    <span class="k">def</span> <span class="nf">summary</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Summarize the results of optimization.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            name (str or None): index of the dataframe</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            (pandas.DataFrame):</span>
+<span class="sd">                Index:</span>
+<span class="sd">                    name or reset index (when name is None)</span>
+<span class="sd">                Columns:</span>
+<span class="sd">                    - (parameters of the model)</span>
+<span class="sd">                    - tau</span>
+<span class="sd">                    - Rt: basic or phase-dependent reproduction number</span>
+<span class="sd">                    - (dimensional parameters [day])</span>
+<span class="sd">                    - RMSLE: Root Mean Squared Log Error</span>
+<span class="sd">                    - Trials: the number of trials</span>
+<span class="sd">                    - Runtime: run time of estimation</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">summary_dict</span> <span class="o">=</span> <span class="p">{</span><span class="n">name</span> <span class="ow">or</span> <span class="mi">0</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">to_dict</span><span class="p">()}</span>
+        <span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="o">.</span><span class="n">from_dict</span><span class="p">(</span><span class="n">summary_dict</span><span class="p">,</span> <span class="n">orient</span><span class="o">=</span><span class="s2">&quot;index&quot;</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">df</span><span class="o">.</span><span class="n">fillna</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">UNKNOWN</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="Estimator.rmsle"><a class="viewcode-back" href="../../../covsirphy.simulation.html#covsirphy.simulation.estimator.Estimator.rmsle">[docs]</a>    <span class="k">def</span> <span class="nf">rmsle</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tau</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">_rmsle</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tau</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Return RMSLE score.</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">            tau (int): tau value</span>
+<span class="sd">            tau (int): tau value [min]</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">rmsle</span><span class="p">(</span>
             <span class="n">train_df</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">divide_minutes</span><span class="p">(</span><span class="n">tau</span><span class="p">),</span>
             <span class="n">dim</span><span class="o">=</span><span class="mi">1</span>
-        <span class="p">)</span></div>
+        <span class="p">)</span>
 
 <div class="viewcode-block" id="Estimator.accuracy"><a class="viewcode-back" href="../../../covsirphy.simulation.html#covsirphy.simulation.estimator.Estimator.accuracy">[docs]</a>    <span class="k">def</span> <span class="nf">accuracy</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">show_figure</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">filename</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
@@ -515,8 +504,10 @@
 <span class="sd">            show_figure (bool): if True, show the result as a figure</span>
 <span class="sd">            filename (str): filename of the figure, or None (show figure)</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">tau</span> <span class="o">=</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">param</span><span class="p">()[</span><span class="bp">self</span><span class="o">.</span><span class="n">TAU</span><span class="p">]</span>
-        <span class="n">train_df</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">divide_minutes</span><span class="p">(</span><span class="n">tau</span><span class="p">)</span>
+        <span class="n">est_dict</span> <span class="o">=</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">param</span><span class="p">()</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">TAU</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">est_dict</span><span class="p">:</span>
+            <span class="n">est_dict</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">TAU</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">tau</span>
+        <span class="n">train_df</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">divide_minutes</span><span class="p">(</span><span class="n">est_dict</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">TAU</span><span class="p">])</span>
         <span class="n">use_variables</span> <span class="o">=</span> <span class="p">[</span>
             <span class="n">v</span> <span class="k">for</span> <span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="p">(</span><span class="n">p</span><span class="p">,</span> <span class="n">v</span><span class="p">))</span>
             <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">PRIORITIES</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">VARIABLES</span><span class="p">))</span>

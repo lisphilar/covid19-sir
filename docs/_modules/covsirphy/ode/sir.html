@@ -289,7 +289,8 @@
 <span class="sd">                        - Susceptible (int): the number of susceptible cases</span>
 <span class="sd">                        - Fatal or Recovered (int): total number of fatal/recovered cases</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">df</span> <span class="o">=</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">specialize</span><span class="p">(</span><span class="n">data_df</span><span class="p">,</span> <span class="n">population</span><span class="p">)</span>
+        <span class="n">df</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">ensure_dataframe</span><span class="p">(</span>
+            <span class="n">data_df</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;data_df&quot;</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="bp">cls</span><span class="o">.</span><span class="n">VALUE_COLUMNS</span><span class="p">)</span>
         <span class="c1"># Calculate dimensional variables</span>
         <span class="n">df</span><span class="p">[</span><span class="bp">cls</span><span class="o">.</span><span class="n">S</span><span class="p">]</span> <span class="o">=</span> <span class="n">population</span> <span class="o">-</span> <span class="n">df</span><span class="p">[</span><span class="bp">cls</span><span class="o">.</span><span class="n">C</span><span class="p">]</span>
         <span class="n">df</span><span class="p">[</span><span class="bp">cls</span><span class="o">.</span><span class="n">FR</span><span class="p">]</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="bp">cls</span><span class="o">.</span><span class="n">F</span><span class="p">]</span> <span class="o">+</span> <span class="n">df</span><span class="p">[</span><span class="bp">cls</span><span class="o">.</span><span class="n">R</span><span class="p">]</span>
@@ -333,8 +334,14 @@
 <div class="viewcode-block" id="SIR.calc_r0"><a class="viewcode-back" href="../../../covsirphy.ode.html#covsirphy.ode.sir.SIR.calc_r0">[docs]</a>    <span class="k">def</span> <span class="nf">calc_r0</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Calculate (basic) reproduction number.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            float</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">rt</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">rho</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">sigma</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">rt</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">rho</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">sigma</span>
+        <span class="k">except</span> <span class="ne">ZeroDivisionError</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">None</span>
         <span class="k">return</span> <span class="nb">round</span><span class="p">(</span><span class="n">rt</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="SIR.calc_days_dict"><a class="viewcode-back" href="../../../covsirphy.ode.html#covsirphy.ode.sir.SIR.calc_days_dict">[docs]</a>    <span class="k">def</span> <span class="nf">calc_days_dict</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tau</span><span class="p">):</span>
@@ -343,11 +350,17 @@
 
 <span class="sd">        Args:</span>
 <span class="sd">            param tau (int): tau value [min]</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            dict[str, int]</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="p">{</span>
-            <span class="s2">&quot;1/beta [day]&quot;</span><span class="p">:</span> <span class="nb">int</span><span class="p">(</span><span class="n">tau</span> <span class="o">/</span> <span class="mi">24</span> <span class="o">/</span> <span class="mi">60</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">rho</span><span class="p">),</span>
-            <span class="s2">&quot;1/gamma [day]&quot;</span><span class="p">:</span> <span class="nb">int</span><span class="p">(</span><span class="n">tau</span> <span class="o">/</span> <span class="mi">24</span> <span class="o">/</span> <span class="mi">60</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">sigma</span><span class="p">)</span>
-        <span class="p">}</span></div></div>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="k">return</span> <span class="p">{</span>
+                <span class="s2">&quot;1/beta [day]&quot;</span><span class="p">:</span> <span class="nb">int</span><span class="p">(</span><span class="n">tau</span> <span class="o">/</span> <span class="mi">24</span> <span class="o">/</span> <span class="mi">60</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">rho</span><span class="p">),</span>
+                <span class="s2">&quot;1/gamma [day]&quot;</span><span class="p">:</span> <span class="nb">int</span><span class="p">(</span><span class="n">tau</span> <span class="o">/</span> <span class="mi">24</span> <span class="o">/</span> <span class="mi">60</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">sigma</span><span class="p">)</span>
+            <span class="p">}</span>
+        <span class="k">except</span> <span class="ne">ZeroDivisionError</span><span class="p">:</span>
+            <span class="k">return</span> <span class="p">{</span><span class="n">p</span><span class="p">:</span> <span class="kc">None</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">DAY_PARAMETERS</span><span class="p">}</span></div></div>
 </pre></div>
 
            </div>

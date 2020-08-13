@@ -169,10 +169,8 @@
     <span class="n">matplotlib</span><span class="o">.</span><span class="n">use</span><span class="p">(</span><span class="s2">&quot;Agg&quot;</span><span class="p">)</span>
 <span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
-<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
 <span class="kn">from</span> <span class="nn">scipy.optimize</span> <span class="kn">import</span> <span class="n">curve_fit</span><span class="p">,</span> <span class="n">OptimizeWarning</span>
 <span class="kn">from</span> <span class="nn">covsirphy.cleaning.term</span> <span class="kn">import</span> <span class="n">Term</span>
-<span class="kn">from</span> <span class="nn">covsirphy.cleaning.jhu_data</span> <span class="kn">import</span> <span class="n">JHUData</span>
 
 
 <div class="viewcode-block" id="Trend"><a class="viewcode-back" href="../../../covsirphy.phase.html#covsirphy.phase.trend.Trend">[docs]</a><span class="k">class</span> <span class="nc">Trend</span><span class="p">(</span><span class="n">Term</span><span class="p">):</span>
@@ -180,52 +178,40 @@
 <span class="sd">    S-R trend analysis in a phase.</span>
 
 <span class="sd">    Args:</span>
-<span class="sd">        jhu_data (covsirphy.JHUData): object of records</span>
-<span class="sd">        population (int): total population in the place</span>
-<span class="sd">        country (str): country name</span>
-<span class="sd">        province (str): province name</span>
-<span class="sd">        start_date (str): start date, like 22Jan2020</span>
-<span class="sd">        end_date (str): end date, like 01Feb2020</span>
+<span class="sd">        sr_df (pandas.DataFrame)</span>
+<span class="sd">            Index:</span>
+<span class="sd">                Date (pd.TimeStamp): Observation date</span>
+<span class="sd">            Columns:</span>
+<span class="sd">                - Recovered (int): the number of recovered cases (&gt; 0)</span>
+<span class="sd">                - Susceptible (int): the number of susceptible cases</span>
+<span class="sd">                - any other columns will be ignored</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">jhu_data</span><span class="p">,</span> <span class="n">population</span><span class="p">,</span>
-                 <span class="n">country</span><span class="p">,</span> <span class="n">province</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">start_date</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">end_date</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sr_df</span><span class="p">):</span>
         <span class="c1"># Dataset</span>
-        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">jhu_data</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">):</span>
-            <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span>
-                <span class="s2">&quot;Please use instance of JHUData as the first argument of Trend class.&quot;</span><span class="p">,</span>
-                <span class="ne">DeprecationWarning</span><span class="p">,</span>
-                <span class="n">stacklevel</span><span class="o">=</span><span class="mi">2</span>
-            <span class="p">)</span>
-            <span class="n">jhu_data</span> <span class="o">=</span> <span class="n">JHUData</span><span class="o">.</span><span class="n">from_dataframe</span><span class="p">(</span><span class="n">jhu_data</span><span class="p">)</span>
-        <span class="n">jhu_data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ensure_instance</span><span class="p">(</span><span class="n">jhu_data</span><span class="p">,</span> <span class="n">JHUData</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;jhu_data&quot;</span><span class="p">)</span>
-        <span class="c1"># Arguments</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">population</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ensure_natural_int</span><span class="p">(</span><span class="n">population</span><span class="p">,</span> <span class="s2">&quot;population&quot;</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">area</span> <span class="o">=</span> <span class="n">JHUData</span><span class="o">.</span><span class="n">area_name</span><span class="p">(</span><span class="n">country</span><span class="p">,</span> <span class="n">province</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">sr_df</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ensure_dataframe</span><span class="p">(</span>
+            <span class="n">sr_df</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;sr_df&quot;</span><span class="p">,</span> <span class="n">time_index</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">S</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">R</span><span class="p">])</span>
         <span class="c1"># Dataset for analysis</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">sr_df</span> <span class="o">=</span> <span class="n">jhu_data</span><span class="o">.</span><span class="n">to_sr</span><span class="p">(</span>
-            <span class="n">country</span><span class="o">=</span><span class="n">country</span><span class="p">,</span> <span class="n">province</span><span class="o">=</span><span class="n">province</span><span class="p">,</span> <span class="n">population</span><span class="o">=</span><span class="n">population</span><span class="p">,</span>
-            <span class="n">start_date</span><span class="o">=</span><span class="n">start_date</span><span class="p">,</span> <span class="n">end_date</span><span class="o">=</span><span class="n">end_date</span>
-        <span class="p">)</span>
         <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">sr_df</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mi">3</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;The length of @sr_df must be over 2.&quot;</span><span class="p">)</span>
-        <span class="c1"># Start/end date</span>
-        <span class="n">date_objects</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">sr_df</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
-        <span class="n">first_obj</span><span class="p">,</span> <span class="n">last_obj</span> <span class="o">=</span> <span class="n">date_objects</span><span class="o">.</span><span class="n">min</span><span class="p">(),</span> <span class="n">date_objects</span><span class="o">.</span><span class="n">max</span><span class="p">()</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">start_date</span> <span class="o">=</span> <span class="p">(</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">date_obj</span><span class="p">(</span><span class="n">start_date</span><span class="p">)</span> <span class="ow">or</span> <span class="n">first_obj</span>
-        <span class="p">)</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">DATE_FORMAT</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">end_date</span> <span class="o">=</span> <span class="p">(</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">date_obj</span><span class="p">(</span><span class="n">end_date</span><span class="p">)</span> <span class="ow">or</span> <span class="n">last_obj</span>
-        <span class="p">)</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">DATE_FORMAT</span><span class="p">)</span>
         <span class="c1"># Setting for analysis</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">result_df</span> <span class="o">=</span> <span class="kc">None</span>
 
-<div class="viewcode-block" id="Trend.analyse"><a class="viewcode-back" href="../../../covsirphy.phase.html#covsirphy.phase.trend.Trend.analyse">[docs]</a>    <span class="k">def</span> <span class="nf">analyse</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="Trend.run"><a class="viewcode-back" href="../../../covsirphy.phase.html#covsirphy.phase.trend.Trend.run">[docs]</a>    <span class="k">def</span> <span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Perform curve fitting of S-R trend with negative exponential function and save the result.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            (pandas.DataFrame): results of fitting</span>
+<span class="sd">                Index:</span>
+<span class="sd">                    - index (Date) (pd.TimeStamp): Observation date</span>
+<span class="sd">                Columns:</span>
+<span class="sd">                    - Recovered: The number of recovered cases</span>
+<span class="sd">                    - Susceptible_actual: Actual values of Susceptible</span>
+<span class="sd">                    - columns defined by @columns</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">result_df</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_fitting</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">sr_df</span><span class="p">)</span></div>
+        <span class="bp">self</span><span class="o">.</span><span class="n">result_df</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_fitting</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">sr_df</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">result_df</span></div>
 
     <span class="k">def</span> <span class="nf">_fitting</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sr_df</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
@@ -267,9 +253,8 @@
         <span class="n">f_partial</span> <span class="o">=</span> <span class="n">functools</span><span class="o">.</span><span class="n">partial</span><span class="p">(</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">negative_exp</span><span class="p">,</span> <span class="n">a</span><span class="o">=</span><span class="n">param</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">b</span><span class="o">=</span><span class="n">param</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
         <span class="p">)</span>
-        <span class="n">df</span><span class="p">[</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">S</span><span class="si">}{</span><span class="bp">self</span><span class="o">.</span><span class="n">P</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">x_series</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">f_partial</span><span class="p">(</span><span class="n">x</span><span class="p">))</span>
-        <span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">int64</span><span class="p">,</span> <span class="n">errors</span><span class="o">=</span><span class="s2">&quot;ignore&quot;</span><span class="p">)</span>
-        <span class="k">return</span> <span class="n">df</span>
+        <span class="n">df</span><span class="p">[</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">S</span><span class="si">}{</span><span class="bp">self</span><span class="o">.</span><span class="n">P</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">f_partial</span><span class="p">(</span><span class="n">x_series</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">df</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">int64</span><span class="p">,</span> <span class="n">errors</span><span class="o">=</span><span class="s2">&quot;ignore&quot;</span><span class="p">)</span>
 
 <div class="viewcode-block" id="Trend.rmsle"><a class="viewcode-back" href="../../../covsirphy.phase.html#covsirphy.phase.trend.Trend.rmsle">[docs]</a>    <span class="k">def</span> <span class="nf">rmsle</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
@@ -278,9 +263,7 @@
 <span class="sd">        Returns:</span>
 <span class="sd">            (float): RMSLE score</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">result_df</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">NameError</span><span class="p">(</span><span class="s2">&quot;Must perform Trend().analyse() in advance.&quot;</span><span class="p">)</span>
-        <span class="n">df</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">result_df</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">inf</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+        <span class="n">df</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">run</span><span class="p">()</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">inf</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
         <span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">df</span><span class="p">[</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">S</span><span class="si">}{</span><span class="bp">self</span><span class="o">.</span><span class="n">A</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">]</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">,</span> <span class="p">:]</span>
         <span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">df</span><span class="p">[</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">S</span><span class="si">}{</span><span class="bp">self</span><span class="o">.</span><span class="n">P</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">]</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">,</span> <span class="p">:]</span>
         <span class="n">actual</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">S</span><span class="si">}{</span><span class="bp">self</span><span class="o">.</span><span class="n">A</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">]</span>
@@ -291,38 +274,22 @@
         <span class="p">)</span>
         <span class="k">return</span> <span class="n">scores</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span></div>
 
-<div class="viewcode-block" id="Trend.result"><a class="viewcode-back" href="../../../covsirphy.phase.html#covsirphy.phase.trend.Trend.result">[docs]</a>    <span class="k">def</span> <span class="nf">result</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Show the result as a dataframe.</span>
-
-<span class="sd">        Returns:</span>
-<span class="sd">            (pandas.DataFrame): results of fitting</span>
-
-<span class="sd">                Index:</span>
-<span class="sd">                    - index (Date) (pd.TimeStamp): Observation date</span>
-<span class="sd">                Columns:</span>
-<span class="sd">                    - Recovered: The number of recovered cases</span>
-<span class="sd">                    - Susceptible_actual: Actual values of Susceptible</span>
-<span class="sd">                    - columns defined by @columns</span>
-
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">result_df</span></div>
-
-<div class="viewcode-block" id="Trend.show"><a class="viewcode-back" href="../../../covsirphy.phase.html#covsirphy.phase.trend.Trend.show">[docs]</a>    <span class="k">def</span> <span class="nf">show</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<div class="viewcode-block" id="Trend.show"><a class="viewcode-back" href="../../../covsirphy.phase.html#covsirphy.phase.trend.Trend.show">[docs]</a>    <span class="k">def</span> <span class="nf">show</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">area</span><span class="p">,</span> <span class="n">filename</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        show the result as a figure.</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">            show_figure (bool): if True, show the history as a pair-plot of parameters.</span>
-<span class="sd">            filename (str): filename of the figure, or None (show figure)</span>
+<span class="sd">            area (str): area name</span>
+<span class="sd">            filename (str): filename of the figure, or None (display)</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">df</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">result</span><span class="p">()</span>
-        <span class="k">if</span> <span class="n">df</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">NameError</span><span class="p">(</span><span class="s2">&quot;Must perform Trend().analyse() in advance.&quot;</span><span class="p">)</span>
-        <span class="n">df</span><span class="p">[</span><span class="s2">&quot;Predicted&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">S</span><span class="si">}{</span><span class="bp">self</span><span class="o">.</span><span class="n">P</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">]</span>
-        <span class="n">title</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">area</span><span class="si">}</span><span class="s2">: S-R trend from </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">start_date</span><span class="si">}</span><span class="s2"> to </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">end_date</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="n">df</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
+        <span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">rename</span><span class="p">({</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">S</span><span class="si">}{</span><span class="bp">self</span><span class="o">.</span><span class="n">P</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">:</span> <span class="s2">&quot;Predicted&quot;</span><span class="p">},</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+        <span class="n">start_date</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">sr_df</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">min</span><span class="p">()</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">DATE_FORMAT</span><span class="p">)</span>
+        <span class="n">end_date</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">sr_df</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">max</span><span class="p">()</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">DATE_FORMAT</span><span class="p">)</span>
+        <span class="n">title</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">area</span><span class="si">}</span><span class="s2">: S-R trend from </span><span class="si">{</span><span class="n">start_date</span><span class="si">}</span><span class="s2"> to </span><span class="si">{</span><span class="n">end_date</span><span class="si">}</span><span class="s2">&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">show_with_many</span><span class="p">(</span>
-            <span class="n">result_df</span><span class="o">=</span><span class="n">df</span><span class="p">,</span> <span class="n">predicted_cols</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;Predicted&quot;</span><span class="p">],</span>
+            <span class="n">result_df</span><span class="o">=</span><span class="n">df</span><span class="p">,</span>
+            <span class="n">predicted_cols</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;Predicted&quot;</span><span class="p">],</span>
             <span class="n">title</span><span class="o">=</span><span class="n">title</span><span class="p">,</span>
             <span class="n">filename</span><span class="o">=</span><span class="n">filename</span>
         <span class="p">)</span></div>
@@ -335,7 +302,6 @@
 
 <span class="sd">        Args:</span>
 <span class="sd">            result_df (pandas.DataFrame): results of fitting</span>
-
 <span class="sd">                Index:</span>
 <span class="sd">                    - index (Date) (pd.TimeStamp): Observation date</span>
 <span class="sd">                Columns:</span>

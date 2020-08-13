@@ -206,7 +206,7 @@
 <span id="covsirphy-worldwide-policy"></span><h2>covsirphy.worldwide.policy<a class="headerlink" href="#module-covsirphy.worldwide.policy" title="Permalink to this headline">¶</a></h2>
 <dl class="py class">
 <dt id="covsirphy.worldwide.policy.PolicyMeasures">
-<em class="property">class </em><code class="sig-prename descclassname">covsirphy.worldwide.policy.</code><code class="sig-name descname">PolicyMeasures</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">jhu_data</span></em>, <em class="sig-param"><span class="n">population_data</span></em>, <em class="sig-param"><span class="n">oxcgrt_data</span></em>, <em class="sig-param"><span class="n">tau</span><span class="o">=</span><span class="default_value">1440</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/worldwide/policy.html#PolicyMeasures"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#covsirphy.worldwide.policy.PolicyMeasures" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">covsirphy.worldwide.policy.</code><code class="sig-name descname">PolicyMeasures</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">jhu_data</span></em>, <em class="sig-param"><span class="n">population_data</span></em>, <em class="sig-param"><span class="n">oxcgrt_data</span></em>, <em class="sig-param"><span class="n">tau</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/worldwide/policy.html#PolicyMeasures"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#covsirphy.worldwide.policy.PolicyMeasures" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="covsirphy.cleaning.html#covsirphy.cleaning.term.Term" title="covsirphy.cleaning.term.Term"><code class="xref py py-class docutils literal notranslate"><span class="pre">covsirphy.cleaning.term.Term</span></code></a></p>
 <p>Analyse the relationship of policy measures and parameters of ODE models.
 This analysis will be done at country level because OxCGRT tracks policies at country level.</p>
@@ -215,7 +215,7 @@ This analysis will be done at country level because OxCGRT tracks policies at co
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>jhu_data</strong> (<em>covsirphy.JHUData</em>) – object of records</p></li>
 <li><p><strong>population_data</strong> (<em>covsirphy.PopulationData</em>) – PopulationData object</p></li>
-<li><p><strong>tau</strong> (<em>int</em>) – tau value [min]</p></li>
+<li><p><strong>tau</strong> (<em>int</em><em> or </em><em>None</em>) – tau value [min]</p></li>
 </ul>
 </dd>
 </dl>
@@ -232,11 +232,15 @@ This analysis will be done at country level because OxCGRT tracks policies at co
 
 <dl class="py method">
 <dt id="covsirphy.worldwide.policy.PolicyMeasures.estimate">
-<code class="sig-name descname">estimate</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">model</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/worldwide/policy.html#PolicyMeasures.estimate"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#covsirphy.worldwide.policy.PolicyMeasures.estimate" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">estimate</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">model</span></em>, <em class="sig-param"><span class="n">n_jobs</span><span class="o">=</span><span class="default_value">- 1</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/worldwide/policy.html#PolicyMeasures.estimate"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#covsirphy.worldwide.policy.PolicyMeasures.estimate" title="Permalink to this definition">¶</a></dt>
 <dd><p>Estimate the parameter values of phases in the registered countries.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>model</strong> (<em>covsirphy.ModelBase</em>) – ODE model</p>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>model</strong> (<em>covsirphy.ModelBase</em>) – ODE model</p></li>
+<li><p><strong>n_jobs</strong> (<em>int</em>) – the number of parallel jobs or -1 (CPU count)</p></li>
+<li><p><strong>kwargs</strong> – keyword arguments of model parameters and covsirphy.Estimator.run()</p></li>
+</ul>
 </dd>
 </dl>
 </dd></dl>
