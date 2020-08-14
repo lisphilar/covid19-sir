@@ -178,7 +178,7 @@ class TestScenario(object):
         with pytest.raises(KeyError):
             snl.summary(columns=[Term.N, "Temperature"])
 
-    @pytest.mark.parametrize("country", ["Japan", "Greece"])
+    @pytest.mark.parametrize("country", ["Greece"])
     def test_estimate(self, jhu_data, population_data, country):
         warnings.filterwarnings("ignore", category=UserWarning)
         # Setting
@@ -205,8 +205,6 @@ class TestScenario(object):
         snl.trend(show_figure=False)
         snl.estimate(SIR)
         # Estimation history
-        with pytest.raises(KeyError):
-            snl.estimate_history(phase="1st")
         snl.estimate_history(phase="1st")
         # Estimation accuracy
         snl.estimate_accuracy(phase="1st")
