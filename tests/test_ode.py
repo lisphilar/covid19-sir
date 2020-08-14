@@ -3,80 +3,83 @@
 
 import pandas as pd
 import pytest
-from covsirphy import Estimator, ODESimulator, Term, ExampleData, Scenario
-from covsirphy import SIR, SIRD, SIRF  # , SIRFV, SEWIRF
+from covsirphy import ExampleData, PopulationData, Term, Scenario
+from covsirphy import SIR, SIRD, SIRF, SIRFV, SEWIRF
 
 
-class TestODESimulator(object):
+class TestODE(object):
     @pytest.mark.parametrize(
         "model",
-        # TODO: add SIRFV and SEWIRF to fix issue #18
-        [SIR, SIRD, SIRF]
-    )
+        [SIR, SIRD, SIRF, SIRFV, SEWIRF])
     def test_ode(self, model):
         # Setting
         eg_tau = 1440
+        area = {"country": "Full", "province": model.NAME}
+        # Population
+        population_data = PopulationData(filename=None)
+        population_data.update(model.EXAMPLE["population"], **area)
         # Simulation
-        example_data = ExampleData(tau=eg_tau)
+        example_data = ExampleData(tau=eg_tau, start_date="01Jan2020")
+        example_data.add(model, **area)
+        # Model-specialized records
+        spe_df = example_data.specialized(**area)
+        assert set(spe_df.columns) == set(
+            [*Term.STR_COLUMNS, *model.VARIABLES])
+        # Non-dimensional records
+        nondim_df = example_data.non_dim(**area)
+        assert set(nondim_df.columns) == set(
+            [Term.TS, *list(model.VAR_DICT.keys())])
+        # JHU-type records
+        jhu_df = example_data.subset(**area)
+        assert set(jhu_df.columns) == set(Term.NLOC_COLUMNS)
+        # Calculate Rt/day parameters when parameters are None
+        param_dict = {p: 0 for p in model.PARAMETERS}
+        model_instance = model(population_data.value(**area), **param_dict)
+        model_instance.calc_r0()
+        model_instance.calc_days_dict(eg_tau)
+
+    @pytest.mark.parametrize("model", [SIR])
+    def test_usage_mistakes(self, model):
+        # Setting
+        eg_tau = 1440
+        # Simulation
+        example_data = ExampleData(tau=eg_tau, start_date="01Jan2020")
+        with pytest.raises(KeyError):
+            assert not example_data.specialized(model=model).empty
+        with pytest.raises(KeyError):
+            assert not example_data.non_dim(model=model).empty
         example_data.add(model)
-        nondim_df = example_data.non_dim(model)
-        assert isinstance(nondim_df, pd.DataFrame)
-        nondim_cols = [Term.TS, *list(model.VAR_DICT.keys())]
-        assert set(nondim_df.columns) == set(nondim_cols)
-        clean_df = example_data.cleaned()
-        assert isinstance(clean_df, pd.DataFrame)
-        assert set(clean_df.columns) == set(Term.COLUMNS)
-        dim_df = example_data.subset(model)
-        assert isinstance(dim_df, pd.DataFrame)
-        assert set(dim_df.columns) == set(Term.NLOC_COLUMNS)
-        # Estimation
-        population = model.EXAMPLE["population"]
-        estimator = Estimator(
-            example_data, model=model, population=population,
-            country=model.NAME, province=Term.UNKNOWN, tau=eg_tau
-        )
-        estimator.run()
-        estimated_df = estimator.summary(name=model.NAME)
-        assert isinstance(estimated_df, pd.DataFrame)
-        estimator.history(show_figure=False)
-        estimator.accuracy(show_figure=False)
+        # Model-specialized records
+        with pytest.raises(ValueError):
+            assert not example_data.specialized().empty
 
     def test_ode_two_phases(self, population_data):
         # Setting
         eg_tau = 1440
+        area = {"country": "Example", "province": "Example"}
         # Simulation
         example_data = ExampleData(tau=eg_tau)
-        example_data.add(SIRF, step_n=30)
-        example_data.add(SIRD, step_n=30)
-        nondim_df = example_data.non_dim(SIRF)
-        assert isinstance(nondim_df, pd.DataFrame)
-        nondim_cols = [Term.TS, *list(SIRF.VAR_DICT.keys())]
-        assert set(nondim_df.columns) == set(nondim_cols)
-        clean_df = example_data.cleaned()
-        assert isinstance(clean_df, pd.DataFrame)
-        assert set(clean_df.columns) == set(Term.COLUMNS)
-        dim_df = example_data.subset(SIRF)
+        example_data.add(SIRF, step_n=30, **area)
+        example_data.add(SIRD, step_n=30, **area)
+        dim_df = example_data.subset(**area)
         assert isinstance(dim_df, pd.DataFrame)
         assert set(dim_df.columns) == set(Term.NLOC_COLUMNS)
-        # Scenario analysis
-        population = SIRF.EXAMPLE["population"]
-        population_data.update(population, country=SIRF.NAME)
-        scenario = Scenario(example_data, population_data, country=SIRF.NAME)
-        scenario.trend()
 
-    @pytest.mark.parametrize("model", [SIR])
-    def test_ode_with_dataframe(self, model):
+    @pytest.mark.parametrize(
+        "model",
+        # SIRFV, SEWIRF
+        [SIR, SIRD, SIRF])
+    def test_estimate(self, model):
         # Setting
         eg_tau = 1440
-        start_date = "22Jan2020"
+        area = {"country": "Full", "province": model.NAME}
+        # Population
+        population_data = PopulationData(filename=None)
+        population_data.update(model.EXAMPLE["population"], **area)
         # Simulation
-        simulator = ODESimulator(country="Example", province=model.NAME)
-        simulator.add(model=model, **model.EXAMPLE)
-        dim_df = simulator.dim(tau=eg_tau, start_date=start_date)
+        example_data = ExampleData(tau=eg_tau, start_date="01Jan2020")
+        example_data.add(model, **area)
         # Estimation
-        population = model.EXAMPLE["population"]
-        estimator = Estimator(
-            dim_df, model=model, population=population,
-            country="Example", province=model.NAME, tau=eg_tau
-        )
-        estimator.run()
+        snl = Scenario(example_data, population_data, **area)
+        snl.add()
+        snl.estimate(model)

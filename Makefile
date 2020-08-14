@@ -32,6 +32,12 @@ test-nosvg:
 	 --cov=covsirphy --cov-report=term-missing
 
 
+.PHONY: test-file
+test-file:
+	@pipenv run pytest tests/test_${file}.py -v --durations=0 --failed-first --maxfail=1 \
+	 --cov=covsirphy --cov-report=term-missing
+
+
 # https://github.com/sphinx-doc/sphinx/issues/3382
 .PHONY: sphinx
 sphinx:
