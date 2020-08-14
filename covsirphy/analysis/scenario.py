@@ -700,9 +700,17 @@ class Scenario(Term):
         )
         return df
 
-    def describe(self, y0_dict=None):
+    def describe(self, y0_dict=None, with_rt=True):
         """
         Describe representative values.
+
+        Args:
+            y0_dict (dict or None):
+                - key (str): variable name
+                - value (float): initial value
+                - dictionary of initial values or None
+                - if model will be changed in the later phase, must be specified
+            with_rt (bool): whether show the history of Rt values
 
         Returns:
             (pandas.DataFrame)
@@ -713,11 +721,6 @@ class Scenario(Term):
                     - argmax(Infected): the date when Infected shows max value
                     - Infected({date}): Infected on the end date of the last phase
                     - Fatal({date}): Fatal on the end date of the last phase
-            y0_dict (dict or None):
-                - key (str): variable name
-                - value (float): initial value
-                - dictionary of initial values or None
-                - if model will be changed in the later phase, must be specified
         """
         _dict = {}
         for (name, _) in self._series_dict.items():
@@ -740,4 +743,15 @@ class Scenario(Term):
                 f"{self.CI} on {last_date.strftime(self.DATE_FORMAT)}": last_ci,
                 f"{self.F} on {last_date.strftime(self.DATE_FORMAT)}": last_f,
             }
-        return pd.DataFrame.from_dict(_dict, orient="index")
+        desc_df = pd.DataFrame.from_dict(_dict, orient="index")
+        # History of reproduction number
+        if with_rt:
+            rt_df = self.summary().reset_index()
+            rt_df = rt_df.pivot_table(
+                index=self.SERIES, columns=self.PHASE, values=self.RT)
+            rt_df = rt_df.fillna(self.UNKNOWN)
+            rt_df = rt_df.loc[:, rt_df.nunique() > 1]
+            cols = sorted(rt_df, key=self.str2num)
+            desc_df = desc_df.join(
+                rt_df[cols].add_suffix(f"_{self.RT}"), how="left")
+        return desc_df
