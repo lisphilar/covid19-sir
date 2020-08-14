@@ -196,10 +196,10 @@ class TestScenario(object):
             snl.estimate(SIR, phases=["30th"])
         with pytest.raises(ValueError):
             snl.estimate(model=SIR, tau=1440)
+        snl.enable(phases=["0th"])
         with pytest.raises(TypeError):
             snl.estimate(model=SIR, phases="1st")
         with pytest.raises(ValueError):
-            snl.enable(phases=["0th"])
             snl.estimate(model=SIR, phases=["0th"])
         snl.clear(include_past=True)
         snl.trend(show_figure=False)
