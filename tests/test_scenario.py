@@ -199,7 +199,8 @@ class TestScenario(object):
         with pytest.raises(TypeError):
             snl.estimate(model=SIR, phases="1st")
         with pytest.raises(ValueError):
-            snl.estimate(SIR, phases=["0th"])
+            snl.enable(phases=["0th"])
+            snl.estimate(model=SIR, phases=["0th"])
         snl.clear(include_past=True)
         snl.trend(show_figure=False)
         with pytest.raises(KeyError):

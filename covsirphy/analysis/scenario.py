@@ -513,12 +513,12 @@ class Scenario(Term):
         Return:
             covsirphy.Estimator: estimator of the phase
         """
-        try:
-            return self._series_dict[name].unit(phase).estimator
-        except KeyError:
-            raise KeyError(
+        estimator = self._series_dict[name].unit(phase).estimator
+        if estimator is None:
+            raise AttributeError(
                 f'Scenario.estimate(model, phases=["{phase}"], name={name}) must be done in advance.'
             )
+        return estimator
 
     def estimate_history(self, phase, name="Main", **kwargs):
         """
