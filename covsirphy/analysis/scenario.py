@@ -672,9 +672,6 @@ class Scenario(Term):
         Notes:
             If 'Main' was used as @name, main PhaseSeries will be used.
         """
-        # Check arguments
-        if "box_plot" in kwargs.keys():
-            raise KeyError("Please use 'show_box_plot', not 'box_plot'")
         self._ensure_name(name)
         # Select target to show
         df = self._param_history(targets, name)
@@ -745,7 +742,7 @@ class Scenario(Term):
             }
         desc_df = pd.DataFrame.from_dict(_dict, orient="index")
         # History of reproduction number
-        if with_rt:
+        if with_rt and len(self._series_dict) > 1:
             rt_df = self.summary().reset_index()
             rt_df = rt_df.pivot_table(
                 index=self.SERIES, columns=self.PHASE, values=self.RT)
