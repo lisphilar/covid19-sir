@@ -124,7 +124,7 @@ clean:
 
 .PHONY: update
 update:
-	@pipenv update
+	@pipenv update --outdated
 
 
 .PHONY: cache_clear
