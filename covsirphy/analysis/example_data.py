@@ -32,12 +32,38 @@ class ExampleData(JHUData):
     def __init__(self, clean_df=None, tau=1440, start_date="22Jan2020"):
         if clean_df is None:
             clean_df = pd.DataFrame(columns=self.COLUMNS)
+        clean_df = self.ensure_dataframe(
+            clean_df, name="clean_df", columns=self.COLUMNS)
         self._raw = clean_df.copy()
         self._cleaned_df = clean_df.copy()
         self._citation = str()
-        self.tau = self.ensure_natural_int(tau, name="tau")
+        self.tau = self.ensure_tau(tau)
         self.start_date = self.ensure_date(start_date, name="start_date")
+        self._specialized_dict = {}
         self.nondim_dict = {}
+
+    def _model_to_area(self, model=None, country=None, province=None):
+        """
+        If country is None and model is not None, model name will returned as country name.
+
+        Args:
+            model (cs.ModelBase or None): the first ODE model
+            country (str or None): country name
+            province (str or None): province name
+
+        Raises:
+            ValueError: both of country and model are None
+
+        Returns:
+            tuple(str, str): country name and province name
+        """
+        province = province or self.UNKNOWN
+        if country is not None:
+            return (country, province)
+        if model is None and country is None:
+            raise ValueError("@model or @country must be specified.")
+        model = self.ensure_subclass(model, ModelBase, name="model")
+        return (model.NAME, province)
 
     def add(self, model, country=None, province=None, **kwargs):
         """
@@ -46,9 +72,9 @@ class ExampleData(JHUData):
         the start date will be the next data of the registered records.
 
         Args:
-            model (subclass of cs.ModelBase): the first ODE model
-            country (str): country name
-            province (str): province name
+            model (cs.ModelBase): the first ODE model
+            country (str or None): country name
+            province (str or None): province name
             kwargs: the other keyword arguments of ODESimulator.add()
 
         Notes:
@@ -59,12 +85,10 @@ class ExampleData(JHUData):
         model = self.ensure_subclass(model, ModelBase, name="model")
         arg_dict = model.EXAMPLE.copy()
         arg_dict.update(kwargs)
-        country = country or model.NAME
-        province = province or self.UNKNOWN
-        try:
-            population = arg_dict["population"]
-        except KeyError:
-            raise KeyError("@population must be specified.")
+        population = arg_dict["population"]
+        # Area
+        country, province = self._model_to_area(
+            model=model, country=country, province=province)
         # Start date and y0 values
         df = self._cleaned_df.copy()
         df = df.loc[
@@ -73,7 +97,8 @@ class ExampleData(JHUData):
         if df.empty:
             start_date = self.start_date
         else:
-            start_date = df.loc[df.index[-1], self.DATE]
+            start_date = df.loc[
+                df.index[-1], self.DATE].strftime(self.DATE_FORMAT)
             df = model.tau_free(df, population, tau=None)
             arg_dict["y0_dict"] = {
                 k: df.loc[df.index[0], k] for k in model.VARIABLES
@@ -81,8 +106,12 @@ class ExampleData(JHUData):
         # Simulation
         simulator = ODESimulator(country=country, province=province)
         simulator.add(model=model, **arg_dict)
-        # Add the simulated records to self
+        # Specialized records
         dim_df = simulator.dim(tau=self.tau, start_date=start_date)
+        if country not in self._specialized_dict:
+            self._specialized_dict[country] = {}
+        self._specialized_dict[country][province] = dim_df.copy()
+        # JHU-type records
         restored_df = model.restore(dim_df)
         restored_df[self.COUNTRY] = country
         restored_df[self.PROVINCE] = province
@@ -91,33 +120,51 @@ class ExampleData(JHUData):
             [self._cleaned_df, selected_df], axis=0, ignore_index=True
         )
         # Set non-dimensional data
-        if country not in self.nondim_dict.keys():
+        if country not in self.nondim_dict:
             self.nondim_dict[country] = {}
         nondim_df = simulator.non_dim()
-        if province in self.nondim_dict[country].keys():
+        if province in self.nondim_dict[country]:
             nondim_df_old = self.nondim_dict[country][province].copy()
             nondim_df = pd.concat([nondim_df_old, nondim_df], axis=0)
         self.nondim_dict[country][province] = nondim_df.copy()
+
+    def specialized(self, model=None, country=None, province=None):
+        """
+        Return dimensional records with model variables.
+
+        Args:
+            model (cs.ModelBase or None): the first ODE model
+            country (str or None): country name
+            province (str or None): province name
+
+        Notes:
+            If country is None, the name of the model will be used.
+            If province is None, '-' will be used.
+        """
+        country, province = self._model_to_area(
+            model=model, country=country, province=province)
+        try:
+            return self._specialized_dict[country][province]
+        except KeyError:
+            raise KeyError(
+                f"Records of {country} - {province} were not registered."
+            )
 
     def non_dim(self, model=None, country=None, province=None):
         """
         Return non-dimensional data.
 
         Args:
-            model (subclass of cs.ModelBase or None): the first ODE model
-            country (str): country name
-            province (str): province name
+            model (cs.ModelBase or None): the first ODE model
+            country (str or None): country name
+            province (str or None): province name
 
         Notes:
             If country is None, the name of the model will be used.
             If province is None, '-' will be used.
         """
-        if model is not None:
-            model = self.ensure_subclass(model, ModelBase, name="model")
-            country = country or model.NAME
-            province = province or self.UNKNOWN
-        if country is None:
-            raise KeyError("@model or @country must be applied.")
+        country, province = self._model_to_area(
+            model=model, country=country, province=province)
         try:
             return self.nondim_dict[country][province]
         except KeyError:
@@ -125,13 +172,15 @@ class ExampleData(JHUData):
                 f"Records of {country} - {province} were not registered."
             )
 
-    def subset(self, model=None, **kwargs):
+    def subset(self, model=None, country=None, province=None, **kwargs):
         """
         Return the subset of dataset.
 
         Args:
-            model (subclass of cs.ModelBase or None): the first ODE model
-            kwargs: keyword arguments of JHUData.subset()
+            model (cs.ModelBase or None): the first ODE model
+            country (str or None): country name
+            province (str or None): province name
+            kwargs: other keyword arguments of JHUData.subset()
 
         Returns:
             (pandas.DataFrame)
@@ -151,9 +200,6 @@ class ExampleData(JHUData):
             If @population is not None, the number of susceptible cases will be calculated.
             Records with Recovered > 0 will be selected.
         """
-        if "country" not in kwargs.keys():
-            if model is None:
-                raise KeyError("@model or @country must be applied.")
-            model = self.ensure_subclass(model, ModelBase, name="model")
-            kwargs["country"] = model.NAME
-        return super().subset(**kwargs)
+        country, _ = self._model_to_area(
+            model=model, country=country, province=province)
+        return super().subset(country=country, province=province, **kwargs)
