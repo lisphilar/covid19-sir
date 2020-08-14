@@ -18,7 +18,7 @@ def main():
     # Load Population dataset
     population_data = data_loader.population()
     # Start scenario analysis
-    ita_scenario = cs.Scenario(jhu_data, population_data, "Italy")
+    ita_scenario = cs.Scenario(jhu_data, population_data, "Italy", tau=120)
     # Show records
     ita_record_df = ita_scenario.records(
         filename=output_dir.joinpath("ita_records.png"))

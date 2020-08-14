@@ -143,7 +143,9 @@ class TestScenario(object):
         snl.trend(show_figure=False)
         # Combine
         length = len(snl["Main"])
-        snl.combine(["1st", "2nd", "3rd"])
+        snl.combine(["1st", "2nd"])
+        n_changed = population_data.value(country) * 0.98
+        snl.combine(["2nd", "3rd"], population=n_changed)
         assert len(snl["Main"]) == length - 2
         # Separate
         with pytest.raises(IndexError):
@@ -176,7 +178,7 @@ class TestScenario(object):
         with pytest.raises(KeyError):
             snl.summary(columns=[Term.N, "Temperature"])
 
-    @pytest.mark.parametrize("country", ["Japan", "Greece"])
+    @pytest.mark.parametrize("country", ["Greece"])
     def test_estimate(self, jhu_data, population_data, country):
         warnings.filterwarnings("ignore", category=UserWarning)
         # Setting
@@ -185,14 +187,20 @@ class TestScenario(object):
         snl.last_date = "01Aug2020"
         with pytest.raises(ValueError):
             snl.estimate(SIR)
-        snl.trend(show_figure=False)
+        snl.trend(include_init_phase=True, show_figure=False)
+        snl.disable(phases=["0th"])
         with pytest.raises(AttributeError):
             snl.estimate_history(phase="1th")
         # Parameter estimation
+        with pytest.raises(KeyError):
+            snl.estimate(SIR, phases=["30th"])
+        with pytest.raises(ValueError):
+            snl.estimate(model=SIR, tau=1440)
+        snl.enable(phases=["0th"])
         with pytest.raises(TypeError):
             snl.estimate(model=SIR, phases="1st")
         with pytest.raises(ValueError):
-            snl.estimate(SIR, phases=["0th"])
+            snl.estimate(model=SIR, phases=["0th"])
         snl.clear(include_past=True)
         snl.trend(show_figure=False)
         snl.estimate(SIR)
@@ -202,6 +210,8 @@ class TestScenario(object):
         snl.estimate_accuracy(phase="1st")
         # Get a value
         snl.get(Term.RT)
+        with pytest.raises(KeyError):
+            snl.get("feeling")
 
     @pytest.mark.parametrize("country", ["Japan"])
     def test_simulate(self, jhu_data, population_data, country):
@@ -212,10 +222,20 @@ class TestScenario(object):
         snl.last_date = "01Aug2020"
         snl.trend(show_figure=False)
         # Parameter estimation
+        with pytest.raises(ValueError):
+            snl.param_history(["rho"])
         snl.estimate(SIR)
         # Simulation
         snl.simulate()
-        # Parameter histpry
-        snl.param_history([Term.RT])
+        # Parameter history
+        snl.param_history([Term.RT], divide_by_first=False)
+        snl.param_history(["rho"])
+        snl.param_history(["rho"], show_figure=False)
+        snl.param_history(["rho"], show_box_plot=False)
+        with pytest.raises(KeyError):
+            snl.param_history(["feeling"])
         # Comparison of scenarios
+        snl.describe()
+        # Add new scenario
+        snl.add(end_date="01Sep2020", name="New")
         snl.describe()
