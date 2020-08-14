@@ -203,10 +203,10 @@ class TestScenario(object):
             snl.estimate(model=SIR, phases=["0th"])
         snl.clear(include_past=True)
         snl.trend(show_figure=False)
-        with pytest.raises(KeyError):
-            snl.estimate_history(phase="1st")
         snl.estimate(SIR)
         # Estimation history
+        with pytest.raises(KeyError):
+            snl.estimate_history(phase="1st")
         snl.estimate_history(phase="1st")
         # Estimation accuracy
         snl.estimate_accuracy(phase="1st")
