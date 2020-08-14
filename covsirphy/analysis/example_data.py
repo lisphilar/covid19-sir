@@ -60,7 +60,7 @@ class ExampleData(JHUData):
         province = province or self.UNKNOWN
         if country is not None:
             return (country, province)
-        if model is None and country is None:
+        if model is None:
             raise ValueError("@model or @country must be specified.")
         model = self.ensure_subclass(model, ModelBase, name="model")
         return (model.NAME, province)
