@@ -188,7 +188,7 @@ class TestScenario(object):
         with pytest.raises(ValueError):
             snl.estimate(SIR)
         snl.trend(include_init_phase=True, show_figure=False)
-        snl.disable(phase="0th")
+        snl.disable(phases="0th")
         with pytest.raises(AttributeError):
             snl.estimate_history(phase="1th")
         # Parameter estimation
