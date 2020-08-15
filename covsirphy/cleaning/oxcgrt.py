@@ -81,7 +81,7 @@ class OxCGRTData(CleaningBase):
         df = df.loc[:, [self.DATE, self.COUNTRY, self.ISO3, *float_cols]]
         return df
 
-    def subset(self, country):
+    def subset(self, country, iso3=None):
         """
         Create a subset for a country.
 
@@ -99,7 +99,7 @@ class OxCGRTData(CleaningBase):
                     - Date (pd.TimeStamp): Observation date
                     - other column names are defined by OxCGRTData.COL_DICT
         """
-        country = self.iso3_to_country(country)
+        country = self.iso3_to_country(country or iso3)
         df = self._cleaned_df.copy()
         df = df.loc[df[self.COUNTRY] == country, :]
         if df.empty:
