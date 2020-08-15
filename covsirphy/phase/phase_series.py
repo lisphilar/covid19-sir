@@ -297,7 +297,8 @@ class PhaseSeries(Term):
         if not type_ok:
             raise TypeError("@new_list must be a list of covsirphy.PhaseUnit.")
         if phase is None:
-            units = sorted(new_list)
+            old_units = [unit for unit in self._units if unit not in new_list]
+            units = sorted(new_list + old_units)
         else:
             old = self.unit(phase)
             units = [unit for unit in self._units if unit != old] + new_list

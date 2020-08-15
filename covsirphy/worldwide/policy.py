@@ -175,7 +175,7 @@ class PolicyMeasures(Term):
             n_jobs (int): the number of parallel jobs or -1 (CPU count)
             kwargs: keyword arguments of model parameters and covsirphy.Estimator.run()
         """
-        model = self.ensure_subclass(model, ModelBase)
+        model = self.ensure_subclass(model, ModelBase, name="model")
         unit_nest = [
             [
                 unit.set_id(
