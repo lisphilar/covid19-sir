@@ -28,6 +28,7 @@
     - Development: SIR-FV and SEWIR-F model
 - Phase-dependent parameter estimation of ODE models
 - Scenario analysis: Simulate the number of cases with user-defined parameter values
+- (In development): Find the relationship of government response and parameter values
 
 ## Inspiration
 - Monitor the spread of COVID-19
