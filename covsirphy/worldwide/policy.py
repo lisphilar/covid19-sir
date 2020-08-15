@@ -206,10 +206,10 @@ class PolicyMeasures(Term):
 
     def param_history(self, param, roll_window=None, show_figure=True, filename=None, **kwargs):
         """
-        Return subset of summary and show a figure to show the history in each country.
+        Return subset of summary and show a figure to show the history of all countries.
 
         Args:
-            param (str): parameter to show
+            param (str): parameter/day parameter/Rt/OxCGRT score to show
             roll_window (int or None): rolling average window if necessary
             show_figure (bool): If True, show the result as a figure
             filename (str): filename of the figure, or None (show figure)
@@ -217,27 +217,17 @@ class PolicyMeasures(Term):
 
         Returns:
             pandas.DataFrame:
-                Index: (int) phase number
+                Index: Date (pd.TimeStamp) date
                 Columns: (str) country names
                 Values: parameter values
         """
-        if self.model is None:
-            raise TypeError(
-                "PolicyMeasures.estimate(model) must be done in advance.")
-        selectable_params = [
-            *self.model.PARAMETERS, *self.model.DAY_PARAMETERS, self.RT]
-        if param not in selectable_params:
-            sel_param_str = ', '.join(selectable_params)
+        # Get the parameter value of each date
+        df = self.track()
+        # Select the param
+        if param not in df.columns:
+            sel_param_str = ', '.join(df.columns.tolist())
             raise KeyError(
                 f"@param must be selected from {sel_param_str}, but {param} was applied.")
-        # Get the parameter value of each date
-        df = self.summary().reset_index()
-        df[self.START] = pd.to_datetime(
-            df[self.START], format=self.DATE_FORMAT)
-        df[self.END] = pd.to_datetime(df[self.END], format=self.DATE_FORMAT)
-        df[self.DATE] = df[[self.START, self.END]].apply(
-            lambda x: pd.date_range(x[0], x[1]).tolist(), axis=1)
-        df = df.explode(self.DATE)
         df = df.pivot_table(
             values=param, index=self.DATE, columns=self.COUNTRY)
         # Rolling mean
@@ -255,3 +245,49 @@ class PolicyMeasures(Term):
             filename=filename
         )
         return df
+
+    def track(self):
+        """
+        Return subset of summary and show a figure to show the history in each country.
+
+        Args:
+            param (str): parameter to show
+            roll_window (int or None): rolling average window if necessary
+            show_figure (bool): If True, show the result as a figure
+            filename (str): filename of the figure, or None (show figure)
+            kwargs: keword arguments of pd.DataFrame.plot or line_plot()
+
+        Returns:
+            pandas.DataFrame:
+                Index: reset index
+                Columns:
+                    - Country (str): country name
+                    - Date (pd.TimeStamp): date
+                    - (float): model parameters
+                    - (float): model day parameters
+                    - Rt (float): reproduction number
+                    - (float): OxCGRT values
+                Values: parameter values
+        """
+        if self.model is None:
+            raise TypeError(
+                "PolicyMeasures.estimate(model) must be done in advance.")
+        # Get parameter/Rt/data parameter value of each date
+        df = self.summary().reset_index().replace(self.UNKNOWN, None)
+        df[self.START] = pd.to_datetime(
+            df[self.START], format=self.DATE_FORMAT)
+        df[self.END] = pd.to_datetime(df[self.END], format=self.DATE_FORMAT)
+        df[self.DATE] = df[[self.START, self.END]].apply(
+            lambda x: pd.date_range(x[0], x[1]).tolist(), axis=1)
+        df = df.explode(self.DATE)
+        cols = [
+            self.DATE, self.COUNTRY, *self.model.PARAMETERS, *self.model.DAY_PARAMETERS, self.RT]
+        param_df = df.loc[:, cols]
+        # OxCGRT
+        oxcgrt_df = self.oxcgrt_data.cleaned()
+        sel = oxcgrt_df[self.COUNTRY].isin(self._countries)
+        oxcgrt_df = oxcgrt_df.loc[sel, :].reset_index(drop=True)
+        # Combine data
+        df = pd.merge(
+            param_df, oxcgrt_df, how="inner", on=[self.COUNTRY, self.DATE])
+        return df.reset_index()
