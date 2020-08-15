@@ -229,7 +229,7 @@ class PolicyMeasures(Term):
             raise KeyError(
                 f"@param must be selected from {sel_param_str}, but {param} was applied.")
         df = df.pivot_table(
-            values=param, index=self.DATE, columns=self.COUNTRY)
+            values=param, index=self.DATE, columns=self.COUNTRY, agg_func="last")
         # Rolling mean
         if roll_window is not None:
             roll_window = self.ensure_natural_int(
@@ -286,8 +286,8 @@ class PolicyMeasures(Term):
         # OxCGRT
         oxcgrt_df = self.oxcgrt_data.cleaned()
         sel = oxcgrt_df[self.COUNTRY].isin(self._countries)
-        oxcgrt_df = oxcgrt_df.loc[sel, :].reset_index(drop=True)
+        oxcgrt_df = oxcgrt_df.loc[
+            sel, [self.DATE, self.COUNTRY, *OxCGRTData.OXCGRT_VARIABLES]]
         # Combine data
-        df = pd.merge(
+        return pd.merge(
             param_df, oxcgrt_df, how="inner", on=[self.COUNTRY, self.DATE])
-        return df.reset_index()
