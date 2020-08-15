@@ -245,9 +245,9 @@ the start date will be the next data of the registered records.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>model</strong> (<em>subclass of cs.ModelBase</em>) – the first ODE model</p></li>
-<li><p><strong>country</strong> (<em>str</em>) – country name</p></li>
-<li><p><strong>province</strong> (<em>str</em>) – province name</p></li>
+<li><p><strong>model</strong> (<em>cs.ModelBase</em>) – the first ODE model</p></li>
+<li><p><strong>country</strong> (<em>str</em><em> or </em><em>None</em>) – country name</p></li>
+<li><p><strong>province</strong> (<em>str</em><em> or </em><em>None</em>) – province name</p></li>
 <li><p><strong>kwargs</strong> – the other keyword arguments of ODESimulator.add()</p></li>
 </ul>
 </dd>
@@ -264,9 +264,27 @@ If province is None, ‘-‘ will be used.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>model</strong> (<em>subclass of cs.ModelBase</em><em> or </em><em>None</em>) – the first ODE model</p></li>
-<li><p><strong>country</strong> (<em>str</em>) – country name</p></li>
-<li><p><strong>province</strong> (<em>str</em>) – province name</p></li>
+<li><p><strong>model</strong> (<em>cs.ModelBase</em><em> or </em><em>None</em>) – the first ODE model</p></li>
+<li><p><strong>country</strong> (<em>str</em><em> or </em><em>None</em>) – country name</p></li>
+<li><p><strong>province</strong> (<em>str</em><em> or </em><em>None</em>) – province name</p></li>
+</ul>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<p>If country is None, the name of the model will be used.
+If province is None, ‘-‘ will be used.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="covsirphy.analysis.example_data.ExampleData.specialized">
+<code class="sig-name descname">specialized</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">model</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">country</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">province</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/analysis/example_data.html#ExampleData.specialized"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#covsirphy.analysis.example_data.ExampleData.specialized" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return dimensional records with model variables.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>model</strong> (<em>cs.ModelBase</em><em> or </em><em>None</em>) – the first ODE model</p></li>
+<li><p><strong>country</strong> (<em>str</em><em> or </em><em>None</em>) – country name</p></li>
+<li><p><strong>province</strong> (<em>str</em><em> or </em><em>None</em>) – province name</p></li>
 </ul>
 </dd>
 </dl>
@@ -277,13 +295,15 @@ If province is None, ‘-‘ will be used.</p>
 
 <dl class="py method">
 <dt id="covsirphy.analysis.example_data.ExampleData.subset">
-<code class="sig-name descname">subset</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">model</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/analysis/example_data.html#ExampleData.subset"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#covsirphy.analysis.example_data.ExampleData.subset" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">subset</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">model</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">country</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">province</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/analysis/example_data.html#ExampleData.subset"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#covsirphy.analysis.example_data.ExampleData.subset" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return the subset of dataset.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>model</strong> (<em>subclass of cs.ModelBase</em><em> or </em><em>None</em>) – the first ODE model</p></li>
-<li><p><strong>kwargs</strong> – keyword arguments of JHUData.subset()</p></li>
+<li><p><strong>model</strong> (<em>cs.ModelBase</em><em> or </em><em>None</em>) – the first ODE model</p></li>
+<li><p><strong>country</strong> (<em>str</em><em> or </em><em>None</em>) – country name</p></li>
+<li><p><strong>province</strong> (<em>str</em><em> or </em><em>None</em>) – province name</p></li>
+<li><p><strong>kwargs</strong> – other keyword arguments of JHUData.subset()</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
@@ -452,11 +472,23 @@ When &#64;phase is ‘0th’, disable 0th phase. 0th phase will not be deleted.<
 
 <dl class="py method">
 <dt id="covsirphy.analysis.scenario.Scenario.describe">
-<code class="sig-name descname">describe</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">y0_dict</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/analysis/scenario.html#Scenario.describe"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#covsirphy.analysis.scenario.Scenario.describe" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">describe</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">y0_dict</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">with_rt</span><span class="o">=</span><span class="default_value">True</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/analysis/scenario.html#Scenario.describe"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#covsirphy.analysis.scenario.Scenario.describe" title="Permalink to this definition">¶</a></dt>
 <dd><p>Describe representative values.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Returns</dt>
-<dd class="field-odd"><p><dl class="simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>y0_dict</strong> (<em>dict</em><em> or </em><em>None</em>) – <ul>
+<li><p>key (str): variable name</p></li>
+<li><p>value (float): initial value</p></li>
+<li><p>dictionary of initial values or None</p></li>
+<li><p>if model will be changed in the later phase, must be specified</p></li>
+</ul>
+</p></li>
+<li><p><strong>with_rt</strong> (<em>bool</em>) – whether show the history of Rt values</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><dl class="simple">
 <dt>(pandas.DataFrame)</dt><dd><dl class="simple">
 <dt>Index:</dt><dd><p>(int): scenario name</p>
 </dd>
@@ -468,13 +500,6 @@ When &#64;phase is ‘0th’, disable 0th phase. 0th phase will not be deleted.<
 </ul>
 </dd>
 </dl>
-</dd>
-<dt>y0_dict (dict or None):</dt><dd><ul class="simple">
-<li><p>key (str): variable name</p></li>
-<li><p>value (float): initial value</p></li>
-<li><p>dictionary of initial values or None</p></li>
-<li><p>if model will be changed in the later phase, must be specified</p></li>
-</ul>
 </dd>
 </dl>
 </p>

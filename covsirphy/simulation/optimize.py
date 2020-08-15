@@ -74,11 +74,7 @@ class Optimizer(Term):
         if self.study is None:
             self._init_study(seed=seed)
         self.study.optimize(
-            lambda x: self.objective(x),
-            n_trials=n_trials,
-            timeout=timeout,
-            n_jobs=n_jobs
-        )
+            self.objective, n_trials=n_trials, timeout=timeout, n_jobs=n_jobs)
         end_time = datetime.now()
         self.run_time += (end_time - start_time).total_seconds()
         self.total_trials += n_trials

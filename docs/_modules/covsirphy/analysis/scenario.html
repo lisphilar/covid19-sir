@@ -673,12 +673,12 @@
 <span class="sd">        Return:</span>
 <span class="sd">            covsirphy.Estimator: estimator of the phase</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">try</span><span class="p">:</span>
-            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_series_dict</span><span class="p">[</span><span class="n">name</span><span class="p">]</span><span class="o">.</span><span class="n">unit</span><span class="p">(</span><span class="n">phase</span><span class="p">)</span><span class="o">.</span><span class="n">estimator</span>
-        <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">KeyError</span><span class="p">(</span>
+        <span class="n">estimator</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_series_dict</span><span class="p">[</span><span class="n">name</span><span class="p">]</span><span class="o">.</span><span class="n">unit</span><span class="p">(</span><span class="n">phase</span><span class="p">)</span><span class="o">.</span><span class="n">estimator</span>
+        <span class="k">if</span> <span class="n">estimator</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">AttributeError</span><span class="p">(</span>
                 <span class="sa">f</span><span class="s1">&#39;Scenario.estimate(model, phases=[&quot;</span><span class="si">{</span><span class="n">phase</span><span class="si">}</span><span class="s1">&quot;], name=</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s1">) must be done in advance.&#39;</span>
-            <span class="p">)</span></div>
+            <span class="p">)</span>
+        <span class="k">return</span> <span class="n">estimator</span></div>
 
 <div class="viewcode-block" id="Scenario.estimate_history"><a class="viewcode-back" href="../../../covsirphy.analysis.html#covsirphy.analysis.scenario.Scenario.estimate_history">[docs]</a>    <span class="k">def</span> <span class="nf">estimate_history</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">phase</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;Main&quot;</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
@@ -832,9 +832,6 @@
 <span class="sd">        Notes:</span>
 <span class="sd">            If &#39;Main&#39; was used as @name, main PhaseSeries will be used.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="c1"># Check arguments</span>
-        <span class="k">if</span> <span class="s2">&quot;box_plot&quot;</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
-            <span class="k">raise</span> <span class="ne">KeyError</span><span class="p">(</span><span class="s2">&quot;Please use &#39;show_box_plot&#39;, not &#39;box_plot&#39;&quot;</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_ensure_name</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
         <span class="c1"># Select target to show</span>
         <span class="n">df</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_param_history</span><span class="p">(</span><span class="n">targets</span><span class="p">,</span> <span class="n">name</span><span class="p">)</span>
@@ -860,9 +857,17 @@
         <span class="p">)</span>
         <span class="k">return</span> <span class="n">df</span></div>
 
-<div class="viewcode-block" id="Scenario.describe"><a class="viewcode-back" href="../../../covsirphy.analysis.html#covsirphy.analysis.scenario.Scenario.describe">[docs]</a>    <span class="k">def</span> <span class="nf">describe</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">y0_dict</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<div class="viewcode-block" id="Scenario.describe"><a class="viewcode-back" href="../../../covsirphy.analysis.html#covsirphy.analysis.scenario.Scenario.describe">[docs]</a>    <span class="k">def</span> <span class="nf">describe</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">y0_dict</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">with_rt</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Describe representative values.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            y0_dict (dict or None):</span>
+<span class="sd">                - key (str): variable name</span>
+<span class="sd">                - value (float): initial value</span>
+<span class="sd">                - dictionary of initial values or None</span>
+<span class="sd">                - if model will be changed in the later phase, must be specified</span>
+<span class="sd">            with_rt (bool): whether show the history of Rt values</span>
 
 <span class="sd">        Returns:</span>
 <span class="sd">            (pandas.DataFrame)</span>
@@ -873,11 +878,6 @@
 <span class="sd">                    - argmax(Infected): the date when Infected shows max value</span>
 <span class="sd">                    - Infected({date}): Infected on the end date of the last phase</span>
 <span class="sd">                    - Fatal({date}): Fatal on the end date of the last phase</span>
-<span class="sd">            y0_dict (dict or None):</span>
-<span class="sd">                - key (str): variable name</span>
-<span class="sd">                - value (float): initial value</span>
-<span class="sd">                - dictionary of initial values or None</span>
-<span class="sd">                - if model will be changed in the later phase, must be specified</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">_dict</span> <span class="o">=</span> <span class="p">{}</span>
         <span class="k">for</span> <span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">_</span><span class="p">)</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_series_dict</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
@@ -900,7 +900,18 @@
                 <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">CI</span><span class="si">}</span><span class="s2"> on </span><span class="si">{</span><span class="n">last_date</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">DATE_FORMAT</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">:</span> <span class="n">last_ci</span><span class="p">,</span>
                 <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">F</span><span class="si">}</span><span class="s2"> on </span><span class="si">{</span><span class="n">last_date</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">DATE_FORMAT</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">:</span> <span class="n">last_f</span><span class="p">,</span>
             <span class="p">}</span>
-        <span class="k">return</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="o">.</span><span class="n">from_dict</span><span class="p">(</span><span class="n">_dict</span><span class="p">,</span> <span class="n">orient</span><span class="o">=</span><span class="s2">&quot;index&quot;</span><span class="p">)</span></div></div>
+        <span class="n">desc_df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="o">.</span><span class="n">from_dict</span><span class="p">(</span><span class="n">_dict</span><span class="p">,</span> <span class="n">orient</span><span class="o">=</span><span class="s2">&quot;index&quot;</span><span class="p">)</span>
+        <span class="c1"># History of reproduction number</span>
+        <span class="k">if</span> <span class="n">with_rt</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_series_dict</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="n">rt_df</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">summary</span><span class="p">()</span><span class="o">.</span><span class="n">reset_index</span><span class="p">()</span>
+            <span class="n">rt_df</span> <span class="o">=</span> <span class="n">rt_df</span><span class="o">.</span><span class="n">pivot_table</span><span class="p">(</span>
+                <span class="n">index</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">SERIES</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">PHASE</span><span class="p">,</span> <span class="n">values</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">RT</span><span class="p">)</span>
+            <span class="n">rt_df</span> <span class="o">=</span> <span class="n">rt_df</span><span class="o">.</span><span class="n">fillna</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">UNKNOWN</span><span class="p">)</span>
+            <span class="n">rt_df</span> <span class="o">=</span> <span class="n">rt_df</span><span class="o">.</span><span class="n">loc</span><span class="p">[:,</span> <span class="n">rt_df</span><span class="o">.</span><span class="n">nunique</span><span class="p">()</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">]</span>
+            <span class="n">cols</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">rt_df</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">str2num</span><span class="p">)</span>
+            <span class="n">desc_df</span> <span class="o">=</span> <span class="n">desc_df</span><span class="o">.</span><span class="n">join</span><span class="p">(</span>
+                <span class="n">rt_df</span><span class="p">[</span><span class="n">cols</span><span class="p">]</span><span class="o">.</span><span class="n">add_suffix</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;_</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">RT</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">),</span> <span class="n">how</span><span class="o">=</span><span class="s2">&quot;left&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">desc_df</span></div></div>
 </pre></div>
 
            </div>

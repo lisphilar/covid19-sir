@@ -12,6 +12,7 @@ class TestChangeFinder(object):
         ["Italy", "Japan", "United States", "India", "New Zealand"]
     )
     def test_find(self, jhu_data, population_data, country):
+        warnings.filterwarnings("ignore", category=DeprecationWarning)
         population = population_data.value(country)
         sr_df = jhu_data.to_sr(country=country, population=population)
         change_finder = ChangeFinder(sr_df)

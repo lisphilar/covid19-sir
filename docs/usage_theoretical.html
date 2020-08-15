@@ -473,7 +473,7 @@ div.rendered_html tbody tr:hover {
 </div>
 <div class="output_area docutils container">
 <div class="highlight"><pre>
-&#39;2.6.0-theta.new.72.167.fix.120.155.157.163.164.165.174.188&#39;
+&#39;2.6.0-kappa.new.72.167.176.191.fix.120.155.157.163.164.165.174.188&#39;
 </pre></div></div>
 </div>
 <div class="nbinput docutils container">
@@ -631,7 +631,7 @@ True
 <span></span><span class="c1"># Model name</span>
 <span class="nb">print</span><span class="p">(</span><span class="n">cs</span><span class="o">.</span><span class="n">SIR</span><span class="o">.</span><span class="n">NAME</span><span class="p">)</span>
 <span class="c1"># Example parameter values</span>
-<span class="n">pprint</span><span class="p">(</span><span class="n">cs</span><span class="o">.</span><span class="n">SIR</span><span class="o">.</span><span class="n">EXAMPLE</span><span class="p">)</span>
+<span class="n">pprint</span><span class="p">(</span><span class="n">cs</span><span class="o">.</span><span class="n">SIR</span><span class="o">.</span><span class="n">EXAMPLE</span><span class="p">,</span> <span class="n">compact</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -652,139 +652,21 @@ SIR
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="n">area</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;country&quot;</span><span class="p">:</span> <span class="s2">&quot;Full&quot;</span><span class="p">,</span> <span class="s2">&quot;province&quot;</span><span class="p">:</span> <span class="n">cs</span><span class="o">.</span><span class="n">SIR</span><span class="o">.</span><span class="n">NAME</span><span class="p">}</span>
+<span></span><span class="n">model</span> <span class="o">=</span> <span class="n">cs</span><span class="o">.</span><span class="n">SIR</span>
+<span class="n">area</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;country&quot;</span><span class="p">:</span> <span class="s2">&quot;Full&quot;</span><span class="p">,</span> <span class="s2">&quot;province&quot;</span><span class="p">:</span> <span class="n">model</span><span class="o">.</span><span class="n">NAME</span><span class="p">}</span>
 <span class="c1"># Add records with SIR model</span>
-<span class="n">example_data</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">cs</span><span class="o">.</span><span class="n">SIR</span><span class="p">,</span> <span class="o">**</span><span class="n">area</span><span class="p">)</span>
-<span class="c1"># Register population value</span>
-<span class="n">population_data</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">cs</span><span class="o">.</span><span class="n">SIR</span><span class="o">.</span><span class="n">EXAMPLE</span><span class="p">[</span><span class="s2">&quot;population&quot;</span><span class="p">],</span> <span class="o">**</span><span class="n">area</span><span class="p">)</span>
-<span class="c1"># Show records with Scenario class</span>
-<span class="n">scenario</span> <span class="o">=</span> <span class="n">cs</span><span class="o">.</span><span class="n">Scenario</span><span class="p">(</span><span class="n">example_data</span><span class="p">,</span> <span class="n">population_data</span><span class="p">,</span> <span class="o">**</span><span class="n">area</span><span class="p">)</span>
-<span class="n">scenario</span><span class="o">.</span><span class="n">records</span><span class="p">()</span><span class="o">.</span><span class="n">tail</span><span class="p">()</span>
+<span class="n">example_data</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="o">**</span><span class="n">area</span><span class="p">)</span>
+<span class="c1"># Records with model variables</span>
+<span class="n">df</span> <span class="o">=</span> <span class="n">example_data</span><span class="o">.</span><span class="n">specialized</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="o">**</span><span class="n">area</span><span class="p">)</span>
+<span class="n">cs</span><span class="o">.</span><span class="n">line_plot</span><span class="p">(</span><span class="n">df</span><span class="o">.</span><span class="n">set_index</span><span class="p">(</span><span class="s2">&quot;Date&quot;</span><span class="p">),</span> <span class="n">title</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;Example data of </span><span class="si">{</span><span class="n">model</span><span class="o">.</span><span class="n">NAME</span><span class="si">}</span><span class="s2"> model&quot;</span><span class="p">,</span> <span class="n">y_integer</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
-<div class="nboutput docutils container">
+<div class="nboutput nblast docutils container">
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area docutils container">
 <img alt="_images/usage_theoretical_13_0.png" src="_images/usage_theoretical_13_0.png" />
-</div>
-</div>
-<div class="nboutput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[9]:
-</pre></div>
-</div>
-<div class="output_area rendered_html docutils container">
-<div>
-<style scoped>
-    .dataframe tbody tr th:only-of-type {
-        vertical-align: middle;
-    }
-
-    .dataframe tbody tr th {
-        vertical-align: top;
-    }
-
-    .dataframe thead th {
-        text-align: right;
-    }
-</style>
-<table border="1" class="dataframe">
-  <thead>
-    <tr style="text-align: right;">
-      <th></th>
-      <th>Date</th>
-      <th>Confirmed</th>
-      <th>Infected</th>
-      <th>Fatal</th>
-      <th>Recovered</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <th>175</th>
-      <td>2020-06-25</td>
-      <td>911645</td>
-      <td>750</td>
-      <td>0</td>
-      <td>910895</td>
-    </tr>
-    <tr>
-      <th>176</th>
-      <td>2020-06-26</td>
-      <td>911658</td>
-      <td>708</td>
-      <td>0</td>
-      <td>910950</td>
-    </tr>
-    <tr>
-      <th>177</th>
-      <td>2020-06-27</td>
-      <td>911671</td>
-      <td>669</td>
-      <td>0</td>
-      <td>911002</td>
-    </tr>
-    <tr>
-      <th>178</th>
-      <td>2020-06-28</td>
-      <td>911682</td>
-      <td>632</td>
-      <td>0</td>
-      <td>911050</td>
-    </tr>
-    <tr>
-      <th>179</th>
-      <td>2020-06-29</td>
-      <td>911692</td>
-      <td>596</td>
-      <td>0</td>
-      <td>911096</td>
-    </tr>
-  </tbody>
-</table>
-</div></div>
-</div>
-<div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[10]:
-</pre></div>
-</div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="n">df</span> <span class="o">=</span> <span class="n">cs</span><span class="o">.</span><span class="n">SIR</span><span class="o">.</span><span class="n">specialize</span><span class="p">(</span><span class="n">scenario</span><span class="o">.</span><span class="n">records</span><span class="p">(</span><span class="n">show_figure</span><span class="o">=</span><span class="kc">False</span><span class="p">),</span> <span class="n">population</span><span class="o">=</span><span class="mi">1000000</span><span class="p">)</span>
-<span class="n">cs</span><span class="o">.</span><span class="n">line_plot</span><span class="p">(</span>
-    <span class="n">df</span><span class="p">[[</span><span class="s2">&quot;Susceptible&quot;</span><span class="p">,</span> <span class="s2">&quot;Infected&quot;</span><span class="p">,</span> <span class="s2">&quot;Fatal or Recovered&quot;</span><span class="p">]],</span>
-    <span class="n">title</span><span class="o">=</span><span class="s2">&quot;SIR model with Fatal or Recovered&quot;</span><span class="p">,</span>
-    <span class="n">y_integer</span><span class="o">=</span><span class="kc">True</span>
-<span class="p">)</span>
-</pre></div>
-</div>
-</div>
-<div class="nboutput nblast docutils container">
-<div class="prompt empty docutils container">
-</div>
-<div class="output_area docutils container">
-<img alt="_images/usage_theoretical_14_0.png" src="_images/usage_theoretical_14_0.png" />
-</div>
-</div>
-<div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[11]:
-</pre></div>
-</div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="c1"># Non-dimensional values</span>
-<span class="n">cs</span><span class="o">.</span><span class="n">line_plot</span><span class="p">(</span>
-    <span class="n">example_data</span><span class="o">.</span><span class="n">non_dim</span><span class="p">(</span><span class="n">country</span><span class="o">=</span><span class="s2">&quot;Full&quot;</span><span class="p">,</span> <span class="n">province</span><span class="o">=</span><span class="n">cs</span><span class="o">.</span><span class="n">SIR</span><span class="o">.</span><span class="n">NAME</span><span class="p">)</span><span class="o">.</span><span class="n">set_index</span><span class="p">(</span><span class="s2">&quot;t&quot;</span><span class="p">),</span>
-    <span class="n">title</span><span class="o">=</span><span class="s2">&quot;Example data of SIR model&quot;</span><span class="p">,</span>
-    <span class="n">xlim</span><span class="o">=</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
-<span class="p">)</span>
-</pre></div>
-</div>
-</div>
-<div class="nboutput nblast docutils container">
-<div class="prompt empty docutils container">
-</div>
-<div class="output_area docutils container">
-<img alt="_images/usage_theoretical_15_0.png" src="_images/usage_theoretical_15_0.png" />
 </div>
 </div>
 </div>
@@ -796,14 +678,14 @@ SIR
 \mathrm{S} \overset{\beta  I}{\longrightarrow}\ &amp; \mathrm{I} \overset{\gamma}{\longrightarrow} \mathrm{R}  \\
 &amp; \mathrm{I} \overset{\alpha}{\longrightarrow} \mathrm{D}  \\
 \end{align*}</div><div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[12]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[10]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
 <span></span><span class="c1"># Model name</span>
 <span class="nb">print</span><span class="p">(</span><span class="n">cs</span><span class="o">.</span><span class="n">SIRD</span><span class="o">.</span><span class="n">NAME</span><span class="p">)</span>
 <span class="c1"># Example parameter values</span>
-<span class="n">pprint</span><span class="p">(</span><span class="n">cs</span><span class="o">.</span><span class="n">SIRD</span><span class="o">.</span><span class="n">EXAMPLE</span><span class="p">)</span>
+<span class="n">pprint</span><span class="p">(</span><span class="n">cs</span><span class="o">.</span><span class="n">SIRD</span><span class="o">.</span><span class="n">EXAMPLE</span><span class="p">,</span> <span class="n">compact</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -823,114 +705,17 @@ SIR-D
 </pre></div></div>
 </div>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[13]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[11]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="n">area</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;country&quot;</span><span class="p">:</span> <span class="s2">&quot;Full&quot;</span><span class="p">,</span> <span class="s2">&quot;province&quot;</span><span class="p">:</span> <span class="n">cs</span><span class="o">.</span><span class="n">SIRD</span><span class="o">.</span><span class="n">NAME</span><span class="p">}</span>
-<span class="c1"># Add records with SIR-D model</span>
-<span class="n">example_data</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">cs</span><span class="o">.</span><span class="n">SIRD</span><span class="p">,</span> <span class="o">**</span><span class="n">area</span><span class="p">)</span>
-<span class="c1"># Register population value</span>
-<span class="n">population_data</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">cs</span><span class="o">.</span><span class="n">SIRD</span><span class="o">.</span><span class="n">EXAMPLE</span><span class="p">[</span><span class="s2">&quot;population&quot;</span><span class="p">],</span> <span class="o">**</span><span class="n">area</span><span class="p">)</span>
-<span class="c1"># Show records with Scenario class</span>
-<span class="n">scenario</span> <span class="o">=</span> <span class="n">cs</span><span class="o">.</span><span class="n">Scenario</span><span class="p">(</span><span class="n">example_data</span><span class="p">,</span> <span class="n">population_data</span><span class="p">,</span> <span class="o">**</span><span class="n">area</span><span class="p">)</span>
-<span class="n">scenario</span><span class="o">.</span><span class="n">records</span><span class="p">()</span><span class="o">.</span><span class="n">tail</span><span class="p">()</span>
-</pre></div>
-</div>
-</div>
-<div class="nboutput docutils container">
-<div class="prompt empty docutils container">
-</div>
-<div class="output_area docutils container">
-<img alt="_images/usage_theoretical_18_0.png" src="_images/usage_theoretical_18_0.png" />
-</div>
-</div>
-<div class="nboutput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[13]:
-</pre></div>
-</div>
-<div class="output_area rendered_html docutils container">
-<div>
-<style scoped>
-    .dataframe tbody tr th:only-of-type {
-        vertical-align: middle;
-    }
-
-    .dataframe tbody tr th {
-        vertical-align: top;
-    }
-
-    .dataframe thead th {
-        text-align: right;
-    }
-</style>
-<table border="1" class="dataframe">
-  <thead>
-    <tr style="text-align: right;">
-      <th></th>
-      <th>Date</th>
-      <th>Confirmed</th>
-      <th>Infected</th>
-      <th>Fatal</th>
-      <th>Recovered</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <th>175</th>
-      <td>2020-06-25</td>
-      <td>888746</td>
-      <td>710</td>
-      <td>55502</td>
-      <td>832534</td>
-    </tr>
-    <tr>
-      <th>176</th>
-      <td>2020-06-26</td>
-      <td>888762</td>
-      <td>670</td>
-      <td>55506</td>
-      <td>832586</td>
-    </tr>
-    <tr>
-      <th>177</th>
-      <td>2020-06-27</td>
-      <td>888776</td>
-      <td>632</td>
-      <td>55509</td>
-      <td>832635</td>
-    </tr>
-    <tr>
-      <th>178</th>
-      <td>2020-06-28</td>
-      <td>888790</td>
-      <td>597</td>
-      <td>55512</td>
-      <td>832681</td>
-    </tr>
-    <tr>
-      <th>179</th>
-      <td>2020-06-29</td>
-      <td>888802</td>
-      <td>563</td>
-      <td>55515</td>
-      <td>832724</td>
-    </tr>
-  </tbody>
-</table>
-</div></div>
-</div>
-<div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[14]:
-</pre></div>
-</div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="c1"># Non-dimensional values</span>
-<span class="n">cs</span><span class="o">.</span><span class="n">line_plot</span><span class="p">(</span>
-    <span class="n">example_data</span><span class="o">.</span><span class="n">non_dim</span><span class="p">(</span><span class="n">country</span><span class="o">=</span><span class="s2">&quot;Full&quot;</span><span class="p">,</span> <span class="n">province</span><span class="o">=</span><span class="n">cs</span><span class="o">.</span><span class="n">SIRD</span><span class="o">.</span><span class="n">NAME</span><span class="p">)</span><span class="o">.</span><span class="n">set_index</span><span class="p">(</span><span class="s2">&quot;t&quot;</span><span class="p">),</span>
-    <span class="n">title</span><span class="o">=</span><span class="s2">&quot;Example data of SIR-D model&quot;</span><span class="p">,</span>
-    <span class="n">xlim</span><span class="o">=</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
-<span class="p">)</span>
+<span></span><span class="n">model</span> <span class="o">=</span> <span class="n">cs</span><span class="o">.</span><span class="n">SIRD</span>
+<span class="n">area</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;country&quot;</span><span class="p">:</span> <span class="s2">&quot;Full&quot;</span><span class="p">,</span> <span class="s2">&quot;province&quot;</span><span class="p">:</span> <span class="n">model</span><span class="o">.</span><span class="n">NAME</span><span class="p">}</span>
+<span class="c1"># Add records with SIR model</span>
+<span class="n">example_data</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="o">**</span><span class="n">area</span><span class="p">)</span>
+<span class="c1"># Records with model variables</span>
+<span class="n">df</span> <span class="o">=</span> <span class="n">example_data</span><span class="o">.</span><span class="n">specialized</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="o">**</span><span class="n">area</span><span class="p">)</span>
+<span class="n">cs</span><span class="o">.</span><span class="n">line_plot</span><span class="p">(</span><span class="n">df</span><span class="o">.</span><span class="n">set_index</span><span class="p">(</span><span class="s2">&quot;Date&quot;</span><span class="p">),</span> <span class="n">title</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;Example data of </span><span class="si">{</span><span class="n">model</span><span class="o">.</span><span class="n">NAME</span><span class="si">}</span><span class="s2"> model&quot;</span><span class="p">,</span> <span class="n">y_integer</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -938,7 +723,7 @@ SIR-D
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area docutils container">
-<img alt="_images/usage_theoretical_19_0.png" src="_images/usage_theoretical_19_0.png" />
+<img alt="_images/usage_theoretical_16_0.png" src="_images/usage_theoretical_16_0.png" />
 </div>
 </div>
 </div>
@@ -951,14 +736,14 @@ SIR-D
 \mathrm{S}^\ast \overset{1 - \alpha_1}{\longrightarrow}\ &amp; \mathrm{I} \overset{\gamma}{\longrightarrow} \mathrm{R}    \\
 &amp; \mathrm{I} \overset{\alpha_2}{\longrightarrow} \mathrm{F}    \\
 \end{align*}</div><div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[15]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[12]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
 <span></span><span class="c1"># Model name</span>
 <span class="nb">print</span><span class="p">(</span><span class="n">cs</span><span class="o">.</span><span class="n">SIRF</span><span class="o">.</span><span class="n">NAME</span><span class="p">)</span>
 <span class="c1"># Example parameter values</span>
-<span class="n">pprint</span><span class="p">(</span><span class="n">cs</span><span class="o">.</span><span class="n">SIRF</span><span class="o">.</span><span class="n">EXAMPLE</span><span class="p">)</span>
+<span class="n">pprint</span><span class="p">(</span><span class="n">cs</span><span class="o">.</span><span class="n">SIRF</span><span class="o">.</span><span class="n">EXAMPLE</span><span class="p">,</span> <span class="n">compact</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -978,114 +763,17 @@ SIR-F
 </pre></div></div>
 </div>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[16]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[13]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="n">area</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;country&quot;</span><span class="p">:</span> <span class="s2">&quot;Full&quot;</span><span class="p">,</span> <span class="s2">&quot;province&quot;</span><span class="p">:</span> <span class="n">cs</span><span class="o">.</span><span class="n">SIRF</span><span class="o">.</span><span class="n">NAME</span><span class="p">}</span>
-<span class="c1"># Add records with SIR-F model</span>
-<span class="n">example_data</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">cs</span><span class="o">.</span><span class="n">SIRF</span><span class="p">,</span> <span class="o">**</span><span class="n">area</span><span class="p">)</span>
-<span class="c1"># Register population value</span>
-<span class="n">population_data</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">cs</span><span class="o">.</span><span class="n">SIRF</span><span class="o">.</span><span class="n">EXAMPLE</span><span class="p">[</span><span class="s2">&quot;population&quot;</span><span class="p">],</span> <span class="o">**</span><span class="n">area</span><span class="p">)</span>
-<span class="c1"># Show records with Scenario class</span>
-<span class="n">scenario</span> <span class="o">=</span> <span class="n">cs</span><span class="o">.</span><span class="n">Scenario</span><span class="p">(</span><span class="n">example_data</span><span class="p">,</span> <span class="n">population_data</span><span class="p">,</span> <span class="o">**</span><span class="n">area</span><span class="p">)</span>
-<span class="n">scenario</span><span class="o">.</span><span class="n">records</span><span class="p">()</span><span class="o">.</span><span class="n">tail</span><span class="p">()</span>
-</pre></div>
-</div>
-</div>
-<div class="nboutput docutils container">
-<div class="prompt empty docutils container">
-</div>
-<div class="output_area docutils container">
-<img alt="_images/usage_theoretical_22_0.png" src="_images/usage_theoretical_22_0.png" />
-</div>
-</div>
-<div class="nboutput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[16]:
-</pre></div>
-</div>
-<div class="output_area rendered_html docutils container">
-<div>
-<style scoped>
-    .dataframe tbody tr th:only-of-type {
-        vertical-align: middle;
-    }
-
-    .dataframe tbody tr th {
-        vertical-align: top;
-    }
-
-    .dataframe thead th {
-        text-align: right;
-    }
-</style>
-<table border="1" class="dataframe">
-  <thead>
-    <tr style="text-align: right;">
-      <th></th>
-      <th>Date</th>
-      <th>Confirmed</th>
-      <th>Infected</th>
-      <th>Fatal</th>
-      <th>Recovered</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <th>175</th>
-      <td>2020-06-25</td>
-      <td>887764</td>
-      <td>723</td>
-      <td>57103</td>
-      <td>829938</td>
-    </tr>
-    <tr>
-      <th>176</th>
-      <td>2020-06-26</td>
-      <td>887779</td>
-      <td>683</td>
-      <td>57106</td>
-      <td>829990</td>
-    </tr>
-    <tr>
-      <th>177</th>
-      <td>2020-06-27</td>
-      <td>887795</td>
-      <td>645</td>
-      <td>57110</td>
-      <td>830040</td>
-    </tr>
-    <tr>
-      <th>178</th>
-      <td>2020-06-28</td>
-      <td>887809</td>
-      <td>609</td>
-      <td>57113</td>
-      <td>830087</td>
-    </tr>
-    <tr>
-      <th>179</th>
-      <td>2020-06-29</td>
-      <td>887821</td>
-      <td>574</td>
-      <td>57116</td>
-      <td>830131</td>
-    </tr>
-  </tbody>
-</table>
-</div></div>
-</div>
-<div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[17]:
-</pre></div>
-</div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="c1"># Non-dimensional values</span>
-<span class="n">cs</span><span class="o">.</span><span class="n">line_plot</span><span class="p">(</span>
-    <span class="n">example_data</span><span class="o">.</span><span class="n">non_dim</span><span class="p">(</span><span class="n">country</span><span class="o">=</span><span class="s2">&quot;Full&quot;</span><span class="p">,</span> <span class="n">province</span><span class="o">=</span><span class="n">cs</span><span class="o">.</span><span class="n">SIRF</span><span class="o">.</span><span class="n">NAME</span><span class="p">)</span><span class="o">.</span><span class="n">set_index</span><span class="p">(</span><span class="s2">&quot;t&quot;</span><span class="p">),</span>
-    <span class="n">title</span><span class="o">=</span><span class="s2">&quot;Example data of SIR-F model&quot;</span><span class="p">,</span>
-    <span class="n">xlim</span><span class="o">=</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
-<span class="p">)</span>
+<span></span><span class="n">model</span> <span class="o">=</span> <span class="n">cs</span><span class="o">.</span><span class="n">SIRF</span>
+<span class="n">area</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;country&quot;</span><span class="p">:</span> <span class="s2">&quot;Full&quot;</span><span class="p">,</span> <span class="s2">&quot;province&quot;</span><span class="p">:</span> <span class="n">model</span><span class="o">.</span><span class="n">NAME</span><span class="p">}</span>
+<span class="c1"># Add records with SIR model</span>
+<span class="n">example_data</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="o">**</span><span class="n">area</span><span class="p">)</span>
+<span class="c1"># Records with model variables</span>
+<span class="n">df</span> <span class="o">=</span> <span class="n">example_data</span><span class="o">.</span><span class="n">specialized</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="o">**</span><span class="n">area</span><span class="p">)</span>
+<span class="n">cs</span><span class="o">.</span><span class="n">line_plot</span><span class="p">(</span><span class="n">df</span><span class="o">.</span><span class="n">set_index</span><span class="p">(</span><span class="s2">&quot;Date&quot;</span><span class="p">),</span> <span class="n">title</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;Example data of </span><span class="si">{</span><span class="n">model</span><span class="o">.</span><span class="n">NAME</span><span class="si">}</span><span class="s2"> model&quot;</span><span class="p">,</span> <span class="n">y_integer</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -1093,7 +781,7 @@ SIR-F
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area docutils container">
-<img alt="_images/usage_theoretical_23_0.png" src="_images/usage_theoretical_23_0.png" />
+<img alt="_images/usage_theoretical_19_0.png" src="_images/usage_theoretical_19_0.png" />
 </div>
 </div>
 </div>
@@ -1106,14 +794,14 @@ SIR-F
 \mathrm{S}^\ast \overset{1 - \alpha_1}{\longrightarrow}\ &amp; \mathrm{I} \overset{\gamma}{\longrightarrow} \mathrm{R}    \\
 &amp; \mathrm{I} \overset{\alpha_2}{\longrightarrow} \mathrm{F}    \\
 \end{align*}</div><div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[18]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[14]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
 <span></span><span class="c1"># Model name</span>
 <span class="nb">print</span><span class="p">(</span><span class="n">cs</span><span class="o">.</span><span class="n">SEWIRF</span><span class="o">.</span><span class="n">NAME</span><span class="p">)</span>
 <span class="c1"># Example parameter values</span>
-<span class="n">pprint</span><span class="p">(</span><span class="n">cs</span><span class="o">.</span><span class="n">SEWIRF</span><span class="o">.</span><span class="n">EXAMPLE</span><span class="p">)</span>
+<span class="n">pprint</span><span class="p">(</span><span class="n">cs</span><span class="o">.</span><span class="n">SEWIRF</span><span class="o">.</span><span class="n">EXAMPLE</span><span class="p">,</span> <span class="n">compact</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -1140,114 +828,17 @@ SEWIR-F
 </pre></div></div>
 </div>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[19]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[15]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="n">area</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;country&quot;</span><span class="p">:</span> <span class="s2">&quot;Full&quot;</span><span class="p">,</span> <span class="s2">&quot;province&quot;</span><span class="p">:</span> <span class="n">cs</span><span class="o">.</span><span class="n">SEWIRF</span><span class="o">.</span><span class="n">NAME</span><span class="p">}</span>
-<span class="c1"># Add records with SIR-F model</span>
-<span class="n">example_data</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">cs</span><span class="o">.</span><span class="n">SEWIRF</span><span class="p">,</span> <span class="o">**</span><span class="n">area</span><span class="p">)</span>
-<span class="c1"># Register population value</span>
-<span class="n">population_data</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">cs</span><span class="o">.</span><span class="n">SEWIRF</span><span class="o">.</span><span class="n">EXAMPLE</span><span class="p">[</span><span class="s2">&quot;population&quot;</span><span class="p">],</span> <span class="o">**</span><span class="n">area</span><span class="p">)</span>
-<span class="c1"># Show records with Scenario class</span>
-<span class="n">scenario</span> <span class="o">=</span> <span class="n">cs</span><span class="o">.</span><span class="n">Scenario</span><span class="p">(</span><span class="n">example_data</span><span class="p">,</span> <span class="n">population_data</span><span class="p">,</span> <span class="o">**</span><span class="n">area</span><span class="p">)</span>
-<span class="n">scenario</span><span class="o">.</span><span class="n">records</span><span class="p">()</span><span class="o">.</span><span class="n">tail</span><span class="p">()</span>
-</pre></div>
-</div>
-</div>
-<div class="nboutput docutils container">
-<div class="prompt empty docutils container">
-</div>
-<div class="output_area docutils container">
-<img alt="_images/usage_theoretical_26_0.png" src="_images/usage_theoretical_26_0.png" />
-</div>
-</div>
-<div class="nboutput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[19]:
-</pre></div>
-</div>
-<div class="output_area rendered_html docutils container">
-<div>
-<style scoped>
-    .dataframe tbody tr th:only-of-type {
-        vertical-align: middle;
-    }
-
-    .dataframe tbody tr th {
-        vertical-align: top;
-    }
-
-    .dataframe thead th {
-        text-align: right;
-    }
-</style>
-<table border="1" class="dataframe">
-  <thead>
-    <tr style="text-align: right;">
-      <th></th>
-      <th>Date</th>
-      <th>Confirmed</th>
-      <th>Infected</th>
-      <th>Fatal</th>
-      <th>Recovered</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <th>175</th>
-      <td>2020-06-25</td>
-      <td>969902</td>
-      <td>1771</td>
-      <td>62325</td>
-      <td>905806</td>
-    </tr>
-    <tr>
-      <th>176</th>
-      <td>2020-06-26</td>
-      <td>969930</td>
-      <td>1661</td>
-      <td>62334</td>
-      <td>905935</td>
-    </tr>
-    <tr>
-      <th>177</th>
-      <td>2020-06-27</td>
-      <td>969956</td>
-      <td>1559</td>
-      <td>62342</td>
-      <td>906055</td>
-    </tr>
-    <tr>
-      <th>178</th>
-      <td>2020-06-28</td>
-      <td>969980</td>
-      <td>1462</td>
-      <td>62349</td>
-      <td>906169</td>
-    </tr>
-    <tr>
-      <th>179</th>
-      <td>2020-06-29</td>
-      <td>970003</td>
-      <td>1372</td>
-      <td>62356</td>
-      <td>906275</td>
-    </tr>
-  </tbody>
-</table>
-</div></div>
-</div>
-<div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[20]:
-</pre></div>
-</div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="c1"># Non-dimensional values</span>
-<span class="n">cs</span><span class="o">.</span><span class="n">line_plot</span><span class="p">(</span>
-    <span class="n">example_data</span><span class="o">.</span><span class="n">non_dim</span><span class="p">(</span><span class="n">country</span><span class="o">=</span><span class="s2">&quot;Full&quot;</span><span class="p">,</span> <span class="n">province</span><span class="o">=</span><span class="n">cs</span><span class="o">.</span><span class="n">SEWIRF</span><span class="o">.</span><span class="n">NAME</span><span class="p">)</span><span class="o">.</span><span class="n">set_index</span><span class="p">(</span><span class="s2">&quot;t&quot;</span><span class="p">),</span>
-    <span class="n">title</span><span class="o">=</span><span class="s2">&quot;Example data of SEWIR-F model&quot;</span><span class="p">,</span>
-    <span class="n">xlim</span><span class="o">=</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
-<span class="p">)</span>
+<span></span><span class="n">model</span> <span class="o">=</span> <span class="n">cs</span><span class="o">.</span><span class="n">SEWIRF</span>
+<span class="n">area</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;country&quot;</span><span class="p">:</span> <span class="s2">&quot;Full&quot;</span><span class="p">,</span> <span class="s2">&quot;province&quot;</span><span class="p">:</span> <span class="n">model</span><span class="o">.</span><span class="n">NAME</span><span class="p">}</span>
+<span class="c1"># Add records with SIR model</span>
+<span class="n">example_data</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="o">**</span><span class="n">area</span><span class="p">)</span>
+<span class="c1"># Records with model variables</span>
+<span class="n">df</span> <span class="o">=</span> <span class="n">example_data</span><span class="o">.</span><span class="n">specialized</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="o">**</span><span class="n">area</span><span class="p">)</span>
+<span class="n">cs</span><span class="o">.</span><span class="n">line_plot</span><span class="p">(</span><span class="n">df</span><span class="o">.</span><span class="n">set_index</span><span class="p">(</span><span class="s2">&quot;Date&quot;</span><span class="p">),</span> <span class="n">title</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;Example data of </span><span class="si">{</span><span class="n">model</span><span class="o">.</span><span class="n">NAME</span><span class="si">}</span><span class="s2"> model&quot;</span><span class="p">,</span> <span class="n">y_integer</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -1255,7 +846,7 @@ SEWIR-F
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area docutils container">
-<img alt="_images/usage_theoretical_27_0.png" src="_images/usage_theoretical_27_0.png" />
+<img alt="_images/usage_theoretical_22_0.png" src="_images/usage_theoretical_22_0.png" />
 </div>
 </div>
 </div>
@@ -1271,14 +862,14 @@ SEWIR-F
 <div class="math notranslate nohighlight">
 \[\begin{split}\frac{\mathrm{d}S}{\mathrm{d}T}= - \beta S I - \omega N  \\\end{split}\]</div>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[21]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[16]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
 <span></span><span class="c1"># Model name</span>
 <span class="nb">print</span><span class="p">(</span><span class="n">cs</span><span class="o">.</span><span class="n">SIRFV</span><span class="o">.</span><span class="n">NAME</span><span class="p">)</span>
 <span class="c1"># Example parameter values</span>
-<span class="n">pprint</span><span class="p">(</span><span class="n">cs</span><span class="o">.</span><span class="n">SIRFV</span><span class="o">.</span><span class="n">EXAMPLE</span><span class="p">)</span>
+<span class="n">pprint</span><span class="p">(</span><span class="n">cs</span><span class="o">.</span><span class="n">SIRFV</span><span class="o">.</span><span class="n">EXAMPLE</span><span class="p">,</span> <span class="n">compact</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -1303,114 +894,17 @@ SIR-FV
 </pre></div></div>
 </div>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[22]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[17]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="n">area</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;country&quot;</span><span class="p">:</span> <span class="s2">&quot;Full&quot;</span><span class="p">,</span> <span class="s2">&quot;province&quot;</span><span class="p">:</span> <span class="n">cs</span><span class="o">.</span><span class="n">SIRFV</span><span class="o">.</span><span class="n">NAME</span><span class="p">}</span>
-<span class="c1"># Add records with SIR-F model</span>
-<span class="n">example_data</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">cs</span><span class="o">.</span><span class="n">SIRFV</span><span class="p">,</span> <span class="o">**</span><span class="n">area</span><span class="p">)</span>
-<span class="c1"># Register population value</span>
-<span class="n">population_data</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">cs</span><span class="o">.</span><span class="n">SIRFV</span><span class="o">.</span><span class="n">EXAMPLE</span><span class="p">[</span><span class="s2">&quot;population&quot;</span><span class="p">],</span> <span class="o">**</span><span class="n">area</span><span class="p">)</span>
-<span class="c1"># Show records with Scenario class</span>
-<span class="n">scenario</span> <span class="o">=</span> <span class="n">cs</span><span class="o">.</span><span class="n">Scenario</span><span class="p">(</span><span class="n">example_data</span><span class="p">,</span> <span class="n">population_data</span><span class="p">,</span> <span class="o">**</span><span class="n">area</span><span class="p">)</span>
-<span class="n">scenario</span><span class="o">.</span><span class="n">records</span><span class="p">()</span><span class="o">.</span><span class="n">tail</span><span class="p">()</span>
-</pre></div>
-</div>
-</div>
-<div class="nboutput docutils container">
-<div class="prompt empty docutils container">
-</div>
-<div class="output_area docutils container">
-<img alt="_images/usage_theoretical_30_0.png" src="_images/usage_theoretical_30_0.png" />
-</div>
-</div>
-<div class="nboutput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[22]:
-</pre></div>
-</div>
-<div class="output_area rendered_html docutils container">
-<div>
-<style scoped>
-    .dataframe tbody tr th:only-of-type {
-        vertical-align: middle;
-    }
-
-    .dataframe tbody tr th {
-        vertical-align: top;
-    }
-
-    .dataframe thead th {
-        text-align: right;
-    }
-</style>
-<table border="1" class="dataframe">
-  <thead>
-    <tr style="text-align: right;">
-      <th></th>
-      <th>Date</th>
-      <th>Confirmed</th>
-      <th>Infected</th>
-      <th>Fatal</th>
-      <th>Recovered</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <th>175</th>
-      <td>2020-06-25</td>
-      <td>790566</td>
-      <td>347</td>
-      <td>47908</td>
-      <td>742311</td>
-    </tr>
-    <tr>
-      <th>176</th>
-      <td>2020-06-26</td>
-      <td>790568</td>
-      <td>322</td>
-      <td>47910</td>
-      <td>742336</td>
-    </tr>
-    <tr>
-      <th>177</th>
-      <td>2020-06-27</td>
-      <td>790569</td>
-      <td>299</td>
-      <td>47911</td>
-      <td>742359</td>
-    </tr>
-    <tr>
-      <th>178</th>
-      <td>2020-06-28</td>
-      <td>790572</td>
-      <td>278</td>
-      <td>47913</td>
-      <td>742381</td>
-    </tr>
-    <tr>
-      <th>179</th>
-      <td>2020-06-29</td>
-      <td>790573</td>
-      <td>258</td>
-      <td>47914</td>
-      <td>742401</td>
-    </tr>
-  </tbody>
-</table>
-</div></div>
-</div>
-<div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[23]:
-</pre></div>
-</div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="c1"># Non-dimensional values</span>
-<span class="n">cs</span><span class="o">.</span><span class="n">line_plot</span><span class="p">(</span>
-    <span class="n">example_data</span><span class="o">.</span><span class="n">non_dim</span><span class="p">(</span><span class="n">country</span><span class="o">=</span><span class="s2">&quot;Full&quot;</span><span class="p">,</span> <span class="n">province</span><span class="o">=</span><span class="n">cs</span><span class="o">.</span><span class="n">SIRFV</span><span class="o">.</span><span class="n">NAME</span><span class="p">)</span><span class="o">.</span><span class="n">set_index</span><span class="p">(</span><span class="s2">&quot;t&quot;</span><span class="p">),</span>
-    <span class="n">title</span><span class="o">=</span><span class="s2">&quot;Example data of SIR-FV model&quot;</span><span class="p">,</span>
-    <span class="n">xlim</span><span class="o">=</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
-<span class="p">)</span>
+<span></span><span class="n">model</span> <span class="o">=</span> <span class="n">cs</span><span class="o">.</span><span class="n">SIRFV</span>
+<span class="n">area</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;country&quot;</span><span class="p">:</span> <span class="s2">&quot;Full&quot;</span><span class="p">,</span> <span class="s2">&quot;province&quot;</span><span class="p">:</span> <span class="n">model</span><span class="o">.</span><span class="n">NAME</span><span class="p">}</span>
+<span class="c1"># Add records with SIR model</span>
+<span class="n">example_data</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="o">**</span><span class="n">area</span><span class="p">)</span>
+<span class="c1"># Records with model variables</span>
+<span class="n">df</span> <span class="o">=</span> <span class="n">example_data</span><span class="o">.</span><span class="n">specialized</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="o">**</span><span class="n">area</span><span class="p">)</span>
+<span class="n">cs</span><span class="o">.</span><span class="n">line_plot</span><span class="p">(</span><span class="n">df</span><span class="o">.</span><span class="n">set_index</span><span class="p">(</span><span class="s2">&quot;Date&quot;</span><span class="p">),</span> <span class="n">title</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;Example data of </span><span class="si">{</span><span class="n">model</span><span class="o">.</span><span class="n">NAME</span><span class="si">}</span><span class="s2"> model&quot;</span><span class="p">,</span> <span class="n">y_integer</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -1418,7 +912,7 @@ SIR-FV
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area docutils container">
-<img alt="_images/usage_theoretical_31_0.png" src="_images/usage_theoretical_31_0.png" />
+<img alt="_images/usage_theoretical_25_0.png" src="_images/usage_theoretical_25_0.png" />
 </div>
 </div>
 </div>
@@ -1457,7 +951,7 @@ SIR-FV
 </tbody>
 </table>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[24]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[18]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
@@ -1468,7 +962,7 @@ SIR-FV
 </div>
 </div>
 <div class="nboutput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[24]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[18]:
 </pre></div>
 </div>
 <div class="output_area docutils container">
@@ -1477,7 +971,7 @@ SIR-FV
 </pre></div></div>
 </div>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[25]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[19]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
@@ -1491,7 +985,7 @@ SIR-FV
 </div>
 </div>
 <div class="nboutput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[25]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[19]:
 </pre></div>
 </div>
 <div class="output_area docutils container">
@@ -1500,7 +994,7 @@ SIR-FV
 </pre></div></div>
 </div>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[26]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[20]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
@@ -1516,7 +1010,7 @@ SIR-FV
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area docutils container">
-<img alt="_images/usage_theoretical_35_0.png" src="_images/usage_theoretical_35_0.png" />
+<img alt="_images/usage_theoretical_29_0.png" src="_images/usage_theoretical_29_0.png" />
 </div>
 </div>
 <div class="nboutput docutils container">
@@ -1672,7 +1166,7 @@ SIR-FV
 <div class="line">Record on 01Jan2020 was removed because the number of recovered cases is 0 and this sometimes causes error in estimation.</div>
 </div>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[27]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[21]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
@@ -1684,7 +1178,7 @@ SIR-FV
 </div>
 </div>
 <div class="nboutput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[27]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[21]:
 </pre></div>
 </div>
 <div class="output_area rendered_html docutils container">
@@ -1747,7 +1241,7 @@ SIR-FV
 </div></div>
 </div>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[28]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[22]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
@@ -1768,7 +1262,7 @@ SIR-FV
 </div>
 </div>
 <div class="nboutput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[28]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[22]:
 </pre></div>
 </div>
 <div class="output_area rendered_html docutils container">
@@ -2003,7 +1497,7 @@ SIR-FV
 <div class="section" id="Compare-the-scenarios">
 <h3>Compare the scenarios<a class="headerlink" href="#Compare-the-scenarios" title="Permalink to this headline">¶</a></h3>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[29]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[23]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
@@ -2013,7 +1507,7 @@ SIR-FV
 </div>
 </div>
 <div class="nboutput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[29]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[23]:
 </pre></div>
 </div>
 <div class="output_area rendered_html docutils container">
@@ -2039,6 +1533,7 @@ SIR-FV
       <th>argmax(Infected)</th>
       <th>Infected on 01Jan2021</th>
       <th>Fatal on 01Jan2021</th>
+      <th>1st_Rt</th>
     </tr>
   </thead>
   <tbody>
@@ -2048,6 +1543,7 @@ SIR-FV
       <td>02Mar2020</td>
       <td>0</td>
       <td>57398</td>
+      <td>2.50</td>
     </tr>
     <tr>
       <th>Lockdown</th>
@@ -2055,6 +1551,7 @@ SIR-FV
       <td>08Mar2020</td>
       <td>106</td>
       <td>28555</td>
+      <td>1.25</td>
     </tr>
     <tr>
       <th>Medicine</th>
@@ -2062,6 +1559,7 @@ SIR-FV
       <td>22Feb2020</td>
       <td>0</td>
       <td>10181</td>
+      <td>1.31</td>
     </tr>
     <tr>
       <th>Vaccine</th>
@@ -2069,6 +1567,7 @@ SIR-FV
       <td>01Feb2020</td>
       <td>0</td>
       <td>4003</td>
+      <td>2.50</td>
     </tr>
   </tbody>
 </table>
@@ -2078,7 +1577,7 @@ SIR-FV
 <div class="section" id="Simulation-of-each-scenario">
 <h3>Simulation of each scenario<a class="headerlink" href="#Simulation-of-each-scenario" title="Permalink to this headline">¶</a></h3>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[30]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[24]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
@@ -2090,11 +1589,11 @@ SIR-FV
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area docutils container">
-<img alt="_images/usage_theoretical_42_0.png" src="_images/usage_theoretical_42_0.png" />
+<img alt="_images/usage_theoretical_36_0.png" src="_images/usage_theoretical_36_0.png" />
 </div>
 </div>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[31]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[25]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
@@ -2106,11 +1605,11 @@ SIR-FV
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area docutils container">
-<img alt="_images/usage_theoretical_43_0.png" src="_images/usage_theoretical_43_0.png" />
+<img alt="_images/usage_theoretical_37_0.png" src="_images/usage_theoretical_37_0.png" />
 </div>
 </div>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[32]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[26]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
@@ -2122,11 +1621,11 @@ SIR-FV
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area docutils container">
-<img alt="_images/usage_theoretical_44_0.png" src="_images/usage_theoretical_44_0.png" />
+<img alt="_images/usage_theoretical_38_0.png" src="_images/usage_theoretical_38_0.png" />
 </div>
 </div>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[33]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[27]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
@@ -2138,7 +1637,7 @@ SIR-FV
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area docutils container">
-<img alt="_images/usage_theoretical_45_0.png" src="_images/usage_theoretical_45_0.png" />
+<img alt="_images/usage_theoretical_39_0.png" src="_images/usage_theoretical_39_0.png" />
 </div>
 </div>
 </div>
