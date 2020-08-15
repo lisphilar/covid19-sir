@@ -16,6 +16,7 @@ class TestChangeFinder(object):
         sr_df = jhu_data.to_sr(country=country, population=population)
         change_finder = ChangeFinder(sr_df)
         change_finder.run()
+        warnings.filterwarnings("ignore", category=DeprecationWarning)
         warnings.filterwarnings("ignore", category=UserWarning)
         change_finder.show(area=jhu_data.area_name(country="Italy"))
         assert isinstance(change_finder.date_range(), tuple)
