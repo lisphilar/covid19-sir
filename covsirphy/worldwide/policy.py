@@ -287,7 +287,7 @@ class PolicyMeasures(Term):
         oxcgrt_df = self.oxcgrt_data.cleaned()
         sel = oxcgrt_df[self.COUNTRY].isin(self._countries)
         oxcgrt_df = oxcgrt_df.loc[
-            sel, [self.DATE, self.COUNTRY, *OxCGRTData.OXCGRT_VARIABLES]]
+            sel, [self.DATE, self.COUNTRY, *OxCGRTData.OXCGRT_VARS]]
         # Combine data
         return pd.merge(
             param_df, oxcgrt_df, how="inner", on=[self.COUNTRY, self.DATE])

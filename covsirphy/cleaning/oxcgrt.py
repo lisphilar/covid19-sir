@@ -9,7 +9,7 @@ class OxCGRTData(CleaningBase):
     """
     Data cleaning of OxCGRT dataset.
     """
-    OXCGRT_VARIABLES = [
+    OXCGRT_VARIABLES_RAW = [
         "school_closing",
         "workplace_closing",
         "cancel_events",
@@ -23,7 +23,8 @@ class OxCGRTData(CleaningBase):
         "contact_tracing",
         "stringency_index"
     ]
-    OXCGRT_COL_DICT = {v: v.capitalize() for v in OXCGRT_VARIABLES}
+    OXCGRT_COL_DICT = {v: v.capitalize() for v in OXCGRT_VARIABLES_RAW}
+    OXCGRT_VARS = list(OXCGRT_COL_DICT.values())
     OXCGRT_COLS = [
         CleaningBase.DATE, CleaningBase.COUNTRY, CleaningBase.ISO3,
         *list(OXCGRT_COL_DICT.values())

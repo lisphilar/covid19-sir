@@ -481,7 +481,7 @@ class DataLoader(Term):
             "administrative_area_level_2": "Province/State",
             "administrative_area_level_1": "Country/Region",
         }
-        columns = list(col_dict.values()) + OxCGRTData.OXCGRT_VARIABLES
+        columns = list(col_dict.values()) + OxCGRTData.OXCGRT_VARIABLES_RAW
         # Merge the datasets
         c_df = c_df.rename(col_dict, axis=1).loc[:, columns]
         p_df = p_df.rename(col_dict, axis=1).loc[:, columns]
