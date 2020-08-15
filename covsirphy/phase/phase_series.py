@@ -296,10 +296,11 @@ class PhaseSeries(Term):
         type_ok = all(isinstance(unit, PhaseUnit) for unit in new_list)
         if not type_ok:
             raise TypeError("@new_list must be a list of covsirphy.PhaseUnit.")
-        old_units = []
-        if keep_old:
-            exc_units = new_list[:] if phase is None else [self.unit(phase)]
-            old_units = [unit for unit in self._units if unit not in exc_units]
+        if phase is None:
+            old_units = self._units[:] if keep_old else []
+        else:
+            exc_unit = self.unit(phase)
+            old_units = [unit for unit in self._units if unit != exc_unit]
         self._units = self._ensure_series(old_units + new_list)
 
     @classmethod
