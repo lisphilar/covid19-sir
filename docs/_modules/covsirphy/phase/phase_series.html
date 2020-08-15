@@ -435,7 +435,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_units</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">units</span> <span class="o">+</span> <span class="p">[</span><span class="n">new</span><span class="p">])</span>
         <span class="k">return</span> <span class="bp">self</span></div>
 
-<div class="viewcode-block" id="PhaseSeries.replaces"><a class="viewcode-back" href="../../../covsirphy.phase.html#covsirphy.phase.phase_series.PhaseSeries.replaces">[docs]</a>    <span class="k">def</span> <span class="nf">replaces</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">phase</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">new_list</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<div class="viewcode-block" id="PhaseSeries.replaces"><a class="viewcode-back" href="../../../covsirphy.phase.html#covsirphy.phase.phase_series.PhaseSeries.replaces">[docs]</a>    <span class="k">def</span> <span class="nf">replaces</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">phase</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">new_list</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">keep_old</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Replace phase object.</span>
 
@@ -447,7 +447,7 @@
 <span class="sd">            covsirphy.PhaseSeries: self</span>
 
 <span class="sd">        Notes:</span>
-<span class="sd">            If @phase is None, all old phases will be deleted.</span>
+<span class="sd">            If @phase is None and @keep_old is False, all old phases will be deleted.</span>
 <span class="sd">            If @phase is not None, the phase will be deleted.</span>
 <span class="sd">            @new_list must be specified.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -457,11 +457,12 @@
         <span class="k">if</span> <span class="ow">not</span> <span class="n">type_ok</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">&quot;@new_list must be a list of covsirphy.PhaseUnit.&quot;</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">phase</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">units</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">new_list</span><span class="p">)</span>
+            <span class="n">old_units</span> <span class="o">=</span> <span class="p">[</span>
+                <span class="n">unit</span> <span class="k">for</span> <span class="n">unit</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_units</span> <span class="k">if</span> <span class="n">unit</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">new_list</span><span class="p">]</span> <span class="k">if</span> <span class="n">keep_old</span> <span class="k">else</span> <span class="p">[]</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="n">old</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">unit</span><span class="p">(</span><span class="n">phase</span><span class="p">)</span>
-            <span class="n">units</span> <span class="o">=</span> <span class="p">[</span><span class="n">unit</span> <span class="k">for</span> <span class="n">unit</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_units</span> <span class="k">if</span> <span class="n">unit</span> <span class="o">!=</span> <span class="n">old</span><span class="p">]</span> <span class="o">+</span> <span class="n">new_list</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_units</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ensure_series</span><span class="p">(</span><span class="n">units</span><span class="p">)</span></div>
+            <span class="n">exc_unit</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">unit</span><span class="p">(</span><span class="n">phase</span><span class="p">)</span>
+            <span class="n">old_units</span> <span class="o">=</span> <span class="p">[</span><span class="n">unit</span> <span class="k">for</span> <span class="n">unit</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_units</span> <span class="k">if</span> <span class="n">unit</span> <span class="o">!=</span> <span class="n">exc_unit</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_units</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ensure_series</span><span class="p">(</span><span class="n">old_units</span> <span class="o">+</span> <span class="n">new_list</span><span class="p">)</span></div>
 
     <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">_ensure_series</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">units</span><span class="p">):</span>
@@ -520,7 +521,7 @@
         <span class="k">if</span> <span class="ow">not</span> <span class="n">set_phases</span><span class="p">:</span>
             <span class="k">if</span> <span class="n">show_figure</span><span class="p">:</span>
                 <span class="n">change_dates</span> <span class="o">=</span> <span class="p">[</span>
-                    <span class="n">unit</span><span class="o">.</span><span class="n">start_date</span> <span class="k">for</span> <span class="n">unit</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_units</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span> <span class="k">if</span> <span class="n">unit</span> <span class="o">&lt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">last_date</span><span class="p">]</span>
+                    <span class="n">unit</span><span class="o">.</span><span class="n">start_date</span> <span class="k">for</span> <span class="n">unit</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_units</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span> <span class="k">if</span> <span class="n">unit</span> <span class="o">&lt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">last_date</span><span class="p">]</span>
                 <span class="n">finder</span><span class="o">.</span><span class="n">show</span><span class="p">(</span>
                     <span class="n">area</span><span class="o">=</span><span class="n">area</span><span class="p">,</span> <span class="n">change_dates</span><span class="o">=</span><span class="n">change_dates</span><span class="p">,</span> <span class="n">filename</span><span class="o">=</span><span class="n">filename</span><span class="p">)</span>
             <span class="k">return</span> <span class="bp">self</span>
@@ -568,11 +569,17 @@
 <span class="sd">                    - variables of the models (int): Confirmed (int) etc.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">dataframes</span> <span class="o">=</span> <span class="p">[]</span>
-        <span class="k">for</span> <span class="n">unit</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_units</span><span class="p">:</span>
-            <span class="k">try</span><span class="p">:</span>
-                <span class="n">unit</span><span class="o">.</span><span class="n">set_y0</span><span class="p">(</span><span class="n">dataframes</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
-            <span class="k">except</span> <span class="ne">IndexError</span><span class="p">:</span>
+        <span class="n">rec_dates</span> <span class="o">=</span> <span class="n">record_df</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">DATE</span><span class="p">]</span><span class="o">.</span><span class="n">dt</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">DATE_FORMAT</span><span class="p">)</span><span class="o">.</span><span class="n">unique</span><span class="p">()</span>
+        <span class="k">for</span> <span class="p">(</span><span class="n">num</span><span class="p">,</span> <span class="n">unit</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_units</span><span class="p">):</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">unit</span><span class="p">:</span>
+                <span class="k">continue</span>
+            <span class="k">if</span> <span class="n">unit</span><span class="o">.</span><span class="n">start_date</span> <span class="ow">in</span> <span class="n">rec_dates</span><span class="p">:</span>
                 <span class="n">unit</span><span class="o">.</span><span class="n">set_y0</span><span class="p">(</span><span class="n">record_df</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">try</span><span class="p">:</span>
+                    <span class="n">unit</span><span class="o">.</span><span class="n">set_y0</span><span class="p">(</span><span class="n">dataframes</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
+                <span class="k">except</span> <span class="ne">IndexError</span><span class="p">:</span>
+                    <span class="k">pass</span>
             <span class="n">df</span> <span class="o">=</span> <span class="n">unit</span><span class="o">.</span><span class="n">simulate</span><span class="p">(</span><span class="n">y0_dict</span><span class="o">=</span><span class="n">y0_dict</span><span class="p">)</span>
             <span class="n">dataframes</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">df</span><span class="p">)</span>
         <span class="n">sim_df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">(</span><span class="n">dataframes</span><span class="p">,</span> <span class="n">ignore_index</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">sort</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>

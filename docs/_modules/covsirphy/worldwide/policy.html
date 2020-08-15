@@ -257,7 +257,7 @@
             <span class="n">un_selectable</span> <span class="o">=</span> <span class="s2">&quot;, &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">un_selectable_set</span><span class="p">))</span>
             <span class="k">raise</span> <span class="ne">KeyError</span><span class="p">(</span>
                 <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">un_selectable</span><span class="si">}</span><span class="s2"> cannot be selected because records not registered.&quot;</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_countries</span> <span class="o">=</span> <span class="n">country_list</span><span class="p">[:]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_countries</span> <span class="o">=</span> <span class="n">country_list</span>
 
 <div class="viewcode-block" id="PolicyMeasures.trend"><a class="viewcode-back" href="../../../covsirphy.worldwide.html#covsirphy.worldwide.policy.PolicyMeasures.trend">[docs]</a>    <span class="k">def</span> <span class="nf">trend</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">min_len</span><span class="o">=</span><span class="mi">2</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
@@ -307,7 +307,8 @@
             <span class="n">df</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">COUNTRY</span><span class="p">]</span> <span class="o">=</span> <span class="n">country</span>
             <span class="n">dataframes</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">df</span><span class="p">)</span>
         <span class="n">summary_df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">(</span><span class="n">dataframes</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">ignore_index</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-        <span class="k">return</span> <span class="n">summary_df</span><span class="o">.</span><span class="n">set_index</span><span class="p">([</span><span class="bp">self</span><span class="o">.</span><span class="n">COUNTRY</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">PHASE</span><span class="p">])</span></div>
+        <span class="n">summary_df</span> <span class="o">=</span> <span class="n">summary_df</span><span class="o">.</span><span class="n">set_index</span><span class="p">([</span><span class="bp">self</span><span class="o">.</span><span class="n">COUNTRY</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">PHASE</span><span class="p">])</span>
+        <span class="k">return</span> <span class="n">summary_df</span><span class="o">.</span><span class="n">fillna</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">UNKNOWN</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="PolicyMeasures.phase_len"><a class="viewcode-back" href="../../../covsirphy.worldwide.html#covsirphy.worldwide.policy.PolicyMeasures.phase_len">[docs]</a>    <span class="k">def</span> <span class="nf">phase_len</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
@@ -335,7 +336,7 @@
 <span class="sd">            n_jobs (int): the number of parallel jobs or -1 (CPU count)</span>
 <span class="sd">            kwargs: keyword arguments of model parameters and covsirphy.Estimator.run()</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">model</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ensure_subclass</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">ModelBase</span><span class="p">)</span>
+        <span class="n">model</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ensure_subclass</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">ModelBase</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;model&quot;</span><span class="p">)</span>
         <span class="n">unit_nest</span> <span class="o">=</span> <span class="p">[</span>
             <span class="p">[</span>
                 <span class="n">unit</span><span class="o">.</span><span class="n">set_id</span><span class="p">(</span>
@@ -359,16 +360,16 @@
                 <span class="n">unit</span> <span class="k">for</span> <span class="n">unit</span> <span class="ow">in</span> <span class="n">results</span>
                 <span class="k">if</span> <span class="n">unit</span><span class="o">.</span><span class="n">id_dict</span><span class="p">[</span><span class="s2">&quot;country&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">jhu_data</span><span class="o">.</span><span class="n">country_to_iso3</span><span class="p">(</span><span class="n">country</span><span class="p">)]</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">scenario_dict</span><span class="p">[</span><span class="n">country</span><span class="p">][</span><span class="bp">self</span><span class="o">.</span><span class="n">MAIN</span><span class="p">]</span><span class="o">.</span><span class="n">replaces</span><span class="p">(</span>
-                <span class="n">phase</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">new_list</span><span class="o">=</span><span class="n">new_units</span><span class="p">)</span>
+                <span class="n">phase</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">new_list</span><span class="o">=</span><span class="n">new_units</span><span class="p">,</span> <span class="n">keep_old</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">model</span> <span class="o">=</span> <span class="n">model</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">tau</span> <span class="o">=</span> <span class="n">mp_estimator</span><span class="o">.</span><span class="n">tau</span></div>
 
 <div class="viewcode-block" id="PolicyMeasures.param_history"><a class="viewcode-back" href="../../../covsirphy.worldwide.html#covsirphy.worldwide.policy.PolicyMeasures.param_history">[docs]</a>    <span class="k">def</span> <span class="nf">param_history</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">param</span><span class="p">,</span> <span class="n">roll_window</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">show_figure</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">filename</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Return subset of summary and show a figure to show the history in each country.</span>
+<span class="sd">        Return subset of summary and show a figure to show the history of all countries.</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">            param (str): parameter to show</span>
+<span class="sd">            param (str): parameter/day parameter/Rt/OxCGRT score to show</span>
 <span class="sd">            roll_window (int or None): rolling average window if necessary</span>
 <span class="sd">            show_figure (bool): If True, show the result as a figure</span>
 <span class="sd">            filename (str): filename of the figure, or None (show figure)</span>
@@ -376,29 +377,19 @@
 
 <span class="sd">        Returns:</span>
 <span class="sd">            pandas.DataFrame:</span>
-<span class="sd">                Index: (int) phase number</span>
+<span class="sd">                Index: Date (pd.TimeStamp) date</span>
 <span class="sd">                Columns: (str) country names</span>
 <span class="sd">                Values: parameter values</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span>
-                <span class="s2">&quot;PolicyMeasures.estimate(model) must be done in advance.&quot;</span><span class="p">)</span>
-        <span class="n">selectable_params</span> <span class="o">=</span> <span class="p">[</span>
-            <span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">PARAMETERS</span><span class="p">,</span> <span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">DAY_PARAMETERS</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">RT</span><span class="p">]</span>
-        <span class="k">if</span> <span class="n">param</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">selectable_params</span><span class="p">:</span>
-            <span class="n">sel_param_str</span> <span class="o">=</span> <span class="s1">&#39;, &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">selectable_params</span><span class="p">)</span>
+        <span class="c1"># Get the parameter value of each date</span>
+        <span class="n">df</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">track</span><span class="p">()</span>
+        <span class="c1"># Select the param</span>
+        <span class="k">if</span> <span class="n">param</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">df</span><span class="o">.</span><span class="n">columns</span><span class="p">:</span>
+            <span class="n">sel_param_str</span> <span class="o">=</span> <span class="s1">&#39;, &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">df</span><span class="o">.</span><span class="n">columns</span><span class="o">.</span><span class="n">tolist</span><span class="p">())</span>
             <span class="k">raise</span> <span class="ne">KeyError</span><span class="p">(</span>
                 <span class="sa">f</span><span class="s2">&quot;@param must be selected from </span><span class="si">{</span><span class="n">sel_param_str</span><span class="si">}</span><span class="s2">, but </span><span class="si">{</span><span class="n">param</span><span class="si">}</span><span class="s2"> was applied.&quot;</span><span class="p">)</span>
-        <span class="c1"># Get the parameter value of each date</span>
-        <span class="n">df</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">summary</span><span class="p">()</span><span class="o">.</span><span class="n">reset_index</span><span class="p">()</span>
-        <span class="n">df</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">START</span><span class="p">]</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">to_datetime</span><span class="p">(</span>
-            <span class="n">df</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">START</span><span class="p">],</span> <span class="nb">format</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">DATE_FORMAT</span><span class="p">)</span>
-        <span class="n">df</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">END</span><span class="p">]</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">to_datetime</span><span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">END</span><span class="p">],</span> <span class="nb">format</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">DATE_FORMAT</span><span class="p">)</span>
-        <span class="n">df</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">DATE</span><span class="p">]</span> <span class="o">=</span> <span class="n">df</span><span class="p">[[</span><span class="bp">self</span><span class="o">.</span><span class="n">START</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">END</span><span class="p">]]</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span>
-            <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">date_range</span><span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">x</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span><span class="o">.</span><span class="n">tolist</span><span class="p">(),</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
-        <span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">explode</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">DATE</span><span class="p">)</span>
         <span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">pivot_table</span><span class="p">(</span>
-            <span class="n">values</span><span class="o">=</span><span class="n">param</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">DATE</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">COUNTRY</span><span class="p">)</span>
+            <span class="n">values</span><span class="o">=</span><span class="n">param</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">DATE</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">COUNTRY</span><span class="p">,</span> <span class="n">aggfunc</span><span class="o">=</span><span class="s2">&quot;last&quot;</span><span class="p">)</span>
         <span class="c1"># Rolling mean</span>
         <span class="k">if</span> <span class="n">roll_window</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">roll_window</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ensure_natural_int</span><span class="p">(</span>
@@ -413,7 +404,53 @@
             <span class="n">h</span><span class="o">=</span><span class="mi">1</span> <span class="k">if</span> <span class="n">param</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">RT</span> <span class="k">else</span> <span class="kc">None</span><span class="p">,</span>
             <span class="n">filename</span><span class="o">=</span><span class="n">filename</span>
         <span class="p">)</span>
-        <span class="k">return</span> <span class="n">df</span></div></div>
+        <span class="k">return</span> <span class="n">df</span></div>
+
+<div class="viewcode-block" id="PolicyMeasures.track"><a class="viewcode-back" href="../../../covsirphy.worldwide.html#covsirphy.worldwide.policy.PolicyMeasures.track">[docs]</a>    <span class="k">def</span> <span class="nf">track</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Return subset of summary and show a figure to show the history in each country.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            param (str): parameter to show</span>
+<span class="sd">            roll_window (int or None): rolling average window if necessary</span>
+<span class="sd">            show_figure (bool): If True, show the result as a figure</span>
+<span class="sd">            filename (str): filename of the figure, or None (show figure)</span>
+<span class="sd">            kwargs: keword arguments of pd.DataFrame.plot or line_plot()</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            pandas.DataFrame:</span>
+<span class="sd">                Index: reset index</span>
+<span class="sd">                Columns:</span>
+<span class="sd">                    - Country (str): country name</span>
+<span class="sd">                    - Date (pd.TimeStamp): date</span>
+<span class="sd">                    - (float): model parameters</span>
+<span class="sd">                    - (float): model day parameters</span>
+<span class="sd">                    - Rt (float): reproduction number</span>
+<span class="sd">                    - (float): OxCGRT values</span>
+<span class="sd">                Values: parameter values</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span>
+                <span class="s2">&quot;PolicyMeasures.estimate(model) must be done in advance.&quot;</span><span class="p">)</span>
+        <span class="c1"># Get parameter/Rt/data parameter value of each date</span>
+        <span class="n">df</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">summary</span><span class="p">()</span><span class="o">.</span><span class="n">reset_index</span><span class="p">()</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">UNKNOWN</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+        <span class="n">df</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">START</span><span class="p">]</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">to_datetime</span><span class="p">(</span>
+            <span class="n">df</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">START</span><span class="p">],</span> <span class="nb">format</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">DATE_FORMAT</span><span class="p">)</span>
+        <span class="n">df</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">END</span><span class="p">]</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">to_datetime</span><span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">END</span><span class="p">],</span> <span class="nb">format</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">DATE_FORMAT</span><span class="p">)</span>
+        <span class="n">df</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">DATE</span><span class="p">]</span> <span class="o">=</span> <span class="n">df</span><span class="p">[[</span><span class="bp">self</span><span class="o">.</span><span class="n">START</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">END</span><span class="p">]]</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span>
+            <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">date_range</span><span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">x</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span><span class="o">.</span><span class="n">tolist</span><span class="p">(),</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+        <span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">explode</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">DATE</span><span class="p">)</span>
+        <span class="n">cols</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">DATE</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">COUNTRY</span><span class="p">,</span> <span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">PARAMETERS</span><span class="p">,</span> <span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">DAY_PARAMETERS</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">RT</span><span class="p">]</span>
+        <span class="n">param_df</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">loc</span><span class="p">[:,</span> <span class="n">cols</span><span class="p">]</span>
+        <span class="c1"># OxCGRT</span>
+        <span class="n">oxcgrt_df</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">oxcgrt_data</span><span class="o">.</span><span class="n">cleaned</span><span class="p">()</span>
+        <span class="n">sel</span> <span class="o">=</span> <span class="n">oxcgrt_df</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">COUNTRY</span><span class="p">]</span><span class="o">.</span><span class="n">isin</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_countries</span><span class="p">)</span>
+        <span class="n">oxcgrt_df</span> <span class="o">=</span> <span class="n">oxcgrt_df</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span>
+            <span class="n">sel</span><span class="p">,</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">DATE</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">COUNTRY</span><span class="p">,</span> <span class="o">*</span><span class="n">OxCGRTData</span><span class="o">.</span><span class="n">OXCGRT_VARS</span><span class="p">]]</span>
+        <span class="c1"># Combine data</span>
+        <span class="k">return</span> <span class="n">pd</span><span class="o">.</span><span class="n">merge</span><span class="p">(</span>
+            <span class="n">param_df</span><span class="p">,</span> <span class="n">oxcgrt_df</span><span class="p">,</span> <span class="n">how</span><span class="o">=</span><span class="s2">&quot;inner&quot;</span><span class="p">,</span> <span class="n">on</span><span class="o">=</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">COUNTRY</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">DATE</span><span class="p">])</span></div></div>
 </pre></div>
 
            </div>

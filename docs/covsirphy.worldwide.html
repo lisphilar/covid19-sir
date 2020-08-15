@@ -248,11 +248,11 @@ This analysis will be done at country level because OxCGRT tracks policies at co
 <dl class="py method">
 <dt id="covsirphy.worldwide.policy.PolicyMeasures.param_history">
 <code class="sig-name descname">param_history</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">param</span></em>, <em class="sig-param"><span class="n">roll_window</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">show_figure</span><span class="o">=</span><span class="default_value">True</span></em>, <em class="sig-param"><span class="n">filename</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/worldwide/policy.html#PolicyMeasures.param_history"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#covsirphy.worldwide.policy.PolicyMeasures.param_history" title="Permalink to this definition">¶</a></dt>
-<dd><p>Return subset of summary and show a figure to show the history in each country.</p>
+<dd><p>Return subset of summary and show a figure to show the history of all countries.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>param</strong> (<em>str</em>) – parameter to show</p></li>
+<li><p><strong>param</strong> (<em>str</em>) – parameter/day parameter/Rt/OxCGRT score to show</p></li>
 <li><p><strong>roll_window</strong> (<em>int</em><em> or </em><em>None</em>) – rolling average window if necessary</p></li>
 <li><p><strong>show_figure</strong> (<em>bool</em>) – If True, show the result as a figure</p></li>
 <li><p><strong>filename</strong> (<em>str</em>) – filename of the figure, or None (show figure)</p></li>
@@ -260,7 +260,7 @@ This analysis will be done at country level because OxCGRT tracks policies at co
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
-<dd class="field-even"><p>Index: (int) phase number
+<dd class="field-even"><p>Index: Date (pd.TimeStamp) date
 Columns: (str) country names
 Values: parameter values</p>
 </dd>
@@ -321,6 +321,42 @@ Values: parameter values</p>
 </dl>
 <p class="rubric">Notes</p>
 <p>If &#64;columns is None, all columns will be shown.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="covsirphy.worldwide.policy.PolicyMeasures.track">
+<code class="sig-name descname">track</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/worldwide/policy.html#PolicyMeasures.track"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#covsirphy.worldwide.policy.PolicyMeasures.track" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return subset of summary and show a figure to show the history in each country.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>param</strong> (<em>str</em>) – parameter to show</p></li>
+<li><p><strong>roll_window</strong> (<em>int</em><em> or </em><em>None</em>) – rolling average window if necessary</p></li>
+<li><p><strong>show_figure</strong> (<em>bool</em>) – If True, show the result as a figure</p></li>
+<li><p><strong>filename</strong> (<em>str</em>) – filename of the figure, or None (show figure)</p></li>
+<li><p><strong>kwargs</strong> – keword arguments of pd.DataFrame.plot or line_plot()</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><p>Index: reset index
+Columns:</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>Country (str): country name</p></li>
+<li><p>Date (pd.TimeStamp): date</p></li>
+<li><p>(float): model parameters</p></li>
+<li><p>(float): model day parameters</p></li>
+<li><p>Rt (float): reproduction number</p></li>
+<li><p>(float): OxCGRT values</p></li>
+</ul>
+</div></blockquote>
+<p>Values: parameter values</p>
+</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>pandas.DataFrame</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py method">
