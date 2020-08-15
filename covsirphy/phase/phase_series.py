@@ -409,11 +409,17 @@ class PhaseSeries(Term):
                     - variables of the models (int): Confirmed (int) etc.
         """
         dataframes = []
-        for unit in self._units:
-            try:
-                unit.set_y0(dataframes[-1])
-            except IndexError:
+        rec_dates = record_df[self.DATE].dt.strftime(self.DATE_FORMAT).unique()
+        for (num, unit) in enumerate(self._units):
+            if not unit:
+                continue
+            if unit.start_date in rec_dates:
                 unit.set_y0(record_df)
+            else:
+                try:
+                    unit.set_y0(dataframes[-1])
+                except IndexError:
+                    pass
             df = unit.simulate(y0_dict=y0_dict)
             dataframes.append(df)
         sim_df = pd.concat(dataframes, ignore_index=True, sort=True)
