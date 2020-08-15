@@ -34,6 +34,8 @@ Functionalities
 -  Phase-dependent parameter estimation of ODE models
 -  Scenario analysis: Simulate the number of cases with user-defined
    parameter values
+-  (In development): Find the relationship of government response and
+   parameter values
 
 Inspiration
 -----------
