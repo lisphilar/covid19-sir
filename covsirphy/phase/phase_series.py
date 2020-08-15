@@ -275,7 +275,7 @@ class PhaseSeries(Term):
         self._units = sorted(units + [new])
         return self
 
-    def replaces(self, phase=None, new_list=None):
+    def replaces(self, phase=None, new_list=None, keep_old=False):
         """
         Replace phase object.
 
@@ -287,7 +287,7 @@ class PhaseSeries(Term):
             covsirphy.PhaseSeries: self
 
         Notes:
-            If @phase is None, all old phases will be deleted.
+            If @phase is None and @keep_old is False, all old phases will be deleted.
             If @phase is not None, the phase will be deleted.
             @new_list must be specified.
         """
@@ -296,13 +296,11 @@ class PhaseSeries(Term):
         type_ok = all(isinstance(unit, PhaseUnit) for unit in new_list)
         if not type_ok:
             raise TypeError("@new_list must be a list of covsirphy.PhaseUnit.")
-        if phase is None:
-            old_units = [unit for unit in self._units if unit not in new_list]
-            units = sorted(new_list + old_units)
-        else:
-            old = self.unit(phase)
-            units = [unit for unit in self._units if unit != old] + new_list
-        self._units = self._ensure_series(units)
+        old_units = []
+        if keep_old:
+            exc_units = new_list[:] if phase is None else [self.unit(phase)]
+            old_units = [unit for unit in self._units if unit not in exc_units]
+        self._units = self._ensure_series(old_units + new_list)
 
     @classmethod
     def _ensure_series(cls, units):

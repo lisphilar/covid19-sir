@@ -97,7 +97,7 @@ class PolicyMeasures(Term):
             un_selectable = ", ".join(list(un_selectable_set))
             raise KeyError(
                 f"{un_selectable} cannot be selected because records not registered.")
-        self._countries = country_list[:]
+        self._countries = country_list
 
     def trend(self, min_len=2):
         """
@@ -147,7 +147,8 @@ class PolicyMeasures(Term):
             df[self.COUNTRY] = country
             dataframes.append(df)
         summary_df = pd.concat(dataframes, axis=0, ignore_index=True)
-        return summary_df.set_index([self.COUNTRY, self.PHASE])
+        summary_df = summary_df.set_index([self.COUNTRY, self.PHASE])
+        return summary_df.fillna(self.UNKNOWN)
 
     def phase_len(self):
         """
