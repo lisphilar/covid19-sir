@@ -361,7 +361,7 @@ class PhaseSeries(Term):
         if not set_phases:
             if show_figure:
                 change_dates = [
-                    unit.start_date for unit in self._units[1:] if unit < self.last_date]
+                    unit.start_date for unit in self._units[1:] if unit <= self.last_date]
                 finder.show(
                     area=area, change_dates=change_dates, filename=filename)
             return self
