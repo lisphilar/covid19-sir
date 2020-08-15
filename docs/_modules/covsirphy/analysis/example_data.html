@@ -192,12 +192,38 @@
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">clean_df</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">tau</span><span class="o">=</span><span class="mi">1440</span><span class="p">,</span> <span class="n">start_date</span><span class="o">=</span><span class="s2">&quot;22Jan2020&quot;</span><span class="p">):</span>
         <span class="k">if</span> <span class="n">clean_df</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">clean_df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">COLUMNS</span><span class="p">)</span>
+        <span class="n">clean_df</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ensure_dataframe</span><span class="p">(</span>
+            <span class="n">clean_df</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;clean_df&quot;</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">COLUMNS</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_raw</span> <span class="o">=</span> <span class="n">clean_df</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_cleaned_df</span> <span class="o">=</span> <span class="n">clean_df</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_citation</span> <span class="o">=</span> <span class="nb">str</span><span class="p">()</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">tau</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ensure_natural_int</span><span class="p">(</span><span class="n">tau</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;tau&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">tau</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ensure_tau</span><span class="p">(</span><span class="n">tau</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">start_date</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ensure_date</span><span class="p">(</span><span class="n">start_date</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;start_date&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_specialized_dict</span> <span class="o">=</span> <span class="p">{}</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">nondim_dict</span> <span class="o">=</span> <span class="p">{}</span>
+
+    <span class="k">def</span> <span class="nf">_model_to_area</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">country</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">province</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        If country is None and model is not None, model name will returned as country name.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            model (cs.ModelBase or None): the first ODE model</span>
+<span class="sd">            country (str or None): country name</span>
+<span class="sd">            province (str or None): province name</span>
+
+<span class="sd">        Raises:</span>
+<span class="sd">            ValueError: both of country and model are None</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            tuple(str, str): country name and province name</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">province</span> <span class="o">=</span> <span class="n">province</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">UNKNOWN</span>
+        <span class="k">if</span> <span class="n">country</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="p">(</span><span class="n">country</span><span class="p">,</span> <span class="n">province</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">model</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;@model or @country must be specified.&quot;</span><span class="p">)</span>
+        <span class="n">model</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ensure_subclass</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">ModelBase</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;model&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="p">(</span><span class="n">model</span><span class="o">.</span><span class="n">NAME</span><span class="p">,</span> <span class="n">province</span><span class="p">)</span>
 
 <div class="viewcode-block" id="ExampleData.add"><a class="viewcode-back" href="../../../covsirphy.analysis.html#covsirphy.analysis.example_data.ExampleData.add">[docs]</a>    <span class="k">def</span> <span class="nf">add</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model</span><span class="p">,</span> <span class="n">country</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">province</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
@@ -206,9 +232,9 @@
 <span class="sd">        the start date will be the next data of the registered records.</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">            model (subclass of cs.ModelBase): the first ODE model</span>
-<span class="sd">            country (str): country name</span>
-<span class="sd">            province (str): province name</span>
+<span class="sd">            model (cs.ModelBase): the first ODE model</span>
+<span class="sd">            country (str or None): country name</span>
+<span class="sd">            province (str or None): province name</span>
 <span class="sd">            kwargs: the other keyword arguments of ODESimulator.add()</span>
 
 <span class="sd">        Notes:</span>
@@ -219,12 +245,10 @@
         <span class="n">model</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ensure_subclass</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">ModelBase</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;model&quot;</span><span class="p">)</span>
         <span class="n">arg_dict</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">EXAMPLE</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
         <span class="n">arg_dict</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">kwargs</span><span class="p">)</span>
-        <span class="n">country</span> <span class="o">=</span> <span class="n">country</span> <span class="ow">or</span> <span class="n">model</span><span class="o">.</span><span class="n">NAME</span>
-        <span class="n">province</span> <span class="o">=</span> <span class="n">province</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">UNKNOWN</span>
-        <span class="k">try</span><span class="p">:</span>
-            <span class="n">population</span> <span class="o">=</span> <span class="n">arg_dict</span><span class="p">[</span><span class="s2">&quot;population&quot;</span><span class="p">]</span>
-        <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">KeyError</span><span class="p">(</span><span class="s2">&quot;@population must be specified.&quot;</span><span class="p">)</span>
+        <span class="n">population</span> <span class="o">=</span> <span class="n">arg_dict</span><span class="p">[</span><span class="s2">&quot;population&quot;</span><span class="p">]</span>
+        <span class="c1"># Area</span>
+        <span class="n">country</span><span class="p">,</span> <span class="n">province</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_model_to_area</span><span class="p">(</span>
+            <span class="n">model</span><span class="o">=</span><span class="n">model</span><span class="p">,</span> <span class="n">country</span><span class="o">=</span><span class="n">country</span><span class="p">,</span> <span class="n">province</span><span class="o">=</span><span class="n">province</span><span class="p">)</span>
         <span class="c1"># Start date and y0 values</span>
         <span class="n">df</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_cleaned_df</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
         <span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span>
@@ -233,7 +257,8 @@
         <span class="k">if</span> <span class="n">df</span><span class="o">.</span><span class="n">empty</span><span class="p">:</span>
             <span class="n">start_date</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">start_date</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="n">start_date</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">df</span><span class="o">.</span><span class="n">index</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">DATE</span><span class="p">]</span>
+            <span class="n">start_date</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span>
+                <span class="n">df</span><span class="o">.</span><span class="n">index</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">DATE</span><span class="p">]</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">DATE_FORMAT</span><span class="p">)</span>
             <span class="n">df</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">tau_free</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">population</span><span class="p">,</span> <span class="n">tau</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
             <span class="n">arg_dict</span><span class="p">[</span><span class="s2">&quot;y0_dict&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span>
                 <span class="n">k</span><span class="p">:</span> <span class="n">df</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">df</span><span class="o">.</span><span class="n">index</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">k</span><span class="p">]</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">model</span><span class="o">.</span><span class="n">VARIABLES</span>
@@ -241,8 +266,12 @@
         <span class="c1"># Simulation</span>
         <span class="n">simulator</span> <span class="o">=</span> <span class="n">ODESimulator</span><span class="p">(</span><span class="n">country</span><span class="o">=</span><span class="n">country</span><span class="p">,</span> <span class="n">province</span><span class="o">=</span><span class="n">province</span><span class="p">)</span>
         <span class="n">simulator</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">model</span><span class="o">=</span><span class="n">model</span><span class="p">,</span> <span class="o">**</span><span class="n">arg_dict</span><span class="p">)</span>
-        <span class="c1"># Add the simulated records to self</span>
+        <span class="c1"># Specialized records</span>
         <span class="n">dim_df</span> <span class="o">=</span> <span class="n">simulator</span><span class="o">.</span><span class="n">dim</span><span class="p">(</span><span class="n">tau</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">tau</span><span class="p">,</span> <span class="n">start_date</span><span class="o">=</span><span class="n">start_date</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">country</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_specialized_dict</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_specialized_dict</span><span class="p">[</span><span class="n">country</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_specialized_dict</span><span class="p">[</span><span class="n">country</span><span class="p">][</span><span class="n">province</span><span class="p">]</span> <span class="o">=</span> <span class="n">dim_df</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+        <span class="c1"># JHU-type records</span>
         <span class="n">restored_df</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">restore</span><span class="p">(</span><span class="n">dim_df</span><span class="p">)</span>
         <span class="n">restored_df</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">COUNTRY</span><span class="p">]</span> <span class="o">=</span> <span class="n">country</span>
         <span class="n">restored_df</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">PROVINCE</span><span class="p">]</span> <span class="o">=</span> <span class="n">province</span>
@@ -251,33 +280,51 @@
             <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_cleaned_df</span><span class="p">,</span> <span class="n">selected_df</span><span class="p">],</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">ignore_index</span><span class="o">=</span><span class="kc">True</span>
         <span class="p">)</span>
         <span class="c1"># Set non-dimensional data</span>
-        <span class="k">if</span> <span class="n">country</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">nondim_dict</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+        <span class="k">if</span> <span class="n">country</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">nondim_dict</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">nondim_dict</span><span class="p">[</span><span class="n">country</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
         <span class="n">nondim_df</span> <span class="o">=</span> <span class="n">simulator</span><span class="o">.</span><span class="n">non_dim</span><span class="p">()</span>
-        <span class="k">if</span> <span class="n">province</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">nondim_dict</span><span class="p">[</span><span class="n">country</span><span class="p">]</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+        <span class="k">if</span> <span class="n">province</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">nondim_dict</span><span class="p">[</span><span class="n">country</span><span class="p">]:</span>
             <span class="n">nondim_df_old</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">nondim_dict</span><span class="p">[</span><span class="n">country</span><span class="p">][</span><span class="n">province</span><span class="p">]</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
             <span class="n">nondim_df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">([</span><span class="n">nondim_df_old</span><span class="p">,</span> <span class="n">nondim_df</span><span class="p">],</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">nondim_dict</span><span class="p">[</span><span class="n">country</span><span class="p">][</span><span class="n">province</span><span class="p">]</span> <span class="o">=</span> <span class="n">nondim_df</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="ExampleData.specialized"><a class="viewcode-back" href="../../../covsirphy.analysis.html#covsirphy.analysis.example_data.ExampleData.specialized">[docs]</a>    <span class="k">def</span> <span class="nf">specialized</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">country</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">province</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Return dimensional records with model variables.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            model (cs.ModelBase or None): the first ODE model</span>
+<span class="sd">            country (str or None): country name</span>
+<span class="sd">            province (str or None): province name</span>
+
+<span class="sd">        Notes:</span>
+<span class="sd">            If country is None, the name of the model will be used.</span>
+<span class="sd">            If province is None, &#39;-&#39; will be used.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">country</span><span class="p">,</span> <span class="n">province</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_model_to_area</span><span class="p">(</span>
+            <span class="n">model</span><span class="o">=</span><span class="n">model</span><span class="p">,</span> <span class="n">country</span><span class="o">=</span><span class="n">country</span><span class="p">,</span> <span class="n">province</span><span class="o">=</span><span class="n">province</span><span class="p">)</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_specialized_dict</span><span class="p">[</span><span class="n">country</span><span class="p">][</span><span class="n">province</span><span class="p">]</span>
+        <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">KeyError</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;Records of </span><span class="si">{</span><span class="n">country</span><span class="si">}</span><span class="s2"> - </span><span class="si">{</span><span class="n">province</span><span class="si">}</span><span class="s2"> were not registered.&quot;</span>
+            <span class="p">)</span></div>
 
 <div class="viewcode-block" id="ExampleData.non_dim"><a class="viewcode-back" href="../../../covsirphy.analysis.html#covsirphy.analysis.example_data.ExampleData.non_dim">[docs]</a>    <span class="k">def</span> <span class="nf">non_dim</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">country</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">province</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Return non-dimensional data.</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">            model (subclass of cs.ModelBase or None): the first ODE model</span>
-<span class="sd">            country (str): country name</span>
-<span class="sd">            province (str): province name</span>
+<span class="sd">            model (cs.ModelBase or None): the first ODE model</span>
+<span class="sd">            country (str or None): country name</span>
+<span class="sd">            province (str or None): province name</span>
 
 <span class="sd">        Notes:</span>
 <span class="sd">            If country is None, the name of the model will be used.</span>
 <span class="sd">            If province is None, &#39;-&#39; will be used.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">if</span> <span class="n">model</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">model</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ensure_subclass</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">ModelBase</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;model&quot;</span><span class="p">)</span>
-            <span class="n">country</span> <span class="o">=</span> <span class="n">country</span> <span class="ow">or</span> <span class="n">model</span><span class="o">.</span><span class="n">NAME</span>
-            <span class="n">province</span> <span class="o">=</span> <span class="n">province</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">UNKNOWN</span>
-        <span class="k">if</span> <span class="n">country</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">KeyError</span><span class="p">(</span><span class="s2">&quot;@model or @country must be applied.&quot;</span><span class="p">)</span>
+        <span class="n">country</span><span class="p">,</span> <span class="n">province</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_model_to_area</span><span class="p">(</span>
+            <span class="n">model</span><span class="o">=</span><span class="n">model</span><span class="p">,</span> <span class="n">country</span><span class="o">=</span><span class="n">country</span><span class="p">,</span> <span class="n">province</span><span class="o">=</span><span class="n">province</span><span class="p">)</span>
         <span class="k">try</span><span class="p">:</span>
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">nondim_dict</span><span class="p">[</span><span class="n">country</span><span class="p">][</span><span class="n">province</span><span class="p">]</span>
         <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
@@ -285,13 +332,15 @@
                 <span class="sa">f</span><span class="s2">&quot;Records of </span><span class="si">{</span><span class="n">country</span><span class="si">}</span><span class="s2"> - </span><span class="si">{</span><span class="n">province</span><span class="si">}</span><span class="s2"> were not registered.&quot;</span>
             <span class="p">)</span></div>
 
-<div class="viewcode-block" id="ExampleData.subset"><a class="viewcode-back" href="../../../covsirphy.analysis.html#covsirphy.analysis.example_data.ExampleData.subset">[docs]</a>    <span class="k">def</span> <span class="nf">subset</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<div class="viewcode-block" id="ExampleData.subset"><a class="viewcode-back" href="../../../covsirphy.analysis.html#covsirphy.analysis.example_data.ExampleData.subset">[docs]</a>    <span class="k">def</span> <span class="nf">subset</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">country</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">province</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Return the subset of dataset.</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">            model (subclass of cs.ModelBase or None): the first ODE model</span>
-<span class="sd">            kwargs: keyword arguments of JHUData.subset()</span>
+<span class="sd">            model (cs.ModelBase or None): the first ODE model</span>
+<span class="sd">            country (str or None): country name</span>
+<span class="sd">            province (str or None): province name</span>
+<span class="sd">            kwargs: other keyword arguments of JHUData.subset()</span>
 
 <span class="sd">        Returns:</span>
 <span class="sd">            (pandas.DataFrame)</span>
@@ -311,12 +360,9 @@
 <span class="sd">            If @population is not None, the number of susceptible cases will be calculated.</span>
 <span class="sd">            Records with Recovered &gt; 0 will be selected.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">if</span> <span class="s2">&quot;country&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
-            <span class="k">if</span> <span class="n">model</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-                <span class="k">raise</span> <span class="ne">KeyError</span><span class="p">(</span><span class="s2">&quot;@model or @country must be applied.&quot;</span><span class="p">)</span>
-            <span class="n">model</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ensure_subclass</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">ModelBase</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;model&quot;</span><span class="p">)</span>
-            <span class="n">kwargs</span><span class="p">[</span><span class="s2">&quot;country&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">NAME</span>
-        <span class="k">return</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">subset</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div></div>
+        <span class="n">country</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_model_to_area</span><span class="p">(</span>
+            <span class="n">model</span><span class="o">=</span><span class="n">model</span><span class="p">,</span> <span class="n">country</span><span class="o">=</span><span class="n">country</span><span class="p">,</span> <span class="n">province</span><span class="o">=</span><span class="n">province</span><span class="p">)</span>
+        <span class="k">return</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">subset</span><span class="p">(</span><span class="n">country</span><span class="o">=</span><span class="n">country</span><span class="p">,</span> <span class="n">province</span><span class="o">=</span><span class="n">province</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div></div>
 </pre></div>
 
            </div>
