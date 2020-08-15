@@ -161,6 +161,7 @@ class ChangeFinder(Term):
             @change_dates must be specified if ChangeFinder.run() was not done.
         """
         change_dates = change_dates or self._change_dates[:]
+        self._change_dates = change_dates[:]
         if not change_dates:
             return([self.dates[0]], [self.dates[-1]])
         # Start dates
