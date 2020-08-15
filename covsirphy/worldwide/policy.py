@@ -229,7 +229,7 @@ class PolicyMeasures(Term):
             raise KeyError(
                 f"@param must be selected from {sel_param_str}, but {param} was applied.")
         df = df.pivot_table(
-            values=param, index=self.DATE, columns=self.COUNTRY, agg_func="last")
+            values=param, index=self.DATE, columns=self.COUNTRY, aggfunc="last")
         # Rolling mean
         if roll_window is not None:
             roll_window = self.ensure_natural_int(
