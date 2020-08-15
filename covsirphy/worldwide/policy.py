@@ -200,7 +200,7 @@ class PolicyMeasures(Term):
                 unit for unit in results
                 if unit.id_dict["country"] == self.jhu_data.country_to_iso3(country)]
             self.scenario_dict[country][self.MAIN].replaces(
-                phase=None, new_list=new_units)
+                phase=None, new_list=new_units, keep_old=True)
         self.model = model
         self.tau = mp_estimator.tau
 
