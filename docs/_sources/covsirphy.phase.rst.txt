@@ -1,11 +1,27 @@
 covsirphy.phase
 =======================
-Perform S-R trend analysis.
+S-R trend analysis and phase setting.
+
+covsirphy.phase.phase\_estimator
+----------------------------
+
+.. automodule:: covsirphy.phase.phase_estimator
+   :members:
+   :undoc-members:
+   :show-inheritance:
 
 covsirphy.phase.phase\_series
 --------------------------------
 
 .. automodule:: covsirphy.phase.phase_series
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+covsirphy.phase.phase\_unit
+----------------------------
+
+.. automodule:: covsirphy.phase.phase_unit
    :members:
    :undoc-members:
    :show-inheritance:
