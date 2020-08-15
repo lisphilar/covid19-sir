@@ -188,10 +188,12 @@ class TestOxCGRTData(object):
         assert isinstance(df, pd.DataFrame)
         assert set(df.columns) == set(OxCGRTData.OXCGRT_COLS)
         subset_cols_set = set(OxCGRTData.OXCGRT_COLS_WITHOUT_COUNTRY)
-        subset_df = oxcgrt_data.subset(country="Japan")
+        subset_df = oxcgrt_data.subset("Japan")
         assert set(subset_df.columns) == subset_cols_set
-        subset_df_iso = oxcgrt_data.subset(iso3="JPN")
+        subset_df_iso = oxcgrt_data.subset("JPN")
         assert set(subset_df_iso.columns) == subset_cols_set
+        with pytest.raises(KeyError):
+            assert oxcgrt_data.subset("Moon").empty
 
     def test_oxcgrt_local_file(self, data_loader):
         local_path = Path("input") / "covid19dh.csv"
@@ -206,7 +208,7 @@ class TestOxCGRTData(object):
             data_loader.oxcgrt(local_file=local_path)
 
     def test_total(self, oxcgrt_data):
-        with pytest.raises(AttributeError):
+        with pytest.raises(NotImplementedError):
             oxcgrt_data.total()
 
     def test_countries(self, oxcgrt_data):

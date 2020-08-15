@@ -77,7 +77,7 @@ class CleaningBase(Term):
         Convert ISO3 code to country name if records are available.
 
         Args:
-            iso3_code (str): ISO3 code
+            iso3_code (str): ISO3 code or country name
 
         Returns:
             (str): country name

@@ -500,7 +500,8 @@ class Scenario(Term):
         results = mp_estimator.run(n_jobs=n_jobs, **kwargs)
         self.tau = mp_estimator.tau
         # Register the results
-        self._series_dict[name].replaces(phase=None, new_list=results)
+        self._series_dict[name].replaces(
+            phase=None, new_list=results, keep_old=True)
 
     def phase_estimator(self, phase, name="Main"):
         """
@@ -584,8 +585,7 @@ class Scenario(Term):
         df = sim_df.set_index(self.DATE)
         fig_cols_set = set(df.columns) & set(self.FIG_COLUMNS)
         fig_cols = [col for col in self.FIG_COLUMNS if col in fig_cols_set]
-        change_dates = [
-            unit.start_date for unit in series._units[1:] if unit < self.last_date]
+        change_dates = [unit.start_date for unit in series._units[1:]]
         line_plot(
             df[fig_cols],
             title=f"{self.area}: Predicted number of cases ({name} scenario)",
