@@ -213,7 +213,7 @@ class PolicyMeasures(Term):
             roll_window (int or None): rolling average window if necessary
             show_figure (bool): If True, show the result as a figure
             filename (str): filename of the figure, or None (show figure)
-            kwargs: keword arguments of pd.DataFrame.plot or line_plot()
+            kwargs: keword arguments of line_plot()
 
         Returns:
             pandas.DataFrame:
@@ -242,7 +242,8 @@ class PolicyMeasures(Term):
             df, title=f"History of {param} in each country",
             ylabel=param,
             h=1 if param == self.RT else None,
-            filename=filename
+            filename=filename,
+            **kwargs
         )
         return df
 
