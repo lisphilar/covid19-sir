@@ -7,11 +7,13 @@ import pytest
 import warnings
 from covsirphy import DataLoader
 from covsirphy import Term, JHUData, CountryData, PopulationData, OxCGRTData
+from covsirphy import Population
 
 
 class TestJHUData(object):
     def test_jhu(self, data_loader):
         jhu_data = data_loader.jhu()
+        assert data_loader.covid19dh_citation
         assert isinstance(jhu_data, JHUData)
         assert isinstance(jhu_data.citation, str)
         df = jhu_data.cleaned()
@@ -88,6 +90,11 @@ class TestJHUData(object):
         df = jhu_data.total()
         assert set(df.columns) == set(
             [*Term.VALUE_COLUMNS, *Term.RATE_COLUMNS])
+
+    def test_from_dataframe(self, jhu_data):
+        df = jhu_data.cleaned()
+        jhu_data2 = JHUData.from_dataframe(df)
+        assert set(df.columns) == set(jhu_data2.cleaned().columns)
 
 
 class TestJapanData(object):
@@ -177,6 +184,13 @@ class TestPopulationData(object):
         assert isinstance(countries, list)
         for country in countries:
             population_data.value(country)
+
+    def test_population_dep(self):
+        warnings.simplefilter("error")
+        with pytest.raises(DeprecationWarning):
+            assert Population(filename=None)
+        warnings.simplefilter("ignore")
+        assert Population(filename=None)
 
 
 class TestOxCGRTData(object):

@@ -39,6 +39,24 @@ class TestODE(object):
         model_instance.calc_days_dict(eg_tau)
 
     @pytest.mark.parametrize("model", [SIR])
+    def test_model_common(self, model):
+        model_ins = model(population=1_000_000, rho=0.2, sigma=0.075)
+        assert str(model_ins) == "SIR model with rho=0.2, sigma=0.075"
+        assert model_ins["rho"] == 0.2
+        with pytest.raises(KeyError):
+            assert model_ins["kappa"] == 0.1
+        with pytest.raises(NotImplementedError):
+            assert model_ins(1, [])
+        with pytest.raises(NotImplementedError):
+            assert model.param_range(1, 2)
+        with pytest.raises(NotImplementedError):
+            assert model.specialized(1, 2)
+        with pytest.raises(NotImplementedError):
+            assert model_ins.calc_r0()
+        with pytest.raises(NotImplementedError):
+            assert model_ins.calc_days_dict(1440)
+
+    @pytest.mark.parametrize("model", [SIR])
     def test_usage_mistakes(self, model):
         # Setting
         eg_tau = 1440
