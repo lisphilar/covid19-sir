@@ -46,15 +46,15 @@ class TestODE(object):
         with pytest.raises(KeyError):
             assert model_ins["kappa"] == 0.1
         with pytest.raises(NotImplementedError):
-            assert model_ins(1, [0, 0, 0])
+            model_ins(1, [0, 0, 0])
         with pytest.raises(NotImplementedError):
-            assert model.param_range(1, 2)
+            model.param_range(1, 2)
         with pytest.raises(NotImplementedError):
-            assert model.specialized(1, 2)
+            model.specialized(1, 2)
         with pytest.raises(NotImplementedError):
-            assert model_ins.calc_r0()
+            model_ins.calc_r0()
         with pytest.raises(NotImplementedError):
-            assert model_ins.calc_days_dict(1440)
+            model_ins.calc_days_dict(1440)
 
     @pytest.mark.parametrize("model", [SIR])
     def test_usage_mistakes(self, model):
