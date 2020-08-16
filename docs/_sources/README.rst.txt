@@ -101,12 +101,16 @@ Usage
 
 Please read the following documents.
 
--  `Usage (quickest
-   version) <https://lisphilar.github.io/covid19-sir/usage_quickest.html>`__
--  `Usage (quick
-   version) <https://lisphilar.github.io/covid19-sir/usage_quick.html>`__
--  `Usage (details:
-   phases) <https://lisphilar.github.io/covid19-sir/usage_phases.html>`__
+-  `Quickest
+   version <https://lisphilar.github.io/covid19-sir/usage_quickest.html>`__
+-  `Quick
+   version <https://lisphilar.github.io/covid19-sir/usage_quick.html>`__
+-  `Details:
+   phases <https://lisphilar.github.io/covid19-sir/usage_phases.html>`__
+-  `Details: theoretical
+   datasets <https://lisphilar.github.io/covid19-sir/usage_theoretical.html>`__
+-  `Details: policy
+   measures <https://lisphilar.github.io/covid19-sir/usage_policy.html>`__
 -  Example codes in `"example" directory of this
    repository <https://github.com/lisphilar/covid19-sir/tree/master/example>`__
 -  `Kaggle: COVID-19 data with SIR
