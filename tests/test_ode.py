@@ -4,7 +4,7 @@
 import pandas as pd
 import pytest
 from covsirphy import ExampleData, PopulationData, Term, Scenario
-from covsirphy import SIR, SIRD, SIRF, SIRFV, SEWIRF
+from covsirphy import ModelBase, SIR, SIRD, SIRF, SIRFV, SEWIRF
 
 
 class TestODE(object):
@@ -37,6 +37,28 @@ class TestODE(object):
         model_instance = model(population_data.value(**area), **param_dict)
         model_instance.calc_r0()
         model_instance.calc_days_dict(eg_tau)
+
+    @pytest.mark.parametrize("model", [SIR])
+    def test_model_common(self, model):
+        model_ins = model(population=1_000_000, rho=0.2, sigma=0.075)
+        assert str(model_ins) == "SIR model with rho=0.2, sigma=0.075"
+        assert model_ins["rho"] == 0.2
+        with pytest.raises(KeyError):
+            assert model_ins["kappa"] == 0.1
+
+    @pytest.mark.parametrize("model", [ModelBase])
+    def test_model_base(self, model):
+        model_ins = model(population=1_000_000)
+        with pytest.raises(NotImplementedError):
+            model_ins(1, [0, 0, 0])
+        with pytest.raises(NotImplementedError):
+            model.param_range(1, 2)
+        with pytest.raises(NotImplementedError):
+            model.specialize(1, 2)
+        with pytest.raises(NotImplementedError):
+            model_ins.calc_r0()
+        with pytest.raises(NotImplementedError):
+            model_ins.calc_days_dict(1440)
 
     @pytest.mark.parametrize("model", [SIR])
     def test_usage_mistakes(self, model):

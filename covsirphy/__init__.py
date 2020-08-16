@@ -1,7 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-from collections import Counter
 import sys
 try:
     import better_exceptions
@@ -40,12 +39,6 @@ __all__ = [
     # Deprecated
     "Population", "Word",
 ]
-
-# Check duplication
-dup_list = [k for (k, v) in Counter(__all__).items() if v > 1]
-if dup_list:
-    dup_str = ', '.join(dup_list)
-    raise Exception(f"Duplication was found in modules. {dup_str}")
 
 # Show exceptions in better format if used from command line
 if not hasattr(sys, "ps1") or not better_exceptions_installed:

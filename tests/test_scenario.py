@@ -112,6 +112,8 @@ class TestScenario(object):
         warnings.simplefilter("error")
         with pytest.raises(DeprecationWarning):
             snl.add_phase(end_date="01May2020")
+        warnings.simplefilter("ignore")
+        snl.add_phase(end_date="01May2020")
 
     @pytest.mark.parametrize("country", ["Japan"])
     def test_trend(self, jhu_data, population_data, country):
@@ -212,6 +214,14 @@ class TestScenario(object):
         snl.get(Term.RT)
         with pytest.raises(KeyError):
             snl.get("feeling")
+
+    @pytest.mark.parametrize("country", ["Japan"])
+    def test_estimate_tau(self, jhu_data, population_data, country):
+        # Setting
+        snl = Scenario(jhu_data, population_data, country)
+        snl.trend(show_figure=False)
+        with pytest.raises(ValueError):
+            snl.estimate(SIR, tau=1440)
 
     @pytest.mark.parametrize("country", ["Japan"])
     def test_simulate(self, jhu_data, population_data, country):

@@ -68,9 +68,7 @@ class CleaningBase(Term):
 
     @citation.setter
     def citation(self, description):
-        if not isinstance(description, str):
-            raise TypeError("@description must be a string.")
-        self._citation = description
+        self._citation = str(description)
 
     def iso3_to_country(self, iso3_code):
         """
@@ -152,10 +150,7 @@ class CleaningBase(Term):
             return df
         df = df.loc[df[self.COUNTRY] == country, :]
         df = df.drop(self.COUNTRY, axis=1)
-        try:
-            df = df.drop(self.ISO3, axis=1)
-        except KeyError:
-            pass
+        df = df.drop(self.ISO3, axis=1, errors="ignore")
         return df.reset_index(drop=True)
 
     def _subset_by_province(self, record_df, province):
