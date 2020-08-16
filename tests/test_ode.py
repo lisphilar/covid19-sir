@@ -54,7 +54,7 @@ class TestODE(object):
         with pytest.raises(NotImplementedError):
             model.param_range(1, 2)
         with pytest.raises(NotImplementedError):
-            model.specialized(1, 2)
+            model.specialize(1, 2)
         with pytest.raises(NotImplementedError):
             model_ins.calc_r0()
         with pytest.raises(NotImplementedError):
