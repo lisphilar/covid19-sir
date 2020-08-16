@@ -41,10 +41,10 @@ Inspiration
 -----------
 
 -  Monitor the spread of COVID-19
--  Keep track parameter values/reproductive number in each
+-  Keep track parameter values/reproduction number in each
    country/province
--  Find the relationship of reproductive number and measures taken in
-   each country/province
+-  Find the relationship of reproductive number and measures taken by
+   each country
 
 If you have ideas or need new functionalities, please join this project.
 Any suggestions with `Github
