@@ -67,9 +67,11 @@ Guidotti, E., Ardia, D., (2020), "COVID-19 Data Hub", Working paper, doi: 10.131
 ## Usage
 Please read the following documents.
 
-- [Usage (quickest version)](https://lisphilar.github.io/covid19-sir/usage_quickest.html)
-- [Usage (quick version)](https://lisphilar.github.io/covid19-sir/usage_quick.html)
-- [Usage (details: phases)](https://lisphilar.github.io/covid19-sir/usage_phases.html)
+- [Quickest version](https://lisphilar.github.io/covid19-sir/usage_quickest.html)
+- [Quick version](https://lisphilar.github.io/covid19-sir/usage_quick.html)
+- [Details: phases](https://lisphilar.github.io/covid19-sir/usage_phases.html)
+- [Details: theoretical datasets](https://lisphilar.github.io/covid19-sir/usage_theoretical.html)
+- [Details: policy measures](https://lisphilar.github.io/covid19-sir/usage_policy.html)
 - Example codes in ["example" directory of this repository](https://github.com/lisphilar/covid19-sir/tree/master/example)
 - [Kaggle: COVID-19 data with SIR model](https://www.kaggle.com/lisphilar/covid-19-data-with-sir-model)
 
