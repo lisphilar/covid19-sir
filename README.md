@@ -32,8 +32,8 @@
 
 ## Inspiration
 - Monitor the spread of COVID-19
-- Keep track parameter values/reproductive number in each country/province
-- Find the relationship of reproductive number and measures taken in each country/province
+- Keep track parameter values/reproduction number in each country/province
+- Find the relationship of reproductive number and measures taken by each country
 
 <strong>If you have ideas or need new functionalities, please join this project.
 Any suggestions with [Github Issues](https://github.com/lisphilar/covid19-sir/issues/new/choose) are always welcomed. Please read [Guideline of contribution](https://lisphilar.github.io/covid19-sir/CONTRIBUTING.html) in advance.</strong>
