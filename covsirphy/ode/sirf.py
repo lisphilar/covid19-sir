@@ -57,6 +57,8 @@ class SIRF(ModelBase):
         self.kappa = kappa
         self.rho = rho
         self.sigma = sigma
+        self.non_param_dict = {
+            "theta": theta, "kappa": kappa, "rho": rho, "sigma": sigma}
 
     def __call__(self, t, X):
         """

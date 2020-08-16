@@ -464,10 +464,7 @@ class Scenario(Term):
         if not isinstance(phases, list):
             raise TypeError("@phases must be None or a list of phase names.")
         selected_units = [series.unit(phase) for phase in phases]
-        future_units = list(set(selected_units) - set(past_units))
-        if not future_units:
-            return selected_units
-        raise KeyError("Future/un-registered/disabled phases were selected.")
+        return list(set(selected_units) & set(past_units))
 
     def estimate(self, model, phases=None, name="Main", n_jobs=-1, **kwargs):
         """

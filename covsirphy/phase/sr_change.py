@@ -49,13 +49,6 @@ class ChangeFinder(Term):
         # Setting for optimization
         self._change_dates = []
 
-    @property
-    def change_dates(self):
-        """
-        list[str]: list of change points
-        """
-        return self._change_dates
-
     def run(self):
         """
         Run optimization and find change points.

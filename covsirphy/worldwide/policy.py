@@ -96,7 +96,7 @@ class PolicyMeasures(Term):
             un_selectable_set = selected_set - all_set
             un_selectable = ", ".join(list(un_selectable_set))
             raise KeyError(
-                f"{un_selectable} cannot be selected because records not registered.")
+                f"{un_selectable} cannot be selected because records are not registered.")
         self._countries = country_list
 
     def trend(self, min_len=2):
@@ -271,7 +271,7 @@ class PolicyMeasures(Term):
                 Values: parameter values
         """
         if self.model is None:
-            raise TypeError(
+            raise ValueError(
                 "PolicyMeasures.estimate(model) must be done in advance.")
         # Get parameter/Rt/data parameter value of each date
         df = self.summary().reset_index().replace(self.UNKNOWN, None)

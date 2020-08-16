@@ -2,13 +2,15 @@
 # -*- coding: utf-8 -*-
 
 import numpy as np
-from covsirphy.ode.mbasecom import ModelBaseCommon
+from covsirphy.cleaning.term import Term
 
 
-class ModelBase(ModelBaseCommon):
+class ModelBase(Term):
     """
     Base class of ODE models.
     """
+    # Quartile range of the parametes when setting initial values
+    QUANTILE_RANGE = [0.3, 0.7]
     # Model name
     NAME = "ModelBase"
     # names of parameters
@@ -40,7 +42,23 @@ class ModelBase(ModelBaseCommon):
         self.population = self.ensure_natural_int(
             population, name="population"
         )
-        # Non-dim parameters
+        # Dictionary of non-dim parameters: {name: value}
+        self.non_param_dict = {}
+
+    def __str__(self):
+        param_str = ", ".join(
+            [f"{p}={v}" for (p, v) in self.non_param_dict.items()]
+        )
+        return f"{self.NAME} model with {param_str}"
+
+    def __getitem__(self, key):
+        """
+        Args:
+            key (str): parameter name
+        """
+        if key not in self.non_param_dict.keys():
+            raise KeyError(f"key must be in {', '.join(self.PARAMETERS)}")
+        return self.non_param_dict[key]
 
     def __call__(self, t, X):
         """
@@ -48,7 +66,7 @@ class ModelBase(ModelBaseCommon):
         This method should be overwritten in subclass.
 
         Returns:
-            (np.array)
+            np.array
         """
         raise NotImplementedError
 

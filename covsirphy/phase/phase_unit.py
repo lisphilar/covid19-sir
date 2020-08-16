@@ -23,7 +23,7 @@ class PhaseUnit(Term):
         >>> unit3 = PhaseUnit("02Mar2020", "01Apr2020", 1000)
         >>> unit4 = PhaseUnit("02Mar2020", "01Apr2020", 1000)
         >>> unit5 = PhaseUnit("01Jan2020", "01Apr2020", 1000)
-            >>> str(unit1)
+        >>> str(unit1)
         'Phase (01Jan2020 - 01Feb2020)'
         >>> unit4 == unit4
         True

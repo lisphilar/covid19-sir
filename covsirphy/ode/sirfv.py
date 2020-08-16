@@ -72,6 +72,8 @@ class SIRFV(ModelBase):
                 raise ValueError(
                     "@v_per_day / @population does not match @omega.")
         self.omega = omega
+        self.non_param_dict = {
+            "theta": theta, "kappa": kappa, "rho": rho, "sigma": sigma, "omega": omega}
 
     def __call__(self, t, X):
         """

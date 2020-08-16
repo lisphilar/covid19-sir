@@ -70,6 +70,11 @@ class SEWIRF(ModelBase):
         self.rho2 = rho2
         self.rho3 = rho3
         self.sigma = sigma
+        self.non_param_dict = {
+            "theta": theta, "kappa": kappa,
+            "rho1": rho1, "rho2": rho2, "rho3": rho3,
+            "sigma": sigma
+        }
 
     def __call__(self, t, X):
         """

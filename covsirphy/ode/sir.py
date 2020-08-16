@@ -50,6 +50,7 @@ class SIR(ModelBase):
         # Non-dim parameters
         self.rho = rho
         self.sigma = sigma
+        self.non_param_dict = {"rho": rho, "sigma": sigma}
 
     def __call__(self, t, X):
         """

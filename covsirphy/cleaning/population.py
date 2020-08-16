@@ -67,8 +67,7 @@ class PopulationData(CleaningBase):
         ]
         self.ensure_dataframe(df, name="the raw data", columns=expected_cols)
         # ISO3
-        if self.ISO3 not in df.columns:
-            df[self.ISO3] = self.UNKNOWN
+        df[self.ISO3] = df[self.ISO3] if self.ISO3 in df.columns else self.UNKNOWN
         # Date
         if self.DATE in df.columns:
             df[self.DATE] = pd.to_datetime(df[self.DATE])
