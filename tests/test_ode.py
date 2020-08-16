@@ -46,7 +46,7 @@ class TestODE(object):
         with pytest.raises(KeyError):
             assert model_ins["kappa"] == 0.1
         with pytest.raises(NotImplementedError):
-            assert model_ins(1, [])
+            assert model_ins(1, [0, 0, 0])
         with pytest.raises(NotImplementedError):
             assert model.param_range(1, 2)
         with pytest.raises(NotImplementedError):
