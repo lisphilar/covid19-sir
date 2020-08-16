@@ -4,7 +4,7 @@
 import pandas as pd
 import pytest
 from covsirphy import ExampleData, PopulationData, Term, Scenario
-from covsirphy import SIR, SIRD, SIRF, SIRFV, SEWIRF
+from covsirphy import ModelBase, SIR, SIRD, SIRF, SIRFV, SEWIRF
 
 
 class TestODE(object):
@@ -45,6 +45,10 @@ class TestODE(object):
         assert model_ins["rho"] == 0.2
         with pytest.raises(KeyError):
             assert model_ins["kappa"] == 0.1
+
+    @pytest.mark.parametrize("model", [ModelBase])
+    def test_model_base(self, model):
+        model_ins = model(population=1_000_000)
         with pytest.raises(NotImplementedError):
             model_ins(1, [0, 0, 0])
         with pytest.raises(NotImplementedError):
