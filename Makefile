@@ -97,6 +97,10 @@ example:
 	@echo "<Worldwide analysis>"
 	@pipenv run python -m example.worldwide
 
+	@# S-R trend analysis
+	@echo "<S-R trend analysis>"
+	@pipenv run python -m example.trend_analysis
+
 
 .PHONY: pypi
 pypi:
