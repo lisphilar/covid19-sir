@@ -39,7 +39,6 @@ class Estimator(Optimizer):
         # Arguments
         self.population = self.ensure_population(population)
         self.model = self.ensure_subclass(model, ModelBase, name="model")
-        self.tau = self.ensure_tau(tau)
         # Dataset
         if isinstance(record_df, JHUData):
             subset_arg_dict = find_args(
@@ -66,6 +65,9 @@ class Estimator(Optimizer):
         optuna.logging.disable_default_handler()
         self.x = self.TS
         self.y_list = model.VARIABLES[:]
+        self.weight_dict = {
+            v: p for (v, p) in zip(model.VARIABLES, model.WEIGHTS) if p > 0
+        }
         self.study = None
         self.total_trials = 0
         self.run_time = 0
@@ -74,6 +76,12 @@ class Estimator(Optimizer):
         self.train_df = None
         # step_n will be defined in divide_minutes()
         self.step_n = None
+        # tau value
+        self.tau = self.ensure_tau(tau)
+        if tau is None:
+            self.taufree_df = pd.DataFrame()
+        else:
+            self.taufree_df = self.divide_minutes(tau)
 
     def run(self, timeout=60, reset_n_max=3,
             timeout_iteration=5, allowance=(0.98, 1.02), seed=0, **kwargs):
@@ -140,10 +148,8 @@ class Estimator(Optimizer):
         Returns:
             (bool): True when all max values of predicted values are in allowance
         """
-        df = self.ensure_dataframe(comp_df, name="comp_df")
-        variables = self.model.VARIABLES[:]
-        a_max_values = [df[f"{v}{self.A}"].max() for v in variables]
-        p_max_values = [df[f"{v}{self.P}"].max() for v in variables]
+        a_max_values = [comp_df[f"{v}{self.A}"].max() for v in self.y_list]
+        p_max_values = [comp_df[f"{v}{self.P}"].max() for v in self.y_list]
         allowance0, allowance1 = allowance
         ok_list = [
             (a * allowance0 <= p) and (p <= a * allowance1)
@@ -163,10 +169,10 @@ class Estimator(Optimizer):
             (float): score of the error function to minimize
         """
         # Convert T to t using tau
-        tau = self.tau
-        if tau is None:
+        taufree_df = self.taufree_df.copy()
+        if taufree_df.empty:
             tau = trial.suggest_categorical(self.TAU, self.tau_candidates)
-        taufree_df = self.divide_minutes(tau)
+            taufree_df = self.divide_minutes(tau)
         # Set parameters of the models
         model_param_dict = self.model.param_range(
             taufree_df, self.population)
@@ -217,23 +223,37 @@ class Estimator(Optimizer):
             (float): score of the error function to minimize
         """
         sim_df = self.simulate(self.step_n, param_dict)
-        df = self.compare(taufree_df, sim_df)
+        comp_df = self.compare(taufree_df, sim_df)
         # Calculate error score
-        v_list = [
-            v for (p, v)
-            in zip(self.model.PRIORITIES, self.model.VARIABLES)
-            if p > 0
-        ]
-        diffs = [df[f"{v}{self.A}"] - df[f"{v}{self.P}"] for v in v_list]
-        numerators = [df[f"{v}{self.A}"] + 1 for v in v_list]
         try:
             return sum(
-                p * np.average(diff.abs() / numerator, weights=df.index)
-                for (p, diff, numerator)
-                in zip(self.model.PRIORITIES, diffs, numerators)
+                self._score(variable, comp_df)
+                for variable in self.weight_dict.keys()
             )
         except (ZeroDivisionError, TypeError):
             return np.inf
+
+    def _score(self, v, comp_df):
+        """
+        Calculate score of the variable.
+
+        Args:
+            v (str): variable na,e
+            com_df (pandas.DataFrame):
+                Index:
+                    (str): time step
+                Columns:
+                    - columns with "_actual"
+                    - columns with "_predicted"
+                    - columns are defined by self.y_list
+
+        Returns:
+            float: score
+        """
+        weight = self.weight_dict[v]
+        actual = comp_df[f"{v}{self.A}"]
+        diff = (actual - comp_df[f"{v}{self.P}"]).abs() / (actual + 1)
+        return weight * np.average(diff, weights=comp_df.index)
 
     def simulate(self, step_n, param_dict):
         """
@@ -350,7 +370,7 @@ class Estimator(Optimizer):
         train_df = self.divide_minutes(est_dict[self.TAU])
         use_variables = [
             v for (i, (p, v))
-            in enumerate(zip(self.model.PRIORITIES, self.model.VARIABLES))
+            in enumerate(zip(self.model.WEIGHTS, self.model.VARIABLES))
             if p != 0 and i != 0
         ]
         return super().accuracy(
