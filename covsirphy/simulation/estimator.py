@@ -78,10 +78,7 @@ class Estimator(Optimizer):
         self.step_n = None
         # tau value
         self.tau = self.ensure_tau(tau)
-        if tau is None:
-            self.taufree_df = pd.DataFrame()
-        else:
-            self.taufree_df = self.divide_minutes(tau)
+        self.taufree_df = pd.DataFrame() if tau is None else self.divide_minutes(tau)
 
     def run(self, timeout=60, reset_n_max=3,
             timeout_iteration=5, allowance=(0.98, 1.02), seed=0, **kwargs):
