@@ -253,7 +253,7 @@ class Estimator(Optimizer):
         weight = self.weight_dict[v]
         actual = comp_df[f"{v}{self.A}"]
         diff = (actual - comp_df[f"{v}{self.P}"]).abs() / (actual + 1)
-        return weight * np.average(diff, weights=comp_df.index)
+        return weight * diff.mean()
 
     def simulate(self, step_n, param_dict):
         """
