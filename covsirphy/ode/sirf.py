@@ -32,7 +32,7 @@ class SIRF(ModelBase):
     }
     VARIABLES = list(VAR_DICT.values())
     # Priorities of the variables when optimization
-    PRIORITIES = np.array([1, 10, 10, 2])
+    PRIORITIES = np.array([1, 1, 1, 1])
     # Variables that increases monotonically
     VARS_INCLEASE = [ModelBase.R, ModelBase.F]
     # Example set of parameters and initial values
