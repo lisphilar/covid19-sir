@@ -146,7 +146,7 @@ class TestScenario(object):
         # Combine
         length = len(snl["Main"])
         snl.combine(["1st", "2nd"])
-        n_changed = population_data.value(country) * 0.98
+        n_changed = int(population_data.value(country) * 0.98)
         snl.combine(["2nd", "3rd"], population=n_changed)
         assert len(snl["Main"]) == length - 2
         # Separate
