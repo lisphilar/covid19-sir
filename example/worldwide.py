@@ -31,9 +31,8 @@ def main():
     # Parameter estimation
     analyser.estimate(cs.SIRF)
     # All results
-    track_df = analyser.track(
-        output_dir.joinpath("track.csv"), index=False)
-    track_df.to_csv()
+    track_df = analyser.track()
+    track_df.to_csv(output_dir.joinpath("track.csv"), index=False)
     # Parameter history of Rt
     rt_df = analyser.param_history(
         "Rt", roll_window=None, filename=output_dir.joinpath("history_rt.png"))
