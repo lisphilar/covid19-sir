@@ -325,24 +325,15 @@
 <span class="sd">            (pandas.DataFrame):</span>
 <span class="sd">                Index:</span>
 <span class="sd">                    (str): time step</span>
-<span class="sd">                Index:</span>
-<span class="sd">                    reset index</span>
 <span class="sd">                Columns:</span>
 <span class="sd">                    - columns with &quot;_actual&quot;</span>
 <span class="sd">                    - columns with &quot;_predicted:</span>
 <span class="sd">                    - columns are defined by self.y_list</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="c1"># Check the arguments</span>
-        <span class="k">if</span> <span class="ow">not</span> <span class="nb">set</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">y_list</span><span class="p">)</span><span class="o">.</span><span class="n">issubset</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">predicted_df</span><span class="o">.</span><span class="n">columns</span><span class="p">)):</span>
-            <span class="n">y_str</span> <span class="o">=</span> <span class="s2">&quot;, &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">y_list</span><span class="p">)</span>
-            <span class="k">raise</span> <span class="ne">KeyError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;@predicted_df must have </span><span class="si">{</span><span class="n">y_str</span><span class="si">}</span><span class="s2"> columns.&quot;</span><span class="p">)</span>
         <span class="c1"># Data for comparison</span>
         <span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">merge</span><span class="p">(</span>
-            <span class="n">actual_df</span><span class="p">,</span> <span class="n">predicted_df</span><span class="p">,</span> <span class="n">on</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">x</span><span class="p">,</span>
-            <span class="n">suffixes</span><span class="o">=</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">A</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">P</span><span class="p">)</span>
-        <span class="p">)</span>
-        <span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">set_index</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">x</span><span class="p">)</span>
-        <span class="k">return</span> <span class="n">df</span></div>
+            <span class="n">actual_df</span><span class="p">,</span> <span class="n">predicted_df</span><span class="p">,</span> <span class="n">on</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">x</span><span class="p">,</span> <span class="n">suffixes</span><span class="o">=</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">A</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">P</span><span class="p">))</span>
+        <span class="k">return</span> <span class="n">df</span><span class="o">.</span><span class="n">set_index</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">x</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="Optimizer.param"><a class="viewcode-back" href="../../../covsirphy.simulation.html#covsirphy.simulation.optimize.Optimizer.param">[docs]</a>    <span class="k">def</span> <span class="nf">param</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
