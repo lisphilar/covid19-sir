@@ -2,10 +2,12 @@
 # -*- coding: utf-8 -*-
 
 from pathlib import Path
+import warnings
 import covsirphy as cs
 
 
 def main():
+    warnings.simplefilter("error")
     # Create output directory in example directory
     code_path = Path(__file__)
     output_dir = code_path.with_name("output").joinpath(code_path.stem)

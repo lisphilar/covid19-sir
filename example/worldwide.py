@@ -30,6 +30,10 @@ def main():
     pprint(analyser.phase_len(), compact=True)
     # Parameter estimation
     analyser.estimate(cs.SIRF)
+    # All results
+    track_df = analyser.track(
+        output_dir.joinpath("track.csv"), index=False)
+    track_df.to_csv()
     # Parameter history of Rt
     rt_df = analyser.param_history(
         "Rt", roll_window=None, filename=output_dir.joinpath("history_rt.png"))

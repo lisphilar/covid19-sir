@@ -2,12 +2,14 @@
 # -*- coding: utf-8 -*-
 
 from pathlib import Path
+import warnings
 import numpy as np
 import pandas as pd
 import covsirphy as cs
 
 
 def main():
+    warnings.simplefilter("error")
     # Create output directory in example directory
     code_path = Path(__file__)
     output_dir = code_path.with_name("output").joinpath(code_path.stem)
@@ -49,8 +51,8 @@ def main():
     )
     estimator.run()
     estimated_df = estimator.summary(name=model.NAME)
-    estimated_df.loc["set"] = pd.Series(
-        {**set_param_dict, "tau": eg_tau}
+    estimated_df = estimated_df.append(
+        pd.Series({**set_param_dict, "tau": eg_tau}, name="set")
     )
     estimated_df["tau"] = estimated_df["tau"].astype(np.int64)
     estimated_df.to_csv(
