@@ -92,7 +92,7 @@ class ExampleData(JHUData):
         # Start date and y0 values
         df = self._cleaned_df.copy()
         df = df.loc[
-            (df[self.COUNTRY] == country) & (df[self.PROVINCE] == province)
+            (df[self.COUNTRY] == country) & (df[self.PROVINCE] == province), :
         ]
         if df.empty:
             start_date = self.start_date

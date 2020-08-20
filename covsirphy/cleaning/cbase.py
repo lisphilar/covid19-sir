@@ -188,7 +188,7 @@ class CleaningBase(Term):
                 df = df.groupby(self.DATE).last().reset_index()
             return df.drop(self.PROVINCE, axis=1)
         # Calculate total values at country level if not registered
-        total_df = df.loc[p_series != self.UNKNOWN]
+        total_df = df.loc[p_series != self.UNKNOWN, :]
         if self.DATE in df.columns:
             total_df = total_df.groupby(self.DATE).sum().reset_index()
             if not total_df.empty:

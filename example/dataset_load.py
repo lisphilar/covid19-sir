@@ -2,10 +2,12 @@
 # -*- coding: utf-8 -*-
 
 from pathlib import Path
+import warnings
 import covsirphy as cs
 
 
 def main():
+    warnings.simplefilter("error")
     # Create output directory in example directory
     code_path = Path(__file__)
     input_dir = code_path.parent.with_name("input")
@@ -45,7 +47,7 @@ def main():
         output_dir.joinpath("oxcgrt_cleaned.csv"), index=False
     )
     # Create a subset for a country with ISO3 country code
-    oxcgrt_data.subset(iso3="JPN").to_csv(
+    oxcgrt_data.subset("JPN").to_csv(
         output_dir.joinpath("oxcgrt_cleaned_jpn.csv"), index=False
     )
 
