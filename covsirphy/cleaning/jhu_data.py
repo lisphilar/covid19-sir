@@ -182,6 +182,7 @@ class JHUData(CleaningBase):
             country=country, province=province, start_date=start_date, end_date=end_date)
         # Select records where Recovered > 0
         df = subset_df.loc[subset_df[self.R] > 0, :]
+        df = df.reset_index(drop=True)
         if df.empty:
             series = subset_df[self.DATE]
             start_date = start_date or series.min().strftime(self.DATE_FORMAT)
@@ -193,7 +194,7 @@ class JHUData(CleaningBase):
         if population is None:
             return df
         population = self.ensure_natural_int(population, name="population")
-        df[self.S] = population - df[self.C]
+        df.loc[:, self.S] = population - df.loc[:, self.C]
         return df
 
     def to_sr(self, country, province=None,
