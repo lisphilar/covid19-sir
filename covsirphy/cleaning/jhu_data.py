@@ -178,16 +178,17 @@ class JHUData(CleaningBase):
             Records with Recovered > 0 will be selected.
         """
         # Subset with area and start/end date
-        df = super().subset(
+        subset_df = super().subset(
             country=country, province=province, start_date=start_date, end_date=end_date)
         # Select records where Recovered > 0
-        df = df.loc[df[self.R] > 0, :]
+        df = subset_df.loc[subset_df[self.R] > 0, :]
         if df.empty:
+            series = subset_df[self.DATE]
+            start_date = start_date or series.min().strftime(self.DATE_FORMAT)
+            end_date = end_date or series.max().strftime(self.DATE_FORMAT)
             s1 = "Records with Recovered > 0 are not registered."
             s2 = f"(country={country}, province={province}, period={start_date}-{end_date})"
-            raise ValueError(
-                f"{s1} {s2}"
-            )
+            raise ValueError(f"{s1} {s2}")
         # Calculate Susceptible if population value was applied
         if population is None:
             return df
