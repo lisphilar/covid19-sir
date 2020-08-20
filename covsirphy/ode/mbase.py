@@ -19,8 +19,8 @@ class ModelBase(Term):
     # Variable names in (non-dim, dimensional) ODEs
     VAR_DICT = dict()
     VARIABLES = list(VAR_DICT.values())
-    # Priorities of the variables when optimization
-    PRIORITIES = np.array(list())
+    # Weights of variables in parameter estimation error function
+    WEIGHTS = np.array(list())
     # Variables that increases monotonically
     VARS_INCLEASE = list()
     # Example set of parameters and initial values

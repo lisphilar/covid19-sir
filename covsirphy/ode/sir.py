@@ -26,8 +26,8 @@ class SIR(ModelBase):
         "z": ModelBase.FR
     }
     VARIABLES = list(VAR_DICT.values())
-    # Priorities of the variables when optimization
-    PRIORITIES = np.array([1, 1, 1])
+    # Weights of variables in parameter estimation error function
+    WEIGHTS = np.array([1, 1, 1])
     # Variables that increases monotonically
     VARS_INCLEASE = [ModelBase.FR]
     # Example set of parameters and initial values

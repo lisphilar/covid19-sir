@@ -28,8 +28,8 @@ class SEWIRF(ModelBase):
         "x3": ModelBase.W,
     }
     VARIABLES = list(VAR_DICT.values())
-    # Priorities of the variables when optimization
-    PRIORITIES = np.array([0, 10, 10, 2, 0, 0])
+    # Weights of variables in parameter estimation error function
+    WEIGHTS = np.array([0, 10, 10, 2, 0, 0])
     # Variables that increases monotonically
     VARS_INCLEASE = [ModelBase.R, ModelBase.F]
     # Example set of parameters and initial values

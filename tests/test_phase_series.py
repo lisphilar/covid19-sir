@@ -31,7 +31,7 @@ class TestPhaseSeries(object):
         # Add a phase with specified population value: 1st
         with pytest.raises(ValueError):
             series.add(end_date="22Apr2020")
-        series.add(end_date="05May2020", population=population * 0.98)
+        series.add(end_date="05May2020", population=int(population * 0.98))
         # Add a phase with specified the number of days: 2nd
         series.add(days=21)
         # Filling past phases and add a future phase: 3rd, 4th

@@ -165,24 +165,15 @@ class Optimizer(Term):
             (pandas.DataFrame):
                 Index:
                     (str): time step
-                Index:
-                    reset index
                 Columns:
                     - columns with "_actual"
                     - columns with "_predicted:
                     - columns are defined by self.y_list
         """
-        # Check the arguments
-        if not set(self.y_list).issubset(set(predicted_df.columns)):
-            y_str = ", ".join(self.y_list)
-            raise KeyError(f"@predicted_df must have {y_str} columns.")
         # Data for comparison
         df = pd.merge(
-            actual_df, predicted_df, on=self.x,
-            suffixes=(self.A, self.P)
-        )
-        df = df.set_index(self.x)
-        return df
+            actual_df, predicted_df, on=self.x, suffixes=(self.A, self.P))
+        return df.set_index(self.x)
 
     def param(self):
         """
