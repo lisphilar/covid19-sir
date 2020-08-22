@@ -161,6 +161,7 @@ class Trend(Term):
         x_series = df[cls.R]
         actual = df[f"{cls.S}{cls.A}"]
         # Plot the actual values
+        warnings.simplefilter("ignore", FutureWarning)
         plt.plot(
             x_series, actual,
             label="Actual", color="black",

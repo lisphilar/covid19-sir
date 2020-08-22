@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
+import warnings
 from dask import dataframe as dd
 import pandas as pd
 from covsirphy.cleaning.term import Term
@@ -15,6 +16,7 @@ class CleaningBase(Term):
     """
 
     def __init__(self, filename):
+        warnings.simplefilter("ignore", DeprecationWarning)
         if filename is None:
             self._raw = pd.DataFrame()
             self._cleaned_df = pd.DataFrame()

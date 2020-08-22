@@ -1,8 +1,9 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-from pathlib import Path
 from datetime import datetime, timezone, timedelta
+from pathlib import Path
+import warnings
 import covid19dh
 from dask import dataframe as dd
 import pandas as pd
@@ -528,6 +529,7 @@ class DataLoader(Term):
                 (pandas.DataFrame): dataset at country level
                 (pandas.DataFrame): dataset at province level
         """
+        warnings.simplefilter("ignore", ResourceWarning)
         c_df = covid19dh.covid19(country=None, level=1, verbose=False)
         c_citations = covid19dh.cite(c_df)
         # For some countries, province-level data is included
