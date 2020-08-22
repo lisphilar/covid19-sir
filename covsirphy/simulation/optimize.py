@@ -2,11 +2,14 @@
 # -*- coding: utf-8 -*-
 
 from datetime import datetime
+import warnings
 import matplotlib.pyplot as plt
 from matplotlib.ticker import ScalarFormatter
 import numpy as np
 import optuna
 import pandas as pd
+if True:
+    warnings.simplefilter("ignore", FutureWarning)
 import seaborn as sns
 from covsirphy.cleaning.term import Term
 
