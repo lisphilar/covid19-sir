@@ -749,3 +749,100 @@ class Scenario(Term):
             desc_df = desc_df.join(
                 rt_df[cols].add_suffix(f"_{self.RT}"), how="left")
         return desc_df
+
+    def _track_param(self, name):
+        """
+        Get the history of parameters for the scenario.
+
+        Args:
+            name (str): phase series name
+
+        Returns:
+            pandas.DataFrame
+                Index: Date (pandas.TimeStamp)
+                Columns:
+                    - Population (int)
+                    - Rt (float)
+                    - parameter values (float)
+                    - day parameter values (float)
+        """
+        df = self.summary(name=name).replace(self.UNKNOWN, None)
+        if self.ODE not in df.columns:
+            raise ValueError(
+                f"Scenario.estimate(model, name={name}) must be done in advance.")
+        # Date range to dates
+        df[self.START] = pd.to_datetime(df[self.START])
+        df[self.END] = pd.to_datetime(df[self.END])
+        df[self.DATE] = df[[self.START, self.END]].apply(
+            lambda x: pd.date_range(x[0], x[1]).tolist(), axis=1)
+        df = df.reset_index(drop=True).explode(self.DATE)
+        # Columns
+        df = df.drop(
+            [self.TENSE, self.START, self.END, self.ODE, self.TAU, *self.EST_COLS], axis=1)
+        df = df.set_index(self.DATE)
+        for col in df.columns:
+            df[col] = pd.to_numeric(df[col], errors="coerce")
+        df[self.N] = df[self.N].astype(np.int64)
+        return df
+
+    def _track(self, name, y0_dict=None):
+        """
+        Show values of parameters and variables in one dataframe for the scenario.
+
+        Args:
+            name (str): phase series name
+            y0_dict (dict or None):
+                - key (str): variable name
+                - value (float): initial value
+                - dictionary of initial values or None
+                - if model will be changed in the later phase, must be specified
+
+        Returns:
+            pandas.DataFrame
+                Index: reset index
+                Columns:
+                    - Date (pandas.TimeStamp)
+                    - variables (int)
+                    - Population (int)
+                    - Rt (float)
+                    - parameter values (float)
+                    - day parameter values (float)
+        """
+        sim_df = self.simulate(name=name, y0_dict=y0_dict, show_figure=False)
+        param_df = self._track_param(name=name)
+        df = pd.merge(
+            sim_df, param_df, how="inner",
+            left_on=self.DATE, right_index=True, sort=True
+        )
+        return df
+
+    def track(self, y0_dict=None):
+        """
+        Show values of parameters and variables in one dataframe.
+
+        Args:
+            y0_dict (dict or None):
+                - key (str): variable name
+                - value (float): initial value
+                - dictionary of initial values or None
+                - if model will be changed in the later phase, must be specified
+
+        Returns:
+            pandas.DataFrame
+                Index: reset index
+                Columns:
+                    - Scenario (str)
+                    - Date (pandas.TimeStamp)
+                    - variables (int)
+                    - Population (int)
+                    - Rt (float)
+                    - parameter values (float)
+                    - day parameter values (float)
+        """
+        dataframes = []
+        append = dataframes.append
+        for name in self._series_dict.keys():
+            df = self._track(name=name, y0_dict=y0_dict)
+            df.insert(0, self.SERIES, name)
+            append(df)
+        return pd.concat(dataframes, axis=0, sort=False)
