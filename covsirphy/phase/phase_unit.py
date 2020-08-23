@@ -496,7 +496,7 @@ class PhaseUnit(Term):
         Perform simulation with the set/estimated parameter values.
 
         Args:
-            y0_dict (dict or None):
+            y0_dict (dict or None): dictionary of initial values or None
                 - key (str): variable name
                 - value (float): initial value
 

@@ -392,11 +392,9 @@ class PhaseSeries(Term):
                     - Fatal (int): the number of fatal cases
                     - Recovered (int): the number of recovered cases (> 0)
                     - Susceptible (int): the number of susceptible cases
-            y0_dict (dict or None):
+            y0_dict (dict or None): dictionary of initial values or None
                 - key (str): variable name
                 - value (float): initial value
-                - dictionary of initial values or None
-                - if model will be changed in the later phase, must be specified
 
         Returns:
             (pandas.DataFrame)

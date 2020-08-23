@@ -554,11 +554,9 @@ class Scenario(Term):
 
         Args:
             name (str): phase series name. If 'Main', main PhaseSeries will be used
-            y0_dict (dict or None):
+            y0_dict (dict or None): dictionary of initial values or None
                 - key (str): variable name
                 - value (float): initial value
-                - dictionary of initial values or None
-                - if model will be changed in the later phase, must be specified
             show_figure (bool):
                 - if True, show the result as a figure.
             filename (str): filename of the figure, or None (show figure)
@@ -582,7 +580,7 @@ class Scenario(Term):
         df = sim_df.set_index(self.DATE)
         fig_cols_set = set(df.columns) & set(self.FIG_COLUMNS)
         fig_cols = [col for col in self.FIG_COLUMNS if col in fig_cols_set]
-        change_dates = [unit.start_date for unit in series._units[1:]]
+        change_dates = [unit.start_date for unit in series][1:]
         line_plot(
             df[fig_cols],
             title=f"{self.area}: Predicted number of cases ({name} scenario)",
@@ -649,6 +647,7 @@ class Scenario(Term):
         df = df.loc[:, targets].dropna(how="any", axis=0)
         return df.astype(np.float64)
 
+    @deprecate(old="Scenario.param_history(targets: list)", new="Scenario.history(target: str)")
     def param_history(self, targets=None, name="Main", divide_by_first=True,
                       show_figure=True, filename=None, show_box_plot=True, **kwargs):
         """
@@ -699,11 +698,9 @@ class Scenario(Term):
         Describe representative values.
 
         Args:
-            y0_dict (dict or None):
+            y0_dict (dict or None): dictionary of initial values or None
                 - key (str): variable name
                 - value (float): initial value
-                - dictionary of initial values or None
-                - if model will be changed in the later phase, must be specified
             with_rt (bool): whether show the history of Rt values
 
         Returns:
@@ -791,11 +788,9 @@ class Scenario(Term):
 
         Args:
             name (str): phase series name
-            y0_dict (dict or None):
+            y0_dict (dict or None): dictionary of initial values or None
                 - key (str): variable name
                 - value (float): initial value
-                - dictionary of initial values or None
-                - if model will be changed in the later phase, must be specified
 
         Returns:
             pandas.DataFrame
@@ -821,11 +816,9 @@ class Scenario(Term):
         Show values of parameters and variables in one dataframe.
 
         Args:
-            y0_dict (dict or None):
+            y0_dict (dict or None): dictionary of initial values or None
                 - key (str): variable name
                 - value (float): initial value
-                - dictionary of initial values or None
-                - if model will be changed in the later phase, must be specified
 
         Returns:
             pandas.DataFrame
@@ -846,3 +839,35 @@ class Scenario(Term):
             df.insert(0, self.SERIES, name)
             append(df)
         return pd.concat(dataframes, axis=0, sort=False)
+
+    def history(self, target, y0_dict=None, show_figure=True, filename=None):
+        """
+        Show the history of variables and parameter values to compare scenarios.
+
+        Args:
+            target (str): parameter or variable to show (Rt etc.)
+            y0_dict (dict or None): dictionary of initial values or None
+                - key (str): variable name
+                - value (float): initial value
+            show_figure (bool): If True, show the result as a figure
+            filename (str): filename of the figure, or None (show figure)
+        """
+        df = self.track(y0_dict=y0_dict)
+        if target not in df.columns:
+            col_str = ", ".join(list(df.columns))
+            raise KeyError(
+                f"@target must be selected from {col_str}, but {target} was applied.")
+        df = df.pivot_table(
+            values=target, index=self.DATE, columns=self.SERIES, aggfunc="last"
+        )
+        if show_figure:
+            series = self._series_dict["Main"]
+            change_dates = [unit.start_date for unit in series][1:]
+            line_plot(
+                df, f"{self.area}: {target} over time", ylabel=target,
+                h=1.0 if target == self.RT else None,
+                v=change_dates,
+                math_scale=False,
+                filename=filename
+            )
+        return df
