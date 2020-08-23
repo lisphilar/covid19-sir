@@ -520,11 +520,7 @@ class PhaseUnit(Term):
         y0_dict = y0_dict or {}
         y0_dict.update(self.y0_dict)
         diff_set = set(self._model.VARIABLES) - y0_dict.keys()
-        if diff_set:
-            diff_str = ", ".join(list(diff_set))
-            s = "s" if len(diff_set) > 1 else ""
-            raise ValueError(
-                f"Initial value{s} of {diff_str} must be specified by @y0_dict or PhaseUnit.set_y0(record_df)")
+        y0_dict.update({var: 0 for var in diff_set})
         # Conditions
         param_dict = self._ode_dict.copy()
         if None in param_dict.values():
