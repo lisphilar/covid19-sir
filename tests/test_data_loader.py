@@ -117,7 +117,7 @@ class TestJapanData(object):
         data_loader = DataLoader("input")
         local_path = Path("input") / "covid19dh.csv"
         with pytest.raises(Exception):
-            warnings.filterwarnings("ignore", category=pd.errors.DtypeWarning)
+            warnings.simplefilter("ignore", category=pd.errors.DtypeWarning)
             data_loader.japan(local_file=local_path)
 
     def test_total(self, japan_data):
@@ -132,7 +132,7 @@ class TestJapanData(object):
 
 class TestPopulationData(object):
     def test_population(self, data_loader):
-        warnings.filterwarnings("error", category=FutureWarning)
+        warnings.simplefilter("error", category=FutureWarning)
         population_data = data_loader.population()
         assert isinstance(population_data, PopulationData)
         assert isinstance(population_data.citation, str)
@@ -164,7 +164,7 @@ class TestPopulationData(object):
             data_loader.population(local_file=local_path)
 
     def test_population_value(self, population_data):
-        warnings.filterwarnings("error", category=FutureWarning)
+        warnings.simplefilter("error", category=FutureWarning)
         df = population_data.cleaned()
         if "JPN" in df["ISO3"].unique():
             assert isinstance(population_data.value("JPN"), int)

@@ -141,11 +141,7 @@ class TestPhaseUnit(object):
         unit = PhaseUnit("27May2020", "27Jun2020", population)
         with pytest.raises(NameError):
             unit.simulate()
-        with pytest.raises(ValueError):
-            unit2 = PhaseUnit("27May2020", "27Jun2020", population)
-            unit2.set_ode(model=SIR)
-            unit2.simulate()
-        with pytest.raises(ValueError):
+        with pytest.raises(KeyError):
             unit3 = PhaseUnit("27May2020", "27Jun2020", population)
             unit3.set_ode(model=SIR, tau=240, rho=0.006)
             unit3.simulate()
@@ -154,8 +150,6 @@ class TestPhaseUnit(object):
         assert summary_dict[Term.RT] == 0.55
         assert summary_dict["1/beta [day]"] == 27
         assert summary_dict["1/gamma [day]"] == 15
-        with pytest.raises(ValueError):
-            unit.simulate()
         # Set initial values
         unit.set_y0(record_df)
         # Simulation

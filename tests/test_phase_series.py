@@ -72,7 +72,7 @@ class TestPhaseSeries(object):
 
     @pytest.mark.parametrize("country", ["Japan"])
     def test_trend(self, jhu_data, population_data, country):
-        warnings.filterwarnings("ignore", category=UserWarning)
+        warnings.simplefilter("ignore", category=UserWarning)
         # Setting
         population = population_data.value(country)
         sr_df = jhu_data.to_sr(country=country, population=population)

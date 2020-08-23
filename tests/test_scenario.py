@@ -59,7 +59,7 @@ class TestScenario(object):
 
     @pytest.mark.parametrize("country", ["Japan"])
     def test_records(self, jhu_data, population_data, country):
-        warnings.filterwarnings("ignore", category=UserWarning)
+        warnings.simplefilter("ignore", category=UserWarning)
         # Setting
         snl = Scenario(jhu_data, population_data, country)
         snl.first_date = "01Apr2020"
@@ -182,7 +182,7 @@ class TestScenario(object):
 
     @pytest.mark.parametrize("country", ["Greece"])
     def test_estimate(self, jhu_data, population_data, country):
-        warnings.filterwarnings("ignore", category=UserWarning)
+        warnings.simplefilter("ignore", category=UserWarning)
         # Setting
         snl = Scenario(jhu_data, population_data, country)
         snl.first_date = "01Apr2020"
@@ -225,8 +225,8 @@ class TestScenario(object):
 
     @pytest.mark.parametrize("country", ["Japan"])
     def test_simulate(self, jhu_data, population_data, country):
-        warnings.filterwarnings("ignore", category=UserWarning)
-        warnings.filterwarnings("ignore", category=DeprecationWarning)
+        warnings.simplefilter("ignore", category=UserWarning)
+        warnings.simplefilter("ignore", category=DeprecationWarning)
         # Setting
         snl = Scenario(jhu_data, population_data, country)
         snl.first_date = "01Apr2020"
