@@ -13,11 +13,9 @@ def main():
     input_dir = code_path.parent.with_name("input")
     output_dir = code_path.with_name("output").joinpath(code_path.stem)
     output_dir.mkdir(exist_ok=True, parents=True)
-    # Create data loader instance
+    # Load datasets
     data_loader = cs.DataLoader(input_dir)
-    # Load JHU-style dataset
     jhu_data = data_loader.jhu()
-    # Load Population dataset
     population_data = data_loader.population()
     # Start scenario analysis
     ita_scenario = cs.Scenario(jhu_data, population_data, "Italy", tau=120)
@@ -27,9 +25,8 @@ def main():
     ita_record_df.to_csv(output_dir.joinpath("ita_records.csv"), index=False)
     # Show S-R trend
     ita_scenario.trend(filename=output_dir.joinpath("ita_trend.png"))
-    # Find change points
     print(ita_scenario.summary())
-    # Hyperparameter estimation
+    # Parameter estimation
     ita_scenario.estimate(cs.SIRF)
     # Show the history of optimization
     ita_scenario.estimate_history(
@@ -51,8 +48,8 @@ def main():
     sigma_4th = ita_scenario.get("sigma", phase="4th")
     sigma_6th = sigma_4th * 2
     ita_scenario.add(
-        name="New medicines", end_date="31Dec2020", sigma=sigma_6th)
-    ita_scenario.add(name="New medicines", days=100)
+        name="Medicine", end_date="31Dec2020", sigma=sigma_6th)
+    ita_scenario.add(name="Medicine", days=100)
     # Prediction of the number of cases
     sim_df = ita_scenario.simulate(
         name="Main",
@@ -62,17 +59,18 @@ def main():
     # Save summary as a CSV file
     summary_df = ita_scenario.summary()
     summary_df.to_csv(output_dir.joinpath("ita_summary.csv"), index=True)
-    # Parameter history
-    ita_scenario.param_history(
-        targets=["Rt"], name="Main", divide_by_first=False, bix_plot=False,
-        filename=output_dir.joinpath("ita_param_history_rt.png")
-    )
-    ita_scenario.param_history(
-        targets=["rho", "sigma"], name="New medicines", divide_by_first=True,
-        filename=output_dir.joinpath("ita_param_history_rho_sigma.png")
-    )
-    desc_df = ita_scenario.describe()
-    desc_df.to_csv(output_dir.joinpath("ita_description.csv"), index=True)
+    # Tracking of main scenario
+    track_df = ita_scenario.track()
+    track_df.to_csv(output_dir.joinpath("ita_track.csv"), index=True)
+    # Compare scenarios
+    ita_scenario.history(
+        "Rt", filename=output_dir.joinpath("ita_history_Rt.png"))
+    ita_scenario.history(
+        "rho", filename=output_dir.joinpath("ita_history_rho.png"))
+    ita_scenario.history(
+        "sigma", filename=output_dir.joinpath("ita_history_sigma.png"))
+    ita_scenario.history(
+        "Infected", filename=output_dir.joinpath("ita_history_infected.png"))
 
 
 if __name__ == "__main__":

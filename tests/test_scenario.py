@@ -59,7 +59,7 @@ class TestScenario(object):
 
     @pytest.mark.parametrize("country", ["Japan"])
     def test_records(self, jhu_data, population_data, country):
-        warnings.filterwarnings("ignore", category=UserWarning)
+        warnings.simplefilter("ignore", category=UserWarning)
         # Setting
         snl = Scenario(jhu_data, population_data, country)
         snl.first_date = "01Apr2020"
@@ -182,7 +182,7 @@ class TestScenario(object):
 
     @pytest.mark.parametrize("country", ["Greece"])
     def test_estimate(self, jhu_data, population_data, country):
-        warnings.filterwarnings("ignore", category=UserWarning)
+        warnings.simplefilter("ignore", category=UserWarning)
         # Setting
         snl = Scenario(jhu_data, population_data, country)
         snl.first_date = "01Apr2020"
@@ -225,7 +225,8 @@ class TestScenario(object):
 
     @pytest.mark.parametrize("country", ["Japan"])
     def test_simulate(self, jhu_data, population_data, country):
-        warnings.filterwarnings("ignore", category=UserWarning)
+        warnings.simplefilter("ignore", category=UserWarning)
+        warnings.simplefilter("ignore", category=DeprecationWarning)
         # Setting
         snl = Scenario(jhu_data, population_data, country)
         snl.first_date = "01Apr2020"
@@ -233,11 +234,12 @@ class TestScenario(object):
         snl.trend(show_figure=False)
         # Parameter estimation
         with pytest.raises(ValueError):
+            # Deprecated
             snl.param_history(["rho"])
         snl.estimate(SIR)
         # Simulation
         snl.simulate()
-        # Parameter history
+        # Parameter history (Deprecated)
         snl.param_history([Term.RT], divide_by_first=False)
         snl.param_history(["rho"])
         snl.param_history(["rho"], show_figure=False)
@@ -246,6 +248,11 @@ class TestScenario(object):
             snl.param_history(["feeling"])
         # Comparison of scenarios
         snl.describe()
+        snl.history(target="Rt")
+        snl.history(target="sigma")
+        snl.history(target="Infected")
+        with pytest.raises(KeyError):
+            snl.history(target="temperature")
         # Add new scenario
         snl.add(end_date="01Sep2020", name="New")
         snl.describe()

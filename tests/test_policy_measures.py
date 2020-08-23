@@ -10,7 +10,7 @@ from covsirphy import SIRF, Scenario
 
 class TestPolicyMeasures(object):
     def test_policy_measures(self, jhu_data, population_data, oxcgrt_data):
-        warnings.filterwarnings("ignore", category=UserWarning)
+        warnings.simplefilter("ignore", category=UserWarning)
         # Create instance
         analyser = PolicyMeasures(
             jhu_data, population_data, oxcgrt_data, tau=360)
@@ -48,7 +48,7 @@ class TestPolicyMeasures(object):
         assert isinstance(df, pd.DataFrame)
 
     def mistake(self, jhu_data, population_data, oxcgrt_data):
-        warnings.filterwarnings("ignore", category=UserWarning)
+        warnings.simplefilter("ignore", category=UserWarning)
         # Create instance
         analyser = PolicyMeasures(
             jhu_data, population_data, oxcgrt_data, tau=360)
