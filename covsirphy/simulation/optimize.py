@@ -10,6 +10,7 @@ import optuna
 import pandas as pd
 if True:
     warnings.simplefilter("ignore", FutureWarning)
+    warnings.simplefilter("ignore", SyntaxWarning)
 import seaborn as sns
 from covsirphy.cleaning.term import Term
 
