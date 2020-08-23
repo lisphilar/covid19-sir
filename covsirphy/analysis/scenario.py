@@ -647,7 +647,10 @@ class Scenario(Term):
         df = df.loc[:, targets].dropna(how="any", axis=0)
         return df.astype(np.float64)
 
-    @deprecate(old="Scenario.param_history(targets: list)", new="Scenario.history(target: str)")
+    @deprecate(
+        old="Scenario.param_history(targets: list)",
+        new="Scenario.history(target: str)",
+        version="2.7.3-alpha")
     def param_history(self, targets=None, name="Main", divide_by_first=True,
                       show_figure=True, filename=None, show_box_plot=True, **kwargs):
         """
