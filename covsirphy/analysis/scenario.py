@@ -808,11 +808,10 @@ class Scenario(Term):
         """
         sim_df = self.simulate(name=name, y0_dict=y0_dict, show_figure=False)
         param_df = self._track_param(name=name)
-        df = pd.merge(
+        return pd.merge(
             sim_df, param_df, how="inner",
             left_on=self.DATE, right_index=True, sort=True
         )
-        return df
 
     def track(self, y0_dict=None):
         """
