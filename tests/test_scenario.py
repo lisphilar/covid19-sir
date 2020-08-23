@@ -236,8 +236,6 @@ class TestScenario(object):
         with pytest.raises(ValueError):
             # Deprecated
             snl.param_history(["rho"])
-        with pytest.raises(ValueError):
-            snl.history(target="Rt")
         snl.estimate(SIR)
         # Simulation
         snl.simulate()
