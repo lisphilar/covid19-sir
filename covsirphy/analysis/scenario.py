@@ -778,7 +778,8 @@ class Scenario(Term):
         df = df.reset_index(drop=True).explode(self.DATE)
         # Columns
         df = df.drop(
-            [self.TENSE, self.START, self.END, self.ODE, self.TAU, *self.EST_COLS], axis=1)
+            [self.TENSE, self.START, self.END, self.ODE, self.TAU, *self.EST_COLS],
+            axis=1, errors="ignore")
         df = df.set_index(self.DATE)
         for col in df.columns:
             df[col] = pd.to_numeric(df[col], errors="coerce")
