@@ -714,11 +714,9 @@
 
 <span class="sd">        Args:</span>
 <span class="sd">            name (str): phase series name. If &#39;Main&#39;, main PhaseSeries will be used</span>
-<span class="sd">            y0_dict (dict or None):</span>
+<span class="sd">            y0_dict (dict or None): dictionary of initial values or None</span>
 <span class="sd">                - key (str): variable name</span>
 <span class="sd">                - value (float): initial value</span>
-<span class="sd">                - dictionary of initial values or None</span>
-<span class="sd">                - if model will be changed in the later phase, must be specified</span>
 <span class="sd">            show_figure (bool):</span>
 <span class="sd">                - if True, show the result as a figure.</span>
 <span class="sd">            filename (str): filename of the figure, or None (show figure)</span>
@@ -742,7 +740,7 @@
         <span class="n">df</span> <span class="o">=</span> <span class="n">sim_df</span><span class="o">.</span><span class="n">set_index</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">DATE</span><span class="p">)</span>
         <span class="n">fig_cols_set</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">df</span><span class="o">.</span><span class="n">columns</span><span class="p">)</span> <span class="o">&amp;</span> <span class="nb">set</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">FIG_COLUMNS</span><span class="p">)</span>
         <span class="n">fig_cols</span> <span class="o">=</span> <span class="p">[</span><span class="n">col</span> <span class="k">for</span> <span class="n">col</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">FIG_COLUMNS</span> <span class="k">if</span> <span class="n">col</span> <span class="ow">in</span> <span class="n">fig_cols_set</span><span class="p">]</span>
-        <span class="n">change_dates</span> <span class="o">=</span> <span class="p">[</span><span class="n">unit</span><span class="o">.</span><span class="n">start_date</span> <span class="k">for</span> <span class="n">unit</span> <span class="ow">in</span> <span class="n">series</span><span class="o">.</span><span class="n">_units</span><span class="p">[</span><span class="mi">1</span><span class="p">:]]</span>
+        <span class="n">change_dates</span> <span class="o">=</span> <span class="p">[</span><span class="n">unit</span><span class="o">.</span><span class="n">start_date</span> <span class="k">for</span> <span class="n">unit</span> <span class="ow">in</span> <span class="n">series</span><span class="p">][</span><span class="mi">1</span><span class="p">:]</span>
         <span class="n">line_plot</span><span class="p">(</span>
             <span class="n">df</span><span class="p">[</span><span class="n">fig_cols</span><span class="p">],</span>
             <span class="n">title</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">area</span><span class="si">}</span><span class="s2">: Predicted number of cases (</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2"> scenario)&quot;</span><span class="p">,</span>
@@ -809,7 +807,11 @@
         <span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">loc</span><span class="p">[:,</span> <span class="n">targets</span><span class="p">]</span><span class="o">.</span><span class="n">dropna</span><span class="p">(</span><span class="n">how</span><span class="o">=</span><span class="s2">&quot;any&quot;</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">df</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span>
 
-<div class="viewcode-block" id="Scenario.param_history"><a class="viewcode-back" href="../../../covsirphy.analysis.html#covsirphy.analysis.scenario.Scenario.param_history">[docs]</a>    <span class="k">def</span> <span class="nf">param_history</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">targets</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;Main&quot;</span><span class="p">,</span> <span class="n">divide_by_first</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+    <span class="nd">@deprecate</span><span class="p">(</span>
+        <span class="n">old</span><span class="o">=</span><span class="s2">&quot;Scenario.param_history(targets: list)&quot;</span><span class="p">,</span>
+        <span class="n">new</span><span class="o">=</span><span class="s2">&quot;Scenario.history(target: str)&quot;</span><span class="p">,</span>
+        <span class="n">version</span><span class="o">=</span><span class="s2">&quot;2.7.3-alpha&quot;</span><span class="p">)</span>
+    <span class="k">def</span> <span class="nf">param_history</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">targets</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;Main&quot;</span><span class="p">,</span> <span class="n">divide_by_first</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
                       <span class="n">show_figure</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">filename</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">show_box_plot</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Return subset of summary and show a figure to show the history.</span>
@@ -852,18 +854,16 @@
             <span class="n">xlabel</span><span class="o">=</span><span class="s2">&quot;Phase&quot;</span><span class="p">,</span> <span class="n">ylabel</span><span class="o">=</span><span class="nb">str</span><span class="p">(),</span> <span class="n">math_scale</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">h</span><span class="o">=</span><span class="n">h</span><span class="p">,</span>
             <span class="n">filename</span><span class="o">=</span><span class="n">filename</span>
         <span class="p">)</span>
-        <span class="k">return</span> <span class="n">df</span></div>
+        <span class="k">return</span> <span class="n">df</span>
 
 <div class="viewcode-block" id="Scenario.describe"><a class="viewcode-back" href="../../../covsirphy.analysis.html#covsirphy.analysis.scenario.Scenario.describe">[docs]</a>    <span class="k">def</span> <span class="nf">describe</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">y0_dict</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">with_rt</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Describe representative values.</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">            y0_dict (dict or None):</span>
+<span class="sd">            y0_dict (dict or None): dictionary of initial values or None</span>
 <span class="sd">                - key (str): variable name</span>
 <span class="sd">                - value (float): initial value</span>
-<span class="sd">                - dictionary of initial values or None</span>
-<span class="sd">                - if model will be changed in the later phase, must be specified</span>
 <span class="sd">            with_rt (bool): whether show the history of Rt values</span>
 
 <span class="sd">        Returns:</span>
@@ -908,7 +908,132 @@
             <span class="n">cols</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">rt_df</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">str2num</span><span class="p">)</span>
             <span class="n">desc_df</span> <span class="o">=</span> <span class="n">desc_df</span><span class="o">.</span><span class="n">join</span><span class="p">(</span>
                 <span class="n">rt_df</span><span class="p">[</span><span class="n">cols</span><span class="p">]</span><span class="o">.</span><span class="n">add_suffix</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;_</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">RT</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">),</span> <span class="n">how</span><span class="o">=</span><span class="s2">&quot;left&quot;</span><span class="p">)</span>
-        <span class="k">return</span> <span class="n">desc_df</span></div></div>
+        <span class="k">return</span> <span class="n">desc_df</span></div>
+
+    <span class="k">def</span> <span class="nf">_track_param</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Get the history of parameters for the scenario.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            name (str): phase series name</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            pandas.DataFrame</span>
+<span class="sd">                Index: Date (pandas.TimeStamp)</span>
+<span class="sd">                Columns:</span>
+<span class="sd">                    - Population (int)</span>
+<span class="sd">                    - Rt (float)</span>
+<span class="sd">                    - parameter values (float)</span>
+<span class="sd">                    - day parameter values (float)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">df</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">summary</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">UNKNOWN</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">ODE</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">df</span><span class="o">.</span><span class="n">columns</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;Scenario.estimate(model, name=</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2">) must be done in advance.&quot;</span><span class="p">)</span>
+        <span class="c1"># Date range to dates</span>
+        <span class="n">df</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">START</span><span class="p">]</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">to_datetime</span><span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">START</span><span class="p">])</span>
+        <span class="n">df</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">END</span><span class="p">]</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">to_datetime</span><span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">END</span><span class="p">])</span>
+        <span class="n">df</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">DATE</span><span class="p">]</span> <span class="o">=</span> <span class="n">df</span><span class="p">[[</span><span class="bp">self</span><span class="o">.</span><span class="n">START</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">END</span><span class="p">]]</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span>
+            <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">date_range</span><span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">x</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span><span class="o">.</span><span class="n">tolist</span><span class="p">(),</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+        <span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">reset_index</span><span class="p">(</span><span class="n">drop</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span><span class="o">.</span><span class="n">explode</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">DATE</span><span class="p">)</span>
+        <span class="c1"># Columns</span>
+        <span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">drop</span><span class="p">(</span>
+            <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">TENSE</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">START</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">END</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">ODE</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">TAU</span><span class="p">,</span> <span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">EST_COLS</span><span class="p">],</span>
+            <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">errors</span><span class="o">=</span><span class="s2">&quot;ignore&quot;</span><span class="p">)</span>
+        <span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">set_index</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">DATE</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">col</span> <span class="ow">in</span> <span class="n">df</span><span class="o">.</span><span class="n">columns</span><span class="p">:</span>
+            <span class="n">df</span><span class="p">[</span><span class="n">col</span><span class="p">]</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">to_numeric</span><span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="n">col</span><span class="p">],</span> <span class="n">errors</span><span class="o">=</span><span class="s2">&quot;coerce&quot;</span><span class="p">)</span>
+        <span class="n">df</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">N</span><span class="p">]</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">N</span><span class="p">]</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">int64</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">df</span>
+
+    <span class="k">def</span> <span class="nf">_track</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">y0_dict</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Show values of parameters and variables in one dataframe for the scenario.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            name (str): phase series name</span>
+<span class="sd">            y0_dict (dict or None): dictionary of initial values or None</span>
+<span class="sd">                - key (str): variable name</span>
+<span class="sd">                - value (float): initial value</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            pandas.DataFrame</span>
+<span class="sd">                Index: reset index</span>
+<span class="sd">                Columns:</span>
+<span class="sd">                    - Date (pandas.TimeStamp)</span>
+<span class="sd">                    - variables (int)</span>
+<span class="sd">                    - Population (int)</span>
+<span class="sd">                    - Rt (float)</span>
+<span class="sd">                    - parameter values (float)</span>
+<span class="sd">                    - day parameter values (float)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">sim_df</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">simulate</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">,</span> <span class="n">y0_dict</span><span class="o">=</span><span class="n">y0_dict</span><span class="p">,</span> <span class="n">show_figure</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+        <span class="n">param_df</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_track_param</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">pd</span><span class="o">.</span><span class="n">merge</span><span class="p">(</span>
+            <span class="n">sim_df</span><span class="p">,</span> <span class="n">param_df</span><span class="p">,</span> <span class="n">how</span><span class="o">=</span><span class="s2">&quot;inner&quot;</span><span class="p">,</span>
+            <span class="n">left_on</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">DATE</span><span class="p">,</span> <span class="n">right_index</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">sort</span><span class="o">=</span><span class="kc">True</span>
+        <span class="p">)</span>
+
+<div class="viewcode-block" id="Scenario.track"><a class="viewcode-back" href="../../../covsirphy.analysis.html#covsirphy.analysis.scenario.Scenario.track">[docs]</a>    <span class="k">def</span> <span class="nf">track</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">y0_dict</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Show values of parameters and variables in one dataframe.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            y0_dict (dict or None): dictionary of initial values or None</span>
+<span class="sd">                - key (str): variable name</span>
+<span class="sd">                - value (float): initial value</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            pandas.DataFrame</span>
+<span class="sd">                Index: reset index</span>
+<span class="sd">                Columns:</span>
+<span class="sd">                    - Scenario (str)</span>
+<span class="sd">                    - Date (pandas.TimeStamp)</span>
+<span class="sd">                    - variables (int)</span>
+<span class="sd">                    - Population (int)</span>
+<span class="sd">                    - Rt (float)</span>
+<span class="sd">                    - parameter values (float)</span>
+<span class="sd">                    - day parameter values (float)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">dataframes</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">append</span> <span class="o">=</span> <span class="n">dataframes</span><span class="o">.</span><span class="n">append</span>
+        <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_series_dict</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+            <span class="n">df</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_track</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">,</span> <span class="n">y0_dict</span><span class="o">=</span><span class="n">y0_dict</span><span class="p">)</span>
+            <span class="n">df</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">SERIES</span><span class="p">,</span> <span class="n">name</span><span class="p">)</span>
+            <span class="n">append</span><span class="p">(</span><span class="n">df</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">(</span><span class="n">dataframes</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">sort</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Scenario.history"><a class="viewcode-back" href="../../../covsirphy.analysis.html#covsirphy.analysis.scenario.Scenario.history">[docs]</a>    <span class="k">def</span> <span class="nf">history</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">target</span><span class="p">,</span> <span class="n">y0_dict</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">show_figure</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">filename</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Show the history of variables and parameter values to compare scenarios.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            target (str): parameter or variable to show (Rt etc.)</span>
+<span class="sd">            y0_dict (dict or None): dictionary of initial values or None</span>
+<span class="sd">                - key (str): variable name</span>
+<span class="sd">                - value (float): initial value</span>
+<span class="sd">            show_figure (bool): If True, show the result as a figure</span>
+<span class="sd">            filename (str): filename of the figure, or None (show figure)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">df</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">track</span><span class="p">(</span><span class="n">y0_dict</span><span class="o">=</span><span class="n">y0_dict</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">target</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">df</span><span class="o">.</span><span class="n">columns</span><span class="p">:</span>
+            <span class="n">col_str</span> <span class="o">=</span> <span class="s2">&quot;, &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">df</span><span class="o">.</span><span class="n">columns</span><span class="p">))</span>
+            <span class="k">raise</span> <span class="ne">KeyError</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;@target must be selected from </span><span class="si">{</span><span class="n">col_str</span><span class="si">}</span><span class="s2">, but </span><span class="si">{</span><span class="n">target</span><span class="si">}</span><span class="s2"> was applied.&quot;</span><span class="p">)</span>
+        <span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">pivot_table</span><span class="p">(</span>
+            <span class="n">values</span><span class="o">=</span><span class="n">target</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">DATE</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">SERIES</span><span class="p">,</span> <span class="n">aggfunc</span><span class="o">=</span><span class="s2">&quot;last&quot;</span>
+        <span class="p">)</span>
+        <span class="k">if</span> <span class="n">show_figure</span><span class="p">:</span>
+            <span class="n">series</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_series_dict</span><span class="p">[</span><span class="s2">&quot;Main&quot;</span><span class="p">]</span>
+            <span class="n">change_dates</span> <span class="o">=</span> <span class="p">[</span><span class="n">unit</span><span class="o">.</span><span class="n">start_date</span> <span class="k">for</span> <span class="n">unit</span> <span class="ow">in</span> <span class="n">series</span><span class="p">][</span><span class="mi">1</span><span class="p">:]</span>
+            <span class="n">line_plot</span><span class="p">(</span>
+                <span class="n">df</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">area</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">target</span><span class="si">}</span><span class="s2"> over time&quot;</span><span class="p">,</span> <span class="n">ylabel</span><span class="o">=</span><span class="n">target</span><span class="p">,</span>
+                <span class="n">h</span><span class="o">=</span><span class="mf">1.0</span> <span class="k">if</span> <span class="n">target</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">RT</span> <span class="k">else</span> <span class="kc">None</span><span class="p">,</span>
+                <span class="n">v</span><span class="o">=</span><span class="n">change_dates</span><span class="p">,</span>
+                <span class="n">math_scale</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+                <span class="n">filename</span><span class="o">=</span><span class="n">filename</span>
+            <span class="p">)</span>
+        <span class="k">return</span> <span class="n">df</span></div></div>
 </pre></div>
 
            </div>

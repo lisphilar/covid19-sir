@@ -477,13 +477,9 @@ When &#64;phase is ‘0th’, disable 0th phase. 0th phase will not be deleted.<
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>y0_dict</strong> (<em>dict</em><em> or </em><em>None</em>) – <ul>
-<li><p>key (str): variable name</p></li>
-<li><p>value (float): initial value</p></li>
-<li><p>dictionary of initial values or None</p></li>
-<li><p>if model will be changed in the later phase, must be specified</p></li>
-</ul>
-</p></li>
+<li><p><strong>y0_dict</strong> (<em>dict</em><em> or </em><em>None</em>) – dictionary of initial values or None
+- key (str): variable name
+- value (float): initial value</p></li>
 <li><p><strong>with_rt</strong> (<em>bool</em>) – whether show the history of Rt values</p></li>
 </ul>
 </dd>
@@ -638,6 +634,24 @@ When &#64;phase is ‘0th’, disable 0th phase. 0th phase will not be deleted.<
 </dd></dl>
 
 <dl class="py method">
+<dt id="covsirphy.analysis.scenario.Scenario.history">
+<code class="sig-name descname">history</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">target</span></em>, <em class="sig-param"><span class="n">y0_dict</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">show_figure</span><span class="o">=</span><span class="default_value">True</span></em>, <em class="sig-param"><span class="n">filename</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/analysis/scenario.html#Scenario.history"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#covsirphy.analysis.scenario.Scenario.history" title="Permalink to this definition">¶</a></dt>
+<dd><p>Show the history of variables and parameter values to compare scenarios.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>target</strong> (<em>str</em>) – parameter or variable to show (Rt etc.)</p></li>
+<li><p><strong>y0_dict</strong> (<em>dict</em><em> or </em><em>None</em>) – dictionary of initial values or None
+- key (str): variable name
+- value (float): initial value</p></li>
+<li><p><strong>show_figure</strong> (<em>bool</em>) – If True, show the result as a figure</p></li>
+<li><p><strong>filename</strong> (<em>str</em>) – filename of the figure, or None (show figure)</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
 <dt id="covsirphy.analysis.scenario.Scenario.last_date">
 <em class="property">property </em><code class="sig-name descname">last_date</code><a class="headerlink" href="#covsirphy.analysis.scenario.Scenario.last_date" title="Permalink to this definition">¶</a></dt>
 <dd><p>the last date of the records</p>
@@ -650,27 +664,8 @@ When &#64;phase is ‘0th’, disable 0th phase. 0th phase will not be deleted.<
 
 <dl class="py method">
 <dt id="covsirphy.analysis.scenario.Scenario.param_history">
-<code class="sig-name descname">param_history</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">targets</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">name</span><span class="o">=</span><span class="default_value">'Main'</span></em>, <em class="sig-param"><span class="n">divide_by_first</span><span class="o">=</span><span class="default_value">True</span></em>, <em class="sig-param"><span class="n">show_figure</span><span class="o">=</span><span class="default_value">True</span></em>, <em class="sig-param"><span class="n">filename</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">show_box_plot</span><span class="o">=</span><span class="default_value">True</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/analysis/scenario.html#Scenario.param_history"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#covsirphy.analysis.scenario.Scenario.param_history" title="Permalink to this definition">¶</a></dt>
-<dd><p>Return subset of summary and show a figure to show the history.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>targets</strong> (<em>list</em><em>[</em><em>str</em><em>] or </em><em>str</em>) – parameters to show (Rt etc.)</p></li>
-<li><p><strong>name</strong> (<em>str</em>) – phase series name</p></li>
-<li><p><strong>divide_by_first</strong> (<em>bool</em>) – if True, divide the values by 1st phase’s values</p></li>
-<li><p><strong>show_box_plot</strong> (<em>bool</em>) – if True, box plot. if False, line plot</p></li>
-<li><p><strong>show_figure</strong> (<em>bool</em>) – If True, show the result as a figure</p></li>
-<li><p><strong>filename</strong> (<em>str</em>) – filename of the figure, or None (show figure)</p></li>
-<li><p><strong>kwargs</strong> – keyword arguments of pd.DataFrame.plot or line_plot()</p></li>
-</ul>
-</dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p>pandas.DataFrame</p>
-</dd>
-</dl>
-<p class="rubric">Notes</p>
-<p>If ‘Main’ was used as &#64;name, main PhaseSeries will be used.</p>
-</dd></dl>
+<code class="sig-name descname">param_history</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="headerlink" href="#covsirphy.analysis.scenario.Scenario.param_history" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
 
 <dl class="py method">
 <dt id="covsirphy.analysis.scenario.Scenario.phase_estimator">
@@ -757,13 +752,9 @@ New phase name will be automatically determined.</p>
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>name</strong> (<em>str</em>) – phase series name. If ‘Main’, main PhaseSeries will be used</p></li>
-<li><p><strong>y0_dict</strong> (<em>dict</em><em> or </em><em>None</em>) – <ul>
-<li><p>key (str): variable name</p></li>
-<li><p>value (float): initial value</p></li>
-<li><p>dictionary of initial values or None</p></li>
-<li><p>if model will be changed in the later phase, must be specified</p></li>
-</ul>
-</p></li>
+<li><p><strong>y0_dict</strong> (<em>dict</em><em> or </em><em>None</em>) – dictionary of initial values or None
+- key (str): variable name
+- value (float): initial value</p></li>
 <li><p><strong>show_figure</strong> (<em>bool</em>) – <ul>
 <li><p>if True, show the result as a figure.</p></li>
 </ul>
@@ -818,6 +809,38 @@ New phase name will be automatically determined.</p>
 <p class="rubric">Notes</p>
 <p>If ‘Main’ was used as &#64;name, main PhaseSeries will be used.
 If &#64;columns is None, all columns will be shown.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="covsirphy.analysis.scenario.Scenario.track">
+<code class="sig-name descname">track</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">y0_dict</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/analysis/scenario.html#Scenario.track"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#covsirphy.analysis.scenario.Scenario.track" title="Permalink to this definition">¶</a></dt>
+<dd><p>Show values of parameters and variables in one dataframe.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>y0_dict</strong> (<em>dict</em><em> or </em><em>None</em>) – dictionary of initial values or None
+- key (str): variable name
+- value (float): initial value</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><dl>
+<dt>pandas.DataFrame</dt><dd><p>Index: reset index
+Columns:</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>Scenario (str)</p></li>
+<li><p>Date (pandas.TimeStamp)</p></li>
+<li><p>variables (int)</p></li>
+<li><p>Population (int)</p></li>
+<li><p>Rt (float)</p></li>
+<li><p>parameter values (float)</p></li>
+<li><p>day parameter values (float)</p></li>
+</ul>
+</div></blockquote>
+</dd>
+</dl>
+</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py method">

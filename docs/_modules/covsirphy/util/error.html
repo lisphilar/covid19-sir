@@ -164,20 +164,21 @@
 <span class="kn">import</span> <span class="nn">warnings</span>
 
 
-<span class="k">def</span> <span class="nf">deprecate</span><span class="p">(</span><span class="n">old</span><span class="p">,</span> <span class="n">new</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="k">def</span> <span class="nf">deprecate</span><span class="p">(</span><span class="n">old</span><span class="p">,</span> <span class="n">new</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">version</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Decorator to raise deprecation warning.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        old (str): description of the old method/function</span>
-<span class="sd">        new (str): description of the new method/function</span>
+<span class="sd">        new (str or None): description of the new method/function</span>
+<span class="sd">        version (str or None): version number, like 2.7.3-alpha</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">def</span> <span class="nf">_deprecate</span><span class="p">(</span><span class="n">func</span><span class="p">):</span>
         <span class="k">def</span> <span class="nf">wrapper</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
             <span class="k">if</span> <span class="n">new</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-                <span class="n">comment</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">old</span><span class="si">}</span><span class="s2"> is deprecated&quot;</span>
+                <span class="n">comment</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">old</span><span class="si">}</span><span class="s2"> is deprecated, version &gt; </span><span class="si">{</span><span class="n">version</span><span class="si">}</span><span class="s2">&quot;</span>
             <span class="k">else</span><span class="p">:</span>
-                <span class="n">comment</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;Please use </span><span class="si">{</span><span class="n">new</span><span class="si">}</span><span class="s2"> rather than </span><span class="si">{</span><span class="n">old</span><span class="si">}</span><span class="s2">&quot;</span>
+                <span class="n">comment</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;Please use </span><span class="si">{</span><span class="n">new</span><span class="si">}</span><span class="s2"> rather than </span><span class="si">{</span><span class="n">old</span><span class="si">}</span><span class="s2">, version &gt; </span><span class="si">{</span><span class="n">version</span><span class="si">}</span><span class="s2">&quot;</span>
             <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span>
                 <span class="n">comment</span><span class="p">,</span>
                 <span class="ne">DeprecationWarning</span><span class="p">,</span>
