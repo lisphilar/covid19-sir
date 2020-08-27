@@ -528,11 +528,20 @@ class DataLoader(Term):
             (tuple):
                 (pandas.DataFrame): dataset at country level
                 (pandas.DataFrame): dataset at province level
+
+        Notes:
+            For some countries, province-level data is included.
         """
         warnings.simplefilter("ignore", ResourceWarning)
-        c_df, c_cite = covid19dh.covid19(country=None, level=1, verbose=False)
-        # For some countries, province-level data is included
-        p_df, p_cite = covid19dh.covid19(country=None, level=2, verbose=False)
+        c_res = covid19dh.covid19(country=None, level=1, verbose=False)
+        p_res = covid19dh.covid19(country=None, level=2, verbose=False)
+        try:
+            c_df, c_cite = c_res
+            p_df, p_cite = p_res
+        except ValueError:
+            # covid19dh <= 1.14
+            c_df, c_cite = c_res.copy(), covid19dh.cite(c_res)
+            p_df, p_cite = p_res.copy(), covid19dh.cite(p_res)
         # Citation
         citations = list(dict.fromkeys(c_cite + p_cite))
         self._covid19dh_citation = "\n".join(citations)
