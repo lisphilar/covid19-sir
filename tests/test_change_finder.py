@@ -32,7 +32,7 @@ class TestChangeFinder(object):
         population = population_data.value("Italy")
         min_size = 7
         df = jhu_data.subset(country="Italy")
-        start_date = df.loc[df.index[0], Term.DATE]
+        start_date = df.loc[df.index[0], Term.DATE].strftime(Term.DATE_FORMAT)
         end_date = Term.date_change(start_date, days=min_size - 2)
         sr_df = jhu_data.to_sr(
             country="Italy", population=population, end_date=end_date)
