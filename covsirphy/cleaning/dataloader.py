@@ -530,12 +530,10 @@ class DataLoader(Term):
                 (pandas.DataFrame): dataset at province level
         """
         warnings.simplefilter("ignore", ResourceWarning)
-        c_df = covid19dh.covid19(country=None, level=1, verbose=False)
-        c_citations = covid19dh.cite(c_df)
+        c_df, c_cite = covid19dh.covid19(country=None, level=1, verbose=False)
         # For some countries, province-level data is included
-        p_df = covid19dh.covid19(country=None, level=2, verbose=False)
-        p_citations = covid19dh.cite(p_df)
+        p_df, p_cite = covid19dh.covid19(country=None, level=2, verbose=False)
         # Citation
-        citations = list(dict.fromkeys(c_citations + p_citations))
+        citations = list(dict.fromkeys(c_cite + p_cite))
         self._covid19dh_citation = "\n".join(citations)
         return (c_df, p_df)
