@@ -688,15 +688,22 @@
 <span class="sd">            (tuple):</span>
 <span class="sd">                (pandas.DataFrame): dataset at country level</span>
 <span class="sd">                (pandas.DataFrame): dataset at province level</span>
+
+<span class="sd">        Notes:</span>
+<span class="sd">            For some countries, province-level data is included.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">warnings</span><span class="o">.</span><span class="n">simplefilter</span><span class="p">(</span><span class="s2">&quot;ignore&quot;</span><span class="p">,</span> <span class="ne">ResourceWarning</span><span class="p">)</span>
-        <span class="n">c_df</span> <span class="o">=</span> <span class="n">covid19dh</span><span class="o">.</span><span class="n">covid19</span><span class="p">(</span><span class="n">country</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">level</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
-        <span class="n">c_citations</span> <span class="o">=</span> <span class="n">covid19dh</span><span class="o">.</span><span class="n">cite</span><span class="p">(</span><span class="n">c_df</span><span class="p">)</span>
-        <span class="c1"># For some countries, province-level data is included</span>
-        <span class="n">p_df</span> <span class="o">=</span> <span class="n">covid19dh</span><span class="o">.</span><span class="n">covid19</span><span class="p">(</span><span class="n">country</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">level</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
-        <span class="n">p_citations</span> <span class="o">=</span> <span class="n">covid19dh</span><span class="o">.</span><span class="n">cite</span><span class="p">(</span><span class="n">p_df</span><span class="p">)</span>
+        <span class="n">c_res</span> <span class="o">=</span> <span class="n">covid19dh</span><span class="o">.</span><span class="n">covid19</span><span class="p">(</span><span class="n">country</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">level</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+        <span class="n">p_res</span> <span class="o">=</span> <span class="n">covid19dh</span><span class="o">.</span><span class="n">covid19</span><span class="p">(</span><span class="n">country</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">level</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">c_df</span><span class="p">,</span> <span class="n">c_cite</span> <span class="o">=</span> <span class="n">c_res</span>
+            <span class="n">p_df</span><span class="p">,</span> <span class="n">p_cite</span> <span class="o">=</span> <span class="n">p_res</span>
+        <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
+            <span class="c1"># covid19dh &lt;= 1.14</span>
+            <span class="n">c_df</span><span class="p">,</span> <span class="n">c_cite</span> <span class="o">=</span> <span class="n">c_res</span><span class="o">.</span><span class="n">copy</span><span class="p">(),</span> <span class="n">covid19dh</span><span class="o">.</span><span class="n">cite</span><span class="p">(</span><span class="n">c_res</span><span class="p">)</span>
+            <span class="n">p_df</span><span class="p">,</span> <span class="n">p_cite</span> <span class="o">=</span> <span class="n">p_res</span><span class="o">.</span><span class="n">copy</span><span class="p">(),</span> <span class="n">covid19dh</span><span class="o">.</span><span class="n">cite</span><span class="p">(</span><span class="n">p_res</span><span class="p">)</span>
         <span class="c1"># Citation</span>
-        <span class="n">citations</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">dict</span><span class="o">.</span><span class="n">fromkeys</span><span class="p">(</span><span class="n">c_citations</span> <span class="o">+</span> <span class="n">p_citations</span><span class="p">))</span>
+        <span class="n">citations</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">dict</span><span class="o">.</span><span class="n">fromkeys</span><span class="p">(</span><span class="n">c_cite</span> <span class="o">+</span> <span class="n">p_cite</span><span class="p">))</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_covid19dh_citation</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">citations</span><span class="p">)</span>
         <span class="k">return</span> <span class="p">(</span><span class="n">c_df</span><span class="p">,</span> <span class="n">p_df</span><span class="p">)</span></div>
 </pre></div>
