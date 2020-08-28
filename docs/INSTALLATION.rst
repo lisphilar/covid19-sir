@@ -34,8 +34,8 @@ Dataset <https://covid19datahub.io/articles/data.html>`__.
 `COVID-19 Data Hub <https://covid19datahub.io/>`__
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Guidotti, E., Ardia, D., (2020), "COVID-19 Data Hub", Working paper,
-doi: 10.13140/RG.2.2.11649.81763.
+Guidotti, E., Ardia, D., (2020), "COVID-19 Data Hub", Journal of Open
+Source Software 5(51):2376, doi: 10.21105/joss.02376.
 
 -  The number of cases (JHU style)
 -  Population in each country
