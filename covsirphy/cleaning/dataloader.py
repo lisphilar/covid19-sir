@@ -73,7 +73,7 @@ class DataLoader(Term):
         self._covid19dh_basename = "covid19dh.csv"
         self._covid19dh_citation_secondary = '(Secondary source)' \
             ' Guidotti, E., Ardia, D., (2020), "COVID-19 Data Hub",' \
-            ' Working paper, doi: 10.13140/RG.2.2.11649.81763.' \
+            ' Journal of Open Source Software 5(51):2376, doi: 10.21105/joss.02376.' \
             '\nWe can get Citation list of primary sources with DataLoader(...).covid19dh_citation'
         # JHU dataset: the number of cases
         self.jhu_url = "https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master" \
