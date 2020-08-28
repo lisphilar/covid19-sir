@@ -15,7 +15,7 @@ We have the following options to start analysis with CovsirPhy. Datasets are not
 We will use the following datasets (CovsirPhy >= 2.4.0). Standard users and developers will retrieve main datasets from [COVID-19 Data Hub](https://covid19datahub.io/) using `covid19dh` Python package. We can get the citation list of primary source `covsirphy.DataLoader` class (refer to "Standard users" subsection). This description is from [COVID-19 Data Hub: Dataset](https://covid19datahub.io/articles/data.html).
 
 ### [COVID-19 Data Hub](https://covid19datahub.io/)
-Guidotti, E., Ardia, D., (2020), "COVID-19 Data Hub", Working paper, doi: 10.13140/RG.2.2.11649.81763.
+Guidotti, E., Ardia, D., (2020), "COVID-19 Data Hub", Journal of Open Source Software 5(51):2376, doi: 10.21105/joss.02376.
 
 - The number of cases (JHU style)
 - Population in each country
