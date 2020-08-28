@@ -61,7 +61,7 @@ Development versions are in [GitHub repository: CovsirPhy](https://github.com/li
 ```
 
 Main datasets will be retrieved via [COVID-19 Data Hub](https://covid19datahub.io/) and the citation is  
-Guidotti, E., Ardia, D., (2020), "COVID-19 Data Hub", Working paper, doi: 10.13140/RG.2.2.11649.81763.
+Guidotti, E., Ardia, D., (2020), "COVID-19 Data Hub", Journal of Open Source Software 5(51):2376, doi: 10.21105/joss.02376.
 
 
 ## Usage
