@@ -233,7 +233,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_covid19dh_basename</span> <span class="o">=</span> <span class="s2">&quot;covid19dh.csv&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_covid19dh_citation_secondary</span> <span class="o">=</span> <span class="s1">&#39;(Secondary source)&#39;</span> \
             <span class="s1">&#39; Guidotti, E., Ardia, D., (2020), &quot;COVID-19 Data Hub&quot;,&#39;</span> \
-            <span class="s1">&#39; Working paper, doi: 10.13140/RG.2.2.11649.81763.&#39;</span> \
+            <span class="s1">&#39; Journal of Open Source Software 5(51):2376, doi: 10.21105/joss.02376.&#39;</span> \
             <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">We can get Citation list of primary sources with DataLoader(...).covid19dh_citation&#39;</span>
         <span class="c1"># JHU dataset: the number of cases</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">jhu_url</span> <span class="o">=</span> <span class="s2">&quot;https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master&quot;</span> \
@@ -693,8 +693,10 @@
 <span class="sd">            For some countries, province-level data is included.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">warnings</span><span class="o">.</span><span class="n">simplefilter</span><span class="p">(</span><span class="s2">&quot;ignore&quot;</span><span class="p">,</span> <span class="ne">ResourceWarning</span><span class="p">)</span>
-        <span class="n">c_res</span> <span class="o">=</span> <span class="n">covid19dh</span><span class="o">.</span><span class="n">covid19</span><span class="p">(</span><span class="n">country</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">level</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
-        <span class="n">p_res</span> <span class="o">=</span> <span class="n">covid19dh</span><span class="o">.</span><span class="n">covid19</span><span class="p">(</span><span class="n">country</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">level</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+        <span class="n">c_res</span> <span class="o">=</span> <span class="n">covid19dh</span><span class="o">.</span><span class="n">covid19</span><span class="p">(</span>
+            <span class="n">country</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">level</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">raw</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+        <span class="n">p_res</span> <span class="o">=</span> <span class="n">covid19dh</span><span class="o">.</span><span class="n">covid19</span><span class="p">(</span>
+            <span class="n">country</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">level</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">raw</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
         <span class="k">try</span><span class="p">:</span>
             <span class="n">c_df</span><span class="p">,</span> <span class="n">c_cite</span> <span class="o">=</span> <span class="n">c_res</span>
             <span class="n">p_df</span><span class="p">,</span> <span class="n">p_cite</span> <span class="o">=</span> <span class="n">p_res</span>
