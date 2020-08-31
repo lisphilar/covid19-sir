@@ -89,7 +89,7 @@ CovsirPhy <https://github.com/lisphilar/covid19-sir>`__.
 
 ::
 
-    !pip install "git+https://github.com/lisphilar/covid19-sir.git#egg=covsirphy"
+    pip install "git+https://github.com/lisphilar/covid19-sir.git#egg=covsirphy"
 
 | Main datasets will be retrieved via `COVID-19 Data
   Hub <https://covid19datahub.io/>`__ and the citation is
