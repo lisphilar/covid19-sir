@@ -544,7 +544,14 @@ class DataLoader(Term):
             # covid19dh <= 1.14
             c_df, c_cite = c_res.copy(), covid19dh.cite(c_res)
             p_df, p_cite = p_res.copy(), covid19dh.cite(p_res)
+            citations = list(dict.fromkeys(c_cite + p_cite))
+            self._covid19dh_citation = "\n".join(citations)
+            return (c_df, p_df)
         # Citation
-        citations = list(dict.fromkeys(c_cite + p_cite))
-        self._covid19dh_citation = "\n".join(citations)
+        cite = pd.concat([c_cite, p_cite], axis=0, ignore_index=True)
+        cite = cite.loc[:, ["title", "year", "url"]]
+        cite = cite.sort_values(["year", "url"], ascending=[False, True])
+        cite.drop_duplicates(subset="title", inplace=True)
+        series = cite.apply(lambda x: f"{x[0]} ({x[1]}), {x[2]}", axis=1)
+        self._covid19dh_citation = "\n".join(series.tolist())
         return (c_df, p_df)
