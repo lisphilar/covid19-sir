@@ -89,7 +89,7 @@ class Term(object):
         if not isinstance(num, int):
             raise TypeError("@num must be an integer.")
         q, mod = divmod(num, 10)
-        suffix = "th" if q == 1 else cls.SUFFIX_DICT[mod]
+        suffix = "th" if q % 10 == 1 else cls.SUFFIX_DICT[mod]
         return f"{num}{suffix}"
 
     @staticmethod
