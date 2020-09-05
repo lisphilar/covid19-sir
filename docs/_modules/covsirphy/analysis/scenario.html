@@ -373,7 +373,7 @@
 
 <div class="viewcode-block" id="Scenario.delete"><a class="viewcode-back" href="../../../covsirphy.analysis.html#covsirphy.analysis.scenario.Scenario.delete">[docs]</a>    <span class="k">def</span> <span class="nf">delete</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">phases</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;Main&quot;</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Delete a phase. The phase will be combined to the previous phase.</span>
+<span class="sd">        Delete phases.</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            phase (list[str] or None): phase names, or [&#39;last&#39;]</span>
@@ -385,6 +385,8 @@
 <span class="sd">        Notes:</span>
 <span class="sd">            If @phases is None, the phase series will be deleted.</span>
 <span class="sd">            When @phase is &#39;0th&#39;, disable 0th phase. 0th phase will not be deleted.</span>
+<span class="sd">            If the last phase is included in @phases, the dates will be released from phases.</span>
+<span class="sd">            If the last phase is not included, the dates will be assigned to the previous phase.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_ensure_name</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
         <span class="c1"># Clear main series or delete sub phase series</span>
