@@ -213,7 +213,7 @@ class Scenario(Term):
 
     def delete(self, phases=None, name="Main"):
         """
-        Delete a phase. The phase will be combined to the previous phase.
+        Delete phases.
 
         Args:
             phase (list[str] or None): phase names, or ['last']
@@ -225,6 +225,8 @@ class Scenario(Term):
         Notes:
             If @phases is None, the phase series will be deleted.
             When @phase is '0th', disable 0th phase. 0th phase will not be deleted.
+            If the last phase is included in @phases, the dates will be released from phases.
+            If the last phase is not included, the dates will be assigned to the previous phase.
         """
         self._ensure_name(name)
         # Clear main series or delete sub phase series
