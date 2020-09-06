@@ -179,6 +179,8 @@ class TestScenario(object):
             snl.summary(columns=Term.N)
         with pytest.raises(KeyError):
             snl.summary(columns=[Term.N, "Temperature"])
+        # To markdown
+        snl.summary().to_markdown()
 
     @pytest.mark.parametrize("country", ["Greece"])
     def test_estimate(self, jhu_data, population_data, country):
