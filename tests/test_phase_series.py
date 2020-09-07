@@ -91,11 +91,7 @@ class TestPhaseSeries(object):
         assert not series.unit("0th")
         assert len(series) == 6
         # Last phase
-        last_phase = PhaseUnit("13Jul2020", "01Aug2020", population)
-        assert series.unit(phase="last") == last_phase
-        # 3rd phase
-        third_phase = PhaseUnit("27May2020", "27Jun2020", population)
-        assert series.unit(phase="3rd") == third_phase
+        assert series.unit(phase="last") == series.unit(phase="6th")
         # Un-registered phase
         with pytest.raises(KeyError):
             series.unit("10th")
