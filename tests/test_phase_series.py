@@ -89,7 +89,7 @@ class TestPhaseSeries(object):
         series.trend(sr_df, show_figure=False)
         # Summary
         assert not series.unit("0th")
-        assert len(series) == 5
+        assert len(series) == 6
         # Last phase
         last_phase = PhaseUnit("13Jul2020", "01Aug2020", population)
         assert series.unit(phase="last") == last_phase
