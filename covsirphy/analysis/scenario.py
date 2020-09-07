@@ -398,7 +398,7 @@ class Scenario(Term):
         df = df.loc[:, columns]
         return df.dropna(how="all", axis=1).fillna(self.UNKNOWN)
 
-    def trend(self, set_phases=True, include_init_phase=False, name="Main",
+    def trend(self, set_phases=True, include_init_phase=True, name="Main",
               show_figure=True, filename=None, **kwargs):
         """
         Perform S-R trend analysis and set phases.
