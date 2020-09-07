@@ -89,13 +89,9 @@ class TestPhaseSeries(object):
         series.trend(sr_df, show_figure=False)
         # Summary
         assert not series.unit("0th")
-        assert len(series) == 5
+        assert len(series) == 6
         # Last phase
-        last_phase = PhaseUnit("13Jul2020", "01Aug2020", population)
-        assert series.unit(phase="last") == last_phase
-        # 3rd phase
-        third_phase = PhaseUnit("27May2020", "27Jun2020", population)
-        assert series.unit(phase="3rd") == third_phase
+        assert series.unit(phase="last") == series.unit(phase="6th")
         # Un-registered phase
         with pytest.raises(KeyError):
             series.unit("10th")
@@ -110,12 +106,12 @@ class TestPhaseSeries(object):
         # Add future phase with model and tau
         series.add(end_date="01Sep2020", model=SIR, tau=360)
         series.add(end_date="01Oct2020")
-        assert series.to_dict()["6th"][Term.ODE] == SIR.NAME
-        assert series.to_dict()["7th"][Term.TAU] == 360
+        assert series.to_dict()["7th"][Term.ODE] == SIR.NAME
+        assert series.to_dict()["8th"][Term.TAU] == 360
         series.add(end_date="01Nov2020", rho=0.006)
         series.add(end_date="01Dec2020", sigma=0.011)
-        assert series.to_dict()["9th"][Term.RT] == 0.55
-        assert series.to_dict()["9th"]["1/beta [day]"] == 41
+        assert series.to_dict()["10th"][Term.RT] == 0.55
+        assert series.to_dict()["10th"]["1/beta [day]"] == 41
 
     @pytest.mark.parametrize("country", ["Japan"])
     def test_delete_phase(self, jhu_data, population_data, country):
@@ -124,11 +120,11 @@ class TestPhaseSeries(object):
         sr_df = jhu_data.to_sr(country=country, population=population)
         series = PhaseSeries("01Apr2020", "01Aug2020", population)
         series.trend(sr_df, show_figure=False)
-        assert len(series) == 5
+        assert len(series) == 6
         # Deletion of 0th phase is the same as disabling 0th phase
         series.enable("0th")
         series.delete("0th")
-        assert len(series) == 5
+        assert len(series) == 6
         assert "5th" in series.to_dict()
         assert not series.unit("0th")
         # Delete phase (not the last registered phase)
@@ -137,7 +133,7 @@ class TestPhaseSeries(object):
             series.unit("3rd").end_date,
             series.unit("2nd").population)
         series.delete("3rd")
-        assert len(series) == 4
+        assert len(series) == 5
         assert series.unit("2nd") == new_second
         # Delete the last phase
         old_last = series.unit("last")
