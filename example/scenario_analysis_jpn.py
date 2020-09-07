@@ -17,6 +17,9 @@ def main():
     data_loader = cs.DataLoader(input_dir)
     jhu_data = data_loader.jhu()
     population_data = data_loader.population()
+    # Japan dataset
+    japan_data = data_loader.japan()
+    jhu_data.replace(japan_data)
     # Start scenario analysis
     scenario = cs.Scenario(jhu_data, population_data, "Japan")
     # Show records
