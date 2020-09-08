@@ -417,6 +417,10 @@ class Scenario(Term):
                 "@n_points argument is un-necessary"
                 " because the number of change points will be automatically determined."
             )
+        try:
+            include_init_phase = kwargs.pop("include_init_phase")
+        except KeyError:
+            include_init_phase = True
         self._ensure_name(name)
         sr_df = self.jhu_data.to_sr(
             country=self.country, province=self.province, population=self.population
@@ -429,9 +433,8 @@ class Scenario(Term):
             filename=filename,
             **kwargs
         )
-        if "include_init_phase" not in kwargs or kwargs["include_init_phase"]:
-            return self
-        self._series_dict[name].disable("0th")
+        if not include_init_phase:
+            self._series_dict[name].disable("0th")
         return self
 
     def _ensure_past_phases(self, phases=None, name="Main"):
