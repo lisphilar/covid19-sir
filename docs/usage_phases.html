@@ -96,7 +96,7 @@
 <li class="toctree-l2"><a class="reference internal" href="#Set-phases-with-S-R-trend-analysis">Set phases with S-R trend analysis</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#(Optional)-Remove-un-necessary-change-points-manually">(Optional) Remove un-necessary change points manually</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#(Optional)-Separate-phases-manually">(Optional) Separate phases manually</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#(Optional)-Delete-phases-manually">(Optional) Delete phases manually</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#(Optional)-Disable-phases-manually">(Optional) Disable phases manually</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#(Optional)-Add-phases-one-by-one">(Optional) Add phases one by one</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#Parameter-estimation-of-ODE-models">Parameter estimation of ODE models</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#Main-scenario">Main scenario</a></li>
@@ -462,7 +462,7 @@ div.rendered_html tbody tr:hover {
 </div>
 <div class="output_area docutils container">
 <div class="highlight"><pre>
-&#39;2.8.1-alpha.fix.211&#39;
+&#39;2.8.2&#39;
 </pre></div></div>
 </div>
 <div class="nbinput docutils container">
@@ -608,11 +608,11 @@ We can get Citation list of primary sources with DataLoader(...).covid19dh_citat
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="c1"># Set phase with S-R trend analysis and delete initial (0th) phase</span>
+<span></span><span class="c1"># Set phase with S-R trend analysis</span>
 <span class="n">scenario</span><span class="o">.</span><span class="n">trend</span><span class="p">(</span><span class="n">set_phases</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-<span class="c1"># This is the same as</span>
-<span class="c1"># scenario.trend(set_phases=True, include_init_phase=True)</span>
-<span class="c1"># scenario.delete(phases=[&quot;0th&quot;])</span>
+<span class="n">scenario</span><span class="o">.</span><span class="n">summary</span><span class="p">()</span>
+<span class="c1"># If necessary, initial (0th) phase can be disabled</span>
+<span class="c1"># scenario.disable(phases=[&quot;0th&quot;])</span>
 </pre></div>
 </div>
 </div>
@@ -625,323 +625,6 @@ We can get Citation list of primary sources with DataLoader(...).covid19dh_citat
 </div>
 <div class="nboutput nblast docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[7]:
-</pre></div>
-</div>
-<div class="output_area docutils container">
-<div class="highlight"><pre>
-&lt;covsirphy.analysis.scenario.Scenario at 0x7f5588ed5610&gt;
-</pre></div></div>
-</div>
-<p>We found five change points from 01May2020 to 20Jul2020. This means that there 6 phases (Initial, 1st, 2nd,…5th). Here, we removed Initial (0th) phase because the number of cases is small in 0th phase and may not show SIR-like trend.</p>
-<div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[8]:
-</pre></div>
-</div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="n">scenario</span><span class="o">.</span><span class="n">summary</span><span class="p">()</span>
-</pre></div>
-</div>
-</div>
-<div class="nboutput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[8]:
-</pre></div>
-</div>
-<div class="output_area rendered_html docutils container">
-<div>
-<style scoped>
-    .dataframe tbody tr th:only-of-type {
-        vertical-align: middle;
-    }
-
-    .dataframe tbody tr th {
-        vertical-align: top;
-    }
-
-    .dataframe thead th {
-        text-align: right;
-    }
-</style>
-<table border="1" class="dataframe">
-  <thead>
-    <tr style="text-align: right;">
-      <th></th>
-      <th>Type</th>
-      <th>Start</th>
-      <th>End</th>
-      <th>Population</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <th>1st</th>
-      <td>Past</td>
-      <td>22May2020</td>
-      <td>03Jun2020</td>
-      <td>1352617328</td>
-    </tr>
-    <tr>
-      <th>2nd</th>
-      <td>Past</td>
-      <td>04Jun2020</td>
-      <td>12Jun2020</td>
-      <td>1352617328</td>
-    </tr>
-    <tr>
-      <th>3rd</th>
-      <td>Past</td>
-      <td>13Jun2020</td>
-      <td>25Jun2020</td>
-      <td>1352617328</td>
-    </tr>
-    <tr>
-      <th>4th</th>
-      <td>Past</td>
-      <td>26Jun2020</td>
-      <td>04Jul2020</td>
-      <td>1352617328</td>
-    </tr>
-    <tr>
-      <th>5th</th>
-      <td>Past</td>
-      <td>05Jul2020</td>
-      <td>16Jul2020</td>
-      <td>1352617328</td>
-    </tr>
-  </tbody>
-</table>
-</div></div>
-</div>
-</div>
-<div class="section" id="(Optional)-Remove-un-necessary-change-points-manually">
-<h2>(Optional) Remove un-necessary change points manually<a class="headerlink" href="#(Optional)-Remove-un-necessary-change-points-manually" title="Permalink to this headline">¶</a></h2>
-<p>The slope of 4th phase seems to equal to that of 3rd phase. Here, we will combine 3rd phase and 4th phase here and reset phase names.</p>
-<div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[9]:
-</pre></div>
-</div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="c1"># Before: 3rd is 16Jun2020-23Jun2020, 4th is 24Jun2020-04Jul2020</span>
-<span class="c1"># After: 3rd is 16Jun2020-04Jul2020, 4th is the same as old 5th</span>
-<span class="n">scenario</span><span class="o">.</span><span class="n">combine</span><span class="p">(</span><span class="n">phases</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;3rd&quot;</span><span class="p">,</span> <span class="s2">&quot;4th&quot;</span><span class="p">])</span>
-<span class="n">scenario</span><span class="o">.</span><span class="n">summary</span><span class="p">()</span>
-</pre></div>
-</div>
-</div>
-<div class="nboutput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[9]:
-</pre></div>
-</div>
-<div class="output_area rendered_html docutils container">
-<div>
-<style scoped>
-    .dataframe tbody tr th:only-of-type {
-        vertical-align: middle;
-    }
-
-    .dataframe tbody tr th {
-        vertical-align: top;
-    }
-
-    .dataframe thead th {
-        text-align: right;
-    }
-</style>
-<table border="1" class="dataframe">
-  <thead>
-    <tr style="text-align: right;">
-      <th></th>
-      <th>Type</th>
-      <th>Start</th>
-      <th>End</th>
-      <th>Population</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <th>1st</th>
-      <td>Past</td>
-      <td>22May2020</td>
-      <td>03Jun2020</td>
-      <td>1352617328</td>
-    </tr>
-    <tr>
-      <th>2nd</th>
-      <td>Past</td>
-      <td>04Jun2020</td>
-      <td>12Jun2020</td>
-      <td>1352617328</td>
-    </tr>
-    <tr>
-      <th>3rd</th>
-      <td>Past</td>
-      <td>13Jun2020</td>
-      <td>04Jul2020</td>
-      <td>1352617328</td>
-    </tr>
-    <tr>
-      <th>4th</th>
-      <td>Past</td>
-      <td>05Jul2020</td>
-      <td>16Jul2020</td>
-      <td>1352617328</td>
-    </tr>
-  </tbody>
-</table>
-</div></div>
-</div>
-<p>Show the trend with manually set change points.</p>
-<div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[10]:
-</pre></div>
-</div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="n">scenario</span><span class="o">.</span><span class="n">trend</span><span class="p">(</span><span class="n">set_phases</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
-</pre></div>
-</div>
-</div>
-<div class="nboutput docutils container">
-<div class="prompt empty docutils container">
-</div>
-<div class="output_area docutils container">
-<img alt="_images/usage_phases_19_0.png" src="_images/usage_phases_19_0.png" />
-</div>
-</div>
-<div class="nboutput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[10]:
-</pre></div>
-</div>
-<div class="output_area docutils container">
-<div class="highlight"><pre>
-&lt;covsirphy.analysis.scenario.Scenario at 0x7f5588ed5610&gt;
-</pre></div></div>
-</div>
-</div>
-<div class="section" id="(Optional)-Separate-phases-manually">
-<h2>(Optional) Separate phases manually<a class="headerlink" href="#(Optional)-Separate-phases-manually" title="Permalink to this headline">¶</a></h2>
-<p>Because point of <span class="math notranslate nohighlight">\((x, y) = (S, R)\)</span> jumped on 30May2020, we will separete the 1st phase with this change point and reset phase names.</p>
-<div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[11]:
-</pre></div>
-</div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="c1"># Before: 1st is 20May2020-05Jun2020</span>
-<span class="c1"># After: 1st is 20May2020-29May2020, 2nd is 30May2020-05Jun2020</span>
-<span class="n">scenario</span><span class="o">.</span><span class="n">separate</span><span class="p">(</span><span class="n">date</span><span class="o">=</span><span class="s2">&quot;30May2020&quot;</span><span class="p">,</span> <span class="n">phase</span><span class="o">=</span><span class="s2">&quot;1st&quot;</span><span class="p">)</span>
-<span class="n">scenario</span><span class="o">.</span><span class="n">summary</span><span class="p">()</span>
-</pre></div>
-</div>
-</div>
-<div class="nboutput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[11]:
-</pre></div>
-</div>
-<div class="output_area rendered_html docutils container">
-<div>
-<style scoped>
-    .dataframe tbody tr th:only-of-type {
-        vertical-align: middle;
-    }
-
-    .dataframe tbody tr th {
-        vertical-align: top;
-    }
-
-    .dataframe thead th {
-        text-align: right;
-    }
-</style>
-<table border="1" class="dataframe">
-  <thead>
-    <tr style="text-align: right;">
-      <th></th>
-      <th>Type</th>
-      <th>Start</th>
-      <th>End</th>
-      <th>Population</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <th>1st</th>
-      <td>Past</td>
-      <td>22May2020</td>
-      <td>29May2020</td>
-      <td>1352617328</td>
-    </tr>
-    <tr>
-      <th>2nd</th>
-      <td>Past</td>
-      <td>30May2020</td>
-      <td>03Jun2020</td>
-      <td>1352617328</td>
-    </tr>
-    <tr>
-      <th>3rd</th>
-      <td>Past</td>
-      <td>04Jun2020</td>
-      <td>12Jun2020</td>
-      <td>1352617328</td>
-    </tr>
-    <tr>
-      <th>4th</th>
-      <td>Past</td>
-      <td>13Jun2020</td>
-      <td>04Jul2020</td>
-      <td>1352617328</td>
-    </tr>
-    <tr>
-      <th>5th</th>
-      <td>Past</td>
-      <td>05Jul2020</td>
-      <td>16Jul2020</td>
-      <td>1352617328</td>
-    </tr>
-  </tbody>
-</table>
-</div></div>
-</div>
-<div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[12]:
-</pre></div>
-</div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="n">scenario</span><span class="o">.</span><span class="n">trend</span><span class="p">(</span><span class="n">set_phases</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
-</pre></div>
-</div>
-</div>
-<div class="nboutput docutils container">
-<div class="prompt empty docutils container">
-</div>
-<div class="output_area docutils container">
-<img alt="_images/usage_phases_22_0.png" src="_images/usage_phases_22_0.png" />
-</div>
-</div>
-<div class="nboutput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[12]:
-</pre></div>
-</div>
-<div class="output_area docutils container">
-<div class="highlight"><pre>
-&lt;covsirphy.analysis.scenario.Scenario at 0x7f5588ed5610&gt;
-</pre></div></div>
-</div>
-</div>
-<div class="section" id="(Optional)-Delete-phases-manually">
-<h2>(Optional) Delete phases manually<a class="headerlink" href="#(Optional)-Delete-phases-manually" title="Permalink to this headline">¶</a></h2>
-<p>Because 1st phase seems un-stable, delete the 1st phase and reset the phase names.</p>
-<div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[13]:
-</pre></div>
-</div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="c1"># Remove 1st phase</span>
-<span class="n">scenario</span><span class="o">.</span><span class="n">delete</span><span class="p">(</span><span class="n">phases</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;1st&quot;</span><span class="p">])</span>
-<span class="n">scenario</span><span class="o">.</span><span class="n">summary</span><span class="p">()</span>
-</pre></div>
-</div>
-</div>
-<div class="nboutput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[13]:
 </pre></div>
 </div>
 <div class="output_area rendered_html docutils container">
@@ -974,34 +657,41 @@ We can get Citation list of primary sources with DataLoader(...).covid19dh_citat
       <th>0th</th>
       <td>Past</td>
       <td>01Mar2020</td>
-      <td>29May2020</td>
+      <td>19May2020</td>
       <td>1352617328</td>
     </tr>
     <tr>
       <th>1st</th>
       <td>Past</td>
-      <td>30May2020</td>
-      <td>03Jun2020</td>
+      <td>20May2020</td>
+      <td>02Jun2020</td>
       <td>1352617328</td>
     </tr>
     <tr>
       <th>2nd</th>
       <td>Past</td>
-      <td>04Jun2020</td>
-      <td>12Jun2020</td>
+      <td>03Jun2020</td>
+      <td>11Jun2020</td>
       <td>1352617328</td>
     </tr>
     <tr>
       <th>3rd</th>
       <td>Past</td>
-      <td>13Jun2020</td>
-      <td>04Jul2020</td>
+      <td>12Jun2020</td>
+      <td>19Jun2020</td>
       <td>1352617328</td>
     </tr>
     <tr>
       <th>4th</th>
       <td>Past</td>
-      <td>05Jul2020</td>
+      <td>20Jun2020</td>
+      <td>29Jun2020</td>
+      <td>1352617328</td>
+    </tr>
+    <tr>
+      <th>5th</th>
+      <td>Past</td>
+      <td>30Jun2020</td>
       <td>16Jul2020</td>
       <td>1352617328</td>
     </tr>
@@ -1009,8 +699,94 @@ We can get Citation list of primary sources with DataLoader(...).covid19dh_citat
 </table>
 </div></div>
 </div>
+</div>
+<div class="section" id="(Optional)-Remove-un-necessary-change-points-manually">
+<h2>(Optional) Remove un-necessary change points manually<a class="headerlink" href="#(Optional)-Remove-un-necessary-change-points-manually" title="Permalink to this headline">¶</a></h2>
+<p>The slope of 4th phase seems to equal to that of 3rd phase. Here, we will combine 3rd phase and 4th phase here and reset phase names.</p>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[14]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[8]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="c1"># Before: 3rd is 12Jun2020-19Jun2020, 4th is 20Jun2020-29Jun2020</span>
+<span class="c1"># After: 3rd is 12Jun2020-29Jun2020, 4th is the same as old 5th</span>
+<span class="n">scenario</span><span class="o">.</span><span class="n">combine</span><span class="p">(</span><span class="n">phases</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;3rd&quot;</span><span class="p">,</span> <span class="s2">&quot;4th&quot;</span><span class="p">])</span>
+<span class="n">scenario</span><span class="o">.</span><span class="n">summary</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[8]:
+</pre></div>
+</div>
+<div class="output_area rendered_html docutils container">
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>Type</th>
+      <th>Start</th>
+      <th>End</th>
+      <th>Population</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0th</th>
+      <td>Past</td>
+      <td>01Mar2020</td>
+      <td>19May2020</td>
+      <td>1352617328</td>
+    </tr>
+    <tr>
+      <th>1st</th>
+      <td>Past</td>
+      <td>20May2020</td>
+      <td>02Jun2020</td>
+      <td>1352617328</td>
+    </tr>
+    <tr>
+      <th>2nd</th>
+      <td>Past</td>
+      <td>03Jun2020</td>
+      <td>11Jun2020</td>
+      <td>1352617328</td>
+    </tr>
+    <tr>
+      <th>3rd</th>
+      <td>Past</td>
+      <td>12Jun2020</td>
+      <td>29Jun2020</td>
+      <td>1352617328</td>
+    </tr>
+    <tr>
+      <th>4th</th>
+      <td>Past</td>
+      <td>30Jun2020</td>
+      <td>16Jul2020</td>
+      <td>1352617328</td>
+    </tr>
+  </tbody>
+</table>
+</div></div>
+</div>
+<p>Show the trend with manually set change points.</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[9]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
@@ -1022,17 +798,330 @@ We can get Citation list of primary sources with DataLoader(...).covid19dh_citat
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area docutils container">
-<img alt="_images/usage_phases_25_0.png" src="_images/usage_phases_25_0.png" />
+<img alt="_images/usage_phases_17_0.png" src="_images/usage_phases_17_0.png" />
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[9]:
+</pre></div>
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+&lt;covsirphy.analysis.scenario.Scenario at 0x7fa1dca43d00&gt;
+</pre></div></div>
+</div>
+</div>
+<div class="section" id="(Optional)-Separate-phases-manually">
+<h2>(Optional) Separate phases manually<a class="headerlink" href="#(Optional)-Separate-phases-manually" title="Permalink to this headline">¶</a></h2>
+<p>Because point of <span class="math notranslate nohighlight">\((x, y) = (S, R)\)</span> jumped on 29May2020, we will separete the 1st phase with this change point and reset phase names.</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[10]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="c1"># Before: 1st is 20May2020-02Jun2020</span>
+<span class="c1"># After: 1st is 20May2020-28May2020, 2nd is 29May2020-02Jun2020</span>
+<span class="n">scenario</span><span class="o">.</span><span class="n">separate</span><span class="p">(</span><span class="n">date</span><span class="o">=</span><span class="s2">&quot;29May2020&quot;</span><span class="p">,</span> <span class="n">phase</span><span class="o">=</span><span class="s2">&quot;1st&quot;</span><span class="p">)</span>
+<span class="n">scenario</span><span class="o">.</span><span class="n">summary</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[10]:
+</pre></div>
+</div>
+<div class="output_area rendered_html docutils container">
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>Type</th>
+      <th>Start</th>
+      <th>End</th>
+      <th>Population</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0th</th>
+      <td>Past</td>
+      <td>01Mar2020</td>
+      <td>19May2020</td>
+      <td>1352617328</td>
+    </tr>
+    <tr>
+      <th>1st</th>
+      <td>Past</td>
+      <td>20May2020</td>
+      <td>28May2020</td>
+      <td>1352617328</td>
+    </tr>
+    <tr>
+      <th>2nd</th>
+      <td>Past</td>
+      <td>29May2020</td>
+      <td>02Jun2020</td>
+      <td>1352617328</td>
+    </tr>
+    <tr>
+      <th>3rd</th>
+      <td>Past</td>
+      <td>03Jun2020</td>
+      <td>11Jun2020</td>
+      <td>1352617328</td>
+    </tr>
+    <tr>
+      <th>4th</th>
+      <td>Past</td>
+      <td>12Jun2020</td>
+      <td>29Jun2020</td>
+      <td>1352617328</td>
+    </tr>
+    <tr>
+      <th>5th</th>
+      <td>Past</td>
+      <td>30Jun2020</td>
+      <td>16Jul2020</td>
+      <td>1352617328</td>
+    </tr>
+  </tbody>
+</table>
+</div></div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[11]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">scenario</span><span class="o">.</span><span class="n">trend</span><span class="p">(</span><span class="n">set_phases</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="_images/usage_phases_20_0.png" src="_images/usage_phases_20_0.png" />
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[11]:
+</pre></div>
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+&lt;covsirphy.analysis.scenario.Scenario at 0x7fa1dca43d00&gt;
+</pre></div></div>
+</div>
+</div>
+<div class="section" id="(Optional)-Disable-phases-manually">
+<h2>(Optional) Disable phases manually<a class="headerlink" href="#(Optional)-Disable-phases-manually" title="Permalink to this headline">¶</a></h2>
+<p>Phases can be disable for parameter eatimation. Disabled phases can be enabled with <code class="docutils literal notranslate"><span class="pre">Scenario.enable()</span></code> method.</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[12]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="c1"># Disable 0th phase</span>
+<span class="n">scenario</span><span class="o">.</span><span class="n">disable</span><span class="p">(</span><span class="n">phases</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;0th&quot;</span><span class="p">])</span>
+<span class="n">scenario</span><span class="o">.</span><span class="n">summary</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[12]:
+</pre></div>
+</div>
+<div class="output_area rendered_html docutils container">
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>Type</th>
+      <th>Start</th>
+      <th>End</th>
+      <th>Population</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>1st</th>
+      <td>Past</td>
+      <td>20May2020</td>
+      <td>28May2020</td>
+      <td>1352617328</td>
+    </tr>
+    <tr>
+      <th>2nd</th>
+      <td>Past</td>
+      <td>29May2020</td>
+      <td>02Jun2020</td>
+      <td>1352617328</td>
+    </tr>
+    <tr>
+      <th>3rd</th>
+      <td>Past</td>
+      <td>03Jun2020</td>
+      <td>11Jun2020</td>
+      <td>1352617328</td>
+    </tr>
+    <tr>
+      <th>4th</th>
+      <td>Past</td>
+      <td>12Jun2020</td>
+      <td>29Jun2020</td>
+      <td>1352617328</td>
+    </tr>
+    <tr>
+      <th>5th</th>
+      <td>Past</td>
+      <td>30Jun2020</td>
+      <td>16Jul2020</td>
+      <td>1352617328</td>
+    </tr>
+  </tbody>
+</table>
+</div></div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[13]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">scenario</span><span class="o">.</span><span class="n">trend</span><span class="p">(</span><span class="n">set_phases</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="_images/usage_phases_23_0.png" src="_images/usage_phases_23_0.png" />
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[13]:
+</pre></div>
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+&lt;covsirphy.analysis.scenario.Scenario at 0x7fa1dca43d00&gt;
+</pre></div></div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[14]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="c1"># Enable 0th phase</span>
+<span class="n">scenario</span><span class="o">.</span><span class="n">enable</span><span class="p">(</span><span class="n">phases</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;0th&quot;</span><span class="p">])</span>
+<span class="n">scenario</span><span class="o">.</span><span class="n">summary</span><span class="p">()</span>
+</pre></div>
 </div>
 </div>
 <div class="nboutput nblast docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[14]:
 </pre></div>
 </div>
-<div class="output_area docutils container">
-<div class="highlight"><pre>
-&lt;covsirphy.analysis.scenario.Scenario at 0x7f5588ed5610&gt;
-</pre></div></div>
+<div class="output_area rendered_html docutils container">
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>Type</th>
+      <th>Start</th>
+      <th>End</th>
+      <th>Population</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0th</th>
+      <td>Past</td>
+      <td>01Mar2020</td>
+      <td>19May2020</td>
+      <td>1352617328</td>
+    </tr>
+    <tr>
+      <th>1st</th>
+      <td>Past</td>
+      <td>20May2020</td>
+      <td>28May2020</td>
+      <td>1352617328</td>
+    </tr>
+    <tr>
+      <th>2nd</th>
+      <td>Past</td>
+      <td>29May2020</td>
+      <td>02Jun2020</td>
+      <td>1352617328</td>
+    </tr>
+    <tr>
+      <th>3rd</th>
+      <td>Past</td>
+      <td>03Jun2020</td>
+      <td>11Jun2020</td>
+      <td>1352617328</td>
+    </tr>
+    <tr>
+      <th>4th</th>
+      <td>Past</td>
+      <td>12Jun2020</td>
+      <td>29Jun2020</td>
+      <td>1352617328</td>
+    </tr>
+    <tr>
+      <th>5th</th>
+      <td>Past</td>
+      <td>30Jun2020</td>
+      <td>16Jul2020</td>
+      <td>1352617328</td>
+    </tr>
+  </tbody>
+</table>
+</div></div>
 </div>
 </div>
 <div class="section" id="(Optional)-Add-phases-one-by-one">
@@ -1084,14 +1173,16 @@ We can get Citation list of primary sources with DataLoader(...).covid19dh_citat
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
 <span></span><span class="c1"># Set 0th phase to set the start date of 1st phase</span>
-<span class="n">scenario</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">end_date</span><span class="o">=</span><span class="s2">&quot;29May2020&quot;</span><span class="p">)</span>
-<span class="c1"># Add 1st phase and delete 0th phase</span>
-<span class="n">scenario</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">end_date</span><span class="o">=</span><span class="s2">&quot;05Jun2020&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">delete</span><span class="p">(</span><span class="n">phases</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;0th&quot;</span><span class="p">])</span>
+<span class="n">scenario</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">end_date</span><span class="o">=</span><span class="s2">&quot;19May2020&quot;</span><span class="p">)</span>
+<span class="c1"># Add 1st phase and disable 0th phase</span>
+<span class="n">scenario</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">end_date</span><span class="o">=</span><span class="s2">&quot;28May2020&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">disable</span><span class="p">(</span><span class="n">phases</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;0th&quot;</span><span class="p">])</span>
 <span class="c1"># Add 2nd phase</span>
-<span class="n">scenario</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">end_date</span><span class="o">=</span><span class="s2">&quot;15Jun2020&quot;</span><span class="p">)</span>
+<span class="n">scenario</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">end_date</span><span class="o">=</span><span class="s2">&quot;02Jun2020&quot;</span><span class="p">)</span>
 <span class="c1"># Add 3rd phase</span>
-<span class="n">scenario</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">end_date</span><span class="o">=</span><span class="s2">&quot;04Jul2020&quot;</span><span class="p">)</span>
-<span class="c1"># Add 4th phase to the last of the records</span>
+<span class="n">scenario</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">end_date</span><span class="o">=</span><span class="s2">&quot;11Jun2020&quot;</span><span class="p">)</span>
+<span class="c1"># Add 4th phase</span>
+<span class="n">scenario</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">end_date</span><span class="o">=</span><span class="s2">&quot;29Jun2020&quot;</span><span class="p">)</span>
+<span class="c1"># Add 5th phase to the last of the records</span>
 <span class="n">scenario</span><span class="o">.</span><span class="n">add</span><span class="p">()</span><span class="o">.</span><span class="n">summary</span><span class="p">()</span>
 </pre></div>
 </div>
@@ -1129,28 +1220,35 @@ We can get Citation list of primary sources with DataLoader(...).covid19dh_citat
     <tr>
       <th>1st</th>
       <td>Past</td>
-      <td>30May2020</td>
-      <td>05Jun2020</td>
+      <td>20May2020</td>
+      <td>28May2020</td>
       <td>1352617328</td>
     </tr>
     <tr>
       <th>2nd</th>
       <td>Past</td>
-      <td>06Jun2020</td>
-      <td>15Jun2020</td>
+      <td>29May2020</td>
+      <td>02Jun2020</td>
       <td>1352617328</td>
     </tr>
     <tr>
       <th>3rd</th>
       <td>Past</td>
-      <td>16Jun2020</td>
-      <td>04Jul2020</td>
+      <td>03Jun2020</td>
+      <td>11Jun2020</td>
       <td>1352617328</td>
     </tr>
     <tr>
       <th>4th</th>
       <td>Past</td>
-      <td>05Jul2020</td>
+      <td>12Jun2020</td>
+      <td>29Jun2020</td>
+      <td>1352617328</td>
+    </tr>
+    <tr>
+      <th>5th</th>
+      <td>Past</td>
+      <td>30Jun2020</td>
       <td>16Jul2020</td>
       <td>1352617328</td>
     </tr>
@@ -1179,10 +1277,11 @@ We can get Citation list of primary sources with DataLoader(...).covid19dh_citat
 
 &lt;SIR-F model: parameter estimation&gt;
 Running optimization with 4 CPUs...
-        4th phase (05Jul2020 - 16Jul2020): finished 1793 trials in 1 min  0 sec
-        1st phase (30May2020 - 05Jun2020): finished  263 trials in 0 min  5 sec
-        2nd phase (06Jun2020 - 15Jun2020): finished  262 trials in 0 min  5 sec
-        3rd phase (16Jun2020 - 04Jul2020): finished  713 trials in 0 min 15 sec
+        5th phase (30Jun2020 - 16Jul2020): finished  351 trials in 0 min 15 sec
+        2nd phase (29May2020 - 02Jun2020): finished  169 trials in 0 min  5 sec
+        3rd phase (03Jun2020 - 11Jun2020): finished  333 trials in 0 min 10 sec
+        1st phase (20May2020 - 28May2020): finished 1580 trials in 1 min  0 sec
+        4th phase (12Jun2020 - 29Jun2020): finished 1558 trials in 1 min  0 sec
 Completed optimization. Total: 1 min 15 sec
 </pre></div></div>
 </div>
@@ -1239,63 +1338,73 @@ Completed optimization. Total: 1 min 15 sec
   <tbody>
     <tr>
       <th>1st</th>
-      <td>30May2020</td>
-      <td>05Jun2020</td>
-      <td>0.018051</td>
-      <td>0.000288</td>
-      <td>0.028399</td>
-      <td>0.013665</td>
-      <td>2.00</td>
+      <td>20May2020</td>
+      <td>28May2020</td>
+      <td>0.017155</td>
+      <td>0.000350</td>
+      <td>0.041600</td>
+      <td>0.020912</td>
+      <td>1.92</td>
     </tr>
     <tr>
       <th>2nd</th>
-      <td>06Jun2020</td>
-      <td>15Jun2020</td>
-      <td>0.011742</td>
-      <td>0.000482</td>
-      <td>0.025739</td>
-      <td>0.016245</td>
-      <td>1.52</td>
+      <td>29May2020</td>
+      <td>02Jun2020</td>
+      <td>0.015602</td>
+      <td>0.000563</td>
+      <td>0.044577</td>
+      <td>0.023315</td>
+      <td>1.84</td>
     </tr>
     <tr>
       <th>3rd</th>
-      <td>16Jun2020</td>
-      <td>04Jul2020</td>
-      <td>0.020923</td>
-      <td>0.000036</td>
-      <td>0.029708</td>
-      <td>0.020510</td>
-      <td>1.42</td>
+      <td>03Jun2020</td>
+      <td>11Jun2020</td>
+      <td>0.021389</td>
+      <td>0.000329</td>
+      <td>0.039782</td>
+      <td>0.020913</td>
+      <td>1.83</td>
     </tr>
     <tr>
       <th>4th</th>
-      <td>05Jul2020</td>
-      <td>16Jul2020</td>
-      <td>0.001199</td>
-      <td>0.000561</td>
-      <td>0.031468</td>
-      <td>0.022374</td>
-      <td>1.37</td>
+      <td>12Jun2020</td>
+      <td>29Jun2020</td>
+      <td>0.015396</td>
+      <td>0.000852</td>
+      <td>0.041950</td>
+      <td>0.030241</td>
+      <td>1.33</td>
     </tr>
     <tr>
       <th>5th</th>
-      <td>17Jul2020</td>
-      <td>01Aug2020</td>
-      <td>0.001199</td>
-      <td>0.000561</td>
-      <td>0.031468</td>
-      <td>0.022374</td>
-      <td>1.37</td>
+      <td>30Jun2020</td>
+      <td>16Jul2020</td>
+      <td>0.000677</td>
+      <td>0.000837</td>
+      <td>0.048018</td>
+      <td>0.033473</td>
+      <td>1.40</td>
     </tr>
     <tr>
       <th>6th</th>
+      <td>17Jul2020</td>
+      <td>01Aug2020</td>
+      <td>0.000677</td>
+      <td>0.000837</td>
+      <td>0.048018</td>
+      <td>0.033473</td>
+      <td>1.40</td>
+    </tr>
+    <tr>
+      <th>7th</th>
       <td>02Aug2020</td>
       <td>10Nov2020</td>
-      <td>0.001199</td>
-      <td>0.000561</td>
-      <td>0.031468</td>
-      <td>0.022374</td>
-      <td>1.37</td>
+      <td>0.000677</td>
+      <td>0.000837</td>
+      <td>0.048018</td>
+      <td>0.033473</td>
+      <td>1.40</td>
     </tr>
   </tbody>
 </table>
@@ -1369,126 +1478,146 @@ Completed optimization. Total: 1 min 15 sec
   </thead>
   <tbody>
     <tr>
-      <th rowspan="6" valign="top">Main</th>
+      <th rowspan="7" valign="top">Main</th>
       <th>1st</th>
-      <td>30May2020</td>
-      <td>05Jun2020</td>
-      <td>0.018051</td>
-      <td>0.000288</td>
-      <td>0.028399</td>
-      <td>0.013665</td>
-      <td>2.00</td>
+      <td>20May2020</td>
+      <td>28May2020</td>
+      <td>0.017155</td>
+      <td>0.000350</td>
+      <td>0.041600</td>
+      <td>0.020912</td>
+      <td>1.92</td>
     </tr>
     <tr>
       <th>2nd</th>
-      <td>06Jun2020</td>
-      <td>15Jun2020</td>
-      <td>0.011742</td>
-      <td>0.000482</td>
-      <td>0.025739</td>
-      <td>0.016245</td>
-      <td>1.52</td>
+      <td>29May2020</td>
+      <td>02Jun2020</td>
+      <td>0.015602</td>
+      <td>0.000563</td>
+      <td>0.044577</td>
+      <td>0.023315</td>
+      <td>1.84</td>
     </tr>
     <tr>
       <th>3rd</th>
-      <td>16Jun2020</td>
-      <td>04Jul2020</td>
-      <td>0.020923</td>
-      <td>0.000036</td>
-      <td>0.029708</td>
-      <td>0.020510</td>
-      <td>1.42</td>
+      <td>03Jun2020</td>
+      <td>11Jun2020</td>
+      <td>0.021389</td>
+      <td>0.000329</td>
+      <td>0.039782</td>
+      <td>0.020913</td>
+      <td>1.83</td>
     </tr>
     <tr>
       <th>4th</th>
-      <td>05Jul2020</td>
-      <td>16Jul2020</td>
-      <td>0.001199</td>
-      <td>0.000561</td>
-      <td>0.031468</td>
-      <td>0.022374</td>
-      <td>1.37</td>
+      <td>12Jun2020</td>
+      <td>29Jun2020</td>
+      <td>0.015396</td>
+      <td>0.000852</td>
+      <td>0.041950</td>
+      <td>0.030241</td>
+      <td>1.33</td>
     </tr>
     <tr>
       <th>5th</th>
-      <td>17Jul2020</td>
-      <td>01Aug2020</td>
-      <td>0.001199</td>
-      <td>0.000561</td>
-      <td>0.031468</td>
-      <td>0.022374</td>
-      <td>1.37</td>
+      <td>30Jun2020</td>
+      <td>16Jul2020</td>
+      <td>0.000677</td>
+      <td>0.000837</td>
+      <td>0.048018</td>
+      <td>0.033473</td>
+      <td>1.40</td>
     </tr>
     <tr>
       <th>6th</th>
-      <td>02Aug2020</td>
-      <td>10Nov2020</td>
-      <td>0.001199</td>
-      <td>0.000561</td>
-      <td>0.031468</td>
-      <td>0.022374</td>
-      <td>1.37</td>
+      <td>17Jul2020</td>
+      <td>01Aug2020</td>
+      <td>0.000677</td>
+      <td>0.000837</td>
+      <td>0.048018</td>
+      <td>0.033473</td>
+      <td>1.40</td>
     </tr>
     <tr>
-      <th rowspan="6" valign="top">Medicine</th>
+      <th>7th</th>
+      <td>02Aug2020</td>
+      <td>10Nov2020</td>
+      <td>0.000677</td>
+      <td>0.000837</td>
+      <td>0.048018</td>
+      <td>0.033473</td>
+      <td>1.40</td>
+    </tr>
+    <tr>
+      <th rowspan="7" valign="top">Medicine</th>
       <th>1st</th>
-      <td>30May2020</td>
-      <td>05Jun2020</td>
-      <td>0.018051</td>
-      <td>0.000288</td>
-      <td>0.028399</td>
-      <td>0.013665</td>
-      <td>2.00</td>
+      <td>20May2020</td>
+      <td>28May2020</td>
+      <td>0.017155</td>
+      <td>0.000350</td>
+      <td>0.041600</td>
+      <td>0.020912</td>
+      <td>1.92</td>
     </tr>
     <tr>
       <th>2nd</th>
-      <td>06Jun2020</td>
-      <td>15Jun2020</td>
-      <td>0.011742</td>
-      <td>0.000482</td>
-      <td>0.025739</td>
-      <td>0.016245</td>
-      <td>1.52</td>
+      <td>29May2020</td>
+      <td>02Jun2020</td>
+      <td>0.015602</td>
+      <td>0.000563</td>
+      <td>0.044577</td>
+      <td>0.023315</td>
+      <td>1.84</td>
     </tr>
     <tr>
       <th>3rd</th>
-      <td>16Jun2020</td>
-      <td>04Jul2020</td>
-      <td>0.020923</td>
-      <td>0.000036</td>
-      <td>0.029708</td>
-      <td>0.020510</td>
-      <td>1.42</td>
+      <td>03Jun2020</td>
+      <td>11Jun2020</td>
+      <td>0.021389</td>
+      <td>0.000329</td>
+      <td>0.039782</td>
+      <td>0.020913</td>
+      <td>1.83</td>
     </tr>
     <tr>
       <th>4th</th>
-      <td>05Jul2020</td>
-      <td>16Jul2020</td>
-      <td>0.001199</td>
-      <td>0.000561</td>
-      <td>0.031468</td>
-      <td>0.022374</td>
-      <td>1.37</td>
+      <td>12Jun2020</td>
+      <td>29Jun2020</td>
+      <td>0.015396</td>
+      <td>0.000852</td>
+      <td>0.041950</td>
+      <td>0.030241</td>
+      <td>1.33</td>
     </tr>
     <tr>
       <th>5th</th>
-      <td>17Jul2020</td>
-      <td>01Aug2020</td>
-      <td>0.001199</td>
-      <td>0.000561</td>
-      <td>0.031468</td>
-      <td>0.044747</td>
-      <td>0.69</td>
+      <td>30Jun2020</td>
+      <td>16Jul2020</td>
+      <td>0.000677</td>
+      <td>0.000837</td>
+      <td>0.048018</td>
+      <td>0.033473</td>
+      <td>1.40</td>
     </tr>
     <tr>
       <th>6th</th>
+      <td>17Jul2020</td>
+      <td>01Aug2020</td>
+      <td>0.000677</td>
+      <td>0.000837</td>
+      <td>0.048018</td>
+      <td>0.060481</td>
+      <td>0.78</td>
+    </tr>
+    <tr>
+      <th>7th</th>
       <td>02Aug2020</td>
       <td>10Nov2020</td>
-      <td>0.001199</td>
-      <td>0.000561</td>
-      <td>0.031468</td>
-      <td>0.044747</td>
-      <td>0.69</td>
+      <td>0.000677</td>
+      <td>0.000837</td>
+      <td>0.048018</td>
+      <td>0.060481</td>
+      <td>0.78</td>
     </tr>
   </tbody>
 </table>
@@ -1534,28 +1663,28 @@ Completed optimization. Total: 1 min 15 sec
       <th>argmax(Infected)</th>
       <th>Infected on 11Nov2020</th>
       <th>Fatal on 11Nov2020</th>
-      <th>5th_Rt</th>
       <th>6th_Rt</th>
+      <th>7th_Rt</th>
     </tr>
   </thead>
   <tbody>
     <tr>
       <th>Main</th>
-      <td>6370619</td>
+      <td>8007433</td>
       <td>11Nov2020</td>
-      <td>6370619</td>
-      <td>465931</td>
-      <td>1.37</td>
-      <td>1.37</td>
+      <td>8007433</td>
+      <td>532155</td>
+      <td>1.40</td>
+      <td>1.40</td>
     </tr>
     <tr>
       <th>Medicine</th>
-      <td>343608</td>
+      <td>350753</td>
       <td>17Jul2020</td>
-      <td>2609</td>
-      <td>40777</td>
-      <td>0.69</td>
-      <td>0.69</td>
+      <td>15279</td>
+      <td>47504</td>
+      <td>0.78</td>
+      <td>0.78</td>
     </tr>
   </tbody>
 </table>
@@ -1575,7 +1704,7 @@ Completed optimization. Total: 1 min 15 sec
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area docutils container">
-<img alt="_images/usage_phases_37_0.png" src="_images/usage_phases_37_0.png" />
+<img alt="_images/usage_phases_36_0.png" src="_images/usage_phases_36_0.png" />
 </div>
 </div>
 <div class="nbinput docutils container">
@@ -1592,7 +1721,7 @@ Completed optimization. Total: 1 min 15 sec
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area docutils container">
-<img alt="_images/usage_phases_38_0.png" src="_images/usage_phases_38_0.png" />
+<img alt="_images/usage_phases_37_0.png" src="_images/usage_phases_37_0.png" />
 </div>
 </div>
 <div class="nbinput docutils container">
@@ -1609,7 +1738,7 @@ Completed optimization. Total: 1 min 15 sec
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area docutils container">
-<img alt="_images/usage_phases_39_0.png" src="_images/usage_phases_39_0.png" />
+<img alt="_images/usage_phases_38_0.png" src="_images/usage_phases_38_0.png" />
 </div>
 </div>
 </div>
