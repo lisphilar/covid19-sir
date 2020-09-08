@@ -89,7 +89,7 @@ class TestPhaseSeries(object):
         series.trend(sr_df, show_figure=False)
         # Summary
         assert not series.unit("0th")
-        assert len(series) == 6
+        assert len(series) == 7
         # Last phase
         assert series.unit(phase="last") == series.unit(phase="6th")
         # Un-registered phase
@@ -120,20 +120,20 @@ class TestPhaseSeries(object):
         sr_df = jhu_data.to_sr(country=country, population=population)
         series = PhaseSeries("01Apr2020", "01Aug2020", population)
         series.trend(sr_df, show_figure=False)
-        assert len(series) == 6
+        assert len(series) == 7
         # Deletion of 0th phase is the same as disabling 0th phase
-        series.enable("0th")
-        series.delete("0th")
-        assert len(series) == 6
-        assert "5th" in series.to_dict()
+        series.disable("0th")
         assert not series.unit("0th")
+        series.enable("0th")
+        assert len(series) == 7
+        assert "5th" in series.to_dict()
         # Delete phase (not the last registered phase)
         new_second = PhaseUnit(
             series.unit("2nd").start_date,
             series.unit("3rd").end_date,
             series.unit("2nd").population)
         series.delete("3rd")
-        assert len(series) == 5
+        assert len(series) == 7
         assert series.unit("2nd") == new_second
         # Delete the last phase
         old_last = series.unit("last")
