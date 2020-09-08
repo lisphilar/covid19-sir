@@ -374,7 +374,6 @@ class PhaseSeries(Term):
         self.clear(include_past=True)
         _, end_dates = finder.date_range()
         [self.add(end_date=end_date) for end_date in end_dates]
-        self.disable("0th")
         return self
 
     def simulate(self, record_df, y0_dict=None):
