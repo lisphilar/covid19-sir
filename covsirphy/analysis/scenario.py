@@ -398,14 +398,12 @@ class Scenario(Term):
         df = df.loc[:, columns]
         return df.dropna(how="all", axis=1).fillna(self.UNKNOWN)
 
-    def trend(self, set_phases=True, include_init_phase=False, name="Main",
-              show_figure=True, filename=None, **kwargs):
+    def trend(self, set_phases=True, name="Main", show_figure=True, filename=None, **kwargs):
         """
         Perform S-R trend analysis and set phases.
 
         Args:
             set_phases (bool): if True, set phases automatically with S-R trend analysis
-            include_init_phase (bool): whether use initial phase or not
             name (str): phase series name
             show_figure (bool): if True, show the result as a figure
             filename (str): filename of the figure, or None (show figure)
@@ -413,15 +411,16 @@ class Scenario(Term):
 
         Returns:
             covsirphy.Scenario: self
-
-        Notes:
-            If @set_phase is True and@include_init_phase is False, initial phase will not be included.
         """
         if "n_points" in kwargs.keys():
             raise ValueError(
                 "@n_points argument is un-necessary"
                 " because the number of change points will be automatically determined."
             )
+        try:
+            include_init_phase = kwargs.pop("include_init_phase")
+        except KeyError:
+            include_init_phase = True
         self._ensure_name(name)
         sr_df = self.jhu_data.to_sr(
             country=self.country, province=self.province, population=self.population
@@ -434,8 +433,8 @@ class Scenario(Term):
             filename=filename,
             **kwargs
         )
-        if include_init_phase:
-            self._series_dict[name].enable("0th")
+        if not include_init_phase:
+            self._series_dict[name].disable("0th")
         return self
 
     def _ensure_past_phases(self, phases=None, name="Main"):
