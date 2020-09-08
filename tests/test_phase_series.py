@@ -123,8 +123,7 @@ class TestPhaseSeries(object):
         series.trend(sr_df, show_figure=False)
         assert len(series) == 7
         # Deletion of 0th phase is the same as disabling 0th phase
-        series.disable("0th")
-        assert not series.unit("0th")
+        series.delete("0th")
         series.enable("0th")
         assert len(series) == 7
         assert "5th" in series.to_dict()
