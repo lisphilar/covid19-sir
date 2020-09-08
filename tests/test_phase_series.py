@@ -73,6 +73,7 @@ class TestPhaseSeries(object):
     @pytest.mark.parametrize("country", ["Japan"])
     def test_trend(self, jhu_data, population_data, country):
         warnings.simplefilter("ignore", category=UserWarning)
+        warnings.simplefilter("ignore", category=DeprecationWarning)
         # Setting
         population = population_data.value(country)
         sr_df = jhu_data.to_sr(country=country, population=population)
@@ -89,7 +90,7 @@ class TestPhaseSeries(object):
         series.trend(sr_df, show_figure=False)
         # Summary
         assert not series.unit("0th")
-        assert len(series) == 7
+        assert len(series) == 6
         # Last phase
         assert series.unit(phase="last") == series.unit(phase="6th")
         # Un-registered phase
