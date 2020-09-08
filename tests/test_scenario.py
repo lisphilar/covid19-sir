@@ -127,9 +127,9 @@ class TestScenario(object):
             snl.trend(show_figure=False, n_points=3)
         # Disable/enable
         length = len(snl["Main"])
-        snl.enable(phases=["0th"], name="Main")
-        assert len(snl["Main"]) == length + 1
         snl.disable(phases=["0th"], name="Main")
+        assert len(snl["Main"]) == length - 1
+        snl.enable(phases=["0th"], name="Main")
         assert len(snl["Main"]) == length
         with pytest.raises(TypeError):
             snl.enable(phases="0th", name="Main")
