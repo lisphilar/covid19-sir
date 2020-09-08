@@ -132,7 +132,7 @@ class TestPhaseSeries(object):
             series.unit("3rd").end_date,
             series.unit("2nd").population)
         series.delete("3rd")
-        assert len(series) == 7
+        assert len(series) == 6
         assert series.unit("2nd") == new_second
         # Delete the last phase
         old_last = series.unit("last")
