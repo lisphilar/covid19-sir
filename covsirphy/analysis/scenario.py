@@ -176,23 +176,25 @@ class Scenario(Term):
         )
         return self
 
-    def _ensure_name(self, name):
+    def _ensure_name(self, name, template="Main"):
         """
         Ensure that the phases series is registered.
-        If not registered, copy the main series.
+        If not registered, copy the template phase series.
 
         Args:
             name (str): phase series name
+            template (str): name of template phase series
         """
         if name in self._series_dict.keys():
             return self._series_dict[name]
         # Phase series
-        series = copy.deepcopy(self._series_dict[self.MAIN])
-        series.clear(include_past=False)
+        if template not in self._series_dict:
+            raise KeyError(f"Template scenario {template} does not exist.")
+        series = copy.deepcopy(self._series_dict[template])
         self._series_dict[name] = series
         return series
 
-    def clear(self, name="Main", include_past=False):
+    def clear(self, name="Main", include_past=False, template="Main"):
         """
         Clear phase information.
 
@@ -203,11 +205,12 @@ class Scenario(Term):
             include_past (bool):
                 - if True, include past phases.
                 - future phase are always included
+            template (str): name of template phase series
 
         Returns:
             covsirphy.Scenario: self
         """
-        self._ensure_name(name)
+        self._ensure_name(name, template=template)
         self._series_dict[name].clear(include_past=include_past)
         return self
 
