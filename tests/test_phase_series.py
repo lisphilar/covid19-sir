@@ -45,7 +45,7 @@ class TestPhaseSeries(object):
         assert series.to_dict()["0th"]["Type"] == Term.PAST
         assert len(df) == 6
         assert set(df.loc["3rd", :].tolist()) == set(
-            [Term.PAST, "28May2020", "01Aug2020", 123998518])
+            [Term.PAST, "27May2020", "01Aug2020", 123998518])
         assert set(df.loc["4th", :].tolist()) == set(
             [Term.FUTURE, "02Aug2020", "01Sep2020", 123998518])
         # Disable/enable a phase
