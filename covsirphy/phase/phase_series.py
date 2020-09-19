@@ -291,11 +291,13 @@ class PhaseSeries(Term):
             If @phase is not None, the phase will be deleted.
             @new_list must be specified.
         """
+        # Check arguments
         if not isinstance(new_list, list):
             raise TypeError("@new_list must be a list of covsirphy.PhaseUnit.")
         type_ok = all(isinstance(unit, PhaseUnit) for unit in new_list)
         if not type_ok:
             raise TypeError("@new_list must be a list of covsirphy.PhaseUnit.")
+        # Replace phases
         if phase is None:
             old_units = [
                 unit for unit in self._units if unit not in new_list] if keep_old else []
