@@ -89,7 +89,7 @@ class PhaseSeries(Term):
             return end_date
         if days is None:
             return self.last_date
-        return self.date_change(start_date, days=days)
+        return self.date_change(start_date, days=days - 1)
 
     def add(self, end_date=None, days=None, population=None, model=None, tau=None, **kwargs):
         """
