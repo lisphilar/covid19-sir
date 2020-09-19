@@ -9,11 +9,10 @@ assignees: ''
 
 ## Summary
 Please edit this to explain the summary of the bug.
-`` needs to return ... but returns ...
+`` needs to return ..., but returns ...
 
-## Related classes
+## (Optional) Related classes
 - `covsirphy.`
-(optional)
 
 ## Codes and outputs:
 ```Python
@@ -22,6 +21,8 @@ import covsirphy as cs
 data_loader = cs.DataLoader("input")
 jhu_data = data_loader.jhu()
 population_data = data_loader.population()
+# Scenario analysis
+snl = cs.Scenario(jhu_data, population_data, "Country name used")
 ```
 This code returns 
 
@@ -29,4 +30,4 @@ This code returns
 - CovsirPhy version: 
 - Python version; 3.8
 - Installation: pipenv
-- OS: Windows/WSL/Linux/MAC/Kaggle Notebook
+- OS: WSL (Ubuntu)/Windows/Linux/Mac/Kaggle Notebook/Google Colaboratory
