@@ -211,6 +211,22 @@ class Scenario(Term):
         self._series_dict[name].clear(include_past=include_past)
         return self
 
+    def _delete_series(self, name):
+        """
+        Delete a phase series.
+
+        Args:
+            name (str): name of phase series
+
+        Returns:
+            covsirphy.Scenario: self
+        """
+        if name == self.MAIN:
+            self.clear(name=name, include_past=True)
+            return self
+        self._series_dict.pop(name)
+        return self
+
     def delete(self, phases=None, name="Main"):
         """
         Delete phases.
@@ -231,14 +247,14 @@ class Scenario(Term):
         self._ensure_name(name)
         # Clear main series or delete sub phase series
         if phases is None:
-            if name == self.MAIN:
-                self.clear(name=name, include_past=True)
-                return self
-            self._series_dict.pop(name)
-            return self
+            return self._delete_series(name)
         # Delete phases
         if not isinstance(phases, list):
             raise TypeError("@phases mut be a list of phase names.")
+        phases = list(set(phases))
+        if "last" in phases:
+            self._series_dict[name].delete("last")
+            phases.remove("last")
         phases = sorted(phases, key=self.str2num, reverse=True)
         for phase in phases:
             self._series_dict[name].delete(phase)
