@@ -300,25 +300,41 @@ class Scenario(Term):
         New phase name will be automatically determined.
 
         Args:
-            phases (list[str]): list of sequential phases
+            phases (list[str]): list of phases
             name (str, optional): name of phase series
             population (int): population value of the start date
             kwargs: keyword arguments to save as phase information
 
         Raises:
-            TypeError: @phases is not a list of sequential phases
+            TypeError: @phases is not a list
 
         Returns:
             covsirphy.Scenario: self
         """
-        phases = sorted(phases, key=self.str2num, reverse=True)
-        self.delete(phases=phases[:-1], name=name)
-        if population is not None:
-            unit_old = self._series_dict[name].unit(phases[-1])
-            unit = PhaseUnit(
-                unit_old.start_date, unit_old.end_date, population)
-            unit.set_ode(**kwargs)
-            self._series_dict[name].replace(phases[-1], unit)
+        series = self._ensure_name(name)
+        # Sort and check @phase is a list
+        if not isinstance(phases, list):
+            raise TypeError("@phases must be a list of phase names.")
+        phases = list(set(phases))
+        if "last" in phases:
+            last_phase = "last"
+            phases.remove("last")
+            phases = sorted(phases, key=self.str2num, reverse=False)
+        else:
+            phases = sorted(phases, key=self.str2num, reverse=False)
+            last_phase = phases[-1]
+        # Setting of the new phase
+        start_date = series.unit(phases[0]).start_date
+        end_date = series.unit(last_phase).end_date
+        population = population or series.unit(last_phase).population
+        new_unit = PhaseUnit(start_date, end_date, population)
+        new_unit.set_ode(**kwargs)
+        # Phases to keep
+        kept_units = [
+            unit for unit in series if unit < start_date or unit > end_date]
+        # Replace units
+        self._series_dict[name].replaces(
+            phase=None, new_list=kept_units + [new_unit], keep_old=False)
         return self
 
     def separate(self, date, name="Main", population=None, **kwargs):
