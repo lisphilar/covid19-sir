@@ -473,7 +473,7 @@ div.rendered_html tbody tr:hover {
 </div>
 <div class="output_area docutils container">
 <div class="highlight"><pre>
-&#39;2.8.2&#39;
+&#39;2.8.3&#39;
 </pre></div></div>
 </div>
 <div class="nbinput docutils container">
@@ -1248,13 +1248,16 @@ SIR-FV
 <span></span><span class="c1"># Add main scenario</span>
 <span class="n">snl</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">end_date</span><span class="o">=</span><span class="s2">&quot;31Dec2020&quot;</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;Main&quot;</span><span class="p">)</span>
 <span class="c1"># Add lockdown scenario</span>
+<span class="n">snl</span><span class="o">.</span><span class="n">clear</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;Lockdown&quot;</span><span class="p">)</span>
 <span class="n">rho_lock</span> <span class="o">=</span> <span class="n">snl</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;rho&quot;</span><span class="p">,</span> <span class="n">phase</span><span class="o">=</span><span class="s2">&quot;0th&quot;</span><span class="p">)</span> <span class="o">/</span> <span class="mi">2</span>
 <span class="n">snl</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">end_date</span><span class="o">=</span><span class="s2">&quot;31Dec2020&quot;</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;Lockdown&quot;</span><span class="p">,</span> <span class="n">rho</span><span class="o">=</span><span class="n">rho_lock</span><span class="p">)</span>
 <span class="c1"># Add medicine scenario</span>
+<span class="n">snl</span><span class="o">.</span><span class="n">clear</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;Medicine&quot;</span><span class="p">)</span>
 <span class="n">kappa_med</span> <span class="o">=</span> <span class="n">snl</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;kappa&quot;</span><span class="p">,</span> <span class="n">phase</span><span class="o">=</span><span class="s2">&quot;0th&quot;</span><span class="p">)</span> <span class="o">/</span> <span class="mi">2</span>
 <span class="n">sigma_med</span> <span class="o">=</span> <span class="n">snl</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;sigma&quot;</span><span class="p">,</span> <span class="n">phase</span><span class="o">=</span><span class="s2">&quot;0th&quot;</span><span class="p">)</span> <span class="o">*</span> <span class="mi">2</span>
 <span class="n">snl</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">end_date</span><span class="o">=</span><span class="s2">&quot;31Dec2020&quot;</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;Medicine&quot;</span><span class="p">,</span> <span class="n">kappa</span><span class="o">=</span><span class="n">kappa_med</span><span class="p">,</span> <span class="n">sigma</span><span class="o">=</span><span class="n">sigma_med</span><span class="p">)</span>
 <span class="c1"># Add vaccine scenario</span>
+<span class="n">snl</span><span class="o">.</span><span class="n">clear</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;Vaccine&quot;</span><span class="p">)</span>
 <span class="n">snl</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">end_date</span><span class="o">=</span><span class="s2">&quot;31Dec2020&quot;</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;Vaccine&quot;</span><span class="p">,</span> <span class="n">model</span><span class="o">=</span><span class="n">cs</span><span class="o">.</span><span class="n">SIRFV</span><span class="p">,</span> <span class="n">omega</span><span class="o">=</span><span class="mf">0.01</span><span class="p">)</span>
 <span class="c1"># Summarize</span>
 <span class="n">snl</span><span class="o">.</span><span class="n">summary</span><span class="p">()</span>
