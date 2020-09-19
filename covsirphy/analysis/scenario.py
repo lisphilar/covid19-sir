@@ -306,7 +306,7 @@ class Scenario(Term):
             kwargs: keyword arguments to save as phase information
 
         Raises:
-            TypeError: @phases is not a list
+            TypeError: @phases is not a list of sequential phases
 
         Returns:
             covsirphy.Scenario: self
