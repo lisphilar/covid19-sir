@@ -9,6 +9,7 @@
 [![Maintainability](https://api.codeclimate.com/v1/badges/eb97eaf9804f436062b9/maintainability)](https://codeclimate.com/github/lisphilar/covid19-sir/maintainability)
 [![Test Coverage](https://api.codeclimate.com/v1/badges/eb97eaf9804f436062b9/test_coverage)](https://codeclimate.com/github/lisphilar/covid19-sir/test_coverage)
 
+
 # CovsirPhy introduction
 
 [<strong>Documentation</strong>](https://lisphilar.github.io/covid19-sir/index.html)
@@ -75,6 +76,12 @@ Please read the following documents.
 - [Details: policy measures](https://lisphilar.github.io/covid19-sir/usage_policy.html)
 - Example codes in ["example" directory of this repository](https://github.com/lisphilar/covid19-sir/tree/master/example)
 - [Kaggle: COVID-19 data with SIR model](https://www.kaggle.com/lisphilar/covid-19-data-with-sir-model)
+
+
+## Support
+Please support this project as a developer (or a backer).
+[![Become a backer](https://opencollective.com/covsirphy/tiers/backer.svg?avatarHeight=36&width=600)](https://opencollective.com/covsirphy)
+
 
 ## License: Apache License 2.0
 Please refer to [LICENSE](https://github.com/lisphilar/covid19-sir/blob/master/LICENSE) file.
