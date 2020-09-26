@@ -117,6 +117,12 @@ Please read the following documents.
 -  `Kaggle: COVID-19 data with SIR
    model <https://www.kaggle.com/lisphilar/covid-19-data-with-sir-model>`__
 
+Support
+-------
+
+Please support this project as a developer (or a backer). |Become a
+backer|
+
 License: Apache License 2.0
 ---------------------------
 
@@ -156,3 +162,5 @@ Related work
    :target: https://codeclimate.com/github/lisphilar/covid19-sir/maintainability
 .. |Test Coverage| image:: https://api.codeclimate.com/v1/badges/eb97eaf9804f436062b9/test_coverage
    :target: https://codeclimate.com/github/lisphilar/covid19-sir/test_coverage
+.. |Become a backer| image:: https://opencollective.com/covsirphy/tiers/backer.svg?avatarHeight=36&width=600
+   :target: https://opencollective.com/covsirphy
