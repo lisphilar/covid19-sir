@@ -910,3 +910,33 @@ class Scenario(Term):
                 filename=filename
             )
         return df
+
+    def history_rate(self, params=None, name="Main", show_figure=True, filename=None):
+        """
+        Show change rates of parameter values in one figure.
+        We can find the parameters which increased/decreased significantly.
+
+        Args:
+            params (list[str] or None): parameters to show
+            name (str): phase series name
+            show_figure (bool): If True, show the result as a figure
+            filename (str): filename of the figure, or None (show figure)
+        """
+        df = self._track_param(name=name)
+        model = self._series_dict[name].unit("last").model
+        cols = list(set(df.columns) & set(model.PARAMETERS))
+        if params is not None:
+            if not isinstance(params, (list, set)):
+                raise TypeError(
+                    f"@params must be a list of parameters, but {params} were applied.")
+            cols = list(set(cols) & set(params)) or cols
+        df = df.loc[:, cols] / df.loc[df.index[0], cols]
+        if show_figure:
+            series = self._series_dict[name]
+            change_dates = [unit.start_date for unit in series][1:]
+            f_date = df.index[0].strftime(self.DATE_FORMAT)
+            title = f"{self.area}: {model.NAME} parameter change rates over time (1.0 on {f_date})"
+            ylabel = f"Value per that on {f_date}"
+            line_plot(
+                df, title, ylabel=ylabel, v=change_dates, math_scale=False, filename=filename),
+        return df
