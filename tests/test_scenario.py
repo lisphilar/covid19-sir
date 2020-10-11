@@ -255,6 +255,8 @@ class TestScenario(object):
         snl.history(target="Infected")
         with pytest.raises(KeyError):
             snl.history(target="temperature")
+        # Change rate of parameters
+        snl.history_rate(name="Main")
         # Add new scenario
         snl.add(end_date="01Sep2020", name="New")
         snl.describe()
