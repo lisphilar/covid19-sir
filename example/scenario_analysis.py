@@ -71,6 +71,9 @@ def main():
         "sigma", filename=output_dir.joinpath("ita_history_sigma.png"))
     ita_scenario.history(
         "Infected", filename=output_dir.joinpath("ita_history_infected.png"))
+    # Change rate of parameters in main scenario (>= 2.8.3-alpha.new.224)
+    scenario.history_rate(
+        name="Main", filename=output_dir.joinpath("ita_history_rate.jpg"))
 
 
 if __name__ == "__main__":
