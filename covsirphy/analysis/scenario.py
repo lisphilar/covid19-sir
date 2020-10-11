@@ -938,5 +938,6 @@ class Scenario(Term):
             title = f"{self.area}: {model.NAME} parameter change rates over time (1.0 on {f_date})"
             ylabel = f"Value per that on {f_date}"
             line_plot(
-                df, title, ylabel=ylabel, v=change_dates, math_scale=False, filename=filename),
+                df, title, ylabel=ylabel, v=change_dates, math_scale=False, filename=filename
+            )
         return df
