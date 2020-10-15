@@ -41,14 +41,15 @@ def main():
             )
         )
     # Add future phase to main scenario
-    ita_scenario.add(name="Main", end_date="01Oct2020")
     ita_scenario.add(name="Main", end_date="31Dec2020")
+    ita_scenario.add(name="Main", end_date="31Mar2021")
     ita_scenario.add(name="Main", days=100)
     # Add future phase to alternative scenario
     sigma_4th = ita_scenario.get("sigma", phase="4th")
     sigma_6th = sigma_4th * 2
+    ita_scenario.clear(name="Medicine", template="Main")
     ita_scenario.add(
-        name="Medicine", end_date="31Dec2020", sigma=sigma_6th)
+        name="Medicine", end_date="31Mar2021", sigma=sigma_6th)
     ita_scenario.add(name="Medicine", days=100)
     # Simulation of the number of cases
     sim_df = ita_scenario.simulate(
@@ -72,7 +73,7 @@ def main():
     ita_scenario.history(
         "Infected", filename=output_dir.joinpath("ita_history_infected.png"))
     # Change rate of parameters in main scenario (>= 2.8.3-alpha.new.224)
-    scenario.history_rate(
+    ita_scenario.history_rate(
         name="Main", filename=output_dir.joinpath("ita_history_rate.jpg"))
 
 
