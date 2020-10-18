@@ -902,8 +902,9 @@ class Scenario(Term):
         if show_figure:
             series = self._series_dict["Main"]
             change_dates = [unit.start_date for unit in series][1:]
+            title = f"{self.area}: {self.RT_FULL if target == self.RT else target} over time"
             line_plot(
-                df, f"{self.area}: {target} over time", ylabel=target,
+                df, title, ylabel=target,
                 h=1.0 if target == self.RT else None,
                 v=change_dates,
                 math_scale=False,
