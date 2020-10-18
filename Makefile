@@ -1,21 +1,19 @@
-.PHONY: install
-install:
+.PHONY: pipenv-setting
+pipenv-setting:
 	@export PIP_DEFAULT_TIMEOUT=7200
 	@pip install wheel; pip install --upgrade pip
 	@pip install pipenv
 	@export PIPENV_VENV_IN_PROJECT=true
 	@export PIPENV_TIMEOUT=7200
-	@pipenv sync --dev
 
+.PHONY: install
+install:
+	@make pipenv-setting
+	@pipenv sync --dev
 
 .PHONY: install-lock
 install-lock:
-	@export PIP_DEFAULT_TIMEOUT=7200
-	@pip install wheel; pip install --upgrade pip
-	@pip install pipenv
-	@export PIPENV_VENV_IN_PROJECT=true
-	@export PIPENV_TIMEOUT=7200
-	@pipenv lock
+	@make pipenv-setting
 	@pipenv install --dev
 
 
