@@ -64,6 +64,7 @@ class Term(object):
     INITIAL = "Initial"
     ODE = "ODE"
     RT = "Rt"
+    RT_FULL = "Reproduction number"
     RMSLE = "RMSLE"
     TRIALS = "Trials"
     RUNTIME = "Runtime"
