@@ -58,6 +58,10 @@ for developers.
 Please use appropriate template if available, and specify the related
 issues and the change.
 
+We use GitHub flow here. Mater (or main) branch can be deployed always
+as the latest development version. Name of branch for pull requests
+should be linked to issue numbers, like "issue100".
+
 Update of version number and sphinx documents is not necessary for
 developers. After reviewing by assigned reviewers, maintainers will
 update them when merge the pull request.
