@@ -605,7 +605,7 @@ class Scenario(Term):
                     - Date (pd.TimeStamp): Observation date
                     - Country (str): country/region name
                     - Province (str): province/prefecture/state name
-                    - variables of the models (int): Confirmed (int) etc.
+                    - Variables of the model and dataset (int): Confirmed etc.
         """
         series = self._ensure_name(name)
         # Simulation
@@ -732,6 +732,53 @@ class Scenario(Term):
         )
         return df
 
+    def _describe(self, y0_dict=None):
+        """
+        Describe representative values.
+
+        Args:
+            y0_dict (dict or None): dictionary of initial values or None
+                - key (str): variable name
+                - value (float): initial value
+
+        Returns:
+            (pandas.DataFrame)
+                Index:
+                    (int): scenario name
+                Columns:
+                    - max(Infected): max value of Infected
+                    - argmax(Infected): the date when Infected shows max value
+                    - Confirmed({date}): Confirmed on the next date of the last phase
+                    - Infected({date}): Infected on the next date of the last phase
+                    - Fatal({date}): Fatal on the next date of the last phase
+        """
+        _dict = {}
+        for (name, _) in self._series_dict.items():
+            # Predict the number of cases
+            df = self.simulate(name=name, y0_dict=y0_dict, show_figure=False)
+            df = df.set_index(self.DATE)
+            cols = df.columns[:]
+            last_date = df.index[-1]
+            # Max value of Infected
+            max_ci = df[self.CI].max()
+            argmax_ci = df[self.CI].idxmax().strftime(self.DATE_FORMAT)
+            # Confirmed on the next date of the last phase
+            last_c = df.loc[last_date, self.C]
+            # Infected on the next date of the last phase
+            last_ci = df.loc[last_date, self.CI]
+            # Fatal on the next date of the last phase
+            last_f = df.loc[last_date, self.F] if self.F in cols else None
+            # Save representative values
+            last_date_str = last_date.strftime(self.DATE_FORMAT)
+            _dict[name] = {
+                f"max({self.CI})": max_ci,
+                f"argmax({self.CI})": argmax_ci,
+                f"{self.C} on {last_date_str}": last_c,
+                f"{self.CI} on {last_date_str}": last_ci,
+                f"{self.F} on {last_date_str}": last_f,
+            }
+        return pd.DataFrame.from_dict(_dict, orient="index")
+
     def describe(self, y0_dict=None, with_rt=True):
         """
         Describe representative values.
@@ -749,42 +796,22 @@ class Scenario(Term):
                 Columns:
                     - max(Infected): max value of Infected
                     - argmax(Infected): the date when Infected shows max value
-                    - Infected({date}): Infected on the end date of the last phase
-                    - Fatal({date}): Fatal on the end date of the last phase
+                    - Confirmed({date}): Confirmed on the next date of the last phase
+                    - Infected({date}): Infected on the next date of the last phase
+                    - Fatal({date}): Fatal on the next date of the last phase
+                    - nth_Rt etc.: Rt value if the values are not the same values
         """
-        _dict = {}
-        for (name, _) in self._series_dict.items():
-            # Predict the number of cases
-            df = self.simulate(name=name, y0_dict=y0_dict, show_figure=False)
-            df = df.set_index(self.DATE)
-            cols = df.columns[:]
-            last_date = df.index[-1]
-            # Max value of Infected
-            max_ci = df[self.CI].max()
-            argmax_ci = df[self.CI].idxmax().strftime(self.DATE_FORMAT)
-            # Infected on the end date of the last phase
-            last_ci = df.loc[last_date, self.CI]
-            # Fatal on the end date of the last phase
-            last_f = df.loc[last_date, self.F] if self.F in cols else None
-            # Save representative values
-            _dict[name] = {
-                f"max({self.CI})": max_ci,
-                f"argmax({self.CI})": argmax_ci,
-                f"{self.CI} on {last_date.strftime(self.DATE_FORMAT)}": last_ci,
-                f"{self.F} on {last_date.strftime(self.DATE_FORMAT)}": last_f,
-            }
-        desc_df = pd.DataFrame.from_dict(_dict, orient="index")
+        df = self._describe(y0_dict=None)
+        if not with_rt or len(self._series_dict) == 1:
+            return df
         # History of reproduction number
-        if with_rt and len(self._series_dict) > 1:
-            rt_df = self.summary().reset_index()
-            rt_df = rt_df.pivot_table(
-                index=self.SERIES, columns=self.PHASE, values=self.RT)
-            rt_df = rt_df.fillna(self.UNKNOWN)
-            rt_df = rt_df.loc[:, rt_df.nunique() > 1]
-            cols = sorted(rt_df, key=self.str2num)
-            desc_df = desc_df.join(
-                rt_df[cols].add_suffix(f"_{self.RT}"), how="left")
-        return desc_df
+        rt_df = self.summary().reset_index()
+        rt_df = rt_df.pivot_table(
+            index=self.SERIES, columns=self.PHASE, values=self.RT)
+        rt_df = rt_df.fillna(self.UNKNOWN)
+        rt_df = rt_df.loc[:, rt_df.nunique() > 1]
+        cols = sorted(rt_df, key=self.str2num)
+        return df.join(rt_df[cols].add_suffix(f"_{self.RT}"), how="left")
 
     def _track_param(self, name):
         """

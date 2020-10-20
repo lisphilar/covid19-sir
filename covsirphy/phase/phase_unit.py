@@ -510,6 +510,7 @@ class PhaseUnit(Term):
                     - Infected (int): the number of currently infected cases
                     - Fatal (int): the number of fatal cases
                     - Recovered (int): the number of recovered cases
+                    - Variables of the model (int): Confirmed etc.
 
         Notes:
             Simulation starts at the start date of the phase.

@@ -405,7 +405,7 @@ class PhaseSeries(Term):
                     - Date (pd.TimeStamp): Observation date
                     - Country (str): country/region name
                     - Province (str): province/prefecture/state name
-                    - variables of the models (int): Confirmed (int) etc.
+                    - Variables of the model and dataset (int): Confirmed etc.
         """
         dataframes = []
         rec_dates = record_df[self.DATE].dt.strftime(self.DATE_FORMAT).unique()

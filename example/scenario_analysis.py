@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
+import functools
 from pathlib import Path
 import warnings
 import covsirphy as cs
@@ -17,64 +18,71 @@ def main():
     data_loader = cs.DataLoader(input_dir)
     jhu_data = data_loader.jhu()
     population_data = data_loader.population()
+    # Set country name
+    country = "Italy"
+    abbr = "ita"
+    figpath = functools.partial(
+        filepath, output_dir=output_dir, country=abbr, ext="jpg")
     # Start scenario analysis
-    ita_scenario = cs.Scenario(jhu_data, population_data, "Italy", tau=120)
+    snl = cs.Scenario(jhu_data, population_data, country, tau=120)
     # Show records
-    ita_record_df = ita_scenario.records(
-        filename=output_dir.joinpath("ita_records.png"))
-    ita_record_df.to_csv(output_dir.joinpath("ita_records.csv"), index=False)
-    # Show S-R trend
-    ita_scenario.trend(filename=output_dir.joinpath("ita_trend.png"))
-    print(ita_scenario.summary())
+    record_df = snl.records(filename=figpath("records"))
+    record_df.to_csv(output_dir.joinpath("ita_records.csv"), index=False)
+    # Show S-R trend)
+    snl.trend(filename=figpath("trend"))
+    print(snl.summary())
     # Parameter estimation
-    ita_scenario.estimate(cs.SIRF)
+    snl.estimate(cs.SIRF)
     # Show the history of optimization
-    ita_scenario.estimate_history(
-        phase="1st", filename=output_dir.joinpath("ita_estimate_history_1st.png")
-    )
+    snl.estimate_history(phase="1st", filename=figpath("estimate_history_1st"))
     # Show the accuracy as a figure
-    df = ita_scenario.summary()
+    df = snl.summary()
     for phase in df.index:
-        ita_scenario.estimate_accuracy(
-            phase=phase, filename=output_dir.joinpath(
-                f"ita_estimate_accuracy_{phase}.png"
-            )
+        snl.estimate_accuracy(
+            phase=phase, filename=figpath(f"estimate_accuracy_{phase}")
         )
     # Add future phase to main scenario
-    ita_scenario.add(name="Main", end_date="31Dec2020")
-    ita_scenario.add(name="Main", end_date="31Mar2021")
-    ita_scenario.add(name="Main", days=100)
+    snl.add(name="Main", end_date="31Mar2021")
+    snl.add(name="Main", days=100)
     # Add future phase to alternative scenario
-    sigma_4th = ita_scenario.get("sigma", phase="4th")
+    sigma_4th = snl.get("sigma", phase="last")
     sigma_6th = sigma_4th * 2
-    ita_scenario.clear(name="Medicine", template="Main")
-    ita_scenario.add(
-        name="Medicine", end_date="31Mar2021", sigma=sigma_6th)
-    ita_scenario.add(name="Medicine", days=100)
+    snl.clear(name="Medicine", template="Main")
+    snl.add(name="Medicine", end_date="31Mar2021")
+    snl.add(name="Medicine", days=100, sigma=sigma_6th)
     # Simulation of the number of cases
-    sim_df = ita_scenario.simulate(
-        name="Main",
-        filename=output_dir.joinpath("ita_simulate.png")
-    )
+    sim_df = snl.simulate(name="Main", filename=figpath("simulate"))
     sim_df.to_csv(output_dir.joinpath("ita_simulate.csv"), index=False)
-    # Save summary as a CSV file
-    summary_df = ita_scenario.summary()
+    # Summary
+    summary_df = snl.summary()
     summary_df.to_csv(output_dir.joinpath("ita_summary.csv"), index=True)
-    # Tracking of main scenario
-    track_df = ita_scenario.track()
+    # Description of scenarios
+    desc_df = snl.describe()
+    desc_df.to_csv(output_dir.joinpath("ita_describe.csv"), index=True)
+    # Tracking for main scenario
+    track_df = snl.track()
     track_df.to_csv(output_dir.joinpath("ita_track.csv"), index=True)
     # Compare scenarios
-    ita_scenario.history(
-        "Rt", filename=output_dir.joinpath("ita_history_Rt.png"))
-    ita_scenario.history(
-        "rho", filename=output_dir.joinpath("ita_history_rho.png"))
-    ita_scenario.history(
-        "sigma", filename=output_dir.joinpath("ita_history_sigma.png"))
-    ita_scenario.history(
-        "Infected", filename=output_dir.joinpath("ita_history_infected.png"))
+    for item in ["Rt", "rho", "sigma", "Infected"]:
+        snl.history(item, filename=figpath(f"history_{item.lower()}"))
     # Change rate of parameters in main scenario (>= 2.8.3-alpha.new.224)
-    ita_scenario.history_rate(
-        name="Main", filename=output_dir.joinpath("ita_history_rate.jpg"))
+    snl.history_rate(name="Main", filename=figpath("history_rate"))
+
+
+def filepath(name, output_dir, country, ext="jpg"):
+    """
+    Return filepath of a figure.
+
+    Args:
+        name (str): name of the figure
+        output_dir (pathlib.Path): path of the directory to save the figure
+        country (str): country name or abbr
+        ext (str, optional): Extension of the output file. Defaults to "jpg".
+
+    Returns:
+        pathlib.Path: filepath of the output file
+    """
+    return output_dir.joinpath(f"{country}_{name}.{ext}")
 
 
 if __name__ == "__main__":
