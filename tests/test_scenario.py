@@ -262,3 +262,14 @@ class TestScenario(object):
         # Add new scenario
         snl.add(end_date="01Sep2020", name="New")
         snl.describe()
+
+    @pytest.mark.parametrize("country", ["Japan"])
+    def test_retrospective(self, jhu_data, population_data, country):
+        # Setting
+        snl = Scenario(jhu_data, population_data, country)
+        snl.first_date = "01Apr2020"
+        snl.last_date = "19Oct2020"
+        snl.trend(show_figure=False)
+        # Retrospective analysis
+        snl.retrospective(
+            "01Sep2020", model=SIR, control="Main", target="Retrospective")
