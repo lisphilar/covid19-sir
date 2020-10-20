@@ -34,23 +34,23 @@ def main():
     track_df = analyser.track()
     track_df.to_csv(output_dir.joinpath("track.csv"), index=False)
     # Parameter history of Rt
-    rt_df = analyser.param_history(
+    rt_df = analyser.history(
         "Rt", roll_window=None, filename=output_dir.joinpath("history_rt.png"))
     rt_df.to_csv(output_dir.joinpath("history_rt.csv"), index=False)
     # Parameter history of rho
-    rho_df = analyser.param_history(
+    rho_df = analyser.history(
         "rho", roll_window=14, filename=output_dir.joinpath("history_rho.jpg"))
     rho_df.to_csv(output_dir.joinpath("history_rho.csv"), index=False)
     # Parameter history of sigma
-    sigma_df = analyser.param_history(
+    sigma_df = analyser.history(
         "sigma", roll_window=14, filename=output_dir.joinpath("history_sigma.jpg"))
     sigma_df.to_csv(output_dir.joinpath("history_sigma.csv"), index=False)
     # Parameter history of kappa
-    kappa_df = analyser.param_history(
+    kappa_df = analyser.history(
         "kappa", roll_window=14, filename=output_dir.joinpath("history_kappa.jpg"))
     kappa_df.to_csv(output_dir.joinpath("history_kappa.csv"), index=False)
     # Parameter history of theta
-    theta_df = analyser.param_history(
+    theta_df = analyser.history(
         "theta", roll_window=14, filename=output_dir.joinpath("history_theta.jpg"))
     theta_df.to_csv(output_dir.joinpath("history_theta.csv"), index=False)
 
