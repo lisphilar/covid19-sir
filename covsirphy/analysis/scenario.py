@@ -169,11 +169,17 @@ class Scenario(Term):
             - Tau will be fixed as the last phase's value.
             - kwargs: Default values are the parameter values of the last phase.
         """
-        self._ensure_name(name)
-        self._series_dict[name].add(
-            end_date=end_date, days=days, population=population,
-            model=model, tau=self.tau, **kwargs
-        )
+        series = self._ensure_name(name)
+        try:
+            self._series_dict[name].add(
+                end_date=end_date, days=days, population=population,
+                model=model, tau=self.tau, **kwargs
+            )
+        except ValueError:
+            last_date = series.unit("last").end_date
+            s1 = f'For "{name}" scenario, @end_date needs to match "DDMmmYYYY" format'
+            raise ValueError(
+                f'{s1} and be over {last_date}. However, {end_date} was applied.') from None
         return self
 
     def _ensure_name(self, name, template="Main"):
