@@ -35,7 +35,7 @@ def main():
     # Parameter history
     for item in ["Rt", "theta", "rho", "sigma", "kappa", "Infected"]:
         snl.history(item, filename=figpath(f"history_{item.lower()}"))
-    # Change rate of parameters in main snl (>= 2.8.3-alpha.new.224)
+    # Change rate of parameters in main snl
     snl.history_rate(name="Main", filename=figpath("history_rate"))
     # Save summary as a CSV file
     summary_df = snl.summary()

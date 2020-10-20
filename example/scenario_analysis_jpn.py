@@ -44,7 +44,7 @@ def main():
     # Parameter history
     for item in ["Rt", "rho", "sigma", "Infected"]:
         snl.history(item, filename=figpath(f"history_{item.lower()}"))
-    # Change rate of parameters in main snl (>= 2.8.3-alpha.new.224)
+    # Change rate of parameters in main snl
     snl.history_rate(name="Main", filename=figpath("history_rate"))
     snl.history_rate(
         params=["kappa", "sigma", "rho"],
