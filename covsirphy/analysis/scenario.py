@@ -353,7 +353,7 @@ class Scenario(Term):
 
         Args:
             date (str): change point, i.e. start date of the new phase
-            name (str, optional): name of phase series
+            name (str): scenario name
             population (int): population value of the change point
             kwargs: keyword arguments of PhaseUnit.set_ode()
 
@@ -366,8 +366,12 @@ class Scenario(Term):
                 (self.num2str(i), unit) for (i, unit) in enumerate(series) if date in unit][0]
         except IndexError:
             raise IndexError(f"Phase on @date ({date}) is not registered.")
-        new_pre = PhaseUnit(
-            old.start_date, self.yesterday(date), old.population)
+        try:
+            new_pre = PhaseUnit(
+                old.start_date, self.yesterday(date), old.population)
+        except ValueError:
+            raise ValueError(
+                f"{name} scenario cannot be separated on {date} because this date is registered as a start date.") from None
         new_pre.set_ode(**old.to_dict())
         new_fol = PhaseUnit(date, old.end_date, population or old.population)
         new_fol.set_ode(**kwargs)
@@ -975,3 +979,38 @@ class Scenario(Term):
                 df, title, ylabel=ylabel, v=change_dates, math_scale=False, filename=filename
             )
         return df
+
+    def retrospective(self, beginning_date, model, control="Main", target="Target", **args):
+        """
+        Perform retrospective analysis.
+        Compare the actual series of phases (control) and
+        series of phases with specified parameters (target).
+
+        Args:
+            beginning_date (str): when the parameter values start to be changed from actual values
+            model (covsirphy.ModelBase): ODE model
+            control (str): scenario name of control
+            target (str): scenario name of target
+            **args: keyword argument of parameters
+
+        Notes:
+            When parameter values are not specified,
+            actual values of the last date before the beginning date will be used.
+        """
+        # Control
+        self.clear(name=control, include_past=True)
+        self.trend(name=control, show_figure=False)
+        series = self._series_dict[control]
+        sep_dates = [[ph.start_date, ph.end_date] for ph in series]
+        if beginning_date not in self.flatten(sep_dates):
+            self.separate(beginning_date, name=control)
+        self.estimate(model, name=control)
+        # Target
+        self.clear(name=target, include_past=False, template=control)
+        phases_changed = [
+            self.num2str(i) for (i, ph) in enumerate(self._series_dict[target])
+            if ph >= beginning_date
+        ]
+        self.delete(phases_changed, name=target)
+        self.add(name=target, **args)
+        self.estimate(model, name=target)
