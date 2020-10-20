@@ -210,6 +210,9 @@ class PolicyMeasures(Term):
         new="PolicyMeasures.history(param: str)",
         version="2.9.0")
     def param_history(self, param, roll_window=None, show_figure=True, filename=None, **kwargs):
+        return self.history(self, param, roll_window=None, show_figure=True, filename=None, **kwargs)
+
+    def history(self, param, roll_window=None, show_figure=True, filename=None, **kwargs):
         """
         Return subset of summary and show a figure to show the history of all countries.
 
