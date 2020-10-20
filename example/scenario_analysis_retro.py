@@ -28,27 +28,15 @@ def main():
         filepath, output_dir=output_dir, country=abbr, ext="jpg")
     # Start scenario analysis
     snl = cs.Scenario(jhu_data, population_data, country)
-    # Show records
-    record_df = snl.records(filename=figpath("records"))
-    record_df.to_csv(output_dir.joinpath("jpn_records.csv"), index=False)
-    # Show S-R trend
-    snl.trend(filename=figpath("trend"))
+    # Retrospective analysis
+    snl.retrospective(
+        "01Sep2020", model=cs.SIRF, control="Main", target="Retrospective")
     print(snl.summary())
-    # Parameter estimation
-    snl.estimate(cs.SIRF)
-    # Add future phase to main scenario
-    snl.add(name="Main", end_date="31Mar2021")
-    # Simulation of the number of cases
-    sim_df = snl.simulate(name="Main", filename=figpath("simulate"))
-    sim_df.to_csv(output_dir.joinpath("jpn_simulate.csv"), index=False)
     # Parameter history
-    for item in ["Rt", "rho", "sigma", "Infected"]:
+    for item in ["Rt", "theta", "rho", "sigma", "kappa", "Infected"]:
         snl.history(item, filename=figpath(f"history_{item.lower()}"))
     # Change rate of parameters in main snl
     snl.history_rate(name="Main", filename=figpath("history_rate"))
-    snl.history_rate(
-        params=["kappa", "sigma", "rho"],
-        name="Main", filename=figpath("history_rate_without_theta"))
     # Save summary as a CSV file
     summary_df = snl.summary()
     summary_df.to_csv(output_dir.joinpath("summary.csv"), index=True)
