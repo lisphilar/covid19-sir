@@ -4,6 +4,7 @@
 from itertools import groupby
 from operator import itemgetter
 import pandas as pd
+from covsirphy.util.error import deprecate
 from covsirphy.util.plotting import line_plot
 from covsirphy.cleaning.jhu_data import JHUData
 from covsirphy.cleaning.population import PopulationData
@@ -204,6 +205,10 @@ class PolicyMeasures(Term):
         self.model = model
         self.tau = mp_estimator.tau
 
+    @deprecate(
+        old="PolicyMeasures.param_history(param: str)",
+        new="PolicyMeasures.history(param: str)",
+        version="2.9.0")
     def param_history(self, param, roll_window=None, show_figure=True, filename=None, **kwargs):
         """
         Return subset of summary and show a figure to show the history of all countries.
