@@ -329,11 +329,17 @@
 <span class="sd">            - Tau will be fixed as the last phase&#39;s value.</span>
 <span class="sd">            - kwargs: Default values are the parameter values of the last phase.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_ensure_name</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_series_dict</span><span class="p">[</span><span class="n">name</span><span class="p">]</span><span class="o">.</span><span class="n">add</span><span class="p">(</span>
-            <span class="n">end_date</span><span class="o">=</span><span class="n">end_date</span><span class="p">,</span> <span class="n">days</span><span class="o">=</span><span class="n">days</span><span class="p">,</span> <span class="n">population</span><span class="o">=</span><span class="n">population</span><span class="p">,</span>
-            <span class="n">model</span><span class="o">=</span><span class="n">model</span><span class="p">,</span> <span class="n">tau</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">tau</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span>
-        <span class="p">)</span>
+        <span class="n">series</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ensure_name</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_series_dict</span><span class="p">[</span><span class="n">name</span><span class="p">]</span><span class="o">.</span><span class="n">add</span><span class="p">(</span>
+                <span class="n">end_date</span><span class="o">=</span><span class="n">end_date</span><span class="p">,</span> <span class="n">days</span><span class="o">=</span><span class="n">days</span><span class="p">,</span> <span class="n">population</span><span class="o">=</span><span class="n">population</span><span class="p">,</span>
+                <span class="n">model</span><span class="o">=</span><span class="n">model</span><span class="p">,</span> <span class="n">tau</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">tau</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span>
+            <span class="p">)</span>
+        <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
+            <span class="n">last_date</span> <span class="o">=</span> <span class="n">series</span><span class="o">.</span><span class="n">unit</span><span class="p">(</span><span class="s2">&quot;last&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">end_date</span>
+            <span class="n">s1</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;For &quot;</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s1">&quot; scenario, @end_date needs to match &quot;DDMmmYYYY&quot; format&#39;</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">s1</span><span class="si">}</span><span class="s1"> and be over </span><span class="si">{</span><span class="n">last_date</span><span class="si">}</span><span class="s1">. However, </span><span class="si">{</span><span class="n">end_date</span><span class="si">}</span><span class="s1"> was applied.&#39;</span><span class="p">)</span> <span class="kn">from</span> <span class="bp">None</span>
         <span class="k">return</span> <span class="bp">self</span></div>
 
     <span class="k">def</span> <span class="nf">_ensure_name</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">template</span><span class="o">=</span><span class="s2">&quot;Main&quot;</span><span class="p">):</span>
@@ -507,7 +513,7 @@
 
 <span class="sd">        Args:</span>
 <span class="sd">            date (str): change point, i.e. start date of the new phase</span>
-<span class="sd">            name (str, optional): name of phase series</span>
+<span class="sd">            name (str): scenario name</span>
 <span class="sd">            population (int): population value of the change point</span>
 <span class="sd">            kwargs: keyword arguments of PhaseUnit.set_ode()</span>
 
@@ -520,8 +526,12 @@
                 <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">num2str</span><span class="p">(</span><span class="n">i</span><span class="p">),</span> <span class="n">unit</span><span class="p">)</span> <span class="k">for</span> <span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="n">unit</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">series</span><span class="p">)</span> <span class="k">if</span> <span class="n">date</span> <span class="ow">in</span> <span class="n">unit</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
         <span class="k">except</span> <span class="ne">IndexError</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">IndexError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Phase on @date (</span><span class="si">{</span><span class="n">date</span><span class="si">}</span><span class="s2">) is not registered.&quot;</span><span class="p">)</span>
-        <span class="n">new_pre</span> <span class="o">=</span> <span class="n">PhaseUnit</span><span class="p">(</span>
-            <span class="n">old</span><span class="o">.</span><span class="n">start_date</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">yesterday</span><span class="p">(</span><span class="n">date</span><span class="p">),</span> <span class="n">old</span><span class="o">.</span><span class="n">population</span><span class="p">)</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">new_pre</span> <span class="o">=</span> <span class="n">PhaseUnit</span><span class="p">(</span>
+                <span class="n">old</span><span class="o">.</span><span class="n">start_date</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">yesterday</span><span class="p">(</span><span class="n">date</span><span class="p">),</span> <span class="n">old</span><span class="o">.</span><span class="n">population</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2"> scenario cannot be separated on </span><span class="si">{</span><span class="n">date</span><span class="si">}</span><span class="s2"> because this date is registered as a start date.&quot;</span><span class="p">)</span> <span class="kn">from</span> <span class="bp">None</span>
         <span class="n">new_pre</span><span class="o">.</span><span class="n">set_ode</span><span class="p">(</span><span class="o">**</span><span class="n">old</span><span class="o">.</span><span class="n">to_dict</span><span class="p">())</span>
         <span class="n">new_fol</span> <span class="o">=</span> <span class="n">PhaseUnit</span><span class="p">(</span><span class="n">date</span><span class="p">,</span> <span class="n">old</span><span class="o">.</span><span class="n">end_date</span><span class="p">,</span> <span class="n">population</span> <span class="ow">or</span> <span class="n">old</span><span class="o">.</span><span class="n">population</span><span class="p">)</span>
         <span class="n">new_fol</span><span class="o">.</span><span class="n">set_ode</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
@@ -765,7 +775,7 @@
 <span class="sd">                    - Date (pd.TimeStamp): Observation date</span>
 <span class="sd">                    - Country (str): country/region name</span>
 <span class="sd">                    - Province (str): province/prefecture/state name</span>
-<span class="sd">                    - variables of the models (int): Confirmed (int) etc.</span>
+<span class="sd">                    - Variables of the model and dataset (int): Confirmed etc.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">series</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ensure_name</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
         <span class="c1"># Simulation</span>
@@ -892,6 +902,53 @@
         <span class="p">)</span>
         <span class="k">return</span> <span class="n">df</span>
 
+    <span class="k">def</span> <span class="nf">_describe</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">y0_dict</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Describe representative values.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            y0_dict (dict or None): dictionary of initial values or None</span>
+<span class="sd">                - key (str): variable name</span>
+<span class="sd">                - value (float): initial value</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            (pandas.DataFrame)</span>
+<span class="sd">                Index:</span>
+<span class="sd">                    (int): scenario name</span>
+<span class="sd">                Columns:</span>
+<span class="sd">                    - max(Infected): max value of Infected</span>
+<span class="sd">                    - argmax(Infected): the date when Infected shows max value</span>
+<span class="sd">                    - Confirmed({date}): Confirmed on the next date of the last phase</span>
+<span class="sd">                    - Infected({date}): Infected on the next date of the last phase</span>
+<span class="sd">                    - Fatal({date}): Fatal on the next date of the last phase</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">_dict</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">for</span> <span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">_</span><span class="p">)</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_series_dict</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="c1"># Predict the number of cases</span>
+            <span class="n">df</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">simulate</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">,</span> <span class="n">y0_dict</span><span class="o">=</span><span class="n">y0_dict</span><span class="p">,</span> <span class="n">show_figure</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+            <span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">set_index</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">DATE</span><span class="p">)</span>
+            <span class="n">cols</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">columns</span><span class="p">[:]</span>
+            <span class="n">last_date</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">index</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+            <span class="c1"># Max value of Infected</span>
+            <span class="n">max_ci</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">CI</span><span class="p">]</span><span class="o">.</span><span class="n">max</span><span class="p">()</span>
+            <span class="n">argmax_ci</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">CI</span><span class="p">]</span><span class="o">.</span><span class="n">idxmax</span><span class="p">()</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">DATE_FORMAT</span><span class="p">)</span>
+            <span class="c1"># Confirmed on the next date of the last phase</span>
+            <span class="n">last_c</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">last_date</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">C</span><span class="p">]</span>
+            <span class="c1"># Infected on the next date of the last phase</span>
+            <span class="n">last_ci</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">last_date</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">CI</span><span class="p">]</span>
+            <span class="c1"># Fatal on the next date of the last phase</span>
+            <span class="n">last_f</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">last_date</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">F</span><span class="p">]</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">F</span> <span class="ow">in</span> <span class="n">cols</span> <span class="k">else</span> <span class="kc">None</span>
+            <span class="c1"># Save representative values</span>
+            <span class="n">last_date_str</span> <span class="o">=</span> <span class="n">last_date</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">DATE_FORMAT</span><span class="p">)</span>
+            <span class="n">_dict</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span>
+                <span class="sa">f</span><span class="s2">&quot;max(</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">CI</span><span class="si">}</span><span class="s2">)&quot;</span><span class="p">:</span> <span class="n">max_ci</span><span class="p">,</span>
+                <span class="sa">f</span><span class="s2">&quot;argmax(</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">CI</span><span class="si">}</span><span class="s2">)&quot;</span><span class="p">:</span> <span class="n">argmax_ci</span><span class="p">,</span>
+                <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">C</span><span class="si">}</span><span class="s2"> on </span><span class="si">{</span><span class="n">last_date_str</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">:</span> <span class="n">last_c</span><span class="p">,</span>
+                <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">CI</span><span class="si">}</span><span class="s2"> on </span><span class="si">{</span><span class="n">last_date_str</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">:</span> <span class="n">last_ci</span><span class="p">,</span>
+                <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">F</span><span class="si">}</span><span class="s2"> on </span><span class="si">{</span><span class="n">last_date_str</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">:</span> <span class="n">last_f</span><span class="p">,</span>
+            <span class="p">}</span>
+        <span class="k">return</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="o">.</span><span class="n">from_dict</span><span class="p">(</span><span class="n">_dict</span><span class="p">,</span> <span class="n">orient</span><span class="o">=</span><span class="s2">&quot;index&quot;</span><span class="p">)</span>
+
 <div class="viewcode-block" id="Scenario.describe"><a class="viewcode-back" href="../../../covsirphy.analysis.html#covsirphy.analysis.scenario.Scenario.describe">[docs]</a>    <span class="k">def</span> <span class="nf">describe</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">y0_dict</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">with_rt</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Describe representative values.</span>
@@ -909,42 +966,22 @@
 <span class="sd">                Columns:</span>
 <span class="sd">                    - max(Infected): max value of Infected</span>
 <span class="sd">                    - argmax(Infected): the date when Infected shows max value</span>
-<span class="sd">                    - Infected({date}): Infected on the end date of the last phase</span>
-<span class="sd">                    - Fatal({date}): Fatal on the end date of the last phase</span>
+<span class="sd">                    - Confirmed({date}): Confirmed on the next date of the last phase</span>
+<span class="sd">                    - Infected({date}): Infected on the next date of the last phase</span>
+<span class="sd">                    - Fatal({date}): Fatal on the next date of the last phase</span>
+<span class="sd">                    - nth_Rt etc.: Rt value if the values are not the same values</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">_dict</span> <span class="o">=</span> <span class="p">{}</span>
-        <span class="k">for</span> <span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">_</span><span class="p">)</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_series_dict</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
-            <span class="c1"># Predict the number of cases</span>
-            <span class="n">df</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">simulate</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">,</span> <span class="n">y0_dict</span><span class="o">=</span><span class="n">y0_dict</span><span class="p">,</span> <span class="n">show_figure</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
-            <span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">set_index</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">DATE</span><span class="p">)</span>
-            <span class="n">cols</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">columns</span><span class="p">[:]</span>
-            <span class="n">last_date</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">index</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
-            <span class="c1"># Max value of Infected</span>
-            <span class="n">max_ci</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">CI</span><span class="p">]</span><span class="o">.</span><span class="n">max</span><span class="p">()</span>
-            <span class="n">argmax_ci</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">CI</span><span class="p">]</span><span class="o">.</span><span class="n">idxmax</span><span class="p">()</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">DATE_FORMAT</span><span class="p">)</span>
-            <span class="c1"># Infected on the end date of the last phase</span>
-            <span class="n">last_ci</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">last_date</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">CI</span><span class="p">]</span>
-            <span class="c1"># Fatal on the end date of the last phase</span>
-            <span class="n">last_f</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">last_date</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">F</span><span class="p">]</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">F</span> <span class="ow">in</span> <span class="n">cols</span> <span class="k">else</span> <span class="kc">None</span>
-            <span class="c1"># Save representative values</span>
-            <span class="n">_dict</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span>
-                <span class="sa">f</span><span class="s2">&quot;max(</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">CI</span><span class="si">}</span><span class="s2">)&quot;</span><span class="p">:</span> <span class="n">max_ci</span><span class="p">,</span>
-                <span class="sa">f</span><span class="s2">&quot;argmax(</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">CI</span><span class="si">}</span><span class="s2">)&quot;</span><span class="p">:</span> <span class="n">argmax_ci</span><span class="p">,</span>
-                <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">CI</span><span class="si">}</span><span class="s2"> on </span><span class="si">{</span><span class="n">last_date</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">DATE_FORMAT</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">:</span> <span class="n">last_ci</span><span class="p">,</span>
-                <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">F</span><span class="si">}</span><span class="s2"> on </span><span class="si">{</span><span class="n">last_date</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">DATE_FORMAT</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">:</span> <span class="n">last_f</span><span class="p">,</span>
-            <span class="p">}</span>
-        <span class="n">desc_df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="o">.</span><span class="n">from_dict</span><span class="p">(</span><span class="n">_dict</span><span class="p">,</span> <span class="n">orient</span><span class="o">=</span><span class="s2">&quot;index&quot;</span><span class="p">)</span>
+        <span class="n">df</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_describe</span><span class="p">(</span><span class="n">y0_dict</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">with_rt</span> <span class="ow">or</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_series_dict</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">df</span>
         <span class="c1"># History of reproduction number</span>
-        <span class="k">if</span> <span class="n">with_rt</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_series_dict</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
-            <span class="n">rt_df</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">summary</span><span class="p">()</span><span class="o">.</span><span class="n">reset_index</span><span class="p">()</span>
-            <span class="n">rt_df</span> <span class="o">=</span> <span class="n">rt_df</span><span class="o">.</span><span class="n">pivot_table</span><span class="p">(</span>
-                <span class="n">index</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">SERIES</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">PHASE</span><span class="p">,</span> <span class="n">values</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">RT</span><span class="p">)</span>
-            <span class="n">rt_df</span> <span class="o">=</span> <span class="n">rt_df</span><span class="o">.</span><span class="n">fillna</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">UNKNOWN</span><span class="p">)</span>
-            <span class="n">rt_df</span> <span class="o">=</span> <span class="n">rt_df</span><span class="o">.</span><span class="n">loc</span><span class="p">[:,</span> <span class="n">rt_df</span><span class="o">.</span><span class="n">nunique</span><span class="p">()</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">]</span>
-            <span class="n">cols</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">rt_df</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">str2num</span><span class="p">)</span>
-            <span class="n">desc_df</span> <span class="o">=</span> <span class="n">desc_df</span><span class="o">.</span><span class="n">join</span><span class="p">(</span>
-                <span class="n">rt_df</span><span class="p">[</span><span class="n">cols</span><span class="p">]</span><span class="o">.</span><span class="n">add_suffix</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;_</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">RT</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">),</span> <span class="n">how</span><span class="o">=</span><span class="s2">&quot;left&quot;</span><span class="p">)</span>
-        <span class="k">return</span> <span class="n">desc_df</span></div>
+        <span class="n">rt_df</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">summary</span><span class="p">()</span><span class="o">.</span><span class="n">reset_index</span><span class="p">()</span>
+        <span class="n">rt_df</span> <span class="o">=</span> <span class="n">rt_df</span><span class="o">.</span><span class="n">pivot_table</span><span class="p">(</span>
+            <span class="n">index</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">SERIES</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">PHASE</span><span class="p">,</span> <span class="n">values</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">RT</span><span class="p">)</span>
+        <span class="n">rt_df</span> <span class="o">=</span> <span class="n">rt_df</span><span class="o">.</span><span class="n">fillna</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">UNKNOWN</span><span class="p">)</span>
+        <span class="n">rt_df</span> <span class="o">=</span> <span class="n">rt_df</span><span class="o">.</span><span class="n">loc</span><span class="p">[:,</span> <span class="n">rt_df</span><span class="o">.</span><span class="n">nunique</span><span class="p">()</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">]</span>
+        <span class="n">cols</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">rt_df</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">str2num</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">df</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">rt_df</span><span class="p">[</span><span class="n">cols</span><span class="p">]</span><span class="o">.</span><span class="n">add_suffix</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;_</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">RT</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">),</span> <span class="n">how</span><span class="o">=</span><span class="s2">&quot;left&quot;</span><span class="p">)</span></div>
 
     <span class="k">def</span> <span class="nf">_track_param</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
@@ -1101,7 +1138,42 @@
             <span class="n">line_plot</span><span class="p">(</span>
                 <span class="n">df</span><span class="p">,</span> <span class="n">title</span><span class="p">,</span> <span class="n">ylabel</span><span class="o">=</span><span class="n">ylabel</span><span class="p">,</span> <span class="n">v</span><span class="o">=</span><span class="n">change_dates</span><span class="p">,</span> <span class="n">math_scale</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">filename</span><span class="o">=</span><span class="n">filename</span>
             <span class="p">)</span>
-        <span class="k">return</span> <span class="n">df</span></div></div>
+        <span class="k">return</span> <span class="n">df</span></div>
+
+<div class="viewcode-block" id="Scenario.retrospective"><a class="viewcode-back" href="../../../covsirphy.analysis.html#covsirphy.analysis.scenario.Scenario.retrospective">[docs]</a>    <span class="k">def</span> <span class="nf">retrospective</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">beginning_date</span><span class="p">,</span> <span class="n">model</span><span class="p">,</span> <span class="n">control</span><span class="o">=</span><span class="s2">&quot;Main&quot;</span><span class="p">,</span> <span class="n">target</span><span class="o">=</span><span class="s2">&quot;Target&quot;</span><span class="p">,</span> <span class="o">**</span><span class="n">args</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Perform retrospective analysis.</span>
+<span class="sd">        Compare the actual series of phases (control) and</span>
+<span class="sd">        series of phases with specified parameters (target).</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            beginning_date (str): when the parameter values start to be changed from actual values</span>
+<span class="sd">            model (covsirphy.ModelBase): ODE model</span>
+<span class="sd">            control (str): scenario name of control</span>
+<span class="sd">            target (str): scenario name of target</span>
+<span class="sd">            **args: keyword argument of parameters</span>
+
+<span class="sd">        Notes:</span>
+<span class="sd">            When parameter values are not specified,</span>
+<span class="sd">            actual values of the last date before the beginning date will be used.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Control</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">clear</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="n">control</span><span class="p">,</span> <span class="n">include_past</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">trend</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="n">control</span><span class="p">,</span> <span class="n">show_figure</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+        <span class="n">series</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_series_dict</span><span class="p">[</span><span class="n">control</span><span class="p">]</span>
+        <span class="n">sep_dates</span> <span class="o">=</span> <span class="p">[[</span><span class="n">ph</span><span class="o">.</span><span class="n">start_date</span><span class="p">,</span> <span class="n">ph</span><span class="o">.</span><span class="n">end_date</span><span class="p">]</span> <span class="k">for</span> <span class="n">ph</span> <span class="ow">in</span> <span class="n">series</span><span class="p">]</span>
+        <span class="k">if</span> <span class="n">beginning_date</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">flatten</span><span class="p">(</span><span class="n">sep_dates</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">separate</span><span class="p">(</span><span class="n">beginning_date</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="n">control</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">estimate</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="n">control</span><span class="p">)</span>
+        <span class="c1"># Target</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">clear</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="n">target</span><span class="p">,</span> <span class="n">include_past</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">template</span><span class="o">=</span><span class="n">control</span><span class="p">)</span>
+        <span class="n">phases_changed</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">num2str</span><span class="p">(</span><span class="n">i</span><span class="p">)</span> <span class="k">for</span> <span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="n">ph</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_series_dict</span><span class="p">[</span><span class="n">target</span><span class="p">])</span>
+            <span class="k">if</span> <span class="n">ph</span> <span class="o">&gt;=</span> <span class="n">beginning_date</span>
+        <span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">delete</span><span class="p">(</span><span class="n">phases_changed</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="n">target</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="n">target</span><span class="p">,</span> <span class="o">**</span><span class="n">args</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">estimate</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="n">target</span><span class="p">)</span></div></div>
 </pre></div>
 
            </div>

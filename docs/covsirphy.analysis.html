@@ -494,8 +494,10 @@ If the last phase is not included, the dates will be assigned to the previous ph
 <dt>Columns:</dt><dd><ul class="simple">
 <li><p>max(Infected): max value of Infected</p></li>
 <li><p>argmax(Infected): the date when Infected shows max value</p></li>
-<li><p>Infected({date}): Infected on the end date of the last phase</p></li>
-<li><p>Fatal({date}): Fatal on the end date of the last phase</p></li>
+<li><p>Confirmed({date}): Confirmed on the next date of the last phase</p></li>
+<li><p>Infected({date}): Infected on the next date of the last phase</p></li>
+<li><p>Fatal({date}): Fatal on the next date of the last phase</p></li>
+<li><p>nth_Rt etc.: Rt value if the values are not the same values</p></li>
 </ul>
 </dd>
 </dl>
@@ -742,6 +744,28 @@ We can find the parameters which increased/decreased significantly.</p>
 </dd></dl>
 
 <dl class="py method">
+<dt id="covsirphy.analysis.scenario.Scenario.retrospective">
+<code class="sig-name descname">retrospective</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">beginning_date</span></em>, <em class="sig-param"><span class="n">model</span></em>, <em class="sig-param"><span class="n">control</span><span class="o">=</span><span class="default_value">'Main'</span></em>, <em class="sig-param"><span class="n">target</span><span class="o">=</span><span class="default_value">'Target'</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">args</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/analysis/scenario.html#Scenario.retrospective"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#covsirphy.analysis.scenario.Scenario.retrospective" title="Permalink to this definition">¶</a></dt>
+<dd><p>Perform retrospective analysis.
+Compare the actual series of phases (control) and
+series of phases with specified parameters (target).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>beginning_date</strong> (<em>str</em>) – when the parameter values start to be changed from actual values</p></li>
+<li><p><strong>model</strong> (<em>covsirphy.ModelBase</em>) – ODE model</p></li>
+<li><p><strong>control</strong> (<em>str</em>) – scenario name of control</p></li>
+<li><p><strong>target</strong> (<em>str</em>) – scenario name of target</p></li>
+<li><p><strong>**args</strong> – keyword argument of parameters</p></li>
+</ul>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<p>When parameter values are not specified,
+actual values of the last date before the beginning date will be used.</p>
+</dd></dl>
+
+<dl class="py method">
 <dt id="covsirphy.analysis.scenario.Scenario.separate">
 <code class="sig-name descname">separate</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">date</span></em>, <em class="sig-param"><span class="n">name</span><span class="o">=</span><span class="default_value">'Main'</span></em>, <em class="sig-param"><span class="n">population</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/analysis/scenario.html#Scenario.separate"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#covsirphy.analysis.scenario.Scenario.separate" title="Permalink to this definition">¶</a></dt>
 <dd><p>Create a new phase with the change point.
@@ -750,7 +774,7 @@ New phase name will be automatically determined.</p>
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>date</strong> (<em>str</em>) – change point, i.e. start date of the new phase</p></li>
-<li><p><strong>name</strong> (<em>str</em><em>, </em><em>optional</em>) – name of phase series</p></li>
+<li><p><strong>name</strong> (<em>str</em>) – scenario name</p></li>
 <li><p><strong>population</strong> (<em>int</em>) – population value of the change point</p></li>
 <li><p><strong>kwargs</strong> – keyword arguments of PhaseUnit.set_ode()</p></li>
 </ul>
@@ -791,7 +815,7 @@ New phase name will be automatically determined.</p>
 <li><p>Date (pd.TimeStamp): Observation date</p></li>
 <li><p>Country (str): country/region name</p></li>
 <li><p>Province (str): province/prefecture/state name</p></li>
-<li><p>variables of the models (int): Confirmed (int) etc.</p></li>
+<li><p>Variables of the model and dataset (int): Confirmed etc.</p></li>
 </ul>
 </dd>
 </dl>
