@@ -90,7 +90,7 @@ class PhaseUnit(Term):
             header = "Phase"
         else:
             id_str = ', '.join(list(self._id_dict.values()))
-            header = f"{id_str} phase"
+            header = f"{id_str:>4} phase"
         return f"{header} ({self._start_date} - {self._end_date})"
 
     def __hash__(self):
