@@ -40,11 +40,11 @@ class TestPolicyMeasures(object):
         assert isinstance(analyser.summary(), pd.DataFrame)
         # Parameter history of Rt
         with pytest.raises(KeyError):
-            df = analyser.param_history("Temperature", roll_window=None)
-        df = analyser.param_history("Rt", roll_window=None)
+            df = analyser.history("Temperature", roll_window=None)
+        df = analyser.history("Rt", roll_window=None)
         assert isinstance(df, pd.DataFrame)
         # Parameter history of rho
-        df = analyser.param_history("rho", roll_window=14, show_figure=False)
+        df = analyser.history("rho", roll_window=14, show_figure=False)
         assert isinstance(df, pd.DataFrame)
 
     def mistake(self, jhu_data, population_data, oxcgrt_data):
