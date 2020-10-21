@@ -36,6 +36,7 @@ def main():
     print(snl.summary())
     # Parameter estimation
     snl.estimate(cs.SIRF)
+    snl.history("Rt", filename=figpath("history_rt_past"))
     # Add future phase to main scenario
     snl.add(name="Main", end_date="31Mar2021")
     # Simulation of the number of cases
