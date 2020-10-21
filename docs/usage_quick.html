@@ -443,8 +443,10 @@ div.rendered_html tbody tr:hover {
 </style>
 <div class="section" id="Usage-(quick-version)">
 <h1>Usage (quick version)<a class="headerlink" href="#Usage-(quick-version)" title="Permalink to this headline">¶</a></h1>
+<p>This is a quick tour of CovsirPhy. Details of datasets and scenario analysis will be explained.</p>
 <div class="section" id="Preparation">
 <h2>Preparation<a class="headerlink" href="#Preparation" title="Permalink to this headline">¶</a></h2>
+<p>Prepare the packages.</p>
 <div class="nbinput nblast docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[1]:
 </pre></div>
@@ -466,17 +468,8 @@ div.rendered_html tbody tr:hover {
 </pre></div>
 </div>
 </div>
-<div class="nbinput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[3]:
-</pre></div>
-</div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="kn">import</span> <span class="nn">warnings</span>
-</pre></div>
-</div>
-</div>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[4]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[3]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
@@ -486,7 +479,7 @@ div.rendered_html tbody tr:hover {
 </div>
 </div>
 <div class="nboutput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[4]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[3]:
 </pre></div>
 </div>
 <div class="output_area docutils container">
@@ -501,7 +494,7 @@ div.rendered_html tbody tr:hover {
 <p>If “input” directory has the datasets, <code class="docutils literal notranslate"><span class="pre">DataLoader</span></code> will load the local files. If the datasets were updated in remote servers, <code class="docutils literal notranslate"><span class="pre">DataLoader</span></code> will update the local files automatically. Download the datasets to “input” direcotry and load them.</p>
 <p>If “input” directory has the datasets, <code class="docutils literal notranslate"><span class="pre">DataLoader</span></code> will load the local files. If the datasets were updated in remote servers, <code class="docutils literal notranslate"><span class="pre">DataLoader</span></code> will update the local files automatically.</p>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[5]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[4]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
@@ -582,8 +575,9 @@ City populations worldwide (2016), http://population.city/taiwan/adm/
 </div>
 <div class="section" id="The-number-of-cases-(JHU-style)">
 <h3>The number of cases (JHU style)<a class="headerlink" href="#The-number-of-cases-(JHU-style)" title="Permalink to this headline">¶</a></h3>
+<p>The main dataset is that of the number of cases. This includes “Confirmed”, “Infected”, “Recovered” and “Fatal”. “Infected” was calculated as “Confirmed - Recovered - Fatal”.</p>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[6]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[5]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
@@ -601,76 +595,18 @@ City populations worldwide (2016), http://population.city/taiwan/adm/
 We can get Citation list of primary sources with DataLoader(...).covid19dh_citation
 </pre></div></div>
 </div>
-<div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[7]:
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[6]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="nb">print</span><span class="p">(</span><span class="n">data_loader</span><span class="o">.</span><span class="n">covid19dh_citation</span><span class="p">)</span>
+<span></span><span class="c1"># Citation of COVID-19 Data Hub: this was shown when `DataLoader.jhu(verbose=True)</span>
+<span class="c1"># print(data_loader.covid19dh_citation)</span>
 </pre></div>
 </div>
 </div>
-<div class="nboutput nblast docutils container">
-<div class="prompt empty docutils container">
-</div>
-<div class="output_area docutils container">
-<div class="highlight"><pre>
-Open Government Data, United Kingdom (2020), https://coronavirus.data.gov.uk
-Department of Disease Control of Thailand (2020), https://covid19.th-stat.com/
-World Health Organization (2020), https://covid19.who.int
-Ireland Health Protection Surveillance Centre (HPSC) and Health Service Executive (HSE) (2020), https://covid19ireland-geohive.hub.arcgis.com/
-The COVID Tracking Project (2020), https://covidtracking.com
-Ministry of Health of Croatia (2020), https://data.gov.hr/dataset/koronavirus/resource/08fab529-ebba-46c7-be79-05782ddb02ef
-Open Government Data, Latvia (2020), https://data.gov.lv/dati/dataset
-Taiwan Ministry of Health and Welfare (2020), https://data.gov.tw/dataset/120451
-Wikipedia (2020), https://en.wikipedia.org/wiki
-Epistat, Belgian Infectious Diseases (2020), https://epistat.sciensano.be
-Johns Hopkins Center for Systems Science and Engineering (2020), https://github.com/CSSEGISandData/COVID-19
-Covid19data.com.au (2020), https://github.com/M3IT/COVID-19_Data
-Data Science for Social Impact research group, University of Pretoria (2020), https://github.com/dsfsi/covid19za
-Data on the COVID-19 pandemic in Portugal (2020), https://github.com/dssg-pt/covid19pt-data
-COVID-19_plus_Russia GitHub repository (2020), https://github.com/grwlf/COVID-19_plus_Russia
-COVID-19 Peru Data Repository (2020), https://github.com/jmcastagnetto/covid-19-peru-data
-Twitter Web Scraper for Polish Ministery of Health (2020), https://github.com/martinbenes1996/covid19poland
-The New York Times (2020), https://github.com/nytimes/covid-19-data
-Open Government Data, Liechtenstein (2020), https://github.com/openZH/covid_19
-Open Government Data, Switzerland (2020), https://github.com/openZH/covid_19
-OpenCOVID19 France (2020), https://github.com/opencovid19-fr/data
-Our World in Data (2020), https://github.com/owid/covid-19-data
-COVID-19 Turkey API (2020), https://github.com/ozanerturk/covid19-turkey-api
-Ministero della Salute, Italia (2020), https://github.com/pcm-dpc/COVID-19
-Japan COVID-19 Bulletin Board (2020), https://github.com/swsoyee/2019-ncov-japan
-Public Health Infobase, Government of Canada (2020), https://health-infobase.canada.ca
-Open Government Data, Austria (2020), https://info.gesundheitsministerium.at/
-Robert Koch-Institut (2020), https://npgeo-corona-npgeo-de.hub.arcgis.com/datasets/dd4580c810204019a7b8eb3e0b329dd6_0
-Ministery of Health of Czech Republic (2020), https://onemocneni-aktualne.mzcr.cz/covid-19
-Public Health Agency, Sweden (2020), https://oppnadata.se/datamangd/#esc_entry=1424&amp;esc_context=525
-Ministry of Public Health and Population of Haiti (2020), https://proxy.hxlstandard.org/data/738954
-Federal Office of Public Health FOPH (2020), https://www.bag.admin.ch/bag/en/home/krankheiten/ausbrueche-epidemien-pandemien/aktuelle-ausbrueche-epidemien/novel-cov/situation-schweiz-und-international.html
-CIA - Central Intelligence Agency (2020), https://www.cia.gov/library/publications/the-world-factbook/geos/aq.html
-COVID19-India API (2020), https://www.covid19india.org/
-Ministerio de Salud y ProtecciÃ³n Social de Colombia (2020), https://www.datos.gov.co
-Ministery of Health, Slovenia (2020), https://www.gov.si/en/topics/coronavirus-disease-covid-19/
-Ministerio de Ciencia, TecnologÃ­a, Conocimiento e InnovaciÃ³n (2020), https://www.minciencia.gob.cl/COVID19
-Ministerio de Sanidad, Consumo y Bienestar Social (2020), https://www.mscbs.gob.es/
-Canada&#39;s National Statistical Agency (2020), https://www150.statcan.gc.ca/t1/tbl1/en/tv.action?pid=1710000901
-Oxford COVID-19 Government Response Tracker (2020), www.bsg.ox.ac.uk/covidtracker
-Eurostat (2019), https://ec.europa.eu/eurostat
-Geloky (2019), https://geloky.com/geocoding/place/Valka+Latvia
-GADM (2019), https://public.opendatasoft.com/explore/dataset/landkreise-in-germany/table/
-Statbel, Belgium in Figures (2019), https://statbel.fgov.be/en/themes/population/structure-population
-Australian Bureau of Statistics (2019), https://www.abs.gov.au/AUSSTATS/abs@.nsf/DetailsPage/3101.0Sep%202019?OpenDocument
-National Bureau of Statistics of China NBS (2018), http://data.stats.gov.cn/english/easyquery.htm?cn=E0103
-World Bank Open Data (2018), https://data.worldbank.org/indicator/SP.POP.TOTL
-Swiss Federal Statistical Office (2018), https://www.bfs.admin.ch/bfs/en/home/statistics/regional-statistics/regional-portraits-key-figures/cantons/data-explanations.html
-Czech Statistical Office (2018), https://www.czso.cz/csu/czso/demograficka-rocenka-kraju-2009-az-2018
-Istituto Nazionale di Statistica, Italia (2018), https://www.istat.it/en/population-and-households?data-and-indicators
-Worldometer (2018), https://www.worldometers.info/world-population/channel-islands-population/
-City populations worldwide (2016), http://population.city/taiwan/adm/
-</pre></div></div>
-</div>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[8]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[7]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
@@ -680,7 +616,7 @@ City populations worldwide (2016), http://population.city/taiwan/adm/
 </div>
 </div>
 <div class="nboutput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[8]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[7]:
 </pre></div>
 </div>
 <div class="output_area rendered_html docutils container">
@@ -726,30 +662,7 @@ City populations worldwide (2016), http://population.city/taiwan/adm/
   </thead>
   <tbody>
     <tr>
-      <th>274974</th>
-      <td>2020-10-16</td>
-      <td>14</td>
-      <td>14</td>
-      <td>0</td>
-      <td>107808.0</td>
-      <td>COL</td>
-      <td>Vichada</td>
-      <td>Colombia</td>
-      <td>3</td>
-      <td>1</td>
-      <td>2</td>
-      <td>3</td>
-      <td>1</td>
-      <td>1</td>
-      <td>1</td>
-      <td>4</td>
-      <td>2</td>
-      <td>2</td>
-      <td>0</td>
-      <td>71.3</td>
-    </tr>
-    <tr>
-      <th>274975</th>
+      <th>275938</th>
       <td>2020-10-17</td>
       <td>14</td>
       <td>14</td>
@@ -772,7 +685,7 @@ City populations worldwide (2016), http://population.city/taiwan/adm/
       <td>71.3</td>
     </tr>
     <tr>
-      <th>274976</th>
+      <th>275939</th>
       <td>2020-10-18</td>
       <td>14</td>
       <td>14</td>
@@ -795,7 +708,7 @@ City populations worldwide (2016), http://population.city/taiwan/adm/
       <td>71.3</td>
     </tr>
     <tr>
-      <th>274977</th>
+      <th>275940</th>
       <td>2020-10-19</td>
       <td>14</td>
       <td>14</td>
@@ -818,8 +731,31 @@ City populations worldwide (2016), http://population.city/taiwan/adm/
       <td>71.3</td>
     </tr>
     <tr>
-      <th>274978</th>
+      <th>275941</th>
       <td>2020-10-20</td>
+      <td>14</td>
+      <td>14</td>
+      <td>0</td>
+      <td>107808.0</td>
+      <td>COL</td>
+      <td>Vichada</td>
+      <td>Colombia</td>
+      <td>3</td>
+      <td>1</td>
+      <td>2</td>
+      <td>3</td>
+      <td>1</td>
+      <td>1</td>
+      <td>1</td>
+      <td>4</td>
+      <td>2</td>
+      <td>2</td>
+      <td>0</td>
+      <td>71.3</td>
+    </tr>
+    <tr>
+      <th>275942</th>
+      <td>2020-10-21</td>
       <td>14</td>
       <td>14</td>
       <td>0</td>
@@ -845,7 +781,7 @@ City populations worldwide (2016), http://population.city/taiwan/adm/
 </div></div>
 </div>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[9]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[8]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
@@ -855,7 +791,7 @@ City populations worldwide (2016), http://population.city/taiwan/adm/
 </div>
 </div>
 <div class="nboutput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[9]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[8]:
 </pre></div>
 </div>
 <div class="output_area rendered_html docutils container">
@@ -888,17 +824,7 @@ City populations worldwide (2016), http://population.city/taiwan/adm/
   </thead>
   <tbody>
     <tr>
-      <th>274974</th>
-      <td>2020-10-16</td>
-      <td>Colombia</td>
-      <td>Vichada</td>
-      <td>14</td>
-      <td>0</td>
-      <td>0</td>
-      <td>14</td>
-    </tr>
-    <tr>
-      <th>274975</th>
+      <th>275938</th>
       <td>2020-10-17</td>
       <td>Colombia</td>
       <td>Vichada</td>
@@ -908,7 +834,7 @@ City populations worldwide (2016), http://population.city/taiwan/adm/
       <td>14</td>
     </tr>
     <tr>
-      <th>274976</th>
+      <th>275939</th>
       <td>2020-10-18</td>
       <td>Colombia</td>
       <td>Vichada</td>
@@ -918,7 +844,7 @@ City populations worldwide (2016), http://population.city/taiwan/adm/
       <td>14</td>
     </tr>
     <tr>
-      <th>274977</th>
+      <th>275940</th>
       <td>2020-10-19</td>
       <td>Colombia</td>
       <td>Vichada</td>
@@ -928,8 +854,18 @@ City populations worldwide (2016), http://population.city/taiwan/adm/
       <td>14</td>
     </tr>
     <tr>
-      <th>274978</th>
+      <th>275941</th>
       <td>2020-10-20</td>
+      <td>Colombia</td>
+      <td>Vichada</td>
+      <td>14</td>
+      <td>0</td>
+      <td>0</td>
+      <td>14</td>
+    </tr>
+    <tr>
+      <th>275942</th>
+      <td>2020-10-21</td>
       <td>Colombia</td>
       <td>Vichada</td>
       <td>14</td>
@@ -942,7 +878,7 @@ City populations worldwide (2016), http://population.city/taiwan/adm/
 </div></div>
 </div>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[10]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[9]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
@@ -952,7 +888,7 @@ City populations worldwide (2016), http://population.city/taiwan/adm/
 </div>
 </div>
 <div class="nboutput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[10]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[9]:
 </pre></div>
 </div>
 <div class="output_area rendered_html docutils container">
@@ -982,14 +918,6 @@ City populations worldwide (2016), http://population.city/taiwan/adm/
     </tr>
   </thead>
   <tbody>
-    <tr>
-      <th>211</th>
-      <td>2020-10-16</td>
-      <td>28601</td>
-      <td>2079</td>
-      <td>431</td>
-      <td>26091</td>
-    </tr>
     <tr>
       <th>212</th>
       <td>2020-10-17</td>
@@ -1022,12 +950,20 @@ City populations worldwide (2016), http://population.city/taiwan/adm/
       <td>437</td>
       <td>26810</td>
     </tr>
+    <tr>
+      <th>216</th>
+      <td>2020-10-21</td>
+      <td>29335</td>
+      <td>1858</td>
+      <td>439</td>
+      <td>27038</td>
+    </tr>
   </tbody>
 </table>
 </div></div>
 </div>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[11]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[10]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
@@ -1038,7 +974,7 @@ City populations worldwide (2016), http://population.city/taiwan/adm/
 </div>
 </div>
 <div class="nboutput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[11]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[10]:
 </pre></div>
 </div>
 <div class="output_area rendered_html docutils container">
@@ -1081,61 +1017,61 @@ City populations worldwide (2016), http://population.city/taiwan/adm/
   </thead>
   <tbody>
     <tr>
-      <th>2020-10-16</th>
-      <td>38920089</td>
-      <td>11175325</td>
-      <td>1096019</td>
-      <td>26648745</td>
-      <td>0.014080</td>
-      <td>0.342352</td>
-      <td>0.039504</td>
-    </tr>
-    <tr>
       <th>2020-10-17</th>
-      <td>39285068</td>
-      <td>11347299</td>
-      <td>1101402</td>
-      <td>26836367</td>
-      <td>0.014018</td>
-      <td>0.341559</td>
-      <td>0.039423</td>
+      <td>39289828</td>
+      <td>11348351</td>
+      <td>1101451</td>
+      <td>26840026</td>
+      <td>0.014017</td>
+      <td>0.341565</td>
+      <td>0.039420</td>
     </tr>
     <tr>
       <th>2020-10-18</th>
-      <td>39584354</td>
-      <td>11452657</td>
-      <td>1104652</td>
-      <td>27027045</td>
-      <td>0.013953</td>
-      <td>0.341385</td>
-      <td>0.039267</td>
+      <td>39592042</td>
+      <td>11456604</td>
+      <td>1104712</td>
+      <td>27030726</td>
+      <td>0.013951</td>
+      <td>0.341366</td>
+      <td>0.039264</td>
     </tr>
     <tr>
       <th>2020-10-19</th>
-      <td>39931173</td>
-      <td>11610651</td>
-      <td>1109175</td>
-      <td>27211347</td>
-      <td>0.013889</td>
-      <td>0.340728</td>
-      <td>0.039165</td>
+      <td>39950261</td>
+      <td>11619157</td>
+      <td>1109365</td>
+      <td>27221739</td>
+      <td>0.013884</td>
+      <td>0.340695</td>
+      <td>0.039157</td>
     </tr>
     <tr>
       <th>2020-10-20</th>
-      <td>39931854</td>
-      <td>11609689</td>
-      <td>1109181</td>
-      <td>27212984</td>
-      <td>0.013888</td>
-      <td>0.340743</td>
-      <td>0.039163</td>
+      <td>40315546</td>
+      <td>11779529</td>
+      <td>1115664</td>
+      <td>27420353</td>
+      <td>0.013837</td>
+      <td>0.340072</td>
+      <td>0.039097</td>
+    </tr>
+    <tr>
+      <th>2020-10-21</th>
+      <td>40332760</td>
+      <td>11792394</td>
+      <td>1115815</td>
+      <td>27424551</td>
+      <td>0.013833</td>
+      <td>0.339979</td>
+      <td>0.039096</td>
     </tr>
   </tbody>
 </table>
 </div></div>
 </div>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[12]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[11]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
@@ -1148,23 +1084,25 @@ City populations worldwide (2016), http://population.city/taiwan/adm/
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area docutils container">
-<img alt="_images/usage_quick_15_0.png" src="_images/usage_quick_15_0.png" />
+<img alt="_images/usage_quick_14_0.png" src="_images/usage_quick_14_0.png" />
 </div>
 </div>
 </div>
 <div class="section" id="(Optional)-Replace-the-dataset-in-Japan">
 <h3>(Optional) Replace the dataset in Japan<a class="headerlink" href="#(Optional)-Replace-the-dataset-in-Japan" title="Permalink to this headline">¶</a></h3>
+<p>If we have dataset for each country, we can use it optionally.</p>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[13]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[12]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="n">jhu_data</span><span class="o">.</span><span class="n">subset</span><span class="p">(</span><span class="s2">&quot;Japan&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">tail</span><span class="p">()</span>
+<span></span><span class="c1"># Registered data in jhu_data</span>
+<span class="n">jhu_data</span><span class="o">.</span><span class="n">subset</span><span class="p">(</span><span class="s2">&quot;Japan&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">tail</span><span class="p">()</span>
 </pre></div>
 </div>
 </div>
 <div class="nboutput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[13]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[12]:
 </pre></div>
 </div>
 <div class="output_area rendered_html docutils container">
@@ -1194,14 +1132,6 @@ City populations worldwide (2016), http://population.city/taiwan/adm/
     </tr>
   </thead>
   <tbody>
-    <tr>
-      <th>250</th>
-      <td>2020-10-16</td>
-      <td>92053</td>
-      <td>5960</td>
-      <td>1664</td>
-      <td>84429</td>
-    </tr>
     <tr>
       <th>251</th>
       <td>2020-10-17</td>
@@ -1229,21 +1159,30 @@ City populations worldwide (2016), http://population.city/taiwan/adm/
     <tr>
       <th>254</th>
       <td>2020-10-20</td>
-      <td>93908</td>
-      <td>5756</td>
+      <td>93907</td>
+      <td>5755</td>
       <td>1679</td>
       <td>86473</td>
+    </tr>
+    <tr>
+      <th>255</th>
+      <td>2020-10-21</td>
+      <td>94526</td>
+      <td>5774</td>
+      <td>1686</td>
+      <td>87066</td>
     </tr>
   </tbody>
 </table>
 </div></div>
 </div>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[14]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[13]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="n">japan_data</span> <span class="o">=</span> <span class="n">data_loader</span><span class="o">.</span><span class="n">japan</span><span class="p">()</span>
+<span></span><span class="c1"># Download the dataset in Japan and show the citation</span>
+<span class="n">japan_data</span> <span class="o">=</span> <span class="n">data_loader</span><span class="o">.</span><span class="n">japan</span><span class="p">()</span>
 <span class="nb">print</span><span class="p">(</span><span class="n">japan_data</span><span class="o">.</span><span class="n">citation</span><span class="p">)</span>
 </pre></div>
 </div>
@@ -1257,17 +1196,19 @@ Lisphilar (2020), COVID-19 dataset in Japan, GitHub repository, https://github.c
 </pre></div></div>
 </div>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[15]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[14]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="n">jhu_data</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="n">japan_data</span><span class="p">)</span>
+<span></span><span class="c1"># Replace the dataset for Japan</span>
+<span class="n">jhu_data</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="n">japan_data</span><span class="p">)</span>
+<span class="c1"># Show the new records in Japan</span>
 <span class="n">jhu_data</span><span class="o">.</span><span class="n">subset</span><span class="p">(</span><span class="s2">&quot;Japan&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">tail</span><span class="p">()</span>
 </pre></div>
 </div>
 </div>
 <div class="nboutput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[15]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[14]:
 </pre></div>
 </div>
 <div class="output_area rendered_html docutils container">
@@ -1297,14 +1238,6 @@ Lisphilar (2020), COVID-19 dataset in Japan, GitHub repository, https://github.c
     </tr>
   </thead>
   <tbody>
-    <tr>
-      <th>248</th>
-      <td>2020-10-16</td>
-      <td>91431</td>
-      <td>5330</td>
-      <td>1650</td>
-      <td>84451</td>
-    </tr>
     <tr>
       <th>249</th>
       <td>2020-10-17</td>
@@ -1337,6 +1270,14 @@ Lisphilar (2020), COVID-19 dataset in Japan, GitHub repository, https://github.c
       <td>1676</td>
       <td>86513</td>
     </tr>
+    <tr>
+      <th>253</th>
+      <td>2020-10-21</td>
+      <td>93933</td>
+      <td>5147</td>
+      <td>1679</td>
+      <td>87107</td>
+    </tr>
   </tbody>
 </table>
 </div></div>
@@ -1344,8 +1285,9 @@ Lisphilar (2020), COVID-19 dataset in Japan, GitHub repository, https://github.c
 </div>
 <div class="section" id="Population-in-each-country">
 <h3>Population in each country<a class="headerlink" href="#Population-in-each-country" title="Permalink to this headline">¶</a></h3>
+<p>Population values are necessary to calculate the number of susceptible people. Susceptible is a variable of SIR-derived models.</p>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[16]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[15]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
@@ -1364,7 +1306,7 @@ We can get Citation list of primary sources with DataLoader(...).covid19dh_citat
 </pre></div></div>
 </div>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[17]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[16]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
@@ -1374,7 +1316,7 @@ We can get Citation list of primary sources with DataLoader(...).covid19dh_citat
 </div>
 </div>
 <div class="nboutput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[17]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[16]:
 </pre></div>
 </div>
 <div class="output_area rendered_html docutils container">
@@ -1420,30 +1362,7 @@ We can get Citation list of primary sources with DataLoader(...).covid19dh_citat
   </thead>
   <tbody>
     <tr>
-      <th>274974</th>
-      <td>2020-10-16</td>
-      <td>14</td>
-      <td>14</td>
-      <td>0</td>
-      <td>107808.0</td>
-      <td>COL</td>
-      <td>Vichada</td>
-      <td>Colombia</td>
-      <td>3</td>
-      <td>1</td>
-      <td>2</td>
-      <td>3</td>
-      <td>1</td>
-      <td>1</td>
-      <td>1</td>
-      <td>4</td>
-      <td>2</td>
-      <td>2</td>
-      <td>0</td>
-      <td>71.3</td>
-    </tr>
-    <tr>
-      <th>274975</th>
+      <th>275938</th>
       <td>2020-10-17</td>
       <td>14</td>
       <td>14</td>
@@ -1466,7 +1385,7 @@ We can get Citation list of primary sources with DataLoader(...).covid19dh_citat
       <td>71.3</td>
     </tr>
     <tr>
-      <th>274976</th>
+      <th>275939</th>
       <td>2020-10-18</td>
       <td>14</td>
       <td>14</td>
@@ -1489,7 +1408,7 @@ We can get Citation list of primary sources with DataLoader(...).covid19dh_citat
       <td>71.3</td>
     </tr>
     <tr>
-      <th>274977</th>
+      <th>275940</th>
       <td>2020-10-19</td>
       <td>14</td>
       <td>14</td>
@@ -1512,8 +1431,31 @@ We can get Citation list of primary sources with DataLoader(...).covid19dh_citat
       <td>71.3</td>
     </tr>
     <tr>
-      <th>274978</th>
+      <th>275941</th>
       <td>2020-10-20</td>
+      <td>14</td>
+      <td>14</td>
+      <td>0</td>
+      <td>107808.0</td>
+      <td>COL</td>
+      <td>Vichada</td>
+      <td>Colombia</td>
+      <td>3</td>
+      <td>1</td>
+      <td>2</td>
+      <td>3</td>
+      <td>1</td>
+      <td>1</td>
+      <td>1</td>
+      <td>4</td>
+      <td>2</td>
+      <td>2</td>
+      <td>0</td>
+      <td>71.3</td>
+    </tr>
+    <tr>
+      <th>275942</th>
+      <td>2020-10-21</td>
       <td>14</td>
       <td>14</td>
       <td>0</td>
@@ -1539,7 +1481,7 @@ We can get Citation list of primary sources with DataLoader(...).covid19dh_citat
 </div></div>
 </div>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[18]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[17]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
@@ -1549,7 +1491,7 @@ We can get Citation list of primary sources with DataLoader(...).covid19dh_citat
 </div>
 </div>
 <div class="nboutput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[18]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[17]:
 </pre></div>
 </div>
 <div class="output_area rendered_html docutils container">
@@ -1580,15 +1522,7 @@ We can get Citation list of primary sources with DataLoader(...).covid19dh_citat
   </thead>
   <tbody>
     <tr>
-      <th>232807</th>
-      <td>COL</td>
-      <td>Colombia</td>
-      <td>Vichada</td>
-      <td>2020-10-16</td>
-      <td>107808</td>
-    </tr>
-    <tr>
-      <th>232808</th>
+      <th>233622</th>
       <td>COL</td>
       <td>Colombia</td>
       <td>Vichada</td>
@@ -1596,7 +1530,7 @@ We can get Citation list of primary sources with DataLoader(...).covid19dh_citat
       <td>107808</td>
     </tr>
     <tr>
-      <th>232809</th>
+      <th>233623</th>
       <td>COL</td>
       <td>Colombia</td>
       <td>Vichada</td>
@@ -1604,7 +1538,7 @@ We can get Citation list of primary sources with DataLoader(...).covid19dh_citat
       <td>107808</td>
     </tr>
     <tr>
-      <th>232810</th>
+      <th>233624</th>
       <td>COL</td>
       <td>Colombia</td>
       <td>Vichada</td>
@@ -1612,11 +1546,19 @@ We can get Citation list of primary sources with DataLoader(...).covid19dh_citat
       <td>107808</td>
     </tr>
     <tr>
-      <th>232811</th>
+      <th>233625</th>
       <td>COL</td>
       <td>Colombia</td>
       <td>Vichada</td>
       <td>2020-10-20</td>
+      <td>107808</td>
+    </tr>
+    <tr>
+      <th>233626</th>
+      <td>COL</td>
+      <td>Colombia</td>
+      <td>Vichada</td>
+      <td>2020-10-21</td>
       <td>107808</td>
     </tr>
   </tbody>
@@ -1624,7 +1566,7 @@ We can get Citation list of primary sources with DataLoader(...).covid19dh_citat
 </div></div>
 </div>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[19]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[18]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
@@ -1633,7 +1575,7 @@ We can get Citation list of primary sources with DataLoader(...).covid19dh_citat
 </div>
 </div>
 <div class="nboutput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[19]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[18]:
 </pre></div>
 </div>
 <div class="output_area docutils container">
@@ -1642,7 +1584,7 @@ We can get Citation list of primary sources with DataLoader(...).covid19dh_citat
 </pre></div></div>
 </div>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[20]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[19]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
@@ -1654,7 +1596,7 @@ We can get Citation list of primary sources with DataLoader(...).covid19dh_citat
 </div>
 </div>
 <div class="nboutput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[20]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[19]:
 </pre></div>
 </div>
 <div class="output_area docutils container">
@@ -1665,8 +1607,9 @@ We can get Citation list of primary sources with DataLoader(...).covid19dh_citat
 </div>
 <div class="section" id="Government-Response-Tracker-(OxCGRT)">
 <h3>Government Response Tracker (OxCGRT)<a class="headerlink" href="#Government-Response-Tracker-(OxCGRT)" title="Permalink to this headline">¶</a></h3>
+<p>This will be used in <a class="reference external" href="https://lisphilar.github.io/covid19-sir/usage_policy.html">Usage (details: policy measures)</a>.</p>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[21]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[20]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
@@ -1685,7 +1628,7 @@ We can get Citation list of primary sources with DataLoader(...).covid19dh_citat
 </pre></div></div>
 </div>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[22]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[21]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
@@ -1695,7 +1638,7 @@ We can get Citation list of primary sources with DataLoader(...).covid19dh_citat
 </div>
 </div>
 <div class="nboutput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[22]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[21]:
 </pre></div>
 </div>
 <div class="output_area rendered_html docutils container">
@@ -1741,30 +1684,7 @@ We can get Citation list of primary sources with DataLoader(...).covid19dh_citat
   </thead>
   <tbody>
     <tr>
-      <th>274974</th>
-      <td>2020-10-16</td>
-      <td>14</td>
-      <td>14</td>
-      <td>0</td>
-      <td>107808.0</td>
-      <td>COL</td>
-      <td>Vichada</td>
-      <td>Colombia</td>
-      <td>3</td>
-      <td>1</td>
-      <td>2</td>
-      <td>3</td>
-      <td>1</td>
-      <td>1</td>
-      <td>1</td>
-      <td>4</td>
-      <td>2</td>
-      <td>2</td>
-      <td>0</td>
-      <td>71.3</td>
-    </tr>
-    <tr>
-      <th>274975</th>
+      <th>275938</th>
       <td>2020-10-17</td>
       <td>14</td>
       <td>14</td>
@@ -1787,7 +1707,7 @@ We can get Citation list of primary sources with DataLoader(...).covid19dh_citat
       <td>71.3</td>
     </tr>
     <tr>
-      <th>274976</th>
+      <th>275939</th>
       <td>2020-10-18</td>
       <td>14</td>
       <td>14</td>
@@ -1810,7 +1730,7 @@ We can get Citation list of primary sources with DataLoader(...).covid19dh_citat
       <td>71.3</td>
     </tr>
     <tr>
-      <th>274977</th>
+      <th>275940</th>
       <td>2020-10-19</td>
       <td>14</td>
       <td>14</td>
@@ -1833,8 +1753,31 @@ We can get Citation list of primary sources with DataLoader(...).covid19dh_citat
       <td>71.3</td>
     </tr>
     <tr>
-      <th>274978</th>
+      <th>275941</th>
       <td>2020-10-20</td>
+      <td>14</td>
+      <td>14</td>
+      <td>0</td>
+      <td>107808.0</td>
+      <td>COL</td>
+      <td>Vichada</td>
+      <td>Colombia</td>
+      <td>3</td>
+      <td>1</td>
+      <td>2</td>
+      <td>3</td>
+      <td>1</td>
+      <td>1</td>
+      <td>1</td>
+      <td>4</td>
+      <td>2</td>
+      <td>2</td>
+      <td>0</td>
+      <td>71.3</td>
+    </tr>
+    <tr>
+      <th>275942</th>
+      <td>2020-10-21</td>
       <td>14</td>
       <td>14</td>
       <td>0</td>
@@ -1860,7 +1803,7 @@ We can get Citation list of primary sources with DataLoader(...).covid19dh_citat
 </div></div>
 </div>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[23]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[22]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
@@ -1870,7 +1813,7 @@ We can get Citation list of primary sources with DataLoader(...).covid19dh_citat
 </div>
 </div>
 <div class="nboutput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[23]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[22]:
 </pre></div>
 </div>
 <div class="output_area rendered_html docutils container">
@@ -1911,25 +1854,7 @@ We can get Citation list of primary sources with DataLoader(...).covid19dh_citat
   </thead>
   <tbody>
     <tr>
-      <th>274974</th>
-      <td>2020-10-16</td>
-      <td>Colombia</td>
-      <td>COL</td>
-      <td>3</td>
-      <td>1</td>
-      <td>2</td>
-      <td>3</td>
-      <td>1</td>
-      <td>1</td>
-      <td>1</td>
-      <td>4</td>
-      <td>2</td>
-      <td>2</td>
-      <td>0</td>
-      <td>71.3</td>
-    </tr>
-    <tr>
-      <th>274975</th>
+      <th>275938</th>
       <td>2020-10-17</td>
       <td>Colombia</td>
       <td>COL</td>
@@ -1947,7 +1872,7 @@ We can get Citation list of primary sources with DataLoader(...).covid19dh_citat
       <td>71.3</td>
     </tr>
     <tr>
-      <th>274976</th>
+      <th>275939</th>
       <td>2020-10-18</td>
       <td>Colombia</td>
       <td>COL</td>
@@ -1965,7 +1890,7 @@ We can get Citation list of primary sources with DataLoader(...).covid19dh_citat
       <td>71.3</td>
     </tr>
     <tr>
-      <th>274977</th>
+      <th>275940</th>
       <td>2020-10-19</td>
       <td>Colombia</td>
       <td>COL</td>
@@ -1983,8 +1908,26 @@ We can get Citation list of primary sources with DataLoader(...).covid19dh_citat
       <td>71.3</td>
     </tr>
     <tr>
-      <th>274978</th>
+      <th>275941</th>
       <td>2020-10-20</td>
+      <td>Colombia</td>
+      <td>COL</td>
+      <td>3</td>
+      <td>1</td>
+      <td>2</td>
+      <td>3</td>
+      <td>1</td>
+      <td>1</td>
+      <td>1</td>
+      <td>4</td>
+      <td>2</td>
+      <td>2</td>
+      <td>0</td>
+      <td>71.3</td>
+    </tr>
+    <tr>
+      <th>275942</th>
+      <td>2020-10-21</td>
       <td>Colombia</td>
       <td>COL</td>
       <td>3</td>
@@ -2005,7 +1948,7 @@ We can get Citation list of primary sources with DataLoader(...).covid19dh_citat
 </div></div>
 </div>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[24]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[23]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
@@ -2015,6 +1958,139 @@ We can get Citation list of primary sources with DataLoader(...).covid19dh_citat
 </div>
 </div>
 <div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[23]:
+</pre></div>
+</div>
+<div class="output_area rendered_html docutils container">
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>Date</th>
+      <th>School_closing</th>
+      <th>Workplace_closing</th>
+      <th>Cancel_events</th>
+      <th>Gatherings_restrictions</th>
+      <th>Transport_closing</th>
+      <th>Stay_home_restrictions</th>
+      <th>Internal_movement_restrictions</th>
+      <th>International_movement_restrictions</th>
+      <th>Information_campaigns</th>
+      <th>Testing_policy</th>
+      <th>Contact_tracing</th>
+      <th>Stringency_index</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>290</th>
+      <td>2020-10-17</td>
+      <td>1</td>
+      <td>1</td>
+      <td>1</td>
+      <td>0</td>
+      <td>0</td>
+      <td>1</td>
+      <td>1</td>
+      <td>1</td>
+      <td>2</td>
+      <td>2</td>
+      <td>1</td>
+      <td>31.48</td>
+    </tr>
+    <tr>
+      <th>291</th>
+      <td>2020-10-18</td>
+      <td>1</td>
+      <td>1</td>
+      <td>1</td>
+      <td>0</td>
+      <td>0</td>
+      <td>1</td>
+      <td>1</td>
+      <td>1</td>
+      <td>2</td>
+      <td>2</td>
+      <td>1</td>
+      <td>31.48</td>
+    </tr>
+    <tr>
+      <th>292</th>
+      <td>2020-10-19</td>
+      <td>1</td>
+      <td>1</td>
+      <td>1</td>
+      <td>0</td>
+      <td>0</td>
+      <td>1</td>
+      <td>1</td>
+      <td>1</td>
+      <td>2</td>
+      <td>2</td>
+      <td>1</td>
+      <td>31.48</td>
+    </tr>
+    <tr>
+      <th>293</th>
+      <td>2020-10-20</td>
+      <td>1</td>
+      <td>1</td>
+      <td>1</td>
+      <td>0</td>
+      <td>0</td>
+      <td>1</td>
+      <td>1</td>
+      <td>1</td>
+      <td>2</td>
+      <td>2</td>
+      <td>1</td>
+      <td>31.48</td>
+    </tr>
+    <tr>
+      <th>294</th>
+      <td>2020-10-21</td>
+      <td>1</td>
+      <td>1</td>
+      <td>1</td>
+      <td>0</td>
+      <td>0</td>
+      <td>1</td>
+      <td>1</td>
+      <td>1</td>
+      <td>2</td>
+      <td>2</td>
+      <td>1</td>
+      <td>31.48</td>
+    </tr>
+  </tbody>
+</table>
+</div></div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[24]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="c1"># Subset for a country (using ISO3 code)</span>
+<span class="n">oxcgrt_data</span><span class="o">.</span><span class="n">subset</span><span class="p">(</span><span class="s2">&quot;JPN&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">tail</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[24]:
 </pre></div>
 </div>
@@ -2054,22 +2130,6 @@ We can get Citation list of primary sources with DataLoader(...).covid19dh_citat
   </thead>
   <tbody>
     <tr>
-      <th>289</th>
-      <td>2020-10-16</td>
-      <td>1</td>
-      <td>1</td>
-      <td>1</td>
-      <td>0</td>
-      <td>0</td>
-      <td>1</td>
-      <td>1</td>
-      <td>1</td>
-      <td>2</td>
-      <td>2</td>
-      <td>1</td>
-      <td>31.48</td>
-    </tr>
-    <tr>
       <th>290</th>
       <td>2020-10-17</td>
       <td>1</td>
@@ -2133,126 +2193,9 @@ We can get Citation list of primary sources with DataLoader(...).covid19dh_citat
       <td>1</td>
       <td>31.48</td>
     </tr>
-  </tbody>
-</table>
-</div></div>
-</div>
-<div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[25]:
-</pre></div>
-</div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="c1"># Subset for a country (using ISO3 code)</span>
-<span class="n">oxcgrt_data</span><span class="o">.</span><span class="n">subset</span><span class="p">(</span><span class="s2">&quot;JPN&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">tail</span><span class="p">()</span>
-</pre></div>
-</div>
-</div>
-<div class="nboutput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[25]:
-</pre></div>
-</div>
-<div class="output_area rendered_html docutils container">
-<div>
-<style scoped>
-    .dataframe tbody tr th:only-of-type {
-        vertical-align: middle;
-    }
-
-    .dataframe tbody tr th {
-        vertical-align: top;
-    }
-
-    .dataframe thead th {
-        text-align: right;
-    }
-</style>
-<table border="1" class="dataframe">
-  <thead>
-    <tr style="text-align: right;">
-      <th></th>
-      <th>Date</th>
-      <th>School_closing</th>
-      <th>Workplace_closing</th>
-      <th>Cancel_events</th>
-      <th>Gatherings_restrictions</th>
-      <th>Transport_closing</th>
-      <th>Stay_home_restrictions</th>
-      <th>Internal_movement_restrictions</th>
-      <th>International_movement_restrictions</th>
-      <th>Information_campaigns</th>
-      <th>Testing_policy</th>
-      <th>Contact_tracing</th>
-      <th>Stringency_index</th>
-    </tr>
-  </thead>
-  <tbody>
     <tr>
-      <th>289</th>
-      <td>2020-10-16</td>
-      <td>1</td>
-      <td>1</td>
-      <td>1</td>
-      <td>0</td>
-      <td>0</td>
-      <td>1</td>
-      <td>1</td>
-      <td>1</td>
-      <td>2</td>
-      <td>2</td>
-      <td>1</td>
-      <td>31.48</td>
-    </tr>
-    <tr>
-      <th>290</th>
-      <td>2020-10-17</td>
-      <td>1</td>
-      <td>1</td>
-      <td>1</td>
-      <td>0</td>
-      <td>0</td>
-      <td>1</td>
-      <td>1</td>
-      <td>1</td>
-      <td>2</td>
-      <td>2</td>
-      <td>1</td>
-      <td>31.48</td>
-    </tr>
-    <tr>
-      <th>291</th>
-      <td>2020-10-18</td>
-      <td>1</td>
-      <td>1</td>
-      <td>1</td>
-      <td>0</td>
-      <td>0</td>
-      <td>1</td>
-      <td>1</td>
-      <td>1</td>
-      <td>2</td>
-      <td>2</td>
-      <td>1</td>
-      <td>31.48</td>
-    </tr>
-    <tr>
-      <th>292</th>
-      <td>2020-10-19</td>
-      <td>1</td>
-      <td>1</td>
-      <td>1</td>
-      <td>0</td>
-      <td>0</td>
-      <td>1</td>
-      <td>1</td>
-      <td>1</td>
-      <td>2</td>
-      <td>2</td>
-      <td>1</td>
-      <td>31.48</td>
-    </tr>
-    <tr>
-      <th>293</th>
-      <td>2020-10-20</td>
+      <th>294</th>
+      <td>2020-10-21</td>
       <td>1</td>
       <td>1</td>
       <td>1</td>
@@ -2276,7 +2219,7 @@ We can get Citation list of primary sources with DataLoader(...).covid19dh_citat
 <h2>Scenario analysis<a class="headerlink" href="#Scenario-analysis" title="Permalink to this headline">¶</a></h2>
 <p>As an example, we will analysis the number of cases in Japan.</p>
 <div class="nbinput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[26]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[25]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
@@ -2286,14 +2229,13 @@ We can get Citation list of primary sources with DataLoader(...).covid19dh_citat
 </div>
 <div class="section" id="Check-records">
 <h3>Check records<a class="headerlink" href="#Check-records" title="Permalink to this headline">¶</a></h3>
+<p>Let’s see the records at first. <code class="docutils literal notranslate"><span class="pre">Scenario.records()</span></code> method return the records as a pandas dataframe and show a line plot.</p>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[27]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[26]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="c1"># import matplotlib</span>
-<span class="c1"># warnings.simplefilter(&quot;ignore&quot;, category=matplotlib.MatplotlibDeprecationWarning)</span>
-<span class="n">record_df</span> <span class="o">=</span> <span class="n">snl</span><span class="o">.</span><span class="n">records</span><span class="p">()</span>
+<span></span><span class="n">record_df</span> <span class="o">=</span> <span class="n">snl</span><span class="o">.</span><span class="n">records</span><span class="p">()</span>
 <span class="n">record_df</span><span class="o">.</span><span class="n">tail</span><span class="p">()</span>
 </pre></div>
 </div>
@@ -2302,11 +2244,11 @@ We can get Citation list of primary sources with DataLoader(...).covid19dh_citat
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area docutils container">
-<img alt="_images/usage_quick_35_0.png" src="_images/usage_quick_35_0.png" />
+<img alt="_images/usage_quick_34_0.png" src="_images/usage_quick_34_0.png" />
 </div>
 </div>
 <div class="nboutput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[27]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[26]:
 </pre></div>
 </div>
 <div class="output_area rendered_html docutils container">
@@ -2336,14 +2278,6 @@ We can get Citation list of primary sources with DataLoader(...).covid19dh_citat
     </tr>
   </thead>
   <tbody>
-    <tr>
-      <th>248</th>
-      <td>2020-10-16</td>
-      <td>91431</td>
-      <td>5330</td>
-      <td>1650</td>
-      <td>84451</td>
-    </tr>
     <tr>
       <th>249</th>
       <td>2020-10-17</td>
@@ -2376,6 +2310,14 @@ We can get Citation list of primary sources with DataLoader(...).covid19dh_citat
       <td>1676</td>
       <td>86513</td>
     </tr>
+    <tr>
+      <th>253</th>
+      <td>2020-10-21</td>
+      <td>93933</td>
+      <td>5147</td>
+      <td>1679</td>
+      <td>87107</td>
+    </tr>
   </tbody>
 </table>
 </div></div>
@@ -2383,12 +2325,14 @@ We can get Citation list of primary sources with DataLoader(...).covid19dh_citat
 </div>
 <div class="section" id="S-R-trend-analysis">
 <h3>S-R trend analysis<a class="headerlink" href="#S-R-trend-analysis" title="Permalink to this headline">¶</a></h3>
+<p>S-R trend analysis finds the change points of SIR-derived ODE parameters. Details will be explained in <a class="reference external" href="https://lisphilar.github.io/covid19-sir/usage_phases.html">Usage (details: phases)</a>.</p>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[28]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[27]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="n">snl</span><span class="o">.</span><span class="n">trend</span><span class="p">(</span><span class="n">set_phases</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span></span><span class="c1"># Perform S-R trend analysis and set phases</span>
+<span class="n">snl</span><span class="o">.</span><span class="n">trend</span><span class="p">(</span><span class="n">set_phases</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 <span class="n">snl</span><span class="o">.</span><span class="n">summary</span><span class="p">()</span>
 </pre></div>
 </div>
@@ -2397,11 +2341,11 @@ We can get Citation list of primary sources with DataLoader(...).covid19dh_citat
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area docutils container">
-<img alt="_images/usage_quick_37_0.png" src="_images/usage_quick_37_0.png" />
+<img alt="_images/usage_quick_36_0.png" src="_images/usage_quick_36_0.png" />
 </div>
 </div>
 <div class="nboutput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[28]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[27]:
 </pre></div>
 </div>
 <div class="output_area rendered_html docutils container">
@@ -2476,13 +2420,13 @@ We can get Citation list of primary sources with DataLoader(...).covid19dh_citat
       <th>6th</th>
       <td>Past</td>
       <td>30Aug2020</td>
-      <td>10Sep2020</td>
+      <td>11Sep2020</td>
       <td>126529100</td>
     </tr>
     <tr>
       <th>7th</th>
       <td>Past</td>
-      <td>11Sep2020</td>
+      <td>12Sep2020</td>
       <td>25Sep2020</td>
       <td>126529100</td>
     </tr>
@@ -2497,7 +2441,7 @@ We can get Citation list of primary sources with DataLoader(...).covid19dh_citat
       <th>9th</th>
       <td>Past</td>
       <td>09Oct2020</td>
-      <td>20Oct2020</td>
+      <td>21Oct2020</td>
       <td>126529100</td>
     </tr>
   </tbody>
@@ -2507,13 +2451,14 @@ We can get Citation list of primary sources with DataLoader(...).covid19dh_citat
 </div>
 <div class="section" id="Hyperparameter-estimation-of-ODE-models">
 <h3>Hyperparameter estimation of ODE models<a class="headerlink" href="#Hyperparameter-estimation-of-ODE-models" title="Permalink to this headline">¶</a></h3>
-<p>As an example, use SIR-F model. We can use SIR, SIRD, (SIRFV), (SEWIRF).</p>
+<p>Here, we will estimate the parameter values of SIR-derived models. As an example, we use SIR-F model. Details of models will be explained in <a class="reference external" href="https://lisphilar.github.io/covid19-sir/usage_theoretical.html">Usage (details: theoritical datasets)</a>.</p>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[29]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[28]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="n">snl</span><span class="o">.</span><span class="n">estimate</span><span class="p">(</span><span class="n">cs</span><span class="o">.</span><span class="n">SIRF</span><span class="p">)</span>
+<span></span><span class="c1"># Estimate the parameter values of SIR-F model</span>
+<span class="n">snl</span><span class="o">.</span><span class="n">estimate</span><span class="p">(</span><span class="n">cs</span><span class="o">.</span><span class="n">SIRF</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -2525,30 +2470,31 @@ We can get Citation list of primary sources with DataLoader(...).covid19dh_citat
 
 &lt;SIR-F model: parameter estimation&gt;
 Running optimization with 4 CPUs...
-         9th phase (09Oct2020 - 20Oct2020): finished  722 trials in 0 min 25 sec
-         2nd phase (07Jul2020 - 23Jul2020): finished  175 trials in 0 min  5 sec
-         3rd phase (24Jul2020 - 01Aug2020): finished 1065 trials in 0 min 40 sec
-         5th phase (15Aug2020 - 29Aug2020): finished  478 trials in 0 min 15 sec
-         0th phase (06Feb2020 - 21Apr2020): finished 1426 trials in 1 min  0 sec
-         1st phase (22Apr2020 - 06Jul2020): finished 1436 trials in 1 min  0 sec
-         6th phase (30Aug2020 - 10Sep2020): finished  320 trials in 0 min 10 sec
-         4th phase (02Aug2020 - 14Aug2020): finished 1487 trials in 1 min  0 sec
-         7th phase (11Sep2020 - 25Sep2020): finished  556 trials in 0 min 15 sec
-         8th phase (26Sep2020 - 08Oct2020): finished 1818 trials in 1 min  0 sec
-Completed optimization. Total: 2 min 26 sec
+         9th phase (09Oct2020 - 21Oct2020): finished 1265 trials in 1 min  0 sec
+         3rd phase (24Jul2020 - 01Aug2020): finished  694 trials in 0 min 30 sec
+         0th phase (06Feb2020 - 21Apr2020): finished 1176 trials in 1 min  0 sec
+         1st phase (22Apr2020 - 06Jul2020): finished 1157 trials in 1 min  0 sec
+         2nd phase (07Jul2020 - 23Jul2020): finished 1209 trials in 1 min  0 sec
+         5th phase (15Aug2020 - 29Aug2020): finished  134 trials in 0 min  5 sec
+         6th phase (30Aug2020 - 11Sep2020): finished  257 trials in 0 min 10 sec
+         7th phase (12Sep2020 - 25Sep2020): finished  392 trials in 0 min 15 sec
+         4th phase (02Aug2020 - 14Aug2020): finished 1270 trials in 1 min  0 sec
+         8th phase (26Sep2020 - 08Oct2020): finished  805 trials in 0 min 30 sec
+Completed optimization. Total: 2 min 37 sec
 </pre></div></div>
 </div>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[30]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[29]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="n">snl</span><span class="o">.</span><span class="n">summary</span><span class="p">()</span>
+<span></span><span class="c1"># Show the sumamry of parameter estimation</span>
+<span class="n">snl</span><span class="o">.</span><span class="n">summary</span><span class="p">()</span>
 </pre></div>
 </div>
 </div>
 <div class="nboutput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[30]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[29]:
 </pre></div>
 </div>
 <div class="output_area rendered_html docutils container">
@@ -2581,10 +2527,10 @@ Completed optimization. Total: 2 min 26 sec
       <th>rho</th>
       <th>sigma</th>
       <th>tau</th>
-      <th>1/alpha2 [day]</th>
-      <th>alpha1 [-]</th>
       <th>1/gamma [day]</th>
       <th>1/beta [day]</th>
+      <th>alpha1 [-]</th>
+      <th>1/alpha2 [day]</th>
       <th>RMSLE</th>
       <th>Trials</th>
       <th>Runtime</th>
@@ -2598,18 +2544,18 @@ Completed optimization. Total: 2 min 26 sec
       <td>21Apr2020</td>
       <td>126529100</td>
       <td>SIR-F</td>
-      <td>4.66</td>
-      <td>0.018341</td>
-      <td>0.000174</td>
-      <td>0.104200</td>
-      <td>0.021769</td>
-      <td>1440</td>
-      <td>5760</td>
-      <td>0.018</td>
-      <td>45</td>
+      <td>4.22</td>
+      <td>0.000302</td>
+      <td>0.001063</td>
+      <td>0.052213</td>
+      <td>0.011310</td>
+      <td>720</td>
+      <td>44</td>
       <td>9</td>
-      <td>0.937856</td>
-      <td>1426</td>
+      <td>0.000</td>
+      <td>470</td>
+      <td>0.952248</td>
+      <td>1176</td>
       <td>1 min  0 sec</td>
     </tr>
     <tr>
@@ -2619,18 +2565,18 @@ Completed optimization. Total: 2 min 26 sec
       <td>06Jul2020</td>
       <td>126529100</td>
       <td>SIR-F</td>
-      <td>0.37</td>
-      <td>0.111664</td>
-      <td>0.000268</td>
-      <td>0.027925</td>
-      <td>0.065885</td>
-      <td>1440</td>
-      <td>3732</td>
-      <td>0.112</td>
-      <td>15</td>
-      <td>35</td>
-      <td>0.916719</td>
-      <td>1436</td>
+      <td>0.41</td>
+      <td>0.072879</td>
+      <td>0.000561</td>
+      <td>0.015767</td>
+      <td>0.035231</td>
+      <td>720</td>
+      <td>14</td>
+      <td>31</td>
+      <td>0.073</td>
+      <td>890</td>
+      <td>0.966841</td>
+      <td>1157</td>
       <td>1 min  0 sec</td>
     </tr>
     <tr>
@@ -2640,19 +2586,19 @@ Completed optimization. Total: 2 min 26 sec
       <td>23Jul2020</td>
       <td>126529100</td>
       <td>SIR-F</td>
-      <td>1.93</td>
-      <td>0.000466</td>
-      <td>0.000080</td>
-      <td>0.133382</td>
-      <td>0.068954</td>
-      <td>1440</td>
-      <td>12426</td>
-      <td>0.000</td>
+      <td>1.94</td>
+      <td>0.001061</td>
+      <td>0.000069</td>
+      <td>0.067294</td>
+      <td>0.034619</td>
+      <td>720</td>
       <td>14</td>
       <td>7</td>
-      <td>0.031898</td>
-      <td>175</td>
-      <td>0 min  5 sec</td>
+      <td>0.001</td>
+      <td>7224</td>
+      <td>0.030932</td>
+      <td>1209</td>
+      <td>1 min  0 sec</td>
     </tr>
     <tr>
       <th>3rd</th>
@@ -2661,19 +2607,19 @@ Completed optimization. Total: 2 min 26 sec
       <td>01Aug2020</td>
       <td>126529100</td>
       <td>SIR-F</td>
-      <td>1.84</td>
-      <td>0.000726</td>
-      <td>0.000120</td>
-      <td>0.134241</td>
-      <td>0.072807</td>
-      <td>1440</td>
-      <td>8341</td>
-      <td>0.001</td>
+      <td>1.85</td>
+      <td>0.000589</td>
+      <td>0.000114</td>
+      <td>0.067612</td>
+      <td>0.036417</td>
+      <td>720</td>
       <td>13</td>
       <td>7</td>
-      <td>0.019265</td>
-      <td>1065</td>
-      <td>0 min 40 sec</td>
+      <td>0.001</td>
+      <td>4397</td>
+      <td>0.020080</td>
+      <td>694</td>
+      <td>0 min 30 sec</td>
     </tr>
     <tr>
       <th>4th</th>
@@ -2682,18 +2628,18 @@ Completed optimization. Total: 2 min 26 sec
       <td>14Aug2020</td>
       <td>126529100</td>
       <td>SIR-F</td>
-      <td>1.57</td>
-      <td>0.001253</td>
-      <td>0.000304</td>
-      <td>0.102607</td>
-      <td>0.065073</td>
-      <td>1440</td>
-      <td>3284</td>
-      <td>0.001</td>
+      <td>1.46</td>
+      <td>0.000248</td>
+      <td>0.000188</td>
+      <td>0.048609</td>
+      <td>0.033005</td>
+      <td>720</td>
       <td>15</td>
-      <td>9</td>
-      <td>0.062261</td>
-      <td>1487</td>
+      <td>10</td>
+      <td>0.000</td>
+      <td>2659</td>
+      <td>0.075828</td>
+      <td>1270</td>
       <td>1 min  0 sec</td>
     </tr>
     <tr>
@@ -2703,60 +2649,60 @@ Completed optimization. Total: 2 min 26 sec
       <td>29Aug2020</td>
       <td>126529100</td>
       <td>SIR-F</td>
-      <td>0.79</td>
-      <td>0.000844</td>
-      <td>0.000831</td>
-      <td>0.073977</td>
-      <td>0.093038</td>
-      <td>1440</td>
-      <td>1204</td>
-      <td>0.001</td>
-      <td>10</td>
+      <td>0.68</td>
+      <td>0.000488</td>
+      <td>0.000526</td>
+      <td>0.036613</td>
+      <td>0.053280</td>
+      <td>720</td>
+      <td>9</td>
       <td>13</td>
-      <td>0.024730</td>
-      <td>478</td>
-      <td>0 min 15 sec</td>
+      <td>0.000</td>
+      <td>950</td>
+      <td>0.108374</td>
+      <td>134</td>
+      <td>0 min  5 sec</td>
     </tr>
     <tr>
       <th>6th</th>
       <td>Past</td>
       <td>30Aug2020</td>
-      <td>10Sep2020</td>
+      <td>11Sep2020</td>
       <td>126529100</td>
       <td>SIR-F</td>
-      <td>0.67</td>
-      <td>0.000277</td>
-      <td>0.001423</td>
-      <td>0.063356</td>
-      <td>0.092474</td>
-      <td>1440</td>
-      <td>702</td>
-      <td>0.000</td>
+      <td>0.70</td>
+      <td>0.000350</td>
+      <td>0.000711</td>
+      <td>0.034064</td>
+      <td>0.047663</td>
+      <td>720</td>
       <td>10</td>
-      <td>15</td>
-      <td>0.012941</td>
-      <td>320</td>
+      <td>14</td>
+      <td>0.000</td>
+      <td>702</td>
+      <td>0.013354</td>
+      <td>257</td>
       <td>0 min 10 sec</td>
     </tr>
     <tr>
       <th>7th</th>
       <td>Past</td>
-      <td>11Sep2020</td>
+      <td>12Sep2020</td>
       <td>25Sep2020</td>
       <td>126529100</td>
       <td>SIR-F</td>
-      <td>0.85</td>
-      <td>0.016642</td>
-      <td>0.000046</td>
-      <td>0.085008</td>
-      <td>0.097873</td>
-      <td>1440</td>
-      <td>21764</td>
-      <td>0.017</td>
-      <td>10</td>
+      <td>0.83</td>
+      <td>0.016205</td>
+      <td>0.000005</td>
+      <td>0.037241</td>
+      <td>0.044173</td>
+      <td>720</td>
       <td>11</td>
-      <td>0.031336</td>
-      <td>556</td>
+      <td>13</td>
+      <td>0.016</td>
+      <td>109582</td>
+      <td>0.030993</td>
+      <td>392</td>
       <td>0 min 15 sec</td>
     </tr>
     <tr>
@@ -2766,40 +2712,40 @@ Completed optimization. Total: 2 min 26 sec
       <td>08Oct2020</td>
       <td>126529100</td>
       <td>SIR-F</td>
-      <td>1.01</td>
-      <td>0.000972</td>
-      <td>0.001053</td>
-      <td>0.093356</td>
-      <td>0.091061</td>
-      <td>1440</td>
-      <td>949</td>
-      <td>0.001</td>
+      <td>1.02</td>
+      <td>0.000443</td>
+      <td>0.000559</td>
+      <td>0.046981</td>
+      <td>0.045396</td>
+      <td>720</td>
+      <td>11</td>
       <td>10</td>
-      <td>10</td>
-      <td>0.017946</td>
-      <td>1818</td>
-      <td>1 min  0 sec</td>
+      <td>0.000</td>
+      <td>894</td>
+      <td>0.019879</td>
+      <td>805</td>
+      <td>0 min 30 sec</td>
     </tr>
     <tr>
       <th>9th</th>
       <td>Past</td>
       <td>09Oct2020</td>
-      <td>20Oct2020</td>
+      <td>21Oct2020</td>
       <td>126529100</td>
       <td>SIR-F</td>
-      <td>1.04</td>
-      <td>0.001755</td>
-      <td>0.000598</td>
-      <td>0.104236</td>
-      <td>0.099343</td>
-      <td>1440</td>
-      <td>1672</td>
-      <td>0.002</td>
-      <td>10</td>
+      <td>1.01</td>
+      <td>0.001072</td>
+      <td>0.000484</td>
+      <td>0.052139</td>
+      <td>0.050919</td>
+      <td>720</td>
       <td>9</td>
-      <td>0.018525</td>
-      <td>722</td>
-      <td>0 min 25 sec</td>
+      <td>9</td>
+      <td>0.001</td>
+      <td>1032</td>
+      <td>0.019816</td>
+      <td>1265</td>
+      <td>1 min  0 sec</td>
     </tr>
   </tbody>
 </table>
@@ -2809,7 +2755,7 @@ Completed optimization. Total: 2 min 26 sec
 <div class="section" id="Accuracy-of-estimation">
 <h3>Accuracy of estimation<a class="headerlink" href="#Accuracy-of-estimation" title="Permalink to this headline">¶</a></h3>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[31]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[30]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
@@ -2821,14 +2767,14 @@ Completed optimization. Total: 2 min 26 sec
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area docutils container">
-<img alt="_images/usage_quick_42_0.png" src="_images/usage_quick_42_0.png" />
+<img alt="_images/usage_quick_41_0.png" src="_images/usage_quick_41_0.png" />
 </div>
 </div>
 </div>
 <div class="section" id="Get-parameter-value">
 <h3>Get parameter value<a class="headerlink" href="#Get-parameter-value" title="Permalink to this headline">¶</a></h3>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[32]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[31]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
@@ -2837,19 +2783,19 @@ Completed optimization. Total: 2 min 26 sec
 </div>
 </div>
 <div class="nboutput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[32]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[31]:
 </pre></div>
 </div>
 <div class="output_area docutils container">
 <div class="highlight"><pre>
-1.57
+1.46
 </pre></div></div>
 </div>
 </div>
 <div class="section" id="Show-parameter-history">
 <h3>Show parameter history<a class="headerlink" href="#Show-parameter-history" title="Permalink to this headline">¶</a></h3>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[33]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[32]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
@@ -2861,11 +2807,11 @@ Completed optimization. Total: 2 min 26 sec
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area docutils container">
-<img alt="_images/usage_quick_46_0.png" src="_images/usage_quick_46_0.png" />
+<img alt="_images/usage_quick_45_0.png" src="_images/usage_quick_45_0.png" />
 </div>
 </div>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[34]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[33]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
@@ -2877,14 +2823,14 @@ Completed optimization. Total: 2 min 26 sec
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area docutils container">
-<img alt="_images/usage_quick_47_0.png" src="_images/usage_quick_47_0.png" />
+<img alt="_images/usage_quick_46_0.png" src="_images/usage_quick_46_0.png" />
 </div>
 </div>
 </div>
 <div class="section" id="Show-the-history-of-reproduction-number">
 <h3>Show the history of reproduction number<a class="headerlink" href="#Show-the-history-of-reproduction-number" title="Permalink to this headline">¶</a></h3>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[35]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[34]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
@@ -2896,14 +2842,14 @@ Completed optimization. Total: 2 min 26 sec
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area docutils container">
-<img alt="_images/usage_quick_49_0.png" src="_images/usage_quick_49_0.png" />
+<img alt="_images/usage_quick_48_0.png" src="_images/usage_quick_48_0.png" />
 </div>
 </div>
 </div>
 <div class="section" id="Simulate-the-number-of-cases">
 <h3>Simulate the number of cases<a class="headerlink" href="#Simulate-the-number-of-cases" title="Permalink to this headline">¶</a></h3>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[36]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[35]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
@@ -2919,11 +2865,11 @@ Completed optimization. Total: 2 min 26 sec
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area docutils container">
-<img alt="_images/usage_quick_51_0.png" src="_images/usage_quick_51_0.png" />
+<img alt="_images/usage_quick_50_0.png" src="_images/usage_quick_50_0.png" />
 </div>
 </div>
 <div class="nboutput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[36]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[35]:
 </pre></div>
 </div>
 <div class="output_area rendered_html docutils container">
@@ -2956,42 +2902,42 @@ Completed optimization. Total: 2 min 26 sec
     <tr>
       <th>417</th>
       <td>2021-03-29</td>
-      <td>222920</td>
-      <td>2630</td>
-      <td>10468</td>
-      <td>209822</td>
+      <td>192789</td>
+      <td>2707</td>
+      <td>6547</td>
+      <td>183535</td>
     </tr>
     <tr>
       <th>418</th>
       <td>2021-03-30</td>
-      <td>224012</td>
-      <td>2639</td>
-      <td>10509</td>
-      <td>210864</td>
+      <td>193471</td>
+      <td>2714</td>
+      <td>6555</td>
+      <td>184202</td>
     </tr>
     <tr>
       <th>419</th>
       <td>2021-03-31</td>
-      <td>225108</td>
-      <td>2647</td>
-      <td>10551</td>
-      <td>211910</td>
+      <td>194154</td>
+      <td>2721</td>
+      <td>6563</td>
+      <td>184870</td>
     </tr>
     <tr>
       <th>420</th>
       <td>2021-04-01</td>
-      <td>226207</td>
-      <td>2655</td>
-      <td>10592</td>
-      <td>212960</td>
+      <td>194838</td>
+      <td>2728</td>
+      <td>6571</td>
+      <td>185539</td>
     </tr>
     <tr>
       <th>421</th>
       <td>2021-04-02</td>
-      <td>227312</td>
-      <td>2663</td>
-      <td>10634</td>
-      <td>214015</td>
+      <td>195522</td>
+      <td>2735</td>
+      <td>6578</td>
+      <td>186209</td>
     </tr>
   </tbody>
 </table>
@@ -3002,7 +2948,7 @@ Completed optimization. Total: 2 min 26 sec
 <h3>Simulate another scenario<a class="headerlink" href="#Simulate-another-scenario" title="Permalink to this headline">¶</a></h3>
 <p>If <span class="math notranslate nohighlight">\(\sigma\)</span> will be double in 30 days, how many cases will be?</p>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[37]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[36]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
@@ -3012,16 +2958,16 @@ Completed optimization. Total: 2 min 26 sec
 </div>
 </div>
 <div class="nboutput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[37]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[36]:
 </pre></div>
 </div>
 <div class="output_area docutils container">
 <div class="highlight"><pre>
-0.09934311455910727
+0.050918546611702406
 </pre></div></div>
 </div>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[38]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[37]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
@@ -3031,16 +2977,16 @@ Completed optimization. Total: 2 min 26 sec
 </div>
 </div>
 <div class="nboutput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[38]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[37]:
 </pre></div>
 </div>
 <div class="output_area docutils container">
 <div class="highlight"><pre>
-0.19868622911821454
+0.10183709322340481
 </pre></div></div>
 </div>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[39]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[38]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
@@ -3052,7 +2998,7 @@ Completed optimization. Total: 2 min 26 sec
 </div>
 </div>
 <div class="nboutput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[39]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[38]:
 </pre></div>
 </div>
 <div class="output_area rendered_html docutils container">
@@ -3086,10 +3032,10 @@ Completed optimization. Total: 2 min 26 sec
       <th>rho</th>
       <th>sigma</th>
       <th>tau</th>
-      <th>1/alpha2 [day]</th>
-      <th>alpha1 [-]</th>
       <th>1/gamma [day]</th>
       <th>1/beta [day]</th>
+      <th>alpha1 [-]</th>
+      <th>1/alpha2 [day]</th>
       <th>RMSLE</th>
       <th>Trials</th>
       <th>Runtime</th>
@@ -3126,18 +3072,18 @@ Completed optimization. Total: 2 min 26 sec
       <td>21Apr2020</td>
       <td>126529100</td>
       <td>SIR-F</td>
-      <td>4.66</td>
-      <td>0.018341</td>
-      <td>0.000174</td>
-      <td>0.104200</td>
-      <td>0.021769</td>
-      <td>1440</td>
-      <td>5760</td>
-      <td>0.018</td>
-      <td>45</td>
+      <td>4.22</td>
+      <td>0.000302</td>
+      <td>0.001063</td>
+      <td>0.052213</td>
+      <td>0.011310</td>
+      <td>720</td>
+      <td>44</td>
       <td>9</td>
-      <td>0.937856</td>
-      <td>1426</td>
+      <td>0.000</td>
+      <td>470</td>
+      <td>0.952248</td>
+      <td>1176</td>
       <td>1 min  0 sec</td>
     </tr>
     <tr>
@@ -3147,18 +3093,18 @@ Completed optimization. Total: 2 min 26 sec
       <td>06Jul2020</td>
       <td>126529100</td>
       <td>SIR-F</td>
-      <td>0.37</td>
-      <td>0.111664</td>
-      <td>0.000268</td>
-      <td>0.027925</td>
-      <td>0.065885</td>
-      <td>1440</td>
-      <td>3732</td>
-      <td>0.112</td>
-      <td>15</td>
-      <td>35</td>
-      <td>0.916719</td>
-      <td>1436</td>
+      <td>0.41</td>
+      <td>0.072879</td>
+      <td>0.000561</td>
+      <td>0.015767</td>
+      <td>0.035231</td>
+      <td>720</td>
+      <td>14</td>
+      <td>31</td>
+      <td>0.073</td>
+      <td>890</td>
+      <td>0.966841</td>
+      <td>1157</td>
       <td>1 min  0 sec</td>
     </tr>
     <tr>
@@ -3168,19 +3114,19 @@ Completed optimization. Total: 2 min 26 sec
       <td>23Jul2020</td>
       <td>126529100</td>
       <td>SIR-F</td>
-      <td>1.93</td>
-      <td>0.000466</td>
-      <td>0.000080</td>
-      <td>0.133382</td>
-      <td>0.068954</td>
-      <td>1440</td>
-      <td>12426</td>
-      <td>0.000</td>
+      <td>1.94</td>
+      <td>0.001061</td>
+      <td>0.000069</td>
+      <td>0.067294</td>
+      <td>0.034619</td>
+      <td>720</td>
       <td>14</td>
       <td>7</td>
-      <td>0.0318977</td>
-      <td>175</td>
-      <td>0 min  5 sec</td>
+      <td>0.001</td>
+      <td>7224</td>
+      <td>0.0309325</td>
+      <td>1209</td>
+      <td>1 min  0 sec</td>
     </tr>
     <tr>
       <th>3rd</th>
@@ -3189,19 +3135,19 @@ Completed optimization. Total: 2 min 26 sec
       <td>01Aug2020</td>
       <td>126529100</td>
       <td>SIR-F</td>
-      <td>1.84</td>
-      <td>0.000726</td>
-      <td>0.000120</td>
-      <td>0.134241</td>
-      <td>0.072807</td>
-      <td>1440</td>
-      <td>8341</td>
-      <td>0.001</td>
+      <td>1.85</td>
+      <td>0.000589</td>
+      <td>0.000114</td>
+      <td>0.067612</td>
+      <td>0.036417</td>
+      <td>720</td>
       <td>13</td>
       <td>7</td>
-      <td>0.0192649</td>
-      <td>1065</td>
-      <td>0 min 40 sec</td>
+      <td>0.001</td>
+      <td>4397</td>
+      <td>0.0200801</td>
+      <td>694</td>
+      <td>0 min 30 sec</td>
     </tr>
     <tr>
       <th>4th</th>
@@ -3210,18 +3156,18 @@ Completed optimization. Total: 2 min 26 sec
       <td>14Aug2020</td>
       <td>126529100</td>
       <td>SIR-F</td>
-      <td>1.57</td>
-      <td>0.001253</td>
-      <td>0.000304</td>
-      <td>0.102607</td>
-      <td>0.065073</td>
-      <td>1440</td>
-      <td>3284</td>
-      <td>0.001</td>
+      <td>1.46</td>
+      <td>0.000248</td>
+      <td>0.000188</td>
+      <td>0.048609</td>
+      <td>0.033005</td>
+      <td>720</td>
       <td>15</td>
-      <td>9</td>
-      <td>0.0622607</td>
-      <td>1487</td>
+      <td>10</td>
+      <td>0.000</td>
+      <td>2659</td>
+      <td>0.075828</td>
+      <td>1270</td>
       <td>1 min  0 sec</td>
     </tr>
     <tr>
@@ -3231,60 +3177,60 @@ Completed optimization. Total: 2 min 26 sec
       <td>29Aug2020</td>
       <td>126529100</td>
       <td>SIR-F</td>
-      <td>0.79</td>
-      <td>0.000844</td>
-      <td>0.000831</td>
-      <td>0.073977</td>
-      <td>0.093038</td>
-      <td>1440</td>
-      <td>1204</td>
-      <td>0.001</td>
-      <td>10</td>
+      <td>0.68</td>
+      <td>0.000488</td>
+      <td>0.000526</td>
+      <td>0.036613</td>
+      <td>0.053280</td>
+      <td>720</td>
+      <td>9</td>
       <td>13</td>
-      <td>0.0247304</td>
-      <td>478</td>
-      <td>0 min 15 sec</td>
+      <td>0.000</td>
+      <td>950</td>
+      <td>0.108374</td>
+      <td>134</td>
+      <td>0 min  5 sec</td>
     </tr>
     <tr>
       <th>6th</th>
       <td>Past</td>
       <td>30Aug2020</td>
-      <td>10Sep2020</td>
+      <td>11Sep2020</td>
       <td>126529100</td>
       <td>SIR-F</td>
-      <td>0.67</td>
-      <td>0.000277</td>
-      <td>0.001423</td>
-      <td>0.063356</td>
-      <td>0.092474</td>
-      <td>1440</td>
-      <td>702</td>
-      <td>0.000</td>
+      <td>0.70</td>
+      <td>0.000350</td>
+      <td>0.000711</td>
+      <td>0.034064</td>
+      <td>0.047663</td>
+      <td>720</td>
       <td>10</td>
-      <td>15</td>
-      <td>0.012941</td>
-      <td>320</td>
+      <td>14</td>
+      <td>0.000</td>
+      <td>702</td>
+      <td>0.0133538</td>
+      <td>257</td>
       <td>0 min 10 sec</td>
     </tr>
     <tr>
       <th>7th</th>
       <td>Past</td>
-      <td>11Sep2020</td>
+      <td>12Sep2020</td>
       <td>25Sep2020</td>
       <td>126529100</td>
       <td>SIR-F</td>
-      <td>0.85</td>
-      <td>0.016642</td>
-      <td>0.000046</td>
-      <td>0.085008</td>
-      <td>0.097873</td>
-      <td>1440</td>
-      <td>21764</td>
-      <td>0.017</td>
-      <td>10</td>
+      <td>0.83</td>
+      <td>0.016205</td>
+      <td>0.000005</td>
+      <td>0.037241</td>
+      <td>0.044173</td>
+      <td>720</td>
       <td>11</td>
-      <td>0.0313364</td>
-      <td>556</td>
+      <td>13</td>
+      <td>0.016</td>
+      <td>109582</td>
+      <td>0.0309925</td>
+      <td>392</td>
       <td>0 min 15 sec</td>
     </tr>
     <tr>
@@ -3294,58 +3240,58 @@ Completed optimization. Total: 2 min 26 sec
       <td>08Oct2020</td>
       <td>126529100</td>
       <td>SIR-F</td>
-      <td>1.01</td>
-      <td>0.000972</td>
-      <td>0.001053</td>
-      <td>0.093356</td>
-      <td>0.091061</td>
-      <td>1440</td>
-      <td>949</td>
-      <td>0.001</td>
+      <td>1.02</td>
+      <td>0.000443</td>
+      <td>0.000559</td>
+      <td>0.046981</td>
+      <td>0.045396</td>
+      <td>720</td>
+      <td>11</td>
       <td>10</td>
-      <td>10</td>
-      <td>0.0179457</td>
-      <td>1818</td>
-      <td>1 min  0 sec</td>
+      <td>0.000</td>
+      <td>894</td>
+      <td>0.0198794</td>
+      <td>805</td>
+      <td>0 min 30 sec</td>
     </tr>
     <tr>
       <th>9th</th>
       <td>Past</td>
       <td>09Oct2020</td>
-      <td>20Oct2020</td>
+      <td>21Oct2020</td>
       <td>126529100</td>
       <td>SIR-F</td>
-      <td>1.04</td>
-      <td>0.001755</td>
-      <td>0.000598</td>
-      <td>0.104236</td>
-      <td>0.099343</td>
-      <td>1440</td>
-      <td>1672</td>
-      <td>0.002</td>
-      <td>10</td>
+      <td>1.01</td>
+      <td>0.001072</td>
+      <td>0.000484</td>
+      <td>0.052139</td>
+      <td>0.050919</td>
+      <td>720</td>
       <td>9</td>
-      <td>0.0185253</td>
-      <td>722</td>
-      <td>0 min 25 sec</td>
+      <td>9</td>
+      <td>0.001</td>
+      <td>1032</td>
+      <td>0.019816</td>
+      <td>1265</td>
+      <td>1 min  0 sec</td>
     </tr>
     <tr>
       <th>10th</th>
       <td>Future</td>
-      <td>21Oct2020</td>
-      <td>19Nov2020</td>
+      <td>22Oct2020</td>
+      <td>20Nov2020</td>
       <td>126529100</td>
       <td>SIR-F</td>
-      <td>1.04</td>
-      <td>0.001755</td>
-      <td>0.000598</td>
-      <td>0.104236</td>
-      <td>0.099343</td>
-      <td>1440</td>
-      <td>1672</td>
-      <td>0.002</td>
-      <td>10</td>
+      <td>1.01</td>
+      <td>0.001072</td>
+      <td>0.000484</td>
+      <td>0.052139</td>
+      <td>0.050919</td>
+      <td>720</td>
       <td>9</td>
+      <td>9</td>
+      <td>0.001</td>
+      <td>1032</td>
       <td>-</td>
       <td>-</td>
       <td>-</td>
@@ -3353,20 +3299,20 @@ Completed optimization. Total: 2 min 26 sec
     <tr>
       <th>11th</th>
       <td>Future</td>
-      <td>20Nov2020</td>
+      <td>21Nov2020</td>
       <td>01Apr2021</td>
       <td>126529100</td>
       <td>SIR-F</td>
-      <td>1.04</td>
-      <td>0.001755</td>
-      <td>0.000598</td>
-      <td>0.104236</td>
-      <td>0.099343</td>
-      <td>1440</td>
-      <td>1672</td>
-      <td>0.002</td>
-      <td>10</td>
+      <td>1.01</td>
+      <td>0.001072</td>
+      <td>0.000484</td>
+      <td>0.052139</td>
+      <td>0.050919</td>
+      <td>720</td>
       <td>9</td>
+      <td>9</td>
+      <td>0.001</td>
+      <td>1032</td>
       <td>-</td>
       <td>-</td>
       <td>-</td>
@@ -3379,18 +3325,18 @@ Completed optimization. Total: 2 min 26 sec
       <td>21Apr2020</td>
       <td>126529100</td>
       <td>SIR-F</td>
-      <td>4.66</td>
-      <td>0.018341</td>
-      <td>0.000174</td>
-      <td>0.104200</td>
-      <td>0.021769</td>
-      <td>1440</td>
-      <td>5760</td>
-      <td>0.018</td>
-      <td>45</td>
+      <td>4.22</td>
+      <td>0.000302</td>
+      <td>0.001063</td>
+      <td>0.052213</td>
+      <td>0.011310</td>
+      <td>720</td>
+      <td>44</td>
       <td>9</td>
-      <td>0.937856</td>
-      <td>1426</td>
+      <td>0.000</td>
+      <td>470</td>
+      <td>0.952248</td>
+      <td>1176</td>
       <td>1 min  0 sec</td>
     </tr>
     <tr>
@@ -3400,18 +3346,18 @@ Completed optimization. Total: 2 min 26 sec
       <td>06Jul2020</td>
       <td>126529100</td>
       <td>SIR-F</td>
-      <td>0.37</td>
-      <td>0.111664</td>
-      <td>0.000268</td>
-      <td>0.027925</td>
-      <td>0.065885</td>
-      <td>1440</td>
-      <td>3732</td>
-      <td>0.112</td>
-      <td>15</td>
-      <td>35</td>
-      <td>0.916719</td>
-      <td>1436</td>
+      <td>0.41</td>
+      <td>0.072879</td>
+      <td>0.000561</td>
+      <td>0.015767</td>
+      <td>0.035231</td>
+      <td>720</td>
+      <td>14</td>
+      <td>31</td>
+      <td>0.073</td>
+      <td>890</td>
+      <td>0.966841</td>
+      <td>1157</td>
       <td>1 min  0 sec</td>
     </tr>
     <tr>
@@ -3421,19 +3367,19 @@ Completed optimization. Total: 2 min 26 sec
       <td>23Jul2020</td>
       <td>126529100</td>
       <td>SIR-F</td>
-      <td>1.93</td>
-      <td>0.000466</td>
-      <td>0.000080</td>
-      <td>0.133382</td>
-      <td>0.068954</td>
-      <td>1440</td>
-      <td>12426</td>
-      <td>0.000</td>
+      <td>1.94</td>
+      <td>0.001061</td>
+      <td>0.000069</td>
+      <td>0.067294</td>
+      <td>0.034619</td>
+      <td>720</td>
       <td>14</td>
       <td>7</td>
-      <td>0.0318977</td>
-      <td>175</td>
-      <td>0 min  5 sec</td>
+      <td>0.001</td>
+      <td>7224</td>
+      <td>0.0309325</td>
+      <td>1209</td>
+      <td>1 min  0 sec</td>
     </tr>
     <tr>
       <th>3rd</th>
@@ -3442,19 +3388,19 @@ Completed optimization. Total: 2 min 26 sec
       <td>01Aug2020</td>
       <td>126529100</td>
       <td>SIR-F</td>
-      <td>1.84</td>
-      <td>0.000726</td>
-      <td>0.000120</td>
-      <td>0.134241</td>
-      <td>0.072807</td>
-      <td>1440</td>
-      <td>8341</td>
-      <td>0.001</td>
+      <td>1.85</td>
+      <td>0.000589</td>
+      <td>0.000114</td>
+      <td>0.067612</td>
+      <td>0.036417</td>
+      <td>720</td>
       <td>13</td>
       <td>7</td>
-      <td>0.0192649</td>
-      <td>1065</td>
-      <td>0 min 40 sec</td>
+      <td>0.001</td>
+      <td>4397</td>
+      <td>0.0200801</td>
+      <td>694</td>
+      <td>0 min 30 sec</td>
     </tr>
     <tr>
       <th>4th</th>
@@ -3463,18 +3409,18 @@ Completed optimization. Total: 2 min 26 sec
       <td>14Aug2020</td>
       <td>126529100</td>
       <td>SIR-F</td>
-      <td>1.57</td>
-      <td>0.001253</td>
-      <td>0.000304</td>
-      <td>0.102607</td>
-      <td>0.065073</td>
-      <td>1440</td>
-      <td>3284</td>
-      <td>0.001</td>
+      <td>1.46</td>
+      <td>0.000248</td>
+      <td>0.000188</td>
+      <td>0.048609</td>
+      <td>0.033005</td>
+      <td>720</td>
       <td>15</td>
-      <td>9</td>
-      <td>0.0622607</td>
-      <td>1487</td>
+      <td>10</td>
+      <td>0.000</td>
+      <td>2659</td>
+      <td>0.075828</td>
+      <td>1270</td>
       <td>1 min  0 sec</td>
     </tr>
     <tr>
@@ -3484,60 +3430,60 @@ Completed optimization. Total: 2 min 26 sec
       <td>29Aug2020</td>
       <td>126529100</td>
       <td>SIR-F</td>
-      <td>0.79</td>
-      <td>0.000844</td>
-      <td>0.000831</td>
-      <td>0.073977</td>
-      <td>0.093038</td>
-      <td>1440</td>
-      <td>1204</td>
-      <td>0.001</td>
-      <td>10</td>
+      <td>0.68</td>
+      <td>0.000488</td>
+      <td>0.000526</td>
+      <td>0.036613</td>
+      <td>0.053280</td>
+      <td>720</td>
+      <td>9</td>
       <td>13</td>
-      <td>0.0247304</td>
-      <td>478</td>
-      <td>0 min 15 sec</td>
+      <td>0.000</td>
+      <td>950</td>
+      <td>0.108374</td>
+      <td>134</td>
+      <td>0 min  5 sec</td>
     </tr>
     <tr>
       <th>6th</th>
       <td>Past</td>
       <td>30Aug2020</td>
-      <td>10Sep2020</td>
+      <td>11Sep2020</td>
       <td>126529100</td>
       <td>SIR-F</td>
-      <td>0.67</td>
-      <td>0.000277</td>
-      <td>0.001423</td>
-      <td>0.063356</td>
-      <td>0.092474</td>
-      <td>1440</td>
-      <td>702</td>
-      <td>0.000</td>
+      <td>0.70</td>
+      <td>0.000350</td>
+      <td>0.000711</td>
+      <td>0.034064</td>
+      <td>0.047663</td>
+      <td>720</td>
       <td>10</td>
-      <td>15</td>
-      <td>0.012941</td>
-      <td>320</td>
+      <td>14</td>
+      <td>0.000</td>
+      <td>702</td>
+      <td>0.0133538</td>
+      <td>257</td>
       <td>0 min 10 sec</td>
     </tr>
     <tr>
       <th>7th</th>
       <td>Past</td>
-      <td>11Sep2020</td>
+      <td>12Sep2020</td>
       <td>25Sep2020</td>
       <td>126529100</td>
       <td>SIR-F</td>
-      <td>0.85</td>
-      <td>0.016642</td>
-      <td>0.000046</td>
-      <td>0.085008</td>
-      <td>0.097873</td>
-      <td>1440</td>
-      <td>21764</td>
-      <td>0.017</td>
-      <td>10</td>
+      <td>0.83</td>
+      <td>0.016205</td>
+      <td>0.000005</td>
+      <td>0.037241</td>
+      <td>0.044173</td>
+      <td>720</td>
       <td>11</td>
-      <td>0.0313364</td>
-      <td>556</td>
+      <td>13</td>
+      <td>0.016</td>
+      <td>109582</td>
+      <td>0.0309925</td>
+      <td>392</td>
       <td>0 min 15 sec</td>
     </tr>
     <tr>
@@ -3547,58 +3493,58 @@ Completed optimization. Total: 2 min 26 sec
       <td>08Oct2020</td>
       <td>126529100</td>
       <td>SIR-F</td>
-      <td>1.01</td>
-      <td>0.000972</td>
-      <td>0.001053</td>
-      <td>0.093356</td>
-      <td>0.091061</td>
-      <td>1440</td>
-      <td>949</td>
-      <td>0.001</td>
+      <td>1.02</td>
+      <td>0.000443</td>
+      <td>0.000559</td>
+      <td>0.046981</td>
+      <td>0.045396</td>
+      <td>720</td>
+      <td>11</td>
       <td>10</td>
-      <td>10</td>
-      <td>0.0179457</td>
-      <td>1818</td>
-      <td>1 min  0 sec</td>
+      <td>0.000</td>
+      <td>894</td>
+      <td>0.0198794</td>
+      <td>805</td>
+      <td>0 min 30 sec</td>
     </tr>
     <tr>
       <th>9th</th>
       <td>Past</td>
       <td>09Oct2020</td>
-      <td>20Oct2020</td>
+      <td>21Oct2020</td>
       <td>126529100</td>
       <td>SIR-F</td>
-      <td>1.04</td>
-      <td>0.001755</td>
-      <td>0.000598</td>
-      <td>0.104236</td>
-      <td>0.099343</td>
-      <td>1440</td>
-      <td>1672</td>
-      <td>0.002</td>
-      <td>10</td>
+      <td>1.01</td>
+      <td>0.001072</td>
+      <td>0.000484</td>
+      <td>0.052139</td>
+      <td>0.050919</td>
+      <td>720</td>
       <td>9</td>
-      <td>0.0185253</td>
-      <td>722</td>
-      <td>0 min 25 sec</td>
+      <td>9</td>
+      <td>0.001</td>
+      <td>1032</td>
+      <td>0.019816</td>
+      <td>1265</td>
+      <td>1 min  0 sec</td>
     </tr>
     <tr>
       <th>10th</th>
       <td>Future</td>
-      <td>21Oct2020</td>
-      <td>19Nov2020</td>
+      <td>22Oct2020</td>
+      <td>20Nov2020</td>
       <td>126529100</td>
       <td>SIR-F</td>
-      <td>1.04</td>
-      <td>0.001755</td>
-      <td>0.000598</td>
-      <td>0.104236</td>
-      <td>0.099343</td>
-      <td>1440</td>
-      <td>1672</td>
-      <td>0.002</td>
-      <td>10</td>
+      <td>1.01</td>
+      <td>0.001072</td>
+      <td>0.000484</td>
+      <td>0.052139</td>
+      <td>0.050919</td>
+      <td>720</td>
       <td>9</td>
+      <td>9</td>
+      <td>0.001</td>
+      <td>1032</td>
       <td>-</td>
       <td>-</td>
       <td>-</td>
@@ -3606,20 +3552,20 @@ Completed optimization. Total: 2 min 26 sec
     <tr>
       <th>11th</th>
       <td>Future</td>
-      <td>20Nov2020</td>
+      <td>21Nov2020</td>
       <td>01Apr2021</td>
       <td>126529100</td>
       <td>SIR-F</td>
-      <td>0.52</td>
-      <td>0.001755</td>
-      <td>0.000598</td>
-      <td>0.104236</td>
-      <td>0.198686</td>
-      <td>1440</td>
-      <td>1672</td>
-      <td>0.002</td>
-      <td>5</td>
+      <td>0.51</td>
+      <td>0.001072</td>
+      <td>0.000484</td>
+      <td>0.052139</td>
+      <td>0.101837</td>
+      <td>720</td>
+      <td>4</td>
       <td>9</td>
+      <td>0.001</td>
+      <td>1032</td>
       <td>-</td>
       <td>-</td>
       <td>-</td>
@@ -3629,7 +3575,7 @@ Completed optimization. Total: 2 min 26 sec
 </div></div>
 </div>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[40]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[39]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
@@ -3641,11 +3587,11 @@ Completed optimization. Total: 2 min 26 sec
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area docutils container">
-<img alt="_images/usage_quick_56_0.png" src="_images/usage_quick_56_0.png" />
+<img alt="_images/usage_quick_55_0.png" src="_images/usage_quick_55_0.png" />
 </div>
 </div>
 <div class="nboutput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[40]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[39]:
 </pre></div>
 </div>
 <div class="output_area rendered_html docutils container">
@@ -3678,42 +3624,42 @@ Completed optimization. Total: 2 min 26 sec
     <tr>
       <th>417</th>
       <td>2021-03-29</td>
-      <td>119703</td>
-      <td>1856</td>
+      <td>117795</td>
+      <td>1929</td>
       <td>0</td>
-      <td>117847</td>
+      <td>115866</td>
     </tr>
     <tr>
       <th>418</th>
       <td>2021-03-30</td>
-      <td>119703</td>
-      <td>1856</td>
+      <td>117795</td>
+      <td>1929</td>
       <td>0</td>
-      <td>117847</td>
+      <td>115866</td>
     </tr>
     <tr>
       <th>419</th>
       <td>2021-03-31</td>
-      <td>119703</td>
-      <td>1856</td>
+      <td>117795</td>
+      <td>1929</td>
       <td>0</td>
-      <td>117847</td>
+      <td>115866</td>
     </tr>
     <tr>
       <th>420</th>
       <td>2021-04-01</td>
-      <td>119703</td>
-      <td>1856</td>
+      <td>117795</td>
+      <td>1929</td>
       <td>0</td>
-      <td>117847</td>
+      <td>115866</td>
     </tr>
     <tr>
       <th>421</th>
       <td>2021-04-02</td>
-      <td>119703</td>
-      <td>1856</td>
+      <td>117795</td>
+      <td>1929</td>
       <td>0</td>
-      <td>117847</td>
+      <td>115866</td>
     </tr>
   </tbody>
 </table>
@@ -3722,8 +3668,9 @@ Completed optimization. Total: 2 min 26 sec
 </div>
 <div class="section" id="Compare-the-scenarios">
 <h3>Compare the scenarios<a class="headerlink" href="#Compare-the-scenarios" title="Permalink to this headline">¶</a></h3>
+<p>We will compare the scenarios with representative values, reproduction number and parameter values.</p>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[41]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[40]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
@@ -3732,7 +3679,7 @@ Completed optimization. Total: 2 min 26 sec
 </div>
 </div>
 <div class="nboutput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[41]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[40]:
 </pre></div>
 </div>
 <div class="output_area rendered_html docutils container">
@@ -3765,32 +3712,48 @@ Completed optimization. Total: 2 min 26 sec
   <tbody>
     <tr>
       <th>Main</th>
-      <td>15246</td>
+      <td>14137</td>
       <td>14Aug2020</td>
-      <td>227312</td>
-      <td>10634</td>
-      <td>2663</td>
-      <td>1.04</td>
+      <td>195522</td>
+      <td>6578</td>
+      <td>2735</td>
+      <td>1.01</td>
     </tr>
     <tr>
       <th>Medicine</th>
-      <td>15246</td>
+      <td>14137</td>
       <td>14Aug2020</td>
-      <td>119703</td>
+      <td>117795</td>
       <td>0</td>
-      <td>1856</td>
-      <td>0.52</td>
+      <td>1929</td>
+      <td>0.51</td>
     </tr>
   </tbody>
 </table>
 </div></div>
 </div>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[42]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[41]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
 <span></span><span class="n">_</span> <span class="o">=</span> <span class="n">snl</span><span class="o">.</span><span class="n">history</span><span class="p">(</span><span class="n">target</span><span class="o">=</span><span class="s2">&quot;Rt&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="_images/usage_quick_58_0.png" src="_images/usage_quick_58_0.png" />
+</div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[42]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">_</span> <span class="o">=</span> <span class="n">snl</span><span class="o">.</span><span class="n">history</span><span class="p">(</span><span class="n">target</span><span class="o">=</span><span class="s2">&quot;rho&quot;</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -3806,7 +3769,7 @@ Completed optimization. Total: 2 min 26 sec
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="n">_</span> <span class="o">=</span> <span class="n">snl</span><span class="o">.</span><span class="n">history</span><span class="p">(</span><span class="n">target</span><span class="o">=</span><span class="s2">&quot;rho&quot;</span><span class="p">)</span>
+<span></span><span class="n">_</span> <span class="o">=</span> <span class="n">snl</span><span class="o">.</span><span class="n">history</span><span class="p">(</span><span class="n">target</span><span class="o">=</span><span class="s2">&quot;sigma&quot;</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -3822,7 +3785,7 @@ Completed optimization. Total: 2 min 26 sec
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="n">_</span> <span class="o">=</span> <span class="n">snl</span><span class="o">.</span><span class="n">history</span><span class="p">(</span><span class="n">target</span><span class="o">=</span><span class="s2">&quot;sigma&quot;</span><span class="p">)</span>
+<span></span><span class="n">_</span> <span class="o">=</span> <span class="n">snl</span><span class="o">.</span><span class="n">history</span><span class="p">(</span><span class="n">target</span><span class="o">=</span><span class="s2">&quot;Infected&quot;</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -3833,27 +3796,12 @@ Completed optimization. Total: 2 min 26 sec
 <img alt="_images/usage_quick_61_0.png" src="_images/usage_quick_61_0.png" />
 </div>
 </div>
-<div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[45]:
-</pre></div>
-</div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="n">_</span> <span class="o">=</span> <span class="n">snl</span><span class="o">.</span><span class="n">history</span><span class="p">(</span><span class="n">target</span><span class="o">=</span><span class="s2">&quot;Infected&quot;</span><span class="p">)</span>
-</pre></div>
-</div>
-</div>
-<div class="nboutput nblast docutils container">
-<div class="prompt empty docutils container">
-</div>
-<div class="output_area docutils container">
-<img alt="_images/usage_quick_62_0.png" src="_images/usage_quick_62_0.png" />
-</div>
-</div>
 </div>
 <div class="section" id="Change-rate-of-parameters-in-main-scenario">
 <h3>Change rate of parameters in main scenario<a class="headerlink" href="#Change-rate-of-parameters-in-main-scenario" title="Permalink to this headline">¶</a></h3>
+<p>History of each parameter will be shown. Values will be divided by the values in 0th phase.</p>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[46]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[45]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
@@ -3865,7 +3813,7 @@ Completed optimization. Total: 2 min 26 sec
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area docutils container">
-<img alt="_images/usage_quick_64_0.png" src="_images/usage_quick_64_0.png" />
+<img alt="_images/usage_quick_63_0.png" src="_images/usage_quick_63_0.png" />
 </div>
 </div>
 </div>
@@ -3874,11 +3822,12 @@ Completed optimization. Total: 2 min 26 sec
 <h2>Retrospective analysis<a class="headerlink" href="#Retrospective-analysis" title="Permalink to this headline">¶</a></h2>
 <p>We can evaluate the impact of measures using past records. How many people were infected if the parameter values have not changed sinse 01Sep2020?</p>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[47]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[46]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="n">snl_retro</span> <span class="o">=</span> <span class="n">cs</span><span class="o">.</span><span class="n">Scenario</span><span class="p">(</span><span class="n">jhu_data</span><span class="p">,</span> <span class="n">population_data</span><span class="p">,</span> <span class="s2">&quot;Japan&quot;</span><span class="p">)</span>
+<span></span><span class="c1"># Perform retrospective analysis</span>
+<span class="n">snl_retro</span> <span class="o">=</span> <span class="n">cs</span><span class="o">.</span><span class="n">Scenario</span><span class="p">(</span><span class="n">jhu_data</span><span class="p">,</span> <span class="n">population_data</span><span class="p">,</span> <span class="s2">&quot;Japan&quot;</span><span class="p">)</span>
 <span class="n">snl_retro</span><span class="o">.</span><span class="n">retrospective</span><span class="p">(</span><span class="s2">&quot;01Sep2020&quot;</span><span class="p">,</span> <span class="n">model</span><span class="o">=</span><span class="n">cs</span><span class="o">.</span><span class="n">SIRF</span><span class="p">,</span> <span class="n">control</span><span class="o">=</span><span class="s2">&quot;Main&quot;</span><span class="p">,</span> <span class="n">target</span><span class="o">=</span><span class="s2">&quot;Retrospective&quot;</span><span class="p">)</span>
 </pre></div>
 </div>
@@ -3891,36 +3840,38 @@ Completed optimization. Total: 2 min 26 sec
 
 &lt;SIR-F model: parameter estimation&gt;
 Running optimization with 4 CPUs...
-        10th phase (09Oct2020 - 20Oct2020): finished  694 trials in 0 min 25 sec
-         2nd phase (07Jul2020 - 23Jul2020): finished  150 trials in 0 min  5 sec
-         3rd phase (24Jul2020 - 01Aug2020): finished 1038 trials in 0 min 45 sec
-         0th phase (06Feb2020 - 21Apr2020): finished 1313 trials in 1 min  0 sec         1st phase (22Apr2020 - 06Jul2020): finished 1332 trials in 1 min  0 sec
-
-         5th phase (15Aug2020 - 29Aug2020): finished  472 trials in 0 min 15 sec
-         4th phase (02Aug2020 - 14Aug2020): finished 1314 trials in 1 min  0 sec
-         6th phase (30Aug2020 - 31Aug2020): finished  227 trials in 0 min  5 sec
-         7th phase (01Sep2020 - 10Sep2020): finished  176 trials in 0 min  5 sec
-         8th phase (11Sep2020 - 25Sep2020): finished  437 trials in 0 min 10 sec
-         9th phase (26Sep2020 - 08Oct2020): finished 1856 trials in 1 min  0 sec
-Completed optimization. Total: 2 min 31 sec
+        10th phase (09Oct2020 - 21Oct2020): finished 1283 trials in 1 min  0 sec
+         3rd phase (24Jul2020 - 01Aug2020): finished  609 trials in 0 min 25 sec
+         2nd phase (07Jul2020 - 23Jul2020): finished 1208 trials in 1 min  0 sec
+         0th phase (06Feb2020 - 21Apr2020): finished 1188 trials in 1 min  0 sec
+         1st phase (22Apr2020 - 06Jul2020): finished 1156 trials in 1 min  0 sec
+         5th phase (15Aug2020 - 29Aug2020): finished  142 trials in 0 min  5 sec
+         6th phase (30Aug2020 - 31Aug2020): finished  196 trials in 0 min  5 sec
+         7th phase (01Sep2020 - 11Sep2020): finished  264 trials in 0 min 10 sec
+         8th phase (12Sep2020 - 25Sep2020): finished  268 trials in 0 min 10 sec
+         4th phase (02Aug2020 - 14Aug2020): finished 1234 trials in 1 min  0 sec
+         9th phase (26Sep2020 - 08Oct2020): finished  797 trials in 0 min 30 sec
+Completed optimization. Total: 2 min 36 sec
 
 &lt;SIR-F model: parameter estimation&gt;
 Running optimization with 4 CPUs...
-         7th phase (01Sep2020 - 20Oct2020): finished 5742 trials in 1 min  0 sec
+         7th phase (01Sep2020 - 21Oct2020): finished 4547 trials in 1 min  0 sec
 Completed optimization. Total: 1 min  0 sec
 </pre></div></div>
 </div>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[48]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[47]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="n">snl_retro</span><span class="o">.</span><span class="n">summary</span><span class="p">()</span>
+<span></span><span class="c1"># Show the summary of estimation</span>
+<span class="n">cols</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;Start&quot;</span><span class="p">,</span> <span class="s2">&quot;End&quot;</span><span class="p">,</span> <span class="s2">&quot;ODE&quot;</span><span class="p">,</span> <span class="s2">&quot;Rt&quot;</span><span class="p">,</span> <span class="o">*</span><span class="n">cs</span><span class="o">.</span><span class="n">SIRF</span><span class="o">.</span><span class="n">PARAMETERS</span><span class="p">]</span> <span class="o">+</span> <span class="p">[</span><span class="s2">&quot;RMSLE&quot;</span><span class="p">,</span> <span class="s2">&quot;Trials&quot;</span><span class="p">,</span> <span class="s2">&quot;Runtime&quot;</span><span class="p">]</span>
+<span class="n">snl_retro</span><span class="o">.</span><span class="n">summary</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="n">cols</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
 <div class="nboutput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[48]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[47]:
 </pre></div>
 </div>
 <div class="output_area rendered_html docutils container">
@@ -3943,21 +3894,14 @@ Completed optimization. Total: 1 min  0 sec
     <tr style="text-align: right;">
       <th></th>
       <th></th>
-      <th>Type</th>
       <th>Start</th>
       <th>End</th>
-      <th>Population</th>
       <th>ODE</th>
       <th>Rt</th>
       <th>theta</th>
       <th>kappa</th>
       <th>rho</th>
       <th>sigma</th>
-      <th>tau</th>
-      <th>1/alpha2 [day]</th>
-      <th>alpha1 [-]</th>
-      <th>1/gamma [day]</th>
-      <th>1/beta [day]</th>
       <th>RMSLE</th>
       <th>Trials</th>
       <th>Runtime</th>
@@ -3976,415 +3920,275 @@ Completed optimization. Total: 1 min  0 sec
       <th></th>
       <th></th>
       <th></th>
-      <th></th>
-      <th></th>
-      <th></th>
-      <th></th>
-      <th></th>
-      <th></th>
-      <th></th>
     </tr>
   </thead>
   <tbody>
     <tr>
       <th rowspan="11" valign="top">Main</th>
       <th>0th</th>
-      <td>Past</td>
       <td>06Feb2020</td>
       <td>21Apr2020</td>
-      <td>126529100</td>
       <td>SIR-F</td>
-      <td>4.66</td>
-      <td>0.018341</td>
-      <td>0.000174</td>
-      <td>0.104200</td>
-      <td>0.021769</td>
-      <td>1440</td>
-      <td>5760</td>
-      <td>0.018</td>
-      <td>45</td>
-      <td>9</td>
-      <td>0.937856</td>
-      <td>1313</td>
+      <td>4.22</td>
+      <td>0.000302</td>
+      <td>0.001063</td>
+      <td>0.052213</td>
+      <td>0.011310</td>
+      <td>0.952248</td>
+      <td>1188</td>
       <td>1 min  0 sec</td>
     </tr>
     <tr>
       <th>1st</th>
-      <td>Past</td>
       <td>22Apr2020</td>
       <td>06Jul2020</td>
-      <td>126529100</td>
       <td>SIR-F</td>
-      <td>0.37</td>
-      <td>0.111664</td>
-      <td>0.000268</td>
-      <td>0.027925</td>
-      <td>0.065885</td>
-      <td>1440</td>
-      <td>3732</td>
-      <td>0.112</td>
-      <td>15</td>
-      <td>35</td>
-      <td>0.916719</td>
-      <td>1332</td>
+      <td>0.41</td>
+      <td>0.072879</td>
+      <td>0.000561</td>
+      <td>0.015767</td>
+      <td>0.035231</td>
+      <td>0.966841</td>
+      <td>1156</td>
       <td>1 min  0 sec</td>
     </tr>
     <tr>
       <th>2nd</th>
-      <td>Past</td>
       <td>07Jul2020</td>
       <td>23Jul2020</td>
-      <td>126529100</td>
       <td>SIR-F</td>
-      <td>1.93</td>
-      <td>0.000466</td>
-      <td>0.000080</td>
-      <td>0.133382</td>
-      <td>0.068954</td>
-      <td>1440</td>
-      <td>12426</td>
-      <td>0.000</td>
-      <td>14</td>
-      <td>7</td>
-      <td>0.031898</td>
-      <td>150</td>
-      <td>0 min  5 sec</td>
+      <td>1.94</td>
+      <td>0.001061</td>
+      <td>0.000069</td>
+      <td>0.067294</td>
+      <td>0.034619</td>
+      <td>0.030932</td>
+      <td>1208</td>
+      <td>1 min  0 sec</td>
     </tr>
     <tr>
       <th>3rd</th>
-      <td>Past</td>
       <td>24Jul2020</td>
       <td>01Aug2020</td>
-      <td>126529100</td>
       <td>SIR-F</td>
-      <td>1.84</td>
-      <td>0.000726</td>
-      <td>0.000120</td>
-      <td>0.134241</td>
-      <td>0.072807</td>
-      <td>1440</td>
-      <td>8341</td>
-      <td>0.001</td>
-      <td>13</td>
-      <td>7</td>
-      <td>0.019265</td>
-      <td>1038</td>
-      <td>0 min 45 sec</td>
+      <td>1.85</td>
+      <td>0.000589</td>
+      <td>0.000114</td>
+      <td>0.067612</td>
+      <td>0.036417</td>
+      <td>0.020080</td>
+      <td>609</td>
+      <td>0 min 25 sec</td>
     </tr>
     <tr>
       <th>4th</th>
-      <td>Past</td>
       <td>02Aug2020</td>
       <td>14Aug2020</td>
-      <td>126529100</td>
       <td>SIR-F</td>
-      <td>1.54</td>
-      <td>0.000361</td>
-      <td>0.000256</td>
-      <td>0.102521</td>
-      <td>0.066353</td>
-      <td>1440</td>
-      <td>3904</td>
-      <td>0.000</td>
-      <td>15</td>
-      <td>9</td>
-      <td>0.063176</td>
-      <td>1314</td>
+      <td>1.46</td>
+      <td>0.000248</td>
+      <td>0.000188</td>
+      <td>0.048609</td>
+      <td>0.033005</td>
+      <td>0.075828</td>
+      <td>1234</td>
       <td>1 min  0 sec</td>
     </tr>
     <tr>
       <th>5th</th>
-      <td>Past</td>
       <td>15Aug2020</td>
       <td>29Aug2020</td>
-      <td>126529100</td>
       <td>SIR-F</td>
-      <td>0.79</td>
-      <td>0.000844</td>
-      <td>0.000831</td>
-      <td>0.073977</td>
-      <td>0.093038</td>
-      <td>1440</td>
-      <td>1204</td>
-      <td>0.001</td>
-      <td>10</td>
-      <td>13</td>
-      <td>0.024730</td>
-      <td>472</td>
-      <td>0 min 15 sec</td>
+      <td>0.68</td>
+      <td>0.000488</td>
+      <td>0.000526</td>
+      <td>0.036613</td>
+      <td>0.053280</td>
+      <td>0.108374</td>
+      <td>142</td>
+      <td>0 min  5 sec</td>
     </tr>
     <tr>
       <th>6th</th>
-      <td>Past</td>
       <td>30Aug2020</td>
       <td>31Aug2020</td>
-      <td>126529100</td>
       <td>SIR-F</td>
       <td>0.92</td>
-      <td>0.023294</td>
-      <td>0.000043</td>
-      <td>0.061460</td>
-      <td>0.065209</td>
-      <td>1440</td>
-      <td>23018</td>
-      <td>0.023</td>
-      <td>15</td>
-      <td>16</td>
-      <td>0.000170</td>
-      <td>227</td>
+      <td>0.000321</td>
+      <td>0.000770</td>
+      <td>0.030730</td>
+      <td>0.032604</td>
+      <td>0.000008</td>
+      <td>196</td>
       <td>0 min  5 sec</td>
     </tr>
     <tr>
       <th>7th</th>
-      <td>Past</td>
       <td>01Sep2020</td>
-      <td>10Sep2020</td>
-      <td>126529100</td>
+      <td>11Sep2020</td>
       <td>SIR-F</td>
-      <td>0.69</td>
-      <td>0.000682</td>
-      <td>0.001661</td>
-      <td>0.066885</td>
-      <td>0.095150</td>
-      <td>1440</td>
-      <td>602</td>
-      <td>0.001</td>
-      <td>10</td>
-      <td>14</td>
-      <td>0.012234</td>
-      <td>176</td>
-      <td>0 min  5 sec</td>
+      <td>0.70</td>
+      <td>0.018301</td>
+      <td>0.000041</td>
+      <td>0.034474</td>
+      <td>0.047999</td>
+      <td>0.012435</td>
+      <td>264</td>
+      <td>0 min 10 sec</td>
     </tr>
     <tr>
       <th>8th</th>
-      <td>Past</td>
-      <td>11Sep2020</td>
+      <td>12Sep2020</td>
       <td>25Sep2020</td>
-      <td>126529100</td>
       <td>SIR-F</td>
-      <td>0.85</td>
-      <td>0.016642</td>
-      <td>0.000046</td>
-      <td>0.085008</td>
-      <td>0.097873</td>
-      <td>1440</td>
-      <td>21764</td>
-      <td>0.017</td>
-      <td>10</td>
-      <td>11</td>
-      <td>0.031336</td>
-      <td>437</td>
+      <td>0.80</td>
+      <td>0.018043</td>
+      <td>0.000041</td>
+      <td>0.037018</td>
+      <td>0.045235</td>
+      <td>0.042523</td>
+      <td>268</td>
       <td>0 min 10 sec</td>
     </tr>
     <tr>
       <th>9th</th>
-      <td>Past</td>
       <td>26Sep2020</td>
       <td>08Oct2020</td>
-      <td>126529100</td>
       <td>SIR-F</td>
-      <td>1.01</td>
-      <td>0.000972</td>
-      <td>0.001053</td>
-      <td>0.093356</td>
-      <td>0.091061</td>
-      <td>1440</td>
-      <td>949</td>
-      <td>0.001</td>
-      <td>10</td>
-      <td>10</td>
-      <td>0.017946</td>
-      <td>1856</td>
-      <td>1 min  0 sec</td>
+      <td>1.02</td>
+      <td>0.000443</td>
+      <td>0.000559</td>
+      <td>0.046981</td>
+      <td>0.045396</td>
+      <td>0.019879</td>
+      <td>797</td>
+      <td>0 min 30 sec</td>
     </tr>
     <tr>
       <th>10th</th>
-      <td>Past</td>
       <td>09Oct2020</td>
-      <td>20Oct2020</td>
-      <td>126529100</td>
+      <td>21Oct2020</td>
       <td>SIR-F</td>
-      <td>1.04</td>
-      <td>0.001755</td>
-      <td>0.000598</td>
-      <td>0.104236</td>
-      <td>0.099343</td>
-      <td>1440</td>
-      <td>1672</td>
-      <td>0.002</td>
-      <td>10</td>
-      <td>9</td>
-      <td>0.018525</td>
-      <td>694</td>
-      <td>0 min 25 sec</td>
+      <td>1.01</td>
+      <td>0.001072</td>
+      <td>0.000484</td>
+      <td>0.052139</td>
+      <td>0.050919</td>
+      <td>0.019816</td>
+      <td>1283</td>
+      <td>1 min  0 sec</td>
     </tr>
     <tr>
       <th rowspan="8" valign="top">Retrospective</th>
       <th>0th</th>
-      <td>Past</td>
       <td>06Feb2020</td>
       <td>21Apr2020</td>
-      <td>126529100</td>
       <td>SIR-F</td>
-      <td>4.66</td>
-      <td>0.018341</td>
-      <td>0.000174</td>
-      <td>0.104200</td>
-      <td>0.021769</td>
-      <td>1440</td>
-      <td>5760</td>
-      <td>0.018</td>
-      <td>45</td>
-      <td>9</td>
-      <td>0.937856</td>
-      <td>1313</td>
+      <td>4.22</td>
+      <td>0.000302</td>
+      <td>0.001063</td>
+      <td>0.052213</td>
+      <td>0.011310</td>
+      <td>0.952248</td>
+      <td>1188</td>
       <td>1 min  0 sec</td>
     </tr>
     <tr>
       <th>1st</th>
-      <td>Past</td>
       <td>22Apr2020</td>
       <td>06Jul2020</td>
-      <td>126529100</td>
       <td>SIR-F</td>
-      <td>0.37</td>
-      <td>0.111664</td>
-      <td>0.000268</td>
-      <td>0.027925</td>
-      <td>0.065885</td>
-      <td>1440</td>
-      <td>3732</td>
-      <td>0.112</td>
-      <td>15</td>
-      <td>35</td>
-      <td>0.916719</td>
-      <td>1332</td>
+      <td>0.41</td>
+      <td>0.072879</td>
+      <td>0.000561</td>
+      <td>0.015767</td>
+      <td>0.035231</td>
+      <td>0.966841</td>
+      <td>1156</td>
       <td>1 min  0 sec</td>
     </tr>
     <tr>
       <th>2nd</th>
-      <td>Past</td>
       <td>07Jul2020</td>
       <td>23Jul2020</td>
-      <td>126529100</td>
       <td>SIR-F</td>
-      <td>1.93</td>
-      <td>0.000466</td>
-      <td>0.000080</td>
-      <td>0.133382</td>
-      <td>0.068954</td>
-      <td>1440</td>
-      <td>12426</td>
-      <td>0.000</td>
-      <td>14</td>
-      <td>7</td>
-      <td>0.031898</td>
-      <td>150</td>
-      <td>0 min  5 sec</td>
+      <td>1.94</td>
+      <td>0.001061</td>
+      <td>0.000069</td>
+      <td>0.067294</td>
+      <td>0.034619</td>
+      <td>0.030932</td>
+      <td>1208</td>
+      <td>1 min  0 sec</td>
     </tr>
     <tr>
       <th>3rd</th>
-      <td>Past</td>
       <td>24Jul2020</td>
       <td>01Aug2020</td>
-      <td>126529100</td>
       <td>SIR-F</td>
-      <td>1.84</td>
-      <td>0.000726</td>
-      <td>0.000120</td>
-      <td>0.134241</td>
-      <td>0.072807</td>
-      <td>1440</td>
-      <td>8341</td>
-      <td>0.001</td>
-      <td>13</td>
-      <td>7</td>
-      <td>0.019265</td>
-      <td>1038</td>
-      <td>0 min 45 sec</td>
+      <td>1.85</td>
+      <td>0.000589</td>
+      <td>0.000114</td>
+      <td>0.067612</td>
+      <td>0.036417</td>
+      <td>0.020080</td>
+      <td>609</td>
+      <td>0 min 25 sec</td>
     </tr>
     <tr>
       <th>4th</th>
-      <td>Past</td>
       <td>02Aug2020</td>
       <td>14Aug2020</td>
-      <td>126529100</td>
       <td>SIR-F</td>
-      <td>1.54</td>
-      <td>0.000361</td>
-      <td>0.000256</td>
-      <td>0.102521</td>
-      <td>0.066353</td>
-      <td>1440</td>
-      <td>3904</td>
-      <td>0.000</td>
-      <td>15</td>
-      <td>9</td>
-      <td>0.063176</td>
-      <td>1314</td>
+      <td>1.46</td>
+      <td>0.000248</td>
+      <td>0.000188</td>
+      <td>0.048609</td>
+      <td>0.033005</td>
+      <td>0.075828</td>
+      <td>1234</td>
       <td>1 min  0 sec</td>
     </tr>
     <tr>
       <th>5th</th>
-      <td>Past</td>
       <td>15Aug2020</td>
       <td>29Aug2020</td>
-      <td>126529100</td>
       <td>SIR-F</td>
-      <td>0.79</td>
-      <td>0.000844</td>
-      <td>0.000831</td>
-      <td>0.073977</td>
-      <td>0.093038</td>
-      <td>1440</td>
-      <td>1204</td>
-      <td>0.001</td>
-      <td>10</td>
-      <td>13</td>
-      <td>0.024730</td>
-      <td>472</td>
-      <td>0 min 15 sec</td>
+      <td>0.68</td>
+      <td>0.000488</td>
+      <td>0.000526</td>
+      <td>0.036613</td>
+      <td>0.053280</td>
+      <td>0.108374</td>
+      <td>142</td>
+      <td>0 min  5 sec</td>
     </tr>
     <tr>
       <th>6th</th>
-      <td>Past</td>
       <td>30Aug2020</td>
       <td>31Aug2020</td>
-      <td>126529100</td>
       <td>SIR-F</td>
       <td>0.92</td>
-      <td>0.023294</td>
-      <td>0.000043</td>
-      <td>0.061460</td>
-      <td>0.065209</td>
-      <td>1440</td>
-      <td>23018</td>
-      <td>0.023</td>
-      <td>15</td>
-      <td>16</td>
-      <td>0.000170</td>
-      <td>227</td>
+      <td>0.000321</td>
+      <td>0.000770</td>
+      <td>0.030730</td>
+      <td>0.032604</td>
+      <td>0.000008</td>
+      <td>196</td>
       <td>0 min  5 sec</td>
     </tr>
     <tr>
       <th>7th</th>
-      <td>Past</td>
       <td>01Sep2020</td>
-      <td>20Oct2020</td>
-      <td>126529100</td>
+      <td>21Oct2020</td>
       <td>SIR-F</td>
       <td>0.92</td>
-      <td>0.023294</td>
-      <td>0.000043</td>
-      <td>0.061460</td>
-      <td>0.065209</td>
-      <td>1440</td>
-      <td>23018</td>
-      <td>0.023</td>
-      <td>15</td>
-      <td>16</td>
-      <td>0.472062</td>
-      <td>5742</td>
+      <td>0.000321</td>
+      <td>0.000770</td>
+      <td>0.030730</td>
+      <td>0.032604</td>
+      <td>0.478756</td>
+      <td>4547</td>
       <td>1 min  0 sec</td>
     </tr>
   </tbody>
@@ -4392,234 +4196,51 @@ Completed optimization. Total: 1 min  0 sec
 </div></div>
 </div>
 <div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[48]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="c1"># History of reproduction number</span>
+<span class="n">_</span> <span class="o">=</span> <span class="n">snl_retro</span><span class="o">.</span><span class="n">history</span><span class="p">(</span><span class="s2">&quot;Rt&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="_images/usage_quick_67_0.png" src="_images/usage_quick_67_0.png" />
+</div>
+</div>
+<div class="nbinput docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[49]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="n">snl_retro</span><span class="o">.</span><span class="n">history</span><span class="p">(</span><span class="s2">&quot;Rt&quot;</span><span class="p">)</span>
+<span></span><span class="c1"># History of Infected</span>
+<span class="n">_</span> <span class="o">=</span> <span class="n">snl_retro</span><span class="o">.</span><span class="n">history</span><span class="p">(</span><span class="s2">&quot;Infected&quot;</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
-<div class="nboutput docutils container">
+<div class="nboutput nblast docutils container">
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area docutils container">
 <img alt="_images/usage_quick_68_0.png" src="_images/usage_quick_68_0.png" />
 </div>
 </div>
-<div class="nboutput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[49]:
-</pre></div>
-</div>
-<div class="output_area rendered_html docutils container">
-<div>
-<style scoped>
-    .dataframe tbody tr th:only-of-type {
-        vertical-align: middle;
-    }
-
-    .dataframe tbody tr th {
-        vertical-align: top;
-    }
-
-    .dataframe thead th {
-        text-align: right;
-    }
-</style>
-<table border="1" class="dataframe">
-  <thead>
-    <tr style="text-align: right;">
-      <th>Scenario</th>
-      <th>Main</th>
-      <th>Retrospective</th>
-    </tr>
-    <tr>
-      <th>Date</th>
-      <th></th>
-      <th></th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <th>2020-02-06</th>
-      <td>4.66</td>
-      <td>4.66</td>
-    </tr>
-    <tr>
-      <th>2020-02-07</th>
-      <td>4.66</td>
-      <td>4.66</td>
-    </tr>
-    <tr>
-      <th>2020-02-08</th>
-      <td>4.66</td>
-      <td>4.66</td>
-    </tr>
-    <tr>
-      <th>2020-02-09</th>
-      <td>4.66</td>
-      <td>4.66</td>
-    </tr>
-    <tr>
-      <th>2020-02-10</th>
-      <td>4.66</td>
-      <td>4.66</td>
-    </tr>
-    <tr>
-      <th>...</th>
-      <td>...</td>
-      <td>...</td>
-    </tr>
-    <tr>
-      <th>2020-10-16</th>
-      <td>1.04</td>
-      <td>0.92</td>
-    </tr>
-    <tr>
-      <th>2020-10-17</th>
-      <td>1.04</td>
-      <td>0.92</td>
-    </tr>
-    <tr>
-      <th>2020-10-18</th>
-      <td>1.04</td>
-      <td>0.92</td>
-    </tr>
-    <tr>
-      <th>2020-10-19</th>
-      <td>1.04</td>
-      <td>0.92</td>
-    </tr>
-    <tr>
-      <th>2020-10-20</th>
-      <td>1.04</td>
-      <td>0.92</td>
-    </tr>
-  </tbody>
-</table>
-<p>258 rows × 2 columns</p>
-</div></div>
-</div>
 <div class="nbinput docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[50]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="n">snl_retro</span><span class="o">.</span><span class="n">history</span><span class="p">(</span><span class="s2">&quot;Infected&quot;</span><span class="p">)</span>
+<span></span><span class="c1"># Show the representative values</span>
+<span class="n">snl_retro</span><span class="o">.</span><span class="n">describe</span><span class="p">()</span>
 </pre></div>
-</div>
-</div>
-<div class="nboutput docutils container">
-<div class="prompt empty docutils container">
-</div>
-<div class="output_area docutils container">
-<img alt="_images/usage_quick_69_0.png" src="_images/usage_quick_69_0.png" />
 </div>
 </div>
 <div class="nboutput nblast docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[50]:
-</pre></div>
-</div>
-<div class="output_area rendered_html docutils container">
-<div>
-<style scoped>
-    .dataframe tbody tr th:only-of-type {
-        vertical-align: middle;
-    }
-
-    .dataframe tbody tr th {
-        vertical-align: top;
-    }
-
-    .dataframe thead th {
-        text-align: right;
-    }
-</style>
-<table border="1" class="dataframe">
-  <thead>
-    <tr style="text-align: right;">
-      <th>Scenario</th>
-      <th>Main</th>
-      <th>Retrospective</th>
-    </tr>
-    <tr>
-      <th>Date</th>
-      <th></th>
-      <th></th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <th>2020-02-06</th>
-      <td>21</td>
-      <td>21</td>
-    </tr>
-    <tr>
-      <th>2020-02-07</th>
-      <td>23</td>
-      <td>23</td>
-    </tr>
-    <tr>
-      <th>2020-02-08</th>
-      <td>25</td>
-      <td>25</td>
-    </tr>
-    <tr>
-      <th>2020-02-09</th>
-      <td>27</td>
-      <td>27</td>
-    </tr>
-    <tr>
-      <th>2020-02-10</th>
-      <td>29</td>
-      <td>29</td>
-    </tr>
-    <tr>
-      <th>...</th>
-      <td>...</td>
-      <td>...</td>
-    </tr>
-    <tr>
-      <th>2020-10-16</th>
-      <td>5442</td>
-      <td>7318</td>
-    </tr>
-    <tr>
-      <th>2020-10-17</th>
-      <td>5464</td>
-      <td>7279</td>
-    </tr>
-    <tr>
-      <th>2020-10-18</th>
-      <td>5486</td>
-      <td>7241</td>
-    </tr>
-    <tr>
-      <th>2020-10-19</th>
-      <td>5508</td>
-      <td>7203</td>
-    </tr>
-    <tr>
-      <th>2020-10-20</th>
-      <td>5530</td>
-      <td>7165</td>
-    </tr>
-  </tbody>
-</table>
-<p>258 rows × 2 columns</p>
-</div></div>
-</div>
-<div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[51]:
-</pre></div>
-</div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="n">snl_retro</span><span class="o">.</span><span class="n">describe</span><span class="p">()</span>
-</pre></div>
-</div>
-</div>
-<div class="nboutput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[51]:
 </pre></div>
 </div>
 <div class="output_area rendered_html docutils container">
@@ -4643,9 +4264,9 @@ Completed optimization. Total: 1 min  0 sec
       <th></th>
       <th>max(Infected)</th>
       <th>argmax(Infected)</th>
-      <th>Confirmed on 21Oct2020</th>
-      <th>Infected on 21Oct2020</th>
-      <th>Fatal on 21Oct2020</th>
+      <th>Confirmed on 22Oct2020</th>
+      <th>Infected on 22Oct2020</th>
+      <th>Fatal on 22Oct2020</th>
       <th>7th_Rt</th>
       <th>8th_Rt</th>
       <th>9th_Rt</th>
@@ -4655,23 +4276,23 @@ Completed optimization. Total: 1 min  0 sec
   <tbody>
     <tr>
       <th>Main</th>
-      <td>15023</td>
+      <td>14137</td>
       <td>14Aug2020</td>
-      <td>94415</td>
-      <td>5553</td>
-      <td>1667</td>
-      <td>0.69</td>
-      <td>0.85</td>
+      <td>94865</td>
+      <td>5379</td>
+      <td>1691</td>
+      <td>0.70</td>
+      <td>0.8</td>
+      <td>1.02</td>
       <td>1.01</td>
-      <td>1.04</td>
     </tr>
     <tr>
       <th>Retrospective</th>
-      <td>15023</td>
+      <td>14137</td>
       <td>14Aug2020</td>
-      <td>93433</td>
-      <td>7128</td>
-      <td>1897</td>
+      <td>93816</td>
+      <td>7059</td>
+      <td>1942</td>
       <td>0.92</td>
       <td>-</td>
       <td>-</td>

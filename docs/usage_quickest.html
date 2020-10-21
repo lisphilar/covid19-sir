@@ -429,8 +429,10 @@ div.rendered_html tbody tr:hover {
 </style>
 <div class="section" id="Usage-(quickest-version)">
 <h1>Usage (quickest version)<a class="headerlink" href="#Usage-(quickest-version)" title="Permalink to this headline">¶</a></h1>
+<p>Thank you for using CovsirPhy!! This is the quickest tour of this package to get an overview. - Download datasets - Parameter estimation with phase-dependent SIR-derived models - Simulate the number of cases</p>
 <div class="section" id="Preparation">
 <h2>Preparation<a class="headerlink" href="#Preparation" title="Permalink to this headline">¶</a></h2>
+<p>Prepare the packages.</p>
 <div class="nbinput nblast docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[1]:
 </pre></div>
@@ -556,7 +558,7 @@ div.rendered_html tbody tr:hover {
 </div>
 <div class="section" id="Start-scenario-analysis">
 <h2>Start scenario analysis<a class="headerlink" href="#Start-scenario-analysis" title="Permalink to this headline">¶</a></h2>
-<p>As an example, we will analysis the number of cases in Italy.</p>
+<p>As an example, we will analysis the number of cases in Italy. Scenario analysis can be performed with <code class="docutils literal notranslate"><span class="pre">Scenario</span></code> class. To initialize this class, we need to specify the country name.</p>
 <div class="nbinput nblast docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[7]:
 </pre></div>
@@ -569,26 +571,103 @@ div.rendered_html tbody tr:hover {
 </div>
 <div class="section" id="Check-records">
 <h2>Check records<a class="headerlink" href="#Check-records" title="Permalink to this headline">¶</a></h2>
+<p>Let’s see the records at first. <code class="docutils literal notranslate"><span class="pre">Scenario.records()</span></code> method return the records as a pandas dataframe and show a line plot.</p>
 <div class="nbinput docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[8]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="n">_</span> <span class="o">=</span> <span class="n">snl</span><span class="o">.</span><span class="n">records</span><span class="p">()</span>
+<span></span><span class="n">df</span> <span class="o">=</span> <span class="n">snl</span><span class="o">.</span><span class="n">records</span><span class="p">()</span>
+<span class="n">df</span><span class="o">.</span><span class="n">tail</span><span class="p">()</span>
 </pre></div>
 </div>
 </div>
-<div class="nboutput nblast docutils container">
+<div class="nboutput docutils container">
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area docutils container">
 <img alt="_images/usage_quickest_14_0.png" src="_images/usage_quickest_14_0.png" />
 </div>
 </div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[8]:
+</pre></div>
+</div>
+<div class="output_area rendered_html docutils container">
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>Date</th>
+      <th>Confirmed</th>
+      <th>Infected</th>
+      <th>Fatal</th>
+      <th>Recovered</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>236</th>
+      <td>2020-10-17</td>
+      <td>402536</td>
+      <td>116935</td>
+      <td>36474</td>
+      <td>249127</td>
+    </tr>
+    <tr>
+      <th>237</th>
+      <td>2020-10-18</td>
+      <td>414241</td>
+      <td>126237</td>
+      <td>36543</td>
+      <td>251461</td>
+    </tr>
+    <tr>
+      <th>238</th>
+      <td>2020-10-19</td>
+      <td>423578</td>
+      <td>134003</td>
+      <td>36616</td>
+      <td>252959</td>
+    </tr>
+    <tr>
+      <th>239</th>
+      <td>2020-10-20</td>
+      <td>434449</td>
+      <td>142739</td>
+      <td>36705</td>
+      <td>255005</td>
+    </tr>
+    <tr>
+      <th>240</th>
+      <td>2020-10-21</td>
+      <td>449648</td>
+      <td>155442</td>
+      <td>36832</td>
+      <td>257374</td>
+    </tr>
+  </tbody>
+</table>
+</div></div>
+</div>
 </div>
 <div class="section" id="S-R-trend-analysis">
 <h2>S-R trend analysis<a class="headerlink" href="#S-R-trend-analysis" title="Permalink to this headline">¶</a></h2>
-<p>S-R trend analysis finds the change points of SIR-derived ODE parameters.</p>
+<p>S-R trend analysis finds the change points of SIR-derived ODE parameters. Details will be explained in <a class="reference external" href="https://lisphilar.github.io/covid19-sir/usage_phases.html">Usage (details: phases)</a>.</p>
 <div class="nbinput docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[9]:
 </pre></div>
@@ -605,6 +684,7 @@ div.rendered_html tbody tr:hover {
 <img alt="_images/usage_quickest_16_0.png" src="_images/usage_quickest_16_0.png" />
 </div>
 </div>
+<p>Summarize the phases. - Type: “Past” or “Future” - Start: start date of the phases - End: end date of the phases - Population: total population in the phases</p>
 <div class="nbinput docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[10]:
 </pre></div>
@@ -655,13 +735,13 @@ div.rendered_html tbody tr:hover {
       <th>1st</th>
       <td>Past</td>
       <td>21Mar2020</td>
-      <td>28Mar2020</td>
+      <td>29Mar2020</td>
       <td>60483973</td>
     </tr>
     <tr>
       <th>2nd</th>
       <td>Past</td>
-      <td>29Mar2020</td>
+      <td>30Mar2020</td>
       <td>10Apr2020</td>
       <td>60483973</td>
     </tr>
@@ -669,63 +749,63 @@ div.rendered_html tbody tr:hover {
       <th>3rd</th>
       <td>Past</td>
       <td>11Apr2020</td>
-      <td>23Apr2020</td>
+      <td>24Apr2020</td>
       <td>60483973</td>
     </tr>
     <tr>
       <th>4th</th>
       <td>Past</td>
-      <td>24Apr2020</td>
-      <td>11May2020</td>
+      <td>25Apr2020</td>
+      <td>02May2020</td>
       <td>60483973</td>
     </tr>
     <tr>
       <th>5th</th>
       <td>Past</td>
-      <td>12May2020</td>
-      <td>27May2020</td>
+      <td>03May2020</td>
+      <td>17May2020</td>
       <td>60483973</td>
     </tr>
     <tr>
       <th>6th</th>
       <td>Past</td>
-      <td>28May2020</td>
-      <td>22Jul2020</td>
+      <td>18May2020</td>
+      <td>30Jun2020</td>
       <td>60483973</td>
     </tr>
     <tr>
       <th>7th</th>
       <td>Past</td>
-      <td>23Jul2020</td>
-      <td>29Aug2020</td>
+      <td>01Jul2020</td>
+      <td>24Aug2020</td>
       <td>60483973</td>
     </tr>
     <tr>
       <th>8th</th>
       <td>Past</td>
-      <td>30Aug2020</td>
-      <td>17Sep2020</td>
+      <td>25Aug2020</td>
+      <td>11Sep2020</td>
       <td>60483973</td>
     </tr>
     <tr>
       <th>9th</th>
       <td>Past</td>
-      <td>18Sep2020</td>
-      <td>01Oct2020</td>
+      <td>12Sep2020</td>
+      <td>26Sep2020</td>
       <td>60483973</td>
     </tr>
     <tr>
       <th>10th</th>
       <td>Past</td>
-      <td>02Oct2020</td>
-      <td>09Oct2020</td>
+      <td>27Sep2020</td>
+      <td>06Oct2020</td>
       <td>60483973</td>
     </tr>
     <tr>
       <th>11th</th>
       <td>Past</td>
-      <td>10Oct2020</td>
-      <td>20Oct2020</td>
+      <td>07Oct2020</td>
+      <td>21Oct2020</td>
       <td>60483973</td>
     </tr>
   </tbody>
@@ -735,7 +815,7 @@ div.rendered_html tbody tr:hover {
 </div>
 <div class="section" id="Hyperparameter-estimation-of-ODE-models">
 <h2>Hyperparameter estimation of ODE models<a class="headerlink" href="#Hyperparameter-estimation-of-ODE-models" title="Permalink to this headline">¶</a></h2>
-<p>As an example, use SIR-F model.</p>
+<p>Here, we will estimate the parameter values of SIR-derived models. As an example, we use SIR-F model. Details of models will be explained in <a class="reference external" href="https://lisphilar.github.io/covid19-sir/usage_theoretical.html">Usage (details: theoritical datasets)</a>.</p>
 <div class="nbinput docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[11]:
 </pre></div>
@@ -753,24 +833,25 @@ div.rendered_html tbody tr:hover {
 
 &lt;SIR-F model: parameter estimation&gt;
 Running optimization with 4 CPUs...
-        11th phase (10Oct2020 - 20Oct2020): finished 1064 trials in 0 min 35 sec
-         1st phase (21Mar2020 - 28Mar2020): finished 1554 trials in 1 min  0 sec
-         0th phase (24Feb2020 - 20Mar2020): finished 1529 trials in 1 min  0 sec
-         2nd phase (29Mar2020 - 10Apr2020): finished 1541 trials in 1 min  0 sec
-         3rd phase (11Apr2020 - 23Apr2020): finished 1548 trials in 1 min  0 sec
-         5th phase (12May2020 - 27May2020): finished  328 trials in 0 min 10 sec
-         6th phase (28May2020 - 22Jul2020): finished  570 trials in 0 min 20 sec
-         9th phase (18Sep2020 - 01Oct2020): finished  321 trials in 0 min 10 sec
-         4th phase (24Apr2020 - 11May2020): finished 1509 trials in 1 min  0 sec
-         7th phase (23Jul2020 - 29Aug2020): finished 1515 trials in 1 min  0 sec
-         8th phase (30Aug2020 - 17Sep2020): finished 1581 trials in 1 min  0 sec
-        10th phase (02Oct2020 - 09Oct2020): finished 1723 trials in 1 min  0 sec
-Completed optimization. Total: 3 min  7 sec
+        11th phase (07Oct2020 - 21Oct2020): finished 1101 trials in 1 min  0 sec
+         3rd phase (11Apr2020 - 24Apr2020): finished  173 trials in 0 min 10 sec
+         0th phase (24Feb2020 - 20Mar2020): finished 1054 trials in 1 min  0 sec         2nd phase (30Mar2020 - 10Apr2020): finished 1067 trials in 1 min  0 sec
+
+         1st phase (21Mar2020 - 29Mar2020): finished 1087 trials in 1 min  0 sec
+         4th phase (25Apr2020 - 02May2020): finished 1134 trials in 1 min  0 sec
+         6th phase (18May2020 - 30Jun2020): finished  768 trials in 0 min 40 sec
+         5th phase (03May2020 - 17May2020): finished 1062 trials in 0 min 55 sec
+         7th phase (01Jul2020 - 24Aug2020): finished 1098 trials in 1 min  0 sec
+         9th phase (12Sep2020 - 26Sep2020): finished  453 trials in 0 min 20 sec
+        10th phase (27Sep2020 - 06Oct2020): finished  265 trials in 0 min 10 sec
+         8th phase (25Aug2020 - 11Sep2020): finished 1195 trials in 1 min  0 sec
+Completed optimization. Total: 3 min 12 sec
 </pre></div></div>
 </div>
 </div>
 <div class="section" id="History-of-reproduction-number">
 <h2>History of reproduction number<a class="headerlink" href="#History-of-reproduction-number" title="Permalink to this headline">¶</a></h2>
+<p>Let’s see the history of parameter values. Reproduction number is here.</p>
 <div class="nbinput docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[12]:
 </pre></div>
@@ -784,12 +865,13 @@ Completed optimization. Total: 3 min  7 sec
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area docutils container">
-<img alt="_images/usage_quickest_21_0.png" src="_images/usage_quickest_21_0.png" />
+<img alt="_images/usage_quickest_22_0.png" src="_images/usage_quickest_22_0.png" />
 </div>
 </div>
 </div>
 <div class="section" id="History-of-parameters">
 <h2>History of parameters<a class="headerlink" href="#History-of-parameters" title="Permalink to this headline">¶</a></h2>
+<p>History of each parameter. Values will be divided by the values in 0th phase.</p>
 <div class="nbinput docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[13]:
 </pre></div>
@@ -803,12 +885,13 @@ Completed optimization. Total: 3 min  7 sec
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area docutils container">
-<img alt="_images/usage_quickest_23_0.png" src="_images/usage_quickest_23_0.png" />
+<img alt="_images/usage_quickest_24_0.png" src="_images/usage_quickest_24_0.png" />
 </div>
 </div>
 </div>
 <div class="section" id="Simulate-the-number-of-cases">
 <h2>Simulate the number of cases<a class="headerlink" href="#Simulate-the-number-of-cases" title="Permalink to this headline">¶</a></h2>
+<p>How many cases will be if the parameter values will not be changed from today?</p>
 <div class="nbinput docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[14]:
 </pre></div>
@@ -823,9 +906,10 @@ Completed optimization. Total: 3 min  7 sec
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area docutils container">
-<img alt="_images/usage_quickest_25_0.png" src="_images/usage_quickest_25_0.png" />
+<img alt="_images/usage_quickest_26_0.png" src="_images/usage_quickest_26_0.png" />
 </div>
 </div>
+<p>Next, please see <a class="reference external" href="https://lisphilar.github.io/covid19-sir/usage_quick.html">Usage (quick version)</a> to find details of datasets and how to perform scenario analysis. Thank you!</p>
 </div>
 </div>
 
