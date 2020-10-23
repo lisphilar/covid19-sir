@@ -27,7 +27,7 @@ def main():
     snl = cs.Scenario(jhu_data, population_data, country, tau=120)
     # Show records
     record_df = snl.records(filename=figpath("records"))
-    record_df.to_csv(output_dir.joinpath("ita_records.csv"), index=False)
+    save_df(record_df, "records", output_dir, abbr, use_index=False)
     # Show S-R trend)
     snl.trend(filename=figpath("trend"))
     print(snl.summary())
@@ -52,16 +52,16 @@ def main():
     snl.add(name="Medicine", days=100, sigma=sigma_6th)
     # Simulation of the number of cases
     sim_df = snl.simulate(name="Main", filename=figpath("simulate"))
-    sim_df.to_csv(output_dir.joinpath("ita_simulate.csv"), index=False)
+    save_df(sim_df, "simulate", output_dir, abbr, use_index=False)
     # Summary
     summary_df = snl.summary()
-    summary_df.to_csv(output_dir.joinpath("ita_summary.csv"), index=True)
+    save_df(summary_df, "summary", output_dir, abbr, use_index=True)
     # Description of scenarios
     desc_df = snl.describe()
-    desc_df.to_csv(output_dir.joinpath("ita_describe.csv"), index=True)
+    save_df(desc_df, "describe", output_dir, abbr, use_index=True)
     # Tracking for main scenario
     track_df = snl.track()
-    track_df.to_csv(output_dir.joinpath("ita_track.csv"), index=True)
+    save_df(track_df, "track", output_dir, abbr, use_index=True)
     # Compare scenarios
     for item in ["Rt", "rho", "sigma", "Infected"]:
         snl.history(item, filename=figpath(f"history_{item.lower()}"))
@@ -83,6 +83,20 @@ def filepath(name, output_dir, country, ext="jpg"):
         pathlib.Path: filepath of the output file
     """
     return output_dir.joinpath(f"{country}_{name}.{ext}")
+
+
+def save_df(df, name, output_dir, country, use_index=True):
+    """
+    Save the dataframe as a CSV file.
+
+    Args:
+        df (pandas.DataFrame): dataframe
+        name (str): name of the dataframe
+        output_dir (pathlib.Path): path of the directory to save the figure
+        country (str): country name or abbr
+        use_index (bool): if True, include index
+    """
+    df.to_csv(output_dir.joinpath(f"{name}.csv"), index=use_index)
 
 
 if __name__ == "__main__":
