@@ -129,7 +129,10 @@ class DataLoader(Term):
                     f"Unknown data format was used in Web API {url}")
             df = pd.json_normalize(json_data)
             return df
-        df = dd.read_csv(url, blocksize=None).compute()
+        try:
+            df = dd.read_csv(url, blocksize=None).compute()
+        except (ValueError, FileNotFoundError):
+            df = pd.read_csv(url)
         return df
 
     def _resolve_filename(self, basename):
