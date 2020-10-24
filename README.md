@@ -67,7 +67,32 @@ Guidotti, E., Ardia, D., (2020), "COVID-19 Data Hub", Journal of Open Source Sof
 
 
 ## Usage
-Please read the following documents.
+Quickest tour of CovsirPhy is here. The following codes analyze the records in Japan, but we can change the country name when creating `Scenario` class instance for your own analysis.
+
+```Python
+import covsirphy as cs
+# Download datasets
+data_loader = cs.DataLoader("input")
+jhu_data = data_loader.jhu()
+population_data = data_loader.population()
+# Check records
+snl = cs.Scenario(jhu_data, population_data, country="Japan")
+snl.records()
+# S-R trend analysis
+snl.trend().summary()
+# Parameter estimation of SIR-F model
+snl.estimate(cs.SIRF)
+# History of reproduction number
+_ = snl.history(target="Rt")
+# History of parameters
+_ = snl.history_rate()
+_ = snl.history(target="rho")
+# Simulation for 30 days
+snl.add(days=30)
+_ = snl.simulate()
+```
+
+Further information:
 
 - [Quickest version](https://lisphilar.github.io/covid19-sir/usage_quickest.html)
 - [Quick version](https://lisphilar.github.io/covid19-sir/usage_quick.html)
