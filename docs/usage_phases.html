@@ -178,21 +178,35 @@
 /* CSS for nbsphinx extension */
 
 /* remove conflicting styling from Sphinx themes */
-div.nbinput.container,
-div.nbinput.container div.prompt,
-div.nbinput.container div.input_area,
-div.nbinput.container div[class*=highlight],
-div.nbinput.container div[class*=highlight] pre,
-div.nboutput.container,
-div.nboutput.container div.prompt,
-div.nboutput.container div.output_area,
-div.nboutput.container div[class*=highlight],
-div.nboutput.container div[class*=highlight] pre {
-    background: none;
+div.nbinput.container div.prompt *,
+div.nboutput.container div.prompt *,
+div.nbinput.container div.input_area pre,
+div.nboutput.container div.output_area pre,
+div.nbinput.container div.input_area .highlight,
+div.nboutput.container div.output_area .highlight {
     border: none;
-    padding: 0 0;
+    padding: 0;
     margin: 0;
     box-shadow: none;
+}
+
+div.nbinput.container > div[class*=highlight],
+div.nboutput.container > div[class*=highlight] {
+    margin: 0;
+}
+
+div.nbinput.container div.prompt *,
+div.nboutput.container div.prompt * {
+    background: none;
+}
+
+div.nboutput.container div.output_area .highlight,
+div.nboutput.container div.output_area pre {
+    background: unset;
+}
+
+div.nboutput.container div.output_area div.highlight {
+    color: unset;  /* override Pygments text color */
 }
 
 /* avoid gaps between output lines */
@@ -293,7 +307,7 @@ div.nboutput.container div.output_area {
 div.nbinput.container div.input_area {
     border: 1px solid #e0e0e0;
     border-radius: 2px;
-    background: #f5f5f5;
+    /*background: #f5f5f5;*/
 }
 
 /* override MathJax center alignment in output cells */
@@ -359,6 +373,7 @@ div.nboutput.container div.output_area.rendered_html,
 div.nboutput.container div.output_area > div.output_javascript,
 div.nboutput.container div.output_area:not(.rendered_html) > img{
     padding: 5px;
+    margin: 0;
 }
 
 /* fix copybtn overflow problem in chromium (needed for 'sphinx_copybutton') */
@@ -470,7 +485,7 @@ div.rendered_html tbody tr:hover {
 </div>
 <div class="output_area docutils container">
 <div class="highlight"><pre>
-&#39;2.9.0&#39;
+&#39;2.9.1&#39;
 </pre></div></div>
 </div>
 <div class="nbinput docutils container">
@@ -815,7 +830,7 @@ We can get Citation list of primary sources with DataLoader(...).covid19dh_citat
 </div>
 <div class="output_area docutils container">
 <div class="highlight"><pre>
-&lt;covsirphy.analysis.scenario.Scenario at 0x7f7b2aa6b8b0&gt;
+&lt;covsirphy.analysis.scenario.Scenario at 0x7f83ea70bdc0&gt;
 </pre></div></div>
 </div>
 </div>
@@ -932,7 +947,7 @@ We can get Citation list of primary sources with DataLoader(...).covid19dh_citat
 </div>
 <div class="output_area docutils container">
 <div class="highlight"><pre>
-&lt;covsirphy.analysis.scenario.Scenario at 0x7f7b2aa6b8b0&gt;
+&lt;covsirphy.analysis.scenario.Scenario at 0x7f83ea70bdc0&gt;
 </pre></div></div>
 </div>
 </div>
@@ -1041,7 +1056,7 @@ We can get Citation list of primary sources with DataLoader(...).covid19dh_citat
 </div>
 <div class="output_area docutils container">
 <div class="highlight"><pre>
-&lt;covsirphy.analysis.scenario.Scenario at 0x7f7b2aa6b8b0&gt;
+&lt;covsirphy.analysis.scenario.Scenario at 0x7f83ea70bdc0&gt;
 </pre></div></div>
 </div>
 <div class="nbinput docutils container">
@@ -1285,11 +1300,11 @@ We can get Citation list of primary sources with DataLoader(...).covid19dh_citat
 
 &lt;SIR-F model: parameter estimation&gt;
 Running optimization with 4 CPUs...
-         5th phase (30Jun2020 - 16Jul2020): finished  381 trials in 0 min 15 sec
-         2nd phase (29May2020 - 02Jun2020): finished  213 trials in 0 min  5 sec         3rd phase (03Jun2020 - 11Jun2020): finished  223 trials in 0 min  5 sec
-
-         1st phase (20May2020 - 28May2020): finished 1727 trials in 1 min  0 sec
-         4th phase (12Jun2020 - 29Jun2020): finished 1709 trials in 1 min  0 sec
+         5th phase (30Jun2020 - 16Jul2020): finished  412 trials in 0 min 15 sec
+         2nd phase (29May2020 - 02Jun2020): finished  165 trials in 0 min  5 sec
+         3rd phase (03Jun2020 - 11Jun2020): finished  353 trials in 0 min 10 sec
+         1st phase (20May2020 - 28May2020): finished 1800 trials in 1 min  0 sec
+         4th phase (12Jun2020 - 29Jun2020): finished 1796 trials in 1 min  0 sec
 Completed optimization. Total: 1 min 15 sec
 </pre></div></div>
 </div>
@@ -1358,11 +1373,11 @@ Completed optimization. Total: 1 min 15 sec
       <th>2nd</th>
       <td>29May2020</td>
       <td>02Jun2020</td>
-      <td>0.026429</td>
-      <td>0.000071</td>
-      <td>0.044830</td>
-      <td>0.023465</td>
-      <td>1.85</td>
+      <td>0.015602</td>
+      <td>0.000563</td>
+      <td>0.044577</td>
+      <td>0.023315</td>
+      <td>1.84</td>
     </tr>
     <tr>
       <th>3rd</th>
@@ -1500,11 +1515,11 @@ Completed optimization. Total: 1 min 15 sec
       <th>2nd</th>
       <td>29May2020</td>
       <td>02Jun2020</td>
-      <td>0.026429</td>
-      <td>0.000071</td>
-      <td>0.044830</td>
-      <td>0.023465</td>
-      <td>1.85</td>
+      <td>0.015602</td>
+      <td>0.000563</td>
+      <td>0.044577</td>
+      <td>0.023315</td>
+      <td>1.84</td>
     </tr>
     <tr>
       <th>3rd</th>
@@ -1571,11 +1586,11 @@ Completed optimization. Total: 1 min 15 sec
       <th>2nd</th>
       <td>29May2020</td>
       <td>02Jun2020</td>
-      <td>0.026429</td>
-      <td>0.000071</td>
-      <td>0.044830</td>
-      <td>0.023465</td>
-      <td>1.85</td>
+      <td>0.015602</td>
+      <td>0.000563</td>
+      <td>0.044577</td>
+      <td>0.023315</td>
+      <td>1.84</td>
     </tr>
     <tr>
       <th>3rd</th>

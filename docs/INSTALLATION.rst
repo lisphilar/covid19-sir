@@ -73,7 +73,7 @@ CovsirPhy <https://github.com/lisphilar/covid19-sir>`__.
 
 ::
 
-    !pip install "git+https://github.com/lisphilar/covid19-sir.git#egg=covsirphy"
+    pip install "git+https://github.com/lisphilar/covid19-sir.git#egg=covsirphy"
 
 Then, download the datasets and save the data in ``input`` directory.
 
