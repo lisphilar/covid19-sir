@@ -118,7 +118,7 @@ class DataLoader(Term):
             is_json (bool): if True, parse the response as Json data.
 
         Returns:
-            (pandas.DataFrame): raw dataset
+            pandas.DataFrame: raw dataset
         """
         if is_json:
             r = requests.get(url)
@@ -127,10 +127,11 @@ class DataLoader(Term):
             except Exception:
                 raise TypeError(
                     f"Unknown data format was used in Web API {url}")
-            df = pd.json_normalize(json_data)
-            return df
-        df = dd.read_csv(url).compute()
-        return df
+            return pd.json_normalize(json_data)
+        try:
+            return dd.read_csv(url, blocksize=None).compute()
+        except (ValueError, FileNotFoundError):
+            return pd.read_csv(url)
 
     def _resolve_filename(self, basename):
         """
