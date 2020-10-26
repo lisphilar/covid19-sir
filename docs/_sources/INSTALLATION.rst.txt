@@ -8,27 +8,58 @@ We have the following options to start analysis with CovsirPhy. Datasets
 are not included in this package, but we can prepare them with
 ``DataLoader`` class.
 
-+--------------------------------+----------------+---------------------------------------+
-|                                | Installation   | Dataset preparation                   |
-+================================+================+=======================================+
-| Standard users                 | pip/pipenv     | Automated with ``DataLoader`` class   |
-+--------------------------------+----------------+---------------------------------------+
-| Developers                     | git-cloning    | Automated with ``DataLoader`` class   |
-+--------------------------------+----------------+---------------------------------------+
-| Kagglers (local environment)   | git-cloning    | Kaggle API and Python script          |
-+--------------------------------+----------------+---------------------------------------+
-| Kagglers (Kaggle platform)     | pip            | Kaggle Datasets                       |
-+--------------------------------+----------------+---------------------------------------+
++-------+-------+-------+
+|       | Insta | Datas |
+|       | llati | et    |
+|       | on    | prepa |
+|       |       | ratio |
+|       |       | n     |
++=======+=======+=======+
+| Stand | pip/p | Autom |
+| ard   | ipenv | ated  |
+| users |       | with  |
+|       |       | ``Dat |
+|       |       | aLoad |
+|       |       | er``  |
+|       |       | class |
++-------+-------+-------+
+| Devel | git-c | Autom |
+| opers | lonin | ated  |
+|       | g     | with  |
+|       |       | ``Dat |
+|       |       | aLoad |
+|       |       | er``  |
+|       |       | class |
++-------+-------+-------+
+| Kaggl | git-c | Kaggl |
+| ers   | lonin | e     |
+| (loca | g     | API,  |
+| l     |       | Pytho |
+| envir |       | n     |
+| onmen |       | scrip |
+| t)    |       | t,    |
+|       |       | ``Dat |
+|       |       | aLoad |
+|       |       | er``  |
++-------+-------+-------+
+| Kaggl | pip   | Kaggl |
+| ers   |       | e     |
+| (Kagg |       | Datas |
+| le    |       | ets,  |
+| platf |       | ``Dat |
+| orm)  |       | aLoad |
+|       |       | er``  |
++-------+-------+-------+
 
 Datasets to load
 ----------------
 
-We will use the following datasets (CovsirPhy >= 2.4.0). Standard users
-and developers will retrieve main datasets from `COVID-19 Data
-Hub <https://covid19datahub.io/>`__ using ``covid19dh`` Python package.
-We can get the citation list of primary source ``covsirphy.DataLoader``
-class (refer to "Standard users" subsection). This description is from
-`COVID-19 Data Hub:
+We will use the following datasets. Standard users and developers will
+retrieve main datasets from `COVID-19 Data
+Hub <https://covid19datahub.io/>`__ using ``covid19dh`` Python package
+internally. We can get the citation list of primary source
+``covsirphy.DataLoader`` class (refer to "Standard users" subsection).
+This description is from `COVID-19 Data Hub:
 Dataset <https://covid19datahub.io/articles/data.html>`__.
 
 `COVID-19 Data Hub <https://covid19datahub.io/>`__
@@ -66,14 +97,14 @@ Python 3.7 or newer versions.
 
 ::
 
-    pip install covsirphy --upgrade
+    pip install --upgrade covsirphy
 
 Development versions are in `GitHub repository:
 CovsirPhy <https://github.com/lisphilar/covid19-sir>`__.
 
 ::
 
-    pip install "git+https://github.com/lisphilar/covid19-sir.git#egg=covsirphy"
+    pip install --upgrade "git+https://github.com/lisphilar/covid19-sir.git#egg=covsirphy"
 
 Then, download the datasets and save the data in ``input`` directory.
 
@@ -176,7 +207,8 @@ saved in ``input`` directory of your local repository.
   scripts are different from that explained in the previous subsections
   as follows.
 
--  The number of cases (JHU): `Novel Corona Virus 2019 Dataset by
+-  The number of cases (JHU) and linelist: `Novel Corona Virus 2019
+   Dataset by
    SRK <https://www.kaggle.com/sudalairajkumar/novel-corona-virus-2019-dataset>`__
 -  The number of cases in Japan: `COVID-19 dataset in Japan by
    Lisphilar <https://www.kaggle.com/lisphilar/covid19-dataset-in-japan>`__
@@ -195,10 +227,10 @@ Usage of ``DataLoader`` class is as follows. Please specify
 
     import covsirphy as cs
     data_loader = cs.DataLoader("input")
-    jhu_data = data_loader.jhu(local_file="./input/covid_19_data.csv")
-    japan_data = data_loader.japan(local_file="./input/covid_jpn_total.csv")
-    population_data = data_loader.population(local_file="./input/locations_population.csv")
-    oxcgrt_data = data_loader.oxcgrt(local_file="./input/OxCGRT_latest.csv")
+    jhu_data = data_loader.jhu()
+    japan_data = data_loader.japan(local_file="./kaggle/input/covid_jpn_total.csv")
+    population_data = data_loader.population()
+    oxcgrt_data = data_loader.oxcgrt(local_file="./kaggle/input/OxCGRT_latest.csv")
 
 (Optional) We can replace a part of JHU data with country-specific
 datasets. As an example, we will use the records in Japan here because
@@ -231,16 +263,15 @@ filenames.
 
     import covsirphy as cs
     # The number of cases (JHU style)
-    jhu_data = cs.JHUData("/kaggle/input/novel-corona-virus-2019-dataset/covid_19_data.csv")
+    data_loader = cs.DataLoader()
+    jhu_data = data_loader.jhu()
     # (Optional) The number of cases in Japan
     japan_data = cs.CountryData("/kaggle/input/covid19-dataset-in-japan/covid_jpn_total.csv", country="Japan")
     japan_data.set_variables(
         date="Date", confirmed="Positive", fatal="Fatal", recovered="Discharged", province=None
     )
     # Population in each country
-    population_data = cs.PopulationData(
-        "/kaggle/input/covid19-global-forecasting-locations-population/locations_population.csv"
-    )
+    population_data = data_loader.population()
 
 | Note:
 | Currently, OxCGRT dataset is not supported.

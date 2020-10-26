@@ -61,17 +61,48 @@ We have the following options to start analysis with CovsirPhy. Datasets
 are not included in this package, but we can prepare them with
 ``DataLoader`` class.
 
-+--------------------------------+----------------+---------------------------------------+
-|                                | Installation   | Dataset preparation                   |
-+================================+================+=======================================+
-| Standard users                 | pip/pipenv     | Automated with ``DataLoader`` class   |
-+--------------------------------+----------------+---------------------------------------+
-| Developers                     | git-cloning    | Automated with ``DataLoader`` class   |
-+--------------------------------+----------------+---------------------------------------+
-| Kagglers (local environment)   | git-cloning    | Kaggle API and Python script          |
-+--------------------------------+----------------+---------------------------------------+
-| Kagglers (Kaggle platform)     | pip            | Kaggle Datasets                       |
-+--------------------------------+----------------+---------------------------------------+
++-------+-------+-------+
+|       | Insta | Datas |
+|       | llati | et    |
+|       | on    | prepa |
+|       |       | ratio |
+|       |       | n     |
++=======+=======+=======+
+| Stand | pip/p | Autom |
+| ard   | ipenv | ated  |
+| users |       | with  |
+|       |       | ``Dat |
+|       |       | aLoad |
+|       |       | er``  |
+|       |       | class |
++-------+-------+-------+
+| Devel | git-c | Autom |
+| opers | lonin | ated  |
+|       | g     | with  |
+|       |       | ``Dat |
+|       |       | aLoad |
+|       |       | er``  |
+|       |       | class |
++-------+-------+-------+
+| Kaggl | git-c | Kaggl |
+| ers   | lonin | e     |
+| (loca | g     | API,  |
+| l     |       | Pytho |
+| envir |       | n     |
+| onmen |       | scrip |
+| t)    |       | t,    |
+|       |       | ``Dat |
+|       |       | aLoad |
+|       |       | er``  |
++-------+-------+-------+
+| Kaggl | pip   | Kaggl |
+| ers   |       | e     |
+| (Kagg |       | Datas |
+| le    |       | ets,  |
+| platf |       | ``Dat |
+| orm)  |       | aLoad |
+|       |       | er``  |
++-------+-------+-------+
 
 \ `Installation and dataset
 preparation <https://lisphilar.github.io/covid19-sir/INSTALLATION.html>`__
