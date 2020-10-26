@@ -2,7 +2,6 @@
 # -*- coding: utf-8 -*-
 
 import os
-import glob
 import shutil
 from pathlib import Path
 import requests
@@ -21,41 +20,25 @@ except Exception:
 
 api = KaggleApi()
 api.authenticate()
-path_ = cwd + "/input/"
-os.makedirs(path_, exist_ok=True)
 
+# Remove the saved dataset
+path_ = cwd + "/kaggle/input/"
+os.makedirs(path_, exist_ok=True)
 shutil.rmtree(path_)
 
-api.dataset_download_files('dgrechka/covid19-global-forecasting-locations-population',
-                           path=path_ + "/",
-                           unzip=True)
+# Download Kaggle datasets
+kaggle_datasets = [
+    "sudalairajkumar/novel-corona-virus-2019-dataset",
+    "dgrechka/covid19-global-forecasting-locations-population",
+    "hotessy/population-pyramid-2019",
+    "marcoferrante/covid19-prevention-in-italy",
+    "lisphilar/covid19-dataset-in-japan",
+]
 
-api.dataset_download_files('sudalairajkumar/novel-corona-virus-2019-dataset',
-                           path=path_ + "/",
-                           unzip=True)
+for dataset in kaggle_datasets:
+    api.dataset_download_files(dataset, path=path_, unzip=True)
 
-api.dataset_download_files('lisphilar/covid19-dataset-in-japan',
-                           path=path_ + "/",
-                           unzip=True)
-
-# Removing files that will not be necessary
-file_list = glob.glob(path_ + '/*')
-file_list_keep = file_list
-file_list_keep = [
-    ele for ele in file_list_keep if "time_series_covid_19_" not in ele]
-file_list_keep = [
-    ele for ele in file_list_keep if "COVID19_line_list_data.csv" not in ele]
-file_list_keep = [
-    ele for ele in file_list_keep if "COVID19_open_line_list.csv" not in ele]
-file_list_keep = [
-    ele for ele in file_list_keep if "covid_jpn_metadata.csv" not in ele]
-file_list_keep = [
-    ele for ele in file_list_keep if "covid_jpn_prefecture.csv" not in ele]
-
-for file_ in file_list:
-    if file_ not in file_list_keep:
-        os.remove(file_)
-
+# OxCGRT
 oxcgrt_file = "https://raw.githubusercontent.com/OxCGRT/covid-policy-tracker/master/data/OxCGRT_latest.csv"
 
 r = requests.get(oxcgrt_file, allow_redirects=True)
