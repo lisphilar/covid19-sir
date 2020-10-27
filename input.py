@@ -37,6 +37,8 @@ kaggle_datasets = [
 for dataset in kaggle_datasets:
     api.dataset_download_files(dataset, path=path_, unzip=True)
 
+# Download Kaggle population pyramid datasets
+# Extract the datasets in population-pyramid-2019 folder
 population_pyramid_path_ = path_ + "/population-pyramid-2019"
 kaggle_dataset_population_pyramid = "hotessy/population-pyramid-2019"
 api.dataset_download_files(kaggle_dataset_population_pyramid, path=population_pyramid_path_, unzip=True)
