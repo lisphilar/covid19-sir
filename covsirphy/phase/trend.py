@@ -87,7 +87,9 @@ class Trend(Term):
         warnings.simplefilter("ignore", RuntimeWarning)
         param, _ = curve_fit(
             self.negative_exp, x_series, y_series,
-            p0=[a_ini, b_ini]
+            p0=[a_ini, b_ini],
+            # Increase mux number of iteration in curve fitting from 600 (default)
+            maxfev=5000
         )
         # Predict the values with the parameters
         f_partial = functools.partial(
