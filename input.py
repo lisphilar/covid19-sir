@@ -30,13 +30,16 @@ shutil.rmtree(path_)
 kaggle_datasets = [
     "sudalairajkumar/novel-corona-virus-2019-dataset",
     "dgrechka/covid19-global-forecasting-locations-population",
-    "hotessy/population-pyramid-2019",
     "marcoferrante/covid19-prevention-in-italy",
     "lisphilar/covid19-dataset-in-japan",
 ]
 
 for dataset in kaggle_datasets:
     api.dataset_download_files(dataset, path=path_, unzip=True)
+
+population_pyramid_path_ = path_ + "/population-pyramid-2019"
+kaggle_dataset_population_pyramid = "hotessy/population-pyramid-2019"
+api.dataset_download_files(kaggle_dataset_population_pyramid, path=population_pyramid_path_, unzip=True)
 
 # OxCGRT
 oxcgrt_file = "https://raw.githubusercontent.com/OxCGRT/covid-policy-tracker/master/data/OxCGRT_latest.csv"
