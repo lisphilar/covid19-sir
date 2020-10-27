@@ -23,7 +23,7 @@ def main():
     jhu_data.replace(japan_data)
     # Set country name
     country = "Japan"
-    abbr = "jpn"
+    abbr = "jpn".lower()
     figpath = functools.partial(
         filepath, output_dir=output_dir, country=abbr, ext="jpg")
     # Start scenario analysis
