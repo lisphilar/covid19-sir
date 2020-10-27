@@ -7,8 +7,8 @@ We have the following options to start analysis with CovsirPhy. Datasets are not
 |:---|:---|:---|
 |Standard users|pip/pipenv|Automated with `DataLoader` class|
 |Developers|git-cloning|Automated with `DataLoader` class|
-|Kagglers (local environment)|git-cloning|Kaggle API, Python script, `DataLoader`|
-|Kagglers (Kaggle platform)|pip|Kaggle Datasets, `DataLoader`|
+|Kagglers (local environment)|git-cloning|Kaggle API and Python script and `DataLoader`|
+|Kagglers (Kaggle platform)|pip|Kaggle Datasets and `DataLoader`|
 
 
 ## Datasets to load
