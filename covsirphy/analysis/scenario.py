@@ -629,7 +629,7 @@ class Scenario(Term):
         change_dates = [unit.start_date for unit in series][1:]
         line_plot(
             df[fig_cols],
-            title=f"{self.area}: Predicted number of cases ({name} scenario)",
+            title=f"{self.area}: Simulated number of cases ({name} scenario)",
             filename=filename,
             y_integer=True,
             v=change_dates
