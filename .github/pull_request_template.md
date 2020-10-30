@@ -1,8 +1,6 @@
 ## Related issues
 This is related to 
 
-## Fix bugs
-(optional)
+## (optional) Fix bugs
 
-## New features
-(optional)
+## (optional) New features

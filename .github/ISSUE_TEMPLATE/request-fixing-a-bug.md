@@ -30,4 +30,4 @@ This code returns
 - CovsirPhy version: 
 - Python version; 3.8
 - Installation: pipenv
-- OS: WSL (Ubuntu)/Windows/Linux/Mac/Kaggle Notebook/Google Colaboratory
+- System: WSL (Ubuntu)/Windows/Linux/Mac/Kaggle Notebook/Google Colaboratory

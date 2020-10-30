@@ -10,15 +10,15 @@ assignees: ''
 ## Summary of question
 
 
-## What have you tried?
+## (Optional) What have you tried?
 
 ```Python
 import covsirphy as cs
 
 ```
 
-## Environment
+## (Optional) Environment
 - CovsirPhy version: 
 - Python version; 3.8
 - Installation: pipenv
-- OS: Windows/WSL/Linux/MAC/Kaggle Notebook
+- System: WSL (Ubuntu)/Windows/Linux/Mac/Kaggle Notebook/Google Colaboratory
