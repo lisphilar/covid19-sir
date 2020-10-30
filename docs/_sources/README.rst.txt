@@ -86,11 +86,13 @@ are not included in this package, but we can prepare them with
 +-------+-------+-------+
 | Kaggl | git-c | Kaggl |
 | ers   | lonin | e     |
-| (loca | g     | API,  |
-| l     |       | Pytho |
-| envir |       | n     |
-| onmen |       | scrip |
-| t)    |       | t,    |
+| (loca | g     | API   |
+| l     |       | and   |
+| envir |       | Pytho |
+| onmen |       | n     |
+| t)    |       | scrip |
+|       |       | t     |
+|       |       | and   |
 |       |       | ``Dat |
 |       |       | aLoad |
 |       |       | er``  |
@@ -98,9 +100,10 @@ are not included in this package, but we can prepare them with
 | Kaggl | pip   | Kaggl |
 | ers   |       | e     |
 | (Kagg |       | Datas |
-| le    |       | ets,  |
-| platf |       | ``Dat |
-| orm)  |       | aLoad |
+| le    |       | ets   |
+| platf |       | and   |
+| orm)  |       | ``Dat |
+|       |       | aLoad |
 |       |       | er``  |
 +-------+-------+-------+
 

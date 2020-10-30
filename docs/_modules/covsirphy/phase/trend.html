@@ -247,7 +247,9 @@
         <span class="n">warnings</span><span class="o">.</span><span class="n">simplefilter</span><span class="p">(</span><span class="s2">&quot;ignore&quot;</span><span class="p">,</span> <span class="ne">RuntimeWarning</span><span class="p">)</span>
         <span class="n">param</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">curve_fit</span><span class="p">(</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">negative_exp</span><span class="p">,</span> <span class="n">x_series</span><span class="p">,</span> <span class="n">y_series</span><span class="p">,</span>
-            <span class="n">p0</span><span class="o">=</span><span class="p">[</span><span class="n">a_ini</span><span class="p">,</span> <span class="n">b_ini</span><span class="p">]</span>
+            <span class="n">p0</span><span class="o">=</span><span class="p">[</span><span class="n">a_ini</span><span class="p">,</span> <span class="n">b_ini</span><span class="p">],</span>
+            <span class="c1"># Increase mux number of iteration in curve fitting from 600 (default)</span>
+            <span class="n">maxfev</span><span class="o">=</span><span class="mi">5000</span>
         <span class="p">)</span>
         <span class="c1"># Predict the values with the parameters</span>
         <span class="n">f_partial</span> <span class="o">=</span> <span class="n">functools</span><span class="o">.</span><span class="n">partial</span><span class="p">(</span>
