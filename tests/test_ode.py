@@ -3,7 +3,7 @@
 
 import pandas as pd
 import pytest
-from covsirphy import ExampleData, PopulationData, Term, Scenario
+from covsirphy import ExampleData, PopulationData, Term, Scenario, ModelValidator
 from covsirphy import ModelBase, SIR, SIRD, SIRF, SIRFV, SEWIRF
 
 
@@ -105,3 +105,13 @@ class TestODE(object):
         snl = Scenario(example_data, population_data, **area)
         snl.add()
         snl.estimate(model)
+
+    @pytest.mark.parametrize(
+        "model",
+        # SIRFV, SEWIRF
+        [SIR, SIRD, SIRF])
+    def test_validation(self, model):
+        # Setting
+        validator = ModelValidator(n_trials=5, seed=1)
+        # Execute validation
+        validator.run(model)
