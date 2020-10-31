@@ -43,6 +43,7 @@ from covsirphy.phase.phase_estimator import MPEstimator
 # analysis
 from covsirphy.analysis.example_data import ExampleData
 from covsirphy.analysis.scenario import Scenario
+from covsirphy.analysis.model_validator import ModelValidator
 # worldwide
 from covsirphy.worldwide.policy import PolicyMeasures
 
@@ -55,8 +56,9 @@ def get_version():
 
 
 __all__ = [
+    "ExampleData", "Scenario", "ModelValidator",
     "ODESimulator", "ChangeFinder",
-    "PhaseSeries", "Scenario", "ExampleData", "PhaseUnit", "MPEstimator",
+    "PhaseSeries", "PhaseUnit", "MPEstimator",
     "Term", "CleaningBase", "DataLoader",
     "JHUData", "CountryData", "PopulationData", "OxCGRTData",
     "ModelBase", "SIR", "SIRD", "SIRF", "SIRFV", "SEWIRF",

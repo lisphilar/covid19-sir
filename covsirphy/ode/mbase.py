@@ -25,10 +25,10 @@ class ModelBase(Term):
     VARS_INCLEASE = list()
     # Example set of parameters and initial values
     EXAMPLE = {
-        "step_n": 180,
-        "population": 1_000_000,
-        "param_dict": dict(),
-        "y0_dict": dict(),
+        Term.STEP_N: 180,
+        Term.N.lower(): 1_000_000,
+        Term.PARAM_DICT: dict(),
+        Term.Y0_DICT: dict(),
     }
 
     def __init__(self, population):

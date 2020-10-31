@@ -37,12 +37,12 @@ class SIRF(ModelBase):
     VARS_INCLEASE = [ModelBase.R, ModelBase.F]
     # Example set of parameters and initial values
     EXAMPLE = {
-        "step_n": 180,
-        "population": 1_000_000,
-        "param_dict": {
+        ModelBase.STEP_N: 180,
+        ModelBase.N.lower(): 1_000_000,
+        ModelBase.PARAM_DICT: {
             "theta": 0.002, "kappa": 0.005, "rho": 0.2, "sigma": 0.075,
         },
-        "y0_dict": {
+        ModelBase.Y0_DICT: {
             ModelBase.S: 999_000, ModelBase.CI: 1000, ModelBase.R: 0, ModelBase.F: 0,
         },
     }

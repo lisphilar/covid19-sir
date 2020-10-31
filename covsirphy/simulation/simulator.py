@@ -56,10 +56,10 @@ class ODESimulator(Term):
         # Register the setting
         self.setting = {
             "model": self.ensure_subclass(model, ModelBase, name="model"),
-            "step_n": self.ensure_natural_int(step_n, name="step_n"),
+            self.STEP_N: self.ensure_natural_int(step_n, name="step_n"),
             "population": self.ensure_population(population),
-            "param_dict": self._ensure_parameters(model, param_dict),
-            "y0_dict": self._ensure_initial_values(model, y0_dict),
+            ModelBase.PARAM_DICT: self._ensure_parameters(model, param_dict),
+            self.Y0_DICT: self._ensure_initial_values(model, y0_dict),
         }
         # Update variable dictionary
         self.var_dict.update(model.VAR_DICT)

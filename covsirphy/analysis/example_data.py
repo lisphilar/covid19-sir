@@ -100,7 +100,7 @@ class ExampleData(JHUData):
             start_date = df.loc[
                 df.index[-1], self.DATE].strftime(self.DATE_FORMAT)
             df = model.tau_free(df, population, tau=None)
-            arg_dict["y0_dict"] = {
+            arg_dict[self.Y0_DICT] = {
                 k: df.loc[df.index[0], k] for k in model.VARIABLES
             }
         # Simulation
