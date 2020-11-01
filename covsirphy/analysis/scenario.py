@@ -1001,8 +1001,13 @@ class Scenario(Term):
         self.clear(name=control, include_past=True)
         self.trend(name=control, show_figure=False)
         series = self._series_dict[control]
-        sep_dates = [[ph.start_date, ph.end_date] for ph in series]
-        if beginning_date not in self.flatten(sep_dates):
+        sep_dates = [
+            date
+            for ph in series
+            for change_date in [ph.start_date, ph.end_date]
+            for date in [self.yesterday(change_date), change_date, self.tomorrow(change_date)]
+        ]
+        if beginning_date not in sep_dates:
             self.separate(beginning_date, name=control)
         self.estimate(model, name=control)
         # Target
