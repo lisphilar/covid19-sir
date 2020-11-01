@@ -13,10 +13,12 @@ def main():
     output_dir = code_path.with_name("output").joinpath(code_path.stem)
     output_dir.mkdir(exist_ok=True, parents=True)
     # Setting
-    validator = cs.ModelValidator(n_trials=5, seed=1)
+    validator = cs.ModelValidator(n_trials=8, seed=1)
     # Execute validation
-    df = validator.run(cs.SIR)
-    print(df)
+    validator.run(cs.SIR)
+    validator.run(cs.SIRD)
+    validator.run(cs.SIRF)
+    print(validator.summary())
 
 
 if __name__ == "__main__":
