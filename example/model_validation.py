@@ -13,28 +13,32 @@ def main():
     output_dir = code_path.with_name("output").joinpath(code_path.stem)
     output_dir.mkdir(exist_ok=True, parents=True)
     # Setting
-    validator = cs.ModelValidator(n_trials=8, seed=1)
+    models = [cs.SIR, cs.SIRD, cs.SIRF]
     # Execute validation with default setting (60 sec, 0.98, 1.02)
-    validator.run(cs.SIR)
-    validator.run(cs.SIRD)
-    validator.run(cs.SIRF)
-    print(validator.summary())
-    save_df(
-        validator.summary(), name="default.csv", country="summary", use_index=False)
+    validation(models, "default.csv", output_dir)
     # Execute validation with long timeout and default allowance setting (0.98, 1.02)
-    validator.run(cs.SIR, timeout=90)
-    validator.run(cs.SIRD, timeout=90)
-    validator.run(cs.SIRF, timeout=90)
-    print(validator.summary())
-    save_df(
-        validator.summary(), name="long.csv", country="summary", use_index=False)
+    validation(models, "long.csv", output_dir, timeout=90)
     # Execute validation with long timeout and restricted allowance
-    validator.run(cs.SIR, timeout=90, allowance=(0.99, 1.01))
-    validator.run(cs.SIRD, timeout=90, allowance=(0.99, 1.01))
-    validator.run(cs.SIRF, timeout=90, allowance=(0.99, 1.01))
-    print(validator.summary())
-    save_df(
-        validator.summary(), name="long_restricted.csv", country="summary", use_index=False)
+    validation(
+        models, "long_restricted.csv", output_dir, timeout=90, allowance=(0.99, 1.01))
+
+
+def validation(models, name, output_dir, **kwargs):
+    """
+    Perform model validation.
+
+    Args:
+        models (list[covsirphy.ModelBase]): ODE models
+        name (str): name of the dataframe
+        output_dir (pathlib.Path): path of the directory to save the figure
+        kwargs: keyword arguments of covsirphy.ModelValidator.run()
+    """
+    validator = cs.ModelValidator(n_trials=8, seed=1)
+    for model in models:
+        validator.run(model, **kwargs)
+    df = validator.summary()
+    print(df)
+    save_df(df, name, output_dir, "summary", use_index=False)
 
 
 def save_df(df, name, output_dir, country, use_index=True):
