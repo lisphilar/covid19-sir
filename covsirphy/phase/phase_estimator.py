@@ -126,6 +126,9 @@ class MPEstimator(Term):
         Args:
             n_jobs (int): the number of parallel jobs or -1 (CPU count)
             kwargs: keyword arguments of model parameters and covsirphy.Estimator.run()
+
+        Returns:
+            list[covsirphy.PhaseUnit]
         """
         units = self._units[:]
         results = []

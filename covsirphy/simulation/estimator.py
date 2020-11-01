@@ -173,11 +173,15 @@ class Estimator(Optimizer):
         # Set parameters of the models
         model_param_dict = self.model.param_range(
             taufree_df, self.population)
-        p_dict = {
-            k: trial.suggest_uniform(k, *v)
-            for (k, v) in model_param_dict.items()
-            if k not in self.fixed_dict.keys()
-        }
+        try:
+            p_dict = {
+                k: trial.suggest_uniform(k, *v)
+                for (k, v) in model_param_dict.items()
+                if k not in self.fixed_dict.keys()
+            }
+        except OverflowError:
+            print(model_param_dict)
+            raise OverflowError from None
         p_dict.update(self.fixed_dict)
         return self.error_f(p_dict, taufree_df)
 
