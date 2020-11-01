@@ -16,8 +16,6 @@ def main():
     models = [cs.SIR, cs.SIRD, cs.SIRF]
     # Execute validation with default setting (60 sec, 0.98, 1.02)
     validation(models, "default", output_dir)
-    # Execute validation with long timeout and default allowance setting (0.98, 1.02)
-    validation(models, "long", output_dir, timeout=90)
     # Execute validation with long timeout and restricted allowance
     validation(
         models, "long_restricted", output_dir, timeout=90, allowance=(0.99, 1.01))
