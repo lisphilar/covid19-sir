@@ -286,6 +286,9 @@
 <span class="sd">        Args:</span>
 <span class="sd">            n_jobs (int): the number of parallel jobs or -1 (CPU count)</span>
 <span class="sd">            kwargs: keyword arguments of model parameters and covsirphy.Estimator.run()</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            list[covsirphy.PhaseUnit]</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">units</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_units</span><span class="p">[:]</span>
         <span class="n">results</span> <span class="o">=</span> <span class="p">[]</span>
@@ -303,9 +306,12 @@
             <span class="n">results</span> <span class="o">=</span> <span class="p">[</span><span class="n">unit_est</span><span class="p">]</span>
         <span class="c1"># Estimation of each phase</span>
         <span class="n">est_f</span> <span class="o">=</span> <span class="n">functools</span><span class="o">.</span><span class="n">partial</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_run</span><span class="p">,</span> <span class="n">tau</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_tau</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
-        <span class="k">with</span> <span class="n">Pool</span><span class="p">(</span><span class="n">n_jobs</span><span class="p">)</span> <span class="k">as</span> <span class="n">p</span><span class="p">:</span>
-            <span class="n">units_est</span> <span class="o">=</span> <span class="n">p</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="n">est_f</span><span class="p">,</span> <span class="n">units</span><span class="p">)</span>
-        <span class="n">results</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">units_est</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">n_jobs</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="n">results</span> <span class="o">=</span> <span class="p">[</span><span class="n">est_f</span><span class="p">(</span><span class="n">unit</span><span class="p">)</span> <span class="k">for</span> <span class="n">unit</span> <span class="ow">in</span> <span class="n">units</span><span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">with</span> <span class="n">Pool</span><span class="p">(</span><span class="n">n_jobs</span><span class="p">)</span> <span class="k">as</span> <span class="n">p</span><span class="p">:</span>
+                <span class="n">units_est</span> <span class="o">=</span> <span class="n">p</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="n">est_f</span><span class="p">,</span> <span class="n">units</span><span class="p">)</span>
+            <span class="n">results</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">units_est</span><span class="p">)</span>
         <span class="c1"># Completion</span>
         <span class="n">stopwatch</span><span class="o">.</span><span class="n">stop</span><span class="p">()</span>
         <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Completed optimization. Total: </span><span class="si">{</span><span class="n">stopwatch</span><span class="o">.</span><span class="n">show</span><span class="p">()</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
