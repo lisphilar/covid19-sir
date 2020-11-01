@@ -180,7 +180,11 @@ class Estimator(Optimizer):
                 if k not in self.fixed_dict.keys()
             }
         except OverflowError:
-            raise OverflowError from None
+            p_dict = {
+                k: trial.suggest_uniform(k, 0, 1)
+                for (k, v) in model_param_dict.items()
+                if k not in self.fixed_dict.keys()
+            }
         p_dict.update(self.fixed_dict)
         return self.error_f(p_dict, taufree_df)
 
