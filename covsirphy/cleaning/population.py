@@ -128,7 +128,7 @@ class PopulationData(CleaningBase):
 
     def total(self):
         """
-        Return the total value of population in the datset.
+        Return the total value of population in the dataset.
 
         Returns:
             (int)

@@ -11,6 +11,7 @@ import requests
 from covsirphy.cleaning.cbase import CleaningBase
 from covsirphy.cleaning.jhu_data import JHUData
 from covsirphy.cleaning.country_data import CountryData
+from covsirphy.cleaning.linelist import LinelistData
 from covsirphy.cleaning.oxcgrt import OxCGRTData
 from covsirphy.cleaning.population import PopulationData
 from covsirphy.cleaning.term import Term
@@ -53,6 +54,11 @@ class DataLoader(Term):
         ...
         >>> print(type(oxcgrt_data.cleaned()))
         <class 'pandas.core.frame.DataFrame'>
+        >>> linelist_data = data_loader.linelist()
+        >>> print(linelist_data.citation)
+        ...
+        >>> print(type(linelist_data.cleaned()))
+        <class 'pandas.core.frame.DataFrame'>
         >>> print(data_loader.covid19dh_citation)
         ...
     """
@@ -92,6 +98,12 @@ class DataLoader(Term):
         # OxCGRT dataset: Oxford Covid-19 Government Response Tracker
         self.oxcgrt_url = "https://raw.githubusercontent.com/OxCGRT/covid-policy-tracker/master/data"
         self.oxcgrt_citation = self._covid19dh_citation_secondary
+        # Linelist of case reports
+        # TODO: change url
+        self.linelist_url = "https://github.com/beoutbreakprepared/nCoV2019/blob/master/latest_data/latestdata.tar.gz"
+        self.linelist_citation = "Xu, B., Gutierrez, B., Mekaru, S. et al. " \
+            "Epidemiological data from the COVID-19 outbreak, real-time case information. " \
+            "Sci Data 7, 106 (2020). https://doi.org/10.1038/s41597-020-0448-0"
         # Dictionary of datasets
         self.dataset_dict = {
             "JHU": {
@@ -105,6 +117,9 @@ class DataLoader(Term):
             },
             "OxCGRT": {
                 "class": OxCGRTData, "url": self.oxcgrt_url, "citation": self.oxcgrt_citation
+            },
+            "Linelist": {
+                "class": LinelistData, "url": self.linelist_url, "citation": self.linelist_citation
             },
         }
 
@@ -218,7 +233,7 @@ class DataLoader(Term):
             kwargs: keyword arguments of @data_class
 
         Returns:
-            (covsirphy.JHUData): the dataset
+            (covsirphy.CleaningBase): the dataset
 
         Notes:
             ".citation" attribute will returns the citation
@@ -296,7 +311,7 @@ class DataLoader(Term):
 
     def japan(self, basename="covid_jpn_total.csv", local_file=None):
         """
-        Load the datset of the number of cases in Japan.
+        Load the dataset of the number of cases in Japan.
         https://github.com/lisphilar/covid19-sir/tree/master/data
 
         Args:
@@ -556,3 +571,38 @@ class DataLoader(Term):
         series = cite.apply(lambda x: f"{x[0]} ({x[1]}), {x[2]}", axis=1)
         self._covid19dh_citation = "\n".join(series.tolist())
         return (c_df, p_df)
+
+    def linelist(self, basename="linelist.csv", local_file=None):
+        """
+        Load the linelist of case reports.
+        https://github.com/beoutbreakprepared/nCoV2019/blob/master/latest_data/latestdata.tar.gz
+
+        Args:
+            basename (str): basename of the file to save the data
+            local_file (str or None): if not None, load the data from this file
+
+        Notes:
+            Regardless the value of @local_file, the data will be save in the directory.
+
+        Returns:
+            (covsirphy.LinelistData): linelist of case reports
+        """
+        filename = self._resolve_filename(basename)
+        if local_file is not None:
+            if Path(local_file).exists():
+                linelist_data = self._create_dataset(
+                    "Linelist", local_file, set_citation=False)
+                df = linelist_data.cleaned()
+                if set(df.columns) != set(LinelistData.LINELIST_COLS):
+                    raise TypeError(
+                        f"{local_file} does not have linelist of case reports.")
+                self._save(linelist_data.raw, filename)
+                return linelist_data
+            raise FileNotFoundError(f"{local_file} does not exist.")
+        if not self._needs_pull(filename, self.linelist_url):
+            return self._create_dataset("Linelist", local_file, set_citation=True)
+        # Retrieve the raw data
+        df = self._get_raw(self.linelist_url)
+        # Save the dataset and return dataset
+        self._save(df, filename)
+        return self._create_dataset("Linelist", local_file, set_citation=True)
