@@ -38,7 +38,7 @@ def main():
     snl.estimate(cs.SIRF)
     snl.history("Rt", filename=figpath("history_rt_past"))
     # Add future phase to main scenario
-    snl.add(name="Main", day=7)
+    snl.add(name="Main", days=7)
     # Simulation of the number of cases
     sim_df = snl.simulate(name="Main", filename=figpath("simulate"))
     save_df(sim_df, "simulate", output_dir, abbr, use_index=False)
