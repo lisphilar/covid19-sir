@@ -49,7 +49,7 @@ def main():
         name="Main", filename=figpath("history_rate_without_theta"))
     # Save summary as a CSV file
     summary_df = snl.summary()
-    save_df(summary_df, "summary", output_dir, abbr, use_index=False)
+    save_df(summary_df, "summary", output_dir, abbr)
 
 
 def filepath(name, output_dir, country, ext="jpg"):
