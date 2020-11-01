@@ -112,6 +112,7 @@ class TestODE(object):
         [SIR, SIRD, SIRF])
     def test_validation(self, model):
         # Setting
-        validator = ModelValidator(n_trials=5, seed=1)
+        validator = ModelValidator(n_trials=4, seed=1)
         # Execute validation
         validator.run(model)
+        validator.summary()
