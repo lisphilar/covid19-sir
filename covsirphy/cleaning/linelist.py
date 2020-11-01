@@ -47,6 +47,8 @@ class LinelistData(CleaningBase):
             inplace=True
         )
         # TODO: add cleaning code
+        # TODO: add test in test/test_data_loader
+        # TODO: documentation
         print(df)
         import sys
         sys.exit()
