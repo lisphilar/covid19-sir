@@ -109,7 +109,7 @@ class SIRF(ModelBase):
         sigma_series = r.diff() / t.diff() / i
         # Calculate quantile
         _dict = {
-            k: v.quantile(cls.QUANTILE_RANGE)
+            k: tuple(v.quantile(cls.QUANTILE_RANGE).clip(0, 1))
             for (k, v) in zip(["rho", "sigma"], [rho_series, sigma_series])
         }
         _dict["theta"] = (0, 1)

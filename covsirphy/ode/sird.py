@@ -106,7 +106,7 @@ class SIRD(ModelBase):
         sigma_series = r.diff() / t.diff() / i
         # Calculate quantile
         _dict = {
-            k: v.quantile(cls.QUANTILE_RANGE)
+            k: tuple(v.quantile(cls.QUANTILE_RANGE).clip(0, 1))
             for (k, v) in zip(
                 ["kappa", "rho", "sigma"],
                 [kappa_series, rho_series, sigma_series]
