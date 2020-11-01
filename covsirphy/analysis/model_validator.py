@@ -45,12 +45,14 @@ class ModelValidator(Term):
         # To avoid "imported but unused"
         self.__swifter = swifter
 
-    def run(self, model, n_jobs=-1):
+    def run(self, model, timeout=60, allowance=(0.98, 1.02), n_jobs=-1):
         """
         Execute model validation.
 
         Args:
             model (covsirphy.ModelBase): ODE model
+            timeout (int): time-out of run
+            allowance (tuple(float, float)): the allowance of the predicted value
             n_jobs (int): the number of parallel jobs or -1 (CPU count)
 
         Returns:
@@ -64,7 +66,8 @@ class ModelValidator(Term):
         df = self._setup(model, n_trials=self.n_trials, seed=self.seed)
         processor = self._processor(model, df)
         # Parameter estimation
-        units_estimated = processor.run(n_jobs=n_jobs)
+        units_estimated = processor.run(
+            timeout=timeout, allowance=allowance, n_jobs=n_jobs)
         # Get estimated parameters
         self._results.append(self._get_result(model, df, units_estimated))
         return self

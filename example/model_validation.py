@@ -15,9 +15,9 @@ def main():
     # Setting
     validator = cs.ModelValidator(n_trials=8, seed=1)
     # Execute validation
-    validator.run(cs.SIR)
-    validator.run(cs.SIRD)
-    validator.run(cs.SIRF)
+    validator.run(cs.SIR, timeout=60, allowance=(0.98, 1.02))
+    validator.run(cs.SIRD, timeout=60, allowance=(0.98, 1.02))
+    validator.run(cs.SIRF, timeout=60, allowance=(0.98, 1.02))
     print(validator.summary())
 
 
