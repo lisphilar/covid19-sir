@@ -34,6 +34,14 @@ covsirphy.cleaning.jhu\_data
    :undoc-members:
    :show-inheritance:
 
+covsirphy.cleaning.linelist
+--------------------------------
+
+.. automodule:: covsirphy.cleaning.linelist
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
 covsirphy.cleaning.oxcgrt
 --------------------------------
 
