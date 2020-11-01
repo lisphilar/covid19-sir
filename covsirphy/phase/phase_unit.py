@@ -184,10 +184,23 @@ class PhaseUnit(Term):
 
         Args:
             id_dict (dict[str, str]): dictionary of identifiers
+
+        Returns:
+            covsirphy.PhaseUnit: self
         """
         if self._id_dict is not None:
             raise AttributeError("@id_dict cannot be overwritten.")
         self._id_dict = kwargs
+        return self
+
+    def del_id(self):
+        """
+        Delete identifers.
+
+        Returns:
+            covsirphy.PhaseUnit: self
+        """
+        self._id_dict = None
         return self
 
     def enable(self):
@@ -304,14 +317,14 @@ class PhaseUnit(Term):
                     - End: end date of the phase
                     - Population: population value of the start date
                     - if available:
-                        - ODE: model name
-                        - Rt: (basic) reproduction number
-                        - parameter values if available
-                        - tau: tau value [min]
-                        - day parameter values if available
-                        - RMSLE: RMSLE value of estimation
-                        - Trials: the number of trials in estimation
-                        - Runtime: runtime of estimation
+                        - ODE (str): model name
+                        - Rt (float): (basic) reproduction number
+                        - rho etc. (float): parameter values if available
+                        - tau (int): tau value [min]
+                        - (int): day parameter values if available
+                        - RMSLE (float): RMSLE score of parameter estimation
+                        - Trials (int): the number of trials in parameter estimation
+                        - Runtime (str): runtime of parameter estimation
         """
         summary_dict = self.to_dict()
         df = pd.DataFrame.from_dict(summary_dict, orient="index").T

@@ -13,7 +13,7 @@ class Term(object):
     """
     Term definition.
     """
-    # Variables of SIR-like model
+    # Variables of SIR-derived model
     N = "Population"
     S = "Susceptible"
     C = "Confirmed"
@@ -34,6 +34,9 @@ class Term(object):
     COUNTRY = "Country"
     ISO3 = "ISO3"
     PROVINCE = "Province"
+    STEP_N = "step_n"
+    Y0_DICT = "y0_dict"
+    PARAM_DICT = "param_dict"
     AREA_COLUMNS = [COUNTRY, PROVINCE]
     STR_COLUMNS = [DATE, *AREA_COLUMNS]
     COLUMNS = [*STR_COLUMNS, C, CI, F, R]

@@ -34,13 +34,13 @@ class SEWIRF(ModelBase):
     VARS_INCLEASE = [ModelBase.R, ModelBase.F]
     # Example set of parameters and initial values
     EXAMPLE = {
-        "step_n": 180,
-        "population": 1_000_000,
-        "param_dict": {
+        ModelBase.STEP_N: 180,
+        ModelBase.N.lower(): 1_000_000,
+        ModelBase.PARAM_DICT: {
             "theta": 0.002, "kappa": 0.005, "rho1": 0.2, "sigma": 0.075,
             "rho2": 0.167, "rho3": 0.167,
         },
-        "y0_dict": {
+        ModelBase.Y0_DICT: {
             ModelBase.S: 994_000, ModelBase.E: 3000, ModelBase.W: 0.002,
             ModelBase.CI: 1000, ModelBase.R: 0, ModelBase.F: 0,
         },
@@ -125,7 +125,7 @@ class SEWIRF(ModelBase):
         sigma_series = r.diff() / t.diff() / i
         # Calculate range
         _dict = {param: (0, 1) for param in cls.PARAMETERS}
-        _dict["sigma"] = sigma_series.quantile(cls.QUANTILE_RANGE)
+        _dict["sigma"] = tuple(sigma_series.quantile(cls.QUANTILE_RANGE).clip(0, 1))
         return _dict
 
     @classmethod

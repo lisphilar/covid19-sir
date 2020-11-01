@@ -126,6 +126,9 @@ class MPEstimator(Term):
         Args:
             n_jobs (int): the number of parallel jobs or -1 (CPU count)
             kwargs: keyword arguments of model parameters and covsirphy.Estimator.run()
+
+        Returns:
+            list[covsirphy.PhaseUnit]
         """
         units = self._units[:]
         results = []
@@ -143,9 +146,12 @@ class MPEstimator(Term):
             results = [unit_est]
         # Estimation of each phase
         est_f = functools.partial(self._run, tau=self._tau, **kwargs)
-        with Pool(n_jobs) as p:
-            units_est = p.map(est_f, units)
-        results.extend(units_est)
+        if n_jobs == 1:
+            results = [est_f(unit) for unit in units]
+        else:
+            with Pool(n_jobs) as p:
+                units_est = p.map(est_f, units)
+            results.extend(units_est)
         # Completion
         stopwatch.stop()
         print(f"Completed optimization. Total: {stopwatch.show()}")

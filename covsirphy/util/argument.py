@@ -13,7 +13,7 @@ def find_args(func_list, **kwargs):
         kwargs: keyword arguments
 
     Returns:
-        dict: dictionary of enable arguments
+        dict: dictionary of enabled arguments
     """
     if not isinstance(func_list, list):
         func_list = [func_list]

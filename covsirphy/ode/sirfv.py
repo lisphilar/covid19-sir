@@ -40,13 +40,13 @@ class SIRFV(ModelBase):
     VARS_INCLEASE = [ModelBase.R, ModelBase.F]
     # Example set of parameters and initial values
     EXAMPLE = {
-        "step_n": 180,
-        "population": 1_000_000,
-        "param_dict": {
+        ModelBase.STEP_N: 180,
+        ModelBase.N.lower(): 1_000_000,
+        ModelBase.PARAM_DICT: {
             "theta": 0.002, "kappa": 0.005, "rho": 0.2, "sigma": 0.075,
             "omega": 0.001,
         },
-        "y0_dict": {
+        ModelBase.Y0_DICT: {
             ModelBase.S: 999_000, ModelBase.CI: 1000, ModelBase.R: 0, ModelBase.F: 0,
             ModelBase.V: 0,
         },
@@ -126,8 +126,10 @@ class SIRFV(ModelBase):
         omega_series = (n - s + i + r + f).diff() / t.diff() / n
         # Calculate range
         _dict = {param: (0, 1) for param in cls.PARAMETERS}
-        _dict["sigma"] = sigma_series.quantile(cls.QUANTILE_RANGE)
-        _dict["omega"] = omega_series.quantile(cls.QUANTILE_RANGE)
+        _dict["sigma"] = tuple(sigma_series.quantile(
+            cls.QUANTILE_RANGE).clip(0, 1))
+        _dict["omega"] = tuple(omega_series.quantile(
+            cls.QUANTILE_RANGE).clip(0, 1))
         return _dict
 
     @classmethod

@@ -3,7 +3,7 @@
 
 import pandas as pd
 import pytest
-from covsirphy import ExampleData, PopulationData, Term, Scenario
+from covsirphy import ExampleData, PopulationData, Term, ModelValidator
 from covsirphy import ModelBase, SIR, SIRD, SIRF, SIRFV, SEWIRF
 
 
@@ -91,17 +91,9 @@ class TestODE(object):
         "model",
         # SIRFV, SEWIRF
         [SIR, SIRD, SIRF])
-    def test_estimate(self, model):
+    def test_validation(self, model):
         # Setting
-        eg_tau = 1440
-        area = {"country": "Full", "province": model.NAME}
-        # Population
-        population_data = PopulationData(filename=None)
-        population_data.update(model.EXAMPLE["population"], **area)
-        # Simulation
-        example_data = ExampleData(tau=eg_tau, start_date="01Jan2020")
-        example_data.add(model, **area)
-        # Estimation
-        snl = Scenario(example_data, population_data, **area)
-        snl.add()
-        snl.estimate(model)
+        validator = ModelValidator(n_trials=4, seed=1)
+        # Execute validation
+        validator.run(model)
+        validator.summary()
