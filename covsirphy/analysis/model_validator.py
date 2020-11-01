@@ -212,4 +212,6 @@ class ModelValidator(Term):
         pre_cols = ["ID", self.ODE, self.RT, f"{self.RT}_est"]
         post_cols = [self.STEP_N, *self.EST_COLS]
         centers = list(set(df.columns) - set(pre_cols) - set(post_cols))
-        return df[[*pre_cols, *centers, *post_cols]]
+        centers_sorted = sorted(
+            centers, key=lambda x: df.columns.tolist().index(x))
+        return df[[*pre_cols, *centers_sorted, *post_cols]]
