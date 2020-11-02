@@ -128,6 +128,21 @@ class Term(object):
             float
         """
         return a * np.exp(-b * x)
+    
+    @staticmethod
+    def linear_fnc(x, a, b):
+        """
+        Linear function f(x)=A x + b.
+
+        Args:
+            x (float): x values
+            a (float): the first parameter of the function
+            b (float): the second parameter of the function
+
+        Returns:
+            float
+        """
+        return a * x + b
 
     @staticmethod
     def flatten(nested_list, unique=True):

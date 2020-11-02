@@ -28,7 +28,7 @@ class ChangeFinder(Term):
         When RMSLE score > max_rmsle, predicted values will be None
     """
 
-    def __init__(self, sr_df, min_size=7, max_rmsle=20.0):
+    def __init__(self, sr_df, min_size=5, max_rmsle=20.0):
         # Dataset
         self.sr_df = self.ensure_dataframe(
             sr_df, name="sr_df", time_index=True, columns=[self.S, self.R])
@@ -129,8 +129,17 @@ class ChangeFinder(Term):
         sr_df = sr_df.loc[(sr_df.index >= sta) & (sr_df.index <= end), :]
         trend = Trend(sr_df)
         df = trend.run()
+        if trend.rmsle() > trend.max_linear_fit_err:
+            # if the linear curve fitting error is significant
+            # then rerun the trend analysis using
+            # the negative exponential function for fitting
+            trend = Trend(sr_df)
+            trend.use_neg_exp_fnc = 1
+            df = trend.run()
+            trend.use_neg_exp_fnc = 0
         if trend.rmsle() > self.max_rmsle:
             df[f"{self.S}{self.P}"] = None
+        # print(trend.rmsle())
         # Get min value for vline
         r_value = int(df[self.R].min())
         # Rename the columns

@@ -36,6 +36,9 @@ class Trend(Term):
             raise ValueError("The length of @sr_df must be over 2.")
         # Setting for analysis
         self.result_df = None
+        self.max_linear_fit_err = 0.5
+        self.use_neg_exp_fnc = 0
+        self.fit_fnc = self.linear_fnc
 
     def run(self):
         """
@@ -79,23 +82,25 @@ class Trend(Term):
         df = df.astype(np.float64)
         # Calculate initial values of parameters
         x_series = df[self.R]
-        y_series = df[f"{self.S}{self.A}"]
+        y_series = np.log(df[f"{self.S}{self.A}"]).astype(np.float64)
         a_ini = y_series.max()
         b_ini = y_series.diff().reset_index(drop=True)[1] / a_ini
-        # Curve fitting with negative exponential function
+        # Curve fitting with linear function (default) or negative exponential function
         warnings.simplefilter("ignore", OptimizeWarning)
         warnings.simplefilter("ignore", RuntimeWarning)
+        if self.use_neg_exp_fnc == 1:
+            self.fit_fnc = self.negative_exp
         param, _ = curve_fit(
-            self.negative_exp, x_series, y_series,
+            self.fit_fnc, x_series, y_series,
             p0=[a_ini, b_ini],
             # Increase mux number of iteration in curve fitting from 600 (default)
             maxfev=5000
         )
         # Predict the values with the parameters
         f_partial = functools.partial(
-            self.negative_exp, a=param[0], b=param[1]
+            self.fit_fnc, a=param[0], b=param[1]
         )
-        df[f"{self.S}{self.P}"] = f_partial(x_series)
+        df[f"{self.S}{self.P}"] = np.exp(f_partial(x_series)).astype(np.float64)
         return df.astype(np.int64, errors="ignore")
 
     def rmsle(self):
