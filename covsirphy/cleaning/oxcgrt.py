@@ -86,15 +86,13 @@ class OxCGRTData(CleaningBase):
         df = df.loc[:, [self.DATE, self.COUNTRY, self.ISO3, *float_cols]]
         return df
 
-    def subset(self, country, iso3=None):
+    def subset(self, country, **kwargs):
         """
         Create a subset for a country.
 
-        Notes:
-            One of @country and @iso3 must be specified.
-
         Args:
             country (str): country name or ISO 3166-1 alpha-3, like JPN
+            kwargs: the other arguments will be ignored in the latest version.
 
         Returns:
             pandas.DataFrame
@@ -104,7 +102,7 @@ class OxCGRTData(CleaningBase):
                     - Date (pd.TimeStamp): Observation date
                     - other column names are defined by OxCGRTData.COL_DICT
         """
-        country = self.iso3_to_country(country or iso3)
+        country = self.iso3_to_country(country)
         df = self._cleaned_df.copy()
         df = df.loc[df[self.COUNTRY] == country, :]
         if df.empty:

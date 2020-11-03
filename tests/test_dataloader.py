@@ -128,8 +128,8 @@ class TestOxCGRTData(object):
 
     def test_subset(self, oxcgrt_data):
         with pytest.raises(KeyError):
-            oxcgrt_data.subset(country="Moon")
-        df = oxcgrt_data.subset(iso3="JPN")
+            oxcgrt_data.subset("Moon")
+        df = oxcgrt_data.subset("JPN")
         assert set(df.columns) == set(OxCGRTData.OXCGRT_COLS_WITHOUT_COUNTRY)
 
     def test_total(self, oxcgrt_data):
@@ -139,7 +139,7 @@ class TestOxCGRTData(object):
 
 class TestCountryData(object):
     def test_cleaning(self, japan_data):
-        assert isinstance(japan_data.raw_columns, list)
+        assert isinstance(japan_data.raw_columns(), list)
         df = japan_data.cleaned()
         assert set(df.columns) == set(Term.COLUMNS)
 
@@ -149,4 +149,4 @@ class TestCountryData(object):
         assert set(df.columns) == column_set
 
     def test_countries(self, japan_data):
-        assert japan_data.country == [japan_data.countries]
+        assert [japan_data.country] == japan_data.countries
