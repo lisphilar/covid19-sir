@@ -149,4 +149,4 @@ class TestCountryData(object):
         assert set(df.columns) == column_set
 
     def test_countries(self, japan_data):
-        assert [japan_data.country] == japan_data.countries
+        assert [japan_data.country] == japan_data.countries()
