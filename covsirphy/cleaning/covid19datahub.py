@@ -57,8 +57,8 @@ class COVID19DataHub(Term):
         Notes:
             Citation of COVID-19 Data Hub will be set as JHUData.citation etc.
         """
-        if force:
-            self.filepath.unlink(missing_ok=True)
+        if force and self.filepath.exists():
+            self.filepath.unlink()
         if not self.filepath.exists():
             raw_df = self._retrieve(verbose=True)
             save_dataframe(raw_df, self.filepath, index=False)
