@@ -8,6 +8,10 @@ from covsirphy.cleaning.cbase import CleaningBase
 class OxCGRTData(CleaningBase):
     """
     Data cleaning of OxCGRT dataset.
+
+    Args:
+        filename (str): CSV filename of the dataset
+        citation (str): citation
     """
     OXCGRT_VARIABLES_RAW = [
         "school_closing",
@@ -33,8 +37,8 @@ class OxCGRTData(CleaningBase):
         CleaningBase.DATE, *list(OXCGRT_COL_DICT.values())
     ]
 
-    def __init__(self, filename):
-        super().__init__(filename)
+    def __init__(self, filename, citation=None):
+        super().__init__(filename, citation)
 
     def _cleaning(self):
         """
@@ -45,7 +49,7 @@ class OxCGRTData(CleaningBase):
         https://github.com/OxCGRT/covid-policy-tracker/
 
         Returns:
-            (pandas.DataFrame)
+            pandas.DataFrame
                 Index:
                     reset index
                 Columns:
@@ -93,7 +97,7 @@ class OxCGRTData(CleaningBase):
             country (str): country name or ISO 3166-1 alpha-3, like JPN
 
         Returns:
-            (pandas.DataFrame)
+            pandas.DataFrame
                 Index:
                     reset index
                 Columns:
