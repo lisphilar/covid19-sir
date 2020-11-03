@@ -18,6 +18,14 @@ covsirphy.cleaning.country\_data
    :undoc-members:
    :show-inheritance:
 
+covsirphy.cleaning.covid19datahub
+-------------------------------
+
+.. automodule:: covsirphy.covid19datahub
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
 covsirphy.cleaning.dataloader
 ------------------------------------
 

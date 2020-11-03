@@ -8,6 +8,10 @@ from covsirphy.cleaning.cbase import CleaningBase
 class OxCGRTData(CleaningBase):
     """
     Data cleaning of OxCGRT dataset.
+
+    Args:
+        filename (str): CSV filename of the dataset
+        citation (str): citation
     """
     OXCGRT_VARIABLES_RAW = [
         "school_closing",
@@ -33,8 +37,8 @@ class OxCGRTData(CleaningBase):
         CleaningBase.DATE, *list(OXCGRT_COL_DICT.values())
     ]
 
-    def __init__(self, filename):
-        super().__init__(filename)
+    def __init__(self, filename, citation=None):
+        super().__init__(filename, citation)
 
     def _cleaning(self):
         """
@@ -45,7 +49,7 @@ class OxCGRTData(CleaningBase):
         https://github.com/OxCGRT/covid-policy-tracker/
 
         Returns:
-            (pandas.DataFrame)
+            pandas.DataFrame
                 Index:
                     reset index
                 Columns:
@@ -82,25 +86,23 @@ class OxCGRTData(CleaningBase):
         df = df.loc[:, [self.DATE, self.COUNTRY, self.ISO3, *float_cols]]
         return df
 
-    def subset(self, country, iso3=None):
+    def subset(self, country, **kwargs):
         """
         Create a subset for a country.
 
-        Notes:
-            One of @country and @iso3 must be specified.
-
         Args:
             country (str): country name or ISO 3166-1 alpha-3, like JPN
+            kwargs: the other arguments will be ignored in the latest version.
 
         Returns:
-            (pandas.DataFrame)
+            pandas.DataFrame
                 Index:
                     reset index
                 Columns:
                     - Date (pd.TimeStamp): Observation date
                     - other column names are defined by OxCGRTData.COL_DICT
         """
-        country = self.iso3_to_country(country or iso3)
+        country = self.iso3_to_country(country)
         df = self._cleaned_df.copy()
         df = df.loc[df[self.COUNTRY] == country, :]
         if df.empty:

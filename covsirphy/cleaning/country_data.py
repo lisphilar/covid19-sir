@@ -27,10 +27,7 @@ class CountryData(CleaningBase):
     @property
     def country(self):
         """
-        Return the country name.
-
-        Returns:
-            (str): country name
+        str: country name
         """
         return self._country
 
@@ -39,7 +36,7 @@ class CountryData(CleaningBase):
         Return the column names of the raw data.
 
         Returns:
-            (list[str]): the list of column names of the raw data
+            list[str]: the list of column names of the raw data
         """
         return self._raw.columns.tolist()
 
@@ -68,7 +65,7 @@ class CountryData(CleaningBase):
         This method overwrite super()._cleaning() method.
 
         Returns:
-            (pandas.DataFrame):
+            pandas.DataFrame:
                 Index:
                     reset index
                 Columns:
@@ -116,7 +113,7 @@ class CountryData(CleaningBase):
         Cleaning method is defined by CountryData._cleaning() method.
 
         Returns:
-            (pandas.DataFrame):
+            pandas.DataFrame:
                 Index:
                     reset index
                 Columns:
@@ -136,7 +133,7 @@ class CountryData(CleaningBase):
         Return a dataframe to show chronological change of number and rates.
 
         Returns:
-            (pandas.DataFrame): group-by Date, sum of the values
+            pandas.DataFrame: group-by Date, sum of the values
 
                 Index:
                     Date (pd.TimeStamp): Observation date
@@ -171,6 +168,6 @@ class CountryData(CleaningBase):
         Return names of countries where records are registered.
 
         Returns:
-            (list[str]): list of country names
+            list[str]: list of country names
         """
         return [self._country]
