@@ -74,8 +74,7 @@ class DataLoader(Term):
         # Create the directory if not exist
         self.dir_path.mkdir(parents=True, exist_ok=True)
         # COVID-19 Data Hub
-        self.covid19dh_dict = None
-        self.covid19dh_primary = None
+        self.covid19dh = None
 
     @staticmethod
     def _last_updated_local(path):
@@ -113,11 +112,12 @@ class DataLoader(Term):
         time_limit = date_local + timedelta(hours=self.update_interval)
         return datetime.now() > time_limit
 
-    def _covid19dh(self, basename="covid19dh.csv", verbose=True):
+    def _covid19dh(self, name, basename="covid19dh.csv", verbose=True):
         """
         Return the datasets of COVID-19 Data Hub.
 
         Args:
+            name (str): name of dataset, "jhu", "population" or "oxcgrt"
             basename (str): basename of CSV file to save records
             verbose (bool): if True, the list of primary sources will be shown when downloading
 
@@ -127,22 +127,20 @@ class DataLoader(Term):
                 - "population", covsirphy.PopulationData: population values
                 - "oxcgrt", covsirphy.OxCGRTData: government responses
         """
-        filename = self.dir_path.joinpath(basename)
-        if self.covid19dh_dict is None:
-            data_hub = COVID19DataHub(filename=filename)
+        filename, force = self.dir_path.joinpath(basename), False
+        if self.covid19dh is None:
+            self.covid19dh = COVID19DataHub(filename=filename)
             force = self._download_necessity(filename)
-            self.covid19dh_dict = data_hub.load(force=force, verbose=verbose)
-            self.covid19dh_primary = data_hub.primary
-        return self.covid19dh_dict
+        return self.covid19dh.load(name=name, force=force, verbose=verbose)
 
     @ property
     def covid19dh_citation(self):
         """
         Return the list of primary sources of COVID-19 Data Hub.
         """
-        if self.covid19dh_primary is None:
-            self._covid19dh(verbose=False)
-        return self.covid19dh_primary
+        if self.covid19dh is None:
+            self._covid19dh(name="jhu", force=False, verbose=False)
+        return self.covid19dh.primary
 
     def jhu(self, basename="covid19dh.csv", local_file=None, verbose=True):
         """
@@ -158,7 +156,7 @@ class DataLoader(Term):
         """
         if local_file is not None:
             return JHUData(filename=local_file)
-        return self._covid19dh(basename=basename, verbose=verbose)["jhu"]
+        return self._covid19dh(name="jhu", basename=basename, verbose=verbose)
 
     def population(self, basename="covid19dh.csv", local_file=None, verbose=True):
         """
@@ -174,7 +172,7 @@ class DataLoader(Term):
         """
         if local_file is not None:
             return PopulationData(filename=local_file)
-        return self._covid19dh(basename=basename, verbose=verbose)["population"]
+        return self._covid19dh(name="population", basename=basename, verbose=verbose)
 
     def oxcgrt(self, basename="covid19dh.csv", local_file=None, verbose=True):
         """
@@ -190,7 +188,7 @@ class DataLoader(Term):
         """
         if local_file is not None:
             return OxCGRTData(filename=local_file)
-        return self._covid19dh(basename=basename, verbose=verbose)["oxcgrt"]
+        return self._covid19dh(name="oxcgrt", basename=basename, verbose=verbose)
 
     def japan(self, basename="covid_jpn_total.csv", local_file=None):
         """
