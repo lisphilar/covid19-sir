@@ -89,7 +89,8 @@ class TestPhaseSeries(object):
         series.trend(sr_df)
         series.trend(sr_df, show_figure=False)
         # Last phase
-        assert series.unit(phase="last") == series.unit(phase="6th")
+        last_name = Term.num2str(len(series))
+        assert series.unit(phase="last") == series.unit(phase=last_name)
         # Un-registered phase
         with pytest.raises(KeyError):
             series.unit("10th")
