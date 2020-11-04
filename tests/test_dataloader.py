@@ -42,7 +42,7 @@ class TestDataLoader(object):
         data_loader.jhu(local_file="input/covid19dh.csv")
         data_loader.population(local_file="input/covid19dh.csv")
         data_loader.oxcgrt(local_file="input/covid19dh.csv")
-        data_loader.japan(local_file="input/covid_japan_total.csv")
+        data_loader.japan(local_file="input/covid_jpn_total.csv")
 
 
 class TestObsoleted(object):
