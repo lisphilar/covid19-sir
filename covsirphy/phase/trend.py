@@ -36,10 +36,15 @@ class Trend(Term):
             raise ValueError("The length of @sr_df must be over 2.")
         # Setting for analysis
         self.result_df = None
+        self.fit_fnc = self.linear
 
-    def run(self):
+    def run(self, func):
         """
-        Perform curve fitting of S-R trend with negative exponential function and save the result.
+        Perform curve fitting of S-R trend with linear or negative exponential function and save the result.
+        
+        Args:
+            func:
+                the selected curve fitting function, either linear or negative exponential
 
         Returns:
             (pandas.DataFrame): results of fitting
@@ -50,13 +55,17 @@ class Trend(Term):
                     - Susceptible_actual: Actual values of Susceptible
                     - columns defined by @columns
         """
+        if func == "linear":
+            self.fit_fnc = self.linear
+        elif func == "negative_exponential":
+            self.fit_fnc = self.negative_exp
         self.result_df = self._fitting(self.sr_df)
         return self.result_df
 
     def _fitting(self, sr_df):
         """
         Perform curve fitting of S-R trend
-            with negative exponential function.
+            with linear or negative exponential function.
 
         Args:
             sr_df (pandas.DataFrame): training dataset
@@ -79,23 +88,23 @@ class Trend(Term):
         df = df.astype(np.float64)
         # Calculate initial values of parameters
         x_series = df[self.R]
-        y_series = df[f"{self.S}{self.A}"]
+        y_series = np.log(df[f"{self.S}{self.A}"]).astype(np.float64)
         a_ini = y_series.max()
         b_ini = y_series.diff().reset_index(drop=True)[1] / a_ini
-        # Curve fitting with negative exponential function
+        # Curve fitting with linear or negative exponential function
         warnings.simplefilter("ignore", OptimizeWarning)
         warnings.simplefilter("ignore", RuntimeWarning)
         param, _ = curve_fit(
-            self.negative_exp, x_series, y_series,
+            self.fit_fnc, x_series, y_series,
             p0=[a_ini, b_ini],
             # Increase mux number of iteration in curve fitting from 600 (default)
             maxfev=5000
         )
         # Predict the values with the parameters
         f_partial = functools.partial(
-            self.negative_exp, a=param[0], b=param[1]
+            self.fit_fnc, a=param[0], b=param[1]
         )
-        df[f"{self.S}{self.P}"] = f_partial(x_series)
+        df[f"{self.S}{self.P}"] = np.exp(f_partial(x_series)).astype(np.float64)
         return df.astype(np.int64, errors="ignore")
 
     def rmsle(self):
@@ -105,7 +114,7 @@ class Trend(Term):
         Returns:
             (float): RMSLE score
         """
-        df = self.run().replace(np.inf, 0)
+        df = self.run(self.fit_fnc).replace(np.inf, 0)
         df = df.loc[df[f"{self.S}{self.A}"] > 0, :]
         df = df.loc[df[f"{self.S}{self.P}"] > 0, :]
         actual = df[f"{self.S}{self.A}"]
