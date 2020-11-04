@@ -139,7 +139,7 @@ class DataLoader(Term):
         Return the list of primary sources of COVID-19 Data Hub.
         """
         if self.covid19dh is None:
-            self._covid19dh(name="jhu", force=False, verbose=False)
+            self._covid19dh(name="jhu", verbose=False)
         return self.covid19dh.primary
 
     def jhu(self, basename="covid19dh.csv", local_file=None, verbose=True):
