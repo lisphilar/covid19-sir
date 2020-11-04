@@ -69,6 +69,8 @@ class TestPhaseSeries(object):
         # Filling past phases: 0th
         series.add()
         assert len(series) == 1
+        # Last phase
+        assert series.phase(phase="last")
 
     @pytest.mark.parametrize("country", ["Japan"])
     def test_trend(self, jhu_data, population_data, country):
@@ -88,9 +90,6 @@ class TestPhaseSeries(object):
         # S-R trend analysis and set phases
         series.trend(sr_df)
         series.trend(sr_df, show_figure=False)
-        # Last phase
-        last_name = Term.num2str(len(series))
-        assert series.unit(phase="last") == series.unit(phase=last_name)
         # Un-registered phase
         with pytest.raises(KeyError):
             series.unit("10th")
