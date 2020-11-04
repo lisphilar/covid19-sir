@@ -89,7 +89,7 @@ class TestPhaseSeries(object):
         series.trend(sr_df)
         series.trend(sr_df, show_figure=False)
         # Summary
-        assert len(series) == 7
+        assert len(series) == 8
         # Last phase
         assert series.unit(phase="last") == series.unit(phase="6th")
         # Un-registered phase
