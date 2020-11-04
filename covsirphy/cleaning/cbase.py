@@ -13,9 +13,10 @@ class CleaningBase(Term):
 
     Args:
         filename (str): CSV filename of the dataset
+        citation (str): citation
     """
 
-    def __init__(self, filename):
+    def __init__(self, filename, citation=None):
         warnings.simplefilter("ignore", DeprecationWarning)
         if filename is None:
             self._raw = pd.DataFrame()
@@ -25,7 +26,7 @@ class CleaningBase(Term):
                 filename, dtype={"Province/State": "object"}
             ).compute()
             self._cleaned_df = self._cleaning()
-        self._citation = str()
+        self._citation = citation or ""
 
     @property
     def raw(self):
@@ -33,7 +34,7 @@ class CleaningBase(Term):
         Return the raw data.
 
         Returns:
-            (pandas.DataFrame): raw data
+            pandas.DataFrame: raw data
         """
         return self._raw
 
@@ -45,7 +46,7 @@ class CleaningBase(Term):
             Cleaning method is defined by self._cleaning() method.
 
         Returns:
-            (pandas.DataFrame): cleaned data
+            pandas.DataFrame: cleaned data
         """
         return self._cleaned_df
 
@@ -57,7 +58,7 @@ class CleaningBase(Term):
             Cleaning method is defined by self._cleaning() method.
 
         Returns:
-            (pandas.DataFrame): cleaned data
+            pandas.DataFrame: cleaned data
         """
         return self._raw.copy()
 
@@ -80,7 +81,7 @@ class CleaningBase(Term):
             iso3_code (str): ISO3 code or country name
 
         Returns:
-            (str): country name
+            str: country name
 
         Notes:
             If ISO3 codes are not registered, return the string as-si @iso3_code.
@@ -102,7 +103,7 @@ class CleaningBase(Term):
             KeyError: ISO3 code of the country is not registered
 
         Returns:
-            (str): ISO3 code
+            str: ISO3 code
         """
         if self.ISO3 not in self._cleaned_df.columns:
             return self.UNKNOWN
@@ -122,7 +123,7 @@ class CleaningBase(Term):
             province (str): province name
 
         Returns:
-            (str): area name
+            str: area name
 
         Notes:
             If province is None or '-', return country name.
@@ -140,7 +141,7 @@ class CleaningBase(Term):
             country (str): country name or ISO3 code
 
         Returns:
-            (pandas.DataFrame)
+            pandas.DataFrame
                 Index:
                     reset index
                 Columns:
@@ -171,7 +172,7 @@ class CleaningBase(Term):
             KeyError: records of the area (country/province) are not registered
 
         Returns:
-            (pandas.DataFrame)
+            pandas.DataFrame
                 Index:
                     reset index
                 Columns:
@@ -222,7 +223,7 @@ class CleaningBase(Term):
             KeyError: records of the area (country/province) are not registered
 
         Returns:
-            (pandas.DataFrame)
+            pandas.DataFrame
                 Index:
                     reset index
                 Columns:
@@ -262,7 +263,7 @@ class CleaningBase(Term):
             KeyError: selected records are not registered
 
         Returns:
-            (pandas.DataFrame)
+            pandas.DataFrame
                 Index:
                     reset index
                 Columns:
@@ -296,7 +297,7 @@ class CleaningBase(Term):
             KeyError: Country names are not registered in this dataset
 
         Returns:
-            (list[str]): list of country names
+            list[str]: list of country names
         """
         df = self._cleaned_df.copy()
         if self.COUNTRY not in df.columns:
@@ -308,7 +309,7 @@ class CleaningBase(Term):
         Calculate total values of the cleaned dataset.
 
         Returns:
-            (pandas.DataFrame or pandas.Series or float):
+            pandas.DataFrame or pandas.Series or float:
                 Index: 'Date' (pandas.TimeStamp) or not exist (pandas.Series)
                 Columns: column names of the cleaned dataset (dtype=int or float)
                 Values: total values

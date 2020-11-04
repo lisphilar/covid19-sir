@@ -12,6 +12,10 @@ from covsirphy.cleaning.cbase import CleaningBase
 class PopulationData(CleaningBase):
     """
     Data cleaning of total population dataset.
+
+    Args:
+        filename (str): CSV filename of the dataset
+        citation (str): citation
     """
     POPULATION_COLS = [
         CleaningBase.ISO3,
@@ -21,7 +25,7 @@ class PopulationData(CleaningBase):
         CleaningBase.N
     ]
 
-    def __init__(self, filename=None):
+    def __init__(self, filename=None, citation=None):
         self.created_time = datetime.now()
         if filename is None:
             self._raw = pd.DataFrame()
@@ -31,14 +35,14 @@ class PopulationData(CleaningBase):
                 filename, dtype={"Province/State": "object"}
             ).compute()
             self._cleaned_df = self._cleaning()
-        self._citation = str()
+        self._citation = citation or ""
 
     def _cleaning(self):
         """
         Perform data cleaning of the raw data.
 
         Returns:
-            (pandas.DataFrame)
+            pandas.DataFrame
                 Index:
                     reset index
                 Columns:
@@ -131,10 +135,10 @@ class PopulationData(CleaningBase):
         Return the total value of population in the datset.
 
         Returns:
-            (int)
+            int
         """
         values = self._cleaned_df[self.N]
-        return sum(values)
+        return int(sum(values))
 
     def to_dict(self, country_level=True):
         """
@@ -144,7 +148,7 @@ class PopulationData(CleaningBase):
         country_level (str): whether key is country name or not
 
         Returns:
-            (dict)
+            dict
                 - if @country_level is True, {"country", population}
                 - if False, {"country/province", population}
         """
@@ -169,7 +173,7 @@ class PopulationData(CleaningBase):
             date (str or None): observation date, like 01Jun2020
 
         Returns:
-            (int): population in the place
+            int: population in the place
 
         Notes:
             If @date is None, the created date of the instancewill be used
@@ -193,6 +197,9 @@ class PopulationData(CleaningBase):
             country (str): country name
             province (str): province name
             date (str or None): observation date, like 01Jun2020
+
+        Returns:
+            covsirphy.PopulationData: self
 
         Notes:
             If @date is None, the created date of the instancewill be used
@@ -227,7 +234,7 @@ class PopulationData(CleaningBase):
             KeyError: Country names are not registered in this dataset
 
         Returns:
-            (list[str]): list of country names
+            list[str]: list of country names
 
         Notes:
             Country 'Others' will be removed.

@@ -10,10 +10,14 @@ from covsirphy.cleaning.country_data import CountryData
 class JHUData(CleaningBase):
     """
     Data cleaning of JHU-style dataset.
+
+    Args:
+        filename (str): CSV filename of the dataset
+        citation (str): citation
     """
 
-    def __init__(self, filename):
-        super().__init__(filename)
+    def __init__(self, filename, citation=None):
+        super().__init__(filename, citation)
 
     def cleaned(self, **kwargs):
         """
@@ -26,7 +30,7 @@ class JHUData(CleaningBase):
             kwargs: keword arguments will be ignored.
 
         Returns:
-            (pandas.DataFrame)
+            pandas.DataFrame
                 Index:
                     reset index
                 Columns:
@@ -51,7 +55,7 @@ class JHUData(CleaningBase):
         This method overwrite super()._cleaning() method.
 
         Returns:
-            (pandas.DataFrame)
+            pandas.DataFrame
                 Index:
                     reset index
                 Columns:
@@ -135,7 +139,7 @@ class JHUData(CleaningBase):
             country_data (covsirphy.CountryData): dataset object of the country
 
         Returns:
-            self
+            covsirphy.JHUData: self
         """
         self.ensure_instance(country_data, CountryData, name="country_data")
         # Read new dataset
@@ -163,7 +167,7 @@ class JHUData(CleaningBase):
             population (int or None): population value
 
         Returns:
-            (pandas.DataFrame)
+            pandas.DataFrame
                 Index:
                     reset index
                 Columns:
@@ -210,7 +214,7 @@ class JHUData(CleaningBase):
             population (int): population value
 
         Returns:
-            (pandas.DataFrame)
+            pandas.DataFrame
                 Index:
                     Date (pd.TimeStamp): Observation date
                 Columns:
@@ -221,7 +225,7 @@ class JHUData(CleaningBase):
             @population must be specified.
             Records with Recovered > 0 will be used.
         """
-        population = self.ensure_natural_int(population, "population")
+        population = self.ensure_population(population)
         subset_df = self.subset(
             country=country, province=province,
             start_date=start_date, end_date=end_date, population=population
@@ -237,7 +241,7 @@ class JHUData(CleaningBase):
             dataframe (pd.DataFrame): Cleaned dataset
 
         Returns:
-            (covsirphy.JHUData): JHU-style dataset
+            covsirphy.JHUData: JHU-style dataset
         """
         instance = cls(filename=None)
         instance._cleaned_df = cls.ensure_dataframe(
@@ -249,7 +253,7 @@ class JHUData(CleaningBase):
         Return a dataframe to show chronological change of number and rates.
 
         Returns:
-            (pandas.DataFrame): group-by Date, sum of the values
+            pandas.DataFrame: group-by Date, sum of the values
 
                 Index:
                     Date (pd.TimeStamp): Observation date
@@ -275,7 +279,7 @@ class JHUData(CleaningBase):
         Return names of countries where records with Recovered > 0 are registered.
 
         Returns:
-            (list[str]): list of country names
+            list[str]: list of country names
         """
         df = self._cleaned_df.copy()
         df = df.loc[df[self.R] > 0, :]

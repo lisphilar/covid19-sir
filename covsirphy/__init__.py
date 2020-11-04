@@ -14,6 +14,7 @@ from covsirphy.util.plotting import line_plot
 from covsirphy.util.map import jpn_map
 from covsirphy.util.stopwatch import StopWatch
 from covsirphy.util.error import deprecate
+from covsirphy.util.file import save_dataframe
 from covsirphy.util.argument import find_args
 # cleaning
 from covsirphy.cleaning.term import Term, Word
@@ -22,6 +23,7 @@ from covsirphy.cleaning.jhu_data import JHUData
 from covsirphy.cleaning.country_data import CountryData
 from covsirphy.cleaning.population import PopulationData, Population
 from covsirphy.cleaning.oxcgrt import OxCGRTData
+from covsirphy.cleaning.covid19datahub import COVID19DataHub
 from covsirphy.cleaning.dataloader import DataLoader
 # ode
 from covsirphy.ode.mbase import ModelBase
@@ -59,11 +61,12 @@ __all__ = [
     "ExampleData", "Scenario", "ModelValidator",
     "ODESimulator", "ChangeFinder",
     "PhaseSeries", "PhaseUnit", "MPEstimator",
-    "Term", "CleaningBase", "DataLoader",
+    "Term", "CleaningBase", "DataLoader", "COVID19DataHub",
     "JHUData", "CountryData", "PopulationData", "OxCGRTData",
     "ModelBase", "SIR", "SIRD", "SIRF", "SIRFV", "SEWIRF",
     "Estimator", "Trend", "Optimizer",
     "line_plot", "jpn_map", "StopWatch", "deprecate", "find_args",
+    "save_dataframe",
     "PolicyMeasures",
     # Deprecated
     "Population", "Word",
