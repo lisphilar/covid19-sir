@@ -125,20 +125,11 @@ class ChangeFinder(Term):
         sr_df = sr_df.loc[(sr_df.index >= sta) & (sr_df.index <= end), :]
         # Calculate linear and negative exponential curve fitting
         # and select the method with the smaller RMSLE score
-        # Linear function
-        trend_line = Trend(sr_df)
-        line_df = trend_line.run(func="linear")
-        # Negative exponential function
-        trend_exp = Trend(sr_df)
-        exp_df = trend_exp.run(func="negative_exponential")
-        # Compare the trends with RMSLE score
-        linear_rmsle = trend_line.rmsle()
-        neg_exp_rmsle = trend_exp.rmsle()
-        if (linear_rmsle < neg_exp_rmsle) and (linear_rmsle > 0):
-            df = line_df.copy()
-        else:
-            df = exp_df.copy()
-        if min(linear_rmsle, neg_exp_rmsle) > self.max_rmsle:
+        trend = Trend(sr_df=sr_df)
+        trend.run()
+        df = trend.result_df.copy()
+        rmsle = trend.rmsle()
+        if self.max_rmsle < rmsle:
             df[f"{self.S}{self.P}"] = None
         # Get min value for vline
         r_value = int(df[self.R].min())

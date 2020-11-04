@@ -43,7 +43,7 @@ class TestPhaseSeries(object):
         base_cols = [Term.TENSE, Term.START, Term.END, Term.N]
         assert set(df.columns) == set(base_cols)
         assert series.to_dict()["0th"]["Type"] == Term.PAST
-        assert len(df) == 6
+        first_len = len(df)
         assert set(df.loc["3rd", :].tolist()) == set(
             [Term.PAST, "27May2020", "01Aug2020", 123998518])
         assert set(df.loc["4th", :].tolist()) == set(
@@ -51,16 +51,16 @@ class TestPhaseSeries(object):
         # Disable/enable a phase
         series.disable("0th")
         assert "0th" not in series.to_dict()
-        assert len(series) == 5
-        assert len([unit for unit in series]) == 6
-        assert len([unit for unit in series if unit]) == 5
+        assert len(series) == first_len - 1
+        assert len([unit for unit in series]) == first_len
+        assert len([unit for unit in series if unit]) == first_len - 1
         series.enable("0th")
         assert "0th" in series.to_dict()
-        assert len(series) == 6
+        assert len(series) == first_len
         # Clear future phases: 4th and 5th will be deleted
         series.clear(include_past=False)
         assert "4th" not in series.to_dict()
-        assert len(series) == 4
+        assert len(series) == first_len - 2
         assert series
         # Clear all phases
         series.clear(include_past=True)
@@ -69,6 +69,8 @@ class TestPhaseSeries(object):
         # Filling past phases: 0th
         series.add()
         assert len(series) == 1
+        # Last phase
+        assert series.unit(phase="last")
 
     @pytest.mark.parametrize("country", ["Japan"])
     def test_trend(self, jhu_data, population_data, country):
@@ -88,10 +90,6 @@ class TestPhaseSeries(object):
         # S-R trend analysis and set phases
         series.trend(sr_df)
         series.trend(sr_df, show_figure=False)
-        # Summary
-        assert len(series) == 7
-        # Last phase
-        assert series.unit(phase="last") == series.unit(phase="6th")
         # Un-registered phase
         with pytest.raises(KeyError):
             series.unit("10th")
@@ -106,12 +104,13 @@ class TestPhaseSeries(object):
         # Add future phase with model and tau
         series.add(end_date="01Sep2020", model=SIR, tau=360)
         series.add(end_date="01Oct2020")
-        assert series.to_dict()["7th"][Term.ODE] == SIR.NAME
-        assert series.to_dict()["8th"][Term.TAU] == 360
+        length = len(series)
+        assert series.to_dict()[Term.num2str(length - 2)][Term.ODE] == SIR.NAME
+        assert series.to_dict()[Term.num2str(length - 1)][Term.TAU] == 360
         series.add(end_date="01Nov2020", rho=0.006)
         series.add(end_date="01Dec2020", sigma=0.011)
-        assert series.to_dict()["10th"][Term.RT] == 0.55
-        assert series.to_dict()["10th"]["1/beta [day]"] == 41
+        assert series.to_dict()[Term.num2str(length + 1)][Term.RT] == 0.55
+        assert series.to_dict()[Term.num2str(length + 1)]["1/beta [day]"] == 41
 
     @pytest.mark.parametrize("country", ["Japan"])
     def test_delete_phase(self, jhu_data, population_data, country):
@@ -120,11 +119,11 @@ class TestPhaseSeries(object):
         sr_df = jhu_data.to_sr(country=country, population=population)
         series = PhaseSeries("01Apr2020", "01Aug2020", population)
         series.trend(sr_df, show_figure=False)
-        assert len(series) == 7
+        first_len = len(series)
         # Deletion of 0th phase is the same as disabling 0th phase
         series.delete("0th")
         series.enable("0th")
-        assert len(series) == 7
+        assert len(series) == first_len
         assert "5th" in series.to_dict()
         # Delete phase (not the last registered phase)
         new_second = PhaseUnit(
@@ -132,7 +131,7 @@ class TestPhaseSeries(object):
             series.unit("3rd").end_date,
             series.unit("2nd").population)
         series.delete("3rd")
-        assert len(series) == 6
+        assert len(series) == first_len - 1
         assert series.unit("2nd") == new_second
         # Delete the last phase
         old_last = series.unit("last")
