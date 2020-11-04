@@ -18,7 +18,7 @@ class TestCOVID19DataHub(object):
         # Citation (with downloading), disabled to avoid downloading many times
         # assert isinstance(data_hub.primary, str)
         # Retrieve the dataset from the server
-        data_hub.load(name="jhu", force=True, verbose=False)
+        data_hub.load(name="jhu", verbose=False)
         with pytest.raises(KeyError):
             data_hub.load(name="unknown")
         # Citation (without downloading)
