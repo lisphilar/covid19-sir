@@ -105,12 +105,12 @@ class TestPhaseSeries(object):
         series.add(end_date="01Sep2020", model=SIR, tau=360)
         series.add(end_date="01Oct2020")
         length = len(series)
-        assert series.to_dict()[Term.num2str(length - 1)][Term.ODE] == SIR.NAME
-        assert series.to_dict()[Term.num2str(length)][Term.TAU] == 360
+        assert series.to_dict()[Term.num2str(length - 2)][Term.ODE] == SIR.NAME
+        assert series.to_dict()[Term.num2str(length - 1)][Term.TAU] == 360
         series.add(end_date="01Nov2020", rho=0.006)
         series.add(end_date="01Dec2020", sigma=0.011)
         assert series.to_dict()[Term.num2str(length + 1)][Term.RT] == 0.55
-        assert series.to_dict()[Term.num2str(length + 2)]["1/beta [day]"] == 41
+        assert series.to_dict()[Term.num2str(length + 1)]["1/beta [day]"] == 41
 
     @pytest.mark.parametrize("country", ["Japan"])
     def test_delete_phase(self, jhu_data, population_data, country):
