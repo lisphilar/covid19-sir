@@ -33,8 +33,7 @@ class ChangeFinder(Term):
         self.sr_df = self.ensure_dataframe(
             sr_df, name="sr_df", time_index=True, columns=[self.S, self.R])
         self.dates = [
-            date_obj.strftime(self.DATE_FORMAT) for date_obj in sr_df.index
-        ]
+            date_obj.strftime(self.DATE_FORMAT) for date_obj in sr_df.index]
         # Minimum size of records
         self.min_size = self.ensure_natural_int(min_size, "min_size")
         # Check length of records
@@ -54,7 +53,7 @@ class ChangeFinder(Term):
         Run optimization and find change points.
 
         Returns:
-            self
+            covsirphy.ChangeFinder: self
         """
         # Convert the dataset, index: Recovered, column: log10(Susceptible)
         sr_df = self.sr_df.copy()
@@ -64,14 +63,12 @@ class ChangeFinder(Term):
         serial_df = pd.DataFrame(np.arange(1, df.index.max() + 1, 1))
         serial_df.index += 1
         df = pd.merge(
-            df, serial_df, left_index=True, right_index=True, how="outer"
-        )
+            df, serial_df, left_index=True, right_index=True, how="outer")
         series = df.reset_index(drop=True).iloc[:, 0]
         series = series.interpolate(limit_direction="both")
         # Sampling to reduce run-time of Ruptures
         samples = np.linspace(
-            0, series.index.max(), len(self.sr_df), dtype=np.int64
-        )
+            0, series.index.max(), len(self.sr_df), dtype=np.int64)
         series = series[samples]
         # Detection with Ruptures
         algorithm = rpt.Pelt(model="rbf", jump=1, min_size=self.min_size)
@@ -100,8 +97,7 @@ class ChangeFinder(Term):
             effective_list = effective_list[:-1]
         # Set change points
         self._change_dates = [
-            date.strftime(self.DATE_FORMAT) for date in effective_list[1:]
-        ]
+            date.strftime(self.DATE_FORMAT) for date in effective_list[1:]]
         return self
 
     def _curve_fitting(self, phase, start_date, end_date):
@@ -127,7 +123,6 @@ class ChangeFinder(Term):
         sta = self.date_obj(start_date)
         end = self.date_obj(end_date)
         sr_df = sr_df.loc[(sr_df.index >= sta) & (sr_df.index <= end), :]
-        
         # Calculate linear and negative exponential curve fitting
         # and select the method with the smaller RMSLE score
         # Linear function
@@ -136,7 +131,6 @@ class ChangeFinder(Term):
         # Negative exponential function
         trend_exp = Trend(sr_df)
         exp_df = trend_exp.run(func="negative_exponential")
-        
         # Compare the trends with RMSLE score
         linear_rmsle = trend_line.rmsle()
         neg_exp_rmsle = trend_exp.rmsle()
@@ -144,10 +138,8 @@ class ChangeFinder(Term):
             df = line_df.copy()
         else:
             df = exp_df.copy()
-            
         if min(linear_rmsle, neg_exp_rmsle) > self.max_rmsle:
             df[f"{self.S}{self.P}"] = None
-        
         # Get min value for vline
         r_value = int(df[self.R].min())
         # Rename the columns
