@@ -130,7 +130,7 @@ class Term(object):
         return a * np.exp(-b * x)
     
     @staticmethod
-    def linear_fnc(x, a, b):
+    def linear(x, a, b):
         """
         Linear function f(x)=A x + b.
 

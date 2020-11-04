@@ -127,19 +127,27 @@ class ChangeFinder(Term):
         sta = self.date_obj(start_date)
         end = self.date_obj(end_date)
         sr_df = sr_df.loc[(sr_df.index >= sta) & (sr_df.index <= end), :]
-        trend = Trend(sr_df)
-        df = trend.run()
-        if trend.rmsle() > trend.max_linear_fit_err:
-            # if the linear curve fitting error is significant
-            # then rerun the trend analysis using
-            # the negative exponential function for fitting
-            trend = Trend(sr_df)
-            trend.use_neg_exp_fnc = 1
-            df = trend.run()
-            trend.use_neg_exp_fnc = 0
-        if trend.rmsle() > self.max_rmsle:
+        
+        # Calculate linear and negative exponential curve fitting
+        # and select the method with the smaller RMSLE score
+        # Linear function
+        trend_line = Trend(sr_df)
+        line_df = trend_line.run(func="linear")
+        # Negative exponential function
+        trend_exp = Trend(sr_df)
+        exp_df = trend_exp.run(func="negative_exponential")
+        
+        # Compare the trends with RMSLE score
+        linear_rmsle = trend_line.rmsle()
+        neg_exp_rmsle = trend_exp.rmsle()
+        if (linear_rmsle < neg_exp_rmsle) and (linear_rmsle > 0):
+            df = line_df.copy()
+        else:
+            df = exp_df.copy()
+            
+        if min(linear_rmsle, neg_exp_rmsle) > self.max_rmsle:
             df[f"{self.S}{self.P}"] = None
-        # print(trend.rmsle())
+        
         # Get min value for vline
         r_value = int(df[self.R].min())
         # Rename the columns
