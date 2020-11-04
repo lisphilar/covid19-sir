@@ -40,19 +40,17 @@ class COVID19DataHub(Term):
                 f"@filename should be a path-like object, but {filename} was applied.")
         self.primary_list = None
 
-    def load(self, force=True, verbose=True):
+    def load(self, name="jhu", force=True, verbose=True):
         """
         Load the datasets of COVID-19 Data Hub.
 
         Args:
+            name (str): name of dataset, "jhu", "population" or "oxcgrt"
             force (bool): if True, always download the dataset from the server
             verbose (bool): if True, the list of primary sources will be shown when downloading
 
         Returns:
-            dict(str, covsirphy.CleaningBase):
-                - "jhu", covsirphy.JHUData: the number of cases
-                - "population", covsirphy.PopulationData: population values
-                - "oxcgrt", covsirphy.OxCGRTData: government responses
+            covsirphy.CleaningBase: the dataset
 
         Notes:
             Citation of COVID-19 Data Hub will be set as JHUData.citation etc.
@@ -62,9 +60,10 @@ class COVID19DataHub(Term):
         if not self.filepath.exists():
             raw_df = self._retrieve(verbose=True)
             save_dataframe(raw_df, self.filepath, index=False)
-        # Set citation
-        return {
-            key: obj(self.filepath, citation=self.CITATION) for (key, obj) in self.OBJ_DICT.items()}
+        if name not in self.OBJ_DICT:
+            raise KeyError(
+                f"@name must be {', '.join(list(self.OBJ_DICT.keys()))}, but {name} was applied.")
+        return self.OBJ_DICT[name](self.filepath, citation=self.CITATION)
 
     def _retrieve(self, verbose=True):
         """
