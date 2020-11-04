@@ -70,7 +70,7 @@ class TestPhaseSeries(object):
         series.add()
         assert len(series) == 1
         # Last phase
-        assert series.phase(phase="last")
+        assert series.unit(phase="last")
 
     @pytest.mark.parametrize("country", ["Japan"])
     def test_trend(self, jhu_data, population_data, country):
