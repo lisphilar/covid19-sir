@@ -22,7 +22,7 @@ class TestChangeFinder(object):
         change_finder = ChangeFinder(sr_df, max_rmsle=max_rmsle)
         change_finder.run()
         # For all phases, check if RMSLE score is lower than max_rmsle=20.0
-        for (start_date, end_date) in change_finder.date_range():
+        for (start_date, end_date) in zip(*change_finder.date_range()):
             phase_df = jhu_data.to_sr(
                 country=country, population=population,
                 start_date=start_date, end_date=end_date)
