@@ -26,9 +26,10 @@ class TestChangeFinder(object):
             phase_df = jhu_data.to_sr(
                 country=country, population=population,
                 start_date=start_date, end_date=end_date)
-            trend = Trend(phase_df)
-            rmsle_linear = trend.run(func="linear").rmsle()
-            rmsle_exp = trend.run(func="negative_exponential").rmsle()
+            trend_linear = Trend(phase_df).run(func="linear")
+            rmsle_linear = trend_linear.rmsle()
+            trend_exp = Trend(phase_df).run(func="negative_exponential")
+            rmsle_exp = trend_exp.rmsle()
             assert min(rmsle_linear, rmsle_exp) < max_rmsle
 
     @pytest.mark.parametrize("country", ["Italy"])
