@@ -132,8 +132,14 @@ class Trend(Term):
             area (str): area name
             filename (str): filename of the figure, or None (display)
         """
-        df = self.run()
+        # Select better function
+        line_df = self.run(func="line")
+        line_rmsle = self.rmsle()
+        exp_df = self.run(func="negative_exponential")
+        exp_rmsle = self.rmsle()
+        df = line_df.copy() if line_rmsle < exp_rmsle else exp_df.copy()
         df = df.rename({f"{self.S}{self.P}": "Predicted"}, axis=1)
+        # Star/end date
         start_date = self.sr_df.index.min().strftime(self.DATE_FORMAT)
         end_date = self.sr_df.index.max().strftime(self.DATE_FORMAT)
         title = f"{area}: S-R trend from {start_date} to {end_date}"
