@@ -41,13 +41,12 @@ class Trend(Term):
     def run(self, func):
         """
         Perform curve fitting of S-R trend with linear or negative exponential function and save the result.
-        
+
         Args:
-            func:
-                the selected curve fitting function, either linear or negative exponential
+            func (function): the selected curve fitting function, either linear or negative exponential
 
         Returns:
-            (pandas.DataFrame): results of fitting
+            pandas.DataFrame: results of fitting
                 Index:
                     - index (Date) (pd.TimeStamp): Observation date
                 Columns:
@@ -64,8 +63,7 @@ class Trend(Term):
 
     def _fitting(self, sr_df):
         """
-        Perform curve fitting of S-R trend
-            with linear or negative exponential function.
+        Perform curve fitting of S-R trend with linear or negative exponential function.
 
         Args:
             sr_df (pandas.DataFrame): training dataset
@@ -76,7 +74,7 @@ class Trend(Term):
                     - Susceptible: Actual data of Susceptible
 
         Returns:
-            (pandas.DataFrame)
+            pandas.DataFrame
                 Index:
                     - index (Date) (pd.TimeStamp): Observation date
                 Columns:
@@ -104,7 +102,8 @@ class Trend(Term):
         f_partial = functools.partial(
             self.fit_fnc, a=param[0], b=param[1]
         )
-        df[f"{self.S}{self.P}"] = np.exp(f_partial(x_series)).astype(np.float64)
+        df[f"{self.S}{self.P}"] = np.exp(
+            f_partial(x_series)).astype(np.float64)
         return df.astype(np.int64, errors="ignore")
 
     def rmsle(self):
