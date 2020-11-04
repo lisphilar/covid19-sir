@@ -9,6 +9,7 @@ if not hasattr(sys, "ps1"):
     matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 import numpy as np
+import pandas as pd
 from scipy.optimize import curve_fit, OptimizeWarning
 from covsirphy.cleaning.term import Term
 
@@ -26,6 +27,8 @@ class Trend(Term):
                 - Susceptible (int): the number of susceptible cases
                 - any other columns will be ignored
     """
+    L = "linear"
+    N = "negative_exponential"
 
     def __init__(self, sr_df):
         # Dataset
@@ -35,10 +38,45 @@ class Trend(Term):
         if len(self.sr_df) < 3:
             raise ValueError("The length of @sr_df must be over 2.")
         # Setting for analysis
-        self.result_df = None
+        self._result_df = pd.DataFrame()
         self.fit_fnc = self.linear
 
-    def run(self, func):
+    @property
+    def result_df(self):
+        """
+        pandas.DataFrame: results of fitting
+            Index:
+                - index (Date) (pd.TimeStamp): Observation date
+            Columns:
+                - Recovered: The number of recovered cases
+                - Susceptible_actual: Actual values of Susceptible
+                - columns defined by @columns
+        """
+        if self._result_df.empty:
+            self.run()
+        return self._result_df
+
+    def run(self):
+        """
+        Perform curve fitting with some functions and select the best solution.
+        Then, the result and RMSLE score of the best solution will be saved.
+
+        Returns:
+            covsirphy.Trend: self
+        """
+        L, N = self.L, self.N
+        # Perform fitting and calculate RMSLE scores
+        dataframe_dict = {func: self._run(func=func) for func in (L, N)}
+        score_dict = {
+            func: self._rmsle(fit_df) for (func, fit_df) in dataframe_dict.items()}
+        # Seclect the best dataframe
+        if 0 < score_dict[L] < score_dict[N]:
+            self._result_df = dataframe_dict[L]
+        else:
+            self._result_df = dataframe_dict[N]
+        return self
+
+    def _run(self, func):
         """
         Perform curve fitting of S-R trend with linear or negative exponential function and save the result.
 
@@ -54,12 +92,8 @@ class Trend(Term):
                     - Susceptible_actual: Actual values of Susceptible
                     - columns defined by @columns
         """
-        if func == "linear":
-            self.fit_fnc = self.linear
-        elif func == "negative_exponential":
-            self.fit_fnc = self.negative_exp
-        self.result_df = self._fitting(self.sr_df)
-        return self.result_df
+        self.fit_fnc = self.negative_exp if func == self.N else self.linear
+        return self._fitting(self.sr_df)
 
     def _fitting(self, sr_df):
         """
@@ -108,12 +142,32 @@ class Trend(Term):
 
     def rmsle(self):
         """
-        Calculate RMSLE score of actual/predicted Susceptible.
+        Return the best RMSLE score.
 
         Returns:
             (float): RMSLE score
         """
-        df = self.run(self.fit_fnc).replace(np.inf, 0)
+        if self._result_df.empty:
+            self.run()
+        return self._rmsle(self._result_df)
+
+    def _rmsle(self, fit_df):
+        """
+        Calculate RMSLE score of actual/predicted Susceptible.
+
+        Args:
+            fit_df (pandas.DataFrame):
+                Index:
+                    - index (Date) (pd.TimeStamp): Observation date
+                Columns:
+                    - Recovered (int): The number of recovered cases
+                    - Susceptible_actual (int): Actual values of Susceptible
+                    - Susceptible_predicted (int): Predicted values of Susceptible
+
+        Returns:
+            (float): RMSLE score
+        """
+        df = fit_df.replace(np.inf, 0)
         df = df.loc[df[f"{self.S}{self.A}"] > 0, :]
         df = df.loc[df[f"{self.S}{self.P}"] > 0, :]
         actual = df[f"{self.S}{self.A}"]
@@ -132,16 +186,12 @@ class Trend(Term):
             area (str): area name
             filename (str): filename of the figure, or None (display)
         """
-        # Select better function
-        line_df = self.run(func="line")
-        line_rmsle = self.rmsle()
-        exp_df = self.run(func="negative_exponential")
-        exp_rmsle = self.rmsle()
-        df = line_df.copy() if line_rmsle < exp_rmsle else exp_df.copy()
+        df = self._result_df.copy()
         df = df.rename({f"{self.S}{self.P}": "Predicted"}, axis=1)
         # Star/end date
         start_date = self.sr_df.index.min().strftime(self.DATE_FORMAT)
         end_date = self.sr_df.index.max().strftime(self.DATE_FORMAT)
+        # Plotting
         title = f"{area}: S-R trend from {start_date} to {end_date}"
         self.show_with_many(
             result_df=df,
