@@ -5,8 +5,6 @@ import math
 import numpy as np
 import optuna
 import pandas as pd
-from covsirphy.util.argument import find_args
-from covsirphy.cleaning.jhu_data import JHUData
 from covsirphy.util.stopwatch import StopWatch
 from covsirphy.ode.mbase import ModelBase
 from covsirphy.simulation.optimize import Optimizer
@@ -40,22 +38,14 @@ class Estimator(Optimizer):
         self.population = self.ensure_population(population)
         self.model = self.ensure_subclass(model, ModelBase, name="model")
         # Dataset
-        if isinstance(record_df, JHUData):
-            subset_arg_dict = find_args(
-                [JHUData.subset, record_df.subset], **kwargs)
-            self.record_df = record_df.subset(
-                population=population, **subset_arg_dict)
-        else:
-            if not set(self.NLOC_COLUMNS).issubset(record_df.columns):
-                record_df = model.restore(record_df)
-            self.record_df = self.ensure_dataframe(
-                record_df, name="record_df", columns=self.NLOC_COLUMNS
-            )
+        if not set(self.NLOC_COLUMNS).issubset(record_df.columns):
+            record_df = model.restore(record_df)
+        self.record_df = self.ensure_dataframe(
+            record_df, name="record_df", columns=self.NLOC_COLUMNS)
         # Initial values
         df = model.tau_free(self.record_df, population, tau=None)
         self.y0_dict = {
-            k: df.loc[df.index[0], k] for k in model.VARIABLES
-        }
+            k: df.loc[df.index[0], k] for k in model.VARIABLES}
         # Fixed parameter values
         self.fixed_dict = {
             k: v for (k, v) in kwargs.items()
@@ -66,8 +56,7 @@ class Estimator(Optimizer):
         self.x = self.TS
         self.y_list = model.VARIABLES[:]
         self.weight_dict = {
-            v: p for (v, p) in zip(model.VARIABLES, model.WEIGHTS) if p > 0
-        }
+            v: p for (v, p) in zip(model.VARIABLES, model.WEIGHTS) if p > 0}
         self.study = None
         self.total_trials = 0
         self.run_time = 0
@@ -173,18 +162,11 @@ class Estimator(Optimizer):
         # Set parameters of the models
         model_param_dict = self.model.param_range(
             taufree_df, self.population)
-        try:
-            p_dict = {
-                k: trial.suggest_uniform(k, *v)
-                for (k, v) in model_param_dict.items()
-                if k not in self.fixed_dict.keys()
-            }
-        except OverflowError:
-            p_dict = {
-                k: trial.suggest_uniform(k, 0, 1)
-                for (k, v) in model_param_dict.items()
-                if k not in self.fixed_dict.keys()
-            }
+        p_dict = {
+            k: trial.suggest_uniform(k, *v)
+            for (k, v) in model_param_dict.items()
+            if k not in self.fixed_dict.keys()
+        }
         p_dict.update(self.fixed_dict)
         return self.error_f(p_dict, taufree_df)
 
@@ -229,13 +211,10 @@ class Estimator(Optimizer):
         sim_df = self.simulate(self.step_n, param_dict)
         comp_df = self.compare(taufree_df, sim_df)
         # Calculate error score
-        try:
-            return sum(
-                self._score(variable, comp_df)
-                for variable in self.weight_dict.keys()
-            )
-        except (ZeroDivisionError, TypeError):
-            return np.inf
+        return sum(
+            self._score(variable, comp_df)
+            for variable in self.weight_dict.keys()
+        )
 
     def _score(self, v, comp_df):
         """
@@ -270,7 +249,7 @@ class Estimator(Optimizer):
                 - value (int or float): parameter value
 
         Returns:
-            (pandas.DataFrame):
+            pandas.DataFrame:
                 Index:
                     reset index
                 Columns:
