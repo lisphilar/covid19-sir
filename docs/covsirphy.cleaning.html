@@ -99,6 +99,7 @@
 <li class="toctree-l2 current"><a class="current reference internal" href="#">covsirphy.cleaning</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#module-covsirphy.cleaning.cbase">covsirphy.cleaning.cbase</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#module-covsirphy.cleaning.country_data">covsirphy.cleaning.country_data</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#covsirphy-cleaning-covid19datahub">covsirphy.cleaning.covid19datahub</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#module-covsirphy.cleaning.dataloader">covsirphy.cleaning.dataloader</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#module-covsirphy.cleaning.jhu_data">covsirphy.cleaning.jhu_data</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#module-covsirphy.cleaning.oxcgrt">covsirphy.cleaning.oxcgrt</a></li>
@@ -213,12 +214,15 @@
 <span id="covsirphy-cleaning-cbase"></span><h2>covsirphy.cleaning.cbase<a class="headerlink" href="#module-covsirphy.cleaning.cbase" title="Permalink to this headline">¶</a></h2>
 <dl class="py class">
 <dt id="covsirphy.cleaning.cbase.CleaningBase">
-<em class="property">class </em><code class="sig-prename descclassname">covsirphy.cleaning.cbase.</code><code class="sig-name descname">CleaningBase</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">filename</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/cleaning/cbase.html#CleaningBase"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#covsirphy.cleaning.cbase.CleaningBase" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">covsirphy.cleaning.cbase.</code><code class="sig-name descname">CleaningBase</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">filename</span></em>, <em class="sig-param"><span class="n">citation</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/cleaning/cbase.html#CleaningBase"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#covsirphy.cleaning.cbase.CleaningBase" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#covsirphy.cleaning.term.Term" title="covsirphy.cleaning.term.Term"><code class="xref py py-class docutils literal notranslate"><span class="pre">covsirphy.cleaning.term.Term</span></code></a></p>
 <p>Basic class for data cleaning.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>filename</strong> (<em>str</em>) – CSV filename of the dataset</p>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>filename</strong> (<em>str</em>) – CSV filename of the dataset</p></li>
+<li><p><strong>citation</strong> (<em>str</em>) – citation</p></li>
+</ul>
 </dd>
 </dl>
 <dl class="py method">
@@ -236,7 +240,7 @@
 <dd class="field-even"><p>area name</p>
 </dd>
 <dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>(str)</p>
+<dd class="field-odd"><p>str</p>
 </dd>
 </dl>
 <p class="rubric">Notes</p>
@@ -266,7 +270,7 @@ If not, return the area name, like ‘Japan/Tokyo’</p>
 <dd class="field-odd"><p>cleaned data</p>
 </dd>
 <dt class="field-even">Return type</dt>
-<dd class="field-even"><p>(pandas.DataFrame)</p>
+<dd class="field-even"><p>pandas.DataFrame</p>
 </dd>
 </dl>
 </dd></dl>
@@ -283,7 +287,7 @@ If not, return the area name, like ‘Japan/Tokyo’</p>
 <dd class="field-even"><p>list of country names</p>
 </dd>
 <dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>(list[str])</p>
+<dd class="field-odd"><p>list[str]</p>
 </dd>
 </dl>
 </dd></dl>
@@ -303,7 +307,7 @@ If not, return the area name, like ‘Japan/Tokyo’</p>
 <dd class="field-odd"><p>ISO3 code</p>
 </dd>
 <dt class="field-even">Return type</dt>
-<dd class="field-even"><p>(str)</p>
+<dd class="field-even"><p>str</p>
 </dd>
 </dl>
 </dd></dl>
@@ -320,7 +324,7 @@ If not, return the area name, like ‘Japan/Tokyo’</p>
 <dd class="field-even"><p>country name</p>
 </dd>
 <dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>(str)</p>
+<dd class="field-odd"><p>str</p>
 </dd>
 </dl>
 <p class="rubric">Notes</p>
@@ -336,7 +340,7 @@ If not, return the area name, like ‘Japan/Tokyo’</p>
 <dd class="field-odd"><p>raw data</p>
 </dd>
 <dt class="field-even">Return type</dt>
-<dd class="field-even"><p>(pandas.DataFrame)</p>
+<dd class="field-even"><p>pandas.DataFrame</p>
 </dd>
 </dl>
 </dd></dl>
@@ -366,7 +370,7 @@ If not, return the area name, like ‘Japan/Tokyo’</p>
 </dd>
 <dt class="field-odd">Returns</dt>
 <dd class="field-odd"><p><dl class="simple">
-<dt>(pandas.DataFrame)</dt><dd><dl class="simple">
+<dt>pandas.DataFrame</dt><dd><dl class="simple">
 <dt>Index:</dt><dd><p>reset index</p>
 </dd>
 <dt>Columns:</dt><dd><p>without ISO3, Country, Province column</p>
@@ -390,7 +394,7 @@ Columns: column names of the cleaned dataset (dtype=int or float)
 Values: total values</p>
 </dd>
 <dt class="field-even">Return type</dt>
-<dd class="field-even"><p>(pandas.DataFrame or pandas.Series or float)</p>
+<dd class="field-even"><p>pandas.DataFrame or pandas.Series or float</p>
 </dd>
 </dl>
 </dd></dl>
@@ -437,7 +441,7 @@ Cleaning method is defined by CountryData._cleaning() method.</p>
 </p>
 </dd>
 <dt class="field-even">Return type</dt>
-<dd class="field-even"><p>(pandas.DataFrame)</p>
+<dd class="field-even"><p>pandas.DataFrame</p>
 </dd>
 </dl>
 </dd></dl>
@@ -451,7 +455,7 @@ Cleaning method is defined by CountryData._cleaning() method.</p>
 <dd class="field-odd"><p>list of country names</p>
 </dd>
 <dt class="field-even">Return type</dt>
-<dd class="field-even"><p>(list[str])</p>
+<dd class="field-even"><p>list[str]</p>
 </dd>
 </dl>
 </dd></dl>
@@ -459,13 +463,10 @@ Cleaning method is defined by CountryData._cleaning() method.</p>
 <dl class="py method">
 <dt id="covsirphy.cleaning.country_data.CountryData.country">
 <em class="property">property </em><code class="sig-name descname">country</code><a class="headerlink" href="#covsirphy.cleaning.country_data.CountryData.country" title="Permalink to this definition">¶</a></dt>
-<dd><p>Return the country name.</p>
+<dd><p>country name</p>
 <dl class="field-list simple">
-<dt class="field-odd">Returns</dt>
-<dd class="field-odd"><p>country name</p>
-</dd>
-<dt class="field-even">Return type</dt>
-<dd class="field-even"><p>(str)</p>
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>str</p>
 </dd>
 </dl>
 </dd></dl>
@@ -479,7 +480,7 @@ Cleaning method is defined by CountryData._cleaning() method.</p>
 <dd class="field-odd"><p>the list of column names of the raw data</p>
 </dd>
 <dt class="field-even">Return type</dt>
-<dd class="field-even"><p>(list[str])</p>
+<dd class="field-even"><p>list[str]</p>
 </dd>
 </dl>
 </dd></dl>
@@ -527,13 +528,16 @@ Cleaning method is defined by CountryData._cleaning() method.</p>
 </p>
 </dd>
 <dt class="field-even">Return type</dt>
-<dd class="field-even"><p>(pandas.DataFrame)</p>
+<dd class="field-even"><p>pandas.DataFrame</p>
 </dd>
 </dl>
 </dd></dl>
 
 </dd></dl>
 
+</div>
+<div class="section" id="covsirphy-cleaning-covid19datahub">
+<h2>covsirphy.cleaning.covid19datahub<a class="headerlink" href="#covsirphy-cleaning-covid19datahub" title="Permalink to this headline">¶</a></h2>
 </div>
 <div class="section" id="module-covsirphy.cleaning.dataloader">
 <span id="covsirphy-cleaning-dataloader"></span><h2>covsirphy.cleaning.dataloader<a class="headerlink" href="#module-covsirphy.cleaning.dataloader" title="Permalink to this headline">¶</a></h2>
@@ -556,59 +560,47 @@ does not have ‘Last-Modified’ keys.
 If &#64;update_interval hours have passed since the last update of local datasets,
 updating will be forced when updating is not prevented by the methods.</p>
 <p class="rubric">Examples</p>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">covsirphy</span> <span class="k">as</span> <span class="nn">cs</span>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="c1"># Setup</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">covsirphy</span> <span class="k">as</span> <span class="nn">cs</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">data_loader</span> <span class="o">=</span> <span class="n">cs</span><span class="o">.</span><span class="n">DataLoader</span><span class="p">(</span><span class="s2">&quot;input&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># JHU data: the number of cases</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">jhu_data</span> <span class="o">=</span> <span class="n">data_loader</span><span class="o">.</span><span class="n">jhu</span><span class="p">()</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">jhu_data</span><span class="o">.</span><span class="n">citation</span><span class="p">)</span>
 <span class="gp">...</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">jhu_data</span><span class="o">.</span><span class="n">cleaned</span><span class="p">()))</span>
 <span class="go">&lt;class &#39;pandas.core.frame.DataFrame&#39;&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># The number of cases in Japan</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">jpn_data</span> <span class="o">=</span> <span class="n">data_loader</span><span class="o">.</span><span class="n">japan</span><span class="p">()</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">jpn_data</span><span class="o">.</span><span class="n">citation</span><span class="p">)</span>
 <span class="gp">...</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">jpn_data</span><span class="o">.</span><span class="n">cleaned</span><span class="p">()))</span>
 <span class="go">&lt;class &#39;pandas.core.frame.DataFrame&#39;&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># Population values</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">population_data</span> <span class="o">=</span> <span class="n">data_loader</span><span class="o">.</span><span class="n">population</span><span class="p">()</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">population_data</span><span class="o">.</span><span class="n">citation</span><span class="p">)</span>
 <span class="gp">...</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">population_data</span><span class="o">.</span><span class="n">cleaned</span><span class="p">()))</span>
 <span class="go">&lt;class &#39;pandas.core.frame.DataFrame&#39;&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># OxCGRT: Government responses</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">oxcgrt_data</span> <span class="o">=</span> <span class="n">data_loader</span><span class="o">.</span><span class="n">oxcgrt</span><span class="p">()</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">oxcgrt_data</span><span class="o">.</span><span class="n">citation</span><span class="p">)</span>
 <span class="gp">...</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">oxcgrt_data</span><span class="o">.</span><span class="n">cleaned</span><span class="p">()))</span>
 <span class="go">&lt;class &#39;pandas.core.frame.DataFrame&#39;&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># Citation list of COVID-19 Data Hub</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">data_loader</span><span class="o">.</span><span class="n">covid19dh_citation</span><span class="p">)</span>
 <span class="gp">...</span>
 </pre></div>
 </div>
-<dl class="py method">
-<dt id="covsirphy.cleaning.dataloader.DataLoader.covid19dh">
-<code class="sig-name descname">covid19dh</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">basename</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">verbose</span><span class="o">=</span><span class="default_value">True</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/cleaning/dataloader.html#DataLoader.covid19dh"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#covsirphy.cleaning.dataloader.DataLoader.covid19dh" title="Permalink to this definition">¶</a></dt>
-<dd><p>Load the dataset of COVID-19 Data Hub.
-<a class="reference external" href="https://covid19datahub.io/">https://covid19datahub.io/</a></p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>basename</strong> (<em>str</em><em> or </em><em>None</em>) – basename of the file to save the data</p></li>
-<li><p><strong>verbose</strong> (<em>bool</em>) – if True, detailed citation list will be shown when downloading</p></li>
-</ul>
-</dd>
-</dl>
-<p class="rubric">Notes</p>
-<p>Regardless the value of &#64;local_file, the data will be save in the directory.
-If &#64;basename is None, the value of DataLoader.DH_BASENAME will be used.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Returns</dt>
-<dd class="field-odd"><p>(pandas.DataFrame)</p>
-</dd>
-</dl>
-</dd></dl>
+<dl class="py attribute">
+<dt id="covsirphy.cleaning.dataloader.DataLoader.GITHUB_URL">
+<code class="sig-name descname">GITHUB_URL</code><em class="property"> = 'https://raw.githubusercontent.com'</em><a class="headerlink" href="#covsirphy.cleaning.dataloader.DataLoader.GITHUB_URL" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
 
 <dl class="py method">
 <dt id="covsirphy.cleaning.dataloader.DataLoader.covid19dh_citation">
 <em class="property">property </em><code class="sig-name descname">covid19dh_citation</code><a class="headerlink" href="#covsirphy.cleaning.dataloader.DataLoader.covid19dh_citation" title="Permalink to this definition">¶</a></dt>
-<dd><p>Return the citation list.</p>
+<dd><p>Return the list of primary sources of COVID-19 Data Hub.</p>
 </dd></dl>
 
 <dl class="py method">
@@ -623,24 +615,19 @@ If &#64;basename is None, the value of DataLoader.DH_BASENAME will be used.</p>
 <li><p><strong>local_file</strong> (<em>str</em><em> or </em><em>None</em>) – if not None, load the data from this file</p></li>
 </ul>
 </dd>
-</dl>
-<p class="rubric">Notes</p>
-<p>Regardless the value of &#64;local_file, the data will be save in the directory.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Returns</dt>
-<dd class="field-odd"><p>dataset at country level</p>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>dataset at country level in Japan</p>
 </dd>
-<dt class="field-even">Return type</dt>
-<dd class="field-even"><p>(covsirphy.CountryData)</p>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>(covsirphy.CountryData)</p>
 </dd>
 </dl>
 </dd></dl>
 
 <dl class="py method">
 <dt id="covsirphy.cleaning.dataloader.DataLoader.jhu">
-<code class="sig-name descname">jhu</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">basename</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">local_file</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">verbose</span><span class="o">=</span><span class="default_value">True</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/cleaning/dataloader.html#DataLoader.jhu"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#covsirphy.cleaning.dataloader.DataLoader.jhu" title="Permalink to this definition">¶</a></dt>
-<dd><p>Load JHU dataset (the number of cases).
-<a class="reference external" href="https://github.com/CSSEGISandData/COVID-19/">https://github.com/CSSEGISandData/COVID-19/</a></p>
+<code class="sig-name descname">jhu</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">basename</span><span class="o">=</span><span class="default_value">'covid19dh.csv'</span></em>, <em class="sig-param"><span class="n">local_file</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">verbose</span><span class="o">=</span><span class="default_value">True</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/cleaning/dataloader.html#DataLoader.jhu"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#covsirphy.cleaning.dataloader.DataLoader.jhu" title="Permalink to this definition">¶</a></dt>
+<dd><p>Load the dataset regarding the number of cases using local CSV file or COVID-19 Data Hub.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
@@ -649,25 +636,19 @@ If &#64;basename is None, the value of DataLoader.DH_BASENAME will be used.</p>
 <li><p><strong>verbose</strong> (<em>bool</em>) – if True, detailed citation list will be shown when downloading</p></li>
 </ul>
 </dd>
-</dl>
-<p class="rubric">Notes</p>
-<p>Regardless the value of &#64;local_file, the data will be save in the directory.
-If &#64;basename is None, the value of DataLoader.DH_BASENAME will be used.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Returns</dt>
-<dd class="field-odd"><p>JHU dataset</p>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>dataset regarding the number of cases</p>
 </dd>
-<dt class="field-even">Return type</dt>
-<dd class="field-even"><p>(covsirphy.JHUData)</p>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>covsirphy.JHUData</p>
 </dd>
 </dl>
 </dd></dl>
 
 <dl class="py method">
 <dt id="covsirphy.cleaning.dataloader.DataLoader.oxcgrt">
-<code class="sig-name descname">oxcgrt</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">basename</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">local_file</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">verbose</span><span class="o">=</span><span class="default_value">True</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/cleaning/dataloader.html#DataLoader.oxcgrt"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#covsirphy.cleaning.dataloader.DataLoader.oxcgrt" title="Permalink to this definition">¶</a></dt>
-<dd><p>Load OxCGRT dataset.
-<a class="reference external" href="https://github.com/OxCGRT/covid-policy-tracker">https://github.com/OxCGRT/covid-policy-tracker</a></p>
+<code class="sig-name descname">oxcgrt</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">basename</span><span class="o">=</span><span class="default_value">'covid19dh.csv'</span></em>, <em class="sig-param"><span class="n">local_file</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">verbose</span><span class="o">=</span><span class="default_value">True</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/cleaning/dataloader.html#DataLoader.oxcgrt"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#covsirphy.cleaning.dataloader.DataLoader.oxcgrt" title="Permalink to this definition">¶</a></dt>
+<dd><p>Load the dataset regarding OxCGRT data using local CSV file or COVID-19 Data Hub.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
@@ -676,25 +657,19 @@ If &#64;basename is None, the value of DataLoader.DH_BASENAME will be used.</p>
 <li><p><strong>verbose</strong> (<em>bool</em>) – if True, detailed citation list will be shown when downloading</p></li>
 </ul>
 </dd>
-</dl>
-<p class="rubric">Notes</p>
-<p>Regardless the value of &#64;local_file, the data will be save in the directory.
-If &#64;basename is None, the value of DataLoader.DH_BASENAME will be used.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Returns</dt>
-<dd class="field-odd"><p>OxCGRT dataset</p>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>dataset regarding OxCGRT data</p>
 </dd>
-<dt class="field-even">Return type</dt>
-<dd class="field-even"><p>(covsirphy.OxCGRTData)</p>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>covsirphy.JHUData</p>
 </dd>
 </dl>
 </dd></dl>
 
 <dl class="py method">
 <dt id="covsirphy.cleaning.dataloader.DataLoader.population">
-<code class="sig-name descname">population</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">basename</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">local_file</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">verbose</span><span class="o">=</span><span class="default_value">True</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/cleaning/dataloader.html#DataLoader.population"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#covsirphy.cleaning.dataloader.DataLoader.population" title="Permalink to this definition">¶</a></dt>
-<dd><p>Load Population dataset from THE WORLD BANK, Population, total.
-<a class="reference external" href="https://data.worldbank.org/indicator/SP.POP.TOTL">https://data.worldbank.org/indicator/SP.POP.TOTL</a></p>
+<code class="sig-name descname">population</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">basename</span><span class="o">=</span><span class="default_value">'covid19dh.csv'</span></em>, <em class="sig-param"><span class="n">local_file</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">verbose</span><span class="o">=</span><span class="default_value">True</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/cleaning/dataloader.html#DataLoader.population"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#covsirphy.cleaning.dataloader.DataLoader.population" title="Permalink to this definition">¶</a></dt>
+<dd><p>Load the dataset regarding population values using local CSV file or COVID-19 Data Hub.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
@@ -703,16 +678,11 @@ If &#64;basename is None, the value of DataLoader.DH_BASENAME will be used.</p>
 <li><p><strong>verbose</strong> (<em>bool</em>) – if True, detailed citation list will be shown when downloading</p></li>
 </ul>
 </dd>
-</dl>
-<p class="rubric">Notes</p>
-<p>Regardless the value of &#64;local_file, the data will be save in the directory.
-If &#64;basename is None, the value of DataLoader.DH_BASENAME will be used.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Returns</dt>
-<dd class="field-odd"><p>Population dataset</p>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>dataset regarding population values</p>
 </dd>
-<dt class="field-even">Return type</dt>
-<dd class="field-even"><p>(covsirphy.Population)</p>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>covsirphy.PopulationData</p>
 </dd>
 </dl>
 </dd></dl>
@@ -724,9 +694,17 @@ If &#64;basename is None, the value of DataLoader.DH_BASENAME will be used.</p>
 <span id="covsirphy-cleaning-jhu-data"></span><h2>covsirphy.cleaning.jhu_data<a class="headerlink" href="#module-covsirphy.cleaning.jhu_data" title="Permalink to this headline">¶</a></h2>
 <dl class="py class">
 <dt id="covsirphy.cleaning.jhu_data.JHUData">
-<em class="property">class </em><code class="sig-prename descclassname">covsirphy.cleaning.jhu_data.</code><code class="sig-name descname">JHUData</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">filename</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/cleaning/jhu_data.html#JHUData"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#covsirphy.cleaning.jhu_data.JHUData" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">covsirphy.cleaning.jhu_data.</code><code class="sig-name descname">JHUData</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">filename</span></em>, <em class="sig-param"><span class="n">citation</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/cleaning/jhu_data.html#JHUData"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#covsirphy.cleaning.jhu_data.JHUData" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#covsirphy.cleaning.cbase.CleaningBase" title="covsirphy.cleaning.cbase.CleaningBase"><code class="xref py py-class docutils literal notranslate"><span class="pre">covsirphy.cleaning.cbase.CleaningBase</span></code></a></p>
 <p>Data cleaning of JHU-style dataset.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>filename</strong> (<em>str</em>) – CSV filename of the dataset</p></li>
+<li><p><strong>citation</strong> (<em>str</em>) – citation</p></li>
+</ul>
+</dd>
+</dl>
 <dl class="py method">
 <dt id="covsirphy.cleaning.jhu_data.JHUData.cleaned">
 <code class="sig-name descname">cleaned</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/cleaning/jhu_data.html#JHUData.cleaned"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#covsirphy.cleaning.jhu_data.JHUData.cleaned" title="Permalink to this definition">¶</a></dt>
@@ -741,7 +719,7 @@ If &#64;basename is None, the value of DataLoader.DH_BASENAME will be used.</p>
 </dd>
 <dt class="field-even">Returns</dt>
 <dd class="field-even"><p><dl class="simple">
-<dt>(pandas.DataFrame)</dt><dd><dl class="simple">
+<dt>pandas.DataFrame</dt><dd><dl class="simple">
 <dt>Index:</dt><dd><p>reset index</p>
 </dd>
 <dt>Columns:</dt><dd><ul class="simple">
@@ -771,7 +749,7 @@ If &#64;basename is None, the value of DataLoader.DH_BASENAME will be used.</p>
 <dd class="field-odd"><p>list of country names</p>
 </dd>
 <dt class="field-even">Return type</dt>
-<dd class="field-even"><p>(list[str])</p>
+<dd class="field-even"><p>list[str]</p>
 </dd>
 </dl>
 </dd></dl>
@@ -788,7 +766,7 @@ If &#64;basename is None, the value of DataLoader.DH_BASENAME will be used.</p>
 <dd class="field-even"><p>JHU-style dataset</p>
 </dd>
 <dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>(covsirphy.JHUData)</p>
+<dd class="field-odd"><p>covsirphy.JHUData</p>
 </dd>
 </dl>
 </dd></dl>
@@ -803,6 +781,9 @@ If &#64;basename is None, the value of DataLoader.DH_BASENAME will be used.</p>
 </dd>
 <dt class="field-even">Returns</dt>
 <dd class="field-even"><p>self</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>covsirphy.JHUData</p>
 </dd>
 </dl>
 </dd></dl>
@@ -823,7 +804,7 @@ If &#64;basename is None, the value of DataLoader.DH_BASENAME will be used.</p>
 </dd>
 <dt class="field-even">Returns</dt>
 <dd class="field-even"><p><dl class="simple">
-<dt>(pandas.DataFrame)</dt><dd><dl class="simple">
+<dt>pandas.DataFrame</dt><dd><dl class="simple">
 <dt>Index:</dt><dd><p>reset index</p>
 </dd>
 <dt>Columns:</dt><dd><ul class="simple">
@@ -861,7 +842,7 @@ Records with Recovered &gt; 0 will be selected.</p>
 </dd>
 <dt class="field-even">Returns</dt>
 <dd class="field-even"><p><dl class="simple">
-<dt>(pandas.DataFrame)</dt><dd><dl class="simple">
+<dt>pandas.DataFrame</dt><dd><dl class="simple">
 <dt>Index:</dt><dd><p>Date (pd.TimeStamp): Observation date</p>
 </dd>
 <dt>Columns:</dt><dd><ul class="simple">
@@ -906,7 +887,7 @@ Records with Recovered &gt; 0 will be used.</p>
 </p>
 </dd>
 <dt class="field-even">Return type</dt>
-<dd class="field-even"><p>(pandas.DataFrame)</p>
+<dd class="field-even"><p>pandas.DataFrame</p>
 </dd>
 </dl>
 </dd></dl>
@@ -918,9 +899,17 @@ Records with Recovered &gt; 0 will be used.</p>
 <span id="covsirphy-cleaning-oxcgrt"></span><h2>covsirphy.cleaning.oxcgrt<a class="headerlink" href="#module-covsirphy.cleaning.oxcgrt" title="Permalink to this headline">¶</a></h2>
 <dl class="py class">
 <dt id="covsirphy.cleaning.oxcgrt.OxCGRTData">
-<em class="property">class </em><code class="sig-prename descclassname">covsirphy.cleaning.oxcgrt.</code><code class="sig-name descname">OxCGRTData</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">filename</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/cleaning/oxcgrt.html#OxCGRTData"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#covsirphy.cleaning.oxcgrt.OxCGRTData" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">covsirphy.cleaning.oxcgrt.</code><code class="sig-name descname">OxCGRTData</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">filename</span></em>, <em class="sig-param"><span class="n">citation</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/cleaning/oxcgrt.html#OxCGRTData"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#covsirphy.cleaning.oxcgrt.OxCGRTData" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#covsirphy.cleaning.cbase.CleaningBase" title="covsirphy.cleaning.cbase.CleaningBase"><code class="xref py py-class docutils literal notranslate"><span class="pre">covsirphy.cleaning.cbase.CleaningBase</span></code></a></p>
 <p>Data cleaning of OxCGRT dataset.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>filename</strong> (<em>str</em>) – CSV filename of the dataset</p></li>
+<li><p><strong>citation</strong> (<em>str</em>) – citation</p></li>
+</ul>
+</dd>
+</dl>
 <dl class="py attribute">
 <dt id="covsirphy.cleaning.oxcgrt.OxCGRTData.OXCGRT_COLS">
 <code class="sig-name descname">OXCGRT_COLS</code><em class="property"> = ['Date', 'Country', 'ISO3', 'School_closing', 'Workplace_closing', 'Cancel_events', 'Gatherings_restrictions', 'Transport_closing', 'Stay_home_restrictions', 'Internal_movement_restrictions', 'International_movement_restrictions', 'Information_campaigns', 'Testing_policy', 'Contact_tracing', 'Stringency_index']</em><a class="headerlink" href="#covsirphy.cleaning.oxcgrt.OxCGRTData.OXCGRT_COLS" title="Permalink to this definition">¶</a></dt>
@@ -948,17 +937,18 @@ Records with Recovered &gt; 0 will be used.</p>
 
 <dl class="py method">
 <dt id="covsirphy.cleaning.oxcgrt.OxCGRTData.subset">
-<code class="sig-name descname">subset</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">country</span></em>, <em class="sig-param"><span class="n">iso3</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/cleaning/oxcgrt.html#OxCGRTData.subset"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#covsirphy.cleaning.oxcgrt.OxCGRTData.subset" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">subset</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">country</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/cleaning/oxcgrt.html#OxCGRTData.subset"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#covsirphy.cleaning.oxcgrt.OxCGRTData.subset" title="Permalink to this definition">¶</a></dt>
 <dd><p>Create a subset for a country.</p>
-<p class="rubric">Notes</p>
-<p>One of &#64;country and &#64;iso3 must be specified.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>country</strong> (<em>str</em>) – country name or ISO 3166-1 alpha-3, like JPN</p>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>country</strong> (<em>str</em>) – country name or ISO 3166-1 alpha-3, like JPN</p></li>
+<li><p><strong>kwargs</strong> – the other arguments will be ignored in the latest version.</p></li>
+</ul>
 </dd>
 <dt class="field-even">Returns</dt>
 <dd class="field-even"><p><dl class="simple">
-<dt>(pandas.DataFrame)</dt><dd><dl class="simple">
+<dt>pandas.DataFrame</dt><dd><dl class="simple">
 <dt>Index:</dt><dd><p>reset index</p>
 </dd>
 <dt>Columns:</dt><dd><ul class="simple">
@@ -993,9 +983,17 @@ Records with Recovered &gt; 0 will be used.</p>
 
 <dl class="py class">
 <dt id="covsirphy.cleaning.population.PopulationData">
-<em class="property">class </em><code class="sig-prename descclassname">covsirphy.cleaning.population.</code><code class="sig-name descname">PopulationData</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">filename</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/cleaning/population.html#PopulationData"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#covsirphy.cleaning.population.PopulationData" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">covsirphy.cleaning.population.</code><code class="sig-name descname">PopulationData</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">filename</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">citation</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/cleaning/population.html#PopulationData"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#covsirphy.cleaning.population.PopulationData" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#covsirphy.cleaning.cbase.CleaningBase" title="covsirphy.cleaning.cbase.CleaningBase"><code class="xref py py-class docutils literal notranslate"><span class="pre">covsirphy.cleaning.cbase.CleaningBase</span></code></a></p>
 <p>Data cleaning of total population dataset.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>filename</strong> (<em>str</em>) – CSV filename of the dataset</p></li>
+<li><p><strong>citation</strong> (<em>str</em>) – citation</p></li>
+</ul>
+</dd>
+</dl>
 <dl class="py attribute">
 <dt id="covsirphy.cleaning.population.PopulationData.POPULATION_COLS">
 <code class="sig-name descname">POPULATION_COLS</code><em class="property"> = ['ISO3', 'Country', 'Province', 'Date', 'Population']</em><a class="headerlink" href="#covsirphy.cleaning.population.PopulationData.POPULATION_COLS" title="Permalink to this definition">¶</a></dt>
@@ -1013,7 +1011,7 @@ Records with Recovered &gt; 0 will be used.</p>
 <dd class="field-even"><p>list of country names</p>
 </dd>
 <dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>(list[str])</p>
+<dd class="field-odd"><p>list[str]</p>
 </dd>
 </dl>
 <p class="rubric">Notes</p>
@@ -1029,7 +1027,7 @@ country_level (str): whether key is country name or not</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns</dt>
 <dd class="field-odd"><p><dl class="simple">
-<dt>(dict)</dt><dd><ul class="simple">
+<dt>dict</dt><dd><ul class="simple">
 <li><p>if &#64;country_level is True, {“country”, population}</p></li>
 <li><p>if False, {“country/province”, population}</p></li>
 </ul>
@@ -1046,7 +1044,7 @@ country_level (str): whether key is country name or not</p>
 <dd><p>Return the total value of population in the datset.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns</dt>
-<dd class="field-odd"><p>(int)</p>
+<dd class="field-odd"><p>int</p>
 </dd>
 </dl>
 </dd></dl>
@@ -1063,6 +1061,12 @@ country_level (str): whether key is country name or not</p>
 <li><p><strong>province</strong> (<em>str</em>) – province name</p></li>
 <li><p><strong>date</strong> (<em>str</em><em> or </em><em>None</em>) – observation date, like 01Jun2020</p></li>
 </ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>self</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>covsirphy.PopulationData</p>
 </dd>
 </dl>
 <p class="rubric">Notes</p>
@@ -1085,7 +1089,7 @@ country_level (str): whether key is country name or not</p>
 <dd class="field-even"><p>population in the place</p>
 </dd>
 <dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>(int)</p>
+<dd class="field-odd"><p>int</p>
 </dd>
 </dl>
 <p class="rubric">Notes</p>
@@ -1600,6 +1604,24 @@ it will be converted to an integer.</p>
 </dd>
 <dt class="field-even">Returns</dt>
 <dd class="field-even"><p>list[object]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="covsirphy.cleaning.term.Term.linear">
+<em class="property">static </em><code class="sig-name descname">linear</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">x</span></em>, <em class="sig-param"><span class="n">a</span></em>, <em class="sig-param"><span class="n">b</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/cleaning/term.html#Term.linear"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#covsirphy.cleaning.term.Term.linear" title="Permalink to this definition">¶</a></dt>
+<dd><p>Linear function f(x)=A x + b.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>x</strong> (<em>float</em>) – x values</p></li>
+<li><p><strong>a</strong> (<em>float</em>) – the first parameter of the function</p></li>
+<li><p><strong>b</strong> (<em>float</em>) – the second parameter of the function</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>float</p>
 </dd>
 </dl>
 </dd></dl>

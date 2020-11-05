@@ -1013,7 +1013,7 @@ Simulation end at the next date of the end date of the phase.</p>
 <span id="covsirphy-phase-sr-change"></span><h2>covsirphy.phase.sr_change<a class="headerlink" href="#module-covsirphy.phase.sr_change" title="Permalink to this headline">¶</a></h2>
 <dl class="py class">
 <dt id="covsirphy.phase.sr_change.ChangeFinder">
-<em class="property">class </em><code class="sig-prename descclassname">covsirphy.phase.sr_change.</code><code class="sig-name descname">ChangeFinder</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">sr_df</span></em>, <em class="sig-param"><span class="n">min_size</span><span class="o">=</span><span class="default_value">7</span></em>, <em class="sig-param"><span class="n">max_rmsle</span><span class="o">=</span><span class="default_value">20.0</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/phase/sr_change.html#ChangeFinder"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#covsirphy.phase.sr_change.ChangeFinder" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">covsirphy.phase.sr_change.</code><code class="sig-name descname">ChangeFinder</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">sr_df</span></em>, <em class="sig-param"><span class="n">min_size</span><span class="o">=</span><span class="default_value">5</span></em>, <em class="sig-param"><span class="n">max_rmsle</span><span class="o">=</span><span class="default_value">20.0</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/phase/sr_change.html#ChangeFinder"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#covsirphy.phase.sr_change.ChangeFinder" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="covsirphy.cleaning.html#covsirphy.cleaning.term.Term" title="covsirphy.cleaning.term.Term"><code class="xref py py-class docutils literal notranslate"><span class="pre">covsirphy.cleaning.term.Term</span></code></a></p>
 <p>Find change points of S-R trend.</p>
 <dl class="field-list simple">
@@ -1064,6 +1064,9 @@ Simulation end at the next date of the end date of the phase.</p>
 <dt class="field-odd">Returns</dt>
 <dd class="field-odd"><p>self</p>
 </dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>covsirphy.ChangeFinder</p>
+</dd>
 </dl>
 </dd></dl>
 
@@ -1109,10 +1112,45 @@ Simulation end at the next date of the end date of the phase.</p>
 </p>
 </dd>
 </dl>
+<dl class="py attribute">
+<dt id="covsirphy.phase.trend.Trend.L">
+<code class="sig-name descname">L</code><em class="property"> = 'linear'</em><a class="headerlink" href="#covsirphy.phase.trend.Trend.L" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="covsirphy.phase.trend.Trend.N">
+<code class="sig-name descname">N</code><em class="property"> = 'negative_exponential'</em><a class="headerlink" href="#covsirphy.phase.trend.Trend.N" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="covsirphy.phase.trend.Trend.result_df">
+<em class="property">property </em><code class="sig-name descname">result_df</code><a class="headerlink" href="#covsirphy.phase.trend.Trend.result_df" title="Permalink to this definition">¶</a></dt>
+<dd><p>results of fitting
+Index:</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>index (Date) (pd.TimeStamp): Observation date</p></li>
+</ul>
+</div></blockquote>
+<dl class="simple">
+<dt>Columns:</dt><dd><ul class="simple">
+<li><p>Recovered: The number of recovered cases</p></li>
+<li><p>Susceptible_actual: Actual values of Susceptible</p></li>
+<li><p>columns defined by &#64;columns</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>pandas.DataFrame</p>
+</dd>
+</dl>
+</dd></dl>
+
 <dl class="py method">
 <dt id="covsirphy.phase.trend.Trend.rmsle">
 <code class="sig-name descname">rmsle</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/phase/trend.html#Trend.rmsle"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#covsirphy.phase.trend.Trend.rmsle" title="Permalink to this definition">¶</a></dt>
-<dd><p>Calculate RMSLE score of actual/predicted Susceptible.</p>
+<dd><p>Return the best RMSLE score.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns</dt>
 <dd class="field-odd"><p>RMSLE score</p>
@@ -1126,28 +1164,14 @@ Simulation end at the next date of the end date of the phase.</p>
 <dl class="py method">
 <dt id="covsirphy.phase.trend.Trend.run">
 <code class="sig-name descname">run</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/phase/trend.html#Trend.run"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#covsirphy.phase.trend.Trend.run" title="Permalink to this definition">¶</a></dt>
-<dd><p>Perform curve fitting of S-R trend with negative exponential function and save the result.</p>
+<dd><p>Perform curve fitting with some functions and select the best solution.
+Then, the result and RMSLE score of the best solution will be saved.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns</dt>
-<dd class="field-odd"><p><dl class="simple">
-<dt>results of fitting</dt><dd><dl class="simple">
-<dt>Index:</dt><dd><ul class="simple">
-<li><p>index (Date) (pd.TimeStamp): Observation date</p></li>
-</ul>
-</dd>
-<dt>Columns:</dt><dd><ul class="simple">
-<li><p>Recovered: The number of recovered cases</p></li>
-<li><p>Susceptible_actual: Actual values of Susceptible</p></li>
-<li><p>columns defined by &#64;columns</p></li>
-</ul>
-</dd>
-</dl>
-</dd>
-</dl>
-</p>
+<dd class="field-odd"><p>self</p>
 </dd>
 <dt class="field-even">Return type</dt>
-<dd class="field-even"><p>(pandas.DataFrame)</p>
+<dd class="field-even"><p>covsirphy.Trend</p>
 </dd>
 </dl>
 </dd></dl>

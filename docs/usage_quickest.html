@@ -178,21 +178,35 @@
 /* CSS for nbsphinx extension */
 
 /* remove conflicting styling from Sphinx themes */
-div.nbinput.container,
-div.nbinput.container div.prompt,
-div.nbinput.container div.input_area,
-div.nbinput.container div[class*=highlight],
-div.nbinput.container div[class*=highlight] pre,
-div.nboutput.container,
-div.nboutput.container div.prompt,
-div.nboutput.container div.output_area,
-div.nboutput.container div[class*=highlight],
-div.nboutput.container div[class*=highlight] pre {
-    background: none;
+div.nbinput.container div.prompt *,
+div.nboutput.container div.prompt *,
+div.nbinput.container div.input_area pre,
+div.nboutput.container div.output_area pre,
+div.nbinput.container div.input_area .highlight,
+div.nboutput.container div.output_area .highlight {
     border: none;
-    padding: 0 0;
+    padding: 0;
     margin: 0;
     box-shadow: none;
+}
+
+div.nbinput.container > div[class*=highlight],
+div.nboutput.container > div[class*=highlight] {
+    margin: 0;
+}
+
+div.nbinput.container div.prompt *,
+div.nboutput.container div.prompt * {
+    background: none;
+}
+
+div.nboutput.container div.output_area .highlight,
+div.nboutput.container div.output_area pre {
+    background: unset;
+}
+
+div.nboutput.container div.output_area div.highlight {
+    color: unset;  /* override Pygments text color */
 }
 
 /* avoid gaps between output lines */
@@ -293,7 +307,7 @@ div.nboutput.container div.output_area {
 div.nbinput.container div.input_area {
     border: 1px solid #e0e0e0;
     border-radius: 2px;
-    background: #f5f5f5;
+    /*background: #f5f5f5;*/
 }
 
 /* override MathJax center alignment in output cells */
@@ -359,6 +373,7 @@ div.nboutput.container div.output_area.rendered_html,
 div.nboutput.container div.output_area > div.output_javascript,
 div.nboutput.container div.output_area:not(.rendered_html) > img{
     padding: 5px;
+    margin: 0;
 }
 
 /* fix copybtn overflow problem in chromium (needed for 'sphinx_copybutton') */
@@ -488,7 +503,7 @@ div.rendered_html tbody tr:hover {
 </div>
 <div class="output_area docutils container">
 <div class="highlight"><pre>
-&#39;2.9.1-delta.new.290.fix.282.283.296&#39;
+&#39;2.10.0&#39;
 </pre></div></div>
 </div>
 </div>
@@ -630,22 +645,6 @@ div.rendered_html tbody tr:hover {
   </thead>
   <tbody>
     <tr>
-      <th>249</th>
-      <td>2020-10-30</td>
-      <td>647674</td>
-      <td>325786</td>
-      <td>38321</td>
-      <td>283567</td>
-    </tr>
-    <tr>
-      <th>250</th>
-      <td>2020-10-31</td>
-      <td>679430</td>
-      <td>351386</td>
-      <td>38618</td>
-      <td>289426</td>
-    </tr>
-    <tr>
       <th>251</th>
       <td>2020-11-01</td>
       <td>709335</td>
@@ -664,10 +663,26 @@ div.rendered_html tbody tr:hover {
     <tr>
       <th>253</th>
       <td>2020-11-03</td>
-      <td>731588</td>
-      <td>396512</td>
-      <td>39059</td>
-      <td>296017</td>
+      <td>759829</td>
+      <td>418142</td>
+      <td>39412</td>
+      <td>302275</td>
+    </tr>
+    <tr>
+      <th>254</th>
+      <td>2020-11-04</td>
+      <td>790377</td>
+      <td>443235</td>
+      <td>39764</td>
+      <td>307378</td>
+    </tr>
+    <tr>
+      <th>255</th>
+      <td>2020-11-05</td>
+      <td>790377</td>
+      <td>443235</td>
+      <td>39764</td>
+      <td>307378</td>
     </tr>
   </tbody>
 </table>
@@ -743,77 +758,84 @@ div.rendered_html tbody tr:hover {
       <th>0th</th>
       <td>Past</td>
       <td>24Feb2020</td>
-      <td>21Mar2020</td>
+      <td>19Mar2020</td>
       <td>60483973</td>
     </tr>
     <tr>
       <th>1st</th>
       <td>Past</td>
-      <td>22Mar2020</td>
-      <td>31Mar2020</td>
+      <td>20Mar2020</td>
+      <td>26Mar2020</td>
       <td>60483973</td>
     </tr>
     <tr>
       <th>2nd</th>
       <td>Past</td>
-      <td>01Apr2020</td>
-      <td>10Apr2020</td>
+      <td>27Mar2020</td>
+      <td>03Apr2020</td>
       <td>60483973</td>
     </tr>
     <tr>
       <th>3rd</th>
       <td>Past</td>
-      <td>11Apr2020</td>
-      <td>20Apr2020</td>
+      <td>04Apr2020</td>
+      <td>13Apr2020</td>
       <td>60483973</td>
     </tr>
     <tr>
       <th>4th</th>
       <td>Past</td>
-      <td>21Apr2020</td>
-      <td>30Apr2020</td>
+      <td>14Apr2020</td>
+      <td>25Apr2020</td>
       <td>60483973</td>
     </tr>
     <tr>
       <th>5th</th>
       <td>Past</td>
-      <td>01May2020</td>
-      <td>21May2020</td>
+      <td>26Apr2020</td>
+      <td>15May2020</td>
       <td>60483973</td>
     </tr>
     <tr>
       <th>6th</th>
       <td>Past</td>
-      <td>22May2020</td>
-      <td>19Aug2020</td>
+      <td>16May2020</td>
+      <td>20Aug2020</td>
       <td>60483973</td>
     </tr>
     <tr>
       <th>7th</th>
       <td>Past</td>
-      <td>20Aug2020</td>
-      <td>18Sep2020</td>
+      <td>21Aug2020</td>
+      <td>22Sep2020</td>
       <td>60483973</td>
     </tr>
     <tr>
       <th>8th</th>
       <td>Past</td>
-      <td>19Sep2020</td>
-      <td>07Oct2020</td>
+      <td>23Sep2020</td>
+      <td>08Oct2020</td>
       <td>60483973</td>
     </tr>
     <tr>
       <th>9th</th>
       <td>Past</td>
-      <td>08Oct2020</td>
-      <td>19Oct2020</td>
+      <td>09Oct2020</td>
+      <td>15Oct2020</td>
       <td>60483973</td>
     </tr>
     <tr>
       <th>10th</th>
       <td>Past</td>
-      <td>20Oct2020</td>
-      <td>03Nov2020</td>
+      <td>16Oct2020</td>
+      <td>24Oct2020</td>
+      <td>60483973</td>
+    </tr>
+    <tr>
+      <th>11th</th>
+      <td>Past</td>
+      <td>25Oct2020</td>
+      <td>05Nov2020</td>
       <td>60483973</td>
     </tr>
   </tbody>
@@ -841,18 +863,19 @@ div.rendered_html tbody tr:hover {
 
 &lt;SIR-F model: parameter estimation&gt;
 Running optimization with 4 CPUs...
-        10th phase (20Oct2020 - 03Nov2020): finished 1633 trials in 1 min  0 sec
-         3rd phase (11Apr2020 - 20Apr2020): finished  550 trials in 0 min 15 sec
-         4th phase (21Apr2020 - 30Apr2020): finished  226 trials in 0 min  5 sec
-         5th phase (01May2020 - 21May2020): finished  344 trials in 0 min 10 sec
-         0th phase (24Feb2020 - 21Mar2020): finished 1396 trials in 1 min  0 sec
-         1st phase (22Mar2020 - 31Mar2020): finished 1422 trials in 1 min  0 sec
-         2nd phase (01Apr2020 - 10Apr2020): finished 1424 trials in 1 min  0 sec
-         6th phase (22May2020 - 19Aug2020): finished 1206 trials in 1 min  0 sec
-         7th phase (20Aug2020 - 18Sep2020): finished 1386 trials in 1 min  0 sec
-         9th phase (08Oct2020 - 19Oct2020): finished 1385 trials in 1 min  0 sec         8th phase (19Sep2020 - 07Oct2020): finished 1388 trials in 1 min  0 sec
-
-Completed optimization. Total: 3 min  2 sec
+        11th phase (25Oct2020 - 05Nov2020): finished 1096 trials in 1 min  0 sec
+         3rd phase (04Apr2020 - 13Apr2020): finished  495 trials in 0 min 25 sec
+         2nd phase (27Mar2020 - 03Apr2020): finished 1029 trials in 1 min  0 sec
+         0th phase (24Feb2020 - 19Mar2020): finished  980 trials in 1 min  0 sec
+         1st phase (20Mar2020 - 26Mar2020): finished 1018 trials in 1 min  0 sec
+         4th phase (14Apr2020 - 25Apr2020): finished 1040 trials in 1 min  0 sec
+         5th phase (26Apr2020 - 15May2020): finished 1151 trials in 1 min  0 sec
+         6th phase (16May2020 - 20Aug2020): finished 1007 trials in 1 min  0 sec
+         7th phase (21Aug2020 - 22Sep2020): finished 1123 trials in 1 min  0 sec
+        10th phase (16Oct2020 - 24Oct2020): finished  225 trials in 0 min 10 sec
+         8th phase (23Sep2020 - 08Oct2020): finished  982 trials in 0 min 50 sec
+         9th phase (09Oct2020 - 15Oct2020): finished  356 trials in 0 min 15 sec
+Completed optimization. Total: 3 min 18 sec
 </pre></div></div>
 </div>
 </div>
