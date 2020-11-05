@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
+import json
 from pathlib import Path
 import warnings
 import covsirphy as cs
@@ -18,8 +19,13 @@ def main():
     jhu_data = data_loader.jhu()
     population_data = data_loader.population()
     oxcgrt_data = data_loader.oxcgrt()
-    # S-R trend analysis for all countries
+    # Setup analyser
     analyser = cs.PolicyMeasures(jhu_data, population_data, oxcgrt_data)
+    # Dictionary of the number of phases in each country
+    with output_dir.joinpath("trend.json").open("w") as fh:
+        analyser.trend()
+        json.dump(analyser.phase_len(), fh, indent=4)
+    # Show figure of S-R trend analysis
     for country in analyser.countries:
         snl = analyser.scenario(country)
         name = country.replace(" ", "_")
