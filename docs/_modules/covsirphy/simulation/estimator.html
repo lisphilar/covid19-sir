@@ -166,8 +166,6 @@
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="kn">import</span> <span class="nn">optuna</span>
 <span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
-<span class="kn">from</span> <span class="nn">covsirphy.util.argument</span> <span class="kn">import</span> <span class="n">find_args</span>
-<span class="kn">from</span> <span class="nn">covsirphy.cleaning.jhu_data</span> <span class="kn">import</span> <span class="n">JHUData</span>
 <span class="kn">from</span> <span class="nn">covsirphy.util.stopwatch</span> <span class="kn">import</span> <span class="n">StopWatch</span>
 <span class="kn">from</span> <span class="nn">covsirphy.ode.mbase</span> <span class="kn">import</span> <span class="n">ModelBase</span>
 <span class="kn">from</span> <span class="nn">covsirphy.simulation.optimize</span> <span class="kn">import</span> <span class="n">Optimizer</span>
@@ -201,22 +199,14 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">population</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ensure_population</span><span class="p">(</span><span class="n">population</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">model</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ensure_subclass</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">ModelBase</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;model&quot;</span><span class="p">)</span>
         <span class="c1"># Dataset</span>
-        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">record_df</span><span class="p">,</span> <span class="n">JHUData</span><span class="p">):</span>
-            <span class="n">subset_arg_dict</span> <span class="o">=</span> <span class="n">find_args</span><span class="p">(</span>
-                <span class="p">[</span><span class="n">JHUData</span><span class="o">.</span><span class="n">subset</span><span class="p">,</span> <span class="n">record_df</span><span class="o">.</span><span class="n">subset</span><span class="p">],</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">record_df</span> <span class="o">=</span> <span class="n">record_df</span><span class="o">.</span><span class="n">subset</span><span class="p">(</span>
-                <span class="n">population</span><span class="o">=</span><span class="n">population</span><span class="p">,</span> <span class="o">**</span><span class="n">subset_arg_dict</span><span class="p">)</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="k">if</span> <span class="ow">not</span> <span class="nb">set</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">NLOC_COLUMNS</span><span class="p">)</span><span class="o">.</span><span class="n">issubset</span><span class="p">(</span><span class="n">record_df</span><span class="o">.</span><span class="n">columns</span><span class="p">):</span>
-                <span class="n">record_df</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">restore</span><span class="p">(</span><span class="n">record_df</span><span class="p">)</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">record_df</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ensure_dataframe</span><span class="p">(</span>
-                <span class="n">record_df</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;record_df&quot;</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">NLOC_COLUMNS</span>
-            <span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">set</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">NLOC_COLUMNS</span><span class="p">)</span><span class="o">.</span><span class="n">issubset</span><span class="p">(</span><span class="n">record_df</span><span class="o">.</span><span class="n">columns</span><span class="p">):</span>
+            <span class="n">record_df</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">restore</span><span class="p">(</span><span class="n">record_df</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">record_df</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ensure_dataframe</span><span class="p">(</span>
+            <span class="n">record_df</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;record_df&quot;</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">NLOC_COLUMNS</span><span class="p">)</span>
         <span class="c1"># Initial values</span>
         <span class="n">df</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">tau_free</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">record_df</span><span class="p">,</span> <span class="n">population</span><span class="p">,</span> <span class="n">tau</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">y0_dict</span> <span class="o">=</span> <span class="p">{</span>
-            <span class="n">k</span><span class="p">:</span> <span class="n">df</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">df</span><span class="o">.</span><span class="n">index</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">k</span><span class="p">]</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">model</span><span class="o">.</span><span class="n">VARIABLES</span>
-        <span class="p">}</span>
+            <span class="n">k</span><span class="p">:</span> <span class="n">df</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">df</span><span class="o">.</span><span class="n">index</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">k</span><span class="p">]</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">model</span><span class="o">.</span><span class="n">VARIABLES</span><span class="p">}</span>
         <span class="c1"># Fixed parameter values</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">fixed_dict</span> <span class="o">=</span> <span class="p">{</span>
             <span class="n">k</span><span class="p">:</span> <span class="n">v</span> <span class="k">for</span> <span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="n">v</span><span class="p">)</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">items</span><span class="p">()</span>
@@ -227,8 +217,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">x</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">TS</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">y_list</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">VARIABLES</span><span class="p">[:]</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">weight_dict</span> <span class="o">=</span> <span class="p">{</span>
-            <span class="n">v</span><span class="p">:</span> <span class="n">p</span> <span class="k">for</span> <span class="p">(</span><span class="n">v</span><span class="p">,</span> <span class="n">p</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">model</span><span class="o">.</span><span class="n">VARIABLES</span><span class="p">,</span> <span class="n">model</span><span class="o">.</span><span class="n">WEIGHTS</span><span class="p">)</span> <span class="k">if</span> <span class="n">p</span> <span class="o">&gt;</span> <span class="mi">0</span>
-        <span class="p">}</span>
+            <span class="n">v</span><span class="p">:</span> <span class="n">p</span> <span class="k">for</span> <span class="p">(</span><span class="n">v</span><span class="p">,</span> <span class="n">p</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">model</span><span class="o">.</span><span class="n">VARIABLES</span><span class="p">,</span> <span class="n">model</span><span class="o">.</span><span class="n">WEIGHTS</span><span class="p">)</span> <span class="k">if</span> <span class="n">p</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">}</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">study</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">total_trials</span> <span class="o">=</span> <span class="mi">0</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">run_time</span> <span class="o">=</span> <span class="mi">0</span>
@@ -334,18 +323,11 @@
         <span class="c1"># Set parameters of the models</span>
         <span class="n">model_param_dict</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">param_range</span><span class="p">(</span>
             <span class="n">taufree_df</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">population</span><span class="p">)</span>
-        <span class="k">try</span><span class="p">:</span>
-            <span class="n">p_dict</span> <span class="o">=</span> <span class="p">{</span>
-                <span class="n">k</span><span class="p">:</span> <span class="n">trial</span><span class="o">.</span><span class="n">suggest_uniform</span><span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="o">*</span><span class="n">v</span><span class="p">)</span>
-                <span class="k">for</span> <span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="n">v</span><span class="p">)</span> <span class="ow">in</span> <span class="n">model_param_dict</span><span class="o">.</span><span class="n">items</span><span class="p">()</span>
-                <span class="k">if</span> <span class="n">k</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">fixed_dict</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span>
-            <span class="p">}</span>
-        <span class="k">except</span> <span class="ne">OverflowError</span><span class="p">:</span>
-            <span class="n">p_dict</span> <span class="o">=</span> <span class="p">{</span>
-                <span class="n">k</span><span class="p">:</span> <span class="n">trial</span><span class="o">.</span><span class="n">suggest_uniform</span><span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
-                <span class="k">for</span> <span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="n">v</span><span class="p">)</span> <span class="ow">in</span> <span class="n">model_param_dict</span><span class="o">.</span><span class="n">items</span><span class="p">()</span>
-                <span class="k">if</span> <span class="n">k</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">fixed_dict</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span>
-            <span class="p">}</span>
+        <span class="n">p_dict</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="n">k</span><span class="p">:</span> <span class="n">trial</span><span class="o">.</span><span class="n">suggest_uniform</span><span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="o">*</span><span class="n">v</span><span class="p">)</span>
+            <span class="k">for</span> <span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="n">v</span><span class="p">)</span> <span class="ow">in</span> <span class="n">model_param_dict</span><span class="o">.</span><span class="n">items</span><span class="p">()</span>
+            <span class="k">if</span> <span class="n">k</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">fixed_dict</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span>
+        <span class="p">}</span>
         <span class="n">p_dict</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">fixed_dict</span><span class="p">)</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">error_f</span><span class="p">(</span><span class="n">p_dict</span><span class="p">,</span> <span class="n">taufree_df</span><span class="p">)</span></div>
 
@@ -385,18 +367,15 @@
 <span class="sd">                    - columns with dimensional variables</span>
 
 <span class="sd">        Returns:</span>
-<span class="sd">            (float): score of the error function to minimize</span>
+<span class="sd">            float: score of the error function to minimize</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">sim_df</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">simulate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">step_n</span><span class="p">,</span> <span class="n">param_dict</span><span class="p">)</span>
         <span class="n">comp_df</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">compare</span><span class="p">(</span><span class="n">taufree_df</span><span class="p">,</span> <span class="n">sim_df</span><span class="p">)</span>
         <span class="c1"># Calculate error score</span>
-        <span class="k">try</span><span class="p">:</span>
-            <span class="k">return</span> <span class="nb">sum</span><span class="p">(</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">_score</span><span class="p">(</span><span class="n">variable</span><span class="p">,</span> <span class="n">comp_df</span><span class="p">)</span>
-                <span class="k">for</span> <span class="n">variable</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">weight_dict</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span>
-            <span class="p">)</span>
-        <span class="k">except</span> <span class="p">(</span><span class="ne">ZeroDivisionError</span><span class="p">,</span> <span class="ne">TypeError</span><span class="p">):</span>
-            <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">inf</span></div>
+        <span class="k">return</span> <span class="nb">sum</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_score</span><span class="p">(</span><span class="n">variable</span><span class="p">,</span> <span class="n">comp_df</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">variable</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">weight_dict</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span>
+        <span class="p">)</span></div>
 
     <span class="k">def</span> <span class="nf">_score</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">v</span><span class="p">,</span> <span class="n">comp_df</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
@@ -431,7 +410,7 @@
 <span class="sd">                - value (int or float): parameter value</span>
 
 <span class="sd">        Returns:</span>
-<span class="sd">            (pandas.DataFrame):</span>
+<span class="sd">            pandas.DataFrame:</span>
 <span class="sd">                Index:</span>
 <span class="sd">                    reset index</span>
 <span class="sd">                Columns:</span>
@@ -456,7 +435,7 @@
 <span class="sd">            name (str or None): index of the dataframe</span>
 
 <span class="sd">        Returns:</span>
-<span class="sd">            (pandas.DataFrame):</span>
+<span class="sd">            pandas.DataFrame:</span>
 <span class="sd">                Index:</span>
 <span class="sd">                    name or reset index (when name is None)</span>
 <span class="sd">                Columns:</span>
@@ -485,36 +464,15 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">RUNTIME</span><span class="p">:</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">minutes</span><span class="si">}</span><span class="s2"> min </span><span class="si">{</span><span class="n">seconds</span><span class="si">:</span><span class="s2">&gt;2</span><span class="si">}</span><span class="s2"> sec&quot;</span>
         <span class="p">}</span></div>
 
-<div class="viewcode-block" id="Estimator.summary"><a class="viewcode-back" href="../../../covsirphy.simulation.html#covsirphy.simulation.estimator.Estimator.summary">[docs]</a>    <span class="k">def</span> <span class="nf">summary</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Summarize the results of optimization.</span>
-
-<span class="sd">        Args:</span>
-<span class="sd">            name (str or None): index of the dataframe</span>
-
-<span class="sd">        Returns:</span>
-<span class="sd">            (pandas.DataFrame):</span>
-<span class="sd">                Index:</span>
-<span class="sd">                    name or reset index (when name is None)</span>
-<span class="sd">                Columns:</span>
-<span class="sd">                    - (parameters of the model)</span>
-<span class="sd">                    - tau</span>
-<span class="sd">                    - Rt: basic or phase-dependent reproduction number</span>
-<span class="sd">                    - (dimensional parameters [day])</span>
-<span class="sd">                    - RMSLE: Root Mean Squared Log Error</span>
-<span class="sd">                    - Trials: the number of trials</span>
-<span class="sd">                    - Runtime: run time of estimation</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">summary_dict</span> <span class="o">=</span> <span class="p">{</span><span class="n">name</span> <span class="ow">or</span> <span class="mi">0</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">to_dict</span><span class="p">()}</span>
-        <span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="o">.</span><span class="n">from_dict</span><span class="p">(</span><span class="n">summary_dict</span><span class="p">,</span> <span class="n">orient</span><span class="o">=</span><span class="s2">&quot;index&quot;</span><span class="p">)</span>
-        <span class="k">return</span> <span class="n">df</span><span class="o">.</span><span class="n">fillna</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">UNKNOWN</span><span class="p">)</span></div>
-
     <span class="k">def</span> <span class="nf">_rmsle</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tau</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Return RMSLE score.</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            tau (int): tau value [min]</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            float: RMSLE score</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">rmsle</span><span class="p">(</span>
             <span class="n">train_df</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">divide_minutes</span><span class="p">(</span><span class="n">tau</span><span class="p">),</span>
