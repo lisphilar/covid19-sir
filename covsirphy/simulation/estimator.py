@@ -206,7 +206,7 @@ class Estimator(Optimizer):
                     - columns with dimensional variables
 
         Returns:
-            (float): score of the error function to minimize
+            float: score of the error function to minimize
         """
         sim_df = self.simulate(self.step_n, param_dict)
         comp_df = self.compare(taufree_df, sim_df)
@@ -274,7 +274,7 @@ class Estimator(Optimizer):
             name (str or None): index of the dataframe
 
         Returns:
-            (pandas.DataFrame):
+            pandas.DataFrame:
                 Index:
                     name or reset index (when name is None)
                 Columns:
@@ -303,36 +303,15 @@ class Estimator(Optimizer):
             self.RUNTIME: f"{minutes} min {seconds:>2} sec"
         }
 
-    def summary(self, name=None):
-        """
-        Summarize the results of optimization.
-
-        Args:
-            name (str or None): index of the dataframe
-
-        Returns:
-            (pandas.DataFrame):
-                Index:
-                    name or reset index (when name is None)
-                Columns:
-                    - (parameters of the model)
-                    - tau
-                    - Rt: basic or phase-dependent reproduction number
-                    - (dimensional parameters [day])
-                    - RMSLE: Root Mean Squared Log Error
-                    - Trials: the number of trials
-                    - Runtime: run time of estimation
-        """
-        summary_dict = {name or 0: self.to_dict()}
-        df = pd.DataFrame.from_dict(summary_dict, orient="index")
-        return df.fillna(self.UNKNOWN)
-
     def _rmsle(self, tau):
         """
         Return RMSLE score.
 
         Args:
             tau (int): tau value [min]
+
+        Returns:
+            float: RMSLE score
         """
         return super().rmsle(
             train_df=self.divide_minutes(tau),
