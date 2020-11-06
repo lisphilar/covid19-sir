@@ -33,6 +33,7 @@ from covsirphy.ode.sirf import SIRF
 from covsirphy.ode.sirfv import SIRFV
 from covsirphy.ode.sewirf import SEWIRF
 # simulation
+from covsirphy.simulation.estimation_study import EstimationStudy
 from covsirphy.simulation.estimator import Estimator
 from covsirphy.simulation.optimize import Optimizer
 from covsirphy.simulation.simulator import ODESimulator
@@ -64,7 +65,7 @@ __all__ = [
     "Term", "CleaningBase", "DataLoader", "COVID19DataHub",
     "JHUData", "CountryData", "PopulationData", "OxCGRTData",
     "ModelBase", "SIR", "SIRD", "SIRF", "SIRFV", "SEWIRF",
-    "Estimator", "Trend", "Optimizer",
+    "Estimator", "Trend", "Optimizer", "EstimationStudy",
     "line_plot", "jpn_map", "StopWatch", "deprecate", "find_args",
     "save_dataframe",
     "PolicyMeasures",
