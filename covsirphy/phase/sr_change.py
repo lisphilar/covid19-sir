@@ -129,7 +129,7 @@ class ChangeFinder(Term):
         trend.run()
         df = trend.result_df.copy()
         rmsle = trend.rmsle()
-        if self.max_rmsle < rmsle:
+        if rmsle > self.max_rmsle:
             df[f"{self.S}{self.P}"] = None
         # Get min value for vline
         r_value = int(df[self.R].min())
