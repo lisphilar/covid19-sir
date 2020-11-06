@@ -55,7 +55,7 @@ class EstimationStudy(Optimizer):
         self.y_list = model.VARIABLES[:]
         self.weight_dict = {
             v: p for (v, p) in zip(model.VARIABLES, model.WEIGHTS) if p > 0}
-        self.study = None
+        self._init_study(seed=seed)
         self.total_trials = 0
         self.run_time = 0
         self.tau_candidates = self.divisors(1440)
