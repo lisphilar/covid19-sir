@@ -70,7 +70,7 @@ class Trend(Term):
         score_dict = {
             func: self._rmsle(fit_df) for (func, fit_df) in dataframe_dict.items()}
         # Select the best dataframe
-        if ((score_dict[L] < score_dict[N]) and (score_dict[L] > 0)) or (score_dict[N] == 0):
+        if 0 < score_dict[L] < score_dict[N] or not score_dict[N]:
             self._result_df = dataframe_dict[L]
         else:
             self._result_df = dataframe_dict[N]
