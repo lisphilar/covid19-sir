@@ -41,15 +41,20 @@ class Estimator(Term):
     warnings.simplefilter("ignore", SyntaxWarning)
 
     def __init__(self, record_df, model, population, tau=None, **kwargs):
-        # Arguments
-        self.population = self.ensure_population(population)
+        # ODE model
         self.model = self.ensure_subclass(model, ModelBase, name="model")
+        self.variables = model.VARIABLES[:]
+        self.weight_dict = {
+            v: p for (v, p) in zip(model.VARIABLES, model.WEIGHTS) if p > 0}
+        self.increasing_vars = [
+            f"{v}{self.P}" for v in self.model.VARS_INCLEASE]
         # Dataset
         if not set(self.NLOC_COLUMNS).issubset(record_df.columns):
             record_df = model.restore(record_df)
         self.record_df = self.ensure_dataframe(
             record_df, name="record_df", columns=self.NLOC_COLUMNS)
-        # Initial values
+        # Settings for simulation
+        self.population = self.ensure_population(population)
         df = model.tau_free(self.record_df, population, tau=None)
         self.y0_dict = {
             k: df.loc[df.index[0], k] for k in model.VARIABLES}
@@ -59,21 +64,13 @@ class Estimator(Term):
             if k in set(model.PARAMETERS) and v is not None
         }
         # For optimization
-        optuna.logging.disable_default_handler()
-        self.x = self.TS
-        self.y_list = model.VARIABLES[:]
-        self.weight_dict = {
-            v: p for (v, p) in zip(model.VARIABLES, model.WEIGHTS) if p > 0}
         self.study = None
         self.total_trials = 0
         self.runtime = 0
-        self.tau_candidates = self.divisors(1440)
-        # Defined in parent class, but not used
-        self.train_df = None
-        # step_n will be defined in divide_minutes()
-        self.step_n = None
-        # tau value
+        # Tau value
         self.tau = self.ensure_tau(tau)
+        self.tau_candidates = self.divisors(1440)
+        self.step_n = None
         self.taufree_df = pd.DataFrame() if tau is None else self.divide_minutes(tau)
 
     def _init_study(self, seed=None):
@@ -116,7 +113,6 @@ class Estimator(Term):
             self._init_study(seed=seed)
         reset_n = 0
         iteration_n = math.ceil(timeout / timeout_iteration)
-        increasing_cols = [f"{v}{self.P}" for v in self.model.VARS_INCLEASE]
         stopwatch = StopWatch()
         for _ in range(iteration_n):
             # Perform optimization
@@ -127,10 +123,7 @@ class Estimator(Term):
             train_df = self.divide_minutes(tau)
             comp_df = self.compare(train_df, self.predict())
             # Check monotonic variables
-            mono_ok_list = [
-                comp_df[col].is_monotonic_increasing for col in increasing_cols
-            ]
-            if not all(mono_ok_list):
+            if not self._is_monotonic(comp_df):
                 if reset_n == reset_n_max - 1:
                     break
                 # Initialize the study
@@ -145,6 +138,26 @@ class Estimator(Term):
         self.runtime_show = stopwatch.show()
         self.total_trials = len(self.study.trials)
 
+    def _is_monotonic(self, comp_df):
+        """
+        Check that simulated number of cases show mononit increasing.
+        Args:
+            comp_df (pandas.DataFrame):
+                Index:
+                    t (int): time step, 0, 1, 2,...
+                Columns:
+                    - columns with suffix "_actual"
+                    - columns with suffix "_predicted"
+                    - columns are defined by self.variables
+        Returns:
+            bool: whether all variable show monotonic increasing or not
+        """
+        # Check monotonic variables
+        mono_ok_list = [
+            comp_df[col].is_monotonic_increasing for col in self.increasing_vars
+        ]
+        return all(mono_ok_list)
+
     def _is_in_allowance(self, comp_df, allowance):
         """
         Return whether all max values of predicted values are in allowance or not.
@@ -156,8 +169,8 @@ class Estimator(Term):
         Returns:
             (bool): True when all max values of predicted values are in allowance
         """
-        a_max_values = [comp_df[f"{v}{self.A}"].max() for v in self.y_list]
-        p_max_values = [comp_df[f"{v}{self.P}"].max() for v in self.y_list]
+        a_max_values = [comp_df[f"{v}{self.A}"].max() for v in self.variables]
+        p_max_values = [comp_df[f"{v}{self.P}"].max() for v in self.variables]
         allowance0, allowance1 = allowance
         ok_list = [
             (a * allowance0 <= p) and (p <= a * allowance1)
@@ -250,7 +263,7 @@ class Estimator(Term):
                 Columns:
                     - columns with "_actual"
                     - columns with "_predicted"
-                    - columns are defined by self.y_list
+                    - columns are defined by self.variables
 
         Returns:
             float: score
@@ -299,7 +312,7 @@ class Estimator(Term):
                     reset index
                 Columns:
                     - t: time step, 0, 1, 2,...
-                    - includes columns defined by self.y_list
+                    - includes columns defined by self.variables
 
             predicted_df (pandas.DataFrame): predicted data
 
@@ -307,7 +320,7 @@ class Estimator(Term):
                     reset index
                 Columns:
                     - t: time step, 0, 1, 2,...
-                    - includes columns defined by self.y_list
+                    - includes columns defined by self.variables
 
         Returns:
             pandas.DataFrame:
@@ -316,12 +329,12 @@ class Estimator(Term):
                 Columns:
                     - columns with "_actual"
                     - columns with "_predicted:
-                    - columns are defined by self.y_list
+                    - columns are defined by self.variables
         """
         # Data for comparison
         df = actual_df.merge(
-            predicted_df, on=self.x, suffixes=(self.A, self.P))
-        return df.set_index(self.x)
+            predicted_df, on=self.TS, suffixes=(self.A, self.P))
+        return df.set_index(self.TS)
 
     def param(self):
         """
@@ -412,10 +425,10 @@ class Estimator(Term):
         predicted_df = self.predict()
         df = self.compare(train_df, predicted_df)
         df = (df + 1).astype(np.int64)
-        for v in self.y_list:
+        for v in self.variables:
             df = df.loc[df[f"{v}{self.A}"] * df[f"{v}{self.P}"] > 0, :]
-        a_list = [np.log10(df[f"{v}{self.A}"]) for v in self.y_list]
-        p_list = [np.log10(df[f"{v}{self.P}"]) for v in self.y_list]
+        a_list = [np.log10(df[f"{v}{self.A}"]) for v in self.variables]
+        p_list = [np.log10(df[f"{v}{self.P}"]) for v in self.variables]
         diffs = [((a - p) ** 2).sum() for (a, p) in zip(a_list, p_list)]
         return np.sqrt(sum(diffs) / len(diffs))
 
@@ -472,7 +485,7 @@ class Estimator(Term):
                     reset index
                 Columns:
                     - t: time step, 0, 1, 2,...
-                    - includes columns defined by self.y_list
+                    - includes columns defined by self.variables
 
             variables (list[str]): variables to compare or None (all variables)
             show_figure (bool): if True, show the result as a figure
