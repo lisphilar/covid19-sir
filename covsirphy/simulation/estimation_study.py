@@ -115,7 +115,7 @@ class EstimationStudy(Term):
         Run trials of hyperparameter optimization.
 
         Args:
-            timeout_iteration (int): time-out of one iteration
+            timeout (int): timeout of optimization
             tau (int or None): tau value [min], a divisor of 1440
             kwargs: parameter values of the model
 

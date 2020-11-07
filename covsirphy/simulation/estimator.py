@@ -43,7 +43,9 @@ class Estimator(Term):
         self.model = self.ensure_subclass(model, ModelBase, name="model")
         self.population = self.ensure_population(population)
         self.tau = self.ensure_tau(tau)
-        self.fixed_dict = kwargs.copy()
+        self.fixed_dict = {
+            k: v for (k, v) in kwargs.items()
+            if k in set(self.variables) and v is not None}
         # Dataset: complement the columns with the model
         if not set(self.NLOC_COLUMNS).issubset(record_df.columns):
             record_df = model.restore(record_df)
