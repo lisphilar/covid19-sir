@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*-
 
 import pandas as pd
+from covsirphy.util.argument import find_args
 from covsirphy.cleaning.term import Term
 from covsirphy.ode.mbase import ModelBase
 from covsirphy.simulation.estimator import Estimator
@@ -443,7 +444,8 @@ class PhaseUnit(Term):
         # Parameter estimation of ODE model
         estimator = Estimator(
             record_df, self._model, self._population, **self._ode_dict, **kwargs)
-        estimator.run(**kwargs)
+        run_args_dict = find_args([estimator.run], **kwargs)
+        estimator.run(**run_args_dict)
         self._read_estimator(estimator, record_df)
         # Set estimator
         self._estimator = estimator
