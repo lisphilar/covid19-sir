@@ -12,10 +12,9 @@ if True:
     warnings.simplefilter("ignore", FutureWarning)
     warnings.simplefilter("ignore", SyntaxWarning)
 import seaborn as sns
-from covsirphy.cleaning.term import Term
 
 
-class Optimizer(Term):
+class Optimizer(object):
     """
     Hyperparameter optimization with Optuna package.
 
@@ -30,6 +29,8 @@ class Optimizer(Term):
         param (keyword arguments): fixed parameter values
     """
     optuna.logging.disable_default_handler()
+    A = "_actual"
+    P = "_predicted"
 
     def __init__(self, train_df, x="t", **params):
         self.x = x
