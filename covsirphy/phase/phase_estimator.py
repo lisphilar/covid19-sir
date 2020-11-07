@@ -154,5 +154,5 @@ class MPEstimator(Term):
             results.extend(units_est)
         # Completion
         stopwatch.stop()
-        print(f"Completed optimization. Total: {stopwatch.show()}")
+        print(f"Completed optimization. Total: {stopwatch.stop_show()}")
         return results

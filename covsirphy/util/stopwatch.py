@@ -14,7 +14,7 @@ class StopWatch(object):
 
     def stop(self):
         """
-        Stop and show time.
+        Stop.
 
         Returns:
             int: elapsed time [sec]
@@ -35,3 +35,12 @@ class StopWatch(object):
         """
         minutes, seconds = divmod(int(time_sec), 60)
         return f"{minutes} min {seconds:>2} sec"
+
+    def stop_show(self):
+        """
+        Stop and show time.
+
+        Returns:
+            str: eg. '1 min 30 sec'
+        """
+        return self.show(self.stop())
