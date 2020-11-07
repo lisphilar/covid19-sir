@@ -7,9 +7,8 @@ from matplotlib.ticker import ScalarFormatter
 import numpy as np
 import optuna
 import pandas as pd
-if True:
-    warnings.simplefilter("ignore", FutureWarning)
-    warnings.simplefilter("ignore", SyntaxWarning)
+warnings.simplefilter("ignore", FutureWarning)
+warnings.simplefilter("ignore", SyntaxWarning)
 import seaborn as sns
 from covsirphy.cleaning.term import Term
 from covsirphy.ode.mbase import ModelBase
