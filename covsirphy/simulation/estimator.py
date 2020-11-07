@@ -349,31 +349,6 @@ class Estimator(Term):
         param_dict.update(self.fixed_dict)
         return param_dict
 
-    def result(self, name):
-        """
-        Return the estimated parameters as a dataframe.
-        This method should be overwritten in subclass.
-
-        Args:
-            name (str): index of the dataframe
-
-        Returns:
-            pandas.DataFrame:
-                Index:
-                    reset index
-                Columns:
-                    - (estimated parameters)
-                    - Trials: the number of trials
-                    - Runtime: run time of estimation
-        """
-        param_dict = self.param()
-        # The number of trials
-        param_dict["Trials"] = self.total_trials
-        # Runtime
-        minutes, seconds = divmod(int(self.runtime), 60)
-        param_dict["Runtime"] = f"{minutes} min {seconds} sec"
-        return param_dict
-
     def to_dict(self):
         """
         Summarize the results of optimization.
@@ -401,14 +376,13 @@ class Estimator(Term):
             population=self.population,
             **{k: v for (k, v) in est_dict.items() if k != self.TAU}
         )
-        minutes, seconds = divmod(int(self.runtime), 60)
         return {
             **est_dict,
             self.RT: model_instance.calc_r0(),
             **model_instance.calc_days_dict(est_dict[self.TAU]),
             self.RMSLE: self._rmsle(est_dict[self.TAU]),
             self.TRIALS: self.total_trials,
-            self.RUNTIME: f"{minutes} min {seconds:>2} sec"
+            self.RUNTIME: StopWatch.show_time(self.runtime)
         }
 
     def _rmsle(self, tau):
