@@ -169,7 +169,7 @@ class Estimator(Term):
             trial (optuna.trial): a trial of the study
 
         Returns:
-            (float): score of the error function to minimize
+            float: score of the error function to minimize
         """
         self.tau = self.tau_final or trial.suggest_categorical(
             self.TAU, self.tau_candidates)
@@ -199,9 +199,7 @@ class Estimator(Term):
 
         Args:
             tau (int): tau value [min]
-            param_dict (dict): estimated parameter values
-                - key (str): parameter name
-                - value (int or float): parameter value
+            dict[str, int or float]: dictionary of parameter values
 
         Returns:
             float: score of the error function to minimize
@@ -240,9 +238,7 @@ class Estimator(Term):
 
         Args:
             step_n (int): number of iteration
-            param_dict (dict): estimated parameter values
-                - key (str): parameter name
-                - value (int or float): parameter value
+            dict[str, int or float]: dictionary of parameter values
 
         Returns:
             pandas.DataFrame:
@@ -268,14 +264,12 @@ class Estimator(Term):
 
         Args:
             tau (int): tau value [min]
-            param_dict (dict): estimated parameter values
-                - key (str): parameter name
-                - value (int or float): parameter value
+            dict[str, int or float]: dictionary of parameter values
 
         Returns:
             pandas.DataFrame:
                 Index:
-                    (str): time step
+                    t (int): Elapsed time divided by tau value [-]
                 Columns:
                     - columns with "_actual"
                     - columns with "_predicted:
@@ -305,13 +299,13 @@ class Estimator(Term):
 
         Returns:
             dict[str, float or int]:
-                    - (parameters of the model)
-                    - tau
-                    - Rt: basic or phase-dependent reproduction number
-                    - (dimensional parameters [day])
-                    - RMSLE: Root Mean Squared Log Error
-                    - Trials: the number of trials
-                    - Runtime: run time of estimation
+                - (parameters of the model)
+                - tau
+                - Rt: basic or phase-dependent reproduction number
+                - (dimensional parameters [day])
+                - RMSLE: Root Mean Squared Log Error
+                - Trials: the number of trials
+                - Runtime: run time of estimation
         """
         est_dict = self.param()
         if self.TAU not in est_dict:
@@ -349,10 +343,9 @@ class Estimator(Term):
         diffs = [((a - p) ** 2).sum() for (a, p) in zip(a_list, p_list)]
         return np.sqrt(sum(diffs) / len(diffs))
 
-    def history(self, show_figure=True, filename=None):
+    def _history(self):
         """
-        Show the history of optimization as a figure
-            and return it as dataframe.
+        Return dataframe to show the history of optimization.
 
         Args:
             show_figure (bool): if True, show the history as a pair-plot of parameters.
@@ -365,12 +358,25 @@ class Estimator(Term):
         df = self.study.trials_dataframe()
         series = df["datetime_complete"] - df["datetime_start"]
         df["time[s]"] = series.dt.total_seconds()
-        df = df.drop(
-            ["datetime_complete", "datetime_start", "system_attrs__number"],
-            axis=1, errors="ignore")
-        # Show figure
+        drop_cols = [
+            "datetime_complete", "datetime_start", "system_attrs__number"]
+        return df.drop(drop_cols, axis=1, errors="ignore")
+
+    def history(self, show_figure=True, filename=None):
+        """
+        Return dataframe to show the history of optimization.
+
+        Args:
+            show_figure (bool): if True, show the history as a pair-plot of parameters.
+            filename (str): filename of the figure, or None (show figure)
+
+        Returns:
+            pandas.DataFrame: the history
+        """
+        df = self._history()
         if not show_figure:
             return df
+        # Show figure
         fig_df = df.loc[:, df.columns.str.startswith("params_")]
         fig_df.columns = fig_df.columns.str.replace("params_", "")
         sns.pairplot(fig_df, diag_kind="kde", markers="+")
@@ -382,23 +388,36 @@ class Estimator(Term):
         plt.clf()
         return df
 
-    def _accuracy(self, variables=None, show_figure=True, filename=None):
+    def accuracy(self, show_figure=True, filename=None):
         """
-        Show the accuracy as a figure.
-        This method can be overwritten in child class.
+        Show accuracy as a figure.
 
         Args:
-            variables (list[str]): variables to compare or None (all variables)
             show_figure (bool): if True, show the result as a figure
             filename (str): filename of the figure, or None (show figure)
+
+        Returns:
+            pandas.DataFrame:
+                Index:
+                    t (int): Elapsed time divided by tau value [-]
+                Columns:
+                    - columns with "_actual"
+                    - columns with "_predicted:
+                    - columns are defined by self.variables
         """
+        # Create a table to compare observed/estimated values
         est_dict = self.param()
         if self.TAU not in est_dict:
             est_dict[self.TAU] = self.tau_final
-        # Create a table to compare observed/estimated values
         df = self.compare(**est_dict)
         if not show_figure:
             return df
+        # Variables to show accuracy
+        variables = [
+            v for (i, (p, v))
+            in enumerate(zip(self.model.WEIGHTS, self.model.VARIABLES))
+            if p != 0 and i != 0
+        ]
         # Prepare figure object
         val_len = len(variables) + 1
         fig, axes = plt.subplots(
@@ -437,22 +456,3 @@ class Estimator(Term):
         plt.savefig(filename, bbox_inches="tight", transparent=False, dpi=300)
         plt.clf()
         return df
-
-    def accuracy(self, show_figure=True, filename=None):
-        """
-        Show the accuracy as a figure.
-
-        Args:
-            show_figure (bool): if True, show the result as a figure
-            filename (str): filename of the figure, or None (show figure)
-        """
-        use_variables = [
-            v for (i, (p, v))
-            in enumerate(zip(self.model.WEIGHTS, self.model.VARIABLES))
-            if p != 0 and i != 0
-        ]
-        return self._accuracy(
-            variables=use_variables,
-            show_figure=show_figure,
-            filename=filename
-        )
