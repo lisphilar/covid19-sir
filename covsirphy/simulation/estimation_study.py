@@ -157,7 +157,7 @@ class EstimationStudy(Term):
         # Set tau value and taufree dataframe
         if self.tau is None:
             self.tau = trial.suggest_categorical(self.TAU, self.tau_candidates)
-            self.set_taufree()
+            self._set_taufree()
         # Set parameters of the models
         range_dict = self.model.param_range(
             self.taufree_df, self.population)
