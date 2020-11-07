@@ -71,7 +71,9 @@ class Estimator(Term):
         self.tau = self.ensure_tau(tau)
         self.tau_candidates = self.divisors(1440)
         self.step_n = None
-        self.taufree_df = pd.DataFrame() if tau is None else self.divide_minutes(tau)
+        self.taufree_df = pd.DataFrame()
+        if tau is not None:
+            self._set_taufree()
 
     def _init_study(self, seed=None):
         """
@@ -118,11 +120,8 @@ class Estimator(Term):
             # Perform optimization
             self.study.optimize(
                 self.objective, n_jobs=1, timeout=timeout_iteration)
-            # Create a table to compare observed/estimated values
-            tau = self.tau or self.param()[self.TAU]
-            train_df = self.divide_minutes(tau)
-            comp_df = self.compare(train_df, self.predict())
             # Check monotonic variables
+            comp_df = self.compare()
             if not self._is_monotonic(comp_df):
                 if reset_n == reset_n_max - 1:
                     break
@@ -190,22 +189,21 @@ class Estimator(Term):
             (float): score of the error function to minimize
         """
         # Convert T to t using tau
-        taufree_df = self.taufree_df.copy()
-        if taufree_df.empty:
-            tau = trial.suggest_categorical(self.TAU, self.tau_candidates)
-            taufree_df = self.divide_minutes(tau)
+        if self.taufree_df.empty:
+            self.tau = trial.suggest_categorical(self.TAU, self.tau_candidates)
+            self._set_taufree()
         # Set parameters of the models
         model_param_dict = self.model.param_range(
-            taufree_df, self.population)
+            self.taufree_df, self.population)
         p_dict = {
             k: trial.suggest_uniform(k, *v)
             for (k, v) in model_param_dict.items()
             if k not in self.fixed_dict.keys()
         }
         p_dict.update(self.fixed_dict)
-        return self.error_f(p_dict, taufree_df)
+        return self.error_f(p_dict)
 
-    def divide_minutes(self, tau):
+    def _set_taufree(self):
         """
         Divide T by tau in the training dataset and calculate the number of steps.
 
@@ -220,11 +218,12 @@ class Estimator(Term):
                     - t (int): Elapsed time divided by tau value [-]
                     - columns with dimensional variables
         """
-        df = self.model.tau_free(self.record_df, self.population, tau=tau)
+        df = self.model.tau_free(self.record_df, self.population, tau=self.tau)
         self.step_n = int(df[self.TS].max())
+        self.taufree_df = df.copy()
         return df
 
-    def error_f(self, param_dict, taufree_df):
+    def error_f(self, param_dict):
         """
         Definition of error score to minimize in the study.
 
@@ -232,19 +231,12 @@ class Estimator(Term):
             param_dict (dict): estimated parameter values
                 - key (str): parameter name
                 - value (int or float): parameter value
-            taufree_df (pandas.DataFrame): training dataset
-
-                Index:
-                    reset index
-                Columns:
-                    - t: time steps [-]
-                    - columns with dimensional variables
 
         Returns:
             float: score of the error function to minimize
         """
-        sim_df = self.simulate(self.step_n, param_dict)
-        comp_df = self.compare(taufree_df, sim_df)
+        sim_df = self._simulate(param_dict)
+        comp_df = self._compare(sim_df)
         # Calculate error score
         return sum(
             self._score(variable, comp_df)
@@ -273,12 +265,11 @@ class Estimator(Term):
         diff = (actual - comp_df.loc[:, f"{v}{self.P}"]).abs() / (actual + 1)
         return weight * diff.mean()
 
-    def simulate(self, step_n, param_dict):
+    def _simulate(self, param_dict):
         """
         Simulate the values with the parameters.
 
         Args:
-            step_n (int): number of iteration
             param_dict (dict): estimated parameter values
                 - key (str): parameter name
                 - value (int or float): parameter value
@@ -294,27 +285,19 @@ class Estimator(Term):
         simulator = ODESimulator()
         simulator.add(
             model=self.model,
-            step_n=step_n,
+            step_n=self.step_n,
             population=self.population,
             param_dict=param_dict,
             y0_dict=self.y0_dict
         )
         return simulator.taufree()
 
-    def compare(self, actual_df, predicted_df):
+    def _compare(self, sim_df):
         """
         Return comparison table.
 
         Args:
-            actual_df (pandas.DataFrame): actual data
-
-                Index:
-                    reset index
-                Columns:
-                    - t: time step, 0, 1, 2,...
-                    - includes columns defined by self.variables
-
-            predicted_df (pandas.DataFrame): predicted data
+            sim_df (pandas.DataFrame): predicted data
 
                 Index:
                     reset index
@@ -332,9 +315,26 @@ class Estimator(Term):
                     - columns are defined by self.variables
         """
         # Data for comparison
-        df = actual_df.merge(
-            predicted_df, on=self.TS, suffixes=(self.A, self.P))
+        df = self.taufree_df.merge(
+            sim_df, on=self.TS, suffixes=(self.A, self.P))
         return df.set_index(self.TS)
+
+    def compare(self):
+        """
+        Return comparison table.
+
+        Returns:
+            pandas.DataFrame:
+                Index:
+                    (str): time step
+                Columns:
+                    - columns with "_actual"
+                    - columns with "_predicted:
+                    - columns are defined by self.variables
+        """
+        param_dict = self.param()
+        sim_df = self._simulate(param_dict)
+        return self._compare(sim_df)
 
     def param(self):
         """
@@ -380,12 +380,12 @@ class Estimator(Term):
             **est_dict,
             self.RT: model_instance.calc_r0(),
             **model_instance.calc_days_dict(est_dict[self.TAU]),
-            self.RMSLE: self._rmsle(est_dict[self.TAU]),
+            self.RMSLE: self._rmsle(),
             self.TRIALS: self.total_trials,
             self.RUNTIME: StopWatch.show_time(self.runtime)
         }
 
-    def _rmsle(self, tau):
+    def _rmsle(self):
         """
         Calculate RMSLE score.
 
@@ -395,24 +395,13 @@ class Estimator(Term):
         Returns:
             float: RMSLE score
         """
-        train_df = self.divide_minutes(tau)
-        predicted_df = self.predict()
-        df = self.compare(train_df, predicted_df)
-        df = (df + 1).astype(np.int64)
+        df = (self.compare() + 1).astype(np.int64)
         for v in self.variables:
             df = df.loc[df[f"{v}{self.A}"] * df[f"{v}{self.P}"] > 0, :]
         a_list = [np.log10(df[f"{v}{self.A}"]) for v in self.variables]
         p_list = [np.log10(df[f"{v}{self.P}"]) for v in self.variables]
         diffs = [((a - p) ** 2).sum() for (a, p) in zip(a_list, p_list)]
         return np.sqrt(sum(diffs) / len(diffs))
-
-    def predict(self):
-        """
-        Predict the values with the calculated values.
-        This method can be overwritten in subclass.
-        """
-        param_dict = self.param()
-        return self.simulate(self.step_n, param_dict)
 
     def history(self, show_figure=True, filename=None):
         """
@@ -447,27 +436,18 @@ class Estimator(Term):
         plt.clf()
         return df
 
-    def _accuracy(self, train_df, variables=None, show_figure=True, filename=None):
+    def _accuracy(self, variables=None, show_figure=True, filename=None):
         """
         Show the accuracy as a figure.
         This method can be overwritten in child class.
 
         Args:
-            train_df (pandas.DataFrame): actual data
-
-                Index:
-                    reset index
-                Columns:
-                    - t: time step, 0, 1, 2,...
-                    - includes columns defined by self.variables
-
             variables (list[str]): variables to compare or None (all variables)
             show_figure (bool): if True, show the result as a figure
             filename (str): filename of the figure, or None (show figure)
         """
         # Create a table to compare observed/estimated values
-        predicted_df = self.predict()
-        df = self.compare(train_df, predicted_df)
+        df = self.compare()
         if not show_figure:
             return df
         # Prepare figure object
@@ -520,14 +500,12 @@ class Estimator(Term):
         est_dict = self.param()
         if self.TAU not in est_dict:
             est_dict[self.TAU] = self.tau
-        train_df = self.divide_minutes(est_dict[self.TAU])
         use_variables = [
             v for (i, (p, v))
             in enumerate(zip(self.model.WEIGHTS, self.model.VARIABLES))
             if p != 0 and i != 0
         ]
         return self._accuracy(
-            train_df=train_df,
             variables=use_variables,
             show_figure=show_figure,
             filename=filename
