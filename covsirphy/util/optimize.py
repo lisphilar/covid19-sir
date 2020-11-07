@@ -8,14 +8,10 @@ from matplotlib.ticker import ScalarFormatter
 import numpy as np
 import optuna
 import pandas as pd
-if True:
-    warnings.simplefilter("ignore", FutureWarning)
-    warnings.simplefilter("ignore", SyntaxWarning)
 import seaborn as sns
-from covsirphy.cleaning.term import Term
 
 
-class Optimizer(Term):
+class Optimizer(object):
     """
     Hyperparameter optimization with Optuna package.
 
@@ -27,20 +23,23 @@ class Optimizer(Term):
             Columns:
                 - Explanatory variable defined by @x
                 - Response variables which is not @x
-        param (keyword arguments): fixed parameter values
+        kwargs: keyword arguments of fixed parameter values
     """
     optuna.logging.disable_default_handler()
+    warnings.simplefilter("ignore", FutureWarning)
+    warnings.simplefilter("ignore", SyntaxWarning)
+    A, P = "_actual", "_predicted"
 
-    def __init__(self, train_df, x="t", **params):
+    def __init__(self, train_df, x="t", **kwargs):
         self.x = x
         self.y_list = [v for v in train_df.columns if v != x]
         self.train_df = train_df.copy()
         self.y0_dict = train_df.iloc[0, :].to_dict()
         self.step_n = len(train_df)
-        self.fixed_dict = params.copy()
+        self.fixed_dict = kwargs.copy()
         self.study = None
         self.total_trials = 0
-        self.run_time = 0
+        self.runtime = 0
 
     def _init_study(self, seed=None):
         """
@@ -80,7 +79,7 @@ class Optimizer(Term):
         self.study.optimize(
             self.objective, n_trials=n_trials, timeout=timeout, n_jobs=n_jobs)
         end_time = datetime.now()
-        self.run_time += (end_time - start_time).total_seconds()
+        self.runtime += (end_time - start_time).total_seconds()
         self.total_trials += n_trials
 
     def objective(self, trial):
@@ -93,7 +92,7 @@ class Optimizer(Term):
             trial (optuna.trial): a trial of the study
 
         Returns:
-            (float): score of the error function to minimize
+            float: score of the error function to minimize
         """
         param_dict = {}
         return self.error_f(param_dict, self.train_df)
@@ -116,7 +115,7 @@ class Optimizer(Term):
                     - includes columns defined by @variables
 
         Returns:
-            (float): score of the error function to minimize
+            float: score of the error function to minimize
         """
         sim_df = self.simulate(self.step_n, param_dict)
         comp_df = self.compare(self.train_df, sim_df)
@@ -134,7 +133,7 @@ class Optimizer(Term):
                 - value (int or float): parameter value
 
         Returns:
-            (pandas.DataFrame):
+            pandas.DataFrame:
                 Index:
                     reset index
                 Columns:
@@ -166,7 +165,7 @@ class Optimizer(Term):
                     - includes columns defined by self.y_list
 
         Returns:
-            (pandas.DataFrame):
+            pandas.DataFrame:
                 Index:
                     (str): time step
                 Columns:
@@ -175,8 +174,8 @@ class Optimizer(Term):
                     - columns are defined by self.y_list
         """
         # Data for comparison
-        df = pd.merge(
-            actual_df, predicted_df, on=self.x, suffixes=(self.A, self.P))
+        df = actual_df.merge(
+            predicted_df, on=self.x, suffixes=(self.A, self.P))
         return df.set_index(self.x)
 
     def param(self):
@@ -184,7 +183,7 @@ class Optimizer(Term):
         Return the estimated parameters as a dictionary.
 
         Returns:
-            (dict)
+            dict
                 - key (str): parameter name
                 - value (int or float): parameter value
         """
@@ -201,7 +200,7 @@ class Optimizer(Term):
             name (str): index of the dataframe
 
         Returns:
-            (pandas.DataFrame):
+            pandas.DataFrame:
                 Index:
                     reset index
                 Columns:
@@ -213,7 +212,7 @@ class Optimizer(Term):
         # The number of trials
         param_dict["Trials"] = self.total_trials
         # Runtime
-        minutes, seconds = divmod(int(self.run_time), 60)
+        minutes, seconds = divmod(int(self.runtime), 60)
         param_dict["Runtime"] = f"{minutes} min {seconds} sec"
         return param_dict
 
@@ -233,7 +232,7 @@ class Optimizer(Term):
             dim (int or float): dimension where comparison will be performed
 
         Returns:
-            (float): RMSLE score
+            float: RMSLE score
         """
         predicted_df = self.predict()
         df = self.compare(train_df, predicted_df)
@@ -263,18 +262,15 @@ class Optimizer(Term):
             filename (str): filename of the figure, or None (show figure)
 
         Returns:
-            (pandas.DataFrame): the history
+            pandas.DataFrame: the history
         """
         # Create dataframe of the history
         df = self.study.trials_dataframe()
         series = df["datetime_complete"] - df["datetime_start"]
         df["time[s]"] = series.dt.total_seconds()
         df = df.drop(
-            ["datetime_complete", "datetime_start"],
-            axis=1
-        )
-        if "system_attrs__number" in df.columns:
-            df = df.drop("system_attrs__number", axis=1)
+            ["datetime_complete", "datetime_start", "system_attrs__number"],
+            axis=1, errors="ignore")
         # Show figure
         if not show_figure:
             return df
