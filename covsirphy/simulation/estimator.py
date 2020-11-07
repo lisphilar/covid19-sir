@@ -163,7 +163,7 @@ class Estimator(Term):
             allowance (tuple(float, float)): the allowance of the predicted value
 
         Returns:
-            (bool): True when all max values of predicted values are in allowance
+            bool: True when all max values of predicted values are in allowance
         """
         a_max_values = [comp_df[f"{v}{self.A}"].max() for v in self.variables]
         p_max_values = [comp_df[f"{v}{self.P}"].max() for v in self.variables]
@@ -183,7 +183,7 @@ class Estimator(Term):
             trial (optuna.trial): a trial of the study
 
         Returns:
-            (float): score of the error function to minimize
+            float: score of the error function to minimize
         """
         # Convert T to t using tau
         if self.taufree_df.empty:
@@ -237,8 +237,7 @@ class Estimator(Term):
         # Calculate error score
         return sum(
             self._score(variable, comp_df)
-            for variable in self.weight_dict.keys()
-        )
+            for variable in self.weight_dict.keys())
 
     def _score(self, v, comp_df):
         """
