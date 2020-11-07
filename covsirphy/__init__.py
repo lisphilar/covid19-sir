@@ -12,6 +12,7 @@ from covsirphy.__version__ import __version__
 # util
 from covsirphy.util.plotting import line_plot
 from covsirphy.util.map import jpn_map
+from covsirphy.util.optimize import Optimizer
 from covsirphy.util.stopwatch import StopWatch
 from covsirphy.util.error import deprecate
 from covsirphy.util.file import save_dataframe
@@ -34,7 +35,6 @@ from covsirphy.ode.sirfv import SIRFV
 from covsirphy.ode.sewirf import SEWIRF
 # simulation
 from covsirphy.simulation.estimator import Estimator
-from covsirphy.simulation.optimize import Optimizer
 from covsirphy.simulation.simulator import ODESimulator
 # phase
 from covsirphy.phase.trend import Trend

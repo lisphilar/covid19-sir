@@ -1,17 +1,21 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-import math
+import warnings
+import matplotlib.pyplot as plt
+from matplotlib.ticker import ScalarFormatter
 import numpy as np
 import optuna
 import pandas as pd
+import seaborn as sns
+import math
 from covsirphy.util.stopwatch import StopWatch
+from covsirphy.cleaning.term import Term
 from covsirphy.ode.mbase import ModelBase
-from covsirphy.simulation.optimize import Optimizer
 from covsirphy.simulation.simulator import ODESimulator
 
 
-class Estimator(Optimizer):
+class Estimator(Term):
     """
     Hyperparameter optimization of an ODE model.
 
@@ -32,6 +36,9 @@ class Estimator(Optimizer):
         kwargs: parameter values of the model and data subseting
     """
     np.seterr(divide="raise")
+    optuna.logging.disable_default_handler()
+    warnings.simplefilter("ignore", FutureWarning)
+    warnings.simplefilter("ignore", SyntaxWarning)
 
     def __init__(self, record_df, model, population, tau=None, **kwargs):
         # Arguments
@@ -59,7 +66,7 @@ class Estimator(Optimizer):
             v: p for (v, p) in zip(model.VARIABLES, model.WEIGHTS) if p > 0}
         self.study = None
         self.total_trials = 0
-        self.run_time = 0
+        self.runtime = 0
         self.tau_candidates = self.divisors(1440)
         # Defined in parent class, but not used
         self.train_df = None
@@ -68,6 +75,21 @@ class Estimator(Optimizer):
         # tau value
         self.tau = self.ensure_tau(tau)
         self.taufree_df = pd.DataFrame() if tau is None else self.divide_minutes(tau)
+
+    def _init_study(self, seed=None):
+        """
+        Initialize Optuna study.
+
+        Args:
+            seed (int or None): random seed of hyperparameter optimization
+
+        Notes:
+            @seed will effective when the number of CPUs is 1
+        """
+        self.study = optuna.create_study(
+            direction="minimize",
+            sampler=optuna.samplers.TPESampler(seed=seed)
+        )
 
     def run(self, timeout=60, reset_n_max=3,
             timeout_iteration=5, allowance=(0.98, 1.02), seed=0, **kwargs):
@@ -101,7 +123,7 @@ class Estimator(Optimizer):
             self.study.optimize(
                 self.objective, n_jobs=1, timeout=timeout_iteration)
             # Create a table to compare observed/estimated values
-            tau = self.tau or super().param()[self.TAU]
+            tau = self.tau or self.param()[self.TAU]
             train_df = self.divide_minutes(tau)
             comp_df = self.compare(train_df, self.predict())
             # Check monotonic variables
@@ -119,8 +141,8 @@ class Estimator(Optimizer):
             if self._is_in_allowance(comp_df, allowance):
                 break
         # Calculate run-time and the number of trials
-        self.run_time = stopwatch.stop()
-        self.run_time_show = stopwatch.show()
+        self.runtime = stopwatch.stop()
+        self.runtime_show = stopwatch.show()
         self.total_trials = len(self.study.trials)
 
     def _is_in_allowance(self, comp_df, allowance):
@@ -178,7 +200,7 @@ class Estimator(Optimizer):
             tau (int): tau value [min]
 
         Returns:
-            (pandas.DataFrame):
+            pandas.DataFrame:
                 Index:
                     reset index
                 Columns:
@@ -221,7 +243,7 @@ class Estimator(Optimizer):
         Calculate score of the variable.
 
         Args:
-            v (str): variable na,e
+            v (str): variable name
             com_df (pandas.DataFrame):
                 Index:
                     (str): time step
@@ -266,6 +288,79 @@ class Estimator(Optimizer):
         )
         return simulator.taufree()
 
+    def compare(self, actual_df, predicted_df):
+        """
+        Return comparison table.
+
+        Args:
+            actual_df (pandas.DataFrame): actual data
+
+                Index:
+                    reset index
+                Columns:
+                    - t: time step, 0, 1, 2,...
+                    - includes columns defined by self.y_list
+
+            predicted_df (pandas.DataFrame): predicted data
+
+                Index:
+                    reset index
+                Columns:
+                    - t: time step, 0, 1, 2,...
+                    - includes columns defined by self.y_list
+
+        Returns:
+            pandas.DataFrame:
+                Index:
+                    (str): time step
+                Columns:
+                    - columns with "_actual"
+                    - columns with "_predicted:
+                    - columns are defined by self.y_list
+        """
+        # Data for comparison
+        df = actual_df.merge(
+            predicted_df, on=self.x, suffixes=(self.A, self.P))
+        return df.set_index(self.x)
+
+    def param(self):
+        """
+        Return the estimated parameters as a dictionary.
+
+        Returns:
+            dict
+                - key (str): parameter name
+                - value (int or float): parameter value
+        """
+        param_dict = self.study.best_params.copy()
+        param_dict.update(self.fixed_dict)
+        return param_dict
+
+    def result(self, name):
+        """
+        Return the estimated parameters as a dataframe.
+        This method should be overwritten in subclass.
+
+        Args:
+            name (str): index of the dataframe
+
+        Returns:
+            pandas.DataFrame:
+                Index:
+                    reset index
+                Columns:
+                    - (estimated parameters)
+                    - Trials: the number of trials
+                    - Runtime: run time of estimation
+        """
+        param_dict = self.param()
+        # The number of trials
+        param_dict["Trials"] = self.total_trials
+        # Runtime
+        minutes, seconds = divmod(int(self.runtime), 60)
+        param_dict["Runtime"] = f"{minutes} min {seconds} sec"
+        return param_dict
+
     def to_dict(self):
         """
         Summarize the results of optimization.
@@ -286,14 +381,14 @@ class Estimator(Optimizer):
                     - Trials: the number of trials
                     - Runtime: run time of estimation
         """
-        est_dict = super().param()
+        est_dict = self.param()
         if self.TAU not in est_dict:
             est_dict[self.TAU] = self.tau
         model_instance = self.model(
             population=self.population,
             **{k: v for (k, v) in est_dict.items() if k != self.TAU}
         )
-        minutes, seconds = divmod(int(self.run_time), 60)
+        minutes, seconds = divmod(int(self.runtime), 60)
         return {
             **est_dict,
             self.RT: model_instance.calc_r0(),
@@ -305,7 +400,7 @@ class Estimator(Optimizer):
 
     def _rmsle(self, tau):
         """
-        Return RMSLE score.
+        Calculate RMSLE score.
 
         Args:
             tau (int): tau value [min]
@@ -313,10 +408,119 @@ class Estimator(Optimizer):
         Returns:
             float: RMSLE score
         """
-        return super().rmsle(
-            train_df=self.divide_minutes(tau),
-            dim=1
+        train_df = self.divide_minutes(tau)
+        predicted_df = self.predict()
+        df = self.compare(train_df, predicted_df)
+        df = (df + 1).astype(np.int64)
+        for v in self.y_list:
+            df = df.loc[df[f"{v}{self.A}"] * df[f"{v}{self.P}"] > 0, :]
+        a_list = [np.log10(df[f"{v}{self.A}"]) for v in self.y_list]
+        p_list = [np.log10(df[f"{v}{self.P}"]) for v in self.y_list]
+        diffs = [((a - p) ** 2).sum() for (a, p) in zip(a_list, p_list)]
+        return np.sqrt(sum(diffs) / len(diffs))
+
+    def predict(self):
+        """
+        Predict the values with the calculated values.
+        This method can be overwritten in subclass.
+        """
+        param_dict = self.param()
+        return self.simulate(self.step_n, param_dict)
+
+    def history(self, show_figure=True, filename=None):
+        """
+        Show the history of optimization as a figure
+            and return it as dataframe.
+
+        Args:
+            show_figure (bool): if True, show the history as a pair-plot of parameters.
+            filename (str): filename of the figure, or None (show figure)
+
+        Returns:
+            pandas.DataFrame: the history
+        """
+        # Create dataframe of the history
+        df = self.study.trials_dataframe()
+        series = df["datetime_complete"] - df["datetime_start"]
+        df["time[s]"] = series.dt.total_seconds()
+        df = df.drop(
+            ["datetime_complete", "datetime_start", "system_attrs__number"],
+            axis=1, errors="ignore")
+        # Show figure
+        if not show_figure:
+            return df
+        fig_df = df.loc[:, df.columns.str.startswith("params_")]
+        fig_df.columns = fig_df.columns.str.replace("params_", "")
+        sns.pairplot(fig_df, diag_kind="kde", markers="+")
+        # Save figure or show figure
+        if filename is None:
+            plt.show()
+            return df
+        plt.savefig(filename, bbox_inches="tight", transparent=False, dpi=300)
+        plt.clf()
+        return df
+
+    def _accuracy(self, train_df, variables=None, show_figure=True, filename=None):
+        """
+        Show the accuracy as a figure.
+        This method can be overwritten in child class.
+
+        Args:
+            train_df (pandas.DataFrame): actual data
+
+                Index:
+                    reset index
+                Columns:
+                    - t: time step, 0, 1, 2,...
+                    - includes columns defined by self.y_list
+
+            variables (list[str]): variables to compare or None (all variables)
+            show_figure (bool): if True, show the result as a figure
+            filename (str): filename of the figure, or None (show figure)
+        """
+        # Create a table to compare observed/estimated values
+        predicted_df = self.predict()
+        df = self.compare(train_df, predicted_df)
+        if not show_figure:
+            return df
+        # Prepare figure object
+        val_len = len(variables) + 1
+        fig, axes = plt.subplots(
+            ncols=1, nrows=val_len, figsize=(9, 6 * val_len / 2)
         )
+        # Comparison of each variable
+        for (ax, v) in zip(axes.ravel()[1:], variables):
+            df[[f"{v}{self.A}", f"{v}{self.P}"]].plot.line(
+                ax=ax, ylim=(0, None), sharex=True,
+                title=f"{self.model.NAME}: Comparison of observed/estimated {v}(t)"
+            )
+            ax.yaxis.set_major_formatter(ScalarFormatter(useMathText=True))
+            ax.ticklabel_format(style="sci", axis="y", scilimits=(0, 0))
+            ax.legend(
+                bbox_to_anchor=(1.02, 0), loc="lower left", borderaxespad=0
+            )
+        # Summarize in a figure
+        for v in variables:
+            df[f"{v}_diff"] = df[f"{v}{self.A}"] - df[f"{v}{self.P}"]
+            df[f"{v}_diff"].plot.line(
+                ax=axes.ravel()[0], sharex=True,
+                title=f"{self.model.NAME}: observed - estimated"
+            )
+        axes.ravel()[0].axhline(y=0, color="black", linestyle="--")
+        axes.ravel()[0].yaxis.set_major_formatter(
+            ScalarFormatter(useMathText=True))
+        axes.ravel()[0].ticklabel_format(
+            style="sci", axis="y", scilimits=(0, 0))
+        axes.ravel()[0].legend(bbox_to_anchor=(1.02, 0),
+                               loc="lower left", borderaxespad=0)
+        fig.tight_layout()
+        # Save figure or show figure
+        if filename is None:
+            plt.show()
+            return df
+        plt.savefig(filename, bbox_inches="tight", transparent=False, dpi=300)
+        plt.clf()
+        return df
 
     def accuracy(self, show_figure=True, filename=None):
         """
@@ -326,7 +530,7 @@ class Estimator(Optimizer):
             show_figure (bool): if True, show the result as a figure
             filename (str): filename of the figure, or None (show figure)
         """
-        est_dict = super().param()
+        est_dict = self.param()
         if self.TAU not in est_dict:
             est_dict[self.TAU] = self.tau
         train_df = self.divide_minutes(est_dict[self.TAU])
@@ -335,7 +539,7 @@ class Estimator(Optimizer):
             in enumerate(zip(self.model.WEIGHTS, self.model.VARIABLES))
             if p != 0 and i != 0
         ]
-        return super().accuracy(
+        return self._accuracy(
             train_df=train_df,
             variables=use_variables,
             show_figure=show_figure,
