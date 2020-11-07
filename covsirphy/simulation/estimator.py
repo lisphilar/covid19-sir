@@ -119,9 +119,7 @@ class Estimator(Term):
             self.study.optimize(
                 self.objective, n_jobs=1, timeout=timeout_iteration)
             # Create a table to compare observed/estimated values
-            param_dict = self.param()
-            tau = self.tau_final or param_dict.pop(self.TAU)
-            comp_df = self.compare(tau, param_dict)
+            comp_df = self.compare(*self.param())
             # Check monotonic variables
             mono_ok_list = [
                 comp_df[col].is_monotonic_increasing for col in increasing_cols
@@ -287,11 +285,13 @@ class Estimator(Term):
         Return the estimated parameters as a dictionary.
 
         Returns:
+            tau (int): tau value [min]
             dict[str, int or float]: dictionary of parameter values
         """
         param_dict = self.study.best_params.copy()
         param_dict.update(self.fixed_dict)
-        return param_dict
+        tau = self.tau_final or param_dict.pop(self.TAU)
+        return (tau, param_dict)
 
     def to_dict(self):
         """
@@ -307,18 +307,14 @@ class Estimator(Term):
                 - Trials: the number of trials
                 - Runtime: run time of estimation
         """
-        est_dict = self.param()
-        if self.TAU not in est_dict:
-            est_dict[self.TAU] = self.tau_final
-        model_instance = self.model(
-            population=self.population,
-            **{k: v for (k, v) in est_dict.items() if k != self.TAU}
-        )
+        tau, param_dict = self.param()
+        model_instance = self.model(population=self.population, **param_dict)
         return {
-            **est_dict,
+            **param_dict,
+            self.TAU: tau,
             self.RT: model_instance.calc_r0(),
-            **model_instance.calc_days_dict(est_dict[self.TAU]),
-            self.RMSLE: self._rmsle(**est_dict),
+            **model_instance.calc_days_dict(tau),
+            self.RMSLE: self._rmsle(tau, **param_dict),
             self.TRIALS: self.total_trials,
             self.RUNTIME: StopWatch.show(self.runtime)
         }
@@ -406,10 +402,7 @@ class Estimator(Term):
                     - columns are defined by self.variables
         """
         # Create a table to compare observed/estimated values
-        est_dict = self.param()
-        if self.TAU not in est_dict:
-            est_dict[self.TAU] = self.tau_final
-        df = self.compare(**est_dict)
+        df = self.compare(**self.param())
         if not show_figure:
             return df
         # Variables to show accuracy
