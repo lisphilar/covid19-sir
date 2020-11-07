@@ -285,8 +285,7 @@ class Estimator(Term):
         Return the estimated parameters as a dictionary.
 
         Returns:
-            tau (int): tau value [min]
-            dict[str, int or float]: dictionary of parameter values
+            tuple(int, dict[str, int or float]): tau value and dictionary of parameter values
         """
         param_dict = self.study.best_params.copy()
         param_dict.update(self.fixed_dict)
@@ -402,7 +401,7 @@ class Estimator(Term):
                     - columns are defined by self.variables
         """
         # Create a table to compare observed/estimated values
-        df = self.compare(**self.param())
+        df = self.compare(*self.param())
         if not show_figure:
             return df
         # Variables to show accuracy
