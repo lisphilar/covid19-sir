@@ -41,6 +41,7 @@ class Estimator(Term):
     def __init__(self, record_df, model, population, tau=None, **kwargs):
         # Arguments
         self.model = self.ensure_subclass(model, ModelBase, name="model")
+        self.variables = model.VARIABLES[:]
         self.population = self.ensure_population(population)
         self.tau = self.ensure_tau(tau)
         self.fixed_dict = {
@@ -53,7 +54,6 @@ class Estimator(Term):
             record_df, name="record_df", columns=self.NLOC_COLUMNS)
         # For optimization
         self.est_study = None
-        self.variables = model.VARIABLES[:]
         self.total_trials = 0
         self.runtime = 0
         # tau value
