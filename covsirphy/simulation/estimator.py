@@ -66,7 +66,8 @@ class Estimator(Term):
         self.total_trials = 0
         self.runtime = 0
         # Tau value
-        self.tau = self.ensure_tau(tau)
+        self.tau_applied = self.ensure_tau(tau)
+        self.tau = tau
         self.tau_candidates = self.divisors(1440)
         self.step_n = None
         self.taufree_df = pd.DataFrame() if tau is None else self.divide_minutes(tau)
@@ -115,8 +116,8 @@ class Estimator(Term):
             self.study.optimize(
                 self.objective, n_jobs=1, timeout=timeout_iteration)
             # Create a table to compare observed/estimated values
-            tau = self.tau or self.param()[self.TAU]
-            train_df = self.divide_minutes(tau)
+            self.tau = self.tau_applied or self.param()[self.TAU]
+            train_df = self.divide_minutes(self.tau)
             comp_df = self.compare(train_df, self.predict())
             # Check monotonic variables
             mono_ok_list = [
