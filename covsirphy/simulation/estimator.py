@@ -225,9 +225,7 @@ class Estimator(Term):
         Definition of error score to minimize in the study.
 
         Args:
-            param_dict (dict): estimated parameter values
-                - key (str): parameter name
-                - value (int or float): parameter value
+            param_dict (dict[str, int or float]): dictionary of parameter values
 
         Returns:
             float: score of the error function to minimize
@@ -247,7 +245,7 @@ class Estimator(Term):
             v (str): variable name
             com_df (pandas.DataFrame):
                 Index:
-                    (str): time step
+                    t (int): time step, 0, 1, 2,...
                 Columns:
                     - columns with "_actual"
                     - columns with "_predicted"
@@ -266,9 +264,7 @@ class Estimator(Term):
         Simulate the values with the parameters.
 
         Args:
-            param_dict (dict): estimated parameter values
-                - key (str): parameter name
-                - value (int or float): parameter value
+            param_dict (dict[str, int or float]): dictionary of parameter values
 
         Returns:
             pandas.DataFrame:
@@ -293,18 +289,17 @@ class Estimator(Term):
         Return comparison table.
 
         Args:
-            sim_df (pandas.DataFrame): predicted data
-
+            sim_df (pandas.DataFrame): simulated data
                 Index:
                     reset index
                 Columns:
-                    - t: time step, 0, 1, 2,...
+                    - t (int): time step, 0, 1, 2,...
                     - includes columns defined by self.variables
 
         Returns:
             pandas.DataFrame:
                 Index:
-                    (str): time step
+                    t (int): time step, 0, 1, 2,...
                 Columns:
                     - columns with "_actual"
                     - columns with "_predicted:
@@ -321,7 +316,7 @@ class Estimator(Term):
         Returns:
             pandas.DataFrame:
                 Index:
-                    (str): time step
+                    t (int): time step, 0, 1, 2,...
                 Columns:
                     - columns with "_actual"
                     - columns with "_predicted:
@@ -336,9 +331,7 @@ class Estimator(Term):
         Return the estimated parameters as a dictionary.
 
         Returns:
-            dict
-                - key (str): parameter name
-                - value (int or float): parameter value
+            dict[str, int or float]: dictionary of parameter values
         """
         param_dict = self.study.best_params.copy()
         param_dict.update(self.fixed_dict)
@@ -348,21 +341,15 @@ class Estimator(Term):
         """
         Summarize the results of optimization.
 
-        Args:
-            name (str or None): index of the dataframe
-
         Returns:
-            pandas.DataFrame:
-                Index:
-                    name or reset index (when name is None)
-                Columns:
-                    - (parameters of the model)
-                    - tau
-                    - Rt: basic or phase-dependent reproduction number
-                    - (dimensional parameters [day])
-                    - RMSLE: Root Mean Squared Log Error
-                    - Trials: the number of trials
-                    - Runtime: run time of estimation
+            dict[str, int or float]:
+                - (parameters of the model)
+                - tau
+                - Rt: basic or phase-dependent reproduction number
+                - (dimensional parameters [day])
+                - RMSLE: Root Mean Squared Log Error
+                - Trials: the number of trials
+                - Runtime: run time of estimation
         """
         est_dict = self.param()
         if self.TAU not in est_dict:
@@ -384,11 +371,8 @@ class Estimator(Term):
         """
         Calculate RMSLE score.
 
-        Args:
-            tau (int): tau value [min]
-
         Returns:
-            float: RMSLE score
+            float: RMSLE
         """
         df = (self.compare() + 1).astype(np.int64)
         for v in self.variables:
@@ -450,7 +434,7 @@ class Estimator(Term):
         Args:
             comp_df (pandas.DataFrame):
                 Index:
-                    (str): time step
+                    t (int): time step, 0, 1, 2,...
                 Columns:
                     - columns with "_actual"
                     - columns with "_predicted:
@@ -507,7 +491,16 @@ class Estimator(Term):
 
         Args:
             show_figure (bool): if True, show the result as a figure
-            filename (str): filename of the figure, or None (show figure)
+            filename (str): filename of the figure, or None (display figure)
+
+        Returns:
+            pandas.DataFrame:
+                Index:
+                    t (int): time step, 0, 1, 2,...
+                Columns:
+                    - columns with "_actual"
+                    - columns with "_predicted:
+                    - columns are defined by self.variables
         """
         comp_df = self.compare()
         if show_figure:
