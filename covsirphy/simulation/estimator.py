@@ -94,26 +94,25 @@ class Estimator(Term):
         reset_n = 0
         iteration_n = math.ceil(timeout / timeout_iteration)
         stopwatch = StopWatch()
-        est_study = self._create_study(seed=seed)
+        self.est_study = self._create_study(seed=seed)
         for _ in range(iteration_n):
-            est_study.run(
+            self.est_study.run(
                 timeout=timeout_iteration, tau=self.tau, **self.fixed_dict)
             # Check monotonic variables
-            comp_df = est_study.compare()
+            comp_df = self.est_study.compare()
             if not self._is_monotonic(comp_df):
                 if reset_n == reset_n_max - 1:
                     break
                 # Initialize the study
-                est_study = self._create_study(seed=seed)
+                self.est_study = self._create_study(seed=seed)
                 reset_n += 1
                 continue
             # Need additional trials when the values are not in allowance
             if self._is_in_allowance(comp_df, allowance):
                 break
         # Get the results
-        self.est_study = est_study
-        self.est_dict = est_study.estimated()
-        self.total_trials = est_study.n_trials
+        self.est_dict = self.est_study.estimated()
+        self.total_trials = self.est_study.n_trials
         self.runtime = stopwatch.stop()
 
     def _is_monotonic(self, comp_df):
