@@ -41,15 +41,18 @@ class Estimator(Term):
     warnings.simplefilter("ignore", SyntaxWarning)
 
     def __init__(self, record_df, model, population, tau=None, **kwargs):
-        # Arguments
-        self.population = self.ensure_population(population)
+        # ODE model
         self.model = self.ensure_subclass(model, ModelBase, name="model")
+        self.variables = model.VARIABLES[:]
+        self.weight_dict = {
+            v: p for (v, p) in zip(model.VARIABLES, model.WEIGHTS) if p > 0}
         # Dataset
         if not set(self.NLOC_COLUMNS).issubset(record_df.columns):
             record_df = model.restore(record_df)
         self.record_df = self.ensure_dataframe(
             record_df, name="record_df", columns=self.NLOC_COLUMNS)
-        # Initial values
+        # Settings for simulation
+        self.population = self.ensure_population(population)
         df = model.tau_free(self.record_df, population, tau=None)
         self.y0_dict = {
             k: df.loc[df.index[0], k] for k in model.VARIABLES}
@@ -59,32 +62,21 @@ class Estimator(Term):
             if k in set(model.PARAMETERS) and v is not None
         }
         # For optimization
-        optuna.logging.disable_default_handler()
-        self.x = self.TS
-        self.y_list = model.VARIABLES[:]
-        self.weight_dict = {
-            v: p for (v, p) in zip(model.VARIABLES, model.WEIGHTS) if p > 0}
         self.study = None
         self.total_trials = 0
         self.runtime = 0
-        self.tau_candidates = self.divisors(1440)
-        # Defined in parent class, but not used
-        self.train_df = None
-        # step_n will be defined in divide_minutes()
-        self.step_n = None
-        # tau value
+        # Tau value
         self.tau = self.ensure_tau(tau)
+        self.tau_candidates = self.divisors(1440)
+        self.step_n = None
         self.taufree_df = pd.DataFrame() if tau is None else self.divide_minutes(tau)
 
-    def _init_study(self, seed=None):
+    def _init_study(self, seed):
         """
         Initialize Optuna study.
 
         Args:
             seed (int or None): random seed of hyperparameter optimization
-
-        Notes:
-            @seed will effective when the number of CPUs is 1
         """
         self.study = optuna.create_study(
             direction="minimize",
@@ -101,7 +93,7 @@ class Estimator(Term):
         - predicted values are in the allowance when each actual value shows max value
 
         Args:
-            timeout (int): time-out of run
+            timeout (int): timeout of optimization
             reset_n_max (int): if study was reset @reset_n_max times, will not be reset anymore
             timeout_iteration (int): time-out of one iteration
             allowance (tuple(float, float)): the allowance of the predicted value
@@ -155,8 +147,8 @@ class Estimator(Term):
         Returns:
             (bool): True when all max values of predicted values are in allowance
         """
-        a_max_values = [comp_df[f"{v}{self.A}"].max() for v in self.y_list]
-        p_max_values = [comp_df[f"{v}{self.P}"].max() for v in self.y_list]
+        a_max_values = [comp_df[f"{v}{self.A}"].max() for v in self.variables]
+        p_max_values = [comp_df[f"{v}{self.P}"].max() for v in self.variables]
         allowance0, allowance1 = allowance
         ok_list = [
             (a * allowance0 <= p) and (p <= a * allowance1)
@@ -249,7 +241,7 @@ class Estimator(Term):
                 Columns:
                     - columns with "_actual"
                     - columns with "_predicted"
-                    - columns are defined by self.y_list
+                    - columns are defined by self.variables
 
         Returns:
             float: score
@@ -298,7 +290,7 @@ class Estimator(Term):
                     reset index
                 Columns:
                     - t: time step, 0, 1, 2,...
-                    - includes columns defined by self.y_list
+                    - includes columns defined by self.variables
 
             predicted_df (pandas.DataFrame): predicted data
 
@@ -306,7 +298,7 @@ class Estimator(Term):
                     reset index
                 Columns:
                     - t: time step, 0, 1, 2,...
-                    - includes columns defined by self.y_list
+                    - includes columns defined by self.variables
 
         Returns:
             pandas.DataFrame:
@@ -315,12 +307,12 @@ class Estimator(Term):
                 Columns:
                     - columns with "_actual"
                     - columns with "_predicted:
-                    - columns are defined by self.y_list
+                    - columns are defined by self.variables
         """
         # Data for comparison
         df = actual_df.merge(
-            predicted_df, on=self.x, suffixes=(self.A, self.P))
-        return df.set_index(self.x)
+            predicted_df, on=self.TS, suffixes=(self.A, self.P))
+        return df.set_index(self.TS)
 
     def param(self):
         """
@@ -411,10 +403,10 @@ class Estimator(Term):
         predicted_df = self.predict()
         df = self.compare(train_df, predicted_df)
         df = (df + 1).astype(np.int64)
-        for v in self.y_list:
+        for v in self.variables:
             df = df.loc[df[f"{v}{self.A}"] * df[f"{v}{self.P}"] > 0, :]
-        a_list = [np.log10(df[f"{v}{self.A}"]) for v in self.y_list]
-        p_list = [np.log10(df[f"{v}{self.P}"]) for v in self.y_list]
+        a_list = [np.log10(df[f"{v}{self.A}"]) for v in self.variables]
+        p_list = [np.log10(df[f"{v}{self.P}"]) for v in self.variables]
         diffs = [((a - p) ** 2).sum() for (a, p) in zip(a_list, p_list)]
         return np.sqrt(sum(diffs) / len(diffs))
 
@@ -471,7 +463,7 @@ class Estimator(Term):
                     reset index
                 Columns:
                     - t: time step, 0, 1, 2,...
-                    - includes columns defined by self.y_list
+                    - includes columns defined by self.variables
 
             variables (list[str]): variables to compare or None (all variables)
             show_figure (bool): if True, show the result as a figure
