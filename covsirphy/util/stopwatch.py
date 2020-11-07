@@ -11,25 +11,27 @@ class StopWatch(object):
 
     def __init__(self):
         self.start_time = datetime.now()
-        self.elapsed = 0
 
     def stop(self):
         """
-        Stop the stopwatch.
+        Stop and show time.
 
         Returns:
-            (int): elapsed time [sec]
+            int: elapsed time [sec]
         """
         end_time = datetime.now()
-        self.elapsed = (end_time - self.start_time).total_seconds()
-        return self.elapsed
+        return (end_time - self.start_time).total_seconds()
 
-    def show(self):
+    @staticmethod
+    def show(time_sec):
         """
         Show the elapsed time as string.
 
+        Args:
+            time_sec (int): time [sec]
+
         Returns:
-            (str): eg. '1 min 30 sec'
+            str: eg. '1 min 30 sec'
         """
-        minutes, seconds = divmod(int(self.elapsed), 60)
+        minutes, seconds = divmod(int(time_sec), 60)
         return f"{minutes} min {seconds:>2} sec"

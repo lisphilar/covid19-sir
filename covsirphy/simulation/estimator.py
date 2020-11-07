@@ -141,8 +141,7 @@ class Estimator(Term):
             if self._is_in_allowance(comp_df, allowance):
                 break
         # Calculate run-time and the number of trials
-        self.runtime = stopwatch.stop()
-        self.runtime_show = stopwatch.show()
+        self.runtime += stopwatch.stop()
         self.total_trials = len(self.study.trials)
 
     def _is_in_allowance(self, comp_df, allowance):
@@ -395,7 +394,7 @@ class Estimator(Term):
             **model_instance.calc_days_dict(est_dict[self.TAU]),
             self.RMSLE: self._rmsle(est_dict[self.TAU]),
             self.TRIALS: self.total_trials,
-            self.RUNTIME: f"{minutes} min {seconds:>2} sec"
+            self.RUNTIME: StopWatch.show(self.runtime)
         }
 
     def _rmsle(self, tau):
