@@ -41,7 +41,6 @@ class Scenario(Term):
         self.area = JHUData.area_name(country, province)
         # First/last date of the area
         df = jhu_data.subset(country=self.country, province=self.province)
-        self.subset_df = df.copy()
         self._first_date = df[self.DATE].min().strftime(self.DATE_FORMAT)
         self._last_date = df[self.DATE].max().strftime(self.DATE_FORMAT)
         # tau value must be shared
@@ -112,7 +111,7 @@ class Scenario(Term):
             filename (str): filename of the figure, or None (show figure)
 
         Returns:
-            (pandas.DataFrame)
+            pandas.DataFrame
                 Index:
                     reset index
                 Columns:
@@ -388,7 +387,7 @@ class Scenario(Term):
                 - if None, all phase series will be shown
 
         Returns:
-            (pandas.DataFrame):
+            pandas.DataFrame:
             - if @name not None, as the same as PhaseSeries().summary()
             - if @name is None, index will be phase series name and phase name
 
@@ -608,7 +607,7 @@ class Scenario(Term):
             filename (str): filename of the figure, or None (show figure)
 
         Returns:
-            (pandas.DataFrame)
+            pandas.DataFrame
                 Index:
                     reset index
                 Columns:
@@ -647,7 +646,7 @@ class Scenario(Term):
             name (str): phase series name
 
         Returns:
-            (str or int or float)
+            str or int or float
 
         Notes:
             If 'Main' was used as @name, main PhaseSeries will be used.
@@ -668,7 +667,7 @@ class Scenario(Term):
             name (str): phase series name
 
         Returns:
-            (pandas.DataFrame): selected summary dataframe
+            pandas.DataFrame: selected summary dataframe
 
         Raises:
             KeyError: targets are not in the columns of summary dataframe
@@ -752,7 +751,7 @@ class Scenario(Term):
                 - value (float): initial value
 
         Returns:
-            (pandas.DataFrame)
+            pandas.DataFrame
                 Index:
                     (int): scenario name
                 Columns:
@@ -800,9 +799,9 @@ class Scenario(Term):
             with_rt (bool): whether show the history of Rt values
 
         Returns:
-            (pandas.DataFrame)
+            pandas.DataFrame:
                 Index:
-                    (int): scenario name
+                    str: scenario name
                 Columns:
                     - max(Infected): max value of Infected
                     - argmax(Infected): the date when Infected shows max value
@@ -831,7 +830,7 @@ class Scenario(Term):
             name (str): phase series name
 
         Returns:
-            pandas.DataFrame
+            pandas.DataFrame:
                 Index: Date (pandas.TimeStamp)
                 Columns:
                     - Population (int)
@@ -870,7 +869,7 @@ class Scenario(Term):
                 - value (float): initial value
 
         Returns:
-            pandas.DataFrame
+            pandas.DataFrame:
                 Index: reset index
                 Columns:
                     - Date (pandas.TimeStamp)
@@ -897,7 +896,7 @@ class Scenario(Term):
                 - value (float): initial value
 
         Returns:
-            pandas.DataFrame
+            pandas.DataFrame:
                 Index: reset index
                 Columns:
                     - Scenario (str)
@@ -927,6 +926,9 @@ class Scenario(Term):
                 - value (float): initial value
             show_figure (bool): If True, show the result as a figure
             filename (str): filename of the figure, or None (show figure)
+
+        Returns:
+            pandas.DataFrame
         """
         df = self.track(y0_dict=y0_dict)
         if target not in df.columns:
@@ -959,6 +961,9 @@ class Scenario(Term):
             name (str): phase series name
             show_figure (bool): If True, show the result as a figure
             filename (str): filename of the figure, or None (show figure)
+
+        Returns:
+            pandas.DataFrame
         """
         df = self._track_param(name=name)
         model = self._series_dict[name].unit("last").model

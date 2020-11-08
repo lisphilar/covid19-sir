@@ -128,7 +128,7 @@ class Term(object):
             float
         """
         return a * np.exp(-b * x)
-    
+
     @staticmethod
     def linear(x, a, b):
         """
