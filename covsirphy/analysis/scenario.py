@@ -25,9 +25,10 @@ class Scenario(Term):
         country (str): country name
         province (str or None): province name
         tau (int or None): tau value
+        uto_complement (bool): if True, the number of cases will be complemented.
     """
 
-    def __init__(self, jhu_data, population_data, country, province=None, tau=None):
+    def __init__(self, jhu_data, population_data, country, province=None, tau=None, auto_complement=True):
         # Population
         population_data = self.ensure_instance(
             population_data, PopulationData, name="population_data")
@@ -47,6 +48,9 @@ class Scenario(Term):
         self.tau = self.ensure_tau(tau)
         # {scenario_name: PhaseSeries}
         self._init_phase_series()
+        # Complement the number of cases
+        if auto_complement:
+            self.complement()
 
     def __getitem__(self, key):
         if key in self._series_dict:
@@ -73,6 +77,52 @@ class Scenario(Term):
             end_date=self._last_date,
             population=self.population
         )
+
+    def complement(self, update_interval=2):
+        """
+        Complement the number of recovered cases when not updated.
+
+        Args:
+            update_interval (int): expected update interval of the number of recovered cases [days]
+
+        Returns:
+            covsirphy.Scenario: self
+
+        Notes:
+            If the number of recovered cases did not change for more than @update_interval days,
+            complement will be applied to the number of recovered cases.
+        """
+        df = self.record_df.copy()
+        # If updated, do not perform complement
+        max_frequency = df[self.R].value_counts().max()
+        if max_frequency <= update_interval:
+            return self
+        # Complement
+        df.loc[df.duplicated([self.R], keep="last"), self.R] = None
+        df[self.R].interpolate(
+            method="spline", order=2, inplace=True, limit_direction="both")
+        df[self.R] = df[self.R].astype(np.int64)
+        # Calculate Infected
+        df[self.CI] = df[self.C] - df[self.F] - df[self.R]
+        # Save records
+        self.record_df = df.copy()
+        return self
+
+    def complement_reverse(self):
+        """
+        Restore the raw records. Reverse method of covsirphy.Scenario.complement().
+
+        Returns:
+            covsirphy.Scenario: self
+        """
+        self.record_df = self.jhu_data.subset(
+            country=self.country,
+            province=self.province,
+            start_date=self._first_date,
+            end_date=self._last_date,
+            population=self.population
+        )
+        return self
 
     @property
     def first_date(self):
@@ -124,9 +174,7 @@ class Scenario(Term):
         Notes:
             Records with Recovered > 0 will be selected.
         """
-        df = self.jhu_data.subset(
-            country=self.country, province=self.province,
-            start_date=self._first_date, end_date=self._last_date)
+        df = self.record_df.drop(self.S, axis=1)
         if not show_figure:
             return df
         line_plot(
@@ -466,9 +514,7 @@ class Scenario(Term):
         except KeyError:
             include_init_phase = True
         self._ensure_name(name)
-        sr_df = self.jhu_data.to_sr(
-            country=self.country, province=self.province, population=self.population
-        )
+        sr_df = self.record_df.set_index(self.DATE).loc[:, [self.R, self.S]]
         self._series_dict[name].trend(
             sr_df=sr_df,
             set_phases=set_phases,
