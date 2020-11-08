@@ -202,7 +202,6 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">area</span> <span class="o">=</span> <span class="n">JHUData</span><span class="o">.</span><span class="n">area_name</span><span class="p">(</span><span class="n">country</span><span class="p">,</span> <span class="n">province</span><span class="p">)</span>
         <span class="c1"># First/last date of the area</span>
         <span class="n">df</span> <span class="o">=</span> <span class="n">jhu_data</span><span class="o">.</span><span class="n">subset</span><span class="p">(</span><span class="n">country</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">country</span><span class="p">,</span> <span class="n">province</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">province</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">subset_df</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_first_date</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">DATE</span><span class="p">]</span><span class="o">.</span><span class="n">min</span><span class="p">()</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">DATE_FORMAT</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_last_date</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">DATE</span><span class="p">]</span><span class="o">.</span><span class="n">max</span><span class="p">()</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">DATE_FORMAT</span><span class="p">)</span>
         <span class="c1"># tau value must be shared</span>
@@ -273,7 +272,7 @@
 <span class="sd">            filename (str): filename of the figure, or None (show figure)</span>
 
 <span class="sd">        Returns:</span>
-<span class="sd">            (pandas.DataFrame)</span>
+<span class="sd">            pandas.DataFrame</span>
 <span class="sd">                Index:</span>
 <span class="sd">                    reset index</span>
 <span class="sd">                Columns:</span>
@@ -549,7 +548,7 @@
 <span class="sd">                - if None, all phase series will be shown</span>
 
 <span class="sd">        Returns:</span>
-<span class="sd">            (pandas.DataFrame):</span>
+<span class="sd">            pandas.DataFrame:</span>
 <span class="sd">            - if @name not None, as the same as PhaseSeries().summary()</span>
 <span class="sd">            - if @name is None, index will be phase series name and phase name</span>
 
@@ -769,7 +768,7 @@
 <span class="sd">            filename (str): filename of the figure, or None (show figure)</span>
 
 <span class="sd">        Returns:</span>
-<span class="sd">            (pandas.DataFrame)</span>
+<span class="sd">            pandas.DataFrame</span>
 <span class="sd">                Index:</span>
 <span class="sd">                    reset index</span>
 <span class="sd">                Columns:</span>
@@ -808,7 +807,7 @@
 <span class="sd">            name (str): phase series name</span>
 
 <span class="sd">        Returns:</span>
-<span class="sd">            (str or int or float)</span>
+<span class="sd">            str or int or float</span>
 
 <span class="sd">        Notes:</span>
 <span class="sd">            If &#39;Main&#39; was used as @name, main PhaseSeries will be used.</span>
@@ -829,7 +828,7 @@
 <span class="sd">            name (str): phase series name</span>
 
 <span class="sd">        Returns:</span>
-<span class="sd">            (pandas.DataFrame): selected summary dataframe</span>
+<span class="sd">            pandas.DataFrame: selected summary dataframe</span>
 
 <span class="sd">        Raises:</span>
 <span class="sd">            KeyError: targets are not in the columns of summary dataframe</span>
@@ -913,7 +912,7 @@
 <span class="sd">                - value (float): initial value</span>
 
 <span class="sd">        Returns:</span>
-<span class="sd">            (pandas.DataFrame)</span>
+<span class="sd">            pandas.DataFrame</span>
 <span class="sd">                Index:</span>
 <span class="sd">                    (int): scenario name</span>
 <span class="sd">                Columns:</span>
@@ -961,9 +960,9 @@
 <span class="sd">            with_rt (bool): whether show the history of Rt values</span>
 
 <span class="sd">        Returns:</span>
-<span class="sd">            (pandas.DataFrame)</span>
+<span class="sd">            pandas.DataFrame:</span>
 <span class="sd">                Index:</span>
-<span class="sd">                    (int): scenario name</span>
+<span class="sd">                    str: scenario name</span>
 <span class="sd">                Columns:</span>
 <span class="sd">                    - max(Infected): max value of Infected</span>
 <span class="sd">                    - argmax(Infected): the date when Infected shows max value</span>
@@ -992,7 +991,7 @@
 <span class="sd">            name (str): phase series name</span>
 
 <span class="sd">        Returns:</span>
-<span class="sd">            pandas.DataFrame</span>
+<span class="sd">            pandas.DataFrame:</span>
 <span class="sd">                Index: Date (pandas.TimeStamp)</span>
 <span class="sd">                Columns:</span>
 <span class="sd">                    - Population (int)</span>
@@ -1031,7 +1030,7 @@
 <span class="sd">                - value (float): initial value</span>
 
 <span class="sd">        Returns:</span>
-<span class="sd">            pandas.DataFrame</span>
+<span class="sd">            pandas.DataFrame:</span>
 <span class="sd">                Index: reset index</span>
 <span class="sd">                Columns:</span>
 <span class="sd">                    - Date (pandas.TimeStamp)</span>
@@ -1058,7 +1057,7 @@
 <span class="sd">                - value (float): initial value</span>
 
 <span class="sd">        Returns:</span>
-<span class="sd">            pandas.DataFrame</span>
+<span class="sd">            pandas.DataFrame:</span>
 <span class="sd">                Index: reset index</span>
 <span class="sd">                Columns:</span>
 <span class="sd">                    - Scenario (str)</span>
@@ -1088,6 +1087,9 @@
 <span class="sd">                - value (float): initial value</span>
 <span class="sd">            show_figure (bool): If True, show the result as a figure</span>
 <span class="sd">            filename (str): filename of the figure, or None (show figure)</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            pandas.DataFrame</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">df</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">track</span><span class="p">(</span><span class="n">y0_dict</span><span class="o">=</span><span class="n">y0_dict</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">target</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">df</span><span class="o">.</span><span class="n">columns</span><span class="p">:</span>
@@ -1120,6 +1122,9 @@
 <span class="sd">            name (str): phase series name</span>
 <span class="sd">            show_figure (bool): If True, show the result as a figure</span>
 <span class="sd">            filename (str): filename of the figure, or None (show figure)</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            pandas.DataFrame</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">df</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_track_param</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">)</span>
         <span class="n">model</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_series_dict</span><span class="p">[</span><span class="n">name</span><span class="p">]</span><span class="o">.</span><span class="n">unit</span><span class="p">(</span><span class="s2">&quot;last&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">model</span>
