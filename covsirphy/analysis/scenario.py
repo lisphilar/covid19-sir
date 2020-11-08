@@ -78,24 +78,30 @@ class Scenario(Term):
             population=self.population
         )
 
-    def complement(self, update_interval=2):
+    def complement(self, interval=2, max_ignored=100):
         """
         Complement the number of recovered cases when not updated.
 
         Args:
-            update_interval (int): expected update interval of the number of recovered cases [days]
+            interval (int): expected update interval of the number of recovered cases [days]
+            max_ignored (int): Max number of recovered cases to be ignored [cases]
 
         Returns:
             covsirphy.Scenario: self
 
         Notes:
-            If the number of recovered cases did not change for more than @update_interval days,
+            If the number of recovered cases did not change
+            for more than @interval days after reached @max_ignored cases,
             complement will be applied to the number of recovered cases.
         """
         df = self.record_df.copy()
+        # Arguments
+        interval = self.ensure_natural_int(interval, name="interval")
+        max_ignored = self.ensure_natural_int(max_ignored, name="max_ignored")
         # If updated, do not perform complement
-        max_frequency = df[self.R].value_counts().max()
-        if max_frequency <= update_interval:
+        series = df.loc[df[self.R] > max_ignored, self.R]
+        max_frequency = series.value_counts().max()
+        if max_frequency <= interval:
             return self
         # Complement
         df.loc[df.duplicated([self.R], keep="last"), self.R] = None
