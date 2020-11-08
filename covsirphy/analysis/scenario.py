@@ -182,6 +182,8 @@ class Scenario(Term):
 
         Notes:
             Records with Recovered > 0 will be selected.
+            If complement was performed by Scenario.complement() or Scenario(auto_complement=True),
+            "(complemented)" will be added to the title of the figure.
         """
         df = self.record_df.drop(self.S, axis=1)
         if not show_figure:
