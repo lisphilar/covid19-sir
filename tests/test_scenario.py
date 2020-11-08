@@ -273,3 +273,20 @@ class TestScenario(object):
         # Retrospective analysis
         snl.retrospective(
             "01Sep2020", model=SIR, control="Main", target="Retrospective")
+
+    @pytest.mark.parametrize("country", ["Greece"])
+    def test_complement(self, jhu_data, population_data, country):
+        max_ignored = 100
+        # Auto complement
+        snl = Scenario(
+            jhu_data, population_data, country, auto_complement=True)
+        recovered = snl.records(show_figure=False)[Term.R]
+        assert recovered[recovered > max_ignored].value_counts().max() == 1
+        # Restore the raw data
+        snl.complement_reverse()
+        recovered = snl.records(show_figure=False)[Term.R]
+        assert recovered[recovered > max_ignored].value_counts().max() != 1
+        # Complement
+        snl.complement()
+        recovered = snl.records(show_figure=False)[Term.R]
+        assert recovered[recovered > max_ignored].value_counts().max() == 1
