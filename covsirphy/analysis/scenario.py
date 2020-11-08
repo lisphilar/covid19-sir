@@ -25,7 +25,7 @@ class Scenario(Term):
         country (str): country name
         province (str or None): province name
         tau (int or None): tau value
-        uto_complement (bool): if True, the number of cases will be complemented.
+        auto_complement (bool): if True, the number of cases will be complemented.
     """
 
     def __init__(self, jhu_data, population_data, country, province=None, tau=None, auto_complement=True):
