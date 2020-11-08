@@ -49,6 +49,7 @@ class Scenario(Term):
         # {scenario_name: PhaseSeries}
         self._init_phase_series()
         # Complement the number of cases
+        self._complemented = False
         if auto_complement:
             self.complement()
 
@@ -112,6 +113,7 @@ class Scenario(Term):
         df[self.CI] = df[self.C] - df[self.F] - df[self.R]
         # Save records
         self.record_df = df.copy()
+        self._complemented = True
         return self
 
     def complement_reverse(self):
@@ -128,6 +130,7 @@ class Scenario(Term):
             end_date=self._last_date,
             population=self.population
         )
+        self._complemented = False
         return self
 
     @property
@@ -183,9 +186,10 @@ class Scenario(Term):
         df = self.record_df.drop(self.S, axis=1)
         if not show_figure:
             return df
+        title = f"{self.area}: Cases over time{' (complemented)' if self._complemented else ''}"
         line_plot(
             df.set_index(self.DATE).drop(self.C, axis=1),
-            f"{self.area}: Cases over time",
+            title,
             y_integer=True,
             filename=filename
         )
