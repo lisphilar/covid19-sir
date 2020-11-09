@@ -292,13 +292,14 @@ class TestScenario(object):
         assert recovered[recovered > max_ignored].value_counts().max() == 1
 
     @pytest.mark.parametrize("country", ["Italy"])
-    @pytest.mark.parametrize("metrics", ["MAE", "MSE", "MSLE", "RMSE", "RMSLE"])
-    def test_score(self, jhu_data, population_data, country, metrics):
+    def test_score(self, jhu_data, population_data, country):
         snl = Scenario(jhu_data, population_data, country)
         snl.trend(show_figure=False)
         snl.estimate(SIRF)
-        score = snl.score(metrics=metrics)
-        assert isinstance(score, float)
+        metrics_list = ["MAE", "MSE", "MSLE", "RMSE", "RMSLE"]
+        for metrics in metrics_list:
+            score = snl.score(metrics=metrics)
+            assert isinstance(score, float)
 
     @pytest.mark.parametrize("country", ["Italy"])
     def test_score_error(self, jhu_data, population_data, country):
