@@ -67,6 +67,11 @@ def main():
         snl.history(item, filename=figpath(f"history_{item.lower()}"))
     # Change rate of parameters in main scenario
     snl.history_rate(name="Main", filename=figpath("history_rate"))
+    # Score of main scenario
+    metrics_list = ["MAE", "MSE", "MSLE", "RMSE", "RMSLE"]
+    for metrics in metrics_list:
+        metrics_name = metrics.rjust(len(max(metrics_list, key=len)))
+        print(f"{metrics_name}: {snl.score(metrics=metrics)}")
 
 
 def filepath(name, output_dir, country, ext="jpg"):
