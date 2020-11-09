@@ -165,6 +165,7 @@
 <span class="kn">import</span> <span class="nn">copy</span>
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<span class="kn">import</span> <span class="nn">sklearn</span>
 <span class="kn">from</span> <span class="nn">covsirphy.util.error</span> <span class="kn">import</span> <span class="n">deprecate</span>
 <span class="kn">from</span> <span class="nn">covsirphy.util.plotting</span> <span class="kn">import</span> <span class="n">line_plot</span><span class="p">,</span> <span class="n">box_plot</span>
 <span class="kn">from</span> <span class="nn">covsirphy.cleaning.term</span> <span class="kn">import</span> <span class="n">Term</span>
@@ -186,9 +187,10 @@
 <span class="sd">        country (str): country name</span>
 <span class="sd">        province (str or None): province name</span>
 <span class="sd">        tau (int or None): tau value</span>
+<span class="sd">        auto_complement (bool): if True, the number of cases will be complemented.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">jhu_data</span><span class="p">,</span> <span class="n">population_data</span><span class="p">,</span> <span class="n">country</span><span class="p">,</span> <span class="n">province</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">tau</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">jhu_data</span><span class="p">,</span> <span class="n">population_data</span><span class="p">,</span> <span class="n">country</span><span class="p">,</span> <span class="n">province</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">tau</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">auto_complement</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
         <span class="c1"># Population</span>
         <span class="n">population_data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ensure_instance</span><span class="p">(</span>
             <span class="n">population_data</span><span class="p">,</span> <span class="n">PopulationData</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;population_data&quot;</span><span class="p">)</span>
@@ -208,6 +210,10 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">tau</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ensure_tau</span><span class="p">(</span><span class="n">tau</span><span class="p">)</span>
         <span class="c1"># {scenario_name: PhaseSeries}</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_init_phase_series</span><span class="p">()</span>
+        <span class="c1"># Complement the number of cases</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_complemented</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="k">if</span> <span class="n">auto_complement</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">complement</span><span class="p">()</span>
 
     <span class="k">def</span> <span class="fm">__getitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">):</span>
         <span class="k">if</span> <span class="n">key</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_series_dict</span><span class="p">:</span>
@@ -234,6 +240,60 @@
             <span class="n">end_date</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_last_date</span><span class="p">,</span>
             <span class="n">population</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">population</span>
         <span class="p">)</span>
+
+<div class="viewcode-block" id="Scenario.complement"><a class="viewcode-back" href="../../../covsirphy.analysis.html#covsirphy.analysis.scenario.Scenario.complement">[docs]</a>    <span class="k">def</span> <span class="nf">complement</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">interval</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">max_ignored</span><span class="o">=</span><span class="mi">100</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Complement the number of recovered cases when not updated.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            interval (int): expected update interval of the number of recovered cases [days]</span>
+<span class="sd">            max_ignored (int): Max number of recovered cases to be ignored [cases]</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            covsirphy.Scenario: self</span>
+
+<span class="sd">        Notes:</span>
+<span class="sd">            If the number of recovered cases did not change</span>
+<span class="sd">            for more than @interval days after reached @max_ignored cases,</span>
+<span class="sd">            complement will be applied to the number of recovered cases.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">df</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">record_df</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+        <span class="c1"># Arguments</span>
+        <span class="n">interval</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ensure_natural_int</span><span class="p">(</span><span class="n">interval</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;interval&quot;</span><span class="p">)</span>
+        <span class="n">max_ignored</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ensure_natural_int</span><span class="p">(</span><span class="n">max_ignored</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;max_ignored&quot;</span><span class="p">)</span>
+        <span class="c1"># If updated, do not perform complement</span>
+        <span class="n">series</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">df</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">R</span><span class="p">]</span> <span class="o">&gt;</span> <span class="n">max_ignored</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">R</span><span class="p">]</span>
+        <span class="n">max_frequency</span> <span class="o">=</span> <span class="n">series</span><span class="o">.</span><span class="n">value_counts</span><span class="p">()</span><span class="o">.</span><span class="n">max</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">max_frequency</span> <span class="o">&lt;=</span> <span class="n">interval</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span>
+        <span class="c1"># Complement</span>
+        <span class="n">df</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">df</span><span class="o">.</span><span class="n">duplicated</span><span class="p">([</span><span class="bp">self</span><span class="o">.</span><span class="n">R</span><span class="p">],</span> <span class="n">keep</span><span class="o">=</span><span class="s2">&quot;last&quot;</span><span class="p">),</span> <span class="bp">self</span><span class="o">.</span><span class="n">R</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="n">df</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">R</span><span class="p">]</span><span class="o">.</span><span class="n">interpolate</span><span class="p">(</span>
+            <span class="n">method</span><span class="o">=</span><span class="s2">&quot;linear&quot;</span><span class="p">,</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">limit_direction</span><span class="o">=</span><span class="s2">&quot;both&quot;</span><span class="p">)</span>
+        <span class="n">df</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">R</span><span class="p">]</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">R</span><span class="p">]</span><span class="o">.</span><span class="n">round</span><span class="p">()</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">int64</span><span class="p">)</span>
+        <span class="c1"># Calculate Infected</span>
+        <span class="n">df</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">CI</span><span class="p">]</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">C</span><span class="p">]</span> <span class="o">-</span> <span class="n">df</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">F</span><span class="p">]</span> <span class="o">-</span> <span class="n">df</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">R</span><span class="p">]</span>
+        <span class="c1"># Save records</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">record_df</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_complemented</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="k">return</span> <span class="bp">self</span></div>
+
+<div class="viewcode-block" id="Scenario.complement_reverse"><a class="viewcode-back" href="../../../covsirphy.analysis.html#covsirphy.analysis.scenario.Scenario.complement_reverse">[docs]</a>    <span class="k">def</span> <span class="nf">complement_reverse</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Restore the raw records. Reverse method of covsirphy.Scenario.complement().</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            covsirphy.Scenario: self</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">record_df</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">jhu_data</span><span class="o">.</span><span class="n">subset</span><span class="p">(</span>
+            <span class="n">country</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">country</span><span class="p">,</span>
+            <span class="n">province</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">province</span><span class="p">,</span>
+            <span class="n">start_date</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_first_date</span><span class="p">,</span>
+            <span class="n">end_date</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_last_date</span><span class="p">,</span>
+            <span class="n">population</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">population</span>
+        <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_complemented</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="k">return</span> <span class="bp">self</span></div>
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">first_date</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
@@ -284,15 +344,16 @@
 
 <span class="sd">        Notes:</span>
 <span class="sd">            Records with Recovered &gt; 0 will be selected.</span>
+<span class="sd">            If complement was performed by Scenario.complement() or Scenario(auto_complement=True),</span>
+<span class="sd">            &quot;(complemented)&quot; will be added to the title of the figure.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">df</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">jhu_data</span><span class="o">.</span><span class="n">subset</span><span class="p">(</span>
-            <span class="n">country</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">country</span><span class="p">,</span> <span class="n">province</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">province</span><span class="p">,</span>
-            <span class="n">start_date</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_first_date</span><span class="p">,</span> <span class="n">end_date</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_last_date</span><span class="p">)</span>
+        <span class="n">df</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">record_df</span><span class="o">.</span><span class="n">drop</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">S</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">show_figure</span><span class="p">:</span>
             <span class="k">return</span> <span class="n">df</span>
+        <span class="n">title</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">area</span><span class="si">}</span><span class="s2">: Cases over time</span><span class="si">{</span><span class="s1">&#39; (complemented)&#39;</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_complemented</span> <span class="k">else</span> <span class="s1">&#39;&#39;</span><span class="si">}</span><span class="s2">&quot;</span>
         <span class="n">line_plot</span><span class="p">(</span>
             <span class="n">df</span><span class="o">.</span><span class="n">set_index</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">DATE</span><span class="p">)</span><span class="o">.</span><span class="n">drop</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">C</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">),</span>
-            <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">area</span><span class="si">}</span><span class="s2">: Cases over time&quot;</span><span class="p">,</span>
+            <span class="n">title</span><span class="p">,</span>
             <span class="n">y_integer</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
             <span class="n">filename</span><span class="o">=</span><span class="n">filename</span>
         <span class="p">)</span>
@@ -627,9 +688,7 @@
         <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
             <span class="n">include_init_phase</span> <span class="o">=</span> <span class="kc">True</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_ensure_name</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
-        <span class="n">sr_df</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">jhu_data</span><span class="o">.</span><span class="n">to_sr</span><span class="p">(</span>
-            <span class="n">country</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">country</span><span class="p">,</span> <span class="n">province</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">province</span><span class="p">,</span> <span class="n">population</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">population</span>
-        <span class="p">)</span>
+        <span class="n">sr_df</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">record_df</span><span class="o">.</span><span class="n">set_index</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">DATE</span><span class="p">)</span><span class="o">.</span><span class="n">loc</span><span class="p">[:,</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">R</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">S</span><span class="p">]]</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_series_dict</span><span class="p">[</span><span class="n">name</span><span class="p">]</span><span class="o">.</span><span class="n">trend</span><span class="p">(</span>
             <span class="n">sr_df</span><span class="o">=</span><span class="n">sr_df</span><span class="p">,</span>
             <span class="n">set_phases</span><span class="o">=</span><span class="n">set_phases</span><span class="p">,</span>
@@ -760,11 +819,8 @@
 
 <span class="sd">        Args:</span>
 <span class="sd">            name (str): phase series name. If &#39;Main&#39;, main PhaseSeries will be used</span>
-<span class="sd">            y0_dict (dict or None): dictionary of initial values or None</span>
-<span class="sd">                - key (str): variable name</span>
-<span class="sd">                - value (float): initial value</span>
-<span class="sd">            show_figure (bool):</span>
-<span class="sd">                - if True, show the result as a figure.</span>
+<span class="sd">            y0_dict(dict[str, float] or None): dictionary of initial values of variables</span>
+<span class="sd">            show_figure (bool): if True, show the result as a figure</span>
 <span class="sd">            filename (str): filename of the figure, or None (show figure)</span>
 
 <span class="sd">        Returns:</span>
@@ -1184,7 +1240,64 @@
         <span class="p">]</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">delete</span><span class="p">(</span><span class="n">phases_changed</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="n">target</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="n">target</span><span class="p">,</span> <span class="o">**</span><span class="n">args</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">estimate</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="n">target</span><span class="p">)</span></div></div>
+        <span class="bp">self</span><span class="o">.</span><span class="n">estimate</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="n">target</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Scenario.score"><a class="viewcode-back" href="../../../covsirphy.analysis.html#covsirphy.analysis.scenario.Scenario.score">[docs]</a>    <span class="k">def</span> <span class="nf">score</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">metrics</span><span class="o">=</span><span class="s2">&quot;RMSLE&quot;</span><span class="p">,</span> <span class="n">variables</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;Main&quot;</span><span class="p">,</span> <span class="n">y0_dict</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Evaluate accuracy of phase setting and parameter estimation of all phases.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            metrics (str): &quot;MAE&quot;, &quot;MSE&quot;, &quot;MSLE&quot;, &quot;RMSE&quot; or &quot;RMSLE&quot;</span>
+<span class="sd">            variables (list[str] or None): variables to use in calculation</span>
+<span class="sd">            name(str): phase series name. If &#39;Main&#39;, main PhaseSeries will be used</span>
+<span class="sd">            y0_dict(dict[str, float] or None): dictionary of initial values of variables</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            float: score with the specified metrics</span>
+
+<span class="sd">        Notes:</span>
+<span class="sd">            If @variables is None, [&quot;Infected&quot;, &quot;Fatal&quot;, &quot;Recovered&quot;] will be used.</span>
+<span class="sd">            &quot;Confirmed&quot;, &quot;Infected&quot;, &quot;Fatal&quot; and &quot;Recovered&quot; can be used in @variables.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Variables to use in calculation</span>
+        <span class="n">variables</span> <span class="o">=</span> <span class="n">variables</span> <span class="ow">or</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">CI</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">F</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">R</span><span class="p">]</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">variables</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;@variables must be a list of variable names, but </span><span class="si">{</span><span class="n">variables</span><span class="si">}</span><span class="s2"> was applied.&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">set</span><span class="p">(</span><span class="n">variables</span><span class="p">)</span><span class="o">.</span><span class="n">issubset</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">VALUE_COLUMNS</span><span class="p">):</span>
+            <span class="n">usable_str</span> <span class="o">=</span> <span class="s2">&quot;, &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">VALUE_COLUMNS</span><span class="p">)</span>
+            <span class="n">selected_str</span> <span class="o">=</span> <span class="s2">&quot;, &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">variables</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="ne">KeyError</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;Only </span><span class="si">{</span><span class="n">usable_str</span><span class="si">}</span><span class="s2"> can be used in @variables, but </span><span class="si">{</span><span class="n">selected_str</span><span class="si">}</span><span class="s2"> was applied.&quot;</span><span class="p">)</span>
+        <span class="c1"># Metrics</span>
+        <span class="n">metrics_dict</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s2">&quot;MAE&quot;</span><span class="p">:</span> <span class="n">sklearn</span><span class="o">.</span><span class="n">metrics</span><span class="o">.</span><span class="n">mean_absolute_error</span><span class="p">,</span>
+            <span class="s2">&quot;MSE&quot;</span><span class="p">:</span> <span class="n">sklearn</span><span class="o">.</span><span class="n">metrics</span><span class="o">.</span><span class="n">mean_squared_error</span><span class="p">,</span>
+            <span class="s2">&quot;MSLE&quot;</span><span class="p">:</span> <span class="n">sklearn</span><span class="o">.</span><span class="n">metrics</span><span class="o">.</span><span class="n">mean_squared_log_error</span><span class="p">,</span>
+            <span class="s2">&quot;RMSE&quot;</span><span class="p">:</span> <span class="k">lambda</span> <span class="n">x1</span><span class="p">,</span> <span class="n">x2</span><span class="p">:</span> <span class="n">sklearn</span><span class="o">.</span><span class="n">metrics</span><span class="o">.</span><span class="n">mean_squared_error</span><span class="p">(</span><span class="n">x1</span><span class="p">,</span> <span class="n">x2</span><span class="p">,</span> <span class="n">squared</span><span class="o">=</span><span class="kc">False</span><span class="p">),</span>
+            <span class="s2">&quot;RMSLE&quot;</span><span class="p">:</span> <span class="k">lambda</span> <span class="n">x1</span><span class="p">,</span> <span class="n">x2</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">sklearn</span><span class="o">.</span><span class="n">metrics</span><span class="o">.</span><span class="n">mean_squared_log_error</span><span class="p">(</span><span class="n">x1</span><span class="p">,</span> <span class="n">x2</span><span class="p">)),</span>
+        <span class="p">}</span>
+        <span class="c1"># Calculation</span>
+        <span class="n">record_df</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">record_df</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span><span class="o">.</span><span class="n">set_index</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">DATE</span><span class="p">)</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">simulated_df</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">simulate</span><span class="p">(</span>
+                <span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">,</span> <span class="n">y0_dict</span><span class="o">=</span><span class="n">y0_dict</span><span class="p">,</span> <span class="n">show_figure</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span><span class="o">.</span><span class="n">set_index</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">DATE</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="s2">&quot;No phases are registered. Please use .trend() method.&quot;</span><span class="p">)</span> <span class="kn">from</span> <span class="bp">None</span>
+        <span class="k">except</span> <span class="ne">NameError</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">NameError</span><span class="p">(</span>
+                <span class="s2">&quot;Parameter values are not set. Please use .estimate(model) method.&quot;</span><span class="p">)</span> <span class="kn">from</span> <span class="bp">None</span>
+        <span class="n">df</span> <span class="o">=</span> <span class="n">record_df</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">simulated_df</span><span class="p">,</span> <span class="n">how</span><span class="o">=</span><span class="s2">&quot;inner&quot;</span><span class="p">,</span> <span class="n">rsuffix</span><span class="o">=</span><span class="s2">&quot;_sim&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">dropna</span><span class="p">()</span>
+        <span class="n">rec_df</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">loc</span><span class="p">[:,</span> <span class="n">variables</span><span class="p">]</span>
+        <span class="n">sim_df</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">loc</span><span class="p">[:,</span> <span class="p">[</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">col</span><span class="si">}</span><span class="s2">_sim&quot;</span> <span class="k">for</span> <span class="n">col</span> <span class="ow">in</span> <span class="n">variables</span><span class="p">]]</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">metrics_dict</span><span class="p">[</span><span class="n">metrics</span><span class="o">.</span><span class="n">upper</span><span class="p">()](</span><span class="n">rec_df</span><span class="p">,</span> <span class="n">sim_df</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
+            <span class="n">metrics_str</span> <span class="o">=</span> <span class="s2">&quot;, &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">metrics_dict</span><span class="o">.</span><span class="n">keys</span><span class="p">()))</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;@metrics must be selected from </span><span class="si">{</span><span class="n">metrics_str</span><span class="si">}</span><span class="s2">, but </span><span class="si">{</span><span class="n">metrics</span><span class="si">}</span><span class="s2"> was applied.&quot;</span>
+            <span class="p">)</span> <span class="kn">from</span> <span class="bp">None</span></div></div>
 </pre></div>
 
            </div>
