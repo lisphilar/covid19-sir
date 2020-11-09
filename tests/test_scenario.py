@@ -6,7 +6,7 @@ import warnings
 import pandas as pd
 import pytest
 from covsirphy import Scenario
-from covsirphy import Term, PhaseSeries, SIR
+from covsirphy import Term, PhaseSeries, SIR, SIRF
 
 
 class TestScenario(object):
@@ -290,3 +290,28 @@ class TestScenario(object):
         snl.complement()
         recovered = snl.records(show_figure=False)[Term.R]
         assert recovered[recovered > max_ignored].value_counts().max() == 1
+
+    @pytest.mark.parametrize("country", ["Italy"])
+    @pytest.mark.parametrize("metrics", ["MAE", "MSE", "MSLE", "RMSE", "RMSLE"])
+    def test_score(self, jhu_data, population_data, country, metrics):
+        snl = Scenario(jhu_data, population_data, country)
+        snl.trend(show_figure=False)
+        snl.estimate(SIRF)
+        score = snl.score(metrics=metrics)
+        assert isinstance(score, float)
+
+    @pytest.mark.parametrize("country", ["Italy"])
+    def test_score_error(self, jhu_data, population_data, country):
+        snl = Scenario(jhu_data, population_data, country)
+        with pytest.raises(ValueError):
+            snl.score()
+        snl.trend(show_figure=False)
+        with pytest.raises(NameError):
+            snl.score()
+        snl.estimate(SIRF)
+        with pytest.raises(TypeError):
+            snl.score(variables="Infected")
+        with pytest.raises(KeyError):
+            snl.score(variables=["Susceptible"])
+        with pytest.raises(ValueError):
+            snl.score(metrics="Subjective evaluation")
