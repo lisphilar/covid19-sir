@@ -1083,7 +1083,7 @@ class Scenario(Term):
 
     def score(self, metrics="RMSLE", variables=None, name="Main", y0_dict=None):
         """
-        Calculate the score of phase setting and 
+        Evaluate accuracy of phase setting and parameter estimation of all phases.
 
         Args:
             metrics (str): "MAE", "MSE", "MSLE", "RMSE" or "RMSLE"
