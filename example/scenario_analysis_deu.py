@@ -50,6 +50,11 @@ def main():
     # Save summary as a CSV file
     summary_df = snl.summary()
     save_df(summary_df, "summary", output_dir, abbr)
+    # Score of main scenario
+    metrics_list = ["MAE", "MSE", "MSLE", "RMSE", "RMSLE"]
+    for metrics in metrics_list:
+        metrics_name = metrics.rjust(len(max(metrics_list, key=len)))
+        print(f"{metrics_name}: {snl.score(metrics=metrics)}")
 
 
 def filepath(name, output_dir, country, ext="jpg"):
