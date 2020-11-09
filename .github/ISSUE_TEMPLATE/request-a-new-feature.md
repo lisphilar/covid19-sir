@@ -7,7 +7,7 @@ assignees: ''
 
 ---
 
-## Summary of thi new feature
+## Summary of this new feature
 A clear and concise description of what the problem is. Ex. I'm always frustrated when
 
 ## (Optional) Solution
