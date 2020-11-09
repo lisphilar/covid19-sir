@@ -309,6 +309,8 @@ class TestScenario(object):
         snl.trend(show_figure=False)
         with pytest.raises(NameError):
             snl.score()
+        all_phases = snl.summary().index.tolist()
+        snl.disable(phases=all_phases[:-2])
         snl.estimate(SIRF)
         with pytest.raises(TypeError):
             snl.score(variables="Infected")
