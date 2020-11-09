@@ -4,6 +4,7 @@
 import copy
 import numpy as np
 import pandas as pd
+import sklearn
 from covsirphy.util.error import deprecate
 from covsirphy.util.plotting import line_plot, box_plot
 from covsirphy.cleaning.term import Term
@@ -657,11 +658,8 @@ class Scenario(Term):
 
         Args:
             name (str): phase series name. If 'Main', main PhaseSeries will be used
-            y0_dict (dict or None): dictionary of initial values or None
-                - key (str): variable name
-                - value (float): initial value
-            show_figure (bool):
-                - if True, show the result as a figure.
+            y0_dict(dict[str, float] or None): dictionary of initial values of variables
+            show_figure (bool): if True, show the result as a figure
             filename (str): filename of the figure, or None (show figure)
 
         Returns:
@@ -1082,3 +1080,60 @@ class Scenario(Term):
         self.delete(phases_changed, name=target)
         self.add(name=target, **args)
         self.estimate(model, name=target)
+
+    def score(self, metrics="RMSLE", variables=None, name="Main", y0_dict=None):
+        """
+        Calculate the score of phase setting and 
+
+        Args:
+            metrics (str): "MAE", "MSE", "MSLE", "RMSE" or "RMSLE"
+            variables (list[str] or None): variables to use in calculation
+            name(str): phase series name. If 'Main', main PhaseSeries will be used
+            y0_dict(dict[str, float] or None): dictionary of initial values of variables
+
+        Returns:
+            float: score with the specified metrics
+
+        Notes:
+            If @variables is None, ["Infected", "Fatal", "Recovered"] will be used.
+            "Confirmed", "Infected", "Fatal" and "Recovered" can be used in @variables.
+        """
+        # Variables to use in calculation
+        variables = variables or [self.CI, self.F, self.R]
+        if not isinstance(variables, list):
+            raise KeyError(
+                f"@variables must be a list of variable names, but {variables} was applied.")
+        if not set(variables).issubset(self.VALUE_COLUMNS):
+            usable_str = ", ".join(self.VALUE_COLUMNS)
+            selected_str = ", ".join(variables)
+            raise KeyError(
+                f"Only {usable_str} can be used in @variables, but {selected_str} was applied.")
+        # Metrics
+        metrics_dict = {
+            "MAE": sklearn.metrics.mean_absolute_error,
+            "MSE": sklearn.metrics.mean_squared_error,
+            "MSLE": sklearn.metrics.mean_squared_log_error,
+            "RMSE": lambda x1, x2: sklearn.metrics.mean_squared_error(x1, x2, squared=False),
+            "RMSLE": lambda x1, x2: np.sqrt(sklearn.metrics.mean_squared_log_error(x1, x2)),
+        }
+        # Calculation
+        record_df = self.record_df.copy().set_index(self.DATE)
+        try:
+            simulated_df = self.simulate(
+                name=name, y0_dict=y0_dict, show_figure=False).set_index(self.DATE)
+        except ValueError:
+            raise ValueError(
+                "No phases are registered. Please use .trend() method.") from None
+        except NameError:
+            raise NameError(
+                "Parameter values are not set. Please use .estimate(model) method.") from None
+        df = record_df.join(simulated_df, how="inner", rsuffix="_sim").dropna()
+        rec_df = df.loc[:, variables]
+        sim_df = df.loc[:, [f"{col}_sim" for col in variables]]
+        try:
+            return metrics_dict[metrics.upper()](rec_df, sim_df)
+        except KeyError:
+            metrics_str = ", ".join(list(metrics_dict.keys()))
+            raise ValueError(
+                f"@metrics must be selected from {metrics_str}, but {metrics} was applied."
+            ) from None
