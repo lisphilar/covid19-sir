@@ -1101,7 +1101,7 @@ class Scenario(Term):
         # Variables to use in calculation
         variables = variables or [self.CI, self.F, self.R]
         if not isinstance(variables, list):
-            raise KeyError(
+            raise TypeError(
                 f"@variables must be a list of variable names, but {variables} was applied.")
         if not set(variables).issubset(self.VALUE_COLUMNS):
             usable_str = ", ".join(self.VALUE_COLUMNS)
