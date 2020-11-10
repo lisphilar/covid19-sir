@@ -490,13 +490,13 @@ class Scenario(Term):
         """
         df = self._summary(name=name)
         all_cols = df.columns.tolist()
-        if set(self.EST_COLS).issubset(set(all_cols)):
+        if set(self.EST_COLS).issubset(all_cols):
             all_cols = [col for col in all_cols if col not in self.EST_COLS]
             all_cols += self.EST_COLS
         columns = columns or all_cols
         if not isinstance(columns, list):
             raise TypeError("@columns must be None or a list of strings.")
-        if not set(columns).issubset(set(df.columns)):
+        if not set(columns).issubset(df.columns):
             raise KeyError(
                 f"Un-registered columns were selected as @columns. Please use {', '.join(df.columns)}."
             )
@@ -736,7 +736,7 @@ class Scenario(Term):
         selectable_cols = [self.N, *parameters, self.RT, *day_params]
         selectable_set = set(selectable_cols)
         df = series.summary().replace(self.UNKNOWN, None)
-        if not selectable_set.issubset(set(df.columns)):
+        if not selectable_set.issubset(df.columns):
             raise ValueError(
                 f"Scenario.estimate(model, phases=None, name={name}) must be done in advance.")
         targets = [targets] if isinstance(targets, str) else targets

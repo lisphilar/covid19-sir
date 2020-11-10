@@ -61,7 +61,7 @@ class TestODE(object):
             model_ins.calc_days_dict(1440)
 
     @pytest.mark.parametrize("model", [SIR])
-    def test_usage_mistakes(self, model):
+    def test_error(self, model):
         # Setting
         eg_tau = 1440
         # Simulation
@@ -87,10 +87,20 @@ class TestODE(object):
         assert isinstance(dim_df, pd.DataFrame)
         assert set(dim_df.columns) == set(Term.NLOC_COLUMNS)
 
+    @pytest.mark.parametrize("model", [SIR])
+    def test_validation_sir(self, model):
+        # Setting
+        validator = ModelValidator(n_trials=4, seed=1)
+        # Execute validation
+        validator.run(model)
+        validator.summary()
+        with pytest.raises(ValueError):
+            validator.run(model)
+
     @pytest.mark.parametrize(
         "model",
         # SIRFV, SEWIRF
-        [SIR, SIRD, SIRF])
+        [SIRD, SIRF])
     def test_validation(self, model):
         # Setting
         validator = ModelValidator(n_trials=4, seed=1)

@@ -181,7 +181,7 @@ class Term(object):
             raise TypeError(f"Index of @{name} must be <pd.DatetimeIndex>.")
         if columns is None:
             return df
-        if not set(columns).issubset(set(df.columns)):
+        if not set(columns).issubset(df.columns):
             cols_str = ", ".join(
                 [col for col in columns if col not in df.columns]
             )

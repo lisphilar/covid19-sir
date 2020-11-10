@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
+import math
 import warnings
 import matplotlib.pyplot as plt
 from matplotlib.ticker import ScalarFormatter
@@ -8,7 +9,7 @@ import numpy as np
 import optuna
 import pandas as pd
 import seaborn as sns
-import math
+from sklearn.metrics import mean_squared_log_error
 from covsirphy.util.stopwatch import StopWatch
 from covsirphy.cleaning.term import Term
 from covsirphy.ode.mbase import ModelBase
@@ -44,8 +45,8 @@ class Estimator(Term):
         # ODE model
         self.model = self.ensure_subclass(model, ModelBase, name="model")
         self.variables = model.VARIABLES[:]
-        self.weight_dict = {
-            v: p for (v, p) in zip(model.VARIABLES, model.WEIGHTS) if p > 0}
+        self.variables_evaluate = [
+            v for (v, p) in zip(model.VARIABLES, model.WEIGHTS) if p > 0]
         # Dataset
         if not set(self.NLOC_COLUMNS).issubset(record_df.columns):
             record_df = model.restore(record_df)
@@ -117,9 +118,9 @@ class Estimator(Term):
         for _ in range(iteration_n):
             # Perform optimization
             self.study.optimize(
-                self.objective, n_jobs=1, timeout=timeout_iteration)
+                self._objective, n_jobs=1, timeout=timeout_iteration)
             # Create a table to compare observed/estimated values
-            comp_df = self.compare(*self.param())
+            comp_df = self._compare(*self._param())
             # Check monotonic variables
             mono_ok_list = [
                 comp_df[col].is_monotonic_increasing for col in increasing_cols
@@ -158,7 +159,7 @@ class Estimator(Term):
         ]
         return all(ok_list)
 
-    def objective(self, trial):
+    def _objective(self, trial):
         """
         Objective function of Optuna study.
         This defines the parameter values using Optuna.
@@ -181,7 +182,7 @@ class Estimator(Term):
             if k not in self.fixed_dict.keys()
         }
         param_dict.update(self.fixed_dict)
-        return self.error_f(self.tau, param_dict)
+        return self._rmsle(self.tau, param_dict)
 
     def _set_taufree(self):
         """
@@ -191,46 +192,26 @@ class Estimator(Term):
             self.record_df, self.population, tau=self.tau)
         self.step_n = int(self.taufree_df[self.TS].max())
 
-    def error_f(self, tau, param_dict):
+    def _rmsle(self, tau, param_dict):
         """
-        Definition of error score to minimize in the study.
+        Calculate RMSLE score.
 
         Args:
             tau (int): tau value [min]
-            dict[str, int or float]: dictionary of parameter values
+            param_dict (dict[str, int or float]): dictionary of parameter values
 
         Returns:
-            float: score of the error function to minimize
+            float: RMSLE score
         """
-        comp_df = self.compare(tau, param_dict)
-        return sum(
-            self._score(variable, comp_df)
-            for variable in self.weight_dict.keys()
-        )
+        comp_df = self._compare(tau, param_dict)
+        rec_df = comp_df.loc[:, [
+            f"{v}{self.A}" for v in self.variables_evaluate]]
+        sim_df = comp_df.loc[:, [
+            f"{v}{self.P}" for v in self.variables_evaluate]]
+        msle = mean_squared_log_error(sim_df, rec_df)
+        return np.sqrt(msle)
 
-    def _score(self, v, comp_df):
-        """
-        Calculate score of the variable.
-
-        Args:
-            v (str): variable name
-            com_df (pandas.DataFrame):
-                Index:
-                    (str): time step
-                Columns:
-                    - columns with "_actual"
-                    - columns with "_predicted"
-                    - columns are defined by self.variables
-
-        Returns:
-            float: score
-        """
-        weight = self.weight_dict[v]
-        actual = comp_df.loc[:, f"{v}{self.A}"]
-        diff = (actual - comp_df.loc[:, f"{v}{self.P}"]).abs() / (actual + 1)
-        return weight * diff.mean()
-
-    def simulate(self, step_n, param_dict):
+    def _simulate(self, step_n, param_dict):
         """
         Simulate the values with the parameters.
 
@@ -256,7 +237,7 @@ class Estimator(Term):
         )
         return simulator.taufree()
 
-    def compare(self, tau, param_dict):
+    def _compare(self, tau, param_dict):
         """
         Return comparison table.
 
@@ -275,12 +256,12 @@ class Estimator(Term):
         """
         self.tau = tau
         self._set_taufree()
-        sim_df = self.simulate(self.step_n, param_dict)
+        sim_df = self._simulate(self.step_n, param_dict)
         df = self.taufree_df.merge(
             sim_df, on=self.TS, suffixes=(self.A, self.P))
         return df.set_index(self.TS)
 
-    def param(self):
+    def _param(self):
         """
         Return the estimated parameters as a dictionary.
 
@@ -306,37 +287,17 @@ class Estimator(Term):
                 - Trials: the number of trials
                 - Runtime: run time of estimation
         """
-        tau, param_dict = self.param()
+        tau, param_dict = self._param()
         model_instance = self.model(population=self.population, **param_dict)
         return {
             **param_dict,
             self.TAU: tau,
             self.RT: model_instance.calc_r0(),
             **model_instance.calc_days_dict(tau),
-            self.RMSLE: self._rmsle(tau, **param_dict),
+            self.RMSLE: self._rmsle(tau, param_dict),
             self.TRIALS: self.total_trials,
             self.RUNTIME: StopWatch.show(self.runtime)
         }
-
-    def _rmsle(self, tau, **kwargs):
-        """
-        Calculate RMSLE score.
-
-        Args:
-            tau (int): tau value [min]
-            kwargs: keyword arguments of parameter values
-
-        Returns:
-            float: RMSLE score
-        """
-        df = self.compare(tau, kwargs)
-        df = (df + 1).astype(np.int64)
-        for v in self.variables:
-            df = df.loc[df[f"{v}{self.A}"] * df[f"{v}{self.P}"] > 0, :]
-        a_list = [np.log10(df[f"{v}{self.A}"]) for v in self.variables]
-        p_list = [np.log10(df[f"{v}{self.P}"]) for v in self.variables]
-        diffs = [((a - p) ** 2).sum() for (a, p) in zip(a_list, p_list)]
-        return np.sqrt(sum(diffs) / len(diffs))
 
     def _history(self):
         """
@@ -401,7 +362,7 @@ class Estimator(Term):
                     - columns are defined by self.variables
         """
         # Create a table to compare observed/estimated values
-        df = self.compare(*self.param())
+        df = self._compare(*self._param())
         if not show_figure:
             return df
         # Variables to show accuracy

@@ -9,7 +9,7 @@ from covsirphy import SIRF, Scenario
 
 
 class TestPolicyMeasures(object):
-    def test_policy_measures(self, jhu_data, population_data, oxcgrt_data):
+    def test_start(self, jhu_data, population_data, oxcgrt_data):
         warnings.simplefilter("ignore", category=UserWarning)
         # Create instance
         analyser = PolicyMeasures(
@@ -33,6 +33,22 @@ class TestPolicyMeasures(object):
         phase_len_dict = analyser.phase_len()
         assert isinstance(phase_len_dict, dict)
         assert isinstance(phase_len_dict[min_len], list)
+
+    def test_analysis(self, jhu_data, population_data, oxcgrt_data):
+        warnings.simplefilter("ignore", category=UserWarning)
+        # Create instance
+        analyser = PolicyMeasures(
+            jhu_data, population_data, oxcgrt_data, tau=360)
+        # S-R trend analysis
+        analyser.trend()
+        # Select two countries
+        phase_len_dict = analyser.phase_len()
+        countries_all = [
+            country
+            for (num, countries) in sorted(phase_len_dict.items(), reverse=True)
+            for country in countries
+        ]
+        analyser.countries = countries_all[:2]
         # Parameter estimation
         with pytest.raises(ValueError):
             analyser.track()
@@ -47,7 +63,7 @@ class TestPolicyMeasures(object):
         df = analyser.history("rho", roll_window=14, show_figure=False)
         assert isinstance(df, pd.DataFrame)
 
-    def mistake(self, jhu_data, population_data, oxcgrt_data):
+    def test_error(self, jhu_data, population_data, oxcgrt_data):
         warnings.simplefilter("ignore", category=UserWarning)
         # Create instance
         analyser = PolicyMeasures(

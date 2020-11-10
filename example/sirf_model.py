@@ -46,11 +46,12 @@ def main():
     )
     # Hyperparameter estimation of example data
     estimator = cs.Estimator(
-        example_data, model=model, population=eg_population,
+        example_data.subset(model), model=model, population=eg_population,
         country=model.NAME, province=None, tau=eg_tau
     )
     estimator.run()
-    estimated_df = estimator.summary(name=model.NAME)
+    estimated_df = pd.DataFrame.from_dict(
+        {model.NAME: estimator.to_dict()}, orient="index")
     estimated_df = estimated_df.append(
         pd.Series({**set_param_dict, "tau": eg_tau}, name="set")
     )
