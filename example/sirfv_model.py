@@ -46,26 +46,23 @@ def main():
     )
     # Hyperparameter estimation of example data
     estimator = cs.Estimator(
-        example_data, model=model, population=eg_population,
-        country=model.NAME, province=None, tau=eg_tau, omega=0.001
+        example_data.subset(model), model=model, population=eg_population,
+        country=model.NAME, province=None, tau=eg_tau
     )
     estimator.run()
-    estimated_df = estimator.summary(name=model.NAME)
+    estimated_df = pd.DataFrame.from_dict(
+        {model.NAME: estimator.to_dict()}, orient="index")
     estimated_df = estimated_df.append(
         pd.Series({**set_param_dict, "tau": eg_tau}, name="set")
     )
     estimated_df["tau"] = estimated_df["tau"].astype(np.int64)
     estimated_df.to_csv(
-        output_dir.joinpath(f"{model.NAME}_estimate_parameter.csv"), index=True
+        output_dir.joinpath("estimate_parameter.csv"), index=True
     )
     # Show the history of optimization
-    estimator.history(filename=output_dir.joinpath(
-        f"{model.NAME}_estimate_history.png")
-    )
+    estimator.history(filename=output_dir.joinpath("estimate_history.png"))
     # Show the accuracy as a figure
-    estimator.accuracy(filename=output_dir.joinpath(
-        f"{model.NAME}_estimate_accuracy.png")
-    )
+    estimator.accuracy(filename=output_dir.joinpath("estimate_accuracy.png"))
 
 
 if __name__ == "__main__":
