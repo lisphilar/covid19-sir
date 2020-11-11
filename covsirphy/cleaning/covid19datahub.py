@@ -106,8 +106,7 @@ class COVID19DataHub(Term):
                 print("\nDetailed citaition list:")
                 print(self.primary_list)
             else:
-                print(
-                    "\nPlease set verbose=2 and force=True to see the detailed citation list.")
+                print("\nPlease set verbose=2 to see the detailed citation list.")
             print("\n")
         return df
 
