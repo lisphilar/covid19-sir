@@ -40,38 +40,44 @@ class COVID19DataHub(Term):
                 f"@filename should be a path-like object, but {filename} was applied.")
         self.primary_list = None
 
-    def load(self, name="jhu", force=True, verbose=True):
+    def load(self, name="jhu", force=True, verbose=1):
         """
         Load the datasets of COVID-19 Data Hub.
 
         Args:
             name (str): name of dataset, "jhu", "population" or "oxcgrt"
             force (bool): if True, always download the dataset from the server
-            verbose (bool): if True, the list of primary sources will be shown when downloading
+            verbose (int): level of verbosity
 
         Returns:
             covsirphy.CleaningBase: the dataset
 
         Notes:
+            If @verbose is 2, detailed citation list will be shown when downloading.
+            If @verbose is 1, how to show the list will be explained.
             Citation of COVID-19 Data Hub will be set as JHUData.citation etc.
         """
         if force and self.filepath.exists():
             self.filepath.unlink()
         if not self.filepath.exists():
-            raw_df = self._retrieve(verbose=True)
+            raw_df = self._retrieve(verbose=verbose)
             save_dataframe(raw_df, self.filepath, index=False)
         if name not in self.OBJ_DICT:
             raise KeyError(
                 f"@name must be {', '.join(list(self.OBJ_DICT.keys()))}, but {name} was applied.")
         return self.OBJ_DICT[name](self.filepath, citation=self.CITATION)
 
-    def _retrieve(self, verbose=True):
+    def _retrieve(self, verbose=1):
         """
         Retrieve datasets from COVID-19 Data Hub.
         Level 1 (country) and level2 (province) will be used and combined to a dataframe.
 
         Args:
-            verbose (bool): if True, detailed citation list will be shown when downloading
+            verbose (int): level of verbosity
+
+        Notes:
+            If @verbose is 2, detailed citation list will be shown when downloading.
+            If @verbose is 1, how to show the list will be explained.
         """
         # Country level
         if verbose:
@@ -95,10 +101,14 @@ class COVID19DataHub(Term):
         c_df = c_df.rename(col_dict, axis=1).loc[:, columns]
         p_df = p_df.rename(col_dict, axis=1).loc[:, columns]
         df = pd.concat([c_df, p_df], axis=0, ignore_index=True)
-        if verbose:
-            print("\nDetailed citaition list:")
-            print(self.primary_list)
-            print("\n\n")
+        if isinstance(verbose, int):
+            if verbose >= 2:
+                print("\nDetailed citaition list:")
+                print(self.primary_list)
+            else:
+                print(
+                    "\nPlease set verbose=2 and force=True to see the detailed citation list.")
+            print("\n")
         return df
 
     def _download(self):
