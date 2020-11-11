@@ -119,13 +119,15 @@ class DataLoader(Term):
         Args:
             name (str): name of dataset, "jhu", "population" or "oxcgrt"
             basename (str): basename of CSV file to save records
-            verbose (bool): if True, the list of primary sources will be shown when downloading
+            verbose (int): level of verbosity
+
+        Notes:
+            If @verbose is 2, detailed citation list will be shown when downloading.
+            If @verbose is 1, how to show the list will be explained.
+            Citation of COVID-19 Data Hub will be set as JHUData.citation etc.
 
         Returns:
-            dict(str, covsirphy.CleaningBase):
-                - "jhu", covsirphy.JHUData: the number of cases
-                - "population", covsirphy.PopulationData: population values
-                - "oxcgrt", covsirphy.OxCGRTData: government responses
+            covsirphy.CleaningBase: the dataset
         """
         filename, force = self.dir_path.joinpath(basename), False
         if self.covid19dh is None:
@@ -139,17 +141,22 @@ class DataLoader(Term):
         Return the list of primary sources of COVID-19 Data Hub.
         """
         if self.covid19dh is None:
-            self._covid19dh(name="jhu", verbose=False)
+            self._covid19dh(name="jhu", verbose=0)
         return self.covid19dh.primary
 
-    def jhu(self, basename="covid19dh.csv", local_file=None, verbose=True):
+    def jhu(self, basename="covid19dh.csv", local_file=None, verbose=1):
         """
         Load the dataset regarding the number of cases using local CSV file or COVID-19 Data Hub.
 
         Args:
             basename (str or None): basename of the file to save the data
             local_file (str or None): if not None, load the data from this file
-            verbose (bool): if True, detailed citation list will be shown when downloading
+            verbose (int): level of verbosity
+
+        Notes:
+            If @verbose is 2, detailed citation list will be shown when downloading.
+            If @verbose is 1, how to show the list will be explained.
+            Citation of COVID-19 Data Hub will be set as JHUData.citation.
 
         Returns:
             covsirphy.JHUData: dataset regarding the number of cases
@@ -158,14 +165,19 @@ class DataLoader(Term):
             return JHUData(filename=local_file)
         return self._covid19dh(name="jhu", basename=basename, verbose=verbose)
 
-    def population(self, basename="covid19dh.csv", local_file=None, verbose=True):
+    def population(self, basename="covid19dh.csv", local_file=None, verbose=1):
         """
         Load the dataset regarding population values using local CSV file or COVID-19 Data Hub.
 
         Args:
             basename (str or None): basename of the file to save the data
             local_file (str or None): if not None, load the data from this file
-            verbose (bool): if True, detailed citation list will be shown when downloading
+            verbose (int): level of verbosity
+
+        Notes:
+            If @verbose is 2, detailed citation list will be shown when downloading.
+            If @verbose is 1, how to show the list will be explained.
+            Citation of COVID-19 Data Hub will be set as PopulationData.citation.
 
         Returns:
             covsirphy.PopulationData: dataset regarding population values
@@ -181,7 +193,12 @@ class DataLoader(Term):
         Args:
             basename (str or None): basename of the file to save the data
             local_file (str or None): if not None, load the data from this file
-            verbose (bool): if True, detailed citation list will be shown when downloading
+            verbose (int): level of verbosity
+
+        Notes:
+            If @verbose is 2, detailed citation list will be shown when downloading.
+            If @verbose is 1, how to show the list will be explained.
+            Citation of COVID-19 Data Hub will be set as OxCGRTData.citation.
 
         Returns:
             covsirphy.JHUData: dataset regarding OxCGRT data
