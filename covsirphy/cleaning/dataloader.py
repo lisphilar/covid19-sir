@@ -186,7 +186,7 @@ class DataLoader(Term):
             return PopulationData(filename=local_file)
         return self._covid19dh(name="population", basename=basename, verbose=verbose)
 
-    def oxcgrt(self, basename="covid19dh.csv", local_file=None, verbose=True):
+    def oxcgrt(self, basename="covid19dh.csv", local_file=None, verbose=1):
         """
         Load the dataset regarding OxCGRT data using local CSV file or COVID-19 Data Hub.
 
