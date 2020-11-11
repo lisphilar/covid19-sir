@@ -101,8 +101,8 @@ class COVID19DataHub(Term):
         c_df = c_df.rename(col_dict, axis=1).loc[:, columns]
         p_df = p_df.rename(col_dict, axis=1).loc[:, columns]
         df = pd.concat([c_df, p_df], axis=0, ignore_index=True)
-        if isinstance(verbose, int):
-            if verbose >= 2:
+        if verbose:
+            if isinstance(verbose, int) and verbose >= 2:
                 print("\nDetailed citaition list:")
                 print(self.primary_list)
             else:
