@@ -62,14 +62,9 @@ class ChangeFinder(Term):
         # Convert index to serial numbers
         serial_df = pd.DataFrame(np.arange(1, df.index.max() + 1, 1))
         serial_df.index += 1
-        df = pd.merge(
-            df, serial_df, left_index=True, right_index=True, how="outer")
+        df = df.join(serial_df, how="outer")
         series = df.reset_index(drop=True).iloc[:, 0]
-        series = series.interpolate(limit_direction="both")
-        # Sampling to reduce run-time of Ruptures
-        samples = np.linspace(
-            0, series.index.max(), len(self.sr_df), dtype=np.int64)
-        series = series[samples]
+        series = series.dropna()
         # Detection with Ruptures
         algorithm = rpt.Pelt(model="rbf", jump=1, min_size=self.min_size)
         results = algorithm.fit_predict(series.values, pen=0.5)
