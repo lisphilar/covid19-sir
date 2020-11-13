@@ -92,7 +92,7 @@ class TestPhaseSeries(object):
         series.trend(sr_df, show_figure=False)
         # Un-registered phase
         with pytest.raises(KeyError):
-            series.unit("10th")
+            series.unit("100th")
 
     @pytest.mark.parametrize("country", ["Japan"])
     def test_add_phase_with_model(self, jhu_data, population_data, country):
