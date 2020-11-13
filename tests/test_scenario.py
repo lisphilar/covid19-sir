@@ -272,7 +272,7 @@ class TestScenario(object):
         snl.trend(show_figure=False)
         # Retrospective analysis
         snl.retrospective(
-            "01May2020", model=SIR, control="Main", target="Retrospective")
+            "01May2020", model=SIR, control="Main", target="Retrospective", timeout=10)
 
     @pytest.mark.parametrize("country", ["Greece"])
     def test_complement(self, jhu_data, population_data, country):
