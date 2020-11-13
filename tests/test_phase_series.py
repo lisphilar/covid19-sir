@@ -92,7 +92,7 @@ class TestPhaseSeries(object):
         series.trend(sr_df, show_figure=False)
         # Un-registered phase
         with pytest.raises(KeyError):
-            series.unit("10th")
+            series.unit("100th")
 
     @pytest.mark.parametrize("country", ["Japan"])
     def test_add_phase_with_model(self, jhu_data, population_data, country):
@@ -143,36 +143,39 @@ class TestPhaseSeries(object):
     def test_replace(self, jhu_data, population_data, country):
         # Setting
         population = population_data.value(country)
-        sr_df = jhu_data.to_sr(country=country, population=population)
         series = PhaseSeries("01Apr2020", "01Aug2020", population)
-        series.trend(sr_df, show_figure=False)
+        series.add(end_date="01May2020")
+        series.add(end_date="01Jun2020")
+        series.add(end_date="01Jul2020")
+        series.add()
         # Replace one old phase with one new phase
-        unit_old = series.unit("2nd")
+        unit_old = series.unit("0th")
         unit_new = PhaseUnit(
             unit_old.start_date, unit_old.end_date, population
         )
         unit_new.set_ode(tau=360)
-        series.replace("2nd", unit_new)
-        assert series.unit("2nd") == unit_new
+        series.replace("0th", unit_new)
+        assert series.unit("0th") == unit_new
         # Replace one old phase with two new phases
-        unit_old = series.unit("2nd")
+
+        unit_old = series.unit("1st")
         change_date = Term.date_change(unit_old.end_date, days=-7)
         unit_pre = PhaseUnit(
             unit_old.start_date, Term.yesterday(change_date), population)
         unit_pre.set_ode(tau=360)
         unit_fol = PhaseUnit(change_date, unit_old.end_date, population)
         unit_fol.set_ode(tau=360)
-        series.replaces(phase="2nd", new_list=[unit_pre, unit_fol])
-        print(series.unit("2nd"), unit_pre)
-        assert series.unit("2nd") == unit_pre
-        assert series.unit("3rd") == unit_fol
+        series.replaces(phase="1st", new_list=[unit_pre, unit_fol])
+        print(series.unit("1st"), unit_pre)
+        assert series.unit("1st") == unit_pre
+        assert series.unit("2nd") == unit_fol
         # TypeError of new_list
         with pytest.raises(TypeError):
-            series.replaces(phase="2nd", new_list=[unit_pre, Term])
+            series.replaces(phase="3rd", new_list=[unit_pre, Term])
         # ValueError with tense
         with pytest.raises(ValueError):
             future_unit = PhaseUnit("01Sep2020", "01Dec2020", population)
-            series.replaces(phase="2nd", new_list=[future_unit])
+            series.replaces(phase="3rd", new_list=[future_unit])
         # Add phase without deletion of any phases
         new1 = PhaseUnit("02Aug2020", "01Sep2020", population)
         new2 = PhaseUnit("02Sep2020", "01Oct2020", population)

@@ -182,7 +182,7 @@ class TestScenario(object):
         # To markdown
         snl.summary().to_markdown()
 
-    @pytest.mark.parametrize("country", ["Greece"])
+    @pytest.mark.parametrize("country", ["Japan"])
     def test_estimate(self, jhu_data, population_data, country):
         warnings.simplefilter("ignore", category=UserWarning)
         # Setting
@@ -194,7 +194,7 @@ class TestScenario(object):
         snl.trend(include_init_phase=True, show_figure=False)
         snl.disable(phases=["0th"])
         with pytest.raises(AttributeError):
-            snl.estimate_history(phase="1th")
+            snl.estimate_history(phase="last")
         # Parameter estimation
         with pytest.raises(KeyError):
             snl.estimate(SIR, phases=["30th"])
@@ -207,7 +207,7 @@ class TestScenario(object):
             snl.estimate(model=SIR, phases=["0th"])
         snl.clear(include_past=True)
         snl.trend(show_figure=False)
-        snl.estimate(SIR)
+        snl.estimate(SIR, timeout=20)
         # Estimation history
         snl.estimate_history(phase="1st")
         # Estimation accuracy
@@ -223,7 +223,7 @@ class TestScenario(object):
         snl = Scenario(jhu_data, population_data, country)
         snl.trend(show_figure=False)
         with pytest.raises(ValueError):
-            snl.estimate(SIR, tau=1440)
+            snl.estimate(SIR, tau=1440, timeout=20)
 
     @pytest.mark.parametrize("country", ["Japan"])
     def test_simulate(self, jhu_data, population_data, country):
@@ -232,13 +232,13 @@ class TestScenario(object):
         # Setting
         snl = Scenario(jhu_data, population_data, country)
         snl.first_date = "01Apr2020"
-        snl.last_date = "01Aug2020"
+        snl.last_date = "01May2020"
         snl.trend(show_figure=False)
         # Parameter estimation
         with pytest.raises(ValueError):
             # Deprecated
             snl.param_history(["rho"])
-        snl.estimate(SIR)
+        snl.estimate(SIR, timeout=10)
         # Simulation
         snl.simulate()
         # Parameter history (Deprecated)
@@ -268,11 +268,11 @@ class TestScenario(object):
         # Setting
         snl = Scenario(jhu_data, population_data, country)
         snl.first_date = "01Apr2020"
-        snl.last_date = "19Oct2020"
+        snl.last_date = "01Jun2020"
         snl.trend(show_figure=False)
         # Retrospective analysis
         snl.retrospective(
-            "01Sep2020", model=SIR, control="Main", target="Retrospective")
+            "01May2020", model=SIR, control="Main", target="Retrospective")
 
     @pytest.mark.parametrize("country", ["Greece"])
     def test_complement(self, jhu_data, population_data, country):
@@ -295,7 +295,7 @@ class TestScenario(object):
     def test_score(self, jhu_data, population_data, country):
         snl = Scenario(jhu_data, population_data, country)
         snl.trend(show_figure=False)
-        snl.estimate(SIRF)
+        snl.estimate(SIRF, timeout=10)
         metrics_list = ["MAE", "MSE", "MSLE", "RMSE", "RMSLE"]
         for metrics in metrics_list:
             score = snl.score(metrics=metrics)
@@ -311,7 +311,7 @@ class TestScenario(object):
             snl.score()
         all_phases = snl.summary().index.tolist()
         snl.disable(phases=all_phases[:-2])
-        snl.estimate(SIRF)
+        snl.estimate(SIRF, timeout=10)
         with pytest.raises(TypeError):
             snl.score(variables="Infected")
         with pytest.raises(KeyError):
