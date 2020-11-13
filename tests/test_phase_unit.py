@@ -110,7 +110,7 @@ class TestPhaseUnit(object):
             unit.estimate()
         unit.record_df = record_df
         assert set(unit.record_df.columns) == set(Term.SUB_COLUMNS)
-        unit.estimate()
+        unit.estimate(timeout=20)
         # Check results
         assert isinstance(unit.estimator, Estimator)
         assert set(SIR.PARAMETERS).issubset(unit.to_dict())
