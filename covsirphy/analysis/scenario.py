@@ -1041,7 +1041,7 @@ class Scenario(Term):
             )
         return df
 
-    def retrospective(self, beginning_date, model, control="Main", target="Target", **args):
+    def retrospective(self, beginning_date, model, control="Main", target="Target", **kwargs):
         """
         Perform retrospective analysis.
         Compare the actual series of phases (control) and
@@ -1052,12 +1052,15 @@ class Scenario(Term):
             model (covsirphy.ModelBase): ODE model
             control (str): scenario name of control
             target (str): scenario name of target
-            **args: keyword argument of parameters
+            kwargs: keyword argument of parameter values and Estimator.run()
 
         Notes:
             When parameter values are not specified,
             actual values of the last date before the beginning date will be used.
         """
+        param_dict = {k: v for (k, v) in kwargs.items()
+                      if k in model.PARAMETERS}
+        est_kwargs = dict(kwargs.items() - param_dict.items())
         # Control
         self.clear(name=control, include_past=True)
         self.trend(name=control, show_figure=False)
@@ -1070,7 +1073,7 @@ class Scenario(Term):
         ]
         if beginning_date not in sep_dates:
             self.separate(beginning_date, name=control)
-        self.estimate(model, name=control)
+        self.estimate(model, name=control, **est_kwargs)
         # Target
         self.clear(name=target, include_past=False, template=control)
         phases_changed = [
@@ -1078,8 +1081,8 @@ class Scenario(Term):
             if ph >= beginning_date
         ]
         self.delete(phases_changed, name=target)
-        self.add(name=target, **args)
-        self.estimate(model, name=target)
+        self.add(name=target, **param_dict)
+        self.estimate(model, name=target, **est_kwargs)
 
     def score(self, metrics="RMSLE", variables=None, name="Main", y0_dict=None):
         """
