@@ -88,8 +88,8 @@ class Estimator(Term):
             sampler=optuna.samplers.TPESampler(seed=seed)
         )
 
-    def run(self, timeout=60, reset_n_max=3,
-            timeout_iteration=5, allowance=(0.98, 1.02), seed=0, **kwargs):
+    def run(self, timeout=180, reset_n_max=3,
+            timeout_iteration=10, allowance=(0.98, 1.02), seed=0, **kwargs):
         """
         Run optimization.
         If the result satisfied the following conditions, optimization ends.
