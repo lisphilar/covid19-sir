@@ -1136,14 +1136,8 @@ class Scenario(Term):
         """
         # Variables to use in calculation
         variables = variables or [self.CI, self.F, self.R]
-        if not isinstance(variables, list):
-            raise TypeError(
-                f"@variables must be a list of variable names, but {variables} was applied.")
-        if not set(variables).issubset(self.VALUE_COLUMNS):
-            usable_str = ", ".join(self.VALUE_COLUMNS)
-            selected_str = ", ".join(variables)
-            raise KeyError(
-                f"Only {usable_str} can be used in @variables, but {selected_str} was applied.")
+        variables = self.ensure_list(
+            variables, self.VALUE_COLUMNS, name="variables")
         # Metrics
         metrics_dict = {
             "MAE": sklearn.metrics.mean_absolute_error,
