@@ -320,6 +320,10 @@ class TestScenario(object):
         snl.disable(phases=all_phases[:-2])
         snl.estimate(SIRF, timeout=10)
         with pytest.raises(TypeError):
+            snl.score(phases="0th")
+        with pytest.raises(KeyError):
+            snl.score(phases=["100th"])
+        with pytest.raises(TypeError):
             snl.score(variables="Infected")
         with pytest.raises(KeyError):
             snl.score(variables=["Susceptible"])
