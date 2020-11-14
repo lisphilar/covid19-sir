@@ -280,13 +280,15 @@
 <span class="sd">        Args:</span>
 <span class="sd">            name (str): name of dataset, &quot;jhu&quot;, &quot;population&quot; or &quot;oxcgrt&quot;</span>
 <span class="sd">            basename (str): basename of CSV file to save records</span>
-<span class="sd">            verbose (bool): if True, the list of primary sources will be shown when downloading</span>
+<span class="sd">            verbose (int): level of verbosity</span>
+
+<span class="sd">        Notes:</span>
+<span class="sd">            If @verbose is 2, detailed citation list will be shown when downloading.</span>
+<span class="sd">            If @verbose is 1, how to show the list will be explained.</span>
+<span class="sd">            Citation of COVID-19 Data Hub will be set as JHUData.citation etc.</span>
 
 <span class="sd">        Returns:</span>
-<span class="sd">            dict(str, covsirphy.CleaningBase):</span>
-<span class="sd">                - &quot;jhu&quot;, covsirphy.JHUData: the number of cases</span>
-<span class="sd">                - &quot;population&quot;, covsirphy.PopulationData: population values</span>
-<span class="sd">                - &quot;oxcgrt&quot;, covsirphy.OxCGRTData: government responses</span>
+<span class="sd">            covsirphy.CleaningBase: the dataset</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">filename</span><span class="p">,</span> <span class="n">force</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dir_path</span><span class="o">.</span><span class="n">joinpath</span><span class="p">(</span><span class="n">basename</span><span class="p">),</span> <span class="kc">False</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">covid19dh</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
@@ -300,17 +302,22 @@
 <span class="sd">        Return the list of primary sources of COVID-19 Data Hub.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">covid19dh</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_covid19dh</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;jhu&quot;</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_covid19dh</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;jhu&quot;</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">covid19dh</span><span class="o">.</span><span class="n">primary</span>
 
-<div class="viewcode-block" id="DataLoader.jhu"><a class="viewcode-back" href="../../../covsirphy.cleaning.html#covsirphy.cleaning.dataloader.DataLoader.jhu">[docs]</a>    <span class="k">def</span> <span class="nf">jhu</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">basename</span><span class="o">=</span><span class="s2">&quot;covid19dh.csv&quot;</span><span class="p">,</span> <span class="n">local_file</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+<div class="viewcode-block" id="DataLoader.jhu"><a class="viewcode-back" href="../../../covsirphy.cleaning.html#covsirphy.cleaning.dataloader.DataLoader.jhu">[docs]</a>    <span class="k">def</span> <span class="nf">jhu</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">basename</span><span class="o">=</span><span class="s2">&quot;covid19dh.csv&quot;</span><span class="p">,</span> <span class="n">local_file</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Load the dataset regarding the number of cases using local CSV file or COVID-19 Data Hub.</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            basename (str or None): basename of the file to save the data</span>
 <span class="sd">            local_file (str or None): if not None, load the data from this file</span>
-<span class="sd">            verbose (bool): if True, detailed citation list will be shown when downloading</span>
+<span class="sd">            verbose (int): level of verbosity</span>
+
+<span class="sd">        Notes:</span>
+<span class="sd">            If @verbose is 2, detailed citation list will be shown when downloading.</span>
+<span class="sd">            If @verbose is 1, how to show the list will be explained.</span>
+<span class="sd">            Citation of COVID-19 Data Hub will be set as JHUData.citation.</span>
 
 <span class="sd">        Returns:</span>
 <span class="sd">            covsirphy.JHUData: dataset regarding the number of cases</span>
@@ -319,14 +326,19 @@
             <span class="k">return</span> <span class="n">JHUData</span><span class="p">(</span><span class="n">filename</span><span class="o">=</span><span class="n">local_file</span><span class="p">)</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_covid19dh</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;jhu&quot;</span><span class="p">,</span> <span class="n">basename</span><span class="o">=</span><span class="n">basename</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="n">verbose</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="DataLoader.population"><a class="viewcode-back" href="../../../covsirphy.cleaning.html#covsirphy.cleaning.dataloader.DataLoader.population">[docs]</a>    <span class="k">def</span> <span class="nf">population</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">basename</span><span class="o">=</span><span class="s2">&quot;covid19dh.csv&quot;</span><span class="p">,</span> <span class="n">local_file</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+<div class="viewcode-block" id="DataLoader.population"><a class="viewcode-back" href="../../../covsirphy.cleaning.html#covsirphy.cleaning.dataloader.DataLoader.population">[docs]</a>    <span class="k">def</span> <span class="nf">population</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">basename</span><span class="o">=</span><span class="s2">&quot;covid19dh.csv&quot;</span><span class="p">,</span> <span class="n">local_file</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Load the dataset regarding population values using local CSV file or COVID-19 Data Hub.</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            basename (str or None): basename of the file to save the data</span>
 <span class="sd">            local_file (str or None): if not None, load the data from this file</span>
-<span class="sd">            verbose (bool): if True, detailed citation list will be shown when downloading</span>
+<span class="sd">            verbose (int): level of verbosity</span>
+
+<span class="sd">        Notes:</span>
+<span class="sd">            If @verbose is 2, detailed citation list will be shown when downloading.</span>
+<span class="sd">            If @verbose is 1, how to show the list will be explained.</span>
+<span class="sd">            Citation of COVID-19 Data Hub will be set as PopulationData.citation.</span>
 
 <span class="sd">        Returns:</span>
 <span class="sd">            covsirphy.PopulationData: dataset regarding population values</span>
@@ -335,14 +347,19 @@
             <span class="k">return</span> <span class="n">PopulationData</span><span class="p">(</span><span class="n">filename</span><span class="o">=</span><span class="n">local_file</span><span class="p">)</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_covid19dh</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;population&quot;</span><span class="p">,</span> <span class="n">basename</span><span class="o">=</span><span class="n">basename</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="n">verbose</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="DataLoader.oxcgrt"><a class="viewcode-back" href="../../../covsirphy.cleaning.html#covsirphy.cleaning.dataloader.DataLoader.oxcgrt">[docs]</a>    <span class="k">def</span> <span class="nf">oxcgrt</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">basename</span><span class="o">=</span><span class="s2">&quot;covid19dh.csv&quot;</span><span class="p">,</span> <span class="n">local_file</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+<div class="viewcode-block" id="DataLoader.oxcgrt"><a class="viewcode-back" href="../../../covsirphy.cleaning.html#covsirphy.cleaning.dataloader.DataLoader.oxcgrt">[docs]</a>    <span class="k">def</span> <span class="nf">oxcgrt</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">basename</span><span class="o">=</span><span class="s2">&quot;covid19dh.csv&quot;</span><span class="p">,</span> <span class="n">local_file</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Load the dataset regarding OxCGRT data using local CSV file or COVID-19 Data Hub.</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            basename (str or None): basename of the file to save the data</span>
 <span class="sd">            local_file (str or None): if not None, load the data from this file</span>
-<span class="sd">            verbose (bool): if True, detailed citation list will be shown when downloading</span>
+<span class="sd">            verbose (int): level of verbosity</span>
+
+<span class="sd">        Notes:</span>
+<span class="sd">            If @verbose is 2, detailed citation list will be shown when downloading.</span>
+<span class="sd">            If @verbose is 1, how to show the list will be explained.</span>
+<span class="sd">            Citation of COVID-19 Data Hub will be set as OxCGRTData.citation.</span>
 
 <span class="sd">        Returns:</span>
 <span class="sd">            covsirphy.JHUData: dataset regarding OxCGRT data</span>

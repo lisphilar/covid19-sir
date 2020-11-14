@@ -680,12 +680,13 @@ If the last phase is not included, the dates will be assigned to the previous ph
 
 <dl class="py method">
 <dt id="covsirphy.analysis.scenario.Scenario.history">
-<code class="sig-name descname">history</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">target</span></em>, <em class="sig-param"><span class="n">y0_dict</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">show_figure</span><span class="o">=</span><span class="default_value">True</span></em>, <em class="sig-param"><span class="n">filename</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/analysis/scenario.html#Scenario.history"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#covsirphy.analysis.scenario.Scenario.history" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">history</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">target</span></em>, <em class="sig-param"><span class="n">with_actual</span><span class="o">=</span><span class="default_value">True</span></em>, <em class="sig-param"><span class="n">y0_dict</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">show_figure</span><span class="o">=</span><span class="default_value">True</span></em>, <em class="sig-param"><span class="n">filename</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/analysis/scenario.html#Scenario.history"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#covsirphy.analysis.scenario.Scenario.history" title="Permalink to this definition">¶</a></dt>
 <dd><p>Show the history of variables and parameter values to compare scenarios.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>target</strong> (<em>str</em>) – parameter or variable to show (Rt etc.)</p></li>
+<li><p><strong>target</strong> (<em>str</em>) – parameter or variable name to show (Rt, Infected etc.)</p></li>
+<li><p><strong>with_actual</strong> (<em>bool</em>) – if True and &#64;target is a variable name, show actual number of cases</p></li>
 <li><p><strong>y0_dict</strong> (<em>dict</em><em> or </em><em>None</em>) – dictionary of initial values or None
 - key (str): variable name
 - value (float): initial value</p></li>
@@ -793,7 +794,7 @@ If complement was performed by Scenario.complement() or Scenario(auto_complement
 
 <dl class="py method">
 <dt id="covsirphy.analysis.scenario.Scenario.retrospective">
-<code class="sig-name descname">retrospective</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">beginning_date</span></em>, <em class="sig-param"><span class="n">model</span></em>, <em class="sig-param"><span class="n">control</span><span class="o">=</span><span class="default_value">'Main'</span></em>, <em class="sig-param"><span class="n">target</span><span class="o">=</span><span class="default_value">'Target'</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">args</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/analysis/scenario.html#Scenario.retrospective"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#covsirphy.analysis.scenario.Scenario.retrospective" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">retrospective</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">beginning_date</span></em>, <em class="sig-param"><span class="n">model</span></em>, <em class="sig-param"><span class="n">control</span><span class="o">=</span><span class="default_value">'Main'</span></em>, <em class="sig-param"><span class="n">target</span><span class="o">=</span><span class="default_value">'Target'</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/analysis/scenario.html#Scenario.retrospective"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#covsirphy.analysis.scenario.Scenario.retrospective" title="Permalink to this definition">¶</a></dt>
 <dd><p>Perform retrospective analysis.
 Compare the actual series of phases (control) and
 series of phases with specified parameters (target).</p>
@@ -804,7 +805,7 @@ series of phases with specified parameters (target).</p>
 <li><p><strong>model</strong> (<em>covsirphy.ModelBase</em>) – ODE model</p></li>
 <li><p><strong>control</strong> (<em>str</em>) – scenario name of control</p></li>
 <li><p><strong>target</strong> (<em>str</em>) – scenario name of target</p></li>
-<li><p><strong>**args</strong> – keyword argument of parameters</p></li>
+<li><p><strong>kwargs</strong> – keyword argument of parameter values and Estimator.run()</p></li>
 </ul>
 </dd>
 </dl>
@@ -925,13 +926,16 @@ If &#64;columns is None, all columns will be shown.</p>
 
 <dl class="py method">
 <dt id="covsirphy.analysis.scenario.Scenario.track">
-<code class="sig-name descname">track</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">y0_dict</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/analysis/scenario.html#Scenario.track"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#covsirphy.analysis.scenario.Scenario.track" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">track</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">with_actual</span><span class="o">=</span><span class="default_value">True</span></em>, <em class="sig-param"><span class="n">y0_dict</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/analysis/scenario.html#Scenario.track"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#covsirphy.analysis.scenario.Scenario.track" title="Permalink to this definition">¶</a></dt>
 <dd><p>Show values of parameters and variables in one dataframe.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>y0_dict</strong> (<em>dict</em><em> or </em><em>None</em>) – dictionary of initial values or None
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>with_actual</strong> (<em>bool</em>) – if True, show actual number of cases will included as “Actual” scenario</p></li>
+<li><p><strong>y0_dict</strong> (<em>dict</em><em> or </em><em>None</em>) – dictionary of initial values or None
 - key (str): variable name
-- value (float): initial value</p>
+- value (float): initial value</p></li>
+</ul>
 </dd>
 <dt class="field-even">Returns</dt>
 <dd class="field-even"><p><p>Index: reset index
