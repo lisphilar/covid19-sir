@@ -1196,18 +1196,13 @@ class Scenario(Term):
         ignored_phases = []
         if phases is not None:
             try:
-                phase_set = set(phases)
+                sel_set = set(phases)
             except TypeError:
                 raise TypeError(
                     f"{phases} must be a list of phases or None, but {phases} was applied."
                 ) from None
             all_phases = [unit for unit in self._series_dict[name] if unit]
-            if not phase_set.issubset(all_phases):
-                all_str = ", ".join(all_phases)
-                sel_str = ", ".join(phases)
-                raise KeyError(
-                    f"@phases should ne selected from {all_str}, but {sel_str} was applied.")
-            ignored_phases = list(set(all_phases) - phase_set)
+            ignored_phases = list(set(all_phases) - sel_set)
             self.disable(ignored_phases, name=name)
         score = self._score(
             metrics=metrics, variables=variables, name=name, y0_dict=y0_dict)
