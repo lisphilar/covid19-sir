@@ -40,7 +40,7 @@ def main():
     sim_df = snl.simulate(name="Main", filename=figpath("simulate"))
     save_df(sim_df, "simulate", output_dir, abbr, use_index=False)
     # Parameter history
-    for item in ["Rt", "rho", "sigma", "Infected"]:
+    for item in ["Rt", "rho", "sigma", "Confirmed", "Infected", "Recovered", "Fatal"]:
         snl.history(item, filename=figpath(f"history_{item.lower()}"))
     # Change rate of parameters in main scenario
     snl.history_rate(name="Main", filename=figpath("history_rate"))
