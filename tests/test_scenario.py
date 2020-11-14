@@ -297,16 +297,15 @@ class TestScenario(object):
 
     @pytest.mark.parametrize("country", ["Italy"])
     def test_score(self, jhu_data, population_data, country):
-        snl = Scenario(jhu_data, population_data, country, tau=360)
+        snl = Scenario(jhu_data, population_data, country)
         snl.trend(show_figure=False)
+        all_phases = snl.summary().index.tolist()
+        snl.disable(all_phases[:-1])
         snl.estimate(SIRF, timeout=10)
         metrics_list = ["MAE", "MSE", "MSLE", "RMSE", "RMSLE"]
         for metrics in metrics_list:
             score = snl.score(metrics=metrics)
             assert isinstance(score, float)
-        # Selected phases
-        all_phases = snl.summary().index.tolist()
-        snl.score(phases=all_phases[:-2])
 
     @pytest.mark.parametrize("country", ["Italy"])
     def test_score_error(self, jhu_data, population_data, country):
