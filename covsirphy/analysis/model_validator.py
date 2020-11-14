@@ -45,7 +45,7 @@ class ModelValidator(Term):
         # To avoid "imported but unused"
         self.__swifter = swifter
 
-    def run(self, model, timeout=60, allowance=(0.98, 1.02), n_jobs=-1):
+    def run(self, model, timeout=180, allowance=(0.98, 1.02), n_jobs=-1):
         """
         Execute model validation.
 
