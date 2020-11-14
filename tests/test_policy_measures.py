@@ -32,7 +32,8 @@ class TestPolicyMeasures(object):
         # Phase length
         phase_len_dict = analyser.phase_len()
         assert isinstance(phase_len_dict, dict)
-        assert isinstance(phase_len_dict[1], list)
+        assert isinstance(
+            max(phase_len_dict.items(), key=lambda x: x[0])[1], list)
         # Select two countries
         phase_len_dict = analyser.phase_len()
         countries_all = [
