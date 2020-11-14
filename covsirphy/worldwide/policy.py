@@ -294,7 +294,7 @@ class PolicyMeasures(Term):
         df = df.explode(self.DATE)
         cols = [
             self.DATE, self.COUNTRY, *self.model.PARAMETERS, *self.model.DAY_PARAMETERS, self.RT]
-        param_df = df.loc[:, cols]
+        param_df = df.reindex(cols)
         # OxCGRT
         oxcgrt_df = self.oxcgrt_data.cleaned()
         sel = oxcgrt_df[self.COUNTRY].isin(self._countries)
