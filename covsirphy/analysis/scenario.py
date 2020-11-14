@@ -1195,14 +1195,19 @@ class Scenario(Term):
         """
         ignored_phases = []
         if phases is not None:
-            try:
-                sel_set = set(phases)
-            except TypeError:
+            if not isinstance(phases, (list, set)):
                 raise TypeError(
-                    f"{phases} must be a list of phases or None, but {phases} was applied."
-                ) from None
-            all_phases = [unit for unit in self._series_dict[name] if unit]
-            ignored_phases = list(set(all_phases) - sel_set)
+                    f"@phases must be a list of phases or None, but {phases} was applied.")
+            sel_set = set(phases)
+            df = self.summary(name=name)
+            all_set = set(df.loc[df[self.TENSE] == self.PAST].index)
+            if not sel_set.issubset(all_set):
+                all_str = ", ".join(list(all_set))
+                sel_str = ", ".join(phases)
+                s = "was" if len(sel_str) == 1 else "were"
+                raise KeyError(
+                    f"Phases must be selected from {all_str}, but {sel_str} {s} applied.")
+            ignored_phases = list(all_set - sel_set)
             self.disable(ignored_phases, name=name)
         score = self._score(
             metrics=metrics, variables=variables, name=name, y0_dict=y0_dict)
