@@ -211,9 +211,9 @@ class TestScenario(object):
         snl.disable(all_phases[:-1])
         snl.estimate(SIR, timeout=10)
         # Estimation history
-        snl.estimate_history(phase="1st")
+        snl.estimate_history(phase="last")
         # Estimation accuracy
-        snl.estimate_accuracy(phase="1st")
+        snl.estimate_accuracy(phase="last")
         # Get a value
         snl.get(Term.RT)
         with pytest.raises(KeyError):
