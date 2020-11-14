@@ -361,7 +361,7 @@ class Term(object):
                 f"@{name} must be a list or tuple, but {type(target)} was applied.")
         ok_list = [element in candidates for element in target]
         if not all(ok_list):
-            raise TypeError(
+            raise KeyError(
                 f"@{name} must be a sub-list of {candidate_str}, but {target} was applied.")
         return target
 
