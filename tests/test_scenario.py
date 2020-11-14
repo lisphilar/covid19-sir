@@ -207,11 +207,13 @@ class TestScenario(object):
             snl.estimate(model=SIR, phases=["0th"])
         snl.clear(include_past=True)
         snl.trend(show_figure=False)
+        all_phases = snl.summary().index.tolist()
+        snl.disable(all_phases[:-1])
         snl.estimate(SIR, timeout=10)
         # Estimation history
-        snl.estimate_history(phase="1st")
+        snl.estimate_history(phase="last")
         # Estimation accuracy
-        snl.estimate_accuracy(phase="1st")
+        snl.estimate_accuracy(phase="last")
         # Get a value
         snl.get(Term.RT)
         with pytest.raises(KeyError):
@@ -238,6 +240,8 @@ class TestScenario(object):
         with pytest.raises(ValueError):
             # Deprecated
             snl.param_history(["rho"])
+        all_phases = snl.summary().index.tolist()
+        snl.disable(all_phases[:-2])
         snl.estimate(SIR, timeout=10)
         # Simulation
         snl.simulate()
@@ -295,6 +299,8 @@ class TestScenario(object):
     def test_score(self, jhu_data, population_data, country):
         snl = Scenario(jhu_data, population_data, country)
         snl.trend(show_figure=False)
+        all_phases = snl.summary().index.tolist()
+        snl.disable(all_phases[:-1])
         snl.estimate(SIRF, timeout=10)
         metrics_list = ["MAE", "MSE", "MSLE", "RMSE", "RMSLE"]
         for metrics in metrics_list:

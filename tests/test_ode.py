@@ -92,7 +92,7 @@ class TestODE(object):
         # Setting
         validator = ModelValidator(n_trials=4, seed=1)
         # Execute validation
-        validator.run(model)
+        validator.run(model, timeout=10)
         validator.summary()
         with pytest.raises(ValueError):
             validator.run(model)
@@ -105,5 +105,5 @@ class TestODE(object):
         # Setting
         validator = ModelValidator(n_trials=1, seed=1)
         # Execute validation
-        validator.run(model)
+        validator.run(model, timeout=10)
         validator.summary()

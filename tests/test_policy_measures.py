@@ -21,18 +21,6 @@ class TestPolicyMeasures(object):
         with pytest.raises(KeyError):
             analyser.scenario("Moon")
         assert isinstance(analyser.countries, list)
-        # S-R trend analysis
-        analyser.trend()
-        min_len = max(analyser.phase_len().keys())
-        analyser.trend(min_len=min_len)
-        # Summarize
-        assert isinstance(analyser.summary(), pd.DataFrame)
-        with pytest.raises(TypeError):
-            analyser.summary(countries="Poland")
-        # Phase length
-        phase_len_dict = analyser.phase_len()
-        assert isinstance(phase_len_dict, dict)
-        assert isinstance(phase_len_dict[min_len], list)
 
     def test_analysis(self, jhu_data, population_data, oxcgrt_data):
         warnings.simplefilter("ignore", category=UserWarning)
@@ -41,14 +29,19 @@ class TestPolicyMeasures(object):
             jhu_data, population_data, oxcgrt_data, tau=360)
         # S-R trend analysis
         analyser.trend()
+        # Phase length
+        phase_len_dict = analyser.phase_len()
+        assert isinstance(phase_len_dict, dict)
+        assert isinstance(
+            max(phase_len_dict.items(), key=lambda x: x[0])[1], list)
         # Select two countries
         phase_len_dict = analyser.phase_len()
         countries_all = [
             country
-            for (num, countries) in sorted(phase_len_dict.items(), reverse=True)
+            for (_, countries) in sorted(phase_len_dict.items())
             for country in countries
         ]
-        analyser.countries = countries_all[-30:-28]
+        analyser.countries = countries_all[:2]
         # Parameter estimation
         with pytest.raises(ValueError):
             analyser.track()
@@ -62,6 +55,10 @@ class TestPolicyMeasures(object):
         # Parameter history of rho
         df = analyser.history("rho", roll_window=14, show_figure=False)
         assert isinstance(df, pd.DataFrame)
+        # Summarize
+        assert isinstance(analyser.summary(), pd.DataFrame)
+        with pytest.raises(TypeError):
+            analyser.summary(countries="Poland")
 
     def test_error(self, jhu_data, population_data, oxcgrt_data):
         warnings.simplefilter("ignore", category=UserWarning)
