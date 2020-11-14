@@ -1117,18 +1117,23 @@ class Scenario(Term):
         self.add(name=target, **param_dict)
         self.estimate(model, name=target, **est_kwargs)
 
-    def _score(self, metrics, variables, name, y0_dict):
+    def _compare_with_actual(self, variables, name, y0_dict):
         """
-        Evaluate accuracy of phase setting and parameter estimation of all phases.
+        Compare actual/simulated number of cases.
 
         Args:
-            metrics (str): "MAE", "MSE", "MSLE", "RMSE" or "RMSLE"
             variables (list[str] or None): variables to use in calculation
             name(str): phase series name. If 'Main', main PhaseSeries will be used
             y0_dict(dict[str, float] or None): dictionary of initial values of variables
 
         Returns:
-            float: score with the specified metrics
+            tuple(pandas.DataFrame, pandas.DataFrame):
+                - actual (pandas.DataFrame):
+                    Index: Date (pd.TimeStamp)
+                    Columns: variables defined by @variables
+                - simulated (pandas.DataFrame):
+                    Index: Date (pd.TimeStamp)
+                    Columns: variables defined by @variables
 
         Notes:
             If @variables is None, ["Infected", "Fatal", "Recovered"] will be used.
@@ -1138,15 +1143,7 @@ class Scenario(Term):
         variables = variables or [self.CI, self.F, self.R]
         variables = self.ensure_list(
             variables, self.VALUE_COLUMNS, name="variables")
-        # Metrics
-        metrics_dict = {
-            "MAE": sklearn.metrics.mean_absolute_error,
-            "MSE": sklearn.metrics.mean_squared_error,
-            "MSLE": sklearn.metrics.mean_squared_log_error,
-            "RMSE": lambda x1, x2: sklearn.metrics.mean_squared_error(x1, x2, squared=False),
-            "RMSLE": lambda x1, x2: np.sqrt(sklearn.metrics.mean_squared_log_error(x1, x2)),
-        }
-        # Calculation
+        # Actual/simulated number of cases
         record_df = self.record_df.copy().set_index(self.DATE)
         try:
             simulated_df = self.simulate(
@@ -1160,6 +1157,33 @@ class Scenario(Term):
         df = record_df.join(simulated_df, how="inner", rsuffix="_sim").dropna()
         rec_df = df.loc[:, variables]
         sim_df = df.loc[:, [f"{col}_sim" for col in variables]]
+        return (rec_df, sim_df)
+
+    def _score(self, metrics, rec_df, sim_df):
+        """
+        Evaluate accuracy of phase setting and parameter estimation of all phases.
+
+        Args:
+            metrics (str): "MAE", "MSE", "MSLE", "RMSE" or "RMSLE"
+            rec_df (pandas.DataFrame): actual number of cases
+                Index: Date (pd.TimeStamp)
+                Columns: variables defined by @variables
+            sim_df (pandas.DataFrame): simulated number of cases
+                Index: Date (pd.TimeStamp)
+                Columns: variables defined by @variables
+
+        Returns:
+            float: score with the specified metrics
+        """
+        # Metrics
+        metrics_dict = {
+            "MAE": sklearn.metrics.mean_absolute_error,
+            "MSE": sklearn.metrics.mean_squared_error,
+            "MSLE": sklearn.metrics.mean_squared_log_error,
+            "RMSE": lambda x1, x2: sklearn.metrics.mean_squared_error(x1, x2, squared=False),
+            "RMSLE": lambda x1, x2: np.sqrt(sklearn.metrics.mean_squared_log_error(x1, x2)),
+        }
+        # Scoring
         try:
             return metrics_dict[metrics.upper()](rec_df, sim_df)
         except KeyError:
@@ -1187,6 +1211,7 @@ class Scenario(Term):
             "Confirmed", "Infected", "Fatal" and "Recovered" can be used in @variables.
             If @phases is None, all phases will be used.
         """
+        # Select phases
         ignored_phases = []
         if phases is not None:
             df = self.summary(name=name)
@@ -1194,8 +1219,11 @@ class Scenario(Term):
             phases = self.ensure_list(phases, candidates, name="target")
             ignored_phases = list(set(candidates) - set(phases))
             self.disable(ignored_phases, name=name)
-        score = self._score(
-            metrics=metrics, variables=variables, name=name, y0_dict=y0_dict)
+        # Get the number of cases
+        rec_df, sim_df = self._compare_with_actual(
+            variables=variables, name=name, y0_dict=y0_dict)
+        # Calculate score
+        score = self._score(metrics=metrics, rec_df=rec_df, sim_df=sim_df)
         if ignored_phases:
             self.enable(ignored_phases, name=name)
         return score
