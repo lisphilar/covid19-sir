@@ -1117,7 +1117,7 @@ class Scenario(Term):
         self.add(name=target, **param_dict)
         self.estimate(model, name=target, **est_kwargs)
 
-    def score(self, metrics="RMSLE", variables=None, name="Main", y0_dict=None):
+    def _score(self, metrics, variables, name, y0_dict):
         """
         Evaluate accuracy of phase setting and parameter estimation of all phases.
 
@@ -1173,3 +1173,44 @@ class Scenario(Term):
             raise ValueError(
                 f"@metrics must be selected from {metrics_str}, but {metrics} was applied."
             ) from None
+
+    def score(self, metrics="RMSLE", variables=None, phases=None, name="Main", y0_dict=None):
+        """
+        Evaluate accuracy of phase setting and parameter estimation of all phases.
+
+        Args:
+            metrics (str): "MAE", "MSE", "MSLE", "RMSE" or "RMSLE"
+            variables (list[str] or None): variables to use in calculation
+            phases (list[str] or None): phases to use in calculation
+            name(str): phase series name. If 'Main', main PhaseSeries will be used
+            y0_dict(dict[str, float] or None): dictionary of initial values of variables
+
+        Returns:
+            float: score with the specified metrics
+
+        Notes:
+            If @variables is None, ["Infected", "Fatal", "Recovered"] will be used.
+            "Confirmed", "Infected", "Fatal" and "Recovered" can be used in @variables.
+            If @phases is None, all phases will be used.
+        """
+        ignored_phases = []
+        if phases is not None:
+            try:
+                phase_set = set(phases)
+            except TypeError:
+                raise TypeError(
+                    f"{phases} must be a list of phases or None, but {phases} was applied."
+                ) from None
+            all_phases = [unit for unit in self._series_dict[name] if unit]
+            if not phase_set.issubset(all_phases):
+                all_str = ", ".join(all_phases)
+                sel_str = ", ".join(phases)
+                raise KeyError(
+                    f"@phases should ne selected from {all_str}, but {sel_str} was applied.")
+            ignored_phases = list(set(all_phases) - phase_set)
+            self.disable(ignored_phases, name=name)
+        score = self._score(
+            metrics=metrics, variables=variables, name=name, y0_dict=y0_dict)
+        if ignored_phases:
+            self.enable(ignored_phases, name=name)
+        return score
