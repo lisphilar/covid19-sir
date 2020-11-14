@@ -942,11 +942,12 @@ class Scenario(Term):
             left_on=self.DATE, right_index=True, sort=True
         )
 
-    def track(self, y0_dict=None):
+    def track(self, with_actual=True, y0_dict=None):
         """
         Show values of parameters and variables in one dataframe.
 
         Args:
+            with_actual (bool): if True, show actual number of cases will included as "Actual" scenario
             y0_dict (dict or None): dictionary of initial values or None
                 - key (str): variable name
                 - value (float): initial value
@@ -969,14 +970,45 @@ class Scenario(Term):
             df = self._track(name=name, y0_dict=y0_dict)
             df.insert(0, self.SERIES, name)
             append(df)
+        if with_actual:
+            df = self.records(show_figure=False)
+            df.insert(0, self.SERIES, self.ACTUAL)
+            append(df)
         return pd.concat(dataframes, axis=0, sort=False)
 
-    def history(self, target, y0_dict=None, show_figure=True, filename=None):
+    def _history(self, target, with_actual=True, y0_dict=None):
         """
         Show the history of variables and parameter values to compare scenarios.
 
         Args:
-            target (str): parameter or variable to show (Rt etc.)
+            target (str): parameter or variable name to show (Rt, Infected etc.)
+            with_actual (bool): if True and @target is a variable name, show actual number of cases
+            y0_dict (dict or None): dictionary of initial values or None
+                - key (str): variable name
+                - value (float): initial value
+
+        Returns:
+            pandas.DataFrame
+        """
+        # Include actual data or not
+        with_actual = with_actual and target in self.VALUE_COLUMNS
+        # Get tracking data
+        df = self.track(with_actual=with_actual, y0_dict=y0_dict)
+        if target not in df.columns:
+            col_str = ", ".join(list(df.columns))
+            raise KeyError(
+                f"@target must be selected from {col_str}, but {target} was applied.")
+        # Select the records of target variable
+        return df.pivot_table(
+            values=target, index=self.DATE, columns=self.SERIES, aggfunc="last")
+
+    def history(self, target, with_actual=True, y0_dict=None, show_figure=True, filename=None):
+        """
+        Show the history of variables and parameter values to compare scenarios.
+
+        Args:
+            target (str): parameter or variable name to show (Rt, Infected etc.)
+            with_actual (bool): if True and @target is a variable name, show actual number of cases
             y0_dict (dict or None): dictionary of initial values or None
                 - key (str): variable name
                 - value (float): initial value
@@ -986,25 +1018,26 @@ class Scenario(Term):
         Returns:
             pandas.DataFrame
         """
-        df = self.track(y0_dict=y0_dict)
-        if target not in df.columns:
-            col_str = ", ".join(list(df.columns))
-            raise KeyError(
-                f"@target must be selected from {col_str}, but {target} was applied.")
-        df = df.pivot_table(
-            values=target, index=self.DATE, columns=self.SERIES, aggfunc="last"
+        df = self._history(
+            target=target, with_actual=with_actual, y0_dict=y0_dict)
+        if not show_figure:
+            return df
+        if target == self.RT:
+            ylabel = self.RT_FULL
+        elif target in self.VALUE_COLUMNS:
+            ylabel = f"The number of {target.lower()} cases"
+        else:
+            ylabel = target
+        series = self._series_dict[self.MAIN]
+        change_dates = [unit.start_date for unit in series][1:]
+        title = f"{self.area}: {ylabel} over time"
+        line_plot(
+            df, title, ylabel=ylabel,
+            h=1.0 if target == self.RT else None,
+            v=change_dates,
+            math_scale=False,
+            filename=filename
         )
-        if show_figure:
-            series = self._series_dict["Main"]
-            change_dates = [unit.start_date for unit in series][1:]
-            title = f"{self.area}: {self.RT_FULL if target == self.RT else target} over time"
-            line_plot(
-                df, title, ylabel=target,
-                h=1.0 if target == self.RT else None,
-                v=change_dates,
-                math_scale=False,
-                filename=filename
-            )
         return df
 
     def history_rate(self, params=None, name="Main", show_figure=True, filename=None):

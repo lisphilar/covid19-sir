@@ -48,11 +48,11 @@ class TestPolicyMeasures(object):
             for (num, countries) in sorted(phase_len_dict.items(), reverse=True)
             for country in countries
         ]
-        analyser.countries = countries_all[:2]
+        analyser.countries = countries_all[-30:-28]
         # Parameter estimation
         with pytest.raises(ValueError):
             analyser.track()
-        analyser.estimate(SIRF, timeout=10)
+        analyser.estimate(SIRF, timeout=5)
         assert isinstance(analyser.summary(), pd.DataFrame)
         # Parameter history of Rt
         with pytest.raises(KeyError):

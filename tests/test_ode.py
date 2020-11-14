@@ -103,7 +103,7 @@ class TestODE(object):
         [SIRD, SIRF])
     def test_validation(self, model):
         # Setting
-        validator = ModelValidator(n_trials=4, seed=1)
+        validator = ModelValidator(n_trials=1, seed=1)
         # Execute validation
         validator.run(model)
         validator.summary()

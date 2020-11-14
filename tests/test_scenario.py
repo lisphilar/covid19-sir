@@ -207,7 +207,7 @@ class TestScenario(object):
             snl.estimate(model=SIR, phases=["0th"])
         snl.clear(include_past=True)
         snl.trend(show_figure=False)
-        snl.estimate(SIR, timeout=20)
+        snl.estimate(SIR, timeout=10)
         # Estimation history
         snl.estimate_history(phase="1st")
         # Estimation accuracy
