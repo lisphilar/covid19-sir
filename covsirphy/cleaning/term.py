@@ -338,6 +338,33 @@ class Term(object):
             raise TypeError(s)
         return target
 
+    @staticmethod
+    def ensure_list(target, candidates, name="target"):
+        """
+        Ensure the target is a sub-list of the candidates.
+
+        Args:
+            target (list[object]): target to ensure
+            candidates (list[object]): list of candidates
+            name (str): argument name of the target
+
+        Returns:
+            object: as-is target
+        """
+        try:
+            candidate_str = ", ".join(candidates)
+        except TypeError:
+            raise TypeError(
+                f"@candidates must be a list, but {candidates} was applied.")
+        if not isinstance(target, (list, tuple)):
+            raise TypeError(
+                f"@{name} must be a list or tuple, but {type(target)} was applied.")
+        ok_list = [element in candidates for element in target]
+        if not all(ok_list):
+            raise KeyError(
+                f"@{name} must be a sub-list of {candidate_str}, but {target} was applied.")
+        return target
+
     @classmethod
     def divisors(cls, value):
         """
