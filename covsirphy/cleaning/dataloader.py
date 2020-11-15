@@ -12,6 +12,7 @@ from covsirphy.cleaning.country_data import CountryData
 from covsirphy.cleaning.oxcgrt import OxCGRTData
 from covsirphy.cleaning.population import PopulationData
 from covsirphy.cleaning.covid19datahub import COVID19DataHub
+from covsirphy.cleaning.linelist import LinelistData
 
 
 class DataLoader(Term):
@@ -209,7 +210,7 @@ class DataLoader(Term):
 
     def japan(self, basename="covid_jpn_total.csv", local_file=None):
         """
-        Load the datset of the number of cases in Japan.
+        Load the dataset of the number of cases in Japan.
         https://github.com/lisphilar/covid19-sir/tree/master/data
 
         Args:
@@ -217,7 +218,7 @@ class DataLoader(Term):
             local_file (str or None): if not None, load the data from this file
 
         Returns:
-            (covsirphy.CountryData): dataset at country level in Japan
+            covsirphy.CountryData: dataset at country level in Japan
         """
         filename = local_file or self.dir_path.joinpath(basename)
         if self._download_necessity(filename=filename):
@@ -237,3 +238,19 @@ class DataLoader(Term):
             recovered="Discharged",
             province=None)
         return japan_data
+
+    def linelist(self, basename="linelist.csv", verbose=1):
+        """
+        Load linelist of case reports.
+        https://github.com/beoutbreakprepared/nCoV2019
+
+        Args:
+            basename (str): basename of the file to save the data
+            verbose (int): level of verbosity
+
+        Returns:
+            covsirphy.CountryData: dataset at country level in Japan
+        """
+        filename = self.dir_path.joinpath(basename)
+        force = self._download_necessity(filename=filename)
+        return LinelistData(filename=filename, force=force, verbose=verbose)

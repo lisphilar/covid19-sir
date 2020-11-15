@@ -43,7 +43,7 @@ class CleaningBase(Term):
         Return the cleaned dataset.
 
         Notes:
-            Cleaning method is defined by self._cleaning() method.
+            Cleaning method is defined by CleaningBase._cleaning() method.
 
         Returns:
             pandas.DataFrame: cleaned data
@@ -53,9 +53,6 @@ class CleaningBase(Term):
     def _cleaning(self):
         """
         Perform data cleaning of the raw data.
-
-        Notes:
-            Cleaning method is defined by self._cleaning() method.
 
         Returns:
             pandas.DataFrame: cleaned data
