@@ -305,8 +305,15 @@ class TestScenario(object):
             score = snl.score(metrics=metrics)
             assert isinstance(score, float)
         # Selected phases
-        all_phases = snl.summary().index.tolist()
-        snl.score(phases=all_phases[:-2])
+        df = snl.summary()
+        all_phases = df.index.tolist()
+        sel_score = snl.score(phases=all_phases[-2:])
+        # Selected past days (when the begging date is a start date)
+        beginning_date = df.loc[df.index[-2], Term.START]
+        past_days = Term.steps(beginning_date, snl.last_date, tau=1440)
+        assert snl.score(past_days=past_days) == sel_score
+        # Selected past days
+        snl.score(past_days=60)
 
     @pytest.mark.parametrize("country", ["Italy"])
     def test_score_error(self, jhu_data, population_data, country):
@@ -329,3 +336,5 @@ class TestScenario(object):
             snl.score(variables=["Susceptible"])
         with pytest.raises(ValueError):
             snl.score(metrics="Subjective evaluation")
+        with pytest.raises(ValueError):
+            snl.score(phases=["0th"], past_days=100)
