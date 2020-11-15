@@ -816,13 +816,15 @@ actual values of the last date before the beginning date will be used.</p>
 
 <dl class="py method">
 <dt id="covsirphy.analysis.scenario.Scenario.score">
-<code class="sig-name descname">score</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">metrics</span><span class="o">=</span><span class="default_value">'RMSLE'</span></em>, <em class="sig-param"><span class="n">variables</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">name</span><span class="o">=</span><span class="default_value">'Main'</span></em>, <em class="sig-param"><span class="n">y0_dict</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/analysis/scenario.html#Scenario.score"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#covsirphy.analysis.scenario.Scenario.score" title="Permalink to this definition">¶</a></dt>
-<dd><p>Evaluate accuracy of phase setting and parameter estimation of all phases.</p>
+<code class="sig-name descname">score</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">metrics</span><span class="o">=</span><span class="default_value">'RMSLE'</span></em>, <em class="sig-param"><span class="n">variables</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">phases</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">past_days</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">name</span><span class="o">=</span><span class="default_value">'Main'</span></em>, <em class="sig-param"><span class="n">y0_dict</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/analysis/scenario.html#Scenario.score"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#covsirphy.analysis.scenario.Scenario.score" title="Permalink to this definition">¶</a></dt>
+<dd><p>Evaluate accuracy of phase setting and parameter estimation of all enabled phases all some past days.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>metrics</strong> (<em>str</em>) – “MAE”, “MSE”, “MSLE”, “RMSE” or “RMSLE”</p></li>
 <li><p><strong>variables</strong> (<em>list</em><em>[</em><em>str</em><em>] or </em><em>None</em>) – variables to use in calculation</p></li>
+<li><p><strong>phases</strong> (<em>list</em><em>[</em><em>str</em><em>] or </em><em>None</em>) – phases to use in calculation</p></li>
+<li><p><strong>past_days</strong> (<em>int</em><em> or </em><em>None</em>) – how many past days to use in calculation, natural integer</p></li>
 <li><p><strong>name</strong> (<em>str</em>) – phase series name. If ‘Main’, main PhaseSeries will be used</p></li>
 <li><p><strong>y0_dict</strong> (<em>dict</em><em>[</em><em>str</em><em>, </em><em>float</em><em>] or </em><em>None</em>) – dictionary of initial values of variables</p></li>
 </ul>
@@ -836,7 +838,9 @@ actual values of the last date before the beginning date will be used.</p>
 </dl>
 <p class="rubric">Notes</p>
 <p>If &#64;variables is None, [“Infected”, “Fatal”, “Recovered”] will be used.
-“Confirmed”, “Infected”, “Fatal” and “Recovered” can be used in &#64;variables.</p>
+“Confirmed”, “Infected”, “Fatal” and “Recovered” can be used in &#64;variables.
+If &#64;phases is None, all phases will be used.
+&#64;phases and &#64;past_days can not be specified at the same time.</p>
 </dd></dl>
 
 <dl class="py method">
@@ -850,7 +854,7 @@ New phase name will be automatically determined.</p>
 <li><p><strong>date</strong> (<em>str</em>) – change point, i.e. start date of the new phase</p></li>
 <li><p><strong>name</strong> (<em>str</em>) – scenario name</p></li>
 <li><p><strong>population</strong> (<em>int</em>) – population value of the change point</p></li>
-<li><p><strong>kwargs</strong> – keyword arguments of PhaseUnit.set_ode()</p></li>
+<li><p><strong>kwargs</strong> – keyword arguments of PhaseUnit.set_ode() if update is necessary</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>

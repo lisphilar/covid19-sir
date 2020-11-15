@@ -96,7 +96,7 @@ in advance.
 
 Stable versions of Covsirphy are available at `PyPI (The Python Package
 Index): covsirphy <https://pypi.org/project/covsirphy/>`__ and support
-Python 3.7 or newer versions.
+Python 3.6 or newer versions.
 
 ::
 
