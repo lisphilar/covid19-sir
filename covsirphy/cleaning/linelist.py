@@ -101,6 +101,7 @@ class LinelistData(CleaningBase):
         except FileNotFoundError:
             return pd.read_csv(urlpath, **kwargs)
         except UnicodeDecodeError:
+            kwargs.pop("low_memory")
             return pd.read_csv(urlpath, engine="python", **kwargs)
 
     def _cleaning(self):
