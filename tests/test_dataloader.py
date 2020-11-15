@@ -4,7 +4,8 @@
 from pathlib import Path
 import pytest
 import warnings
-from covsirphy import COVID19DataHub, DataLoader
+import pandas as pd
+from covsirphy import COVID19DataHub, DataLoader, LinelistData
 from covsirphy import Term, JHUData, CountryData, PopulationData, OxCGRTData
 from covsirphy import Word, Population
 
@@ -25,6 +26,16 @@ class TestCOVID19DataHub(object):
         assert isinstance(data_hub.primary, str)
 
 
+class TestLinelistData(object):
+    def test_linelist(self):
+        linelist_data = LinelistData(
+            filename=Path("input").joinpath("linelist.csv"))
+        with pytest.raises(NotImplementedError):
+            linelist_data.total()
+        assert isinstance(linelist_data.cleaned(), pd.DataFrame)
+        assert isinstance(linelist_data.citation, str)
+
+
 class TestDataLoader(object):
     def test_dataloader(self):
         # Create DataLoader instance
@@ -38,11 +49,7 @@ class TestDataLoader(object):
         assert isinstance(data_loader.population(), PopulationData)
         assert isinstance(data_loader.oxcgrt(), OxCGRTData)
         assert isinstance(data_loader.japan(), CountryData)
-        # With local files
-        data_loader.jhu(local_file="input/covid19dh.csv")
-        data_loader.population(local_file="input/covid19dh.csv")
-        data_loader.oxcgrt(local_file="input/covid19dh.csv")
-        data_loader.japan(local_file="input/covid_jpn_total.csv")
+        assert isinstance(data_loader.linelist(), LinelistData)
 
 
 class TestObsoleted(object):
