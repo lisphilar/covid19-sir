@@ -95,9 +95,9 @@ class LinelistData(CleaningBase):
             pd.DataFrame: raw dataset
         """
         kwargs = {
-            "low_memory": False, "blocksize": None, "dtype": "object", "header": header, }
+            "low_memory": False, "dtype": "object", "header": header, }
         try:
-            return dd.read_csv(urlpath, **kwargs).compute()
+            return dd.read_csv(urlpath, blocksize=None, **kwargs).compute()
         except FileNotFoundError:
             return pd.read_csv(urlpath, **kwargs)
         except UnicodeDecodeError:
