@@ -415,7 +415,7 @@ class Scenario(Term):
             date (str): change point, i.e. start date of the new phase
             name (str): scenario name
             population (int): population value of the change point
-            kwargs: keyword arguments of PhaseUnit.set_ode()
+            kwargs: keyword arguments of PhaseUnit.set_ode() if update is necessary
 
         Returns:
             covsirphy.Scenario: self
@@ -432,9 +432,11 @@ class Scenario(Term):
         except ValueError:
             raise ValueError(
                 f"{name} scenario cannot be separated on {date} because this date is registered as a start date.") from None
-        new_pre.set_ode(**old.to_dict())
+        setting_dict = old.to_dict()
+        setting_dict.update(kwargs)
+        new_pre.set_ode(**setting_dict)
         new_fol = PhaseUnit(date, old.end_date, population or old.population)
-        new_fol.set_ode(**kwargs)
+        new_fol.set_ode(model=old.model, **setting_dict)
         self._series_dict[name].replaces(phase, [new_pre, new_fol])
         return self
 
@@ -1159,9 +1161,9 @@ class Scenario(Term):
         sim_df = df.loc[:, [f"{col}_sim" for col in variables]]
         return (rec_df, sim_df)
 
-    def _score(self, metrics, rec_df, sim_df):
+    def _calc_score(self, metrics, rec_df, sim_df):
         """
-        Evaluate accuracy of phase setting and parameter estimation of all phases.
+        Evaluate accuracy of phase setting and parameter estimation of all enabled phases.
 
         Args:
             metrics (str): "MAE", "MSE", "MSLE", "RMSE" or "RMSLE"
@@ -1192,9 +1194,9 @@ class Scenario(Term):
                 f"@metrics must be selected from {metrics_str}, but {metrics} was applied."
             ) from None
 
-    def score(self, metrics="RMSLE", variables=None, phases=None, name="Main", y0_dict=None):
+    def _score(self, metrics, variables, phases, name, y0_dict):
         """
-        Evaluate accuracy of phase setting and parameter estimation of all phases.
+        Evaluate accuracy of phase setting and parameter estimation of selected enabled phases.
 
         Args:
             metrics (str): "MAE", "MSE", "MSLE", "RMSE" or "RMSLE"
@@ -1223,7 +1225,55 @@ class Scenario(Term):
         rec_df, sim_df = self._compare_with_actual(
             variables=variables, name=name, y0_dict=y0_dict)
         # Calculate score
-        score = self._score(metrics=metrics, rec_df=rec_df, sim_df=sim_df)
+        score = self._calc_score(metrics=metrics, rec_df=rec_df, sim_df=sim_df)
         if ignored_phases:
             self.enable(ignored_phases, name=name)
+        return score
+
+    def score(self, metrics="RMSLE", variables=None, phases=None, past_days=None, name="Main", y0_dict=None):
+        """
+        Evaluate accuracy of phase setting and parameter estimation of all enabled phases all some past days.
+
+        Args:
+            metrics (str): "MAE", "MSE", "MSLE", "RMSE" or "RMSLE"
+            variables (list[str] or None): variables to use in calculation
+            phases (list[str] or None): phases to use in calculation
+            past_days (int or None): how many past days to use in calculation, natural integer
+            name(str): phase series name. If 'Main', main PhaseSeries will be used
+            y0_dict(dict[str, float] or None): dictionary of initial values of variables
+
+        Returns:
+            float: score with the specified metrics
+
+        Notes:
+            If @variables is None, ["Infected", "Fatal", "Recovered"] will be used.
+            "Confirmed", "Infected", "Fatal" and "Recovered" can be used in @variables.
+            If @phases is None, all phases will be used.
+            @phases and @past_days can not be specified at the same time.
+        """
+        name_temp = name
+        if past_days is not None:
+            if phases is not None:
+                raise ValueError(
+                    "@phases and @past_days cannot be specified at the same time.")
+            past_days = self.ensure_natural_int(past_days, name="past_days")
+            # Separate a phase if the beginning date is not registered as start date of a phase
+            beginning_date = self.date_change(
+                self.last_date, days=0 - past_days)
+            if beginning_date not in self.summary(name=name)[self.START]:
+                name_temp = f"{name}_temporally_for_scoring"
+                self.clear(name=name_temp, include_past=False, template=name)
+                try:
+                    self.separate(date=beginning_date, name=name_temp)
+                except ValueError:
+                    pass
+                phases = [
+                    self.num2str(num) for (num, unit)
+                    in enumerate(self._series_dict[name_temp])
+                    if unit >= beginning_date
+                ]
+        score = self._score(
+            metrics=metrics, variables=variables, phases=phases, name=name_temp, y0_dict=y0_dict)
+        if name_temp != name:
+            self.delete(name=name_temp)
         return score
