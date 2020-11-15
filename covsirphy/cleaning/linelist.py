@@ -64,6 +64,20 @@ class LinelistData(CleaningBase):
                 "Retrieving linelist from Open COVID-19 Data Working Group repository: https://github.com/beoutbreakprepared/nCoV2019")
         # Download the dataset
         df = self._load(self.URL, header=1)
+        # Remove un-necessary columns
+        df = df.drop(
+            [
+                "Unnamed: 0", "city", "latitude", "longitude", "geo_resolution",
+                "lives_in_Wuhan", "travel_history_dates", "travel_history_location",
+                "reported_market_exposure", "additional_information",
+                "chronic_disease_binary", "source", "sequence_available",
+                "notes_for_discussion", "location", "admin3", "admin2", "admin1",
+                "country_new", "admin_id", "data_moderator_initials",
+                "travel_history_binary",
+            ],
+            axis=1,
+            errors="ignore"
+        )
         # Save the raw data
         df.to_csv(filename, index=False)
         return df
