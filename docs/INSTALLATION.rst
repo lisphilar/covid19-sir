@@ -43,6 +43,15 @@ Source Software 5(51):2376, doi: 10.21105/joss.02376.
 -  Population in each country
 -  Government Response Tracker (OxCGRT)
 
+`Open COVID-19 Data Working Group <https://github.com/beoutbreakprepared/nCoV2019>`__
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Xu, B., Gutierrez, B., Mekaru, S. et al. Epidemiological data from the
+COVID-19 outbreak, real-time case information. Sci Data 7, 106 (2020).
+https://doi.org/10.1038/s41597-020-0448-0
+
+-  Linelist of case reports
+
 `Datasets for CovsirPhy <https://github.com/lisphilar/covid19-sir/tree/master/data>`__
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -87,6 +96,7 @@ Then, download the datasets and save the data in ``input`` directory.
     japan_data = data_loader.japan()
     population_data = data_loader.population()
     oxcgrt_data = data_loader.oxcgrt()
+    linelist = data_loader.linelist()
 
 If ``input`` directory has the datasets, ``DataLoader`` will load the
 local files. If the datasets were updated in remote servers,
@@ -197,11 +207,12 @@ Usage of ``DataLoader`` class is as follows. Please specify
 .. code:: python
 
     import covsirphy as cs
-    data_loader = cs.DataLoader("input")
+    data_loader = cs.DataLoader("kaggle/input")
     jhu_data = data_loader.jhu()
     japan_data = data_loader.japan(local_file="./kaggle/input/covid_jpn_total.csv")
     population_data = data_loader.population()
-    oxcgrt_data = data_loader.oxcgrt(local_file="./kaggle/input/OxCGRT_latest.csv")
+    oxcgrt_data = data_loader.oxcgrt()
+    linelist = data_loader.linelist()
 
 (Optional) We can replace a part of JHU data with country-specific
 datasets. As an example, we will use the records in Japan here because

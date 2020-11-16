@@ -92,6 +92,7 @@
 <li class="toctree-l2"><a class="reference internal" href="#options-of-installation">Options of installation</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#datasets-to-load">Datasets to load</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#covid-19-data-hub">COVID-19 Data Hub</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#open-covid-19-data-working-group">Open COVID-19 Data Working Group</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#datasets-for-covsirphy">Datasets for CovsirPhy</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#how-to-request-new-data-loader">How to request new data loader</a></li>
 </ul>
@@ -260,6 +261,15 @@ Source Software 5(51):2376, doi: 10.21105/joss.02376.</p>
 <li><p>Government Response Tracker (OxCGRT)</p></li>
 </ul>
 </div>
+<div class="section" id="open-covid-19-data-working-group">
+<h3><a class="reference external" href="https://github.com/beoutbreakprepared/nCoV2019">Open COVID-19 Data Working Group</a><a class="headerlink" href="#open-covid-19-data-working-group" title="Permalink to this headline">¶</a></h3>
+<p>Xu, B., Gutierrez, B., Mekaru, S. et al. Epidemiological data from the
+COVID-19 outbreak, real-time case information. Sci Data 7, 106 (2020).
+<a class="reference external" href="https://doi.org/10.1038/s41597-020-0448-0">https://doi.org/10.1038/s41597-020-0448-0</a></p>
+<ul class="simple">
+<li><p>Linelist of case reports</p></li>
+</ul>
+</div>
 <div class="section" id="datasets-for-covsirphy">
 <h3><a class="reference external" href="https://github.com/lisphilar/covid19-sir/tree/master/data">Datasets for CovsirPhy</a><a class="headerlink" href="#datasets-for-covsirphy" title="Permalink to this headline">¶</a></h3>
 <div class="line-block">
@@ -297,6 +307,7 @@ CovsirPhy</a>.</p>
 <span class="n">japan_data</span> <span class="o">=</span> <span class="n">data_loader</span><span class="o">.</span><span class="n">japan</span><span class="p">()</span>
 <span class="n">population_data</span> <span class="o">=</span> <span class="n">data_loader</span><span class="o">.</span><span class="n">population</span><span class="p">()</span>
 <span class="n">oxcgrt_data</span> <span class="o">=</span> <span class="n">data_loader</span><span class="o">.</span><span class="n">oxcgrt</span><span class="p">()</span>
+<span class="n">linelist</span> <span class="o">=</span> <span class="n">data_loader</span><span class="o">.</span><span class="n">linelist</span><span class="p">()</span>
 </pre></div>
 </div>
 <p>If <code class="docutils literal notranslate"><span class="pre">input</span></code> directory has the datasets, <code class="docutils literal notranslate"><span class="pre">DataLoader</span></code> will load the
@@ -405,11 +416,12 @@ Government.</a></p></li>
 <p>Usage of <code class="docutils literal notranslate"><span class="pre">DataLoader</span></code> class is as follows. Please specify
 <code class="docutils literal notranslate"><span class="pre">local_file</span></code> argument in the methods.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">covsirphy</span> <span class="k">as</span> <span class="nn">cs</span>
-<span class="n">data_loader</span> <span class="o">=</span> <span class="n">cs</span><span class="o">.</span><span class="n">DataLoader</span><span class="p">(</span><span class="s2">&quot;input&quot;</span><span class="p">)</span>
+<span class="n">data_loader</span> <span class="o">=</span> <span class="n">cs</span><span class="o">.</span><span class="n">DataLoader</span><span class="p">(</span><span class="s2">&quot;kaggle/input&quot;</span><span class="p">)</span>
 <span class="n">jhu_data</span> <span class="o">=</span> <span class="n">data_loader</span><span class="o">.</span><span class="n">jhu</span><span class="p">()</span>
 <span class="n">japan_data</span> <span class="o">=</span> <span class="n">data_loader</span><span class="o">.</span><span class="n">japan</span><span class="p">(</span><span class="n">local_file</span><span class="o">=</span><span class="s2">&quot;./kaggle/input/covid_jpn_total.csv&quot;</span><span class="p">)</span>
 <span class="n">population_data</span> <span class="o">=</span> <span class="n">data_loader</span><span class="o">.</span><span class="n">population</span><span class="p">()</span>
-<span class="n">oxcgrt_data</span> <span class="o">=</span> <span class="n">data_loader</span><span class="o">.</span><span class="n">oxcgrt</span><span class="p">(</span><span class="n">local_file</span><span class="o">=</span><span class="s2">&quot;./kaggle/input/OxCGRT_latest.csv&quot;</span><span class="p">)</span>
+<span class="n">oxcgrt_data</span> <span class="o">=</span> <span class="n">data_loader</span><span class="o">.</span><span class="n">oxcgrt</span><span class="p">()</span>
+<span class="n">linelist</span> <span class="o">=</span> <span class="n">data_loader</span><span class="o">.</span><span class="n">linelist</span><span class="p">()</span>
 </pre></div>
 </div>
 <p>(Optional) We can replace a part of JHU data with country-specific
