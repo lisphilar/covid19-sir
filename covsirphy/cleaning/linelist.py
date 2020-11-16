@@ -98,11 +98,8 @@ class LinelistData(CleaningBase):
             "low_memory": False, "dtype": "object", "header": header, }
         try:
             return dd.read_csv(urlpath, blocksize=None, **kwargs).compute()
-        except FileNotFoundError:
+        except (FileNotFoundError, UnicodeDecodeError):
             return pd.read_csv(urlpath, **kwargs)
-        except UnicodeDecodeError:
-            kwargs.pop("low_memory")
-            return pd.read_csv(urlpath, engine="python", **kwargs)
 
     def _cleaning(self):
         """
