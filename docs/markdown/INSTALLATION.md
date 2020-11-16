@@ -3,12 +3,12 @@
 ## Options of installation
 We have the following options to start analysis with CovsirPhy. Datasets are not included in this package, but we can prepare them with `DataLoader` class.
 
-||Installation|Dataset preparation|
-|:---|:---|:---|
-|Standard users|pip/pipenv|Automated with `DataLoader` class|
-|Developers|git-cloning|Automated with `DataLoader` class|
-|Kagglers (local environment)|git-cloning|Kaggle API and Python script and `DataLoader`|
-|Kagglers (Kaggle platform)|pip|Kaggle Datasets and `DataLoader`|
+|                            |Installation     |Dataset preparation                          |
+|:---------------------------|:----------------|:--------------------------------------------|
+|Standard users              |pip/pipenv       |Automated with `DataLoader` class            |
+|Developers                  |git-cloning      |Automated with `DataLoader` class            |
+|Kagglers (local environment)|git-cloning      |Kaggle API and Python script and `DataLoader`|
+|Kagglers (Kaggle platform)  |pip              |Kaggle Datasets and `DataLoader`             |
 
 
 ## Datasets to load

@@ -43,12 +43,12 @@ Any suggestions with [Github Issues](https://github.com/lisphilar/covid19-sir/is
 ## Installation and dataset preparation
 We have the following options to start analysis with CovsirPhy. Datasets are not included in this package, but we can prepare them with `DataLoader` class.
 
-||Installation|Dataset preparation|
-|:---|:---|:---|
-|Standard users|pip/pipenv|Automated with `DataLoader` class|
-|Developers|git-cloning|Automated with `DataLoader` class|
-|Kagglers (local environment)|git-cloning|Kaggle API and Python script and `DataLoader`|
-|Kagglers (Kaggle platform)|pip|Kaggle Datasets and `DataLoader`|
+|                            |Installation     |Dataset preparation                          |
+|:---------------------------|:----------------|:--------------------------------------------|
+|Standard users              |pip/pipenv       |Automated with `DataLoader` class            |
+|Developers                  |git-cloning      |Automated with `DataLoader` class            |
+|Kagglers (local environment)|git-cloning      |Kaggle API and Python script and `DataLoader`|
+|Kagglers (Kaggle platform)  |pip              |Kaggle Datasets and `DataLoader`             |
 
 <strong>[Installation and dataset preparation](https://lisphilar.github.io/covid19-sir/INSTALLATION.html) explains how to install and prepare datasets for all users.</strong>
 

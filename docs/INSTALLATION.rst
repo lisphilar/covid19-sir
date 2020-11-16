@@ -8,51 +8,19 @@ We have the following options to start analysis with CovsirPhy. Datasets
 are not included in this package, but we can prepare them with
 ``DataLoader`` class.
 
-+-------+-------+-------+
-|       | Insta | Datas |
-|       | llati | et    |
-|       | on    | prepa |
-|       |       | ratio |
-|       |       | n     |
-+=======+=======+=======+
-| Stand | pip/p | Autom |
-| ard   | ipenv | ated  |
-| users |       | with  |
-|       |       | ``Dat |
-|       |       | aLoad |
-|       |       | er``  |
-|       |       | class |
-+-------+-------+-------+
-| Devel | git-c | Autom |
-| opers | lonin | ated  |
-|       | g     | with  |
-|       |       | ``Dat |
-|       |       | aLoad |
-|       |       | er``  |
-|       |       | class |
-+-------+-------+-------+
-| Kaggl | git-c | Kaggl |
-| ers   | lonin | e     |
-| (loca | g     | API   |
-| l     |       | and   |
-| envir |       | Pytho |
-| onmen |       | n     |
-| t)    |       | scrip |
-|       |       | t     |
-|       |       | and   |
-|       |       | ``Dat |
-|       |       | aLoad |
-|       |       | er``  |
-+-------+-------+-------+
-| Kaggl | pip   | Kaggl |
-| ers   |       | e     |
-| (Kagg |       | Datas |
-| le    |       | ets   |
-| platf |       | and   |
-| orm)  |       | ``Dat |
-|       |       | aLoad |
-|       |       | er``  |
-+-------+-------+-------+
++------------------------+---------------+-------------------------------------+
+|                        | Installation  | Dataset preparation                 |
++========================+===============+=====================================+
+| Standard users         | pip/pipenv    | Automated with ``DataLoader`` class |
++------------------------+---------------+-------------------------------------+
+| Developers             | git-cloning   | Automated with ``DataLoader`` class |
++------------------------+---------------+-------------------------------------+
+| Kagglers (local        | git-cloning   | Kaggle API and Python script and    |
+| environment)           |               | ``DataLoader``                      |
++------------------------+---------------+-------------------------------------+
+| Kagglers (Kaggle       | pip           | Kaggle Datasets and ``DataLoader``  |
+| platform)              |               |                                     |
++------------------------+---------------+-------------------------------------+
 
 Datasets to load
 ----------------
