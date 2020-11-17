@@ -272,7 +272,8 @@ class JHUData(CleaningBase):
         """
         df = self._cleaned_df.copy()
         df = df.loc[df[self.PROVINCE] == self.UNKNOWN]
-        total_series = df.groupby(self.DATE).sum()
+        df = df.groupby(self.DATE).sum()
+        total_series = df.loc[:, self.C]
         r_cols = self.RATE_COLUMNS[:]
         df[r_cols[0]] = df[self.F] / total_series
         df[r_cols[1]] = df[self.R] / total_series
