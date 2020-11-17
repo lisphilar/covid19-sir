@@ -4,6 +4,7 @@ pipenv-setting:
 	@pip install wheel; pip install --upgrade pip
 	@pip install pipenv
 	@export PIPENV_VENV_IN_PROJECT=true
+	@export PIPENV_INSTALL_TIMEOUT=7200
 	@export PIPENV_TIMEOUT=7200
 
 .PHONY: install
