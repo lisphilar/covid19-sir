@@ -73,15 +73,15 @@ class JHUData(CleaningBase):
         df = df.rename(
             {
                 "ObservationDate": self.DATE,
+                "ISO3": self.ISO3,
                 "Country/Region": self.COUNTRY,
                 "Province/State": self.PROVINCE,
-                "Deaths": self.F
+                "Confirmed": self.C,
+                "Deaths": self.F,
+                "Recovered": self.R
             },
             axis=1
         )
-        # ISO3 code
-        if self.ISO3 not in df.columns:
-            df[self.ISO3] = self.UNKNOWN
         # Confirm the expected columns are in raw data
         expected_cols = [
             self.DATE, self.ISO3, self.COUNTRY, self.PROVINCE, self.C, self.F, self.R
@@ -103,7 +103,6 @@ class JHUData(CleaningBase):
                 "Republic of Moldova": "Moldova",
                 "Taiwan*": "Taiwan",
                 "Cruise Ship": "Others",
-                "United Kingdom": "UK",
                 "Viet Nam": "Vietnam",
                 "Czechia": "Czech Republic",
                 "St. Martin": "Saint Martin",
@@ -182,9 +181,14 @@ class JHUData(CleaningBase):
             If @population is not None, the number of susceptible cases will be calculated.
             Records with Recovered > 0 will be selected.
         """
+        area = self.area_name(country, province=province)
         # Subset with area and start/end date
-        subset_df = super().subset(
-            country=country, province=province, start_date=start_date, end_date=end_date)
+        try:
+            subset_df = super().subset(
+                country=country, province=province, start_date=start_date, end_date=end_date)
+        except KeyError:
+            raise KeyError(
+                f"Records in {area} from {start_date} to {end_date} are un-registered.") from None
         # Select records where Recovered > 0
         df = subset_df.loc[subset_df[self.R] > 0, :]
         df = df.reset_index(drop=True)
@@ -192,13 +196,13 @@ class JHUData(CleaningBase):
             series = subset_df[self.DATE]
             start_date = start_date or series.min().strftime(self.DATE_FORMAT)
             end_date = end_date or series.max().strftime(self.DATE_FORMAT)
-            s1 = "Records with Recovered > 0 are not registered."
-            s2 = f"(country={country}, province={province}, period={start_date}-{end_date})"
-            raise ValueError(f"{s1} {s2}")
+            area = self.area_name(country, province=province)
+            raise ValueError(
+                f"Records with 'Recovered > 0' in {area} from {start_date} to {end_date} are un-registered.")
         # Calculate Susceptible if population value was applied
         if population is None:
             return df
-        population = self.ensure_natural_int(population, name="population")
+        population = self.ensure_population(population)
         df.loc[:, self.S] = population - df.loc[:, self.C]
         return df
 
@@ -250,7 +254,7 @@ class JHUData(CleaningBase):
 
     def total(self):
         """
-        Return a dataframe to show chronological change of number and rates.
+        Calculate total number of cases and rates.
 
         Returns:
             pandas.DataFrame: group-by Date, sum of the values
@@ -266,8 +270,10 @@ class JHUData(CleaningBase):
                     - Recovered per Confirmed (int)
                     - Fatal per (Fatal or Recovered) (int)
         """
-        df = super().total()
-        total_series = df.sum(axis=1)
+        df = self._cleaned_df.copy()
+        df = df.loc[df[self.PROVINCE] == self.UNKNOWN]
+        df = df.groupby(self.DATE).sum()
+        total_series = df.loc[:, self.C]
         r_cols = self.RATE_COLUMNS[:]
         df[r_cols[0]] = df[self.F] / total_series
         df[r_cols[1]] = df[self.R] / total_series

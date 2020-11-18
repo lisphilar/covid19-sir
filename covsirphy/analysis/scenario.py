@@ -109,7 +109,7 @@ class Scenario(Term):
         df.loc[df.duplicated([self.R], keep="last"), self.R] = None
         df[self.R].interpolate(
             method="linear", inplace=True, limit_direction="both")
-        df[self.R] = df[self.R].round().astype(np.int64)
+        df[self.R] = df[self.R].fillna(method="bfill").round().astype(np.int64)
         # Calculate Infected
         df[self.CI] = df[self.C] - df[self.F] - df[self.R]
         # Save records

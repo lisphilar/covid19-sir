@@ -102,18 +102,17 @@ class OxCGRTData(CleaningBase):
                     - Date (pd.TimeStamp): Observation date
                     - other column names are defined by OxCGRTData.COL_DICT
         """
-        country = self.iso3_to_country(country)
-        df = self._cleaned_df.copy()
-        df = df.loc[df[self.COUNTRY] == country, :]
-        if df.empty:
+        country = self.ensure_country_name(country)
+        try:
+            df = super().subset(country=country)
+        except KeyError:
             raise KeyError(
-                f"Records of {country} are not included in the dataset.")
+                f"Records in {country} are un-registered.") from None
         df = df.groupby(self.DATE).last().reset_index()
-        df = df.loc[:, self.OXCGRT_COLS_WITHOUT_COUNTRY]
-        return df
+        return df.loc[:, self.OXCGRT_COLS_WITHOUT_COUNTRY]
 
     def total(self):
         """
-        This is not defined for this child class.
+        This method is not defined for OxCGRTData class.
         """
         raise NotImplementedError

@@ -120,6 +120,7 @@ class SEWIRF(ModelBase):
         df = cls.ensure_dataframe(
             taufree_df, name="taufree_df", columns=[cls.TS, *cls.VARIABLES]
         )
+        df = df.loc[(df[cls.S] > 0) & (df[cls.CI] > 0)]
         _, t, i, r = population, df[cls.TS], df[cls.CI], df[cls.R]
         # sigma = (dR/dt) / I
         sigma_series = r.diff() / t.diff() / i

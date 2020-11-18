@@ -73,10 +73,7 @@ class PopulationData(CleaningBase):
         # ISO3
         df[self.ISO3] = df[self.ISO3] if self.ISO3 in df.columns else self.UNKNOWN
         # Date
-        if self.DATE in df.columns:
-            df[self.DATE] = pd.to_datetime(df[self.DATE])
-        else:
-            df[self.DATE] = self._created_date()
+        df[self.DATE] = pd.to_datetime(df[self.DATE])
         # Country
         df[self.COUNTRY] = df[self.COUNTRY].replace(
             {
@@ -132,7 +129,7 @@ class PopulationData(CleaningBase):
 
     def total(self):
         """
-        Return the total value of population in the datset.
+        Return the total value of population in the dataset.
 
         Returns:
             int
@@ -178,17 +175,18 @@ class PopulationData(CleaningBase):
         Notes:
             If @date is None, the created date of the instancewill be used
         """
-        df = self.subset(country=country, province=province)
-        if date is None:
-            df = df.sort_values(self.DATE)
-            df = df.loc[df.index[-1], [self.N]]
-        else:
-            df = df.loc[df[self.DATE] == pd.to_datetime(date), [self.N]]
-            if df.empty:
-                raise KeyError("Record on {date} was not registered.")
-        return int(df.values[0])
+        try:
+            df = self.subset(
+                country=country, province=province, start_date=date, end_date=date)
+        except KeyError:
+            area = self.area_name(country, province=province)
+            date_str = "" if date is None else " on {date}"
+            raise KeyError(
+                f"Records in {area}{date_str} are un-registered.") from None
+        df = df.sort_values(self.DATE)
+        return int(df.loc[df.index[-1], [self.N]].values[0])
 
-    def update(self, value, country, province="-", date=None):
+    def update(self, value, country, province=None, date=None):
         """
         Update the value of a new place.
 
@@ -202,13 +200,12 @@ class PopulationData(CleaningBase):
             covsirphy.PopulationData: self
 
         Notes:
-            If @date is None, the created date of the instancewill be used
+            If @date is None, the created date of the instance will be used.
+            If @province is None, "-" will be used.
         """
-        value = self.ensure_natural_int(value, "value")
-        if date is None:
-            date_stamp = pd.to_datetime(self._created_date())
-        else:
-            date_stamp = pd.to_datetime(date)
+        population = self.ensure_natural_int(value, "value")
+        province = province or self.UNKNOWN
+        date_stamp = pd.to_datetime(date or self._created_date())
         df = self._cleaned_df.copy()
         c_series = df[self.COUNTRY]
         p_series = df[self.PROVINCE]
@@ -220,7 +217,7 @@ class PopulationData(CleaningBase):
             self._cleaned_df = df.copy()
             return self
         series = pd.Series(
-            [self.UNKNOWN, country, province, date_stamp, value],
+            [self.UNKNOWN, country, province, date_stamp, population],
             index=[self.ISO3, self.COUNTRY, self.PROVINCE, self.DATE, self.N]
         )
         self._cleaned_df = df.append(series, ignore_index=True)

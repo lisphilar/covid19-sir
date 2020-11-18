@@ -19,7 +19,7 @@ class TestCOVID19DataHub(object):
         # Citation (with downloading), disabled to avoid downloading many times
         # assert isinstance(data_hub.primary, str)
         # Retrieve the dataset from the server
-        data_hub.load(name="jhu", verbose=False)
+        data_hub.load(name="jhu", force=False, verbose=False)
         with pytest.raises(KeyError):
             data_hub.load(name="unknown")
         # Citation (without downloading)
@@ -65,6 +65,7 @@ class TestJHUData(object):
             jhu_data.cleaned(population=None)
         df = jhu_data.cleaned()
         assert set(df.columns) == set(Term.COLUMNS)
+        assert isinstance(JHUData.from_dataframe(df), JHUData)
 
     def test_subset(self, jhu_data):
         df = jhu_data.subset(
@@ -72,6 +73,9 @@ class TestJHUData(object):
         assert set(df.columns) == set(Term.NLOC_COLUMNS)
         with pytest.raises(KeyError):
             jhu_data.subset("Moon")
+        with pytest.raises(ValueError):
+            jhu_data.subset(
+                "Japan", start_date="01Jan2020", end_date="10Jan2020")
         s_df = jhu_data.subset("Japan", population=126_500_000)
         assert set(s_df.columns) == set(Term.SUB_COLUMNS)
 
@@ -115,7 +119,8 @@ class TestPopulationData(object):
         with pytest.raises(KeyError):
             population_data.value("Japan", "01Jan1000")
 
-    def test_update(self, population_data):
+    def test_update(self):
+        population_data = PopulationData(filename=None)
         population_data.update(1000, "Moon")
         assert population_data.value("Moon") == 1000
         population_data.update(2000, "Moon")
