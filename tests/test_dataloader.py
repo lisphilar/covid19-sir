@@ -1,7 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-from covsirphy.cleaning.cbase import CleaningBase
 from pathlib import Path
 import pytest
 import warnings
@@ -58,12 +57,6 @@ class TestObsoleted(object):
         warnings.simplefilter("ignore", category=DeprecationWarning)
         Population(filename=None)
         Word()
-
-
-class TestCleaningBase(object):
-    def test_cbase(self):
-        cbase = CleaningBase(filename=None)
-        assert cbase.raw.empty
 
 
 class TestJHUData(object):
