@@ -187,7 +187,7 @@ class Term(object):
                 [col for col in columns if col not in df.columns]
             )
             included = ", ".join(df.columns.tolist())
-            s1 = f"Expected columns were not included in {name} with {included}."
+            s1 = f"Expected columns were not included in {name} which has {included}."
             raise KeyError(
                 f"{s1} However, {cols_str} must be included."
             )
