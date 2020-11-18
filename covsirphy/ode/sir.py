@@ -92,7 +92,7 @@ class SIR(ModelBase):
         df = cls.ensure_dataframe(
             taufree_df, name="taufree_df", columns=[cls.TS, *cls.VARIABLES]
         )
-        df = df.loc[(df[cls.S] > 0) & (df[cls.I] > 0)]
+        df = df.loc[(df[cls.S] > 0) & (df[cls.CI] > 0)]
         n, t, s, i, r = population, df[cls.TS], df[cls.S], df[cls.CI], df[cls.FR]
         # rho = - n * (dS/dt) / S / I
         rho_series = 0 - n * s.diff() / t.diff() / s / i

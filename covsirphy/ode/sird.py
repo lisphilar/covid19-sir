@@ -96,7 +96,7 @@ class SIRD(ModelBase):
         df = cls.ensure_dataframe(
             taufree_df, name="taufree_df", columns=[cls.TS, *cls.VARIABLES]
         )
-        df = df.loc[(df[cls.S] > 0) & (df[cls.I] > 0)]
+        df = df.loc[(df[cls.S] > 0) & (df[cls.CI] > 0)]
         n, t = population, df[cls.TS]
         s, i, r, d = df[cls.S], df[cls.CI], df[cls.R], df[cls.F]
         # kappa = (dD/dt) / I
