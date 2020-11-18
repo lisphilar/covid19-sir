@@ -14,14 +14,11 @@ class CleaningBase(Term):
     Basic class for data cleaning.
 
     Args:
-        filename (str or None): CSV filename of the dataset
-        citation (str or None): citation if possible
-
-    Notes:
-        If @filename is None, empty dataframe will be set as raw data
+        filename (str): CSV filename of the dataset
+        citation (str): citation
     """
 
-    def __init__(self, filename=None, citation=None):
+    def __init__(self, filename, citation=None):
         warnings.simplefilter("ignore", DeprecationWarning)
         if filename is None:
             self._raw = pd.DataFrame()
@@ -86,8 +83,10 @@ class CleaningBase(Term):
         Returns:
             str: country name
         """
-        df = self.ensure_dataframe(
-            self._cleaned_df, name="the cleaned dataset", columns=[self.COUNTRY])
+        df = self._cleaned_df.copy()
+        if self.COUNTRY not in df.columns:
+            raise KeyError(
+                "Country names are not registered in the cleaned dataset.")
         registered_set = set(df[self.COUNTRY].unique())
         if country in registered_set:
             return country
@@ -175,17 +174,21 @@ class CleaningBase(Term):
         Returns:
             pandas.DataFrame: subset for the country/province
         """
-        df = self.ensure_dataframe(
-            self._cleaned_df, name="the cleaned dataset", columns=[self.COUNTRY])
+        df = self._cleaned_df.copy()
         # Country level
         country = self.ensure_country_name(country)
-        df = df.loc[df[self.COUNTRY] == country, :]
+        try:
+            df = df.loc[df[self.COUNTRY] == country, :]
+        except KeyError:
+            raise KeyError(
+                f"Field '{self.COUNTRY}' is invalid, but country name was specified.") from None
         # Province level
         province = province or self.UNKNOWN
-        if self.PROVINCE not in df.columns and province == self.UNKNOWN:
-            return df
-        df = self.ensure_dataframe(
-            self._cleaned_df, name="the cleaned dataset", columns=[self.PROVINCE])
+        if self.PROVINCE not in df.columns:
+            if province == self.UNKNOWN:
+                return df
+            raise KeyError(
+                f"Field '{self.PROVINCE}' is invalid, but province name was specified.") from None
         return df.loc[df[self.PROVINCE] == province, :]
 
     def subset(self, country, province=None, start_date=None, end_date=None):
@@ -214,8 +217,9 @@ class CleaningBase(Term):
         # Subset with Start/end date
         if start_date is None and end_date is None:
             return df.reset_index(drop=True)
-        df = self.ensure_dataframe(
-            df, name="the cleaned dataset", columns=[self.DATE])
+        if self.DATE not in df.columns:
+            raise KeyError(
+                "@start_date and @end_date must be None because field '{self.DATE}' is invalid.")
         series = df[self.DATE].copy()
         start_obj = self.date_obj(date_str=start_date, default=series.min())
         end_obj = self.date_obj(date_str=end_date, default=series.max())
@@ -235,7 +239,9 @@ class CleaningBase(Term):
         Returns:
             list[str]: list of country names
         """
-        df = self.ensure_dataframe(self._cleaned_df, columns=[self.COUNTRY])
+        df = self._cleaned_df.copy()
+        if self.COUNTRY not in df.columns:
+            raise KeyError("Country names are not registered in this dataset.")
         return list(df[self.COUNTRY].unique())
 
     def total(self):
