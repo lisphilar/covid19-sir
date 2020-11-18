@@ -14,8 +14,12 @@ class CleaningBase(Term):
     Basic class for data cleaning.
 
     Args:
-        filename (str): CSV filename of the dataset
-        citation (str): citation
+        filename (str or None): CSV filename of the dataset
+        citation (str or None): citation
+
+    Returns:
+        If @filename is None, empty dataframe will be set as raw data.
+        If @citation is None, citation will be empty string.
     """
 
     def __init__(self, filename, citation=None):

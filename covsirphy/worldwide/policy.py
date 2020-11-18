@@ -60,27 +60,10 @@ class PolicyMeasures(Term):
         Initialize the scenario classes of registered countries.
         """
         self.scenario_dict = {
-            country: self._create_scenario_instance(country)
+            country: Scenario(
+                self.jhu_data, self.population_data, country=country, tau=self.tau)
             for country in self._countries
         }
-        self._countries = [
-            c for c in self._countries if self.scenario_dict[c] is not None]
-
-    def _create_scenario_instance(self, country):
-        """
-        Create Scenario instance.
-
-        Args:
-            country (str): country name
-
-        Returns:
-            covsirphy.Scenario
-        """
-        try:
-            return Scenario(
-                self.jhu_data, self.population_data, country=country, tau=self.tau)
-        except ValueError:
-            return
 
     def scenario(self, country):
         """

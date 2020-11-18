@@ -288,5 +288,6 @@ class JHUData(CleaningBase):
             list[str]: list of country names
         """
         df = self._cleaned_df.copy()
+        df = df.loc[df[self.PROVINCE] == self.UNKNOWN]
         df = df.loc[df[self.R] > 0, :]
         return list(df[self.COUNTRY].unique())
