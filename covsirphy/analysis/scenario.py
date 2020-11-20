@@ -41,18 +41,15 @@ class Scenario(Term):
         self.country = country
         self.province = province or self.UNKNOWN
         self.area = JHUData.area_name(country, province)
-        # First/last date of the area
-        df = jhu_data.subset(country=self.country, province=self.province)
-        self._first_date = df[self.DATE].min().strftime(self.DATE_FORMAT)
-        self._last_date = df[self.DATE].max().strftime(self.DATE_FORMAT)
         # tau value must be shared
         self.tau = self.ensure_tau(tau)
-        # {scenario_name: PhaseSeries}
-        self._init_phase_series()
-        # Complement the number of cases
+        # Whether complement the number of cases or not
+        self._auto_complement = bool(auto_complement)
         self._complemented = False
-        if auto_complement:
-            self.complement()
+        # Create {scenario_name: PhaseSeries} and set records
+        self._first_date = None
+        self._last_date = None
+        self._init_phase_series()
 
     def __getitem__(self, key):
         if key in self._series_dict:
@@ -65,24 +62,29 @@ class Scenario(Term):
 
     def _init_phase_series(self):
         """
-        Initialize dictionary of phase series.
+        Initialize dictionary of phase series and set records.
+        Only when auto-complement mode, complement records if necessary.
         """
+        # Set records (complement records, if necessary)
+        if self._auto_complement:
+            self.complement()
+        else:
+            self.complement_reverse()
+        # First/last date of the records
+        if self._first_date is None:
+            series = self.record_df.loc[:, self.DATE]
+            self._first_date = series.min().strftime(self.DATE_FORMAT)
+            self._last_date = series.max().strftime(self.DATE_FORMAT)
+        # Set main scenario
         self._series_dict = {
             self.MAIN: PhaseSeries(
                 self._first_date, self._last_date, self.population
             )
         }
-        self.record_df = self.jhu_data.subset(
-            country=self.country,
-            province=self.province,
-            start_date=self._first_date,
-            end_date=self._last_date,
-            population=self.population
-        )
 
     def complement(self, interval=2, max_ignored=100):
         """
-        Complement the number of recovered cases when not updated.
+        Complement the number of recovered cases when not updated/reported.
 
         Args:
             interval (int): expected update interval of the number of recovered cases [days]
@@ -96,25 +98,10 @@ class Scenario(Term):
             for more than @interval days after reached @max_ignored cases,
             complement will be applied to the number of recovered cases.
         """
-        df = self.record_df.copy()
-        # Arguments
-        interval = self.ensure_natural_int(interval, name="interval")
-        max_ignored = self.ensure_natural_int(max_ignored, name="max_ignored")
-        # If updated, do not perform complement
-        series = df.loc[df[self.R] > max_ignored, self.R]
-        max_frequency = series.value_counts().max()
-        if max_frequency <= interval:
-            return self
-        # Complement
-        df.loc[df.duplicated([self.R], keep="last"), self.R] = None
-        df[self.R].interpolate(
-            method="linear", inplace=True, limit_direction="both")
-        df[self.R] = df[self.R].fillna(method="bfill").round().astype(np.int64)
-        # Calculate Infected
-        df[self.CI] = df[self.C] - df[self.F] - df[self.R]
-        # Save records
-        self.record_df = df.copy()
-        self._complemented = True
+        self.record_df, self._complemented = self.jhu_data.subset_complement(
+            country=self.country, province=self.province,
+            start_date=self._first_date, end_date=self._last_date, population=self.population,
+            interval=interval, max_ignored=max_ignored)
         return self
 
     def complement_reverse(self):

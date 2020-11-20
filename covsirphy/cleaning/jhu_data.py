@@ -18,6 +18,7 @@ class JHUData(CleaningBase):
 
     def __init__(self, filename, citation=None):
         super().__init__(filename, citation)
+        self._closing_period = None
 
     def cleaned(self, **kwargs):
         """
@@ -153,8 +154,7 @@ class JHUData(CleaningBase):
         self._cleaned_df = df.copy()
         return self
 
-    def subset(self, country, province=None,
-               start_date=None, end_date=None, population=None):
+    def _subset(self, country, province, start_date, end_date, population):
         """
         Return the subset of dataset.
 
@@ -179,16 +179,54 @@ class JHUData(CleaningBase):
 
         Notes:
             If @population is not None, the number of susceptible cases will be calculated.
-            Records with Recovered > 0 will be selected.
         """
-        area = self.area_name(country, province=province)
         # Subset with area and start/end date
         try:
-            subset_df = super().subset(
+            df = super().subset(
                 country=country, province=province, start_date=start_date, end_date=end_date)
         except KeyError:
+            columns = self.NLOC_COLUMNS if population is None else self.SUB_COLUMNS
+            return pd.DataFrame(columns=columns)
+        # Calculate Susceptible if population value was applied
+        if population is None:
+            return df
+        df.loc[:, self.S] = population - df.loc[:, self.C]
+        return df
+
+    def subset(self, country, province=None, start_date=None, end_date=None, population=None):
+        """
+        Return the subset of dataset with Recovered > 0.
+
+        Args:
+            country (str): country name or ISO3 code
+            province (str or None): province name
+            start_date (str or None): start date, like 22Jan2020
+            end_date (str or None): end date, like 01Feb2020
+            population (int or None): population value
+
+        Returns:
+            pandas.DataFrame
+                Index:
+                    reset index
+                Columns:
+                    - Date (pd.TimeStamp): Observation date
+                    - Confirmed (int): the number of confirmed cases
+                    - Infected (int): the number of currently infected cases
+                    - Fatal (int): the number of fatal cases
+                    - Recovered (int): the number of recovered cases (> 0)
+                    - Susceptible (int): the number of susceptible cases, if calculated
+
+        Notes:
+            If @population is not None, the number of susceptible cases will be calculated.
+        """
+        area = self.area_name(country, province=province)
+        # Subset with area, start/end date and calculate Susceptible
+        subset_df = self._subset(
+            country=country, province=province,
+            start_date=start_date, end_date=end_date, population=population)
+        if subset_df.empty:
             raise KeyError(
-                f"Records in {area} from {start_date} to {end_date} are un-registered.") from None
+                f"Records in {area} from {start_date} to {end_date} are un-registered.")
         # Select records where Recovered > 0
         df = subset_df.loc[subset_df[self.R] > 0, :]
         df = df.reset_index(drop=True)
@@ -199,11 +237,6 @@ class JHUData(CleaningBase):
             area = self.area_name(country, province=province)
             raise ValueError(
                 f"Records with 'Recovered > 0' in {area} from {start_date} to {end_date} are un-registered.")
-        # Calculate Susceptible if population value was applied
-        if population is None:
-            return df
-        population = self.ensure_population(population)
-        df.loc[:, self.S] = population - df.loc[:, self.C]
         return df
 
     def to_sr(self, country, province=None,
@@ -282,12 +315,177 @@ class JHUData(CleaningBase):
 
     def countries(self):
         """
-        Return names of countries where records with Recovered > 0 are registered.
+        Return names of countries where records.
 
         Returns:
             list[str]: list of country names
         """
         df = self._cleaned_df.copy()
         df = df.loc[df[self.PROVINCE] == self.UNKNOWN]
-        df = df.loc[df[self.R] > 0, :]
         return list(df[self.COUNTRY].unique())
+
+    def calculate_closing_period(self):
+        """
+        Calculate mode value of closing period, time from confirmation to get outcome.
+
+        Returns:
+            int: closing period [days]
+        """
+        # Get cleaned dataset at country level
+        df = self._cleaned_df.copy()
+        df = df.loc[df[self.PROVINCE] == self.UNKNOWN]
+        # Select records of countries where recovered values are reported
+        df = df.groupby(self.COUNTRY).filter(lambda x: x[self.R].sum() != 0)
+        # Total number of confirmed/closed cases of selected records
+        df = df.groupby(self.DATE).sum()
+        df[self.FR] = df[[self.F, self.R]].sum(axis=1)
+        df = df.loc[:, [self.C, self.FR]]
+        # Calculate how many days to confirmed, closed
+        df = df.unstack().reset_index()
+        df.columns = ["Variable", self.DATE, "Number"]
+        df["Days"] = (df[self.DATE] - df[self.DATE].min()).dt.days
+        df = df.pivot_table(values="Days", index="Number", columns="Variable")
+        df = df.interpolate(limit_direction="both").fillna(method="ffill")
+        df["Elapsed"] = df[self.FR] - df[self.C]
+        df = df.loc[df["Elapsed"] > 0]
+        # Calculate mode value of closing period
+        return df["Elapsed"].mode().astype(np.int64).values[0]
+
+    def _complement_recovered_full(self, subset_df):
+        """
+        Estimate the number of recovered cases with closing period, if necessary.
+
+        Args:
+            subset_df (pandas.DataFrame): subset records with country, province and start/end dates
+                Index:
+                    reset index
+                Columns:
+                    - Date (pd.TimeStamp): Observation date
+                    - Confirmed (int): the number of confirmed cases
+                    - Fatal (int): the number of fatal cases
+                    - the other columns will be ignored
+
+        Returns:
+            pandas.DataFrame
+                Index:
+                    reset index
+                Columns:
+                    - Date (pd.TimeStamp): Observation date
+                    - Confirmed (int): the number of confirmed cases
+                    - Infected (int): the number of currently infected cases
+                    - Fatal (int): the number of fatal cases
+                    - Recovered (int): the number of recovered cases
+                    - Susceptible (int): the number of susceptible cases, if @subset_df has
+        """
+        if subset_df[self.R].sum():
+            return subset_df
+        df = subset_df.set_index(self.DATE)
+        # Closing period
+        self._closing_period = self._closing_period or self.calculate_closing_period()
+        # Estimate recovered records
+        shifted = df[self.C].shift(periods=self._closing_period, freq="D")
+        df[self.R] = shifted.fillna(0).astype(np.int64) - df[self.F]
+        # Re-calculate infected records
+        df[self.CI] = df[self.C] - df[self.F] - df[self.R]
+        return df.reset_index()
+
+    def _complement_recovered_partial(self, subset_df, interval, max_ignored):
+        """
+        Complement the number of recovered cases when not updated, if necessary.
+
+        Args:
+            subset_df (pandas.DataFrame): subset records with country, province and start/end dates
+                Index:
+                    reset index
+                Columns:
+                    - Date (pd.TimeStamp): Observation date
+                    - Confirmed (int): the number of confirmed cases
+                    - Fatal (int): the number of fatal cases
+                    - the other columns will be ignored
+            interval (int): expected update interval of the number of recovered cases [days]
+            max_ignored (int): Max number of recovered cases to be ignored [cases]
+
+        Returns:
+            pandas.DataFrame
+                Index:
+                    reset index
+                Columns:
+                    - Date (pd.TimeStamp): Observation date
+                    - Confirmed (int): the number of confirmed cases
+                    - Infected (int): the number of currently infected cases
+                    - Fatal (int): the number of fatal cases
+                    - Recovered (int): the number of recovered cases
+                    - Susceptible (int): the number of susceptible cases, if @subset_df has
+
+        Notes:
+            If the number of recovered cases did not change
+            for more than @interval days after reached @max_ignored cases,
+            complement will be applied to the number of recovered cases.
+        """
+        df = subset_df.copy()
+        # If updated, do not perform complement
+        series = df.loc[df[self.R] > max_ignored, self.R]
+        max_frequency = series.value_counts().max()
+        if max_frequency <= interval:
+            return subset_df
+        # Complement
+        df.loc[df.duplicated([self.R], keep="last"), self.R] = None
+        df[self.R].interpolate(
+            method="linear", inplace=True, limit_direction="both")
+        df[self.R] = df[self.R].fillna(method="bfill").round().astype(np.int64)
+        # Calculate Infected
+        df[self.CI] = df[self.C] - df[self.F] - df[self.R]
+        return df
+
+    def subset_complement(self, country, province=None,
+                          start_date=None, end_date=None, population=None,
+                          interval=2, max_ignored=100):
+        """
+        Return the subset of dataset and complement recovered data, if necessary.
+        Records with Recovered > 0 will be selected.
+
+        Args:
+            country(str): country name or ISO3 code
+            province(str or None): province name
+            start_date(str or None): start date, like 22Jan2020
+            end_date(str or None): end date, like 01Feb2020
+            population(int or None): population value
+
+        Returns:
+            tuple(pandas.DataFrame, bool):
+                pandas.DataFrame:
+                    Index:
+                        reset index
+                    Columns:
+                        - Date(pd.TimeStamp): Observation date
+                        - Confirmed(int): the number of confirmed cases
+                        - Infected(int): the number of currently infected cases
+                        - Fatal(int): the number of fatal cases
+                        - Recovered (int): the number of recovered cases ( > 0)
+                        - Susceptible(int): the number of susceptible cases, if calculated
+                bool: whether recovered data complemented or not
+
+        Notes:
+            If @ population is not None, the number of susceptible cases will be calculated.
+        """
+        # Arguments
+        interval = self.ensure_natural_int(interval, name="interval")
+        max_ignored = self.ensure_natural_int(max_ignored, name="max_ignored")
+        # Subset with area, start/end date and calculate Susceptible
+        subset_df = self._subset(
+            country=country, province=province,
+            start_date=start_date, end_date=end_date, population=population)
+        if subset_df.empty:
+            area = self.area_name(country, province=province)
+            raise KeyError(
+                f"Records in {area} from {start_date} to {end_date} are un-registered.")
+        # Complement recovered value if necessary
+        df = self._complement_recovered_full(subset_df)
+        df = self._complement_recovered_partial(
+            df, interval=interval, max_ignored=max_ignored)
+        # Whether complemented or not
+        is_complemented = not df.equals(subset_df)
+        # Select records where Recovered > 0
+        df = df.loc[df[self.R] > 0, :]
+        df = df.reset_index(drop=True)
+        return (df, is_complemented)
