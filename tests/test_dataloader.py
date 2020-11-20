@@ -98,6 +98,24 @@ class TestJHUData(object):
     def test_countries(self, jhu_data):
         assert isinstance(jhu_data.countries(), list)
 
+    @pytest.mark.parametrize("country", ["Netherlands", "China"])
+    def test_subset_complement_full(self, jhu_data, country):
+        with pytest.raises(ValueError):
+            jhu_data.subset(country=country)
+        df, is_complemented = jhu_data.subset_complement(country=country)
+        assert set(df.columns) == set(Term.NLOC_COLUMNS)
+        assert is_complemented
+        with pytest.raises(KeyError):
+            jhu_data.subset_complement(country=country, end_date="01Jan1900")
+
+    @pytest.mark.parametrize("country", ["Japan"])
+    def test_subset_complement_partial(self, jhu_data, country):
+        df, is_complemented = jhu_data.subset_complement(country=country)
+        assert set(df.columns) == set(Term.NLOC_COLUMNS)
+        assert is_complemented
+        with pytest.raises(KeyError):
+            jhu_data.subset_complement(country=country, end_date="01Jan1900")
+
 
 class TestPopulationData(object):
     def test_cleaning(self, population_data):
