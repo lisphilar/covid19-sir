@@ -47,6 +47,7 @@ class Scenario(Term):
         self._auto_complement = bool(auto_complement)
         self._complemented = False
         # Create {scenario_name: PhaseSeries} and set records
+        self.record_df = pd.DataFrame()
         self._first_date = None
         self._last_date = None
         self._init_phase_series()
