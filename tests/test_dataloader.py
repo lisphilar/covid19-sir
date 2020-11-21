@@ -1,12 +1,12 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-from covsirphy.cleaning.cbase import CleaningBase
 from pathlib import Path
 import pytest
 import warnings
 import pandas as pd
-from covsirphy import COVID19DataHub, DataLoader, LinelistData
+from covsirphy import CleaningBase, SIRF
+from covsirphy import COVID19DataHub, DataLoader, LinelistData, ExampleData
 from covsirphy import Term, JHUData, CountryData, PopulationData, OxCGRTData
 from covsirphy import Word, Population
 
@@ -63,8 +63,19 @@ class TestObsoleted(object):
 class TestCleaningBase(object):
     def test_cbase(self):
         cbase = CleaningBase(filename=None)
+        with pytest.raises(KeyError):
+            cbase.iso3_to_country("JPN")
         with pytest.raises(NotImplementedError):
             cbase.total()
+
+
+class TestExampleData(object):
+    def test_iso3(self):
+        example_data = ExampleData()
+        example_data.add(SIRF, country="Japan")
+        assert example_data.country_to_iso3("Japan") == "JPN"
+        example_data.add(SIRF, country="Moon")
+        assert example_data.country_to_iso3("Moon") == "---"
 
 
 class TestJHUData(object):
