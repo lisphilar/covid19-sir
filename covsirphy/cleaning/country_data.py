@@ -94,10 +94,7 @@ class CountryData(CleaningBase):
         # Remove empty rows
         df = df.dropna(subset=[self.DATE])
         # Add province column
-        if self.province_col:
-            df = df.rename({self.province_col: self.PROVINCE}, axis=1)
-        else:
-            df[self.PROVINCE] = self.UNKNOWN
+        df[self.PROVINCE] = self.UNKNOWN if self.province_col is None else df[self.province_col]
         # Values
         df[self.CI] = df[self.C] - df[self.F] - df[self.R]
         v_cols = self.VALUE_COLUMNS[:]
