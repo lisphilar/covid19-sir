@@ -68,6 +68,16 @@ class OxCGRTData(CleaningBase):
             },
             axis=1
         )
+        df[self.COUNTRY] = df[self.COUNTRY].replace(
+            {
+                # COD
+                "Congo, the Democratic Republic of the": "Democratic Republic of the Congo",
+                # COG
+                "Congo": "Republic of the Congo",
+                # Diamond princess
+                "Diamond Princess": "Others",
+            }
+        )
         # Confirm the expected columns are in raw data
         self.ensure_dataframe(
             df, name="the raw data", columns=self.OXCGRT_COLS
@@ -103,11 +113,7 @@ class OxCGRTData(CleaningBase):
                     - other column names are defined by OxCGRTData.COL_DICT
         """
         country = self.ensure_country_name(country)
-        try:
-            df = super().subset(country=country)
-        except KeyError:
-            raise KeyError(
-                f"Records in {country} are un-registered.") from None
+        df = super().subset(country=country)
         df = df.groupby(self.DATE).last().reset_index()
         return df.loc[:, self.OXCGRT_COLS_WITHOUT_COUNTRY]
 

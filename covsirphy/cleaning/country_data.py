@@ -12,12 +12,15 @@ class CountryData(CleaningBase):
     Data cleaning of country level data.
 
     Args:
-        filename (str): filename to read the data
+        filename (str or None): filename to read the data
         country (str): country name
     """
 
     def __init__(self, filename, country):
-        self._raw = dd.read_csv(filename).compute()
+        if filename is None:
+            self._raw = pd.DataFrame()
+        else:
+            self._raw = dd.read_csv(filename).compute()
         self._country = country
         self.province_col = None
         self.var_dict = {}
@@ -91,10 +94,7 @@ class CountryData(CleaningBase):
         # Remove empty rows
         df = df.dropna(subset=[self.DATE])
         # Add province column
-        if self.province_col:
-            df = df.rename({self.province_col: self.PROVINCE}, axis=1)
-        else:
-            df[self.PROVINCE] = self.UNKNOWN
+        df[self.PROVINCE] = self.UNKNOWN if self.province_col is None else df[self.province_col]
         # Values
         df[self.CI] = df[self.C] - df[self.F] - df[self.R]
         v_cols = self.VALUE_COLUMNS[:]

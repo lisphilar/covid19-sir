@@ -5,7 +5,8 @@ from pathlib import Path
 import pytest
 import warnings
 import pandas as pd
-from covsirphy import COVID19DataHub, DataLoader, LinelistData
+from covsirphy import CleaningBase, SIRF
+from covsirphy import COVID19DataHub, DataLoader, LinelistData, ExampleData
 from covsirphy import Term, JHUData, CountryData, PopulationData, OxCGRTData
 from covsirphy import Word, Population
 
@@ -50,6 +51,10 @@ class TestDataLoader(object):
         assert isinstance(data_loader.oxcgrt(), OxCGRTData)
         assert isinstance(data_loader.japan(), CountryData)
         assert isinstance(data_loader.linelist(), LinelistData)
+        # Local file
+        data_loader.jhu(local_file="input/covid19dh.csv")
+        data_loader.population(local_file="input/covid19dh.csv")
+        data_loader.oxcgrt(local_file="input/covid19dh.csv")
 
 
 class TestObsoleted(object):
@@ -59,8 +64,27 @@ class TestObsoleted(object):
         Word()
 
 
+class TestCleaningBase(object):
+    def test_cbase(self):
+        cbase = CleaningBase(filename=None)
+        with pytest.raises(KeyError):
+            cbase.iso3_to_country("JPN")
+        with pytest.raises(NotImplementedError):
+            cbase.total()
+
+
+class TestExampleData(object):
+    def test_iso3(self):
+        example_data = ExampleData()
+        example_data.add(SIRF, country="Japan")
+        assert example_data.country_to_iso3("Japan") == "JPN"
+        example_data.add(SIRF, country="Moon")
+        assert example_data.country_to_iso3("Moon") == "---"
+
+
 class TestJHUData(object):
     def test_cleaning(self, jhu_data):
+        assert isinstance(jhu_data.raw, pd.DataFrame)
         with pytest.raises(ValueError):
             jhu_data.cleaned(population=None)
         df = jhu_data.cleaned()
@@ -78,6 +102,8 @@ class TestJHUData(object):
                 "Japan", start_date="01Jan2020", end_date="10Jan2020")
         s_df = jhu_data.subset("Japan", population=126_500_000)
         assert set(s_df.columns) == set(Term.SUB_COLUMNS)
+        jhu_data.subset("UK")
+        jhu_data.subset("US")
 
     def test_replace(self, jhu_data, japan_data):
         jhu_data.replace(japan_data)
@@ -136,6 +162,7 @@ class TestPopulationData(object):
         assert isinstance(old_value, int)
         with pytest.raises(KeyError):
             population_data.value("Japan", "01Jan1000")
+        population_data.value("UK")
 
     def test_update(self):
         population_data = PopulationData(filename=None)
@@ -177,3 +204,8 @@ class TestCountryData(object):
 
     def test_countries(self, japan_data):
         assert [japan_data.country] == japan_data.countries()
+
+    def test_create(self):
+        country_data = CountryData(filename=None, country="Moon")
+        with pytest.raises(ValueError):
+            country_data.cleaned()
