@@ -146,10 +146,11 @@ class CleaningBase(Term):
             iso3_dict = df.set_index(self.COUNTRY)[self.ISO3].to_dict()
             if country in df[self.COUNTRY].unique():
                 return iso3_dict[country]
-        found_countries = pycountry.countries.search_fuzzy(country)
-        if found_countries:
+        try:
+            found_countries = pycountry.countries.search_fuzzy(country)
             return found_countries[0].alpha_3
-        return "---"
+        except LookupError:
+            return "---"
 
     @classmethod
     def area_name(cls, country, province=None):
