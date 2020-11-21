@@ -200,3 +200,8 @@ class TestCountryData(object):
 
     def test_countries(self, japan_data):
         assert [japan_data.country] == japan_data.countries()
+
+    def test_create(self):
+        country_data = CountryData(filename=None, country="Moon")
+        with pytest.raises(ValueError):
+            country_data.cleaned()
