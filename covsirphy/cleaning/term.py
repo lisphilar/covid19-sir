@@ -189,7 +189,7 @@ class Term(object):
             included = ", ".join(df.columns.tolist())
             s1 = f"Expected columns were not included in {name} with {included}."
             raise KeyError(
-                f"{s1} However, {cols_str} must be included."
+                f"{s1} {cols_str} must be included."
             )
         return df
 
