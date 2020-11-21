@@ -103,11 +103,7 @@ class OxCGRTData(CleaningBase):
                     - other column names are defined by OxCGRTData.COL_DICT
         """
         country = self.ensure_country_name(country)
-        try:
-            df = super().subset(country=country)
-        except KeyError:
-            raise KeyError(
-                f"Records in {country} are un-registered.") from None
+        df = super().subset(country=country)
         df = df.groupby(self.DATE).last().reset_index()
         return df.loc[:, self.OXCGRT_COLS_WITHOUT_COUNTRY]
 
