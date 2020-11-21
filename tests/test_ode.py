@@ -97,7 +97,7 @@ class TestODE(object):
         with pytest.raises(ValueError):
             validator.run(model)
 
-    @pytest.mark.parametrize("model", [SIRD, SIRF, SIRFV, SEWIRF])
+    @pytest.mark.parametrize("model", [SIRD, SIRF])
     def test_validation(self, model):
         # Setting
         validator = ModelValidator(n_trials=1, seed=1)
