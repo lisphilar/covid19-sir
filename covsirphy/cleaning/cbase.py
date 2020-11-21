@@ -88,7 +88,11 @@ class CleaningBase(Term):
             str: country name
         """
         # Special
-        name_dict = {"UK": "United Kingdom"}
+        name_dict = {
+            "UK": "United Kingdom",
+            "South Korea": "Korea, South",
+            "Ivory Coast": "Cote d'Ivoire",
+        }
         if country in name_dict:
             country = name_dict[country]
         # Registered in dataset

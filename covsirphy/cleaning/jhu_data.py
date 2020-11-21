@@ -93,35 +93,14 @@ class JHUData(CleaningBase):
         # Country
         df[self.COUNTRY] = df[self.COUNTRY].replace(
             {
-                "Mainland China": "China",
-                "Hong Kong SAR": "Hong Kong",
-                "Taipei and environs": "Taiwan",
-                "Iran (Islamic Republic of)": "Iran",
-                "Republic of Korea": "South Korea",
-                "Republic of Ireland": "Ireland",
-                "Macao SAR": "Macau",
-                "Russian Federation": "Russia",
-                "Republic of Moldova": "Moldova",
-                "Taiwan*": "Taiwan",
-                "Cruise Ship": "Others",
-                "Viet Nam": "Vietnam",
-                "Czechia": "Czech Republic",
-                "St. Martin": "Saint Martin",
-                "Cote d'Ivoire": "Ivory Coast",
-                "('St. Martin',)": "Saint Martin",
-                "Congo (Kinshasa)": "Congo",
-                "Congo (Brazzaville)": "Congo",
-                "Congo, the Democratic Republic of the": "Congo",
-                "The, Bahamas": "Bahamas",
+                # COD
+                "Congo, the Democratic Republic of the": "Democratic Republic of the Congo",
+                # COG
+                "Congo": "Republic of the Congo",
             }
         )
         # Province
-        df[self.PROVINCE] = df[self.PROVINCE].fillna(self.UNKNOWN).replace(
-            {
-                "Cruise Ship": "Diamond Princess",
-                "Diamond Princess cruise ship": "Diamond Princess"
-            }
-        )
+        df[self.PROVINCE] = df[self.PROVINCE].fillna(self.UNKNOWN)
         df.loc[df[self.COUNTRY] == "Diamond Princess", [
             self.COUNTRY, self.PROVINCE]] = ["Others", "Diamond Princess"]
         # Values

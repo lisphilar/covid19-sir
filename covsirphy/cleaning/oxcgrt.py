@@ -68,6 +68,16 @@ class OxCGRTData(CleaningBase):
             },
             axis=1
         )
+        df[self.COUNTRY] = df[self.COUNTRY].replace(
+            {
+                # COD
+                "Congo, the Democratic Republic of the": "Democratic Republic of the Congo",
+                # COG
+                "Congo": "Republic of the Congo",
+                # Diamond princess
+                "Diamond Princess": "Others",
+            }
+        )
         # Confirm the expected columns are in raw data
         self.ensure_dataframe(
             df, name="the raw data", columns=self.OXCGRT_COLS
