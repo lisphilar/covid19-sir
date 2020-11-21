@@ -147,6 +147,7 @@ class TestPopulationData(object):
         assert isinstance(old_value, int)
         with pytest.raises(KeyError):
             population_data.value("Japan", "01Jan1000")
+        population_data.value("UK")
 
     def test_update(self):
         population_data = PopulationData(filename=None)
