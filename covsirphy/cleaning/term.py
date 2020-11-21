@@ -91,8 +91,7 @@ class Term(object):
         Returns:
             str
         """
-        if not isinstance(num, int):
-            raise TypeError("@num must be an integer.")
+        num = cls.ensure_natural_int(num, include_zero=True)
         q, mod = divmod(num, 10)
         suffix = "th" if q % 10 == 1 else cls.SUFFIX_DICT[mod]
         return f"{num}{suffix}"
