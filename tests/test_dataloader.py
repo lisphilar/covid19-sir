@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
+from covsirphy.cleaning.cbase import CleaningBase
 from pathlib import Path
 import pytest
 import warnings
@@ -59,6 +60,13 @@ class TestObsoleted(object):
         Word()
 
 
+class TestCleaningBase(object):
+    def test_cbase(self):
+        cbase = CleaningBase(filename=None)
+        with pytest.raises(NotImplementedError):
+            cbase.total()
+
+
 class TestJHUData(object):
     def test_cleaning(self, jhu_data):
         assert isinstance(jhu_data.raw, pd.DataFrame)
@@ -79,6 +87,8 @@ class TestJHUData(object):
                 "Japan", start_date="01Jan2020", end_date="10Jan2020")
         s_df = jhu_data.subset("Japan", population=126_500_000)
         assert set(s_df.columns) == set(Term.SUB_COLUMNS)
+        jhu_data.subset("UK")
+        jhu_data.subset("US")
 
     def test_replace(self, jhu_data, japan_data):
         jhu_data.replace(japan_data)
