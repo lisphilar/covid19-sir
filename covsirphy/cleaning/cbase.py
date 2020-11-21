@@ -87,14 +87,16 @@ class CleaningBase(Term):
         Returns:
             str: country name
         """
+        # Special
+        name_dict = {"UK": "United Kingdom"}
+        if country in name_dict:
+            country = name_dict[country]
+        # Registered in dataset
         df = self.ensure_dataframe(
             self._cleaned_df, name="the cleaned dataset", columns=[self.COUNTRY])
         registered_set = set(df[self.COUNTRY].unique())
         if country in registered_set:
             return country
-        name_dict = {"UK": "United Kingdom"}
-        if country in name_dict:
-            return name_dict[country]
         try:
             searched = [
                 c.name for c in pycountry.countries.search_fuzzy(country)]
