@@ -51,6 +51,10 @@ class TestDataLoader(object):
         assert isinstance(data_loader.oxcgrt(), OxCGRTData)
         assert isinstance(data_loader.japan(), CountryData)
         assert isinstance(data_loader.linelist(), LinelistData)
+        # Local file
+        data_loader.jhu(local_file="input/covid19dh.csv")
+        data_loader.population(local_file="input/covid19dh.csv")
+        data_loader.oxcgrt(local_file="input/covid19dh.csv")
 
 
 class TestObsoleted(object):
