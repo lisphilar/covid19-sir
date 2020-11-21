@@ -179,21 +179,35 @@
 /* CSS for nbsphinx extension */
 
 /* remove conflicting styling from Sphinx themes */
-div.nbinput.container,
-div.nbinput.container div.prompt,
-div.nbinput.container div.input_area,
-div.nbinput.container div[class*=highlight],
-div.nbinput.container div[class*=highlight] pre,
-div.nboutput.container,
-div.nboutput.container div.prompt,
-div.nboutput.container div.output_area,
-div.nboutput.container div[class*=highlight],
-div.nboutput.container div[class*=highlight] pre {
-    background: none;
+div.nbinput.container div.prompt *,
+div.nboutput.container div.prompt *,
+div.nbinput.container div.input_area pre,
+div.nboutput.container div.output_area pre,
+div.nbinput.container div.input_area .highlight,
+div.nboutput.container div.output_area .highlight {
     border: none;
-    padding: 0 0;
+    padding: 0;
     margin: 0;
     box-shadow: none;
+}
+
+div.nbinput.container > div[class*=highlight],
+div.nboutput.container > div[class*=highlight] {
+    margin: 0;
+}
+
+div.nbinput.container div.prompt *,
+div.nboutput.container div.prompt * {
+    background: none;
+}
+
+div.nboutput.container div.output_area .highlight,
+div.nboutput.container div.output_area pre {
+    background: unset;
+}
+
+div.nboutput.container div.output_area div.highlight {
+    color: unset;  /* override Pygments text color */
 }
 
 /* avoid gaps between output lines */
@@ -294,7 +308,7 @@ div.nboutput.container div.output_area {
 div.nbinput.container div.input_area {
     border: 1px solid #e0e0e0;
     border-radius: 2px;
-    background: #f5f5f5;
+    /*background: #f5f5f5;*/
 }
 
 /* override MathJax center alignment in output cells */
@@ -360,6 +374,7 @@ div.nboutput.container div.output_area.rendered_html,
 div.nboutput.container div.output_area > div.output_javascript,
 div.nboutput.container div.output_area:not(.rendered_html) > img{
     padding: 5px;
+    margin: 0;
 }
 
 /* fix copybtn overflow problem in chromium (needed for 'sphinx_copybutton') */
@@ -471,7 +486,7 @@ div.rendered_html tbody tr:hover {
 </div>
 <div class="output_area docutils container">
 <div class="highlight"><pre>
-&#39;2.11.0&#39;
+&#39;2.11.0-zeta.new.281.334.fixing.339.refactor.340&#39;
 </pre></div></div>
 </div>
 <div class="nbinput docutils container">
@@ -843,7 +858,7 @@ div.rendered_html tbody tr:hover {
 </div>
 <div class="output_area docutils container">
 <div class="highlight"><pre>
-&lt;covsirphy.analysis.scenario.Scenario at 0x7f35f88c8640&gt;
+&lt;covsirphy.analysis.scenario.Scenario at 0x7fe9f250d460&gt;
 </pre></div></div>
 </div>
 </div>
@@ -974,7 +989,7 @@ div.rendered_html tbody tr:hover {
 </div>
 <div class="output_area docutils container">
 <div class="highlight"><pre>
-&lt;covsirphy.analysis.scenario.Scenario at 0x7f35f88c8640&gt;
+&lt;covsirphy.analysis.scenario.Scenario at 0x7fe9f250d460&gt;
 </pre></div></div>
 </div>
 </div>
@@ -1097,7 +1112,7 @@ div.rendered_html tbody tr:hover {
 </div>
 <div class="output_area docutils container">
 <div class="highlight"><pre>
-&lt;covsirphy.analysis.scenario.Scenario at 0x7f35f88c8640&gt;
+&lt;covsirphy.analysis.scenario.Scenario at 0x7fe9f250d460&gt;
 </pre></div></div>
 </div>
 <div class="nbinput docutils container">
@@ -1355,11 +1370,11 @@ div.rendered_html tbody tr:hover {
 
 &lt;SIR-F model: parameter estimation&gt;
 Running optimization with 4 CPUs...
-         5th phase (30Jun2020 - 16Jul2020): finished  810 trials in 0 min 30 sec
-         3rd phase (03Jun2020 - 11Jun2020): finished  313 trials in 0 min 10 sec
-         1st phase (20May2020 - 28May2020): finished  331 trials in 0 min 10 sec
-         2nd phase (29May2020 - 02Jun2020): finished  286 trials in 0 min 10 sec
-         4th phase (12Jun2020 - 29Jun2020): finished 3861 trials in 3 min  0 sec
+         5th phase (30Jun2020 - 16Jul2020): finished  848 trials in 0 min 30 sec
+         3rd phase (03Jun2020 - 11Jun2020): finished  369 trials in 0 min 10 sec         1st phase (20May2020 - 28May2020): finished  369 trials in 0 min 10 sec
+
+         2nd phase (29May2020 - 02Jun2020): finished  370 trials in 0 min 10 sec
+         4th phase (12Jun2020 - 29Jun2020): finished 3943 trials in 3 min  0 sec
 Completed optimization. Total: 3 min 31 sec
 </pre></div></div>
 </div>

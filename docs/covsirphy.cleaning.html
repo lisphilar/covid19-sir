@@ -220,9 +220,13 @@
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>filename</strong> (<em>str</em>) – CSV filename of the dataset</p></li>
-<li><p><strong>citation</strong> (<em>str</em>) – citation</p></li>
+<li><p><strong>filename</strong> (<em>str</em><em> or </em><em>None</em>) – CSV filename of the dataset</p></li>
+<li><p><strong>citation</strong> (<em>str</em><em> or </em><em>None</em>) – citation</p></li>
 </ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>If &#64;filename is None, empty dataframe will be set as raw data.
+If &#64;citation is None, citation will be empty string.</p>
 </dd>
 </dl>
 <dl class="py method">
@@ -304,7 +308,7 @@ If not, return the area name, like ‘Japan/Tokyo’</p>
 <dd class="field-even"><p><strong>KeyError</strong> – ISO3 code of the country is not registered</p>
 </dd>
 <dt class="field-odd">Returns</dt>
-<dd class="field-odd"><p>ISO3 code</p>
+<dd class="field-odd"><p>ISO3 code or “—” (when unknown)</p>
 </dd>
 <dt class="field-even">Return type</dt>
 <dd class="field-even"><p>str</p>
@@ -313,12 +317,13 @@ If not, return the area name, like ‘Japan/Tokyo’</p>
 </dd></dl>
 
 <dl class="py method">
-<dt id="covsirphy.cleaning.cbase.CleaningBase.iso3_to_country">
-<code class="sig-name descname">iso3_to_country</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">iso3_code</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/cleaning/cbase.html#CleaningBase.iso3_to_country"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#covsirphy.cleaning.cbase.CleaningBase.iso3_to_country" title="Permalink to this definition">¶</a></dt>
-<dd><p>Convert ISO3 code to country name if records are available.</p>
+<dt id="covsirphy.cleaning.cbase.CleaningBase.ensure_country_name">
+<code class="sig-name descname">ensure_country_name</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">country</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/cleaning/cbase.html#CleaningBase.ensure_country_name"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#covsirphy.cleaning.cbase.CleaningBase.ensure_country_name" title="Permalink to this definition">¶</a></dt>
+<dd><p>Ensure that the country name is correct.
+If not, the correct country name will be found.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>iso3_code</strong> (<em>str</em>) – ISO3 code or country name</p>
+<dd class="field-odd"><p><strong>country</strong> (<em>str</em>) – country name</p>
 </dd>
 <dt class="field-even">Returns</dt>
 <dd class="field-even"><p>country name</p>
@@ -327,9 +332,12 @@ If not, return the area name, like ‘Japan/Tokyo’</p>
 <dd class="field-odd"><p>str</p>
 </dd>
 </dl>
-<p class="rubric">Notes</p>
-<p>If ISO3 codes are not registered, return the string as-si &#64;iso3_code.</p>
 </dd></dl>
+
+<dl class="py method">
+<dt id="covsirphy.cleaning.cbase.CleaningBase.iso3_to_country">
+<code class="sig-name descname">iso3_to_country</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="headerlink" href="#covsirphy.cleaning.cbase.CleaningBase.iso3_to_country" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
 
 <dl class="py method">
 <dt id="covsirphy.cleaning.cbase.CleaningBase.raw">
@@ -358,18 +366,8 @@ If not, return the area name, like ‘Japan/Tokyo’</p>
 <li><p><strong>end_date</strong> (<em>str</em><em> or </em><em>None</em>) – end date, like 01Feb2020</p></li>
 </ul>
 </dd>
-<dt class="field-even">Raises</dt>
-<dd class="field-even"><ul class="simple">
-<li><p><strong>ValueError</strong> – <ul>
-<li><p>&#64;country was None
-    - &#64;province is not None, but the dataset does not have Province column</p></li>
-</ul>
-</p></li>
-<li><p><strong>KeyError</strong> – selected records are not registered</p></li>
-</ul>
-</dd>
-<dt class="field-odd">Returns</dt>
-<dd class="field-odd"><p><dl class="simple">
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><dl class="simple">
 <dt>pandas.DataFrame</dt><dd><dl class="simple">
 <dt>Index:</dt><dd><p>reset index</p>
 </dd>
@@ -387,16 +385,6 @@ If not, return the area name, like ‘Japan/Tokyo’</p>
 <dt id="covsirphy.cleaning.cbase.CleaningBase.total">
 <code class="sig-name descname">total</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/cleaning/cbase.html#CleaningBase.total"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#covsirphy.cleaning.cbase.CleaningBase.total" title="Permalink to this definition">¶</a></dt>
 <dd><p>Calculate total values of the cleaned dataset.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Returns</dt>
-<dd class="field-odd"><p>Index: ‘Date’ (pandas.TimeStamp) or not exist (pandas.Series)
-Columns: column names of the cleaned dataset (dtype=int or float)
-Values: total values</p>
-</dd>
-<dt class="field-even">Return type</dt>
-<dd class="field-even"><p>pandas.DataFrame or pandas.Series or float</p>
-</dd>
-</dl>
 </dd></dl>
 
 </dd></dl>
@@ -412,7 +400,7 @@ Values: total values</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>filename</strong> (<em>str</em>) – filename to read the data</p></li>
+<li><p><strong>filename</strong> (<em>str</em><em> or </em><em>None</em>) – filename to read the data</p></li>
 <li><p><strong>country</strong> (<em>str</em>) – country name</p></li>
 </ul>
 </dd>
@@ -745,6 +733,20 @@ Citation of COVID-19 Data Hub will be set as PopulationData.citation.</p>
 </dd>
 </dl>
 <dl class="py method">
+<dt id="covsirphy.cleaning.jhu_data.JHUData.calculate_closing_period">
+<code class="sig-name descname">calculate_closing_period</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/cleaning/jhu_data.html#JHUData.calculate_closing_period"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#covsirphy.cleaning.jhu_data.JHUData.calculate_closing_period" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculate mode value of closing period, time from confirmation to get outcome.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>closing period [days]</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>int</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
 <dt id="covsirphy.cleaning.jhu_data.JHUData.cleaned">
 <code class="sig-name descname">cleaned</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/cleaning/jhu_data.html#JHUData.cleaned"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#covsirphy.cleaning.jhu_data.JHUData.cleaned" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return the cleaned dataset.</p>
@@ -782,7 +784,7 @@ Citation of COVID-19 Data Hub will be set as PopulationData.citation.</p>
 <dl class="py method">
 <dt id="covsirphy.cleaning.jhu_data.JHUData.countries">
 <code class="sig-name descname">countries</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/cleaning/jhu_data.html#JHUData.countries"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#covsirphy.cleaning.jhu_data.JHUData.countries" title="Permalink to this definition">¶</a></dt>
-<dd><p>Return names of countries where records with Recovered &gt; 0 are registered.</p>
+<dd><p>Return names of countries where records.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns</dt>
 <dd class="field-odd"><p>list of country names</p>
@@ -830,7 +832,7 @@ Citation of COVID-19 Data Hub will be set as PopulationData.citation.</p>
 <dl class="py method">
 <dt id="covsirphy.cleaning.jhu_data.JHUData.subset">
 <code class="sig-name descname">subset</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">country</span></em>, <em class="sig-param"><span class="n">province</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">start_date</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">end_date</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">population</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/cleaning/jhu_data.html#JHUData.subset"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#covsirphy.cleaning.jhu_data.JHUData.subset" title="Permalink to this definition">¶</a></dt>
-<dd><p>Return the subset of dataset.</p>
+<dd><p>Return the subset of dataset with Recovered &gt; 0.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
@@ -862,8 +864,50 @@ Citation of COVID-19 Data Hub will be set as PopulationData.citation.</p>
 </dd>
 </dl>
 <p class="rubric">Notes</p>
-<p>If &#64;population is not None, the number of susceptible cases will be calculated.
+<p>If &#64;population is not None, the number of susceptible cases will be calculated.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="covsirphy.cleaning.jhu_data.JHUData.subset_complement">
+<code class="sig-name descname">subset_complement</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">country</span></em>, <em class="sig-param"><span class="n">province</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">start_date</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">end_date</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">population</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">interval</span><span class="o">=</span><span class="default_value">2</span></em>, <em class="sig-param"><span class="n">max_ignored</span><span class="o">=</span><span class="default_value">100</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/cleaning/jhu_data.html#JHUData.subset_complement"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#covsirphy.cleaning.jhu_data.JHUData.subset_complement" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the subset of dataset and complement recovered data, if necessary.
 Records with Recovered &gt; 0 will be selected.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>country</strong> (<em>str</em>) – country name or ISO3 code</p></li>
+<li><p><strong>province</strong> (<em>str</em><em> or </em><em>None</em>) – province name</p></li>
+<li><p><strong>start_date</strong> (<em>str</em><em> or </em><em>None</em>) – start date, like 22Jan2020</p></li>
+<li><p><strong>end_date</strong> (<em>str</em><em> or </em><em>None</em>) – end date, like 01Feb2020</p></li>
+<li><p><strong>population</strong> (<em>int</em><em> or </em><em>None</em>) – population value</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><dl class="simple">
+<dt>pandas.DataFrame:</dt><dd><dl class="simple">
+<dt>Index:</dt><dd><p>reset index</p>
+</dd>
+<dt>Columns:</dt><dd><ul class="simple">
+<li><p>Date(pd.TimeStamp): Observation date</p></li>
+<li><p>Confirmed(int): the number of confirmed cases</p></li>
+<li><p>Infected(int): the number of currently infected cases</p></li>
+<li><p>Fatal(int): the number of fatal cases</p></li>
+<li><p>Recovered (int): the number of recovered cases ( &gt; 0)</p></li>
+<li><p>Susceptible(int): the number of susceptible cases, if calculated</p></li>
+</ul>
+</dd>
+</dl>
+</dd>
+</dl>
+<p>bool: whether recovered data complemented or not</p>
+</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>tuple(pandas.DataFrame, bool)</p>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<p>If &#64; population is not None, the number of susceptible cases will be calculated.</p>
 </dd></dl>
 
 <dl class="py method">
@@ -903,7 +947,7 @@ Records with Recovered &gt; 0 will be used.</p>
 <dl class="py method">
 <dt id="covsirphy.cleaning.jhu_data.JHUData.total">
 <code class="sig-name descname">total</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/cleaning/jhu_data.html#JHUData.total"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#covsirphy.cleaning.jhu_data.JHUData.total" title="Permalink to this definition">¶</a></dt>
-<dd><p>Return a dataframe to show chronological change of number and rates.</p>
+<dd><p>Calculate total number of cases and rates.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns</dt>
 <dd class="field-odd"><p><p>group-by Date, sum of the values</p>
@@ -1006,7 +1050,7 @@ Records with Recovered &gt; 0 will be used.</p>
 <dl class="py method">
 <dt id="covsirphy.cleaning.oxcgrt.OxCGRTData.total">
 <code class="sig-name descname">total</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/cleaning/oxcgrt.html#OxCGRTData.total"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#covsirphy.cleaning.oxcgrt.OxCGRTData.total" title="Permalink to this definition">¶</a></dt>
-<dd><p>This is not defined for this child class.</p>
+<dd><p>This method is not defined for OxCGRTData class.</p>
 </dd></dl>
 
 </dd></dl>
@@ -1080,7 +1124,7 @@ country_level (str): whether key is country name or not</p>
 <dl class="py method">
 <dt id="covsirphy.cleaning.population.PopulationData.total">
 <code class="sig-name descname">total</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/cleaning/population.html#PopulationData.total"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#covsirphy.cleaning.population.PopulationData.total" title="Permalink to this definition">¶</a></dt>
-<dd><p>Return the total value of population in the datset.</p>
+<dd><p>Return the total value of population in the dataset.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns</dt>
 <dd class="field-odd"><p>int</p>
@@ -1090,7 +1134,7 @@ country_level (str): whether key is country name or not</p>
 
 <dl class="py method">
 <dt id="covsirphy.cleaning.population.PopulationData.update">
-<code class="sig-name descname">update</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">value</span></em>, <em class="sig-param"><span class="n">country</span></em>, <em class="sig-param"><span class="n">province</span><span class="o">=</span><span class="default_value">'-'</span></em>, <em class="sig-param"><span class="n">date</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/cleaning/population.html#PopulationData.update"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#covsirphy.cleaning.population.PopulationData.update" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">update</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">value</span></em>, <em class="sig-param"><span class="n">country</span></em>, <em class="sig-param"><span class="n">province</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">date</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/cleaning/population.html#PopulationData.update"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#covsirphy.cleaning.population.PopulationData.update" title="Permalink to this definition">¶</a></dt>
 <dd><p>Update the value of a new place.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -1109,7 +1153,8 @@ country_level (str): whether key is country name or not</p>
 </dd>
 </dl>
 <p class="rubric">Notes</p>
-<p>If &#64;date is None, the created date of the instancewill be used</p>
+<p>If &#64;date is None, the created date of the instance will be used.
+If &#64;province is None, “-” will be used.</p>
 </dd></dl>
 
 <dl class="py method">

@@ -1,0 +1,241 @@
+Term definition
+===============
+
+This is a list of term in CovsirPhy project. These terms are used as
+method names and figure titles.
+
+.. raw:: html
+
+   <dl>
+
+.. raw:: html
+
+   <dt>
+
+model
+
+.. raw:: html
+
+   </dt>
+
+.. raw:: html
+
+   <dd>
+
+ODE models derived from the simple SIR model.
+
+.. raw:: html
+
+   </dd>
+
+.. raw:: html
+
+   <dt>
+
+accuracy of models
+
+.. raw:: html
+
+   </dt>
+
+.. raw:: html
+
+   <dd>
+
+Whether variables and parameters of a model are represent the currenct
+situation of the outbreak or not.
+
+.. raw:: html
+
+   </dd>
+
+.. raw:: html
+
+   <dt>
+
+phase
+
+.. raw:: html
+
+   </dt>
+
+.. raw:: html
+
+   <dd>
+
+A sequential dates in which parameter values of SIR-derived models are
+fixed.
+
+.. raw:: html
+
+   </dd>
+
+.. raw:: html
+
+   <dt>
+
+trend
+
+.. raw:: html
+
+   </dt>
+
+.. raw:: html
+
+   <dd>
+
+Parameter set of a phase.
+
+.. raw:: html
+
+   </dd>
+
+.. raw:: html
+
+   <dt>
+
+trend analysis
+
+.. raw:: html
+
+   </dt>
+
+.. raw:: html
+
+   <dd>
+
+Breaking down the series of records to phases.
+
+.. raw:: html
+
+   </dd>
+
+.. raw:: html
+
+   <dt>
+
+accuracy of trend analysis
+
+.. raw:: html
+
+   </dt>
+
+.. raw:: html
+
+   <dd>
+
+Whether the change date of phases are effective or not.
+
+.. raw:: html
+
+   </dd>
+
+.. raw:: html
+
+   <dt>
+
+parameter estimation
+
+.. raw:: html
+
+   </dt>
+
+.. raw:: html
+
+   <dd>
+
+Optimization of model parameter values with actual records of a phase.
+
+.. raw:: html
+
+   </dd>
+
+.. raw:: html
+
+   <dt>
+
+accuracy of parameter estimation
+
+.. raw:: html
+
+   </dt>
+
+.. raw:: html
+
+   <dd>
+
+How small the difference of actual number of cases and simulated number
+of cases with the estimated parameter values in a phase. This will be
+scored with RMSLE.
+
+.. raw:: html
+
+   </dd>
+
+.. raw:: html
+
+   <dt>
+
+simulation
+
+.. raw:: html
+
+   </dt>
+
+.. raw:: html
+
+   <dd>
+
+Calculation of the number of cases with fixed parameter values and
+initial values.
+
+.. raw:: html
+
+   </dd>
+
+.. raw:: html
+
+   <dt>
+
+prediction
+
+.. raw:: html
+
+   </dt>
+
+.. raw:: html
+
+   <dd>
+
+Prediction of parameter values in the future phases using relationship
+of estimated parameters and indexes regarding measures taken by
+countries and individuals.
+
+.. raw:: html
+
+   </dd>
+
+.. raw:: html
+
+   <dt>
+
+forecasting
+
+.. raw:: html
+
+   </dt>
+
+.. raw:: html
+
+   <dd>
+
+Forecasting of the number of cases in the future phases. This needs
+trend analysis, parameter estimation, simulation and prediction.
+
+.. raw:: html
+
+   </dd>
+
+.. raw:: html
+
+   </dl>
