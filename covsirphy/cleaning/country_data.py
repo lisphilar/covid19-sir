@@ -12,12 +12,15 @@ class CountryData(CleaningBase):
     Data cleaning of country level data.
 
     Args:
-        filename (str): filename to read the data
+        filename (str or None): filename to read the data
         country (str): country name
     """
 
     def __init__(self, filename, country):
-        self._raw = dd.read_csv(filename).compute()
+        if filename is None:
+            self._raw = pd.DataFrame()
+        else:
+            self._raw = dd.read_csv(filename).compute()
         self._country = country
         self.province_col = None
         self.var_dict = {}
