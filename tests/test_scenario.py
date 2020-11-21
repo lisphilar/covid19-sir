@@ -10,11 +10,11 @@ from covsirphy import Term, PhaseSeries, SIR, SIRF
 
 
 class TestScenario(object):
-    @pytest.mark.parametrize("country", ["Italy", "Japan"])
+    @pytest.mark.parametrize("country", ["Italy", "Japan", "Netherlands"])
     @pytest.mark.parametrize("province", [None, "Tokyo"])
     @pytest.mark.parametrize("tau", [None, 720, 1000])
     def test_start(self, jhu_data, population_data, country, province, tau):
-        if country == "Italy" and province == "Tokyo":
+        if province == "Tokyo" and country != "Japan":
             with pytest.raises(KeyError):
                 Scenario(
                     jhu_data, population_data, country, province=province)
