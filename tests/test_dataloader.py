@@ -61,6 +61,7 @@ class TestObsoleted(object):
 
 class TestJHUData(object):
     def test_cleaning(self, jhu_data):
+        assert isinstance(jhu_data.raw, pd.DataFrame)
         with pytest.raises(ValueError):
             jhu_data.cleaned(population=None)
         df = jhu_data.cleaned()
