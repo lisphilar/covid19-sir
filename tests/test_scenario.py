@@ -209,7 +209,7 @@ class TestScenario(object):
         snl.trend(show_figure=False)
         all_phases = snl.summary().index.tolist()
         snl.disable(all_phases[:-1])
-        snl.estimate(SIR, timeout=10)
+        snl.estimate(SIR, timeout=5, timeout_iteration=5)
         # Estimation history
         snl.estimate_history(phase="last")
         # Estimation accuracy
@@ -242,7 +242,7 @@ class TestScenario(object):
             snl.param_history(["rho"])
         all_phases = snl.summary().index.tolist()
         snl.disable(all_phases[:-2])
-        snl.estimate(SIR, timeout=10)
+        snl.estimate(SIR, timeout=5, timeout_iteration=5)
         # Simulation
         snl.simulate()
         # Parameter history (Deprecated)
@@ -276,7 +276,8 @@ class TestScenario(object):
         snl.trend(show_figure=False)
         # Retrospective analysis
         snl.retrospective(
-            "01May2020", model=SIR, control="Main", target="Retrospective", timeout=10)
+            "01May2020", model=SIR, control="Main", target="Retrospective",
+            timeout=5, timeout_iteration=5)
 
     @pytest.mark.parametrize("country", ["Greece"])
     def test_complement(self, jhu_data, population_data, country):
@@ -299,7 +300,7 @@ class TestScenario(object):
     def test_score(self, jhu_data, population_data, country):
         snl = Scenario(jhu_data, population_data, country, tau=360)
         snl.trend(show_figure=False)
-        snl.estimate(SIRF, timeout=10)
+        snl.estimate(SIRF, timeout=5, timeout_iteration=5)
         metrics_list = ["MAE", "MSE", "MSLE", "RMSE", "RMSLE"]
         for metrics in metrics_list:
             score = snl.score(metrics=metrics)
@@ -325,7 +326,7 @@ class TestScenario(object):
             snl.score()
         all_phases = snl.summary().index.tolist()
         snl.disable(phases=all_phases[:-2])
-        snl.estimate(SIRF, timeout=10)
+        snl.estimate(SIRF, timeout=5, timeout_iteration=5)
         with pytest.raises(TypeError):
             snl.score(phases="0th")
         with pytest.raises(KeyError):
