@@ -289,10 +289,9 @@ class Estimator(Term):
         try:
             param_dict = self.study.best_params.copy()
         except ValueError:
-            param_dict = {
-                self.TAU: self.tau_final,
-                **{p: None for p in self.model.PARAMETERS}
-            }
+            param_dict = {p: None for p in self.model.PARAMETERS}
+            if self.tau_final is None:
+                param_dict[self.TAU] = None
         param_dict.update(self.fixed_dict)
         tau = self.tau_final or param_dict.pop(self.TAU)
         return (tau, param_dict)
