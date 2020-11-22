@@ -50,7 +50,7 @@ class PolicyMeasures(Term):
         Returns:
             (list[str]): list of country names
         """
-        j_list = self.jhu_data.countries()
+        j_list = self.jhu_data.countries(complement=True)
         p_list = self.population_data.countries()
         o_list = self.oxcgrt_data.countries()
         return list(set(j_list) & set(p_list) & set(o_list))

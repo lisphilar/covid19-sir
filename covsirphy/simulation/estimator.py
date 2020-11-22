@@ -129,7 +129,7 @@ class Estimator(Term):
                 if reset_n == reset_n_max - 1:
                     break
                 # Initialize the study
-                self._init_study()
+                self._init_study(seed=seed)
                 reset_n += 1
                 continue
             # Need additional trials when the values are not in allowance
@@ -177,12 +177,30 @@ class Estimator(Term):
         model_param_dict = self.model.param_range(
             self.taufree_df, self.population)
         param_dict = {
-            k: trial.suggest_uniform(k, *v)
+            k: self._suggest(trial, k, *v)
             for (k, v) in model_param_dict.items()
             if k not in self.fixed_dict.keys()
         }
         param_dict.update(self.fixed_dict)
         return self._rmsle(self.tau, param_dict)
+
+    def _suggest(self, trial, name, min_value, max_value):
+        """
+        Suggest parameter value for the trial.
+
+        Args:
+            trial (optuna.trial): a trial of the study
+            name (str): parameter name
+            min_value (float): minimum value of the parameter
+            max_value (float): max value of the parameter
+
+        Returns:
+            optuna.trial
+        """
+        try:
+            return trial.suggest_uniform(name, min_value, max_value)
+        except (OverflowError, np.AxisError):
+            return trial.suggest_uniform(name, 0, 1)
 
     def _set_taufree(self):
         """
@@ -268,7 +286,12 @@ class Estimator(Term):
         Returns:
             tuple(int, dict[str, int or float]): tau value and dictionary of parameter values
         """
-        param_dict = self.study.best_params.copy()
+        try:
+            param_dict = self.study.best_params.copy()
+        except ValueError:
+            param_dict = {p: 0 for p in self.model.PARAMETERS}
+            if self.tau_final is None:
+                param_dict[self.TAU] = None
         param_dict.update(self.fixed_dict)
         tau = self.tau_final or param_dict.pop(self.TAU)
         return (tau, param_dict)

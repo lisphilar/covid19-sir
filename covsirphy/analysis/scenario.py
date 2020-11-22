@@ -69,8 +69,15 @@ class Scenario(Term):
         # Set records (complement records, if necessary)
         if self._auto_complement:
             self.complement()
+            if self.record_df.empty:
+                self.complement_reverse()
         else:
             self.complement_reverse()
+        if self.record_df.empty:
+            area = self.jhu_data.area_name(
+                self.country, province=self.province)
+            raise ValueError(
+                f"Records with 'Recovered > 0' in {area} are un-registered.")
         # First/last date of the records
         if self._first_date is None:
             series = self.record_df.loc[:, self.DATE]
