@@ -409,7 +409,8 @@ class JHUData(CleaningBase):
                     - Recovered (int): the number of recovered cases
                     - Susceptible (int): the number of susceptible cases, if @subset_df has
         """
-        if subset_df[self.R].sum():
+        c, f, r = subset_df[[self.C, self.F, self.R]].max().tolist()
+        if r > max_ignored and r > (c - f) * 0.1:
             return subset_df
         df = subset_df.set_index(self.DATE)
         # Closing period
