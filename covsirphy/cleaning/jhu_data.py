@@ -331,7 +331,7 @@ class JHUData(CleaningBase):
         # Calculate mode value of closing period
         return df["Elapsed"].mode().astype(np.int64).values[0]
 
-    def _complement_non_monotonic(self, subset_df):
+    def _complement_non_monotonic(self, subset_df, monotonic_columns):
         """
         Make the number of cases show monotonic increasing, if necessary.
 
@@ -344,6 +344,7 @@ class JHUData(CleaningBase):
                     - Confirmed (int): the number of confirmed cases
                     - Fatal (int): the number of fatal cases
                     - the other columns will be ignored
+            monotonic_columns (list[str]): columns that show monotonic increasing
 
         Returns:
             pandas.DataFrame
@@ -359,7 +360,7 @@ class JHUData(CleaningBase):
         """
         # If all variables show monotic increasing, complement will not be done
         columns = [
-            col for col in self.MONO_COLUMNS if not subset_df[col].is_monotonic_increasing]
+            col for col in monotonic_columns if not subset_df[col].is_monotonic_increasing]
         if not columns:
             return subset_df
         # Complement
@@ -381,7 +382,7 @@ class JHUData(CleaningBase):
         df[self.CI] = df[self.C] - df[self.F] - df[self.R]
         return df.reset_index()
 
-    def _complement_recovered_full(self, subset_df):
+    def _complement_recovered_full(self, subset_df, max_ignored):
         """
         Estimate the number of recovered cases with closing period, if necessary.
 
@@ -394,6 +395,7 @@ class JHUData(CleaningBase):
                     - Confirmed (int): the number of confirmed cases
                     - Fatal (int): the number of fatal cases
                     - the other columns will be ignored
+            max_ignored (int): Max number of recovered cases to be ignored [cases]
 
         Returns:
             pandas.DataFrame
@@ -414,8 +416,12 @@ class JHUData(CleaningBase):
         self._closing_period = self._closing_period or self.calculate_closing_period()
         # Estimate recovered records
         shifted = df[self.C].shift(periods=self._closing_period, freq="D")
-        df[self.R] = (shifted - df[self.F]).fillna(0).astype(np.int64)
-        df.loc[df[self.R] < 0, self.R] = 0
+        df[self.R] = shifted - df[self.F]
+        df.loc[df[self.R] < 0, self.R] = None
+        df[self.R].interpolate(method="spline", order=1, inplace=True)
+        df[self.R] = df[self.R].fillna(0).astype(np.int64)
+        df = self._complement_non_monotonic(
+            df.reset_index(), [self.R]).set_index(self.DATE)
         # Re-calculate infected records
         df[self.CI] = df[self.C] - df[self.F] - df[self.R]
         return df.reset_index()
@@ -511,8 +517,9 @@ class JHUData(CleaningBase):
             raise KeyError(
                 f"Records in {area} from {start_date} to {end_date} are un-registered.")
         # Complement recovered value if necessary
-        df = self._complement_non_monotonic(subset_df)
-        df = self._complement_recovered_full(df)
+        df = self._complement_non_monotonic(
+            subset_df, monotonic_columns=self.MONO_COLUMNS)
+        df = self._complement_recovered_full(df, max_ignored=max_ignored)
         df = self._complement_recovered_partial(
             df, interval=interval, max_ignored=max_ignored)
         # Whether complemented or not
