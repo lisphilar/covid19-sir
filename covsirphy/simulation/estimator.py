@@ -129,7 +129,7 @@ class Estimator(Term):
                 if reset_n == reset_n_max - 1:
                     break
                 # Initialize the study
-                self._init_study()
+                self._init_study(seed=seed)
                 reset_n += 1
                 continue
             # Need additional trials when the values are not in allowance
