@@ -44,6 +44,7 @@ class Term(object):
     SUB_COLUMNS = [DATE, C, CI, F, R, S]
     VALUE_COLUMNS = [C, CI, F, R]
     FIG_COLUMNS = [CI, F, R, FR, V, E, W]
+    MONO_COLUMNS = [C, F, R]
     # Date format: 22Jan2020 etc.
     DATE_FORMAT = "%d%b%Y"
     # Separator of country and province

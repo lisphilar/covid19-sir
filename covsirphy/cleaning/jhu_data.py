@@ -331,6 +331,55 @@ class JHUData(CleaningBase):
         # Calculate mode value of closing period
         return df["Elapsed"].mode().astype(np.int64).values[0]
 
+    def _complement_non_monotonic(self, subset_df):
+        """
+        Make the number of cases show monotonic increasing, if necessary.
+
+        Args:
+            subset_df (pandas.DataFrame): subset records with country, province and start/end dates
+                Index:
+                    reset index
+                Columns:
+                    - Date (pd.TimeStamp): Observation date
+                    - Confirmed (int): the number of confirmed cases
+                    - Fatal (int): the number of fatal cases
+                    - the other columns will be ignored
+
+        Returns:
+            pandas.DataFrame
+                Index:
+                    reset index
+                Columns:
+                    - Date (pd.TimeStamp): Observation date
+                    - Confirmed (int): the number of confirmed cases
+                    - Infected (int): the number of currently infected cases
+                    - Fatal (int): the number of fatal cases
+                    - Recovered (int): the number of recovered cases
+                    - Susceptible (int): the number of susceptible cases, if @subset_df has
+        """
+        # If all variables show monotic increasing, complement will not be done
+        columns = [
+            col for col in self.MONO_COLUMNS if not subset_df[col].is_monotonic_increasing]
+        if not columns:
+            return subset_df
+        # Complement
+        df = subset_df.set_index(self.DATE)
+        for col in columns:
+            decreased_dates = df[df[col].diff() < 0].index.tolist()
+            for date in decreased_dates:
+                # Raw value on the decreased date
+                raw_last = df.loc[date, col]
+                # Extrapolated value on the date
+                series = df.loc[:date, col]
+                series.iloc[-1] = None
+                series.interpolate(method="spline", order=1, inplace=True)
+                # Reduce values to the previous date
+                df.loc[:date, col] = series * raw_last / series.iloc[-1]
+                df[col] = df[col].astype(np.int64)
+        # Calculate Infected
+        df[self.CI] = df[self.C] - df[self.F] - df[self.R]
+        return df.reset_index()
+
     def _complement_recovered_full(self, subset_df):
         """
         Estimate the number of recovered cases with closing period, if necessary.
@@ -461,7 +510,8 @@ class JHUData(CleaningBase):
             raise KeyError(
                 f"Records in {area} from {start_date} to {end_date} are un-registered.")
         # Complement recovered value if necessary
-        df = self._complement_recovered_full(subset_df)
+        df = self._complement_non_monotonic(subset_df)
+        df = self._complement_recovered_full(df)
         df = self._complement_recovered_partial(
             df, interval=interval, max_ignored=max_ignored)
         # Whether complemented or not
