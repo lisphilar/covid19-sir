@@ -102,7 +102,6 @@ class TestJHUData(object):
                 "Japan", start_date="01Jan2020", end_date="10Jan2020")
         s_df = jhu_data.subset("Japan", population=126_500_000)
         assert set(s_df.columns) == set(Term.SUB_COLUMNS)
-        jhu_data.subset("UK")
         jhu_data.subset("US")
 
     def test_replace(self, jhu_data, japan_data):
@@ -123,6 +122,12 @@ class TestJHUData(object):
 
     def test_countries(self, jhu_data):
         assert isinstance(jhu_data.countries(), list)
+
+    @pytest.mark.parameterize("country", ["UK"])
+    def test_subset_complement_non_monotonic(self, jhu_data, country):
+        df, is_complemented = jhu_data.subset_complement(country=country)
+        assert is_complemented
+        assert df[Term.C].is_monotonic_increasing
 
     @pytest.mark.parametrize("country", ["Netherlands", "China"])
     def test_subset_complement_full(self, jhu_data, country):
