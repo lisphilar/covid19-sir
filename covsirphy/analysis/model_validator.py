@@ -141,7 +141,8 @@ class ModelValidator(Term):
             # Population
             population_data.update(population, country=name)
             # Phase unit
-            snl = Scenario(example_data, population_data, country=name)
+            snl = Scenario(
+                example_data, population_data, country=name, auto_complement=False)
             snl.add()
             unit = snl[self.MAIN].unit("last").del_id().set_id(country=name)
             units.append(unit)
