@@ -177,12 +177,30 @@ class Estimator(Term):
         model_param_dict = self.model.param_range(
             self.taufree_df, self.population)
         param_dict = {
-            k: trial.suggest_uniform(k, *v)
+            k: self._suggest(trial, k, *v)
             for (k, v) in model_param_dict.items()
             if k not in self.fixed_dict.keys()
         }
         param_dict.update(self.fixed_dict)
         return self._rmsle(self.tau, param_dict)
+
+    def _suggest(self, trial, name, min_value, max_value):
+        """
+        Suggest parameter value for the trial.
+
+        Args:
+            trial (optuna.trial): a trial of the study
+            name (str): parameter name
+            min_value (float): minimum value of the parameter
+            max_value (float): max value of the parameter
+
+        Returns:
+            optuna.trial
+        """
+        try:
+            return trial.suggest_uniform(name, min_value, max_value)
+        except OverflowError:
+            return trial.suggest_uniform(name, 0, 1)
 
     def _set_taufree(self):
         """
