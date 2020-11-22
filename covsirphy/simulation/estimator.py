@@ -286,7 +286,13 @@ class Estimator(Term):
         Returns:
             tuple(int, dict[str, int or float]): tau value and dictionary of parameter values
         """
-        param_dict = self.study.best_params.copy()
+        try:
+            param_dict = self.study.best_params.copy()
+        except ValueError:
+            param_dict = {
+                self.TAU: self.tau_final,
+                **{p: None for p in self.model.PARAMETERS}
+            }
         param_dict.update(self.fixed_dict)
         tau = self.tau_final or param_dict.pop(self.TAU)
         return (tau, param_dict)
