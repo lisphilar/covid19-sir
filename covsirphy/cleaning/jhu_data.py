@@ -373,6 +373,7 @@ class JHUData(CleaningBase):
                 series = df.loc[:date, col]
                 series.iloc[-1] = None
                 series.interpolate(method="spline", order=1, inplace=True)
+                series.fillna(method="ffill", inplace=True)
                 # Reduce values to the previous date
                 df.loc[:date, col] = series * raw_last / series.iloc[-1]
                 df[col] = df[col].astype(np.int64)
