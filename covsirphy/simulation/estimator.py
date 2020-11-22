@@ -199,7 +199,7 @@ class Estimator(Term):
         """
         try:
             return trial.suggest_uniform(name, min_value, max_value)
-        except OverflowError:
+        except (OverflowError, np.AxisError):
             return trial.suggest_uniform(name, 0, 1)
 
     def _set_taufree(self):
