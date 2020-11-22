@@ -121,7 +121,8 @@ class TestJHUData(object):
         assert set(df.columns) == column_set
 
     def test_countries(self, jhu_data):
-        assert isinstance(jhu_data.countries(), list)
+        assert isinstance(jhu_data.countries(complement=False), list)
+        assert isinstance(jhu_data.countries(complement=True), list)
 
     @pytest.mark.parametrize("country", ["UK"])
     def test_subset_complement_non_monotonic(self, jhu_data, country):

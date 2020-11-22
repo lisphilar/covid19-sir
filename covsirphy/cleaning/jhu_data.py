@@ -292,17 +292,31 @@ class JHUData(CleaningBase):
         df[r_cols[2]] = df[self.F] / (df[self.F] + df[self.R])
         return df.loc[:, [*self.VALUE_COLUMNS, *r_cols]]
 
-    def countries(self):
+    def countries(self, complement=True, **kwargs):
         """
         Return names of countries where records.
+
+        Args:
+            complement (bool): whether say OK for complement or not
+            interval (int): expected update interval of the number of recovered cases [days]
+            kwargs: the other keyword arguments of JHUData.subset_complement()
 
         Returns:
             list[str]: list of country names
         """
         df = self._cleaned_df.copy()
         df = df.loc[df[self.PROVINCE] == self.UNKNOWN]
-        df = df.loc[df[self.F] + df[self.R] > 0]
-        return list(df[self.COUNTRY].unique())
+        # All countries
+        all_set = set((df[self.COUNTRY].unique()))
+        # Selectable countries without complement
+        raw_ok_set = set(df.loc[df[self.R] > 0, self.COUNTRY].unique())
+        if not complement:
+            return sorted(raw_ok_set)
+        # Selectable countries
+        comp_ok_list = [
+            country for country in all_set - raw_ok_set
+            if not self.subset_complement(country=country, **kwargs)[0].empty]
+        return sorted(raw_ok_set | set(comp_ok_list))
 
     def calculate_closing_period(self):
         """
@@ -488,6 +502,8 @@ class JHUData(CleaningBase):
             start_date(str or None): start date, like 22Jan2020
             end_date(str or None): end date, like 01Feb2020
             population(int or None): population value
+            interval (int): expected update interval of the number of recovered cases [days]
+            max_ignored (int): Max number of recovered cases to be ignored [cases]
 
         Returns:
             tuple(pandas.DataFrame, bool):
