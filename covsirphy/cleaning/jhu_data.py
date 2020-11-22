@@ -365,6 +365,7 @@ class JHUData(CleaningBase):
         # Estimate recovered records
         shifted = df[self.C].shift(periods=self._closing_period, freq="D")
         df[self.R] = (shifted - df[self.F]).fillna(0).astype(np.int64)
+        df.loc[df[self.R] < 0, self.R] = 0
         # Re-calculate infected records
         df[self.CI] = df[self.C] - df[self.F] - df[self.R]
         return df.reset_index()
