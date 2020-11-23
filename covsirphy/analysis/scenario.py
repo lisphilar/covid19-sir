@@ -14,6 +14,7 @@ from covsirphy.ode.mbase import ModelBase
 from covsirphy.phase.phase_unit import PhaseUnit
 from covsirphy.phase.phase_series import PhaseSeries
 from covsirphy.phase.phase_estimator import MPEstimator
+from covsirphy.analysis.param_tracker import ParamTracker
 
 
 class Scenario(Term):
@@ -192,6 +193,19 @@ class Scenario(Term):
             filename=filename
         )
         return df
+
+    def _create_tracker(self, name):
+        """
+        Create a instance of covsirphy.ParamTracker.
+
+        Args:
+            name (str): scenario name
+
+        Returns:
+            covsirphy.ParamTracker
+        """
+        return ParamTracker(
+            record_df=self.record_df, phase_series=self._ensure_name(name), area=self.area)
 
     @deprecate(old="Scenario.add_phase()", new="Scenario.add()")
     def add_phase(self, **kwargs):
@@ -415,24 +429,8 @@ class Scenario(Term):
         Returns:
             covsirphy.Scenario: self
         """
-        series = self._ensure_name(name)
-        try:
-            phase, old = [
-                (self.num2str(i), unit) for (i, unit) in enumerate(series) if date in unit][0]
-        except IndexError:
-            raise IndexError(f"Phase on @date ({date}) is not registered.")
-        try:
-            new_pre = PhaseUnit(
-                old.start_date, self.yesterday(date), old.population)
-        except ValueError:
-            raise ValueError(
-                f"{name} scenario cannot be separated on {date} because this date is registered as a start date.") from None
-        setting_dict = old.to_dict()
-        setting_dict.update(kwargs)
-        new_pre.set_ode(**setting_dict)
-        new_fol = PhaseUnit(date, old.end_date, population or old.population)
-        new_fol.set_ode(model=old.model, **setting_dict)
-        self._series_dict[name].replaces(phase, [new_pre, new_fol])
+        tracker = self._create_tracker(name)
+        self._series_dict[name] = tracker.separate(date)
         return self
 
     def _summary(self, name=None):
@@ -508,7 +506,7 @@ class Scenario(Term):
             set_phases (bool): if True, set phases automatically with S-R trend analysis
             name (str): phase series name
             show_figure (bool): if True, show the result as a figure
-            filename (str): filename of the figure, or None (show figure)
+            filename (str): filename of the figure, or None (display)
             kwargs: keyword arguments of ChangeFinder()
 
         Returns:
@@ -523,16 +521,12 @@ class Scenario(Term):
             include_init_phase = kwargs.pop("include_init_phase")
         except KeyError:
             include_init_phase = True
-        self._ensure_name(name)
-        sr_df = self.record_df.set_index(self.DATE).loc[:, [self.R, self.S]]
-        self._series_dict[name].trend(
-            sr_df=sr_df,
-            set_phases=set_phases,
-            area=self.area,
-            show_figure=show_figure,
-            filename=filename,
-            **kwargs
-        )
+        tracker = ParamTracker(
+            record_df=self.record_df, phase_series=self._ensure_name(name), area=self.area)
+        series = tracker.trend(
+            show_figure=show_figure, filename=filename, **kwargs)
+        if set_phases:
+            self._series_dict[name] = series
         if not include_init_phase:
             self._series_dict[name].disable("0th")
         return self
@@ -1088,21 +1082,17 @@ class Scenario(Term):
             When parameter values are not specified,
             actual values of the last date before the beginning date will be used.
         """
-        param_dict = {k: v for (k, v) in kwargs.items()
-                      if k in model.PARAMETERS}
+        param_dict = {
+            k: v for (k, v) in kwargs.items() if k in model.PARAMETERS}
         est_kwargs = dict(kwargs.items() - param_dict.items())
         # Control
         self.clear(name=control, include_past=True)
         self.trend(name=control, show_figure=False)
-        series = self._series_dict[control]
-        sep_dates = [
-            date
-            for ph in series
-            for change_date in [ph.start_date, ph.end_date]
-            for date in [self.yesterday(change_date), change_date, self.tomorrow(change_date)]
-        ]
-        if beginning_date not in sep_dates:
-            self.separate(beginning_date, name=control)
+        tracker = self._create_tracker(control)
+        try:
+            tracker.separate(beginning_date)
+        except ValueError:
+            pass
         self.estimate(model, name=control, **est_kwargs)
         # Target
         self.clear(name=target, include_past=False, template=control)
