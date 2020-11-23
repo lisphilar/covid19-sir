@@ -53,6 +53,8 @@ class TestParamTracker(object):
 
     def test_simulate(self, param_tracker):
         param_tracker.trend()
+        with pytest.raises(NameError):
+            param_tracker.simulate()
         param_tracker.estimate(SIRF, timeout=5, timeout_iteration=5)
         param_tracker.simulate()
 
