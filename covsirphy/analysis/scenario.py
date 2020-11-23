@@ -430,7 +430,8 @@ class Scenario(Term):
             covsirphy.Scenario: self
         """
         tracker = self._create_tracker(name)
-        self._series_dict[name] = tracker.separate(date)
+        self._series_dict[name] = tracker.separate(
+            date, population=population, **kwargs)
         return self
 
     def _summary(self, name=None):
@@ -498,12 +499,12 @@ class Scenario(Term):
         df = df.loc[:, columns]
         return df.dropna(how="all", axis=1).fillna(self.UNKNOWN)
 
-    def trend(self, set_phases=True, name="Main", show_figure=True, filename=None, **kwargs):
+    def trend(self, force=True, name="Main", show_figure=True, filename=None, **kwargs):
         """
         Perform S-R trend analysis and set phases.
 
         Args:
-            set_phases (bool): if True, set phases automatically with S-R trend analysis
+            force (bool): if True, change points will be over-written
             name (str): phase series name
             show_figure (bool): if True, show the result as a figure
             filename (str): filename of the figure, or None (display)
@@ -512,6 +513,7 @@ class Scenario(Term):
         Returns:
             covsirphy.Scenario: self
         """
+        # Arguments
         if "n_points" in kwargs.keys():
             raise ValueError(
                 "@n_points argument is un-necessary"
@@ -521,12 +523,15 @@ class Scenario(Term):
             include_init_phase = kwargs.pop("include_init_phase")
         except KeyError:
             include_init_phase = True
-        tracker = ParamTracker(
-            record_df=self.record_df, phase_series=self._ensure_name(name), area=self.area)
-        series = tracker.trend(
-            show_figure=show_figure, filename=filename, **kwargs)
-        if set_phases:
-            self._series_dict[name] = series
+        try:
+            force = kwargs.pop("set_phases")
+        except KeyError:
+            pass
+        # S-R trend analysis
+        tracker = self._create_tracker(name)
+        self._series_dict[name] = tracker.trend(
+            force=force, show_figure=show_figure, filename=filename, **kwargs)
+        # Disable 0th phase, if necessary
         if not include_init_phase:
             self._series_dict[name].disable("0th")
         return self

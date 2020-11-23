@@ -32,11 +32,12 @@ class ParamTracker(Term):
             phase_series, PhaseSeries, name="phase_seres")
         self.area = area or ""
 
-    def trend(self, show_figure=True, filename=None, **kwargs):
+    def trend(self, force=True, show_figure=True, filename=None, **kwargs):
         """
         Split the records with trend analysis.
 
         Args:
+            force (bool): if True, change points will be over-written
             show_figure (bool): if True, show the result as a figure
             filename (str): filename of the figure, or None (show figure)
             kwargs: keyword arguments of ChangeFinder()
@@ -45,7 +46,8 @@ class ParamTracker(Term):
             covsirphy.PhaseSeries
         """
         sr_df = self.record_df.set_index(self.DATE).loc[:, [self.R, self.S]]
-        self.series.trend(sr_df=sr_df, **kwargs)
+        if force or not self.series:
+            self.series.trend(sr_df=sr_df, **kwargs)
         if show_figure:
             self.series.trend_show(
                 sr_df=sr_df, area=self.area, filename=filename)
