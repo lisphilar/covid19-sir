@@ -4,16 +4,14 @@
 import copy
 import numpy as np
 import pandas as pd
-import sklearn
 from covsirphy.util.error import deprecate
 from covsirphy.util.plotting import line_plot, box_plot
 from covsirphy.cleaning.term import Term
 from covsirphy.cleaning.jhu_data import JHUData
 from covsirphy.cleaning.population import PopulationData
-from covsirphy.ode.mbase import ModelBase
 from covsirphy.phase.phase_unit import PhaseUnit
 from covsirphy.phase.phase_series import PhaseSeries
-from covsirphy.phase.phase_estimator import MPEstimator
+from covsirphy.analysis.param_tracker import ParamTracker
 
 
 class Scenario(Term):
@@ -193,6 +191,20 @@ class Scenario(Term):
         )
         return df
 
+    def _create_tracker(self, name):
+        """
+        Create a instance of covsirphy.ParamTracker.
+
+        Args:
+            name (str): scenario name
+
+        Returns:
+            covsirphy.ParamTracker
+        """
+        return ParamTracker(
+            record_df=self.record_df, phase_series=self._ensure_name(name),
+            area=self.area, tau=self.tau)
+
     @deprecate(old="Scenario.add_phase()", new="Scenario.add()")
     def add_phase(self, **kwargs):
         return self.add(**kwargs)
@@ -335,10 +347,8 @@ class Scenario(Term):
         Returns:
             covsirphy.Scenario: self
         """
-        if not isinstance(phases, list):
-            raise TypeError("@phases must be a list of phase names.")
-        for phase in phases:
-            self._series_dict[name].disable(phase)
+        tracker = self._create_tracker(name)
+        self._series_dict[name] = tracker.disable(phases)
         return self
 
     def enable(self, phases, name="Main"):
@@ -352,10 +362,8 @@ class Scenario(Term):
         Returns:
             covsirphy.Scenario: self
         """
-        if not isinstance(phases, list):
-            raise TypeError("@phases must be a list of phase names.")
-        for phase in phases:
-            self._series_dict[name].enable(phase)
+        tracker = self._create_tracker(name)
+        self._series_dict[name] = tracker.enable(phases)
         return self
 
     def combine(self, phases, name="Main", population=None, **kwargs):
@@ -415,24 +423,9 @@ class Scenario(Term):
         Returns:
             covsirphy.Scenario: self
         """
-        series = self._ensure_name(name)
-        try:
-            phase, old = [
-                (self.num2str(i), unit) for (i, unit) in enumerate(series) if date in unit][0]
-        except IndexError:
-            raise IndexError(f"Phase on @date ({date}) is not registered.")
-        try:
-            new_pre = PhaseUnit(
-                old.start_date, self.yesterday(date), old.population)
-        except ValueError:
-            raise ValueError(
-                f"{name} scenario cannot be separated on {date} because this date is registered as a start date.") from None
-        setting_dict = old.to_dict()
-        setting_dict.update(kwargs)
-        new_pre.set_ode(**setting_dict)
-        new_fol = PhaseUnit(date, old.end_date, population or old.population)
-        new_fol.set_ode(model=old.model, **setting_dict)
-        self._series_dict[name].replaces(phase, [new_pre, new_fol])
+        tracker = self._create_tracker(name)
+        self._series_dict[name] = tracker.separate(
+            date, population=population, **kwargs)
         return self
 
     def _summary(self, name=None):
@@ -500,20 +493,21 @@ class Scenario(Term):
         df = df.loc[:, columns]
         return df.dropna(how="all", axis=1).fillna(self.UNKNOWN)
 
-    def trend(self, set_phases=True, name="Main", show_figure=True, filename=None, **kwargs):
+    def trend(self, force=True, name="Main", show_figure=True, filename=None, **kwargs):
         """
         Perform S-R trend analysis and set phases.
 
         Args:
-            set_phases (bool): if True, set phases automatically with S-R trend analysis
+            force (bool): if True, change points will be over-written
             name (str): phase series name
             show_figure (bool): if True, show the result as a figure
-            filename (str): filename of the figure, or None (show figure)
+            filename (str): filename of the figure, or None (display)
             kwargs: keyword arguments of ChangeFinder()
 
         Returns:
             covsirphy.Scenario: self
         """
+        # Arguments
         if "n_points" in kwargs.keys():
             raise ValueError(
                 "@n_points argument is un-necessary"
@@ -523,53 +517,22 @@ class Scenario(Term):
             include_init_phase = kwargs.pop("include_init_phase")
         except KeyError:
             include_init_phase = True
-        self._ensure_name(name)
-        sr_df = self.record_df.set_index(self.DATE).loc[:, [self.R, self.S]]
-        self._series_dict[name].trend(
-            sr_df=sr_df,
-            set_phases=set_phases,
-            area=self.area,
-            show_figure=show_figure,
-            filename=filename,
-            **kwargs
-        )
+        try:
+            force = kwargs.pop("set_phases")
+        except KeyError:
+            pass
+        # S-R trend analysis
+        tracker = self._create_tracker(name)
+        self._series_dict[name] = tracker.trend(
+            force=force, show_figure=show_figure, filename=filename, **kwargs)
+        # Disable 0th phase, if necessary
         if not include_init_phase:
             self._series_dict[name].disable("0th")
         return self
 
-    def _ensure_past_phases(self, phases=None, name="Main"):
-        """
-        Ensure that the phases are past phases.
-
-        Args:
-            phases (list[str]): list of phase names, like 1st, 2nd...
-            name (str): phase series name
-
-        Returns:
-            list[covsirphy.PhaseUnit]: list of names of phase units
-
-        Notes:
-            If @phases is None, return the all past phases.
-        """
-        series = self._ensure_name(name)
-        past_units = [
-            unit.set_id(phase=self.num2str(num))
-            for (num, unit) in enumerate(series)
-            if unit and unit <= self.last_date and unit.id_dict is None
-        ]
-        if not past_units:
-            raise ValueError(
-                "Scenario.trend(), Scenario.enable() or Scenario.add() must be done in advance.")
-        if phases is None:
-            return past_units
-        if not isinstance(phases, list):
-            raise TypeError("@phases must be None or a list of phase names.")
-        selected_units = [series.unit(phase) for phase in phases]
-        return list(set(selected_units) & set(past_units))
-
     def estimate(self, model, phases=None, name="Main", n_jobs=-1, **kwargs):
         """
-        Estimate the parameters of the model using the records.
+        Perform parameter estimation for each phases.
 
         Args:
             model (covsirphy.ModelBase): ODE model
@@ -582,24 +545,15 @@ class Scenario(Term):
             - If 'Main' was used as @name, main PhaseSeries will be used.
             - If @name phase was not registered, new PhaseSeries will be created.
             - If @phases is None, all past phase will be used.
+            - Phases with estimated parameter values will be ignored.
             - In kwargs, tau value cannot be included.
         """
-        model = self.ensure_subclass(model, ModelBase, "model")
-        units = self._ensure_past_phases(phases=phases, name=name)
-        # tau value must be specified in Scenario.__init__
         if self.TAU in kwargs:
             raise ValueError(
                 "@tau must be specified when scenario = Scenario(), and cannot be specified here.")
-        # Parameter estimation
-        mp_estimator = MPEstimator(
-            record_df=self.record_df, model=model, tau=self.tau, **kwargs
-        )
-        mp_estimator.add(units)
-        results = mp_estimator.run(n_jobs=n_jobs, **kwargs)
-        self.tau = mp_estimator.tau
-        # Register the results
-        self._series_dict[name].replaces(
-            phase=None, new_list=results, keep_old=True)
+        tracker = self._create_tracker(name)
+        self.tau, self._series_dict[name] = tracker.estimate(
+            model=model, phases=phases, n_jobs=n_jobs, **kwargs)
 
     def phase_estimator(self, phase, name="Main"):
         """
@@ -651,7 +605,7 @@ class Scenario(Term):
 
     def simulate(self, name="Main", y0_dict=None, show_figure=True, filename=None):
         """
-        Simulate ODE models with set parameter values and show it as a figure.
+        Simulate ODE models with set/estimated parameter values and show it as a figure.
 
         Args:
             name (str): phase series name. If 'Main', main PhaseSeries will be used
@@ -669,22 +623,27 @@ class Scenario(Term):
                     - Province (str): province/prefecture/state name
                     - Variables of the model and dataset (int): Confirmed etc.
         """
-        series = self._ensure_name(name)
-        # Simulation
-        sim_df = series.simulate(record_df=self.record_df, y0_dict=y0_dict)
+        tracker = self._create_tracker(name)
+        try:
+            sim_df = tracker.simulate(y0_dict=y0_dict)
+        except ValueError:
+            raise ValueError(
+                "Phases should be registered with Scenario.trend() or Scenario.add() in advance.") from None
+        except NameError:
+            raise NameError(
+                "Parameter estimation should be done with Scenario.estimate() in advance.") from None
         if not show_figure:
             return sim_df
         # Show figure
         df = sim_df.set_index(self.DATE)
         fig_cols_set = set(df.columns) & set(self.FIG_COLUMNS)
         fig_cols = [col for col in self.FIG_COLUMNS if col in fig_cols_set]
-        change_dates = [unit.start_date for unit in series][1:]
         line_plot(
             df[fig_cols],
             title=f"{self.area}: Simulated number of cases ({name} scenario)",
             filename=filename,
             y_integer=True,
-            v=change_dates
+            v=tracker.change_dates()
         )
         return sim_df
 
@@ -863,7 +822,7 @@ class Scenario(Term):
                     - Fatal({date}): Fatal on the next date of the last phase
                     - nth_Rt etc.: Rt value if the values are not the same values
         """
-        df = self._describe(y0_dict=None)
+        df = self._describe(y0_dict=y0_dict)
         if not with_rt or len(self._series_dict) == 1:
             return df
         # History of reproduction number
@@ -1025,13 +984,12 @@ class Scenario(Term):
             ylabel = f"The number of {target.lower()} cases"
         else:
             ylabel = target
-        series = self._series_dict[self.MAIN]
-        change_dates = [unit.start_date for unit in series][1:]
         title = f"{self.area}: {ylabel} over time"
+        tracker = self._create_tracker(self.MAIN)
         line_plot(
             df, title, ylabel=ylabel,
             h=1.0 if target == self.RT else None,
-            v=change_dates,
+            v=tracker.change_dates(),
             math_scale=False,
             filename=filename
         )
@@ -1061,14 +1019,14 @@ class Scenario(Term):
             cols = list(set(cols) & set(params)) or cols
         df = df.loc[:, cols] / df.loc[df.index[0], cols]
         if show_figure:
-            series = self._series_dict[name]
-            change_dates = [unit.start_date for unit in series][1:]
             f_date = df.index[0].strftime(self.DATE_FORMAT)
             title = f"{self.area}: {model.NAME} parameter change rates over time (1.0 on {f_date})"
             ylabel = f"Value per that on {f_date}"
+            title = f"{self.area}: {ylabel} over time"
+            tracker = self._create_tracker(self.MAIN)
             line_plot(
-                df, title, ylabel=ylabel, v=change_dates, math_scale=False, filename=filename
-            )
+                df, title, ylabel=ylabel, v=tracker.change_dates(),
+                math_scale=False, filename=filename)
         return df
 
     def retrospective(self, beginning_date, model, control="Main", target="Target", **kwargs):
@@ -1088,21 +1046,17 @@ class Scenario(Term):
             When parameter values are not specified,
             actual values of the last date before the beginning date will be used.
         """
-        param_dict = {k: v for (k, v) in kwargs.items()
-                      if k in model.PARAMETERS}
+        param_dict = {
+            k: v for (k, v) in kwargs.items() if k in model.PARAMETERS}
         est_kwargs = dict(kwargs.items() - param_dict.items())
         # Control
         self.clear(name=control, include_past=True)
         self.trend(name=control, show_figure=False)
-        series = self._series_dict[control]
-        sep_dates = [
-            date
-            for ph in series
-            for change_date in [ph.start_date, ph.end_date]
-            for date in [self.yesterday(change_date), change_date, self.tomorrow(change_date)]
-        ]
-        if beginning_date not in sep_dates:
-            self.separate(beginning_date, name=control)
+        tracker = self._create_tracker(control)
+        try:
+            tracker.separate(beginning_date)
+        except ValueError:
+            pass
         self.estimate(model, name=control, **est_kwargs)
         # Target
         self.clear(name=target, include_past=False, template=control)
@@ -1113,117 +1067,6 @@ class Scenario(Term):
         self.delete(phases_changed, name=target)
         self.add(name=target, **param_dict)
         self.estimate(model, name=target, **est_kwargs)
-
-    def _compare_with_actual(self, variables, name, y0_dict):
-        """
-        Compare actual/simulated number of cases.
-
-        Args:
-            variables (list[str] or None): variables to use in calculation
-            name(str): phase series name. If 'Main', main PhaseSeries will be used
-            y0_dict(dict[str, float] or None): dictionary of initial values of variables
-
-        Returns:
-            tuple(pandas.DataFrame, pandas.DataFrame):
-                - actual (pandas.DataFrame):
-                    Index: Date (pd.TimeStamp)
-                    Columns: variables defined by @variables
-                - simulated (pandas.DataFrame):
-                    Index: Date (pd.TimeStamp)
-                    Columns: variables defined by @variables
-
-        Notes:
-            If @variables is None, ["Infected", "Fatal", "Recovered"] will be used.
-            "Confirmed", "Infected", "Fatal" and "Recovered" can be used in @variables.
-        """
-        # Variables to use in calculation
-        variables = variables or [self.CI, self.F, self.R]
-        variables = self.ensure_list(
-            variables, self.VALUE_COLUMNS, name="variables")
-        # Actual/simulated number of cases
-        record_df = self.record_df.copy().set_index(self.DATE)
-        try:
-            simulated_df = self.simulate(
-                name=name, y0_dict=y0_dict, show_figure=False).set_index(self.DATE)
-        except ValueError:
-            raise ValueError(
-                "No phases are registered. Please use .trend() method.") from None
-        except NameError:
-            raise NameError(
-                "Parameter values are not set. Please use .estimate(model) method.") from None
-        df = record_df.join(simulated_df, how="inner", rsuffix="_sim").dropna()
-        rec_df = df.loc[:, variables]
-        sim_df = df.loc[:, [f"{col}_sim" for col in variables]]
-        return (rec_df, sim_df)
-
-    def _calc_score(self, metrics, rec_df, sim_df):
-        """
-        Evaluate accuracy of phase setting and parameter estimation of all enabled phases.
-
-        Args:
-            metrics (str): "MAE", "MSE", "MSLE", "RMSE" or "RMSLE"
-            rec_df (pandas.DataFrame): actual number of cases
-                Index: Date (pd.TimeStamp)
-                Columns: variables defined by @variables
-            sim_df (pandas.DataFrame): simulated number of cases
-                Index: Date (pd.TimeStamp)
-                Columns: variables defined by @variables
-
-        Returns:
-            float: score with the specified metrics
-        """
-        # Metrics
-        metrics_dict = {
-            "MAE": sklearn.metrics.mean_absolute_error,
-            "MSE": sklearn.metrics.mean_squared_error,
-            "MSLE": sklearn.metrics.mean_squared_log_error,
-            "RMSE": lambda x1, x2: sklearn.metrics.mean_squared_error(x1, x2, squared=False),
-            "RMSLE": lambda x1, x2: np.sqrt(sklearn.metrics.mean_squared_log_error(x1, x2)),
-        }
-        # Scoring
-        try:
-            return metrics_dict[metrics.upper()](rec_df, sim_df)
-        except KeyError:
-            metrics_str = ", ".join(list(metrics_dict.keys()))
-            raise ValueError(
-                f"@metrics must be selected from {metrics_str}, but {metrics} was applied."
-            ) from None
-
-    def _score(self, metrics, variables, phases, name, y0_dict):
-        """
-        Evaluate accuracy of phase setting and parameter estimation of selected enabled phases.
-
-        Args:
-            metrics (str): "MAE", "MSE", "MSLE", "RMSE" or "RMSLE"
-            variables (list[str] or None): variables to use in calculation
-            phases (list[str] or None): phases to use in calculation
-            name(str): phase series name. If 'Main', main PhaseSeries will be used
-            y0_dict(dict[str, float] or None): dictionary of initial values of variables
-
-        Returns:
-            float: score with the specified metrics
-
-        Notes:
-            If @variables is None, ["Infected", "Fatal", "Recovered"] will be used.
-            "Confirmed", "Infected", "Fatal" and "Recovered" can be used in @variables.
-            If @phases is None, all phases will be used.
-        """
-        # Select phases
-        ignored_phases = []
-        if phases is not None:
-            df = self.summary(name=name)
-            candidates = df.loc[df[self.TENSE] == self.PAST].index.tolist()
-            phases = self.ensure_list(phases, candidates, name="target")
-            ignored_phases = list(set(candidates) - set(phases))
-            self.disable(ignored_phases, name=name)
-        # Get the number of cases
-        rec_df, sim_df = self._compare_with_actual(
-            variables=variables, name=name, y0_dict=y0_dict)
-        # Calculate score
-        score = self._calc_score(metrics=metrics, rec_df=rec_df, sim_df=sim_df)
-        if ignored_phases:
-            self.enable(ignored_phases, name=name)
-        return score
 
     def score(self, metrics="RMSLE", variables=None, phases=None, past_days=None, name="Main", y0_dict=None):
         """
@@ -1246,29 +1089,29 @@ class Scenario(Term):
             If @phases is None, all phases will be used.
             @phases and @past_days can not be specified at the same time.
         """
-        name_temp = name
+        name_temp = f"{name}_temporally_for_scoring"
+        self.clear(name=name_temp, include_past=False, template=name)
+        tracker = self._create_tracker(name_temp)
         if past_days is not None:
             if phases is not None:
                 raise ValueError(
                     "@phases and @past_days cannot be specified at the same time.")
             past_days = self.ensure_natural_int(past_days, name="past_days")
-            # Separate a phase if the beginning date is not registered as start date of a phase
+            # Separate a phase, if possible
             beginning_date = self.date_change(
                 self.last_date, days=0 - past_days)
-            if beginning_date not in self.summary(name=name)[self.START]:
-                name_temp = f"{name}_temporally_for_scoring"
-                self.clear(name=name_temp, include_past=False, template=name)
-                try:
-                    self.separate(date=beginning_date, name=name_temp)
-                except ValueError:
-                    pass
-                phases = [
-                    self.num2str(num) for (num, unit)
-                    in enumerate(self._series_dict[name_temp])
-                    if unit >= beginning_date
-                ]
-        score = self._score(
-            metrics=metrics, variables=variables, phases=phases, name=name_temp, y0_dict=y0_dict)
+            try:
+                tracker.separate(date=beginning_date)
+            except ValueError:
+                pass
+            # Ge the list of target phases
+            phases = [
+                self.num2str(num) for (num, unit)
+                in enumerate(self._series_dict[name_temp])
+                if unit >= beginning_date
+            ]
+        score = tracker.score(
+            metrics=metrics, variables=variables, phases=phases, y0_dict=y0_dict)
         if name_temp != name:
             self.delete(name=name_temp)
         return score

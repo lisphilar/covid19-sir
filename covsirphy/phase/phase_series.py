@@ -334,22 +334,49 @@ class PhaseSeries(Term):
                     f"The list of units does not a series of phases. Applied: {s}")
         return sorted_units
 
-    def trend(self, sr_df, set_phases=True, area=None, show_figure=True, filename=None, **kwargs):
+    def trend(self, sr_df, **kwargs):
         """
         Perform S-R trend analysis.
 
         Args:
-            sr_df (pandas.DataFrame)
+            sr_df (pandas.DataFrame): susceptible and recovered records
                 Index:
                     Date (pd.TimeStamp): Observation date
                 Columns:
                     - Recovered (int): the number of recovered cases (> 0)
                     - Susceptible (int): the number of susceptible cases
                     - any other columns will be ignored
-            set_phases (bool): if True, update phases
+            kwargs: keyword arguments of ChangeFinder()
+
+        Returns:
+            covsirphy.PhaseSeries: self
+        """
+        sta = self.date_obj(self.first_date)
+        end = self.date_obj(self.last_date)
+        sr_df = sr_df.loc[(sr_df.index >= sta) & (sr_df.index <= end), :]
+        # Find change points
+        finder = ChangeFinder(sr_df, **kwargs)
+        finder.run()
+        # Register phases
+        self.clear(include_past=True)
+        _, end_dates = finder.date_range()
+        [self.add(end_date=end_date) for end_date in end_dates]
+        return self
+
+    def trend_show(self, sr_df, area=None, filename=None):
+        """
+        Show S-R plane, indicating change points found with S-R trend analysis.
+
+        Args:
+            sr_df (pandas.DataFrame): susceptible and recovered records
+                Index:
+                    Date (pd.TimeStamp): Observation date
+                Columns:
+                    - Recovered (int): the number of recovered cases (> 0)
+                    - Susceptible (int): the number of susceptible cases
+                    - any other columns will be ignored
             area (str or None): area name
-            show_figure (bool): if True, show the result as a figure
-            filename (str): filename of the figure, or None (show figure)
+            filename (str): filename of the figure, or None (display)
             kwargs: keyword arguments of ChangeFinder()
 
         Returns:
@@ -359,24 +386,11 @@ class PhaseSeries(Term):
         sta = self.date_obj(self.first_date)
         end = self.date_obj(self.last_date)
         sr_df = sr_df.loc[(sr_df.index >= sta) & (sr_df.index <= end), :]
-        finder = ChangeFinder(sr_df, **kwargs)
-        if not set_phases:
-            if show_figure:
-                change_dates = [
-                    unit.start_date for unit in self._units[1:] if unit <= self.last_date]
-                finder.show(
-                    area=area, change_dates=change_dates, filename=filename)
-            return self
-        # Find change points
-        finder.run()
-        # Show trends
-        if show_figure:
-            finder.show(area=area, filename=filename)
-        # Register phases
-        self.clear(include_past=True)
-        _, end_dates = finder.date_range()
-        [self.add(end_date=end_date) for end_date in end_dates]
-        return self
+        finder = ChangeFinder(sr_df)
+        change_dates = [
+            unit.start_date for unit in self._units[1:] if unit <= self.last_date]
+        finder.show(
+            area=area, change_dates=change_dates, filename=filename)
 
     def simulate(self, record_df, y0_dict=None):
         """
@@ -423,5 +437,5 @@ class PhaseSeries(Term):
             dataframes.append(df)
         sim_df = pd.concat(dataframes, ignore_index=True, sort=True)
         sim_df = sim_df.set_index(self.DATE).resample("D").last()
-        sim_df = sim_df.astype(np.int64)
+        sim_df = sim_df.dropna().astype(np.int64)
         return sim_df.reset_index()

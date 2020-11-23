@@ -35,7 +35,7 @@ class TestScenario(object):
         population = population_data.value(country)
         sr_df = jhu_data.to_sr(country=country, population=population)
         series = PhaseSeries("01Apr2020", "01Aug2020", population)
-        series.trend(sr_df, show_figure=False)
+        series.trend(sr_df)
         # Add scenario
         snl["New"] = series
         # Get scenario
@@ -150,8 +150,6 @@ class TestScenario(object):
         snl.combine(["2nd", "3rd"], population=n_changed)
         assert len(snl["Main"]) == length - 2
         # Separate
-        with pytest.raises(IndexError):
-            snl.separate(date="01Dec2020")
         snl.separate(date="01May2020")
         assert len(snl["Main"]) == length - 1
 
@@ -191,8 +189,7 @@ class TestScenario(object):
         snl.last_date = "01Aug2020"
         with pytest.raises(ValueError):
             snl.estimate(SIR)
-        snl.trend(include_init_phase=True, show_figure=False)
-        snl.disable(phases=["0th"])
+        snl.trend(show_figure=False)
         with pytest.raises(AttributeError):
             snl.estimate_history(phase="last")
         # Parameter estimation
@@ -200,15 +197,6 @@ class TestScenario(object):
             snl.estimate(SIR, phases=["30th"])
         with pytest.raises(ValueError):
             snl.estimate(model=SIR, tau=1440)
-        snl.enable(phases=["0th"])
-        with pytest.raises(TypeError):
-            snl.estimate(model=SIR, phases="1st")
-        with pytest.raises(ValueError):
-            snl.estimate(model=SIR, phases=["0th"])
-        snl.clear(include_past=True)
-        snl.trend(show_figure=False)
-        all_phases = snl.summary().index.tolist()
-        snl.disable(all_phases[:-1])
         snl.estimate(SIR, timeout=5, timeout_iteration=5)
         # Estimation history
         snl.estimate_history(phase="last")
@@ -235,6 +223,8 @@ class TestScenario(object):
         snl = Scenario(jhu_data, population_data, country)
         snl.first_date = "01Apr2020"
         snl.last_date = "01May2020"
+        with pytest.raises(ValueError):
+            snl.simulate()
         snl.trend(show_figure=False)
         # Parameter estimation
         with pytest.raises(ValueError):
@@ -242,6 +232,8 @@ class TestScenario(object):
             snl.param_history(["rho"])
         all_phases = snl.summary().index.tolist()
         snl.disable(all_phases[:-2])
+        with pytest.raises(NameError):
+            snl.simulate()
         snl.estimate(SIR, timeout=5, timeout_iteration=5)
         # Simulation
         snl.simulate()
@@ -301,10 +293,7 @@ class TestScenario(object):
         snl = Scenario(jhu_data, population_data, country, tau=360)
         snl.trend(show_figure=False)
         snl.estimate(SIRF, timeout=5, timeout_iteration=5)
-        metrics_list = ["MAE", "MSE", "MSLE", "RMSE", "RMSLE"]
-        for metrics in metrics_list:
-            score = snl.score(metrics=metrics)
-            assert isinstance(score, float)
+        assert isinstance(snl.score(metrics="RMSLE"), float)
         # Selected phases
         df = snl.summary()
         all_phases = df.index.tolist()
@@ -315,27 +304,3 @@ class TestScenario(object):
         assert snl.score(past_days=past_days) == sel_score
         # Selected past days
         snl.score(past_days=60)
-
-    @pytest.mark.parametrize("country", ["Italy"])
-    def test_score_error(self, jhu_data, population_data, country):
-        snl = Scenario(jhu_data, population_data, country)
-        with pytest.raises(ValueError):
-            snl.score()
-        snl.trend(show_figure=False)
-        with pytest.raises(NameError):
-            snl.score()
-        all_phases = snl.summary().index.tolist()
-        snl.disable(phases=all_phases[:-2])
-        snl.estimate(SIRF, timeout=5, timeout_iteration=5)
-        with pytest.raises(TypeError):
-            snl.score(phases="0th")
-        with pytest.raises(KeyError):
-            snl.score(phases=["100th"])
-        with pytest.raises(TypeError):
-            snl.score(variables="Infected")
-        with pytest.raises(KeyError):
-            snl.score(variables=["Susceptible"])
-        with pytest.raises(ValueError):
-            snl.score(metrics="Subjective evaluation")
-        with pytest.raises(ValueError):
-            snl.score(phases=["0th"], past_days=100)
