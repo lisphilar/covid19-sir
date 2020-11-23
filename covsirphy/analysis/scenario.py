@@ -10,10 +10,8 @@ from covsirphy.util.plotting import line_plot, box_plot
 from covsirphy.cleaning.term import Term
 from covsirphy.cleaning.jhu_data import JHUData
 from covsirphy.cleaning.population import PopulationData
-from covsirphy.ode.mbase import ModelBase
 from covsirphy.phase.phase_unit import PhaseUnit
 from covsirphy.phase.phase_series import PhaseSeries
-from covsirphy.phase.phase_estimator import MPEstimator
 from covsirphy.analysis.param_tracker import ParamTracker
 
 
@@ -205,7 +203,8 @@ class Scenario(Term):
             covsirphy.ParamTracker
         """
         return ParamTracker(
-            record_df=self.record_df, phase_series=self._ensure_name(name), area=self.area)
+            record_df=self.record_df, phase_series=self._ensure_name(name),
+            area=self.area, tau=self.tau)
 
     @deprecate(old="Scenario.add_phase()", new="Scenario.add()")
     def add_phase(self, **kwargs):
@@ -536,39 +535,9 @@ class Scenario(Term):
             self._series_dict[name].disable("0th")
         return self
 
-    def _ensure_past_phases(self, phases=None, name="Main"):
-        """
-        Ensure that the phases are past phases.
-
-        Args:
-            phases (list[str]): list of phase names, like 1st, 2nd...
-            name (str): phase series name
-
-        Returns:
-            list[covsirphy.PhaseUnit]: list of names of phase units
-
-        Notes:
-            If @phases is None, return the all past phases.
-        """
-        series = self._ensure_name(name)
-        past_units = [
-            unit.set_id(phase=self.num2str(num))
-            for (num, unit) in enumerate(series)
-            if unit and unit <= self.last_date and unit.id_dict is None
-        ]
-        if not past_units:
-            raise ValueError(
-                "Scenario.trend(), Scenario.enable() or Scenario.add() must be done in advance.")
-        if phases is None:
-            return past_units
-        if not isinstance(phases, list):
-            raise TypeError("@phases must be None or a list of phase names.")
-        selected_units = [series.unit(phase) for phase in phases]
-        return list(set(selected_units) & set(past_units))
-
     def estimate(self, model, phases=None, name="Main", n_jobs=-1, **kwargs):
         """
-        Estimate the parameters of the model using the records.
+        Perform parameter estimation for each phases.
 
         Args:
             model (covsirphy.ModelBase): ODE model
@@ -581,24 +550,15 @@ class Scenario(Term):
             - If 'Main' was used as @name, main PhaseSeries will be used.
             - If @name phase was not registered, new PhaseSeries will be created.
             - If @phases is None, all past phase will be used.
+            - Phases with estimated parameter values will be ignored.
             - In kwargs, tau value cannot be included.
         """
-        model = self.ensure_subclass(model, ModelBase, "model")
-        units = self._ensure_past_phases(phases=phases, name=name)
-        # tau value must be specified in Scenario.__init__
         if self.TAU in kwargs:
             raise ValueError(
                 "@tau must be specified when scenario = Scenario(), and cannot be specified here.")
-        # Parameter estimation
-        mp_estimator = MPEstimator(
-            record_df=self.record_df, model=model, tau=self.tau, **kwargs
-        )
-        mp_estimator.add(units)
-        results = mp_estimator.run(n_jobs=n_jobs, **kwargs)
-        self.tau = mp_estimator.tau
-        # Register the results
-        self._series_dict[name].replaces(
-            phase=None, new_list=results, keep_old=True)
+        tracker = self._create_tracker(name)
+        self.tau, self._series_dict[name] = tracker.estimate(
+            model=model, phases=phases, n_jobs=n_jobs, **kwargs)
 
     def phase_estimator(self, phase, name="Main"):
         """
@@ -862,7 +822,7 @@ class Scenario(Term):
                     - Fatal({date}): Fatal on the next date of the last phase
                     - nth_Rt etc.: Rt value if the values are not the same values
         """
-        df = self._describe(y0_dict=None)
+        df = self._describe(y0_dict=y0_dict)
         if not with_rt or len(self._series_dict) == 1:
             return df
         # History of reproduction number

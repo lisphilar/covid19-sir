@@ -189,8 +189,7 @@ class TestScenario(object):
         snl.last_date = "01Aug2020"
         with pytest.raises(ValueError):
             snl.estimate(SIR)
-        snl.trend(include_init_phase=True, show_figure=False)
-        snl.disable(phases=["0th"])
+        snl.trend(show_figure=False)
         with pytest.raises(AttributeError):
             snl.estimate_history(phase="last")
         # Parameter estimation
@@ -198,15 +197,6 @@ class TestScenario(object):
             snl.estimate(SIR, phases=["30th"])
         with pytest.raises(ValueError):
             snl.estimate(model=SIR, tau=1440)
-        snl.enable(phases=["0th"])
-        with pytest.raises(TypeError):
-            snl.estimate(model=SIR, phases="1st")
-        with pytest.raises(ValueError):
-            snl.estimate(model=SIR, phases=["0th"])
-        snl.clear(include_past=True)
-        snl.trend(show_figure=False)
-        all_phases = snl.summary().index.tolist()
-        snl.disable(all_phases[:-1])
         snl.estimate(SIR, timeout=5, timeout_iteration=5)
         # Estimation history
         snl.estimate_history(phase="last")

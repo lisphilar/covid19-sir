@@ -2,7 +2,9 @@
 # -*- coding: utf-8 -*-
 
 from covsirphy.cleaning.term import Term
+from covsirphy.ode.mbase import ModelBase
 from covsirphy.phase.phase_unit import PhaseUnit
+from covsirphy.phase.phase_estimator import MPEstimator
 from covsirphy.phase.phase_series import PhaseSeries
 
 
@@ -23,14 +25,16 @@ class ParamTracker(Term):
                 - Susceptible (int): the number of susceptible cases
         phase_series (covsirphy.PhaseSeries): phase series object with first/last dates and population
         area (str or None): area name, like Japan/Tokyo, or empty string
+        tau (int or None): tau value [min]
     """
 
-    def __init__(self, record_df, phase_series, area=None):
+    def __init__(self, record_df, phase_series, area=None, tau=None):
         self.record_df = self.ensure_dataframe(
             record_df, name="record_df", columns=self.SUB_COLUMNS)
         self.series = self.ensure_instance(
             phase_series, PhaseSeries, name="phase_seres")
         self.area = area or ""
+        self.tau = self.ensure_tau(tau)
 
     def trend(self, force=True, show_figure=True, filename=None, **kwargs):
         """
@@ -53,6 +57,14 @@ class ParamTracker(Term):
                 sr_df=sr_df, area=self.area, filename=filename)
         return self.series
 
+    def _ensure_phase_setting(self):
+        """
+        Ensure that phases were set.
+        """
+        if not self.series:
+            raise ValueError(
+                "No phases were registered. Please use .trend() or .add() in advance.")
+
     def find_phase(self, date):
         """
         Find the name of the phase which has the date.
@@ -65,9 +77,7 @@ class ParamTracker(Term):
                 str: phase name, like 1st, 2nd,...
                 covsirphy.PhaseUnit: phase unit
         """
-        if not self.series:
-            raise ValueError(
-                "No phases were registered. Please use .trend() or .add() in advance.")
+        self._ensure_phase_setting()
         self.ensure_date(date)
         phase_nest = [
             (self.num2str(i), unit) for (i, unit) in enumerate(self.series) if date in unit]
@@ -115,3 +125,76 @@ class ParamTracker(Term):
         new_fol.set_ode(model=old.model, **setting_dict)
         self.series.replaces(phase, [new_pre, new_fol])
         return self.series
+
+    def past_phases(self, phases=None):
+        """
+        Return names and phase units of the past phases.
+
+        Args:
+            phases (tuple/list[str]): list of phase names, like 1st, 2nd...
+
+        Returns:
+            tuple(list[str], list[covsirphy.PhaseUnit]):
+                list[str]: list of phase names
+                list[covsirphy.PhaseUnit]: list of phase units
+
+        Notes:
+            If @phases is None, return the all past phases.
+            If @phases is not None, intersection will be selected.
+        """
+        self._ensure_phase_setting()
+        # List of past phases
+        last_date = self.record_df[self.DATE].max().strftime(self.DATE_FORMAT)
+        past_nest = [
+            [self.num2str(num), unit]
+            for (num, unit) in enumerate(self.series)
+            if unit and unit <= last_date
+        ]
+        past_phases, past_units = zip(*past_nest)
+        # Select phases to use
+        selected_phases = phases or past_phases[:]
+        if not isinstance(selected_phases, (list, tuple)):
+            raise TypeError(
+                "@phases must be None or a list/tuple of phase names.")
+        final_phases = list(set(selected_phases) & set(past_phases))
+        # Convert phase names to phase units
+        selected_units = [self.series.unit(ph) for ph in selected_phases]
+        final_units = list(set(selected_units) & set(past_units))
+        return (final_phases, final_units)
+
+    def estimate(self, model, phases=None, n_jobs=-1, **kwargs):
+        """
+        Perform parameter estimation for each phases.
+
+        Args:
+            model (covsirphy.ModelBase): ODE model
+            phases (list[str]): list of phase names, like 1st, 2nd...
+            n_jobs (int): the number of parallel jobs or -1 (CPU count)
+            kwargs: keyword arguments of model parameters and covsirphy.Estimator.run()
+
+        Returns:
+            tuple(int, covsirphy.PhaseSeries): tau value [min] and phase series
+
+        Notes:
+            - If @phases is None, all past phase will be used.
+            - Phases with estimated parameter values will be ignored.
+            - In kwargs, tau value cannot be included.
+        """
+        model = self.ensure_subclass(model, ModelBase, "model")
+        units = [
+            unit.set_id(phase=phase)
+            for (phase, unit) in zip(*self.past_phases(phases=phases))
+            if unit.id_dict is None
+        ]
+        if not units:
+            raise IndexError("All phases have completed parameter estimation.")
+        # Parameter estimation
+        mp_estimator = MPEstimator(
+            record_df=self.record_df, model=model, tau=self.tau, **kwargs
+        )
+        mp_estimator.add(units)
+        results = mp_estimator.run(n_jobs=n_jobs, **kwargs)
+        self.tau = mp_estimator.tau
+        # Register the results
+        self.series.replaces(phase=None, new_list=results, keep_old=True)
+        return (self.tau, self.series)

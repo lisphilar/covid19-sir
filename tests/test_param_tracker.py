@@ -4,6 +4,7 @@
 
 import warnings
 import pytest
+from covsirphy import SIRF
 
 
 class TestParamTracker(object):
@@ -31,3 +32,22 @@ class TestParamTracker(object):
                 param_tracker.separate(date)
         else:
             param_tracker.separate(date)
+
+    def test_past_phases(self, param_tracker):
+        param_tracker.trend(show_figure=False)
+        all_phases, all_units = param_tracker.past_phases()
+        with pytest.raises(TypeError):
+            param_tracker.past_phases(phases="1st")
+        sel_phases, sel_units = param_tracker.past_phases(
+            phases=["0th", "1st"])
+        assert set(sel_phases) == set(["0th", "1st"])
+        assert set(sel_phases).issubset(all_phases)
+        assert set(sel_units).issubset(all_units)
+
+    def test_estimate(self, param_tracker):
+        param_tracker.trend(show_figure=False)
+        param_tracker.estimate(
+            SIRF, phases=["1st"], timeout=5, timeout_iteration=5)
+        param_tracker.estimate(SIRF, timeout=5, timeout_iteration=5)
+        with pytest.raises(IndexError):
+            param_tracker.estimate(SIRF, timeout=5, timeout_iteration=5)
