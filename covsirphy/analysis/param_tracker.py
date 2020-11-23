@@ -36,7 +36,7 @@ class ParamTracker(Term):
         self.area = area or ""
         self.tau = self.ensure_tau(tau)
 
-    def trend(self, force=True, show_figure=True, filename=None, **kwargs):
+    def trend(self, force=True, show_figure=False, filename=None, **kwargs):
         """
         Split the records with trend analysis.
 
@@ -85,6 +85,15 @@ class ParamTracker(Term):
             return phase_nest[0]
         except IndexError:
             raise IndexError(f"Phase on {date} is not registered.") from None
+
+    def change_dates(self):
+        """
+        Return the list of changed dates (start dates of phases since 1st phase).
+
+        Returns:
+            list[str]: list of change dates
+        """
+        return [unit.start_date for unit in self.series][1:]
 
     def near_change_dates(self):
         """
@@ -198,3 +207,22 @@ class ParamTracker(Term):
         # Register the results
         self.series.replaces(phase=None, new_list=results, keep_old=True)
         return (self.tau, self.series)
+
+    def simulate(self, y0_dict=None):
+        """
+        Simulate ODE models with set/estimated parameter values.
+
+        Args:
+            y0_dict(dict[str, float] or None): dictionary of initial values of variables
+
+        Returns:
+            pandas.DataFrame
+                Index:
+                    reset index
+                Columns:
+                    - Date (pd.TimeStamp): Observation date
+                    - Country (str): country/region name
+                    - Province (str): province/prefecture/state name
+                    - Variables of the model and dataset (int): Confirmed etc.
+        """
+        return self.series.simulate(record_df=self.record_df, y0_dict=y0_dict)

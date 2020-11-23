@@ -610,7 +610,7 @@ class Scenario(Term):
 
     def simulate(self, name="Main", y0_dict=None, show_figure=True, filename=None):
         """
-        Simulate ODE models with set parameter values and show it as a figure.
+        Simulate ODE models with set/estimated parameter values and show it as a figure.
 
         Args:
             name (str): phase series name. If 'Main', main PhaseSeries will be used
@@ -628,22 +628,20 @@ class Scenario(Term):
                     - Province (str): province/prefecture/state name
                     - Variables of the model and dataset (int): Confirmed etc.
         """
-        series = self._ensure_name(name)
-        # Simulation
-        sim_df = series.simulate(record_df=self.record_df, y0_dict=y0_dict)
+        tracker = self._create_tracker(name)
+        sim_df = tracker.simulate(y0_dict=y0_dict)
         if not show_figure:
             return sim_df
         # Show figure
         df = sim_df.set_index(self.DATE)
         fig_cols_set = set(df.columns) & set(self.FIG_COLUMNS)
         fig_cols = [col for col in self.FIG_COLUMNS if col in fig_cols_set]
-        change_dates = [unit.start_date for unit in series][1:]
         line_plot(
             df[fig_cols],
             title=f"{self.area}: Simulated number of cases ({name} scenario)",
             filename=filename,
             y_integer=True,
-            v=change_dates
+            v=tracker.change_dates()
         )
         return sim_df
 
