@@ -1,6 +1,8 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
+import numpy as np
+import sklearn
 from covsirphy.cleaning.term import Term
 from covsirphy.ode.mbase import ModelBase
 from covsirphy.phase.phase_unit import PhaseUnit
@@ -27,6 +29,13 @@ class ParamTracker(Term):
         area (str or None): area name, like Japan/Tokyo, or empty string
         tau (int or None): tau value [min]
     """
+    METRICS_DICT = {
+        "MAE": sklearn.metrics.mean_absolute_error,
+        "MSE": sklearn.metrics.mean_squared_error,
+        "MSLE": sklearn.metrics.mean_squared_log_error,
+        "RMSE": lambda x1, x2: sklearn.metrics.mean_squared_error(x1, x2, squared=False),
+        "RMSLE": lambda x1, x2: np.sqrt(sklearn.metrics.mean_squared_log_error(x1, x2)),
+    }
 
     def __init__(self, record_df, phase_series, area=None, tau=None):
         self.record_df = self.ensure_dataframe(
@@ -63,7 +72,7 @@ class ParamTracker(Term):
         """
         if not self.series:
             raise ValueError(
-                "No phases were registered. Please use .trend() or .add() in advance.")
+                "Phases should be registered with .trend() or .add() in advance.")
 
     def find_phase(self, date):
         """
@@ -107,6 +116,36 @@ class ParamTracker(Term):
         return [
             date for base_date in base_dates
             for date in [self.yesterday(base_date), base_date, self.tomorrow(base_date)]]
+
+    def disable(self, phases):
+        """
+        The phases will be disabled.
+
+        Args:
+            phase (list[str] or None): phase names
+
+        Returns:
+            covsirphy.PhaseSeries
+        """
+        phases = self.ensure_list(phases, candidates=None, name="phases")
+        for phase in phases:
+            self.series.disable(phase)
+        return self.series
+
+    def enable(self, phases):
+        """
+        The phases will be enabled.
+
+        Args:
+            phase (list[str] or None): phase names
+
+        Returns:
+            covsirphy.PhaseSeries
+        """
+        phases = self.ensure_list(phases, candidates=None, name="phases")
+        for phase in phases:
+            self.series.enable(phase)
+        return self.series
 
     def separate(self, date, population=None, **kwargs):
         """
@@ -161,10 +200,8 @@ class ParamTracker(Term):
         ]
         past_phases, past_units = zip(*past_nest)
         # Select phases to use
-        selected_phases = phases or past_phases[:]
-        if not isinstance(selected_phases, (list, tuple)):
-            raise TypeError(
-                "@phases must be None or a list/tuple of phase names.")
+        selected_phases = self.ensure_list(
+            phases or past_phases, candidates=past_phases, name="phases")
         final_phases = list(set(selected_phases) & set(past_phases))
         # Convert phase names to phase units
         selected_units = [self.series.unit(ph) for ph in selected_phases]
@@ -189,6 +226,7 @@ class ParamTracker(Term):
             - Phases with estimated parameter values will be ignored.
             - In kwargs, tau value cannot be included.
         """
+        self._ensure_phase_setting()
         model = self.ensure_subclass(model, ModelBase, "model")
         units = [
             unit.set_id(phase=phase)
@@ -225,4 +263,76 @@ class ParamTracker(Term):
                     - Province (str): province/prefecture/state name
                     - Variables of the model and dataset (int): Confirmed etc.
         """
-        return self.series.simulate(record_df=self.record_df, y0_dict=y0_dict)
+        self._ensure_phase_setting()
+        try:
+            return self.series.simulate(record_df=self.record_df, y0_dict=y0_dict)
+        except NameError:
+            raise NameError(
+                "Parameter estimation should be done with .estimate() in advance.") from None
+
+    def _compare_with_actual(self, variables, y0_dict=None):
+        """
+        Compare actual/simulated number of cases.
+
+        Args:
+            variables (list[str]): variables to use in calculation
+            y0_dict(dict[str, float] or None): dictionary of initial values of variables
+
+        Returns:
+            tuple(pandas.DataFrame, pandas.DataFrame):
+                - actual (pandas.DataFrame):
+                    Index: Date (pd.TimeStamp)
+                    Columns: variables defined by @variables
+                - simulated (pandas.DataFrame):
+                    Index: Date (pd.TimeStamp)
+                    Columns: variables defined by @variables
+        """
+        record_df = self.record_df.copy().set_index(self.DATE)
+        simulated_df = self.simulate(y0_dict=y0_dict).set_index(self.DATE)
+        df = record_df.join(simulated_df, how="inner", rsuffix="_sim").dropna()
+        rec_df = df.loc[:, variables]
+        sim_df = df.loc[:, [f"{col}_sim" for col in variables]]
+        sim_df.columns = variables
+        return (rec_df, sim_df)
+
+    def score(self, metrics="RMSLE", variables=None, phases=None, y0_dict=None):
+        """
+        Evaluate accuracy of phase setting and parameter estimation of selected enabled phases.
+
+        Args:
+            metrics (str): "MAE", "MSE", "MSLE", "RMSE" or "RMSLE"
+            variables (list[str] or None): variables to use in calculation
+            phases (list[str] or None): phases to use in calculation
+            y0_dict(dict[str, float] or None): dictionary of initial values of variables
+
+        Returns:
+            float: score with the specified metrics
+
+        Notes:
+            If @variables is None, ["Infected", "Fatal", "Recovered"] will be used.
+            "Confirmed", "Infected", "Fatal" and "Recovered" can be used in @variables.
+            If @phases is None, all phases will be used.
+        """
+        # Arguments
+        if metrics not in self.METRICS_DICT:
+            metrics_str = ", ".join(list(self.METRICS_DICT.keys()))
+            raise ValueError(
+                f"@metrics must be selected from {metrics_str}, but {metrics} was applied.")
+        variables = variables or [self.CI, self.F, self.R]
+        variables = self.ensure_list(
+            variables, self.VALUE_COLUMNS, name="variables")
+        # Disable the non-target phases
+        all_phases, _ = self.past_phases(phases=None)
+        target_phases, _ = self.past_phases(phases=phases)
+        ignored_phases = list(set(all_phases) - set(target_phases))
+        if ignored_phases:
+            self.disable(ignored_phases)
+        # Get the number of cases
+        rec_df, sim_df = self._compare_with_actual(
+            variables=variables, y0_dict=y0_dict)
+        # Calculate score
+        score = self.METRICS_DICT[metrics.upper()](rec_df, sim_df)
+        # Enable the disabled non-target phases
+        if ignored_phases:
+            self.enable(ignored_phases)
+        return score

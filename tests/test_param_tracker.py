@@ -37,8 +37,6 @@ class TestParamTracker(object):
     def test_past_phases(self, param_tracker):
         param_tracker.trend()
         all_phases, all_units = param_tracker.past_phases()
-        with pytest.raises(TypeError):
-            param_tracker.past_phases(phases="1st")
         sel_phases, sel_units = param_tracker.past_phases(
             phases=["0th", "1st"])
         assert set(sel_phases) == set(["0th", "1st"])
@@ -57,3 +55,22 @@ class TestParamTracker(object):
         param_tracker.trend()
         param_tracker.estimate(SIRF, timeout=5, timeout_iteration=5)
         param_tracker.simulate()
+
+    def test_score(self, param_tracker):
+        param_tracker.trend()
+        param_tracker.estimate(SIRF, timeout=5, timeout_iteration=5)
+        param_tracker.simulate()
+        # Scores of all phases
+        metrics_list = ["MAE", "MSE", "MSLE", "RMSE", "RMSLE"]
+        for metrics in metrics_list:
+            score = param_tracker.score(metrics=metrics)
+            assert isinstance(score, float)
+        # Scores of target phases
+        param_tracker.score(metrics="RMSLE", phases=["0th", "2nd"])
+        # Errors with arguments
+        with pytest.raises(TypeError):
+            param_tracker.score(variables="Infected")
+        with pytest.raises(KeyError):
+            param_tracker.score(variables=["Susceptible"])
+        with pytest.raises(ValueError):
+            param_tracker.score(metrics="Subjective evaluation")

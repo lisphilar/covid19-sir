@@ -437,5 +437,5 @@ class PhaseSeries(Term):
             dataframes.append(df)
         sim_df = pd.concat(dataframes, ignore_index=True, sort=True)
         sim_df = sim_df.set_index(self.DATE).resample("D").last()
-        sim_df = sim_df.astype(np.int64)
+        sim_df = sim_df.dropna().astype(np.int64)
         return sim_df.reset_index()
