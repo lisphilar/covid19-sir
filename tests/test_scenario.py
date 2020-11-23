@@ -35,7 +35,7 @@ class TestScenario(object):
         population = population_data.value(country)
         sr_df = jhu_data.to_sr(country=country, population=population)
         series = PhaseSeries("01Apr2020", "01Aug2020", population)
-        series.trend(sr_df, show_figure=False)
+        series.trend(sr_df)
         # Add scenario
         snl["New"] = series
         # Get scenario
@@ -150,8 +150,6 @@ class TestScenario(object):
         snl.combine(["2nd", "3rd"], population=n_changed)
         assert len(snl["Main"]) == length - 2
         # Separate
-        with pytest.raises(IndexError):
-            snl.separate(date="01Dec2020")
         snl.separate(date="01May2020")
         assert len(snl["Main"]) == length - 1
 
