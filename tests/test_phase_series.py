@@ -80,15 +80,9 @@ class TestPhaseSeries(object):
         population = population_data.value(country)
         sr_df = jhu_data.to_sr(country=country, population=population)
         series = PhaseSeries("01Apr2020", "01Aug2020", population)
-        # Add a phase with specified end date
-        series.add(end_date="22Apr2020")
         # S-R trend analysis
         series.trend(sr_df)
         series.trend_show(sr_df=sr_df, area=None, filename=None)
-        assert len(series) == 1
-        assert set(series.to_dict()) == set(["0th"])
-        # S-R trend analysis and set phases
-        series.trend(sr_df)
         # Un-registered phase
         with pytest.raises(KeyError):
             series.unit("100th")
