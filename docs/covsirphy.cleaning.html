@@ -783,14 +783,21 @@ Citation of COVID-19 Data Hub will be set as PopulationData.citation.</p>
 
 <dl class="py method">
 <dt id="covsirphy.cleaning.jhu_data.JHUData.countries">
-<code class="sig-name descname">countries</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/cleaning/jhu_data.html#JHUData.countries"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#covsirphy.cleaning.jhu_data.JHUData.countries" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">countries</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">complement</span><span class="o">=</span><span class="default_value">True</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/cleaning/jhu_data.html#JHUData.countries"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#covsirphy.cleaning.jhu_data.JHUData.countries" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return names of countries where records.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Returns</dt>
-<dd class="field-odd"><p>list of country names</p>
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>complement</strong> (<em>bool</em>) – whether say OK for complement or not</p></li>
+<li><p><strong>interval</strong> (<em>int</em>) – expected update interval of the number of recovered cases [days]</p></li>
+<li><p><strong>kwargs</strong> – the other keyword arguments of JHUData.subset_complement()</p></li>
+</ul>
 </dd>
-<dt class="field-even">Return type</dt>
-<dd class="field-even"><p>list[str]</p>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>list of country names</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>list[str]</p>
 </dd>
 </dl>
 </dd></dl>
@@ -880,6 +887,8 @@ Records with Recovered &gt; 0 will be selected.</p>
 <li><p><strong>start_date</strong> (<em>str</em><em> or </em><em>None</em>) – start date, like 22Jan2020</p></li>
 <li><p><strong>end_date</strong> (<em>str</em><em> or </em><em>None</em>) – end date, like 01Feb2020</p></li>
 <li><p><strong>population</strong> (<em>int</em><em> or </em><em>None</em>) – population value</p></li>
+<li><p><strong>interval</strong> (<em>int</em>) – expected update interval of the number of recovered cases [days]</p></li>
+<li><p><strong>max_ignored</strong> (<em>int</em>) – Max number of recovered cases to be ignored [cases]</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
@@ -1286,6 +1295,11 @@ If &#64;province is None, “-” will be used.</p>
 <dd></dd></dl>
 
 <dl class="py attribute">
+<dt id="covsirphy.cleaning.term.Term.MONO_COLUMNS">
+<code class="sig-name descname">MONO_COLUMNS</code><em class="property"> = ['Confirmed', 'Fatal', 'Recovered']</em><a class="headerlink" href="#covsirphy.cleaning.term.Term.MONO_COLUMNS" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
 <dt id="covsirphy.cleaning.term.Term.N">
 <code class="sig-name descname">N</code><em class="property"> = 'Population'</em><a class="headerlink" href="#covsirphy.cleaning.term.Term.N" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
@@ -1601,13 +1615,13 @@ it will be converted to a float.</p>
 
 <dl class="py method">
 <dt id="covsirphy.cleaning.term.Term.ensure_list">
-<em class="property">static </em><code class="sig-name descname">ensure_list</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">target</span></em>, <em class="sig-param"><span class="n">candidates</span></em>, <em class="sig-param"><span class="n">name</span><span class="o">=</span><span class="default_value">'target'</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/cleaning/term.html#Term.ensure_list"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#covsirphy.cleaning.term.Term.ensure_list" title="Permalink to this definition">¶</a></dt>
+<em class="property">static </em><code class="sig-name descname">ensure_list</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">target</span></em>, <em class="sig-param"><span class="n">candidates</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">name</span><span class="o">=</span><span class="default_value">'target'</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/cleaning/term.html#Term.ensure_list"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#covsirphy.cleaning.term.Term.ensure_list" title="Permalink to this definition">¶</a></dt>
 <dd><p>Ensure the target is a sub-list of the candidates.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>target</strong> (<em>list</em><em>[</em><em>object</em><em>]</em>) – target to ensure</p></li>
-<li><p><strong>candidates</strong> (<em>list</em><em>[</em><em>object</em><em>]</em>) – list of candidates</p></li>
+<li><p><strong>candidates</strong> (<em>list</em><em>[</em><em>object</em><em>] or </em><em>None</em>) – list of candidates, if we have</p></li>
 <li><p><strong>name</strong> (<em>str</em>) – argument name of the target</p></li>
 </ul>
 </dd>

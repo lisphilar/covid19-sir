@@ -551,14 +551,17 @@ If &#64;phase is not None, the phase will be deleted.
 
 <dl class="py method">
 <dt id="covsirphy.phase.phase_series.PhaseSeries.trend">
-<code class="sig-name descname">trend</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">sr_df</span></em>, <em class="sig-param"><span class="n">set_phases</span><span class="o">=</span><span class="default_value">True</span></em>, <em class="sig-param"><span class="n">area</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">show_figure</span><span class="o">=</span><span class="default_value">True</span></em>, <em class="sig-param"><span class="n">filename</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/phase/phase_series.html#PhaseSeries.trend"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#covsirphy.phase.phase_series.PhaseSeries.trend" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">trend</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">sr_df</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/phase/phase_series.html#PhaseSeries.trend"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#covsirphy.phase.phase_series.PhaseSeries.trend" title="Permalink to this definition">¶</a></dt>
 <dd><p>Perform S-R trend analysis.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>sr_df</strong> (<em>pandas.DataFrame</em>) – <dl class="simple">
-<dt>Index:</dt><dd><p>Date (pd.TimeStamp): Observation date</p>
-</dd>
+<li><p><strong>sr_df</strong> (<em>pandas.DataFrame</em>) – <p>susceptible and recovered records
+Index:</p>
+<blockquote>
+<div><p>Date (pd.TimeStamp): Observation date</p>
+</div></blockquote>
+<dl class="simple">
 <dt>Columns:</dt><dd><ul>
 <li><p>Recovered (int): the number of recovered cases (&gt; 0)</p></li>
 <li><p>Susceptible (int): the number of susceptible cases</p></li>
@@ -567,10 +570,41 @@ If &#64;phase is not None, the phase will be deleted.
 </dd>
 </dl>
 </p></li>
-<li><p><strong>set_phases</strong> (<em>bool</em>) – if True, update phases</p></li>
+<li><p><strong>kwargs</strong> – keyword arguments of ChangeFinder()</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>self</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>covsirphy.PhaseSeries</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="covsirphy.phase.phase_series.PhaseSeries.trend_show">
+<code class="sig-name descname">trend_show</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">sr_df</span></em>, <em class="sig-param"><span class="n">area</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">filename</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/phase/phase_series.html#PhaseSeries.trend_show"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#covsirphy.phase.phase_series.PhaseSeries.trend_show" title="Permalink to this definition">¶</a></dt>
+<dd><p>Show S-R plane, indicating change points found with S-R trend analysis.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>sr_df</strong> (<em>pandas.DataFrame</em>) – <p>susceptible and recovered records
+Index:</p>
+<blockquote>
+<div><p>Date (pd.TimeStamp): Observation date</p>
+</div></blockquote>
+<dl class="simple">
+<dt>Columns:</dt><dd><ul>
+<li><p>Recovered (int): the number of recovered cases (&gt; 0)</p></li>
+<li><p>Susceptible (int): the number of susceptible cases</p></li>
+<li><p>any other columns will be ignored</p></li>
+</ul>
+</dd>
+</dl>
+</p></li>
 <li><p><strong>area</strong> (<em>str</em><em> or </em><em>None</em>) – area name</p></li>
-<li><p><strong>show_figure</strong> (<em>bool</em>) – if True, show the result as a figure</p></li>
-<li><p><strong>filename</strong> (<em>str</em>) – filename of the figure, or None (show figure)</p></li>
+<li><p><strong>filename</strong> (<em>str</em>) – filename of the figure, or None (display)</p></li>
 <li><p><strong>kwargs</strong> – keyword arguments of ChangeFinder()</p></li>
 </ul>
 </dd>

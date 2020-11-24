@@ -495,22 +495,49 @@
                     <span class="sa">f</span><span class="s2">&quot;The list of units does not a series of phases. Applied: </span><span class="si">{</span><span class="n">s</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">sorted_units</span>
 
-<div class="viewcode-block" id="PhaseSeries.trend"><a class="viewcode-back" href="../../../covsirphy.phase.html#covsirphy.phase.phase_series.PhaseSeries.trend">[docs]</a>    <span class="k">def</span> <span class="nf">trend</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sr_df</span><span class="p">,</span> <span class="n">set_phases</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">area</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">show_figure</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">filename</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<div class="viewcode-block" id="PhaseSeries.trend"><a class="viewcode-back" href="../../../covsirphy.phase.html#covsirphy.phase.phase_series.PhaseSeries.trend">[docs]</a>    <span class="k">def</span> <span class="nf">trend</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sr_df</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Perform S-R trend analysis.</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">            sr_df (pandas.DataFrame)</span>
+<span class="sd">            sr_df (pandas.DataFrame): susceptible and recovered records</span>
 <span class="sd">                Index:</span>
 <span class="sd">                    Date (pd.TimeStamp): Observation date</span>
 <span class="sd">                Columns:</span>
 <span class="sd">                    - Recovered (int): the number of recovered cases (&gt; 0)</span>
 <span class="sd">                    - Susceptible (int): the number of susceptible cases</span>
 <span class="sd">                    - any other columns will be ignored</span>
-<span class="sd">            set_phases (bool): if True, update phases</span>
+<span class="sd">            kwargs: keyword arguments of ChangeFinder()</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            covsirphy.PhaseSeries: self</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">sta</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">date_obj</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">first_date</span><span class="p">)</span>
+        <span class="n">end</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">date_obj</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">last_date</span><span class="p">)</span>
+        <span class="n">sr_df</span> <span class="o">=</span> <span class="n">sr_df</span><span class="o">.</span><span class="n">loc</span><span class="p">[(</span><span class="n">sr_df</span><span class="o">.</span><span class="n">index</span> <span class="o">&gt;=</span> <span class="n">sta</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">sr_df</span><span class="o">.</span><span class="n">index</span> <span class="o">&lt;=</span> <span class="n">end</span><span class="p">),</span> <span class="p">:]</span>
+        <span class="c1"># Find change points</span>
+        <span class="n">finder</span> <span class="o">=</span> <span class="n">ChangeFinder</span><span class="p">(</span><span class="n">sr_df</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="n">finder</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
+        <span class="c1"># Register phases</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">clear</span><span class="p">(</span><span class="n">include_past</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="n">_</span><span class="p">,</span> <span class="n">end_dates</span> <span class="o">=</span> <span class="n">finder</span><span class="o">.</span><span class="n">date_range</span><span class="p">()</span>
+        <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">end_date</span><span class="o">=</span><span class="n">end_date</span><span class="p">)</span> <span class="k">for</span> <span class="n">end_date</span> <span class="ow">in</span> <span class="n">end_dates</span><span class="p">]</span>
+        <span class="k">return</span> <span class="bp">self</span></div>
+
+<div class="viewcode-block" id="PhaseSeries.trend_show"><a class="viewcode-back" href="../../../covsirphy.phase.html#covsirphy.phase.phase_series.PhaseSeries.trend_show">[docs]</a>    <span class="k">def</span> <span class="nf">trend_show</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sr_df</span><span class="p">,</span> <span class="n">area</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">filename</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Show S-R plane, indicating change points found with S-R trend analysis.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            sr_df (pandas.DataFrame): susceptible and recovered records</span>
+<span class="sd">                Index:</span>
+<span class="sd">                    Date (pd.TimeStamp): Observation date</span>
+<span class="sd">                Columns:</span>
+<span class="sd">                    - Recovered (int): the number of recovered cases (&gt; 0)</span>
+<span class="sd">                    - Susceptible (int): the number of susceptible cases</span>
+<span class="sd">                    - any other columns will be ignored</span>
 <span class="sd">            area (str or None): area name</span>
-<span class="sd">            show_figure (bool): if True, show the result as a figure</span>
-<span class="sd">            filename (str): filename of the figure, or None (show figure)</span>
+<span class="sd">            filename (str): filename of the figure, or None (display)</span>
 <span class="sd">            kwargs: keyword arguments of ChangeFinder()</span>
 
 <span class="sd">        Returns:</span>
@@ -520,24 +547,11 @@
         <span class="n">sta</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">date_obj</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">first_date</span><span class="p">)</span>
         <span class="n">end</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">date_obj</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">last_date</span><span class="p">)</span>
         <span class="n">sr_df</span> <span class="o">=</span> <span class="n">sr_df</span><span class="o">.</span><span class="n">loc</span><span class="p">[(</span><span class="n">sr_df</span><span class="o">.</span><span class="n">index</span> <span class="o">&gt;=</span> <span class="n">sta</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">sr_df</span><span class="o">.</span><span class="n">index</span> <span class="o">&lt;=</span> <span class="n">end</span><span class="p">),</span> <span class="p">:]</span>
-        <span class="n">finder</span> <span class="o">=</span> <span class="n">ChangeFinder</span><span class="p">(</span><span class="n">sr_df</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
-        <span class="k">if</span> <span class="ow">not</span> <span class="n">set_phases</span><span class="p">:</span>
-            <span class="k">if</span> <span class="n">show_figure</span><span class="p">:</span>
-                <span class="n">change_dates</span> <span class="o">=</span> <span class="p">[</span>
-                    <span class="n">unit</span><span class="o">.</span><span class="n">start_date</span> <span class="k">for</span> <span class="n">unit</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_units</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span> <span class="k">if</span> <span class="n">unit</span> <span class="o">&lt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">last_date</span><span class="p">]</span>
-                <span class="n">finder</span><span class="o">.</span><span class="n">show</span><span class="p">(</span>
-                    <span class="n">area</span><span class="o">=</span><span class="n">area</span><span class="p">,</span> <span class="n">change_dates</span><span class="o">=</span><span class="n">change_dates</span><span class="p">,</span> <span class="n">filename</span><span class="o">=</span><span class="n">filename</span><span class="p">)</span>
-            <span class="k">return</span> <span class="bp">self</span>
-        <span class="c1"># Find change points</span>
-        <span class="n">finder</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
-        <span class="c1"># Show trends</span>
-        <span class="k">if</span> <span class="n">show_figure</span><span class="p">:</span>
-            <span class="n">finder</span><span class="o">.</span><span class="n">show</span><span class="p">(</span><span class="n">area</span><span class="o">=</span><span class="n">area</span><span class="p">,</span> <span class="n">filename</span><span class="o">=</span><span class="n">filename</span><span class="p">)</span>
-        <span class="c1"># Register phases</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">clear</span><span class="p">(</span><span class="n">include_past</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-        <span class="n">_</span><span class="p">,</span> <span class="n">end_dates</span> <span class="o">=</span> <span class="n">finder</span><span class="o">.</span><span class="n">date_range</span><span class="p">()</span>
-        <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">end_date</span><span class="o">=</span><span class="n">end_date</span><span class="p">)</span> <span class="k">for</span> <span class="n">end_date</span> <span class="ow">in</span> <span class="n">end_dates</span><span class="p">]</span>
-        <span class="k">return</span> <span class="bp">self</span></div>
+        <span class="n">finder</span> <span class="o">=</span> <span class="n">ChangeFinder</span><span class="p">(</span><span class="n">sr_df</span><span class="p">)</span>
+        <span class="n">change_dates</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="n">unit</span><span class="o">.</span><span class="n">start_date</span> <span class="k">for</span> <span class="n">unit</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_units</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span> <span class="k">if</span> <span class="n">unit</span> <span class="o">&lt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">last_date</span><span class="p">]</span>
+        <span class="n">finder</span><span class="o">.</span><span class="n">show</span><span class="p">(</span>
+            <span class="n">area</span><span class="o">=</span><span class="n">area</span><span class="p">,</span> <span class="n">change_dates</span><span class="o">=</span><span class="n">change_dates</span><span class="p">,</span> <span class="n">filename</span><span class="o">=</span><span class="n">filename</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="PhaseSeries.simulate"><a class="viewcode-back" href="../../../covsirphy.phase.html#covsirphy.phase.phase_series.PhaseSeries.simulate">[docs]</a>    <span class="k">def</span> <span class="nf">simulate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">record_df</span><span class="p">,</span> <span class="n">y0_dict</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
@@ -584,7 +598,7 @@
             <span class="n">dataframes</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">df</span><span class="p">)</span>
         <span class="n">sim_df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">(</span><span class="n">dataframes</span><span class="p">,</span> <span class="n">ignore_index</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">sort</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
         <span class="n">sim_df</span> <span class="o">=</span> <span class="n">sim_df</span><span class="o">.</span><span class="n">set_index</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">DATE</span><span class="p">)</span><span class="o">.</span><span class="n">resample</span><span class="p">(</span><span class="s2">&quot;D&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">last</span><span class="p">()</span>
-        <span class="n">sim_df</span> <span class="o">=</span> <span class="n">sim_df</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">int64</span><span class="p">)</span>
+        <span class="n">sim_df</span> <span class="o">=</span> <span class="n">sim_df</span><span class="o">.</span><span class="n">dropna</span><span class="p">()</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">int64</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">sim_df</span><span class="o">.</span><span class="n">reset_index</span><span class="p">()</span></div></div>
 </pre></div>
 

@@ -163,9 +163,9 @@
 <span class="c1"># -*- coding: utf-8 -*-</span>
 
 <span class="kn">import</span> <span class="nn">warnings</span>
+<span class="kn">import</span> <span class="nn">country_converter</span> <span class="k">as</span> <span class="nn">coco</span>
 <span class="kn">from</span> <span class="nn">dask</span> <span class="kn">import</span> <span class="n">dataframe</span> <span class="k">as</span> <span class="n">dd</span>
 <span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
-<span class="kn">import</span> <span class="nn">pycountry</span>
 <span class="kn">from</span> <span class="nn">covsirphy.util.error</span> <span class="kn">import</span> <span class="n">deprecate</span>
 <span class="kn">from</span> <span class="nn">covsirphy.cleaning.term</span> <span class="kn">import</span> <span class="n">Term</span>
 
@@ -248,29 +248,27 @@
 <span class="sd">        Returns:</span>
 <span class="sd">            str: country name</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="c1"># Special</span>
-        <span class="n">name_dict</span> <span class="o">=</span> <span class="p">{</span>
-            <span class="s2">&quot;UK&quot;</span><span class="p">:</span> <span class="s2">&quot;United Kingdom&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;South Korea&quot;</span><span class="p">:</span> <span class="s2">&quot;Korea, South&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;Ivory Coast&quot;</span><span class="p">:</span> <span class="s2">&quot;Cote d&#39;Ivoire&quot;</span><span class="p">,</span>
-        <span class="p">}</span>
-        <span class="k">if</span> <span class="n">country</span> <span class="ow">in</span> <span class="n">name_dict</span><span class="p">:</span>
-            <span class="n">country</span> <span class="o">=</span> <span class="n">name_dict</span><span class="p">[</span><span class="n">country</span><span class="p">]</span>
-        <span class="c1"># Registered in dataset</span>
         <span class="n">df</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ensure_dataframe</span><span class="p">(</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_cleaned_df</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;the cleaned dataset&quot;</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">COUNTRY</span><span class="p">])</span>
-        <span class="n">registered_set</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">COUNTRY</span><span class="p">]</span><span class="o">.</span><span class="n">unique</span><span class="p">())</span>
-        <span class="k">if</span> <span class="n">country</span> <span class="ow">in</span> <span class="n">registered_set</span><span class="p">:</span>
+        <span class="n">selectable_set</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">COUNTRY</span><span class="p">]</span><span class="o">.</span><span class="n">unique</span><span class="p">())</span>
+        <span class="c1"># return country name as-is if selectable</span>
+        <span class="k">if</span> <span class="n">country</span> <span class="ow">in</span> <span class="n">selectable_set</span><span class="p">:</span>
             <span class="k">return</span> <span class="n">country</span>
-        <span class="k">try</span><span class="p">:</span>
-            <span class="n">searched</span> <span class="o">=</span> <span class="p">[</span>
-                <span class="n">c</span><span class="o">.</span><span class="n">name</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">pycountry</span><span class="o">.</span><span class="n">countries</span><span class="o">.</span><span class="n">search_fuzzy</span><span class="p">(</span><span class="n">country</span><span class="p">)]</span>
-        <span class="k">except</span> <span class="ne">LookupError</span><span class="p">:</span>
-            <span class="n">searched</span> <span class="o">=</span> <span class="p">[]</span>
-        <span class="n">intersection</span> <span class="o">=</span> <span class="n">registered_set</span> <span class="o">&amp;</span> <span class="nb">set</span><span class="p">(</span><span class="n">searched</span><span class="p">)</span>
-        <span class="k">if</span> <span class="n">intersection</span><span class="p">:</span>
-            <span class="k">return</span> <span class="nb">list</span><span class="p">(</span><span class="n">intersection</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
-        <span class="k">raise</span> <span class="ne">KeyError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;No records in </span><span class="si">{</span><span class="n">country</span><span class="si">}</span><span class="s2"> are registered.&quot;</span><span class="p">)</span></div>
+        <span class="c1"># Convert country name</span>
+        <span class="n">converted</span> <span class="o">=</span> <span class="n">coco</span><span class="o">.</span><span class="n">convert</span><span class="p">(</span><span class="n">country</span><span class="p">,</span> <span class="n">to</span><span class="o">=</span><span class="s2">&quot;name_short&quot;</span><span class="p">,</span> <span class="n">not_found</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+        <span class="c1"># Additional abbr</span>
+        <span class="n">abbr_dict</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s2">&quot;Congo Republic&quot;</span><span class="p">:</span> <span class="s2">&quot;Republic of the Congo&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;DR Congo&quot;</span><span class="p">:</span> <span class="s2">&quot;Democratic Republic of the Congo&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;UK&quot;</span><span class="p">:</span> <span class="s2">&quot;United Kingdom&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;Vatican&quot;</span><span class="p">:</span> <span class="s2">&quot;Holy See&quot;</span><span class="p">,</span>
+        <span class="p">}</span>
+        <span class="n">name</span> <span class="o">=</span> <span class="n">abbr_dict</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">converted</span><span class="p">,</span> <span class="n">converted</span><span class="p">)</span>
+        <span class="c1"># Return the name if registered in the dataset</span>
+        <span class="k">if</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">selectable_set</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">name</span>
+        <span class="n">s</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot; (recognized as </span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2">)&quot;</span>
+        <span class="k">raise</span> <span class="ne">KeyError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;No records in </span><span class="si">{</span><span class="n">country</span><span class="si">}{</span><span class="n">s</span><span class="si">}</span><span class="s2"> are registered.&quot;</span><span class="p">)</span></div>
 
     <span class="nd">@deprecate</span><span class="p">(</span><span class="s2">&quot;CleaningBase.iso3_to_country()&quot;</span><span class="p">,</span> <span class="n">new</span><span class="o">=</span><span class="s2">&quot;CleaningBase.ensure_country_name()&quot;</span><span class="p">)</span>
     <span class="k">def</span> <span class="nf">iso3_to_country</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">iso3_code</span><span class="p">):</span>
@@ -301,17 +299,8 @@
 <span class="sd">        Returns:</span>
 <span class="sd">            str: ISO3 code or &quot;---&quot; (when unknown)</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">country</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ensure_country_name</span><span class="p">(</span><span class="n">country</span><span class="p">)</span>
-        <span class="n">df</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_cleaned_df</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
-        <span class="k">if</span> <span class="nb">set</span><span class="p">([</span><span class="bp">self</span><span class="o">.</span><span class="n">ISO3</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">COUNTRY</span><span class="p">])</span><span class="o">.</span><span class="n">issubset</span><span class="p">(</span><span class="n">df</span><span class="o">.</span><span class="n">columns</span><span class="p">):</span>
-            <span class="n">iso3_dict</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">set_index</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">COUNTRY</span><span class="p">)[</span><span class="bp">self</span><span class="o">.</span><span class="n">ISO3</span><span class="p">]</span><span class="o">.</span><span class="n">to_dict</span><span class="p">()</span>
-            <span class="k">if</span> <span class="n">country</span> <span class="ow">in</span> <span class="n">df</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">COUNTRY</span><span class="p">]</span><span class="o">.</span><span class="n">unique</span><span class="p">():</span>
-                <span class="k">return</span> <span class="n">iso3_dict</span><span class="p">[</span><span class="n">country</span><span class="p">]</span>
-        <span class="k">try</span><span class="p">:</span>
-            <span class="n">found_countries</span> <span class="o">=</span> <span class="n">pycountry</span><span class="o">.</span><span class="n">countries</span><span class="o">.</span><span class="n">search_fuzzy</span><span class="p">(</span><span class="n">country</span><span class="p">)</span>
-            <span class="k">return</span> <span class="n">found_countries</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">alpha_3</span>
-        <span class="k">except</span> <span class="ne">LookupError</span><span class="p">:</span>
-            <span class="k">return</span> <span class="s2">&quot;---&quot;</span></div>
+        <span class="n">name</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ensure_country_name</span><span class="p">(</span><span class="n">country</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">coco</span><span class="o">.</span><span class="n">convert</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">to</span><span class="o">=</span><span class="s2">&quot;ISO3&quot;</span><span class="p">,</span> <span class="n">not_found</span><span class="o">=</span><span class="s2">&quot;---&quot;</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="CleaningBase.area_name"><a class="viewcode-back" href="../../../covsirphy.cleaning.html#covsirphy.cleaning.cbase.CleaningBase.area_name">[docs]</a>    <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">area_name</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">country</span><span class="p">,</span> <span class="n">province</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>

@@ -591,7 +591,7 @@ If the last phase is not included, the dates will be assigned to the previous ph
 <dl class="py method">
 <dt id="covsirphy.analysis.scenario.Scenario.estimate">
 <code class="sig-name descname">estimate</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">model</span></em>, <em class="sig-param"><span class="n">phases</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">name</span><span class="o">=</span><span class="default_value">'Main'</span></em>, <em class="sig-param"><span class="n">n_jobs</span><span class="o">=</span><span class="default_value">- 1</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/analysis/scenario.html#Scenario.estimate"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#covsirphy.analysis.scenario.Scenario.estimate" title="Permalink to this definition">¶</a></dt>
-<dd><p>Estimate the parameters of the model using the records.</p>
+<dd><p>Perform parameter estimation for each phases.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
@@ -608,6 +608,7 @@ If the last phase is not included, the dates will be assigned to the previous ph
 <li><p>If ‘Main’ was used as &#64;name, main PhaseSeries will be used.</p></li>
 <li><p>If &#64;name phase was not registered, new PhaseSeries will be created.</p></li>
 <li><p>If &#64;phases is None, all past phase will be used.</p></li>
+<li><p>Phases with estimated parameter values will be ignored.</p></li>
 <li><p>In kwargs, tau value cannot be included.</p></li>
 </ul>
 </dd></dl>
@@ -869,7 +870,7 @@ New phase name will be automatically determined.</p>
 <dl class="py method">
 <dt id="covsirphy.analysis.scenario.Scenario.simulate">
 <code class="sig-name descname">simulate</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">name</span><span class="o">=</span><span class="default_value">'Main'</span></em>, <em class="sig-param"><span class="n">y0_dict</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">show_figure</span><span class="o">=</span><span class="default_value">True</span></em>, <em class="sig-param"><span class="n">filename</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/analysis/scenario.html#Scenario.simulate"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#covsirphy.analysis.scenario.Scenario.simulate" title="Permalink to this definition">¶</a></dt>
-<dd><p>Simulate ODE models with set parameter values and show it as a figure.</p>
+<dd><p>Simulate ODE models with set/estimated parameter values and show it as a figure.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
@@ -965,15 +966,15 @@ Columns:</p>
 
 <dl class="py method">
 <dt id="covsirphy.analysis.scenario.Scenario.trend">
-<code class="sig-name descname">trend</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">set_phases</span><span class="o">=</span><span class="default_value">True</span></em>, <em class="sig-param"><span class="n">name</span><span class="o">=</span><span class="default_value">'Main'</span></em>, <em class="sig-param"><span class="n">show_figure</span><span class="o">=</span><span class="default_value">True</span></em>, <em class="sig-param"><span class="n">filename</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/analysis/scenario.html#Scenario.trend"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#covsirphy.analysis.scenario.Scenario.trend" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">trend</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">force</span><span class="o">=</span><span class="default_value">True</span></em>, <em class="sig-param"><span class="n">name</span><span class="o">=</span><span class="default_value">'Main'</span></em>, <em class="sig-param"><span class="n">show_figure</span><span class="o">=</span><span class="default_value">True</span></em>, <em class="sig-param"><span class="n">filename</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/analysis/scenario.html#Scenario.trend"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#covsirphy.analysis.scenario.Scenario.trend" title="Permalink to this definition">¶</a></dt>
 <dd><p>Perform S-R trend analysis and set phases.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>set_phases</strong> (<em>bool</em>) – if True, set phases automatically with S-R trend analysis</p></li>
+<li><p><strong>force</strong> (<em>bool</em>) – if True, change points will be over-written</p></li>
 <li><p><strong>name</strong> (<em>str</em>) – phase series name</p></li>
 <li><p><strong>show_figure</strong> (<em>bool</em>) – if True, show the result as a figure</p></li>
-<li><p><strong>filename</strong> (<em>str</em>) – filename of the figure, or None (show figure)</p></li>
+<li><p><strong>filename</strong> (<em>str</em>) – filename of the figure, or None (display)</p></li>
 <li><p><strong>kwargs</strong> – keyword arguments of ChangeFinder()</p></li>
 </ul>
 </dd>

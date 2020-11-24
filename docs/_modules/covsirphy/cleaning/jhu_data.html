@@ -258,6 +258,8 @@
                 <span class="s2">&quot;Congo, the Democratic Republic of the&quot;</span><span class="p">:</span> <span class="s2">&quot;Democratic Republic of the Congo&quot;</span><span class="p">,</span>
                 <span class="c1"># COG</span>
                 <span class="s2">&quot;Congo&quot;</span><span class="p">:</span> <span class="s2">&quot;Republic of the Congo&quot;</span><span class="p">,</span>
+                <span class="c1"># South Korea</span>
+                <span class="s2">&quot;Korea, South&quot;</span><span class="p">:</span> <span class="s2">&quot;South Korea&quot;</span><span class="p">,</span>
             <span class="p">}</span>
         <span class="p">)</span>
         <span class="c1"># Province</span>
@@ -365,8 +367,10 @@
             <span class="n">country</span><span class="o">=</span><span class="n">country</span><span class="p">,</span> <span class="n">province</span><span class="o">=</span><span class="n">province</span><span class="p">,</span>
             <span class="n">start_date</span><span class="o">=</span><span class="n">start_date</span><span class="p">,</span> <span class="n">end_date</span><span class="o">=</span><span class="n">end_date</span><span class="p">,</span> <span class="n">population</span><span class="o">=</span><span class="n">population</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">subset_df</span><span class="o">.</span><span class="n">empty</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">KeyError</span><span class="p">(</span>
-                <span class="sa">f</span><span class="s2">&quot;Records in </span><span class="si">{</span><span class="n">area</span><span class="si">}</span><span class="s2"> from </span><span class="si">{</span><span class="n">start_date</span><span class="si">}</span><span class="s2"> to </span><span class="si">{</span><span class="n">end_date</span><span class="si">}</span><span class="s2"> are un-registered.&quot;</span><span class="p">)</span>
+            <span class="n">area</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">area_name</span><span class="p">(</span><span class="n">country</span><span class="p">,</span> <span class="n">province</span><span class="o">=</span><span class="n">province</span><span class="p">)</span>
+            <span class="n">s_fr</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span> <span class="k">if</span> <span class="n">start_date</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="sa">f</span><span class="s2">&quot; from </span><span class="si">{</span><span class="n">start_date</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="n">s_to</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span> <span class="k">if</span> <span class="n">end_date</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="sa">f</span><span class="s2">&quot; from </span><span class="si">{</span><span class="n">end_date</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="k">raise</span> <span class="ne">KeyError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Records in </span><span class="si">{</span><span class="n">area</span><span class="si">}{</span><span class="n">s_fr</span><span class="si">}{</span><span class="n">s_to</span><span class="si">}</span><span class="s2"> are un-registered.&quot;</span><span class="p">)</span>
         <span class="c1"># Select records where Recovered &gt; 0</span>
         <span class="n">df</span> <span class="o">=</span> <span class="n">subset_df</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">subset_df</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">R</span><span class="p">]</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">,</span> <span class="p">:]</span>
         <span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">reset_index</span><span class="p">(</span><span class="n">drop</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
@@ -453,17 +457,31 @@
         <span class="n">df</span><span class="p">[</span><span class="n">r_cols</span><span class="p">[</span><span class="mi">2</span><span class="p">]]</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">F</span><span class="p">]</span> <span class="o">/</span> <span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">F</span><span class="p">]</span> <span class="o">+</span> <span class="n">df</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">R</span><span class="p">])</span>
         <span class="k">return</span> <span class="n">df</span><span class="o">.</span><span class="n">loc</span><span class="p">[:,</span> <span class="p">[</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">VALUE_COLUMNS</span><span class="p">,</span> <span class="o">*</span><span class="n">r_cols</span><span class="p">]]</span></div>
 
-<div class="viewcode-block" id="JHUData.countries"><a class="viewcode-back" href="../../../covsirphy.cleaning.html#covsirphy.cleaning.jhu_data.JHUData.countries">[docs]</a>    <span class="k">def</span> <span class="nf">countries</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="JHUData.countries"><a class="viewcode-back" href="../../../covsirphy.cleaning.html#covsirphy.cleaning.jhu_data.JHUData.countries">[docs]</a>    <span class="k">def</span> <span class="nf">countries</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">complement</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Return names of countries where records.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            complement (bool): whether say OK for complement or not</span>
+<span class="sd">            interval (int): expected update interval of the number of recovered cases [days]</span>
+<span class="sd">            kwargs: the other keyword arguments of JHUData.subset_complement()</span>
 
 <span class="sd">        Returns:</span>
 <span class="sd">            list[str]: list of country names</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">df</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_cleaned_df</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
         <span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">df</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">PROVINCE</span><span class="p">]</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">UNKNOWN</span><span class="p">]</span>
-        <span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">df</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">F</span><span class="p">]</span> <span class="o">+</span> <span class="n">df</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">R</span><span class="p">]</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">]</span>
-        <span class="k">return</span> <span class="nb">list</span><span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">COUNTRY</span><span class="p">]</span><span class="o">.</span><span class="n">unique</span><span class="p">())</span></div>
+        <span class="c1"># All countries</span>
+        <span class="n">all_set</span> <span class="o">=</span> <span class="nb">set</span><span class="p">((</span><span class="n">df</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">COUNTRY</span><span class="p">]</span><span class="o">.</span><span class="n">unique</span><span class="p">()))</span>
+        <span class="c1"># Selectable countries without complement</span>
+        <span class="n">raw_ok_set</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">df</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">df</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">R</span><span class="p">]</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">COUNTRY</span><span class="p">]</span><span class="o">.</span><span class="n">unique</span><span class="p">())</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">complement</span><span class="p">:</span>
+            <span class="k">return</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">raw_ok_set</span><span class="p">)</span>
+        <span class="c1"># Selectable countries</span>
+        <span class="n">comp_ok_list</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="n">country</span> <span class="k">for</span> <span class="n">country</span> <span class="ow">in</span> <span class="n">all_set</span> <span class="o">-</span> <span class="n">raw_ok_set</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">subset_complement</span><span class="p">(</span><span class="n">country</span><span class="o">=</span><span class="n">country</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">empty</span><span class="p">]</span>
+        <span class="k">return</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">raw_ok_set</span> <span class="o">|</span> <span class="nb">set</span><span class="p">(</span><span class="n">comp_ok_list</span><span class="p">))</span></div>
 
 <div class="viewcode-block" id="JHUData.calculate_closing_period"><a class="viewcode-back" href="../../../covsirphy.cleaning.html#covsirphy.cleaning.jhu_data.JHUData.calculate_closing_period">[docs]</a>    <span class="k">def</span> <span class="nf">calculate_closing_period</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
@@ -492,9 +510,9 @@
         <span class="c1"># Calculate mode value of closing period</span>
         <span class="k">return</span> <span class="n">df</span><span class="p">[</span><span class="s2">&quot;Elapsed&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">mode</span><span class="p">()</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">int64</span><span class="p">)</span><span class="o">.</span><span class="n">values</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span></div>
 
-    <span class="k">def</span> <span class="nf">_complement_recovered_full</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">subset_df</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">_complement_non_monotonic</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">subset_df</span><span class="p">,</span> <span class="n">monotonic_columns</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Estimate the number of recovered cases with closing period, if necessary.</span>
+<span class="sd">        Make the number of cases show monotonic increasing, if necessary.</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            subset_df (pandas.DataFrame): subset records with country, province and start/end dates</span>
@@ -505,6 +523,7 @@
 <span class="sd">                    - Confirmed (int): the number of confirmed cases</span>
 <span class="sd">                    - Fatal (int): the number of fatal cases</span>
 <span class="sd">                    - the other columns will be ignored</span>
+<span class="sd">            monotonic_columns (list[str]): columns that show monotonic increasing</span>
 
 <span class="sd">        Returns:</span>
 <span class="sd">            pandas.DataFrame</span>
@@ -518,14 +537,71 @@
 <span class="sd">                    - Recovered (int): the number of recovered cases</span>
 <span class="sd">                    - Susceptible (int): the number of susceptible cases, if @subset_df has</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">if</span> <span class="n">subset_df</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">R</span><span class="p">]</span><span class="o">.</span><span class="n">sum</span><span class="p">():</span>
+        <span class="c1"># If all variables show monotic increasing, complement will not be done</span>
+        <span class="n">columns</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="n">col</span> <span class="k">for</span> <span class="n">col</span> <span class="ow">in</span> <span class="n">monotonic_columns</span> <span class="k">if</span> <span class="ow">not</span> <span class="n">subset_df</span><span class="p">[</span><span class="n">col</span><span class="p">]</span><span class="o">.</span><span class="n">is_monotonic_increasing</span><span class="p">]</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">columns</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">subset_df</span>
+        <span class="c1"># Complement</span>
+        <span class="n">df</span> <span class="o">=</span> <span class="n">subset_df</span><span class="o">.</span><span class="n">set_index</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">DATE</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">col</span> <span class="ow">in</span> <span class="n">columns</span><span class="p">:</span>
+            <span class="n">decreased_dates</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="n">df</span><span class="p">[</span><span class="n">col</span><span class="p">]</span><span class="o">.</span><span class="n">diff</span><span class="p">()</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span>
+            <span class="k">for</span> <span class="n">date</span> <span class="ow">in</span> <span class="n">decreased_dates</span><span class="p">:</span>
+                <span class="c1"># Raw value on the decreased date</span>
+                <span class="n">raw_last</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">date</span><span class="p">,</span> <span class="n">col</span><span class="p">]</span>
+                <span class="c1"># Extrapolated value on the date</span>
+                <span class="n">series</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">loc</span><span class="p">[:</span><span class="n">date</span><span class="p">,</span> <span class="n">col</span><span class="p">]</span>
+                <span class="n">series</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+                <span class="n">series</span><span class="o">.</span><span class="n">interpolate</span><span class="p">(</span><span class="n">method</span><span class="o">=</span><span class="s2">&quot;spline&quot;</span><span class="p">,</span> <span class="n">order</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+                <span class="n">series</span><span class="o">.</span><span class="n">fillna</span><span class="p">(</span><span class="n">method</span><span class="o">=</span><span class="s2">&quot;ffill&quot;</span><span class="p">,</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+                <span class="c1"># Reduce values to the previous date</span>
+                <span class="n">df</span><span class="o">.</span><span class="n">loc</span><span class="p">[:</span><span class="n">date</span><span class="p">,</span> <span class="n">col</span><span class="p">]</span> <span class="o">=</span> <span class="n">series</span> <span class="o">*</span> <span class="n">raw_last</span> <span class="o">/</span> <span class="n">series</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+                <span class="n">df</span><span class="p">[</span><span class="n">col</span><span class="p">]</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="n">col</span><span class="p">]</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">int64</span><span class="p">)</span>
+        <span class="c1"># Calculate Infected</span>
+        <span class="n">df</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">CI</span><span class="p">]</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">C</span><span class="p">]</span> <span class="o">-</span> <span class="n">df</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">F</span><span class="p">]</span> <span class="o">-</span> <span class="n">df</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">R</span><span class="p">]</span>
+        <span class="k">return</span> <span class="n">df</span><span class="o">.</span><span class="n">reset_index</span><span class="p">()</span>
+
+    <span class="k">def</span> <span class="nf">_complement_recovered_full</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">subset_df</span><span class="p">,</span> <span class="n">max_ignored</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Estimate the number of recovered cases with closing period, if necessary.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            subset_df (pandas.DataFrame): subset records with country, province and start/end dates</span>
+<span class="sd">                Index:</span>
+<span class="sd">                    reset index</span>
+<span class="sd">                Columns:</span>
+<span class="sd">                    - Date (pd.TimeStamp): Observation date</span>
+<span class="sd">                    - Confirmed (int): the number of confirmed cases</span>
+<span class="sd">                    - Fatal (int): the number of fatal cases</span>
+<span class="sd">                    - the other columns will be ignored</span>
+<span class="sd">            max_ignored (int): Max number of recovered cases to be ignored [cases]</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            pandas.DataFrame</span>
+<span class="sd">                Index:</span>
+<span class="sd">                    reset index</span>
+<span class="sd">                Columns:</span>
+<span class="sd">                    - Date (pd.TimeStamp): Observation date</span>
+<span class="sd">                    - Confirmed (int): the number of confirmed cases</span>
+<span class="sd">                    - Infected (int): the number of currently infected cases</span>
+<span class="sd">                    - Fatal (int): the number of fatal cases</span>
+<span class="sd">                    - Recovered (int): the number of recovered cases</span>
+<span class="sd">                    - Susceptible (int): the number of susceptible cases, if @subset_df has</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">c</span><span class="p">,</span> <span class="n">f</span><span class="p">,</span> <span class="n">r</span> <span class="o">=</span> <span class="n">subset_df</span><span class="p">[[</span><span class="bp">self</span><span class="o">.</span><span class="n">C</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">F</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">R</span><span class="p">]]</span><span class="o">.</span><span class="n">max</span><span class="p">()</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">r</span> <span class="o">&gt;</span> <span class="n">max_ignored</span> <span class="ow">and</span> <span class="n">r</span> <span class="o">&gt;</span> <span class="p">(</span><span class="n">c</span> <span class="o">-</span> <span class="n">f</span><span class="p">)</span> <span class="o">*</span> <span class="mf">0.1</span><span class="p">:</span>
             <span class="k">return</span> <span class="n">subset_df</span>
         <span class="n">df</span> <span class="o">=</span> <span class="n">subset_df</span><span class="o">.</span><span class="n">set_index</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">DATE</span><span class="p">)</span>
         <span class="c1"># Closing period</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_closing_period</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_closing_period</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">calculate_closing_period</span><span class="p">()</span>
         <span class="c1"># Estimate recovered records</span>
         <span class="n">shifted</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">C</span><span class="p">]</span><span class="o">.</span><span class="n">shift</span><span class="p">(</span><span class="n">periods</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_closing_period</span><span class="p">,</span> <span class="n">freq</span><span class="o">=</span><span class="s2">&quot;D&quot;</span><span class="p">)</span>
-        <span class="n">df</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">R</span><span class="p">]</span> <span class="o">=</span> <span class="n">shifted</span><span class="o">.</span><span class="n">fillna</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">int64</span><span class="p">)</span> <span class="o">-</span> <span class="n">df</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">F</span><span class="p">]</span>
+        <span class="n">df</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">R</span><span class="p">]</span> <span class="o">=</span> <span class="n">shifted</span> <span class="o">-</span> <span class="n">df</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">F</span><span class="p">]</span>
+        <span class="n">df</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">df</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">R</span><span class="p">]</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">R</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="n">df</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">R</span><span class="p">]</span><span class="o">.</span><span class="n">interpolate</span><span class="p">(</span><span class="n">method</span><span class="o">=</span><span class="s2">&quot;spline&quot;</span><span class="p">,</span> <span class="n">order</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="n">df</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">R</span><span class="p">]</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">R</span><span class="p">]</span><span class="o">.</span><span class="n">fillna</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">int64</span><span class="p">)</span>
+        <span class="n">df</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_complement_non_monotonic</span><span class="p">(</span>
+            <span class="n">df</span><span class="o">.</span><span class="n">reset_index</span><span class="p">(),</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">R</span><span class="p">])</span><span class="o">.</span><span class="n">set_index</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">DATE</span><span class="p">)</span>
         <span class="c1"># Re-calculate infected records</span>
         <span class="n">df</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">CI</span><span class="p">]</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">C</span><span class="p">]</span> <span class="o">-</span> <span class="n">df</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">F</span><span class="p">]</span> <span class="o">-</span> <span class="n">df</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">R</span><span class="p">]</span>
         <span class="k">return</span> <span class="n">df</span><span class="o">.</span><span class="n">reset_index</span><span class="p">()</span>
@@ -591,6 +667,8 @@
 <span class="sd">            start_date(str or None): start date, like 22Jan2020</span>
 <span class="sd">            end_date(str or None): end date, like 01Feb2020</span>
 <span class="sd">            population(int or None): population value</span>
+<span class="sd">            interval (int): expected update interval of the number of recovered cases [days]</span>
+<span class="sd">            max_ignored (int): Max number of recovered cases to be ignored [cases]</span>
 
 <span class="sd">        Returns:</span>
 <span class="sd">            tuple(pandas.DataFrame, bool):</span>
@@ -618,10 +696,13 @@
             <span class="n">start_date</span><span class="o">=</span><span class="n">start_date</span><span class="p">,</span> <span class="n">end_date</span><span class="o">=</span><span class="n">end_date</span><span class="p">,</span> <span class="n">population</span><span class="o">=</span><span class="n">population</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">subset_df</span><span class="o">.</span><span class="n">empty</span><span class="p">:</span>
             <span class="n">area</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">area_name</span><span class="p">(</span><span class="n">country</span><span class="p">,</span> <span class="n">province</span><span class="o">=</span><span class="n">province</span><span class="p">)</span>
-            <span class="k">raise</span> <span class="ne">KeyError</span><span class="p">(</span>
-                <span class="sa">f</span><span class="s2">&quot;Records in </span><span class="si">{</span><span class="n">area</span><span class="si">}</span><span class="s2"> from </span><span class="si">{</span><span class="n">start_date</span><span class="si">}</span><span class="s2"> to </span><span class="si">{</span><span class="n">end_date</span><span class="si">}</span><span class="s2"> are un-registered.&quot;</span><span class="p">)</span>
+            <span class="n">s_fr</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span> <span class="k">if</span> <span class="n">start_date</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="sa">f</span><span class="s2">&quot; from </span><span class="si">{</span><span class="n">start_date</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="n">s_to</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span> <span class="k">if</span> <span class="n">end_date</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="sa">f</span><span class="s2">&quot; from </span><span class="si">{</span><span class="n">end_date</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="k">raise</span> <span class="ne">KeyError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Records in </span><span class="si">{</span><span class="n">area</span><span class="si">}{</span><span class="n">s_fr</span><span class="si">}{</span><span class="n">s_to</span><span class="si">}</span><span class="s2"> are un-registered.&quot;</span><span class="p">)</span>
         <span class="c1"># Complement recovered value if necessary</span>
-        <span class="n">df</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_complement_recovered_full</span><span class="p">(</span><span class="n">subset_df</span><span class="p">)</span>
+        <span class="n">df</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_complement_non_monotonic</span><span class="p">(</span>
+            <span class="n">subset_df</span><span class="p">,</span> <span class="n">monotonic_columns</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">MONO_COLUMNS</span><span class="p">)</span>
+        <span class="n">df</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_complement_recovered_full</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">max_ignored</span><span class="o">=</span><span class="n">max_ignored</span><span class="p">)</span>
         <span class="n">df</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_complement_recovered_partial</span><span class="p">(</span>
             <span class="n">df</span><span class="p">,</span> <span class="n">interval</span><span class="o">=</span><span class="n">interval</span><span class="p">,</span> <span class="n">max_ignored</span><span class="o">=</span><span class="n">max_ignored</span><span class="p">)</span>
         <span class="c1"># Whether complemented or not</span>
