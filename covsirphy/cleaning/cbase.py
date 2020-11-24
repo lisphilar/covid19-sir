@@ -2,9 +2,9 @@
 # -*- coding: utf-8 -*-
 
 import warnings
+import country_converter as coco
 from dask import dataframe as dd
 import pandas as pd
-import pycountry
 from covsirphy.util.error import deprecate
 from covsirphy.cleaning.term import Term
 
@@ -87,29 +87,27 @@ class CleaningBase(Term):
         Returns:
             str: country name
         """
-        # Special
-        name_dict = {
-            "UK": "United Kingdom",
-            "South Korea": "Korea, South",
-            "Ivory Coast": "Cote d'Ivoire",
-        }
-        if country in name_dict:
-            country = name_dict[country]
-        # Registered in dataset
         df = self.ensure_dataframe(
             self._cleaned_df, name="the cleaned dataset", columns=[self.COUNTRY])
-        registered_set = set(df[self.COUNTRY].unique())
-        if country in registered_set:
+        selectable_set = set(df[self.COUNTRY].unique())
+        # return country name as-is if selectable
+        if country in selectable_set:
             return country
-        try:
-            searched = [
-                c.name for c in pycountry.countries.search_fuzzy(country)]
-        except LookupError:
-            searched = []
-        intersection = registered_set & set(searched)
-        if intersection:
-            return list(intersection)[0]
-        raise KeyError(f"No records in {country} are registered.")
+        # Convert country name
+        converted = coco.convert(country, to="name_short", not_found=None)
+        # Additional abbr
+        abbr_dict = {
+            "Congo Republic": "Republic of the Congo",
+            "DR Congo": "Democratic Republic of the Congo",
+            "UK": "United Kingdom",
+            "Vatican": "Holy See",
+        }
+        name = abbr_dict.get(converted, converted)
+        # Return the name if registered in the dataset
+        if name in selectable_set:
+            return name
+        s = f" (recognized as {name})"
+        raise KeyError(f"No records in {country}{s} are registered.")
 
     @deprecate("CleaningBase.iso3_to_country()", new="CleaningBase.ensure_country_name()")
     def iso3_to_country(self, iso3_code):
@@ -140,17 +138,8 @@ class CleaningBase(Term):
         Returns:
             str: ISO3 code or "---" (when unknown)
         """
-        country = self.ensure_country_name(country)
-        df = self._cleaned_df.copy()
-        if set([self.ISO3, self.COUNTRY]).issubset(df.columns):
-            iso3_dict = df.set_index(self.COUNTRY)[self.ISO3].to_dict()
-            if country in df[self.COUNTRY].unique():
-                return iso3_dict[country]
-        try:
-            found_countries = pycountry.countries.search_fuzzy(country)
-            return found_countries[0].alpha_3
-        except LookupError:
-            return "---"
+        name = self.ensure_country_name(country)
+        return coco.convert(name, to="ISO3", not_found="---")
 
     @classmethod
     def area_name(cls, country, province=None):

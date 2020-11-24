@@ -148,6 +148,34 @@ class TestJHUData(object):
         with pytest.raises(KeyError):
             jhu_data.subset_complement(country=country, end_date="01Jan1900")
 
+    @pytest.mark.parametrize(
+        "applied, expected, iso3",
+        [
+            ("Congo", "Republic of the Congo", "COG"),
+            ("Democratic Congo", "Democratic Republic of the Congo", "COD"),
+            ("GR", "Greece", "GRC"),
+            ("gr", "Greece", "GRC"),
+            ("GRC", "Greece", "GRC"),
+            ("Greece", "Greece", "GRC"),
+            ("GREECE", "Greece", "GRC"),
+            ("gre", "error", "GRC"),
+            ("Ivory Coast", "Cote d'Ivoire", "CIV"),
+            ("Korea, South", "South Korea", "KOR"),
+            ("UK", "United Kingdom", "GBR"),
+            ("US", "United States", "USA"),
+            ("USA", "United States", "USA"),
+            ("VAT", "Holy See", "VAT"),
+        ]
+    )
+    def test_country_name(self, jhu_data, applied, expected, iso3):
+        if expected == "error":
+            with pytest.raises(KeyError):
+                jhu_data.ensure_country_name(applied)
+        else:
+            response = jhu_data.ensure_country_name(applied)
+            assert response == expected
+            assert jhu_data.country_to_iso3(response) == iso3
+
 
 class TestPopulationData(object):
     def test_cleaning(self, population_data):
