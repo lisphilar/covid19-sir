@@ -97,9 +97,10 @@ class CleaningBase(Term):
         converted = coco.convert(country, to="name_short", not_found=None)
         # Additional abbr
         abbr_dict = {
-            "UK": "United Kingdom",
-            "DR Congo": "Democratic Republic of the Congo",
             "Congo Republic": "Republic of the Congo",
+            "DR Congo": "Democratic Republic of the Congo",
+            "UK": "United Kingdom",
+            "Vatican": "Holy See",
         }
         name = abbr_dict.get(converted, converted)
         # Return the name if registered in the dataset

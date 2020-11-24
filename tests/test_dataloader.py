@@ -164,6 +164,7 @@ class TestJHUData(object):
             ("UK", "United Kingdom", "GBR"),
             ("US", "United States", "USA"),
             ("USA", "United States", "USA"),
+            ("VAT", "Holy See", "VAT"),
         ]
     )
     def test_country_name(self, jhu_data, applied, expected, iso3):
