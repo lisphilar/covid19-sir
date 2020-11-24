@@ -206,8 +206,10 @@ class JHUData(CleaningBase):
             country=country, province=province,
             start_date=start_date, end_date=end_date, population=population)
         if subset_df.empty:
-            raise KeyError(
-                f"Records in {area} from {start_date} to {end_date} are un-registered.")
+            area = self.area_name(country, province=province)
+            s_fr = "" if start_date is None else f" from {start_date}"
+            s_to = "" if end_date is None else f" from {end_date}"
+            raise KeyError(f"Records in {area}{s_fr}{s_to} are un-registered.")
         # Select records where Recovered > 0
         df = subset_df.loc[subset_df[self.R] > 0, :]
         df = df.reset_index(drop=True)
@@ -532,12 +534,10 @@ class JHUData(CleaningBase):
             country=country, province=province,
             start_date=start_date, end_date=end_date, population=population)
         if subset_df.empty:
-            series = subset_df[self.DATE]
-            start_date = start_date or series.min().strftime(self.DATE_FORMAT)
-            end_date = end_date or series.max().strftime(self.DATE_FORMAT)
             area = self.area_name(country, province=province)
-            raise KeyError(
-                f"Records in {area} from {start_date} to {end_date} are un-registered.")
+            s_fr = "" if start_date is None else f" from {start_date}"
+            s_to = "" if end_date is None else f" from {end_date}"
+            raise KeyError(f"Records in {area}{s_fr}{s_to} are un-registered.")
         # Complement recovered value if necessary
         df = self._complement_non_monotonic(
             subset_df, monotonic_columns=self.MONO_COLUMNS)
