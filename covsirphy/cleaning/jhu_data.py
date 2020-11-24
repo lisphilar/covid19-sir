@@ -532,6 +532,9 @@ class JHUData(CleaningBase):
             country=country, province=province,
             start_date=start_date, end_date=end_date, population=population)
         if subset_df.empty:
+            series = subset_df[self.DATE]
+            start_date = start_date or series.min().strftime(self.DATE_FORMAT)
+            end_date = end_date or series.max().strftime(self.DATE_FORMAT)
             area = self.area_name(country, province=province)
             raise KeyError(
                 f"Records in {area} from {start_date} to {end_date} are un-registered.")
