@@ -89,9 +89,9 @@ class CleaningBase(Term):
         """
         df = self.ensure_dataframe(
             self._cleaned_df, name="the cleaned dataset", columns=[self.COUNTRY])
-        selectable_countries = set(df[self.COUNTRY].unique())
+        selectable_set = set(df[self.COUNTRY].unique())
         # return country name as-is if selectable
-        if country in selectable_countries:
+        if country in selectable_set:
             return country
         # Convert country name
         converted = coco.convert(country, to="name_short", not_found=None)
@@ -103,7 +103,7 @@ class CleaningBase(Term):
         }
         name = abbr_dict.get(converted, converted)
         # Return the name if registered in the dataset
-        if name in selectable_countries:
+        if name in selectable_set:
             return name
         s = f" (recognized as {name})"
         raise KeyError(f"No records in {country}{s} are registered.")
