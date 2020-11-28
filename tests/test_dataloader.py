@@ -36,6 +36,17 @@ class TestLinelistData(object):
         assert isinstance(linelist_data.cleaned(), pd.DataFrame)
         assert isinstance(linelist_data.citation, str)
 
+    @pytest.mark.parametrize("country", ["Japan", "Germany"])
+    @pytest.mark.parametrize("province", [None, "Tokyo"])
+    def test_subset(self, linelist_data, country, province):
+        if (country, province) == ("Germany", "Tokyo"):
+            with pytest.raises(KeyError):
+                linelist_data.subset(country=country, province=province)
+        else:
+            df = linelist_data.subset(country=country, province=province)
+            column_set = set(df) | set([Term.COUNTRY, Term.PROVINCE])
+            assert column_set == set(LinelistData.LINELIST_COLS)
+
 
 class TestDataLoader(object):
     def test_dataloader(self):

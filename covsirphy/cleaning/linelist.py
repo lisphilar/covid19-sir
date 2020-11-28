@@ -158,6 +158,45 @@ class LinelistData(CleaningBase):
         # Select columns
         return df.loc[:, self.LINELIST_COLS]
 
+    def subset(self, country, province=None):
+        """
+        Return subset of the country/province and start/end date.
+
+        Args:
+            country (str): country name or ISO3 code
+            province (str or None): province name
+
+        Returns:
+            pandas.DataFrame
+                Index:
+                    reset index
+                Columns:
+                    - Hospitalized_date (pandas.TimeStamp)
+                    - Confirmation_date (pandas.TimeStamp)
+                    - Outcome_date (pandas.TimeStamp)
+                    - Confirmed (bool)
+                    - Infected (bool)
+                    - Recovered (bool)
+                    - Fatal (bool)
+                    - Symtoms (str)
+                    - Chronic_disease (str)
+                    - Age (int or None)
+                    - Sex (str)
+        """
+        df = self._cleaned_df.copy()
+        # Subset by country name
+        country = self.ensure_country_name(country)
+        df = df.loc[df[self.COUNTRY] == country]
+        # Subset by province name
+        if province not in (None, self.UNKNOWN):
+            df = df.loc[df[self.PROVINCE] == province]
+        # Check records are registered
+        area = self.area_name(country, province=province)
+        if df.empty:
+            raise KeyError(f"Records in {area} are un-registered.")
+        df = df.drop([self.COUNTRY, self.PROVINCE], axis=1)
+        return df.reset_index(drop=True)
+
     def total(self):
         """
         This is not defined for this child class.
