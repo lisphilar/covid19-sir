@@ -20,9 +20,12 @@ def main():
     print(linelist_data.citation)
     linelist_data.cleaned().to_csv(
         output_dir.joinpath("linelist_cleaned.csv"), index=False)
-    # Subset
+    # Subset by area
     linelist_data.subset("Japan").to_csv(
-        output_dir.joinpath("linelist_jpn.csv"), index=False)
+        output_dir.joinpath("linelist_japan.csv"), index=False)
+    # Closed records
+    linelist_data.closed("China", outcome="Recovered").to_csv(
+        output_dir.joinpath("linelist_china_recovered.csv"), index=False)
 
 
 if __name__ == "__main__":
