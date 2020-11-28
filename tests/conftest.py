@@ -30,6 +30,12 @@ def japan_data():
 
 
 @pytest.fixture(autouse=True)
+def linelist_data():
+    data_loader = DataLoader()
+    return data_loader.linelist()
+
+
+@pytest.fixture(autouse=True)
 def param_tracker():
     data_loader = DataLoader()
     jhu_data = data_loader.jhu()
