@@ -28,6 +28,8 @@ class LinelistData(CleaningBase):
     CHRONIC = "Chronic_disease"
     OUTCOME = "Outcome"
     OUTCOME_DATE = "Outcome_date"
+    R_DATE = "Recovered_date"
+    F_DATE = "Fatal_date"
     LINELIST_COLS = [
         CleaningBase.COUNTRY, CleaningBase.PROVINCE,
         HOSPITAL_DATE, CONFIRM_DATE, OUTCOME_DATE,
@@ -160,7 +162,7 @@ class LinelistData(CleaningBase):
 
     def subset(self, country, province=None):
         """
-        Return subset of the country/province and start/end date.
+        Return subset of the country/province.
 
         Args:
             country (str): country name or ISO3 code
@@ -171,9 +173,9 @@ class LinelistData(CleaningBase):
                 Index:
                     reset index
                 Columns:
-                    - Hospitalized_date (pandas.TimeStamp)
-                    - Confirmation_date (pandas.TimeStamp)
-                    - Outcome_date (pandas.TimeStamp)
+                    - Hospitalized_date (pandas.TimeStamp or NT)
+                    - Confirmation_date (pandas.TimeStamp or NT)
+                    - Outcome_date (pandas.TimeStamp or NT)
                     - Confirmed (bool)
                     - Infected (bool)
                     - Recovered (bool)
@@ -195,6 +197,40 @@ class LinelistData(CleaningBase):
         if df.empty:
             raise KeyError(f"Records in {area} are un-registered.")
         df = df.drop([self.COUNTRY, self.PROVINCE], axis=1)
+        return df.reset_index(drop=True)
+
+    def closed(self, country, province=None, outcome="Recovered"):
+        """
+        Return subset of the country/province and start/end date.
+
+        Args:
+            country (str): country name or ISO3 code
+            province (str or None): province name
+            outcome (str): 'Recovered' or 'Fatal'
+
+        Returns:
+            pandas.DataFrame
+                Index:
+                    reset index
+                Columns:
+                    - Hospitalized_date (pandas.TimeStamp or NT)
+                    - Confirmation_date (pandas.TimeStamp or NT)
+                    - Recovered_date (pandas.TimeStamp): if outcome is Recovered
+                    - Fatal_date (pandas.TimeStamp): if outcome is Fatal
+                    - Symtoms (str)
+                    - Chronic_disease (str)
+                    - Age (int or None)
+                    - Sex (str)
+        """
+        column_dict = {self.R: self.R_DATE, self.F: self.F_DATE}
+        if outcome not in column_dict:
+            raise KeyError(
+                f"@outcome should be selected from {self.R} or {self.F}, but {outcome} was applied.")
+        # Subseting
+        df = self.subset(country=country, province=province)
+        df = df.loc[(df[outcome]) & (~df[self.OUTCOME_DATE].isna())]
+        df = df.rename({self.OUTCOME_DATE: column_dict[outcome]}, axis=1)
+        df = df.drop([self.C, self.CI, self.F, self.R], axis=1)
         return df.reset_index(drop=True)
 
     def total(self):

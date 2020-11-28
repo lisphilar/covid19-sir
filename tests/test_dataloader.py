@@ -47,6 +47,15 @@ class TestLinelistData(object):
             column_set = set(df) | set([Term.COUNTRY, Term.PROVINCE])
             assert column_set == set(LinelistData.LINELIST_COLS)
 
+    @pytest.mark.parametrize("country", ["Japan"])
+    @pytest.mark.parametrize("outcome", ["Recovered", "Fatal", "Confirmed"])
+    def test_closed(self, linelist_data, country, outcome):
+        if outcome in ["Recovered", "Fatal"]:
+            linelist_data.closed(country=country, outcome=outcome)
+        else:
+            with pytest.raises(KeyError):
+                linelist_data.closed(country=country, outcome=outcome)
+
 
 class TestDataLoader(object):
     def test_dataloader(self):
