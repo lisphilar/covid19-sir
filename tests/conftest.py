@@ -12,6 +12,11 @@ def jhu_data():
 
 
 @pytest.fixture(autouse=True)
+def data_loader():
+    return DataLoader()
+
+
+@pytest.fixture(autouse=True)
 def population_data():
     data_loader = DataLoader()
     return data_loader.population()
