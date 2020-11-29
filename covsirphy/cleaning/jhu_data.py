@@ -546,6 +546,8 @@ class JHUData(CleaningBase):
         df = self._complement_recovered_full(df, max_ignored=max_ignored)
         df = self._complement_recovered_partial(
             df, interval=interval, max_ignored=max_ignored)
+        df[self.R] = df[self.R].abs()
+        df.loc[:, self.R] = sorted(df[self.R])
         # Whether complemented or not
         is_complemented = not df.equals(subset_df)
         # Select records where Recovered > 0

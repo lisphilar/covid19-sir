@@ -12,6 +12,11 @@ def jhu_data():
 
 
 @pytest.fixture(autouse=True)
+def data_loader():
+    return DataLoader()
+
+
+@pytest.fixture(autouse=True)
 def population_data():
     data_loader = DataLoader()
     return data_loader.population()
@@ -27,12 +32,6 @@ def oxcgrt_data():
 def japan_data():
     data_loader = DataLoader()
     return data_loader.japan()
-
-
-@pytest.fixture(autouse=True)
-def linelist_data():
-    data_loader = DataLoader()
-    return data_loader.linelist()
 
 
 @pytest.fixture(autouse=True)
