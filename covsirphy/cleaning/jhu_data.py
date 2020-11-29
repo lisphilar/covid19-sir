@@ -436,6 +436,7 @@ class JHUData(CleaningBase):
         # Estimate recovered records
         shifted = df[self.C].shift(periods=self._closing_period, freq="D")
         df[self.R] = shifted - df[self.F]
+        # Apply absolute value to recovered records and sort them in ascending order
         df[self.R] = df[self.R].abs()
         df.loc[:, self.R] = sorted(df[self.R])
         df[self.R].interpolate(method="spline", order=1, inplace=True)
@@ -547,9 +548,6 @@ class JHUData(CleaningBase):
             df, interval=interval, max_ignored=max_ignored)
         # Whether complemented or not
         is_complemented = not df.equals(subset_df)
-        # Apply absolute value to recovered records and sort them in ascending order
-        df[self.R] = df[self.R].abs()
-        df.loc[:, self.R] = sorted(df[self.R])
         # Select records where Recovered > 0
         df = df.loc[df[self.R] > 0, :]
         df = df.reset_index(drop=True)

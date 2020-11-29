@@ -211,11 +211,13 @@ class LinelistData(CleaningBase):
                 Index:
                     reset index
                 Columns:
+                    - Country (str)
+                    - Province (str)
                     - Hospitalized_date (pandas.TimeStamp or NT)
                     - Confirmation_date (pandas.TimeStamp)
                     - Recovered_date (pandas.TimeStamp): if outcome is Recovered
                     - Fatal_date (pandas.TimeStamp): if outcome is Fatal
-                    - Symtoms (str)
+                    - Symptoms (str)
                     - Chronic_disease (str)
                     - Age (int or None)
                     - Sex (str)

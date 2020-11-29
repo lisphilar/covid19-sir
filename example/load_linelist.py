@@ -23,9 +23,9 @@ def main():
     # Subset by area
     linelist_data.subset("Japan").to_csv(
         output_dir.joinpath("linelist_japan.csv"), index=False)
-    # Closed records
-    linelist_data.closed("China", outcome="Recovered").to_csv(
-        output_dir.joinpath("linelist_china_recovered.csv"), index=False)
+    # Global closed records (only recovered)
+    linelist_data.closed(outcome="Recovered").to_csv(
+        output_dir.joinpath("linelist_global_recovered.csv"), index=False)
 
 
 if __name__ == "__main__":

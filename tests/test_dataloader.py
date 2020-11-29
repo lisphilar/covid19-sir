@@ -49,12 +49,12 @@ class TestLinelistData(object):
 
     @pytest.mark.parametrize("country", ["China"])
     @pytest.mark.parametrize("outcome", ["Recovered", "Fatal", "Confirmed"])
-    def test_closed(self, linelist_data, country, outcome):
+    def test_closed(self, linelist_data, outcome):
         if outcome in ["Recovered", "Fatal"]:
-            linelist_data.closed(country=country, outcome=outcome)
+            linelist_data.closed(outcome=outcome)
         else:
             with pytest.raises(KeyError):
-                linelist_data.closed(country=country, outcome=outcome)
+                linelist_data.closed(outcome=outcome)
 
 
 class TestDataLoader(object):
