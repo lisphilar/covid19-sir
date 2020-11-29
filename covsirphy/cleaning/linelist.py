@@ -211,8 +211,8 @@ class LinelistData(CleaningBase):
                 Index:
                     reset index
                 Columns:
-                    - Country (str)
-                    - Province (str)
+                    - Country (str): country name
+                    - Province (str): province name or "-"
                     - Hospitalized_date (pandas.TimeStamp or NT)
                     - Confirmation_date (pandas.TimeStamp)
                     - Recovered_date (pandas.TimeStamp): if outcome is Recovered
@@ -226,7 +226,6 @@ class LinelistData(CleaningBase):
         if outcome not in column_dict:
             raise KeyError(
                 f"@outcome should be selected from {self.R} or {self.F}, but {outcome} was applied.")
-        # Subset by area
         df = self._cleaned_df.copy()
         # Subset by date
         df = df.loc[(df[outcome]) & (~df[self.OUTCOME_DATE].isna())]
