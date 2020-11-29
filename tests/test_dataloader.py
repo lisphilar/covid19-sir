@@ -48,7 +48,6 @@ class TestLinelistData(object):
             column_set = set(df) | set([Term.COUNTRY, Term.PROVINCE])
             assert column_set == set(LinelistData.LINELIST_COLS)
 
-    @pytest.mark.parametrize("country", ["China"])
     @pytest.mark.parametrize("outcome", ["Recovered", "Fatal", "Confirmed"])
     def test_closed(self, data_loader, outcome):
         linelist_data = data_loader.linelist()
