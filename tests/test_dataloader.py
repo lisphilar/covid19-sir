@@ -38,7 +38,8 @@ class TestLinelistData(object):
 
     @pytest.mark.parametrize("country", ["Japan", "Germany"])
     @pytest.mark.parametrize("province", [None, "Tokyo"])
-    def test_subset(self, linelist_data, country, province):
+    def test_subset(self, data_loader, country, province):
+        linelist_data = data_loader.linelist()
         if (country, province) == ("Germany", "Tokyo"):
             with pytest.raises(KeyError):
                 linelist_data.subset(country=country, province=province)
@@ -49,7 +50,8 @@ class TestLinelistData(object):
 
     @pytest.mark.parametrize("country", ["China"])
     @pytest.mark.parametrize("outcome", ["Recovered", "Fatal", "Confirmed"])
-    def test_closed(self, linelist_data, country, outcome):
+    def test_closed(self, data_loader, country, outcome):
+        linelist_data = data_loader.linelist()
         if outcome in ["Recovered", "Fatal"]:
             linelist_data.closed(country=country, outcome=outcome)
         else:
