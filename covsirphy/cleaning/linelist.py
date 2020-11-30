@@ -134,6 +134,9 @@ class LinelistData(CleaningBase):
         for col in [self.HOSPITAL_DATE, self.CONFIRM_DATE, self.OUTCOME_DATE]:
             df[col] = pd.to_datetime(
                 df[col], infer_datetime_format=True, errors="coerce")
+        df = df.loc[~df[self.CONFIRM_DATE].isna()]
+        df = df.loc[~df[self.OUTCOME_DATE].isna()]
+        df = df.loc[df[self.CONFIRM_DATE] < df[self.OUTCOME_DATE]]
         # Outcome
         df[self.C] = ~df[self.CONFIRM_DATE].isna()
         df[self.R] = df[self.OUTCOME].str.lower().isin(
@@ -228,9 +231,7 @@ class LinelistData(CleaningBase):
                 f"@outcome should be selected from {self.R} or {self.F}, but {outcome} was applied.")
         df = self._cleaned_df.copy()
         # Subset by date
-        df = df.loc[(df[outcome]) & (~df[self.OUTCOME_DATE].isna())]
-        df = df.loc[~df[self.CONFIRM_DATE].isna()]
-        df = df.loc[df[self.CONFIRM_DATE] < df[self.OUTCOME_DATE]]
+        df = df.loc[df[outcome]]
         # Column names
         df = df.rename({self.OUTCOME_DATE: column_dict[outcome]}, axis=1)
         df = df.drop([self.C, self.CI, self.F, self.R], axis=1)
