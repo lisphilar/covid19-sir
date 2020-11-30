@@ -199,13 +199,11 @@ class LinelistData(CleaningBase):
         df = df.drop([self.COUNTRY, self.PROVINCE], axis=1)
         return df.reset_index(drop=True)
 
-    def closed(self, country, province=None, outcome="Recovered"):
+    def closed(self, outcome="Recovered"):
         """
-        Return subset of the country/province and start/end date.
+        Return subset of global outcome data (recovered/fatal).
 
         Args:
-            country (str): country name or ISO3 code
-            province (str or None): province name
             outcome (str): 'Recovered' or 'Fatal'
 
         Returns:
@@ -213,11 +211,13 @@ class LinelistData(CleaningBase):
                 Index:
                     reset index
                 Columns:
+                    - Country (str): country name
+                    - Province (str): province name or "-"
                     - Hospitalized_date (pandas.TimeStamp or NT)
                     - Confirmation_date (pandas.TimeStamp)
                     - Recovered_date (pandas.TimeStamp): if outcome is Recovered
                     - Fatal_date (pandas.TimeStamp): if outcome is Fatal
-                    - Symtoms (str)
+                    - Symptoms (str)
                     - Chronic_disease (str)
                     - Age (int or None)
                     - Sex (str)
@@ -226,8 +226,7 @@ class LinelistData(CleaningBase):
         if outcome not in column_dict:
             raise KeyError(
                 f"@outcome should be selected from {self.R} or {self.F}, but {outcome} was applied.")
-        # Subset by area
-        df = self.subset(country=country, province=province)
+        df = self._cleaned_df.copy()
         # Subset by date
         df = df.loc[(df[outcome]) & (~df[self.OUTCOME_DATE].isna())]
         df = df.loc[~df[self.CONFIRM_DATE].isna()]

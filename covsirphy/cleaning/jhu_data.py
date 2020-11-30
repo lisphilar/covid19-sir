@@ -436,7 +436,9 @@ class JHUData(CleaningBase):
         # Estimate recovered records
         shifted = df[self.C].shift(periods=self._closing_period, freq="D")
         df[self.R] = shifted - df[self.F]
-        df.loc[df[self.R] < 0, self.R] = None
+        # Apply absolute value to recovered records and sort them in ascending order
+        df[self.R] = df[self.R].abs()
+        df.loc[:, self.R] = sorted(df[self.R])
         df[self.R].interpolate(method="spline", order=1, inplace=True)
         df[self.R] = df[self.R].fillna(0).astype(np.int64)
         df = self._complement_non_monotonic(
@@ -544,6 +546,9 @@ class JHUData(CleaningBase):
         df = self._complement_recovered_full(df, max_ignored=max_ignored)
         df = self._complement_recovered_partial(
             df, interval=interval, max_ignored=max_ignored)
+        # Apply absolute value to recovered records and sort them in ascending order
+        df[self.R] = df[self.R].abs()
+        df.loc[:, self.R] = sorted(df[self.R])
         # Whether complemented or not
         is_complemented = not df.equals(subset_df)
         # Select records where Recovered > 0
