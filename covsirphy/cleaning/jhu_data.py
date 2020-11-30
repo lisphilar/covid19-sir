@@ -555,3 +555,53 @@ class JHUData(CleaningBase):
         df = df.loc[df[self.R] > 0, :]
         df = df.reset_index(drop=True)
         return (df, is_complemented)
+
+    def records(self, country, province=None, start_date=None, end_date=None, population=None,
+                auto_complement=True, **kwargs):
+        """
+        JHU-style dataset for the area from the start date to the end date.
+        Records with Recovered > 0 will be selected.
+
+        Args:
+            country(str): country name or ISO3 code
+            province(str or None): province name
+            start_date(str or None): start date, like 22Jan2020
+            end_date(str or None): end date, like 01Feb2020
+            population(int or None): population value
+            auto_complement (bool): if True and necessary, the number of cases will be complemented
+            kwargs: the other arguments of JHUData.subset_complement()
+
+        Returns:
+            tuple(pandas.DataFrame, bool):
+                pandas.DataFrame:
+                    Index: reset index
+                    Columns:
+                        - Date(pd.TimeStamp): Observation date
+                        - Confirmed(int): the number of confirmed cases
+                        - Infected(int): the number of currently infected cases
+                        - Fatal(int): the number of fatal cases
+                        - Recovered (int): the number of recovered cases ( > 0)
+                        - Susceptible(int): the number of susceptible cases, if calculated
+                bool: whether recovered data complemented or not
+
+        Notes:
+            If @ population is not None, the number of susceptible cases will be calculated.
+            If necessary and @auto_complement is True, complement recovered data.
+        """
+        subset_arg_dict = {
+            "country": country, "province": province,
+            "start_date": start_date, "end_date": end_date, "population": population,
+        }
+        if auto_complement:
+            df, is_complemented = self.subset_complement(
+                **subset_arg_dict, **kwargs)
+            if not df.empty:
+                return (df, is_complemented)
+        try:
+            return (self.subset(**subset_arg_dict), False)
+        except ValueError:
+            area = self.area_name(country, province=province)
+            s_fr = "" if start_date is None else f" from {start_date}"
+            s_to = "" if end_date is None else f" from {end_date}"
+            raise ValueError(
+                f"Records with Recovered > 0 in {area}{s_fr}{s_to}  are un-registered.") from None

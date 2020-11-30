@@ -24,7 +24,7 @@ class Scenario(Term):
         country (str): country name
         province (str or None): province name
         tau (int or None): tau value
-        auto_complement (bool): if True, the number of cases will be complemented.
+        auto_complement (bool): if True and necessary, the number of cases will be complemented
     """
 
     def __init__(self, jhu_data, population_data, country, province=None, tau=None, auto_complement=True):
@@ -65,17 +65,12 @@ class Scenario(Term):
         Only when auto-complement mode, complement records if necessary.
         """
         # Set records (complement records, if necessary)
-        if self._auto_complement:
-            self.complement()
-            if self.record_df.empty:
-                self.complement_reverse()
-        else:
-            self.complement_reverse()
-        if self.record_df.empty:
-            area = self.jhu_data.area_name(
-                self.country, province=self.province)
-            raise ValueError(
-                f"Records with 'Recovered > 0' in {area} are un-registered.")
+        self.record_df, self._complemented = self.jhu_data.records(
+            country=self.country, province=self.province,
+            start_date=self._first_date, end_date=self._last_date,
+            population=self.population,
+            auto_complement=self._auto_complement
+        )
         # First/last date of the records
         if self._first_date is None:
             series = self.record_df.loc[:, self.DATE]
@@ -90,7 +85,7 @@ class Scenario(Term):
 
     def complement(self, interval=2, max_ignored=100):
         """
-        Complement the number of recovered cases when not updated/reported.
+        Complement the number of recovered cases, if necessary.
 
         Args:
             interval (int): expected update interval of the number of recovered cases [days]
@@ -98,16 +93,13 @@ class Scenario(Term):
 
         Returns:
             covsirphy.Scenario: self
-
-        Notes:
-            If the number of recovered cases did not change
-            for more than @interval days after reached @max_ignored cases,
-            complement will be applied to the number of recovered cases.
         """
-        self.record_df, self._complemented = self.jhu_data.subset_complement(
+        self.record_df, self._complemented = self.jhu_data.records(
             country=self.country, province=self.province,
-            start_date=self._first_date, end_date=self._last_date, population=self.population,
-            interval=interval, max_ignored=max_ignored)
+            start_date=self._first_date, end_date=self._last_date,
+            population=self.population,
+            auto_complement=True, interval=interval, max_ignored=max_ignored
+        )
         return self
 
     def complement_reverse(self):
@@ -117,14 +109,12 @@ class Scenario(Term):
         Returns:
             covsirphy.Scenario: self
         """
-        self.record_df = self.jhu_data.subset(
-            country=self.country,
-            province=self.province,
-            start_date=self._first_date,
-            end_date=self._last_date,
-            population=self.population
+        self.record_df, self._complemented = self.jhu_data.records(
+            country=self.country, province=self.province,
+            start_date=self._first_date, end_date=self._last_date,
+            population=self.population,
+            auto_complement=False
         )
-        self._complemented = False
         return self
 
     @property
