@@ -5,36 +5,36 @@ import pytest
 from covsirphy import DataLoader, PhaseSeries, ParamTracker
 
 
-@pytest.fixture(autouse=True)
+@pytest.fixture(scope="session")
 def jhu_data():
     data_loader = DataLoader()
     return data_loader.jhu()
 
 
-@pytest.fixture(autouse=True)
+@pytest.fixture(scope="session")
 def data_loader():
     return DataLoader()
 
 
-@pytest.fixture(autouse=True)
+@pytest.fixture(scope="session")
 def population_data():
     data_loader = DataLoader()
     return data_loader.population()
 
 
-@pytest.fixture(autouse=True)
+@pytest.fixture(scope="session")
 def oxcgrt_data():
     data_loader = DataLoader()
     return data_loader.oxcgrt()
 
 
-@pytest.fixture(autouse=True)
+@pytest.fixture(scope="session")
 def japan_data():
     data_loader = DataLoader()
     return data_loader.japan()
 
 
-@pytest.fixture(autouse=True)
+@pytest.fixture(scope="session")
 def param_tracker():
     data_loader = DataLoader()
     jhu_data = data_loader.jhu()
