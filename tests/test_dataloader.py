@@ -38,8 +38,7 @@ class TestLinelistData(object):
 
     @pytest.mark.parametrize("country", ["Japan", "Germany"])
     @pytest.mark.parametrize("province", [None, "Tokyo"])
-    def test_subset(self, data_loader, country, province):
-        linelist_data = data_loader.linelist()
+    def test_subset(self, linelist_data, country, province):
         if (country, province) == ("Germany", "Tokyo"):
             with pytest.raises(KeyError):
                 linelist_data.subset(country=country, province=province)
@@ -49,8 +48,7 @@ class TestLinelistData(object):
             assert column_set == set(LinelistData.LINELIST_COLS)
 
     @pytest.mark.parametrize("outcome", ["Recovered", "Fatal", "Confirmed"])
-    def test_closed(self, data_loader, outcome):
-        linelist_data = data_loader.linelist()
+    def test_closed(self, linelist_data, outcome):
         if outcome in ["Recovered", "Fatal"]:
             linelist_data.closed(outcome=outcome)
         else:
@@ -59,19 +57,20 @@ class TestLinelistData(object):
 
 
 class TestDataLoader(object):
-    def test_dataloader(self):
-        # Create DataLoader instance
+    def test_start(self):
         with pytest.raises(TypeError):
             DataLoader(directory=0)
-        data_loader = DataLoader(directory="input", update_interval=12)
+
+    def test_dataloader(self, jhu_data, population_data, oxcgrt_data, japan_data, linelist_data):
         # List of primary sources of COVID-19 Data Hub
+        data_loader = DataLoader()
         assert data_loader.covid19dh_citation
         # Data loading
-        assert isinstance(data_loader.jhu(), JHUData)
-        assert isinstance(data_loader.population(), PopulationData)
-        assert isinstance(data_loader.oxcgrt(), OxCGRTData)
-        assert isinstance(data_loader.japan(), CountryData)
-        assert isinstance(data_loader.linelist(), LinelistData)
+        assert isinstance(jhu_data, JHUData)
+        assert isinstance(population_data, PopulationData)
+        assert isinstance(oxcgrt_data, OxCGRTData)
+        assert isinstance(japan_data, CountryData)
+        assert isinstance(linelist_data, LinelistData)
         # Local file
         data_loader.jhu(local_file="input/covid19dh.csv")
         data_loader.population(local_file="input/covid19dh.csv")

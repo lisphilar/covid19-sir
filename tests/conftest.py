@@ -6,11 +6,6 @@ from covsirphy import DataLoader
 
 
 @pytest.fixture(scope="session")
-def data_loader():
-    return DataLoader()
-
-
-@pytest.fixture(scope="session")
 def jhu_data():
     data_loader = DataLoader()
     return data_loader.jhu()
@@ -32,3 +27,9 @@ def oxcgrt_data():
 def japan_data():
     data_loader = DataLoader()
     return data_loader.japan()
+
+
+@pytest.fixture(scope="session")
+def linelist_data():
+    data_loader = DataLoader()
+    return data_loader.linelist()
