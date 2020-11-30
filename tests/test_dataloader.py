@@ -166,6 +166,12 @@ class TestJHUData(object):
         with pytest.raises(KeyError):
             jhu_data.subset_complement(country=country, end_date="01Jan1900")
 
+    @pytest.mark.parametrize("country", ["UK", "Netherlands", "China", "Japan"])
+    def test_records(self, jhu_data, country):
+        df, is_complemented = jhu_data.subset_complement(country=country)
+        assert set(df.columns) == set(Term.NLOC_COLUMNS)
+        assert is_complemented
+
     @pytest.mark.parametrize(
         "applied, expected, iso3",
         [
