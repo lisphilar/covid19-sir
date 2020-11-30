@@ -28,9 +28,7 @@ class TestCOVID19DataHub(object):
 
 
 class TestLinelistData(object):
-    def test_linelist(self):
-        linelist_data = LinelistData(
-            filename=Path("input").joinpath("linelist.csv"))
+    def test_linelist(self, linelist_data):
         with pytest.raises(NotImplementedError):
             linelist_data.total()
         assert isinstance(linelist_data.cleaned(), pd.DataFrame)
