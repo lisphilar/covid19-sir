@@ -45,6 +45,7 @@ from covsirphy.phase.phase_series import PhaseSeries
 from covsirphy.phase.phase_estimator import MPEstimator
 # analysis
 from covsirphy.analysis.example_data import ExampleData
+from covsirphy.analysis.data_handler import DataHandler
 from covsirphy.analysis.param_tracker import ParamTracker
 from covsirphy.analysis.scenario import Scenario
 from covsirphy.analysis.model_validator import ModelValidator
@@ -61,7 +62,7 @@ def get_version():
 
 __all__ = [
     "ExampleData", "Scenario", "ModelValidator", "ParamTracker",
-    "ODESimulator", "ChangeFinder",
+    "ODESimulator", "ChangeFinder", "DataHandler",
     "PhaseSeries", "PhaseUnit", "MPEstimator",
     "Term", "CleaningBase", "DataLoader", "COVID19DataHub",
     "JHUData", "CountryData", "PopulationData", "OxCGRTData",

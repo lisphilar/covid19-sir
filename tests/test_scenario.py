@@ -5,28 +5,66 @@ from datetime import datetime
 import warnings
 import pandas as pd
 import pytest
-from covsirphy import Scenario
+from covsirphy import Scenario, DataHandler
 from covsirphy import Term, PhaseSeries, SIR, SIRF
 
 
-class TestScenario(object):
+class TestDataHandler(object):
     @pytest.mark.parametrize("country", ["Italy", "Japan", "Netherlands"])
     @pytest.mark.parametrize("province", [None, "Abruzzo"])
-    @pytest.mark.parametrize("tau", [None, 720, 1000])
-    def test_start(self, jhu_data, population_data, country, province, tau):
+    def test_start(self, jhu_data, population_data, country, province):
         if province == "Abruzzo" and country != "Italy":
             with pytest.raises(KeyError):
-                Scenario(
+                DataHandler(
                     jhu_data, population_data, country, province=province)
             return
-        if tau == 1000:
-            with pytest.raises(ValueError):
-                Scenario(
-                    jhu_data, population_data, country, province=province, tau=tau)
-            return
-        Scenario(
-            jhu_data, population_data, country, province=province, tau=tau)
+        DataHandler(jhu_data, population_data, country, province=province)
 
+    @pytest.mark.parametrize("country", ["Japan"])
+    def test_start_record_range(self, jhu_data, population_data, country):
+        # Setting
+        dhl = DataHandler(jhu_data, population_data, country)
+        dhl.init_records()
+        # Test
+        dhl.first_date = "01Apr2020"
+        assert dhl.first_date == "01Apr2020"
+        dhl.last_date = "01May2020"
+        assert dhl.last_date == "01May2020"
+        with pytest.raises(ValueError):
+            dhl.first_date = "01Jan2019"
+        with pytest.raises(ValueError):
+            tomorrow = Term.tomorrow(datetime.now().strftime(Term.DATE_FORMAT))
+            dhl.last_date = tomorrow
+
+    @pytest.mark.parametrize("country", ["Japan"])
+    def test_records(self, jhu_data, population_data, country):
+        warnings.simplefilter("ignore", category=UserWarning)
+        # Setting
+        dhl = DataHandler(jhu_data, population_data, country)
+        dhl.init_records()
+        dhl.first_date = "01Apr2020"
+        dhl.last_date = "01Aug2020"
+        # Test
+        df = dhl.records(show_figure=False)
+        assert isinstance(df, pd.DataFrame)
+        assert set(df.columns) == set(Term.NLOC_COLUMNS)
+        dates = df[Term.DATE]
+        assert dates.min() == Term.date_obj(dhl.first_date)
+        assert dates.max() == Term.date_obj(dhl.last_date)
+        df2 = dhl.records(show_figure=True)
+        assert isinstance(df2, pd.DataFrame)
+        assert set(df2.columns) == set(Term.NLOC_COLUMNS)
+
+    @pytest.mark.parametrize("country", ["Japan"])
+    def test_records_diff(self, jhu_data, population_data, country):
+        warnings.simplefilter("ignore", category=UserWarning)
+        dhl = DataHandler(jhu_data, population_data, country)
+        dhl.init_records()
+        dhl.records_diff(window=7, show_figure=False)
+        dhl.records_diff(window=100, show_figure=True)
+
+
+class TestScenario(object):
     @pytest.mark.parametrize("country", ["Japan"])
     def test_class_as_dict(self, jhu_data, population_data, country):
         # Setting
@@ -41,46 +79,6 @@ class TestScenario(object):
         # Get scenario
         assert snl["New"] == series
         assert len(snl["New"]) == len(series)
-
-    @pytest.mark.parametrize("country", ["Japan"])
-    def test_start_record_range(self, jhu_data, population_data, country):
-        # Setting
-        snl = Scenario(jhu_data, population_data, country)
-        # Test
-        snl.first_date = "01Apr2020"
-        assert snl.first_date == "01Apr2020"
-        snl.last_date = "01May2020"
-        assert snl.last_date == "01May2020"
-        with pytest.raises(ValueError):
-            snl.first_date = "01Jan2019"
-        with pytest.raises(ValueError):
-            tomorrow = Term.tomorrow(datetime.now().strftime(Term.DATE_FORMAT))
-            snl.last_date = tomorrow
-
-    @pytest.mark.parametrize("country", ["Japan"])
-    def test_records(self, jhu_data, population_data, country):
-        warnings.simplefilter("ignore", category=UserWarning)
-        # Setting
-        snl = Scenario(jhu_data, population_data, country)
-        snl.first_date = "01Apr2020"
-        snl.last_date = "01Aug2020"
-        # Test
-        df = snl.records(show_figure=False)
-        assert isinstance(df, pd.DataFrame)
-        assert set(df.columns) == set(Term.NLOC_COLUMNS)
-        dates = df[Term.DATE]
-        assert dates.min() == Term.date_obj(snl.first_date)
-        assert dates.max() == Term.date_obj(snl.last_date)
-        df2 = snl.records(show_figure=True)
-        assert isinstance(df2, pd.DataFrame)
-        assert set(df2.columns) == set(Term.NLOC_COLUMNS)
-
-    @pytest.mark.parametrize("country", ["Japan"])
-    def test_records_diff(self, jhu_data, population_data, country):
-        warnings.simplefilter("ignore", category=UserWarning)
-        snl = Scenario(jhu_data, population_data, country)
-        snl.records_diff(window=7, show_figure=False)
-        snl.records_diff(window=100, show_figure=True)
 
     @pytest.mark.parametrize("country", ["Japan"])
     def test_edit_series(self, jhu_data, population_data, country):
