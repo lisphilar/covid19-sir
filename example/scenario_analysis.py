@@ -28,7 +28,9 @@ def main():
     # Show records
     record_df = snl.records(filename=figpath("records"))
     save_df(record_df, "records", output_dir, abbr, use_index=False)
-    # Show S-R trend)
+    # Daily new cases
+    snl.records_diff(filename=figpath("records_diff"))
+    # Show S-R trend
     snl.trend(filename=figpath("trend"))
     print(snl.summary())
     # Parameter estimation

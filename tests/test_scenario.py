@@ -76,6 +76,13 @@ class TestScenario(object):
         assert set(df2.columns) == set(Term.NLOC_COLUMNS)
 
     @pytest.mark.parametrize("country", ["Japan"])
+    def test_records_diff(self, jhu_data, population_data, country):
+        warnings.simplefilter("ignore", category=UserWarning)
+        snl = Scenario(jhu_data, population_data, country)
+        snl.records_diff(window=7, show_figure=False)
+        snl.records_diff(window=100, show_figure=True)
+
+    @pytest.mark.parametrize("country", ["Japan"])
     def test_edit_series(self, jhu_data, population_data, country):
         # Setting
         snl = Scenario(jhu_data, population_data, country)

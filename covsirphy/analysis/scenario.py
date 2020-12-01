@@ -181,6 +181,41 @@ class Scenario(Term):
         )
         return df
 
+    def records_diff(self, variables=None, window=7, show_figure=True, filename=None):
+        """
+        Return the number of daily new cases (the first discreate difference of records).
+
+        Args:
+            variables (str or None): variables to show
+            window (int): window of moving average, >= 1
+            show_figure (bool): if True, show the records as a line-plot.
+            filename (str): filename of the figure, or None (show figure)
+
+        Returns:
+            pandas.DataFrame
+                Index:
+                    - Date (pd.TimeStamp): Observation date
+                Columns:
+                    - Confirmed (int): daily new cases of Confirmed, if calculated
+                    - Infected (int):  daily new cases of Infected, if calculated
+                    - Fatal (int):  daily new cases of Fatal, if calculated
+                    - Recovered (int):  daily new cases of Recovered, if calculated
+
+        Notes:
+            @variables can be selected from Confirmed, Infected, Fatal and Recovered.
+            If None was set to @variables, ["Confirmed", "Fatal", "Recovered"] will be used.
+        """
+        variables = self.ensure_list(
+            variables or [self.C, self.F, self.R], candidates=self.VALUE_COLUMNS, name="variables")
+        window = self.ensure_natural_int(window, name="window")
+        df = self.record_df.set_index(self.DATE)[variables]
+        df = df.diff().rolling(window=window).mean()
+        if not show_figure:
+            return df
+        title = f"{self.area}: Daily new cases{' (complemented)' if self._complemented else ''}"
+        line_plot(df, title, y_integer=True, filename=filename)
+        return df
+
     def _create_tracker(self, name):
         """
         Create a instance of covsirphy.ParamTracker.
