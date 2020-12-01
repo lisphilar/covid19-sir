@@ -29,6 +29,7 @@ class Scenario(DataHandler):
         super().__init__(
             jhu_data, population_data, country, province=province, auto_complement=auto_complement)
         self.tau = self.ensure_tau(tau)
+        super().init_records()
         self._init_phase_series()
 
     def __getitem__(self, key):
@@ -52,6 +53,7 @@ class Scenario(DataHandler):
         self.ensure_date_order(self._first_date, date, name="date")
         self.ensure_date_order(date, self._last_date, name="date")
         self._first_date = date
+        super().init_records()
         self._init_phase_series()
 
     @property
@@ -66,6 +68,7 @@ class Scenario(DataHandler):
         self.ensure_date_order(self._first_date, date, name="date")
         self.ensure_date_order(date, self._last_date, name="date")
         self._last_date = date
+        super().init_records()
         self._init_phase_series()
 
     def _init_phase_series(self):
@@ -73,7 +76,6 @@ class Scenario(DataHandler):
         Initialize dictionary of phase series and set records.
         Only when auto-complement mode, complement records if necessary.
         """
-        super()._init_records()
         self._series_dict = {
             self.MAIN: PhaseSeries(
                 self._first_date, self._last_date, self.population

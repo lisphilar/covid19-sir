@@ -24,6 +24,7 @@ class TestDataHandler(object):
     def test_start_record_range(self, jhu_data, population_data, country):
         # Setting
         dhl = DataHandler(jhu_data, population_data, country)
+        dhl.init_records()
         # Test
         dhl.first_date = "01Apr2020"
         assert dhl.first_date == "01Apr2020"
@@ -40,6 +41,7 @@ class TestDataHandler(object):
         warnings.simplefilter("ignore", category=UserWarning)
         # Setting
         dhl = DataHandler(jhu_data, population_data, country)
+        dhl.init_records()
         dhl.first_date = "01Apr2020"
         dhl.last_date = "01Aug2020"
         # Test
@@ -56,9 +58,10 @@ class TestDataHandler(object):
     @pytest.mark.parametrize("country", ["Japan"])
     def test_records_diff(self, jhu_data, population_data, country):
         warnings.simplefilter("ignore", category=UserWarning)
-        snl = Scenario(jhu_data, population_data, country)
-        snl.records_diff(window=7, show_figure=False)
-        snl.records_diff(window=100, show_figure=True)
+        dhl = DataHandler(jhu_data, population_data, country)
+        dhl.init_records()
+        dhl.records_diff(window=7, show_figure=False)
+        dhl.records_diff(window=100, show_figure=True)
 
 
 class TestScenario(object):

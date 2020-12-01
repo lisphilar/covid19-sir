@@ -39,9 +39,8 @@ class DataHandler(Term):
         self.record_df = pd.DataFrame()
         self._first_date = None
         self._last_date = None
-        self._init_records()
 
-    def _init_records(self):
+    def init_records(self):
         """
         Set records.
         Only when auto-complement mode, complement records if necessary.
@@ -71,7 +70,7 @@ class DataHandler(Term):
         self.ensure_date_order(self._first_date, date, name="date")
         self.ensure_date_order(date, self._last_date, name="date")
         self._first_date = date
-        self._init_records()
+        self.init_records()
 
     @property
     def last_date(self):
@@ -85,7 +84,7 @@ class DataHandler(Term):
         self.ensure_date_order(self._first_date, date, name="date")
         self.ensure_date_order(date, self._last_date, name="date")
         self._last_date = date
-        self._init_records()
+        self.init_records()
 
     def complement(self, interval=2, max_ignored=100):
         """
