@@ -209,7 +209,7 @@ class Scenario(Term):
             variables or [self.C, self.F, self.R], candidates=self.VALUE_COLUMNS, name="variables")
         window = self.ensure_natural_int(window, name="window")
         df = self.record_df.set_index(self.DATE)[variables]
-        df = df.diff().rolling(window=window).mean()
+        df = df.diff().dropna().rolling(window=window).mean().dropna()
         if not show_figure:
             return df
         title = f"{self.area}: Daily new cases{' (complemented)' if self._complemented else ''}"
