@@ -107,9 +107,8 @@ class MPEstimator(Term):
             province = id_dict["province"] if "province" in id_dict else None
             population = self.population_data.value(
                 country=country, province=province)
-            record_df = self.jhu_data.subset(
-                country=country, province=province, population=population
-            )
+            record_df = self.jhu_data.records(
+                country=country, province=province, population=population)
         else:
             record_df = self.record_df.copy()
         unit.estimate(record_df=record_df, **kwargs)
