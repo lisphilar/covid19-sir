@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*-
 
 import pandas as pd
+from covsirphy.util.error import SubsetNotFoundError
 from covsirphy.cleaning.jhu_data import JHUData
 from covsirphy.ode.mbase import ModelBase
 from covsirphy.simulation.simulator import ODESimulator
@@ -146,9 +147,7 @@ class ExampleData(JHUData):
         try:
             return self._specialized_dict[country][province]
         except KeyError:
-            raise KeyError(
-                f"Records of {country} - {province} were not registered."
-            )
+            raise SubsetNotFoundError(country=country, province=province)
 
     def non_dim(self, model=None, country=None, province=None):
         """
@@ -168,9 +167,7 @@ class ExampleData(JHUData):
         try:
             return self.nondim_dict[country][province]
         except KeyError:
-            raise KeyError(
-                f"Records of {country} - {province} were not registered."
-            )
+            raise SubsetNotFoundError(country=country, province=province)
 
     def subset(self, model=None, country=None, province=None, **kwargs):
         """

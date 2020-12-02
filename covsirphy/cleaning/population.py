@@ -5,7 +5,7 @@ from datetime import datetime
 from dask import dataframe as dd
 import numpy as np
 import pandas as pd
-from covsirphy.util.error import deprecate
+from covsirphy.util.error import deprecate, SubsetNotFoundError
 from covsirphy.cleaning.cbase import CleaningBase
 
 
@@ -154,14 +154,13 @@ class PopulationData(CleaningBase):
         Notes:
             If @date is None, the created date of the instancewill be used
         """
+        country_alias = self.ensure_country_name(country)
         try:
             df = self.subset(
                 country=country, province=province, start_date=date, end_date=date)
         except KeyError:
-            area = self.area_name(country, province=province)
-            date_str = "" if date is None else " on {date}"
-            raise KeyError(
-                f"Records in {area}{date_str} are un-registered.") from None
+            raise SubsetNotFoundError(
+                country=country, country_alias=country_alias, province=province, date=date)
         df = df.sort_values(self.DATE)
         return int(df.loc[df.index[-1], [self.N]].values[0])
 

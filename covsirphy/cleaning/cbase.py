@@ -5,7 +5,7 @@ import warnings
 import country_converter as coco
 from dask import dataframe as dd
 import pandas as pd
-from covsirphy.util.error import deprecate
+from covsirphy.util.error import deprecate, SubsetNotFoundError
 from covsirphy.cleaning.term import Term
 
 
@@ -106,8 +106,7 @@ class CleaningBase(Term):
         # Return the name if registered in the dataset
         if name in selectable_set:
             return name
-        s = f" (recognized as {name})"
-        raise KeyError(f"No records in {country}{s} are registered.")
+        raise SubsetNotFoundError(country=country, country_alias=name)
 
     @deprecate("CleaningBase.iso3_to_country()", new="CleaningBase.ensure_country_name()")
     def iso3_to_country(self, iso3_code):
@@ -202,12 +201,13 @@ class CleaningBase(Term):
                 Columns:
                     without ISO3, Country, Province column
         """
+        country_alias = self.ensure_country_name(country)
         df = self._subset_by_area(country=country, province=province)
         df = df.drop(
             [self.COUNTRY, self.ISO3, self.PROVINCE], axis=1, errors="ignore")
-        area = self.area_name(country, province=province)
         if df.empty:
-            raise KeyError(f"Records in {area} are un-registered.")
+            raise SubsetNotFoundError(
+                country=country, country_alias=country_alias, province=province)
         # Subset with Start/end date
         if start_date is None and end_date is None:
             return df.reset_index(drop=True)
@@ -218,8 +218,9 @@ class CleaningBase(Term):
         end_obj = self.date_obj(date_str=end_date, default=series.max())
         df = df.loc[(start_obj <= series) & (series <= end_obj), :]
         if df.empty:
-            raise KeyError(
-                f"Records in {area} from {start_date} to {end_date} are un-registered.")
+            raise SubsetNotFoundError(
+                country=country, country_alias=country_alias, province=province,
+                start_date=start_date, end_date=end_date)
         return df.reset_index(drop=True)
 
     def countries(self):
