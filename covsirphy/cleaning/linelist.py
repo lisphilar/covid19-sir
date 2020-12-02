@@ -4,6 +4,7 @@
 from dask import dataframe as dd
 import pandas as pd
 import swifter
+from covsirphy.util.error import SubsetNotFoundError
 from covsirphy.cleaning.cbase import CleaningBase
 from pathlib import Path
 
@@ -194,9 +195,11 @@ class LinelistData(CleaningBase):
         if province not in (None, self.UNKNOWN):
             df = df.loc[df[self.PROVINCE] == province]
         # Check records are registered
+        country_alias = self.ensure_country_name(country)
         area = self.area_name(country, province=province)
         if df.empty:
-            raise KeyError(f"Records in {area} are un-registered.")
+            raise SubsetNotFoundError(
+                country=country, country_alias=country_alias, province=province)
         df = df.drop([self.COUNTRY, self.PROVINCE], axis=1)
         return df.reset_index(drop=True)
 

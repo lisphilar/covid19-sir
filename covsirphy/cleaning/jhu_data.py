@@ -3,6 +3,7 @@
 
 import numpy as np
 import pandas as pd
+from covsirphy.util.error import SubsetNotFoundError
 from covsirphy.cleaning.cbase import CleaningBase
 from covsirphy.cleaning.country_data import CountryData
 
@@ -200,26 +201,22 @@ class JHUData(CleaningBase):
         Notes:
             If @population is not None, the number of susceptible cases will be calculated.
         """
-        area = self.area_name(country, province=province)
+        country_alias = self.ensure_country_name(country)
         # Subset with area, start/end date and calculate Susceptible
         subset_df = self._subset(
             country=country, province=province,
             start_date=start_date, end_date=end_date, population=population)
         if subset_df.empty:
-            area = self.area_name(country, province=province)
-            s_fr = "" if start_date is None else f" from {start_date}"
-            s_to = "" if end_date is None else f" from {end_date}"
-            raise KeyError(f"Records in {area}{s_fr}{s_to} are un-registered.")
+            raise SubsetNotFoundError(
+                country=country, country_alias=country_alias, province=province,
+                start_date=start_date, end_date=end_date)
         # Select records where Recovered > 0
         df = subset_df.loc[subset_df[self.R] > 0, :]
         df = df.reset_index(drop=True)
         if df.empty:
-            series = subset_df[self.DATE]
-            start_date = start_date or series.min().strftime(self.DATE_FORMAT)
-            end_date = end_date or series.max().strftime(self.DATE_FORMAT)
-            area = self.area_name(country, province=province)
-            raise ValueError(
-                f"Records with 'Recovered > 0' in {area} from {start_date} to {end_date} are un-registered.")
+            raise SubsetNotFoundError(
+                country=country, country_alias=country_alias, province=province,
+                start_date=start_date, end_date=end_date, message="with 'Recovered > 0'") from None
         return df
 
     def to_sr(self, country, province=None,
@@ -248,8 +245,7 @@ class JHUData(CleaningBase):
         population = self.ensure_population(population)
         subset_df = self.subset(
             country=country, province=province,
-            start_date=start_date, end_date=end_date, population=population
-        )
+            start_date=start_date, end_date=end_date, population=population)
         return subset_df.set_index(self.DATE).loc[:, [self.R, self.S]]
 
     @classmethod
@@ -532,14 +528,14 @@ class JHUData(CleaningBase):
         interval = self.ensure_natural_int(interval, name="interval")
         max_ignored = self.ensure_natural_int(max_ignored, name="max_ignored")
         # Subset with area, start/end date and calculate Susceptible
+        country_alias = self.ensure_country_name(country)
         subset_df = self._subset(
             country=country, province=province,
             start_date=start_date, end_date=end_date, population=population)
         if subset_df.empty:
-            area = self.area_name(country, province=province)
-            s_fr = "" if start_date is None else f" from {start_date}"
-            s_to = "" if end_date is None else f" from {end_date}"
-            raise KeyError(f"Records in {area}{s_fr}{s_to} are un-registered.")
+            raise SubsetNotFoundError(
+                country=country, country_alias=country_alias, province=province,
+                start_date=start_date, end_date=end_date) from None
         # Complement recovered value if necessary
         df = self._complement_non_monotonic(
             subset_df, monotonic_columns=self.MONO_COLUMNS)
@@ -588,6 +584,7 @@ class JHUData(CleaningBase):
             If @ population is not None, the number of susceptible cases will be calculated.
             If necessary and @auto_complement is True, complement recovered data.
         """
+        country_alias = self.ensure_country_name(country)
         subset_arg_dict = {
             "country": country, "province": province,
             "start_date": start_date, "end_date": end_date, "population": population,
@@ -600,8 +597,6 @@ class JHUData(CleaningBase):
         try:
             return (self.subset(**subset_arg_dict), False)
         except ValueError:
-            area = self.area_name(country, province=province)
-            s_fr = "" if start_date is None else f" from {start_date}"
-            s_to = "" if end_date is None else f" from {end_date}"
-            raise ValueError(
-                f"Records with Recovered > 0 in {area}{s_fr}{s_to}  are un-registered.") from None
+            raise SubsetNotFoundError(
+                country=country, country_alias=country_alias, province=province,
+                start_date=start_date, end_date=end_date, message="with 'Recovered > 0'") from None
