@@ -185,8 +185,7 @@ class PolicyMeasures(Term):
             [
                 unit.set_id(
                     country=self.jhu_data.country_to_iso3(country),
-                    phase=f"{self.num2str(num):>4}"
-                )
+                    phase=f"{self.num2str(num):>4}")
                 for (num, unit) in enumerate(self.scenario_dict[country][self.MAIN]) if unit]
             for country in self._countries
         ]
@@ -194,8 +193,7 @@ class PolicyMeasures(Term):
         # Parameter estimation
         mp_estimator = MPEstimator(
             jhu_data=self.jhu_data, population_data=self.population_data,
-            model=model, tau=self.tau, **kwargs
-        )
+            model=model, tau=self.tau, **kwargs)
         mp_estimator.add(units)
         results = mp_estimator.run(
             n_jobs=n_jobs, auto_complement=True, **kwargs)
