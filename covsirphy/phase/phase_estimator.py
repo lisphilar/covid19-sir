@@ -85,13 +85,14 @@ class MPEstimator(Term):
         self._units.extend(units)
         return self
 
-    def _run(self, unit, tau, **kwargs):
+    def _run(self, unit, tau, auto_complement=False, **kwargs):
         """
         Run estimation for one phase.
 
         Args:
             unit (covsirphy.PhaseUnit): unit of one phase
             tau (int or None): tau value [min], a divisor of 1440
+            auto_complement (bool): if True and necessary, the number of cases will be complemented
             kwargs: keyword arguments of model parameters and covsirphy.Estimator.run()
         """
         # Set tau
@@ -108,7 +109,8 @@ class MPEstimator(Term):
             population = self.population_data.value(
                 country=country, province=province)
             record_df = self.jhu_data.records(
-                country=country, province=province, population=population)
+                country=country, province=province, population=population,
+                auto_complement=auto_complement)
         else:
             record_df = self.record_df.copy()
         unit.estimate(record_df=record_df, **kwargs)

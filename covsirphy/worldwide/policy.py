@@ -197,7 +197,8 @@ class PolicyMeasures(Term):
             model=model, tau=self.tau, **kwargs
         )
         mp_estimator.add(units)
-        results = mp_estimator.run(n_jobs=n_jobs, **kwargs)
+        results = mp_estimator.run(
+            n_jobs=n_jobs, auto_complement=True, **kwargs)
         # Register the results
         for country in self._countries:
             new_units = [
