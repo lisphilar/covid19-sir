@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*-
 
 from datetime import timedelta
+import warnings
 import numpy as np
 import pandas as pd
 import ruptures as rpt
@@ -66,6 +67,7 @@ class ChangeFinder(Term):
         series = df.reset_index(drop=True).iloc[:, 0]
         series = series.dropna()
         # Detection with Ruptures
+        warnings.simplefilter("ignore", category=RuntimeWarning)
         algorithm = rpt.Pelt(model="rbf", jump=1, min_size=self.min_size)
         results = algorithm.fit_predict(series.values, pen=0.5)
         # Convert index values to Susceptible values

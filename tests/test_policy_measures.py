@@ -24,6 +24,7 @@ class TestPolicyMeasures(object):
 
     def test_analysis(self, jhu_data, population_data, oxcgrt_data):
         warnings.simplefilter("ignore", category=UserWarning)
+        warnings.simplefilter("error", category=RuntimeWarning)
         # Create instance
         analyser = PolicyMeasures(
             jhu_data, population_data, oxcgrt_data, tau=360)
@@ -62,6 +63,7 @@ class TestPolicyMeasures(object):
 
     def test_error(self, jhu_data, population_data, oxcgrt_data):
         warnings.simplefilter("ignore", category=UserWarning)
+        warnings.simplefilter("error", category=RuntimeWarning)
         # Create instance
         analyser = PolicyMeasures(
             jhu_data, population_data, oxcgrt_data, tau=360)
