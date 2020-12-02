@@ -50,8 +50,8 @@ class SubsetNotFoundError(KeyError, ValueError):
             c_alias_str = ""
         else:
             c_alias_str = f" ({country_alias})"
-        province_str = "" if province is None else f"/{province}"
-        self.area = f"{country}{c_alias_str}{province_str}"
+        province_str = "" if province is None else f"{province}, "
+        self.area = f"{province_str}{country}{c_alias_str}"
         # Date
         if date is None:
             start_str = "" if start_date is None else f" from {start_date}"
