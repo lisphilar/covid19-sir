@@ -163,6 +163,7 @@
 <span class="c1"># -*- coding: utf-8 -*-</span>
 
 <span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<span class="kn">from</span> <span class="nn">covsirphy.util.error</span> <span class="kn">import</span> <span class="n">SubsetNotFoundError</span>
 <span class="kn">from</span> <span class="nn">covsirphy.cleaning.jhu_data</span> <span class="kn">import</span> <span class="n">JHUData</span>
 <span class="kn">from</span> <span class="nn">covsirphy.ode.mbase</span> <span class="kn">import</span> <span class="n">ModelBase</span>
 <span class="kn">from</span> <span class="nn">covsirphy.simulation.simulator</span> <span class="kn">import</span> <span class="n">ODESimulator</span>
@@ -307,9 +308,7 @@
         <span class="k">try</span><span class="p">:</span>
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_specialized_dict</span><span class="p">[</span><span class="n">country</span><span class="p">][</span><span class="n">province</span><span class="p">]</span>
         <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">KeyError</span><span class="p">(</span>
-                <span class="sa">f</span><span class="s2">&quot;Records of </span><span class="si">{</span><span class="n">country</span><span class="si">}</span><span class="s2"> - </span><span class="si">{</span><span class="n">province</span><span class="si">}</span><span class="s2"> were not registered.&quot;</span>
-            <span class="p">)</span></div>
+            <span class="k">raise</span> <span class="n">SubsetNotFoundError</span><span class="p">(</span><span class="n">country</span><span class="o">=</span><span class="n">country</span><span class="p">,</span> <span class="n">province</span><span class="o">=</span><span class="n">province</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="ExampleData.non_dim"><a class="viewcode-back" href="../../../covsirphy.analysis.html#covsirphy.analysis.example_data.ExampleData.non_dim">[docs]</a>    <span class="k">def</span> <span class="nf">non_dim</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">country</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">province</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
@@ -329,9 +328,7 @@
         <span class="k">try</span><span class="p">:</span>
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">nondim_dict</span><span class="p">[</span><span class="n">country</span><span class="p">][</span><span class="n">province</span><span class="p">]</span>
         <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">KeyError</span><span class="p">(</span>
-                <span class="sa">f</span><span class="s2">&quot;Records of </span><span class="si">{</span><span class="n">country</span><span class="si">}</span><span class="s2"> - </span><span class="si">{</span><span class="n">province</span><span class="si">}</span><span class="s2"> were not registered.&quot;</span>
-            <span class="p">)</span></div>
+            <span class="k">raise</span> <span class="n">SubsetNotFoundError</span><span class="p">(</span><span class="n">country</span><span class="o">=</span><span class="n">country</span><span class="p">,</span> <span class="n">province</span><span class="o">=</span><span class="n">province</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="ExampleData.subset"><a class="viewcode-back" href="../../../covsirphy.analysis.html#covsirphy.analysis.example_data.ExampleData.subset">[docs]</a>    <span class="k">def</span> <span class="nf">subset</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">country</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">province</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>

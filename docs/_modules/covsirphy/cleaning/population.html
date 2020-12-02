@@ -166,7 +166,7 @@
 <span class="kn">from</span> <span class="nn">dask</span> <span class="kn">import</span> <span class="n">dataframe</span> <span class="k">as</span> <span class="n">dd</span>
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
-<span class="kn">from</span> <span class="nn">covsirphy.util.error</span> <span class="kn">import</span> <span class="n">deprecate</span>
+<span class="kn">from</span> <span class="nn">covsirphy.util.error</span> <span class="kn">import</span> <span class="n">deprecate</span><span class="p">,</span> <span class="n">SubsetNotFoundError</span>
 <span class="kn">from</span> <span class="nn">covsirphy.cleaning.cbase</span> <span class="kn">import</span> <span class="n">CleaningBase</span>
 
 
@@ -315,14 +315,13 @@
 <span class="sd">        Notes:</span>
 <span class="sd">            If @date is None, the created date of the instancewill be used</span>
 <span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">country_alias</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ensure_country_name</span><span class="p">(</span><span class="n">country</span><span class="p">)</span>
         <span class="k">try</span><span class="p">:</span>
             <span class="n">df</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">subset</span><span class="p">(</span>
                 <span class="n">country</span><span class="o">=</span><span class="n">country</span><span class="p">,</span> <span class="n">province</span><span class="o">=</span><span class="n">province</span><span class="p">,</span> <span class="n">start_date</span><span class="o">=</span><span class="n">date</span><span class="p">,</span> <span class="n">end_date</span><span class="o">=</span><span class="n">date</span><span class="p">)</span>
         <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
-            <span class="n">area</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">area_name</span><span class="p">(</span><span class="n">country</span><span class="p">,</span> <span class="n">province</span><span class="o">=</span><span class="n">province</span><span class="p">)</span>
-            <span class="n">date_str</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span> <span class="k">if</span> <span class="n">date</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="s2">&quot; on </span><span class="si">{date}</span><span class="s2">&quot;</span>
-            <span class="k">raise</span> <span class="ne">KeyError</span><span class="p">(</span>
-                <span class="sa">f</span><span class="s2">&quot;Records in </span><span class="si">{</span><span class="n">area</span><span class="si">}{</span><span class="n">date_str</span><span class="si">}</span><span class="s2"> are un-registered.&quot;</span><span class="p">)</span> <span class="kn">from</span> <span class="bp">None</span>
+            <span class="k">raise</span> <span class="n">SubsetNotFoundError</span><span class="p">(</span>
+                <span class="n">country</span><span class="o">=</span><span class="n">country</span><span class="p">,</span> <span class="n">country_alias</span><span class="o">=</span><span class="n">country_alias</span><span class="p">,</span> <span class="n">province</span><span class="o">=</span><span class="n">province</span><span class="p">,</span> <span class="n">date</span><span class="o">=</span><span class="n">date</span><span class="p">)</span>
         <span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">sort_values</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">DATE</span><span class="p">)</span>
         <span class="k">return</span> <span class="nb">int</span><span class="p">(</span><span class="n">df</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">df</span><span class="o">.</span><span class="n">index</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">N</span><span class="p">]]</span><span class="o">.</span><span class="n">values</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span></div>
 

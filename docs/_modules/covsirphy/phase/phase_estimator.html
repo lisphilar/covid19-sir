@@ -246,13 +246,14 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_units</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">units</span><span class="p">)</span>
         <span class="k">return</span> <span class="bp">self</span></div>
 
-    <span class="k">def</span> <span class="nf">_run</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">unit</span><span class="p">,</span> <span class="n">tau</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">_run</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">unit</span><span class="p">,</span> <span class="n">tau</span><span class="p">,</span> <span class="n">auto_complement</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Run estimation for one phase.</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            unit (covsirphy.PhaseUnit): unit of one phase</span>
 <span class="sd">            tau (int or None): tau value [min], a divisor of 1440</span>
+<span class="sd">            auto_complement (bool): if True and necessary, the number of cases will be complemented</span>
 <span class="sd">            kwargs: keyword arguments of model parameters and covsirphy.Estimator.run()</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="c1"># Set tau</span>
@@ -268,9 +269,9 @@
             <span class="n">province</span> <span class="o">=</span> <span class="n">id_dict</span><span class="p">[</span><span class="s2">&quot;province&quot;</span><span class="p">]</span> <span class="k">if</span> <span class="s2">&quot;province&quot;</span> <span class="ow">in</span> <span class="n">id_dict</span> <span class="k">else</span> <span class="kc">None</span>
             <span class="n">population</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">population_data</span><span class="o">.</span><span class="n">value</span><span class="p">(</span>
                 <span class="n">country</span><span class="o">=</span><span class="n">country</span><span class="p">,</span> <span class="n">province</span><span class="o">=</span><span class="n">province</span><span class="p">)</span>
-            <span class="n">record_df</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">jhu_data</span><span class="o">.</span><span class="n">subset</span><span class="p">(</span>
-                <span class="n">country</span><span class="o">=</span><span class="n">country</span><span class="p">,</span> <span class="n">province</span><span class="o">=</span><span class="n">province</span><span class="p">,</span> <span class="n">population</span><span class="o">=</span><span class="n">population</span>
-            <span class="p">)</span>
+            <span class="n">record_df</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">jhu_data</span><span class="o">.</span><span class="n">records</span><span class="p">(</span>
+                <span class="n">country</span><span class="o">=</span><span class="n">country</span><span class="p">,</span> <span class="n">province</span><span class="o">=</span><span class="n">province</span><span class="p">,</span> <span class="n">population</span><span class="o">=</span><span class="n">population</span><span class="p">,</span>
+                <span class="n">auto_complement</span><span class="o">=</span><span class="n">auto_complement</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="n">record_df</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">record_df</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
         <span class="n">unit</span><span class="o">.</span><span class="n">estimate</span><span class="p">(</span><span class="n">record_df</span><span class="o">=</span><span class="n">record_df</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>

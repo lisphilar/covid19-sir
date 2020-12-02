@@ -820,6 +820,51 @@ Citation of COVID-19 Data Hub will be set as PopulationData.citation.</p>
 </dd></dl>
 
 <dl class="py method">
+<dt id="covsirphy.cleaning.jhu_data.JHUData.records">
+<code class="sig-name descname">records</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">country</span></em>, <em class="sig-param"><span class="n">province</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">start_date</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">end_date</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">population</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">auto_complement</span><span class="o">=</span><span class="default_value">True</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/cleaning/jhu_data.html#JHUData.records"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#covsirphy.cleaning.jhu_data.JHUData.records" title="Permalink to this definition">¶</a></dt>
+<dd><p>JHU-style dataset for the area from the start date to the end date.
+Records with Recovered &gt; 0 will be selected.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>country</strong> (<em>str</em>) – country name or ISO3 code</p></li>
+<li><p><strong>province</strong> (<em>str</em><em> or </em><em>None</em>) – province name</p></li>
+<li><p><strong>start_date</strong> (<em>str</em><em> or </em><em>None</em>) – start date, like 22Jan2020</p></li>
+<li><p><strong>end_date</strong> (<em>str</em><em> or </em><em>None</em>) – end date, like 01Feb2020</p></li>
+<li><p><strong>population</strong> (<em>int</em><em> or </em><em>None</em>) – population value</p></li>
+<li><p><strong>auto_complement</strong> (<em>bool</em>) – if True and necessary, the number of cases will be complemented</p></li>
+<li><p><strong>kwargs</strong> – the other arguments of JHUData.subset_complement()</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><dl>
+<dt>pandas.DataFrame:</dt><dd><p>Index: reset index
+Columns:</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>Date(pd.TimeStamp): Observation date</p></li>
+<li><p>Confirmed(int): the number of confirmed cases</p></li>
+<li><p>Infected(int): the number of currently infected cases</p></li>
+<li><p>Fatal(int): the number of fatal cases</p></li>
+<li><p>Recovered (int): the number of recovered cases ( &gt; 0)</p></li>
+<li><p>Susceptible(int): the number of susceptible cases, if calculated</p></li>
+</ul>
+</div></blockquote>
+</dd>
+</dl>
+<p>bool: whether recovered data complemented or not</p>
+</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>tuple(pandas.DataFrame, bool)</p>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<p>If &#64; population is not None, the number of susceptible cases will be calculated.
+If necessary and &#64;auto_complement is True, complement recovered data.</p>
+</dd></dl>
+
+<dl class="py method">
 <dt id="covsirphy.cleaning.jhu_data.JHUData.replace">
 <code class="sig-name descname">replace</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">country_data</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/cleaning/jhu_data.html#JHUData.replace"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#covsirphy.cleaning.jhu_data.JHUData.replace" title="Permalink to this definition">¶</a></dt>
 <dd><p>Replace a part of cleaned dataset with a dataframe.</p>

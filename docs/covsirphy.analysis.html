@@ -342,7 +342,7 @@ Records with Recovered &gt; 0 will be selected.</p>
 <dl class="py class">
 <dt id="covsirphy.analysis.scenario.Scenario">
 <em class="property">class </em><code class="sig-prename descclassname">covsirphy.analysis.scenario.</code><code class="sig-name descname">Scenario</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">jhu_data</span></em>, <em class="sig-param"><span class="n">population_data</span></em>, <em class="sig-param"><span class="n">country</span></em>, <em class="sig-param"><span class="n">province</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">tau</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">auto_complement</span><span class="o">=</span><span class="default_value">True</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/analysis/scenario.html#Scenario"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#covsirphy.analysis.scenario.Scenario" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference internal" href="covsirphy.cleaning.html#covsirphy.cleaning.term.Term" title="covsirphy.cleaning.term.Term"><code class="xref py py-class docutils literal notranslate"><span class="pre">covsirphy.cleaning.term.Term</span></code></a></p>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">covsirphy.analysis.data_handler.DataHandler</span></code></p>
 <p>Scenario analysis.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -352,7 +352,7 @@ Records with Recovered &gt; 0 will be selected.</p>
 <li><p><strong>country</strong> (<em>str</em>) – country name</p></li>
 <li><p><strong>province</strong> (<em>str</em><em> or </em><em>None</em>) – province name</p></li>
 <li><p><strong>tau</strong> (<em>int</em><em> or </em><em>None</em>) – tau value</p></li>
-<li><p><strong>auto_complement</strong> (<em>bool</em>) – if True, the number of cases will be complemented.</p></li>
+<li><p><strong>auto_complement</strong> (<em>bool</em>) – if True and necessary, the number of cases will be complemented</p></li>
 </ul>
 </dd>
 </dl>
@@ -441,44 +441,6 @@ New phase name will be automatically determined.</p>
 <dt class="field-even">Raises</dt>
 <dd class="field-even"><p><strong>TypeError</strong> – &#64;phases is not a list</p>
 </dd>
-<dt class="field-odd">Returns</dt>
-<dd class="field-odd"><p>self</p>
-</dd>
-<dt class="field-even">Return type</dt>
-<dd class="field-even"><p>covsirphy.Scenario</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt id="covsirphy.analysis.scenario.Scenario.complement">
-<code class="sig-name descname">complement</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">interval</span><span class="o">=</span><span class="default_value">2</span></em>, <em class="sig-param"><span class="n">max_ignored</span><span class="o">=</span><span class="default_value">100</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/analysis/scenario.html#Scenario.complement"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#covsirphy.analysis.scenario.Scenario.complement" title="Permalink to this definition">¶</a></dt>
-<dd><p>Complement the number of recovered cases when not updated/reported.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>interval</strong> (<em>int</em>) – expected update interval of the number of recovered cases [days]</p></li>
-<li><p><strong>max_ignored</strong> (<em>int</em>) – Max number of recovered cases to be ignored [cases]</p></li>
-</ul>
-</dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p>self</p>
-</dd>
-<dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>covsirphy.Scenario</p>
-</dd>
-</dl>
-<p class="rubric">Notes</p>
-<p>If the number of recovered cases did not change
-for more than &#64;interval days after reached &#64;max_ignored cases,
-complement will be applied to the number of recovered cases.</p>
-</dd></dl>
-
-<dl class="py method">
-<dt id="covsirphy.analysis.scenario.Scenario.complement_reverse">
-<code class="sig-name descname">complement_reverse</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/analysis/scenario.html#Scenario.complement_reverse"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#covsirphy.analysis.scenario.Scenario.complement_reverse" title="Permalink to this definition">¶</a></dt>
-<dd><p>Restore the raw records. Reverse method of covsirphy.Scenario.complement().</p>
-<dl class="field-list simple">
 <dt class="field-odd">Returns</dt>
 <dd class="field-odd"><p>self</p>
 </dd>
@@ -755,42 +717,6 @@ We can find the parameters which increased/decreased significantly.</p>
 <dd class="field-odd"><p>covsirphy.Estimator</p>
 </dd>
 </dl>
-</dd></dl>
-
-<dl class="py method">
-<dt id="covsirphy.analysis.scenario.Scenario.records">
-<code class="sig-name descname">records</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">show_figure</span><span class="o">=</span><span class="default_value">True</span></em>, <em class="sig-param"><span class="n">filename</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/analysis/scenario.html#Scenario.records"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#covsirphy.analysis.scenario.Scenario.records" title="Permalink to this definition">¶</a></dt>
-<dd><p>Return the records as a dataframe.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>show_figure</strong> (<em>bool</em>) – if True, show the records as a line-plot.</p></li>
-<li><p><strong>filename</strong> (<em>str</em>) – filename of the figure, or None (show figure)</p></li>
-</ul>
-</dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p><dl class="simple">
-<dt>pandas.DataFrame</dt><dd><dl class="simple">
-<dt>Index:</dt><dd><p>reset index</p>
-</dd>
-<dt>Columns:</dt><dd><ul class="simple">
-<li><p>Date (pd.TimeStamp): Observation date</p></li>
-<li><p>Confirmed (int): the number of confirmed cases</p></li>
-<li><p>Infected (int): the number of currently infected cases</p></li>
-<li><p>Fatal (int): the number of fatal cases</p></li>
-<li><p>Recovered (int): the number of recovered cases (&gt; 0)</p></li>
-</ul>
-</dd>
-</dl>
-</dd>
-</dl>
-</p>
-</dd>
-</dl>
-<p class="rubric">Notes</p>
-<p>Records with Recovered &gt; 0 will be selected.
-If complement was performed by Scenario.complement() or Scenario(auto_complement=True),
-“(complemented)” will be added to the title of the figure.</p>
 </dd></dl>
 
 <dl class="py method">

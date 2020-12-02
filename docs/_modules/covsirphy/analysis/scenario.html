@@ -163,19 +163,17 @@
 <span class="c1"># -*- coding: utf-8 -*-</span>
 
 <span class="kn">import</span> <span class="nn">copy</span>
+<span class="kn">from</span> <span class="nn">covsirphy.analysis.data_handler</span> <span class="kn">import</span> <span class="n">DataHandler</span>
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
 <span class="kn">from</span> <span class="nn">covsirphy.util.error</span> <span class="kn">import</span> <span class="n">deprecate</span>
 <span class="kn">from</span> <span class="nn">covsirphy.util.plotting</span> <span class="kn">import</span> <span class="n">line_plot</span><span class="p">,</span> <span class="n">box_plot</span>
-<span class="kn">from</span> <span class="nn">covsirphy.cleaning.term</span> <span class="kn">import</span> <span class="n">Term</span>
-<span class="kn">from</span> <span class="nn">covsirphy.cleaning.jhu_data</span> <span class="kn">import</span> <span class="n">JHUData</span>
-<span class="kn">from</span> <span class="nn">covsirphy.cleaning.population</span> <span class="kn">import</span> <span class="n">PopulationData</span>
 <span class="kn">from</span> <span class="nn">covsirphy.phase.phase_unit</span> <span class="kn">import</span> <span class="n">PhaseUnit</span>
 <span class="kn">from</span> <span class="nn">covsirphy.phase.phase_series</span> <span class="kn">import</span> <span class="n">PhaseSeries</span>
 <span class="kn">from</span> <span class="nn">covsirphy.analysis.param_tracker</span> <span class="kn">import</span> <span class="n">ParamTracker</span>
 
 
-<div class="viewcode-block" id="Scenario"><a class="viewcode-back" href="../../../covsirphy.analysis.html#covsirphy.analysis.scenario.Scenario">[docs]</a><span class="k">class</span> <span class="nc">Scenario</span><span class="p">(</span><span class="n">Term</span><span class="p">):</span>
+<div class="viewcode-block" id="Scenario"><a class="viewcode-back" href="../../../covsirphy.analysis.html#covsirphy.analysis.scenario.Scenario">[docs]</a><span class="k">class</span> <span class="nc">Scenario</span><span class="p">(</span><span class="n">DataHandler</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Scenario analysis.</span>
 
@@ -185,30 +183,14 @@
 <span class="sd">        country (str): country name</span>
 <span class="sd">        province (str or None): province name</span>
 <span class="sd">        tau (int or None): tau value</span>
-<span class="sd">        auto_complement (bool): if True, the number of cases will be complemented.</span>
+<span class="sd">        auto_complement (bool): if True and necessary, the number of cases will be complemented</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">jhu_data</span><span class="p">,</span> <span class="n">population_data</span><span class="p">,</span> <span class="n">country</span><span class="p">,</span> <span class="n">province</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">tau</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">auto_complement</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
-        <span class="c1"># Population</span>
-        <span class="n">population_data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ensure_instance</span><span class="p">(</span>
-            <span class="n">population_data</span><span class="p">,</span> <span class="n">PopulationData</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;population_data&quot;</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">population</span> <span class="o">=</span> <span class="n">population_data</span><span class="o">.</span><span class="n">value</span><span class="p">(</span><span class="n">country</span><span class="p">,</span> <span class="n">province</span><span class="o">=</span><span class="n">province</span><span class="p">)</span>
-        <span class="c1"># Records</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">jhu_data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ensure_instance</span><span class="p">(</span>
-            <span class="n">jhu_data</span><span class="p">,</span> <span class="n">JHUData</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;jhu_data&quot;</span><span class="p">)</span>
-        <span class="c1"># Area name</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">country</span> <span class="o">=</span> <span class="n">country</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">province</span> <span class="o">=</span> <span class="n">province</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">UNKNOWN</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">area</span> <span class="o">=</span> <span class="n">JHUData</span><span class="o">.</span><span class="n">area_name</span><span class="p">(</span><span class="n">country</span><span class="p">,</span> <span class="n">province</span><span class="p">)</span>
-        <span class="c1"># tau value must be shared</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span>
+            <span class="n">jhu_data</span><span class="p">,</span> <span class="n">population_data</span><span class="p">,</span> <span class="n">country</span><span class="p">,</span> <span class="n">province</span><span class="o">=</span><span class="n">province</span><span class="p">,</span> <span class="n">auto_complement</span><span class="o">=</span><span class="n">auto_complement</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">tau</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ensure_tau</span><span class="p">(</span><span class="n">tau</span><span class="p">)</span>
-        <span class="c1"># Whether complement the number of cases or not</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_auto_complement</span> <span class="o">=</span> <span class="nb">bool</span><span class="p">(</span><span class="n">auto_complement</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_complemented</span> <span class="o">=</span> <span class="kc">False</span>
-        <span class="c1"># Create {scenario_name: PhaseSeries} and set records</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">record_df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">()</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_first_date</span> <span class="o">=</span> <span class="kc">None</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_last_date</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">init_records</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_init_phase_series</span><span class="p">()</span>
 
     <span class="k">def</span> <span class="fm">__getitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">):</span>
@@ -219,74 +201,6 @@
     <span class="k">def</span> <span class="fm">__setitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">ensure_instance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">PhaseSeries</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;value&quot;</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_series_dict</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">value</span>
-
-    <span class="k">def</span> <span class="nf">_init_phase_series</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Initialize dictionary of phase series and set records.</span>
-<span class="sd">        Only when auto-complement mode, complement records if necessary.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="c1"># Set records (complement records, if necessary)</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_auto_complement</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">complement</span><span class="p">()</span>
-            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">record_df</span><span class="o">.</span><span class="n">empty</span><span class="p">:</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">complement_reverse</span><span class="p">()</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">complement_reverse</span><span class="p">()</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">record_df</span><span class="o">.</span><span class="n">empty</span><span class="p">:</span>
-            <span class="n">area</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">jhu_data</span><span class="o">.</span><span class="n">area_name</span><span class="p">(</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">country</span><span class="p">,</span> <span class="n">province</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">province</span><span class="p">)</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
-                <span class="sa">f</span><span class="s2">&quot;Records with &#39;Recovered &gt; 0&#39; in </span><span class="si">{</span><span class="n">area</span><span class="si">}</span><span class="s2"> are un-registered.&quot;</span><span class="p">)</span>
-        <span class="c1"># First/last date of the records</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_first_date</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">series</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">record_df</span><span class="o">.</span><span class="n">loc</span><span class="p">[:,</span> <span class="bp">self</span><span class="o">.</span><span class="n">DATE</span><span class="p">]</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_first_date</span> <span class="o">=</span> <span class="n">series</span><span class="o">.</span><span class="n">min</span><span class="p">()</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">DATE_FORMAT</span><span class="p">)</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_last_date</span> <span class="o">=</span> <span class="n">series</span><span class="o">.</span><span class="n">max</span><span class="p">()</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">DATE_FORMAT</span><span class="p">)</span>
-        <span class="c1"># Set main scenario</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_series_dict</span> <span class="o">=</span> <span class="p">{</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">MAIN</span><span class="p">:</span> <span class="n">PhaseSeries</span><span class="p">(</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">_first_date</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_last_date</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">population</span>
-            <span class="p">)</span>
-        <span class="p">}</span>
-
-<div class="viewcode-block" id="Scenario.complement"><a class="viewcode-back" href="../../../covsirphy.analysis.html#covsirphy.analysis.scenario.Scenario.complement">[docs]</a>    <span class="k">def</span> <span class="nf">complement</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">interval</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">max_ignored</span><span class="o">=</span><span class="mi">100</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Complement the number of recovered cases when not updated/reported.</span>
-
-<span class="sd">        Args:</span>
-<span class="sd">            interval (int): expected update interval of the number of recovered cases [days]</span>
-<span class="sd">            max_ignored (int): Max number of recovered cases to be ignored [cases]</span>
-
-<span class="sd">        Returns:</span>
-<span class="sd">            covsirphy.Scenario: self</span>
-
-<span class="sd">        Notes:</span>
-<span class="sd">            If the number of recovered cases did not change</span>
-<span class="sd">            for more than @interval days after reached @max_ignored cases,</span>
-<span class="sd">            complement will be applied to the number of recovered cases.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">record_df</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_complemented</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">jhu_data</span><span class="o">.</span><span class="n">subset_complement</span><span class="p">(</span>
-            <span class="n">country</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">country</span><span class="p">,</span> <span class="n">province</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">province</span><span class="p">,</span>
-            <span class="n">start_date</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_first_date</span><span class="p">,</span> <span class="n">end_date</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_last_date</span><span class="p">,</span> <span class="n">population</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">population</span><span class="p">,</span>
-            <span class="n">interval</span><span class="o">=</span><span class="n">interval</span><span class="p">,</span> <span class="n">max_ignored</span><span class="o">=</span><span class="n">max_ignored</span><span class="p">)</span>
-        <span class="k">return</span> <span class="bp">self</span></div>
-
-<div class="viewcode-block" id="Scenario.complement_reverse"><a class="viewcode-back" href="../../../covsirphy.analysis.html#covsirphy.analysis.scenario.Scenario.complement_reverse">[docs]</a>    <span class="k">def</span> <span class="nf">complement_reverse</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Restore the raw records. Reverse method of covsirphy.Scenario.complement().</span>
-
-<span class="sd">        Returns:</span>
-<span class="sd">            covsirphy.Scenario: self</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">record_df</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">jhu_data</span><span class="o">.</span><span class="n">subset</span><span class="p">(</span>
-            <span class="n">country</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">country</span><span class="p">,</span>
-            <span class="n">province</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">province</span><span class="p">,</span>
-            <span class="n">start_date</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_first_date</span><span class="p">,</span>
-            <span class="n">end_date</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_last_date</span><span class="p">,</span>
-            <span class="n">population</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">population</span>
-        <span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_complemented</span> <span class="o">=</span> <span class="kc">False</span>
-        <span class="k">return</span> <span class="bp">self</span></div>
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">first_date</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
@@ -300,6 +214,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">ensure_date_order</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_first_date</span><span class="p">,</span> <span class="n">date</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;date&quot;</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">ensure_date_order</span><span class="p">(</span><span class="n">date</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_last_date</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;date&quot;</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_first_date</span> <span class="o">=</span> <span class="n">date</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">init_records</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_init_phase_series</span><span class="p">()</span>
 
     <span class="nd">@property</span>
@@ -314,43 +229,19 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">ensure_date_order</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_first_date</span><span class="p">,</span> <span class="n">date</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;date&quot;</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">ensure_date_order</span><span class="p">(</span><span class="n">date</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_last_date</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;date&quot;</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_last_date</span> <span class="o">=</span> <span class="n">date</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">init_records</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_init_phase_series</span><span class="p">()</span>
 
-<div class="viewcode-block" id="Scenario.records"><a class="viewcode-back" href="../../../covsirphy.analysis.html#covsirphy.analysis.scenario.Scenario.records">[docs]</a>    <span class="k">def</span> <span class="nf">records</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">show_figure</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">filename</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">_init_phase_series</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Return the records as a dataframe.</span>
-
-<span class="sd">        Args:</span>
-<span class="sd">            show_figure (bool): if True, show the records as a line-plot.</span>
-<span class="sd">            filename (str): filename of the figure, or None (show figure)</span>
-
-<span class="sd">        Returns:</span>
-<span class="sd">            pandas.DataFrame</span>
-<span class="sd">                Index:</span>
-<span class="sd">                    reset index</span>
-<span class="sd">                Columns:</span>
-<span class="sd">                    - Date (pd.TimeStamp): Observation date</span>
-<span class="sd">                    - Confirmed (int): the number of confirmed cases</span>
-<span class="sd">                    - Infected (int): the number of currently infected cases</span>
-<span class="sd">                    - Fatal (int): the number of fatal cases</span>
-<span class="sd">                    - Recovered (int): the number of recovered cases (&gt; 0)</span>
-
-<span class="sd">        Notes:</span>
-<span class="sd">            Records with Recovered &gt; 0 will be selected.</span>
-<span class="sd">            If complement was performed by Scenario.complement() or Scenario(auto_complement=True),</span>
-<span class="sd">            &quot;(complemented)&quot; will be added to the title of the figure.</span>
+<span class="sd">        Initialize dictionary of phase series and set records.</span>
+<span class="sd">        Only when auto-complement mode, complement records if necessary.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">df</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">record_df</span><span class="o">.</span><span class="n">drop</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">S</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
-        <span class="k">if</span> <span class="ow">not</span> <span class="n">show_figure</span><span class="p">:</span>
-            <span class="k">return</span> <span class="n">df</span>
-        <span class="n">title</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">area</span><span class="si">}</span><span class="s2">: Cases over time</span><span class="si">{</span><span class="s1">&#39; (complemented)&#39;</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_complemented</span> <span class="k">else</span> <span class="s1">&#39;&#39;</span><span class="si">}</span><span class="s2">&quot;</span>
-        <span class="n">line_plot</span><span class="p">(</span>
-            <span class="n">df</span><span class="o">.</span><span class="n">set_index</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">DATE</span><span class="p">)</span><span class="o">.</span><span class="n">drop</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">C</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">),</span>
-            <span class="n">title</span><span class="p">,</span>
-            <span class="n">y_integer</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-            <span class="n">filename</span><span class="o">=</span><span class="n">filename</span>
-        <span class="p">)</span>
-        <span class="k">return</span> <span class="n">df</span></div>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_series_dict</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">MAIN</span><span class="p">:</span> <span class="n">PhaseSeries</span><span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_first_date</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_last_date</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">population</span>
+            <span class="p">)</span>
+        <span class="p">}</span>
 
     <span class="k">def</span> <span class="nf">_create_tracker</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>

@@ -166,7 +166,7 @@
 <span class="kn">import</span> <span class="nn">country_converter</span> <span class="k">as</span> <span class="nn">coco</span>
 <span class="kn">from</span> <span class="nn">dask</span> <span class="kn">import</span> <span class="n">dataframe</span> <span class="k">as</span> <span class="n">dd</span>
 <span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
-<span class="kn">from</span> <span class="nn">covsirphy.util.error</span> <span class="kn">import</span> <span class="n">deprecate</span>
+<span class="kn">from</span> <span class="nn">covsirphy.util.error</span> <span class="kn">import</span> <span class="n">deprecate</span><span class="p">,</span> <span class="n">SubsetNotFoundError</span>
 <span class="kn">from</span> <span class="nn">covsirphy.cleaning.term</span> <span class="kn">import</span> <span class="n">Term</span>
 
 
@@ -267,8 +267,7 @@
         <span class="c1"># Return the name if registered in the dataset</span>
         <span class="k">if</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">selectable_set</span><span class="p">:</span>
             <span class="k">return</span> <span class="n">name</span>
-        <span class="n">s</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot; (recognized as </span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2">)&quot;</span>
-        <span class="k">raise</span> <span class="ne">KeyError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;No records in </span><span class="si">{</span><span class="n">country</span><span class="si">}{</span><span class="n">s</span><span class="si">}</span><span class="s2"> are registered.&quot;</span><span class="p">)</span></div>
+        <span class="k">raise</span> <span class="n">SubsetNotFoundError</span><span class="p">(</span><span class="n">country</span><span class="o">=</span><span class="n">country</span><span class="p">,</span> <span class="n">country_alias</span><span class="o">=</span><span class="n">name</span><span class="p">)</span></div>
 
     <span class="nd">@deprecate</span><span class="p">(</span><span class="s2">&quot;CleaningBase.iso3_to_country()&quot;</span><span class="p">,</span> <span class="n">new</span><span class="o">=</span><span class="s2">&quot;CleaningBase.ensure_country_name()&quot;</span><span class="p">)</span>
     <span class="k">def</span> <span class="nf">iso3_to_country</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">iso3_code</span><span class="p">):</span>
@@ -363,12 +362,13 @@
 <span class="sd">                Columns:</span>
 <span class="sd">                    without ISO3, Country, Province column</span>
 <span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">country_alias</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ensure_country_name</span><span class="p">(</span><span class="n">country</span><span class="p">)</span>
         <span class="n">df</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_subset_by_area</span><span class="p">(</span><span class="n">country</span><span class="o">=</span><span class="n">country</span><span class="p">,</span> <span class="n">province</span><span class="o">=</span><span class="n">province</span><span class="p">)</span>
         <span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">drop</span><span class="p">(</span>
             <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">COUNTRY</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">ISO3</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">PROVINCE</span><span class="p">],</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">errors</span><span class="o">=</span><span class="s2">&quot;ignore&quot;</span><span class="p">)</span>
-        <span class="n">area</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">area_name</span><span class="p">(</span><span class="n">country</span><span class="p">,</span> <span class="n">province</span><span class="o">=</span><span class="n">province</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">df</span><span class="o">.</span><span class="n">empty</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">KeyError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Records in </span><span class="si">{</span><span class="n">area</span><span class="si">}</span><span class="s2"> are un-registered.&quot;</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="n">SubsetNotFoundError</span><span class="p">(</span>
+                <span class="n">country</span><span class="o">=</span><span class="n">country</span><span class="p">,</span> <span class="n">country_alias</span><span class="o">=</span><span class="n">country_alias</span><span class="p">,</span> <span class="n">province</span><span class="o">=</span><span class="n">province</span><span class="p">)</span>
         <span class="c1"># Subset with Start/end date</span>
         <span class="k">if</span> <span class="n">start_date</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">end_date</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">return</span> <span class="n">df</span><span class="o">.</span><span class="n">reset_index</span><span class="p">(</span><span class="n">drop</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
@@ -379,8 +379,9 @@
         <span class="n">end_obj</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">date_obj</span><span class="p">(</span><span class="n">date_str</span><span class="o">=</span><span class="n">end_date</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="n">series</span><span class="o">.</span><span class="n">max</span><span class="p">())</span>
         <span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">loc</span><span class="p">[(</span><span class="n">start_obj</span> <span class="o">&lt;=</span> <span class="n">series</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">series</span> <span class="o">&lt;=</span> <span class="n">end_obj</span><span class="p">),</span> <span class="p">:]</span>
         <span class="k">if</span> <span class="n">df</span><span class="o">.</span><span class="n">empty</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">KeyError</span><span class="p">(</span>
-                <span class="sa">f</span><span class="s2">&quot;Records in </span><span class="si">{</span><span class="n">area</span><span class="si">}</span><span class="s2"> from </span><span class="si">{</span><span class="n">start_date</span><span class="si">}</span><span class="s2"> to </span><span class="si">{</span><span class="n">end_date</span><span class="si">}</span><span class="s2"> are un-registered.&quot;</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="n">SubsetNotFoundError</span><span class="p">(</span>
+                <span class="n">country</span><span class="o">=</span><span class="n">country</span><span class="p">,</span> <span class="n">country_alias</span><span class="o">=</span><span class="n">country_alias</span><span class="p">,</span> <span class="n">province</span><span class="o">=</span><span class="n">province</span><span class="p">,</span>
+                <span class="n">start_date</span><span class="o">=</span><span class="n">start_date</span><span class="p">,</span> <span class="n">end_date</span><span class="o">=</span><span class="n">end_date</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">df</span><span class="o">.</span><span class="n">reset_index</span><span class="p">(</span><span class="n">drop</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="CleaningBase.countries"><a class="viewcode-back" href="../../../covsirphy.cleaning.html#covsirphy.cleaning.cbase.CleaningBase.countries">[docs]</a>    <span class="k">def</span> <span class="nf">countries</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
