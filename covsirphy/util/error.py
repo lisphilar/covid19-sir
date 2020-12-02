@@ -63,4 +63,4 @@ class SubsetNotFoundError(KeyError, ValueError):
         self.message = "" if message is None else f" {message}"
 
     def __str__(self):
-        return f"Records{self.message} in {self.area}{self.date}"
+        return f"Records{self.message} in {self.area}{self.date} were not found."
