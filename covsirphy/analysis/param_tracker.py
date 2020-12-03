@@ -40,10 +40,17 @@ class ParamTracker(Term):
     def __init__(self, record_df, phase_series, area=None, tau=None):
         self.record_df = self.ensure_dataframe(
             record_df, name="record_df", columns=self.SUB_COLUMNS)
-        self.series = self.ensure_instance(
+        self._series = self.ensure_instance(
             phase_series, PhaseSeries, name="phase_seres")
         self.area = area or ""
         self.tau = self.ensure_tau(tau)
+
+    @property
+    def series(self):
+        """
+        covsirphy.PhaseSeries: phase series object (series of covsirphy.PhaseUnit)
+        """
+        return self._series
 
     def trend(self, force=True, show_figure=False, filename=None, **kwargs):
         """
@@ -59,18 +66,18 @@ class ParamTracker(Term):
             covsirphy.PhaseSeries
         """
         sr_df = self.record_df.set_index(self.DATE).loc[:, [self.R, self.S]]
-        if force or not self.series:
-            self.series.trend(sr_df=sr_df, **kwargs)
+        if force or not self._series:
+            self._series.trend(sr_df=sr_df, **kwargs)
         if show_figure:
-            self.series.trend_show(
+            self._series.trend_show(
                 sr_df=sr_df, area=self.area, filename=filename)
-        return self.series
+        return self._series
 
     def _ensure_phase_setting(self):
         """
         Ensure that phases were set.
         """
-        if not self.series:
+        if not self._series:
             raise ValueError(
                 "Phases should be registered with .trend() or .add() in advance.")
 
@@ -89,7 +96,7 @@ class ParamTracker(Term):
         self._ensure_phase_setting()
         self.ensure_date(date)
         phase_nest = [
-            (self.num2str(i), unit) for (i, unit) in enumerate(self.series) if date in unit]
+            (self.num2str(i), unit) for (i, unit) in enumerate(self._series) if date in unit]
         try:
             return phase_nest[0]
         except IndexError:
@@ -102,7 +109,7 @@ class ParamTracker(Term):
         Returns:
             list[str]: list of change dates
         """
-        return [unit.start_date for unit in self.series][1:]
+        return [unit.start_date for unit in self._series][1:]
 
     def near_change_dates(self):
         """
@@ -112,7 +119,7 @@ class ParamTracker(Term):
             list[str]: list of dates
         """
         base_dates = [
-            date for ph in self.series for date in [ph.start_date, ph.end_date]]
+            date for ph in self._series for date in [ph.start_date, ph.end_date]]
         return [
             date for base_date in base_dates
             for date in [self.yesterday(base_date), base_date, self.tomorrow(base_date)]]
@@ -129,8 +136,8 @@ class ParamTracker(Term):
         """
         phases = self.ensure_list(phases, candidates=None, name="phases")
         for phase in phases:
-            self.series.disable(phase)
-        return self.series
+            self._series.disable(phase)
+        return self._series
 
     def enable(self, phases):
         """
@@ -144,8 +151,119 @@ class ParamTracker(Term):
         """
         phases = self.ensure_list(phases, candidates=None, name="phases")
         for phase in phases:
-            self.series.enable(phase)
-        return self.series
+            self._series.enable(phase)
+        return self._series
+
+    def add(self, end_date=None, days=None, population=None, model=None, **kwargs):
+        """
+        Add a new phase.
+        The start date will be the next date of the last registered phase.
+
+        Args:
+            end_date (str): end date of the new phase
+            days (int): the number of days to add
+            population (int or None): population value of the start date
+            model (covsirphy.ModelBase or None): ODE model
+            kwargs: keyword arguments of ODE model parameters, not including tau value
+
+        Returns:
+            covsirphy.PhaseSeries
+
+        Notes:
+            - If the phases series has not been registered, new phase series will be created.
+            - Either @end_date or @days must be specified.
+            - If @end_date and @days are None, the end date will be the last date of the records.
+            - If both of @end_date and @days were specified, @end_date will be used.
+            - If @popultion is None, initial value will be used.
+            - If @model is None, the model of the last phase will be used.
+            - Tau will be fixed as the last phase's value.
+            - kwargs: Default values are the parameter values of the last phase.
+        """
+        try:
+            self._series.add(
+                end_date=end_date, days=days, population=population,
+                model=model, tau=self.tau, **kwargs)
+        except ValueError:
+            last_date = self._series.unit("last").end_date
+            s1 = '@end_date needs to match "DDMmmYYYY" format'
+            raise ValueError(
+                f'{s1} and be over {last_date}. However, {end_date} was applied.') from None
+        return self._series
+
+    def delete_all(self):
+        """
+        Delete all phases.
+
+        Returns:
+            covsirphy.PhaseSeries
+        """
+        arg_dict = {
+            "first_date": self._series.first_date,
+            "last_date": self._series.last_date,
+            "population": self._series.unit("last").population
+        }
+        self._series = PhaseSeries(**arg_dict)
+        return self._series
+
+    def delete(self, phases):
+        """
+        Delete selected phases.
+
+        Args:
+            phases (list[str]): phases names to delete
+
+        Returns:
+            covsirphy.PhaseSeries
+        """
+        all_phases = [
+            self.num2str(num) for (num, unit) in enumerate(self._series) if unit]
+        if "last" in set(phases):
+            phases = [ph for ph in phases if ph != "last"] + [all_phases[-1]]
+        self.ensure_list(phases, candidates=all_phases, name="phases")
+        phases = sorted(list(set(phases)), key=self.str2num, reverse=True)
+        for ph in phases:
+            self._series.delete(ph)
+        return self._series
+
+    def combine(self, phases, population=None, **kwargs):
+        """
+        Combine the sequential phases as one phase.
+        New phase name will be automatically determined.
+
+        Args:
+            phases (list[str]): list of phases
+            population (int): population value of the start date
+            kwargs: keyword arguments to save as phase information
+
+        Raises:
+            TypeError: @phases is not a list
+
+        Returns:
+            covsirphy.Scenario: self
+        """
+        all_phases = [
+            self.num2str(num) for (num, unit) in enumerate(self._series) if unit]
+        if "last" in set(phases):
+            phases.remove("last")
+            phases = sorted(phases, key=self.str2num, reverse=False)
+            last_phase = "last"
+        else:
+            phases = sorted(phases, key=self.str2num, reverse=False)
+            last_phase = phases[-1]
+        self.ensure_list(phases, candidates=all_phases, name="phases")
+        # Setting of the new phase
+        start_date = self._series.unit(phases[0]).start_date
+        end_date = self._series.unit(last_phase).end_date
+        population = population or self._series.unit(last_phase).population
+        new_unit = PhaseUnit(start_date, end_date, population)
+        new_unit.set_ode(**kwargs)
+        # Phases to keep
+        kept_units = [
+            unit for unit in self.series if unit < start_date or unit > end_date]
+        # Replace units
+        self._series.replaces(
+            phase=None, new_list=kept_units + [new_unit], keep_old=False)
+        return self._series
 
     def separate(self, date, population=None, **kwargs):
         """
@@ -171,8 +289,8 @@ class ParamTracker(Term):
         new_pre.set_ode(**setting_dict)
         new_fol = PhaseUnit(date, old.end_date, population or old.population)
         new_fol.set_ode(model=old.model, **setting_dict)
-        self.series.replaces(phase, [new_pre, new_fol])
-        return self.series
+        self._series.replaces(phase, [new_pre, new_fol])
+        return self._series
 
     def past_phases(self, phases=None):
         """
@@ -195,7 +313,7 @@ class ParamTracker(Term):
         last_date = self.record_df[self.DATE].max().strftime(self.DATE_FORMAT)
         past_nest = [
             [self.num2str(num), unit]
-            for (num, unit) in enumerate(self.series)
+            for (num, unit) in enumerate(self._series)
             if unit and unit <= last_date
         ]
         past_phases, past_units = zip(*past_nest)
@@ -204,9 +322,31 @@ class ParamTracker(Term):
             phases or past_phases, candidates=past_phases, name="phases")
         final_phases = list(set(selected_phases) & set(past_phases))
         # Convert phase names to phase units
-        selected_units = [self.series.unit(ph) for ph in selected_phases]
+        selected_units = [self._series.unit(ph) for ph in selected_phases]
         final_units = list(set(selected_units) & set(past_units))
         return (final_phases, final_units)
+
+    def future_phases(self):
+        """
+        Return names and phase units of the future phases.
+
+        Returns:
+            tuple(list[str], list[covsirphy.PhaseUnit]):
+                list[str]: list of phase names
+                list[covsirphy.PhaseUnit]: list of phase units
+        """
+        self._ensure_phase_setting()
+        # All phases
+        all_nest = [
+            [self.num2str(num), unit] for (num, unit) in enumerate(self._series) if unit]
+        # Past phases
+        past_phases, _ = self.past_phases(phases=None)
+        # Future phases
+        future_nest = [
+            [ph, unit] for (ph, unit) in all_nest if ph not in past_phases]
+        if not future_nest:
+            return ([], [])
+        return tuple(zip(*future_nest))
 
     def estimate(self, model, phases=None, n_jobs=-1, **kwargs):
         """
@@ -243,8 +383,8 @@ class ParamTracker(Term):
         results = mp_estimator.run(n_jobs=n_jobs, **kwargs)
         self.tau = mp_estimator.tau
         # Register the results
-        self.series.replaces(phase=None, new_list=results, keep_old=True)
-        return (self.tau, self.series)
+        self._series.replaces(phase=None, new_list=results, keep_old=True)
+        return (self.tau, self._series)
 
     def simulate(self, y0_dict=None):
         """
@@ -265,7 +405,7 @@ class ParamTracker(Term):
         """
         self._ensure_phase_setting()
         try:
-            return self.series.simulate(record_df=self.record_df, y0_dict=y0_dict)
+            return self._series.simulate(record_df=self.record_df, y0_dict=y0_dict)
         except NameError:
             raise NameError(
                 "Parameter estimation should be done with .estimate() in advance.") from None

@@ -64,3 +64,18 @@ class SubsetNotFoundError(KeyError, ValueError):
 
     def __str__(self):
         return f"Records{self.message} in {self.area}{self.date} were not found."
+
+
+class ScenarioNotFoundError(KeyError):
+    """
+    Error unregistered scenario name was specified.
+
+    Args:
+        name (str): scenario name
+    """
+
+    def __init__(self, name):
+        self.name = name
+
+    def __str__(self):
+        return f"{self.name} scenario is not registered."
