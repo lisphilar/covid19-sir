@@ -15,7 +15,7 @@ from covsirphy.util.map import jpn_map
 from covsirphy.util.optimize import Optimizer
 from covsirphy.util.stopwatch import StopWatch
 from covsirphy.util.error import deprecate
-from covsirphy.util.error import SubsetNotFoundError
+from covsirphy.util.error import SubsetNotFoundError, ScenarioNotFoundError
 from covsirphy.util.file import save_dataframe
 from covsirphy.util.argument import find_args
 # cleaning
@@ -73,7 +73,7 @@ __all__ = [
     "line_plot", "jpn_map", "StopWatch", "deprecate", "find_args",
     "save_dataframe",
     "PolicyMeasures",
-    "SubsetNotFoundError",
+    "SubsetNotFoundError", "ScenarioNotFoundError",
     # Deprecated
     "Population", "Word",
 ]
