@@ -3,7 +3,7 @@
 
 import pytest
 from covsirphy import PhaseUnit
-from covsirphy import Term, SIR, Estimator
+from covsirphy import Term, SIR, Estimator, UnExecutedError
 
 
 class TestPhaseUnit(object):
@@ -139,9 +139,7 @@ class TestPhaseUnit(object):
         record_df = jhu_data.subset(country, population=population)
         # Parameter setting
         unit = PhaseUnit("27May2020", "27Jun2020", population)
-        with pytest.raises(NameError):
-            unit.simulate()
-        with pytest.raises(KeyError):
+        with pytest.raises(UnExecutedError):
             unit3 = PhaseUnit("27May2020", "27Jun2020", population)
             unit3.set_ode(model=SIR, tau=240, rho=0.006)
             unit3.simulate()
