@@ -74,7 +74,7 @@ class TestScenario(object):
         population = population_data.value(country)
         series = PhaseSeries("01Apr2020", "01Aug2020", population)
         with pytest.raises(ScenarioNotFoundError):
-            snl["New"]
+            assert snl["New"]
         # Add scenario
         snl["New"] = series
         # Get scenario
