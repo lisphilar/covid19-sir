@@ -162,13 +162,14 @@
 <span></span><span class="ch">#!/usr/bin/env python</span>
 <span class="c1"># -*- coding: utf-8 -*-</span>
 
-<span class="kn">from</span> <span class="nn">covsirphy.analysis.data_handler</span> <span class="kn">import</span> <span class="n">DataHandler</span>
+<span class="kn">import</span> <span class="nn">copy</span>
+<span class="kn">import</span> <span class="nn">warnings</span>
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
-<span class="kn">from</span> <span class="nn">covsirphy.util.error</span> <span class="kn">import</span> <span class="n">deprecate</span><span class="p">,</span> <span class="n">ScenarioNotFoundError</span>
+<span class="kn">from</span> <span class="nn">covsirphy.util.error</span> <span class="kn">import</span> <span class="n">deprecate</span><span class="p">,</span> <span class="n">ScenarioNotFoundError</span><span class="p">,</span> <span class="n">UnExecutedError</span>
 <span class="kn">from</span> <span class="nn">covsirphy.util.plotting</span> <span class="kn">import</span> <span class="n">line_plot</span><span class="p">,</span> <span class="n">box_plot</span>
-<span class="kn">from</span> <span class="nn">covsirphy.phase.phase_series</span> <span class="kn">import</span> <span class="n">PhaseSeries</span>
 <span class="kn">from</span> <span class="nn">covsirphy.analysis.param_tracker</span> <span class="kn">import</span> <span class="n">ParamTracker</span>
+<span class="kn">from</span> <span class="nn">covsirphy.analysis.data_handler</span> <span class="kn">import</span> <span class="n">DataHandler</span>
 
 
 <div class="viewcode-block" id="Scenario"><a class="viewcode-back" href="../../../covsirphy.analysis.html#covsirphy.analysis.scenario.Scenario">[docs]</a><span class="k">class</span> <span class="nc">Scenario</span><span class="p">(</span><span class="n">DataHandler</span><span class="p">):</span>
@@ -271,10 +272,10 @@
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Initialize dictionary of trackers.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">series</span> <span class="o">=</span> <span class="n">PhaseSeries</span><span class="p">(</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_first_date</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_last_date</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">population</span><span class="p">)</span>
+        <span class="n">series</span> <span class="o">=</span> <span class="n">ParamTracker</span><span class="o">.</span><span class="n">create_series</span><span class="p">(</span>
+            <span class="n">first_date</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_first_date</span><span class="p">,</span> <span class="n">last_date</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_last_date</span><span class="p">,</span> <span class="n">population</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">population</span><span class="p">)</span>
         <span class="n">tracker</span> <span class="o">=</span> <span class="n">ParamTracker</span><span class="p">(</span>
-            <span class="n">record_df</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">record_df</span><span class="p">,</span> <span class="n">phase_series</span><span class="o">=</span><span class="n">series</span><span class="p">)</span>
+            <span class="n">record_df</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">record_df</span><span class="p">,</span> <span class="n">phase_series</span><span class="o">=</span><span class="n">series</span><span class="p">,</span> <span class="n">area</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">area</span><span class="p">,</span> <span class="n">tau</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">tau</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_tracker_dict</span> <span class="o">=</span> <span class="p">{</span><span class="bp">self</span><span class="o">.</span><span class="n">MAIN</span><span class="p">:</span> <span class="n">tracker</span><span class="p">}</span>
 
     <span class="k">def</span> <span class="nf">_tracker</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">template</span><span class="o">=</span><span class="s2">&quot;Main&quot;</span><span class="p">):</span>
@@ -289,15 +290,13 @@
 <span class="sd">        Returns:</span>
 <span class="sd">            covsirphy.ParamTracker</span>
 <span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Registered</span>
         <span class="k">if</span> <span class="n">name</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_tracker_dict</span><span class="p">:</span>
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_tracker_dict</span><span class="p">[</span><span class="n">name</span><span class="p">]</span>
-        <span class="c1"># Phase series</span>
+        <span class="c1"># Un-registered and create it</span>
         <span class="k">if</span> <span class="n">template</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_tracker_dict</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="n">ScenarioNotFoundError</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
-        <span class="n">tracker</span> <span class="o">=</span> <span class="n">ParamTracker</span><span class="p">(</span>
-            <span class="n">record_df</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">record_df</span><span class="p">,</span>
-            <span class="n">phase_series</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_tracker_dict</span><span class="p">[</span><span class="n">template</span><span class="p">]</span><span class="o">.</span><span class="n">series</span><span class="p">,</span>
-            <span class="n">area</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">area</span><span class="p">,</span> <span class="n">tau</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">tau</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="n">ScenarioNotFoundError</span><span class="p">(</span><span class="n">template</span><span class="p">)</span>
+        <span class="n">tracker</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_tracker_dict</span><span class="p">[</span><span class="n">template</span><span class="p">])</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_tracker_dict</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">tracker</span>
         <span class="k">return</span> <span class="n">tracker</span>
 
@@ -332,6 +331,8 @@
 <span class="sd">            - Tau will be fixed as the last phase&#39;s value.</span>
 <span class="sd">            - kwargs: Default values are the parameter values of the last phase.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">end_date</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">ensure_date</span><span class="p">(</span><span class="n">end_date</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;end_date&quot;</span><span class="p">)</span>
         <span class="n">tracker</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_tracker</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
         <span class="k">try</span><span class="p">:</span>
             <span class="n">tracker</span><span class="o">.</span><span class="n">add</span><span class="p">(</span>
@@ -339,9 +340,8 @@
                 <span class="n">model</span><span class="o">=</span><span class="n">model</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
         <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
             <span class="n">last_date</span> <span class="o">=</span> <span class="n">tracker</span><span class="o">.</span><span class="n">series</span><span class="o">.</span><span class="n">unit</span><span class="p">(</span><span class="s2">&quot;last&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">end_date</span>
-            <span class="n">s1</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;For &quot;</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s1">&quot; scenario, @end_date needs to match &quot;DDMmmYYYY&quot; format&#39;</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
-                <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">s1</span><span class="si">}</span><span class="s1"> and be over </span><span class="si">{</span><span class="n">last_date</span><span class="si">}</span><span class="s1">. However, </span><span class="si">{</span><span class="n">end_date</span><span class="si">}</span><span class="s1"> was applied.&#39;</span><span class="p">)</span> <span class="kn">from</span> <span class="bp">None</span>
+                <span class="sa">f</span><span class="s1">&#39;@end_date must be over </span><span class="si">{</span><span class="n">last_date</span><span class="si">}</span><span class="s1">. However, </span><span class="si">{</span><span class="n">end_date</span><span class="si">}</span><span class="s1"> was applied.&#39;</span><span class="p">)</span> <span class="kn">from</span> <span class="bp">None</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_tracker_dict</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">tracker</span>
         <span class="k">return</span> <span class="bp">self</span></div>
 
@@ -379,7 +379,7 @@
 <span class="sd">            covsirphy.Scenario: self</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="n">name</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">MAIN</span><span class="p">:</span>
-            <span class="bp">self</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_tracker</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">MAIN</span><span class="p">)</span><span class="o">.</span><span class="n">delete_all</span><span class="p">()</span>
+            <span class="bp">self</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">MAIN</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_tracker</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">MAIN</span><span class="p">)</span><span class="o">.</span><span class="n">delete_all</span><span class="p">()</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_tracker_dict</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
         <span class="k">return</span> <span class="bp">self</span>
@@ -557,6 +557,9 @@
             <span class="p">)</span>
         <span class="k">try</span><span class="p">:</span>
             <span class="n">include_init_phase</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;include_init_phase&quot;</span><span class="p">)</span>
+            <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span>
+                <span class="s2">&quot;@include_init_phase was deprecated. Please use Scenario.disable(&#39;0th&#39;).&quot;</span><span class="p">,</span>
+                <span class="ne">DeprecationWarning</span><span class="p">,</span> <span class="n">stacklevel</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
         <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
             <span class="n">include_init_phase</span> <span class="o">=</span> <span class="kc">True</span>
         <span class="k">try</span><span class="p">:</span>
@@ -569,7 +572,7 @@
             <span class="n">force</span><span class="o">=</span><span class="n">force</span><span class="p">,</span> <span class="n">show_figure</span><span class="o">=</span><span class="n">show_figure</span><span class="p">,</span> <span class="n">filename</span><span class="o">=</span><span class="n">filename</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
         <span class="c1"># Disable 0th phase, if necessary</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">include_init_phase</span><span class="p">:</span>
-            <span class="bp">self</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">tracker</span><span class="o">.</span><span class="n">disable</span><span class="p">(</span><span class="s2">&quot;0th&quot;</span><span class="p">)</span>
+            <span class="bp">self</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">tracker</span><span class="o">.</span><span class="n">disable</span><span class="p">(</span><span class="n">phases</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;0th&quot;</span><span class="p">])</span>
         <span class="k">return</span> <span class="bp">self</span></div>
 
 <div class="viewcode-block" id="Scenario.estimate"><a class="viewcode-back" href="../../../covsirphy.analysis.html#covsirphy.analysis.scenario.Scenario.estimate">[docs]</a>    <span class="k">def</span> <span class="nf">estimate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model</span><span class="p">,</span> <span class="n">phases</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;Main&quot;</span><span class="p">,</span> <span class="n">n_jobs</span><span class="o">=-</span><span class="mi">1</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
@@ -609,9 +612,8 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">estimator</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_tracker_dict</span><span class="p">[</span><span class="n">name</span><span class="p">]</span><span class="o">.</span><span class="n">series</span><span class="o">.</span><span class="n">unit</span><span class="p">(</span><span class="n">phase</span><span class="p">)</span><span class="o">.</span><span class="n">estimator</span>
         <span class="k">if</span> <span class="n">estimator</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">AttributeError</span><span class="p">(</span>
-                <span class="sa">f</span><span class="s1">&#39;Scenario.estimate(model, phases=[&quot;</span><span class="si">{</span><span class="n">phase</span><span class="si">}</span><span class="s1">&quot;], name=</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s1">) must be done in advance.&#39;</span>
-            <span class="p">)</span>
+            <span class="k">raise</span> <span class="n">UnExecutedError</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s1">&#39;Scenario.estimate(model, phases=[&quot;</span><span class="si">{</span><span class="n">phase</span><span class="si">}</span><span class="s1">&quot;], name=</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s1">)&#39;</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">estimator</span></div>
 
 <div class="viewcode-block" id="Scenario.estimate_history"><a class="viewcode-back" href="../../../covsirphy.analysis.html#covsirphy.analysis.scenario.Scenario.estimate_history">[docs]</a>    <span class="k">def</span> <span class="nf">estimate_history</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">phase</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;Main&quot;</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
@@ -667,12 +669,9 @@
         <span class="n">tracker</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_tracker</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
         <span class="k">try</span><span class="p">:</span>
             <span class="n">sim_df</span> <span class="o">=</span> <span class="n">tracker</span><span class="o">.</span><span class="n">simulate</span><span class="p">(</span><span class="n">y0_dict</span><span class="o">=</span><span class="n">y0_dict</span><span class="p">)</span>
-        <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
-                <span class="s2">&quot;Phases should be registered with Scenario.trend() or Scenario.add() in advance.&quot;</span><span class="p">)</span> <span class="kn">from</span> <span class="bp">None</span>
-        <span class="k">except</span> <span class="ne">NameError</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">NameError</span><span class="p">(</span>
-                <span class="s2">&quot;Parameter estimation should be done with Scenario.estimate() in advance.&quot;</span><span class="p">)</span> <span class="kn">from</span> <span class="bp">None</span>
+        <span class="k">except</span> <span class="n">UnExecutedError</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">UnExecutedError</span><span class="p">(</span>
+                <span class="s2">&quot;Scenario.trend() or Scenario.add(), and Scenario.estimate(model)&quot;</span><span class="p">)</span> <span class="kn">from</span> <span class="bp">None</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">show_figure</span><span class="p">:</span>
             <span class="k">return</span> <span class="n">sim_df</span>
         <span class="c1"># Show figure</span>
@@ -734,8 +733,8 @@
         <span class="n">selectable_set</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">selectable_cols</span><span class="p">)</span>
         <span class="n">df</span> <span class="o">=</span> <span class="n">series</span><span class="o">.</span><span class="n">summary</span><span class="p">()</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">UNKNOWN</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">selectable_set</span><span class="o">.</span><span class="n">issubset</span><span class="p">(</span><span class="n">df</span><span class="o">.</span><span class="n">columns</span><span class="p">):</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
-                <span class="sa">f</span><span class="s2">&quot;Scenario.estimate(model, phases=None, name=</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2">) must be done in advance.&quot;</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="n">UnExecutedError</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s1">&#39;Scenario.estimate(model, phases=None, name=&quot;</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s1">&quot;)&#39;</span><span class="p">)</span>
         <span class="n">targets</span> <span class="o">=</span> <span class="p">[</span><span class="n">targets</span><span class="p">]</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">targets</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span> <span class="k">else</span> <span class="n">targets</span>
         <span class="n">targets</span> <span class="o">=</span> <span class="n">targets</span> <span class="ow">or</span> <span class="n">selectable_cols</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="nb">set</span><span class="p">(</span><span class="n">targets</span><span class="p">)</span><span class="o">.</span><span class="n">issubset</span><span class="p">(</span><span class="n">selectable_set</span><span class="p">):</span>
@@ -892,9 +891,6 @@
 <span class="sd">                    - day parameter values (float)</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">df</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">summary</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">UNKNOWN</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">ODE</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">df</span><span class="o">.</span><span class="n">columns</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
-                <span class="sa">f</span><span class="s2">&quot;Scenario.estimate(model, name=</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2">) must be done in advance.&quot;</span><span class="p">)</span>
         <span class="c1"># Date range to dates</span>
         <span class="n">df</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">START</span><span class="p">]</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">to_datetime</span><span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">START</span><span class="p">])</span>
         <span class="n">df</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">END</span><span class="p">]</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">to_datetime</span><span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">END</span><span class="p">])</span>
@@ -1093,9 +1089,8 @@
         <span class="c1"># Control</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">clear</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="n">control</span><span class="p">,</span> <span class="n">include_past</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">trend</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="n">control</span><span class="p">,</span> <span class="n">show_figure</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
-        <span class="n">tracker</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_tracker</span><span class="p">(</span><span class="n">control</span><span class="p">)</span>
         <span class="k">try</span><span class="p">:</span>
-            <span class="n">tracker</span><span class="o">.</span><span class="n">separate</span><span class="p">(</span><span class="n">beginning_date</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">separate</span><span class="p">(</span><span class="n">date</span><span class="o">=</span><span class="n">beginning_date</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="n">control</span><span class="p">)</span>
         <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
             <span class="k">pass</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">estimate</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="n">control</span><span class="p">,</span> <span class="o">**</span><span class="n">est_kwargs</span><span class="p">)</span>
@@ -1105,7 +1100,7 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">num2str</span><span class="p">(</span><span class="n">i</span><span class="p">)</span> <span class="k">for</span> <span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="n">ph</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_tracker</span><span class="p">(</span><span class="n">target</span><span class="p">)</span><span class="o">.</span><span class="n">series</span><span class="p">)</span>
             <span class="k">if</span> <span class="n">ph</span> <span class="o">&gt;=</span> <span class="n">beginning_date</span>
         <span class="p">]</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">delete</span><span class="p">(</span><span class="n">phases_changed</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="n">target</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">delete</span><span class="p">(</span><span class="n">phases</span><span class="o">=</span><span class="n">phases_changed</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="n">target</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="n">target</span><span class="p">,</span> <span class="o">**</span><span class="n">param_dict</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">estimate</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="n">target</span><span class="p">,</span> <span class="o">**</span><span class="n">est_kwargs</span><span class="p">)</span></div>
 
@@ -1130,9 +1125,7 @@
 <span class="sd">            If @phases is None, all phases will be used.</span>
 <span class="sd">            @phases and @past_days can not be specified at the same time.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">name_temp</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2">_temporally_for_scoring&quot;</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">clear</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="n">name_temp</span><span class="p">,</span> <span class="n">include_past</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">template</span><span class="o">=</span><span class="n">name</span><span class="p">)</span>
-        <span class="n">tracker</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_tracker</span><span class="p">(</span><span class="n">name_temp</span><span class="p">)</span>
+        <span class="n">tracker</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_tracker</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">past_days</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">if</span> <span class="n">phases</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
                 <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
@@ -1140,7 +1133,7 @@
             <span class="n">past_days</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ensure_natural_int</span><span class="p">(</span><span class="n">past_days</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;past_days&quot;</span><span class="p">)</span>
             <span class="c1"># Separate a phase, if possible</span>
             <span class="n">beginning_date</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">date_change</span><span class="p">(</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">last_date</span><span class="p">,</span> <span class="n">days</span><span class="o">=</span><span class="mi">0</span> <span class="o">-</span> <span class="n">past_days</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_last_date</span><span class="p">,</span> <span class="n">days</span><span class="o">=</span><span class="mi">0</span> <span class="o">-</span> <span class="n">past_days</span><span class="p">)</span>
             <span class="k">try</span><span class="p">:</span>
                 <span class="n">tracker</span><span class="o">.</span><span class="n">separate</span><span class="p">(</span><span class="n">date</span><span class="o">=</span><span class="n">beginning_date</span><span class="p">)</span>
             <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
@@ -1148,14 +1141,11 @@
             <span class="c1"># Ge the list of target phases</span>
             <span class="n">phases</span> <span class="o">=</span> <span class="p">[</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">num2str</span><span class="p">(</span><span class="n">num</span><span class="p">)</span> <span class="k">for</span> <span class="p">(</span><span class="n">num</span><span class="p">,</span> <span class="n">unit</span><span class="p">)</span>
-                <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_tracker_dict</span><span class="p">[</span><span class="n">name_temp</span><span class="p">]</span><span class="o">.</span><span class="n">series</span><span class="p">)</span>
+                <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">tracker</span><span class="o">.</span><span class="n">series</span><span class="p">)</span>
                 <span class="k">if</span> <span class="n">unit</span> <span class="o">&gt;=</span> <span class="n">beginning_date</span>
             <span class="p">]</span>
-        <span class="n">score</span> <span class="o">=</span> <span class="n">tracker</span><span class="o">.</span><span class="n">score</span><span class="p">(</span>
-            <span class="n">metrics</span><span class="o">=</span><span class="n">metrics</span><span class="p">,</span> <span class="n">variables</span><span class="o">=</span><span class="n">variables</span><span class="p">,</span> <span class="n">phases</span><span class="o">=</span><span class="n">phases</span><span class="p">,</span> <span class="n">y0_dict</span><span class="o">=</span><span class="n">y0_dict</span><span class="p">)</span>
-        <span class="k">if</span> <span class="n">name_temp</span> <span class="o">!=</span> <span class="n">name</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">delete</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="n">name_temp</span><span class="p">)</span>
-        <span class="k">return</span> <span class="n">score</span></div></div>
+        <span class="k">return</span> <span class="n">tracker</span><span class="o">.</span><span class="n">score</span><span class="p">(</span>
+            <span class="n">metrics</span><span class="o">=</span><span class="n">metrics</span><span class="p">,</span> <span class="n">variables</span><span class="o">=</span><span class="n">variables</span><span class="p">,</span> <span class="n">phases</span><span class="o">=</span><span class="n">phases</span><span class="p">,</span> <span class="n">y0_dict</span><span class="o">=</span><span class="n">y0_dict</span><span class="p">)</span></div></div>
 </pre></div>
 
            </div>

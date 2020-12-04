@@ -163,6 +163,7 @@
 <span class="c1"># -*- coding: utf-8 -*-</span>
 
 <span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<span class="kn">from</span> <span class="nn">covsirphy.util.error</span> <span class="kn">import</span> <span class="n">UnExecutedError</span>
 <span class="kn">from</span> <span class="nn">covsirphy.cleaning.term</span> <span class="kn">import</span> <span class="n">Term</span>
 <span class="kn">from</span> <span class="nn">covsirphy.ode.mbase</span> <span class="kn">import</span> <span class="n">ModelBase</span>
 <span class="kn">from</span> <span class="nn">covsirphy.simulation.estimator</span> <span class="kn">import</span> <span class="n">Estimator</span>
@@ -560,8 +561,7 @@
 <span class="sd">            NameError: ODE model is not registered</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_model</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">NameError</span><span class="p">(</span>
-                <span class="s2">&quot;PhaseUnit.set_ode(model) must be done in advance.&quot;</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="n">UnExecutedError</span><span class="p">(</span><span class="s2">&quot;PhaseUnit.set_ode(model)&quot;</span><span class="p">)</span>
 
 <div class="viewcode-block" id="PhaseUnit.estimate"><a class="viewcode-back" href="../../../covsirphy.phase.html#covsirphy.phase.phase_unit.PhaseUnit.estimate">[docs]</a>    <span class="k">def</span> <span class="nf">estimate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">record_df</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
@@ -580,10 +580,6 @@
 <span class="sd">                    - any other columns will be ignored</span>
 <span class="sd">            **kwargs: keyword arguments of Estimator.run()</span>
 
-<span class="sd">        Raises:</span>
-<span class="sd">            NameError: PhaseUnit.set_ode(model) was not done in advance.</span>
-<span class="sd">            ValueError: @record_df is None and PhaseUnit.record_df = ... was not done in advance.</span>
-
 <span class="sd">        Notes:</span>
 <span class="sd">            If @record_df is None, registered records will be used.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -592,8 +588,8 @@
         <span class="k">if</span> <span class="n">record_df</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">record_df</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_record_df</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
         <span class="k">if</span> <span class="n">record_df</span><span class="o">.</span><span class="n">empty</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
-                <span class="s2">&quot;@record_df must be specified or PhaseUnit.record_df = ... must be done in advance.&quot;</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="n">UnExecutedError</span><span class="p">(</span>
+                <span class="s2">&quot;PhaseUnit.record_df = ...&quot;</span><span class="p">,</span> <span class="n">message</span><span class="o">=</span><span class="s2">&quot;or specify @record_df argument&quot;</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">ensure_dataframe</span><span class="p">(</span>
             <span class="n">record_df</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;record_df&quot;</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">NLOC_COLUMNS</span><span class="p">)</span>
         <span class="c1"># Check dates</span>
@@ -699,8 +695,7 @@
         <span class="c1"># Conditions</span>
         <span class="n">param_dict</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ode_dict</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
         <span class="k">if</span> <span class="kc">None</span> <span class="ow">in</span> <span class="n">param_dict</span><span class="o">.</span><span class="n">values</span><span class="p">():</span>
-            <span class="k">raise</span> <span class="ne">KeyError</span><span class="p">(</span>
-                <span class="s2">&quot;Tau and parameter values must be specified in advance with PhaseUnit.set_ode().&quot;</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="n">UnExecutedError</span><span class="p">(</span><span class="s2">&quot;PhaseUnit.set_ode()&quot;</span><span class="p">)</span>
         <span class="n">tau</span> <span class="o">=</span> <span class="n">param_dict</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">TAU</span><span class="p">)</span>
         <span class="n">last_date</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">tomorrow</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_end_date</span><span class="p">)</span>
         <span class="c1"># Simulation</span>

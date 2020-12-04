@@ -208,6 +208,7 @@
     <span class="n">MONO_COLUMNS</span> <span class="o">=</span> <span class="p">[</span><span class="n">C</span><span class="p">,</span> <span class="n">F</span><span class="p">,</span> <span class="n">R</span><span class="p">]</span>
     <span class="c1"># Date format: 22Jan2020 etc.</span>
     <span class="n">DATE_FORMAT</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">%d</span><span class="s2">%b%Y&quot;</span>
+    <span class="n">DATE_FORMAT_DESC</span> <span class="o">=</span> <span class="s2">&quot;DDMmmYYYY&quot;</span>
     <span class="c1"># Separator of country and province</span>
     <span class="n">SEP</span> <span class="o">=</span> <span class="s2">&quot;/&quot;</span>
     <span class="c1"># EDA</span>
@@ -459,8 +460,7 @@
             <span class="bp">cls</span><span class="o">.</span><span class="n">date_obj</span><span class="p">(</span><span class="n">target</span><span class="p">)</span>
         <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
-                <span class="sa">f</span><span class="s2">&quot;@</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2"> must be a natural number, but </span><span class="si">{</span><span class="n">target</span><span class="si">}</span><span class="s2"> was applied&quot;</span>
-            <span class="p">)</span>
+                <span class="sa">f</span><span class="s2">&quot;@</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2"> needs to match </span><span class="si">{</span><span class="bp">cls</span><span class="o">.</span><span class="n">DATE_FORMAT_DESC</span><span class="si">}</span><span class="s2">, but </span><span class="si">{</span><span class="n">target</span><span class="si">}</span><span class="s2"> was applied.&quot;</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">target</span></div>
 
 <div class="viewcode-block" id="Term.ensure_subclass"><a class="viewcode-back" href="../../../covsirphy.cleaning.html#covsirphy.cleaning.term.Term.ensure_subclass">[docs]</a>    <span class="nd">@staticmethod</span>
