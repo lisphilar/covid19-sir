@@ -129,9 +129,10 @@ class Scenario(DataHandler):
         Returns:
             covsirphy.ParamTracker
         """
+        # Registered
         if name in self._tracker_dict:
             return self._tracker_dict[name]
-        # Phase series
+        # Un-registered and create it
         if template not in self._tracker_dict:
             raise ScenarioNotFoundError(template)
         tracker = copy.deepcopy(self._tracker_dict[template])
