@@ -170,6 +170,8 @@ class Scenario(DataHandler):
             - Tau will be fixed as the last phase's value.
             - kwargs: Default values are the parameter values of the last phase.
         """
+        if end_date is not None:
+            self.ensure_date(end_date, name="end_date")
         tracker = self._tracker(name)
         try:
             tracker.add(
@@ -177,9 +179,8 @@ class Scenario(DataHandler):
                 model=model, **kwargs)
         except ValueError:
             last_date = tracker.series.unit("last").end_date
-            s1 = f'For "{name}" scenario, @end_date needs to match "DDMmmYYYY" format'
             raise ValueError(
-                f'{s1} and be over {last_date}. However, {end_date} was applied.') from None
+                f'@end_date must be over {last_date}. However, {end_date} was applied.') from None
         self._tracker_dict[name] = tracker
         return self
 

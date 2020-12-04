@@ -47,6 +47,7 @@ class Term(object):
     MONO_COLUMNS = [C, F, R]
     # Date format: 22Jan2020 etc.
     DATE_FORMAT = "%d%b%Y"
+    DATE_FORMAT_DESC = "DDMmmYYYY"
     # Separator of country and province
     SEP = "/"
     # EDA
@@ -298,8 +299,7 @@ class Term(object):
             cls.date_obj(target)
         except ValueError:
             raise ValueError(
-                f"@{name} must be a natural number, but {target} was applied"
-            )
+                f"@{name} needs to match {cls.DATE_FORMAT_DESC}, but {target} was applied.")
         return target
 
     @staticmethod
