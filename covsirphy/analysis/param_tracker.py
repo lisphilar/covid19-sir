@@ -3,6 +3,7 @@
 
 import numpy as np
 import sklearn
+from covsirphy.util.error import UnExecutedError
 from covsirphy.cleaning.term import Term
 from covsirphy.ode.mbase import ModelBase
 from covsirphy.phase.phase_unit import PhaseUnit
@@ -97,8 +98,7 @@ class ParamTracker(Term):
         Ensure that phases were set.
         """
         if not self._series:
-            raise ValueError(
-                "Phases should be registered with .trend() or .add() in advance.")
+            raise UnExecutedError(".trend() or .add()")
 
     def find_phase(self, date):
         """
@@ -198,15 +198,16 @@ class ParamTracker(Term):
             - Tau will be fixed as the last phase's value.
             - kwargs: Default values are the parameter values of the last phase.
         """
+        if end_date is not None:
+            self.ensure_date(end_date, name="end_date")
         try:
             self._series.add(
                 end_date=end_date, days=days, population=population,
                 model=model, tau=self.tau, **kwargs)
         except ValueError:
             last_date = self._series.unit("last").end_date
-            s1 = '@end_date needs to match "DDMmmYYYY" format'
             raise ValueError(
-                f'{s1} and be over {last_date}. However, {end_date} was applied.') from None
+                f'@end_date must be over {last_date}. However, {end_date} was applied.') from None
         return self._series
 
     def delete_all(self):
@@ -426,8 +427,7 @@ class ParamTracker(Term):
         try:
             return self._series.simulate(record_df=self.record_df, y0_dict=y0_dict)
         except NameError:
-            raise NameError(
-                "Parameter estimation should be done with .estimate() in advance.") from None
+            raise UnExecutedError(".estimate()")
 
     def _compare_with_actual(self, variables, y0_dict=None):
         """

@@ -4,7 +4,7 @@
 from itertools import groupby
 from operator import itemgetter
 import pandas as pd
-from covsirphy.util.error import deprecate
+from covsirphy.util.error import deprecate, UnExecutedError
 from covsirphy.util.plotting import line_plot
 from covsirphy.cleaning.jhu_data import JHUData
 from covsirphy.cleaning.population import PopulationData
@@ -281,8 +281,7 @@ class PolicyMeasures(Term):
                 Values: parameter values
         """
         if self.model is None:
-            raise ValueError(
-                "PolicyMeasures.estimate(model) must be done in advance.")
+            raise UnExecutedError("PolicyMeasures.estimate(model)")
         # Get parameter/Rt/data parameter value of each date
         df = self.summary().reset_index().replace(self.UNKNOWN, None)
         df[self.START] = pd.to_datetime(

@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*-
 
 import pandas as pd
+from covsirphy.util.error import UnExecutedError
 from covsirphy.cleaning.term import Term
 from covsirphy.ode.mbase import ModelBase
 from covsirphy.simulation.estimator import Estimator
@@ -399,8 +400,7 @@ class PhaseUnit(Term):
             NameError: ODE model is not registered
         """
         if self._model is None:
-            raise NameError(
-                "PhaseUnit.set_ode(model) must be done in advance.")
+            raise UnExecutedError("PhaseUnit.set_ode(model)")
 
     def estimate(self, record_df=None, **kwargs):
         """
@@ -419,10 +419,6 @@ class PhaseUnit(Term):
                     - any other columns will be ignored
             **kwargs: keyword arguments of Estimator.run()
 
-        Raises:
-            NameError: PhaseUnit.set_ode(model) was not done in advance.
-            ValueError: @record_df is None and PhaseUnit.record_df = ... was not done in advance.
-
         Notes:
             If @record_df is None, registered records will be used.
         """
@@ -431,8 +427,8 @@ class PhaseUnit(Term):
         if record_df is None:
             record_df = self._record_df.copy()
         if record_df.empty:
-            raise ValueError(
-                "@record_df must be specified or PhaseUnit.record_df = ... must be done in advance.")
+            raise UnExecutedError(
+                "PhaseUnit.record_df = ...", message="or specify @record_df argument")
         self.ensure_dataframe(
             record_df, name="record_df", columns=self.NLOC_COLUMNS)
         # Check dates
@@ -538,8 +534,7 @@ class PhaseUnit(Term):
         # Conditions
         param_dict = self._ode_dict.copy()
         if None in param_dict.values():
-            raise KeyError(
-                "Tau and parameter values must be specified in advance with PhaseUnit.set_ode().")
+            raise UnExecutedError("PhaseUnit.set_ode()")
         tau = param_dict.pop(self.TAU)
         last_date = self.tomorrow(self._end_date)
         # Simulation

@@ -5,7 +5,7 @@ import copy
 import warnings
 import numpy as np
 import pandas as pd
-from covsirphy.util.error import deprecate, ScenarioNotFoundError
+from covsirphy.util.error import deprecate, ScenarioNotFoundError, UnExecutedError
 from covsirphy.util.plotting import line_plot, box_plot
 from covsirphy.analysis.param_tracker import ParamTracker
 from covsirphy.analysis.data_handler import DataHandler
@@ -129,9 +129,10 @@ class Scenario(DataHandler):
         Returns:
             covsirphy.ParamTracker
         """
+        # Registered
         if name in self._tracker_dict:
             return self._tracker_dict[name]
-        # Phase series
+        # Un-registered and create it
         if template not in self._tracker_dict:
             raise ScenarioNotFoundError(template)
         tracker = copy.deepcopy(self._tracker_dict[template])
@@ -169,6 +170,8 @@ class Scenario(DataHandler):
             - Tau will be fixed as the last phase's value.
             - kwargs: Default values are the parameter values of the last phase.
         """
+        if end_date is not None:
+            self.ensure_date(end_date, name="end_date")
         tracker = self._tracker(name)
         try:
             tracker.add(
@@ -176,9 +179,8 @@ class Scenario(DataHandler):
                 model=model, **kwargs)
         except ValueError:
             last_date = tracker.series.unit("last").end_date
-            s1 = f'For "{name}" scenario, @end_date needs to match "DDMmmYYYY" format'
             raise ValueError(
-                f'{s1} and be over {last_date}. However, {end_date} was applied.') from None
+                f'@end_date must be over {last_date}. However, {end_date} was applied.') from None
         self._tracker_dict[name] = tracker
         return self
 
@@ -449,9 +451,8 @@ class Scenario(DataHandler):
         """
         estimator = self._tracker_dict[name].series.unit(phase).estimator
         if estimator is None:
-            raise AttributeError(
-                f'Scenario.estimate(model, phases=["{phase}"], name={name}) must be done in advance.'
-            )
+            raise UnExecutedError(
+                f'Scenario.estimate(model, phases=["{phase}"], name={name})')
         return estimator
 
     def estimate_history(self, phase, name="Main", **kwargs):
@@ -507,12 +508,9 @@ class Scenario(DataHandler):
         tracker = self._tracker(name)
         try:
             sim_df = tracker.simulate(y0_dict=y0_dict)
-        except ValueError:
-            raise ValueError(
-                "Phases should be registered with Scenario.trend() or Scenario.add() in advance.") from None
-        except NameError:
-            raise NameError(
-                "Parameter estimation should be done with Scenario.estimate() in advance.") from None
+        except UnExecutedError:
+            raise UnExecutedError(
+                "Scenario.trend() or Scenario.add(), and Scenario.estimate(model)") from None
         if not show_figure:
             return sim_df
         # Show figure
@@ -574,8 +572,8 @@ class Scenario(DataHandler):
         selectable_set = set(selectable_cols)
         df = series.summary().replace(self.UNKNOWN, None)
         if not selectable_set.issubset(df.columns):
-            raise ValueError(
-                f"Scenario.estimate(model, phases=None, name={name}) must be done in advance.")
+            raise UnExecutedError(
+                f'Scenario.estimate(model, phases=None, name="{name}")')
         targets = [targets] if isinstance(targets, str) else targets
         targets = targets or selectable_cols
         if not set(targets).issubset(selectable_set):
