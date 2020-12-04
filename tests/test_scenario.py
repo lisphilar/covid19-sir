@@ -5,12 +5,13 @@ from datetime import datetime
 import warnings
 import pandas as pd
 import pytest
+from covsirphy import ScenarioNotFoundError
 from covsirphy import Scenario, DataHandler
 from covsirphy import Term, PhaseSeries, SIR, SIRF
 
 
 class TestDataHandler(object):
-    @pytest.mark.parametrize("country", ["Italy", "Japan", "Netherlands"])
+    @pytest.mark.parametrize("country", ["Italy", "Japan", "Netherlands", "Greece"])
     @pytest.mark.parametrize("province", [None, "Abruzzo"])
     def test_start(self, jhu_data, population_data, country, province):
         if province == "Abruzzo" and country != "Italy":
@@ -71,14 +72,13 @@ class TestScenario(object):
         snl = Scenario(jhu_data, population_data, country)
         # Create a phase series
         population = population_data.value(country)
-        sr_df = jhu_data.to_sr(country=country, population=population)
         series = PhaseSeries("01Apr2020", "01Aug2020", population)
-        series.trend(sr_df)
+        with pytest.raises(ScenarioNotFoundError):
+            snl["New"]
         # Add scenario
         snl["New"] = series
         # Get scenario
         assert snl["New"] == series
-        assert len(snl["New"]) == len(series)
 
     @pytest.mark.parametrize("country", ["Japan"])
     def test_edit_series(self, jhu_data, population_data, country):
@@ -86,14 +86,20 @@ class TestScenario(object):
         snl = Scenario(jhu_data, population_data, country)
         snl.first_date = "01Apr2020"
         snl.last_date = "01Aug2020"
+        assert snl.first_date == "01Apr2020"
+        assert snl.last_date == "01Aug2020"
         # Add and clear
         assert snl.summary().empty
         snl.add(end_date="05May2020")
+        with pytest.raises(ValueError):
+            snl.add(end_date="20Apr2020")
         snl.add(days=20)
         snl.add()
         snl.add(end_date="01Sep2020")
         assert len(snl["Main"]) == 4
         snl.clear(include_past=True)
+        with pytest.raises(ScenarioNotFoundError):
+            snl.clear("New", template="Un-registered")
         snl.add(end_date="01Sep2020", name="New")
         assert len(snl["New"]) == 2
         # Delete
@@ -126,6 +132,13 @@ class TestScenario(object):
         snl = Scenario(jhu_data, population_data, country)
         snl.first_date = "01Apr2020"
         snl.last_date = "01Aug2020"
+        # Deprecated
+        warnings.simplefilter("error")
+        with pytest.raises(DeprecationWarning):
+            snl.trend(include_init_phase=False, show_figure=False)
+        warnings.simplefilter("ignore")
+        snl.trend(include_init_phase=False, show_figure=False)
+        # S-R trend analysis
         snl.trend(show_figure=False)
         assert snl["Main"]
         with pytest.raises(ValueError):
@@ -202,7 +215,7 @@ class TestScenario(object):
             snl.estimate(SIR, phases=["30th"])
         with pytest.raises(ValueError):
             snl.estimate(model=SIR, tau=1440)
-        snl.estimate(SIR, timeout=5, timeout_iteration=5)
+        snl.estimate(SIR, timeout=1, timeout_iteration=1)
         # Estimation history
         snl.estimate_history(phase="last")
         # Estimation accuracy
@@ -218,7 +231,7 @@ class TestScenario(object):
         snl = Scenario(jhu_data, population_data, country)
         snl.trend(show_figure=False)
         with pytest.raises(ValueError):
-            snl.estimate(SIR, tau=1440, timeout=20)
+            snl.estimate(SIRF, tau=1440, timeout=20)
 
     @pytest.mark.parametrize("country", ["Japan"])
     def test_simulate(self, jhu_data, population_data, country):
@@ -230,6 +243,8 @@ class TestScenario(object):
         snl.last_date = "01May2020"
         with pytest.raises(ValueError):
             snl.simulate()
+        with pytest.raises(ValueError):
+            snl.track()
         snl.trend(show_figure=False)
         # Parameter estimation
         with pytest.raises(ValueError):
@@ -239,7 +254,7 @@ class TestScenario(object):
         snl.disable(all_phases[:-2])
         with pytest.raises(NameError):
             snl.simulate()
-        snl.estimate(SIR, timeout=5, timeout_iteration=5)
+        snl.estimate(SIRF, timeout=5, timeout_iteration=5)
         # Simulation
         snl.simulate()
         # Parameter history (Deprecated)
@@ -251,13 +266,17 @@ class TestScenario(object):
             snl.param_history(["feeling"])
         # Comparison of scenarios
         snl.describe()
+        snl.track()
         snl.history(target="Rt")
         snl.history(target="sigma")
+        snl.history(target="rho", show_figure=False)
         snl.history(target="Infected")
         with pytest.raises(KeyError):
             snl.history(target="temperature")
         # Change rate of parameters
         snl.history_rate(name="Main")
+        snl.history_rate(
+            name="Main", params=["theta", "kappa"], show_figure=False)
         with pytest.raises(TypeError):
             snl.history_rate(params="", name="Main")
         # Add new scenario
@@ -273,31 +292,14 @@ class TestScenario(object):
         snl.trend(show_figure=False)
         # Retrospective analysis
         snl.retrospective(
-            "01May2020", model=SIR, control="Main", target="Retrospective",
-            timeout=5, timeout_iteration=5)
-
-    @pytest.mark.parametrize("country", ["Greece"])
-    def test_complement(self, jhu_data, population_data, country):
-        max_ignored = 100
-        # Auto complement
-        snl = Scenario(
-            jhu_data, population_data, country, auto_complement=True)
-        recovered = snl.records(show_figure=False)[Term.R]
-        assert recovered[recovered > max_ignored].value_counts().max() == 1
-        # Restore the raw data
-        snl.complement_reverse()
-        recovered = snl.records(show_figure=False)[Term.R]
-        assert recovered[recovered > max_ignored].value_counts().max() != 1
-        # Complement
-        snl.complement()
-        recovered = snl.records(show_figure=False)[Term.R]
-        assert recovered[recovered > max_ignored].value_counts().max() == 1
+            "01May2020", model=SIRF, control="Main", target="Retrospective",
+            timeout=1, timeout_iteration=1)
 
     @pytest.mark.parametrize("country", ["Italy"])
     def test_score(self, jhu_data, population_data, country):
         snl = Scenario(jhu_data, population_data, country, tau=360)
         snl.trend(show_figure=False)
-        snl.estimate(SIRF, timeout=5, timeout_iteration=5)
+        snl.estimate(SIRF, timeout=1, timeout_iteration=1)
         assert isinstance(snl.score(metrics="RMSLE"), float)
         # Selected phases
         df = snl.summary()
@@ -309,3 +311,5 @@ class TestScenario(object):
         assert snl.score(past_days=past_days) == sel_score
         # Selected past days
         snl.score(past_days=60)
+        with pytest.raises(ValueError):
+            snl.score(phases=["1st"], past_days=60)

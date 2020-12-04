@@ -409,7 +409,7 @@ class Scenario(DataHandler):
             force=force, show_figure=show_figure, filename=filename, **kwargs)
         # Disable 0th phase, if necessary
         if not include_init_phase:
-            self[name] = tracker.disable("0th")
+            self[name] = tracker.disable(phases=["0th"])
         return self
 
     def estimate(self, model, phases=None, name="Main", n_jobs=-1, **kwargs):
@@ -732,9 +732,6 @@ class Scenario(DataHandler):
                     - day parameter values (float)
         """
         df = self.summary(name=name).replace(self.UNKNOWN, None)
-        if self.ODE not in df.columns:
-            raise ValueError(
-                f"Scenario.estimate(model, name={name}) must be done in advance.")
         # Date range to dates
         df[self.START] = pd.to_datetime(df[self.START])
         df[self.END] = pd.to_datetime(df[self.END])
