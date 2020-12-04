@@ -6,7 +6,6 @@ import numpy as np
 import pandas as pd
 from covsirphy.util.error import deprecate, ScenarioNotFoundError
 from covsirphy.util.plotting import line_plot, box_plot
-from covsirphy.phase.phase_series import PhaseSeries
 from covsirphy.analysis.param_tracker import ParamTracker
 from covsirphy.analysis.data_handler import DataHandler
 
@@ -111,10 +110,10 @@ class Scenario(DataHandler):
         """
         Initialize dictionary of trackers.
         """
-        series = PhaseSeries(
-            self._first_date, self._last_date, self.population)
+        series = ParamTracker.create_series(
+            first_date=self._first_date, last_date=self._last_date, population=self.population)
         tracker = ParamTracker(
-            record_df=self.record_df, phase_series=series)
+            record_df=self.record_df, phase_series=series, area=self.area, tau=self.tau)
         self._tracker_dict = {self.MAIN: tracker}
 
     def _tracker(self, name, template="Main"):

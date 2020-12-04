@@ -48,6 +48,22 @@ class ParamTracker(Term):
     def __len__(self):
         return len(self._series)
 
+    @staticmethod
+    def create_series(first_date, last_date, population):
+        """
+        Create PhaseSeries instance.
+
+        Args:
+            first_date (str): the first date of the records
+            last_date (str): the last date of the records
+            population (int): population value
+
+        Returns:
+            covsirphy.PhaseSeries
+        """
+        return PhaseSeries(
+            first_date=first_date, last_date=last_date, population=population)
+
     @property
     def series(self):
         """

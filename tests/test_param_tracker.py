@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*-
 
 
+from covsirphy.phase.phase_unit import PhaseUnit
 import warnings
 import pytest
 from covsirphy import SIRF, PhaseSeries, ParamTracker
@@ -11,7 +12,8 @@ from covsirphy import SIRF, PhaseSeries, ParamTracker
 def tracker(jhu_data, population_data):
     population = population_data.value(country="Japan")
     record_df = jhu_data.subset(country="Japan", population=population)
-    series = PhaseSeries("01Apr2020", "01Nov2020", population)
+    series = ParamTracker.create_series("01Apr2020", "01Nov2020", population)
+    assert isinstance(series, PhaseSeries)
     return ParamTracker(
         record_df=record_df, phase_series=series, area="Japan"
     )
@@ -40,7 +42,16 @@ class TestParamTracker(object):
         tracker.delete_all()
         assert not tracker
 
+    def test_combine(self, tracker):
+        tracker.add("01May2020")
+        tracker.add("01Jun2020")
+        tracker.add("01Jul2020")
+        tracker.add("01Aug2020")
+        tracker.combine(phases=["2nd", "last"])
+        tracker.combine(phases=["0th", "1st"])
+
     def test_before_trend(self, tracker):
+        tracker.delete_all()
         with pytest.raises(ValueError):
             tracker.find_phase("01May2020")
 
@@ -71,6 +82,16 @@ class TestParamTracker(object):
         assert set(sel_phases) == set(["0th", "1st"])
         assert set(sel_phases).issubset(all_phases)
         assert set(sel_units).issubset(all_units)
+
+    def test_future_phases(self, tracker):
+        tracker.trend()
+        phases0, units0 = tracker.future_phases()
+        assert len(phases0) == len(units0) == 0
+        tracker.add(end_date="01Apr2021")
+        phases, units = tracker.future_phases()
+        assert len(phases) == len(units) == 1
+        assert isinstance(units[0], PhaseUnit)
+        tracker.delete(phases=phases)
 
     def test_before_estimate(self, tracker):
         with pytest.raises(NameError):
