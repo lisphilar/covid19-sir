@@ -4,6 +4,7 @@
 from dask import dataframe as dd
 import numpy as np
 import pandas as pd
+from covsirphy.util.error import UnExecutedError
 from covsirphy.cleaning.cbase import CleaningBase
 
 
@@ -81,8 +82,7 @@ class CountryData(CleaningBase):
                     - Recovered (int): the number of recovered cases
         """
         if not self.var_dict:
-            raise ValueError(
-                "Please execute CountryData.set_variables() in advance.")
+            raise UnExecutedError("CountryData.set_variables()")
         df = self._raw.copy()
         # Rename the columns
         df = df.rename(self.var_dict, axis=1)

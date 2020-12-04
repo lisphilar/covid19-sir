@@ -102,3 +102,20 @@ class ScenarioNotFoundError(KeyError):
 
     def __str__(self):
         return f"{self.name} scenario is not registered."
+
+
+class UnExecutedError(AttributeError, NameError, ValueError):
+    """
+    Error when we have unexecuted methods that we need to run in advance.
+
+    Args:
+        method_name (str): method name to run in advance
+        message (str or None): the other messages
+    """
+
+    def __init__(self, method_name, message=None):
+        self.method_name = method_name
+        self.message = "." if message is None else f" {message}."
+
+    def __str__(self):
+        return f"Please execute {self.method_name} in advance{self.message}"

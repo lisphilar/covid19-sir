@@ -5,7 +5,7 @@ import copy
 import warnings
 import numpy as np
 import pandas as pd
-from covsirphy.util.error import deprecate, ScenarioNotFoundError
+from covsirphy.util.error import deprecate, ScenarioNotFoundError, UnExecutedError
 from covsirphy.util.plotting import line_plot, box_plot
 from covsirphy.analysis.param_tracker import ParamTracker
 from covsirphy.analysis.data_handler import DataHandler
@@ -449,9 +449,8 @@ class Scenario(DataHandler):
         """
         estimator = self._tracker_dict[name].series.unit(phase).estimator
         if estimator is None:
-            raise AttributeError(
-                f'Scenario.estimate(model, phases=["{phase}"], name={name}) must be done in advance.'
-            )
+            raise UnExecutedError(
+                f'Scenario.estimate(model, phases=["{phase}"], name={name})')
         return estimator
 
     def estimate_history(self, phase, name="Main", **kwargs):
@@ -508,11 +507,10 @@ class Scenario(DataHandler):
         try:
             sim_df = tracker.simulate(y0_dict=y0_dict)
         except ValueError:
-            raise ValueError(
-                "Phases should be registered with Scenario.trend() or Scenario.add() in advance.") from None
+            raise UnExecutedError(
+                "Scenario.trend() or Scenario.add()") from None
         except NameError:
-            raise NameError(
-                "Parameter estimation should be done with Scenario.estimate() in advance.") from None
+            raise UnExecutedError("Scenario.estimate(model)") from None
         if not show_figure:
             return sim_df
         # Show figure
@@ -574,8 +572,8 @@ class Scenario(DataHandler):
         selectable_set = set(selectable_cols)
         df = series.summary().replace(self.UNKNOWN, None)
         if not selectable_set.issubset(df.columns):
-            raise ValueError(
-                f"Scenario.estimate(model, phases=None, name={name}) must be done in advance.")
+            raise UnExecutedError(
+                f'Scenario.estimate(model, phases=None, name="{name}")')
         targets = [targets] if isinstance(targets, str) else targets
         targets = targets or selectable_cols
         if not set(targets).issubset(selectable_set):

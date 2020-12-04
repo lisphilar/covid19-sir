@@ -3,6 +3,7 @@
 
 import numpy as np
 import sklearn
+from covsirphy.util.error import UnExecutedError
 from covsirphy.cleaning.term import Term
 from covsirphy.ode.mbase import ModelBase
 from covsirphy.phase.phase_unit import PhaseUnit
@@ -97,8 +98,7 @@ class ParamTracker(Term):
         Ensure that phases were set.
         """
         if not self._series:
-            raise ValueError(
-                "Phases should be registered with .trend() or .add() in advance.")
+            raise UnExecutedError(".trend() or .add()")
 
     def find_phase(self, date):
         """
@@ -426,8 +426,7 @@ class ParamTracker(Term):
         try:
             return self._series.simulate(record_df=self.record_df, y0_dict=y0_dict)
         except NameError:
-            raise NameError(
-                "Parameter estimation should be done with .estimate() in advance.") from None
+            raise UnExecutedError(".estimate()")
 
     def _compare_with_actual(self, variables, y0_dict=None):
         """
