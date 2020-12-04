@@ -506,11 +506,9 @@ class Scenario(DataHandler):
         tracker = self._tracker(name)
         try:
             sim_df = tracker.simulate(y0_dict=y0_dict)
-        except ValueError:
+        except UnExecutedError:
             raise UnExecutedError(
-                "Scenario.trend() or Scenario.add()") from None
-        except NameError:
-            raise UnExecutedError("Scenario.estimate(model)") from None
+                "Scenario.trend() or Scenario.add(), and Scenario.estimate(model)") from None
         if not show_figure:
             return sim_df
         # Show figure
