@@ -45,6 +45,9 @@ class ParamTracker(Term):
         self.area = area or ""
         self.tau = self.ensure_tau(tau)
 
+    def __len__(self):
+        return len(self._series)
+
     @property
     def series(self):
         """
