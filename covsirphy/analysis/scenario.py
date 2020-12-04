@@ -1,13 +1,14 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-from covsirphy.analysis.data_handler import DataHandler
+import copy
 import numpy as np
 import pandas as pd
 from covsirphy.util.error import deprecate, ScenarioNotFoundError
 from covsirphy.util.plotting import line_plot, box_plot
 from covsirphy.phase.phase_series import PhaseSeries
 from covsirphy.analysis.param_tracker import ParamTracker
+from covsirphy.analysis.data_handler import DataHandler
 
 
 class Scenario(DataHandler):
@@ -132,11 +133,8 @@ class Scenario(DataHandler):
             return self._tracker_dict[name]
         # Phase series
         if template not in self._tracker_dict:
-            raise ScenarioNotFoundError(name)
-        tracker = ParamTracker(
-            record_df=self.record_df,
-            phase_series=self._tracker_dict[template].series,
-            area=self.area, tau=self.tau)
+            raise ScenarioNotFoundError(template)
+        tracker = copy.deepcopy(self._tracker_dict[template])
         self._tracker_dict[name] = tracker
         return tracker
 
@@ -218,7 +216,7 @@ class Scenario(DataHandler):
             covsirphy.Scenario: self
         """
         if name == self.MAIN:
-            self[name] = self._tracker(self.MAIN).delete_all()
+            self[self.MAIN] = self._tracker(self.MAIN).delete_all()
         else:
             self._tracker_dict.pop(name)
         return self
@@ -932,9 +930,8 @@ class Scenario(DataHandler):
         # Control
         self.clear(name=control, include_past=True)
         self.trend(name=control, show_figure=False)
-        tracker = self._tracker(control)
         try:
-            tracker.separate(beginning_date)
+            self.separate(date=beginning_date, name=control)
         except ValueError:
             pass
         self.estimate(model, name=control, **est_kwargs)
@@ -944,7 +941,7 @@ class Scenario(DataHandler):
             self.num2str(i) for (i, ph) in enumerate(self._tracker(target).series)
             if ph >= beginning_date
         ]
-        self.delete(phases_changed, name=target)
+        self.delete(phases=phases_changed, name=target)
         self.add(name=target, **param_dict)
         self.estimate(model, name=target, **est_kwargs)
 
@@ -969,9 +966,7 @@ class Scenario(DataHandler):
             If @phases is None, all phases will be used.
             @phases and @past_days can not be specified at the same time.
         """
-        name_temp = f"{name}_temporally_for_scoring"
-        self.clear(name=name_temp, include_past=False, template=name)
-        tracker = self._tracker(name_temp)
+        tracker = self._tracker(name)
         if past_days is not None:
             if phases is not None:
                 raise ValueError(
@@ -979,7 +974,7 @@ class Scenario(DataHandler):
             past_days = self.ensure_natural_int(past_days, name="past_days")
             # Separate a phase, if possible
             beginning_date = self.date_change(
-                self.last_date, days=0 - past_days)
+                self._last_date, days=0 - past_days)
             try:
                 tracker.separate(date=beginning_date)
             except ValueError:
@@ -987,11 +982,8 @@ class Scenario(DataHandler):
             # Ge the list of target phases
             phases = [
                 self.num2str(num) for (num, unit)
-                in enumerate(self._tracker_dict[name_temp].series)
+                in enumerate(tracker.series)
                 if unit >= beginning_date
             ]
-        score = tracker.score(
+        return tracker.score(
             metrics=metrics, variables=variables, phases=phases, y0_dict=y0_dict)
-        if name_temp != name:
-            self.delete(name=name_temp)
-        return score
