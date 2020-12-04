@@ -222,6 +222,7 @@ class JHUData(CleaningBase):
     def to_sr(self, country, province=None,
               start_date=None, end_date=None, population=None):
         """
+        Create Susceptible/Recovered dataset without complement.
 
         Args:
             country (str): country name
