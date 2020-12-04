@@ -46,7 +46,7 @@ class TestPolicyMeasures(object):
         # Parameter estimation
         with pytest.raises(ValueError):
             analyser.track()
-        analyser.estimate(SIRF, timeout=5, timeout_iteration=5)
+        analyser.estimate(SIRF, timeout=1, timeout_iteration=1)
         assert isinstance(analyser.summary(), pd.DataFrame)
         # Parameter history of Rt
         with pytest.raises(KeyError):
