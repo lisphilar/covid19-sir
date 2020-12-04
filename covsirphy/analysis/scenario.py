@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*-
 
 import copy
+import warnings
 import numpy as np
 import pandas as pd
 from covsirphy.util.error import deprecate, ScenarioNotFoundError
@@ -393,6 +394,9 @@ class Scenario(DataHandler):
             )
         try:
             include_init_phase = kwargs.pop("include_init_phase")
+            warnings.warn(
+                "@include_init_phase was deprecated. Please use Scenario.disable('0th').",
+                DeprecationWarning, stacklevel=2)
         except KeyError:
             include_init_phase = True
         try:
