@@ -196,7 +196,6 @@ class LinelistData(CleaningBase):
             df = df.loc[df[self.PROVINCE] == province]
         # Check records are registered
         country_alias = self.ensure_country_name(country)
-        area = self.area_name(country, province=province)
         if df.empty:
             raise SubsetNotFoundError(
                 country=country, country_alias=country_alias, province=province)
