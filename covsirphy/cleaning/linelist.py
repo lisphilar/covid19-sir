@@ -238,6 +238,17 @@ class LinelistData(CleaningBase):
         df = df.drop([self.C, self.CI, self.F, self.R], axis=1)
         return df.reset_index(drop=True)
 
+    def recovery_period(self):
+        """
+        Calculate median value of recovery period (from confirmation to recovery).
+
+        Returns:
+            int: recovery period [days]
+        """
+        df = self.closed(outcome=self.R)
+        series = (df[self.R_DATE] - df[self.CONFIRM_DATE]).dt.days
+        return int(series.median())
+
     def total(self):
         """
         This is not defined for this child class.
