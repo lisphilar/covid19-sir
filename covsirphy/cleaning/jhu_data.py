@@ -426,7 +426,14 @@ class JHUData(CleaningBase):
         """
         c, f, r = subset_df[[self.C, self.F, self.R]].max().tolist()
         if r > max_ignored and r > (c - f) * 0.1:
-            return subset_df
+            # Check if the difference between the recovered and confirmed
+            # is less than 1% of the confirmed when outbreaking
+            sel_1 = subset_df[self.C] > max_ignored
+            sel_2 = subset_df[self.C].diff().diff() > 0
+            _df = subset_df.loc[sel_1 & sel_2]
+            _df = _df.loc[_df[self.R] > 0.99 * (_df[self.C] - _df[self.F])]
+            if _df.empty:
+                return subset_df
         df = subset_df.set_index(self.DATE)
         # Closing period
         self._closing_period = self._closing_period or self.calculate_closing_period()
