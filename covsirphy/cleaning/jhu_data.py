@@ -410,7 +410,7 @@ class JHUData(CleaningBase):
                     - Confirmed (int): the number of confirmed cases
                     - Fatal (int): the number of fatal cases
                     - the other columns will be ignored
-            max_ignored (int): Max number of recovered cases to be ignored [cases]
+            max_ignored (int): max number of confirmed and recovered cases to be ignored [cases]
 
         Returns:
             pandas.DataFrame
@@ -426,8 +426,8 @@ class JHUData(CleaningBase):
         """
         c, f, r = subset_df[[self.C, self.F, self.R]].max().tolist()
         if r > max_ignored and r > (c - f) * 0.1:
-            # Check if the difference between the recovered and confirmed
-            # is less than 1% of the confirmed when outbreaking
+            # Check if sum of recovered is more than 99%
+            # of sum of recovered and infected when outbreaking
             sel_1 = subset_df[self.C] > max_ignored
             sel_2 = subset_df[self.C].diff().diff() > 0
             _df = subset_df.loc[sel_1 & sel_2]
