@@ -410,7 +410,7 @@ class JHUData(CleaningBase):
                     - Confirmed (int): the number of confirmed cases
                     - Fatal (int): the number of fatal cases
                     - the other columns will be ignored
-            max_ignored (int): Max number of recovered cases to be ignored [cases]
+            max_ignored (int): max number of confirmed and recovered cases to be ignored [cases]
 
         Returns:
             pandas.DataFrame
@@ -426,7 +426,14 @@ class JHUData(CleaningBase):
         """
         c, f, r = subset_df[[self.C, self.F, self.R]].max().tolist()
         if r > max_ignored and r > (c - f) * 0.1:
-            return subset_df
+            # Check if sum of recovered is more than 99%
+            # of sum of recovered and infected when outbreaking
+            sel_1 = subset_df[self.C] > max_ignored
+            sel_2 = subset_df[self.C].diff().diff().rolling(14).mean() > 0
+            _df = subset_df.loc[sel_1 & sel_2]
+            _df = _df.loc[_df[self.R] > 0.99 * (_df[self.C] - _df[self.F])]
+            if _df.empty:
+                return subset_df
         df = subset_df.set_index(self.DATE)
         # Closing period
         self._closing_period = self._closing_period or self.calculate_closing_period()

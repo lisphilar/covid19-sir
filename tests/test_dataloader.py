@@ -5,6 +5,7 @@ from pathlib import Path
 import pytest
 import warnings
 import pandas as pd
+from covsirphy import SubsetNotFoundError
 from covsirphy import CleaningBase, SIRF
 from covsirphy import COVID19DataHub, DataLoader, LinelistData, ExampleData
 from covsirphy import Term, JHUData, CountryData, PopulationData, OxCGRTData
@@ -148,10 +149,11 @@ class TestJHUData(object):
         assert is_complemented
         assert df[Term.C].is_monotonic_increasing
 
-    @pytest.mark.parametrize("country", ["Netherlands", "China"])
+    @pytest.mark.parametrize("country", ["Netherlands", "China", "Germany"])
     def test_subset_complement_full(self, jhu_data, country):
-        with pytest.raises(ValueError):
-            jhu_data.subset(country=country)
+        if country != "Germany":
+            with pytest.raises(ValueError):
+                jhu_data.subset(country=country)
         df, is_complemented = jhu_data.subset_complement(country=country)
         assert set(df.columns) == set(Term.NLOC_COLUMNS)
         assert is_complemented
@@ -166,11 +168,16 @@ class TestJHUData(object):
         with pytest.raises(KeyError):
             jhu_data.subset_complement(country=country, end_date="01Jan1900")
 
-    @pytest.mark.parametrize("country", ["UK", "Netherlands", "China", "Japan"])
+    @pytest.mark.parametrize("country", ["UK", "Netherlands", "China", "Germany", "Japan"])
     def test_records(self, jhu_data, country):
-        df, is_complemented = jhu_data.subset_complement(country=country)
+        df, is_complemented = jhu_data.records(country=country)
         assert set(df.columns) == set(Term.NLOC_COLUMNS)
         assert is_complemented
+
+    @pytest.mark.parametrize("country", ["Netherlands", "Moon"])
+    def test_records_error(self, jhu_data, country):
+        with pytest.raises(SubsetNotFoundError):
+            jhu_data.records(country=country, auto_complement=False)
 
     @pytest.mark.parametrize(
         "applied, expected, iso3",
