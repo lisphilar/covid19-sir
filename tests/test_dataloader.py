@@ -54,6 +54,9 @@ class TestLinelistData(object):
             with pytest.raises(KeyError):
                 linelist_data.closed(outcome=outcome)
 
+    def test_recovery_period(self, linelist_data):
+        assert isinstance(linelist_data.recovery_period(), int)
+
 
 class TestDataLoader(object):
     def test_start(self):
@@ -143,6 +146,9 @@ class TestJHUData(object):
         assert isinstance(jhu_data.countries(complement=False), list)
         assert isinstance(jhu_data.countries(complement=True), list)
 
+    def test_closing_period(self, jhu_data):
+        assert isinstance(jhu_data.calculate_closing_period(), int)
+
     @pytest.mark.parametrize("country", ["UK"])
     def test_subset_complement_non_monotonic(self, jhu_data, country):
         df, is_complemented = jhu_data.subset_complement(country=country)
@@ -151,6 +157,7 @@ class TestJHUData(object):
 
     @pytest.mark.parametrize("country", ["Netherlands", "China", "Germany"])
     def test_subset_complement_full(self, jhu_data, country):
+        assert isinstance(jhu_data.recovery_period, int)
         if country != "Germany":
             with pytest.raises(ValueError):
                 jhu_data.subset(country=country)
