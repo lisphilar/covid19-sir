@@ -429,7 +429,7 @@ class JHUData(CleaningBase):
             # Check if sum of recovered is more than 99%
             # of sum of recovered and infected when outbreaking
             sel_1 = subset_df[self.C] > max_ignored
-            sel_2 = subset_df[self.C].diff().diff() > 0
+            sel_2 = subset_df[self.C].diff().diff().rolling(14).mean() > 0
             _df = subset_df.loc[sel_1 & sel_2]
             _df = _df.loc[_df[self.R] > 0.99 * (_df[self.C] - _df[self.F])]
             if _df.empty:
