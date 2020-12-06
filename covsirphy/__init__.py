@@ -23,6 +23,7 @@ from covsirphy.cleaning.term import Term, Word
 from covsirphy.cleaning.cbase import CleaningBase
 from covsirphy.cleaning.jhu_data import JHUData
 from covsirphy.cleaning.country_data import CountryData
+from covsirphy.cleaning.japan_data import JapanData
 from covsirphy.cleaning.population import PopulationData, Population
 from covsirphy.cleaning.oxcgrt import OxCGRTData
 from covsirphy.cleaning.covid19datahub import COVID19DataHub
@@ -67,7 +68,7 @@ __all__ = [
     "PhaseSeries", "PhaseUnit", "MPEstimator",
     "Term", "CleaningBase", "DataLoader", "COVID19DataHub",
     "JHUData", "CountryData", "PopulationData", "OxCGRTData",
-    "LinelistData",
+    "LinelistData", "JapanData",
     "ModelBase", "SIR", "SIRD", "SIRF", "SIRFV", "SEWIRF",
     "Estimator", "Trend", "Optimizer",
     "line_plot", "jpn_map", "StopWatch", "deprecate", "find_args",

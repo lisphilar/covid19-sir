@@ -93,6 +93,8 @@ class TestCleaningBase(object):
             cbase.iso3_to_country("JPN")
         with pytest.raises(NotImplementedError):
             cbase.total()
+        cbase.citation = "citation"
+        assert cbase.citation == "citation"
 
 
 class TestExampleData(object):
@@ -266,8 +268,10 @@ class TestOxCGRTData(object):
 class TestCountryData(object):
     def test_cleaning(self, japan_data):
         assert isinstance(japan_data.raw_columns(), list)
+        with pytest.raises(NotImplementedError):
+            japan_data.set_variables()
         df = japan_data.cleaned()
-        assert set(df.columns) == set(Term.COLUMNS)
+        assert set(Term.COLUMNS).issubset(df.columns)
 
     def test_total(self, japan_data):
         df = japan_data.total()
@@ -277,7 +281,16 @@ class TestCountryData(object):
     def test_countries(self, japan_data):
         assert [japan_data.country] == japan_data.countries()
 
-    def test_create(self):
+    def test_create(self, japan_data):
         country_data = CountryData(filename=None, country="Moon")
         with pytest.raises(ValueError):
             country_data.cleaned()
+        country_data.raw = japan_data.raw
+        country_data.set_variables(
+            date="Date",
+            confirmed="Positive",
+            fatal="Fatal",
+            recovered="Discharged",
+            province="Area")
+        df = country_data.cleaned()
+        assert set(df.columns) == set(Term.COLUMNS)

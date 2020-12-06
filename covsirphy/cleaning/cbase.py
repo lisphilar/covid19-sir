@@ -37,12 +37,35 @@ class CleaningBase(Term):
     @property
     def raw(self):
         """
-        Return the raw data.
-
-        Returns:
-            pandas.DataFrame: raw data
+        pandas.DataFrame: raw data
         """
         return self._raw
+
+    @raw.setter
+    def raw(self, dataframe):
+        """
+        pandas.DataFrame: raw dataset
+        """
+        self._raw = self.ensure_dataframe(dataframe, name="dataframe")
+
+    @staticmethod
+    def load(urlpath, header=0):
+        """
+        Load a local/remote file.
+
+        Args:
+            urlpath (str or pathlib.Path): filename or URL
+            header (int): row number of the header
+
+        Returns:
+            pd.DataFrame: raw dataset
+        """
+        kwargs = {
+            "low_memory": False, "dtype": "object", "header": header, }
+        try:
+            return dd.read_csv(urlpath, blocksize=None, **kwargs).compute()
+        except (FileNotFoundError, UnicodeDecodeError):
+            return pd.read_csv(urlpath, **kwargs)
 
     def cleaned(self):
         """

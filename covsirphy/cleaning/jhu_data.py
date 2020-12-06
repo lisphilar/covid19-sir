@@ -130,6 +130,15 @@ class JHUData(CleaningBase):
 
         Args:
             country_data (covsirphy.CountryData): dataset object of the country
+                Index: reset index
+                Columns:
+                    - Date (pd.TimeStamp): Observation date
+                    - Province (str): province name
+                    - Confirmed (int): the number of confirmed cases
+                    - Infected (int): the number of currently infected cases
+                    - Fatal (int): the number of fatal cases
+                    - Recovered (int): the number of recovered cases
+                    - The other columns will be ignored
 
         Returns:
             covsirphy.JHUData: self
@@ -137,11 +146,11 @@ class JHUData(CleaningBase):
         self.ensure_instance(country_data, CountryData, name="country_data")
         # Read new dataset
         country = country_data.country
-        new = country_data.cleaned()
+        new = country_data.cleaned().loc[:, self.COLUMNS]
         new[self.ISO3] = self.country_to_iso3(country)
         # Remove the data in the country from JHU dataset
         df = self._cleaned_df.copy()
-        df = df.loc[df[self.COUNTRY] != country, :]
+        df = df.loc[df[self.COUNTRY] != country]
         # Combine JHU data and the new data
         df = pd.concat([df, new], axis=0, sort=False)
         self._cleaned_df = df.copy()

@@ -38,6 +38,7 @@ class COVID19DataHub(Term):
         except TypeError:
             raise TypeError(
                 f"@filename should be a path-like object, but {filename} was applied.")
+        self.filepath.parent.mkdir(exist_ok=True, parents=True)
         self.primary_list = None
 
     def load(self, name="jhu", force=True, verbose=1):

@@ -1,12 +1,11 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-from dask import dataframe as dd
+from pathlib import Path
 import pandas as pd
 import swifter
 from covsirphy.util.error import SubsetNotFoundError
 from covsirphy.cleaning.cbase import CleaningBase
-from pathlib import Path
 
 
 class LinelistData(CleaningBase):
@@ -40,7 +39,7 @@ class LinelistData(CleaningBase):
 
     def __init__(self, filename, force=False, verbose=1):
         if Path(filename).exists() and not force:
-            self._raw = self._load(filename)
+            self._raw = self.load(filename)
         else:
             self._raw = self._retrieve(filename=filename, verbose=verbose)
         self._cleaned_df = self._cleaning()
@@ -66,7 +65,7 @@ class LinelistData(CleaningBase):
             print(
                 "Retrieving linelist from Open COVID-19 Data Working Group repository: https://github.com/beoutbreakprepared/nCoV2019")
         # Download the dataset
-        df = self._load(self.URL, header=1)
+        df = self.load(self.URL, header=1)
         # Remove un-necessary columns
         df = df.drop(
             [
@@ -84,25 +83,6 @@ class LinelistData(CleaningBase):
         # Save the raw data
         df.to_csv(filename, index=False)
         return df
-
-    @staticmethod
-    def _load(urlpath, header=0):
-        """
-        Load a local/remote file.
-
-        Args:
-            urlpath (str or pathlib.Path): filename or URL
-            header (int): row number of the header
-
-        Returns:
-            pd.DataFrame: raw dataset
-        """
-        kwargs = {
-            "low_memory": False, "dtype": "object", "header": header, }
-        try:
-            return dd.read_csv(urlpath, blocksize=None, **kwargs).compute()
-        except (FileNotFoundError, UnicodeDecodeError):
-            return pd.read_csv(urlpath, **kwargs)
 
     def _cleaning(self):
         """
