@@ -96,6 +96,7 @@ Further information:
 
 - [Quickest version](https://lisphilar.github.io/covid19-sir/usage_quickest.html)
 - [Quick version](https://lisphilar.github.io/covid19-sir/usage_quick.html)
+- [Details: datasets](https://lisphilar.github.io/covid19-sir/usage_dataset.html)
 - [Details: phases](https://lisphilar.github.io/covid19-sir/usage_phases.html)
 - [Details: theoretical datasets](https://lisphilar.github.io/covid19-sir/usage_theoretical.html)
 - [Details: policy measures](https://lisphilar.github.io/covid19-sir/usage_policy.html)
