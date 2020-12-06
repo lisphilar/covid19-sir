@@ -17,6 +17,7 @@
    INSTALLATION
    usage_quickest
    usage_quick
+   usage_dataset
    usage_phases
    usage_theoretical
    usage_policy
