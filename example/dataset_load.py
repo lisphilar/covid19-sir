@@ -16,23 +16,17 @@ def main():
     # Create data loader instance
     data_loader = cs.DataLoader(input_dir)
     # Load JHU dataset
+    print("<The number of cases>")
     jhu_data = data_loader.jhu()
     print(jhu_data.citation)
     ncov_df = jhu_data.cleaned()
     ncov_df.to_csv(output_dir.joinpath("covid19_cleaned_jhu.csv"), index=False)
-    # Load Japan dataset (the number of cases)
-    japan_data = data_loader.japan()
-    print(japan_data.citation)
-    japan_df = japan_data.cleaned()
-    japan_df.to_csv(output_dir.joinpath(
-        "covid19_cleaned_japan.csv"), index=False)
-    # Replace records of Japan with Japan-specific dataset
-    jhu_data.replace(japan_data)
-    ncov_df = jhu_data.cleaned()
-    ncov_df.to_csv(
-        output_dir.joinpath("jhu_cleaned_replaced.csv"), index=False
-    )
+    # Subset for Japan
+    japan_df, _ = jhu_data.records("Japan")
+    japan_df.to_csv(
+        output_dir.joinpath("jhu_cleaned_japan.csv"), index=False)
     # Load Population dataset
+    print("<Population values>")
     population_data = data_loader.population()
     print(population_data.citation)
     population_df = population_data.cleaned()
@@ -40,15 +34,12 @@ def main():
         output_dir.joinpath("population_cleaned.csv"), index=False
     )
     # Load OxCGRT dataset
+    print("<Government response tracker>")
     oxcgrt_data = data_loader.oxcgrt()
     print(oxcgrt_data.citation)
     oxcgrt_df = oxcgrt_data.cleaned()
     oxcgrt_df.to_csv(
         output_dir.joinpath("oxcgrt_cleaned.csv"), index=False
-    )
-    # Create a subset for a country with ISO3 country code
-    oxcgrt_data.subset("JPN").to_csv(
-        output_dir.joinpath("oxcgrt_cleaned_jpn.csv"), index=False
     )
 
 

@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
+from pathlib import Path
 import warnings
 import country_converter as coco
 from dask import dataframe as dd
@@ -28,6 +29,7 @@ class CleaningBase(Term):
             self._raw = pd.DataFrame()
             self._cleaned_df = pd.DataFrame()
         else:
+            Path(filename).parent.mkdir(exist_ok=True, parents=True)
             self._raw = dd.read_csv(
                 filename, dtype={"Province/State": "object"}
             ).compute()

@@ -49,6 +49,7 @@ class JapanData(CountryData):
     ]
 
     def __init__(self, filename, force=False, verbose=1):
+        Path(filename).parent.mkdir(exist_ok=True, parents=True)
         if Path(filename).exists() and not force:
             self._raw = self.load(filename)
         else:
