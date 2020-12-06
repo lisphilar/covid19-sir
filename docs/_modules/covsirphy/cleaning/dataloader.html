@@ -164,12 +164,9 @@
 
 <span class="kn">from</span> <span class="nn">datetime</span> <span class="kn">import</span> <span class="n">datetime</span><span class="p">,</span> <span class="n">timezone</span><span class="p">,</span> <span class="n">timedelta</span>
 <span class="kn">from</span> <span class="nn">pathlib</span> <span class="kn">import</span> <span class="n">Path</span>
-<span class="kn">from</span> <span class="nn">dask</span> <span class="kn">import</span> <span class="n">dataframe</span> <span class="k">as</span> <span class="n">dd</span>
-<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
-<span class="kn">from</span> <span class="nn">covsirphy.util.file</span> <span class="kn">import</span> <span class="n">save_dataframe</span>
 <span class="kn">from</span> <span class="nn">covsirphy.cleaning.term</span> <span class="kn">import</span> <span class="n">Term</span>
 <span class="kn">from</span> <span class="nn">covsirphy.cleaning.jhu_data</span> <span class="kn">import</span> <span class="n">JHUData</span>
-<span class="kn">from</span> <span class="nn">covsirphy.cleaning.country_data</span> <span class="kn">import</span> <span class="n">CountryData</span>
+<span class="kn">from</span> <span class="nn">covsirphy.cleaning.japan_data</span> <span class="kn">import</span> <span class="n">JapanData</span>
 <span class="kn">from</span> <span class="nn">covsirphy.cleaning.oxcgrt</span> <span class="kn">import</span> <span class="n">OxCGRTData</span>
 <span class="kn">from</span> <span class="nn">covsirphy.cleaning.population</span> <span class="kn">import</span> <span class="n">PopulationData</span>
 <span class="kn">from</span> <span class="nn">covsirphy.cleaning.covid19datahub</span> <span class="kn">import</span> <span class="n">COVID19DataHub</span>
@@ -237,6 +234,8 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">dir_path</span><span class="o">.</span><span class="n">mkdir</span><span class="p">(</span><span class="n">parents</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
         <span class="c1"># COVID-19 Data Hub</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">covid19dh</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="c1"># Cache instances</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_linelist_data</span> <span class="o">=</span> <span class="kc">None</span>
 
     <span class="nd">@staticmethod</span>
     <span class="k">def</span> <span class="nf">_last_updated_local</span><span class="p">(</span><span class="n">path</span><span class="p">):</span>
@@ -325,7 +324,18 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="n">local_file</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">return</span> <span class="n">JHUData</span><span class="p">(</span><span class="n">filename</span><span class="o">=</span><span class="n">local_file</span><span class="p">)</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_covid19dh</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;jhu&quot;</span><span class="p">,</span> <span class="n">basename</span><span class="o">=</span><span class="n">basename</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="n">verbose</span><span class="p">)</span></div>
+        <span class="n">jhu_data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_covid19dh</span><span class="p">(</span>
+            <span class="n">name</span><span class="o">=</span><span class="s2">&quot;jhu&quot;</span><span class="p">,</span> <span class="n">basename</span><span class="o">=</span><span class="n">basename</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="n">verbose</span><span class="p">)</span>
+        <span class="c1"># Retrieve JHU data from COVID-19 Data Hub</span>
+        <span class="n">jhu_data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_covid19dh</span><span class="p">(</span>
+            <span class="n">name</span><span class="o">=</span><span class="s2">&quot;jhu&quot;</span><span class="p">,</span> <span class="n">basename</span><span class="o">=</span><span class="n">basename</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="n">verbose</span><span class="p">)</span>
+        <span class="c1"># Set recovery period for full complement of recovered data in some countries</span>
+        <span class="n">jhu_data</span><span class="o">.</span><span class="n">recovery_period</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">linelist</span><span class="p">(</span>
+            <span class="n">verbose</span><span class="o">=</span><span class="n">verbose</span><span class="p">)</span><span class="o">.</span><span class="n">recovery_period</span><span class="p">()</span>
+        <span class="c1"># Replace Japan dataset with the government-announced data</span>
+        <span class="n">japan_data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">japan</span><span class="p">()</span>
+        <span class="n">jhu_data</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="n">japan_data</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">jhu_data</span></div>
 
 <div class="viewcode-block" id="DataLoader.population"><a class="viewcode-back" href="../../../covsirphy.cleaning.html#covsirphy.cleaning.dataloader.DataLoader.population">[docs]</a>    <span class="k">def</span> <span class="nf">population</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">basename</span><span class="o">=</span><span class="s2">&quot;covid19dh.csv&quot;</span><span class="p">,</span> <span class="n">local_file</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
@@ -369,7 +379,7 @@
             <span class="k">return</span> <span class="n">OxCGRTData</span><span class="p">(</span><span class="n">filename</span><span class="o">=</span><span class="n">local_file</span><span class="p">)</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_covid19dh</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;oxcgrt&quot;</span><span class="p">,</span> <span class="n">basename</span><span class="o">=</span><span class="n">basename</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="n">verbose</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="DataLoader.japan"><a class="viewcode-back" href="../../../covsirphy.cleaning.html#covsirphy.cleaning.dataloader.DataLoader.japan">[docs]</a>    <span class="k">def</span> <span class="nf">japan</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">basename</span><span class="o">=</span><span class="s2">&quot;covid_jpn_total.csv&quot;</span><span class="p">,</span> <span class="n">local_file</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<div class="viewcode-block" id="DataLoader.japan"><a class="viewcode-back" href="../../../covsirphy.cleaning.html#covsirphy.cleaning.dataloader.DataLoader.japan">[docs]</a>    <span class="k">def</span> <span class="nf">japan</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">basename</span><span class="o">=</span><span class="s2">&quot;covid_japan.csv&quot;</span><span class="p">,</span> <span class="n">local_file</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Load the dataset of the number of cases in Japan.</span>
 <span class="sd">        https://github.com/lisphilar/covid19-sir/tree/master/data</span>
@@ -377,28 +387,14 @@
 <span class="sd">        Args:</span>
 <span class="sd">            basename (str): basename of the file to save the data</span>
 <span class="sd">            local_file (str or None): if not None, load the data from this file</span>
+<span class="sd">            verbose (int): level of verbosity</span>
 
 <span class="sd">        Returns:</span>
 <span class="sd">            covsirphy.CountryData: dataset at country level in Japan</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">filename</span> <span class="o">=</span> <span class="n">local_file</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">dir_path</span><span class="o">.</span><span class="n">joinpath</span><span class="p">(</span><span class="n">basename</span><span class="p">)</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_download_necessity</span><span class="p">(</span><span class="n">filename</span><span class="o">=</span><span class="n">filename</span><span class="p">):</span>
-            <span class="n">url</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">GITHUB_URL</span><span class="si">}</span><span class="s2">/lisphilar/covid19-sir/master/data/japan/covid_jpn_total.csv&quot;</span>
-            <span class="k">try</span><span class="p">:</span>
-                <span class="n">df</span> <span class="o">=</span> <span class="n">dd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">url</span><span class="p">,</span> <span class="n">blocksize</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span><span class="o">.</span><span class="n">compute</span><span class="p">()</span>
-            <span class="k">except</span> <span class="p">(</span><span class="ne">ValueError</span><span class="p">,</span> <span class="ne">FileNotFoundError</span><span class="p">):</span>
-                <span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">url</span><span class="p">)</span>
-            <span class="n">save_dataframe</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">filename</span><span class="o">=</span><span class="n">filename</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
-        <span class="n">japan_data</span> <span class="o">=</span> <span class="n">CountryData</span><span class="p">(</span><span class="n">filename</span><span class="o">=</span><span class="n">filename</span><span class="p">,</span> <span class="n">country</span><span class="o">=</span><span class="s2">&quot;Japan&quot;</span><span class="p">)</span>
-        <span class="n">japan_data</span><span class="o">.</span><span class="n">citation</span> <span class="o">=</span> <span class="s2">&quot;Lisphilar (2020), COVID-19 dataset in Japan, GitHub repository, &quot;</span> \
-            <span class="s2">&quot;https://github.com/lisphilar/covid19-sir/data/japan&quot;</span>
-        <span class="n">japan_data</span><span class="o">.</span><span class="n">set_variables</span><span class="p">(</span>
-            <span class="n">date</span><span class="o">=</span><span class="s2">&quot;Date&quot;</span><span class="p">,</span>
-            <span class="n">confirmed</span><span class="o">=</span><span class="s2">&quot;Positive&quot;</span><span class="p">,</span>
-            <span class="n">fatal</span><span class="o">=</span><span class="s2">&quot;Fatal&quot;</span><span class="p">,</span>
-            <span class="n">recovered</span><span class="o">=</span><span class="s2">&quot;Discharged&quot;</span><span class="p">,</span>
-            <span class="n">province</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
-        <span class="k">return</span> <span class="n">japan_data</span></div>
+        <span class="n">force</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_download_necessity</span><span class="p">(</span><span class="n">filename</span><span class="o">=</span><span class="n">filename</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">JapanData</span><span class="p">(</span><span class="n">filename</span><span class="o">=</span><span class="n">filename</span><span class="p">,</span> <span class="n">force</span><span class="o">=</span><span class="n">force</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="n">verbose</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="DataLoader.linelist"><a class="viewcode-back" href="../../../covsirphy.cleaning.html#covsirphy.cleaning.dataloader.DataLoader.linelist">[docs]</a>    <span class="k">def</span> <span class="nf">linelist</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">basename</span><span class="o">=</span><span class="s2">&quot;linelist.csv&quot;</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
@@ -412,9 +408,12 @@
 <span class="sd">        Returns:</span>
 <span class="sd">            covsirphy.CountryData: dataset at country level in Japan</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">filename</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dir_path</span><span class="o">.</span><span class="n">joinpath</span><span class="p">(</span><span class="n">basename</span><span class="p">)</span>
-        <span class="n">force</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_download_necessity</span><span class="p">(</span><span class="n">filename</span><span class="o">=</span><span class="n">filename</span><span class="p">)</span>
-        <span class="k">return</span> <span class="n">LinelistData</span><span class="p">(</span><span class="n">filename</span><span class="o">=</span><span class="n">filename</span><span class="p">,</span> <span class="n">force</span><span class="o">=</span><span class="n">force</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="n">verbose</span><span class="p">)</span></div></div>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_linelist_data</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">filename</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dir_path</span><span class="o">.</span><span class="n">joinpath</span><span class="p">(</span><span class="n">basename</span><span class="p">)</span>
+            <span class="n">force</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_download_necessity</span><span class="p">(</span><span class="n">filename</span><span class="o">=</span><span class="n">filename</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_linelist_data</span> <span class="o">=</span> <span class="n">LinelistData</span><span class="p">(</span>
+                <span class="n">filename</span><span class="o">=</span><span class="n">filename</span><span class="p">,</span> <span class="n">force</span><span class="o">=</span><span class="n">force</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="n">verbose</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_linelist_data</span></div></div>
 </pre></div>
 
            </div>

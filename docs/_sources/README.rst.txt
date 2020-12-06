@@ -136,6 +136,8 @@ Further information:
 -  `Quick
    version <https://lisphilar.github.io/covid19-sir/usage_quick.html>`__
 -  `Details:
+   datasets <https://lisphilar.github.io/covid19-sir/usage_dataset.html>`__
+-  `Details:
    phases <https://lisphilar.github.io/covid19-sir/usage_phases.html>`__
 -  `Details: theoretical
    datasets <https://lisphilar.github.io/covid19-sir/usage_theoretical.html>`__
