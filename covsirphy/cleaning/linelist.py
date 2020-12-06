@@ -41,6 +41,7 @@ class LinelistData(CleaningBase):
         if Path(filename).exists() and not force:
             self._raw = self.load(filename)
         else:
+            Path(filename).parent.mkdir(exist_ok=True, parents=True)
             self._raw = self._retrieve(filename=filename, verbose=verbose)
         self._cleaned_df = self._cleaning()
         self._citation = "Xu, B., Gutierrez, B., Mekaru, S. et al. " \

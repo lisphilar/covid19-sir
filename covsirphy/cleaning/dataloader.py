@@ -165,8 +165,15 @@ class DataLoader(Term):
             return JHUData(filename=local_file)
         jhu_data = self._covid19dh(
             name="jhu", basename=basename, verbose=verbose)
+        # Retrieve JHU data from COVID-19 Data Hub
+        jhu_data = self._covid19dh(
+            name="jhu", basename=basename, verbose=verbose)
+        # Set recovery period for full complement of recovered data in some countries
         jhu_data.recovery_period = self.linelist(
             verbose=verbose).recovery_period()
+        # Replace Japan dataset with the government-announced data
+        japan_data = self.japan()
+        jhu_data.replace(japan_data)
         return jhu_data
 
     def population(self, basename="covid19dh.csv", local_file=None, verbose=1):

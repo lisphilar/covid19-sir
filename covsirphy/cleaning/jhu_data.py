@@ -142,6 +142,9 @@ class JHUData(CleaningBase):
 
         Returns:
             covsirphy.JHUData: self
+
+        Notes:
+            Citation of the country data will be added to 'JHUData.citation' description.
         """
         self.ensure_instance(country_data, CountryData, name="country_data")
         # Read new dataset
@@ -154,6 +157,8 @@ class JHUData(CleaningBase):
         # Combine JHU data and the new data
         df = pd.concat([df, new], axis=0, sort=False)
         self._cleaned_df = df.copy()
+        # Citation
+        self._citation += f"\n{country_data.citation}"
         return self
 
     def _subset(self, country, province, start_date, end_date, population):
