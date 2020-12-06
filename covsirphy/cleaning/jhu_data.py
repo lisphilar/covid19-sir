@@ -19,7 +19,18 @@ class JHUData(CleaningBase):
 
     def __init__(self, filename, citation=None):
         super().__init__(filename, citation)
-        self._closing_period = None
+        self._recovery_period = None
+
+    @property
+    def recovery_period(self):
+        """
+        int: expected value of recovery period [days]
+        """
+        return self._recovery_period
+
+    @recovery_period.setter
+    def recovery_period(self, value):
+        self._recovery_period = self.ensure_natural_int(value)
 
     def cleaned(self, **kwargs):
         """
@@ -344,7 +355,7 @@ class JHUData(CleaningBase):
         df["Elapsed"] = df[self.FR] - df[self.C]
         df = df.loc[df["Elapsed"] > 0]
         # Calculate mode value of closing period
-        return df["Elapsed"].mode().astype(np.int64).values[0]
+        return int(df["Elapsed"].mode().astype(np.int64).values[0])
 
     def _complement_non_monotonic(self, subset_df, monotonic_columns):
         """
@@ -423,6 +434,10 @@ class JHUData(CleaningBase):
                     - Fatal (int): the number of fatal cases
                     - Recovered (int): the number of recovered cases
                     - Susceptible (int): the number of susceptible cases, if @subset_df has
+
+        Notes:
+            Expected recovery period [days] should be applied with 'JHUData.recovery_period = 12' as an example.
+            If not, mode value of closing (recovered/fatal) period will be used.
         """
         c, f, r = subset_df[[self.C, self.F, self.R]].max().tolist()
         if r > max_ignored and r > (c - f) * 0.1:
@@ -436,10 +451,10 @@ class JHUData(CleaningBase):
                 return subset_df
         df = subset_df.set_index(self.DATE)
         # Closing period
-        self._closing_period = self._closing_period or self.calculate_closing_period()
+        self._recovery_period = self._recovery_period or self.calculate_closing_period()
         # Estimate recovered records
-        shifted = df[self.C].shift(periods=self._closing_period, freq="D")
-        df[self.R] = shifted - df[self.F]
+        df[self.R] = (df[self.C] - df[self.F]).shift(
+            periods=self._recovery_period, freq="D")
         # Apply absolute value to recovered records and sort them in ascending order
         df[self.R] = df[self.R].abs()
         df.loc[:, self.R] = sorted(df[self.R])

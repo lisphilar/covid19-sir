@@ -76,6 +76,8 @@ class DataLoader(Term):
         self.dir_path.mkdir(parents=True, exist_ok=True)
         # COVID-19 Data Hub
         self.covid19dh = None
+        # Cache instances
+        self._linelist_data = None
 
     @staticmethod
     def _last_updated_local(path):
@@ -164,7 +166,11 @@ class DataLoader(Term):
         """
         if local_file is not None:
             return JHUData(filename=local_file)
-        return self._covid19dh(name="jhu", basename=basename, verbose=verbose)
+        jhu_data = self._covid19dh(
+            name="jhu", basename=basename, verbose=verbose)
+        jhu_data.recovery_period = self.linelist(
+            verbose=verbose).recovery_period()
+        return jhu_data
 
     def population(self, basename="covid19dh.csv", local_file=None, verbose=1):
         """
@@ -251,6 +257,9 @@ class DataLoader(Term):
         Returns:
             covsirphy.CountryData: dataset at country level in Japan
         """
-        filename = self.dir_path.joinpath(basename)
-        force = self._download_necessity(filename=filename)
-        return LinelistData(filename=filename, force=force, verbose=verbose)
+        if self._linelist_data is None:
+            filename = self.dir_path.joinpath(basename)
+            force = self._download_necessity(filename=filename)
+            self._linelist_data = LinelistData(
+                filename=filename, force=force, verbose=verbose)
+        return self._linelist_data
