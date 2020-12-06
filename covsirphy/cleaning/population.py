@@ -91,8 +91,8 @@ class PopulationData(CleaningBase):
         df = df.dropna(subset=[self.N]).reset_index(drop=True)
         df[self.N] = df[self.N].astype(np.int64)
         # Columns to use
-        df = df.loc[:, [self.ISO3, self.COUNTRY,
-                        self.PROVINCE, self.DATE, self.N]]
+        df = df.loc[
+            :, [self.ISO3, self.COUNTRY, self.PROVINCE, self.DATE, self.N]]
         # Remove duplicates
         df = df.drop_duplicates().reset_index(drop=True)
         return df

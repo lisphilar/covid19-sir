@@ -3,12 +3,9 @@
 
 from datetime import datetime, timezone, timedelta
 from pathlib import Path
-from dask import dataframe as dd
-import pandas as pd
-from covsirphy.util.file import save_dataframe
 from covsirphy.cleaning.term import Term
 from covsirphy.cleaning.jhu_data import JHUData
-from covsirphy.cleaning.country_data import CountryData
+from covsirphy.cleaning.japan_data import JapanData
 from covsirphy.cleaning.oxcgrt import OxCGRTData
 from covsirphy.cleaning.population import PopulationData
 from covsirphy.cleaning.covid19datahub import COVID19DataHub
@@ -214,7 +211,7 @@ class DataLoader(Term):
             return OxCGRTData(filename=local_file)
         return self._covid19dh(name="oxcgrt", basename=basename, verbose=verbose)
 
-    def japan(self, basename="covid_jpn_total.csv", local_file=None):
+    def japan(self, basename="covid_japan.csv", local_file=None, verbose=1):
         """
         Load the dataset of the number of cases in Japan.
         https://github.com/lisphilar/covid19-sir/tree/master/data
@@ -222,28 +219,14 @@ class DataLoader(Term):
         Args:
             basename (str): basename of the file to save the data
             local_file (str or None): if not None, load the data from this file
+            verbose (int): level of verbosity
 
         Returns:
             covsirphy.CountryData: dataset at country level in Japan
         """
         filename = local_file or self.dir_path.joinpath(basename)
-        if self._download_necessity(filename=filename):
-            url = f"{self.GITHUB_URL}/lisphilar/covid19-sir/master/data/japan/covid_jpn_total.csv"
-            try:
-                df = dd.read_csv(url, blocksize=None).compute()
-            except (ValueError, FileNotFoundError):
-                df = pd.read_csv(url)
-            save_dataframe(df, filename=filename, index=False)
-        japan_data = CountryData(filename=filename, country="Japan")
-        japan_data.citation = "Lisphilar (2020), COVID-19 dataset in Japan, GitHub repository, " \
-            "https://github.com/lisphilar/covid19-sir/data/japan"
-        japan_data.set_variables(
-            date="Date",
-            confirmed="Positive",
-            fatal="Fatal",
-            recovered="Discharged",
-            province=None)
-        return japan_data
+        force = self._download_necessity(filename=filename)
+        return JapanData(filename=filename, force=force, verbose=verbose)
 
     def linelist(self, basename="linelist.csv", verbose=1):
         """

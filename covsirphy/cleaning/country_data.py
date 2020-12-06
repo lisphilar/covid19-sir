@@ -96,9 +96,10 @@ class CountryData(CleaningBase):
         # Add province column
         df[self.PROVINCE] = self.UNKNOWN if self.province_col is None else df[self.province_col]
         # Values
-        df[self.CI] = df[self.C] - df[self.F] - df[self.R]
-        v_cols = self.VALUE_COLUMNS[:]
+        v_cols = [self.C, self.F, self.R]
         df[v_cols] = df[v_cols].fillna(0).astype(np.int64)
+        df[self.CI] = df[self.C] - df[self.F] - df[self.R]
+        print(df.info())
         # Groupby date and province
         df[self.DATE] = pd.to_datetime(df[self.DATE])
         df = df.groupby([self.DATE, self.PROVINCE]).sum().reset_index()
