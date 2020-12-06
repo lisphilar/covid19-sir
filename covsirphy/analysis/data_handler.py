@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
+import numpy as np
 import pandas as pd
 from covsirphy.util.plotting import line_plot
 from covsirphy.cleaning.term import Term
@@ -184,7 +185,8 @@ class DataHandler(Term):
             variables or [self.C, self.F, self.R], candidates=self.VALUE_COLUMNS, name="variables")
         window = self.ensure_natural_int(window, name="window")
         df = self.record_df.set_index(self.DATE)[variables]
-        df = df.diff().dropna().rolling(window=window).mean().dropna()
+        df = df.diff().dropna()
+        df = df.rolling(window=window).mean().dropna().astype(np.int64)
         if not show_figure:
             return df
         title = f"{self.area}: Daily new cases{' (complemented)' if self._complemented else ''}"
