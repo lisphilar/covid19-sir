@@ -143,12 +143,15 @@ class DataHandler(Term):
         Notes:
             Records with Recovered > 0 will be selected.
             If complement was performed by Scenario.complement() or Scenario(auto_complement=True),
-            "(complemented)" will be added to the title of the figure.
+            The kind of complement will be added to the title of the figure.
         """
         df = self.record_df.drop(self.S, axis=1)
         if not show_figure:
             return df
-        title = f"{self.area}: Cases over time{' (complemented)' if self._complemented else ''}"
+        if self._complemented:
+            title = f"{self.area}: Cases over time\nwith {self._complemented}"
+        else:
+            title = f"{self.area}: Cases over time"
         line_plot(
             df.set_index(self.DATE).drop(self.C, axis=1),
             title,

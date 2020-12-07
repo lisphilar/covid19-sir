@@ -371,7 +371,7 @@ class JHUData(CleaningBase):
         # Calculate mode value of closing period
         return int(df["Elapsed"].mode().astype(np.int64).values[0])
 
-    def _complement_non_monotonic(self, subset_df, monotonic_columns):
+    def _complement_non_monotonic(self, subset_df, col):
         """
         Make the number of cases show monotonic increasing, if necessary.
 
@@ -384,40 +384,28 @@ class JHUData(CleaningBase):
                     - Confirmed (int): the number of confirmed cases
                     - Fatal (int): the number of fatal cases
                     - the other columns will be ignored
-            monotonic_columns (list[str]): columns that show monotonic increasing
+            col (str): column name to show monotonic increasing
 
         Returns:
-            pandas.DataFrame
-                Index:
-                    reset index
-                Columns:
-                    - Date (pd.TimeStamp): Observation date
-                    - Confirmed (int): the number of confirmed cases
-                    - Infected (int): the number of currently infected cases
-                    - Fatal (int): the number of fatal cases
-                    - Recovered (int): the number of recovered cases
-                    - Susceptible (int): the number of susceptible cases, if @subset_df has
+            pandas.DataFrame: index and columns are not changed from @subset_df
         """
-        # If all variables show monotic increasing, complement will not be done
-        columns = [
-            col for col in monotonic_columns if not subset_df[col].is_monotonic_increasing]
-        if not columns:
+        # If the variable shows monotic increasing, complement will not be done
+        if subset_df[col].is_monotonic_increasing:
             return subset_df
         # Complement
         df = subset_df.set_index(self.DATE)
-        for col in columns:
-            decreased_dates = df[df[col].diff() < 0].index.tolist()
-            for date in decreased_dates:
-                # Raw value on the decreased date
-                raw_last = df.loc[date, col]
-                # Extrapolated value on the date
-                series = df.loc[:date, col]
-                series.iloc[-1] = None
-                series.interpolate(method="spline", order=1, inplace=True)
-                series.fillna(method="ffill", inplace=True)
-                # Reduce values to the previous date
-                df.loc[:date, col] = series * raw_last / series.iloc[-1]
-                df[col] = df[col].astype(np.int64)
+        decreased_dates = df[df[col].diff() < 0].index.tolist()
+        for date in decreased_dates:
+            # Raw value on the decreased date
+            raw_last = df.loc[date, col]
+            # Extrapolated value on the date
+            series = df.loc[:date, col]
+            series.iloc[-1] = None
+            series.interpolate(method="spline", order=1, inplace=True)
+            series.fillna(method="ffill", inplace=True)
+            # Reduce values to the previous date
+            df.loc[:date, col] = series * raw_last / series.iloc[-1]
+            df[col] = df[col].astype(np.int64)
         # Calculate Infected
         df[self.CI] = df[self.C] - df[self.F] - df[self.R]
         return df.reset_index()
@@ -438,16 +426,7 @@ class JHUData(CleaningBase):
             max_ignored (int): max number of confirmed and recovered cases to be ignored [cases]
 
         Returns:
-            pandas.DataFrame
-                Index:
-                    reset index
-                Columns:
-                    - Date (pd.TimeStamp): Observation date
-                    - Confirmed (int): the number of confirmed cases
-                    - Infected (int): the number of currently infected cases
-                    - Fatal (int): the number of fatal cases
-                    - Recovered (int): the number of recovered cases
-                    - Susceptible (int): the number of susceptible cases, if @subset_df has
+            pandas.DataFrame: index and columns are not changed from @subset_df
 
         Notes:
             Expected recovery period [days] should be applied with 'JHUData.recovery_period = 12' as an example.
@@ -475,7 +454,7 @@ class JHUData(CleaningBase):
         df[self.R].interpolate(method="spline", order=1, inplace=True)
         df[self.R] = df[self.R].fillna(0).astype(np.int64)
         df = self._complement_non_monotonic(
-            df.reset_index(), [self.R]).set_index(self.DATE)
+            df.reset_index(), col=self.R).set_index(self.DATE)
         # Re-calculate infected records
         df[self.CI] = df[self.C] - df[self.F] - df[self.R]
         return df.reset_index()
@@ -497,16 +476,7 @@ class JHUData(CleaningBase):
             max_ignored (int): Max number of recovered cases to be ignored [cases]
 
         Returns:
-            pandas.DataFrame
-                Index:
-                    reset index
-                Columns:
-                    - Date (pd.TimeStamp): Observation date
-                    - Confirmed (int): the number of confirmed cases
-                    - Infected (int): the number of currently infected cases
-                    - Fatal (int): the number of fatal cases
-                    - Recovered (int): the number of recovered cases
-                    - Susceptible (int): the number of susceptible cases, if @subset_df has
+            pandas.DataFrame: index and columns are not changed from @subset_df
 
         Notes:
             If the number of recovered cases did not change
@@ -528,6 +498,124 @@ class JHUData(CleaningBase):
         df[self.CI] = df[self.C] - df[self.F] - df[self.R]
         return df
 
+    def _complement_recovered_sort(self, subset_df):
+        """
+        Sort the values of recovered data.
+
+        Args:
+            subset_df (pandas.DataFrame): subset records with country, province and start/end dates
+                Index:
+                    reset index
+                Columns:
+                    - Date (pd.TimeStamp): Observation date
+                    - Confirmed (int): the number of confirmed cases
+                    - Fatal (int): the number of fatal cases
+                    - the other columns will be ignored
+
+        Returns:
+            pandas.DataFrame: index and columns are not changed from @subset_df
+        """
+        df = subset_df.copy()
+        df[self.R] = df[self.R].abs()
+        df.loc[:, self.R] = sorted(df[self.R])
+        # Calculate infected data
+        df[self.CI] = df[self.C] - df[self.F] - df[self.R]
+        return df
+
+    def _complement_apply(self, subset_df, func, point_performed, **kwargs):
+        """
+        Perform complement with the function, if necessary.
+
+        Args:
+            subset_df (pandas.DataFrame): Subset of records
+                Index: reset index
+                Columns:
+                    - Date (pd.TimeStamp): Observation date
+                    - Confirmed (int): the number of confirmed cases
+                    - Infected (int): the number of currently infected cases
+                    - Fatal (int): the number of fatal cases
+                    - Recovered (int): the number of recovered cases
+                    - Susceptible (int): the number of susceptible cases, if @subset_df has
+            func (function): function to perform complement
+            point_performed (int): point when complement was done
+            kwargs: keyword arguments of the function
+
+        Returns:
+            tuple(pandas.DataFrame, bool):
+                pandas.DataFrame: index and columns are not changed from @subset_df
+                bool: If performed, return @point_performed. If not, return 0.
+        """
+        df = func(subset_df, **kwargs)
+        point = 0 if df.equals(subset_df) else point_performed
+        return (df, point)
+
+    def _complement_handle(self, subset_df, interval, max_ignored):
+        """
+        Perform complement, if necessary.
+
+        Args:
+            subset_df (pandas.DataFrame): Subset of records
+                Index: reset index
+                Columns:
+                    - Date (pd.TimeStamp): Observation date
+                    - Confirmed (int): the number of confirmed cases
+                    - Infected (int): the number of currently infected cases
+                    - Fatal (int): the number of fatal cases
+                    - Recovered (int): the number of recovered cases
+                    - Susceptible (int): the number of susceptible cases, if @subset_df has
+            interval (int): expected update interval of the number of recovered cases [days]
+            max_ignored (int): Max number of recovered cases to be ignored [cases]
+
+        Returns:
+            tuple(pandas.DataFrame, str):
+                pandas.DataFrame: index and columns are not changed from @subset_df
+                str: kind of complement
+
+        Notes:
+            The kinds of complement are
+                - '' (not complemented)
+                - 'monotonic increasing complemented confirmed data'
+                - 'monotonic increasing complemented fatal data'
+                - 'monotonic increasing complemented recovered data'
+                - 'fully complemented recovered data'
+                - 'partially complemented recovered data'
+        """
+        df = subset_df.copy()
+        status_dict = dict.fromkeys(self.MONO_COLUMNS, 0)
+        status_name_dict = {
+            1: "sorting",
+            2: "monotonic increasing",
+            3: "partially",
+            4: "fully",
+        }
+        # Complement for monotonic increasing
+        for variable in self.MONO_COLUMNS:
+            df, point = self._complement_apply(
+                df, self._complement_non_monotonic, 2, col=variable)
+            status_dict[variable] = max(status_dict[variable], point)
+        # Full complement of recovered data
+        df, point = self._complement_apply(
+            df, self._complement_recovered_full, 4, max_ignored=max_ignored)
+        status_dict[self.R] = max(status_dict[self.R], point)
+        # Partial complement of recovered data
+        df, point = self._complement_apply(
+            df, self._complement_recovered_partial, 3, interval=interval, max_ignored=max_ignored)
+        status_dict[self.R] = max(status_dict[self.R], point)
+        # Apply absolute value to recovered records and sort them in ascending order
+        df, point = self._complement_apply(
+            df, self._complement_recovered_sort, 1)
+        status_dict[self.R] = max(status_dict[self.R], point)
+        # Check the kind of complement
+        if not sum(status_dict.values()):
+            status = ""
+        else:
+            status_list = [
+                f"{status_name_dict[score]} complemented {v.lower()} data"
+                for (v, score) in status_dict.items() if score
+            ]
+            status = " and ".join(status_list)
+        return (df, status)
+
     def subset_complement(self, country, province=None,
                           start_date=None, end_date=None, population=None,
                           interval=2, max_ignored=100):
@@ -545,7 +633,7 @@ class JHUData(CleaningBase):
             max_ignored (int): Max number of recovered cases to be ignored [cases]
 
         Returns:
-            tuple(pandas.DataFrame, bool):
+            tuple(pandas.DataFrame, str/bool):
                 pandas.DataFrame:
                     Index:
                         reset index
@@ -556,10 +644,10 @@ class JHUData(CleaningBase):
                         - Fatal(int): the number of fatal cases
                         - Recovered (int): the number of recovered cases ( > 0)
                         - Susceptible(int): the number of susceptible cases, if calculated
-                bool: whether recovered data complemented or not
+                str/bool: kind of complement or False
 
         Notes:
-            If @ population is not None, the number of susceptible cases will be calculated.
+            If @population is not None, the number of susceptible cases will be calculated.
         """
         # Arguments
         interval = self.ensure_natural_int(interval, name="interval")
@@ -573,17 +661,11 @@ class JHUData(CleaningBase):
             raise SubsetNotFoundError(
                 country=country, country_alias=country_alias, province=province,
                 start_date=start_date, end_date=end_date) from None
-        # Complement recovered value if necessary
-        df = self._complement_non_monotonic(
-            subset_df, monotonic_columns=self.MONO_COLUMNS)
-        df = self._complement_recovered_full(df, max_ignored=max_ignored)
-        df = self._complement_recovered_partial(
-            df, interval=interval, max_ignored=max_ignored)
-        # Apply absolute value to recovered records and sort them in ascending order
-        df[self.R] = df[self.R].abs()
-        df.loc[:, self.R] = sorted(df[self.R])
-        # Whether complemented or not
-        is_complemented = not df.equals(subset_df)
+        # Complement, if necessary
+        df, status = self._complement_handle(
+            subset_df, interval=interval, max_ignored=max_ignored)
+        # Kind of complement or False
+        is_complemented = status or False
         # Select records where Recovered > 0
         df = df.loc[df[self.R] > 0, :]
         df = df.reset_index(drop=True)
@@ -615,7 +697,7 @@ class JHUData(CleaningBase):
                         - Fatal(int): the number of fatal cases
                         - Recovered (int): the number of recovered cases ( > 0)
                         - Susceptible(int): the number of susceptible cases, if calculated
-                bool: whether recovered data complemented or not
+                str/bool: kind of complement or False
 
         Notes:
             If @ population is not None, the number of susceptible cases will be calculated.
