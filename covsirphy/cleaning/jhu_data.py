@@ -213,7 +213,7 @@ class JHUData(CleaningBase):
                     - Confirmed (int): the number of confirmed cases
                     - Infected (int): the number of currently infected cases
                     - Fatal (int): the number of fatal cases
-                    - Recovered (int): the number of recovered cases (> 0)
+                    - Recovered (int): the number of recovered cases
                     - Susceptible (int): the number of susceptible cases, if calculated
 
         Notes:
@@ -222,7 +222,7 @@ class JHUData(CleaningBase):
         if population is None:
             return subset_df
         subset_df.loc[:, self.S] = population - subset_df.loc[:, self.C]
-        return subset_df.loc[self.SUB_COLUMNS]
+        return subset_df[self.SUB_COLUMNS]
 
     def subset(self, country, province=None, start_date=None, end_date=None, population=None):
         """
