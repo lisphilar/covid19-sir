@@ -200,9 +200,8 @@ class JHUDataComplementHandler(Term):
             # of sum of recovered and infected when outbreaking
             sel_1 = df[self.C] > self.max_ignored
             sel_2 = df[self.C].diff().diff().rolling(14).mean() > 0
-            s_df = df.loc[sel_1 & sel_2]
-            s_df = s_df.loc[s_df[self.R] > 0.99 *
-                            (s_df[self.C] - s_df[self.F])]
+            s_df = df.loc[
+                sel_1 & sel_2 & (df[self.R] > 0.99 * (df[self.C] - df[self.F]))]
             if s_df.empty:
                 return df
         # Estimate recovered records
@@ -232,9 +231,7 @@ class JHUDataComplementHandler(Term):
             return df
         # Complement
         df.loc[df.duplicated([self.R], keep="last"), self.R] = None
-        df[self.R].interpolate(
-            method="linear", inplace=True, limit_direction="both")
-        df[self.R] = df[self.R].fillna(method="bfill")
+        df[self.R].interpolate(method="spline", order=1, inplace=True)
         return df
 
     def _recovered_sort(self, df):
@@ -253,5 +250,5 @@ class JHUDataComplementHandler(Term):
         """
         df.loc[:, self.R] = sorted(df[self.R].abs())
         df[self.R].interpolate(method="spline", order=1, inplace=True)
-        df[self.R] = df[self.R].fillna(0).round().astype(np.int64)
+        df[self.R] = df[self.R].fillna(0).round()
         return df
