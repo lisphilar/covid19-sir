@@ -46,14 +46,14 @@ class JHUDataComplementHandler(Term):
         """
         return [
             (None, self._pre_processing, 0),
-            (self.C, functools.partial(self._monotonic(variable=self.C)), 2),
-            (self.F, functools.partial(self._monotonic(variable=self.F)), 2),
-            (self.R, functools.partial(self._monotonic(variable=self.R)), 2),
+            (self.C, functools.partial(self._monotonic, variable=self.C), 2),
+            (self.F, functools.partial(self._monotonic, variable=self.F), 2),
+            (self.R, functools.partial(self._monotonic, variable=self.R), 2),
             (self.R, self._recovered_full, 4),
             (self.R, self._recovered_sort, 1),
-            (self.R, functools.partial(self._monotonic(variable=self.R)), 2),
+            (self.R, functools.partial(self._monotonic, variable=self.R), 2),
             (self.R, self._recovered_partial, 3),
-            (self.R, functools.partial(self._monotonic(variable=self.R)), 2),
+            (self.R, functools.partial(self._monotonic, variable=self.R), 2),
             (self.R, self._recovered_sort, 1),
             (None, self._post_processing, 0)
         ]
@@ -97,7 +97,7 @@ class JHUDataComplementHandler(Term):
             subset_df, name="subset_df", columns=[self.DATE, *self.RAW_COLS])
         # Initialize
         df = subset_df.copy()
-        status_dict = dict.fromkeys(self.RA_COLS, 0)
+        status_dict = dict.fromkeys(self.RAW_COLS, 0)
         # Perform complement
         for (variable, func, score) in self._protocol():
             df = func(df)
@@ -176,7 +176,7 @@ class JHUDataComplementHandler(Term):
             series.fillna(method="ffill", inplace=True)
             # Reduce values to the previous date
             df.loc[:date, variable] = series * raw_last / series.iloc[-1]
-            df[variable] = df[variable].astype(np.int64)
+            df[variable] = df[variable].fillna(0).astype(np.int64)
         return df
 
     def _recovered_full(self, df):
@@ -231,7 +231,9 @@ class JHUDataComplementHandler(Term):
             return df
         # Complement
         df.loc[df.duplicated([self.R], keep="last"), self.R] = None
-        df[self.R].interpolate(method="spline", order=1, inplace=True)
+        df[self.R].interpolate(
+            method="linear", inplace=True, limit_direction="both")
+        df[self.R] = df[self.R].fillna(method="bfill")
         return df
 
     def _recovered_sort(self, df):
