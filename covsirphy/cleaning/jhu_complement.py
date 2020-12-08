@@ -11,14 +11,6 @@ class JHUDataComplementHandler(Term):
     Complement JHU dataset, if necessary.
 
     Args:
-        subset_df (pandas.DataFrame): Subset of records
-            Index: reset index
-            Columns:
-                - Date (pd.TimeStamp): Observation date
-                - Confirmed (int): the number of confirmed cases
-                - Fatal (int): the number of fatal cases
-                - Recovered (int): the number of recovered cases
-                - The other columns will be ignored
         recovery_period (int): expected value of recovery period [days]
         interval (int): expected update interval of the number of recovered cases [days]
         max_ignored (int): Max number of recovered cases to be ignored [cases]
@@ -37,11 +29,7 @@ class JHUDataComplementHandler(Term):
         4: "fully",
     }
 
-    def __init__(self, subset_df, recovery_period, interval, max_ignored):
-        self.ensure_dataframe(
-            subset_df, name="subset_df", columns=[self.DATE, *self.RAW_COLS])
-        # Before complement: Index=Date, Columns=Confirmed, Fatal, Recovered
-        self._raw_df = subset_df.set_index(self.DATE).loc[:, self.RAW_COLS]
+    def __init__(self, recovery_period, interval, max_ignored):
         # Arguments for complement
         self.recovery_period = self.ensure_natural_int(
             recovery_period, name="recovery_period")
@@ -54,20 +42,32 @@ class JHUDataComplementHandler(Term):
         Return the list of complement solutions and scores.
 
         Returns:
-            list[function, str, int]: nested list of variables to be updated, methods and scores
+            list[str/None, function, int]: nested list of variables to be updated, methods and scores
         """
         return [
+            (None, self._pre_processing, 0),
             (self.C, functools.partial(self._monotonic(variable=self.C)), 2),
             (self.F, functools.partial(self._monotonic(variable=self.F)), 2),
             (self.R, functools.partial(self._monotonic(variable=self.R)), 2),
             (self.R, self._recovered_full, 4),
             (self.R, self._recovered_partial, 3),
             (self.R, self._recovered_sort, 1),
+            (None, self._post_processing, 0)
         ]
 
-    def run(self):
+    def run(self, subset_df):
         """
         Perform complement.
+
+        Args:
+            subset_df (pandas.DataFrame): Subset of records
+                Index: reset index
+                Columns:
+                    - Date (pd.TimeStamp): Observation date
+                    - Confirmed (int): the number of confirmed cases
+                    - Fatal (int): the number of fatal cases
+                    - Recovered (int): the number of recovered cases
+                    - The other columns will be ignored
 
         Returns:
             tuple(pandas.DataFrame, str):
@@ -90,36 +90,15 @@ class JHUDataComplementHandler(Term):
                 - 'fully complemented recovered data'
                 - 'partially complemented recovered data'
         """
-        # Complement
-        df, status = self._run(self._raw_df)
-        # Calculate infected data
-        df[self.CI] = df[self.C] - df[self.F] - df[self.R]
-        df = df.loc[:, self.VALUE_COLUMNS]
-        df = df.astype(np.int64).reset_index()
-        return (df, status)
-
-    def _run(self):
-        """
-        Perform complement per protocol defined by self._protocol method.
-
-        Returns:
-            tuple(pandas.DataFrame, str):
-                pandas.DataFrame:
-                    Index: reset index
-                    Columns:
-                        - Date(pd.TimeStamp): Observation date
-                        - Confirmed(int): the number of confirmed cases
-                        - Infected(int): the number of currently infected cases
-                        - Fatal(int): the number of fatal cases
-                        - Recovered (int): the number of recovered cases
-                str: status code ("" or kind of complement defined in self.STATUS_NAME_DICT)
-        """
-        df = self._raw_df.copy()
+        self.ensure_dataframe(
+            subset_df, name="subset_df", columns=[self.DATE, *self.RAW_COLS])
+        # Initialize
+        df = subset_df.copy()
         status_dict = dict.fromkeys(self.RA_COLS, 0)
         # Perform complement
         for (variable, func, score) in self._protocol():
             df = func(df)
-            if not df.equals(self._raw_df):
+            if not df.equals(subset_df) and variable is not None:
                 status_dict[variable] = max(status_dict[variable], score)
         # Create status code
         status_list = [
@@ -127,6 +106,41 @@ class JHUDataComplementHandler(Term):
             for (v, score) in status_dict.items() if score]
         status = " and ".join(status_list)
         return (df, status)
+
+    def _pre_processing(self, subset_df):
+        """
+        Select Confirmed/Fatal/Recovered class from the dataset.
+
+        Args:
+            subset_df (pandas.DataFrame): Subset of records
+                Index: reset index
+                Columns: Date, Confirmed, Fatal, Recovered (the others will be ignored)
+
+        Returns:
+            pandas.DataFrame
+                Index: Date (pandas.TimeStamp)
+                Columns: Confirmed, Fatal, Recovered
+        """
+        return subset_df.set_index(self.DATE).loc[:, self.RAW_COLS]
+
+    def _post_processing(self, df):
+        """
+        Select Confirmed/Fatal/Recovered class from the dataset.
+
+        Args:
+            df (pandas.DataFrame)
+                Index: Date (pandas.TimeStamp)
+                Columns: Confirmed, Fatal, Recovered
+
+        Returns:
+            pandas.DataFrame: complemented records
+                Index: reset index
+                Columns: Date (pandas.TimeStamp), Confirmed, Infected, Fatal, Recovered (int)
+        """
+        df = df.astype(np.int64)
+        df[self.CI] = df[self.C] - df[self.F] - df[self.R]
+        df = df.loc[:, self.VALUE_COLUMNS]
+        return df.reset_index()
 
     def _monotonic(self, df, variable):
         pass
