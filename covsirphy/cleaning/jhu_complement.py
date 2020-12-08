@@ -96,12 +96,12 @@ class JHUDataComplementHandler(Term):
         self.ensure_dataframe(
             subset_df, name="subset_df", columns=[self.DATE, *self.RAW_COLS])
         # Initialize
-        df = subset_df.copy()
+        after_df = subset_df.copy()
         status_dict = dict.fromkeys(self.RAW_COLS, 0)
-        # Perform complement
+        # Perform complement one by one
         for (variable, func, score) in self._protocol():
-            df = func(df)
-            if df.equals(subset_df) or variable is None:
+            before_df, after_df = after_df.copy(), func(after_df)
+            if after_df.equals(before_df) or variable is None:
                 continue
             status_dict[variable] = max(status_dict[variable], score)
         # Create status code
@@ -109,7 +109,7 @@ class JHUDataComplementHandler(Term):
             f"{self.STATUS_NAME_DICT[score]} complemented {v.lower()} data"
             for (v, score) in status_dict.items() if score]
         status = " and ".join(status_list)
-        return (df, status)
+        return (after_df, status)
 
     def _pre_processing(self, subset_df):
         """
@@ -151,7 +151,7 @@ class JHUDataComplementHandler(Term):
         Force the variable show monotonic increasing.
 
         Args:
-            df (pandas.DataFrame)
+            df (pandas.DataFrame):
                 Index: Date (pandas.TimeStamp)
                 Columns: Confirmed, Fatal, Recovered
             variable (str): variable name to show monotonic increasing
@@ -184,7 +184,7 @@ class JHUDataComplementHandler(Term):
         Estimate the number of recovered cases with the value of recovery period.
 
         Args:
-            df (pandas.DataFrame)
+            df (pandas.DataFrame):
                 Index: Date (pandas.TimeStamp)
                 Columns: Confirmed, Fatal, Recovered
 
@@ -215,7 +215,7 @@ class JHUDataComplementHandler(Term):
         after reached 'self.max_ignored' cases, interpolate the recovered values.
 
         Args:
-            df (pandas.DataFrame)
+            df (pandas.DataFrame):
                 Index: Date (pandas.TimeStamp)
                 Columns: Confirmed, Fatal, Recovered
 
@@ -241,7 +241,7 @@ class JHUDataComplementHandler(Term):
         Sort the absolute values of recovered data.
 
         Args:
-            df (pandas.DataFrame)
+            df (pandas.DataFrame):
                 Index: Date (pandas.TimeStamp)
                 Columns: Confirmed, Fatal, Recovered
 
