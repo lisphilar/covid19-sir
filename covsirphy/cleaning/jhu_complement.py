@@ -50,7 +50,10 @@ class JHUDataComplementHandler(Term):
             (self.F, functools.partial(self._monotonic(variable=self.F)), 2),
             (self.R, functools.partial(self._monotonic(variable=self.R)), 2),
             (self.R, self._recovered_full, 4),
+            (self.R, self._recovered_sort, 1),
+            (self.R, functools.partial(self._monotonic(variable=self.R)), 2),
             (self.R, self._recovered_partial, 3),
+            (self.R, functools.partial(self._monotonic(variable=self.R)), 2),
             (self.R, self._recovered_sort, 1),
             (None, self._post_processing, 0)
         ]
@@ -98,8 +101,9 @@ class JHUDataComplementHandler(Term):
         # Perform complement
         for (variable, func, score) in self._protocol():
             df = func(df)
-            if not df.equals(subset_df) and variable is not None:
-                status_dict[variable] = max(status_dict[variable], score)
+            if df.equals(subset_df) or variable is None:
+                continue
+            status_dict[variable] = max(status_dict[variable], score)
         # Create status code
         status_list = [
             f"{self.STATUS_NAME_DICT[score]} complemented {v.lower()} data"
@@ -143,13 +147,111 @@ class JHUDataComplementHandler(Term):
         return df.reset_index()
 
     def _monotonic(self, df, variable):
-        pass
+        """
+        Force the variable show monotonic increasing.
+
+        Args:
+            df (pandas.DataFrame)
+                Index: Date (pandas.TimeStamp)
+                Columns: Confirmed, Fatal, Recovered
+            variable (str): variable name to show monotonic increasing
+
+        Returns:
+            pandas.DataFrame: complemented records
+                Index: Date (pandas.TimeStamp)
+                Columns: Confirmed, Fatal, Recovered
+        """
+        # Whether complement is necessary or not
+        if df[variable].is_monotonic_increasing:
+            return df
+        # Complement
+        decreased_dates = df[df[variable].diff() < 0].index.tolist()
+        for date in decreased_dates:
+            # Raw value on the decreased date
+            raw_last = df.loc[date, variable]
+            # Extrapolated value on the date
+            series = df.loc[:date, variable]
+            series.iloc[-1] = None
+            series.interpolate(method="spline", order=1, inplace=True)
+            series.fillna(method="ffill", inplace=True)
+            # Reduce values to the previous date
+            df.loc[:date, variable] = series * raw_last / series.iloc[-1]
+            df[variable] = df[variable].astype(np.int64)
+        return df
 
     def _recovered_full(self, df):
-        pass
+        """
+        Estimate the number of recovered cases with the value of recovery period.
+
+        Args:
+            df (pandas.DataFrame)
+                Index: Date (pandas.TimeStamp)
+                Columns: Confirmed, Fatal, Recovered
+
+        Returns:
+            pandas.DataFrame: complemented records
+                Index: Date (pandas.TimeStamp)
+                Columns: Confirmed, Fatal, Recovered
+        """
+        # Whether complement is necessary or not
+        c, f, r = df[self.RAW_COLS].max().tolist()
+        if r > self.max_ignored and r > (c - f) * 0.1:
+            # Check if sum of recovered is more than 99%
+            # of sum of recovered and infected when outbreaking
+            sel_1 = df[self.C] > self.max_ignored
+            sel_2 = df[self.C].diff().diff().rolling(14).mean() > 0
+            s_df = df.loc[sel_1 & sel_2]
+            s_df = s_df.loc[s_df[self.R] > 0.99 *
+                            (s_df[self.C] - s_df[self.F])]
+            if s_df.empty:
+                return df
+        # Estimate recovered records
+        df[self.R] = (df[self.C] - df[self.F]).shift(
+            periods=self.recovery_period, freq="D")
+        return df
 
     def _recovered_partial(self, df):
-        pass
+        """
+        If recovered values do not change for more than applied 'self.interval' days
+        after reached 'self.max_ignored' cases, interpolate the recovered values.
+
+        Args:
+            df (pandas.DataFrame)
+                Index: Date (pandas.TimeStamp)
+                Columns: Confirmed, Fatal, Recovered
+
+        Returns:
+            pandas.DataFrame: complemented records
+                Index: Date (pandas.TimeStamp)
+                Columns: Confirmed, Fatal, Recovered
+        """
+        # Whether complement is necessary or not
+        series = df.loc[df[self.R] > self.max_ignored, self.R]
+        max_frequency = series.value_counts().max()
+        if max_frequency <= self.interval:
+            return df
+        # Complement
+        df.loc[df.duplicated([self.R], keep="last"), self.R] = None
+        df[self.R].interpolate(
+            method="linear", inplace=True, limit_direction="both")
+        df[self.R] = df[self.R].fillna(method="bfill")
+        return df
 
     def _recovered_sort(self, df):
-        pass
+        """
+        Sort the absolute values of recovered data.
+
+        Args:
+            df (pandas.DataFrame)
+                Index: Date (pandas.TimeStamp)
+                Columns: Confirmed, Fatal, Recovered
+
+        Returns:
+            pandas.DataFrame: complemented records
+                Index: Date (pandas.TimeStamp)
+                Columns: Confirmed, Fatal, Recovered
+        """
+        df.loc[:, self.R] = sorted(df[self.R].abs())
+        df[self.R].interpolate(method="spline", order=1, inplace=True)
+        df[self.R] = df[self.R].fillna(0).round().astype(np.int64)
+        return df
