@@ -108,7 +108,7 @@ class JHUDataComplementHandler(Term):
         status_list = [
             f"{self.STATUS_NAME_DICT[score]} complemented {v.lower()} data"
             for (v, score) in status_dict.items() if score]
-        status = " and ".join(status_list)
+        status = " and \n".join(status_list)
         return (after_df, status)
 
     def _pre_processing(self, subset_df):
