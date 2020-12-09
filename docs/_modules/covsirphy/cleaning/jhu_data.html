@@ -168,6 +168,7 @@
 <span class="kn">from</span> <span class="nn">covsirphy.util.error</span> <span class="kn">import</span> <span class="n">SubsetNotFoundError</span>
 <span class="kn">from</span> <span class="nn">covsirphy.cleaning.cbase</span> <span class="kn">import</span> <span class="n">CleaningBase</span>
 <span class="kn">from</span> <span class="nn">covsirphy.cleaning.country_data</span> <span class="kn">import</span> <span class="n">CountryData</span>
+<span class="kn">from</span> <span class="nn">covsirphy.cleaning.jhu_complement</span> <span class="kn">import</span> <span class="n">JHUDataComplementHandler</span>
 
 
 <div class="viewcode-block" id="JHUData"><a class="viewcode-back" href="../../../covsirphy.cleaning.html#covsirphy.cleaning.jhu_data.JHUData">[docs]</a><span class="k">class</span> <span class="nc">JHUData</span><span class="p">(</span><span class="n">CleaningBase</span><span class="p">):</span>
@@ -323,15 +324,46 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_citation</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="se">\n</span><span class="si">{</span><span class="n">country_data</span><span class="o">.</span><span class="n">citation</span><span class="si">}</span><span class="s2">&quot;</span>
         <span class="k">return</span> <span class="bp">self</span></div>
 
-    <span class="k">def</span> <span class="nf">_subset</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">country</span><span class="p">,</span> <span class="n">province</span><span class="p">,</span> <span class="n">start_date</span><span class="p">,</span> <span class="n">end_date</span><span class="p">,</span> <span class="n">population</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">_subset</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">country</span><span class="p">,</span> <span class="n">province</span><span class="p">,</span> <span class="n">start_date</span><span class="p">,</span> <span class="n">end_date</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Return the subset of dataset.</span>
+<span class="sd">        Return the subset of dataset or empty dataframe (when no records were found).</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            country (str): country name or ISO3 code</span>
 <span class="sd">            province (str or None): province name</span>
 <span class="sd">            start_date (str or None): start date, like 22Jan2020</span>
 <span class="sd">            end_date (str or None): end date, like 01Feb2020</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            pandas.DataFrame</span>
+<span class="sd">                Index:</span>
+<span class="sd">                    reset index</span>
+<span class="sd">                Columns:</span>
+<span class="sd">                    - Date (pd.TimeStamp): Observation date</span>
+<span class="sd">                    - Confirmed (int): the number of confirmed cases</span>
+<span class="sd">                    - Infected (int): the number of currently infected cases</span>
+<span class="sd">                    - Fatal (int): the number of fatal cases</span>
+<span class="sd">                    - Recovered (int): the number of recovered cases</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="k">return</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">subset</span><span class="p">(</span>
+                <span class="n">country</span><span class="o">=</span><span class="n">country</span><span class="p">,</span> <span class="n">province</span><span class="o">=</span><span class="n">province</span><span class="p">,</span> <span class="n">start_date</span><span class="o">=</span><span class="n">start_date</span><span class="p">,</span> <span class="n">end_date</span><span class="o">=</span><span class="n">end_date</span><span class="p">)</span>
+        <span class="k">except</span> <span class="n">SubsetNotFoundError</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">NLOC_COLUMNS</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_calculate_susceptible</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">subset_df</span><span class="p">,</span> <span class="n">population</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Return the subset of dataset.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            subset_df (pandas.DataFrame)</span>
+<span class="sd">                Index: reset index</span>
+<span class="sd">                Columns:</span>
+<span class="sd">                    - Date (pd.TimeStamp): Observation date</span>
+<span class="sd">                    - Confirmed (int): the number of confirmed cases</span>
+<span class="sd">                    - Infected (int): the number of currently infected cases</span>
+<span class="sd">                    - Fatal (int): the number of fatal cases</span>
+<span class="sd">                    - Recovered (int): the number of recovered cases</span>
 <span class="sd">            population (int or None): population value</span>
 
 <span class="sd">        Returns:</span>
@@ -343,24 +375,16 @@
 <span class="sd">                    - Confirmed (int): the number of confirmed cases</span>
 <span class="sd">                    - Infected (int): the number of currently infected cases</span>
 <span class="sd">                    - Fatal (int): the number of fatal cases</span>
-<span class="sd">                    - Recovered (int): the number of recovered cases (&gt; 0)</span>
+<span class="sd">                    - Recovered (int): the number of recovered cases</span>
 <span class="sd">                    - Susceptible (int): the number of susceptible cases, if calculated</span>
 
 <span class="sd">        Notes:</span>
 <span class="sd">            If @population is not None, the number of susceptible cases will be calculated.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="c1"># Subset with area and start/end date</span>
-        <span class="k">try</span><span class="p">:</span>
-            <span class="n">df</span> <span class="o">=</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">subset</span><span class="p">(</span>
-                <span class="n">country</span><span class="o">=</span><span class="n">country</span><span class="p">,</span> <span class="n">province</span><span class="o">=</span><span class="n">province</span><span class="p">,</span> <span class="n">start_date</span><span class="o">=</span><span class="n">start_date</span><span class="p">,</span> <span class="n">end_date</span><span class="o">=</span><span class="n">end_date</span><span class="p">)</span>
-        <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
-            <span class="n">columns</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">NLOC_COLUMNS</span> <span class="k">if</span> <span class="n">population</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="bp">self</span><span class="o">.</span><span class="n">SUB_COLUMNS</span>
-            <span class="k">return</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="n">columns</span><span class="p">)</span>
-        <span class="c1"># Calculate Susceptible if population value was applied</span>
         <span class="k">if</span> <span class="n">population</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="k">return</span> <span class="n">df</span>
-        <span class="n">df</span><span class="o">.</span><span class="n">loc</span><span class="p">[:,</span> <span class="bp">self</span><span class="o">.</span><span class="n">S</span><span class="p">]</span> <span class="o">=</span> <span class="n">population</span> <span class="o">-</span> <span class="n">df</span><span class="o">.</span><span class="n">loc</span><span class="p">[:,</span> <span class="bp">self</span><span class="o">.</span><span class="n">C</span><span class="p">]</span>
-        <span class="k">return</span> <span class="n">df</span>
+            <span class="k">return</span> <span class="n">subset_df</span>
+        <span class="n">subset_df</span><span class="o">.</span><span class="n">loc</span><span class="p">[:,</span> <span class="bp">self</span><span class="o">.</span><span class="n">S</span><span class="p">]</span> <span class="o">=</span> <span class="n">population</span> <span class="o">-</span> <span class="n">subset_df</span><span class="o">.</span><span class="n">loc</span><span class="p">[:,</span> <span class="bp">self</span><span class="o">.</span><span class="n">C</span><span class="p">]</span>
+        <span class="k">return</span> <span class="n">subset_df</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">SUB_COLUMNS</span><span class="p">]</span>
 
 <div class="viewcode-block" id="JHUData.subset"><a class="viewcode-back" href="../../../covsirphy.cleaning.html#covsirphy.cleaning.jhu_data.JHUData.subset">[docs]</a>    <span class="k">def</span> <span class="nf">subset</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">country</span><span class="p">,</span> <span class="n">province</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">start_date</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">end_date</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">population</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
@@ -391,15 +415,15 @@
         <span class="n">country_alias</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ensure_country_name</span><span class="p">(</span><span class="n">country</span><span class="p">)</span>
         <span class="c1"># Subset with area, start/end date and calculate Susceptible</span>
         <span class="n">subset_df</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_subset</span><span class="p">(</span>
-            <span class="n">country</span><span class="o">=</span><span class="n">country</span><span class="p">,</span> <span class="n">province</span><span class="o">=</span><span class="n">province</span><span class="p">,</span>
-            <span class="n">start_date</span><span class="o">=</span><span class="n">start_date</span><span class="p">,</span> <span class="n">end_date</span><span class="o">=</span><span class="n">end_date</span><span class="p">,</span> <span class="n">population</span><span class="o">=</span><span class="n">population</span><span class="p">)</span>
+            <span class="n">country</span><span class="o">=</span><span class="n">country</span><span class="p">,</span> <span class="n">province</span><span class="o">=</span><span class="n">province</span><span class="p">,</span> <span class="n">start_date</span><span class="o">=</span><span class="n">start_date</span><span class="p">,</span> <span class="n">end_date</span><span class="o">=</span><span class="n">end_date</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">subset_df</span><span class="o">.</span><span class="n">empty</span><span class="p">:</span>
             <span class="k">raise</span> <span class="n">SubsetNotFoundError</span><span class="p">(</span>
                 <span class="n">country</span><span class="o">=</span><span class="n">country</span><span class="p">,</span> <span class="n">country_alias</span><span class="o">=</span><span class="n">country_alias</span><span class="p">,</span> <span class="n">province</span><span class="o">=</span><span class="n">province</span><span class="p">,</span>
                 <span class="n">start_date</span><span class="o">=</span><span class="n">start_date</span><span class="p">,</span> <span class="n">end_date</span><span class="o">=</span><span class="n">end_date</span><span class="p">)</span>
+        <span class="c1"># Calculate Susceptible</span>
+        <span class="n">df</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_calculate_susceptible</span><span class="p">(</span><span class="n">subset_df</span><span class="p">,</span> <span class="n">population</span><span class="p">)</span>
         <span class="c1"># Select records where Recovered &gt; 0</span>
-        <span class="n">df</span> <span class="o">=</span> <span class="n">subset_df</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">subset_df</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">R</span><span class="p">]</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">,</span> <span class="p">:]</span>
-        <span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">reset_index</span><span class="p">(</span><span class="n">drop</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">df</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">R</span><span class="p">]</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">,</span> <span class="p">:]</span><span class="o">.</span><span class="n">reset_index</span><span class="p">(</span><span class="n">drop</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">df</span><span class="o">.</span><span class="n">empty</span><span class="p">:</span>
             <span class="k">raise</span> <span class="n">SubsetNotFoundError</span><span class="p">(</span>
                 <span class="n">country</span><span class="o">=</span><span class="n">country</span><span class="p">,</span> <span class="n">country_alias</span><span class="o">=</span><span class="n">country_alias</span><span class="p">,</span> <span class="n">province</span><span class="o">=</span><span class="n">province</span><span class="p">,</span>
@@ -533,251 +557,6 @@
         <span class="c1"># Calculate mode value of closing period</span>
         <span class="k">return</span> <span class="nb">int</span><span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="s2">&quot;Elapsed&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">mode</span><span class="p">()</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">int64</span><span class="p">)</span><span class="o">.</span><span class="n">values</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span></div>
 
-    <span class="k">def</span> <span class="nf">_complement_non_monotonic</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">subset_df</span><span class="p">,</span> <span class="n">col</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Make the number of cases show monotonic increasing, if necessary.</span>
-
-<span class="sd">        Args:</span>
-<span class="sd">            subset_df (pandas.DataFrame): subset records with country, province and start/end dates</span>
-<span class="sd">                Index:</span>
-<span class="sd">                    reset index</span>
-<span class="sd">                Columns:</span>
-<span class="sd">                    - Date (pd.TimeStamp): Observation date</span>
-<span class="sd">                    - Confirmed (int): the number of confirmed cases</span>
-<span class="sd">                    - Fatal (int): the number of fatal cases</span>
-<span class="sd">                    - the other columns will be ignored</span>
-<span class="sd">            col (str): column name to show monotonic increasing</span>
-
-<span class="sd">        Returns:</span>
-<span class="sd">            pandas.DataFrame: index and columns are not changed from @subset_df</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="c1"># If the variable shows monotic increasing, complement will not be done</span>
-        <span class="k">if</span> <span class="n">subset_df</span><span class="p">[</span><span class="n">col</span><span class="p">]</span><span class="o">.</span><span class="n">is_monotonic_increasing</span><span class="p">:</span>
-            <span class="k">return</span> <span class="n">subset_df</span>
-        <span class="c1"># Complement</span>
-        <span class="n">df</span> <span class="o">=</span> <span class="n">subset_df</span><span class="o">.</span><span class="n">set_index</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">DATE</span><span class="p">)</span>
-        <span class="n">decreased_dates</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="n">df</span><span class="p">[</span><span class="n">col</span><span class="p">]</span><span class="o">.</span><span class="n">diff</span><span class="p">()</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span>
-        <span class="k">for</span> <span class="n">date</span> <span class="ow">in</span> <span class="n">decreased_dates</span><span class="p">:</span>
-            <span class="c1"># Raw value on the decreased date</span>
-            <span class="n">raw_last</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">date</span><span class="p">,</span> <span class="n">col</span><span class="p">]</span>
-            <span class="c1"># Extrapolated value on the date</span>
-            <span class="n">series</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">loc</span><span class="p">[:</span><span class="n">date</span><span class="p">,</span> <span class="n">col</span><span class="p">]</span>
-            <span class="n">series</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
-            <span class="n">series</span><span class="o">.</span><span class="n">interpolate</span><span class="p">(</span><span class="n">method</span><span class="o">=</span><span class="s2">&quot;spline&quot;</span><span class="p">,</span> <span class="n">order</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-            <span class="n">series</span><span class="o">.</span><span class="n">fillna</span><span class="p">(</span><span class="n">method</span><span class="o">=</span><span class="s2">&quot;ffill&quot;</span><span class="p">,</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-            <span class="c1"># Reduce values to the previous date</span>
-            <span class="n">df</span><span class="o">.</span><span class="n">loc</span><span class="p">[:</span><span class="n">date</span><span class="p">,</span> <span class="n">col</span><span class="p">]</span> <span class="o">=</span> <span class="n">series</span> <span class="o">*</span> <span class="n">raw_last</span> <span class="o">/</span> <span class="n">series</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
-            <span class="n">df</span><span class="p">[</span><span class="n">col</span><span class="p">]</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="n">col</span><span class="p">]</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">int64</span><span class="p">)</span>
-        <span class="c1"># Calculate Infected</span>
-        <span class="n">df</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">CI</span><span class="p">]</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">C</span><span class="p">]</span> <span class="o">-</span> <span class="n">df</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">F</span><span class="p">]</span> <span class="o">-</span> <span class="n">df</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">R</span><span class="p">]</span>
-        <span class="k">return</span> <span class="n">df</span><span class="o">.</span><span class="n">reset_index</span><span class="p">()</span>
-
-    <span class="k">def</span> <span class="nf">_complement_recovered_full</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">subset_df</span><span class="p">,</span> <span class="n">max_ignored</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Estimate the number of recovered cases with closing period, if necessary.</span>
-
-<span class="sd">        Args:</span>
-<span class="sd">            subset_df (pandas.DataFrame): subset records with country, province and start/end dates</span>
-<span class="sd">                Index:</span>
-<span class="sd">                    reset index</span>
-<span class="sd">                Columns:</span>
-<span class="sd">                    - Date (pd.TimeStamp): Observation date</span>
-<span class="sd">                    - Confirmed (int): the number of confirmed cases</span>
-<span class="sd">                    - Fatal (int): the number of fatal cases</span>
-<span class="sd">                    - the other columns will be ignored</span>
-<span class="sd">            max_ignored (int): max number of confirmed and recovered cases to be ignored [cases]</span>
-
-<span class="sd">        Returns:</span>
-<span class="sd">            pandas.DataFrame: index and columns are not changed from @subset_df</span>
-
-<span class="sd">        Notes:</span>
-<span class="sd">            Expected recovery period [days] should be applied with &#39;JHUData.recovery_period = 12&#39; as an example.</span>
-<span class="sd">            If not, mode value of closing (recovered/fatal) period will be used.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">c</span><span class="p">,</span> <span class="n">f</span><span class="p">,</span> <span class="n">r</span> <span class="o">=</span> <span class="n">subset_df</span><span class="p">[[</span><span class="bp">self</span><span class="o">.</span><span class="n">C</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">F</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">R</span><span class="p">]]</span><span class="o">.</span><span class="n">max</span><span class="p">()</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span>
-        <span class="k">if</span> <span class="n">r</span> <span class="o">&gt;</span> <span class="n">max_ignored</span> <span class="ow">and</span> <span class="n">r</span> <span class="o">&gt;</span> <span class="p">(</span><span class="n">c</span> <span class="o">-</span> <span class="n">f</span><span class="p">)</span> <span class="o">*</span> <span class="mf">0.1</span><span class="p">:</span>
-            <span class="c1"># Check if sum of recovered is more than 99%</span>
-            <span class="c1"># of sum of recovered and infected when outbreaking</span>
-            <span class="n">sel_1</span> <span class="o">=</span> <span class="n">subset_df</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">C</span><span class="p">]</span> <span class="o">&gt;</span> <span class="n">max_ignored</span>
-            <span class="n">sel_2</span> <span class="o">=</span> <span class="n">subset_df</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">C</span><span class="p">]</span><span class="o">.</span><span class="n">diff</span><span class="p">()</span><span class="o">.</span><span class="n">diff</span><span class="p">()</span><span class="o">.</span><span class="n">rolling</span><span class="p">(</span><span class="mi">14</span><span class="p">)</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span> <span class="o">&gt;</span> <span class="mi">0</span>
-            <span class="n">_df</span> <span class="o">=</span> <span class="n">subset_df</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">sel_1</span> <span class="o">&amp;</span> <span class="n">sel_2</span><span class="p">]</span>
-            <span class="n">_df</span> <span class="o">=</span> <span class="n">_df</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">_df</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">R</span><span class="p">]</span> <span class="o">&gt;</span> <span class="mf">0.99</span> <span class="o">*</span> <span class="p">(</span><span class="n">_df</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">C</span><span class="p">]</span> <span class="o">-</span> <span class="n">_df</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">F</span><span class="p">])]</span>
-            <span class="k">if</span> <span class="n">_df</span><span class="o">.</span><span class="n">empty</span><span class="p">:</span>
-                <span class="k">return</span> <span class="n">subset_df</span>
-        <span class="n">df</span> <span class="o">=</span> <span class="n">subset_df</span><span class="o">.</span><span class="n">set_index</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">DATE</span><span class="p">)</span>
-        <span class="c1"># Closing period</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_recovery_period</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_recovery_period</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">calculate_closing_period</span><span class="p">()</span>
-        <span class="c1"># Estimate recovered records</span>
-        <span class="n">df</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">R</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">C</span><span class="p">]</span> <span class="o">-</span> <span class="n">df</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">F</span><span class="p">])</span><span class="o">.</span><span class="n">shift</span><span class="p">(</span>
-            <span class="n">periods</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_recovery_period</span><span class="p">,</span> <span class="n">freq</span><span class="o">=</span><span class="s2">&quot;D&quot;</span><span class="p">)</span>
-        <span class="c1"># Apply absolute value to recovered records and sort them in ascending order</span>
-        <span class="n">df</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">R</span><span class="p">]</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">R</span><span class="p">]</span><span class="o">.</span><span class="n">abs</span><span class="p">()</span>
-        <span class="n">df</span><span class="o">.</span><span class="n">loc</span><span class="p">[:,</span> <span class="bp">self</span><span class="o">.</span><span class="n">R</span><span class="p">]</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">R</span><span class="p">])</span>
-        <span class="n">df</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">R</span><span class="p">]</span><span class="o">.</span><span class="n">interpolate</span><span class="p">(</span><span class="n">method</span><span class="o">=</span><span class="s2">&quot;spline&quot;</span><span class="p">,</span> <span class="n">order</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-        <span class="n">df</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">R</span><span class="p">]</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">R</span><span class="p">]</span><span class="o">.</span><span class="n">fillna</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">int64</span><span class="p">)</span>
-        <span class="n">df</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_complement_non_monotonic</span><span class="p">(</span>
-            <span class="n">df</span><span class="o">.</span><span class="n">reset_index</span><span class="p">(),</span> <span class="n">col</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">R</span><span class="p">)</span><span class="o">.</span><span class="n">set_index</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">DATE</span><span class="p">)</span>
-        <span class="c1"># Re-calculate infected records</span>
-        <span class="n">df</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">CI</span><span class="p">]</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">C</span><span class="p">]</span> <span class="o">-</span> <span class="n">df</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">F</span><span class="p">]</span> <span class="o">-</span> <span class="n">df</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">R</span><span class="p">]</span>
-        <span class="k">return</span> <span class="n">df</span><span class="o">.</span><span class="n">reset_index</span><span class="p">()</span>
-
-    <span class="k">def</span> <span class="nf">_complement_recovered_partial</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">subset_df</span><span class="p">,</span> <span class="n">interval</span><span class="p">,</span> <span class="n">max_ignored</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Complement the number of recovered cases when not updated, if necessary.</span>
-
-<span class="sd">        Args:</span>
-<span class="sd">            subset_df (pandas.DataFrame): subset records with country, province and start/end dates</span>
-<span class="sd">                Index:</span>
-<span class="sd">                    reset index</span>
-<span class="sd">                Columns:</span>
-<span class="sd">                    - Date (pd.TimeStamp): Observation date</span>
-<span class="sd">                    - Confirmed (int): the number of confirmed cases</span>
-<span class="sd">                    - Fatal (int): the number of fatal cases</span>
-<span class="sd">                    - the other columns will be ignored</span>
-<span class="sd">            interval (int): expected update interval of the number of recovered cases [days]</span>
-<span class="sd">            max_ignored (int): Max number of recovered cases to be ignored [cases]</span>
-
-<span class="sd">        Returns:</span>
-<span class="sd">            pandas.DataFrame: index and columns are not changed from @subset_df</span>
-
-<span class="sd">        Notes:</span>
-<span class="sd">            If the number of recovered cases did not change</span>
-<span class="sd">            for more than @interval days after reached @max_ignored cases,</span>
-<span class="sd">            complement will be applied to the number of recovered cases.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">df</span> <span class="o">=</span> <span class="n">subset_df</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
-        <span class="c1"># If updated, do not perform complement</span>
-        <span class="n">series</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">df</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">R</span><span class="p">]</span> <span class="o">&gt;</span> <span class="n">max_ignored</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">R</span><span class="p">]</span>
-        <span class="n">max_frequency</span> <span class="o">=</span> <span class="n">series</span><span class="o">.</span><span class="n">value_counts</span><span class="p">()</span><span class="o">.</span><span class="n">max</span><span class="p">()</span>
-        <span class="k">if</span> <span class="n">max_frequency</span> <span class="o">&lt;=</span> <span class="n">interval</span><span class="p">:</span>
-            <span class="k">return</span> <span class="n">subset_df</span>
-        <span class="c1"># Complement</span>
-        <span class="n">df</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">df</span><span class="o">.</span><span class="n">duplicated</span><span class="p">([</span><span class="bp">self</span><span class="o">.</span><span class="n">R</span><span class="p">],</span> <span class="n">keep</span><span class="o">=</span><span class="s2">&quot;last&quot;</span><span class="p">),</span> <span class="bp">self</span><span class="o">.</span><span class="n">R</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
-        <span class="n">df</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">R</span><span class="p">]</span><span class="o">.</span><span class="n">interpolate</span><span class="p">(</span>
-            <span class="n">method</span><span class="o">=</span><span class="s2">&quot;linear&quot;</span><span class="p">,</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">limit_direction</span><span class="o">=</span><span class="s2">&quot;both&quot;</span><span class="p">)</span>
-        <span class="n">df</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">R</span><span class="p">]</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">R</span><span class="p">]</span><span class="o">.</span><span class="n">fillna</span><span class="p">(</span><span class="n">method</span><span class="o">=</span><span class="s2">&quot;bfill&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">round</span><span class="p">()</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">int64</span><span class="p">)</span>
-        <span class="c1"># Calculate Infected</span>
-        <span class="n">df</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">CI</span><span class="p">]</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">C</span><span class="p">]</span> <span class="o">-</span> <span class="n">df</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">F</span><span class="p">]</span> <span class="o">-</span> <span class="n">df</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">R</span><span class="p">]</span>
-        <span class="k">return</span> <span class="n">df</span>
-
-    <span class="k">def</span> <span class="nf">_complement_recovered_sort</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">subset_df</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Sort the values of recovered data.</span>
-
-<span class="sd">        Args:</span>
-<span class="sd">            subset_df (pandas.DataFrame): subset records with country, province and start/end dates</span>
-<span class="sd">                Index:</span>
-<span class="sd">                    reset index</span>
-<span class="sd">                Columns:</span>
-<span class="sd">                    - Date (pd.TimeStamp): Observation date</span>
-<span class="sd">                    - Confirmed (int): the number of confirmed cases</span>
-<span class="sd">                    - Fatal (int): the number of fatal cases</span>
-<span class="sd">                    - the other columns will be ignored</span>
-
-<span class="sd">        Returns:</span>
-<span class="sd">            pandas.DataFrame: index and columns are not changed from @subset_df</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">df</span> <span class="o">=</span> <span class="n">subset_df</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
-        <span class="n">df</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">R</span><span class="p">]</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">R</span><span class="p">]</span><span class="o">.</span><span class="n">abs</span><span class="p">()</span>
-        <span class="n">df</span><span class="o">.</span><span class="n">loc</span><span class="p">[:,</span> <span class="bp">self</span><span class="o">.</span><span class="n">R</span><span class="p">]</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">R</span><span class="p">])</span>
-        <span class="c1"># Calculate infected data</span>
-        <span class="n">df</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">CI</span><span class="p">]</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">C</span><span class="p">]</span> <span class="o">-</span> <span class="n">df</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">F</span><span class="p">]</span> <span class="o">-</span> <span class="n">df</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">R</span><span class="p">]</span>
-        <span class="k">return</span> <span class="n">df</span>
-
-    <span class="k">def</span> <span class="nf">_complement_apply</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">subset_df</span><span class="p">,</span> <span class="n">func</span><span class="p">,</span> <span class="n">point_performed</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Perform complement with the function, if necessary.</span>
-
-<span class="sd">        Args:</span>
-<span class="sd">            subset_df (pandas.DataFrame): Subset of records</span>
-<span class="sd">                Index: reset index</span>
-<span class="sd">                Columns:</span>
-<span class="sd">                    - Date (pd.TimeStamp): Observation date</span>
-<span class="sd">                    - Confirmed (int): the number of confirmed cases</span>
-<span class="sd">                    - Infected (int): the number of currently infected cases</span>
-<span class="sd">                    - Fatal (int): the number of fatal cases</span>
-<span class="sd">                    - Recovered (int): the number of recovered cases</span>
-<span class="sd">                    - Susceptible (int): the number of susceptible cases, if @subset_df has</span>
-<span class="sd">            func (function): function to perform complement</span>
-<span class="sd">            point_performed (int): point when complement was done</span>
-<span class="sd">            kwargs: keyword arguments of the function</span>
-
-<span class="sd">        Returns:</span>
-<span class="sd">            tuple(pandas.DataFrame, bool):</span>
-<span class="sd">                pandas.DataFrame: index and columns are not changed from @subset_df</span>
-<span class="sd">                bool: If performed, return @point_performed. If not, return 0.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">df</span> <span class="o">=</span> <span class="n">func</span><span class="p">(</span><span class="n">subset_df</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
-        <span class="n">point</span> <span class="o">=</span> <span class="mi">0</span> <span class="k">if</span> <span class="n">df</span><span class="o">.</span><span class="n">equals</span><span class="p">(</span><span class="n">subset_df</span><span class="p">)</span> <span class="k">else</span> <span class="n">point_performed</span>
-        <span class="k">return</span> <span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">point</span><span class="p">)</span>
-
-    <span class="k">def</span> <span class="nf">_complement_handle</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">subset_df</span><span class="p">,</span> <span class="n">interval</span><span class="p">,</span> <span class="n">max_ignored</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Perform complement, if necessary.</span>
-
-<span class="sd">        Args:</span>
-<span class="sd">            subset_df (pandas.DataFrame): Subset of records</span>
-<span class="sd">                Index: reset index</span>
-<span class="sd">                Columns:</span>
-<span class="sd">                    - Date (pd.TimeStamp): Observation date</span>
-<span class="sd">                    - Confirmed (int): the number of confirmed cases</span>
-<span class="sd">                    - Infected (int): the number of currently infected cases</span>
-<span class="sd">                    - Fatal (int): the number of fatal cases</span>
-<span class="sd">                    - Recovered (int): the number of recovered cases</span>
-<span class="sd">                    - Susceptible (int): the number of susceptible cases, if @subset_df has</span>
-<span class="sd">            interval (int): expected update interval of the number of recovered cases [days]</span>
-<span class="sd">            max_ignored (int): Max number of recovered cases to be ignored [cases]</span>
-
-<span class="sd">        Returns:</span>
-<span class="sd">            tuple(pandas.DataFrame, str):</span>
-<span class="sd">                pandas.DataFrame: index and columns are not changed from @subset_df</span>
-<span class="sd">                str: kind of complement</span>
-
-<span class="sd">        Notes:</span>
-<span class="sd">            The kinds of complement are</span>
-<span class="sd">                - &#39;&#39; (not complemented)</span>
-<span class="sd">                - &#39;monotonic increasing complemented confirmed data&#39;</span>
-<span class="sd">                - &#39;monotonic increasing complemented fatal data&#39;</span>
-<span class="sd">                - &#39;monotonic increasing complemented recovered data&#39;</span>
-<span class="sd">                - &#39;fully complemented recovered data&#39;</span>
-<span class="sd">                - &#39;partially complemented recovered data&#39;</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">df</span> <span class="o">=</span> <span class="n">subset_df</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
-        <span class="n">status_dict</span> <span class="o">=</span> <span class="nb">dict</span><span class="o">.</span><span class="n">fromkeys</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">MONO_COLUMNS</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
-        <span class="n">status_name_dict</span> <span class="o">=</span> <span class="p">{</span>
-            <span class="mi">1</span><span class="p">:</span> <span class="s2">&quot;sorting&quot;</span><span class="p">,</span>
-            <span class="mi">2</span><span class="p">:</span> <span class="s2">&quot;monotonic increasing&quot;</span><span class="p">,</span>
-            <span class="mi">3</span><span class="p">:</span> <span class="s2">&quot;partially&quot;</span><span class="p">,</span>
-            <span class="mi">4</span><span class="p">:</span> <span class="s2">&quot;fully&quot;</span><span class="p">,</span>
-        <span class="p">}</span>
-        <span class="c1"># Complement for monotonic increasing</span>
-        <span class="k">for</span> <span class="n">variable</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">MONO_COLUMNS</span><span class="p">:</span>
-            <span class="n">df</span><span class="p">,</span> <span class="n">point</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_complement_apply</span><span class="p">(</span>
-                <span class="n">df</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_complement_non_monotonic</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="n">col</span><span class="o">=</span><span class="n">variable</span><span class="p">)</span>
-            <span class="n">status_dict</span><span class="p">[</span><span class="n">variable</span><span class="p">]</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">status_dict</span><span class="p">[</span><span class="n">variable</span><span class="p">],</span> <span class="n">point</span><span class="p">)</span>
-        <span class="c1"># Full complement of recovered data</span>
-        <span class="n">df</span><span class="p">,</span> <span class="n">point</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_complement_apply</span><span class="p">(</span>
-            <span class="n">df</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_complement_recovered_full</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="n">max_ignored</span><span class="o">=</span><span class="n">max_ignored</span><span class="p">)</span>
-        <span class="n">status_dict</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">R</span><span class="p">]</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">status_dict</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">R</span><span class="p">],</span> <span class="n">point</span><span class="p">)</span>
-        <span class="c1"># Partial complement of recovered data</span>
-        <span class="n">df</span><span class="p">,</span> <span class="n">point</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_complement_apply</span><span class="p">(</span>
-            <span class="n">df</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_complement_recovered_partial</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="n">interval</span><span class="o">=</span><span class="n">interval</span><span class="p">,</span> <span class="n">max_ignored</span><span class="o">=</span><span class="n">max_ignored</span><span class="p">)</span>
-        <span class="n">status_dict</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">R</span><span class="p">]</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">status_dict</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">R</span><span class="p">],</span> <span class="n">point</span><span class="p">)</span>
-        <span class="c1"># Apply absolute value to recovered records and sort them in ascending order</span>
-        <span class="n">df</span><span class="p">,</span> <span class="n">point</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_complement_apply</span><span class="p">(</span>
-            <span class="n">df</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_complement_recovered_sort</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
-        <span class="n">status_dict</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">R</span><span class="p">]</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">status_dict</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">R</span><span class="p">],</span> <span class="n">point</span><span class="p">)</span>
-        <span class="c1"># Check the kind of complement</span>
-        <span class="k">if</span> <span class="ow">not</span> <span class="nb">sum</span><span class="p">(</span><span class="n">status_dict</span><span class="o">.</span><span class="n">values</span><span class="p">()):</span>
-            <span class="n">status</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="n">status_list</span> <span class="o">=</span> <span class="p">[</span>
-                <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">status_name_dict</span><span class="p">[</span><span class="n">score</span><span class="p">]</span><span class="si">}</span><span class="s2"> complemented </span><span class="si">{</span><span class="n">v</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span><span class="si">}</span><span class="s2"> data&quot;</span>
-                <span class="k">for</span> <span class="p">(</span><span class="n">v</span><span class="p">,</span> <span class="n">score</span><span class="p">)</span> <span class="ow">in</span> <span class="n">status_dict</span><span class="o">.</span><span class="n">items</span><span class="p">()</span> <span class="k">if</span> <span class="n">score</span>
-            <span class="p">]</span>
-            <span class="n">status</span> <span class="o">=</span> <span class="s2">&quot; and &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">status_list</span><span class="p">)</span>
-        <span class="k">return</span> <span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">status</span><span class="p">)</span>
-
 <div class="viewcode-block" id="JHUData.subset_complement"><a class="viewcode-back" href="../../../covsirphy.cleaning.html#covsirphy.cleaning.jhu_data.JHUData.subset_complement">[docs]</a>    <span class="k">def</span> <span class="nf">subset_complement</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">country</span><span class="p">,</span> <span class="n">province</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
                           <span class="n">start_date</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">end_date</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">population</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
                           <span class="n">interval</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">max_ignored</span><span class="o">=</span><span class="mi">100</span><span class="p">):</span>
@@ -817,20 +596,24 @@
         <span class="c1"># Subset with area, start/end date and calculate Susceptible</span>
         <span class="n">country_alias</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ensure_country_name</span><span class="p">(</span><span class="n">country</span><span class="p">)</span>
         <span class="n">subset_df</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_subset</span><span class="p">(</span>
-            <span class="n">country</span><span class="o">=</span><span class="n">country</span><span class="p">,</span> <span class="n">province</span><span class="o">=</span><span class="n">province</span><span class="p">,</span>
-            <span class="n">start_date</span><span class="o">=</span><span class="n">start_date</span><span class="p">,</span> <span class="n">end_date</span><span class="o">=</span><span class="n">end_date</span><span class="p">,</span> <span class="n">population</span><span class="o">=</span><span class="n">population</span><span class="p">)</span>
+            <span class="n">country</span><span class="o">=</span><span class="n">country</span><span class="p">,</span> <span class="n">province</span><span class="o">=</span><span class="n">province</span><span class="p">,</span> <span class="n">start_date</span><span class="o">=</span><span class="n">start_date</span><span class="p">,</span> <span class="n">end_date</span><span class="o">=</span><span class="n">end_date</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">subset_df</span><span class="o">.</span><span class="n">empty</span><span class="p">:</span>
             <span class="k">raise</span> <span class="n">SubsetNotFoundError</span><span class="p">(</span>
                 <span class="n">country</span><span class="o">=</span><span class="n">country</span><span class="p">,</span> <span class="n">country_alias</span><span class="o">=</span><span class="n">country_alias</span><span class="p">,</span> <span class="n">province</span><span class="o">=</span><span class="n">province</span><span class="p">,</span>
                 <span class="n">start_date</span><span class="o">=</span><span class="n">start_date</span><span class="p">,</span> <span class="n">end_date</span><span class="o">=</span><span class="n">end_date</span><span class="p">)</span> <span class="kn">from</span> <span class="bp">None</span>
         <span class="c1"># Complement, if necessary</span>
-        <span class="n">df</span><span class="p">,</span> <span class="n">status</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_complement_handle</span><span class="p">(</span>
-            <span class="n">subset_df</span><span class="p">,</span> <span class="n">interval</span><span class="o">=</span><span class="n">interval</span><span class="p">,</span> <span class="n">max_ignored</span><span class="o">=</span><span class="n">max_ignored</span><span class="p">)</span>
+        <span class="n">handler</span> <span class="o">=</span> <span class="n">JHUDataComplementHandler</span><span class="p">(</span>
+            <span class="n">recovery_period</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_recovery_period</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">calculate_closing_period</span><span class="p">(),</span>
+            <span class="n">interval</span><span class="o">=</span><span class="n">interval</span><span class="p">,</span>
+            <span class="n">max_ignored</span><span class="o">=</span><span class="n">max_ignored</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="n">df</span><span class="p">,</span> <span class="n">status</span> <span class="o">=</span> <span class="n">handler</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">subset_df</span><span class="p">)</span>
+        <span class="c1"># Calculate Susceptible</span>
+        <span class="n">df</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_calculate_susceptible</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">population</span><span class="p">)</span>
         <span class="c1"># Kind of complement or False</span>
         <span class="n">is_complemented</span> <span class="o">=</span> <span class="n">status</span> <span class="ow">or</span> <span class="kc">False</span>
         <span class="c1"># Select records where Recovered &gt; 0</span>
-        <span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">df</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">R</span><span class="p">]</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">,</span> <span class="p">:]</span>
-        <span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">reset_index</span><span class="p">(</span><span class="n">drop</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">df</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">R</span><span class="p">]</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">,</span> <span class="p">:]</span><span class="o">.</span><span class="n">reset_index</span><span class="p">(</span><span class="n">drop</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
         <span class="k">return</span> <span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">is_complemented</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="JHUData.records"><a class="viewcode-back" href="../../../covsirphy.cleaning.html#covsirphy.cleaning.jhu_data.JHUData.records">[docs]</a>    <span class="k">def</span> <span class="nf">records</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">country</span><span class="p">,</span> <span class="n">province</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">start_date</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">end_date</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">population</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
