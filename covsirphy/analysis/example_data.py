@@ -200,3 +200,17 @@ class ExampleData(JHUData):
         country, _ = self._model_to_area(
             model=model, country=country, province=province)
         return super().subset(country=country, province=province, **kwargs)
+
+    def subset_complement(self, **kwargs):
+        """
+        This is the same as ExampleData.subset().
+        Complement will not be done.
+        """
+        return self.subset(**kwargs)
+
+    def records(self, **kwargs):
+        """
+        This is the same as ExampleData.subset().
+        Complement will not be done.
+        """
+        return self.subset(**kwargs)
