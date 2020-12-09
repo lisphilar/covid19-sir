@@ -3,6 +3,7 @@
 
 import pandas as pd
 from covsirphy.util.error import SubsetNotFoundError
+from covsirphy.util.argument import find_args
 from covsirphy.cleaning.jhu_data import JHUData
 from covsirphy.ode.mbase import ModelBase
 from covsirphy.simulation.simulator import ODESimulator
@@ -199,6 +200,7 @@ class ExampleData(JHUData):
         """
         country, _ = self._model_to_area(
             model=model, country=country, province=province)
+        kwargs = find_args([super().subset], **kwargs)
         return super().subset(country=country, province=province, **kwargs)
 
     def subset_complement(self, **kwargs):
@@ -206,11 +208,11 @@ class ExampleData(JHUData):
         This is the same as ExampleData.subset().
         Complement will not be done.
         """
-        return self.subset(**kwargs)
+        return (self.subset(**kwargs), False)
 
     def records(self, **kwargs):
         """
         This is the same as ExampleData.subset().
         Complement will not be done.
         """
-        return self.subset(**kwargs)
+        return (self.subset(**kwargs), False)
