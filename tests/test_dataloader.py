@@ -105,6 +105,13 @@ class TestExampleData(object):
         example_data.add(SIRF, country="Moon")
         assert example_data.country_to_iso3("Moon") == "---"
 
+    def test_subset(self):
+        example_data = ExampleData()
+        example_data.add(SIRF, country="Japan")
+        example_data.subset(country="Japan")
+        example_data.subset_complement(country="Japan")
+        example_data.records(country="Japan")
+
 
 class TestJHUData(object):
     def test_cleaning(self, jhu_data):
