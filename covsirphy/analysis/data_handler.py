@@ -192,6 +192,9 @@ class DataHandler(Term):
         df = df.rolling(window=window).mean().dropna().astype(np.int64)
         if not show_figure:
             return df
-        title = f"{self.area}: Daily new cases{' (complemented)' if self._complemented else ''}"
+        if self._complemented:
+            title = f"{self.area}: Daily new cases\nwith {self._complemented}"
+        else:
+            title = f"{self.area}: Daily new cases"
         line_plot(df, title, y_integer=True, filename=filename)
         return df
