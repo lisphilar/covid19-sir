@@ -10,6 +10,7 @@ from covsirphy.cleaning.term import Term
 from covsirphy.cleaning.jhu_data import JHUData
 from covsirphy.cleaning.oxcgrt import OxCGRTData
 from covsirphy.cleaning.population import PopulationData
+from covsirphy.cleaning.pcr_data import PCRData
 
 
 class COVID19DataHub(Term):
@@ -30,6 +31,7 @@ class COVID19DataHub(Term):
         "jhu": JHUData,
         "population": PopulationData,
         "oxcgrt": OxCGRTData,
+        "pcr": PCRData,
     }
 
     def __init__(self, filename):
@@ -46,7 +48,7 @@ class COVID19DataHub(Term):
         Load the datasets of COVID-19 Data Hub.
 
         Args:
-            name (str): name of dataset, "jhu", "population" or "oxcgrt"
+            name (str): name of dataset, "jhu", "population", "oxcgrt" or "pcr"
             force (bool): if True, always download the dataset from the server
             verbose (int): level of verbosity
 
@@ -89,6 +91,7 @@ class COVID19DataHub(Term):
         # All columns: https://covid19datahub.io/articles/doc/data.html
         col_dict = {
             "date": "ObservationDate",
+            "tests": "Tests",
             "confirmed": "Confirmed",
             "recovered": "Recovered",
             "deaths": "Deaths",
@@ -127,9 +130,9 @@ class COVID19DataHub(Term):
         """
         warnings.simplefilter("ignore", ResourceWarning)
         c_res = covid19dh.covid19(
-            country=None, level=1, verbose=False, raw=False)
+            country=None, level=1, verbose=False, raw=True)
         p_res = covid19dh.covid19(
-            country=None, level=2, verbose=False, raw=False)
+            country=None, level=2, verbose=False, raw=True)
         try:
             c_df, c_cite = c_res
             p_df, p_cite = p_res
@@ -146,7 +149,7 @@ class COVID19DataHub(Term):
         cite.drop_duplicates(subset="title", inplace=True)
         series = cite.apply(lambda x: f"{x[0]} ({x[1]}), {x[2]}", axis=1)
         return (c_df, p_df, "\n".join(series.tolist()))
-
+    
     @property
     def primary(self):
         """
