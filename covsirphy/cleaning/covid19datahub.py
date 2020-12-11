@@ -130,9 +130,9 @@ class COVID19DataHub(Term):
         """
         warnings.simplefilter("ignore", ResourceWarning)
         c_res = covid19dh.covid19(
-            country=None, level=1, verbose=False, raw=True)
+            country=None, level=1, verbose=False, raw=False)
         p_res = covid19dh.covid19(
-            country=None, level=2, verbose=False, raw=True)
+            country=None, level=2, verbose=False, raw=False)
         try:
             c_df, c_cite = c_res
             p_df, p_cite = p_res
@@ -149,7 +149,7 @@ class COVID19DataHub(Term):
         cite.drop_duplicates(subset="title", inplace=True)
         series = cite.apply(lambda x: f"{x[0]} ({x[1]}), {x[2]}", axis=1)
         return (c_df, p_df, "\n".join(series.tolist()))
-    
+
     @property
     def primary(self):
         """

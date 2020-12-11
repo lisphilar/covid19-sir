@@ -165,9 +165,7 @@ class PCRData(CleaningBase):
                 axis=1
             )
             # Confirm the expected columns are in raw data
-            expected_cols = [
-                self.DATE, self.COUNTRY, self.PROVINCE, self.TESTS, self.C
-            ]
+            expected_cols = self.PCR_COLUMNS
             self.ensure_dataframe(new, name="the raw data", columns=expected_cols)
             
         new[self.ISO3] = self.country_to_iso3(country)
@@ -287,12 +285,8 @@ class PCRData(CleaningBase):
         """
         df.fillna(0, inplace=True)
         max_frequency = df[variable].value_counts().max()
-        if ((max_frequency <= self.interval) & (df[variable].tail(1) != 0)).bool():
-            is_complemented = False
-            return (df, is_complemented)
-        # Complement
-        is_complemented = True
-        return (df, is_complemented)
+        need_complement = max_frequency > self.interval or not df.loc[df.index[-1], variable]
+        return (df, need_complement)
     
     def pcr_partial_complement(self, df, variable, method=None):
         """
@@ -380,20 +374,26 @@ class PCRData(CleaningBase):
         """
         window = self.ensure_natural_int(window, name="window")
         df = self.records(country, province)[0]
-        if df[self.TESTS].max() == 0:
+        
+        if not df[self.TESTS].max():
             print("No tests records found for country " + country) if not province else print("No tests records found for province " + province)
             df["PCR_Rate"] = 0
             return df
-        
+
         # Check if there are too many missing value, more than half
-        if len(np.where(df[self.TESTS] == 0)[0]) >= len(df[self.TESTS])/2:
+        if (df[self.TESTS] == 0).mean() >= 0.5:
             print("Too many missing tests records for country " + country) if not province else print("Too many missing tests records for province " + province) 
             df["PCR_Rate"] = 0
             return df
         
         # Confirmed must be monotonically increasing
+        if df[self.C].iloc[-1] == 0:
+            df[self.C].iloc[-1] = df[self.C].iloc[-2]
         df = self.pcr_monotonic(df, self.C)
-        df, is_Tests_complemented = self.pcr_partial_complement(df, "Tests")
+        df, is_complemented = self.pcr_partial_complement(df, self.TESTS)
+        # If Tests values are all valid, with no missing values in-between,
+        # they must be monotonically increasing as well
+        df = self.pcr_monotonic(df, self.TESTS)
         
         # Calculate daily values for tests and confirmed (with window=1)
         df["Tests_diff"] = df[self.TESTS].diff()
@@ -411,12 +411,12 @@ class PCRData(CleaningBase):
         # Keep valid non-zero values by complementing zeros at the end
         if non_zero_index_end < (len(df)-1):
             df.loc[non_zero_index_end+1:, "Tests_diff"] = None
-        df, is_Tests_complemented = self.pcr_partial_complement(df, "Tests_diff")
+        df, is_complemented = self.pcr_partial_complement(df, "Tests_diff")
         
         # Use rolling window for averaging tests and confirmed
         df["Tests_diff"] = df["Tests_diff"].rolling(window).mean()
         df["C_diff"] = df["C_diff"].rolling(window).mean()
-        df, is_Tests_complemented = self.pcr_partial_complement(df, "Tests_diff")
+        df, is_complemented = self.pcr_partial_complement(df, "Tests_diff")
         
         # Remove first zero lines due to window
         df = df.replace(0,np.nan)
@@ -424,11 +424,11 @@ class PCRData(CleaningBase):
         df = df.loc[non_zero_index_start:].reset_index(drop=True)
         
         # Calculate PCR values
-        df["PCR_Rate"] = [(abs(i) / abs(j)) * 100 for i, j in zip(df["C_diff"], df["Tests_diff"])]
+        df["PCR_Rate"] = [(i / j) * 100 for i, j in zip(df["C_diff"], df["Tests_diff"])]
         
         if not show_figure:
             return df
-        title = f"{country if not province else province}: Positive Rate (%) over time{' (Tests partially complemented)' if is_Tests_complemented else ''}"
+        title = f"{country if not province else province}: Positive Rate (%) over time{' (Tests partially complemented)' if is_complemented else ''}"
         line_plot(
             df.set_index(self.DATE)["PCR_Rate"],
             title,

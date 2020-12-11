@@ -119,7 +119,7 @@ class JHUData(CleaningBase):
         df.loc[df[self.COUNTRY] == "Diamond Princess", [
             self.COUNTRY, self.PROVINCE]] = ["Others", "Diamond Princess"]
         # Values
-        df = df.fillna(0)
+        df = df.fillna(method="ffill").fillna(0)
         df[self.CI] = df[self.C] - df[self.F] - df[self.R]
         df[self.VALUE_COLUMNS] = df[self.VALUE_COLUMNS].astype(np.int64)
         df = df.loc[:, [self.ISO3, *self.COLUMNS]].reset_index(drop=True)
