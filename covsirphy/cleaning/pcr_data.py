@@ -334,7 +334,6 @@ class PCRData(CleaningBase):
                         - Date(pd.TimeStamp): Observation date
                         - Tests (int): the number of total tests performed
                         - Confirmed(int): the number of confirmed cases
-                str/bool: kind of complement or False
         """
         country_alias = self.ensure_country_name(country)
         subset_arg_dict = {
@@ -342,21 +341,21 @@ class PCRData(CleaningBase):
             "start_date": start_date, "end_date": end_date,
         }
         try:
-            return (self.subset(**subset_arg_dict), False)
+            return self.subset(**subset_arg_dict)
         except ValueError:
             raise SubsetNotFoundError(
                 country=country, country_alias=country_alias, province=province,
                 start_date=start_date, end_date=end_date) from None
 
-    def positive_rate(self, country, province=None, window=3, show_figure=True, filename=None):
+    def pcr_processing(self, df, window):
         """
-        Return the PCR rate of a country as a dataframe.
+        Return the processed pcr data
 
         Args:
-            country(str): country name or ISO3 code
             window (int): window of moving average, >= 1
-            show_figure (bool): if True, show the records as a line-plot.
-            filename (str): filename of the figure, or None (show figure)
+            df (pandas.DataFrame):
+                Index: Date (pandas.TimeStamp)
+                Columns: Tests, Confirmed
 
         Returns:
             pandas.DataFrame
@@ -367,25 +366,8 @@ class PCRData(CleaningBase):
                     - Tests (int): the number of total tests performed
                     - Confirmed (int): the number of confirmed cases
                     - PCR_Rate (float): positive rate (%) of the daily cases over the total daily tests performed
-
-        Notes:
-            If non monotonic records were found for either cases or tests,
-            "(complemented)" will be added to the title of the figure.
+            bool: True if complement is needed or False
         """
-        window = self.ensure_natural_int(window, name="window")
-        df = self.records(country, province)[0]
-        
-        if not df[self.TESTS].max():
-            print("No tests records found for country " + country) if not province else print("No tests records found for province " + province)
-            df["PCR_Rate"] = 0
-            return df
-
-        # Check if there are too many missing value, more than half
-        if (df[self.TESTS] == 0).mean() >= 0.5:
-            print("Too many missing tests records for country " + country) if not province else print("Too many missing tests records for province " + province) 
-            df["PCR_Rate"] = 0
-            return df
-        
         # Confirmed must be monotonically increasing
         if df[self.C].iloc[-1] == 0:
             df[self.C].iloc[-1] = df[self.C].iloc[-2]
@@ -422,6 +404,48 @@ class PCRData(CleaningBase):
         df = df.replace(0,np.nan)
         non_zero_index_start = df["Tests_diff"].first_valid_index()
         df = df.loc[non_zero_index_start:].reset_index(drop=True)
+        
+        return (df, is_complemented)
+        
+    def positive_rate(self, country, province=None, window=3, show_figure=True, filename=None):
+        """
+        Return the PCR rate of a country as a dataframe.
+
+        Args:
+            country(str): country name or ISO3 code
+            window (int): window of moving average, >= 1
+            show_figure (bool): if True, show the records as a line-plot.
+            filename (str): filename of the figure, or None (show figure)
+
+        Returns:
+            pandas.DataFrame
+                Index:
+                    reset index
+                Columns:
+                    - Date (pd.TimeStamp): Observation date
+                    - Tests (int): the number of total tests performed
+                    - Confirmed (int): the number of confirmed cases
+                    - PCR_Rate (float): positive rate (%) of the daily cases over the total daily tests performed
+
+        Notes:
+            If non monotonic records were found for either cases or tests,
+            "(complemented)" will be added to the title of the figure.
+        """
+        window = self.ensure_natural_int(window, name="window")
+        df = self.records(country, province)
+        
+        if not df[self.TESTS].max():
+            print("No tests records found for country " + country) if not province else print("No tests records found for province " + province)
+            df["PCR_Rate"] = 0
+            return df
+
+        # Check if there are too many missing value, more than half
+        if (df[self.TESTS] == 0).mean() >= 0.5:
+            print("Too many missing tests records for country " + country) if not province else print("Too many missing tests records for province " + province) 
+            df["PCR_Rate"] = 0
+            return df
+        
+        df, is_complemented = self.pcr_processing(df, window)
         
         # Calculate PCR values
         df["PCR_Rate"] = [(i / j) * 100 for i, j in zip(df["C_diff"], df["Tests_diff"])]
