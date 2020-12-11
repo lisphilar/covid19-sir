@@ -8,7 +8,6 @@ from covsirphy.util.plotting import line_plot
 from covsirphy.util.error import SubsetNotFoundError
 from covsirphy.cleaning.cbase import CleaningBase
 from covsirphy.cleaning.country_data import CountryData
-# from covsirphy.cleaning.jhu_complement import JHUDataComplementHandler
 
 
 class PCRData(CleaningBase):
@@ -317,10 +316,10 @@ class PCRData(CleaningBase):
         if not is_complemented:
             return (df, is_complemented)
         
-        for variable in df:
-            df[variable].replace(0,np.nan, inplace=True)
-            df[variable].fillna(method="ffill", inplace=True)
-            df[variable].fillna(method="bfill", inplace=True)
+        for col in df:
+            df[col].replace(0,np.nan, inplace=True)
+            df[col].fillna(method="ffill", inplace=True)
+            df[col].fillna(method="bfill", inplace=True)
         return (df, is_complemented)
 
     def records(self, country, province=None, start_date=None, end_date=None, **kwargs):
@@ -385,47 +384,47 @@ class PCRData(CleaningBase):
             print("No tests records found for country " + country) if not province else print("No tests records found for province " + province)
             df["PCR_Rate"] = 0
             return df
-        else:
-            # Check if there are too many missing value, more than half
-            if len(np.where(df[self.TESTS] == 0)[0]) >= len(df[self.TESTS])/2:
-                print("Too many missing tests records for country " + country) if not province else print("Too many missing tests records for province " + province) 
-                df["PCR_Rate"] = 0
-                return df
-            
-            # Confirmed must be monotonically increasing
-            df = self.pcr_monotonic(df, self.C)
-            df, is_Tests_complemented = self.pcr_partial_complement(df, "Tests")
-            
-            # Calculate daily values for tests and confirmed (with window=1)
-            df["Tests_diff"] = df[self.TESTS].diff()
-            df["C_diff"] = df[self.C].diff()
-            
-            # Ensure that tests > confirmed in daily basis
-            df.loc[df["Tests_diff"].abs() < df["C_diff"].abs(), "Tests_diff"] = None
-            
-            # Keep valid non-zero values by ignoring zeros at the beginning
-            df = df.replace(0,np.nan)
-            non_zero_index_start = df["Tests_diff"].first_valid_index()
-            df = df.loc[non_zero_index_start:].reset_index(drop=True)
-            non_zero_index_end = df["Tests_diff"].last_valid_index()
-            
-            # Keep valid non-zero values by complementing zeros at the end
-            if non_zero_index_end < (len(df)-1):
-                df.loc[non_zero_index_end+1:, "Tests_diff"] = None
-            df, is_Tests_complemented = self.pcr_partial_complement(df, "Tests_diff")
-            
-            # Use rolling window for averaging tests and confirmed
-            df["Tests_diff"] = df["Tests_diff"].rolling(window).mean()
-            df["C_diff"] = df["C_diff"].rolling(window).mean()
-            df, is_Tests_complemented = self.pcr_partial_complement(df, "Tests_diff")
-            
-            # Remove first zero lines due to window
-            df = df.replace(0,np.nan)
-            non_zero_index_start = df["Tests_diff"].first_valid_index()
-            df = df.loc[non_zero_index_start:].reset_index(drop=True)
-            
-            # Calculate PCR values
-            df["PCR_Rate"] = [(abs(i) / abs(j)) * 100 for i, j in zip(df["C_diff"], df["Tests_diff"])]
+        
+        # Check if there are too many missing value, more than half
+        if len(np.where(df[self.TESTS] == 0)[0]) >= len(df[self.TESTS])/2:
+            print("Too many missing tests records for country " + country) if not province else print("Too many missing tests records for province " + province) 
+            df["PCR_Rate"] = 0
+            return df
+        
+        # Confirmed must be monotonically increasing
+        df = self.pcr_monotonic(df, self.C)
+        df, is_Tests_complemented = self.pcr_partial_complement(df, "Tests")
+        
+        # Calculate daily values for tests and confirmed (with window=1)
+        df["Tests_diff"] = df[self.TESTS].diff()
+        df["C_diff"] = df[self.C].diff()
+        
+        # Ensure that tests > confirmed in daily basis
+        df.loc[df["Tests_diff"].abs() < df["C_diff"].abs(), "Tests_diff"] = None
+        
+        # Keep valid non-zero values by ignoring zeros at the beginning
+        df = df.replace(0,np.nan)
+        non_zero_index_start = df["Tests_diff"].first_valid_index()
+        df = df.loc[non_zero_index_start:].reset_index(drop=True)
+        non_zero_index_end = df["Tests_diff"].last_valid_index()
+        
+        # Keep valid non-zero values by complementing zeros at the end
+        if non_zero_index_end < (len(df)-1):
+            df.loc[non_zero_index_end+1:, "Tests_diff"] = None
+        df, is_Tests_complemented = self.pcr_partial_complement(df, "Tests_diff")
+        
+        # Use rolling window for averaging tests and confirmed
+        df["Tests_diff"] = df["Tests_diff"].rolling(window).mean()
+        df["C_diff"] = df["C_diff"].rolling(window).mean()
+        df, is_Tests_complemented = self.pcr_partial_complement(df, "Tests_diff")
+        
+        # Remove first zero lines due to window
+        df = df.replace(0,np.nan)
+        non_zero_index_start = df["Tests_diff"].first_valid_index()
+        df = df.loc[non_zero_index_start:].reset_index(drop=True)
+        
+        # Calculate PCR values
+        df["PCR_Rate"] = [(abs(i) / abs(j)) * 100 for i, j in zip(df["C_diff"], df["Tests_diff"])]
         
         if not show_figure:
             return df
