@@ -33,3 +33,8 @@ def japan_data(data_loader):
 @pytest.fixture(scope="session")
 def linelist_data(data_loader):
     return data_loader.linelist()
+
+
+@pytest.fixture(scope="session")
+def pcr_data(data_loader):
+    return data_loader.pcr()

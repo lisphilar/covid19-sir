@@ -37,9 +37,6 @@ class JHUData(CleaningBase):
         """
         Return the cleaned dataset.
 
-        Note:
-            Cleaning method is defined by self._cleaning() method.
-
         Args:
             kwargs: keword arguments will be ignored.
 
@@ -55,13 +52,14 @@ class JHUData(CleaningBase):
                     - Infected (int): the number of currently infected cases
                     - Fatal (int): the number of fatal cases
                     - Recovered (int): the number of recovered cases
+
+        Notes:
+            Cleaning method is defined by self._cleaning() method.
         """
         if "population" in kwargs.keys():
             raise ValueError(
                 "@population was removed in JHUData.cleaned(). Please use JHUData.subset()")
-        df = self._cleaned_df.copy()
-        df = df.loc[:, self.COLUMNS]
-        return df
+        return self._cleaned_df.loc[:, self.COLUMNS]
 
     def _cleaning(self):
         """
@@ -304,7 +302,7 @@ class JHUData(CleaningBase):
         Create JHUData instance using a pandas dataframe.
 
         Args:
-            dataframe (pd.DataFrame): Cleaned dataset
+            dataframe (pd.DataFrame): cleaned dataset
 
         Returns:
             covsirphy.JHUData: JHU-style dataset

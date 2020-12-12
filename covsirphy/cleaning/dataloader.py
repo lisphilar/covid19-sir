@@ -252,7 +252,7 @@ class DataLoader(Term):
             self._linelist_data = LinelistData(
                 filename=filename, force=force, verbose=verbose)
         return self._linelist_data
-    
+
     def pcr(self, basename="covid19dh.csv", local_file=None, verbose=1):
         """
         Load the dataset regarding the number of tests and confirmed cases,
