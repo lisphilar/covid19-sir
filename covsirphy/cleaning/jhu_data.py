@@ -37,9 +37,6 @@ class JHUData(CleaningBase):
         """
         Return the cleaned dataset.
 
-        Note:
-            Cleaning method is defined by self._cleaning() method.
-
         Args:
             kwargs: keword arguments will be ignored.
 
@@ -55,6 +52,9 @@ class JHUData(CleaningBase):
                     - Infected (int): the number of currently infected cases
                     - Fatal (int): the number of fatal cases
                     - Recovered (int): the number of recovered cases
+
+        Notes:
+            Cleaning method is defined by self._cleaning() method.
         """
         if "population" in kwargs.keys():
             raise ValueError(

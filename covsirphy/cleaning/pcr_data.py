@@ -22,18 +22,15 @@ class PCRData(CleaningBase):
     # Column names
     TESTS = "Tests"
     TESTS_JPN = "Tested"
-    
     PCR_COLS = [
         CleaningBase.DATE, CleaningBase.COUNTRY,
         CleaningBase.PROVINCE, TESTS, CleaningBase.C
     ]
-    
     PCR_NLOC_COLUMNS = [CleaningBase.DATE, TESTS, CleaningBase.C]
-    
     PCR_COLUMNS = [*CleaningBase.STR_COLUMNS, TESTS, CleaningBase.C]
     PCR_JPN_COLUMNS = [*CleaningBase.STR_COLUMNS, TESTS_JPN, CleaningBase.C]
     PCR_VALUE_COLUMNS = [TESTS, CleaningBase.C]
-    
+
     def __init__(self, filename, interval=2, citation=None):
         if filename is None:
             self._raw = pd.DataFrame()
@@ -46,15 +43,9 @@ class PCRData(CleaningBase):
         self.interval = self.ensure_natural_int(interval, name="interval")
         self._citation = citation or ""
 
-    def cleaned(self, **kwargs):
+    def cleaned(self):
         """
         Return the cleaned dataset of PCRData with tests and confirmed data.
-
-        Note:
-            Cleaning method is defined by self._cleaning() method.
-
-        Args:
-            kwargs: keword arguments will be ignored.
 
         Returns:
             pandas.DataFrame
@@ -66,6 +57,9 @@ class PCRData(CleaningBase):
                     - Province (str): province/prefecture/state name
                     - Tests (int): the number of total tests performed
                     - Confirmed (int): the number of confirmed cases
+
+        Notes:
+            Cleaning method is defined by self._cleaning() method.
         """
         df = self._cleaned_df.copy()
         df = df.loc[:, self.PCR_COLS]
@@ -167,8 +161,8 @@ class PCRData(CleaningBase):
             )
             # Confirm the expected columns are in raw data
             expected_cols = self.PCR_COLUMNS
-            self.ensure_dataframe(new, name="the raw data", columns=expected_cols)
-            
+            self.ensure_dataframe(
+                new, name="the raw data", columns=expected_cols)
         new[self.ISO3] = self.country_to_iso3(country)
         # Remove the data in the country from JHU dataset
         df = self._cleaned_df.copy()
@@ -233,7 +227,7 @@ class PCRData(CleaningBase):
                 country=country, country_alias=country_alias, province=province,
                 start_date=start_date, end_date=end_date)
         return subset_df
-    
+
     def pcr_monotonic(self, df, variable):
         """
         Force the variable show monotonic increasing.
@@ -266,7 +260,7 @@ class PCRData(CleaningBase):
             df.loc[:date, variable] = series * raw_last / series.iloc[-1]
             df[variable] = df[variable].fillna(0).astype(np.int64)
         return df
-    
+
     def pcr_check_complement(self, df, variable):
         """
         If variable values do not change for more than applied 'self.interval' days,
@@ -288,7 +282,7 @@ class PCRData(CleaningBase):
         max_frequency = df[variable].value_counts().max()
         need_complement = max_frequency > self.interval or not df.loc[df.index[-1], variable]
         return (df, need_complement)
-    
+
     def pcr_partial_complement(self, df, variable, method=None):
         """
         If there are missing values in variable column,
@@ -307,12 +301,10 @@ class PCRData(CleaningBase):
             bool: True if complement is needed or False
         """
         df, is_complemented = self.pcr_check_complement(df, variable)
-        
         if not is_complemented:
             return (df, is_complemented)
-        
         for col in df:
-            df[col].replace(0,np.nan, inplace=True)
+            df[col].replace(0, np.nan, inplace=True)
             df[col].fillna(method="ffill", inplace=True)
             df[col].fillna(method="bfill", inplace=True)
         return (df, is_complemented)
@@ -377,37 +369,31 @@ class PCRData(CleaningBase):
         # If Tests values are all valid, with no missing values in-between,
         # they must be monotonically increasing as well
         df = self.pcr_monotonic(df, self.TESTS)
-        
         # Calculate daily values for tests and confirmed (with window=1)
         df["Tests_diff"] = df[self.TESTS].diff()
         df["C_diff"] = df[self.C].diff()
-        
         # Ensure that tests > confirmed in daily basis
-        df.loc[df["Tests_diff"].abs() < df["C_diff"].abs(), "Tests_diff"] = None
-        
+        df.loc[df["Tests_diff"].abs() < df["C_diff"].abs(),
+               "Tests_diff"] = None
         # Keep valid non-zero values by ignoring zeros at the beginning
-        df = df.replace(0,np.nan)
+        df = df.replace(0, np.nan)
         non_zero_index_start = df["Tests_diff"].first_valid_index()
         df = df.loc[non_zero_index_start:].reset_index(drop=True)
         non_zero_index_end = df["Tests_diff"].last_valid_index()
-        
         # Keep valid non-zero values by complementing zeros at the end
-        if non_zero_index_end < (len(df)-1):
-            df.loc[non_zero_index_end+1:, "Tests_diff"] = None
+        if non_zero_index_end < (len(df) - 1):
+            df.loc[non_zero_index_end + 1:, "Tests_diff"] = None
         df, is_complemented = self.pcr_partial_complement(df, "Tests_diff")
-        
         # Use rolling window for averaging tests and confirmed
         df["Tests_diff"] = df["Tests_diff"].rolling(window).mean()
         df["C_diff"] = df["C_diff"].rolling(window).mean()
         df, is_complemented = self.pcr_partial_complement(df, "Tests_diff")
-        
         # Remove first zero lines due to window
-        df = df.replace(0,np.nan)
+        df = df.replace(0, np.nan)
         non_zero_index_start = df["Tests_diff"].first_valid_index()
         df = df.loc[non_zero_index_start:].reset_index(drop=True)
-        
         return (df, is_complemented)
-    
+
     def pcr_check_preconditions(self, df, country, province=None):
         """
         Check preconditions in order to proceed with PCR data processing
@@ -428,7 +414,7 @@ class PCRData(CleaningBase):
                 country=country, province=province, message="Too many missing Tests records") from None
 
         return (df, preconditions_okay)
-        
+
     def positive_rate(self, country, province=None, window=3, show_figure=True, filename=None):
         """
         Return the PCR rate of a country as a dataframe.
@@ -456,18 +442,17 @@ class PCRData(CleaningBase):
         """
         window = self.ensure_natural_int(window, name="window")
         df = self.records(country, province)
-        
         # Check PCR data preconditions
-        df, preconditions_okay = self.pcr_check_preconditions(df, country, province)
+        df, preconditions_okay = self.pcr_check_preconditions(
+            df, country, province)
         if not preconditions_okay:
             return df
-        
         # Process PCR data
         df, is_complemented = self.pcr_processing(df, window)
-        
         # Calculate PCR values
-        df["PCR_Rate"] = [(i / j) * 100 for i, j in zip(df["C_diff"], df["Tests_diff"])]
-        
+        df["PCR_Rate"] = df[["C_diff", "Tests_diff"]].apply(
+            lambda x: x[0] / x[1] * 100, axis=1)
+
         if not show_figure:
             return df
         title = f"{country if not province else province}: Positive Rate (%) over time{' (Tests partially complemented)' if is_complemented else ''}"
