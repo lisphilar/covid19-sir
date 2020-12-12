@@ -462,6 +462,7 @@ class PCRData(CleaningBase):
             title,
             ylabel="Test positive rate (%)",
             y_integer=True,
-            filename=filename
+            filename=filename,
+            show_legend=False,
         )
         return df
