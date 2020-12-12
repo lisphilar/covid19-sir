@@ -6,7 +6,7 @@ import pandas as pd
 from dask import dataframe as dd
 from covsirphy.util.plotting import line_plot
 from covsirphy.util.error import SubsetNotFoundError
-from covsirphy.util.error import PCRIncorrectPreconditions
+from covsirphy.util.error import PCRIncorrectPreconditionError
 from covsirphy.cleaning.cbase import CleaningBase
 from covsirphy.cleaning.country_data import CountryData
 
@@ -410,7 +410,7 @@ class PCRData(CleaningBase):
         if (not df[self.TESTS].max()) or ((df[self.TESTS] == 0).mean() >= 0.5):
             df["PCR_Rate"] = 0
             preconditions_okay = False
-            raise PCRIncorrectPreconditions(
+            raise PCRIncorrectPreconditionError(
                 country=country, province=province, message="Too many missing Tests records") from None
 
         return (df, preconditions_okay)

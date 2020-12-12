@@ -121,7 +121,7 @@ class UnExecutedError(AttributeError, NameError, ValueError):
         return f"Please execute {self.method_name} in advance{self.message}"
 
 
-class PCRIncorrectPreconditions(KeyError):
+class PCRIncorrectPreconditionError(KeyError):
     """
     Error when checking preconditions in the PCR data.
 
