@@ -24,6 +24,7 @@ class Term(object):
     V = "Vaccinated"
     E = "Exposed"
     W = "Waiting"
+    TESTS = "Tests"
     # Column names
     DATE = "Date"
     START = "Start"
@@ -185,8 +186,7 @@ class Term(object):
             return df
         if not set(columns).issubset(df.columns):
             cols_str = ", ".join(
-                [col for col in columns if col not in df.columns]
-            )
+                col for col in columns if col not in df.columns)
             included = ", ".join(df.columns.tolist())
             s1 = f"Expected columns were not included in {name} with {included}."
             raise KeyError(

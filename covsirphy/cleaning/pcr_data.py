@@ -20,16 +20,14 @@ class PCRData(CleaningBase):
         citation (str): citation
     """
     # Column names
-    TESTS = "Tests"
-    TESTS_JPN = "Tested"
     PCR_COLS = [
         CleaningBase.DATE, CleaningBase.COUNTRY,
-        CleaningBase.PROVINCE, TESTS, CleaningBase.C
+        CleaningBase.PROVINCE, CleaningBase.TESTS, CleaningBase.C
     ]
-    PCR_NLOC_COLUMNS = [CleaningBase.DATE, TESTS, CleaningBase.C]
-    PCR_COLUMNS = [*CleaningBase.STR_COLUMNS, TESTS, CleaningBase.C]
-    PCR_JPN_COLUMNS = [*CleaningBase.STR_COLUMNS, TESTS_JPN, CleaningBase.C]
-    PCR_VALUE_COLUMNS = [TESTS, CleaningBase.C]
+    PCR_NLOC_COLUMNS = [CleaningBase.DATE, CleaningBase.TESTS, CleaningBase.C]
+    PCR_COLUMNS = [
+        *CleaningBase.STR_COLUMNS, CleaningBase.TESTS, CleaningBase.C]
+    PCR_VALUE_COLUMNS = [CleaningBase.TESTS, CleaningBase.C]
 
     def __init__(self, filename, interval=2, citation=None):
         if filename is None:
@@ -144,32 +142,15 @@ class PCRData(CleaningBase):
         self.ensure_instance(country_data, CountryData, name="country_data")
         # Read new dataset
         country = country_data.country
-        if country != "Japan":
-            new = country_data.cleaned().loc[:, self.PCR_COLUMNS]
-        else:
-            new = country_data.cleaned().loc[:, self.PCR_JPN_COLUMNS]
-            # Rename the columns
-            new = new.rename(
-                {
-                    "Date": self.DATE,
-                    "Country": self.COUNTRY,
-                    "Province": self.PROVINCE,
-                    "Tested": self.TESTS,
-                    "Confirmed": self.C
-                },
-                axis=1
-            )
-            # Confirm the expected columns are in raw data
-            expected_cols = self.PCR_COLUMNS
-            self.ensure_dataframe(
-                new, name="the raw data", columns=expected_cols)
+        new = self.ensure_dataframe(
+            country_data.cleaned(), name="the raw data", columns=self.PCR_COLUMNS)
+        new = new.loc[:, self.PCR_COLUMNS]
         new[self.ISO3] = self.country_to_iso3(country)
-        # Remove the data in the country from JHU dataset
+        # Remove the data in the country from the current datset
         df = self._cleaned_df.copy()
         df = df.loc[df[self.COUNTRY] != country]
-        # Combine JHU data and the new data
-        df = pd.concat([df, new], axis=0, sort=False)
-        self._cleaned_df = df.copy()
+        # Add the new data
+        self._cleaned_df = pd.concat([df, new], axis=0, sort=False)
         # Citation
         self._citation += f"\n{country_data.citation}"
         return self

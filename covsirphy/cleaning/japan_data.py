@@ -32,8 +32,6 @@ class JapanData(CountryData):
     GITHUB_URL = "https://raw.githubusercontent.com"
     URL_C = f"{GITHUB_URL}/lisphilar/covid19-sir/master/data/japan/covid_jpn_total.csv"
     URL_P = f"{GITHUB_URL}/lisphilar/covid19-sir/master/data/japan/covid_jpn_prefecture.csv"
-    # Persons who was tested
-    TESTED = "Tested"
     # Moderate: cases who requires hospitalization but not severe
     MODERATE = "Moderate"
     # Severe
@@ -41,7 +39,7 @@ class JapanData(CountryData):
     # Column names
     JAPAN_VALUE_COLS = [
         CountryData.C, CountryData.CI, CountryData.F, CountryData.R,
-        TESTED, MODERATE, SEVERE,
+        CountryData.TESTS, MODERATE, SEVERE,
     ]
     JAPAN_COLS = [
         CountryData.DATE, CountryData.COUNTRY, CountryData.PROVINCE,
@@ -107,14 +105,14 @@ class JapanData(CountryData):
                 "Fatal": self.F,
                 "Discharged": self.R,
                 "Hosp_severe": self.SEVERE,
-                "Tested": self.TESTED
+                "Tested": self.TESTS
             },
             axis=1
         )
         # Date
         df[self.DATE] = pd.to_datetime(df[self.DATE])
         # Fill NA values
-        for col in [self.C, self.F, self.R, self.SEVERE, "Hosp_require", self.TESTED]:
+        for col in [self.C, self.F, self.R, self.SEVERE, "Hosp_require", self.TESTS]:
             df[col] = pd.to_numeric(df[col], errors="coerce")
         df = df.groupby(self.PROVINCE).apply(
             lambda x: x.set_index(self.DATE).resample("D").interpolate("linear", limit_direction="both"))
