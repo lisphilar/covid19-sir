@@ -10,6 +10,7 @@ from covsirphy.cleaning.oxcgrt import OxCGRTData
 from covsirphy.cleaning.population import PopulationData
 from covsirphy.cleaning.covid19datahub import COVID19DataHub
 from covsirphy.cleaning.linelist import LinelistData
+from covsirphy.cleaning.pcr_data import PCRData
 
 
 class DataLoader(Term):
@@ -163,8 +164,6 @@ class DataLoader(Term):
         """
         if local_file is not None:
             return JHUData(filename=local_file)
-        jhu_data = self._covid19dh(
-            name="jhu", basename=basename, verbose=verbose)
         # Retrieve JHU data from COVID-19 Data Hub
         jhu_data = self._covid19dh(
             name="jhu", basename=basename, verbose=verbose)
@@ -253,3 +252,31 @@ class DataLoader(Term):
             self._linelist_data = LinelistData(
                 filename=filename, force=force, verbose=verbose)
         return self._linelist_data
+    
+    def pcr(self, basename="covid19dh.csv", local_file=None, verbose=1):
+        """
+        Load the dataset regarding the number of tests and confirmed cases,
+        using local CSV file or COVID-19 Data Hub.
+
+        Args:
+            basename (str or None): basename of the file to save the data
+            local_file (str or None): if not None, load the data from this file
+            verbose (int): level of verbosity
+
+        Notes:
+            If @verbose is 2, detailed citation list will be shown when downloading.
+            If @verbose is 1, how to show the list will be explained.
+            Citation of COVID-19 Data Hub will be set as JHUData.citation.
+
+        Returns:
+            covsirphy.PCRData: dataset regarding the number of tests and confirmed cases
+        """
+        if local_file is not None:
+            return PCRData(filename=local_file)
+        # Retrieve JHU data from COVID-19 Data Hub
+        pcr_data = self._covid19dh(
+            name="pcr", basename=basename, verbose=verbose)
+        # Replace Japan dataset with the government-announced data
+        japan_data = self.japan()
+        pcr_data.replace(japan_data)
+        return pcr_data
