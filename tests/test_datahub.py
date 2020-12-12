@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*-
 
 from pathlib import Path
+import warnings
 import pytest
 import pandas as pd
 from covsirphy import SubsetNotFoundError
@@ -220,6 +221,20 @@ class TestPCRData(object):
 
     def test_subset(self, pcr_data):
         with pytest.raises(SubsetNotFoundError):
-            pcr_data.subset("JPN", end_date="01Jan2000")
-        df = pcr_data.subset("Japan")
+            pcr_data.subset("Greece", end_date="01Jan2000")
+        df = pcr_data.subset("Greece")
         assert set(df.columns) == set(PCRData.PCR_NLOC_COLUMNS)
+
+    def test_records(self, pcr_data):
+        with pytest.raises(SubsetNotFoundError):
+            pcr_data.records("Greece", end_date="01Jan2000")
+        df = pcr_data.records("Greece")
+        assert set(df.columns) == set(PCRData.PCR_NLOC_COLUMNS)
+
+    @pytest.mark.parametrize("country", ["Greece", "Italy"])
+    def test_positive_rate(self, pcr_data, country):
+        warnings.simplefilter("ignore", category=UserWarning)
+        pcr_data.positive_rate(country, show_figure=True)
+        df = pcr_data.positive_rate(country, show_figure=False)
+        assert set(
+            [PCRData.T_DIFF, PCRData.C_DIFF, PCRData.PCR_RATE]).issubset(df.columns)
