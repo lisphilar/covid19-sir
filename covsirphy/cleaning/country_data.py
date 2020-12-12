@@ -15,14 +15,19 @@ class CountryData(CleaningBase):
     Args:
         filename (str or None): filename to read the data
         country (str): country name
+        province (str or None): province name
+
+    Returns:
+        If province name will be set in CountryData.set_variables(), @province will be ignored.
     """
 
-    def __init__(self, filename, country):
+    def __init__(self, filename, country, province=None):
         if filename is None:
             self._raw = pd.DataFrame()
         else:
             self._raw = dd.read_csv(filename).compute()
         self._country = country
+        self._province = province
         self.province_col = None
         self.var_dict = {}
         self._cleaned_df = pd.DataFrame()
@@ -94,12 +99,14 @@ class CountryData(CleaningBase):
         # Remove empty rows
         df = df.dropna(subset=[self.DATE])
         # Add province column
-        df[self.PROVINCE] = self.UNKNOWN if self.province_col is None else df[self.province_col]
+        if self._province_col is not None:
+            df = df.rename({self.province_col: self.PROVINCE}, axis=1)
+        else:
+            df[self.PROVINCE] = self._province or self.UNKNOWN
         # Values
         v_cols = [self.C, self.F, self.R]
         df[v_cols] = df[v_cols].fillna(0).astype(np.int64)
         df[self.CI] = df[self.C] - df[self.F] - df[self.R]
-        print(df.info())
         # Groupby date and province
         df[self.DATE] = pd.to_datetime(df[self.DATE])
         df = df.groupby([self.DATE, self.PROVINCE]).sum().reset_index()
