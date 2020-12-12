@@ -103,3 +103,16 @@ class TestCountryData(object):
             province="Area")
         df = country_data.cleaned()
         assert set(df.columns) == set(Term.COLUMNS)
+
+    def test_create_province(self, japan_data):
+        country_data = CountryData(
+            filename=None, country="Moon", province="Reiner Gamma")
+        country_data.raw = japan_data.raw
+        country_data.set_variables(
+            date="Date",
+            confirmed="Positive",
+            fatal="Fatal",
+            recovered="Discharged",
+            province=None)
+        df = country_data.cleaned()
+        assert set(df.columns) == set(Term.COLUMNS)
