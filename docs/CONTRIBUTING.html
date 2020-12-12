@@ -87,7 +87,8 @@
               <p class="caption"><span class="caption-text">Contents:</span></p>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="README.html">CovsirPhy introduction</a></li>
-<li class="toctree-l1"><a class="reference internal" href="INSTALLATION.html">Installation and dataset preparation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="INSTALLATION.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="INSTALLATION.html#dataset-preparation">Dataset preparation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="usage_quickest.html">Usage (quickest version)</a></li>
 <li class="toctree-l1"><a class="reference internal" href="usage_quick.html">Usage (quick version)</a></li>
 <li class="toctree-l1"><a class="reference internal" href="usage_dataset.html">Usage (datasets)</a></li>
@@ -97,7 +98,8 @@
 <li class="toctree-l1"><a class="reference internal" href="covsirphy.html">API reference</a></li>
 <li class="toctree-l1"><a class="reference internal" href="TERM.html">Term definition</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Guideline of contribution</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="#issues">Issues</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#clone-covsirphy-repository-and-install-dependencies">Clone CovsirPhy repository and install dependencies</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#run-tests">Run tests</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#pull-request">Pull request</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#versioning">Versioning</a></li>
 </ul>
@@ -199,9 +201,11 @@
 will overcome the outbreak in the near future.</div>
 </div>
 <p>When you contribute to covid-sir repository including CovsirPhy package,
-please kindly follow CODE_OF_CONDUCT.md and the steps explained in
-this document. If you have any questions or any request to change about
-this guideline, please inform the author via issue page.</p>
+please kindly follow <a class="reference external" href="https://lisphilar.github.io/covid19-sir/CODE_OF_CONDUCT.html">Code of
+conduct</a>
+and the steps explained in this document. If you have any questions or
+any request to change about this guideline, please inform the author via
+issue page.</p>
 <p>Terms: - ‘Maintainers’ maintain this repository and merge the pull
 requests, update <a class="reference external" href="https://lisphilar.github.io/covid19-sir/">sphinx
 document</a> and version
@@ -209,13 +213,65 @@ number. - ‘Developers’ create pull requests. - ‘Users’ uses this package
 (and create issues).</p>
 <p>Currently, ‘maintainer(s)’ is/are the author (&#64;lisphilar) in this
 document.</p>
-<div class="section" id="issues">
-<h2>Issues<a class="headerlink" href="#issues" title="Permalink to this headline">¶</a></h2>
-<p>All users can <a class="reference external" href="https://github.com/lisphilar/covid19-sir/issues">create an
-issue</a> when you want
-to - ask a question - request fix a bug, - request update of
-documentation, - request a new feature, - request a new data loader or
-new dataset, - communicate with the maintainers and the user community.</p>
+<div class="section" id="clone-covsirphy-repository-and-install-dependencies">
+<h2>Clone CovsirPhy repository and install dependencies<a class="headerlink" href="#clone-covsirphy-repository-and-install-dependencies" title="Permalink to this headline">¶</a></h2>
+<p>Developers will clone CovsirPhy repository with <code class="docutils literal notranslate"><span class="pre">git</span> <span class="pre">clone</span></code> command
+and install dependencies with pipenv.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">git</span> <span class="n">clone</span> <span class="n">https</span><span class="p">:</span><span class="o">//</span><span class="n">github</span><span class="o">.</span><span class="n">com</span><span class="o">/</span><span class="n">lisphilar</span><span class="o">/</span><span class="n">covid19</span><span class="o">-</span><span class="n">sir</span><span class="o">.</span><span class="n">git</span>
+<span class="n">cd</span> <span class="n">covid19</span><span class="o">-</span><span class="n">sir</span>
+<span class="n">pip</span> <span class="n">install</span> <span class="n">wheel</span><span class="p">;</span> <span class="n">pip</span> <span class="n">install</span> <span class="o">--</span><span class="n">upgrade</span> <span class="n">pip</span><span class="p">;</span> <span class="n">pip</span> <span class="n">install</span> <span class="n">pipenv</span>
+<span class="n">export</span> <span class="n">PIPENV_VENV_IN_PROJECT</span><span class="o">=</span><span class="n">true</span>
+<span class="n">export</span> <span class="n">PIPENV_TIMEOUT</span><span class="o">=</span><span class="mi">7200</span>
+<span class="n">pipenv</span> <span class="n">sync</span> <span class="o">--</span><span class="n">dev</span>
+</pre></div>
+</div>
+<p>Shell will be started with <code class="docutils literal notranslate"><span class="pre">pipenv</span> <span class="pre">shell</span></code> and <code class="docutils literal notranslate"><span class="pre">python</span></code> command.
+Example codes are archived in “example” directory.</p>
+<p>If you can run <code class="docutils literal notranslate"><span class="pre">make</span></code> command,</p>
+<table class="docutils align-default">
+<colgroup>
+<col style="width: 28%" />
+<col style="width: 72%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">make</span> <span class="pre">install</span></code></p></td>
+<td><p>Install pipenv and the dependencies of CovsirPhy</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">make</span> <span class="pre">test</span></code></p></td>
+<td><p>Run tests using Pytest</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">make</span> <span class="pre">docs</span></code></p></td>
+<td><p>Update sphinx document</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">make</span> <span class="pre">example</span></code></p></td>
+<td><p>Run example codes</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">make</span> <span class="pre">clean</span></code></p></td>
+<td><p>Clean-up output files and pipenv environment</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="run-tests">
+<h2>Run tests<a class="headerlink" href="#run-tests" title="Permalink to this headline">¶</a></h2>
+<p>Developers can perform tests with
+<code class="docutils literal notranslate"><span class="pre">pipenv</span> <span class="pre">run</span> <span class="pre">pytest</span> <span class="pre">tests</span> <span class="pre">-v</span> <span class="pre">--durations=0</span> <span class="pre">--failed-first</span> <span class="pre">--maxfail=1</span> <span class="pre">--cov=covsirphy</span> <span class="pre">--cov-report=term-missing</span> <span class="pre">--profile-svg</span></code>
+and call graph will be saved as SVG file (prof/combined.svg).</p>
+<ul class="simple">
+<li><p>Windows users need to install <a class="reference external" href="https://graphviz.org/_pages/Download/Download_windows.html">Graphviz for
+Windows</a>
+in advance.</p></li>
+<li><p>Debian/Ubuntu users need to install Graphviz with
+<code class="docutils literal notranslate"><span class="pre">sudo</span> <span class="pre">apt</span> <span class="pre">install</span> <span class="pre">graphviz</span></code> in advance. ## Issues All users can
+<a class="reference external" href="https://github.com/lisphilar/covid19-sir/issues">create an issue</a>
+when you want to</p></li>
+<li><p>ask a question</p></li>
+<li><p>request fix a bug,</p></li>
+<li><p>request update of documentation,</p></li>
+<li><p>request a new feature,</p></li>
+<li><p>request a new data loader or new dataset,</p></li>
+<li><p>communicate with the maintainers and the user community.</p></li>
+</ul>
 <p>Please ensure that the issue - has one question/request, - uses
 appropriate issue template if available, - has appropriate title, and -
 explains your execution environment and codes.</p>

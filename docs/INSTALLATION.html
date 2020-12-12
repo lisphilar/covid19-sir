@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Installation and dataset preparation &mdash; CovsirPhy  documentation</title>
+  <title>Installation &mdash; CovsirPhy  documentation</title>
   
 
   
@@ -88,19 +88,16 @@
               <p class="caption"><span class="caption-text">Contents:</span></p>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="README.html">CovsirPhy introduction</a></li>
-<li class="toctree-l1 current"><a class="current reference internal" href="#">Installation and dataset preparation</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="#options-of-installation">Options of installation</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#datasets-to-load">Datasets to load</a><ul>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="#dataset-preparation">Dataset preparation</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#recommended-datasets">1. Recommended datasets</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#covid-19-data-hub">COVID-19 Data Hub</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#open-covid-19-data-working-group">Open COVID-19 Data Working Group</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#datasets-for-covsirphy">Datasets for CovsirPhy</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#how-to-request-new-data-loader">How to request new data loader</a></li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference internal" href="#standard-users">1. Standard users</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#developers">2. Developers</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#kagglers-local-environment">3. Kagglers (local environment)</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#kagglers-kaggle-platform">4. Kagglers (Kaggle platform)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#how-to-request-new-data-loader">2. How to request new data loader</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#use-a-local-csv-file-which-has-the-number-of-cases">3. Use a local CSV file which has the number of cases</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="usage_quickest.html">Usage (quickest version)</a></li>
@@ -158,7 +155,7 @@
     
       <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
         
-      <li>Installation and dataset preparation</li>
+      <li>Installation</li>
     
     
       <li class="wy-breadcrumbs-aside">
@@ -201,57 +198,48 @@
     text-align: unset;
 }
 </style>
-<div class="section" id="installation-and-dataset-preparation">
-<h1>Installation and dataset preparation<a class="headerlink" href="#installation-and-dataset-preparation" title="Permalink to this headline">¶</a></h1>
-<div class="section" id="options-of-installation">
-<h2>Options of installation<a class="headerlink" href="#options-of-installation" title="Permalink to this headline">¶</a></h2>
-<p>We have the following options to start analysis with CovsirPhy. Datasets
-are not included in this package, but we can prepare them with
-<code class="docutils literal notranslate"><span class="pre">DataLoader</span></code> class.</p>
-<table class="docutils align-default">
-<colgroup>
-<col style="width: 32%" />
-<col style="width: 20%" />
-<col style="width: 49%" />
-</colgroup>
-<thead>
-<tr class="row-odd"><th class="head"></th>
-<th class="head"><p>Installation</p></th>
-<th class="head"><p>Dataset preparation</p></th>
-</tr>
-</thead>
-<tbody>
-<tr class="row-even"><td><p>Standard users</p></td>
-<td><p>pip/pipenv</p></td>
-<td><p>Automated with <code class="docutils literal notranslate"><span class="pre">DataLoader</span></code> class</p></td>
-</tr>
-<tr class="row-odd"><td><p>Developers</p></td>
-<td><p>git-cloning</p></td>
-<td><p>Automated with <code class="docutils literal notranslate"><span class="pre">DataLoader</span></code> class</p></td>
-</tr>
-<tr class="row-even"><td><p>Kagglers (local
-environment)</p></td>
-<td><p>git-cloning</p></td>
-<td><p>Kaggle API and Python script and
-<code class="docutils literal notranslate"><span class="pre">DataLoader</span></code></p></td>
-</tr>
-<tr class="row-odd"><td><p>Kagglers (Kaggle
-platform)</p></td>
-<td><p>pip</p></td>
-<td><p>Kaggle Datasets and <code class="docutils literal notranslate"><span class="pre">DataLoader</span></code></p></td>
-</tr>
-</tbody>
-</table>
+<div class="section" id="installation">
+<h1>Installation<a class="headerlink" href="#installation" title="Permalink to this headline">¶</a></h1>
+<p>The latest stable version of CovsirPhy is available at <a class="reference external" href="https://pypi.org/project/covsirphy/">PyPI (The Python
+Package Index): covsirphy</a> and
+supports Python 3.6 or newer versions.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">pip</span> <span class="n">install</span> <span class="o">--</span><span class="n">upgrade</span> <span class="n">covsirphy</span>
+</pre></div>
 </div>
-<div class="section" id="datasets-to-load">
-<h2>Datasets to load<a class="headerlink" href="#datasets-to-load" title="Permalink to this headline">¶</a></h2>
-<p>We will use the following datasets. Standard users and developers will
-retrieve main datasets from <a class="reference external" href="https://covid19datahub.io/">COVID-19 Data
-Hub</a> using <code class="docutils literal notranslate"><span class="pre">covid19dh</span></code> Python package
-internally. We can get the citation list of primary source
-<code class="docutils literal notranslate"><span class="pre">covsirphy.DataLoader</span></code> class (refer to “Standard users” subsection).
-This description is from <a class="reference external" href="https://covid19datahub.io/articles/data.html">COVID-19 Data Hub:
-Dataset</a>.</p>
+<p>Development versions are in <a class="reference external" href="https://github.com/lisphilar/covid19-sir">GitHub repository:
+CovsirPhy</a>.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">pip</span> <span class="n">install</span> <span class="o">--</span><span class="n">upgrade</span> <span class="s2">&quot;git+https://github.com/lisphilar/covid19-sir.git#egg=covsirphy&quot;</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="dataset-preparation">
+<h1>Dataset preparation<a class="headerlink" href="#dataset-preparation" title="Permalink to this headline">¶</a></h1>
+<p>Recommended datasets for analysis can be downloaded and updated easily
+with <code class="docutils literal notranslate"><span class="pre">DataLoader</span></code> class. If you have CSV files in your environment,
+you can analyse them.</p>
+<div class="section" id="recommended-datasets">
+<h2>1. Recommended datasets<a class="headerlink" href="#recommended-datasets" title="Permalink to this headline">¶</a></h2>
+<p>With the following codes, we can download the latest recommended
+datasets and save them in “input” folder of the current directory.
+Please refer to <a class="reference external" href="https://lisphilar.github.io/covid19-sir/usage_dataset.html">Usage
+(datasets)</a>
+to find the details of the datasets.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">covsirphy</span> <span class="k">as</span> <span class="nn">cs</span>
+<span class="c1"># Create DataLoader instance</span>
+<span class="n">data_loader</span> <span class="o">=</span> <span class="n">cs</span><span class="o">.</span><span class="n">DataLoader</span><span class="p">(</span><span class="s2">&quot;input&quot;</span><span class="p">)</span>
+<span class="c1"># The number of cases (JHU style)</span>
+<span class="n">jhu_data</span> <span class="o">=</span> <span class="n">data_loader</span><span class="o">.</span><span class="n">jhu</span><span class="p">()</span>
+<span class="c1"># Linelist of case reports</span>
+<span class="n">linelist</span> <span class="o">=</span> <span class="n">data_loader</span><span class="o">.</span><span class="n">linelist</span><span class="p">()</span>
+<span class="c1"># Population in each country</span>
+<span class="n">population_data</span> <span class="o">=</span> <span class="n">data_loader</span><span class="o">.</span><span class="n">population</span><span class="p">()</span>
+<span class="c1"># Government Response Tracker (OxCGRT)</span>
+<span class="n">oxcgrt_data</span> <span class="o">=</span> <span class="n">data_loader</span><span class="o">.</span><span class="n">oxcgrt</span><span class="p">()</span>
+<span class="c1"># The number of tests</span>
+<span class="n">pcr_data</span> <span class="o">=</span> <span class="n">data_loader</span><span class="o">.</span><span class="n">pcr</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>The downloaded datasets were retrieved from the following sites.</p>
 <div class="section" id="covid-19-data-hub">
 <h3><a class="reference external" href="https://covid19datahub.io/">COVID-19 Data Hub</a><a class="headerlink" href="#covid-19-data-hub" title="Permalink to this headline">¶</a></h3>
 <p>Guidotti, E., Ardia, D., (2020), “COVID-19 Data Hub”, Journal of Open
@@ -260,6 +248,7 @@ Source Software 5(51):2376, doi: 10.21105/joss.02376.</p>
 <li><p>The number of cases (JHU style)</p></li>
 <li><p>Population in each country</p></li>
 <li><p>Government Response Tracker (OxCGRT)</p></li>
+<li><p>The number of tests</p></li>
 </ul>
 </div>
 <div class="section" id="open-covid-19-data-working-group">
@@ -273,13 +262,14 @@ COVID-19 outbreak, real-time case information. Sci Data 7, 106 (2020).
 </div>
 <div class="section" id="datasets-for-covsirphy">
 <h3><a class="reference external" href="https://github.com/lisphilar/covid19-sir/tree/master/data">Datasets for CovsirPhy</a><a class="headerlink" href="#datasets-for-covsirphy" title="Permalink to this headline">¶</a></h3>
-<div class="line-block">
-<div class="line">Lisphilar (2020), GitHub repository, COVID-19 dataset in Japan.</div>
-<div class="line">- The number of cases in Japan</div>
+<p>Lisphilar (2020), GitHub repository, COVID-19 dataset in Japan.</p>
+<ul class="simple">
+<li><p>The number of cases in Japan</p></li>
+</ul>
 </div>
 </div>
 <div class="section" id="how-to-request-new-data-loader">
-<h3>How to request new data loader<a class="headerlink" href="#how-to-request-new-data-loader" title="Permalink to this headline">¶</a></h3>
+<h2>2. How to request new data loader<a class="headerlink" href="#how-to-request-new-data-loader" title="Permalink to this headline">¶</a></h2>
 <p>If you want to use a new dataset for your analysis, please kindly inform
 us via <a class="reference external" href="https://github.com/lisphilar/covid19-sir/issues/new/?template=request-new-method-of-dataloader-class.md">GitHub Issues: Request new method of DataLoader
 class</a>.
@@ -287,191 +277,79 @@ Please read <a class="reference external" href="https://lisphilar.github.io/covi
 contribution</a>
 in advance.</p>
 </div>
-</div>
-<div class="section" id="standard-users">
-<h2>1. Standard users<a class="headerlink" href="#standard-users" title="Permalink to this headline">¶</a></h2>
-<p>Stable versions of Covsirphy are available at <a class="reference external" href="https://pypi.org/project/covsirphy/">PyPI (The Python Package
-Index): covsirphy</a> and support
-Python 3.6 or newer versions.</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">pip</span> <span class="n">install</span> <span class="o">--</span><span class="n">upgrade</span> <span class="n">covsirphy</span>
-</pre></div>
-</div>
-<p>Development versions are in <a class="reference external" href="https://github.com/lisphilar/covid19-sir">GitHub repository:
-CovsirPhy</a>.</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">pip</span> <span class="n">install</span> <span class="o">--</span><span class="n">upgrade</span> <span class="s2">&quot;git+https://github.com/lisphilar/covid19-sir.git#egg=covsirphy&quot;</span>
-</pre></div>
-</div>
-<p>Then, download the datasets and save the data in <code class="docutils literal notranslate"><span class="pre">input</span></code> directory.</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">covsirphy</span> <span class="k">as</span> <span class="nn">cs</span>
-<span class="n">data_loader</span> <span class="o">=</span> <span class="n">cs</span><span class="o">.</span><span class="n">DataLoader</span><span class="p">(</span><span class="s2">&quot;input&quot;</span><span class="p">)</span>
-<span class="n">jhu_data</span> <span class="o">=</span> <span class="n">data_loader</span><span class="o">.</span><span class="n">jhu</span><span class="p">()</span>
-<span class="n">japan_data</span> <span class="o">=</span> <span class="n">data_loader</span><span class="o">.</span><span class="n">japan</span><span class="p">()</span>
-<span class="n">population_data</span> <span class="o">=</span> <span class="n">data_loader</span><span class="o">.</span><span class="n">population</span><span class="p">()</span>
-<span class="n">oxcgrt_data</span> <span class="o">=</span> <span class="n">data_loader</span><span class="o">.</span><span class="n">oxcgrt</span><span class="p">()</span>
-<span class="n">linelist</span> <span class="o">=</span> <span class="n">data_loader</span><span class="o">.</span><span class="n">linelist</span><span class="p">()</span>
-</pre></div>
-</div>
-<p>If <code class="docutils literal notranslate"><span class="pre">input</span></code> directory has the datasets, <code class="docutils literal notranslate"><span class="pre">DataLoader</span></code> will load the
-local files. If the datasets were updated in remote servers,
-<code class="docutils literal notranslate"><span class="pre">DataLoader</span></code> will update the local files automatically.</p>
-<p>We can get descriptions of the datasets and raw/cleaned datasets easily.
-As an example, JHU dataset will be used here.</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Description (string)</span>
-<span class="n">jhu_data</span><span class="o">.</span><span class="n">citation</span>
-<span class="c1"># Raw data (pandas.DataFrame)</span>
-<span class="n">jhu_data</span><span class="o">.</span><span class="n">raw</span>
-<span class="c1"># Cleaned data (pandas.DataFrame)</span>
-<span class="n">jhu_data</span><span class="o">.</span><span class="n">cleaned</span><span class="p">()</span>
-</pre></div>
-</div>
-<p>We can get COVID-19 Data Hub citation list of primary sources as
-follows.</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">data_loader</span><span class="o">.</span><span class="n">covid19dh_citation</span>
-</pre></div>
-</div>
-</div>
-<div class="section" id="developers">
-<h2>2. Developers<a class="headerlink" href="#developers" title="Permalink to this headline">¶</a></h2>
-<p>Developers will clone this repository with <code class="docutils literal notranslate"><span class="pre">git</span> <span class="pre">clone</span></code> command and
-install dependencies with pipenv.</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">git</span> <span class="n">clone</span> <span class="n">https</span><span class="p">:</span><span class="o">//</span><span class="n">github</span><span class="o">.</span><span class="n">com</span><span class="o">/</span><span class="n">lisphilar</span><span class="o">/</span><span class="n">covid19</span><span class="o">-</span><span class="n">sir</span><span class="o">.</span><span class="n">git</span>
-<span class="n">cd</span> <span class="n">covid19</span><span class="o">-</span><span class="n">sir</span>
-<span class="n">pip</span> <span class="n">install</span> <span class="n">wheel</span><span class="p">;</span> <span class="n">pip</span> <span class="n">install</span> <span class="o">--</span><span class="n">upgrade</span> <span class="n">pip</span><span class="p">;</span> <span class="n">pip</span> <span class="n">install</span> <span class="n">pipenv</span>
-<span class="n">export</span> <span class="n">PIPENV_VENV_IN_PROJECT</span><span class="o">=</span><span class="n">true</span>
-<span class="n">export</span> <span class="n">PIPENV_TIMEOUT</span><span class="o">=</span><span class="mi">7200</span>
-<span class="n">pipenv</span> <span class="n">sync</span> <span class="o">--</span><span class="n">dev</span>
-</pre></div>
-</div>
-<p>Shell will be started with <code class="docutils literal notranslate"><span class="pre">pipenv</span> <span class="pre">shell</span></code> and <code class="docutils literal notranslate"><span class="pre">python</span></code> command.</p>
-<p>Developers can perform tests with
-<code class="docutils literal notranslate"><span class="pre">pipenv</span> <span class="pre">run</span> <span class="pre">pytest</span> <span class="pre">-v</span> <span class="pre">--durations=0</span> <span class="pre">--failed-first</span> <span class="pre">--maxfail=1</span> <span class="pre">--cov=covsirphy</span> <span class="pre">--cov-report=term-missing</span> <span class="pre">--profile-svg</span></code>
-and call graph will be saved as SVG file (prof/combined.svg).</p>
+<div class="section" id="use-a-local-csv-file-which-has-the-number-of-cases">
+<h2>3. Use a local CSV file which has the number of cases<a class="headerlink" href="#use-a-local-csv-file-which-has-the-number-of-cases" title="Permalink to this headline">¶</a></h2>
+<p>We can replace <code class="docutils literal notranslate"><span class="pre">jhu_data</span></code> instance created by <code class="docutils literal notranslate"><span class="pre">DataLoader</span></code> class
+with your dataset saved in a CSV file.</p>
+<p>As an example, we have a CSV file (“oslo.csv”) with the following
+columns.</p>
 <ul class="simple">
-<li><p>Windows users need to install <a class="reference external" href="https://graphviz.org/_pages/Download/Download_windows.html">Graphviz for
-Windows</a>
-in advance.</p></li>
-<li><p>Debian/Ubuntu users need to install Graphviz with
-<code class="docutils literal notranslate"><span class="pre">sudo</span> <span class="pre">apt</span> <span class="pre">install</span> <span class="pre">graphviz</span></code> in advance.</p></li>
+<li><p>“date”: reported dates</p></li>
+<li><p>“confirmed”: the number of confirmed cases</p></li>
+<li><p>“recovered”: the number of recovered cases</p></li>
+<li><p>“fatal”: the number of fatal cases</p></li>
+<li><p>“province”: province names</p></li>
 </ul>
-<p>If you can run <code class="docutils literal notranslate"><span class="pre">make</span></code> command,</p>
-<table class="docutils align-default">
-<colgroup>
-<col style="width: 28%" />
-<col style="width: 72%" />
-</colgroup>
-<tbody>
-<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">make</span> <span class="pre">install</span></code></p></td>
-<td><p>Install pipenv and the dependencies of CovsirPhy</p></td>
-</tr>
-<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">make</span> <span class="pre">test</span></code></p></td>
-<td><p>Run tests using Pytest</p></td>
-</tr>
-<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">make</span> <span class="pre">docs</span></code></p></td>
-<td><p>Update sphinx document</p></td>
-</tr>
-<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">make</span> <span class="pre">example</span></code></p></td>
-<td><p>Run example codes</p></td>
-</tr>
-<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">make</span> <span class="pre">clean</span></code></p></td>
-<td><p>Clean-up output files and pipenv environment</p></td>
-</tr>
-</tbody>
-</table>
-<p>We can prepare the dataset with the same codes as that was explained in
-“1. Standard users” subsection.</p>
+<p>Please create <code class="docutils literal notranslate"><span class="pre">CountryData</span></code> instance at first.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Create CountryData instance</span>
+<span class="n">country_data</span> <span class="o">=</span> <span class="n">cs</span><span class="o">.</span><span class="n">CountryData</span><span class="p">(</span><span class="s2">&quot;oslo.csv&quot;</span><span class="p">,</span> <span class="n">country</span><span class="o">=</span><span class="s2">&quot;Norway&quot;</span><span class="p">)</span>
+<span class="n">country_data</span><span class="o">.</span><span class="n">set_variables</span><span class="p">(</span>
+    <span class="n">date</span><span class="o">=</span><span class="s2">&quot;date&quot;</span><span class="p">,</span> <span class="n">confirmed</span><span class="o">=</span><span class="s2">&quot;confirmed&quot;</span><span class="p">,</span> <span class="n">recovered</span><span class="o">=</span><span class="s2">&quot;recovered&quot;</span><span class="p">,</span> <span class="n">fatal</span><span class="o">=</span><span class="s2">&quot;fatal&quot;</span><span class="p">,</span> <span class="n">province</span><span class="o">=</span><span class="s2">&quot;province&quot;</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="c1"># If you do not have province column, you can specify with province argument</span>
+<span class="c1"># country_data = cs.CountryData(&quot;oslo.csv&quot;, country=&quot;Norway&quot;, province=&quot;Oslo&quot;)</span>
+<span class="c1"># country_data.set_variables(</span>
+<span class="c1">#     date=&quot;date&quot;, confirmed=&quot;confirmed&quot;, recovered=&quot;recovered&quot;, fatal=&quot;fatal&quot;,</span>
+<span class="c1"># )</span>
+<span class="c1"># If the dataset does not have province-level records,</span>
+<span class="c1"># country_data = cs.CountryData(&quot;oslo.csv&quot;, country=&quot;Norway&quot;)</span>
+<span class="c1"># country_data.set_variables(</span>
+<span class="c1">#     date=&quot;date&quot;, confirmed=&quot;confirmed&quot;, recovered=&quot;recovered&quot;, fatal=&quot;fatal&quot;,</span>
+<span class="c1"># )</span>
+</pre></div>
 </div>
-<div class="section" id="kagglers-local-environment">
-<h2>3. Kagglers (local environment)<a class="headerlink" href="#kagglers-local-environment" title="Permalink to this headline">¶</a></h2>
-<p>As explained in “2. Developers” subsection, we need to git-clone this
-repository and install the dependencies when you want to uses this
-package with Kaggle API in your local environment.</p>
-<p>Then, please move to account page of Kaggle and download “kaggle.json”
-by selecting “API &gt; Create New API Token” button. Copy the json file to
-the top directory of the local repository or “~/.kaggle”. Please refer
-to <a class="reference external" href="https://www.kaggle.com/docs/api">How to Use Kaggle: Public API</a>
-and <a class="reference external" href="https://stackoverflow.com/questions/55934733/documentation-for-kaggle-api-within-python#:~:text=Here%20are%20the%20steps%20involved%20in%20using%20the%20Kaggle%20API%20from%20Python.&amp;text=Go%20to%20your%20Kaggle%20account,json%20will%20be%20downloaded">stackoverflow: documentation for Kaggle API *within*
+<p>Then, convert it to <code class="docutils literal notranslate"><span class="pre">JHUData</span></code> instance.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Create JHUData instance using cleaned dataset (pandas.DataFrame)</span>
+<span class="n">jhu_data</span> <span class="o">=</span> <span class="n">cs</span><span class="o">.</span><span class="n">JHUData</span><span class="o">.</span><span class="n">from_dataframe</span><span class="p">(</span><span class="n">country_data</span><span class="o">.</span><span class="n">cleaned</span><span class="p">())</span>
+<span class="c1"># Or, we can use and update the output of DataLoader.jhu()</span>
+<span class="c1"># jhu_data = data_loader.jhu()</span>
+<span class="c1"># jhu_data.replace(country_data)</span>
+</pre></div>
+</div>
+<p>Additionally, you may need to register population values to
+<code class="docutils literal notranslate"><span class="pre">PopulationData</span></code> instance manually.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Create PopulationData instance with empty dataset</span>
+<span class="n">population_data</span> <span class="o">=</span> <span class="n">cs</span><span class="o">.</span><span class="n">PopulationData</span><span class="p">()</span>
+<span class="c1"># Or, we can use the output of DataLoader.population()</span>
+<span class="c1"># population_data = data_loader.population()</span>
+<span class="c1"># Update the population value</span>
+<span class="n">population_data</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="mi">693494</span><span class="p">,</span> <span class="n">country</span><span class="o">=</span><span class="s2">&quot;Norway&quot;</span><span class="p">,</span> <span class="n">province</span><span class="o">=</span><span class="s2">&quot;Oslo&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Notes: This is also effective in <a class="reference external" href="https://www.kaggle.com/">Kaggle</a>
+Notebook. The datasets are saved in “/kaggle/input/” directory.</p>
+<p>Notes: If you have Kaggle API, you can download Kaggle datasets by
+updating and executing
+<a class="reference external" href="https://github.com/lisphilar/covid19-sir/blob/master/input.py">input.py</a>
+script. CSV files will be saved in “/kaggle/input/” directory.</p>
+<p>Kaggle API: Move to account page of Kaggle and download “kaggle.json” by
+selecting “API &gt; Create New API Token” button. Copy the json file to the
+top directory of the local repository or “~/.kaggle”. Please refer to
+<a class="reference external" href="https://www.kaggle.com/docs/api">How to Use Kaggle: Public API</a> and
+<a class="reference external" href="https://stackoverflow.com/questions/55934733/documentation-for-kaggle-api-within-python#:~:text=Here%20are%20the%20steps%20involved%20in%20using%20the%20Kaggle%20API%20from%20Python.&amp;text=Go%20to%20your%20Kaggle%20account,json%20will%20be%20downloaded">stackoverflow: documentation for Kaggle API *within*
 python?</a></p>
-<p>We can download datasets with <code class="docutils literal notranslate"><span class="pre">pipenv</span> <span class="pre">run</span> <span class="pre">./input.py</span></code> command.
-Modification of environment variables is un-necessary. Files will be
-saved in <code class="docutils literal notranslate"><span class="pre">input</span></code> directory of your local repository.</p>
-<div class="line-block">
-<div class="line">Note:</div>
-<div class="line">Except for OxCGRT dataset, the datasets downloaded with <code class="docutils literal notranslate"><span class="pre">input.py</span></code>
-scripts are different from that explained in the previous subsections
-as follows.</div>
-</div>
+<p>Notes: CovsirPhy project started in Kaggle platform with the following
+datasets.</p>
 <ul class="simple">
 <li><p>The number of cases (JHU) and linelist: <a class="reference external" href="https://www.kaggle.com/sudalairajkumar/novel-corona-virus-2019-dataset">Novel Corona Virus 2019
 Dataset by
 SRK</a></p></li>
-<li><p>The number of cases in Japan: <a class="reference external" href="https://www.kaggle.com/lisphilar/covid19-dataset-in-japan">COVID-19 dataset in Japan by
-Lisphilar</a></p></li>
 <li><p>Population in each country: <a class="reference external" href="https://www.kaggle.com/dgrechka/covid19-global-forecasting-locations-population">covid19 global forecasting: locations
 population by Dmitry A.
 Grechka</a></p></li>
-<li><p>Government Response Tracker (OxCGRT): <a class="reference external" href="https://github.com/OxCGRT/covid-policy-tracker">Thomas Hale, Sam Webster, Anna
-Petherick, Toby Phillips, and Beatriz Kira. (2020). Oxford COVID-19
-Government Response Tracker. Blavatnik School of
-Government.</a></p></li>
+<li><p>The number of cases in Japan: <a class="reference external" href="https://www.kaggle.com/lisphilar/covid19-dataset-in-japan">COVID-19 dataset in Japan by
+Lisphilar</a></p></li>
 </ul>
-<p>Usage of <code class="docutils literal notranslate"><span class="pre">DataLoader</span></code> class is as follows. Please specify
-<code class="docutils literal notranslate"><span class="pre">local_file</span></code> argument in the methods.</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">covsirphy</span> <span class="k">as</span> <span class="nn">cs</span>
-<span class="n">data_loader</span> <span class="o">=</span> <span class="n">cs</span><span class="o">.</span><span class="n">DataLoader</span><span class="p">(</span><span class="s2">&quot;kaggle/input&quot;</span><span class="p">)</span>
-<span class="n">jhu_data</span> <span class="o">=</span> <span class="n">data_loader</span><span class="o">.</span><span class="n">jhu</span><span class="p">()</span>
-<span class="n">japan_data</span> <span class="o">=</span> <span class="n">data_loader</span><span class="o">.</span><span class="n">japan</span><span class="p">(</span><span class="n">local_file</span><span class="o">=</span><span class="s2">&quot;./kaggle/input/covid_jpn_total.csv&quot;</span><span class="p">)</span>
-<span class="n">population_data</span> <span class="o">=</span> <span class="n">data_loader</span><span class="o">.</span><span class="n">population</span><span class="p">()</span>
-<span class="n">oxcgrt_data</span> <span class="o">=</span> <span class="n">data_loader</span><span class="o">.</span><span class="n">oxcgrt</span><span class="p">()</span>
-<span class="n">linelist</span> <span class="o">=</span> <span class="n">data_loader</span><span class="o">.</span><span class="n">linelist</span><span class="p">()</span>
-</pre></div>
-</div>
-<p>(Optional) We can replace a part of JHU data with country-specific
-datasets. As an example, we will use the records in Japan here because
-values of JHU dataset sometimes differ from government-announced values
-as shown in <a class="reference external" href="https://www.kaggle.com/lisphilar/covid-19-government-jhu-data-in-japan">COVID-19: Government/JHU data in
-Japan</a>.</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">jhu_data</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="n">japan_data</span><span class="p">)</span>
-<span class="n">ncov_df</span> <span class="o">=</span> <span class="n">jhu_data</span><span class="o">.</span><span class="n">cleaned</span><span class="p">()</span>
-</pre></div>
-</div>
-</div>
-<div class="section" id="kagglers-kaggle-platform">
-<h2>4. Kagglers (Kaggle platform)<a class="headerlink" href="#kagglers-kaggle-platform" title="Permalink to this headline">¶</a></h2>
-<p>When you want to use this package in Kaggle notebook, please turn on
-Internet option in notebook setting and download the datasets explained
-in the previous subsection “3. Kagglers (Kaggle platform)”.</p>
-<p>Then, install this package with pip command.</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>!pip install covsirphy
-</pre></div>
-</div>
-<p>Then, please load the datasets with the following codes, specifying the
-filenames.</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">covsirphy</span> <span class="k">as</span> <span class="nn">cs</span>
-<span class="c1"># The number of cases (JHU style)</span>
-<span class="n">data_loader</span> <span class="o">=</span> <span class="n">cs</span><span class="o">.</span><span class="n">DataLoader</span><span class="p">()</span>
-<span class="n">jhu_data</span> <span class="o">=</span> <span class="n">data_loader</span><span class="o">.</span><span class="n">jhu</span><span class="p">()</span>
-<span class="c1"># (Optional) The number of cases in Japan</span>
-<span class="n">japan_data</span> <span class="o">=</span> <span class="n">cs</span><span class="o">.</span><span class="n">CountryData</span><span class="p">(</span><span class="s2">&quot;/kaggle/input/covid19-dataset-in-japan/covid_jpn_total.csv&quot;</span><span class="p">,</span> <span class="n">country</span><span class="o">=</span><span class="s2">&quot;Japan&quot;</span><span class="p">)</span>
-<span class="n">japan_data</span><span class="o">.</span><span class="n">set_variables</span><span class="p">(</span>
-    <span class="n">date</span><span class="o">=</span><span class="s2">&quot;Date&quot;</span><span class="p">,</span> <span class="n">confirmed</span><span class="o">=</span><span class="s2">&quot;Positive&quot;</span><span class="p">,</span> <span class="n">fatal</span><span class="o">=</span><span class="s2">&quot;Fatal&quot;</span><span class="p">,</span> <span class="n">recovered</span><span class="o">=</span><span class="s2">&quot;Discharged&quot;</span><span class="p">,</span> <span class="n">province</span><span class="o">=</span><span class="kc">None</span>
-<span class="p">)</span>
-<span class="c1"># Population in each country</span>
-<span class="n">population_data</span> <span class="o">=</span> <span class="n">data_loader</span><span class="o">.</span><span class="n">population</span><span class="p">()</span>
-</pre></div>
-</div>
-<div class="line-block">
-<div class="line">Note:</div>
-<div class="line">Currently, OxCGRT dataset is not supported.</div>
-</div>
-<p>(Optional) We can replace a part of JHU data with country-specific
-datasets. As an example, we will use the records in Japan here because
-values of JHU dataset sometimes differ from government-announced values
-as shown in <a class="reference external" href="https://www.kaggle.com/lisphilar/covid-19-government-jhu-data-in-japan">COVID-19: Government/JHU data in
-Japan</a>.</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">jhu_data</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="n">japan_data</span><span class="p">)</span>
-<span class="n">ncov_df</span> <span class="o">=</span> <span class="n">jhu_data</span><span class="o">.</span><span class="n">cleaned</span><span class="p">()</span>
-</pre></div>
-</div>
 </div>
 </div>
 

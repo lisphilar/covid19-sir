@@ -23,6 +23,8 @@
    usage_policy
    covsirphy
    TERM
+   CODE_OF_CONDUCT
+   SECURITY
    CONTRIBUTING
 
 
