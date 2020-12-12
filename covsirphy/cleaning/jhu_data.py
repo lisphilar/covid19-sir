@@ -59,9 +59,7 @@ class JHUData(CleaningBase):
         if "population" in kwargs.keys():
             raise ValueError(
                 "@population was removed in JHUData.cleaned(). Please use JHUData.subset()")
-        df = self._cleaned_df.copy()
-        df = df.loc[:, self.COLUMNS]
-        return df
+        return self._cleaned_df.loc[:, self.COLUMNS]
 
     def _cleaning(self):
         """
