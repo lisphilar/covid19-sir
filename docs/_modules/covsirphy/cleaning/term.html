@@ -186,6 +186,7 @@
     <span class="n">V</span> <span class="o">=</span> <span class="s2">&quot;Vaccinated&quot;</span>
     <span class="n">E</span> <span class="o">=</span> <span class="s2">&quot;Exposed&quot;</span>
     <span class="n">W</span> <span class="o">=</span> <span class="s2">&quot;Waiting&quot;</span>
+    <span class="n">TESTS</span> <span class="o">=</span> <span class="s2">&quot;Tests&quot;</span>
     <span class="c1"># Column names</span>
     <span class="n">DATE</span> <span class="o">=</span> <span class="s2">&quot;Date&quot;</span>
     <span class="n">START</span> <span class="o">=</span> <span class="s2">&quot;Start&quot;</span>
@@ -347,8 +348,7 @@
             <span class="k">return</span> <span class="n">df</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="nb">set</span><span class="p">(</span><span class="n">columns</span><span class="p">)</span><span class="o">.</span><span class="n">issubset</span><span class="p">(</span><span class="n">df</span><span class="o">.</span><span class="n">columns</span><span class="p">):</span>
             <span class="n">cols_str</span> <span class="o">=</span> <span class="s2">&quot;, &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span>
-                <span class="p">[</span><span class="n">col</span> <span class="k">for</span> <span class="n">col</span> <span class="ow">in</span> <span class="n">columns</span> <span class="k">if</span> <span class="n">col</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">df</span><span class="o">.</span><span class="n">columns</span><span class="p">]</span>
-            <span class="p">)</span>
+                <span class="n">col</span> <span class="k">for</span> <span class="n">col</span> <span class="ow">in</span> <span class="n">columns</span> <span class="k">if</span> <span class="n">col</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">df</span><span class="o">.</span><span class="n">columns</span><span class="p">)</span>
             <span class="n">included</span> <span class="o">=</span> <span class="s2">&quot;, &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">df</span><span class="o">.</span><span class="n">columns</span><span class="o">.</span><span class="n">tolist</span><span class="p">())</span>
             <span class="n">s1</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;Expected columns were not included in </span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2"> with </span><span class="si">{</span><span class="n">included</span><span class="si">}</span><span class="s2">.&quot;</span>
             <span class="k">raise</span> <span class="ne">KeyError</span><span class="p">(</span>

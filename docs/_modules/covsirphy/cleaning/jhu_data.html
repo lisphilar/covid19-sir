@@ -199,9 +199,6 @@
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Return the cleaned dataset.</span>
 
-<span class="sd">        Note:</span>
-<span class="sd">            Cleaning method is defined by self._cleaning() method.</span>
-
 <span class="sd">        Args:</span>
 <span class="sd">            kwargs: keword arguments will be ignored.</span>
 
@@ -217,13 +214,14 @@
 <span class="sd">                    - Infected (int): the number of currently infected cases</span>
 <span class="sd">                    - Fatal (int): the number of fatal cases</span>
 <span class="sd">                    - Recovered (int): the number of recovered cases</span>
+
+<span class="sd">        Notes:</span>
+<span class="sd">            Cleaning method is defined by self._cleaning() method.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="s2">&quot;population&quot;</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
                 <span class="s2">&quot;@population was removed in JHUData.cleaned(). Please use JHUData.subset()&quot;</span><span class="p">)</span>
-        <span class="n">df</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_cleaned_df</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
-        <span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">loc</span><span class="p">[:,</span> <span class="bp">self</span><span class="o">.</span><span class="n">COLUMNS</span><span class="p">]</span>
-        <span class="k">return</span> <span class="n">df</span></div>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_cleaned_df</span><span class="o">.</span><span class="n">loc</span><span class="p">[:,</span> <span class="bp">self</span><span class="o">.</span><span class="n">COLUMNS</span><span class="p">]</span></div>
 
     <span class="k">def</span> <span class="nf">_cleaning</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
@@ -466,7 +464,7 @@
 <span class="sd">        Create JHUData instance using a pandas dataframe.</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">            dataframe (pd.DataFrame): Cleaned dataset</span>
+<span class="sd">            dataframe (pd.DataFrame): cleaned dataset</span>
 
 <span class="sd">        Returns:</span>
 <span class="sd">            covsirphy.JHUData: JHU-style dataset</span>
@@ -536,12 +534,17 @@
 
 <span class="sd">        Returns:</span>
 <span class="sd">            int: closing period [days]</span>
+
+<span class="sd">        Notes:</span>
+<span class="sd">            If no records we can use for calculation were registered, 12 [days] will be applied.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="c1"># Get cleaned dataset at country level</span>
         <span class="n">df</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_cleaned_df</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
         <span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">df</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">PROVINCE</span><span class="p">]</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">UNKNOWN</span><span class="p">]</span>
         <span class="c1"># Select records of countries where recovered values are reported</span>
         <span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">COUNTRY</span><span class="p">)</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">R</span><span class="p">]</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">df</span><span class="o">.</span><span class="n">empty</span><span class="p">:</span>
+            <span class="k">return</span> <span class="mi">12</span>
         <span class="c1"># Total number of confirmed/closed cases of selected records</span>
         <span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">DATE</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
         <span class="n">df</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">FR</span><span class="p">]</span> <span class="o">=</span> <span class="n">df</span><span class="p">[[</span><span class="bp">self</span><span class="o">.</span><span class="n">F</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">R</span><span class="p">]]</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>

@@ -172,6 +172,7 @@
 <span class="kn">from</span> <span class="nn">covsirphy.cleaning.population</span> <span class="kn">import</span> <span class="n">PopulationData</span>
 <span class="kn">from</span> <span class="nn">covsirphy.cleaning.covid19datahub</span> <span class="kn">import</span> <span class="n">COVID19DataHub</span>
 <span class="kn">from</span> <span class="nn">covsirphy.cleaning.linelist</span> <span class="kn">import</span> <span class="n">LinelistData</span>
+<span class="kn">from</span> <span class="nn">covsirphy.cleaning.pcr_data</span> <span class="kn">import</span> <span class="n">PCRData</span>
 
 
 <div class="viewcode-block" id="DataLoader"><a class="viewcode-back" href="../../../covsirphy.cleaning.html#covsirphy.cleaning.dataloader.DataLoader">[docs]</a><span class="k">class</span> <span class="nc">DataLoader</span><span class="p">(</span><span class="n">Term</span><span class="p">):</span>
@@ -325,8 +326,6 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="n">local_file</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">return</span> <span class="n">JHUData</span><span class="p">(</span><span class="n">filename</span><span class="o">=</span><span class="n">local_file</span><span class="p">)</span>
-        <span class="n">jhu_data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_covid19dh</span><span class="p">(</span>
-            <span class="n">name</span><span class="o">=</span><span class="s2">&quot;jhu&quot;</span><span class="p">,</span> <span class="n">basename</span><span class="o">=</span><span class="n">basename</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="n">verbose</span><span class="p">)</span>
         <span class="c1"># Retrieve JHU data from COVID-19 Data Hub</span>
         <span class="n">jhu_data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_covid19dh</span><span class="p">(</span>
             <span class="n">name</span><span class="o">=</span><span class="s2">&quot;jhu&quot;</span><span class="p">,</span> <span class="n">basename</span><span class="o">=</span><span class="n">basename</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="n">verbose</span><span class="p">)</span>
@@ -414,7 +413,35 @@
             <span class="n">force</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_download_necessity</span><span class="p">(</span><span class="n">filename</span><span class="o">=</span><span class="n">filename</span><span class="p">)</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_linelist_data</span> <span class="o">=</span> <span class="n">LinelistData</span><span class="p">(</span>
                 <span class="n">filename</span><span class="o">=</span><span class="n">filename</span><span class="p">,</span> <span class="n">force</span><span class="o">=</span><span class="n">force</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="n">verbose</span><span class="p">)</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_linelist_data</span></div></div>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_linelist_data</span></div>
+
+<div class="viewcode-block" id="DataLoader.pcr"><a class="viewcode-back" href="../../../covsirphy.cleaning.html#covsirphy.cleaning.dataloader.DataLoader.pcr">[docs]</a>    <span class="k">def</span> <span class="nf">pcr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">basename</span><span class="o">=</span><span class="s2">&quot;covid19dh.csv&quot;</span><span class="p">,</span> <span class="n">local_file</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Load the dataset regarding the number of tests and confirmed cases,</span>
+<span class="sd">        using local CSV file or COVID-19 Data Hub.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            basename (str or None): basename of the file to save the data</span>
+<span class="sd">            local_file (str or None): if not None, load the data from this file</span>
+<span class="sd">            verbose (int): level of verbosity</span>
+
+<span class="sd">        Notes:</span>
+<span class="sd">            If @verbose is 2, detailed citation list will be shown when downloading.</span>
+<span class="sd">            If @verbose is 1, how to show the list will be explained.</span>
+<span class="sd">            Citation of COVID-19 Data Hub will be set as JHUData.citation.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            covsirphy.PCRData: dataset regarding the number of tests and confirmed cases</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">local_file</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">PCRData</span><span class="p">(</span><span class="n">filename</span><span class="o">=</span><span class="n">local_file</span><span class="p">)</span>
+        <span class="c1"># Retrieve JHU data from COVID-19 Data Hub</span>
+        <span class="n">pcr_data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_covid19dh</span><span class="p">(</span>
+            <span class="n">name</span><span class="o">=</span><span class="s2">&quot;pcr&quot;</span><span class="p">,</span> <span class="n">basename</span><span class="o">=</span><span class="n">basename</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="n">verbose</span><span class="p">)</span>
+        <span class="c1"># Replace Japan dataset with the government-announced data</span>
+        <span class="n">japan_data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">japan</span><span class="p">()</span>
+        <span class="n">pcr_data</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="n">japan_data</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">pcr_data</span></div></div>
 </pre></div>
 
            </div>
