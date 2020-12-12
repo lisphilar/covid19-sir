@@ -40,38 +40,25 @@
 <strong>If you have ideas or need new functionalities, please join this project.
 Any suggestions with [Github Issues](https://github.com/lisphilar/covid19-sir/issues/new/choose) are always welcomed. Please read [Guideline of contribution](https://lisphilar.github.io/covid19-sir/CONTRIBUTING.html) in advance.</strong>
 
-## Installation and dataset preparation
-We have the following options to start analysis with CovsirPhy. Datasets are not included in this package, but we can prepare them with `DataLoader` class.
+## Installation
+The latest stable version of CovsirPhy is available at [PyPI (The Python Package Index): covsirphy](https://pypi.org/project/covsirphy/) and supports Python 3.6 or newer versions.
 
-|                            |Installation     |Dataset preparation                          |
-|:---------------------------|:----------------|:--------------------------------------------|
-|Standard users              |pip/pipenv       |Automated with `DataLoader` class            |
-|Developers                  |git-cloning      |Automated with `DataLoader` class            |
-|Kagglers (local environment)|git-cloning      |Kaggle API and Python script and `DataLoader`|
-|Kagglers (Kaggle platform)  |pip              |Kaggle Datasets and `DataLoader`             |
-
-<strong>[Installation and dataset preparation](https://lisphilar.github.io/covid19-sir/INSTALLATION.html) explains how to install and prepare datasets for all users.</strong>
-
-Stable versions of Covsirphy are available at [PyPI (The Python Package Index): covsirphy](https://pypi.org/project/covsirphy/) and support Python 3.6 or newer versions.
 ```
-pip install covsirphy --upgrade
+pip install --upgrade covsirphy
 ```
 
 Development versions are in [GitHub repository: CovsirPhy](https://github.com/lisphilar/covid19-sir).
-```
-pip install "git+https://github.com/lisphilar/covid19-sir.git#egg=covsirphy"
-```
 
-Main datasets will be retrieved via [COVID-19 Data Hub](https://covid19datahub.io/) and the citation is  
-Guidotti, E., Ardia, D., (2020), "COVID-19 Data Hub", Journal of Open Source Software 5(51):2376, doi: 10.21105/joss.02376.
-
+```
+pip install --upgrade "git+https://github.com/lisphilar/covid19-sir.git#egg=covsirphy"
+```
 
 ## Usage
 Quickest tour of CovsirPhy is here. The following codes analyze the records in Japan, but we can change the country name when creating `Scenario` class instance for your own analysis.
 
 ```Python
 import covsirphy as cs
-# Download datasets
+# Download and update datasets
 data_loader = cs.DataLoader("input")
 jhu_data = data_loader.jhu()
 population_data = data_loader.population()

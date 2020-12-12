@@ -41,8 +41,11 @@ test-file:
 .PHONY: sphinx
 sphinx:
 	@# sudo apt install pandoc
+	@# update docs/index.rst as well as the following codes
 	@pandoc --from markdown --to rst README.md -o docs/README.rst
+	@pandoc --from markdown --to rst .github/CODE_OF_CONDUCT.md -o docs/CODE_OF_CONDUCT.rst
 	@pandoc --from markdown --to rst .github/CONTRIBUTING.md -o docs/CONTRIBUTING.rst
+	@pandoc --from markdown --to rst SECURITY.md -o docs/SECURITY.rst
 	@pandoc --from markdown --to rst docs/markdown/INSTALLATION.md -o docs/INSTALLATION.rst
 	@pandoc --from markdown --to rst docs/markdown/TERM.md -o docs/TERM.rst
 	@# When new module was added, update docs/covsirphy.rst and docs/(module name).rst
