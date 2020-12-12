@@ -302,7 +302,7 @@ class JHUData(CleaningBase):
         Create JHUData instance using a pandas dataframe.
 
         Args:
-            dataframe (pd.DataFrame): Cleaned dataset
+            dataframe (pd.DataFrame): cleaned dataset
 
         Returns:
             covsirphy.JHUData: JHU-style dataset

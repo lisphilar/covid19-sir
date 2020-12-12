@@ -17,7 +17,7 @@ class PCRData(CleaningBase):
     Data cleaning of PCR dataset.
 
     Args:
-        filename (str): CSV filename of the dataset
+        filename (str or None): CSV filename of the dataset
         interval (int): expected update interval of the number of confirmed cases and tests [days]
         citation (str): citation
     """
@@ -122,6 +122,22 @@ class PCRData(CleaningBase):
         df[self.C] = df[self.C].astype(np.int64)
         df = df.loc[:, [self.ISO3, *self.PCR_COLUMNS]].reset_index(drop=True)
         return df
+
+    @classmethod
+    def from_dataframe(cls, dataframe):
+        """
+        Create PCRData instance using a pandas dataframe.
+
+        Args:
+            dataframe (pd.DataFrame): cleaned dataset
+
+        Returns:
+            covsirphy.PCRData: PCR dataset
+        """
+        instance = cls(filename=None)
+        instance._cleaned_df = cls.ensure_dataframe(
+            dataframe, name="dataframe", columns=cls.PCR_COLUMNS)
+        return instance
 
     def replace(self, country_data):
         """
