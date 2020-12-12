@@ -20,14 +20,9 @@ class PCRData(CleaningBase):
         citation (str): citation
     """
     # Column names
-    PCR_COLS = [
-        CleaningBase.DATE, CleaningBase.COUNTRY,
-        CleaningBase.PROVINCE, CleaningBase.TESTS, CleaningBase.C
-    ]
-    PCR_NLOC_COLUMNS = [CleaningBase.DATE, CleaningBase.TESTS, CleaningBase.C]
-    PCR_COLUMNS = [
-        *CleaningBase.STR_COLUMNS, CleaningBase.TESTS, CleaningBase.C]
     PCR_VALUE_COLUMNS = [CleaningBase.TESTS, CleaningBase.C]
+    PCR_NLOC_COLUMNS = [CleaningBase.DATE, *PCR_VALUE_COLUMNS]
+    PCR_COLUMNS = [*CleaningBase.STR_COLUMNS, *PCR_VALUE_COLUMNS]
 
     def __init__(self, filename, interval=2, citation=None):
         if filename is None:
@@ -60,7 +55,7 @@ class PCRData(CleaningBase):
             Cleaning method is defined by self._cleaning() method.
         """
         df = self._cleaned_df.copy()
-        df = df.loc[:, self.PCR_COLS]
+        df = df.loc[:, self.PCR_COLUMNS]
         return df
 
     def _cleaning(self):
