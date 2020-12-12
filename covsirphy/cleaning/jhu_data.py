@@ -372,12 +372,17 @@ class JHUData(CleaningBase):
 
         Returns:
             int: closing period [days]
+
+        Notes:
+            If no records we can use for calculation were registered, 12 [days] will be applied.
         """
         # Get cleaned dataset at country level
         df = self._cleaned_df.copy()
         df = df.loc[df[self.PROVINCE] == self.UNKNOWN]
         # Select records of countries where recovered values are reported
         df = df.groupby(self.COUNTRY).filter(lambda x: x[self.R].sum() != 0)
+        if df.empty:
+            return 12
         # Total number of confirmed/closed cases of selected records
         df = df.groupby(self.DATE).sum()
         df[self.FR] = df[[self.F, self.R]].sum(axis=1)
