@@ -27,10 +27,10 @@ from covsirphy.cleaning.country_data import CountryData
 from covsirphy.cleaning.japan_data import JapanData
 from covsirphy.cleaning.population import PopulationData, Population
 from covsirphy.cleaning.oxcgrt import OxCGRTData
+from covsirphy.cleaning.pcr_data import PCRData
 from covsirphy.cleaning.covid19datahub import COVID19DataHub
 from covsirphy.cleaning.linelist import LinelistData
 from covsirphy.cleaning.dataloader import DataLoader
-from covsirphy.cleaning.pcr_data import PCRData
 # ode
 from covsirphy.ode.mbase import ModelBase
 from covsirphy.ode.sir import SIR
