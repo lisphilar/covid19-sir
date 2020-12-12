@@ -119,3 +119,36 @@ class UnExecutedError(AttributeError, NameError, ValueError):
 
     def __str__(self):
         return f"Please execute {self.method_name} in advance{self.message}"
+
+class PCRIncorrectPreconditions(KeyError):
+    """
+    Error when checking preconditions in the PCR data.
+
+    Args:
+        country (str): country name
+        province (str or None): province name
+        message (str or None): the other messages
+    """
+
+    def __init__(self, country, province=None, message=None):
+        self.area = self._area(country, province)
+        self.message = "" if message is None else f" {message}"
+
+    def __str__(self):
+        return f"{self.message}{self.area}."
+    
+    @staticmethod
+    def _area(country, province):
+        """
+        Error when PCR preconditions failed with specified arguments.
+
+        Args:
+            country (str): country name
+            province (str or None): province name
+
+        Returns:
+            str: area name
+        """
+        country_str = (" in country " + country) if not province else ""
+        province_str = "" if province is None else (" in province " + province)
+        return f"{province_str}{country_str}"

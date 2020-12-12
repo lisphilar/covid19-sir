@@ -6,6 +6,7 @@ import pandas as pd
 from dask import dataframe as dd
 from covsirphy.util.plotting import line_plot
 from covsirphy.util.error import SubsetNotFoundError
+from covsirphy.util.error import PCRIncorrectPreconditions
 from covsirphy.cleaning.cbase import CleaningBase
 from covsirphy.cleaning.country_data import CountryData
 
@@ -406,6 +407,27 @@ class PCRData(CleaningBase):
         df = df.loc[non_zero_index_start:].reset_index(drop=True)
         
         return (df, is_complemented)
+    
+    def pcr_check_preconditions(self, df, country, province=None):
+        """
+        Check preconditions in order to proceed with PCR data processing
+
+        Args:
+            df (pandas.DataFrame):
+                Index: Date (pandas.TimeStamp)
+                Columns: Tests, Confirmed
+            country(str): country name or ISO3 code
+            province(str or None): province name
+        """
+        preconditions_okay = True
+        # Check if there are too many missing values
+        if (not df[self.TESTS].max()) or ((df[self.TESTS] == 0).mean() >= 0.5):
+            df["PCR_Rate"] = 0
+            preconditions_okay = False
+            raise PCRIncorrectPreconditions(
+                country=country, province=province, message="Too many missing Tests records") from None
+
+        return (df, preconditions_okay)
         
     def positive_rate(self, country, province=None, window=3, show_figure=True, filename=None):
         """
@@ -413,18 +435,19 @@ class PCRData(CleaningBase):
 
         Args:
             country(str): country name or ISO3 code
+            province(str or None): province name
             window (int): window of moving average, >= 1
             show_figure (bool): if True, show the records as a line-plot.
             filename (str): filename of the figure, or None (show figure)
 
         Returns:
             pandas.DataFrame
-                Index:
-                    reset index
                 Columns:
                     - Date (pd.TimeStamp): Observation date
                     - Tests (int): the number of total tests performed
                     - Confirmed (int): the number of confirmed cases
+                    - Tests_diff (int): daily tests performed
+                    - C_diff (int): daily confirmed cases
                     - PCR_Rate (float): positive rate (%) of the daily cases over the total daily tests performed
 
         Notes:
@@ -434,17 +457,12 @@ class PCRData(CleaningBase):
         window = self.ensure_natural_int(window, name="window")
         df = self.records(country, province)
         
-        if not df[self.TESTS].max():
-            print("No tests records found for country " + country) if not province else print("No tests records found for province " + province)
-            df["PCR_Rate"] = 0
-            return df
-
-        # Check if there are too many missing value, more than half
-        if (df[self.TESTS] == 0).mean() >= 0.5:
-            print("Too many missing tests records for country " + country) if not province else print("Too many missing tests records for province " + province) 
-            df["PCR_Rate"] = 0
+        # Check PCR data preconditions
+        df, preconditions_okay = self.pcr_check_preconditions(df, country, province)
+        if not preconditions_okay:
             return df
         
+        # Process PCR data
         df, is_complemented = self.pcr_processing(df, window)
         
         # Calculate PCR values
