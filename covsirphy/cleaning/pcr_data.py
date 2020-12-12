@@ -277,13 +277,13 @@ class PCRData(CleaningBase):
         max_frequency = df[variable].value_counts().max()
         return max_frequency > self.interval or not df.loc[df.index[-1], variable]
 
-    def _pcr_partial_complement(self, df, variable):
+    def _pcr_partial_complement(self, before_df, variable):
         """
         If there are missing values in variable column,
-        apply partial compliment (bfill, ffill) to all columns
+        apply partial compliment (bfill, ffill) to all columns.
 
         Args:
-            df (pandas.DataFrame):
+            before_df (pandas.DataFrame):
                 Index: Date (pandas.TimeStamp)
                 Columns: Tests, Confirmed, Tests_diff, C_diff
             variable: the desired column to use
@@ -294,16 +294,19 @@ class PCRData(CleaningBase):
                     Index: Date (pandas.TimeStamp)
                     Columns: Tests, Confirmed, Tests_diff, C_diff
                 bool: whether complement was done or not
+
+        Notes:
+            Filling NA with 0 will be always applied.
         """
-        df.fillna(0, inplace=True)
-        df, is_complemented = self._pcr_check_complement(df, variable)
-        if not is_complemented:
-            return (df, is_complemented)
+        before_df.fillna(0, inplace=True)
+        if not self._pcr_check_complement(before_df, variable):
+            return (before_df, False)
+        df = before_df.copy()
         for col in df:
             df[col].replace(0, np.nan, inplace=True)
             df[col].fillna(method="ffill", inplace=True)
             df[col].fillna(method="bfill", inplace=True)
-        return (df, is_complemented)
+        return (df, df.equals(before_df))
 
     def records(self, country, province=None, start_date=None, end_date=None):
         """
