@@ -1,7 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-from dask import dataframe as dd
 import numpy as np
 import pandas as pd
 from covsirphy.util.error import UnExecutedError
@@ -22,10 +21,7 @@ class CountryData(CleaningBase):
     """
 
     def __init__(self, filename, country, province=None):
-        if filename is None:
-            self._raw = pd.DataFrame()
-        else:
-            self._raw = dd.read_csv(filename).compute()
+        self._raw = pd.DataFrame() if filename is None else self.load(filename)
         self._country = country
         self._province = province
         self.province_col = None
