@@ -1,18 +1,39 @@
-# Installation and dataset preparation
+# Installation
+The latest stable version of CovsirPhy is available at [PyPI (The Python Package Index): covsirphy](https://pypi.org/project/covsirphy/) and supports Python 3.6 or newer versions.
 
-## Options of installation
-We have the following options to start analysis with CovsirPhy. Datasets are not included in this package, but we can prepare them with `DataLoader` class.
+```
+pip install --upgrade covsirphy
+```
 
-|                            |Installation     |Dataset preparation                          |
-|:---------------------------|:----------------|:--------------------------------------------|
-|Standard users              |pip/pipenv       |Automated with `DataLoader` class            |
-|Developers                  |git-cloning      |Automated with `DataLoader` class            |
-|Kagglers (local environment)|git-cloning      |Kaggle API and Python script and `DataLoader`|
-|Kagglers (Kaggle platform)  |pip              |Kaggle Datasets and `DataLoader`             |
+Development versions are in [GitHub repository: CovsirPhy](https://github.com/lisphilar/covid19-sir).
 
+```
+pip install --upgrade "git+https://github.com/lisphilar/covid19-sir.git#egg=covsirphy"
+```
 
-## Datasets to load
-We will use the following datasets. Standard users and developers will retrieve main datasets from [COVID-19 Data Hub](https://covid19datahub.io/) using `covid19dh` Python package internally. We can get the citation list of primary source `covsirphy.DataLoader` class (refer to "Standard users" subsection). This description is from [COVID-19 Data Hub: Dataset](https://covid19datahub.io/articles/data.html).
+# Dataset preparation
+Recommended datasets for analysis can be downloaded and updated easily with `DataLoader` class. If you have CSV files in your environment, you can analyse them.
+
+## 1. Recommended datasets
+With the following codes,  we can download the latest recommended datasets and save them in "input" folder of the current directory. Please refer to [Usage (datasets)](https://lisphilar.github.io/covid19-sir/usage_dataset.html) to find the details of the datasets.
+
+```Python
+import covsirphy as cs
+# Create DataLoader instance
+data_loader = cs.DataLoader("input")
+# The number of cases (JHU style)
+jhu_data = data_loader.jhu()
+# Linelist of case reports
+linelist = data_loader.linelist()
+# Population in each country
+population_data = data_loader.population()
+# Government Response Tracker (OxCGRT)
+oxcgrt_data = data_loader.oxcgrt()
+# The number of tests
+pcr_data = data_loader.pcr()
+```
+
+The downloaded datasets were retrieved from the following sites.
 
 ### [COVID-19 Data Hub](https://covid19datahub.io/)
 Guidotti, E., Ardia, D., (2020), "COVID-19 Data Hub", Journal of Open Source Software 5(51):2376, doi: 10.21105/joss.02376.
@@ -20,6 +41,7 @@ Guidotti, E., Ardia, D., (2020), "COVID-19 Data Hub", Journal of Open Source Sof
 - The number of cases (JHU style)
 - Population in each country
 - Government Response Tracker (OxCGRT)
+- The number of tests
 
 ### [Open COVID-19 Data Working Group](https://github.com/beoutbreakprepared/nCoV2019)
 Xu, B., Gutierrez, B., Mekaru, S. et al. Epidemiological data from the COVID-19 outbreak, real-time case information. Sci Data 7, 106 (2020). https://doi.org/10.1038/s41597-020-0448-0
@@ -28,144 +50,75 @@ Xu, B., Gutierrez, B., Mekaru, S. et al. Epidemiological data from the COVID-19 
 
 ### [Datasets for CovsirPhy](https://github.com/lisphilar/covid19-sir/tree/master/data)
 Lisphilar (2020), GitHub repository, COVID-19 dataset in Japan.  
+
 - The number of cases in Japan
 
-### How to request new data loader
+## 2. How to request new data loader
 If you want to use a new dataset for your analysis, please kindly inform us via [GitHub Issues: Request new method of DataLoader class](https://github.com/lisphilar/covid19-sir/issues/new/?template=request-new-method-of-dataloader-class.md). Please read [Guideline of contribution](https://lisphilar.github.io/covid19-sir/CONTRIBUTING.html) in advance.
 
-## 1. Standard users
-Stable versions of Covsirphy are available at [PyPI (The Python Package Index): covsirphy](https://pypi.org/project/covsirphy/) and support Python 3.6 or newer versions.
-```
-pip install --upgrade covsirphy
-```
+## 3. Use a local CSV file which has the number of cases
+We can replace `jhu_data` instance created by `DataLoader` class with your dataset saved in a CSV file.
 
-Development versions are in [GitHub repository: CovsirPhy](https://github.com/lisphilar/covid19-sir).
-```
-pip install --upgrade "git+https://github.com/lisphilar/covid19-sir.git#egg=covsirphy"
-```
+As an example, we have a CSV file ("oslo.csv") with the following columns.
 
-Then, download the datasets and save the data in `input` directory.
+- "date": reported dates
+- "confirmed": the number of confirmed cases
+- "recovered": the number of recovered cases
+- "fatal": the number of fatal cases
+- "province": province names
+
+Please create `CountryData` instance at first.
+
 ```Python
-import covsirphy as cs
-data_loader = cs.DataLoader("input")
-jhu_data = data_loader.jhu()
-japan_data = data_loader.japan()
-population_data = data_loader.population()
-oxcgrt_data = data_loader.oxcgrt()
-linelist = data_loader.linelist()
+# Create CountryData instance
+country_data = cs.CountryData("oslo.csv", country="Norway")
+country_data.set_variables(
+    date="date", confirmed="confirmed", recovered="recovered", fatal="fatal", province="province",
+)
+# If you do not have province column, you can specify with province argument
+# country_data = cs.CountryData("oslo.csv", country="Norway", province="Oslo")
+# country_data.set_variables(
+#     date="date", confirmed="confirmed", recovered="recovered", fatal="fatal",
+# )
+# If the dataset does not have province-level records,
+# country_data = cs.CountryData("oslo.csv", country="Norway")
+# country_data.set_variables(
+#     date="date", confirmed="confirmed", recovered="recovered", fatal="fatal",
+# )
 ```
-If `input` directory has the datasets, `DataLoader` will load the local files. If the datasets were updated in remote servers, `DataLoader` will update the local files automatically.
 
-We can get descriptions of the datasets and raw/cleaned datasets easily. As an example, JHU dataset will be used here.
+Then, convert it to `JHUData` instance.
+
 ```Python
-# Description (string)
-jhu_data.citation
-# Raw data (pandas.DataFrame)
-jhu_data.raw
-# Cleaned data (pandas.DataFrame)
-jhu_data.cleaned()
+# Create JHUData instance using cleaned dataset (pandas.DataFrame)
+jhu_data = cs.JHUData.from_dataframe(country_data.cleaned())
+# Or, we can use and update the output of DataLoader.jhu()
+# jhu_data = data_loader.jhu()
+# jhu_data.replace(country_data)
 ```
-We can get COVID-19 Data Hub citation list of primary sources as follows.
+
+Additionally, you may need to register population values to `PopulationData` instance manually.
+
 ```Python
-data_loader.covid19dh_citation
+# Create PopulationData instance with empty dataset
+population_data = cs.PopulationData()
+# Or, we can use the output of DataLoader.population()
+# population_data = data_loader.population()
+# Update the population value
+population_data.update(693494, country="Norway", province="Oslo")
 ```
 
+Notes:
+This is also effective in [Kaggle](https://www.kaggle.com/) Notebook. The datasets are saved in "/kaggle/input/" directory.
 
-## 2. Developers
-Developers will clone this repository with `git clone` command and install dependencies with pipenv.
-```
-git clone https://github.com/lisphilar/covid19-sir.git
-cd covid19-sir
-pip install wheel; pip install --upgrade pip; pip install pipenv
-export PIPENV_VENV_IN_PROJECT=true
-export PIPENV_TIMEOUT=7200
-pipenv sync --dev
-```
+Notes:
+If you have Kaggle API, you can download Kaggle datasets by updating and executing [input.py](https://github.com/lisphilar/covid19-sir/blob/master/input.py) script. CSV files will be saved in "/kaggle/input/" directory.
 
-Shell will be started with `pipenv shell` and `python` command.
+Kaggle API: Move to account page of Kaggle and download "kaggle.json" by selecting "API > Create New API Token" button. Copy the json file to the top directory of the local repository or "~/.kaggle". Please refer to [How to Use Kaggle: Public API](https://www.kaggle.com/docs/api) and [stackoverflow: documentation for Kaggle API *within* python?](https://stackoverflow.com/questions/55934733/documentation-for-kaggle-api-within-python#:~:text=Here%20are%20the%20steps%20involved%20in%20using%20the%20Kaggle%20API%20from%20Python.&text=Go%20to%20your%20Kaggle%20account,json%20will%20be%20downloaded)
 
-Developers can perform tests with `pipenv run pytest -v --durations=0 --failed-first --maxfail=1 --cov=covsirphy --cov-report=term-missing --profile-svg` and call graph will be saved as SVG file (prof/combined.svg).
-
-- Windows users need to install [Graphviz for Windows](https://graphviz.org/_pages/Download/Download_windows.html) in advance.
-- Debian/Ubuntu users need to install Graphviz with `sudo apt install graphviz` in advance.
-
-If you can run `make` command,
-
-|||
-|:---|:---|
-|`make install`|Install pipenv and the dependencies of CovsirPhy|
-|`make test`|Run tests using Pytest|
-|`make docs`|Update sphinx document|
-|`make example`|Run example codes|
-|`make clean`|Clean-up output files and pipenv environment|
-
-We can prepare the dataset with the same codes as that was explained in "1. Standard users" subsection.
-
-## 3. Kagglers (local environment)
-As explained in "2. Developers" subsection, we need to git-clone this repository and install the dependencies when you want to uses this package with Kaggle API in your local environment.
-
-Then, please move to account page of Kaggle and download "kaggle.json" by selecting "API > Create New API Token" button. Copy the json file to the top directory of the local repository or "~/.kaggle". Please refer to [How to Use Kaggle: Public API](https://www.kaggle.com/docs/api) and [stackoverflow: documentation for Kaggle API *within* python?](https://stackoverflow.com/questions/55934733/documentation-for-kaggle-api-within-python#:~:text=Here%20are%20the%20steps%20involved%20in%20using%20the%20Kaggle%20API%20from%20Python.&text=Go%20to%20your%20Kaggle%20account,json%20will%20be%20downloaded)
-
-We can download datasets with `pipenv run ./input.py` command. Modification of environment variables is un-necessary. Files will be saved in `input` directory of your local repository.
-
-Note:  
-Except for OxCGRT dataset, the datasets downloaded with `input.py` scripts are different from that explained in the previous subsections as follows.
+Notes:
+CovsirPhy project started in Kaggle platform with the following datasets.
 
 - The number of cases (JHU) and linelist: [Novel Corona Virus 2019 Dataset by SRK](https://www.kaggle.com/sudalairajkumar/novel-corona-virus-2019-dataset)
-- The number of cases in Japan: [COVID-19 dataset in Japan by Lisphilar](https://www.kaggle.com/lisphilar/covid19-dataset-in-japan)
 - Population in each country:  [covid19 global forecasting: locations population by Dmitry A. Grechka](https://www.kaggle.com/dgrechka/covid19-global-forecasting-locations-population)
-- Government Response Tracker (OxCGRT):  [Thomas Hale, Sam Webster, Anna Petherick, Toby Phillips, and Beatriz Kira. (2020). Oxford COVID-19 Government Response Tracker. Blavatnik School of Government.](https://github.com/OxCGRT/covid-policy-tracker)
-
-Usage of `DataLoader` class is as follows. Please specify `local_file` argument in the methods.
-```Python
-import covsirphy as cs
-data_loader = cs.DataLoader("kaggle/input")
-jhu_data = data_loader.jhu()
-japan_data = data_loader.japan(local_file="./kaggle/input/covid_jpn_total.csv")
-population_data = data_loader.population()
-oxcgrt_data = data_loader.oxcgrt()
-linelist = data_loader.linelist()
-```
-
-(Optional) We can replace a part of JHU data with country-specific datasets.
-As an example, we will use the records in Japan here because values of JHU dataset sometimes differ from government-announced values as shown in [COVID-19: Government/JHU data in Japan](https://www.kaggle.com/lisphilar/covid-19-government-jhu-data-in-japan).
-
-```Python
-jhu_data.replace(japan_data)
-ncov_df = jhu_data.cleaned()
-```
-
-## 4. Kagglers (Kaggle platform)
-When you want to use this package in Kaggle notebook, please turn on Internet option in notebook setting and download the datasets explained in the previous subsection "3. Kagglers (Kaggle platform)".
-
-Then, install this package with pip command.
-```
-!pip install covsirphy
-```
-
-Then, please load the datasets with the following codes, specifying the filenames.
-```Python
-import covsirphy as cs
-# The number of cases (JHU style)
-data_loader = cs.DataLoader()
-jhu_data = data_loader.jhu()
-# (Optional) The number of cases in Japan
-japan_data = cs.CountryData("/kaggle/input/covid19-dataset-in-japan/covid_jpn_total.csv", country="Japan")
-japan_data.set_variables(
-    date="Date", confirmed="Positive", fatal="Fatal", recovered="Discharged", province=None
-)
-# Population in each country
-population_data = data_loader.population()
-```
-
-Note:  
-Currently, OxCGRT dataset is not supported.
-
-
-(Optional) We can replace a part of JHU data with country-specific datasets.
-As an example, we will use the records in Japan here because values of JHU dataset sometimes differ from government-announced values as shown in [COVID-19: Government/JHU data in Japan](https://www.kaggle.com/lisphilar/covid-19-government-jhu-data-in-japan).
-
-```Python
-jhu_data.replace(japan_data)
-ncov_df = jhu_data.cleaned()
-```
+- The number of cases in Japan: [COVID-19 dataset in Japan by Lisphilar](https://www.kaggle.com/lisphilar/covid19-dataset-in-japan)
