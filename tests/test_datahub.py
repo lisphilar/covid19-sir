@@ -56,9 +56,11 @@ class TestJHUData(object):
         assert set(df.columns) == set(Term.COLUMNS)
         assert isinstance(JHUData.from_dataframe(df), JHUData)
 
-    def test_from_dataframe(self, jhu_data):
-        df = jhu_data.cleaned()
-        assert isinstance(JHUData.from_dataframe(df), JHUData)
+    def test_from_dataframe(self, japan_data):
+        df = japan_data.cleaned()
+        jhu_data_df = JHUData.from_dataframe(df)
+        assert isinstance(jhu_data_df, JHUData)
+        jhu_data_df.records("Japan")
 
     def test_subset(self, jhu_data):
         df = jhu_data.subset(
