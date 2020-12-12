@@ -358,6 +358,7 @@ class Estimator(Term):
         # Show figure
         fig_df = df.loc[:, df.columns.str.startswith("params_")]
         fig_df.columns = fig_df.columns.str.replace("params_", "")
+        warnings.simplefilter("ignore", category=UserWarning)
         sns.pairplot(fig_df, diag_kind="kde", markers="+")
         # Save figure or show figure
         if filename is None:
