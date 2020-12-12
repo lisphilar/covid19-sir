@@ -6,7 +6,7 @@ import pytest
 import pandas as pd
 from covsirphy import SubsetNotFoundError
 from covsirphy import COVID19DataHub, DataLoader, LinelistData
-from covsirphy import Term, JHUData, CountryData, PopulationData, OxCGRTData
+from covsirphy import Term, JHUData, CountryData, PopulationData, OxCGRTData, PCRData
 
 
 class TestCOVID19DataHub(object):
@@ -53,6 +53,10 @@ class TestJHUData(object):
             jhu_data.cleaned(population=None)
         df = jhu_data.cleaned()
         assert set(df.columns) == set(Term.COLUMNS)
+        assert isinstance(JHUData.from_dataframe(df), JHUData)
+
+    def test_from_dataframe(self, jhu_data):
+        df = jhu_data.cleaned()
         assert isinstance(JHUData.from_dataframe(df), JHUData)
 
     def test_subset(self, jhu_data):
@@ -203,3 +207,19 @@ class TestOxCGRTData(object):
     def test_total(self, oxcgrt_data):
         with pytest.raises(NotImplementedError):
             oxcgrt_data.total()
+
+
+class TestPCRData(object):
+    def test_cleaning(self, pcr_data):
+        df = pcr_data.cleaned()
+        assert set(df.columns) == set(PCRData.PCR_COLUMNS)
+
+    def test_from_dataframe(self, pcr_data):
+        df = pcr_data.cleaned()
+        assert isinstance(PCRData.from_dataframe(df), PCRData)
+
+    def test_subset(self, pcr_data):
+        with pytest.raises(SubsetNotFoundError):
+            pcr_data.subset("JPN", end_date="01Jan2000")
+        df = pcr_data.subset("Japan")
+        assert set(df.columns) == set(PCRData.PCR_NLOC_COLUMNS)
