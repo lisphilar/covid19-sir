@@ -221,10 +221,8 @@ class CleaningBase(Term):
 
         Returns:
             pandas.DataFrame
-                Index:
-                    reset index
-                Columns:
-                    without ISO3, Country, Province column
+                Index: reset index
+                Columns: without ISO3, Country, Province column
         """
         country_alias = self.ensure_country_name(country)
         df = self._subset_by_area(country=country, province=province)
@@ -247,6 +245,52 @@ class CleaningBase(Term):
                 country=country, country_alias=country_alias, province=province,
                 start_date=start_date, end_date=end_date)
         return df.reset_index(drop=True)
+
+    def subset_complement(self, country, **kwargs):
+        """
+        Return the subset. If necessary, complemention will be performed.
+
+        Raises:
+            NotImplementedError
+        """
+        raise NotImplementedError
+
+    def records(self, country, province=None, start_date=None, end_date=None,
+                auto_complement=True, **kwargs):
+        """
+        Return the subset. If necessary, complemention will be performed.
+
+        Args:
+            country (str): country name or ISO3 code
+            province (str or None): province name
+            start_date (str or None): start date, like 22Jan2020
+            end_date (str or None): end date, like 01Feb2020
+            auto_complement (bool): if True and necessary, the number of cases will be complemented
+            kwargs: the other arguments of complement
+
+        Returns:
+            pandas.DataFrame
+                Index: reset index
+                Columns:
+                    without ISO3, Country, Province column
+        """
+        country_alias = self.ensure_country_name(country)
+        subset_arg_dict = {
+            "country": country, "province": province, "start_date": start_date, "end_date": end_date}
+        if auto_complement:
+            try:
+                df, is_complemented = self.subset_complement(
+                    **subset_arg_dict, **kwargs)
+                if not df.empty:
+                    return (df, is_complemented)
+            except NotImplementedError:
+                pass
+        try:
+            return (self.subset(**subset_arg_dict), False)
+        except SubsetNotFoundError:
+            raise SubsetNotFoundError(
+                country=country, country_alias=country_alias, province=province,
+                start_date=start_date, end_date=end_date) from None
 
     def countries(self):
         """

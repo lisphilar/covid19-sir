@@ -91,12 +91,12 @@ class COVID19DataHub(Term):
         # All columns: https://covid19datahub.io/articles/doc/data.html
         col_dict = {
             "date": "ObservationDate",
-            "tests": "Tests",
-            "confirmed": "Confirmed",
-            "recovered": "Recovered",
+            "tests": self.TESTS,
+            "confirmed": self.C,
+            "recovered": self.R,
             "deaths": "Deaths",
-            "population": "Population",
-            "iso_alpha_3": "ISO3",
+            "population": self.N,
+            "iso_alpha_3": self.ISO3,
             "administrative_area_level_2": "Province/State",
             "administrative_area_level_1": "Country/Region",
         }
