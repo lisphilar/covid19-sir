@@ -386,10 +386,8 @@
 
 <span class="sd">        Returns:</span>
 <span class="sd">            pandas.DataFrame</span>
-<span class="sd">                Index:</span>
-<span class="sd">                    reset index</span>
-<span class="sd">                Columns:</span>
-<span class="sd">                    without ISO3, Country, Province column</span>
+<span class="sd">                Index: reset index</span>
+<span class="sd">                Columns: without ISO3, Country, Province column</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">country_alias</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ensure_country_name</span><span class="p">(</span><span class="n">country</span><span class="p">)</span>
         <span class="n">df</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_subset_by_area</span><span class="p">(</span><span class="n">country</span><span class="o">=</span><span class="n">country</span><span class="p">,</span> <span class="n">province</span><span class="o">=</span><span class="n">province</span><span class="p">)</span>
@@ -412,6 +410,52 @@
                 <span class="n">country</span><span class="o">=</span><span class="n">country</span><span class="p">,</span> <span class="n">country_alias</span><span class="o">=</span><span class="n">country_alias</span><span class="p">,</span> <span class="n">province</span><span class="o">=</span><span class="n">province</span><span class="p">,</span>
                 <span class="n">start_date</span><span class="o">=</span><span class="n">start_date</span><span class="p">,</span> <span class="n">end_date</span><span class="o">=</span><span class="n">end_date</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">df</span><span class="o">.</span><span class="n">reset_index</span><span class="p">(</span><span class="n">drop</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="CleaningBase.subset_complement"><a class="viewcode-back" href="../../../covsirphy.cleaning.html#covsirphy.cleaning.cbase.CleaningBase.subset_complement">[docs]</a>    <span class="k">def</span> <span class="nf">subset_complement</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">country</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Return the subset. If necessary, complemention will be performed.</span>
+
+<span class="sd">        Raises:</span>
+<span class="sd">            NotImplementedError</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span></div>
+
+<div class="viewcode-block" id="CleaningBase.records"><a class="viewcode-back" href="../../../covsirphy.cleaning.html#covsirphy.cleaning.cbase.CleaningBase.records">[docs]</a>    <span class="k">def</span> <span class="nf">records</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">country</span><span class="p">,</span> <span class="n">province</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">start_date</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">end_date</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                <span class="n">auto_complement</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Return the subset. If necessary, complemention will be performed.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            country (str): country name or ISO3 code</span>
+<span class="sd">            province (str or None): province name</span>
+<span class="sd">            start_date (str or None): start date, like 22Jan2020</span>
+<span class="sd">            end_date (str or None): end date, like 01Feb2020</span>
+<span class="sd">            auto_complement (bool): if True and necessary, the number of cases will be complemented</span>
+<span class="sd">            kwargs: the other arguments of complement</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            pandas.DataFrame</span>
+<span class="sd">                Index: reset index</span>
+<span class="sd">                Columns:</span>
+<span class="sd">                    without ISO3, Country, Province column</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">country_alias</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ensure_country_name</span><span class="p">(</span><span class="n">country</span><span class="p">)</span>
+        <span class="n">subset_arg_dict</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s2">&quot;country&quot;</span><span class="p">:</span> <span class="n">country</span><span class="p">,</span> <span class="s2">&quot;province&quot;</span><span class="p">:</span> <span class="n">province</span><span class="p">,</span> <span class="s2">&quot;start_date&quot;</span><span class="p">:</span> <span class="n">start_date</span><span class="p">,</span> <span class="s2">&quot;end_date&quot;</span><span class="p">:</span> <span class="n">end_date</span><span class="p">}</span>
+        <span class="k">if</span> <span class="n">auto_complement</span><span class="p">:</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">df</span><span class="p">,</span> <span class="n">is_complemented</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">subset_complement</span><span class="p">(</span>
+                    <span class="o">**</span><span class="n">subset_arg_dict</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+                <span class="k">if</span> <span class="ow">not</span> <span class="n">df</span><span class="o">.</span><span class="n">empty</span><span class="p">:</span>
+                    <span class="k">return</span> <span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">is_complemented</span><span class="p">)</span>
+            <span class="k">except</span> <span class="ne">NotImplementedError</span><span class="p">:</span>
+                <span class="k">pass</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="k">return</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">subset</span><span class="p">(</span><span class="o">**</span><span class="n">subset_arg_dict</span><span class="p">),</span> <span class="kc">False</span><span class="p">)</span>
+        <span class="k">except</span> <span class="n">SubsetNotFoundError</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">SubsetNotFoundError</span><span class="p">(</span>
+                <span class="n">country</span><span class="o">=</span><span class="n">country</span><span class="p">,</span> <span class="n">country_alias</span><span class="o">=</span><span class="n">country_alias</span><span class="p">,</span> <span class="n">province</span><span class="o">=</span><span class="n">province</span><span class="p">,</span>
+                <span class="n">start_date</span><span class="o">=</span><span class="n">start_date</span><span class="p">,</span> <span class="n">end_date</span><span class="o">=</span><span class="n">end_date</span><span class="p">)</span> <span class="kn">from</span> <span class="bp">None</span></div>
 
 <div class="viewcode-block" id="CleaningBase.countries"><a class="viewcode-back" href="../../../covsirphy.cleaning.html#covsirphy.cleaning.cbase.CleaningBase.countries">[docs]</a>    <span class="k">def</span> <span class="nf">countries</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>

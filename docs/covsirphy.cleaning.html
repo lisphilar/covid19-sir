@@ -375,6 +375,35 @@ If not, the correct country name will be found.</p>
 </dd></dl>
 
 <dl class="py method">
+<dt id="covsirphy.cleaning.cbase.CleaningBase.records">
+<code class="sig-name descname">records</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">country</span></em>, <em class="sig-param"><span class="n">province</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">start_date</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">end_date</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">auto_complement</span><span class="o">=</span><span class="default_value">True</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/cleaning/cbase.html#CleaningBase.records"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#covsirphy.cleaning.cbase.CleaningBase.records" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the subset. If necessary, complemention will be performed.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>country</strong> (<em>str</em>) – country name or ISO3 code</p></li>
+<li><p><strong>province</strong> (<em>str</em><em> or </em><em>None</em>) – province name</p></li>
+<li><p><strong>start_date</strong> (<em>str</em><em> or </em><em>None</em>) – start date, like 22Jan2020</p></li>
+<li><p><strong>end_date</strong> (<em>str</em><em> or </em><em>None</em>) – end date, like 01Feb2020</p></li>
+<li><p><strong>auto_complement</strong> (<em>bool</em>) – if True and necessary, the number of cases will be complemented</p></li>
+<li><p><strong>kwargs</strong> – the other arguments of complement</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><dl>
+<dt>pandas.DataFrame</dt><dd><p>Index: reset index
+Columns:</p>
+<blockquote>
+<div><p>without ISO3, Country, Province column</p>
+</div></blockquote>
+</dd>
+</dl>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
 <dt id="covsirphy.cleaning.cbase.CleaningBase.subset">
 <code class="sig-name descname">subset</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">country</span></em>, <em class="sig-param"><span class="n">province</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">start_date</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">end_date</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/cleaning/cbase.html#CleaningBase.subset"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#covsirphy.cleaning.cbase.CleaningBase.subset" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return subset of the country/province and start/end date.</p>
@@ -389,15 +418,22 @@ If not, the correct country name will be found.</p>
 </dd>
 <dt class="field-even">Returns</dt>
 <dd class="field-even"><p><dl class="simple">
-<dt>pandas.DataFrame</dt><dd><dl class="simple">
-<dt>Index:</dt><dd><p>reset index</p>
-</dd>
-<dt>Columns:</dt><dd><p>without ISO3, Country, Province column</p>
-</dd>
-</dl>
+<dt>pandas.DataFrame</dt><dd><p>Index: reset index
+Columns: without ISO3, Country, Province column</p>
 </dd>
 </dl>
 </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="covsirphy.cleaning.cbase.CleaningBase.subset_complement">
+<code class="sig-name descname">subset_complement</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">country</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/cleaning/cbase.html#CleaningBase.subset_complement"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#covsirphy.cleaning.cbase.CleaningBase.subset_complement" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the subset. If necessary, complemention will be performed.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Raises</dt>
+<dd class="field-odd"><p><strong>NotImplementedError</strong> – </p>
 </dd>
 </dl>
 </dd></dl>
