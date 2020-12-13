@@ -63,7 +63,7 @@ class OxCGRTData(CleaningBase):
         df = df.rename(self.OXCGRT_COL_DICT, axis=1)
         df = df.rename(
             {
-                "CountryName": self.COUNTRY, "Date": self.DATE, "CountryCode": self.ISO3,
+                "CountryName": self.COUNTRY, "CountryCode": self.ISO3,
                 "Country/Region": self.COUNTRY, "ObservationDate": self.DATE,
             },
             axis=1

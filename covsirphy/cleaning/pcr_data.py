@@ -6,7 +6,6 @@ import pandas as pd
 from dask import dataframe as dd
 import swifter
 from covsirphy.util.plotting import line_plot
-from covsirphy.util.error import SubsetNotFoundError
 from covsirphy.util.error import PCRIncorrectPreconditionError
 from covsirphy.cleaning.cbase import CleaningBase
 from covsirphy.cleaning.country_data import CountryData
@@ -86,19 +85,14 @@ class PCRData(CleaningBase):
         df = df.rename(
             {
                 "ObservationDate": self.DATE,
-                "ISO3": self.ISO3,
                 "Country/Region": self.COUNTRY,
                 "Province/State": self.PROVINCE,
-                "Tests": self.TESTS,
-                "Confirmed": self.C
             },
             axis=1
         )
         # Confirm the expected columns are in raw data
-        expected_cols = [
-            self.DATE, self.ISO3, self.COUNTRY, self.PROVINCE, self.TESTS, self.C
-        ]
-        self.ensure_dataframe(df, name="the raw data", columns=expected_cols)
+        self.ensure_dataframe(
+            df, name="the raw data", columns=self.PCR_COLUMNS)
         # Datetime columns
         df[self.DATE] = pd.to_datetime(df[self.DATE])
         # Country
@@ -172,60 +166,6 @@ class PCRData(CleaningBase):
         self._citation += f"\n{country_data.citation}"
         return self
 
-    def _subset(self, country, province, start_date, end_date):
-        """
-        Return the subset of dataset or empty dataframe (when no records were found).
-
-        Args:
-            country (str): country name or ISO3 code
-            province (str or None): province name
-            start_date (str or None): start date, like 22Jan2020
-            end_date (str or None): end date, like 01Feb2020
-
-        Returns:
-            pandas.DataFrame
-                Index:
-                    reset index
-                Columns:
-                    - Date (pd.TimeStamp): Observation date
-                    - Tests (int): the number of total tests performed
-                    - Confirmed (int): the number of confirmed cases
-        """
-        try:
-            return super().subset(
-                country=country, province=province, start_date=start_date, end_date=end_date)
-        except SubsetNotFoundError:
-            return pd.DataFrame(columns=self.PCR_NLOC_COLUMNS)
-
-    def subset(self, country, province=None, start_date=None, end_date=None):
-        """
-        Return the subset of dataset
-
-        Args:
-            country (str): country name or ISO3 code
-            province (str or None): province name
-            start_date (str or None): start date, like 22Jan2020
-            end_date (str or None): end date, like 01Feb2020
-
-        Returns:
-            pandas.DataFrame
-                Index:
-                    reset index
-                Columns:
-                    - Date (pd.TimeStamp): Observation date
-                    - Tests (int): the number of total tests performed
-                    - Confirmed (int): the number of confirmed cases
-        """
-        country_alias = self.ensure_country_name(country)
-        # Subset with area, start/end date and calculate Susceptible
-        subset_df = self._subset(
-            country=country, province=province, start_date=start_date, end_date=end_date)
-        if subset_df.empty:
-            raise SubsetNotFoundError(
-                country=country, country_alias=country_alias, province=province,
-                start_date=start_date, end_date=end_date)
-        return subset_df
-
     @staticmethod
     def _pcr_monotonic(df, variable):
         """
@@ -289,62 +229,28 @@ class PCRData(CleaningBase):
             variable: the desired column to use
 
         Returns:
-            tuple(pandas.DataFrame, bool):
-                pandas.DataFrame: complemented records
-                    Index: Date (pandas.TimeStamp)
-                    Columns: Tests, Confirmed, Tests_diff, C_diff
-                bool: whether complement was done or not
+            pandas.DataFrame: complemented records
+                Index: Date (pandas.TimeStamp)
+                Columns: Tests, Confirmed, Tests_diff, C_diff
 
         Notes:
             Filling NA with 0 will be always applied.
         """
-        before_df.fillna(0, inplace=True)
-        if not self._pcr_check_complement(before_df, variable):
-            return (before_df, False)
-        df = before_df.copy()
+        df = before_df.fillna(0)
+        if not self._pcr_check_complement(df, variable):
+            return df
         for col in df:
             df[col].replace(0, np.nan, inplace=True)
             df[col].fillna(method="ffill", inplace=True)
             df[col].fillna(method="bfill", inplace=True)
-        return (df, df.equals(before_df))
+        return df
 
-    def records(self, country, province=None, start_date=None, end_date=None):
-        """
-        JHU-style dataset for the area from the start date to the end date.
-
-        Args:
-            country(str): country name or ISO3 code
-            province(str or None): province name
-            start_date(str or None): start date, like 22Jan2020
-            end_date(str or None): end date, like 01Feb2020
-
-        Returns:
-            tuple(pandas.DataFrame, bool):
-                pandas.DataFrame:
-                    Index: reset index
-                    Columns:
-                        - Date(pd.TimeStamp): Observation date
-                        - Tests (int): the number of total tests performed
-                        - Confirmed(int): the number of confirmed cases
-        """
-        country_alias = self.ensure_country_name(country)
-        subset_arg_dict = {
-            "country": country, "province": province,
-            "start_date": start_date, "end_date": end_date,
-        }
-        try:
-            return self.subset(**subset_arg_dict)
-        except ValueError:
-            raise SubsetNotFoundError(
-                country=country, country_alias=country_alias, province=province,
-                start_date=start_date, end_date=end_date) from None
-
-    def _pcr_processing(self, df, window):
+    def _pcr_processing(self, before_df, window):
         """
         Return the processed pcr data
 
         Args:
-            df (pandas.DataFrame):
+            before_df (pandas.DataFrame):
                 Index: reset index
                 Columns: Date (pandas.TimeStamp), Tests, Confirmed
             window (int): window of moving average, >= 1
@@ -361,11 +267,10 @@ class PCRData(CleaningBase):
                         - Confirmed_diff (int): daily confirmed cases
                 bool: True if complement is needed or False
         """
+        df = before_df.fillna(method="ffill")
         # Confirmed must show monotonic increasing
-        if not df.loc[df.index[-1], self.C]:
-            df.loc[df.index[-1], self.C] = df.loc[df.index[-2], self.C]
         df = self._pcr_monotonic(df, self.C)
-        df, is_complemented = self._pcr_partial_complement(df, self.TESTS)
+        df = self._pcr_partial_complement(df, self.TESTS)
         # If Tests values are all valid, with no missing values in-between,
         # they must be monotonically increasing as well
         df = self._pcr_monotonic(df, self.TESTS)
@@ -383,15 +288,18 @@ class PCRData(CleaningBase):
         # Keep valid non-zero values by complementing zeros at the end
         if non_zero_index_end < (len(df) - 1):
             df.loc[non_zero_index_end + 1:, self.T_DIFF] = None
-        df, is_complemented = self._pcr_partial_complement(df, self.T_DIFF)
+        df = self._pcr_partial_complement(df, self.T_DIFF)
         # Use rolling window for averaging tests and confirmed
         df[self.T_DIFF] = df[self.T_DIFF].rolling(window).mean()
         df[self.C_DIFF] = df[self.C_DIFF].rolling(window).mean()
-        df, is_complemented = self._pcr_partial_complement(df, self.T_DIFF)
+        df = self._pcr_partial_complement(df, self.T_DIFF)
         # Remove first zero lines due to window
         df = df.replace(0, np.nan)
         non_zero_index_start = df[self.T_DIFF].first_valid_index()
         df = df.loc[non_zero_index_start:].reset_index(drop=True)
+        # Complemented or not
+        is_complemented = df.drop(
+            [self.T_DIFF, self.C_DIFF], axis=1).equals(before_df)
         return (df, is_complemented)
 
     def _pcr_check_preconditions(self, df, country, province):
@@ -441,11 +349,11 @@ class PCRData(CleaningBase):
             "with partially complemented tests data" will be added to the title of the figure.
         """
         window = self.ensure_natural_int(window, name="window")
-        df = self.records(country, province=province)
+        subset_df = self.subset(country, province=province)
         # Check PCR data preconditions
-        self._pcr_check_preconditions(df, country, province)
+        self._pcr_check_preconditions(subset_df, country, province)
         # Process PCR data
-        df, is_complemented = self._pcr_processing(df, window)
+        df, is_complemented = self._pcr_processing(subset_df, window)
         # Calculate PCR values
         df[self.PCR_RATE] = df[[self.C_DIFF, self.T_DIFF]].swifter.progress_bar(False).apply(
             lambda x: x[0] / x[1] * 100, axis=1)
@@ -453,13 +361,10 @@ class PCRData(CleaningBase):
             return df
         # Create figure
         area = self.area_name(country, province=province)
-        if is_complemented:
-            title = f"{area}: Test positive rate (%) over time\nwith partially complemented tests data"
-        else:
-            title = f"{area}: Test positive rate (%) over time"
+        comp_status = "\nwith partially complemented tests data" if is_complemented else ""
         line_plot(
             df.set_index(self.DATE)[self.PCR_RATE],
-            title,
+            title=f"{area}: Test positive rate (%) over time {comp_status}",
             ylabel="Test positive rate (%)",
             y_integer=True,
             filename=filename,

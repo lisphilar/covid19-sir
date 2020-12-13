@@ -60,7 +60,6 @@ class PopulationData(CleaningBase):
                 "Country/Region": self.COUNTRY,
                 "Province.State": self.PROVINCE,
                 "Province/State": self.PROVINCE,
-                "Population": self.N,
                 "ObservationDate": self.DATE
             },
             axis=1

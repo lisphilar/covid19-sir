@@ -85,12 +85,9 @@ class JHUData(CleaningBase):
         df = df.rename(
             {
                 "ObservationDate": self.DATE,
-                "ISO3": self.ISO3,
                 "Country/Region": self.COUNTRY,
                 "Province/State": self.PROVINCE,
-                "Confirmed": self.C,
                 "Deaths": self.F,
-                "Recovered": self.R
             },
             axis=1
         )
