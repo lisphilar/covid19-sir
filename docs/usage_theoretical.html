@@ -648,8 +648,16 @@ True
 \begin{align*}
 \mathrm{S} \overset{\beta I}{\longrightarrow} \mathrm{I} \overset{\gamma}{\longrightarrow} \mathrm{R}  \\
 \end{align*}</div><div class="line-block">
+<div class="line">Variables:</div>
+<div class="line">- <span class="math notranslate nohighlight">\(\mathrm{S}\)</span>: Susceptible (= Population - Confirmed) - <span class="math notranslate nohighlight">\(\mathrm{I}\)</span>: Infected (=Confirmed - Recovered - Fatal) - <span class="math notranslate nohighlight">\(\mathrm{R}\)</span>: Recovered or Fatal (= Recovered + Fatal)</div>
+</div>
+<div class="line-block">
+<div class="line">Parameters:</div>
+<div class="line">- <span class="math notranslate nohighlight">\(\beta\)</span>: Effective contact rate <span class="math notranslate nohighlight">\(\mathrm{[1/min]}\)</span> - <span class="math notranslate nohighlight">\(\gamma\)</span>: Recovery (+ Mortality) rate <span class="math notranslate nohighlight">\(\mathrm{[1/min]}\)</span></div>
+</div>
+<div class="line-block">
 <div class="line">Note:</div>
-<div class="line">Though R in SIR model is “Recovered and have immunity”, We defines “R as Recovered or fatal”. This is because mortality rate cannot be ignored in the real COVID-19 data.</div>
+<div class="line">Though R in SIR model is “Recovered and have immunity”, we defines “R as Recovered or fatal”. This is because mortality rate cannot be ignored in the real COVID-19 data.</div>
 </div>
 <div class="nbinput docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[9]:
@@ -705,7 +713,15 @@ SIR
 \begin{align*}
 \mathrm{S} \overset{\beta  I}{\longrightarrow}\ &amp; \mathrm{I} \overset{\gamma}{\longrightarrow} \mathrm{R}  \\
 &amp; \mathrm{I} \overset{\alpha}{\longrightarrow} \mathrm{D}  \\
-\end{align*}</div><div class="nbinput docutils container">
+\end{align*}</div><div class="line-block">
+<div class="line">Variables:</div>
+<div class="line">- <span class="math notranslate nohighlight">\(\mathrm{S}\)</span>: Susceptible (= Population - Confirmed) - <span class="math notranslate nohighlight">\(\mathrm{I}\)</span>: Infected (=Confirmed - Recovered - Fatal) - <span class="math notranslate nohighlight">\(\mathrm{R}\)</span>: Recovered - <span class="math notranslate nohighlight">\(\mathrm{D}\)</span>: Fatal</div>
+</div>
+<div class="line-block">
+<div class="line">Parameters:</div>
+<div class="line">- <span class="math notranslate nohighlight">\(\alpha\)</span>: Mortality rate <span class="math notranslate nohighlight">\(\mathrm{[1/min]}\)</span> - <span class="math notranslate nohighlight">\(\beta\)</span>: Effective contact rate <span class="math notranslate nohighlight">\(\mathrm{[1/min]}\)</span> - <span class="math notranslate nohighlight">\(\gamma\)</span>: Recovery rate <span class="math notranslate nohighlight">\(\mathrm{[1/min]}\)</span></div>
+</div>
+<div class="nbinput docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[11]:
 </pre></div>
 </div>
@@ -757,13 +773,30 @@ SIR-D
 </div>
 <div class="section" id="SIR-F-model">
 <h2>SIR-F model<a class="headerlink" href="#SIR-F-model" title="Permalink to this headline">¶</a></h2>
-<p>It is reported that some cases died before clinical diagnosis of COVID-19. To consider this issue, “S + I <span class="math notranslate nohighlight">\(\to\)</span> Fatal + I” will be added to the model. When <span class="math notranslate nohighlight">\(\alpha_{1}=0\)</span>, SIR-F model will be the same as SIR-D model.</p>
+<p>In the initial phase of COVID-19 outbreak, many cases were confirmed after they died. To consider this issue, “S + I <span class="math notranslate nohighlight">\(\to\)</span> Fatal + I” will be added to the model. When <span class="math notranslate nohighlight">\(\alpha_{1}=0\)</span>, SIR-F model will be the same as SIR-D model.</p>
 <div class="math notranslate nohighlight">
 \begin{align*}
 \mathrm{S} \overset{\beta I}{\longrightarrow} \mathrm{S}^\ast \overset{\alpha_1}{\longrightarrow}\ &amp; \mathrm{F}    \\
 \mathrm{S}^\ast \overset{1 - \alpha_1}{\longrightarrow}\ &amp; \mathrm{I} \overset{\gamma}{\longrightarrow} \mathrm{R}    \\
 &amp; \mathrm{I} \overset{\alpha_2}{\longrightarrow} \mathrm{F}    \\
-\end{align*}</div><div class="nbinput docutils container">
+\end{align*}</div><div class="line-block">
+<div class="line">Variables:</div>
+<div class="line">- <span class="math notranslate nohighlight">\(\mathrm{S}\)</span>: Susceptible (= Population - Confirmed) - <span class="math notranslate nohighlight">\(\mathrm{S}^\ast\)</span>: Confirmed and un-categorized - <span class="math notranslate nohighlight">\(\mathrm{I}\)</span>: Confirmed and categorized as Infected - <span class="math notranslate nohighlight">\(\mathrm{R}\)</span>: Confirmed and categorized as Recovered - <span class="math notranslate nohighlight">\(\mathrm{F}\)</span>: Confirmed and categorzied as Fatal</div>
+</div>
+<div class="line-block">
+<div class="line">Parameters:</div>
+<div class="line">- <span class="math notranslate nohighlight">\(\alpha_1\)</span>: Mortality rate of <span class="math notranslate nohighlight">\(\mathrm{S}^\ast\)</span> cases <span class="math notranslate nohighlight">\(\mathrm{[1/min]}\)</span> - <span class="math notranslate nohighlight">\(\alpha_2\)</span>: Mortality rate of Infected cases <span class="math notranslate nohighlight">\(\mathrm{[1/min]}\)</span> - <span class="math notranslate nohighlight">\(\beta\)</span>: Effective contact rate <span class="math notranslate nohighlight">\(\mathrm{[1/min]}\)</span> - <span class="math notranslate nohighlight">\(\gamma\)</span>: Recovery rate <span class="math notranslate nohighlight">\(\mathrm{[1/min]}\)</span></div>
+</div>
+<div class="line-block">
+<div class="line">Notes on <span class="math notranslate nohighlight">\(\mathrm{S}^\ast\)</span> variable:</div>
+<div class="line"><span class="math notranslate nohighlight">\(\mathrm{S}^\ast\)</span> describes the cases who are actually carriers of the disease without anyone (including themselves) knowing about it, who either die and they are confirmed positive after death, while some others are moved to infected after being confirmed.</div>
+</div>
+<p>In JHU-style dataset, we know the number of cases who were confirmed with COVID-19, but we do not know the number of died cases who died without COVID-19. Essentially <span class="math notranslate nohighlight">\(\mathrm{S}^\ast\)</span> serves as an auxiliary compartment in SIR-F model to separate the two death situations and insert a probability factor of {<span class="math notranslate nohighlight">\(\alpha_1\)</span>, <span class="math notranslate nohighlight">\(1 - \alpha_1\)</span>}.</p>
+<div class="line-block">
+<div class="line">Notes on the difference of SIR-D and SIR-F model:</div>
+<div class="line"><span class="math notranslate nohighlight">\(\alpha_1\)</span> is small at this time because performance of PCR tests was improved, but we can use SIR-F model rather than SIR-D model as an enhanced model even now becase <span class="math notranslate nohighlight">\(\alpha_1\)</span> can be 0 in the ODE model.</div>
+</div>
+<div class="nbinput docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[13]:
 </pre></div>
 </div>
@@ -809,7 +842,7 @@ SIR-F
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area docutils container">
-<img alt="_images/usage_theoretical_20_0.png" src="_images/usage_theoretical_20_0.png" />
+<img alt="_images/usage_theoretical_22_0.png" src="_images/usage_theoretical_22_0.png" />
 </div>
 </div>
 </div>
@@ -821,7 +854,15 @@ SIR-F
 \mathrm{S} \overset{\beta_1 (W+I)}{\longrightarrow} \mathrm{E} \overset{\beta_2}{\longrightarrow} \mathrm{W} \overset{\beta_3}{\longrightarrow} \mathrm{S}^\ast \overset{\alpha_1}{\longrightarrow}\ &amp; \mathrm{F}    \\
 \mathrm{S}^\ast \overset{1 - \alpha_1}{\longrightarrow}\ &amp; \mathrm{I} \overset{\gamma}{\longrightarrow} \mathrm{R}    \\
 &amp; \mathrm{I} \overset{\alpha_2}{\longrightarrow} \mathrm{F}    \\
-\end{align*}</div><div class="nbinput docutils container">
+\end{align*}</div><div class="line-block">
+<div class="line">Variables:</div>
+<div class="line">- <span class="math notranslate nohighlight">\(\mathrm{S}\)</span>: Susceptible - <span class="math notranslate nohighlight">\(\mathrm{E}\)</span>: Exposed and in latent period (without infectivity) - <span class="math notranslate nohighlight">\(\mathrm{W}\)</span>: Waiting for confirmaion fiagnosis (with infectivity) - <span class="math notranslate nohighlight">\(\mathrm{S}^\ast\)</span>: Confirmed and un-categorized - <span class="math notranslate nohighlight">\(\mathrm{I}\)</span>: Confirmed and categorized as Infected - <span class="math notranslate nohighlight">\(\mathrm{R}\)</span>: Confirmed and categorized as Recovered - <span class="math notranslate nohighlight">\(\mathrm{F}\)</span>: Confirmed and categorzied as Fatal</div>
+</div>
+<div class="line-block">
+<div class="line">Parameters:</div>
+<div class="line">- <span class="math notranslate nohighlight">\(\alpha_1\)</span>: Mortality rate of <span class="math notranslate nohighlight">\(\mathrm{S}^\ast\)</span> cases <span class="math notranslate nohighlight">\(\mathrm{[1/min]}\)</span> - <span class="math notranslate nohighlight">\(\alpha_2\)</span>: Mortality rate of Infected cases <span class="math notranslate nohighlight">\(\mathrm{[1/min]}\)</span> - <span class="math notranslate nohighlight">\(\beta_1\)</span>: Exposure rate (the nymber of encounter with the virus in a minute) <span class="math notranslate nohighlight">\(\mathrm{[1/min]}\)</span> - <span class="math notranslate nohighlight">\(\beta_2\)</span>: Inverse of latent period <span class="math notranslate nohighlight">\(\mathrm{[1/min]}\)</span> - <span class="math notranslate nohighlight">\(\beta_3\)</span>: Inverse of waiting time for confirmation <span class="math notranslate nohighlight">\(\mathrm{[1/min]}\)</span> - <span class="math notranslate nohighlight">\(\gamma\)</span>: Recovery rate <span class="math notranslate nohighlight">\(\mathrm{[1/min]}\)</span></div>
+</div>
+<div class="nbinput docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[15]:
 </pre></div>
 </div>
@@ -874,7 +915,7 @@ SEWIR-F
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area docutils container">
-<img alt="_images/usage_theoretical_23_0.png" src="_images/usage_theoretical_23_0.png" />
+<img alt="_images/usage_theoretical_26_0.png" src="_images/usage_theoretical_26_0.png" />
 </div>
 </div>
 </div>
@@ -940,7 +981,7 @@ SIR-FV
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area docutils container">
-<img alt="_images/usage_theoretical_26_0.png" src="_images/usage_theoretical_26_0.png" />
+<img alt="_images/usage_theoretical_29_0.png" src="_images/usage_theoretical_29_0.png" />
 </div>
 </div>
 </div>
@@ -1038,7 +1079,7 @@ SIR-FV
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area docutils container">
-<img alt="_images/usage_theoretical_30_0.png" src="_images/usage_theoretical_30_0.png" />
+<img alt="_images/usage_theoretical_33_0.png" src="_images/usage_theoretical_33_0.png" />
 </div>
 </div>
 <div class="nboutput docutils container">
@@ -1622,7 +1663,7 @@ SIR-FV
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area docutils container">
-<img alt="_images/usage_theoretical_36_0.png" src="_images/usage_theoretical_36_0.png" />
+<img alt="_images/usage_theoretical_39_0.png" src="_images/usage_theoretical_39_0.png" />
 </div>
 </div>
 <div class="nbinput docutils container">
@@ -1638,7 +1679,7 @@ SIR-FV
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area docutils container">
-<img alt="_images/usage_theoretical_37_0.png" src="_images/usage_theoretical_37_0.png" />
+<img alt="_images/usage_theoretical_40_0.png" src="_images/usage_theoretical_40_0.png" />
 </div>
 </div>
 <div class="nbinput docutils container">
@@ -1654,7 +1695,7 @@ SIR-FV
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area docutils container">
-<img alt="_images/usage_theoretical_38_0.png" src="_images/usage_theoretical_38_0.png" />
+<img alt="_images/usage_theoretical_41_0.png" src="_images/usage_theoretical_41_0.png" />
 </div>
 </div>
 </div>
@@ -1673,7 +1714,7 @@ SIR-FV
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area docutils container">
-<img alt="_images/usage_theoretical_40_0.png" src="_images/usage_theoretical_40_0.png" />
+<img alt="_images/usage_theoretical_43_0.png" src="_images/usage_theoretical_43_0.png" />
 </div>
 </div>
 <div class="nbinput docutils container">
@@ -1689,7 +1730,7 @@ SIR-FV
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area docutils container">
-<img alt="_images/usage_theoretical_41_0.png" src="_images/usage_theoretical_41_0.png" />
+<img alt="_images/usage_theoretical_44_0.png" src="_images/usage_theoretical_44_0.png" />
 </div>
 </div>
 <div class="nbinput docutils container">
@@ -1705,7 +1746,7 @@ SIR-FV
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area docutils container">
-<img alt="_images/usage_theoretical_42_0.png" src="_images/usage_theoretical_42_0.png" />
+<img alt="_images/usage_theoretical_45_0.png" src="_images/usage_theoretical_45_0.png" />
 </div>
 </div>
 <div class="nbinput docutils container">
@@ -1721,7 +1762,7 @@ SIR-FV
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area docutils container">
-<img alt="_images/usage_theoretical_43_0.png" src="_images/usage_theoretical_43_0.png" />
+<img alt="_images/usage_theoretical_46_0.png" src="_images/usage_theoretical_46_0.png" />
 </div>
 </div>
 </div>

@@ -273,8 +273,17 @@
       "\\mathrm{S} \\overset{\\beta I}{\\longrightarrow} \\mathrm{I} \\overset{\\gamma}{\\longrightarrow} \\mathrm{R}  \\\\\n",
       "\\end{align*}\n",
       "\n",
+      "Variables:  \n",
+      "- $\\mathrm{S}$: Susceptible (= Population - Confirmed)\n",
+      "- $\\mathrm{I}$: Infected (=Confirmed - Recovered - Fatal)\n",
+      "- $\\mathrm{R}$: Recovered or Fatal (= Recovered + Fatal)\n",
+      "\n",
+      "Parameters:  \n",
+      "- $\\beta$: Effective contact rate $\\mathrm{[1/min]}$\n",
+      "- $\\gamma$: Recovery (+ Mortality) rate $\\mathrm{[1/min]}$\n",
+      "\n",
       "Note:  \n",
-      "Though R in SIR model is \"Recovered and have immunity\", We defines \"R as Recovered or fatal\". This is because mortality rate cannot be ignored in the real COVID-19 data."
+      "Though R in SIR model is \"Recovered and have immunity\", we defines \"R as Recovered or fatal\". This is because mortality rate cannot be ignored in the real COVID-19 data."
      ]
     },
     {
@@ -339,7 +348,18 @@
       "\\begin{align*}\n",
       "\\mathrm{S} \\overset{\\beta  I}{\\longrightarrow}\\ & \\mathrm{I} \\overset{\\gamma}{\\longrightarrow} \\mathrm{R}  \\\\\n",
       "& \\mathrm{I} \\overset{\\alpha}{\\longrightarrow} \\mathrm{D}  \\\\\n",
-      "\\end{align*}"
+      "\\end{align*}\n",
+      "\n",
+      "Variables:  \n",
+      "- $\\mathrm{S}$: Susceptible (= Population - Confirmed)\n",
+      "- $\\mathrm{I}$: Infected (=Confirmed - Recovered - Fatal)\n",
+      "- $\\mathrm{R}$: Recovered\n",
+      "- $\\mathrm{D}$: Fatal\n",
+      "\n",
+      "Parameters:  \n",
+      "- $\\alpha$: Mortality rate $\\mathrm{[1/min]}$\n",
+      "- $\\beta$: Effective contact rate $\\mathrm{[1/min]}$\n",
+      "- $\\gamma$: Recovery rate $\\mathrm{[1/min]}$"
      ]
     },
     {
@@ -403,12 +423,44 @@
      "metadata": {},
      "source": [
       "## SIR-F model\n",
-      "It is reported that some cases died before clinical diagnosis of COVID-19. To consider this issue, \"S + I $\\to$ Fatal + I\" will be added to the model. When $\\alpha_{1}=0$, SIR-F model will be the same as SIR-D model.\n",
+      "In the initial phase of COVID-19 outbreak, many cases were confirmed after they died. To consider this issue, \"S + I $\\to$ Fatal + I\" will be added to the model. When $\\alpha_{1}=0$, SIR-F model will be the same as SIR-D model.\n",
       "\\begin{align*}\n",
       "\\mathrm{S} \\overset{\\beta I}{\\longrightarrow} \\mathrm{S}^\\ast \\overset{\\alpha_1}{\\longrightarrow}\\ & \\mathrm{F}    \\\\\n",
       "\\mathrm{S}^\\ast \\overset{1 - \\alpha_1}{\\longrightarrow}\\ & \\mathrm{I} \\overset{\\gamma}{\\longrightarrow} \\mathrm{R}    \\\\\n",
       "& \\mathrm{I} \\overset{\\alpha_2}{\\longrightarrow} \\mathrm{F}    \\\\\n",
-      "\\end{align*}"
+      "\\end{align*}\n",
+      "\n",
+      "Variables:  \n",
+      "- $\\mathrm{S}$: Susceptible (= Population - Confirmed)\n",
+      "- $\\mathrm{S}^\\ast$: Confirmed and un-categorized\n",
+      "- $\\mathrm{I}$: Confirmed and categorized as Infected\n",
+      "- $\\mathrm{R}$: Confirmed and categorized as Recovered\n",
+      "- $\\mathrm{F}$: Confirmed and categorzied as Fatal\n",
+      "\n",
+      "Parameters:  \n",
+      "- $\\alpha_1$: Mortality rate of $\\mathrm{S}^\\ast$ cases $\\mathrm{[1/min]}$\n",
+      "- $\\alpha_2$: Mortality rate of Infected cases $\\mathrm{[1/min]}$\n",
+      "- $\\beta$: Effective contact rate $\\mathrm{[1/min]}$\n",
+      "- $\\gamma$: Recovery rate $\\mathrm{[1/min]}$"
+     ]
+    },
+    {
+     "cell_type": "markdown",
+     "metadata": {},
+     "source": [
+      "Notes on $\\mathrm{S}^\\ast$ variable:  \n",
+      "$\\mathrm{S}^\\ast$ describes the cases who are actually carriers of the disease without anyone (including themselves) knowing about it, who either die and they are confirmed positive after death, while some others are moved to infected after being confirmed.\n",
+      "\n",
+      "In JHU-style dataset, we know the number of cases who were confirmed with COVID-19, but we do not know the number of died cases who died without COVID-19.\n",
+      "Essentially $\\mathrm{S}^\\ast$ serves as an auxiliary compartment in SIR-F model to separate the two death situations and insert a probability factor of {$\\alpha_1$, $1 - \\alpha_1$}."
+     ]
+    },
+    {
+     "cell_type": "markdown",
+     "metadata": {},
+     "source": [
+      "Notes on the difference of SIR-D and SIR-F model:  \n",
+      "$\\alpha_1$ is small at this time because performance of PCR tests was improved, but we can use SIR-F model rather than SIR-D model as an enhanced model even now becase $\\alpha_1$ can be 0 in the ODE model."
      ]
     },
     {
@@ -478,6 +530,28 @@
       "\\mathrm{S}^\\ast \\overset{1 - \\alpha_1}{\\longrightarrow}\\ & \\mathrm{I} \\overset{\\gamma}{\\longrightarrow} \\mathrm{R}    \\\\\n",
       "& \\mathrm{I} \\overset{\\alpha_2}{\\longrightarrow} \\mathrm{F}    \\\\\n",
       "\\end{align*}"
+     ]
+    },
+    {
+     "cell_type": "markdown",
+     "metadata": {},
+     "source": [
+      "Variables:  \n",
+      "- $\\mathrm{S}$: Susceptible\n",
+      "- $\\mathrm{E}$: <u>Exposed and in latent period (without infectivity)</u>\n",
+      "- $\\mathrm{W}$: <u>Waiting for confirmaion fiagnosis (with infectivity)</u>\n",
+      "- $\\mathrm{S}^\\ast$: Confirmed and un-categorized\n",
+      "- $\\mathrm{I}$: Confirmed and categorized as Infected\n",
+      "- $\\mathrm{R}$: Confirmed and categorized as Recovered\n",
+      "- $\\mathrm{F}$: Confirmed and categorzied as Fatal\n",
+      "\n",
+      "Parameters:  \n",
+      "- $\\alpha_1$: Mortality rate of $\\mathrm{S}^\\ast$ cases $\\mathrm{[1/min]}$\n",
+      "- $\\alpha_2$: Mortality rate of Infected cases $\\mathrm{[1/min]}$\n",
+      "- $\\beta_1$: <u>Exposure rate (the nymber of encounter with the virus in a minute)</u> $\\mathrm{[1/min]}$\n",
+      "- $\\beta_2$: <u>Inverse of latent period</u> $\\mathrm{[1/min]}$\n",
+      "- $\\beta_3$: <u>Inverse of waiting time for confirmation</u> $\\mathrm{[1/min]}$\n",
+      "- $\\gamma$: Recovery rate $\\mathrm{[1/min]}$"
      ]
     },
     {
