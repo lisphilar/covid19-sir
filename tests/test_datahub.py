@@ -5,7 +5,7 @@ from pathlib import Path
 import warnings
 import pytest
 import pandas as pd
-from covsirphy import SubsetNotFoundError
+from covsirphy import SubsetNotFoundError, PCRIncorrectPreconditionError
 from covsirphy import COVID19DataHub, DataLoader, LinelistData
 from covsirphy import Term, JHUData, CountryData, PopulationData, OxCGRTData, PCRData
 
@@ -227,10 +227,14 @@ class TestPCRData(object):
         df = pcr_data.subset("Greece")
         assert set(df.columns) == set(PCRData.PCR_NLOC_COLUMNS)
 
+    def test_subset_complement(self, pcr_data):
+        with pytest.raises(NotImplementedError):
+            pcr_data.subset_complement("Greece")
+
     def test_records(self, pcr_data):
         with pytest.raises(SubsetNotFoundError):
             pcr_data.records("Greece", end_date="01Jan2000")
-        df = pcr_data.records("Greece")
+        df, _ = pcr_data.records("Greece")
         assert set(df.columns) == set(PCRData.PCR_NLOC_COLUMNS)
 
     @pytest.mark.parametrize("country", ["Greece", "Italy"])
@@ -240,3 +244,8 @@ class TestPCRData(object):
         df = pcr_data.positive_rate(country, show_figure=False)
         assert set(
             [PCRData.T_DIFF, PCRData.C_DIFF, PCRData.PCR_RATE]).issubset(df.columns)
+
+    @pytest.mark.parametrize("country", ["China"])
+    def test_positive_rate_error(self, pcr_data, country):
+        with pytest.raises(PCRIncorrectPreconditionError):
+            pcr_data.positive_rate(country, show_figure=False)
