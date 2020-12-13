@@ -1,43 +1,53 @@
-covsirphy.phase
+covsirphy.phase package
 =======================
-S-R trend analysis and phase setting.
 
-covsirphy.phase.phase\_estimator
-----------------------------
+Submodules
+----------
+
+covsirphy.phase.phase\_estimator module
+---------------------------------------
 
 .. automodule:: covsirphy.phase.phase_estimator
    :members:
    :undoc-members:
    :show-inheritance:
 
-covsirphy.phase.phase\_series
---------------------------------
+covsirphy.phase.phase\_series module
+------------------------------------
 
 .. automodule:: covsirphy.phase.phase_series
    :members:
    :undoc-members:
    :show-inheritance:
 
-covsirphy.phase.phase\_unit
-----------------------------
+covsirphy.phase.phase\_unit module
+----------------------------------
 
 .. automodule:: covsirphy.phase.phase_unit
    :members:
    :undoc-members:
    :show-inheritance:
 
-covsirphy.phase.sr\_change
--------------------------------
+covsirphy.phase.sr\_change module
+---------------------------------
 
 .. automodule:: covsirphy.phase.sr_change
    :members:
    :undoc-members:
    :show-inheritance:
 
-covsirphy.phase.trend
+covsirphy.phase.trend module
 ----------------------------
 
 .. automodule:: covsirphy.phase.trend
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+Module contents
+---------------
+
+.. automodule:: covsirphy.phase
    :members:
    :undoc-members:
    :show-inheritance:

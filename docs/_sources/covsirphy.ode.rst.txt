@@ -1,8 +1,10 @@
-covsirphy.ode
+covsirphy.ode package
 =====================
-Define ODE models.
 
-covsirphy.ode.mbase
+Submodules
+----------
+
+covsirphy.ode.mbase module
 --------------------------
 
 .. automodule:: covsirphy.ode.mbase
@@ -10,15 +12,7 @@ covsirphy.ode.mbase
    :undoc-members:
    :show-inheritance:
 
-covsirphy.ode.mbasecom
------------------------------
-
-.. automodule:: covsirphy.ode.mbasecom
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
-covsirphy.ode.sewirf
+covsirphy.ode.sewirf module
 ---------------------------
 
 .. automodule:: covsirphy.ode.sewirf
@@ -26,7 +20,7 @@ covsirphy.ode.sewirf
    :undoc-members:
    :show-inheritance:
 
-covsirphy.ode.sir
+covsirphy.ode.sir module
 ------------------------
 
 .. automodule:: covsirphy.ode.sir
@@ -42,7 +36,7 @@ covsirphy.ode.sird module
    :undoc-members:
    :show-inheritance:
 
-covsirphy.ode.sirf
+covsirphy.ode.sirf module
 -------------------------
 
 .. automodule:: covsirphy.ode.sirf
@@ -50,10 +44,18 @@ covsirphy.ode.sirf
    :undoc-members:
    :show-inheritance:
 
-covsirphy.ode.sirfv
+covsirphy.ode.sirfv module
 --------------------------
 
 .. automodule:: covsirphy.ode.sirfv
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+Module contents
+---------------
+
+.. automodule:: covsirphy.ode
    :members:
    :undoc-members:
    :show-inheritance:

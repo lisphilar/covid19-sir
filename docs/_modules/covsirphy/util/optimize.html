@@ -1,0 +1,562 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>covsirphy.util.optimize &mdash; CovsirPhy  documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+
+  
+  
+  
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
+        <script src="../../../_static/jquery.js"></script>
+        <script src="../../../_static/underscore.js"></script>
+        <script src="../../../_static/doctools.js"></script>
+        <script src="../../../_static/language_data.js"></script>
+        <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+        <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+        <script type="text/x-mathjax-config">MathJax.Hub.Config({"tex2jax": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "processEscapes": true, "ignoreClass": "document", "processClass": "math|output_area"}})</script>
+    
+    <script type="text/javascript" src="../../../_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../../../index.html" class="icon icon-home" alt="Documentation Home"> CovsirPhy
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../README.html">CovsirPhy introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../INSTALLATION.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../INSTALLATION.html#dataset-preparation">Dataset preparation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../usage_quickest.html">Usage (quickest version)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../usage_quick.html">Usage (quick version)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../usage_dataset.html">Usage (datasets)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../usage_phases.html">Usage (details: phases)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../usage_theoretical.html">Usage (details: theoretical datasets)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../usage_policy.html">Usage (details: policy measures)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../covsirphy.html">covsirphy package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../TERM.html">Term definition</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../CODE_OF_CONDUCT.html">Contributor Covenant Code of Conduct</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../SECURITY.html">Security policy of CovsirPhy</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../CONTRIBUTING.html">Guideline of contribution</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">CovsirPhy</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../../index.html" class="icon icon-home"></a> &raquo;</li>
+        
+          <li><a href="../../index.html">Module code</a> &raquo;</li>
+        
+      <li>covsirphy.util.optimize</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for covsirphy.util.optimize</h1><div class="highlight"><pre>
+<span></span><span class="ch">#!/usr/bin/env python</span>
+<span class="c1"># -*- coding: utf-8 -*-</span>
+
+<span class="kn">from</span> <span class="nn">datetime</span> <span class="kn">import</span> <span class="n">datetime</span>
+<span class="kn">import</span> <span class="nn">warnings</span>
+<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+<span class="kn">from</span> <span class="nn">matplotlib.ticker</span> <span class="kn">import</span> <span class="n">ScalarFormatter</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">optuna</span>
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<span class="kn">import</span> <span class="nn">seaborn</span> <span class="k">as</span> <span class="nn">sns</span>
+
+
+<div class="viewcode-block" id="Optimizer"><a class="viewcode-back" href="../../../covsirphy.util.html#covsirphy.Optimizer">[docs]</a><span class="k">class</span> <span class="nc">Optimizer</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Hyperparameter optimization with Optuna package.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        train_df (pandas.DataFrame): training dataset</span>
+
+<span class="sd">            Index:</span>
+<span class="sd">                reset index</span>
+<span class="sd">            Columns:</span>
+<span class="sd">                - Explanatory variable defined by @x</span>
+<span class="sd">                - Response variables which is not @x</span>
+<span class="sd">        kwargs: keyword arguments of fixed parameter values</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">optuna</span><span class="o">.</span><span class="n">logging</span><span class="o">.</span><span class="n">disable_default_handler</span><span class="p">()</span>
+    <span class="n">warnings</span><span class="o">.</span><span class="n">simplefilter</span><span class="p">(</span><span class="s2">&quot;ignore&quot;</span><span class="p">,</span> <span class="ne">FutureWarning</span><span class="p">)</span>
+    <span class="n">warnings</span><span class="o">.</span><span class="n">simplefilter</span><span class="p">(</span><span class="s2">&quot;ignore&quot;</span><span class="p">,</span> <span class="ne">SyntaxWarning</span><span class="p">)</span>
+    <span class="n">A</span><span class="p">,</span> <span class="n">P</span> <span class="o">=</span> <span class="s2">&quot;_actual&quot;</span><span class="p">,</span> <span class="s2">&quot;_predicted&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">train_df</span><span class="p">,</span> <span class="n">x</span><span class="o">=</span><span class="s2">&quot;t&quot;</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">x</span> <span class="o">=</span> <span class="n">x</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">y_list</span> <span class="o">=</span> <span class="p">[</span><span class="n">v</span> <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">train_df</span><span class="o">.</span><span class="n">columns</span> <span class="k">if</span> <span class="n">v</span> <span class="o">!=</span> <span class="n">x</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">train_df</span> <span class="o">=</span> <span class="n">train_df</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">y0_dict</span> <span class="o">=</span> <span class="n">train_df</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="p">:]</span><span class="o">.</span><span class="n">to_dict</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">step_n</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">train_df</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">fixed_dict</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">study</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">total_trials</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">runtime</span> <span class="o">=</span> <span class="mi">0</span>
+
+    <span class="k">def</span> <span class="nf">_init_study</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">seed</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Initialize Optuna study.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            seed (int or None): random seed of hyperparameter optimization</span>
+
+<span class="sd">        Notes:</span>
+<span class="sd">            @seed will effective when the number of CPUs is 1</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">study</span> <span class="o">=</span> <span class="n">optuna</span><span class="o">.</span><span class="n">create_study</span><span class="p">(</span>
+            <span class="n">direction</span><span class="o">=</span><span class="s2">&quot;minimize&quot;</span><span class="p">,</span>
+            <span class="n">sampler</span><span class="o">=</span><span class="n">optuna</span><span class="o">.</span><span class="n">samplers</span><span class="o">.</span><span class="n">TPESampler</span><span class="p">(</span><span class="n">seed</span><span class="o">=</span><span class="n">seed</span><span class="p">)</span>
+        <span class="p">)</span>
+
+<div class="viewcode-block" id="Optimizer.run"><a class="viewcode-back" href="../../../covsirphy.util.html#covsirphy.Optimizer.run">[docs]</a>    <span class="k">def</span> <span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">n_trials</span><span class="p">,</span> <span class="n">timeout</span><span class="p">,</span> <span class="n">n_jobs</span><span class="o">=-</span><span class="mi">1</span><span class="p">,</span> <span class="n">seed</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Run optimization.</span>
+<span class="sd">        This method can be overwritten in subclass.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            timeout (int): time-out of run</span>
+<span class="sd">            n_trials (int): the number of trials</span>
+<span class="sd">            n_jobs (int): the number of parallel jobs or -1 (CPU count)</span>
+<span class="sd">            seed (int or None): random seed of hyperparameter optimization</span>
+
+<span class="sd">        Notes:</span>
+<span class="sd">            @seed will effective when @n_jobs is 1</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">seed</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">n_jobs</span> <span class="o">!=</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="s2">&quot;@seed must be None when @n_jobs is not equal to 1.&quot;</span><span class="p">)</span>
+        <span class="n">start_time</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">()</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">study</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_init_study</span><span class="p">(</span><span class="n">seed</span><span class="o">=</span><span class="n">seed</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">study</span><span class="o">.</span><span class="n">optimize</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">objective</span><span class="p">,</span> <span class="n">n_trials</span><span class="o">=</span><span class="n">n_trials</span><span class="p">,</span> <span class="n">timeout</span><span class="o">=</span><span class="n">timeout</span><span class="p">,</span> <span class="n">n_jobs</span><span class="o">=</span><span class="n">n_jobs</span><span class="p">)</span>
+        <span class="n">end_time</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">runtime</span> <span class="o">+=</span> <span class="p">(</span><span class="n">end_time</span> <span class="o">-</span> <span class="n">start_time</span><span class="p">)</span><span class="o">.</span><span class="n">total_seconds</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">total_trials</span> <span class="o">+=</span> <span class="n">n_trials</span></div>
+
+<div class="viewcode-block" id="Optimizer.objective"><a class="viewcode-back" href="../../../covsirphy.util.html#covsirphy.Optimizer.objective">[docs]</a>    <span class="k">def</span> <span class="nf">objective</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">trial</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Objective function of Optuna study.</span>
+<span class="sd">        This defines the parameter values using Optuna.</span>
+<span class="sd">        This method should be overwritten in subclass.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            trial (optuna.trial): a trial of the study</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            float: score of the error function to minimize</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">param_dict</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">error_f</span><span class="p">(</span><span class="n">param_dict</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">train_df</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Optimizer.error_f"><a class="viewcode-back" href="../../../covsirphy.util.html#covsirphy.Optimizer.error_f">[docs]</a>    <span class="k">def</span> <span class="nf">error_f</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">param_dict</span><span class="p">,</span> <span class="n">train_df</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Definition of error score to minimize in the study.</span>
+<span class="sd">        This method should be overwritten in subclass.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            param_dict (dict): estimated parameter values</span>
+<span class="sd">                - key (str): parameter name</span>
+<span class="sd">                - value (int or float): parameter value</span>
+<span class="sd">            train_df (pandas.DataFrame): actual data</span>
+
+<span class="sd">                Index:</span>
+<span class="sd">                    reset index</span>
+<span class="sd">                Columns:</span>
+<span class="sd">                    - t: time step, 0, 1, 2,...</span>
+<span class="sd">                    - includes columns defined by @variables</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            float: score of the error function to minimize</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">sim_df</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">simulate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">step_n</span><span class="p">,</span> <span class="n">param_dict</span><span class="p">)</span>
+        <span class="n">comp_df</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">compare</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">train_df</span><span class="p">,</span> <span class="n">sim_df</span><span class="p">)</span>
+        <span class="n">_</span> <span class="o">=</span> <span class="p">(</span><span class="n">sim_df</span><span class="p">,</span> <span class="n">comp_df</span><span class="p">)</span>
+        <span class="k">return</span> <span class="mi">0</span></div>
+
+<div class="viewcode-block" id="Optimizer.simulate"><a class="viewcode-back" href="../../../covsirphy.util.html#covsirphy.Optimizer.simulate">[docs]</a>    <span class="k">def</span> <span class="nf">simulate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">param_dict</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Simulate the values with the parameters.</span>
+<span class="sd">        This method should be overwritten in subclass.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            param_dict (dict): estimated parameter values</span>
+<span class="sd">                - key (str): parameter name</span>
+<span class="sd">                - value (int or float): parameter value</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            pandas.DataFrame:</span>
+<span class="sd">                Index:</span>
+<span class="sd">                    reset index</span>
+<span class="sd">                Columns:</span>
+<span class="sd">                    - Explanatory variable defined by self.x</span>
+<span class="sd">                    - Response variables which defined by self.y_list</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">_</span> <span class="o">=</span> <span class="n">param_dict</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+        <span class="k">return</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">x</span><span class="p">,</span> <span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">y_list</span><span class="p">])</span></div>
+
+<div class="viewcode-block" id="Optimizer.compare"><a class="viewcode-back" href="../../../covsirphy.util.html#covsirphy.Optimizer.compare">[docs]</a>    <span class="k">def</span> <span class="nf">compare</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">actual_df</span><span class="p">,</span> <span class="n">predicted_df</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Return comparison table.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            actual_df (pandas.DataFrame): actual data</span>
+
+<span class="sd">                Index:</span>
+<span class="sd">                    reset index</span>
+<span class="sd">                Columns:</span>
+<span class="sd">                    - t: time step, 0, 1, 2,...</span>
+<span class="sd">                    - includes columns defined by self.y_list</span>
+
+<span class="sd">            predicted_df (pandas.DataFrame): predicted data</span>
+
+<span class="sd">                Index:</span>
+<span class="sd">                    reset index</span>
+<span class="sd">                Columns:</span>
+<span class="sd">                    - t: time step, 0, 1, 2,...</span>
+<span class="sd">                    - includes columns defined by self.y_list</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            pandas.DataFrame:</span>
+<span class="sd">                Index:</span>
+<span class="sd">                    (str): time step</span>
+<span class="sd">                Columns:</span>
+<span class="sd">                    - columns with &quot;_actual&quot;</span>
+<span class="sd">                    - columns with &quot;_predicted:</span>
+<span class="sd">                    - columns are defined by self.y_list</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Data for comparison</span>
+        <span class="n">df</span> <span class="o">=</span> <span class="n">actual_df</span><span class="o">.</span><span class="n">merge</span><span class="p">(</span>
+            <span class="n">predicted_df</span><span class="p">,</span> <span class="n">on</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">x</span><span class="p">,</span> <span class="n">suffixes</span><span class="o">=</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">A</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">P</span><span class="p">))</span>
+        <span class="k">return</span> <span class="n">df</span><span class="o">.</span><span class="n">set_index</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">x</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Optimizer.param"><a class="viewcode-back" href="../../../covsirphy.util.html#covsirphy.Optimizer.param">[docs]</a>    <span class="k">def</span> <span class="nf">param</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Return the estimated parameters as a dictionary.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            dict</span>
+<span class="sd">                - key (str): parameter name</span>
+<span class="sd">                - value (int or float): parameter value</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">param_dict</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">study</span><span class="o">.</span><span class="n">best_params</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+        <span class="n">param_dict</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">fixed_dict</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">param_dict</span></div>
+
+<div class="viewcode-block" id="Optimizer.result"><a class="viewcode-back" href="../../../covsirphy.util.html#covsirphy.Optimizer.result">[docs]</a>    <span class="k">def</span> <span class="nf">result</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Return the estimated parameters as a dataframe.</span>
+<span class="sd">        This method should be overwritten in subclass.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            name (str): index of the dataframe</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            pandas.DataFrame:</span>
+<span class="sd">                Index:</span>
+<span class="sd">                    reset index</span>
+<span class="sd">                Columns:</span>
+<span class="sd">                    - (estimated parameters)</span>
+<span class="sd">                    - Trials: the number of trials</span>
+<span class="sd">                    - Runtime: run time of estimation</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">param_dict</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">param</span><span class="p">()</span>
+        <span class="c1"># The number of trials</span>
+        <span class="n">param_dict</span><span class="p">[</span><span class="s2">&quot;Trials&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">total_trials</span>
+        <span class="c1"># Runtime</span>
+        <span class="n">minutes</span><span class="p">,</span> <span class="n">seconds</span> <span class="o">=</span> <span class="nb">divmod</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">runtime</span><span class="p">),</span> <span class="mi">60</span><span class="p">)</span>
+        <span class="n">param_dict</span><span class="p">[</span><span class="s2">&quot;Runtime&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">minutes</span><span class="si">}</span><span class="s2"> min </span><span class="si">{</span><span class="n">seconds</span><span class="si">}</span><span class="s2"> sec&quot;</span>
+        <span class="k">return</span> <span class="n">param_dict</span></div>
+
+<div class="viewcode-block" id="Optimizer.rmsle"><a class="viewcode-back" href="../../../covsirphy.util.html#covsirphy.Optimizer.rmsle">[docs]</a>    <span class="k">def</span> <span class="nf">rmsle</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">train_df</span><span class="p">,</span> <span class="n">dim</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Calculate RMSLE score.</span>
+<span class="sd">        This method can be overwritten in child class.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            train_df (pandas.DataFrame): actual data</span>
+
+<span class="sd">                Index:</span>
+<span class="sd">                    reset index</span>
+<span class="sd">                Columns:</span>
+<span class="sd">                    - t: time step, 0, 1, 2,...</span>
+<span class="sd">                    - includes columns defined by self.y_list</span>
+<span class="sd">            dim (int or float): dimension where comparison will be performed</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            float: RMSLE score</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">predicted_df</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">predict</span><span class="p">()</span>
+        <span class="n">df</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">compare</span><span class="p">(</span><span class="n">train_df</span><span class="p">,</span> <span class="n">predicted_df</span><span class="p">)</span>
+        <span class="n">df</span> <span class="o">=</span> <span class="p">(</span><span class="n">df</span> <span class="o">*</span> <span class="n">dim</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">int64</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">y_list</span><span class="p">:</span>
+            <span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">df</span><span class="p">[</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">v</span><span class="si">}{</span><span class="bp">self</span><span class="o">.</span><span class="n">A</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">]</span> <span class="o">*</span> <span class="n">df</span><span class="p">[</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">v</span><span class="si">}{</span><span class="bp">self</span><span class="o">.</span><span class="n">P</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">]</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">,</span> <span class="p">:]</span>
+        <span class="n">a_list</span> <span class="o">=</span> <span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">log10</span><span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">v</span><span class="si">}{</span><span class="bp">self</span><span class="o">.</span><span class="n">A</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">])</span> <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">y_list</span><span class="p">]</span>
+        <span class="n">p_list</span> <span class="o">=</span> <span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">log10</span><span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">v</span><span class="si">}{</span><span class="bp">self</span><span class="o">.</span><span class="n">P</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">])</span> <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">y_list</span><span class="p">]</span>
+        <span class="n">diffs</span> <span class="o">=</span> <span class="p">[((</span><span class="n">a</span> <span class="o">-</span> <span class="n">p</span><span class="p">)</span> <span class="o">**</span> <span class="mi">2</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span> <span class="k">for</span> <span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">p</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">a_list</span><span class="p">,</span> <span class="n">p_list</span><span class="p">)]</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="nb">sum</span><span class="p">(</span><span class="n">diffs</span><span class="p">)</span> <span class="o">/</span> <span class="nb">len</span><span class="p">(</span><span class="n">diffs</span><span class="p">))</span></div>
+
+<div class="viewcode-block" id="Optimizer.predict"><a class="viewcode-back" href="../../../covsirphy.util.html#covsirphy.Optimizer.predict">[docs]</a>    <span class="k">def</span> <span class="nf">predict</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Predict the values with the calculated values.</span>
+<span class="sd">        This method can be overwritten in subclass.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">param_dict</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">param</span><span class="p">()</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">simulate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">step_n</span><span class="p">,</span> <span class="n">param_dict</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Optimizer.history"><a class="viewcode-back" href="../../../covsirphy.util.html#covsirphy.Optimizer.history">[docs]</a>    <span class="k">def</span> <span class="nf">history</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">show_figure</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">filename</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Show the history of optimization as a figure</span>
+<span class="sd">            and return it as dataframe.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            show_figure (bool): if True, show the history as a pair-plot of parameters.</span>
+<span class="sd">            filename (str): filename of the figure, or None (show figure)</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            pandas.DataFrame: the history</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Create dataframe of the history</span>
+        <span class="n">df</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">study</span><span class="o">.</span><span class="n">trials_dataframe</span><span class="p">()</span>
+        <span class="n">series</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="s2">&quot;datetime_complete&quot;</span><span class="p">]</span> <span class="o">-</span> <span class="n">df</span><span class="p">[</span><span class="s2">&quot;datetime_start&quot;</span><span class="p">]</span>
+        <span class="n">df</span><span class="p">[</span><span class="s2">&quot;time[s]&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">series</span><span class="o">.</span><span class="n">dt</span><span class="o">.</span><span class="n">total_seconds</span><span class="p">()</span>
+        <span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">drop</span><span class="p">(</span>
+            <span class="p">[</span><span class="s2">&quot;datetime_complete&quot;</span><span class="p">,</span> <span class="s2">&quot;datetime_start&quot;</span><span class="p">,</span> <span class="s2">&quot;system_attrs__number&quot;</span><span class="p">],</span>
+            <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">errors</span><span class="o">=</span><span class="s2">&quot;ignore&quot;</span><span class="p">)</span>
+        <span class="c1"># Show figure</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">show_figure</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">df</span>
+        <span class="n">fig_df</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">loc</span><span class="p">[:,</span> <span class="n">df</span><span class="o">.</span><span class="n">columns</span><span class="o">.</span><span class="n">str</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;params_&quot;</span><span class="p">)]</span>
+        <span class="n">fig_df</span><span class="o">.</span><span class="n">columns</span> <span class="o">=</span> <span class="n">fig_df</span><span class="o">.</span><span class="n">columns</span><span class="o">.</span><span class="n">str</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;params_&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span>
+        <span class="n">sns</span><span class="o">.</span><span class="n">pairplot</span><span class="p">(</span><span class="n">fig_df</span><span class="p">,</span> <span class="n">diag_kind</span><span class="o">=</span><span class="s2">&quot;kde&quot;</span><span class="p">,</span> <span class="n">markers</span><span class="o">=</span><span class="s2">&quot;+&quot;</span><span class="p">)</span>
+        <span class="c1"># Save figure or show figure</span>
+        <span class="k">if</span> <span class="n">filename</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+            <span class="k">return</span> <span class="n">df</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="n">bbox_inches</span><span class="o">=</span><span class="s2">&quot;tight&quot;</span><span class="p">,</span> <span class="n">transparent</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">dpi</span><span class="o">=</span><span class="mi">300</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">clf</span><span class="p">()</span>
+        <span class="k">return</span> <span class="n">df</span></div>
+
+<div class="viewcode-block" id="Optimizer.accuracy"><a class="viewcode-back" href="../../../covsirphy.util.html#covsirphy.Optimizer.accuracy">[docs]</a>    <span class="k">def</span> <span class="nf">accuracy</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">train_df</span><span class="p">,</span> <span class="n">variables</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">show_figure</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">filename</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Show the accuracy as a figure.</span>
+<span class="sd">        This method can be overwritten in child class.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            train_df (pandas.DataFrame): actual data</span>
+
+<span class="sd">                Index:</span>
+<span class="sd">                    reset index</span>
+<span class="sd">                Columns:</span>
+<span class="sd">                    - t: time step, 0, 1, 2,...</span>
+<span class="sd">                    - includes columns defined by self.y_list</span>
+
+<span class="sd">            variables (list[str]): variables to compare or None (all variables)</span>
+<span class="sd">            show_figure (bool): if True, show the result as a figure</span>
+<span class="sd">            filename (str): filename of the figure, or None (show figure)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Create a table to compare observed/estimated values</span>
+        <span class="n">predicted_df</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">predict</span><span class="p">()</span>
+        <span class="n">df</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">compare</span><span class="p">(</span><span class="n">train_df</span><span class="p">,</span> <span class="n">predicted_df</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">show_figure</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">df</span>
+        <span class="c1"># Prepare figure object</span>
+        <span class="n">val_len</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">variables</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span>
+        <span class="n">fig</span><span class="p">,</span> <span class="n">axes</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span>
+            <span class="n">ncols</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">nrows</span><span class="o">=</span><span class="n">val_len</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">9</span><span class="p">,</span> <span class="mi">6</span> <span class="o">*</span> <span class="n">val_len</span> <span class="o">/</span> <span class="mi">2</span><span class="p">)</span>
+        <span class="p">)</span>
+        <span class="c1"># Comparison of each variable</span>
+        <span class="k">for</span> <span class="p">(</span><span class="n">ax</span><span class="p">,</span> <span class="n">v</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">axes</span><span class="o">.</span><span class="n">ravel</span><span class="p">()[</span><span class="mi">1</span><span class="p">:],</span> <span class="n">variables</span><span class="p">):</span>
+            <span class="n">df</span><span class="p">[[</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">v</span><span class="si">}{</span><span class="bp">self</span><span class="o">.</span><span class="n">A</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">v</span><span class="si">}{</span><span class="bp">self</span><span class="o">.</span><span class="n">P</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">]]</span><span class="o">.</span><span class="n">plot</span><span class="o">.</span><span class="n">line</span><span class="p">(</span>
+                <span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">,</span> <span class="n">ylim</span><span class="o">=</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="kc">None</span><span class="p">),</span> <span class="n">sharex</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                <span class="n">title</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">NAME</span><span class="si">}</span><span class="s2">: Comparison of observed/estimated </span><span class="si">{</span><span class="n">v</span><span class="si">}</span><span class="s2">(t)&quot;</span>
+            <span class="p">)</span>
+            <span class="n">ax</span><span class="o">.</span><span class="n">yaxis</span><span class="o">.</span><span class="n">set_major_formatter</span><span class="p">(</span><span class="n">ScalarFormatter</span><span class="p">(</span><span class="n">useMathText</span><span class="o">=</span><span class="kc">True</span><span class="p">))</span>
+            <span class="n">ax</span><span class="o">.</span><span class="n">ticklabel_format</span><span class="p">(</span><span class="n">style</span><span class="o">=</span><span class="s2">&quot;sci&quot;</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="s2">&quot;y&quot;</span><span class="p">,</span> <span class="n">scilimits</span><span class="o">=</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">))</span>
+            <span class="n">ax</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span>
+                <span class="n">bbox_to_anchor</span><span class="o">=</span><span class="p">(</span><span class="mf">1.02</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span> <span class="n">loc</span><span class="o">=</span><span class="s2">&quot;lower left&quot;</span><span class="p">,</span> <span class="n">borderaxespad</span><span class="o">=</span><span class="mi">0</span>
+            <span class="p">)</span>
+        <span class="c1"># Summarize in a figure</span>
+        <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">variables</span><span class="p">:</span>
+            <span class="n">df</span><span class="p">[</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">v</span><span class="si">}</span><span class="s2">_diff&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">v</span><span class="si">}{</span><span class="bp">self</span><span class="o">.</span><span class="n">A</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">]</span> <span class="o">-</span> <span class="n">df</span><span class="p">[</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">v</span><span class="si">}{</span><span class="bp">self</span><span class="o">.</span><span class="n">P</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">]</span>
+            <span class="n">df</span><span class="p">[</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">v</span><span class="si">}</span><span class="s2">_diff&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">plot</span><span class="o">.</span><span class="n">line</span><span class="p">(</span>
+                <span class="n">ax</span><span class="o">=</span><span class="n">axes</span><span class="o">.</span><span class="n">ravel</span><span class="p">()[</span><span class="mi">0</span><span class="p">],</span> <span class="n">sharex</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                <span class="n">title</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">NAME</span><span class="si">}</span><span class="s2">: observed - estimated&quot;</span>
+            <span class="p">)</span>
+        <span class="n">axes</span><span class="o">.</span><span class="n">ravel</span><span class="p">()[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">axhline</span><span class="p">(</span><span class="n">y</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;black&quot;</span><span class="p">,</span> <span class="n">linestyle</span><span class="o">=</span><span class="s2">&quot;--&quot;</span><span class="p">)</span>
+        <span class="n">axes</span><span class="o">.</span><span class="n">ravel</span><span class="p">()[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">yaxis</span><span class="o">.</span><span class="n">set_major_formatter</span><span class="p">(</span>
+            <span class="n">ScalarFormatter</span><span class="p">(</span><span class="n">useMathText</span><span class="o">=</span><span class="kc">True</span><span class="p">))</span>
+        <span class="n">axes</span><span class="o">.</span><span class="n">ravel</span><span class="p">()[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">ticklabel_format</span><span class="p">(</span>
+            <span class="n">style</span><span class="o">=</span><span class="s2">&quot;sci&quot;</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="s2">&quot;y&quot;</span><span class="p">,</span> <span class="n">scilimits</span><span class="o">=</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">))</span>
+        <span class="n">axes</span><span class="o">.</span><span class="n">ravel</span><span class="p">()[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">bbox_to_anchor</span><span class="o">=</span><span class="p">(</span><span class="mf">1.02</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span>
+                               <span class="n">loc</span><span class="o">=</span><span class="s2">&quot;lower left&quot;</span><span class="p">,</span> <span class="n">borderaxespad</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+        <span class="n">fig</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
+        <span class="c1"># Save figure or show figure</span>
+        <span class="k">if</span> <span class="n">filename</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+            <span class="k">return</span> <span class="n">df</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="n">bbox_inches</span><span class="o">=</span><span class="s2">&quot;tight&quot;</span><span class="p">,</span> <span class="n">transparent</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">dpi</span><span class="o">=</span><span class="mi">300</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">clf</span><span class="p">()</span>
+        <span class="k">return</span> <span class="n">df</span></div></div>
+</pre></div>
+
+           </div>
+           
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        
+        &copy; Copyright 2020, CovsirPhy Development Team
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

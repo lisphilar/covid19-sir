@@ -94,7 +94,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../../../usage_phases.html">Usage (details: phases)</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../usage_theoretical.html">Usage (details: theoretical datasets)</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../usage_policy.html">Usage (details: policy measures)</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../covsirphy.html">API reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../covsirphy.html">covsirphy package</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../TERM.html">Term definition</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../CODE_OF_CONDUCT.html">Contributor Covenant Code of Conduct</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../SECURITY.html">Security policy of CovsirPhy</a></li>
@@ -169,7 +169,7 @@
 <span class="kn">import</span> <span class="nn">warnings</span>
 
 
-<span class="k">def</span> <span class="nf">deprecate</span><span class="p">(</span><span class="n">old</span><span class="p">,</span> <span class="n">new</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">version</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<div class="viewcode-block" id="deprecate"><a class="viewcode-back" href="../../../covsirphy.util.html#covsirphy.deprecate">[docs]</a><span class="k">def</span> <span class="nf">deprecate</span><span class="p">(</span><span class="n">old</span><span class="p">,</span> <span class="n">new</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">version</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Decorator to raise deprecation warning.</span>
 
@@ -191,10 +191,10 @@
             <span class="p">)</span>
             <span class="k">return</span> <span class="n">func</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">wrapper</span>
-    <span class="k">return</span> <span class="n">_deprecate</span>
+    <span class="k">return</span> <span class="n">_deprecate</span></div>
 
 
-<span class="k">class</span> <span class="nc">SubsetNotFoundError</span><span class="p">(</span><span class="ne">KeyError</span><span class="p">,</span> <span class="ne">ValueError</span><span class="p">):</span>
+<div class="viewcode-block" id="SubsetNotFoundError"><a class="viewcode-back" href="../../../covsirphy.util.html#covsirphy.SubsetNotFoundError">[docs]</a><span class="k">class</span> <span class="nc">SubsetNotFoundError</span><span class="p">(</span><span class="ne">KeyError</span><span class="p">,</span> <span class="ne">ValueError</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Error when subset was failed with specified arguments.</span>
 
@@ -251,10 +251,10 @@
             <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot; on </span><span class="si">{</span><span class="n">date</span><span class="si">}</span><span class="s2">&quot;</span>
         <span class="n">start_str</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span> <span class="k">if</span> <span class="n">start_date</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="sa">f</span><span class="s2">&quot; from </span><span class="si">{</span><span class="n">start_date</span><span class="si">}</span><span class="s2">&quot;</span>
         <span class="n">end_str</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span> <span class="k">if</span> <span class="n">end_date</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="sa">f</span><span class="s2">&quot; to </span><span class="si">{</span><span class="n">end_date</span><span class="si">}</span><span class="s2">&quot;</span>
-        <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">start_str</span><span class="si">}{</span><span class="n">end_str</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">start_str</span><span class="si">}{</span><span class="n">end_str</span><span class="si">}</span><span class="s2">&quot;</span></div>
 
 
-<span class="k">class</span> <span class="nc">ScenarioNotFoundError</span><span class="p">(</span><span class="ne">KeyError</span><span class="p">):</span>
+<div class="viewcode-block" id="ScenarioNotFoundError"><a class="viewcode-back" href="../../../covsirphy.util.html#covsirphy.ScenarioNotFoundError">[docs]</a><span class="k">class</span> <span class="nc">ScenarioNotFoundError</span><span class="p">(</span><span class="ne">KeyError</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Error when unregistered scenario name was specified.</span>
 
@@ -266,10 +266,10 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">name</span>
 
     <span class="k">def</span> <span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2"> scenario is not registered.&quot;</span>
+        <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2"> scenario is not registered.&quot;</span></div>
 
 
-<span class="k">class</span> <span class="nc">UnExecutedError</span><span class="p">(</span><span class="ne">AttributeError</span><span class="p">,</span> <span class="ne">NameError</span><span class="p">,</span> <span class="ne">ValueError</span><span class="p">):</span>
+<div class="viewcode-block" id="UnExecutedError"><a class="viewcode-back" href="../../../covsirphy.util.html#covsirphy.UnExecutedError">[docs]</a><span class="k">class</span> <span class="nc">UnExecutedError</span><span class="p">(</span><span class="ne">AttributeError</span><span class="p">,</span> <span class="ne">NameError</span><span class="p">,</span> <span class="ne">ValueError</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Error when we have unexecuted methods that we need to run in advance.</span>
 
@@ -283,10 +283,10 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">message</span> <span class="o">=</span> <span class="s2">&quot;.&quot;</span> <span class="k">if</span> <span class="n">message</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="sa">f</span><span class="s2">&quot; </span><span class="si">{</span><span class="n">message</span><span class="si">}</span><span class="s2">.&quot;</span>
 
     <span class="k">def</span> <span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;Please execute </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">method_name</span><span class="si">}</span><span class="s2"> in advance</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">message</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;Please execute </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">method_name</span><span class="si">}</span><span class="s2"> in advance</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">message</span><span class="si">}</span><span class="s2">&quot;</span></div>
 
 
-<span class="k">class</span> <span class="nc">PCRIncorrectPreconditionError</span><span class="p">(</span><span class="ne">KeyError</span><span class="p">):</span>
+<div class="viewcode-block" id="PCRIncorrectPreconditionError"><a class="viewcode-back" href="../../../covsirphy.util.html#covsirphy.PCRIncorrectPreconditionError">[docs]</a><span class="k">class</span> <span class="nc">PCRIncorrectPreconditionError</span><span class="p">(</span><span class="ne">KeyError</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Error when checking preconditions in the PCR data.</span>
 
@@ -317,7 +317,7 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">country_str</span> <span class="o">=</span> <span class="p">(</span><span class="s2">&quot; in country &quot;</span> <span class="o">+</span> <span class="n">country</span><span class="p">)</span> <span class="k">if</span> <span class="ow">not</span> <span class="n">province</span> <span class="k">else</span> <span class="s2">&quot;&quot;</span>
         <span class="n">province_str</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span> <span class="k">if</span> <span class="n">province</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="p">(</span><span class="s2">&quot; in province &quot;</span> <span class="o">+</span> <span class="n">province</span><span class="p">)</span>
-        <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">province_str</span><span class="si">}{</span><span class="n">country_str</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">province_str</span><span class="si">}{</span><span class="n">country_str</span><span class="si">}</span><span class="s2">&quot;</span></div>
 </pre></div>
 
            </div>

@@ -1,8 +1,10 @@
-covsirphy.simulation
+covsirphy.simulation package
 ============================
-Perform ODE simulation and estimation of ODE parameters.
 
-covsirphy.simulation.estimator
+Submodules
+----------
+
+covsirphy.simulation.estimator module
 -------------------------------------
 
 .. automodule:: covsirphy.simulation.estimator
@@ -10,18 +12,18 @@ covsirphy.simulation.estimator
    :undoc-members:
    :show-inheritance:
 
-covsirphy.simulation.optimize
-------------------------------------
+covsirphy.simulation.simulator module
+-------------------------------------
 
-.. automodule:: covsirphy.simulation.optimize
+.. automodule:: covsirphy.simulation.simulator
    :members:
    :undoc-members:
    :show-inheritance:
 
-covsirphy.simulation.simulator
--------------------------------------
+Module contents
+---------------
 
-.. automodule:: covsirphy.simulation.simulator
+.. automodule:: covsirphy.simulation
    :members:
    :undoc-members:
    :show-inheritance:

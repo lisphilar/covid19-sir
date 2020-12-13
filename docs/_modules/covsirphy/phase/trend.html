@@ -94,7 +94,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../../../usage_phases.html">Usage (details: phases)</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../usage_theoretical.html">Usage (details: theoretical datasets)</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../usage_policy.html">Usage (details: policy measures)</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../covsirphy.html">API reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../covsirphy.html">covsirphy package</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../TERM.html">Term definition</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../CODE_OF_CONDUCT.html">Contributor Covenant Code of Conduct</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../SECURITY.html">Security policy of CovsirPhy</a></li>
@@ -179,7 +179,7 @@
 <span class="kn">from</span> <span class="nn">covsirphy.cleaning.term</span> <span class="kn">import</span> <span class="n">Term</span>
 
 
-<div class="viewcode-block" id="Trend"><a class="viewcode-back" href="../../../covsirphy.phase.html#covsirphy.phase.trend.Trend">[docs]</a><span class="k">class</span> <span class="nc">Trend</span><span class="p">(</span><span class="n">Term</span><span class="p">):</span>
+<div class="viewcode-block" id="Trend"><a class="viewcode-back" href="../../../covsirphy.phase.html#covsirphy.Trend">[docs]</a><span class="k">class</span> <span class="nc">Trend</span><span class="p">(</span><span class="n">Term</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    S-R trend analysis in a phase.</span>
 
@@ -221,7 +221,7 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_result_df</span>
 
-<div class="viewcode-block" id="Trend.run"><a class="viewcode-back" href="../../../covsirphy.phase.html#covsirphy.phase.trend.Trend.run">[docs]</a>    <span class="k">def</span> <span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="Trend.run"><a class="viewcode-back" href="../../../covsirphy.phase.html#covsirphy.Trend.run">[docs]</a>    <span class="k">def</span> <span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Perform curve fitting with some functions and select the best solution.</span>
 <span class="sd">        Then, the result and RMSLE score of the best solution will be saved.</span>
@@ -305,7 +305,7 @@
             <span class="n">f_partial</span><span class="p">(</span><span class="n">x_series</span><span class="p">))</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">df</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">int64</span><span class="p">,</span> <span class="n">errors</span><span class="o">=</span><span class="s2">&quot;ignore&quot;</span><span class="p">)</span>
 
-<div class="viewcode-block" id="Trend.rmsle"><a class="viewcode-back" href="../../../covsirphy.phase.html#covsirphy.phase.trend.Trend.rmsle">[docs]</a>    <span class="k">def</span> <span class="nf">rmsle</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="Trend.rmsle"><a class="viewcode-back" href="../../../covsirphy.phase.html#covsirphy.Trend.rmsle">[docs]</a>    <span class="k">def</span> <span class="nf">rmsle</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Return the best RMSLE score.</span>
 
@@ -343,7 +343,7 @@
         <span class="p">)</span>
         <span class="k">return</span> <span class="n">scores</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
 
-<div class="viewcode-block" id="Trend.show"><a class="viewcode-back" href="../../../covsirphy.phase.html#covsirphy.phase.trend.Trend.show">[docs]</a>    <span class="k">def</span> <span class="nf">show</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">area</span><span class="p">,</span> <span class="n">filename</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<div class="viewcode-block" id="Trend.show"><a class="viewcode-back" href="../../../covsirphy.phase.html#covsirphy.Trend.show">[docs]</a>    <span class="k">def</span> <span class="nf">show</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">area</span><span class="p">,</span> <span class="n">filename</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        show the result as a figure.</span>
 
@@ -365,7 +365,7 @@
             <span class="n">filename</span><span class="o">=</span><span class="n">filename</span>
         <span class="p">)</span></div>
 
-<div class="viewcode-block" id="Trend.show_with_many"><a class="viewcode-back" href="../../../covsirphy.phase.html#covsirphy.phase.trend.Trend.show_with_many">[docs]</a>    <span class="nd">@classmethod</span>
+<div class="viewcode-block" id="Trend.show_with_many"><a class="viewcode-back" href="../../../covsirphy.phase.html#covsirphy.Trend.show_with_many">[docs]</a>    <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">show_with_many</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">result_df</span><span class="p">,</span> <span class="n">predicted_cols</span><span class="p">,</span>
                        <span class="n">title</span><span class="p">,</span> <span class="n">vlines</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">filename</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>

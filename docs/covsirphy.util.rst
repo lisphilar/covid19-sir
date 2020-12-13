@@ -1,8 +1,34 @@
-covsirphy.util
+covsirphy.util package
 ======================
-Useful tools.
 
-covsirphy.util.map
+Submodules
+----------
+
+covsirphy.util.argument module
+------------------------------
+
+.. automodule:: covsirphy.util.argument
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+covsirphy.util.error module
+---------------------------
+
+.. automodule:: covsirphy.util.error
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+covsirphy.util.file module
+--------------------------
+
+.. automodule:: covsirphy.util.file
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+covsirphy.util.map module
 -------------------------
 
 .. automodule:: covsirphy.util.map
@@ -10,7 +36,15 @@ covsirphy.util.map
    :undoc-members:
    :show-inheritance:
 
-covsirphy.util.plotting
+covsirphy.util.optimize module
+------------------------------
+
+.. automodule:: covsirphy.util.optimize
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+covsirphy.util.plotting module
 ------------------------------
 
 .. automodule:: covsirphy.util.plotting
@@ -18,10 +52,18 @@ covsirphy.util.plotting
    :undoc-members:
    :show-inheritance:
 
-covsirphy.util.stopwatch
+covsirphy.util.stopwatch module
 -------------------------------
 
 .. automodule:: covsirphy.util.stopwatch
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+Module contents
+---------------
+
+.. automodule:: covsirphy.util
    :members:
    :undoc-members:
    :show-inheritance:

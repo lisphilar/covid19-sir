@@ -1,8 +1,10 @@
-covsirphy.cleaning
+covsirphy.cleaning package
 ==========================
-Data loading and cleaning.
 
-covsirphy.cleaning.cbase
+Submodules
+----------
+
+covsirphy.cleaning.cbase module
 -------------------------------
 
 .. automodule:: covsirphy.cleaning.cbase
@@ -10,7 +12,7 @@ covsirphy.cleaning.cbase
    :undoc-members:
    :show-inheritance:
 
-covsirphy.cleaning.country\_data
+covsirphy.cleaning.country\_data module
 ---------------------------------------
 
 .. automodule:: covsirphy.cleaning.country_data
@@ -18,15 +20,15 @@ covsirphy.cleaning.country\_data
    :undoc-members:
    :show-inheritance:
 
-covsirphy.cleaning.covid19datahub
--------------------------------
+covsirphy.cleaning.covid19datahub module
+----------------------------------------
 
-.. automodule:: covsirphy.covid19datahub
+.. automodule:: covsirphy.cleaning.covid19datahub
    :members:
    :undoc-members:
    :show-inheritance:
 
-covsirphy.cleaning.dataloader
+covsirphy.cleaning.dataloader module
 ------------------------------------
 
 .. automodule:: covsirphy.cleaning.dataloader
@@ -34,7 +36,23 @@ covsirphy.cleaning.dataloader
    :undoc-members:
    :show-inheritance:
 
-covsirphy.cleaning.jhu\_data
+covsirphy.cleaning.japan\_data module
+-------------------------------------
+
+.. automodule:: covsirphy.cleaning.japan_data
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+covsirphy.cleaning.jhu\_complement module
+-----------------------------------------
+
+.. automodule:: covsirphy.cleaning.jhu_complement
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+covsirphy.cleaning.jhu\_data module
 -----------------------------------
 
 .. automodule:: covsirphy.cleaning.jhu_data
@@ -42,7 +60,15 @@ covsirphy.cleaning.jhu\_data
    :undoc-members:
    :show-inheritance:
 
-covsirphy.cleaning.oxcgrt
+covsirphy.cleaning.linelist module
+----------------------------------
+
+.. automodule:: covsirphy.cleaning.linelist
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+covsirphy.cleaning.oxcgrt module
 --------------------------------
 
 .. automodule:: covsirphy.cleaning.oxcgrt
@@ -50,7 +76,15 @@ covsirphy.cleaning.oxcgrt
    :undoc-members:
    :show-inheritance:
 
-covsirphy.cleaning.population
+covsirphy.cleaning.pcr\_data module
+-----------------------------------
+
+.. automodule:: covsirphy.cleaning.pcr_data
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+covsirphy.cleaning.population module
 ------------------------------------
 
 .. automodule:: covsirphy.cleaning.population
@@ -58,10 +92,18 @@ covsirphy.cleaning.population
    :undoc-members:
    :show-inheritance:
 
-covsirphy.cleaning.term
+covsirphy.cleaning.term module
 ------------------------------
 
 .. automodule:: covsirphy.cleaning.term
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+Module contents
+---------------
+
+.. automodule:: covsirphy.cleaning
    :members:
    :undoc-members:
    :show-inheritance:

@@ -94,7 +94,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../../../usage_phases.html">Usage (details: phases)</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../usage_theoretical.html">Usage (details: theoretical datasets)</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../usage_policy.html">Usage (details: policy measures)</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../covsirphy.html">API reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../covsirphy.html">covsirphy package</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../TERM.html">Term definition</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../CODE_OF_CONDUCT.html">Contributor Covenant Code of Conduct</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../SECURITY.html">Security policy of CovsirPhy</a></li>
@@ -174,7 +174,7 @@
 <span class="kn">from</span> <span class="nn">covsirphy.simulation.simulator</span> <span class="kn">import</span> <span class="n">ODESimulator</span>
 
 
-<div class="viewcode-block" id="ExampleData"><a class="viewcode-back" href="../../../covsirphy.analysis.html#covsirphy.analysis.example_data.ExampleData">[docs]</a><span class="k">class</span> <span class="nc">ExampleData</span><span class="p">(</span><span class="n">JHUData</span><span class="p">):</span>
+<div class="viewcode-block" id="ExampleData"><a class="viewcode-back" href="../../../covsirphy.analysis.html#covsirphy.ExampleData">[docs]</a><span class="k">class</span> <span class="nc">ExampleData</span><span class="p">(</span><span class="n">JHUData</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Example dataset as a child class of JHUData.</span>
 
@@ -232,7 +232,7 @@
         <span class="n">model</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ensure_subclass</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">ModelBase</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;model&quot;</span><span class="p">)</span>
         <span class="k">return</span> <span class="p">(</span><span class="n">model</span><span class="o">.</span><span class="n">NAME</span><span class="p">,</span> <span class="n">province</span><span class="p">)</span>
 
-<div class="viewcode-block" id="ExampleData.add"><a class="viewcode-back" href="../../../covsirphy.analysis.html#covsirphy.analysis.example_data.ExampleData.add">[docs]</a>    <span class="k">def</span> <span class="nf">add</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model</span><span class="p">,</span> <span class="n">country</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">province</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<div class="viewcode-block" id="ExampleData.add"><a class="viewcode-back" href="../../../covsirphy.analysis.html#covsirphy.ExampleData.add">[docs]</a>    <span class="k">def</span> <span class="nf">add</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model</span><span class="p">,</span> <span class="n">country</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">province</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Add example data.</span>
 <span class="sd">        If the country has been registered,</span>
@@ -295,7 +295,7 @@
             <span class="n">nondim_df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">([</span><span class="n">nondim_df_old</span><span class="p">,</span> <span class="n">nondim_df</span><span class="p">],</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">nondim_dict</span><span class="p">[</span><span class="n">country</span><span class="p">][</span><span class="n">province</span><span class="p">]</span> <span class="o">=</span> <span class="n">nondim_df</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span></div>
 
-<div class="viewcode-block" id="ExampleData.specialized"><a class="viewcode-back" href="../../../covsirphy.analysis.html#covsirphy.analysis.example_data.ExampleData.specialized">[docs]</a>    <span class="k">def</span> <span class="nf">specialized</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">country</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">province</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<div class="viewcode-block" id="ExampleData.specialized"><a class="viewcode-back" href="../../../covsirphy.analysis.html#covsirphy.ExampleData.specialized">[docs]</a>    <span class="k">def</span> <span class="nf">specialized</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">country</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">province</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Return dimensional records with model variables.</span>
 
@@ -315,7 +315,7 @@
         <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
             <span class="k">raise</span> <span class="n">SubsetNotFoundError</span><span class="p">(</span><span class="n">country</span><span class="o">=</span><span class="n">country</span><span class="p">,</span> <span class="n">province</span><span class="o">=</span><span class="n">province</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="ExampleData.non_dim"><a class="viewcode-back" href="../../../covsirphy.analysis.html#covsirphy.analysis.example_data.ExampleData.non_dim">[docs]</a>    <span class="k">def</span> <span class="nf">non_dim</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">country</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">province</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<div class="viewcode-block" id="ExampleData.non_dim"><a class="viewcode-back" href="../../../covsirphy.analysis.html#covsirphy.ExampleData.non_dim">[docs]</a>    <span class="k">def</span> <span class="nf">non_dim</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">country</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">province</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Return non-dimensional data.</span>
 
@@ -335,7 +335,7 @@
         <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
             <span class="k">raise</span> <span class="n">SubsetNotFoundError</span><span class="p">(</span><span class="n">country</span><span class="o">=</span><span class="n">country</span><span class="p">,</span> <span class="n">province</span><span class="o">=</span><span class="n">province</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="ExampleData.subset"><a class="viewcode-back" href="../../../covsirphy.analysis.html#covsirphy.analysis.example_data.ExampleData.subset">[docs]</a>    <span class="k">def</span> <span class="nf">subset</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">country</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">province</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<div class="viewcode-block" id="ExampleData.subset"><a class="viewcode-back" href="../../../covsirphy.analysis.html#covsirphy.ExampleData.subset">[docs]</a>    <span class="k">def</span> <span class="nf">subset</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">country</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">province</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Return the subset of dataset.</span>
 
@@ -368,14 +368,14 @@
         <span class="n">kwargs</span> <span class="o">=</span> <span class="n">find_args</span><span class="p">([</span><span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">subset</span><span class="p">],</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
         <span class="k">return</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">subset</span><span class="p">(</span><span class="n">country</span><span class="o">=</span><span class="n">country</span><span class="p">,</span> <span class="n">province</span><span class="o">=</span><span class="n">province</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="ExampleData.subset_complement"><a class="viewcode-back" href="../../../covsirphy.analysis.html#covsirphy.analysis.example_data.ExampleData.subset_complement">[docs]</a>    <span class="k">def</span> <span class="nf">subset_complement</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<div class="viewcode-block" id="ExampleData.subset_complement"><a class="viewcode-back" href="../../../covsirphy.analysis.html#covsirphy.ExampleData.subset_complement">[docs]</a>    <span class="k">def</span> <span class="nf">subset_complement</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        This is the same as ExampleData.subset().</span>
 <span class="sd">        Complement will not be done.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">subset</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">),</span> <span class="kc">False</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="ExampleData.records"><a class="viewcode-back" href="../../../covsirphy.analysis.html#covsirphy.analysis.example_data.ExampleData.records">[docs]</a>    <span class="k">def</span> <span class="nf">records</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<div class="viewcode-block" id="ExampleData.records"><a class="viewcode-back" href="../../../covsirphy.analysis.html#covsirphy.ExampleData.records">[docs]</a>    <span class="k">def</span> <span class="nf">records</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        This is the same as ExampleData.subset().</span>
 <span class="sd">        Complement will not be done.</span>
