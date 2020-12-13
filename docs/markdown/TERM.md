@@ -36,4 +36,15 @@ This is a list of term in CovsirPhy project. These terms are used as method name
 <dt><strong>forecasting</strong></dt>
 <dd>Forecasting of the number of cases in the future phases. This needs trend analysis, parameter estimation, simulation and prediction.</dd>
 
+<dt><strong>tau parameter in models</strong></dt>
+<dd>Tau is a parameter used to convert actual time (with unit [min]) to time steps (without units).
+This conversion enables us to use actual dataset with ODE models. It is a divisor of 1440 [min] (= 1 day).
+
+Tau is generally considered as a parameter and is not set to a predetermined value.
+Its value is determined by the estimator only during the last phase and then uses that value for all the previous phases as well.
+
+Because the refresh rate of the data is per day, the unit of tau value should be equal to or under 1 day.
+So when tau is estimated to be for example 360 [min] instead of 1440 [min], that would mean the analysis is more effective if we study the records per 6 hours (since 360/1440 = 1/4 of the day) and not as a whole day.
+If for some reason tau would be set to more than 1 day, then many records would be ignored and that is the reason tau is bound to max 1 day = 1440 [min].</dd>
+
 </dl>
