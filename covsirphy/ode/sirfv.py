@@ -127,10 +127,12 @@ class SIRFV(ModelBase):
         omega_series = (n - s + i + r + f).diff() / t.diff() / n
         # Calculate range
         _dict = {param: (0, 1) for param in cls.PARAMETERS}
-        _dict["sigma"] = tuple(sigma_series.quantile(
-            cls.QUANTILE_RANGE).clip(0, 1))
-        _dict["omega"] = tuple(omega_series.quantile(
-            cls.QUANTILE_RANGE).clip(0, 1))
+        if not sigma_series.empty:
+            _dict["sigma"] = tuple(sigma_series.quantile(
+                cls.QUANTILE_RANGE).clip(0, 1))
+        if not omega_series.empty:
+            _dict["omega"] = tuple(omega_series.quantile(
+                cls.QUANTILE_RANGE).clip(0, 1))
         return _dict
 
     @classmethod
