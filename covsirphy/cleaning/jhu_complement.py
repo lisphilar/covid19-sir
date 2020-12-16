@@ -253,6 +253,6 @@ class JHUDataComplementHandler(Term):
                 Columns: Confirmed, Fatal, Recovered
         """
         df.loc[:, self.R] = sorted(df[self.R].abs())
-        df[self.R].interpolate(method="spline", order=1, inplace=True)
+        df[self.R].interpolate(method="date", inplace=True)
         df[self.R] = df[self.R].fillna(0).round()
         return df
