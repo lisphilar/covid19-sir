@@ -104,7 +104,7 @@ class TestJHUData(object):
         assert is_complemented
         assert df[Term.C].is_monotonic_increasing
 
-    @pytest.mark.parametrize("country", ["Netherlands", "China", "Germany", "France"])
+    @pytest.mark.parametrize("country", ["Netherlands", "China", "Germany"])
     def test_subset_complement_full(self, jhu_data, country):
         assert isinstance(jhu_data.recovery_period, int)
         if country in set(["Netherlands", "China"]):
