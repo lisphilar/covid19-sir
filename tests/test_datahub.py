@@ -104,10 +104,10 @@ class TestJHUData(object):
         assert is_complemented
         assert df[Term.C].is_monotonic_increasing
 
-    @pytest.mark.parametrize("country", ["Netherlands", "China", "Germany"])
+    @pytest.mark.parametrize("country", ["Netherlands", "China", "Germany", "France"])
     def test_subset_complement_full(self, jhu_data, country):
         assert isinstance(jhu_data.recovery_period, int)
-        if country != "Germany":
+        if country in set(["Netherlands", "China"]):
             with pytest.raises(ValueError):
                 jhu_data.subset(country=country)
         df, is_complemented = jhu_data.subset_complement(country=country)
@@ -124,7 +124,8 @@ class TestJHUData(object):
         with pytest.raises(KeyError):
             jhu_data.subset_complement(country=country, end_date="01Jan1900")
 
-    @pytest.mark.parametrize("country", ["UK", "Netherlands", "China", "Germany", "Japan"])
+    @pytest.mark.parametrize(
+        "country", ["UK", "Netherlands", "China", "Germany", "France", "Japan"])
     def test_records(self, jhu_data, country):
         df, is_complemented = jhu_data.records(country=country)
         assert set(df.columns) == set(Term.NLOC_COLUMNS)
