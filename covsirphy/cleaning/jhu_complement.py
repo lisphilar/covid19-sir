@@ -196,14 +196,15 @@ class JHUDataComplementHandler(Term):
                 Columns: Confirmed, Fatal, Recovered
         """
         # Whether complement is necessary or not
-        # Necessary if sum of recovered is more than 99%
-        # of sum of recovered and infected when outbreaking
-        sel_1 = df[self.C] > self.max_ignored
-        sel_2 = df[self.C].diff().diff().rolling(14).mean() > 0
-        s_df = df.loc[
-            sel_1 & sel_2 & (df[self.R] > 0.99 * (df[self.C] - df[self.F]))]
-        if s_df.empty:
-            return df
+        if df[self.R].max() > self.max_ignored:
+            # Necessary if sum of recovered is more than 99%
+            # of sum of recovered and infected when outbreaking
+            sel_1 = df[self.C] > self.max_ignored
+            sel_2 = df[self.C].diff().diff().rolling(14).mean() > 0
+            s_df = df.loc[
+                sel_1 & sel_2 & (df[self.R] > 0.99 * (df[self.C] - df[self.F]))]
+            if s_df.empty:
+                return df
         # Estimate recovered records
         df[self.R] = (df[self.C] - df[self.F]).shift(
             periods=self.recovery_period, freq="D")
