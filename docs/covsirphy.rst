@@ -1,6 +1,11 @@
 covsirphy package
 =================
 
+.. automodule:: covsirphy
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
 Subpackages
 -----------
 
@@ -14,11 +19,3 @@ Subpackages
    covsirphy.simulation
    covsirphy.util
    covsirphy.worldwide
-
-Module contents
----------------
-
-.. automodule:: covsirphy
-   :members:
-   :undoc-members:
-   :show-inheritance:

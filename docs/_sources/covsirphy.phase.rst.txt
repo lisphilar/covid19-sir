@@ -1,53 +1,19 @@
 covsirphy.phase package
 =======================
 
-Submodules
-----------
-
-covsirphy.phase.phase\_estimator module
----------------------------------------
-
-.. automodule:: covsirphy.phase.phase_estimator
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
-covsirphy.phase.phase\_series module
-------------------------------------
-
-.. automodule:: covsirphy.phase.phase_series
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
-covsirphy.phase.phase\_unit module
-----------------------------------
-
-.. automodule:: covsirphy.phase.phase_unit
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
-covsirphy.phase.sr\_change module
----------------------------------
-
-.. automodule:: covsirphy.phase.sr_change
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
-covsirphy.phase.trend module
-----------------------------
-
-.. automodule:: covsirphy.phase.trend
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
-Module contents
----------------
-
 .. automodule:: covsirphy.phase
    :members:
    :undoc-members:
    :show-inheritance:
+
+Submodules
+----------
+
+.. toctree::
+   :maxdepth: 4
+
+   covsirphy.phase.phase_estimator
+   covsirphy.phase.phase_series
+   covsirphy.phase.phase_unit
+   covsirphy.phase.sr_change
+   covsirphy.phase.trend

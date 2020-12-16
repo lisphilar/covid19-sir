@@ -175,7 +175,7 @@
 <span class="kn">from</span> <span class="nn">covsirphy.cleaning.term</span> <span class="kn">import</span> <span class="n">Term</span>
 
 
-<div class="viewcode-block" id="CleaningBase"><a class="viewcode-back" href="../../../covsirphy.cleaning.html#covsirphy.CleaningBase">[docs]</a><span class="k">class</span> <span class="nc">CleaningBase</span><span class="p">(</span><span class="n">Term</span><span class="p">):</span>
+<div class="viewcode-block" id="CleaningBase"><a class="viewcode-back" href="../../../covsirphy.cleaning.cbase.html#covsirphy.CleaningBase">[docs]</a><span class="k">class</span> <span class="nc">CleaningBase</span><span class="p">(</span><span class="n">Term</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Basic class for data cleaning.</span>
 
@@ -215,7 +215,7 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_raw</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ensure_dataframe</span><span class="p">(</span><span class="n">dataframe</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;dataframe&quot;</span><span class="p">)</span>
 
-<div class="viewcode-block" id="CleaningBase.load"><a class="viewcode-back" href="../../../covsirphy.cleaning.html#covsirphy.CleaningBase.load">[docs]</a>    <span class="nd">@staticmethod</span>
+<div class="viewcode-block" id="CleaningBase.load"><a class="viewcode-back" href="../../../covsirphy.cleaning.cbase.html#covsirphy.CleaningBase.load">[docs]</a>    <span class="nd">@staticmethod</span>
     <span class="k">def</span> <span class="nf">load</span><span class="p">(</span><span class="n">urlpath</span><span class="p">,</span> <span class="n">header</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Load a local/remote file.</span>
@@ -234,7 +234,7 @@
         <span class="k">except</span> <span class="p">(</span><span class="ne">FileNotFoundError</span><span class="p">,</span> <span class="ne">UnicodeDecodeError</span><span class="p">):</span>
             <span class="k">return</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">urlpath</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="CleaningBase.cleaned"><a class="viewcode-back" href="../../../covsirphy.cleaning.html#covsirphy.CleaningBase.cleaned">[docs]</a>    <span class="k">def</span> <span class="nf">cleaned</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="CleaningBase.cleaned"><a class="viewcode-back" href="../../../covsirphy.cleaning.cbase.html#covsirphy.CleaningBase.cleaned">[docs]</a>    <span class="k">def</span> <span class="nf">cleaned</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Return the cleaned dataset.</span>
 
@@ -266,7 +266,7 @@
     <span class="k">def</span> <span class="nf">citation</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">description</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_citation</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">description</span><span class="p">)</span>
 
-<div class="viewcode-block" id="CleaningBase.ensure_country_name"><a class="viewcode-back" href="../../../covsirphy.cleaning.html#covsirphy.CleaningBase.ensure_country_name">[docs]</a>    <span class="k">def</span> <span class="nf">ensure_country_name</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">country</span><span class="p">):</span>
+<div class="viewcode-block" id="CleaningBase.ensure_country_name"><a class="viewcode-back" href="../../../covsirphy.cleaning.cbase.html#covsirphy.CleaningBase.ensure_country_name">[docs]</a>    <span class="k">def</span> <span class="nf">ensure_country_name</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">country</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Ensure that the country name is correct.</span>
 <span class="sd">        If not, the correct country name will be found.</span>
@@ -314,7 +314,7 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">ensure_country_name</span><span class="p">(</span><span class="n">iso3_code</span><span class="p">)</span>
 
-<div class="viewcode-block" id="CleaningBase.country_to_iso3"><a class="viewcode-back" href="../../../covsirphy.cleaning.html#covsirphy.CleaningBase.country_to_iso3">[docs]</a>    <span class="k">def</span> <span class="nf">country_to_iso3</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">country</span><span class="p">):</span>
+<div class="viewcode-block" id="CleaningBase.country_to_iso3"><a class="viewcode-back" href="../../../covsirphy.cleaning.cbase.html#covsirphy.CleaningBase.country_to_iso3">[docs]</a>    <span class="k">def</span> <span class="nf">country_to_iso3</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">country</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Convert country name to ISO3 code if records are available.</span>
 
@@ -330,7 +330,7 @@
         <span class="n">name</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ensure_country_name</span><span class="p">(</span><span class="n">country</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">coco</span><span class="o">.</span><span class="n">convert</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">to</span><span class="o">=</span><span class="s2">&quot;ISO3&quot;</span><span class="p">,</span> <span class="n">not_found</span><span class="o">=</span><span class="s2">&quot;---&quot;</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="CleaningBase.area_name"><a class="viewcode-back" href="../../../covsirphy.cleaning.html#covsirphy.CleaningBase.area_name">[docs]</a>    <span class="nd">@classmethod</span>
+<div class="viewcode-block" id="CleaningBase.area_name"><a class="viewcode-back" href="../../../covsirphy.cleaning.cbase.html#covsirphy.CleaningBase.area_name">[docs]</a>    <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">area_name</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">country</span><span class="p">,</span> <span class="n">province</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Return area name of the country/province.</span>
@@ -374,7 +374,7 @@
             <span class="n">df</span><span class="p">,</span> <span class="s2">&quot;the cleaned dataset&quot;</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">PROVINCE</span><span class="p">])</span>
         <span class="k">return</span> <span class="n">df</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">df</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">PROVINCE</span><span class="p">]</span> <span class="o">==</span> <span class="n">province</span><span class="p">,</span> <span class="p">:]</span>
 
-<div class="viewcode-block" id="CleaningBase.subset"><a class="viewcode-back" href="../../../covsirphy.cleaning.html#covsirphy.CleaningBase.subset">[docs]</a>    <span class="k">def</span> <span class="nf">subset</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">country</span><span class="p">,</span> <span class="n">province</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">start_date</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">end_date</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<div class="viewcode-block" id="CleaningBase.subset"><a class="viewcode-back" href="../../../covsirphy.cleaning.cbase.html#covsirphy.CleaningBase.subset">[docs]</a>    <span class="k">def</span> <span class="nf">subset</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">country</span><span class="p">,</span> <span class="n">province</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">start_date</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">end_date</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Return subset of the country/province and start/end date.</span>
 
@@ -411,7 +411,7 @@
                 <span class="n">start_date</span><span class="o">=</span><span class="n">start_date</span><span class="p">,</span> <span class="n">end_date</span><span class="o">=</span><span class="n">end_date</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">df</span><span class="o">.</span><span class="n">reset_index</span><span class="p">(</span><span class="n">drop</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="CleaningBase.subset_complement"><a class="viewcode-back" href="../../../covsirphy.cleaning.html#covsirphy.CleaningBase.subset_complement">[docs]</a>    <span class="k">def</span> <span class="nf">subset_complement</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">country</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<div class="viewcode-block" id="CleaningBase.subset_complement"><a class="viewcode-back" href="../../../covsirphy.cleaning.cbase.html#covsirphy.CleaningBase.subset_complement">[docs]</a>    <span class="k">def</span> <span class="nf">subset_complement</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">country</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Return the subset. If necessary, complemention will be performed.</span>
 
@@ -420,7 +420,7 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">raise</span> <span class="ne">NotImplementedError</span></div>
 
-<div class="viewcode-block" id="CleaningBase.records"><a class="viewcode-back" href="../../../covsirphy.cleaning.html#covsirphy.CleaningBase.records">[docs]</a>    <span class="k">def</span> <span class="nf">records</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">country</span><span class="p">,</span> <span class="n">province</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">start_date</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">end_date</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+<div class="viewcode-block" id="CleaningBase.records"><a class="viewcode-back" href="../../../covsirphy.cleaning.cbase.html#covsirphy.CleaningBase.records">[docs]</a>    <span class="k">def</span> <span class="nf">records</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">country</span><span class="p">,</span> <span class="n">province</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">start_date</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">end_date</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
                 <span class="n">auto_complement</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Return the subset. If necessary, complemention will be performed.</span>
@@ -457,7 +457,7 @@
                 <span class="n">country</span><span class="o">=</span><span class="n">country</span><span class="p">,</span> <span class="n">country_alias</span><span class="o">=</span><span class="n">country_alias</span><span class="p">,</span> <span class="n">province</span><span class="o">=</span><span class="n">province</span><span class="p">,</span>
                 <span class="n">start_date</span><span class="o">=</span><span class="n">start_date</span><span class="p">,</span> <span class="n">end_date</span><span class="o">=</span><span class="n">end_date</span><span class="p">)</span> <span class="kn">from</span> <span class="bp">None</span></div>
 
-<div class="viewcode-block" id="CleaningBase.countries"><a class="viewcode-back" href="../../../covsirphy.cleaning.html#covsirphy.CleaningBase.countries">[docs]</a>    <span class="k">def</span> <span class="nf">countries</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="CleaningBase.countries"><a class="viewcode-back" href="../../../covsirphy.cleaning.cbase.html#covsirphy.CleaningBase.countries">[docs]</a>    <span class="k">def</span> <span class="nf">countries</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Return names of countries where records are registered.</span>
 
@@ -471,7 +471,7 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">_cleaned_df</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;the cleaned dataset&quot;</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">COUNTRY</span><span class="p">])</span>
         <span class="k">return</span> <span class="nb">list</span><span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">COUNTRY</span><span class="p">]</span><span class="o">.</span><span class="n">unique</span><span class="p">())</span></div>
 
-<div class="viewcode-block" id="CleaningBase.total"><a class="viewcode-back" href="../../../covsirphy.cleaning.html#covsirphy.CleaningBase.total">[docs]</a>    <span class="k">def</span> <span class="nf">total</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="CleaningBase.total"><a class="viewcode-back" href="../../../covsirphy.cleaning.cbase.html#covsirphy.CleaningBase.total">[docs]</a>    <span class="k">def</span> <span class="nf">total</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Calculate total values of the cleaned dataset.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
