@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*-
 
 import functools
+import warnings
 import numpy as np
 from covsirphy.cleaning.term import Term
 
@@ -161,6 +162,7 @@ class JHUDataComplementHandler(Term):
                 Index: Date (pandas.TimeStamp)
                 Columns: Confirmed, Fatal, Recovered
         """
+        warnings.simplefilter("ignore", UserWarning)
         # Whether complement is necessary or not
         if df[variable].is_monotonic_increasing:
             return df
