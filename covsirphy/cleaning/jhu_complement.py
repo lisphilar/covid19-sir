@@ -15,6 +15,8 @@ class JHUDataComplementHandler(Term):
         recovery_period (int): expected value of recovery period [days]
         interval (int): expected update interval of the number of recovered cases [days]
         max_ignored (int): Max number of recovered cases to be ignored [cases]
+        max_ending_unupdated (int) : Max number of days to apply full complement,
+                         where max recovered cases are not updated [days]
 
     Notes:
         To add new complement solutions, we need to update cls.STATUS_NAME_DICT and self._protocol().
@@ -30,13 +32,15 @@ class JHUDataComplementHandler(Term):
         4: "fully",
     }
 
-    def __init__(self, recovery_period, interval, max_ignored):
+    def __init__(self, recovery_period, interval, max_ignored, max_ending_unupdated):
         # Arguments for complement
         self.recovery_period = self.ensure_natural_int(
             recovery_period, name="recovery_period")
         self.interval = self.ensure_natural_int(interval, name="interval")
         self.max_ignored = self.ensure_natural_int(
             max_ignored, name="max_ignored")
+        self.max_ending_unupdated = self.ensure_natural_int(
+            max_ending_unupdated, name="max_ending_unupdated")
 
     def _protocol(self):
         """
@@ -199,17 +203,54 @@ class JHUDataComplementHandler(Term):
         if df[self.R].max() > self.max_ignored:
             # Necessary if sum of recovered is more than 99%
             # of sum of recovered and infected when outbreaking
-            sel_1 = df[self.C] > self.max_ignored
+            sel_C1 = df[self.C] > self.max_ignored
+            sel_R1 = df[self.R] > self.max_ignored
             sel_2 = df[self.C].diff().diff().rolling(14).mean() > 0
-            s_df = df.loc[
-                sel_1 & sel_2 & (df[self.R] > 0.99 * (df[self.C] - df[self.F]))]
-            if s_df.empty:
+            sel_3 = df[self.R] < 0.01 * (df[self.C] - df[self.F]).rolling(14).mean()
+            s_df_1 = df.loc[
+                sel_C1 & sel_2 & (df[self.R] > 0.99 * (df[self.C] - df[self.F]))]
+            s_df_2 = df.loc[sel_R1 & sel_2 & sel_3]
+            if s_df_1.empty and s_df_2.empty:
                 return df
         # Estimate recovered records
         df[self.R] = (df[self.C] - df[self.F]).shift(
             periods=self.recovery_period, freq="D")
         return df
 
+    def _recovered_partial_ending(self, df):
+        """
+        If ending recovered values do not change for more than applied 'self.interval' days
+        after reached 'self.max_ignored' cases, apply full complement only to these
+        unupdated values and keep the previous valid ones.
+        _recovered_partial() does not handle well such values, because
+        they are not in-between values and interpolation generates only similar values,
+        but small compared to confirmed cases.
+
+        Args:
+            df (pandas.DataFrame):
+                Index: Date (pandas.TimeStamp)
+                Columns: Confirmed, Fatal, Recovered
+
+        Returns:
+            pandas.DataFrame: complemented records
+                Index: Date (pandas.TimeStamp)
+                Columns: Confirmed, Fatal, Recovered
+        """
+        # Whether complement is necessary or not
+        r_max = df[self.R].max()
+        sel_0 = len(np.where((df[self.R] == df[self.R].max()) == True)[0]) > self.max_ending_unupdated
+        min_index = np.where((df[self.R] == df[self.R].max()) == True)[0].min()
+        if (not r_max) | (not sel_0):
+            # full complement will be handled in _recovered_full()
+            return df
+        # Fully complement last records that are not updated
+        # for more than max_ending_unupdated days;
+        # keep previous valid values as they are
+        min_index += 1 # keep first max value
+        df.loc[df.index[min_index]:, self.R] = (df[self.C] - df[self.F]).shift(
+            periods=self.recovery_period, freq="D").loc[df.index[min_index]:]
+        return df
+    
     def _recovered_partial(self, df):
         """
         If recovered values do not change for more than applied 'self.interval' days
@@ -230,7 +271,9 @@ class JHUDataComplementHandler(Term):
         max_frequency = series.value_counts().max()
         if max_frequency <= self.interval:
             return df
-        # Complement
+        # Complement first any ending unupdated values
+        df = self._recovered_partial_ending(df)
+        # Complement in-between values
         df.loc[df.duplicated([self.R], keep="last"), self.R] = None
         df[self.R].interpolate(
             method="linear", inplace=True, limit_direction="both")

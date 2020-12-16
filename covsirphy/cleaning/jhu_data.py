@@ -397,7 +397,7 @@ class JHUData(CleaningBase):
 
     def subset_complement(self, country, province=None,
                           start_date=None, end_date=None, population=None,
-                          interval=2, max_ignored=100):
+                          interval=2, max_ignored=100, max_ending_unupdated=14):
         """
         Return the subset of dataset and complement recovered data, if necessary.
         Records with Recovered > 0 will be selected.
@@ -410,6 +410,8 @@ class JHUData(CleaningBase):
             population(int or None): population value
             interval (int): expected update interval of the number of recovered cases [days]
             max_ignored (int): Max number of recovered cases to be ignored [cases]
+            max_ending_unupdated (int) : Max number of days to apply full complement,
+                 where ending recovered cases are not updated [days]
 
         Returns:
             tuple(pandas.DataFrame, str/bool):
@@ -444,6 +446,7 @@ class JHUData(CleaningBase):
             recovery_period=self._recovery_period or self.calculate_closing_period(),
             interval=interval,
             max_ignored=max_ignored,
+            max_ending_unupdated=max_ending_unupdated,
         )
         df, status = handler.run(subset_df)
         # Calculate Susceptible
