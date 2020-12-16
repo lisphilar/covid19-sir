@@ -238,8 +238,8 @@ class JHUDataComplementHandler(Term):
         """
         # Whether complement is necessary or not
         r_max = df[self.R].max()
-        sel_0 = len(np.where((df[self.R] == df[self.R].max()) == True)[0]) > self.max_ending_unupdated
-        min_index = np.where((df[self.R] == df[self.R].max()) == True)[0].min()
+        sel_0 = len(np.where(df[self.R] == df[self.R].max())[0]) > self.max_ending_unupdated
+        min_index = np.where(df[self.R] == df[self.R].max())[0].min()
         if (not r_max) | (not sel_0):
             # full complement will be handled in _recovered_full()
             return df
