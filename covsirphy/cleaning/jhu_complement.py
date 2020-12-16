@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*-
 
 import functools
+import warnings
 import numpy as np
 from covsirphy.cleaning.term import Term
 
@@ -161,6 +162,7 @@ class JHUDataComplementHandler(Term):
                 Index: Date (pandas.TimeStamp)
                 Columns: Confirmed, Fatal, Recovered
         """
+        warnings.simplefilter("ignore", UserWarning)
         # Whether complement is necessary or not
         if df[variable].is_monotonic_increasing:
             return df
@@ -194,9 +196,8 @@ class JHUDataComplementHandler(Term):
                 Columns: Confirmed, Fatal, Recovered
         """
         # Whether complement is necessary or not
-        c, f, r = df[self.RAW_COLS].max().tolist()
-        if r > self.max_ignored and r > (c - f) * 0.1:
-            # Check if sum of recovered is more than 99%
+        if df[self.R].max() > self.max_ignored:
+            # Necessary if sum of recovered is more than 99%
             # of sum of recovered and infected when outbreaking
             sel_1 = df[self.C] > self.max_ignored
             sel_2 = df[self.C].diff().diff().rolling(14).mean() > 0
@@ -251,6 +252,6 @@ class JHUDataComplementHandler(Term):
                 Columns: Confirmed, Fatal, Recovered
         """
         df.loc[:, self.R] = sorted(df[self.R].abs())
-        df[self.R].interpolate(method="spline", order=1, inplace=True)
+        df[self.R].interpolate(method="time", inplace=True)
         df[self.R] = df[self.R].fillna(0).round()
         return df
