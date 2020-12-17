@@ -4,6 +4,7 @@
 import functools
 import warnings
 import numpy as np
+from datetime import timedelta
 from covsirphy.cleaning.term import Term
 
 
@@ -57,6 +58,7 @@ class JHUDataComplementHandler(Term):
             (self.R, self._recovered_full, 4),
             (self.R, self._recovered_sort, 1),
             (self.R, functools.partial(self._monotonic, variable=self.R), 2),
+            (self.R, self._recovered_partial_ending, 3),
             (self.R, self._recovered_partial, 3),
             (self.R, functools.partial(self._monotonic, variable=self.R), 2),
             (self.R, self._recovered_sort, 1),
@@ -202,13 +204,14 @@ class JHUDataComplementHandler(Term):
         # Whether complement is necessary or not
         if df[self.R].max() > self.max_ignored:
             # Necessary if sum of recovered is more than 99%
-            # of sum of recovered and infected when outbreaking
+            # or less than 1% of sum of recovered minus infected when outbreaking
             sel_C1 = df[self.C] > self.max_ignored
             sel_R1 = df[self.R] > self.max_ignored
             sel_2 = df[self.C].diff().diff().rolling(14).mean() > 0
-            sel_3 = df[self.R] < 0.01 * (df[self.C] - df[self.F]).rolling(14).mean()
-            s_df_1 = df.loc[
-                sel_C1 & sel_2 & (df[self.R] > 0.99 * (df[self.C] - df[self.F]))]
+            cf_diff = (df[self.C] - df[self.F]).rolling(14).mean()
+            sel_3 = df[self.R] < 0.01 * cf_diff
+            sel_4 = df[self.R] > 0.99 * cf_diff
+            s_df_1 = df.loc[sel_C1 & sel_2 & sel_4]
             s_df_2 = df.loc[sel_R1 & sel_2 & sel_3]
             if s_df_1.empty and s_df_2.empty:
                 return df
@@ -238,19 +241,19 @@ class JHUDataComplementHandler(Term):
         """
         # Whether complement is necessary or not
         r_max = df[self.R].max()
-        sel_0 = len(np.where(df[self.R] == df[self.R].max())[0]) > self.max_ending_unupdated
-        min_index = np.where(df[self.R] == df[self.R].max())[0].min()
-        if (not r_max) | (not sel_0):
+        sel_0 = (df[self.R] == r_max).sum() > self.max_ending_unupdated
+        min_index = df[self.R].idxmax() + timedelta(days=1)  # keep first max value
+        if not (r_max and sel_0):
             # full complement will be handled in _recovered_full()
             return df
+        # Complement any ending unupdated values.
         # Fully complement last records that are not updated
         # for more than max_ending_unupdated days;
         # keep previous valid values as they are
-        min_index += 1 # keep first max value
-        df.loc[df.index[min_index]:, self.R] = (df[self.C] - df[self.F]).shift(
-            periods=self.recovery_period, freq="D").loc[df.index[min_index]:]
+        df.loc[min_index:, self.R] = (df[self.C] - df[self.F]).shift(
+            periods=self.recovery_period, freq="D").loc[min_index:]
         return df
-    
+
     def _recovered_partial(self, df):
         """
         If recovered values do not change for more than applied 'self.interval' days
@@ -271,8 +274,6 @@ class JHUDataComplementHandler(Term):
         max_frequency = series.value_counts().max()
         if max_frequency <= self.interval:
             return df
-        # Complement first any ending unupdated values
-        df = self._recovered_partial_ending(df)
         # Complement in-between values
         df.loc[df.duplicated([self.R], keep="last"), self.R] = None
         df[self.R].interpolate(
