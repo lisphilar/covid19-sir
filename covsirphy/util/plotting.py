@@ -21,6 +21,7 @@ def line_plot(df, title, xlabel=None, ylabel="Cases",
               xlim=(None, None), ylim=(0, None),
               math_scale=True, x_logscale=False, y_logscale=False, y_integer=False,
               show_legend=True, bbox_to_anchor=(1.02, 0), bbox_loc="lower left",
+              colormap=None,
               filename=None):
     """
     Show chronological change of the data.
@@ -48,12 +49,13 @@ def line_plot(df, title, xlabel=None, ylabel="Cases",
         show_legend (bool): whether show legend or not
         bbox_to_anchor (tuple(int or float, int or float)): distance of legend and plot
         bbox_loc (str): location of legend
+        colormap (str, matplotlib colormap object or None): colormap, please refer to https://matplotlib.org/examples/color/colormaps_reference.html
         filename (str): filename of the figure, or None (show figure)
 
     Notes:
         If None is included in xlim/ylim, the values will be automatically determined by Matplotlib
     """
-    ax = df.plot()
+    ax = df.plot(colormap=colormap)
     # Scale
     if math_scale:
         ax.yaxis.set_major_formatter(

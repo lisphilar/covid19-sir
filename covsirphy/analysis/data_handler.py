@@ -121,7 +121,7 @@ class DataHandler(Term):
         )
         return self
 
-    def records(self, variables=None, show_figure=True, filename=None):
+    def records(self, variables=None, show_figure=True, filename=None, **kwargs):
         """
         Return the records as a dataframe.
 
@@ -129,6 +129,7 @@ class DataHandler(Term):
             show_figure (bool): if True, show the records as a line-plot.
             variables (list[str] or None): variables to include, Infected/Fatal/Recovered when None
             filename (str): filename of the figure, or None (show figure)
+            kwargs: the other keyword arguments of covsirphy.line_plot()
 
         Returns:
             pandas.DataFrame
