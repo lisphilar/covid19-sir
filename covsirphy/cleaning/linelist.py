@@ -36,6 +36,19 @@ class LinelistData(CleaningBase):
         CleaningBase.C, CleaningBase.CI, CleaningBase.R, CleaningBase.F,
         SYMPTOM, CHRONIC, AGE, SEX,
     ]
+    # Raw dataset
+    RAW_COL_DICT = {
+        "age": AGE,
+        "sex": SEX,
+        "province": CleaningBase.PROVINCE,
+        "country": CleaningBase.COUNTRY,
+        "date_admission_hospital": HOSPITAL_DATE,
+        "date_confirmation": CONFIRM_DATE,
+        "symptoms": SYMPTOM,
+        "chronic_disease": CHRONIC,
+        "outcome": OUTCOME,
+        "date_death_or_discharge": OUTCOME_DATE,
+    }
 
     def __init__(self, filename, force=False, verbose=1):
         if Path(filename).exists() and not force:
@@ -66,21 +79,7 @@ class LinelistData(CleaningBase):
             print(
                 "Retrieving linelist from Open COVID-19 Data Working Group repository: https://github.com/beoutbreakprepared/nCoV2019")
         # Download the dataset
-        df = self.load(self.URL, header=1)
-        # Remove un-necessary columns
-        df = df.drop(
-            [
-                "Unnamed: 0", "city", "latitude", "longitude", "geo_resolution",
-                "lives_in_Wuhan", "travel_history_dates", "travel_history_location",
-                "reported_market_exposure", "additional_information",
-                "chronic_disease_binary", "source", "sequence_available",
-                "notes_for_discussion", "location", "admin3", "admin2", "admin1",
-                "country_new", "admin_id", "data_moderator_initials",
-                "travel_history_binary",
-            ],
-            axis=1,
-            errors="ignore"
-        )
+        df = self.load(self.URL, header=1, columns=list(self.RAW_COL_DICT))
         # Save the raw data
         df.to_csv(filename, index=False)
         return df
@@ -94,21 +93,7 @@ class LinelistData(CleaningBase):
         """
         df = self._raw.copy()
         # Rename columns
-        df = df.rename(
-            {
-                "age": self.AGE,
-                "sex": self.SEX,
-                "province": self.PROVINCE,
-                "country": self.COUNTRY,
-                "date_admission_hospital": self.HOSPITAL_DATE,
-                "date_confirmation": self.CONFIRM_DATE,
-                "symptoms": self.SYMPTOM,
-                "chronic_disease": self.CHRONIC,
-                "outcome": self.OUTCOME,
-                "date_death_or_discharge": self.OUTCOME_DATE,
-            },
-            axis=1
-        )
+        df = df.rename(self.RAW_COL_DICT, axis=1)
         # Location
         df = df.dropna(subset=[self.COUNTRY])
         df[self.PROVINCE] = df[self.PROVINCE].fillna(self.UNKNOWN)

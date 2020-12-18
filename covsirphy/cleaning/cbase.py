@@ -51,7 +51,7 @@ class CleaningBase(Term):
         self._raw = self.ensure_dataframe(dataframe, name="dataframe")
 
     @staticmethod
-    def load(urlpath, header=0):
+    def load(urlpath, header=0, columns=None):
         """
         Load a local/remote file.
 
@@ -63,7 +63,7 @@ class CleaningBase(Term):
             pd.DataFrame: raw dataset
         """
         kwargs = {
-            "low_memory": False, "dtype": "object", "header": header, }
+            "low_memory": False, "dtype": "object", "header": header, "names": columns}
         try:
             return dd.read_csv(urlpath, blocksize=None, **kwargs).compute()
         except (FileNotFoundError, UnicodeDecodeError):
