@@ -54,7 +54,7 @@ class OxCGRTData(CleaningBase):
                     reset index
                 Columns:
                     - Date (pd.TimeStamp): Observation date
-                    - Country (str): country/region name
+                    - Country (pandas.Category): country/region name
                     - ISO3 (str): ISO 3166-1 alpha-3, like JPN
                     - other column names are defined by OxCGRTData.COL_DICT
         """

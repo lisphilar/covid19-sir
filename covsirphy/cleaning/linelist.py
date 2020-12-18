@@ -199,8 +199,8 @@ class LinelistData(CleaningBase):
                 Index:
                     reset index
                 Columns:
-                    - Country (str): country name
-                    - Province (str): province name or "-"
+                    - Country (pandas.Category): country name
+                    - Province (pandas.Category): province name or "-"
                     - Hospitalized_date (pandas.TimeStamp or NT)
                     - Confirmation_date (pandas.TimeStamp)
                     - Recovered_date (pandas.TimeStamp): if outcome is Recovered

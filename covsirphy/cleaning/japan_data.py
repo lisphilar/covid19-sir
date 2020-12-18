@@ -19,8 +19,8 @@ class JapanData(CountryData):
     Notes:
         Columns of JapanData.cleaned():
             - Date (pandas.TimeStamp): date
-            - Country (str): 'Japan'
-            - Province (str): '-' (country level), 'Entering' or province names
+            - Country (pandas.Category): 'Japan'
+            - Province (pandas.Category): '-' (country level), 'Entering' or province names
             - Confirmed (int): the number of confirmed cases
             - Infected (int): the number of currently infected cases
             - Fatal (int): the number of fatal cases

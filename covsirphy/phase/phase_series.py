@@ -412,7 +412,7 @@ class PhaseSeries(Term):
                 - value (float): initial value
 
         Returns:
-            (pandas.DataFrame)
+            pandas.DataFrame
                 Index:
                     reset index
                 Columns:

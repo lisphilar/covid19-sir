@@ -46,8 +46,8 @@ class JHUData(CleaningBase):
                     reset index
                 Columns:
                     - Date (pd.TimeStamp): Observation date
-                    - Country (str): country/region name
-                    - Province (str): province/prefecture/state name
+                    - Country (pandas.Category): country/region name
+                    - Province (pandas.Category): province/prefecture/state name
                     - Confirmed (int): the number of confirmed cases
                     - Infected (int): the number of currently infected cases
                     - Fatal (int): the number of fatal cases
@@ -73,8 +73,8 @@ class JHUData(CleaningBase):
                 Columns:
                     - Date (pd.TimeStamp): Observation date
                     - ISO3 (str): ISO3 code
-                    - Country (str): country/region name
-                    - Province (str): province/prefecture/state name
+                    - Country (pandas.Category): country/region name
+                    - Province (pandas.Category): province/prefecture/state name
                     - Confirmed (int): the number of confirmed cases
                     - Infected (int): the number of currently infected cases
                     - Fatal (int): the number of fatal cases
@@ -128,15 +128,6 @@ class JHUData(CleaningBase):
 
         Args:
             country_data (covsirphy.CountryData): dataset object of the country
-                Index: reset index
-                Columns:
-                    - Date (pd.TimeStamp): Observation date
-                    - Province (str): province name
-                    - Confirmed (int): the number of confirmed cases
-                    - Infected (int): the number of currently infected cases
-                    - Fatal (int): the number of fatal cases
-                    - Recovered (int): the number of recovered cases
-                    - The other columns will be ignored
 
         Returns:
             covsirphy.JHUData: self

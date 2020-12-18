@@ -47,8 +47,8 @@ class PopulationData(CleaningBase):
                     reset index
                 Columns:
                     - ISO3 (str): ISO3 code or "-"
-                    - Country (str): country/region name
-                    - Province (str): province/prefecture/state name
+                    - Country (pandas.Category): country/region name
+                    - Province (pandas.Category): province/prefecture/state name
                     - Date (pd.TimeStamp): date of the records (if available) or today
                     - Population (int): total population
         """
