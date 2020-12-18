@@ -157,7 +157,7 @@ class DataHandler(Term):
             df.set_index(self.DATE), title, y_integer=True, filename=filename, **kwargs)
         return df
 
-    def records_diff(self, variables=None, window=7, show_figure=True, filename=None):
+    def records_diff(self, variables=None, window=7, show_figure=True, filename=None, **kwargs):
         """
         Return the number of daily new cases (the first discreate difference of records).
 
@@ -166,6 +166,7 @@ class DataHandler(Term):
             window (int): window of moving average, >= 1
             show_figure (bool): if True, show the records as a line-plot.
             filename (str): filename of the figure, or None (show figure)
+            kwargs: the other keyword arguments of covsirphy.line_plot()
 
         Returns:
             pandas.DataFrame
@@ -193,5 +194,5 @@ class DataHandler(Term):
             title = f"{self.area}: Daily new cases\nwith {self._complemented}"
         else:
             title = f"{self.area}: Daily new cases"
-        line_plot(df, title, y_integer=True, filename=filename)
+        line_plot(df, title, y_integer=True, filename=filename, **kwargs)
         return df
