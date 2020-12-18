@@ -54,7 +54,7 @@ class OxCGRTData(CleaningBase):
                     reset index
                 Columns:
                     - Date (pd.TimeStamp): Observation date
-                    - Country (str): country/region name
+                    - Country (pandas.Category): country/region name
                     - ISO3 (str): ISO 3166-1 alpha-3, like JPN
                     - other column names are defined by OxCGRTData.COL_DICT
         """
@@ -94,6 +94,9 @@ class OxCGRTData(CleaningBase):
             df[col] = df[col].fillna(method="ffill")
         # Select the columns to use
         df = df.loc[:, [self.DATE, self.COUNTRY, self.ISO3, *float_cols]]
+        # Update data types to reduce memory
+        cat_cols = [self.ISO3, self.COUNTRY]
+        df[cat_cols] = df[cat_cols].astype("category")
         return df
 
     def subset(self, country, **kwargs):

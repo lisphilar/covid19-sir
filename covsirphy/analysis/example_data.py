@@ -14,14 +14,14 @@ class ExampleData(JHUData):
     Example dataset as a child class of JHUData.
 
     Args:
-        clean_df (pandas.DataFrame): cleaned data
+        clean_df (pandas.DataFrame or None): cleaned data
 
             Index:
                 - reset index
             Columns:
                 - Date (pd.TimeStamp): Observation date
-                - Country (str): country/region name
-                - Province (str): province/prefecture/sstate name
+                - Country (pandas.Category): country/region name
+                - Province (pandas.Category): province/prefecture/sstate name
                 - Confirmed (int): the number of confirmed cases
                 - Infected (int): the number of currently infected cases
                 - Fatal (int): the number of fatal cases

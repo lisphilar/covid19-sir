@@ -46,6 +46,7 @@ class Term(object):
     VALUE_COLUMNS = [C, CI, F, R]
     FIG_COLUMNS = [CI, F, R, FR, V, E, W]
     MONO_COLUMNS = [C, F, R]
+    AREA_ABBR_COLS = [ISO3, *AREA_COLUMNS]
     # Date format: 22Jan2020 etc.
     DATE_FORMAT = "%d%b%Y"
     DATE_FORMAT_DESC = "DDMmmYYYY"

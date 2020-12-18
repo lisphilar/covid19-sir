@@ -46,8 +46,8 @@ class JHUData(CleaningBase):
                     reset index
                 Columns:
                     - Date (pd.TimeStamp): Observation date
-                    - Country (str): country/region name
-                    - Province (str): province/prefecture/state name
+                    - Country (pandas.Category): country/region name
+                    - Province (pandas.Category): province/prefecture/state name
                     - Confirmed (int): the number of confirmed cases
                     - Infected (int): the number of currently infected cases
                     - Fatal (int): the number of fatal cases
@@ -73,8 +73,8 @@ class JHUData(CleaningBase):
                 Columns:
                     - Date (pd.TimeStamp): Observation date
                     - ISO3 (str): ISO3 code
-                    - Country (str): country/region name
-                    - Province (str): province/prefecture/state name
+                    - Country (pandas.Category): country/region name
+                    - Province (pandas.Category): province/prefecture/state name
                     - Confirmed (int): the number of confirmed cases
                     - Infected (int): the number of currently infected cases
                     - Fatal (int): the number of fatal cases
@@ -118,6 +118,8 @@ class JHUData(CleaningBase):
         df[self.CI] = df[self.C] - df[self.F] - df[self.R]
         df[self.VALUE_COLUMNS] = df[self.VALUE_COLUMNS].astype(np.int64)
         df = df.loc[:, [self.ISO3, *self.COLUMNS]].reset_index(drop=True)
+        # Update data types to reduce memory
+        df[self.AREA_ABBR_COLS] = df[self.AREA_ABBR_COLS].astype("category")
         return df
 
     def replace(self, country_data):
@@ -126,15 +128,6 @@ class JHUData(CleaningBase):
 
         Args:
             country_data (covsirphy.CountryData): dataset object of the country
-                Index: reset index
-                Columns:
-                    - Date (pd.TimeStamp): Observation date
-                    - Province (str): province name
-                    - Confirmed (int): the number of confirmed cases
-                    - Infected (int): the number of currently infected cases
-                    - Fatal (int): the number of fatal cases
-                    - Recovered (int): the number of recovered cases
-                    - The other columns will be ignored
 
         Returns:
             covsirphy.JHUData: self
@@ -152,6 +145,8 @@ class JHUData(CleaningBase):
         df = df.loc[df[self.COUNTRY] != country]
         # Combine JHU data and the new data
         df = pd.concat([df, new], axis=0, sort=False)
+        # Update data types to reduce memory
+        df[self.AREA_ABBR_COLS] = df[self.AREA_ABBR_COLS].astype("category")
         self._cleaned_df = df.copy()
         # Citation
         self._citation += f"\n{country_data.citation}"

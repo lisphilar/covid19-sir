@@ -19,8 +19,8 @@ class JapanData(CountryData):
     Notes:
         Columns of JapanData.cleaned():
             - Date (pandas.TimeStamp): date
-            - Country (str): 'Japan'
-            - Province (str): '-' (country level), 'Entering' or province names
+            - Country (pandas.Category): 'Japan'
+            - Province (pandas.Category): '-' (country level), 'Entering' or province names
             - Confirmed (int): the number of confirmed cases
             - Infected (int): the number of currently infected cases
             - Fatal (int): the number of fatal cases
@@ -139,6 +139,8 @@ class JapanData(CountryData):
         df[self.JAPAN_VALUE_COLS] = df[self.JAPAN_VALUE_COLS].astype(np.int64)
         # Country
         df[self.COUNTRY] = "Japan"
+        # Update data types to reduce memory
+        df[self.AREA_COLUMNS] = df[self.AREA_COLUMNS].astype("category")
         return df.loc[:, self.JAPAN_COLS]
 
     def set_variables(self):
