@@ -1,7 +1,7 @@
 ---
 name: Request fixing a bug
 about: Customized issue template for fixing a bug.
-title: '[Fix]'
+title: '[Fix] '
 labels: bug
 assignees: ''
 

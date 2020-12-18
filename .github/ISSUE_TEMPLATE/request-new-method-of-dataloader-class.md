@@ -1,7 +1,7 @@
 ---
 name: Request new method of DataLoader class
 about: Request a new method of DataLoader to use new dataset.
-title: '[New]'
+title: '[New] '
 labels: Brainstorming, New data loader, enhancement
 assignees: ''
 
