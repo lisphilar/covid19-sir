@@ -118,6 +118,8 @@ class JHUData(CleaningBase):
         df[self.CI] = df[self.C] - df[self.F] - df[self.R]
         df[self.VALUE_COLUMNS] = df[self.VALUE_COLUMNS].astype(np.int64)
         df = df.loc[:, [self.ISO3, *self.COLUMNS]].reset_index(drop=True)
+        # Update data types to reduce memory
+        df[self.AREA_ABBR_COLS] = df[self.AREA_ABBR_COLS].astype("category")
         return df
 
     def replace(self, country_data):

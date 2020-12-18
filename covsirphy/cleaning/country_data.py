@@ -109,6 +109,8 @@ class CountryData(CleaningBase):
         # Add country column
         df[self.COUNTRY] = self._country
         df = df.loc[:, self.COLUMNS]
+        # Update data types to reduce memory
+        df[self.AREA_COLUMNS] = df[self.AREA_COLUMNS].astype("category")
         return df
 
     def cleaned(self):

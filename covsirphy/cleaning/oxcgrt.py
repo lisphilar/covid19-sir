@@ -94,6 +94,8 @@ class OxCGRTData(CleaningBase):
             df[col] = df[col].fillna(method="ffill")
         # Select the columns to use
         df = df.loc[:, [self.DATE, self.COUNTRY, self.ISO3, *float_cols]]
+        # Update data types to reduce memory
+        df[self.AREA_ABBR_COLS] = df[self.AREA_ABBR_COLS].astype("category")
         return df
 
     def subset(self, country, **kwargs):

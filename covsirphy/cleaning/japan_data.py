@@ -139,6 +139,8 @@ class JapanData(CountryData):
         df[self.JAPAN_VALUE_COLS] = df[self.JAPAN_VALUE_COLS].astype(np.int64)
         # Country
         df[self.COUNTRY] = "Japan"
+        # Update data types to reduce memory
+        df[self.AREA_COLUMNS] = df[self.AREA_COLUMNS].astype("category")
         return df.loc[:, self.JAPAN_COLS]
 
     def set_variables(self):

@@ -115,6 +115,8 @@ class PCRData(CleaningBase):
         df[self.TESTS] = df[self.TESTS].astype(np.int64)
         df[self.C] = df[self.C].astype(np.int64)
         df = df.loc[:, [self.ISO3, *self.PCR_COLUMNS]].reset_index(drop=True)
+        # Update data types to reduce memory
+        df[self.AREA_ABBR_COLS] = df[self.AREA_ABBR_COLS].astype("category")
         return df
 
     @classmethod

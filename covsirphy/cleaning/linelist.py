@@ -140,6 +140,10 @@ class LinelistData(CleaningBase):
         df[self.AGE] = pd.to_numeric(df[self.AGE], errors="coerce")
         # Sex
         df[self.SEX] = df[self.SEX].fillna(self.UNKNOWN)
+        # Update data types to reduce memory
+        cat_cols = [
+            self.AGE, self.SEX, self.SYMPTOM, self.CHRONIC, *self.AREA_COLUMNS]
+        df[cat_cols] = df[cat_cols].astype("category")
         # Select columns
         return df.loc[:, self.LINELIST_COLS]
 

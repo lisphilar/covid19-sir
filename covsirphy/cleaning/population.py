@@ -94,6 +94,8 @@ class PopulationData(CleaningBase):
             :, [self.ISO3, self.COUNTRY, self.PROVINCE, self.DATE, self.N]]
         # Remove duplicates
         df = df.drop_duplicates().reset_index(drop=True)
+        # Update data types to reduce memory
+        df[self.AREA_ABBR_COLS] = df[self.AREA_ABBR_COLS].astype("category")
         return df
 
     def _created_date(self):
