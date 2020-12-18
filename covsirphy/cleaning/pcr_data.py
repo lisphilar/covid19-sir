@@ -18,6 +18,7 @@ class PCRData(CleaningBase):
     Args:
         filename (str or None): CSV filename of the dataset
         interval (int): expected update interval of the number of confirmed cases and tests [days]
+        min_pcr_tests (int): minimum number of valid daily tests performed in order to calculate positive rate
         citation (str): citation
     """
     # Column names
@@ -29,7 +30,7 @@ class PCRData(CleaningBase):
     C_DIFF = "Confirmed_diff"
     PCR_RATE = "Test_positive_rate"
 
-    def __init__(self, filename, interval=2, citation=None):
+    def __init__(self, filename, interval=2, min_pcr_tests=100, citation=None):
         if filename is None:
             self._raw = pd.DataFrame()
             self._cleaned_df = pd.DataFrame(columns=self.PCR_COLUMNS)
@@ -39,6 +40,7 @@ class PCRData(CleaningBase):
             ).compute()
             self._cleaned_df = self._cleaning()
         self.interval = self.ensure_natural_int(interval, name="interval")
+        self.min_pcr_tests = self.ensure_natural_int(min_pcr_tests, name="min_pcr_tests")
         self._citation = citation or ""
         # To avoid "imported but unused"
         self.__swifter = swifter
@@ -320,7 +322,7 @@ class PCRData(CleaningBase):
             raise PCRIncorrectPreconditionError(
                 country=country, province=province, message="Too many missing Tests records") from None
 
-    def positive_rate(self, country, province=None, window=3, show_figure=True, filename=None):
+    def positive_rate(self, country, province=None, window=7, show_figure=True, filename=None):
         """
         Return the PCR rate of a country as a dataframe.
 
@@ -356,7 +358,7 @@ class PCRData(CleaningBase):
         df, is_complemented = self._pcr_processing(subset_df, window)
         # Calculate PCR values
         df[self.PCR_RATE] = df[[self.C_DIFF, self.T_DIFF]].swifter.progress_bar(False).apply(
-            lambda x: x[0] / x[1] * 100, axis=1)
+            lambda x: x[0] / x[1] * 100 if x[1] > self.min_pcr_tests else 0, axis=1)
         if not show_figure:
             return df
         # Create figure
