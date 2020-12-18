@@ -154,11 +154,7 @@ class DataHandler(Term):
         else:
             title = f"{self.area}: Cases over time"
         line_plot(
-            df.set_index(self.DATE),
-            title,
-            y_integer=True,
-            filename=filename
-        )
+            df.set_index(self.DATE), title, y_integer=True, filename=filename, **kwargs)
         return df
 
     def records_diff(self, variables=None, window=7, show_figure=True, filename=None):
