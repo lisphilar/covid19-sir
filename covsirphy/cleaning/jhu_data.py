@@ -145,6 +145,8 @@ class JHUData(CleaningBase):
         df = df.loc[df[self.COUNTRY] != country]
         # Combine JHU data and the new data
         df = pd.concat([df, new], axis=0, sort=False)
+        # Update data types to reduce memory
+        df[self.AREA_ABBR_COLS] = df[self.AREA_ABBR_COLS].astype("category")
         self._cleaned_df = df.copy()
         # Citation
         self._citation += f"\n{country_data.citation}"

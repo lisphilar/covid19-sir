@@ -163,7 +163,10 @@ class PCRData(CleaningBase):
         df = self._cleaned_df.copy()
         df = df.loc[df[self.COUNTRY] != country]
         # Add the new data
-        self._cleaned_df = pd.concat([df, new], axis=0, sort=False)
+        df = pd.concat([df, new], axis=0, sort=False)
+        # Update data types to reduce memory
+        df[self.AREA_ABBR_COLS] = df[self.AREA_ABBR_COLS].astype("category")
+        self._cleaned_df = df.copy()
         # Citation
         self._citation += f"\n{country_data.citation}"
         return self
