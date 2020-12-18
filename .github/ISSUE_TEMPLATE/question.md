@@ -1,7 +1,7 @@
 ---
 name: Question
 about: Question about CovsirPhy and this project.
-title: '[Docs]'
+title: '[Docs] '
 labels: question
 assignees: ''
 
