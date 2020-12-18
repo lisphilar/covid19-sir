@@ -169,10 +169,11 @@
 <span class="kn">import</span> <span class="nn">functools</span>
 <span class="kn">import</span> <span class="nn">warnings</span>
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">from</span> <span class="nn">datetime</span> <span class="kn">import</span> <span class="n">timedelta</span>
 <span class="kn">from</span> <span class="nn">covsirphy.cleaning.term</span> <span class="kn">import</span> <span class="n">Term</span>
 
 
-<div class="viewcode-block" id="JHUDataComplementHandler"><a class="viewcode-back" href="../../../covsirphy.cleaning.html#covsirphy.JHUDataComplementHandler">[docs]</a><span class="k">class</span> <span class="nc">JHUDataComplementHandler</span><span class="p">(</span><span class="n">Term</span><span class="p">):</span>
+<div class="viewcode-block" id="JHUDataComplementHandler"><a class="viewcode-back" href="../../../covsirphy.cleaning.jhu_complement.html#covsirphy.JHUDataComplementHandler">[docs]</a><span class="k">class</span> <span class="nc">JHUDataComplementHandler</span><span class="p">(</span><span class="n">Term</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Complement JHU dataset, if necessary.</span>
 
@@ -180,6 +181,8 @@
 <span class="sd">        recovery_period (int): expected value of recovery period [days]</span>
 <span class="sd">        interval (int): expected update interval of the number of recovered cases [days]</span>
 <span class="sd">        max_ignored (int): Max number of recovered cases to be ignored [cases]</span>
+<span class="sd">        max_ending_unupdated (int) : Max number of days to apply full complement,</span>
+<span class="sd">                         where max recovered cases are not updated [days]</span>
 
 <span class="sd">    Notes:</span>
 <span class="sd">        To add new complement solutions, we need to update cls.STATUS_NAME_DICT and self._protocol().</span>
@@ -195,13 +198,15 @@
         <span class="mi">4</span><span class="p">:</span> <span class="s2">&quot;fully&quot;</span><span class="p">,</span>
     <span class="p">}</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">recovery_period</span><span class="p">,</span> <span class="n">interval</span><span class="p">,</span> <span class="n">max_ignored</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">recovery_period</span><span class="p">,</span> <span class="n">interval</span><span class="p">,</span> <span class="n">max_ignored</span><span class="p">,</span> <span class="n">max_ending_unupdated</span><span class="p">):</span>
         <span class="c1"># Arguments for complement</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">recovery_period</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ensure_natural_int</span><span class="p">(</span>
             <span class="n">recovery_period</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;recovery_period&quot;</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">interval</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ensure_natural_int</span><span class="p">(</span><span class="n">interval</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;interval&quot;</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">max_ignored</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ensure_natural_int</span><span class="p">(</span>
             <span class="n">max_ignored</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;max_ignored&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">max_ending_unupdated</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ensure_natural_int</span><span class="p">(</span>
+            <span class="n">max_ending_unupdated</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;max_ending_unupdated&quot;</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">_protocol</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
@@ -218,13 +223,14 @@
             <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">R</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_recovered_full</span><span class="p">,</span> <span class="mi">4</span><span class="p">),</span>
             <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">R</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_recovered_sort</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span>
             <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">R</span><span class="p">,</span> <span class="n">functools</span><span class="o">.</span><span class="n">partial</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_monotonic</span><span class="p">,</span> <span class="n">variable</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">R</span><span class="p">),</span> <span class="mi">2</span><span class="p">),</span>
+            <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">R</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_recovered_partial_ending</span><span class="p">,</span> <span class="mi">3</span><span class="p">),</span>
             <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">R</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_recovered_partial</span><span class="p">,</span> <span class="mi">3</span><span class="p">),</span>
             <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">R</span><span class="p">,</span> <span class="n">functools</span><span class="o">.</span><span class="n">partial</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_monotonic</span><span class="p">,</span> <span class="n">variable</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">R</span><span class="p">),</span> <span class="mi">2</span><span class="p">),</span>
             <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">R</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_recovered_sort</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span>
             <span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_post_processing</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
         <span class="p">]</span>
 
-<div class="viewcode-block" id="JHUDataComplementHandler.run"><a class="viewcode-back" href="../../../covsirphy.cleaning.html#covsirphy.JHUDataComplementHandler.run">[docs]</a>    <span class="k">def</span> <span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">subset_df</span><span class="p">):</span>
+<div class="viewcode-block" id="JHUDataComplementHandler.run"><a class="viewcode-back" href="../../../covsirphy.cleaning.jhu_complement.html#covsirphy.JHUDataComplementHandler.run">[docs]</a>    <span class="k">def</span> <span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">subset_df</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Perform complement.</span>
 
@@ -363,16 +369,54 @@
         <span class="c1"># Whether complement is necessary or not</span>
         <span class="k">if</span> <span class="n">df</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">R</span><span class="p">]</span><span class="o">.</span><span class="n">max</span><span class="p">()</span> <span class="o">&gt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">max_ignored</span><span class="p">:</span>
             <span class="c1"># Necessary if sum of recovered is more than 99%</span>
-            <span class="c1"># of sum of recovered and infected when outbreaking</span>
-            <span class="n">sel_1</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">C</span><span class="p">]</span> <span class="o">&gt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">max_ignored</span>
+            <span class="c1"># or less than 1% of sum of recovered minus infected when outbreaking</span>
+            <span class="n">sel_C1</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">C</span><span class="p">]</span> <span class="o">&gt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">max_ignored</span>
+            <span class="n">sel_R1</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">R</span><span class="p">]</span> <span class="o">&gt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">max_ignored</span>
             <span class="n">sel_2</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">C</span><span class="p">]</span><span class="o">.</span><span class="n">diff</span><span class="p">()</span><span class="o">.</span><span class="n">diff</span><span class="p">()</span><span class="o">.</span><span class="n">rolling</span><span class="p">(</span><span class="mi">14</span><span class="p">)</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span> <span class="o">&gt;</span> <span class="mi">0</span>
-            <span class="n">s_df</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span>
-                <span class="n">sel_1</span> <span class="o">&amp;</span> <span class="n">sel_2</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">R</span><span class="p">]</span> <span class="o">&gt;</span> <span class="mf">0.99</span> <span class="o">*</span> <span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">C</span><span class="p">]</span> <span class="o">-</span> <span class="n">df</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">F</span><span class="p">]))]</span>
-            <span class="k">if</span> <span class="n">s_df</span><span class="o">.</span><span class="n">empty</span><span class="p">:</span>
+            <span class="n">cf_diff</span> <span class="o">=</span> <span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">C</span><span class="p">]</span> <span class="o">-</span> <span class="n">df</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">F</span><span class="p">])</span><span class="o">.</span><span class="n">rolling</span><span class="p">(</span><span class="mi">14</span><span class="p">)</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span>
+            <span class="n">sel_3</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">R</span><span class="p">]</span> <span class="o">&lt;</span> <span class="mf">0.01</span> <span class="o">*</span> <span class="n">cf_diff</span>
+            <span class="n">sel_4</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">R</span><span class="p">]</span> <span class="o">&gt;</span> <span class="mf">0.99</span> <span class="o">*</span> <span class="n">cf_diff</span>
+            <span class="n">s_df_1</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">sel_C1</span> <span class="o">&amp;</span> <span class="n">sel_2</span> <span class="o">&amp;</span> <span class="n">sel_4</span><span class="p">]</span>
+            <span class="n">s_df_2</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">sel_R1</span> <span class="o">&amp;</span> <span class="n">sel_2</span> <span class="o">&amp;</span> <span class="n">sel_3</span><span class="p">]</span>
+            <span class="k">if</span> <span class="n">s_df_1</span><span class="o">.</span><span class="n">empty</span> <span class="ow">and</span> <span class="n">s_df_2</span><span class="o">.</span><span class="n">empty</span><span class="p">:</span>
                 <span class="k">return</span> <span class="n">df</span>
         <span class="c1"># Estimate recovered records</span>
         <span class="n">df</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">R</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">C</span><span class="p">]</span> <span class="o">-</span> <span class="n">df</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">F</span><span class="p">])</span><span class="o">.</span><span class="n">shift</span><span class="p">(</span>
             <span class="n">periods</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">recovery_period</span><span class="p">,</span> <span class="n">freq</span><span class="o">=</span><span class="s2">&quot;D&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">df</span>
+
+    <span class="k">def</span> <span class="nf">_recovered_partial_ending</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">df</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        If ending recovered values do not change for more than applied &#39;self.interval&#39; days</span>
+<span class="sd">        after reached &#39;self.max_ignored&#39; cases, apply full complement only to these</span>
+<span class="sd">        unupdated values and keep the previous valid ones.</span>
+<span class="sd">        _recovered_partial() does not handle well such values, because</span>
+<span class="sd">        they are not in-between values and interpolation generates only similar values,</span>
+<span class="sd">        but small compared to confirmed cases.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            df (pandas.DataFrame):</span>
+<span class="sd">                Index: Date (pandas.TimeStamp)</span>
+<span class="sd">                Columns: Confirmed, Fatal, Recovered</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            pandas.DataFrame: complemented records</span>
+<span class="sd">                Index: Date (pandas.TimeStamp)</span>
+<span class="sd">                Columns: Confirmed, Fatal, Recovered</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Whether complement is necessary or not</span>
+        <span class="n">r_max</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">R</span><span class="p">]</span><span class="o">.</span><span class="n">max</span><span class="p">()</span>
+        <span class="n">sel_0</span> <span class="o">=</span> <span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">R</span><span class="p">]</span> <span class="o">==</span> <span class="n">r_max</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span> <span class="o">&gt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">max_ending_unupdated</span>
+        <span class="n">min_index</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">R</span><span class="p">]</span><span class="o">.</span><span class="n">idxmax</span><span class="p">()</span> <span class="o">+</span> <span class="n">timedelta</span><span class="p">(</span><span class="n">days</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>  <span class="c1"># keep first max value</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="p">(</span><span class="n">r_max</span> <span class="ow">and</span> <span class="n">sel_0</span><span class="p">):</span>
+            <span class="c1"># full complement will be handled in _recovered_full()</span>
+            <span class="k">return</span> <span class="n">df</span>
+        <span class="c1"># Complement any ending unupdated values.</span>
+        <span class="c1"># Fully complement last records that are not updated</span>
+        <span class="c1"># for more than max_ending_unupdated days;</span>
+        <span class="c1"># keep previous valid values as they are</span>
+        <span class="n">df</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">min_index</span><span class="p">:,</span> <span class="bp">self</span><span class="o">.</span><span class="n">R</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">C</span><span class="p">]</span> <span class="o">-</span> <span class="n">df</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">F</span><span class="p">])</span><span class="o">.</span><span class="n">shift</span><span class="p">(</span>
+            <span class="n">periods</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">recovery_period</span><span class="p">,</span> <span class="n">freq</span><span class="o">=</span><span class="s2">&quot;D&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">min_index</span><span class="p">:]</span>
         <span class="k">return</span> <span class="n">df</span>
 
     <span class="k">def</span> <span class="nf">_recovered_partial</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">df</span><span class="p">):</span>
@@ -395,7 +439,7 @@
         <span class="n">max_frequency</span> <span class="o">=</span> <span class="n">series</span><span class="o">.</span><span class="n">value_counts</span><span class="p">()</span><span class="o">.</span><span class="n">max</span><span class="p">()</span>
         <span class="k">if</span> <span class="n">max_frequency</span> <span class="o">&lt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">interval</span><span class="p">:</span>
             <span class="k">return</span> <span class="n">df</span>
-        <span class="c1"># Complement</span>
+        <span class="c1"># Complement in-between values</span>
         <span class="n">df</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">df</span><span class="o">.</span><span class="n">duplicated</span><span class="p">([</span><span class="bp">self</span><span class="o">.</span><span class="n">R</span><span class="p">],</span> <span class="n">keep</span><span class="o">=</span><span class="s2">&quot;last&quot;</span><span class="p">),</span> <span class="bp">self</span><span class="o">.</span><span class="n">R</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="n">df</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">R</span><span class="p">]</span><span class="o">.</span><span class="n">interpolate</span><span class="p">(</span>
             <span class="n">method</span><span class="o">=</span><span class="s2">&quot;linear&quot;</span><span class="p">,</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">limit_direction</span><span class="o">=</span><span class="s2">&quot;both&quot;</span><span class="p">)</span>

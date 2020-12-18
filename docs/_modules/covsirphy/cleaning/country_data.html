@@ -172,7 +172,7 @@
 <span class="kn">from</span> <span class="nn">covsirphy.cleaning.cbase</span> <span class="kn">import</span> <span class="n">CleaningBase</span>
 
 
-<div class="viewcode-block" id="CountryData"><a class="viewcode-back" href="../../../covsirphy.cleaning.html#covsirphy.CountryData">[docs]</a><span class="k">class</span> <span class="nc">CountryData</span><span class="p">(</span><span class="n">CleaningBase</span><span class="p">):</span>
+<div class="viewcode-block" id="CountryData"><a class="viewcode-back" href="../../../covsirphy.cleaning.country_data.html#covsirphy.CountryData">[docs]</a><span class="k">class</span> <span class="nc">CountryData</span><span class="p">(</span><span class="n">CleaningBase</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Data cleaning of country level data.</span>
 
@@ -201,7 +201,7 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_country</span>
 
-<div class="viewcode-block" id="CountryData.raw_columns"><a class="viewcode-back" href="../../../covsirphy.cleaning.html#covsirphy.CountryData.raw_columns">[docs]</a>    <span class="k">def</span> <span class="nf">raw_columns</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="CountryData.raw_columns"><a class="viewcode-back" href="../../../covsirphy.cleaning.country_data.html#covsirphy.CountryData.raw_columns">[docs]</a>    <span class="k">def</span> <span class="nf">raw_columns</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Return the column names of the raw data.</span>
 
@@ -210,7 +210,7 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_raw</span><span class="o">.</span><span class="n">columns</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span></div>
 
-<div class="viewcode-block" id="CountryData.set_variables"><a class="viewcode-back" href="../../../covsirphy.cleaning.html#covsirphy.CountryData.set_variables">[docs]</a>    <span class="k">def</span> <span class="nf">set_variables</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">date</span><span class="p">,</span> <span class="n">confirmed</span><span class="p">,</span> <span class="n">fatal</span><span class="p">,</span> <span class="n">recovered</span><span class="p">,</span> <span class="n">province</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<div class="viewcode-block" id="CountryData.set_variables"><a class="viewcode-back" href="../../../covsirphy.cleaning.country_data.html#covsirphy.CountryData.set_variables">[docs]</a>    <span class="k">def</span> <span class="nf">set_variables</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">date</span><span class="p">,</span> <span class="n">confirmed</span><span class="p">,</span> <span class="n">fatal</span><span class="p">,</span> <span class="n">recovered</span><span class="p">,</span> <span class="n">province</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Set the correspondence of the variables and columns of the raw data.</span>
 
@@ -240,8 +240,8 @@
 <span class="sd">                    reset index</span>
 <span class="sd">                Columns:</span>
 <span class="sd">                    - Date (pd.TimeStamp): Observation date</span>
-<span class="sd">                    - Country (str): country/region name</span>
-<span class="sd">                    - Province (str): province/prefecture/state name</span>
+<span class="sd">                    - Country (pandas.Category): country/region name</span>
+<span class="sd">                    - Province (pandas.Category): province/prefecture/state name</span>
 <span class="sd">                    - Confirmed (int): the number of confirmed cases</span>
 <span class="sd">                    - Infected (int): the number of currently infected cases</span>
 <span class="sd">                    - Fatal (int): the number of fatal cases</span>
@@ -274,9 +274,11 @@
         <span class="c1"># Add country column</span>
         <span class="n">df</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">COUNTRY</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_country</span>
         <span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">loc</span><span class="p">[:,</span> <span class="bp">self</span><span class="o">.</span><span class="n">COLUMNS</span><span class="p">]</span>
+        <span class="c1"># Update data types to reduce memory</span>
+        <span class="n">df</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">AREA_COLUMNS</span><span class="p">]</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">AREA_COLUMNS</span><span class="p">]</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="s2">&quot;category&quot;</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">df</span>
 
-<div class="viewcode-block" id="CountryData.cleaned"><a class="viewcode-back" href="../../../covsirphy.cleaning.html#covsirphy.CountryData.cleaned">[docs]</a>    <span class="k">def</span> <span class="nf">cleaned</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="CountryData.cleaned"><a class="viewcode-back" href="../../../covsirphy.cleaning.country_data.html#covsirphy.CountryData.cleaned">[docs]</a>    <span class="k">def</span> <span class="nf">cleaned</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Return the cleaned dataset.</span>
 <span class="sd">        Cleaning method is defined by CountryData._cleaning() method.</span>
@@ -287,8 +289,8 @@
 <span class="sd">                    reset index</span>
 <span class="sd">                Columns:</span>
 <span class="sd">                    - Date (pd.TimeStamp): Observation date</span>
-<span class="sd">                    - Country (str): country/region name</span>
-<span class="sd">                    - Province (str): province/prefecture/sstate name</span>
+<span class="sd">                    - Country (pandas.Category): country/region name</span>
+<span class="sd">                    - Province (pandas.Category): province/prefecture/sstate name</span>
 <span class="sd">                    - Confirmed (int): the number of confirmed cases</span>
 <span class="sd">                    - Infected (int): the number of currently infected cases</span>
 <span class="sd">                    - Fatal (int): the number of fatal cases</span>
@@ -297,7 +299,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_cleaned_df</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_cleaning</span><span class="p">()</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_cleaned_df</span></div>
 
-<div class="viewcode-block" id="CountryData.total"><a class="viewcode-back" href="../../../covsirphy.cleaning.html#covsirphy.CountryData.total">[docs]</a>    <span class="k">def</span> <span class="nf">total</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="CountryData.total"><a class="viewcode-back" href="../../../covsirphy.cleaning.country_data.html#covsirphy.CountryData.total">[docs]</a>    <span class="k">def</span> <span class="nf">total</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Return a dataframe to show chronological change of number and rates.</span>
 
@@ -332,7 +334,7 @@
         <span class="n">df</span><span class="p">[</span><span class="n">r_cols</span><span class="p">[</span><span class="mi">2</span><span class="p">]]</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">F</span><span class="p">]</span> <span class="o">/</span> <span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">F</span><span class="p">]</span> <span class="o">+</span> <span class="n">df</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">R</span><span class="p">])</span>
         <span class="k">return</span> <span class="n">df</span><span class="o">.</span><span class="n">loc</span><span class="p">[:,</span> <span class="p">[</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">VALUE_COLUMNS</span><span class="p">,</span> <span class="o">*</span><span class="n">r_cols</span><span class="p">]]</span></div>
 
-<div class="viewcode-block" id="CountryData.countries"><a class="viewcode-back" href="../../../covsirphy.cleaning.html#covsirphy.CountryData.countries">[docs]</a>    <span class="k">def</span> <span class="nf">countries</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="CountryData.countries"><a class="viewcode-back" href="../../../covsirphy.cleaning.country_data.html#covsirphy.CountryData.countries">[docs]</a>    <span class="k">def</span> <span class="nf">countries</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Return names of countries where records are registered.</span>
 

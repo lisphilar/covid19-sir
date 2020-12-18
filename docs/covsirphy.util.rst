@@ -1,69 +1,21 @@
 covsirphy.util package
 ======================
 
-Submodules
-----------
-
-covsirphy.util.argument module
-------------------------------
-
-.. automodule:: covsirphy.util.argument
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
-covsirphy.util.error module
----------------------------
-
-.. automodule:: covsirphy.util.error
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
-covsirphy.util.file module
---------------------------
-
-.. automodule:: covsirphy.util.file
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
-covsirphy.util.map module
--------------------------
-
-.. automodule:: covsirphy.util.map
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
-covsirphy.util.optimize module
-------------------------------
-
-.. automodule:: covsirphy.util.optimize
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
-covsirphy.util.plotting module
-------------------------------
-
-.. automodule:: covsirphy.util.plotting
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
-covsirphy.util.stopwatch module
--------------------------------
-
-.. automodule:: covsirphy.util.stopwatch
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
-Module contents
----------------
-
 .. automodule:: covsirphy.util
    :members:
    :undoc-members:
    :show-inheritance:
+
+Submodules
+----------
+
+.. toctree::
+   :maxdepth: 4
+
+   covsirphy.util.argument
+   covsirphy.util.error
+   covsirphy.util.file
+   covsirphy.util.map
+   covsirphy.util.optimize
+   covsirphy.util.plotting
+   covsirphy.util.stopwatch

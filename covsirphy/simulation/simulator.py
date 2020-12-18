@@ -211,7 +211,7 @@ class ODESimulator(Term):
             start_date (str): start date of the records, like 22Jan2020
 
         Returns:
-            (pandas.DataFrame)
+            pandas.DataFrame
                 Index:
                     reset index
                 Columns:

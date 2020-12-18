@@ -140,6 +140,10 @@ class LinelistData(CleaningBase):
         df[self.AGE] = pd.to_numeric(df[self.AGE], errors="coerce")
         # Sex
         df[self.SEX] = df[self.SEX].fillna(self.UNKNOWN)
+        # Update data types to reduce memory
+        cat_cols = [
+            self.AGE, self.SEX, self.SYMPTOM, self.CHRONIC, *self.AREA_COLUMNS]
+        df[cat_cols] = df[cat_cols].astype("category")
         # Select columns
         return df.loc[:, self.LINELIST_COLS]
 
@@ -195,8 +199,8 @@ class LinelistData(CleaningBase):
                 Index:
                     reset index
                 Columns:
-                    - Country (str): country name
-                    - Province (str): province name or "-"
+                    - Country (pandas.Category): country name
+                    - Province (pandas.Category): province name or "-"
                     - Hospitalized_date (pandas.TimeStamp or NT)
                     - Confirmation_date (pandas.TimeStamp)
                     - Recovered_date (pandas.TimeStamp): if outcome is Recovered

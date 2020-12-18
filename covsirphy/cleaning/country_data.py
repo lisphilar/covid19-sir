@@ -75,8 +75,8 @@ class CountryData(CleaningBase):
                     reset index
                 Columns:
                     - Date (pd.TimeStamp): Observation date
-                    - Country (str): country/region name
-                    - Province (str): province/prefecture/state name
+                    - Country (pandas.Category): country/region name
+                    - Province (pandas.Category): province/prefecture/state name
                     - Confirmed (int): the number of confirmed cases
                     - Infected (int): the number of currently infected cases
                     - Fatal (int): the number of fatal cases
@@ -109,6 +109,8 @@ class CountryData(CleaningBase):
         # Add country column
         df[self.COUNTRY] = self._country
         df = df.loc[:, self.COLUMNS]
+        # Update data types to reduce memory
+        df[self.AREA_COLUMNS] = df[self.AREA_COLUMNS].astype("category")
         return df
 
     def cleaned(self):
@@ -122,8 +124,8 @@ class CountryData(CleaningBase):
                     reset index
                 Columns:
                     - Date (pd.TimeStamp): Observation date
-                    - Country (str): country/region name
-                    - Province (str): province/prefecture/sstate name
+                    - Country (pandas.Category): country/region name
+                    - Province (pandas.Category): province/prefecture/sstate name
                     - Confirmed (int): the number of confirmed cases
                     - Infected (int): the number of currently infected cases
                     - Fatal (int): the number of fatal cases

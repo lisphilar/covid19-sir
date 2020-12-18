@@ -174,7 +174,7 @@
 <span class="kn">from</span> <span class="nn">covsirphy.cleaning.jhu_complement</span> <span class="kn">import</span> <span class="n">JHUDataComplementHandler</span>
 
 
-<div class="viewcode-block" id="JHUData"><a class="viewcode-back" href="../../../covsirphy.cleaning.html#covsirphy.JHUData">[docs]</a><span class="k">class</span> <span class="nc">JHUData</span><span class="p">(</span><span class="n">CleaningBase</span><span class="p">):</span>
+<div class="viewcode-block" id="JHUData"><a class="viewcode-back" href="../../../covsirphy.cleaning.jhu_data.html#covsirphy.JHUData">[docs]</a><span class="k">class</span> <span class="nc">JHUData</span><span class="p">(</span><span class="n">CleaningBase</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Data cleaning of JHU-style dataset.</span>
 
@@ -198,7 +198,7 @@
     <span class="k">def</span> <span class="nf">recovery_period</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_recovery_period</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ensure_natural_int</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
 
-<div class="viewcode-block" id="JHUData.cleaned"><a class="viewcode-back" href="../../../covsirphy.cleaning.html#covsirphy.JHUData.cleaned">[docs]</a>    <span class="k">def</span> <span class="nf">cleaned</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<div class="viewcode-block" id="JHUData.cleaned"><a class="viewcode-back" href="../../../covsirphy.cleaning.jhu_data.html#covsirphy.JHUData.cleaned">[docs]</a>    <span class="k">def</span> <span class="nf">cleaned</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Return the cleaned dataset.</span>
 
@@ -211,8 +211,8 @@
 <span class="sd">                    reset index</span>
 <span class="sd">                Columns:</span>
 <span class="sd">                    - Date (pd.TimeStamp): Observation date</span>
-<span class="sd">                    - Country (str): country/region name</span>
-<span class="sd">                    - Province (str): province/prefecture/state name</span>
+<span class="sd">                    - Country (pandas.Category): country/region name</span>
+<span class="sd">                    - Province (pandas.Category): province/prefecture/state name</span>
 <span class="sd">                    - Confirmed (int): the number of confirmed cases</span>
 <span class="sd">                    - Infected (int): the number of currently infected cases</span>
 <span class="sd">                    - Fatal (int): the number of fatal cases</span>
@@ -238,8 +238,8 @@
 <span class="sd">                Columns:</span>
 <span class="sd">                    - Date (pd.TimeStamp): Observation date</span>
 <span class="sd">                    - ISO3 (str): ISO3 code</span>
-<span class="sd">                    - Country (str): country/region name</span>
-<span class="sd">                    - Province (str): province/prefecture/state name</span>
+<span class="sd">                    - Country (pandas.Category): country/region name</span>
+<span class="sd">                    - Province (pandas.Category): province/prefecture/state name</span>
 <span class="sd">                    - Confirmed (int): the number of confirmed cases</span>
 <span class="sd">                    - Infected (int): the number of currently infected cases</span>
 <span class="sd">                    - Fatal (int): the number of fatal cases</span>
@@ -283,23 +283,16 @@
         <span class="n">df</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">CI</span><span class="p">]</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">C</span><span class="p">]</span> <span class="o">-</span> <span class="n">df</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">F</span><span class="p">]</span> <span class="o">-</span> <span class="n">df</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">R</span><span class="p">]</span>
         <span class="n">df</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">VALUE_COLUMNS</span><span class="p">]</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">VALUE_COLUMNS</span><span class="p">]</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">int64</span><span class="p">)</span>
         <span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">loc</span><span class="p">[:,</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">ISO3</span><span class="p">,</span> <span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">COLUMNS</span><span class="p">]]</span><span class="o">.</span><span class="n">reset_index</span><span class="p">(</span><span class="n">drop</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="c1"># Update data types to reduce memory</span>
+        <span class="n">df</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">AREA_ABBR_COLS</span><span class="p">]</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">AREA_ABBR_COLS</span><span class="p">]</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="s2">&quot;category&quot;</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">df</span>
 
-<div class="viewcode-block" id="JHUData.replace"><a class="viewcode-back" href="../../../covsirphy.cleaning.html#covsirphy.JHUData.replace">[docs]</a>    <span class="k">def</span> <span class="nf">replace</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">country_data</span><span class="p">):</span>
+<div class="viewcode-block" id="JHUData.replace"><a class="viewcode-back" href="../../../covsirphy.cleaning.jhu_data.html#covsirphy.JHUData.replace">[docs]</a>    <span class="k">def</span> <span class="nf">replace</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">country_data</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Replace a part of cleaned dataset with a dataframe.</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            country_data (covsirphy.CountryData): dataset object of the country</span>
-<span class="sd">                Index: reset index</span>
-<span class="sd">                Columns:</span>
-<span class="sd">                    - Date (pd.TimeStamp): Observation date</span>
-<span class="sd">                    - Province (str): province name</span>
-<span class="sd">                    - Confirmed (int): the number of confirmed cases</span>
-<span class="sd">                    - Infected (int): the number of currently infected cases</span>
-<span class="sd">                    - Fatal (int): the number of fatal cases</span>
-<span class="sd">                    - Recovered (int): the number of recovered cases</span>
-<span class="sd">                    - The other columns will be ignored</span>
 
 <span class="sd">        Returns:</span>
 <span class="sd">            covsirphy.JHUData: self</span>
@@ -317,6 +310,8 @@
         <span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">df</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">COUNTRY</span><span class="p">]</span> <span class="o">!=</span> <span class="n">country</span><span class="p">]</span>
         <span class="c1"># Combine JHU data and the new data</span>
         <span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">([</span><span class="n">df</span><span class="p">,</span> <span class="n">new</span><span class="p">],</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">sort</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+        <span class="c1"># Update data types to reduce memory</span>
+        <span class="n">df</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">AREA_ABBR_COLS</span><span class="p">]</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">AREA_ABBR_COLS</span><span class="p">]</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="s2">&quot;category&quot;</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_cleaned_df</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
         <span class="c1"># Citation</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_citation</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="se">\n</span><span class="si">{</span><span class="n">country_data</span><span class="o">.</span><span class="n">citation</span><span class="si">}</span><span class="s2">&quot;</span>
@@ -384,7 +379,7 @@
         <span class="n">subset_df</span><span class="o">.</span><span class="n">loc</span><span class="p">[:,</span> <span class="bp">self</span><span class="o">.</span><span class="n">S</span><span class="p">]</span> <span class="o">=</span> <span class="n">population</span> <span class="o">-</span> <span class="n">subset_df</span><span class="o">.</span><span class="n">loc</span><span class="p">[:,</span> <span class="bp">self</span><span class="o">.</span><span class="n">C</span><span class="p">]</span>
         <span class="k">return</span> <span class="n">subset_df</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">SUB_COLUMNS</span><span class="p">]</span>
 
-<div class="viewcode-block" id="JHUData.subset"><a class="viewcode-back" href="../../../covsirphy.cleaning.html#covsirphy.JHUData.subset">[docs]</a>    <span class="k">def</span> <span class="nf">subset</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">country</span><span class="p">,</span> <span class="n">province</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">start_date</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">end_date</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">population</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<div class="viewcode-block" id="JHUData.subset"><a class="viewcode-back" href="../../../covsirphy.cleaning.jhu_data.html#covsirphy.JHUData.subset">[docs]</a>    <span class="k">def</span> <span class="nf">subset</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">country</span><span class="p">,</span> <span class="n">province</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">start_date</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">end_date</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">population</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Return the subset of dataset with Recovered &gt; 0.</span>
 
@@ -428,7 +423,7 @@
                 <span class="n">start_date</span><span class="o">=</span><span class="n">start_date</span><span class="p">,</span> <span class="n">end_date</span><span class="o">=</span><span class="n">end_date</span><span class="p">,</span> <span class="n">message</span><span class="o">=</span><span class="s2">&quot;with &#39;Recovered &gt; 0&#39;&quot;</span><span class="p">)</span> <span class="kn">from</span> <span class="bp">None</span>
         <span class="k">return</span> <span class="n">df</span></div>
 
-<div class="viewcode-block" id="JHUData.to_sr"><a class="viewcode-back" href="../../../covsirphy.cleaning.html#covsirphy.JHUData.to_sr">[docs]</a>    <span class="k">def</span> <span class="nf">to_sr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">country</span><span class="p">,</span> <span class="n">province</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+<div class="viewcode-block" id="JHUData.to_sr"><a class="viewcode-back" href="../../../covsirphy.cleaning.jhu_data.html#covsirphy.JHUData.to_sr">[docs]</a>    <span class="k">def</span> <span class="nf">to_sr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">country</span><span class="p">,</span> <span class="n">province</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
               <span class="n">start_date</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">end_date</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">population</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Create Susceptible/Recovered dataset without complement.</span>
@@ -458,7 +453,7 @@
             <span class="n">start_date</span><span class="o">=</span><span class="n">start_date</span><span class="p">,</span> <span class="n">end_date</span><span class="o">=</span><span class="n">end_date</span><span class="p">,</span> <span class="n">population</span><span class="o">=</span><span class="n">population</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">subset_df</span><span class="o">.</span><span class="n">set_index</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">DATE</span><span class="p">)</span><span class="o">.</span><span class="n">loc</span><span class="p">[:,</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">R</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">S</span><span class="p">]]</span></div>
 
-<div class="viewcode-block" id="JHUData.from_dataframe"><a class="viewcode-back" href="../../../covsirphy.cleaning.html#covsirphy.JHUData.from_dataframe">[docs]</a>    <span class="nd">@classmethod</span>
+<div class="viewcode-block" id="JHUData.from_dataframe"><a class="viewcode-back" href="../../../covsirphy.cleaning.jhu_data.html#covsirphy.JHUData.from_dataframe">[docs]</a>    <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">from_dataframe</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">dataframe</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Create JHUData instance using a pandas dataframe.</span>
@@ -474,7 +469,7 @@
             <span class="n">dataframe</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;dataframe&quot;</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="bp">cls</span><span class="o">.</span><span class="n">COLUMNS</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">instance</span></div>
 
-<div class="viewcode-block" id="JHUData.total"><a class="viewcode-back" href="../../../covsirphy.cleaning.html#covsirphy.JHUData.total">[docs]</a>    <span class="k">def</span> <span class="nf">total</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="JHUData.total"><a class="viewcode-back" href="../../../covsirphy.cleaning.jhu_data.html#covsirphy.JHUData.total">[docs]</a>    <span class="k">def</span> <span class="nf">total</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Calculate total number of cases and rates.</span>
 
@@ -502,7 +497,7 @@
         <span class="n">df</span><span class="p">[</span><span class="n">r_cols</span><span class="p">[</span><span class="mi">2</span><span class="p">]]</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">F</span><span class="p">]</span> <span class="o">/</span> <span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">F</span><span class="p">]</span> <span class="o">+</span> <span class="n">df</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">R</span><span class="p">])</span>
         <span class="k">return</span> <span class="n">df</span><span class="o">.</span><span class="n">loc</span><span class="p">[:,</span> <span class="p">[</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">VALUE_COLUMNS</span><span class="p">,</span> <span class="o">*</span><span class="n">r_cols</span><span class="p">]]</span></div>
 
-<div class="viewcode-block" id="JHUData.countries"><a class="viewcode-back" href="../../../covsirphy.cleaning.html#covsirphy.JHUData.countries">[docs]</a>    <span class="k">def</span> <span class="nf">countries</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">complement</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<div class="viewcode-block" id="JHUData.countries"><a class="viewcode-back" href="../../../covsirphy.cleaning.jhu_data.html#covsirphy.JHUData.countries">[docs]</a>    <span class="k">def</span> <span class="nf">countries</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">complement</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Return names of countries where records.</span>
 
@@ -528,7 +523,7 @@
             <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">subset_complement</span><span class="p">(</span><span class="n">country</span><span class="o">=</span><span class="n">country</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">empty</span><span class="p">]</span>
         <span class="k">return</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">raw_ok_set</span> <span class="o">|</span> <span class="nb">set</span><span class="p">(</span><span class="n">comp_ok_list</span><span class="p">))</span></div>
 
-<div class="viewcode-block" id="JHUData.calculate_closing_period"><a class="viewcode-back" href="../../../covsirphy.cleaning.html#covsirphy.JHUData.calculate_closing_period">[docs]</a>    <span class="k">def</span> <span class="nf">calculate_closing_period</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="JHUData.calculate_closing_period"><a class="viewcode-back" href="../../../covsirphy.cleaning.jhu_data.html#covsirphy.JHUData.calculate_closing_period">[docs]</a>    <span class="k">def</span> <span class="nf">calculate_closing_period</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Calculate mode value of closing period, time from confirmation to get outcome.</span>
 
@@ -560,9 +555,9 @@
         <span class="c1"># Calculate mode value of closing period</span>
         <span class="k">return</span> <span class="nb">int</span><span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="s2">&quot;Elapsed&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">mode</span><span class="p">()</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">int64</span><span class="p">)</span><span class="o">.</span><span class="n">values</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span></div>
 
-<div class="viewcode-block" id="JHUData.subset_complement"><a class="viewcode-back" href="../../../covsirphy.cleaning.html#covsirphy.JHUData.subset_complement">[docs]</a>    <span class="k">def</span> <span class="nf">subset_complement</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">country</span><span class="p">,</span> <span class="n">province</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+<div class="viewcode-block" id="JHUData.subset_complement"><a class="viewcode-back" href="../../../covsirphy.cleaning.jhu_data.html#covsirphy.JHUData.subset_complement">[docs]</a>    <span class="k">def</span> <span class="nf">subset_complement</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">country</span><span class="p">,</span> <span class="n">province</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
                           <span class="n">start_date</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">end_date</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">population</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-                          <span class="n">interval</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">max_ignored</span><span class="o">=</span><span class="mi">100</span><span class="p">):</span>
+                          <span class="n">interval</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">max_ignored</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span> <span class="n">max_ending_unupdated</span><span class="o">=</span><span class="mi">14</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Return the subset of dataset and complement recovered data, if necessary.</span>
 <span class="sd">        Records with Recovered &gt; 0 will be selected.</span>
@@ -575,6 +570,8 @@
 <span class="sd">            population(int or None): population value</span>
 <span class="sd">            interval (int): expected update interval of the number of recovered cases [days]</span>
 <span class="sd">            max_ignored (int): Max number of recovered cases to be ignored [cases]</span>
+<span class="sd">            max_ending_unupdated (int) : Max number of days to apply full complement,</span>
+<span class="sd">                 where ending recovered cases are not updated [days]</span>
 
 <span class="sd">        Returns:</span>
 <span class="sd">            tuple(pandas.DataFrame, str/bool):</span>
@@ -609,6 +606,7 @@
             <span class="n">recovery_period</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_recovery_period</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">calculate_closing_period</span><span class="p">(),</span>
             <span class="n">interval</span><span class="o">=</span><span class="n">interval</span><span class="p">,</span>
             <span class="n">max_ignored</span><span class="o">=</span><span class="n">max_ignored</span><span class="p">,</span>
+            <span class="n">max_ending_unupdated</span><span class="o">=</span><span class="n">max_ending_unupdated</span><span class="p">,</span>
         <span class="p">)</span>
         <span class="n">df</span><span class="p">,</span> <span class="n">status</span> <span class="o">=</span> <span class="n">handler</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">subset_df</span><span class="p">)</span>
         <span class="c1"># Calculate Susceptible</span>
@@ -619,7 +617,7 @@
         <span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">df</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">R</span><span class="p">]</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">,</span> <span class="p">:]</span><span class="o">.</span><span class="n">reset_index</span><span class="p">(</span><span class="n">drop</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
         <span class="k">return</span> <span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">is_complemented</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="JHUData.records"><a class="viewcode-back" href="../../../covsirphy.cleaning.html#covsirphy.JHUData.records">[docs]</a>    <span class="k">def</span> <span class="nf">records</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">country</span><span class="p">,</span> <span class="n">province</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">start_date</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">end_date</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">population</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+<div class="viewcode-block" id="JHUData.records"><a class="viewcode-back" href="../../../covsirphy.cleaning.jhu_data.html#covsirphy.JHUData.records">[docs]</a>    <span class="k">def</span> <span class="nf">records</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">country</span><span class="p">,</span> <span class="n">province</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">start_date</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">end_date</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">population</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
                 <span class="n">auto_complement</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        JHU-style dataset for the area from the start date to the end date.</span>

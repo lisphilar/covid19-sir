@@ -176,7 +176,7 @@
 <span class="kn">from</span> <span class="nn">covsirphy.cleaning.country_data</span> <span class="kn">import</span> <span class="n">CountryData</span>
 
 
-<div class="viewcode-block" id="PCRData"><a class="viewcode-back" href="../../../covsirphy.cleaning.html#covsirphy.PCRData">[docs]</a><span class="k">class</span> <span class="nc">PCRData</span><span class="p">(</span><span class="n">CleaningBase</span><span class="p">):</span>
+<div class="viewcode-block" id="PCRData"><a class="viewcode-back" href="../../../covsirphy.cleaning.pcr_data.html#covsirphy.PCRData">[docs]</a><span class="k">class</span> <span class="nc">PCRData</span><span class="p">(</span><span class="n">CleaningBase</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Data cleaning of PCR dataset.</span>
 
@@ -208,7 +208,7 @@
         <span class="c1"># To avoid &quot;imported but unused&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">__swifter</span> <span class="o">=</span> <span class="n">swifter</span>
 
-<div class="viewcode-block" id="PCRData.cleaned"><a class="viewcode-back" href="../../../covsirphy.cleaning.html#covsirphy.PCRData.cleaned">[docs]</a>    <span class="k">def</span> <span class="nf">cleaned</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="PCRData.cleaned"><a class="viewcode-back" href="../../../covsirphy.cleaning.pcr_data.html#covsirphy.PCRData.cleaned">[docs]</a>    <span class="k">def</span> <span class="nf">cleaned</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Return the cleaned dataset of PCRData with tests and confirmed data.</span>
 
@@ -218,8 +218,8 @@
 <span class="sd">                    reset index</span>
 <span class="sd">                Columns:</span>
 <span class="sd">                    - Date (pd.TimeStamp): Observation date</span>
-<span class="sd">                    - Country (str): country/region name</span>
-<span class="sd">                    - Province (str): province/prefecture/state name</span>
+<span class="sd">                    - Country (pandas.Category): country/region name</span>
+<span class="sd">                    - Province (pandas.Category): province/prefecture/state name</span>
 <span class="sd">                    - Tests (int): the number of total tests performed</span>
 <span class="sd">                    - Confirmed (int): the number of confirmed cases</span>
 
@@ -240,8 +240,8 @@
 <span class="sd">                Columns:</span>
 <span class="sd">                    - Date (pd.TimeStamp): Observation date</span>
 <span class="sd">                    - ISO3 (str): ISO3 code</span>
-<span class="sd">                    - Country (str): country/region name</span>
-<span class="sd">                    - Province (str): province/prefecture/state name</span>
+<span class="sd">                    - Country (pandas.Category): country/region name</span>
+<span class="sd">                    - Province (pandas.Category): province/prefecture/state name</span>
 <span class="sd">                    - Tests (int): the number of total tests performed</span>
 <span class="sd">                    - Confirmed (int): the number of confirmed cases</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -280,9 +280,11 @@
         <span class="n">df</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">TESTS</span><span class="p">]</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">TESTS</span><span class="p">]</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">int64</span><span class="p">)</span>
         <span class="n">df</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">C</span><span class="p">]</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">C</span><span class="p">]</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">int64</span><span class="p">)</span>
         <span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">loc</span><span class="p">[:,</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">ISO3</span><span class="p">,</span> <span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">PCR_COLUMNS</span><span class="p">]]</span><span class="o">.</span><span class="n">reset_index</span><span class="p">(</span><span class="n">drop</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="c1"># Update data types to reduce memory</span>
+        <span class="n">df</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">AREA_ABBR_COLS</span><span class="p">]</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">AREA_ABBR_COLS</span><span class="p">]</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="s2">&quot;category&quot;</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">df</span>
 
-<div class="viewcode-block" id="PCRData.from_dataframe"><a class="viewcode-back" href="../../../covsirphy.cleaning.html#covsirphy.PCRData.from_dataframe">[docs]</a>    <span class="nd">@classmethod</span>
+<div class="viewcode-block" id="PCRData.from_dataframe"><a class="viewcode-back" href="../../../covsirphy.cleaning.pcr_data.html#covsirphy.PCRData.from_dataframe">[docs]</a>    <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">from_dataframe</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">dataframe</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Create PCRData instance using a pandas dataframe.</span>
@@ -298,7 +300,7 @@
             <span class="n">dataframe</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;dataframe&quot;</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="bp">cls</span><span class="o">.</span><span class="n">PCR_COLUMNS</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">instance</span></div>
 
-<div class="viewcode-block" id="PCRData.replace"><a class="viewcode-back" href="../../../covsirphy.cleaning.html#covsirphy.PCRData.replace">[docs]</a>    <span class="k">def</span> <span class="nf">replace</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">country_data</span><span class="p">):</span>
+<div class="viewcode-block" id="PCRData.replace"><a class="viewcode-back" href="../../../covsirphy.cleaning.pcr_data.html#covsirphy.PCRData.replace">[docs]</a>    <span class="k">def</span> <span class="nf">replace</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">country_data</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Replace a part of cleaned dataset with a dataframe.</span>
 
@@ -307,7 +309,7 @@
 <span class="sd">                Index: reset index</span>
 <span class="sd">                Columns:</span>
 <span class="sd">                    - Date (pd.TimeStamp): Observation date</span>
-<span class="sd">                    - Province (str): province name</span>
+<span class="sd">                    - Province (pandas.Category): province name</span>
 <span class="sd">                    - Tests (int): the number of total tests performed</span>
 <span class="sd">                    - Confirmed (int): the number of confirmed cases</span>
 <span class="sd">                    - The other columns will be ignored</span>
@@ -326,7 +328,10 @@
         <span class="n">df</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_cleaned_df</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
         <span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">df</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">COUNTRY</span><span class="p">]</span> <span class="o">!=</span> <span class="n">country</span><span class="p">]</span>
         <span class="c1"># Add the new data</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_cleaned_df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">([</span><span class="n">df</span><span class="p">,</span> <span class="n">new</span><span class="p">],</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">sort</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+        <span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">([</span><span class="n">df</span><span class="p">,</span> <span class="n">new</span><span class="p">],</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">sort</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+        <span class="c1"># Update data types to reduce memory</span>
+        <span class="n">df</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">AREA_ABBR_COLS</span><span class="p">]</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">AREA_ABBR_COLS</span><span class="p">]</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="s2">&quot;category&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_cleaned_df</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
         <span class="c1"># Citation</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_citation</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="se">\n</span><span class="si">{</span><span class="n">country_data</span><span class="o">.</span><span class="n">citation</span><span class="si">}</span><span class="s2">&quot;</span>
         <span class="k">return</span> <span class="bp">self</span></div>
@@ -485,7 +490,7 @@
             <span class="k">raise</span> <span class="n">PCRIncorrectPreconditionError</span><span class="p">(</span>
                 <span class="n">country</span><span class="o">=</span><span class="n">country</span><span class="p">,</span> <span class="n">province</span><span class="o">=</span><span class="n">province</span><span class="p">,</span> <span class="n">message</span><span class="o">=</span><span class="s2">&quot;Too many missing Tests records&quot;</span><span class="p">)</span> <span class="kn">from</span> <span class="bp">None</span>
 
-<div class="viewcode-block" id="PCRData.positive_rate"><a class="viewcode-back" href="../../../covsirphy.cleaning.html#covsirphy.PCRData.positive_rate">[docs]</a>    <span class="k">def</span> <span class="nf">positive_rate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">country</span><span class="p">,</span> <span class="n">province</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">window</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">show_figure</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">filename</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<div class="viewcode-block" id="PCRData.positive_rate"><a class="viewcode-back" href="../../../covsirphy.cleaning.pcr_data.html#covsirphy.PCRData.positive_rate">[docs]</a>    <span class="k">def</span> <span class="nf">positive_rate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">country</span><span class="p">,</span> <span class="n">province</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">window</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">show_figure</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">filename</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Return the PCR rate of a country as a dataframe.</span>
 

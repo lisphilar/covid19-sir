@@ -173,7 +173,7 @@
 <span class="kn">from</span> <span class="nn">covsirphy.cleaning.cbase</span> <span class="kn">import</span> <span class="n">CleaningBase</span>
 
 
-<div class="viewcode-block" id="LinelistData"><a class="viewcode-back" href="../../../covsirphy.cleaning.html#covsirphy.LinelistData">[docs]</a><span class="k">class</span> <span class="nc">LinelistData</span><span class="p">(</span><span class="n">CleaningBase</span><span class="p">):</span>
+<div class="viewcode-block" id="LinelistData"><a class="viewcode-back" href="../../../covsirphy.cleaning.linelist.html#covsirphy.LinelistData">[docs]</a><span class="k">class</span> <span class="nc">LinelistData</span><span class="p">(</span><span class="n">CleaningBase</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Linelist of case reports.</span>
 
@@ -305,10 +305,14 @@
         <span class="n">df</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">AGE</span><span class="p">]</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">to_numeric</span><span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">AGE</span><span class="p">],</span> <span class="n">errors</span><span class="o">=</span><span class="s2">&quot;coerce&quot;</span><span class="p">)</span>
         <span class="c1"># Sex</span>
         <span class="n">df</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">SEX</span><span class="p">]</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">SEX</span><span class="p">]</span><span class="o">.</span><span class="n">fillna</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">UNKNOWN</span><span class="p">)</span>
+        <span class="c1"># Update data types to reduce memory</span>
+        <span class="n">cat_cols</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">AGE</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">SEX</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">SYMPTOM</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">CHRONIC</span><span class="p">,</span> <span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">AREA_COLUMNS</span><span class="p">]</span>
+        <span class="n">df</span><span class="p">[</span><span class="n">cat_cols</span><span class="p">]</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="n">cat_cols</span><span class="p">]</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="s2">&quot;category&quot;</span><span class="p">)</span>
         <span class="c1"># Select columns</span>
         <span class="k">return</span> <span class="n">df</span><span class="o">.</span><span class="n">loc</span><span class="p">[:,</span> <span class="bp">self</span><span class="o">.</span><span class="n">LINELIST_COLS</span><span class="p">]</span>
 
-<div class="viewcode-block" id="LinelistData.subset"><a class="viewcode-back" href="../../../covsirphy.cleaning.html#covsirphy.LinelistData.subset">[docs]</a>    <span class="k">def</span> <span class="nf">subset</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">country</span><span class="p">,</span> <span class="n">province</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<div class="viewcode-block" id="LinelistData.subset"><a class="viewcode-back" href="../../../covsirphy.cleaning.linelist.html#covsirphy.LinelistData.subset">[docs]</a>    <span class="k">def</span> <span class="nf">subset</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">country</span><span class="p">,</span> <span class="n">province</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Return subset of the country/province.</span>
 
@@ -348,7 +352,7 @@
         <span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">drop</span><span class="p">([</span><span class="bp">self</span><span class="o">.</span><span class="n">COUNTRY</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">PROVINCE</span><span class="p">],</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">df</span><span class="o">.</span><span class="n">reset_index</span><span class="p">(</span><span class="n">drop</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="LinelistData.closed"><a class="viewcode-back" href="../../../covsirphy.cleaning.html#covsirphy.LinelistData.closed">[docs]</a>    <span class="k">def</span> <span class="nf">closed</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">outcome</span><span class="o">=</span><span class="s2">&quot;Recovered&quot;</span><span class="p">):</span>
+<div class="viewcode-block" id="LinelistData.closed"><a class="viewcode-back" href="../../../covsirphy.cleaning.linelist.html#covsirphy.LinelistData.closed">[docs]</a>    <span class="k">def</span> <span class="nf">closed</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">outcome</span><span class="o">=</span><span class="s2">&quot;Recovered&quot;</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Return subset of global outcome data (recovered/fatal).</span>
 
@@ -360,8 +364,8 @@
 <span class="sd">                Index:</span>
 <span class="sd">                    reset index</span>
 <span class="sd">                Columns:</span>
-<span class="sd">                    - Country (str): country name</span>
-<span class="sd">                    - Province (str): province name or &quot;-&quot;</span>
+<span class="sd">                    - Country (pandas.Category): country name</span>
+<span class="sd">                    - Province (pandas.Category): province name or &quot;-&quot;</span>
 <span class="sd">                    - Hospitalized_date (pandas.TimeStamp or NT)</span>
 <span class="sd">                    - Confirmation_date (pandas.TimeStamp)</span>
 <span class="sd">                    - Recovered_date (pandas.TimeStamp): if outcome is Recovered</span>
@@ -384,7 +388,7 @@
         <span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">drop</span><span class="p">([</span><span class="bp">self</span><span class="o">.</span><span class="n">C</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">CI</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">F</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">R</span><span class="p">],</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">df</span><span class="o">.</span><span class="n">reset_index</span><span class="p">(</span><span class="n">drop</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="LinelistData.recovery_period"><a class="viewcode-back" href="../../../covsirphy.cleaning.html#covsirphy.LinelistData.recovery_period">[docs]</a>    <span class="k">def</span> <span class="nf">recovery_period</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="LinelistData.recovery_period"><a class="viewcode-back" href="../../../covsirphy.cleaning.linelist.html#covsirphy.LinelistData.recovery_period">[docs]</a>    <span class="k">def</span> <span class="nf">recovery_period</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Calculate median value of recovery period (from confirmation to recovery).</span>
 
@@ -395,7 +399,7 @@
         <span class="n">series</span> <span class="o">=</span> <span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">R_DATE</span><span class="p">]</span> <span class="o">-</span> <span class="n">df</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">CONFIRM_DATE</span><span class="p">])</span><span class="o">.</span><span class="n">dt</span><span class="o">.</span><span class="n">days</span>
         <span class="k">return</span> <span class="nb">int</span><span class="p">(</span><span class="n">series</span><span class="o">.</span><span class="n">median</span><span class="p">())</span></div>
 
-<div class="viewcode-block" id="LinelistData.total"><a class="viewcode-back" href="../../../covsirphy.cleaning.html#covsirphy.LinelistData.total">[docs]</a>    <span class="k">def</span> <span class="nf">total</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="LinelistData.total"><a class="viewcode-back" href="../../../covsirphy.cleaning.linelist.html#covsirphy.LinelistData.total">[docs]</a>    <span class="k">def</span> <span class="nf">total</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        This is not defined for this child class.</span>
 <span class="sd">        &quot;&quot;&quot;</span>

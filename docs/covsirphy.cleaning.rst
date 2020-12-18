@@ -1,109 +1,26 @@
 covsirphy.cleaning package
 ==========================
 
-Submodules
-----------
-
-covsirphy.cleaning.cbase module
--------------------------------
-
-.. automodule:: covsirphy.cleaning.cbase
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
-covsirphy.cleaning.country\_data module
----------------------------------------
-
-.. automodule:: covsirphy.cleaning.country_data
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
-covsirphy.cleaning.covid19datahub module
-----------------------------------------
-
-.. automodule:: covsirphy.cleaning.covid19datahub
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
-covsirphy.cleaning.dataloader module
-------------------------------------
-
-.. automodule:: covsirphy.cleaning.dataloader
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
-covsirphy.cleaning.japan\_data module
--------------------------------------
-
-.. automodule:: covsirphy.cleaning.japan_data
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
-covsirphy.cleaning.jhu\_complement module
------------------------------------------
-
-.. automodule:: covsirphy.cleaning.jhu_complement
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
-covsirphy.cleaning.jhu\_data module
------------------------------------
-
-.. automodule:: covsirphy.cleaning.jhu_data
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
-covsirphy.cleaning.linelist module
-----------------------------------
-
-.. automodule:: covsirphy.cleaning.linelist
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
-covsirphy.cleaning.oxcgrt module
---------------------------------
-
-.. automodule:: covsirphy.cleaning.oxcgrt
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
-covsirphy.cleaning.pcr\_data module
------------------------------------
-
-.. automodule:: covsirphy.cleaning.pcr_data
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
-covsirphy.cleaning.population module
-------------------------------------
-
-.. automodule:: covsirphy.cleaning.population
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
-covsirphy.cleaning.term module
-------------------------------
-
-.. automodule:: covsirphy.cleaning.term
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
-Module contents
----------------
-
 .. automodule:: covsirphy.cleaning
    :members:
    :undoc-members:
    :show-inheritance:
+
+Submodules
+----------
+
+.. toctree::
+   :maxdepth: 4
+
+   covsirphy.cleaning.cbase
+   covsirphy.cleaning.country_data
+   covsirphy.cleaning.covid19datahub
+   covsirphy.cleaning.dataloader
+   covsirphy.cleaning.japan_data
+   covsirphy.cleaning.jhu_complement
+   covsirphy.cleaning.jhu_data
+   covsirphy.cleaning.linelist
+   covsirphy.cleaning.oxcgrt
+   covsirphy.cleaning.pcr_data
+   covsirphy.cleaning.population
+   covsirphy.cleaning.term
