@@ -79,7 +79,7 @@ class LinelistData(CleaningBase):
             print(
                 "Retrieving linelist from Open COVID-19 Data Working Group repository: https://github.com/beoutbreakprepared/nCoV2019")
         # Download the dataset
-        df = self.load(self.URL, header=1, columns=list(self.RAW_COL_DICT))
+        df = self.load(self.URL, header=1, columns=None)
         # Save the raw data
         df.to_csv(filename, index=False)
         return df

@@ -66,7 +66,7 @@ class CleaningBase(Term):
             "low_memory": False, "dtype": "object", "header": header, "names": columns}
         try:
             return dd.read_csv(urlpath, blocksize=None, **kwargs).compute()
-        except (FileNotFoundError, UnicodeDecodeError):
+        except (FileNotFoundError, UnicodeDecodeError, pd.errors.ParserError):
             return pd.read_csv(urlpath, **kwargs)
 
     def cleaned(self):
