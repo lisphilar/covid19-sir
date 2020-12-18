@@ -184,8 +184,8 @@
 <span class="sd">    Notes:</span>
 <span class="sd">        Columns of JapanData.cleaned():</span>
 <span class="sd">            - Date (pandas.TimeStamp): date</span>
-<span class="sd">            - Country (str): &#39;Japan&#39;</span>
-<span class="sd">            - Province (str): &#39;-&#39; (country level), &#39;Entering&#39; or province names</span>
+<span class="sd">            - Country (pandas.Category): &#39;Japan&#39;</span>
+<span class="sd">            - Province (pandas.Category): &#39;-&#39; (country level), &#39;Entering&#39; or province names</span>
 <span class="sd">            - Confirmed (int): the number of confirmed cases</span>
 <span class="sd">            - Infected (int): the number of currently infected cases</span>
 <span class="sd">            - Fatal (int): the number of fatal cases</span>
@@ -304,6 +304,8 @@
         <span class="n">df</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">JAPAN_VALUE_COLS</span><span class="p">]</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">JAPAN_VALUE_COLS</span><span class="p">]</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">int64</span><span class="p">)</span>
         <span class="c1"># Country</span>
         <span class="n">df</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">COUNTRY</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;Japan&quot;</span>
+        <span class="c1"># Update data types to reduce memory</span>
+        <span class="n">df</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">AREA_COLUMNS</span><span class="p">]</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">AREA_COLUMNS</span><span class="p">]</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="s2">&quot;category&quot;</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">df</span><span class="o">.</span><span class="n">loc</span><span class="p">[:,</span> <span class="bp">self</span><span class="o">.</span><span class="n">JAPAN_COLS</span><span class="p">]</span>
 
 <div class="viewcode-block" id="JapanData.set_variables"><a class="viewcode-back" href="../../../covsirphy.cleaning.japan_data.html#covsirphy.JapanData.set_variables">[docs]</a>    <span class="k">def</span> <span class="nf">set_variables</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>

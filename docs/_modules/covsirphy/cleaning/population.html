@@ -212,8 +212,8 @@
 <span class="sd">                    reset index</span>
 <span class="sd">                Columns:</span>
 <span class="sd">                    - ISO3 (str): ISO3 code or &quot;-&quot;</span>
-<span class="sd">                    - Country (str): country/region name</span>
-<span class="sd">                    - Province (str): province/prefecture/state name</span>
+<span class="sd">                    - Country (pandas.Category): country/region name</span>
+<span class="sd">                    - Province (pandas.Category): province/prefecture/state name</span>
 <span class="sd">                    - Date (pd.TimeStamp): date of the records (if available) or today</span>
 <span class="sd">                    - Population (int): total population</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -259,6 +259,8 @@
             <span class="p">:,</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">ISO3</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">COUNTRY</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">PROVINCE</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">DATE</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">N</span><span class="p">]]</span>
         <span class="c1"># Remove duplicates</span>
         <span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">drop_duplicates</span><span class="p">()</span><span class="o">.</span><span class="n">reset_index</span><span class="p">(</span><span class="n">drop</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="c1"># Update data types to reduce memory</span>
+        <span class="n">df</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">AREA_ABBR_COLS</span><span class="p">]</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">AREA_ABBR_COLS</span><span class="p">]</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="s2">&quot;category&quot;</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">df</span>
 
     <span class="k">def</span> <span class="nf">_created_date</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>

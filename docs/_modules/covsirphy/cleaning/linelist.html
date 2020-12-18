@@ -305,6 +305,10 @@
         <span class="n">df</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">AGE</span><span class="p">]</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">to_numeric</span><span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">AGE</span><span class="p">],</span> <span class="n">errors</span><span class="o">=</span><span class="s2">&quot;coerce&quot;</span><span class="p">)</span>
         <span class="c1"># Sex</span>
         <span class="n">df</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">SEX</span><span class="p">]</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">SEX</span><span class="p">]</span><span class="o">.</span><span class="n">fillna</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">UNKNOWN</span><span class="p">)</span>
+        <span class="c1"># Update data types to reduce memory</span>
+        <span class="n">cat_cols</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">AGE</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">SEX</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">SYMPTOM</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">CHRONIC</span><span class="p">,</span> <span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">AREA_COLUMNS</span><span class="p">]</span>
+        <span class="n">df</span><span class="p">[</span><span class="n">cat_cols</span><span class="p">]</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="n">cat_cols</span><span class="p">]</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="s2">&quot;category&quot;</span><span class="p">)</span>
         <span class="c1"># Select columns</span>
         <span class="k">return</span> <span class="n">df</span><span class="o">.</span><span class="n">loc</span><span class="p">[:,</span> <span class="bp">self</span><span class="o">.</span><span class="n">LINELIST_COLS</span><span class="p">]</span>
 
@@ -360,8 +364,8 @@
 <span class="sd">                Index:</span>
 <span class="sd">                    reset index</span>
 <span class="sd">                Columns:</span>
-<span class="sd">                    - Country (str): country name</span>
-<span class="sd">                    - Province (str): province name or &quot;-&quot;</span>
+<span class="sd">                    - Country (pandas.Category): country name</span>
+<span class="sd">                    - Province (pandas.Category): province name or &quot;-&quot;</span>
 <span class="sd">                    - Hospitalized_date (pandas.TimeStamp or NT)</span>
 <span class="sd">                    - Confirmation_date (pandas.TimeStamp)</span>
 <span class="sd">                    - Recovered_date (pandas.TimeStamp): if outcome is Recovered</span>

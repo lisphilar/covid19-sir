@@ -603,8 +603,8 @@ Cleaning method is defined by CountryData._cleaning() method.</p>
 </dd>
 <dt>Columns:</dt><dd><ul class="simple">
 <li><p>Date (pd.TimeStamp): Observation date</p></li>
-<li><p>Country (str): country/region name</p></li>
-<li><p>Province (str): province/prefecture/sstate name</p></li>
+<li><p>Country (pandas.Category): country/region name</p></li>
+<li><p>Province (pandas.Category): province/prefecture/sstate name</p></li>
 <li><p>Confirmed (int): the number of confirmed cases</p></li>
 <li><p>Infected (int): the number of currently infected cases</p></li>
 <li><p>Fatal (int): the number of fatal cases</p></li>
@@ -1216,7 +1216,7 @@ If the result satisfied the following conditions, optimization ends.
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>clean_df</strong> (<em>pandas.DataFrame</em>) – <p>cleaned data</p>
+<li><p><strong>clean_df</strong> (<em>pandas.DataFrame</em><em> or </em><em>None</em>) – <p>cleaned data</p>
 <dl class="simple">
 <dt>Index:</dt><dd><ul>
 <li><p>reset index</p></li>
@@ -1224,8 +1224,8 @@ If the result satisfied the following conditions, optimization ends.
 </dd>
 <dt>Columns:</dt><dd><ul>
 <li><p>Date (pd.TimeStamp): Observation date</p></li>
-<li><p>Country (str): country/region name</p></li>
-<li><p>Province (str): province/prefecture/sstate name</p></li>
+<li><p>Country (pandas.Category): country/region name</p></li>
+<li><p>Province (pandas.Category): province/prefecture/sstate name</p></li>
 <li><p>Confirmed (int): the number of confirmed cases</p></li>
 <li><p>Infected (int): the number of currently infected cases</p></li>
 <li><p>Fatal (int): the number of fatal cases</p></li>
@@ -1396,8 +1396,8 @@ Complement will not be done.</p>
 </dd>
 <dt>Columns:</dt><dd><ul class="simple">
 <li><p>Date (pd.TimeStamp): Observation date</p></li>
-<li><p>Country (str): country/region name</p></li>
-<li><p>Province (str): province/prefecture/state name</p></li>
+<li><p>Country (pandas.Category): country/region name</p></li>
+<li><p>Province (pandas.Category): province/prefecture/state name</p></li>
 <li><p>Confirmed (int): the number of confirmed cases</p></li>
 <li><p>Infected (int): the number of currently infected cases</p></li>
 <li><p>Fatal (int): the number of fatal cases</p></li>
@@ -1514,21 +1514,7 @@ If necessary and &#64;auto_complement is True, complement recovered data.</p>
 <dd><p>Replace a part of cleaned dataset with a dataframe.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>country_data</strong> (<a class="reference internal" href="#covsirphy.CountryData" title="covsirphy.CountryData"><em>covsirphy.CountryData</em></a>) – <p>dataset object of the country
-Index: reset index
-Columns:</p>
-<blockquote>
-<div><ul class="simple">
-<li><p>Date (pd.TimeStamp): Observation date</p></li>
-<li><p>Province (str): province name</p></li>
-<li><p>Confirmed (int): the number of confirmed cases</p></li>
-<li><p>Infected (int): the number of currently infected cases</p></li>
-<li><p>Fatal (int): the number of fatal cases</p></li>
-<li><p>Recovered (int): the number of recovered cases</p></li>
-<li><p>The other columns will be ignored</p></li>
-</ul>
-</div></blockquote>
-</p>
+<dd class="field-odd"><p><strong>country_data</strong> (<a class="reference internal" href="#covsirphy.CountryData" title="covsirphy.CountryData"><em>covsirphy.CountryData</em></a>) – dataset object of the country</p>
 </dd>
 <dt class="field-even">Returns</dt>
 <dd class="field-even"><p>self</p>
@@ -1581,7 +1567,7 @@ Columns:</p>
 
 <dl class="py method">
 <dt id="covsirphy.JHUData.subset_complement">
-<code class="sig-name descname">subset_complement</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">country</span></em>, <em class="sig-param"><span class="n">province</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">start_date</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">end_date</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">population</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">interval</span><span class="o">=</span><span class="default_value">2</span></em>, <em class="sig-param"><span class="n">max_ignored</span><span class="o">=</span><span class="default_value">100</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/cleaning/jhu_data.html#JHUData.subset_complement"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#covsirphy.JHUData.subset_complement" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">subset_complement</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">country</span></em>, <em class="sig-param"><span class="n">province</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">start_date</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">end_date</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">population</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">interval</span><span class="o">=</span><span class="default_value">2</span></em>, <em class="sig-param"><span class="n">max_ignored</span><span class="o">=</span><span class="default_value">100</span></em>, <em class="sig-param"><span class="n">max_ending_unupdated</span><span class="o">=</span><span class="default_value">14</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/cleaning/jhu_data.html#JHUData.subset_complement"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#covsirphy.JHUData.subset_complement" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return the subset of dataset and complement recovered data, if necessary.
 Records with Recovered &gt; 0 will be selected.</p>
 <dl class="field-list simple">
@@ -1594,6 +1580,8 @@ Records with Recovered &gt; 0 will be selected.</p>
 <li><p><strong>population</strong> (<em>int</em><em> or </em><em>None</em>) – population value</p></li>
 <li><p><strong>interval</strong> (<em>int</em>) – expected update interval of the number of recovered cases [days]</p></li>
 <li><p><strong>max_ignored</strong> (<em>int</em>) – Max number of recovered cases to be ignored [cases]</p></li>
+<li><p><strong>max_ending_unupdated</strong> (<em>int</em>) – Max number of days to apply full complement,
+where ending recovered cases are not updated [days]</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
@@ -1694,7 +1682,7 @@ Records with Recovered &gt; 0 will be used.</p>
 
 <dl class="py class">
 <dt id="covsirphy.JHUDataComplementHandler">
-<em class="property">class </em><code class="sig-prename descclassname">covsirphy.</code><code class="sig-name descname">JHUDataComplementHandler</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">recovery_period</span></em>, <em class="sig-param"><span class="n">interval</span></em>, <em class="sig-param"><span class="n">max_ignored</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/cleaning/jhu_complement.html#JHUDataComplementHandler"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#covsirphy.JHUDataComplementHandler" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">covsirphy.</code><code class="sig-name descname">JHUDataComplementHandler</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">recovery_period</span></em>, <em class="sig-param"><span class="n">interval</span></em>, <em class="sig-param"><span class="n">max_ignored</span></em>, <em class="sig-param"><span class="n">max_ending_unupdated</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/cleaning/jhu_complement.html#JHUDataComplementHandler"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#covsirphy.JHUDataComplementHandler" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="covsirphy.cleaning.term.html#covsirphy.cleaning.term.Term" title="covsirphy.cleaning.term.Term"><code class="xref py py-class docutils literal notranslate"><span class="pre">covsirphy.cleaning.term.Term</span></code></a></p>
 <p>Complement JHU dataset, if necessary.</p>
 <dl class="field-list simple">
@@ -1703,6 +1691,8 @@ Records with Recovered &gt; 0 will be used.</p>
 <li><p><strong>recovery_period</strong> (<em>int</em>) – expected value of recovery period [days]</p></li>
 <li><p><strong>interval</strong> (<em>int</em>) – expected update interval of the number of recovered cases [days]</p></li>
 <li><p><strong>max_ignored</strong> (<em>int</em>) – Max number of recovered cases to be ignored [cases]</p></li>
+<li><p><strong>max_ending_unupdated</strong> (<em>int</em>) – Max number of days to apply full complement,
+where max recovered cases are not updated [days]</p></li>
 </ul>
 </dd>
 </dl>
@@ -1796,8 +1786,8 @@ Columns:</p>
 <dl class="simple">
 <dt>Columns of JapanData.cleaned():</dt><dd><ul class="simple">
 <li><p>Date (pandas.TimeStamp): date</p></li>
-<li><p>Country (str): ‘Japan’</p></li>
-<li><p>Province (str): ‘-‘ (country level), ‘Entering’ or province names</p></li>
+<li><p>Country (pandas.Category): ‘Japan’</p></li>
+<li><p>Province (pandas.Category): ‘-‘ (country level), ‘Entering’ or province names</p></li>
 <li><p>Confirmed (int): the number of confirmed cases</p></li>
 <li><p>Infected (int): the number of currently infected cases</p></li>
 <li><p>Fatal (int): the number of fatal cases</p></li>
@@ -1955,8 +1945,8 @@ Columns:</p>
 <dt>Index:</dt><dd><p>reset index</p>
 </dd>
 <dt>Columns:</dt><dd><ul class="simple">
-<li><p>Country (str): country name</p></li>
-<li><p>Province (str): province name or “-“</p></li>
+<li><p>Country (pandas.Category): country name</p></li>
+<li><p>Province (pandas.Category): province name or “-“</p></li>
 <li><p>Hospitalized_date (pandas.TimeStamp or NT)</p></li>
 <li><p>Confirmation_date (pandas.TimeStamp)</p></li>
 <li><p>Recovered_date (pandas.TimeStamp): if outcome is Recovered</p></li>
@@ -2500,7 +2490,7 @@ Columns:</p>
 </dd>
 <dt class="field-even">Returns</dt>
 <dd class="field-even"><p><dl class="simple">
-<dt>(pandas.DataFrame)</dt><dd><dl class="simple">
+<dt>pandas.DataFrame</dt><dd><dl class="simple">
 <dt>Index:</dt><dd><p>reset index</p>
 </dd>
 <dt>Columns:</dt><dd><ul class="simple">
@@ -3021,8 +3011,8 @@ This method should be overwritten in subclass.</p>
 </dd>
 <dt>Columns:</dt><dd><ul class="simple">
 <li><p>Date (pd.TimeStamp): Observation date</p></li>
-<li><p>Country (str): country/region name</p></li>
-<li><p>Province (str): province/prefecture/state name</p></li>
+<li><p>Country (pandas.Category): country/region name</p></li>
+<li><p>Province (pandas.Category): province/prefecture/state name</p></li>
 <li><p>Tests (int): the number of total tests performed</p></li>
 <li><p>Confirmed (int): the number of confirmed cases</p></li>
 </ul>
@@ -3106,7 +3096,7 @@ Columns:</p>
 <blockquote>
 <div><ul class="simple">
 <li><p>Date (pd.TimeStamp): Observation date</p></li>
-<li><p>Province (str): province name</p></li>
+<li><p>Province (pandas.Category): province name</p></li>
 <li><p>Tests (int): the number of total tests performed</p></li>
 <li><p>Confirmed (int): the number of confirmed cases</p></li>
 <li><p>The other columns will be ignored</p></li>
@@ -3704,7 +3694,7 @@ If &#64;phase is not None, the phase will be deleted.
 </dd>
 <dt class="field-even">Returns</dt>
 <dd class="field-even"><p><dl class="simple">
-<dt>(pandas.DataFrame)</dt><dd><dl class="simple">
+<dt>pandas.DataFrame</dt><dd><dl class="simple">
 <dt>Index:</dt><dd><p>reset index</p>
 </dd>
 <dt>Columns:</dt><dd><ul class="simple">
@@ -6235,6 +6225,11 @@ Columns:</p>
 <dl class="py attribute">
 <dt id="covsirphy.Term.ACTUAL">
 <code class="sig-name descname">ACTUAL</code><em class="property"> = 'Actual'</em><a class="headerlink" href="#covsirphy.Term.ACTUAL" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="covsirphy.Term.AREA_ABBR_COLS">
+<code class="sig-name descname">AREA_ABBR_COLS</code><em class="property"> = ['ISO3', 'Country', 'Province']</em><a class="headerlink" href="#covsirphy.Term.AREA_ABBR_COLS" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="py attribute">

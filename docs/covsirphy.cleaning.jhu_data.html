@@ -238,8 +238,8 @@
 </dd>
 <dt>Columns:</dt><dd><ul class="simple">
 <li><p>Date (pd.TimeStamp): Observation date</p></li>
-<li><p>Country (str): country/region name</p></li>
-<li><p>Province (str): province/prefecture/state name</p></li>
+<li><p>Country (pandas.Category): country/region name</p></li>
+<li><p>Province (pandas.Category): province/prefecture/state name</p></li>
 <li><p>Confirmed (int): the number of confirmed cases</p></li>
 <li><p>Infected (int): the number of currently infected cases</p></li>
 <li><p>Fatal (int): the number of fatal cases</p></li>
@@ -356,21 +356,7 @@ If necessary and &#64;auto_complement is True, complement recovered data.</p>
 <dd><p>Replace a part of cleaned dataset with a dataframe.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>country_data</strong> (<a class="reference internal" href="covsirphy.html#covsirphy.CountryData" title="covsirphy.CountryData"><em>covsirphy.CountryData</em></a>) – <p>dataset object of the country
-Index: reset index
-Columns:</p>
-<blockquote>
-<div><ul class="simple">
-<li><p>Date (pd.TimeStamp): Observation date</p></li>
-<li><p>Province (str): province name</p></li>
-<li><p>Confirmed (int): the number of confirmed cases</p></li>
-<li><p>Infected (int): the number of currently infected cases</p></li>
-<li><p>Fatal (int): the number of fatal cases</p></li>
-<li><p>Recovered (int): the number of recovered cases</p></li>
-<li><p>The other columns will be ignored</p></li>
-</ul>
-</div></blockquote>
-</p>
+<dd class="field-odd"><p><strong>country_data</strong> (<a class="reference internal" href="covsirphy.html#covsirphy.CountryData" title="covsirphy.CountryData"><em>covsirphy.CountryData</em></a>) – dataset object of the country</p>
 </dd>
 <dt class="field-even">Returns</dt>
 <dd class="field-even"><p>self</p>
@@ -423,7 +409,7 @@ Columns:</p>
 
 <dl class="py method">
 <dt id="covsirphy.cleaning.jhu_data.JHUData.subset_complement">
-<code class="sig-name descname">subset_complement</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">country</span></em>, <em class="sig-param"><span class="n">province</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">start_date</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">end_date</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">population</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">interval</span><span class="o">=</span><span class="default_value">2</span></em>, <em class="sig-param"><span class="n">max_ignored</span><span class="o">=</span><span class="default_value">100</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/cleaning/jhu_data.html#JHUData.subset_complement"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#covsirphy.cleaning.jhu_data.JHUData.subset_complement" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">subset_complement</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">country</span></em>, <em class="sig-param"><span class="n">province</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">start_date</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">end_date</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">population</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">interval</span><span class="o">=</span><span class="default_value">2</span></em>, <em class="sig-param"><span class="n">max_ignored</span><span class="o">=</span><span class="default_value">100</span></em>, <em class="sig-param"><span class="n">max_ending_unupdated</span><span class="o">=</span><span class="default_value">14</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/cleaning/jhu_data.html#JHUData.subset_complement"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#covsirphy.cleaning.jhu_data.JHUData.subset_complement" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return the subset of dataset and complement recovered data, if necessary.
 Records with Recovered &gt; 0 will be selected.</p>
 <dl class="field-list simple">
@@ -436,6 +422,8 @@ Records with Recovered &gt; 0 will be selected.</p>
 <li><p><strong>population</strong> (<em>int</em><em> or </em><em>None</em>) – population value</p></li>
 <li><p><strong>interval</strong> (<em>int</em>) – expected update interval of the number of recovered cases [days]</p></li>
 <li><p><strong>max_ignored</strong> (<em>int</em>) – Max number of recovered cases to be ignored [cases]</p></li>
+<li><p><strong>max_ending_unupdated</strong> (<em>int</em>) – Max number of days to apply full complement,
+where ending recovered cases are not updated [days]</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
