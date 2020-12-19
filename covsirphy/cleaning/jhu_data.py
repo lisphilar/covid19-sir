@@ -390,6 +390,64 @@ class JHUData(CleaningBase):
         # Calculate mode value of closing period
         return int(df["Elapsed"].mode().astype(np.int64).values[0])
 
+    def _calculate_recovery_period(self):
+        """
+        Calculate the median value of recovery period of all countries
+        where recovered values are reported.
+
+        Returns:
+            int: recovery period [days]
+
+        Notes:
+            If no records we can use for calculation were registered, 17 [days] will be applied.
+        """
+        # If registered, we will use it
+        if self._recovery_period is not None:
+            return self._recovery_period
+        # Get valid data for calculation
+        df = self._cleaned_df.copy()
+        df = df.loc[df[self.PROVINCE] == self.UNKNOWN]
+        df = df.groupby(self.COUNTRY).filter(lambda x: x[self.R].sum() != 0)
+        # If no records were found 17 days will be returned
+        if df.empty:
+            return 17
+        periods = [
+            self._calculate_recovery_period_country(df, country)
+            for country in df[self.COUNTRY].unique()
+        ]
+        self._recovery_period = int(pd.Series(periods).median())
+        return self._recovery_period
+
+    def _calculate_recovery_period_country(self, valid_df, country):
+        """
+        Calculate mode value of recovery period in the country.
+        If many mode values were found, mean value of mode values will be returned.
+
+        Args:
+            valid_df (pandas.DataFrame):
+                - Index: reset_index
+                - Columns: Date, Confirmed, Recovered, Fatal
+
+        Returns:
+            int: mode value of recovery period [days]
+        """
+        # Select country data
+        df = valid_df.copy()
+        df = df.loc[df[self.COUNTRY] == country].groupby(self.DATE).sum()
+        # Calculate "Confirmed - Fatal"
+        df["diff"] = df[self.C] - df[self.F]
+        df = df.loc[:, ["diff", self.R]]
+        # Calculate how many days passed to reach the number of cases
+        df = df.unstack().reset_index()
+        df.columns = ["Variable", "Date", "Number"]
+        df["Days"] = (df[self.DATE] - df[self.DATE].min()).st.days
+        # Calculate recovery period (mode value because bimodal)
+        df = df.pivot_table(values="Days", index="Number", columns="Variable")
+        df = df.interpolate(limit_area="inside").dropna().astype(np.int64)
+        df["Elapsed"] = df[self.R] - df["diff"]
+        df = df.loc[df["Elapsed"] > 0]
+        return df["Elapsed"].mode().mean()
+
     def subset_complement(self, country, province=None,
                           start_date=None, end_date=None, population=None,
                           interval=2, max_ignored=100, max_ending_unupdated=14):
