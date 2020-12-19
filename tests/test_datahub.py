@@ -83,6 +83,7 @@ class TestJHUData(object):
         assert df.loc[df.index[-1], Term.DATE] == last_date
 
     def test_to_sr(self, jhu_data):
+        warnings.simplefilter("ignore", category=DeprecationWarning)
         df = jhu_data.to_sr("Japan", population=126_500_000)
         assert set(df.columns) == set([Term.R, Term.S])
 
@@ -96,7 +97,9 @@ class TestJHUData(object):
         assert isinstance(jhu_data.countries(complement=True), list)
 
     def test_closing_period(self, jhu_data):
+        warnings.simplefilter("ignore", category=DeprecationWarning)
         assert isinstance(jhu_data.calculate_closing_period(), int)
+        assert isinstance(jhu_data.calculate_recovery_period(), int)
 
     @pytest.mark.parametrize("country", ["UK"])
     def test_subset_complement_non_monotonic(self, jhu_data, country):
