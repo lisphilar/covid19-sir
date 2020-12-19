@@ -393,7 +393,7 @@ class JHUData(CleaningBase):
         # Calculate mode value of closing period
         return int(df["Elapsed"].mode().astype(np.int64).values[0])
 
-    def _calculate_recovery_period(self):
+    def calculate_recovery_period(self):
         """
         Calculate the median value of recovery period of all countries
         where recovered values are reported.
@@ -495,8 +495,9 @@ class JHUData(CleaningBase):
                 country=country, country_alias=country_alias, province=province,
                 start_date=start_date, end_date=end_date) from None
         # Complement, if necessary
+        self._recovery_period = self._recovery_period or self.calculate_recovery_period()
         handler = JHUDataComplementHandler(
-            recovery_period=self._recovery_period or self._calculate_recovery_period(),
+            recovery_period=self._recovery_period,
             interval=interval,
             max_ignored=max_ignored,
             max_ending_unupdated=max_ending_unupdated,
