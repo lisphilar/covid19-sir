@@ -3,7 +3,7 @@
 
 import numpy as np
 import pandas as pd
-from covsirphy.util.error import SubsetNotFoundError
+from covsirphy.util.error import SubsetNotFoundError, deprecate
 from covsirphy.cleaning.cbase import CleaningBase
 from covsirphy.cleaning.country_data import CountryData
 from covsirphy.cleaning.jhu_complement import JHUDataComplementHandler
@@ -358,6 +358,7 @@ class JHUData(CleaningBase):
             if not self.subset_complement(country=country, **kwargs)[0].empty]
         return sorted(raw_ok_set | set(comp_ok_list))
 
+    @deprecate("JHUData.calculate_closing_period()")
     def calculate_closing_period(self):
         """
         Calculate mode value of closing period, time from confirmation to get outcome.
@@ -389,6 +390,61 @@ class JHUData(CleaningBase):
         df = df.loc[df["Elapsed"] > 0]
         # Calculate mode value of closing period
         return int(df["Elapsed"].mode().astype(np.int64).values[0])
+
+    def calculate_recovery_period(self):
+        """
+        Calculate the median value of recovery period of all countries
+        where recovered values are reported.
+
+        Returns:
+            int: recovery period [days]
+
+        Notes:
+            If no records we can use for calculation were registered, 17 [days] will be applied.
+        """
+        # Get valid data for calculation
+        df = self._cleaned_df.copy()
+        df = df.loc[df[self.PROVINCE] == self.UNKNOWN]
+        df = df.groupby(self.COUNTRY).filter(lambda x: x[self.R].sum() != 0)
+        # If no records were found 17 days will be returned
+        if df.empty:
+            return 17
+        # Calculate median value of recovery period in all countries with valid data
+        periods = [
+            self._calculate_recovery_period_country(df, country)
+            for country in df[self.COUNTRY].unique()
+        ]
+        return int(pd.Series(periods).median())
+
+    def _calculate_recovery_period_country(self, valid_df, country):
+        """
+        Calculate mode value of recovery period in the country.
+        If many mode values were found, mean value of mode values will be returned.
+
+        Args:
+            valid_df (pandas.DataFrame):
+                - Index: reset_index
+                - Columns: Date, Confirmed, Recovered, Fatal
+
+        Returns:
+            int: mode value of recovery period [days]
+        """
+        # Select country data
+        df = valid_df.copy()
+        df = df.loc[df[self.COUNTRY] == country].groupby(self.DATE).sum()
+        # Calculate "Confirmed - Fatal"
+        df["diff"] = df[self.C] - df[self.F]
+        df = df.loc[:, ["diff", self.R]]
+        # Calculate how many days passed to reach the number of cases
+        df = df.unstack().reset_index()
+        df.columns = ["Variable", "Date", "Number"]
+        df["Days"] = (df[self.DATE] - df[self.DATE].min()).dt.days
+        # Calculate recovery period (mode value because bimodal)
+        df = df.pivot_table(values="Days", index="Number", columns="Variable")
+        df = df.interpolate(limit_area="inside").dropna().astype(np.int64)
+        df["Elapsed"] = df[self.R] - df["diff"]
+        df = df.loc[df["Elapsed"] > 0]
+        return df["Elapsed"].mode().mean()
 
     def subset_complement(self, country, province=None,
                           start_date=None, end_date=None, population=None,
@@ -437,8 +493,9 @@ class JHUData(CleaningBase):
                 country=country, country_alias=country_alias, province=province,
                 start_date=start_date, end_date=end_date) from None
         # Complement, if necessary
+        self._recovery_period = self._recovery_period or self.calculate_recovery_period()
         handler = JHUDataComplementHandler(
-            recovery_period=self._recovery_period or self.calculate_closing_period(),
+            recovery_period=self._recovery_period,
             interval=interval,
             max_ignored=max_ignored,
             max_ending_unupdated=max_ending_unupdated,

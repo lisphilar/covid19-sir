@@ -96,7 +96,9 @@ class TestJHUData(object):
         assert isinstance(jhu_data.countries(complement=True), list)
 
     def test_closing_period(self, jhu_data):
+        warnings.simplefilter("ignore", category=DeprecationWarning)
         assert isinstance(jhu_data.calculate_closing_period(), int)
+        assert isinstance(jhu_data.calculate_recovery_period(), int)
 
     @pytest.mark.parametrize("country", ["UK"])
     def test_subset_complement_non_monotonic(self, jhu_data, country):
@@ -106,11 +108,11 @@ class TestJHUData(object):
 
     @pytest.mark.parametrize("country", ["Netherlands", "China", "Germany"])
     def test_subset_complement_full(self, jhu_data, country):
-        assert isinstance(jhu_data.recovery_period, int)
         if country in set(["Netherlands", "China"]):
             with pytest.raises(ValueError):
                 jhu_data.subset(country=country)
         df, is_complemented = jhu_data.subset_complement(country=country)
+        assert isinstance(jhu_data.recovery_period, int)
         assert set(df.columns) == set(Term.NLOC_COLUMNS)
         assert is_complemented
         with pytest.raises(KeyError):
