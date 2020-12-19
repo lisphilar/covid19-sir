@@ -46,15 +46,13 @@ class TestDataHandler(object):
         dhl.first_date = "01Apr2020"
         dhl.last_date = "01Aug2020"
         # Test
-        df = dhl.records(show_figure=False)
+        df = dhl.records(variables=None, show_figure=False)
         assert isinstance(df, pd.DataFrame)
-        assert set(df.columns) == set(Term.NLOC_COLUMNS)
+        assert set(df.columns) == set([Term.DATE, Term.CI, Term.F, Term.R])
         dates = df[Term.DATE]
         assert dates.min() == Term.date_obj(dhl.first_date)
         assert dates.max() == Term.date_obj(dhl.last_date)
-        df2 = dhl.records(show_figure=True)
-        assert isinstance(df2, pd.DataFrame)
-        assert set(df2.columns) == set(Term.NLOC_COLUMNS)
+        dhl.records(show_figure=True)
 
     @pytest.mark.parametrize("country", ["Japan"])
     def test_records_diff(self, jhu_data, population_data, country):

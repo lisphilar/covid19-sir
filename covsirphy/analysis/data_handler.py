@@ -121,13 +121,15 @@ class DataHandler(Term):
         )
         return self
 
-    def records(self, show_figure=True, filename=None):
+    def records(self, variables=None, show_figure=True, filename=None, **kwargs):
         """
         Return the records as a dataframe.
 
         Args:
             show_figure (bool): if True, show the records as a line-plot.
+            variables (list[str] or None): variables to include, Infected/Fatal/Recovered when None
             filename (str): filename of the figure, or None (show figure)
+            kwargs: the other keyword arguments of covsirphy.line_plot()
 
         Returns:
             pandas.DataFrame
@@ -135,17 +137,16 @@ class DataHandler(Term):
                     reset index
                 Columns:
                     - Date (pd.TimeStamp): Observation date
-                    - Confirmed (int): the number of confirmed cases
-                    - Infected (int): the number of currently infected cases
-                    - Fatal (int): the number of fatal cases
-                    - Recovered (int): the number of recovered cases (> 0)
-
+                    - Columns set by @variables (int)
         Notes:
             Records with Recovered > 0 will be selected.
             If complement was performed by Scenario.complement() or Scenario(auto_complement=True),
             The kind of complement will be added to the title of the figure.
         """
-        df = self.record_df.drop(self.S, axis=1)
+        variables = self.ensure_list(
+            variables or [self.CI, self.F, self.R],
+            candidates=self.VALUE_COLUMNS, name="variables")
+        df = self.record_df.loc[:, [self.DATE, *variables]]
         if not show_figure:
             return df
         if self._complemented:
@@ -153,14 +154,10 @@ class DataHandler(Term):
         else:
             title = f"{self.area}: Cases over time"
         line_plot(
-            df.set_index(self.DATE).drop(self.C, axis=1),
-            title,
-            y_integer=True,
-            filename=filename
-        )
+            df.set_index(self.DATE), title, y_integer=True, filename=filename, **kwargs)
         return df
 
-    def records_diff(self, variables=None, window=7, show_figure=True, filename=None):
+    def records_diff(self, variables=None, window=7, show_figure=True, filename=None, **kwargs):
         """
         Return the number of daily new cases (the first discreate difference of records).
 
@@ -169,6 +166,7 @@ class DataHandler(Term):
             window (int): window of moving average, >= 1
             show_figure (bool): if True, show the records as a line-plot.
             filename (str): filename of the figure, or None (show figure)
+            kwargs: the other keyword arguments of covsirphy.line_plot()
 
         Returns:
             pandas.DataFrame
@@ -196,5 +194,5 @@ class DataHandler(Term):
             title = f"{self.area}: Daily new cases\nwith {self._complemented}"
         else:
             title = f"{self.area}: Daily new cases"
-        line_plot(df, title, y_integer=True, filename=filename)
+        line_plot(df, title, y_integer=True, filename=filename, **kwargs)
         return df
