@@ -52,7 +52,8 @@ class TestDataHandler(object):
         dates = df[Term.DATE]
         assert dates.min() == Term.date_obj(dhl.first_date)
         assert dates.max() == Term.date_obj(dhl.last_date)
-        dhl.records(show_figure=True)
+        df2 = dhl.records(variables=["Susceptible"], show_figure=True)
+        assert set(df2.columns) == set([Term.DATE, Term.S])
 
     @pytest.mark.parametrize("country", ["Japan"])
     def test_records_diff(self, jhu_data, population_data, country):
