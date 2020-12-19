@@ -106,11 +106,11 @@ class TestJHUData(object):
 
     @pytest.mark.parametrize("country", ["Netherlands", "China", "Germany"])
     def test_subset_complement_full(self, jhu_data, country):
-        assert isinstance(jhu_data.recovery_period, int)
         if country in set(["Netherlands", "China"]):
             with pytest.raises(ValueError):
                 jhu_data.subset(country=country)
         df, is_complemented = jhu_data.subset_complement(country=country)
+        assert isinstance(jhu_data.recovery_period, int)
         assert set(df.columns) == set(Term.NLOC_COLUMNS)
         assert is_complemented
         with pytest.raises(KeyError):
