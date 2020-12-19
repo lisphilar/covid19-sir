@@ -90,7 +90,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../../../INSTALLATION.html#dataset-preparation">Dataset preparation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../usage_quickest.html">Usage (quickest version)</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../usage_quick.html">Usage (quick version)</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../usage_dataset.html">Usage (datasets)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../usage_dataset.html">Usage (details: datasets)</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../usage_phases.html">Usage (details: phases)</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../usage_theoretical.html">Usage (details: theoretical datasets)</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../usage_policy.html">Usage (details: policy measures)</a></li>
@@ -186,6 +186,7 @@
               <span class="n">xlim</span><span class="o">=</span><span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">),</span> <span class="n">ylim</span><span class="o">=</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="kc">None</span><span class="p">),</span>
               <span class="n">math_scale</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">x_logscale</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">y_logscale</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">y_integer</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
               <span class="n">show_legend</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">bbox_to_anchor</span><span class="o">=</span><span class="p">(</span><span class="mf">1.02</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span> <span class="n">bbox_loc</span><span class="o">=</span><span class="s2">&quot;lower left&quot;</span><span class="p">,</span>
+              <span class="n">colormap</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">color_dict</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
               <span class="n">filename</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Show chronological change of the data.</span>
@@ -213,12 +214,19 @@
 <span class="sd">        show_legend (bool): whether show legend or not</span>
 <span class="sd">        bbox_to_anchor (tuple(int or float, int or float)): distance of legend and plot</span>
 <span class="sd">        bbox_loc (str): location of legend</span>
+<span class="sd">        colormap (str, matplotlib colormap object or None): colormap, please refer to https://matplotlib.org/examples/color/colormaps_reference.html</span>
+<span class="sd">        color_dict (dict[str, str] or None): dictionary of column names (keys) and colors (values)</span>
 <span class="sd">        filename (str): filename of the figure, or None (show figure)</span>
 
 <span class="sd">    Notes:</span>
 <span class="sd">        If None is included in xlim/ylim, the values will be automatically determined by Matplotlib</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">ax</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">plot</span><span class="p">()</span>
+    <span class="n">colors</span> <span class="o">=</span> <span class="kc">None</span> <span class="k">if</span> <span class="n">color_dict</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="p">[</span>
+        <span class="n">color_dict</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">col</span><span class="p">)</span> <span class="k">for</span> <span class="n">col</span> <span class="ow">in</span> <span class="n">df</span><span class="o">.</span><span class="n">columns</span><span class="p">]</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">ax</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">colormap</span><span class="o">=</span><span class="n">colormap</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="n">colors</span><span class="p">)</span>
+    <span class="k">except</span> <span class="ne">ValueError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="n">e</span><span class="o">.</span><span class="n">args</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="kn">from</span> <span class="bp">None</span>
     <span class="c1"># Scale</span>
     <span class="k">if</span> <span class="n">math_scale</span><span class="p">:</span>
         <span class="n">ax</span><span class="o">.</span><span class="n">yaxis</span><span class="o">.</span><span class="n">set_major_formatter</span><span class="p">(</span>

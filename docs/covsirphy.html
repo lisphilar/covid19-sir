@@ -92,7 +92,7 @@
 <li class="toctree-l1"><a class="reference internal" href="INSTALLATION.html#dataset-preparation">Dataset preparation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="usage_quickest.html">Usage (quickest version)</a></li>
 <li class="toctree-l1"><a class="reference internal" href="usage_quick.html">Usage (quick version)</a></li>
-<li class="toctree-l1"><a class="reference internal" href="usage_dataset.html">Usage (datasets)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="usage_dataset.html">Usage (details: datasets)</a></li>
 <li class="toctree-l1"><a class="reference internal" href="usage_phases.html">Usage (details: phases)</a></li>
 <li class="toctree-l1"><a class="reference internal" href="usage_theoretical.html">Usage (details: theoretical datasets)</a></li>
 <li class="toctree-l1"><a class="reference internal" href="usage_policy.html">Usage (details: policy measures)</a></li>
@@ -473,7 +473,7 @@ If not, the correct country name will be found.</p>
 
 <dl class="py method">
 <dt id="covsirphy.CleaningBase.load">
-<em class="property">static </em><code class="sig-name descname">load</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">urlpath</span></em>, <em class="sig-param"><span class="n">header</span><span class="o">=</span><span class="default_value">0</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/cleaning/cbase.html#CleaningBase.load"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#covsirphy.CleaningBase.load" title="Permalink to this definition">¶</a></dt>
+<em class="property">static </em><code class="sig-name descname">load</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">urlpath</span></em>, <em class="sig-param"><span class="n">header</span><span class="o">=</span><span class="default_value">0</span></em>, <em class="sig-param"><span class="n">columns</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/cleaning/cbase.html#CleaningBase.load"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#covsirphy.CleaningBase.load" title="Permalink to this definition">¶</a></dt>
 <dd><p>Load a local/remote file.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -790,13 +790,15 @@ Only when auto-complement mode, complement records if necessary.</p>
 
 <dl class="py method">
 <dt id="covsirphy.DataHandler.records">
-<code class="sig-name descname">records</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">show_figure</span><span class="o">=</span><span class="default_value">True</span></em>, <em class="sig-param"><span class="n">filename</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/analysis/data_handler.html#DataHandler.records"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#covsirphy.DataHandler.records" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">records</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">variables</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">show_figure</span><span class="o">=</span><span class="default_value">True</span></em>, <em class="sig-param"><span class="n">filename</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/analysis/data_handler.html#DataHandler.records"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#covsirphy.DataHandler.records" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return the records as a dataframe.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>show_figure</strong> (<em>bool</em>) – if True, show the records as a line-plot.</p></li>
+<li><p><strong>variables</strong> (<em>list</em><em>[</em><em>str</em><em>] or </em><em>None</em>) – variables to include, Infected/Fatal/Recovered when None</p></li>
 <li><p><strong>filename</strong> (<em>str</em>) – filename of the figure, or None (show figure)</p></li>
+<li><p><strong>kwargs</strong> – the other keyword arguments of covsirphy.line_plot()</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
@@ -806,10 +808,7 @@ Only when auto-complement mode, complement records if necessary.</p>
 </dd>
 <dt>Columns:</dt><dd><ul class="simple">
 <li><p>Date (pd.TimeStamp): Observation date</p></li>
-<li><p>Confirmed (int): the number of confirmed cases</p></li>
-<li><p>Infected (int): the number of currently infected cases</p></li>
-<li><p>Fatal (int): the number of fatal cases</p></li>
-<li><p>Recovered (int): the number of recovered cases (&gt; 0)</p></li>
+<li><p>Columns set by &#64;variables (int)</p></li>
 </ul>
 </dd>
 </dl>
@@ -819,14 +818,17 @@ Only when auto-complement mode, complement records if necessary.</p>
 </dd>
 </dl>
 <p class="rubric">Notes</p>
-<p>Records with Recovered &gt; 0 will be selected.
-If complement was performed by Scenario.complement() or Scenario(auto_complement=True),
-The kind of complement will be added to the title of the figure.</p>
+<ul class="simple">
+<li><p>Records with Recovered &gt; 0 will be selected.</p></li>
+<li><p>If complement was performed by Scenario.complement() or Scenario(auto_complement=True),</p></li>
+</ul>
+<p>The kind of complement will be added to the title of the figure.
+- &#64;variables can be selected from Susceptible/Confirmed/Infected/Fatal/Recovered.</p>
 </dd></dl>
 
 <dl class="py method">
 <dt id="covsirphy.DataHandler.records_diff">
-<code class="sig-name descname">records_diff</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">variables</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">window</span><span class="o">=</span><span class="default_value">7</span></em>, <em class="sig-param"><span class="n">show_figure</span><span class="o">=</span><span class="default_value">True</span></em>, <em class="sig-param"><span class="n">filename</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/analysis/data_handler.html#DataHandler.records_diff"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#covsirphy.DataHandler.records_diff" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">records_diff</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">variables</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">window</span><span class="o">=</span><span class="default_value">7</span></em>, <em class="sig-param"><span class="n">show_figure</span><span class="o">=</span><span class="default_value">True</span></em>, <em class="sig-param"><span class="n">filename</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/analysis/data_handler.html#DataHandler.records_diff"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#covsirphy.DataHandler.records_diff" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return the number of daily new cases (the first discreate difference of records).</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -835,6 +837,7 @@ The kind of complement will be added to the title of the figure.</p>
 <li><p><strong>window</strong> (<em>int</em>) – window of moving average, &gt;= 1</p></li>
 <li><p><strong>show_figure</strong> (<em>bool</em>) – if True, show the records as a line-plot.</p></li>
 <li><p><strong>filename</strong> (<em>str</em>) – filename of the figure, or None (show figure)</p></li>
+<li><p><strong>kwargs</strong> – the other keyword arguments of covsirphy.line_plot()</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
@@ -1367,18 +1370,24 @@ Complement will not be done.</p>
 </dl>
 <dl class="py method">
 <dt id="covsirphy.JHUData.calculate_closing_period">
-<code class="sig-name descname">calculate_closing_period</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/cleaning/jhu_data.html#JHUData.calculate_closing_period"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#covsirphy.JHUData.calculate_closing_period" title="Permalink to this definition">¶</a></dt>
-<dd><p>Calculate mode value of closing period, time from confirmation to get outcome.</p>
+<code class="sig-name descname">calculate_closing_period</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="headerlink" href="#covsirphy.JHUData.calculate_closing_period" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="covsirphy.JHUData.calculate_recovery_period">
+<code class="sig-name descname">calculate_recovery_period</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/cleaning/jhu_data.html#JHUData.calculate_recovery_period"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#covsirphy.JHUData.calculate_recovery_period" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculate the median value of recovery period of all countries
+where recovered values are reported.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns</dt>
-<dd class="field-odd"><p>closing period [days]</p>
+<dd class="field-odd"><p>recovery period [days]</p>
 </dd>
 <dt class="field-even">Return type</dt>
 <dd class="field-even"><p>int</p>
 </dd>
 </dl>
 <p class="rubric">Notes</p>
-<p>If no records we can use for calculation were registered, 12 [days] will be applied.</p>
+<p>If no records we can use for calculation were registered, 17 [days] will be applied.</p>
 </dd></dl>
 
 <dl class="py method">
@@ -1909,6 +1918,11 @@ Columns:</p>
 <dl class="py attribute">
 <dt id="covsirphy.LinelistData.OUTCOME_DATE">
 <code class="sig-name descname">OUTCOME_DATE</code><em class="property"> = 'Outcome_date'</em><a class="headerlink" href="#covsirphy.LinelistData.OUTCOME_DATE" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="covsirphy.LinelistData.RAW_COL_DICT">
+<code class="sig-name descname">RAW_COL_DICT</code><em class="property"> = {'age': 'Age', 'chronic_disease': 'Chronic_disease', 'country': 'Country', 'date_admission_hospital': 'Hospitalized_date', 'date_confirmation': 'Confirmation_date', 'date_death_or_discharge': 'Outcome_date', 'outcome': 'Outcome', 'province': 'Province', 'sex': 'Sex', 'symptoms': 'Symptoms'}</em><a class="headerlink" href="#covsirphy.LinelistData.RAW_COL_DICT" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="py attribute">
@@ -2957,7 +2971,7 @@ This method should be overwritten in subclass.</p>
 
 <dl class="py class">
 <dt id="covsirphy.PCRData">
-<em class="property">class </em><code class="sig-prename descclassname">covsirphy.</code><code class="sig-name descname">PCRData</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">filename</span></em>, <em class="sig-param"><span class="n">interval</span><span class="o">=</span><span class="default_value">2</span></em>, <em class="sig-param"><span class="n">citation</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/cleaning/pcr_data.html#PCRData"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#covsirphy.PCRData" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">covsirphy.</code><code class="sig-name descname">PCRData</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">filename</span></em>, <em class="sig-param"><span class="n">interval</span><span class="o">=</span><span class="default_value">2</span></em>, <em class="sig-param"><span class="n">min_pcr_tests</span><span class="o">=</span><span class="default_value">100</span></em>, <em class="sig-param"><span class="n">citation</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/cleaning/pcr_data.html#PCRData"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#covsirphy.PCRData" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="covsirphy.cleaning.cbase.html#covsirphy.cleaning.cbase.CleaningBase" title="covsirphy.cleaning.cbase.CleaningBase"><code class="xref py py-class docutils literal notranslate"><span class="pre">covsirphy.cleaning.cbase.CleaningBase</span></code></a></p>
 <p>Data cleaning of PCR dataset.</p>
 <dl class="field-list simple">
@@ -2965,6 +2979,7 @@ This method should be overwritten in subclass.</p>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>filename</strong> (<em>str</em><em> or </em><em>None</em>) – CSV filename of the dataset</p></li>
 <li><p><strong>interval</strong> (<em>int</em>) – expected update interval of the number of confirmed cases and tests [days]</p></li>
+<li><p><strong>min_pcr_tests</strong> (<em>int</em>) – minimum number of valid daily tests performed in order to calculate positive rate</p></li>
 <li><p><strong>citation</strong> (<em>str</em>) – citation</p></li>
 </ul>
 </dd>
@@ -3046,7 +3061,7 @@ This method should be overwritten in subclass.</p>
 
 <dl class="py method">
 <dt id="covsirphy.PCRData.positive_rate">
-<code class="sig-name descname">positive_rate</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">country</span></em>, <em class="sig-param"><span class="n">province</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">window</span><span class="o">=</span><span class="default_value">3</span></em>, <em class="sig-param"><span class="n">show_figure</span><span class="o">=</span><span class="default_value">True</span></em>, <em class="sig-param"><span class="n">filename</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/cleaning/pcr_data.html#PCRData.positive_rate"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#covsirphy.PCRData.positive_rate" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">positive_rate</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">country</span></em>, <em class="sig-param"><span class="n">province</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">window</span><span class="o">=</span><span class="default_value">7</span></em>, <em class="sig-param"><span class="n">show_figure</span><span class="o">=</span><span class="default_value">True</span></em>, <em class="sig-param"><span class="n">filename</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/cleaning/pcr_data.html#PCRData.positive_rate"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#covsirphy.PCRData.positive_rate" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return the PCR rate of a country as a dataframe.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -7091,7 +7106,7 @@ Index:</p>
 
 <dl class="py function">
 <dt id="covsirphy.line_plot">
-<code class="sig-prename descclassname">covsirphy.</code><code class="sig-name descname">line_plot</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">df</span></em>, <em class="sig-param"><span class="n">title</span></em>, <em class="sig-param"><span class="n">xlabel</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">ylabel</span><span class="o">=</span><span class="default_value">'Cases'</span></em>, <em class="sig-param"><span class="n">v</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">h</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">xlim</span><span class="o">=</span><span class="default_value">(None, None)</span></em>, <em class="sig-param"><span class="n">ylim</span><span class="o">=</span><span class="default_value">(0, None)</span></em>, <em class="sig-param"><span class="n">math_scale</span><span class="o">=</span><span class="default_value">True</span></em>, <em class="sig-param"><span class="n">x_logscale</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">y_logscale</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">y_integer</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">show_legend</span><span class="o">=</span><span class="default_value">True</span></em>, <em class="sig-param"><span class="n">bbox_to_anchor</span><span class="o">=</span><span class="default_value">(1.02, 0)</span></em>, <em class="sig-param"><span class="n">bbox_loc</span><span class="o">=</span><span class="default_value">'lower left'</span></em>, <em class="sig-param"><span class="n">filename</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/util/plotting.html#line_plot"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#covsirphy.line_plot" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">covsirphy.</code><code class="sig-name descname">line_plot</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">df</span></em>, <em class="sig-param"><span class="n">title</span></em>, <em class="sig-param"><span class="n">xlabel</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">ylabel</span><span class="o">=</span><span class="default_value">'Cases'</span></em>, <em class="sig-param"><span class="n">v</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">h</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">xlim</span><span class="o">=</span><span class="default_value">(None, None)</span></em>, <em class="sig-param"><span class="n">ylim</span><span class="o">=</span><span class="default_value">(0, None)</span></em>, <em class="sig-param"><span class="n">math_scale</span><span class="o">=</span><span class="default_value">True</span></em>, <em class="sig-param"><span class="n">x_logscale</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">y_logscale</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">y_integer</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">show_legend</span><span class="o">=</span><span class="default_value">True</span></em>, <em class="sig-param"><span class="n">bbox_to_anchor</span><span class="o">=</span><span class="default_value">(1.02, 0)</span></em>, <em class="sig-param"><span class="n">bbox_loc</span><span class="o">=</span><span class="default_value">'lower left'</span></em>, <em class="sig-param"><span class="n">colormap</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">color_dict</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">filename</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/util/plotting.html#line_plot"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#covsirphy.line_plot" title="Permalink to this definition">¶</a></dt>
 <dd><p>Show chronological change of the data.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -7120,6 +7135,8 @@ Index:</p>
 <li><p><strong>show_legend</strong> (<em>bool</em>) – whether show legend or not</p></li>
 <li><p><strong>bbox_to_anchor</strong> (<em>tuple</em><em>(</em><em>int</em><em> or </em><em>float</em><em>, </em><em>int</em><em> or </em><em>float</em><em>)</em>) – distance of legend and plot</p></li>
 <li><p><strong>bbox_loc</strong> (<em>str</em>) – location of legend</p></li>
+<li><p><strong>colormap</strong> (<em>str</em><em>, </em><em>matplotlib colormap object</em><em> or </em><em>None</em>) – colormap, please refer to <a class="reference external" href="https://matplotlib.org/examples/color/colormaps_reference.html">https://matplotlib.org/examples/color/colormaps_reference.html</a></p></li>
+<li><p><strong>color_dict</strong> (<em>dict</em><em>[</em><em>str</em><em>, </em><em>str</em><em>] or </em><em>None</em>) – dictionary of column names (keys) and colors (values)</p></li>
 <li><p><strong>filename</strong> (<em>str</em>) – filename of the figure, or None (show figure)</p></li>
 </ul>
 </dd>

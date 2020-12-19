@@ -92,7 +92,7 @@
 <li class="toctree-l1"><a class="reference internal" href="INSTALLATION.html#dataset-preparation">Dataset preparation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="usage_quickest.html">Usage (quickest version)</a></li>
 <li class="toctree-l1"><a class="reference internal" href="usage_quick.html">Usage (quick version)</a></li>
-<li class="toctree-l1"><a class="reference internal" href="usage_dataset.html">Usage (datasets)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="usage_dataset.html">Usage (details: datasets)</a></li>
 <li class="toctree-l1"><a class="reference internal" href="usage_phases.html">Usage (details: phases)</a></li>
 <li class="toctree-l1"><a class="reference internal" href="usage_theoretical.html">Usage (details: theoretical datasets)</a></li>
 <li class="toctree-l1"><a class="reference internal" href="usage_policy.html">Usage (details: policy measures)</a></li>
@@ -275,13 +275,15 @@ Only when auto-complement mode, complement records if necessary.</p>
 
 <dl class="py method">
 <dt id="covsirphy.analysis.data_handler.DataHandler.records">
-<code class="sig-name descname">records</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">show_figure</span><span class="o">=</span><span class="default_value">True</span></em>, <em class="sig-param"><span class="n">filename</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/analysis/data_handler.html#DataHandler.records"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#covsirphy.analysis.data_handler.DataHandler.records" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">records</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">variables</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">show_figure</span><span class="o">=</span><span class="default_value">True</span></em>, <em class="sig-param"><span class="n">filename</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/analysis/data_handler.html#DataHandler.records"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#covsirphy.analysis.data_handler.DataHandler.records" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return the records as a dataframe.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>show_figure</strong> (<em>bool</em>) – if True, show the records as a line-plot.</p></li>
+<li><p><strong>variables</strong> (<em>list</em><em>[</em><em>str</em><em>] or </em><em>None</em>) – variables to include, Infected/Fatal/Recovered when None</p></li>
 <li><p><strong>filename</strong> (<em>str</em>) – filename of the figure, or None (show figure)</p></li>
+<li><p><strong>kwargs</strong> – the other keyword arguments of covsirphy.line_plot()</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
@@ -291,10 +293,7 @@ Only when auto-complement mode, complement records if necessary.</p>
 </dd>
 <dt>Columns:</dt><dd><ul class="simple">
 <li><p>Date (pd.TimeStamp): Observation date</p></li>
-<li><p>Confirmed (int): the number of confirmed cases</p></li>
-<li><p>Infected (int): the number of currently infected cases</p></li>
-<li><p>Fatal (int): the number of fatal cases</p></li>
-<li><p>Recovered (int): the number of recovered cases (&gt; 0)</p></li>
+<li><p>Columns set by &#64;variables (int)</p></li>
 </ul>
 </dd>
 </dl>
@@ -304,14 +303,17 @@ Only when auto-complement mode, complement records if necessary.</p>
 </dd>
 </dl>
 <p class="rubric">Notes</p>
-<p>Records with Recovered &gt; 0 will be selected.
-If complement was performed by Scenario.complement() or Scenario(auto_complement=True),
-The kind of complement will be added to the title of the figure.</p>
+<ul class="simple">
+<li><p>Records with Recovered &gt; 0 will be selected.</p></li>
+<li><p>If complement was performed by Scenario.complement() or Scenario(auto_complement=True),</p></li>
+</ul>
+<p>The kind of complement will be added to the title of the figure.
+- &#64;variables can be selected from Susceptible/Confirmed/Infected/Fatal/Recovered.</p>
 </dd></dl>
 
 <dl class="py method">
 <dt id="covsirphy.analysis.data_handler.DataHandler.records_diff">
-<code class="sig-name descname">records_diff</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">variables</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">window</span><span class="o">=</span><span class="default_value">7</span></em>, <em class="sig-param"><span class="n">show_figure</span><span class="o">=</span><span class="default_value">True</span></em>, <em class="sig-param"><span class="n">filename</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/analysis/data_handler.html#DataHandler.records_diff"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#covsirphy.analysis.data_handler.DataHandler.records_diff" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">records_diff</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">variables</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">window</span><span class="o">=</span><span class="default_value">7</span></em>, <em class="sig-param"><span class="n">show_figure</span><span class="o">=</span><span class="default_value">True</span></em>, <em class="sig-param"><span class="n">filename</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/analysis/data_handler.html#DataHandler.records_diff"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#covsirphy.analysis.data_handler.DataHandler.records_diff" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return the number of daily new cases (the first discreate difference of records).</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -320,6 +322,7 @@ The kind of complement will be added to the title of the figure.</p>
 <li><p><strong>window</strong> (<em>int</em>) – window of moving average, &gt;= 1</p></li>
 <li><p><strong>show_figure</strong> (<em>bool</em>) – if True, show the records as a line-plot.</p></li>
 <li><p><strong>filename</strong> (<em>str</em>) – filename of the figure, or None (show figure)</p></li>
+<li><p><strong>kwargs</strong> – the other keyword arguments of covsirphy.line_plot()</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>

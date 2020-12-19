@@ -90,7 +90,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../../../INSTALLATION.html#dataset-preparation">Dataset preparation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../usage_quickest.html">Usage (quickest version)</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../usage_quick.html">Usage (quick version)</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../usage_dataset.html">Usage (datasets)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../usage_dataset.html">Usage (details: datasets)</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../usage_phases.html">Usage (details: phases)</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../usage_theoretical.html">Usage (details: theoretical datasets)</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../usage_policy.html">Usage (details: policy measures)</a></li>
@@ -286,13 +286,15 @@
         <span class="p">)</span>
         <span class="k">return</span> <span class="bp">self</span></div>
 
-<div class="viewcode-block" id="DataHandler.records"><a class="viewcode-back" href="../../../covsirphy.analysis.data_handler.html#covsirphy.DataHandler.records">[docs]</a>    <span class="k">def</span> <span class="nf">records</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">show_figure</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">filename</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<div class="viewcode-block" id="DataHandler.records"><a class="viewcode-back" href="../../../covsirphy.analysis.data_handler.html#covsirphy.DataHandler.records">[docs]</a>    <span class="k">def</span> <span class="nf">records</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">variables</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">show_figure</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">filename</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Return the records as a dataframe.</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            show_figure (bool): if True, show the records as a line-plot.</span>
+<span class="sd">            variables (list[str] or None): variables to include, Infected/Fatal/Recovered when None</span>
 <span class="sd">            filename (str): filename of the figure, or None (show figure)</span>
+<span class="sd">            kwargs: the other keyword arguments of covsirphy.line_plot()</span>
 
 <span class="sd">        Returns:</span>
 <span class="sd">            pandas.DataFrame</span>
@@ -300,17 +302,17 @@
 <span class="sd">                    reset index</span>
 <span class="sd">                Columns:</span>
 <span class="sd">                    - Date (pd.TimeStamp): Observation date</span>
-<span class="sd">                    - Confirmed (int): the number of confirmed cases</span>
-<span class="sd">                    - Infected (int): the number of currently infected cases</span>
-<span class="sd">                    - Fatal (int): the number of fatal cases</span>
-<span class="sd">                    - Recovered (int): the number of recovered cases (&gt; 0)</span>
-
+<span class="sd">                    - Columns set by @variables (int)</span>
 <span class="sd">        Notes:</span>
-<span class="sd">            Records with Recovered &gt; 0 will be selected.</span>
-<span class="sd">            If complement was performed by Scenario.complement() or Scenario(auto_complement=True),</span>
+<span class="sd">            - Records with Recovered &gt; 0 will be selected.</span>
+<span class="sd">            - If complement was performed by Scenario.complement() or Scenario(auto_complement=True),</span>
 <span class="sd">            The kind of complement will be added to the title of the figure.</span>
+<span class="sd">            - @variables can be selected from Susceptible/Confirmed/Infected/Fatal/Recovered.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">df</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">record_df</span><span class="o">.</span><span class="n">drop</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">S</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+        <span class="n">variables</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ensure_list</span><span class="p">(</span>
+            <span class="n">variables</span> <span class="ow">or</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">CI</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">F</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">R</span><span class="p">],</span>
+            <span class="n">candidates</span><span class="o">=</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">S</span><span class="p">,</span> <span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">VALUE_COLUMNS</span><span class="p">],</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;variables&quot;</span><span class="p">)</span>
+        <span class="n">df</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">record_df</span><span class="o">.</span><span class="n">loc</span><span class="p">[:,</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">DATE</span><span class="p">,</span> <span class="o">*</span><span class="n">variables</span><span class="p">]]</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">show_figure</span><span class="p">:</span>
             <span class="k">return</span> <span class="n">df</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_complemented</span><span class="p">:</span>
@@ -318,14 +320,10 @@
         <span class="k">else</span><span class="p">:</span>
             <span class="n">title</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">area</span><span class="si">}</span><span class="s2">: Cases over time&quot;</span>
         <span class="n">line_plot</span><span class="p">(</span>
-            <span class="n">df</span><span class="o">.</span><span class="n">set_index</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">DATE</span><span class="p">)</span><span class="o">.</span><span class="n">drop</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">C</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">),</span>
-            <span class="n">title</span><span class="p">,</span>
-            <span class="n">y_integer</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-            <span class="n">filename</span><span class="o">=</span><span class="n">filename</span>
-        <span class="p">)</span>
+            <span class="n">df</span><span class="o">.</span><span class="n">set_index</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">DATE</span><span class="p">),</span> <span class="n">title</span><span class="p">,</span> <span class="n">y_integer</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">filename</span><span class="o">=</span><span class="n">filename</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">df</span></div>
 
-<div class="viewcode-block" id="DataHandler.records_diff"><a class="viewcode-back" href="../../../covsirphy.analysis.data_handler.html#covsirphy.DataHandler.records_diff">[docs]</a>    <span class="k">def</span> <span class="nf">records_diff</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">variables</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">window</span><span class="o">=</span><span class="mi">7</span><span class="p">,</span> <span class="n">show_figure</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">filename</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<div class="viewcode-block" id="DataHandler.records_diff"><a class="viewcode-back" href="../../../covsirphy.analysis.data_handler.html#covsirphy.DataHandler.records_diff">[docs]</a>    <span class="k">def</span> <span class="nf">records_diff</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">variables</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">window</span><span class="o">=</span><span class="mi">7</span><span class="p">,</span> <span class="n">show_figure</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">filename</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Return the number of daily new cases (the first discreate difference of records).</span>
 
@@ -334,6 +332,7 @@
 <span class="sd">            window (int): window of moving average, &gt;= 1</span>
 <span class="sd">            show_figure (bool): if True, show the records as a line-plot.</span>
 <span class="sd">            filename (str): filename of the figure, or None (show figure)</span>
+<span class="sd">            kwargs: the other keyword arguments of covsirphy.line_plot()</span>
 
 <span class="sd">        Returns:</span>
 <span class="sd">            pandas.DataFrame</span>
@@ -361,7 +360,7 @@
             <span class="n">title</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">area</span><span class="si">}</span><span class="s2">: Daily new cases</span><span class="se">\n</span><span class="s2">with </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_complemented</span><span class="si">}</span><span class="s2">&quot;</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="n">title</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">area</span><span class="si">}</span><span class="s2">: Daily new cases&quot;</span>
-        <span class="n">line_plot</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">title</span><span class="p">,</span> <span class="n">y_integer</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">filename</span><span class="o">=</span><span class="n">filename</span><span class="p">)</span>
+        <span class="n">line_plot</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">title</span><span class="p">,</span> <span class="n">y_integer</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">filename</span><span class="o">=</span><span class="n">filename</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">df</span></div></div>
 </pre></div>
 
