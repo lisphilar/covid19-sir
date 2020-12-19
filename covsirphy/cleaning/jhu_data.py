@@ -440,7 +440,7 @@ class JHUData(CleaningBase):
         # Calculate how many days passed to reach the number of cases
         df = df.unstack().reset_index()
         df.columns = ["Variable", "Date", "Number"]
-        df["Days"] = (df[self.DATE] - df[self.DATE].min()).st.days
+        df["Days"] = (df[self.DATE] - df[self.DATE].min()).dt.days
         # Calculate recovery period (mode value because bimodal)
         df = df.pivot_table(values="Days", index="Number", columns="Variable")
         df = df.interpolate(limit_area="inside").dropna().astype(np.int64)
