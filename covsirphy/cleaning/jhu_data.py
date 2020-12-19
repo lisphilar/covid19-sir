@@ -3,7 +3,7 @@
 
 import numpy as np
 import pandas as pd
-from covsirphy.util.error import SubsetNotFoundError
+from covsirphy.util.error import SubsetNotFoundError, deprecate
 from covsirphy.cleaning.cbase import CleaningBase
 from covsirphy.cleaning.country_data import CountryData
 from covsirphy.cleaning.jhu_complement import JHUDataComplementHandler
@@ -258,6 +258,8 @@ class JHUData(CleaningBase):
                 start_date=start_date, end_date=end_date, message="with 'Recovered > 0'") from None
         return df
 
+    @deprecate("JHUData.to_sr()",
+               new="JHUData.records().set_index('Date').[:, ['Recovered', 'Susceptible']]")
     def to_sr(self, country, province=None,
               start_date=None, end_date=None, population=None):
         """
@@ -358,6 +360,7 @@ class JHUData(CleaningBase):
             if not self.subset_complement(country=country, **kwargs)[0].empty]
         return sorted(raw_ok_set | set(comp_ok_list))
 
+    @deprecate("JHUData.calculate_closing_period()")
     def calculate_closing_period(self):
         """
         Calculate mode value of closing period, time from confirmation to get outcome.
