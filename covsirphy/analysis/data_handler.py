@@ -146,7 +146,7 @@ class DataHandler(Term):
         """
         variables = self.ensure_list(
             variables or [self.CI, self.F, self.R],
-            candidates=self.VALUE_COLUMNS, name="variables")
+            candidates=[self.S, *self.VALUE_COLUMNS], name="variables")
         df = self.record_df.loc[:, [self.DATE, *variables]]
         if not show_figure:
             return df
