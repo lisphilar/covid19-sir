@@ -139,9 +139,10 @@ class DataHandler(Term):
                     - Date (pd.TimeStamp): Observation date
                     - Columns set by @variables (int)
         Notes:
-            Records with Recovered > 0 will be selected.
-            If complement was performed by Scenario.complement() or Scenario(auto_complement=True),
+            - Records with Recovered > 0 will be selected.
+            - If complement was performed by Scenario.complement() or Scenario(auto_complement=True),
             The kind of complement will be added to the title of the figure.
+            - @variables can be selected from Susceptible/Confirmed/Infected/Fatal/Recovered.
         """
         variables = self.ensure_list(
             variables or [self.CI, self.F, self.R],
