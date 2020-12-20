@@ -51,6 +51,16 @@ def main():
     pcr_data.positive_rate(
         country="Greece",
         filename=output_dir.joinpath("pcr_positive_rate_Greece.jpg"))
+    # Load vaccine dataset
+    print("<The number of vaccinations>")
+    vaccine_data = data_loader.vaccine()
+    print(vaccine_data.citation)
+    vaccine_df = vaccine_data.cleaned()
+    vaccine_df.to_csv(
+        output_dir.joinpath("vaccine_cleaned.csv"), index=False)
+    subset_df = vaccine_data.subset(country="Canada")
+    subset_df.to_csv(
+        output_dir.joinpath("vaccine_subset_canada.csv"), index=False)
 
 
 if __name__ == "__main__":
