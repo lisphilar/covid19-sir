@@ -1,11 +1,12 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
+from covsirphy.util.error import SubsetNotFoundError
 import pytest
 import warnings
 import pandas as pd
 from covsirphy import CleaningBase, SIRF
-from covsirphy import LinelistData, ExampleData
+from covsirphy import LinelistData, ExampleData, VaccineData
 from covsirphy import Term, CountryData
 from covsirphy import Word, Population
 
@@ -116,3 +117,24 @@ class TestCountryData(object):
             province=None)
         df = country_data.cleaned()
         assert set(df.columns) == set(Term.COLUMNS)
+
+
+class TestVaccineData(object):
+    def test_cleaning(self, vaccine_data):
+        df = vaccine_data.cleaned()
+        assert set(VaccineData.VAC_COLS).issubset(df.columns)
+
+    @pytest.mark.parametrize("country", ["Canada"])
+    def test_subset(self, vaccine_data, country):
+        df = vaccine_data.subset(country=country)
+        assert set(df.columns) == set([Term.DATE, Term.VAC])
+        clean_df = vaccine_data.cleaned()
+        product = clean_df.loc[clean_df.index[0], Term.PRODUCT]
+        vaccine_data.subset(
+            country=country, product=product, start_date="15Dec2020", end_date="18Dec2020")
+        with pytest.raises(SubsetNotFoundError):
+            vaccine_data.subset(country=country, end_date="01May2020")
+
+    def test_total(self, vaccine_data):
+        df = vaccine_data.total()
+        assert set(df.columns) == set([Term.DATE, Term.VAC])

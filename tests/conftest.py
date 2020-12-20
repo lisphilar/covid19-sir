@@ -38,3 +38,8 @@ def linelist_data(data_loader):
 @pytest.fixture(scope="session")
 def pcr_data(data_loader):
     return data_loader.pcr()
+
+
+@pytest.fixture(scope="session")
+def vaccine_data(data_loader):
+    return data_loader.vaccine()

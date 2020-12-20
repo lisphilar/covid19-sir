@@ -7,7 +7,8 @@ import pytest
 import pandas as pd
 from covsirphy import SubsetNotFoundError, PCRIncorrectPreconditionError
 from covsirphy import COVID19DataHub, DataLoader, LinelistData
-from covsirphy import Term, JHUData, CountryData, PopulationData, OxCGRTData, PCRData
+from covsirphy import Term, JHUData, CountryData, PopulationData
+from covsirphy import OxCGRTData, PCRData, VaccineData
 
 
 class TestCOVID19DataHub(object):
@@ -32,7 +33,7 @@ class TestDataLoader(object):
             DataLoader(directory=0)
 
     def test_dataloader(self, jhu_data, population_data, oxcgrt_data,
-                        japan_data, linelist_data, pcr_data):
+                        japan_data, linelist_data, pcr_data, vaccine_data):
         # List of primary sources of COVID-19 Data Hub
         data_loader = DataLoader()
         assert data_loader.covid19dh_citation
@@ -43,10 +44,12 @@ class TestDataLoader(object):
         assert isinstance(japan_data, CountryData)
         assert isinstance(linelist_data, LinelistData)
         assert isinstance(pcr_data, PCRData)
+        assert isinstance(vaccine_data, VaccineData)
         # Local file
         data_loader.jhu(local_file="input/covid19dh.csv")
         data_loader.population(local_file="input/covid19dh.csv")
         data_loader.oxcgrt(local_file="input/covid19dh.csv")
+        data_loader.pcr(local_file="input/covid19dh.csv")
 
 
 class TestJHUData(object):
