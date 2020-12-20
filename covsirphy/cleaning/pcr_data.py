@@ -190,6 +190,10 @@ class PCRData(CleaningBase):
         df[self.DATE] = pd.to_datetime(df[self.DATE])
         # Save the dataframe as the cleaned dataset
         self._cleaned_df = df.reset_index(drop=True)
+        # Update citation
+        self._citation += "\nHasell, J., Mathieu, E., Beltekian, D. et al." \
+            " A cross-country database of COVID-19 testing. Sci Data 7, 345 (2020)." \
+            " https://doi.org/10.1038/s41597-020-00688-8"
         return self
 
     def replace(self, country_data):
