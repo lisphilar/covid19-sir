@@ -25,6 +25,8 @@ class Term(object):
     E = "Exposed"
     W = "Waiting"
     TESTS = "Tests"
+    VAC = "Vaccinations"
+    PRODUCT = "Product"
     # Column names
     DATE = "Date"
     START = "Start"
