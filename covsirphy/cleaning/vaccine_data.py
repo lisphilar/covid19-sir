@@ -129,8 +129,7 @@ class VaccineData(CleaningBase):
         # Resampling
         df = df.set_index(self.DATE).resample("D").sum()
         # Fill in the blanks
-        df[self.VAC] = df[self.VAC].replace(
-            0, None).fillna(method="ffill").fillna(0)
+        df[self.VAC] = df[self.VAC].replace(0, None).interpolate().fillna(0)
         # Check records were found
         if df.empty:
             raise SubsetNotFoundError(
