@@ -11,6 +11,7 @@ from covsirphy.cleaning.population import PopulationData
 from covsirphy.cleaning.covid19datahub import COVID19DataHub
 from covsirphy.cleaning.linelist import LinelistData
 from covsirphy.cleaning.pcr_data import PCRData
+from covsirphy.cleaning.vaccine_data import VaccineData
 
 
 class DataLoader(Term):
@@ -282,3 +283,20 @@ class DataLoader(Term):
         japan_data = self.japan()
         pcr_data.replace(japan_data)
         return pcr_data
+
+    def vaccine(self, basename="ourworldindata_vaccine.csv", verbose=1):
+        """
+        Load the dataset regarding vaccination.
+        https://github.com/owid/covid-19-data/tree/master/public/data
+        https://ourworldindata.org/coronavirus
+
+        Args:
+            basename (str): basename of the file to save the data
+            verbose (int): level of verbosity
+
+        Returns:
+            covsirphy.VaccineData: dataset regarding vaccines
+        """
+        filename = self.dir_path.joinpath(basename)
+        force = self._download_necessity(filename=filename)
+        return VaccineData(filename=filename, force=force, verbose=verbose)

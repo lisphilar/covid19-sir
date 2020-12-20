@@ -31,6 +31,7 @@ from covsirphy.cleaning.oxcgrt import OxCGRTData
 from covsirphy.cleaning.pcr_data import PCRData
 from covsirphy.cleaning.covid19datahub import COVID19DataHub
 from covsirphy.cleaning.linelist import LinelistData
+from covsirphy.cleaning.vaccine_data import VaccineData
 from covsirphy.cleaning.dataloader import DataLoader
 # ode
 from covsirphy.ode.mbase import ModelBase
@@ -70,7 +71,7 @@ __all__ = [
     "ODESimulator", "ChangeFinder", "DataHandler",
     "PhaseSeries", "PhaseUnit", "MPEstimator",
     "Term", "CleaningBase", "DataLoader", "COVID19DataHub",
-    "JHUData", "CountryData", "PopulationData", "OxCGRTData",
+    "JHUData", "CountryData", "PopulationData", "OxCGRTData", "VaccineData",
     "LinelistData", "PCRData", "JapanData", "JHUDataComplementHandler",
     "ModelBase", "SIR", "SIRD", "SIRF", "SIRFV", "SEWIRF",
     "Estimator", "Trend", "Optimizer",

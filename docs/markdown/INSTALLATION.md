@@ -19,6 +19,7 @@ With the following codes,  we can download the latest recommended datasets and s
 
 ```Python
 import covsirphy as cs
+cs.__version__
 # Create DataLoader instance
 data_loader = cs.DataLoader("input")
 # The number of cases (JHU style)
@@ -31,6 +32,8 @@ population_data = data_loader.population()
 oxcgrt_data = data_loader.oxcgrt()
 # The number of tests
 pcr_data = data_loader.pcr()
+# The number of vaccines (will be prepared in 2.14.0)
+vaccine_data = data_loader.vaccine()
 ```
 
 The downloaded datasets were retrieved from the following sites.
@@ -52,6 +55,7 @@ Xu, B., Gutierrez, B., Mekaru, S. et al. Epidemiological data from the COVID-19 
 Citation: Hasell, J., Mathieu, E., Beltekian, D. et al. A cross-country database of COVID-19 testing. Sci Data 7, 345 (2020). https://doi.org/10.1038/s41597-020-00688-8
 
 - The number of tests
+- The number of vaccinations
 
 ### [Datasets for CovsirPhy](https://github.com/lisphilar/covid19-sir/tree/master/data)
 Lisphilar (2020), GitHub repository, COVID-19 dataset in Japan.  
