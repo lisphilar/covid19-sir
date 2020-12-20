@@ -51,19 +51,21 @@ class CleaningBase(Term):
         self._raw = self.ensure_dataframe(dataframe, name="dataframe")
 
     @staticmethod
-    def load(urlpath, header=0, columns=None):
+    def load(urlpath, header=0, columns=None, dtype="object"):
         """
         Load a local/remote file.
 
         Args:
             urlpath (str or pathlib.Path): filename or URL
             header (int): row number of the header
+            columns (list[str]): columns to use
+            dtype (str or dict[str]): data type for the dataframe or specified columns
 
         Returns:
             pd.DataFrame: raw dataset
         """
         kwargs = {
-            "low_memory": False, "dtype": "object", "header": header, "names": columns}
+            "low_memory": False, "dtype": dtype, "header": header, "usecols": columns}
         try:
             return dd.read_csv(urlpath, blocksize=None, **kwargs).compute()
         except (FileNotFoundError, UnicodeDecodeError, pd.errors.ParserError):
