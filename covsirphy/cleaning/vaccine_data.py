@@ -150,5 +150,8 @@ class VaccineData(CleaningBase):
                     - Vaccinations (int): the number of vaccinations
         """
         df = self._cleaned_df.copy()
+        # Remove duplication
+        df = df.loc[df[self.COUNTRY] == "United Kingdom"]
+        # Resampling
         df = df.set_index(self.DATE).resample("D").sum()
         return df.reset_index()
