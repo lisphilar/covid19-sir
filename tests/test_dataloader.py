@@ -135,6 +135,10 @@ class TestVaccineData(object):
         with pytest.raises(SubsetNotFoundError):
             vaccine_data.subset(country=country, end_date="01May2020")
 
+    @pytest.mark.parametrize("country", ["GBR"])
+    def test_records(self, vaccine_data, country):
+        vaccine_data.records(country=country)
+
     def test_total(self, vaccine_data):
         df = vaccine_data.total()
         assert set(df.columns) == set([Term.DATE, Term.VAC])
