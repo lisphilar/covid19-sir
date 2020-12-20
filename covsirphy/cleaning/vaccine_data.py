@@ -127,7 +127,7 @@ class VaccineData(CleaningBase):
         if end_date is not None:
             df = df.loc[df[self.DATE] <= self.date_obj(end_date)]
         # Resampling
-        df = df.set_index(self.DATE).resample("D").sum()
+        df = df.set_index(self.DATE).resample("D").sum().reset_index()
         # Fill in the blanks
         df[self.VAC] = df[self.VAC].replace(0, None).interpolate().fillna(0)
         # Check records were found
@@ -135,7 +135,7 @@ class VaccineData(CleaningBase):
             raise SubsetNotFoundError(
                 country=country, country_alias=country_alias, province=product,
                 start_date=start_date, end_date=end_date)
-        return df.reset_index()
+        return df
 
     def total(self):
         """
