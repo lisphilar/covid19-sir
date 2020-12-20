@@ -44,15 +44,13 @@ def main():
     # Load PCR test dataset
     print("<The number of PCR tests>")
     pcr_data = data_loader.pcr()
-    print(oxcgrt_data.citation)
+    print(pcr_data.citation)
     pcr_df = pcr_data.cleaned()
     pcr_df.to_csv(
-        output_dir.joinpath("pcr_cleaned.csv"), index=False
-    )
+        output_dir.joinpath("pcr_cleaned.csv"), index=False)
     pcr_data.positive_rate(
         country="Greece",
-        filename=output_dir.joinpath("pcr_positive_rate_Greece.jpg")
-    )
+        filename=output_dir.joinpath("pcr_positive_rate_Greece.jpg"))
 
 
 if __name__ == "__main__":

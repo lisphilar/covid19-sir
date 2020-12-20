@@ -31,7 +31,8 @@ class TestDataLoader(object):
         with pytest.raises(TypeError):
             DataLoader(directory=0)
 
-    def test_dataloader(self, jhu_data, population_data, oxcgrt_data, japan_data, linelist_data):
+    def test_dataloader(self, jhu_data, population_data, oxcgrt_data,
+                        japan_data, linelist_data, pcr_data):
         # List of primary sources of COVID-19 Data Hub
         data_loader = DataLoader()
         assert data_loader.covid19dh_citation
@@ -41,6 +42,7 @@ class TestDataLoader(object):
         assert isinstance(oxcgrt_data, OxCGRTData)
         assert isinstance(japan_data, CountryData)
         assert isinstance(linelist_data, LinelistData)
+        assert isinstance(pcr_data, PCRData)
         # Local file
         data_loader.jhu(local_file="input/covid19dh.csv")
         data_loader.population(local_file="input/covid19dh.csv")
@@ -223,6 +225,10 @@ class TestPCRData(object):
     def test_from_dataframe(self, pcr_data):
         df = pcr_data.cleaned()
         assert isinstance(PCRData.from_dataframe(df), PCRData)
+
+    def test_update_with_ourworldindata(self, pcr_data):
+        pcr_data.update_with_ourworldindata(
+            filename="input/ourworldindata_pcr.csv")
 
     def test_subset(self, pcr_data):
         with pytest.raises(SubsetNotFoundError):

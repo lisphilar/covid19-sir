@@ -48,6 +48,11 @@ Xu, B., Gutierrez, B., Mekaru, S. et al. Epidemiological data from the COVID-19 
 
 - Linelist of case reports
 
+### [Our World In Data](https://github.com/owid/covid-19-data/tree/master/public/data)
+Citation: Hasell, J., Mathieu, E., Beltekian, D. et al. A cross-country database of COVID-19 testing. Sci Data 7, 345 (2020). https://doi.org/10.1038/s41597-020-00688-8
+
+- The number of tests
+
 ### [Datasets for CovsirPhy](https://github.com/lisphilar/covid19-sir/tree/master/data)
 Lisphilar (2020), GitHub repository, COVID-19 dataset in Japan.  
 

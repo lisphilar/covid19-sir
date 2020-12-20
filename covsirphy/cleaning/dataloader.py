@@ -250,14 +250,16 @@ class DataLoader(Term):
                 filename=filename, force=force, verbose=verbose)
         return self._linelist_data
 
-    def pcr(self, basename="covid19dh.csv", local_file=None, verbose=1):
+    def pcr(self, basename="covid19dh.csv", local_file=None,
+            basename_owid="ourworldindata_pcr.csv", verbose=1):
         """
         Load the dataset regarding the number of tests and confirmed cases,
         using local CSV file or COVID-19 Data Hub.
 
         Args:
-            basename (str or None): basename of the file to save the data
+            basename (str or None): basename of the file to save "COVID-19 Data Hub" data
             local_file (str or None): if not None, load the data from this file
+            basename_owid (str): basename of the file to save "Our World In Data" data
             verbose (int): level of verbosity
 
         Notes:
@@ -273,6 +275,9 @@ class DataLoader(Term):
         # Retrieve JHU data from COVID-19 Data Hub
         pcr_data = self._covid19dh(
             name="pcr", basename=basename, verbose=verbose)
+        # Update the values using "Our World In Data" dataset
+        owid_filename = self.dir_path.joinpath(basename_owid)
+        pcr_data.update_with_ourworldindata(filename=owid_filename)
         # Replace Japan dataset with the government-announced data
         japan_data = self.japan()
         pcr_data.replace(japan_data)

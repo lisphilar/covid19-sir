@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
+from pathlib import Path
 import numpy as np
 import pandas as pd
 from dask import dataframe as dd
@@ -40,7 +41,8 @@ class PCRData(CleaningBase):
             ).compute()
             self._cleaned_df = self._cleaning()
         self.interval = self.ensure_natural_int(interval, name="interval")
-        self.min_pcr_tests = self.ensure_natural_int(min_pcr_tests, name="min_pcr_tests")
+        self.min_pcr_tests = self.ensure_natural_int(
+            min_pcr_tests, name="min_pcr_tests")
         self._citation = citation or ""
         # To avoid "imported but unused"
         self.__swifter = swifter
@@ -136,6 +138,63 @@ class PCRData(CleaningBase):
         instance._cleaned_df = cls.ensure_dataframe(
             dataframe, name="dataframe", columns=cls.PCR_COLUMNS)
         return instance
+
+    def _download_ourworldindata(self, filename):
+        """
+        Download the dataset (ISO code/date/the number of tests) from "Our World In Data" site.
+        https://github.com/owid/covid-19-data/tree/master/public/data
+        https://ourworldindata.org/coronavirus
+
+        Args:
+            filename (str): CSV filename to save the datasetretrieved from "Our World In Data"
+        """
+        url = "https://covid.ourworldindata.org/data/testing/covid-testing-all-observations.csv"
+        col_dict = {
+            "ISO code": self.ISO3,
+            "Date": self.DATE,
+            "Cumulative total": self.TESTS
+        }
+        # Download the dataset
+        df = self.load(url, columns=list(col_dict))
+        # Data cleaning
+        df = df.rename(col_dict, axis=1)
+        df[self.TESTS] = pd.to_numeric(df[self.TESTS], errors="coerce")
+        df[self.TESTS] = df[self.TESTS].fillna(method="ffill").astype(np.int64)
+        # Drop duplicated records
+        df = df.drop_duplicates(subset=[self.ISO3, self.DATE])
+        # Save as CSV file
+        df.to_csv(filename, index=False)
+        return df
+
+    def update_with_ourworldindata(self, filename, force=False):
+        """
+        Update the cleaned dataset using the data retrieved from "Our World In Data" site.
+        https://github.com/owid/covid-19-data/tree/master/public/data
+        https://ourworldindata.org/coronavirus
+
+        Args:
+            filename (str): CSV filename to save the datasetretrieved from "Our World In Data"
+            force (bool): if True, always download the dataset from "Our World In Data"
+        """
+        # Retrieve dataset from "Our World In Data" if necessary
+        Path(filename).parent.mkdir(exist_ok=True, parents=True)
+        if Path(filename).exists() and not force:
+            new_df = self.load(filename, dtype={self.TESTS: np.int64})
+        else:
+            new_df = self._download_ourworldindata(filename)
+        # Update the cleaned dataset
+        df = self._cleaned_df.copy()
+        df.index = df[self.ISO3].str.cat(df[self.DATE].astype(str), sep="_")
+        new_df.index = new_df[self.ISO3].str.cat(new_df[self.DATE], sep="_")
+        df.update(new_df)
+        df[self.DATE] = pd.to_datetime(df[self.DATE])
+        # Save the dataframe as the cleaned dataset
+        self._cleaned_df = df.reset_index(drop=True)
+        # Update citation
+        self._citation += "\nHasell, J., Mathieu, E., Beltekian, D. et al." \
+            " A cross-country database of COVID-19 testing. Sci Data 7, 345 (2020)." \
+            " https://doi.org/10.1038/s41597-020-00688-8"
+        return self
 
     def replace(self, country_data):
         """
