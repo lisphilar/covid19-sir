@@ -9,8 +9,18 @@ covsirphy.simulation package
 Submodules
 ----------
 
-.. toctree::
-   :maxdepth: 4
+covsirphy.simulation.estimator module
+-------------------------------------
 
-   covsirphy.simulation.estimator
-   covsirphy.simulation.simulator
+.. automodule:: covsirphy.simulation.estimator
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+covsirphy.simulation.simulator module
+-------------------------------------
+
+.. automodule:: covsirphy.simulation.simulator
+   :members:
+   :undoc-members:
+   :show-inheritance:

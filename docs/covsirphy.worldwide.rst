@@ -9,7 +9,10 @@ covsirphy.worldwide package
 Submodules
 ----------
 
-.. toctree::
-   :maxdepth: 4
+covsirphy.worldwide.policy module
+---------------------------------
 
-   covsirphy.worldwide.policy
+.. automodule:: covsirphy.worldwide.policy
+   :members:
+   :undoc-members:
+   :show-inheritance:

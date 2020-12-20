@@ -39,7 +39,7 @@
     
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="&lt;no title&gt;" href="covsirphy.analysis.data_handler.html" />
+    <link rel="next" title="covsirphy.cleaning package" href="covsirphy.cleaning.html" />
     <link rel="prev" title="covsirphy package" href="covsirphy.html" /> 
 </head>
 
@@ -100,6 +100,11 @@
 <li class="toctree-l2 current"><a class="reference internal" href="covsirphy.html#subpackages">Subpackages</a><ul class="current">
 <li class="toctree-l3 current"><a class="current reference internal" href="#">covsirphy.analysis package</a><ul>
 <li class="toctree-l4"><a class="reference internal" href="#submodules">Submodules</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#module-covsirphy.analysis.data_handler">covsirphy.analysis.data_handler module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#module-covsirphy.analysis.example_data">covsirphy.analysis.example_data module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#module-covsirphy.analysis.model_validator">covsirphy.analysis.model_validator module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#module-covsirphy.analysis.param_tracker">covsirphy.analysis.param_tracker module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#module-covsirphy.analysis.scenario">covsirphy.analysis.scenario module</a></li>
 </ul>
 </li>
 <li class="toctree-l3"><a class="reference internal" href="covsirphy.cleaning.html">covsirphy.cleaning package</a></li>
@@ -211,8 +216,1352 @@
 <span id="covsirphy-analysis-package"></span><h1>covsirphy.analysis package<a class="headerlink" href="#module-covsirphy.analysis" title="Permalink to this headline">¶</a></h1>
 <div class="section" id="submodules">
 <h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this headline">¶</a></h2>
-<div class="toctree-wrapper compound">
 </div>
+<div class="section" id="module-covsirphy.analysis.data_handler">
+<span id="covsirphy-analysis-data-handler-module"></span><h2>covsirphy.analysis.data_handler module<a class="headerlink" href="#module-covsirphy.analysis.data_handler" title="Permalink to this headline">¶</a></h2>
+<dl class="py class">
+<dt id="covsirphy.analysis.data_handler.DataHandler">
+<em class="property">class </em><code class="sig-name descname">DataHandler</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">jhu_data</span></em>, <em class="sig-param"><span class="n">population_data</span></em>, <em class="sig-param"><span class="n">country</span></em>, <em class="sig-param"><span class="n">province</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">auto_complement</span><span class="o">=</span><span class="default_value">True</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/analysis/data_handler.html#DataHandler"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#covsirphy.analysis.data_handler.DataHandler" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="covsirphy.cleaning.term.html#covsirphy.cleaning.term.Term" title="covsirphy.cleaning.term.Term"><code class="xref py py-class docutils literal notranslate"><span class="pre">covsirphy.cleaning.term.Term</span></code></a></p>
+<p>Data handler for scenario analysis.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>jhu_data</strong> (<a class="reference internal" href="covsirphy.html#covsirphy.JHUData" title="covsirphy.JHUData"><em>covsirphy.JHUData</em></a>) – object of records</p></li>
+<li><p><strong>population_data</strong> (<a class="reference internal" href="covsirphy.html#covsirphy.PopulationData" title="covsirphy.PopulationData"><em>covsirphy.PopulationData</em></a>) – PopulationData object</p></li>
+<li><p><strong>country</strong> (<em>str</em>) – country name</p></li>
+<li><p><strong>province</strong> (<em>str</em><em> or </em><em>None</em>) – province name</p></li>
+<li><p><strong>auto_complement</strong> (<em>bool</em>) – if True and necessary, the number of cases will be complemented</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py method">
+<dt id="covsirphy.analysis.data_handler.DataHandler.complement">
+<code class="sig-name descname">complement</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">interval</span><span class="o">=</span><span class="default_value">2</span></em>, <em class="sig-param"><span class="n">max_ignored</span><span class="o">=</span><span class="default_value">100</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/analysis/data_handler.html#DataHandler.complement"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#covsirphy.analysis.data_handler.DataHandler.complement" title="Permalink to this definition">¶</a></dt>
+<dd><p>Complement the number of recovered cases, if necessary.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>interval</strong> (<em>int</em>) – expected update interval of the number of recovered cases [days]</p></li>
+<li><p><strong>max_ignored</strong> (<em>int</em>) – Max number of recovered cases to be ignored [cases]</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>self</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference internal" href="covsirphy.html#covsirphy.Scenario" title="covsirphy.Scenario">covsirphy.Scenario</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="covsirphy.analysis.data_handler.DataHandler.complement_reverse">
+<code class="sig-name descname">complement_reverse</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/analysis/data_handler.html#DataHandler.complement_reverse"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#covsirphy.analysis.data_handler.DataHandler.complement_reverse" title="Permalink to this definition">¶</a></dt>
+<dd><p>Restore the raw records. Reverse method of covsirphy.Scenario.complement().</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>self</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><a class="reference internal" href="covsirphy.html#covsirphy.Scenario" title="covsirphy.Scenario">covsirphy.Scenario</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="covsirphy.analysis.data_handler.DataHandler.first_date">
+<em class="property">property </em><code class="sig-name descname">first_date</code><a class="headerlink" href="#covsirphy.analysis.data_handler.DataHandler.first_date" title="Permalink to this definition">¶</a></dt>
+<dd><p>the first date of the records</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="covsirphy.analysis.data_handler.DataHandler.init_records">
+<code class="sig-name descname">init_records</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/analysis/data_handler.html#DataHandler.init_records"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#covsirphy.analysis.data_handler.DataHandler.init_records" title="Permalink to this definition">¶</a></dt>
+<dd><p>Set records.
+Only when auto-complement mode, complement records if necessary.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="covsirphy.analysis.data_handler.DataHandler.last_date">
+<em class="property">property </em><code class="sig-name descname">last_date</code><a class="headerlink" href="#covsirphy.analysis.data_handler.DataHandler.last_date" title="Permalink to this definition">¶</a></dt>
+<dd><p>the last date of the records</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="covsirphy.analysis.data_handler.DataHandler.records">
+<code class="sig-name descname">records</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">variables</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">show_figure</span><span class="o">=</span><span class="default_value">True</span></em>, <em class="sig-param"><span class="n">filename</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/analysis/data_handler.html#DataHandler.records"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#covsirphy.analysis.data_handler.DataHandler.records" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the records as a dataframe.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>show_figure</strong> (<em>bool</em>) – if True, show the records as a line-plot.</p></li>
+<li><p><strong>variables</strong> (<em>list</em><em>[</em><em>str</em><em>] or </em><em>None</em>) – variables to include, Infected/Fatal/Recovered when None</p></li>
+<li><p><strong>filename</strong> (<em>str</em>) – filename of the figure, or None (show figure)</p></li>
+<li><p><strong>kwargs</strong> – the other keyword arguments of covsirphy.line_plot()</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><dl class="simple">
+<dt>pandas.DataFrame</dt><dd><dl class="simple">
+<dt>Index:</dt><dd><p>reset index</p>
+</dd>
+<dt>Columns:</dt><dd><ul class="simple">
+<li><p>Date (pd.TimeStamp): Observation date</p></li>
+<li><p>Columns set by &#64;variables (int)</p></li>
+</ul>
+</dd>
+</dl>
+</dd>
+</dl>
+</p>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<ul class="simple">
+<li><p>Records with Recovered &gt; 0 will be selected.</p></li>
+<li><p>If complement was performed by Scenario.complement() or Scenario(auto_complement=True),</p></li>
+</ul>
+<p>The kind of complement will be added to the title of the figure.
+- &#64;variables can be selected from Susceptible/Confirmed/Infected/Fatal/Recovered.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="covsirphy.analysis.data_handler.DataHandler.records_diff">
+<code class="sig-name descname">records_diff</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">variables</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">window</span><span class="o">=</span><span class="default_value">7</span></em>, <em class="sig-param"><span class="n">show_figure</span><span class="o">=</span><span class="default_value">True</span></em>, <em class="sig-param"><span class="n">filename</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/analysis/data_handler.html#DataHandler.records_diff"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#covsirphy.analysis.data_handler.DataHandler.records_diff" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the number of daily new cases (the first discreate difference of records).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>variables</strong> (<em>str</em><em> or </em><em>None</em>) – variables to show</p></li>
+<li><p><strong>window</strong> (<em>int</em>) – window of moving average, &gt;= 1</p></li>
+<li><p><strong>show_figure</strong> (<em>bool</em>) – if True, show the records as a line-plot.</p></li>
+<li><p><strong>filename</strong> (<em>str</em>) – filename of the figure, or None (show figure)</p></li>
+<li><p><strong>kwargs</strong> – the other keyword arguments of covsirphy.line_plot()</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><dl class="simple">
+<dt>pandas.DataFrame</dt><dd><dl class="simple">
+<dt>Index:</dt><dd><ul class="simple">
+<li><p>Date (pd.TimeStamp): Observation date</p></li>
+</ul>
+</dd>
+<dt>Columns:</dt><dd><ul class="simple">
+<li><p>Confirmed (int): daily new cases of Confirmed, if calculated</p></li>
+<li><p>Infected (int):  daily new cases of Infected, if calculated</p></li>
+<li><p>Fatal (int):  daily new cases of Fatal, if calculated</p></li>
+<li><p>Recovered (int):  daily new cases of Recovered, if calculated</p></li>
+</ul>
+</dd>
+</dl>
+</dd>
+</dl>
+</p>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<p>&#64;variables will be selected from Confirmed, Infected, Fatal and Recovered.
+If None was set as &#64;variables, [“Confirmed”, “Fatal”, “Recovered”] will be used.</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-covsirphy.analysis.example_data">
+<span id="covsirphy-analysis-example-data-module"></span><h2>covsirphy.analysis.example_data module<a class="headerlink" href="#module-covsirphy.analysis.example_data" title="Permalink to this headline">¶</a></h2>
+<dl class="py class">
+<dt id="covsirphy.analysis.example_data.ExampleData">
+<em class="property">class </em><code class="sig-name descname">ExampleData</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">clean_df</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">tau</span><span class="o">=</span><span class="default_value">1440</span></em>, <em class="sig-param"><span class="n">start_date</span><span class="o">=</span><span class="default_value">'22Jan2020'</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/analysis/example_data.html#ExampleData"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#covsirphy.analysis.example_data.ExampleData" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="covsirphy.cleaning.jhu_data.html#covsirphy.cleaning.jhu_data.JHUData" title="covsirphy.cleaning.jhu_data.JHUData"><code class="xref py py-class docutils literal notranslate"><span class="pre">covsirphy.cleaning.jhu_data.JHUData</span></code></a></p>
+<p>Example dataset as a child class of JHUData.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>clean_df</strong> (<em>pandas.DataFrame</em><em> or </em><em>None</em>) – <p>cleaned data</p>
+<dl class="simple">
+<dt>Index:</dt><dd><ul>
+<li><p>reset index</p></li>
+</ul>
+</dd>
+<dt>Columns:</dt><dd><ul>
+<li><p>Date (pd.TimeStamp): Observation date</p></li>
+<li><p>Country (pandas.Category): country/region name</p></li>
+<li><p>Province (pandas.Category): province/prefecture/sstate name</p></li>
+<li><p>Confirmed (int): the number of confirmed cases</p></li>
+<li><p>Infected (int): the number of currently infected cases</p></li>
+<li><p>Fatal (int): the number of fatal cases</p></li>
+<li><p>Recovered (int): the number of recovered cases</p></li>
+</ul>
+</dd>
+</dl>
+</p></li>
+<li><p><strong>tau</strong> (<em>int</em>) – tau value [min]</p></li>
+<li><p><strong>start_date</strong> (<em>str</em>) – start date, like 22Jan2020</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py method">
+<dt id="covsirphy.analysis.example_data.ExampleData.add">
+<code class="sig-name descname">add</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">model</span></em>, <em class="sig-param"><span class="n">country</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">province</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/analysis/example_data.html#ExampleData.add"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#covsirphy.analysis.example_data.ExampleData.add" title="Permalink to this definition">¶</a></dt>
+<dd><p>Add example data.
+If the country has been registered,
+the start date will be the next data of the registered records.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>model</strong> (<em>cs.ModelBase</em>) – the first ODE model</p></li>
+<li><p><strong>country</strong> (<em>str</em><em> or </em><em>None</em>) – country name</p></li>
+<li><p><strong>province</strong> (<em>str</em><em> or </em><em>None</em>) – province name</p></li>
+<li><p><strong>kwargs</strong> – the other keyword arguments of ODESimulator.add()</p></li>
+</ul>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<p>If country is None, the name of the model will be used.
+If province is None, ‘-‘ will be used.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="covsirphy.analysis.example_data.ExampleData.non_dim">
+<code class="sig-name descname">non_dim</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">model</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">country</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">province</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/analysis/example_data.html#ExampleData.non_dim"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#covsirphy.analysis.example_data.ExampleData.non_dim" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return non-dimensional data.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>model</strong> (<em>cs.ModelBase</em><em> or </em><em>None</em>) – the first ODE model</p></li>
+<li><p><strong>country</strong> (<em>str</em><em> or </em><em>None</em>) – country name</p></li>
+<li><p><strong>province</strong> (<em>str</em><em> or </em><em>None</em>) – province name</p></li>
+</ul>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<p>If country is None, the name of the model will be used.
+If province is None, ‘-‘ will be used.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="covsirphy.analysis.example_data.ExampleData.records">
+<code class="sig-name descname">records</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/analysis/example_data.html#ExampleData.records"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#covsirphy.analysis.example_data.ExampleData.records" title="Permalink to this definition">¶</a></dt>
+<dd><p>This is the same as ExampleData.subset().
+Complement will not be done.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="covsirphy.analysis.example_data.ExampleData.specialized">
+<code class="sig-name descname">specialized</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">model</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">country</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">province</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/analysis/example_data.html#ExampleData.specialized"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#covsirphy.analysis.example_data.ExampleData.specialized" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return dimensional records with model variables.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>model</strong> (<em>cs.ModelBase</em><em> or </em><em>None</em>) – the first ODE model</p></li>
+<li><p><strong>country</strong> (<em>str</em><em> or </em><em>None</em>) – country name</p></li>
+<li><p><strong>province</strong> (<em>str</em><em> or </em><em>None</em>) – province name</p></li>
+</ul>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<p>If country is None, the name of the model will be used.
+If province is None, ‘-‘ will be used.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="covsirphy.analysis.example_data.ExampleData.subset">
+<code class="sig-name descname">subset</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">model</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">country</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">province</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/analysis/example_data.html#ExampleData.subset"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#covsirphy.analysis.example_data.ExampleData.subset" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the subset of dataset.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>model</strong> (<em>cs.ModelBase</em><em> or </em><em>None</em>) – the first ODE model</p></li>
+<li><p><strong>country</strong> (<em>str</em><em> or </em><em>None</em>) – country name</p></li>
+<li><p><strong>province</strong> (<em>str</em><em> or </em><em>None</em>) – province name</p></li>
+<li><p><strong>kwargs</strong> – other keyword arguments of JHUData.subset()</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><dl class="simple">
+<dt>(pandas.DataFrame)</dt><dd><dl class="simple">
+<dt>Index:</dt><dd><p>reset index</p>
+</dd>
+<dt>Columns:</dt><dd><ul class="simple">
+<li><p>Date (pd.TimeStamp): Observation date</p></li>
+<li><p>Confirmed (int): the number of confirmed cases</p></li>
+<li><p>Infected (int): the number of currently infected cases</p></li>
+<li><p>Fatal (int): the number of fatal cases</p></li>
+<li><p>Recovered (int): the number of recovered cases (&gt; 0)</p></li>
+<li><p>Susceptible (int): the number of susceptible cases, if calculated</p></li>
+</ul>
+</dd>
+</dl>
+</dd>
+</dl>
+</p>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<p>If country is None, the name of the model will be used.
+If province is None, ‘-‘ will be used.
+If &#64;population is not None, the number of susceptible cases will be calculated.
+Records with Recovered &gt; 0 will be selected.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="covsirphy.analysis.example_data.ExampleData.subset_complement">
+<code class="sig-name descname">subset_complement</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/analysis/example_data.html#ExampleData.subset_complement"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#covsirphy.analysis.example_data.ExampleData.subset_complement" title="Permalink to this definition">¶</a></dt>
+<dd><p>This is the same as ExampleData.subset().
+Complement will not be done.</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-covsirphy.analysis.model_validator">
+<span id="covsirphy-analysis-model-validator-module"></span><h2>covsirphy.analysis.model_validator module<a class="headerlink" href="#module-covsirphy.analysis.model_validator" title="Permalink to this headline">¶</a></h2>
+<dl class="py class">
+<dt id="covsirphy.analysis.model_validator.ModelValidator">
+<em class="property">class </em><code class="sig-name descname">ModelValidator</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">tau</span><span class="o">=</span><span class="default_value">1440</span></em>, <em class="sig-param"><span class="n">n_trials</span><span class="o">=</span><span class="default_value">8</span></em>, <em class="sig-param"><span class="n">seed</span><span class="o">=</span><span class="default_value">0</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/analysis/model_validator.html#ModelValidator"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#covsirphy.analysis.model_validator.ModelValidator" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="covsirphy.cleaning.term.html#covsirphy.cleaning.term.Term" title="covsirphy.cleaning.term.Term"><code class="xref py py-class docutils literal notranslate"><span class="pre">covsirphy.cleaning.term.Term</span></code></a></p>
+<p>Validate a ODE model as follows.
+- Create a model parameter set, phase length and initial values randomly.
+- Simulate the number of cases with an user-defined parameter set.
+- Perform parameter estimation with the theoretical data (the dataset created with step 1).
+- Compare the user-defined parameter set and estimated parameter set.
+- Repeat with anather set of parameters.
+- Small difference of the two parameter sets means that the model can be used for parameter estimation.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>tau</strong> (<em>int</em>) – tau value [min]</p></li>
+<li><p><strong>n_trials</strong> (<em>int</em>) – the number of trials</p></li>
+<li><p><strong>seed</strong> (<em>int</em>) – random seed</p></li>
+</ul>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<p>Population value and initial values are defined by model.EXAMPLE.
+Estimators know tau values before parameter estimation.</p>
+<dl class="py method">
+<dt id="covsirphy.analysis.model_validator.ModelValidator.run">
+<code class="sig-name descname">run</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">model</span></em>, <em class="sig-param"><span class="n">timeout</span><span class="o">=</span><span class="default_value">180</span></em>, <em class="sig-param"><span class="n">allowance</span><span class="o">=</span><span class="default_value">0.98, 1.02</span></em>, <em class="sig-param"><span class="n">n_jobs</span><span class="o">=</span><span class="default_value">- 1</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/analysis/model_validator.html#ModelValidator.run"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#covsirphy.analysis.model_validator.ModelValidator.run" title="Permalink to this definition">¶</a></dt>
+<dd><p>Execute model validation.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>model</strong> (<a class="reference internal" href="covsirphy.html#covsirphy.ModelBase" title="covsirphy.ModelBase"><em>covsirphy.ModelBase</em></a>) – ODE model</p></li>
+<li><p><strong>timeout</strong> (<em>int</em>) – time-out of run</p></li>
+<li><p><strong>allowance</strong> (<em>tuple</em><em>(</em><em>float</em><em>, </em><em>float</em><em>)</em>) – the allowance of the predicted value</p></li>
+<li><p><strong>n_jobs</strong> (<em>int</em>) – the number of parallel jobs or -1 (CPU count)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>self</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference internal" href="covsirphy.html#covsirphy.ModelValidator" title="covsirphy.ModelValidator">covsirphy.ModelValidator</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="covsirphy.analysis.model_validator.ModelValidator.summary">
+<code class="sig-name descname">summary</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/analysis/model_validator.html#ModelValidator.summary"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#covsirphy.analysis.model_validator.ModelValidator.summary" title="Permalink to this definition">¶</a></dt>
+<dd><p>Show the summary of validation.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p><p>Index: reset index
+Columns:</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>ID (str): ID, like SIR_0</p></li>
+<li><p>ODE (str): model name</p></li>
+<li><p>Rt (float): reproduction number set by ._setup() method</p></li>
+<li><p>Rt_est (float): estimated reproduction number</p></li>
+<li><p>rho etc. (float): parameter values set by ._setup() method</p></li>
+<li><p>rho_est etc. (float): estimated parameter values</p></li>
+<li><p>step_n (int): step number of simulation</p></li>
+<li><p>RMSLE (float): RMSLE score of parameter estimation</p></li>
+<li><p>Trials (int): the number of trials in parameter estimation</p></li>
+<li><p>Runtime (str): runtime of parameter estimation</p></li>
+</ul>
+</div></blockquote>
+</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>pandas.DataFrame</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-covsirphy.analysis.param_tracker">
+<span id="covsirphy-analysis-param-tracker-module"></span><h2>covsirphy.analysis.param_tracker module<a class="headerlink" href="#module-covsirphy.analysis.param_tracker" title="Permalink to this headline">¶</a></h2>
+<dl class="py class">
+<dt id="covsirphy.analysis.param_tracker.ParamTracker">
+<em class="property">class </em><code class="sig-name descname">ParamTracker</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">record_df</span></em>, <em class="sig-param"><span class="n">phase_series</span></em>, <em class="sig-param"><span class="n">area</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">tau</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/analysis/param_tracker.html#ParamTracker"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#covsirphy.analysis.param_tracker.ParamTracker" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="covsirphy.cleaning.term.html#covsirphy.cleaning.term.Term" title="covsirphy.cleaning.term.Term"><code class="xref py py-class docutils literal notranslate"><span class="pre">covsirphy.cleaning.term.Term</span></code></a></p>
+<p>Split records with S-R trend analysis and estimate parameter values of the phases.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>record_df</strong> (<em>pandas.DataFrame</em>) – <p>records
+Index:</p>
+<blockquote>
+<div><p>reset index</p>
+</div></blockquote>
+<dl class="simple">
+<dt>Columns:</dt><dd><ul>
+<li><p>Date (pd.TimeStamp): Observation date</p></li>
+<li><p>Confirmed (int): the number of confirmed cases</p></li>
+<li><p>Infected (int): the number of currently infected cases</p></li>
+<li><p>Fatal (int): the number of fatal cases</p></li>
+<li><p>Recovered (int): the number of recovered cases</p></li>
+<li><p>Susceptible (int): the number of susceptible cases</p></li>
+</ul>
+</dd>
+</dl>
+</p></li>
+<li><p><strong>phase_series</strong> (<a class="reference internal" href="covsirphy.html#covsirphy.PhaseSeries" title="covsirphy.PhaseSeries"><em>covsirphy.PhaseSeries</em></a>) – phase series object with first/last dates and population</p></li>
+<li><p><strong>area</strong> (<em>str</em><em> or </em><em>None</em>) – area name, like Japan/Tokyo, or empty string</p></li>
+<li><p><strong>tau</strong> (<em>int</em><em> or </em><em>None</em>) – tau value [min]</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py attribute">
+<dt id="covsirphy.analysis.param_tracker.ParamTracker.METRICS_DICT">
+<code class="sig-name descname">METRICS_DICT</code><em class="property"> = {'MAE': &lt;function mean_absolute_error&gt;, 'MSE': &lt;function mean_squared_error&gt;, 'MSLE': &lt;function mean_squared_log_error&gt;, 'RMSE': &lt;function ParamTracker.&lt;lambda&gt;&gt;, 'RMSLE': &lt;function ParamTracker.&lt;lambda&gt;&gt;}</em><a class="headerlink" href="#covsirphy.analysis.param_tracker.ParamTracker.METRICS_DICT" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="covsirphy.analysis.param_tracker.ParamTracker.add">
+<code class="sig-name descname">add</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">end_date</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">days</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">population</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">model</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/analysis/param_tracker.html#ParamTracker.add"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#covsirphy.analysis.param_tracker.ParamTracker.add" title="Permalink to this definition">¶</a></dt>
+<dd><p>Add a new phase.
+The start date will be the next date of the last registered phase.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>end_date</strong> (<em>str</em>) – end date of the new phase</p></li>
+<li><p><strong>days</strong> (<em>int</em>) – the number of days to add</p></li>
+<li><p><strong>population</strong> (<em>int</em><em> or </em><em>None</em>) – population value of the start date</p></li>
+<li><p><strong>model</strong> (<a class="reference internal" href="covsirphy.html#covsirphy.ModelBase" title="covsirphy.ModelBase"><em>covsirphy.ModelBase</em></a><em> or </em><em>None</em>) – ODE model</p></li>
+<li><p><strong>kwargs</strong> – keyword arguments of ODE model parameters, not including tau value</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>covsirphy.PhaseSeries</p>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<ul class="simple">
+<li><p>If the phases series has not been registered, new phase series will be created.</p></li>
+<li><p>Either &#64;end_date or &#64;days must be specified.</p></li>
+<li><p>If &#64;end_date and &#64;days are None, the end date will be the last date of the records.</p></li>
+<li><p>If both of &#64;end_date and &#64;days were specified, &#64;end_date will be used.</p></li>
+<li><p>If &#64;popultion is None, initial value will be used.</p></li>
+<li><p>If &#64;model is None, the model of the last phase will be used.</p></li>
+<li><p>Tau will be fixed as the last phase’s value.</p></li>
+<li><p>kwargs: Default values are the parameter values of the last phase.</p></li>
+</ul>
+</dd></dl>
+
+<dl class="py method">
+<dt id="covsirphy.analysis.param_tracker.ParamTracker.change_dates">
+<code class="sig-name descname">change_dates</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/analysis/param_tracker.html#ParamTracker.change_dates"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#covsirphy.analysis.param_tracker.ParamTracker.change_dates" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the list of changed dates (start dates of phases since 1st phase).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>list of change dates</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>list[str]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="covsirphy.analysis.param_tracker.ParamTracker.combine">
+<code class="sig-name descname">combine</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">phases</span></em>, <em class="sig-param"><span class="n">population</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/analysis/param_tracker.html#ParamTracker.combine"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#covsirphy.analysis.param_tracker.ParamTracker.combine" title="Permalink to this definition">¶</a></dt>
+<dd><p>Combine the sequential phases as one phase.
+New phase name will be automatically determined.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>phases</strong> (<em>list</em><em>[</em><em>str</em><em>]</em>) – list of phases</p></li>
+<li><p><strong>population</strong> (<em>int</em>) – population value of the start date</p></li>
+<li><p><strong>kwargs</strong> – keyword arguments to save as phase information</p></li>
+</ul>
+</dd>
+<dt class="field-even">Raises</dt>
+<dd class="field-even"><p><strong>TypeError</strong> – &#64;phases is not a list</p>
+</dd>
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>self</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><a class="reference internal" href="covsirphy.html#covsirphy.Scenario" title="covsirphy.Scenario">covsirphy.Scenario</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="covsirphy.analysis.param_tracker.ParamTracker.create_series">
+<em class="property">static </em><code class="sig-name descname">create_series</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">first_date</span></em>, <em class="sig-param"><span class="n">last_date</span></em>, <em class="sig-param"><span class="n">population</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/analysis/param_tracker.html#ParamTracker.create_series"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#covsirphy.analysis.param_tracker.ParamTracker.create_series" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create PhaseSeries instance.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>first_date</strong> (<em>str</em>) – the first date of the records</p></li>
+<li><p><strong>last_date</strong> (<em>str</em>) – the last date of the records</p></li>
+<li><p><strong>population</strong> (<em>int</em>) – population value</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>covsirphy.PhaseSeries</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="covsirphy.analysis.param_tracker.ParamTracker.delete">
+<code class="sig-name descname">delete</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">phases</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/analysis/param_tracker.html#ParamTracker.delete"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#covsirphy.analysis.param_tracker.ParamTracker.delete" title="Permalink to this definition">¶</a></dt>
+<dd><p>Delete selected phases.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>phases</strong> (<em>list</em><em>[</em><em>str</em><em>]</em>) – phases names to delete</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>covsirphy.PhaseSeries</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="covsirphy.analysis.param_tracker.ParamTracker.delete_all">
+<code class="sig-name descname">delete_all</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/analysis/param_tracker.html#ParamTracker.delete_all"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#covsirphy.analysis.param_tracker.ParamTracker.delete_all" title="Permalink to this definition">¶</a></dt>
+<dd><p>Delete all phases.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>covsirphy.PhaseSeries</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="covsirphy.analysis.param_tracker.ParamTracker.disable">
+<code class="sig-name descname">disable</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">phases</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/analysis/param_tracker.html#ParamTracker.disable"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#covsirphy.analysis.param_tracker.ParamTracker.disable" title="Permalink to this definition">¶</a></dt>
+<dd><p>The phases will be disabled.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>phase</strong> (<em>list</em><em>[</em><em>str</em><em>] or </em><em>None</em>) – phase names</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>covsirphy.PhaseSeries</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="covsirphy.analysis.param_tracker.ParamTracker.enable">
+<code class="sig-name descname">enable</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">phases</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/analysis/param_tracker.html#ParamTracker.enable"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#covsirphy.analysis.param_tracker.ParamTracker.enable" title="Permalink to this definition">¶</a></dt>
+<dd><p>The phases will be enabled.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>phase</strong> (<em>list</em><em>[</em><em>str</em><em>] or </em><em>None</em>) – phase names</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>covsirphy.PhaseSeries</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="covsirphy.analysis.param_tracker.ParamTracker.estimate">
+<code class="sig-name descname">estimate</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">model</span></em>, <em class="sig-param"><span class="n">phases</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">n_jobs</span><span class="o">=</span><span class="default_value">- 1</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/analysis/param_tracker.html#ParamTracker.estimate"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#covsirphy.analysis.param_tracker.ParamTracker.estimate" title="Permalink to this definition">¶</a></dt>
+<dd><p>Perform parameter estimation for each phases.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>model</strong> (<a class="reference internal" href="covsirphy.html#covsirphy.ModelBase" title="covsirphy.ModelBase"><em>covsirphy.ModelBase</em></a>) – ODE model</p></li>
+<li><p><strong>phases</strong> (<em>list</em><em>[</em><em>str</em><em>]</em>) – list of phase names, like 1st, 2nd…</p></li>
+<li><p><strong>n_jobs</strong> (<em>int</em>) – the number of parallel jobs or -1 (CPU count)</p></li>
+<li><p><strong>kwargs</strong> – keyword arguments of model parameters and covsirphy.Estimator.run()</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>tau value [min] and phase series</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>tuple(int, <a class="reference internal" href="covsirphy.html#covsirphy.PhaseSeries" title="covsirphy.PhaseSeries">covsirphy.PhaseSeries</a>)</p>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<ul class="simple">
+<li><p>If &#64;phases is None, all past phase will be used.</p></li>
+<li><p>Phases with estimated parameter values will be ignored.</p></li>
+<li><p>In kwargs, tau value cannot be included.</p></li>
+</ul>
+</dd></dl>
+
+<dl class="py method">
+<dt id="covsirphy.analysis.param_tracker.ParamTracker.find_phase">
+<code class="sig-name descname">find_phase</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">date</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/analysis/param_tracker.html#ParamTracker.find_phase"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#covsirphy.analysis.param_tracker.ParamTracker.find_phase" title="Permalink to this definition">¶</a></dt>
+<dd><p>Find the name of the phase which has the date.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>date</strong> (<em>str</em>) – date, like 01Jan2020</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>str: phase name, like 1st, 2nd,…
+covsirphy.PhaseUnit: phase unit</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>tuple(str, <a class="reference internal" href="covsirphy.html#covsirphy.PhaseUnit" title="covsirphy.PhaseUnit">covsirphy.PhaseUnit</a>)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="covsirphy.analysis.param_tracker.ParamTracker.future_phases">
+<code class="sig-name descname">future_phases</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/analysis/param_tracker.html#ParamTracker.future_phases"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#covsirphy.analysis.param_tracker.ParamTracker.future_phases" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return names and phase units of the future phases.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>list[str]: list of phase names
+list[covsirphy.PhaseUnit]: list of phase units</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>tuple(list[str], list[<a class="reference internal" href="covsirphy.html#covsirphy.PhaseUnit" title="covsirphy.PhaseUnit">covsirphy.PhaseUnit</a>])</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="covsirphy.analysis.param_tracker.ParamTracker.near_change_dates">
+<code class="sig-name descname">near_change_dates</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/analysis/param_tracker.html#ParamTracker.near_change_dates"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#covsirphy.analysis.param_tracker.ParamTracker.near_change_dates" title="Permalink to this definition">¶</a></dt>
+<dd><p>Show the list of dates which are yesterday/tomorrow of the start/end dates.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>list of dates</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>list[str]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="covsirphy.analysis.param_tracker.ParamTracker.past_phases">
+<code class="sig-name descname">past_phases</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">phases</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/analysis/param_tracker.html#ParamTracker.past_phases"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#covsirphy.analysis.param_tracker.ParamTracker.past_phases" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return names and phase units of the past phases.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>phases</strong> (<em>tuple/list</em><em>[</em><em>str</em><em>]</em>) – list of phase names, like 1st, 2nd…</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>list[str]: list of phase names
+list[covsirphy.PhaseUnit]: list of phase units</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>tuple(list[str], list[<a class="reference internal" href="covsirphy.html#covsirphy.PhaseUnit" title="covsirphy.PhaseUnit">covsirphy.PhaseUnit</a>])</p>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<p>If &#64;phases is None, return the all past phases.
+If &#64;phases is not None, intersection will be selected.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="covsirphy.analysis.param_tracker.ParamTracker.score">
+<code class="sig-name descname">score</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">metrics</span><span class="o">=</span><span class="default_value">'RMSLE'</span></em>, <em class="sig-param"><span class="n">variables</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">phases</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">y0_dict</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/analysis/param_tracker.html#ParamTracker.score"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#covsirphy.analysis.param_tracker.ParamTracker.score" title="Permalink to this definition">¶</a></dt>
+<dd><p>Evaluate accuracy of phase setting and parameter estimation of selected enabled phases.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>metrics</strong> (<em>str</em>) – “MAE”, “MSE”, “MSLE”, “RMSE” or “RMSLE”</p></li>
+<li><p><strong>variables</strong> (<em>list</em><em>[</em><em>str</em><em>] or </em><em>None</em>) – variables to use in calculation</p></li>
+<li><p><strong>phases</strong> (<em>list</em><em>[</em><em>str</em><em>] or </em><em>None</em>) – phases to use in calculation</p></li>
+<li><p><strong>y0_dict</strong> (<em>dict</em><em>[</em><em>str</em><em>, </em><em>float</em><em>] or </em><em>None</em>) – dictionary of initial values of variables</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>score with the specified metrics</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>float</p>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<p>If &#64;variables is None, [“Infected”, “Fatal”, “Recovered”] will be used.
+“Confirmed”, “Infected”, “Fatal” and “Recovered” can be used in &#64;variables.
+If &#64;phases is None, all phases will be used.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="covsirphy.analysis.param_tracker.ParamTracker.separate">
+<code class="sig-name descname">separate</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">date</span></em>, <em class="sig-param"><span class="n">population</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/analysis/param_tracker.html#ParamTracker.separate"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#covsirphy.analysis.param_tracker.ParamTracker.separate" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create a new phase with the change point.
+New phase name will be automatically determined.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>date</strong> (<em>str</em>) – change point, i.e. start date of the new phase</p></li>
+<li><p><strong>population</strong> (<em>int</em>) – population value of the change point</p></li>
+<li><p><strong>kwargs</strong> – keyword arguments of PhaseUnit.set_ode() if update is necessary</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>covsirphy.PhaseSeries</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="covsirphy.analysis.param_tracker.ParamTracker.series">
+<em class="property">property </em><code class="sig-name descname">series</code><a class="headerlink" href="#covsirphy.analysis.param_tracker.ParamTracker.series" title="Permalink to this definition">¶</a></dt>
+<dd><p>phase series object (series of covsirphy.PhaseUnit)</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p><a class="reference internal" href="covsirphy.html#covsirphy.PhaseSeries" title="covsirphy.PhaseSeries">covsirphy.PhaseSeries</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="covsirphy.analysis.param_tracker.ParamTracker.simulate">
+<code class="sig-name descname">simulate</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">y0_dict</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/analysis/param_tracker.html#ParamTracker.simulate"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#covsirphy.analysis.param_tracker.ParamTracker.simulate" title="Permalink to this definition">¶</a></dt>
+<dd><p>Simulate ODE models with set/estimated parameter values.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>y0_dict</strong> (<em>dict</em><em>[</em><em>str</em><em>, </em><em>float</em><em>] or </em><em>None</em>) – dictionary of initial values of variables</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><dl class="simple">
+<dt>pandas.DataFrame</dt><dd><dl class="simple">
+<dt>Index:</dt><dd><p>reset index</p>
+</dd>
+<dt>Columns:</dt><dd><ul class="simple">
+<li><p>Date (pd.TimeStamp): Observation date</p></li>
+<li><p>Country (str): country/region name</p></li>
+<li><p>Province (str): province/prefecture/state name</p></li>
+<li><p>Variables of the model and dataset (int): Confirmed etc.</p></li>
+</ul>
+</dd>
+</dl>
+</dd>
+</dl>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="covsirphy.analysis.param_tracker.ParamTracker.trend">
+<code class="sig-name descname">trend</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">force</span><span class="o">=</span><span class="default_value">True</span></em>, <em class="sig-param"><span class="n">show_figure</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">filename</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/analysis/param_tracker.html#ParamTracker.trend"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#covsirphy.analysis.param_tracker.ParamTracker.trend" title="Permalink to this definition">¶</a></dt>
+<dd><p>Split the records with trend analysis.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>force</strong> (<em>bool</em>) – if True, change points will be over-written</p></li>
+<li><p><strong>show_figure</strong> (<em>bool</em>) – if True, show the result as a figure</p></li>
+<li><p><strong>filename</strong> (<em>str</em>) – filename of the figure, or None (show figure)</p></li>
+<li><p><strong>kwargs</strong> – keyword arguments of ChangeFinder()</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>covsirphy.PhaseSeries</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-covsirphy.analysis.scenario">
+<span id="covsirphy-analysis-scenario-module"></span><h2>covsirphy.analysis.scenario module<a class="headerlink" href="#module-covsirphy.analysis.scenario" title="Permalink to this headline">¶</a></h2>
+<dl class="py class">
+<dt id="covsirphy.analysis.scenario.Scenario">
+<em class="property">class </em><code class="sig-name descname">Scenario</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">jhu_data</span></em>, <em class="sig-param"><span class="n">population_data</span></em>, <em class="sig-param"><span class="n">country</span></em>, <em class="sig-param"><span class="n">province</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">tau</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">auto_complement</span><span class="o">=</span><span class="default_value">True</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/analysis/scenario.html#Scenario"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#covsirphy.analysis.scenario.Scenario" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="covsirphy.analysis.data_handler.html#covsirphy.analysis.data_handler.DataHandler" title="covsirphy.analysis.data_handler.DataHandler"><code class="xref py py-class docutils literal notranslate"><span class="pre">covsirphy.analysis.data_handler.DataHandler</span></code></a></p>
+<p>Scenario analysis.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>jhu_data</strong> (<a class="reference internal" href="covsirphy.html#covsirphy.JHUData" title="covsirphy.JHUData"><em>covsirphy.JHUData</em></a>) – object of records</p></li>
+<li><p><strong>population_data</strong> (<a class="reference internal" href="covsirphy.html#covsirphy.PopulationData" title="covsirphy.PopulationData"><em>covsirphy.PopulationData</em></a>) – PopulationData object</p></li>
+<li><p><strong>country</strong> (<em>str</em>) – country name</p></li>
+<li><p><strong>province</strong> (<em>str</em><em> or </em><em>None</em>) – province name</p></li>
+<li><p><strong>tau</strong> (<em>int</em><em> or </em><em>None</em>) – tau value</p></li>
+<li><p><strong>auto_complement</strong> (<em>bool</em>) – if True and necessary, the number of cases will be complemented</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py method">
+<dt id="covsirphy.analysis.scenario.Scenario.add">
+<code class="sig-name descname">add</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">name</span><span class="o">=</span><span class="default_value">'Main'</span></em>, <em class="sig-param"><span class="n">end_date</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">days</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">population</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">model</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/analysis/scenario.html#Scenario.add"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#covsirphy.analysis.scenario.Scenario.add" title="Permalink to this definition">¶</a></dt>
+<dd><p>Add a new phase.
+The start date will be the next date of the last registered phase.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>name</strong> (<em>str</em>) – phase series name, ‘Main’ or user-defined name</p></li>
+<li><p><strong>end_date</strong> (<em>str</em>) – end date of the new phase</p></li>
+<li><p><strong>days</strong> (<em>int</em>) – the number of days to add</p></li>
+<li><p><strong>population</strong> (<em>int</em><em> or </em><em>None</em>) – population value of the start date</p></li>
+<li><p><strong>model</strong> (<a class="reference internal" href="covsirphy.html#covsirphy.ModelBase" title="covsirphy.ModelBase"><em>covsirphy.ModelBase</em></a><em> or </em><em>None</em>) – ODE model</p></li>
+<li><p><strong>kwargs</strong> – keyword arguments of ODE model parameters, not including tau value.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>self</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference internal" href="covsirphy.html#covsirphy.Scenario" title="covsirphy.Scenario">covsirphy.Scenario</a></p>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<ul class="simple">
+<li><p>If the phases series has not been registered, new phase series will be created.</p></li>
+<li><p>Either &#64;end_date or &#64;days must be specified.</p></li>
+<li><p>If &#64;end_date and &#64;days are None, the end date will be the last date of the records.</p></li>
+<li><p>If both of &#64;end_date and &#64;days were specified, &#64;end_date will be used.</p></li>
+<li><p>If &#64;popultion is None, initial value will be used.</p></li>
+<li><p>If &#64;model is None, the model of the last phase will be used.</p></li>
+<li><p>Tau will be fixed as the last phase’s value.</p></li>
+<li><p>kwargs: Default values are the parameter values of the last phase.</p></li>
+</ul>
+</dd></dl>
+
+<dl class="py method">
+<dt id="covsirphy.analysis.scenario.Scenario.add_phase">
+<code class="sig-name descname">add_phase</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="headerlink" href="#covsirphy.analysis.scenario.Scenario.add_phase" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="covsirphy.analysis.scenario.Scenario.clear">
+<code class="sig-name descname">clear</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">name</span><span class="o">=</span><span class="default_value">'Main'</span></em>, <em class="sig-param"><span class="n">include_past</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">template</span><span class="o">=</span><span class="default_value">'Main'</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/analysis/scenario.html#Scenario.clear"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#covsirphy.analysis.scenario.Scenario.clear" title="Permalink to this definition">¶</a></dt>
+<dd><p>Clear phase information.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>name</strong> (<em>str</em>) – scenario name</p></li>
+<li><p><strong>include_past</strong> (<em>bool</em>) – if True, past phases will be removed as well as future phases</p></li>
+<li><p><strong>template</strong> (<em>str</em>) – name of template scenario</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>self</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference internal" href="covsirphy.html#covsirphy.Scenario" title="covsirphy.Scenario">covsirphy.Scenario</a></p>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<p>If un-registered scenario name was specified, new scenario will be created.
+Future phases will be always deleted.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="covsirphy.analysis.scenario.Scenario.combine">
+<code class="sig-name descname">combine</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">phases</span></em>, <em class="sig-param"><span class="n">name</span><span class="o">=</span><span class="default_value">'Main'</span></em>, <em class="sig-param"><span class="n">population</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/analysis/scenario.html#Scenario.combine"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#covsirphy.analysis.scenario.Scenario.combine" title="Permalink to this definition">¶</a></dt>
+<dd><p>Combine the sequential phases as one phase.
+New phase name will be automatically determined.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>phases</strong> (<em>list</em><em>[</em><em>str</em><em>]</em>) – list of phases</p></li>
+<li><p><strong>name</strong> (<em>str</em><em>, </em><em>optional</em>) – name of phase series</p></li>
+<li><p><strong>population</strong> (<em>int</em>) – population value of the start date</p></li>
+<li><p><strong>kwargs</strong> – keyword arguments to save as phase information</p></li>
+</ul>
+</dd>
+<dt class="field-even">Raises</dt>
+<dd class="field-even"><p><strong>TypeError</strong> – &#64;phases is not a list</p>
+</dd>
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>self</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><a class="reference internal" href="covsirphy.html#covsirphy.Scenario" title="covsirphy.Scenario">covsirphy.Scenario</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="covsirphy.analysis.scenario.Scenario.delete">
+<code class="sig-name descname">delete</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">phases</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">name</span><span class="o">=</span><span class="default_value">'Main'</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/analysis/scenario.html#Scenario.delete"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#covsirphy.analysis.scenario.Scenario.delete" title="Permalink to this definition">¶</a></dt>
+<dd><p>Delete phases.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>phase</strong> (<em>list</em><em>[</em><em>str</em><em>] or </em><em>None</em>) – phase names, or [‘last’]</p></li>
+<li><p><strong>name</strong> (<em>str</em>) – name of phase series</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>self</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference internal" href="covsirphy.html#covsirphy.Scenario" title="covsirphy.Scenario">covsirphy.Scenario</a></p>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<p>If &#64;phases is None, the phase series will be deleted.
+When &#64;phase is ‘0th’, disable 0th phase. 0th phase will not be deleted.
+If the last phase is included in &#64;phases, the dates will be released from phases.
+If the last phase is not included, the dates will be assigned to the previous phase.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="covsirphy.analysis.scenario.Scenario.describe">
+<code class="sig-name descname">describe</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">y0_dict</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">with_rt</span><span class="o">=</span><span class="default_value">True</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/analysis/scenario.html#Scenario.describe"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#covsirphy.analysis.scenario.Scenario.describe" title="Permalink to this definition">¶</a></dt>
+<dd><p>Describe representative values.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>y0_dict</strong> (<em>dict</em><em> or </em><em>None</em>) – dictionary of initial values or None
+- key (str): variable name
+- value (float): initial value</p></li>
+<li><p><strong>with_rt</strong> (<em>bool</em>) – whether show the history of Rt values</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><dl class="simple">
+<dt>Index:</dt><dd><p>str: scenario name</p>
+</dd>
+<dt>Columns:</dt><dd><ul class="simple">
+<li><p>max(Infected): max value of Infected</p></li>
+<li><p>argmax(Infected): the date when Infected shows max value</p></li>
+<li><p>Confirmed({date}): Confirmed on the next date of the last phase</p></li>
+<li><p>Infected({date}): Infected on the next date of the last phase</p></li>
+<li><p>Fatal({date}): Fatal on the next date of the last phase</p></li>
+<li><p>nth_Rt etc.: Rt value if the values are not the same values</p></li>
+</ul>
+</dd>
+</dl>
+</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>pandas.DataFrame</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="covsirphy.analysis.scenario.Scenario.disable">
+<code class="sig-name descname">disable</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">phases</span></em>, <em class="sig-param"><span class="n">name</span><span class="o">=</span><span class="default_value">'Main'</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/analysis/scenario.html#Scenario.disable"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#covsirphy.analysis.scenario.Scenario.disable" title="Permalink to this definition">¶</a></dt>
+<dd><p>The phases will be disabled and removed from summary.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>phase</strong> (<em>list</em><em>[</em><em>str</em><em>] or </em><em>None</em>) – phase names</p></li>
+<li><p><strong>name</strong> (<em>str</em>) – name of phase series</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>self</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference internal" href="covsirphy.html#covsirphy.Scenario" title="covsirphy.Scenario">covsirphy.Scenario</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="covsirphy.analysis.scenario.Scenario.enable">
+<code class="sig-name descname">enable</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">phases</span></em>, <em class="sig-param"><span class="n">name</span><span class="o">=</span><span class="default_value">'Main'</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/analysis/scenario.html#Scenario.enable"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#covsirphy.analysis.scenario.Scenario.enable" title="Permalink to this definition">¶</a></dt>
+<dd><p>The phases will be enabled and appear in summary.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>phase</strong> (<em>list</em><em>[</em><em>str</em><em>] or </em><em>None</em>) – phase names</p></li>
+<li><p><strong>name</strong> (<em>str</em>) – name of phase series</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>self</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference internal" href="covsirphy.html#covsirphy.Scenario" title="covsirphy.Scenario">covsirphy.Scenario</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="covsirphy.analysis.scenario.Scenario.estimate">
+<code class="sig-name descname">estimate</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">model</span></em>, <em class="sig-param"><span class="n">phases</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">name</span><span class="o">=</span><span class="default_value">'Main'</span></em>, <em class="sig-param"><span class="n">n_jobs</span><span class="o">=</span><span class="default_value">- 1</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/analysis/scenario.html#Scenario.estimate"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#covsirphy.analysis.scenario.Scenario.estimate" title="Permalink to this definition">¶</a></dt>
+<dd><p>Perform parameter estimation for each phases.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>model</strong> (<a class="reference internal" href="covsirphy.html#covsirphy.ModelBase" title="covsirphy.ModelBase"><em>covsirphy.ModelBase</em></a>) – ODE model</p></li>
+<li><p><strong>phases</strong> (<em>list</em><em>[</em><em>str</em><em>]</em>) – list of phase names, like 1st, 2nd…</p></li>
+<li><p><strong>name</strong> (<em>str</em>) – phase series name</p></li>
+<li><p><strong>n_jobs</strong> (<em>int</em>) – the number of parallel jobs or -1 (CPU count)</p></li>
+<li><p><strong>kwargs</strong> – keyword arguments of model parameters and covsirphy.Estimator.run()</p></li>
+</ul>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<ul class="simple">
+<li><p>If ‘Main’ was used as &#64;name, main PhaseSeries will be used.</p></li>
+<li><p>If &#64;name phase was not registered, new PhaseSeries will be created.</p></li>
+<li><p>If &#64;phases is None, all past phase will be used.</p></li>
+<li><p>Phases with estimated parameter values will be ignored.</p></li>
+<li><p>In kwargs, tau value cannot be included.</p></li>
+</ul>
+</dd></dl>
+
+<dl class="py method">
+<dt id="covsirphy.analysis.scenario.Scenario.estimate_accuracy">
+<code class="sig-name descname">estimate_accuracy</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">phase</span></em>, <em class="sig-param"><span class="n">name</span><span class="o">=</span><span class="default_value">'Main'</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/analysis/scenario.html#Scenario.estimate_accuracy"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#covsirphy.analysis.scenario.Scenario.estimate_accuracy" title="Permalink to this definition">¶</a></dt>
+<dd><p>Show the accuracy as a figure.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>phase</strong> (<em>str</em>) – phase name, like 1st, 2nd…</p></li>
+<li><p><strong>name</strong> (<em>str</em>) – phase series name</p></li>
+<li><p><strong>kwargs</strong> – keyword arguments of covsirphy.Estimator.accuracy()</p></li>
+</ul>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<p>If ‘Main’ was used as &#64;name, main PhaseSeries will be used.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="covsirphy.analysis.scenario.Scenario.estimate_history">
+<code class="sig-name descname">estimate_history</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">phase</span></em>, <em class="sig-param"><span class="n">name</span><span class="o">=</span><span class="default_value">'Main'</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/analysis/scenario.html#Scenario.estimate_history"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#covsirphy.analysis.scenario.Scenario.estimate_history" title="Permalink to this definition">¶</a></dt>
+<dd><p>Show the history of optimization.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>phase</strong> (<em>str</em>) – phase name, like 1st, 2nd…</p></li>
+<li><p><strong>name</strong> (<em>str</em>) – phase series name</p></li>
+<li><p><strong>kwargs</strong> – keyword arguments of covsirphy.Estimator.history()</p></li>
+</ul>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<p>If ‘Main’ was used as &#64;name, main PhaseSeries will be used.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="covsirphy.analysis.scenario.Scenario.first_date">
+<em class="property">property </em><code class="sig-name descname">first_date</code><a class="headerlink" href="#covsirphy.analysis.scenario.Scenario.first_date" title="Permalink to this definition">¶</a></dt>
+<dd><p>the first date of the records</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="covsirphy.analysis.scenario.Scenario.get">
+<code class="sig-name descname">get</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">param</span></em>, <em class="sig-param"><span class="n">phase</span><span class="o">=</span><span class="default_value">'last'</span></em>, <em class="sig-param"><span class="n">name</span><span class="o">=</span><span class="default_value">'Main'</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/analysis/scenario.html#Scenario.get"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#covsirphy.analysis.scenario.Scenario.get" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the parameter value of the phase.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>param</strong> (<em>str</em>) – parameter name (columns in self.summary())</p></li>
+<li><p><strong>phase</strong> (<em>str</em>) – phase name or ‘last’
+- if ‘last’, the value of the last phase will be returned</p></li>
+<li><p><strong>name</strong> (<em>str</em>) – phase series name</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>str or int or float</p>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<p>If ‘Main’ was used as &#64;name, main PhaseSeries will be used.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="covsirphy.analysis.scenario.Scenario.history">
+<code class="sig-name descname">history</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">target</span></em>, <em class="sig-param"><span class="n">with_actual</span><span class="o">=</span><span class="default_value">True</span></em>, <em class="sig-param"><span class="n">y0_dict</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">show_figure</span><span class="o">=</span><span class="default_value">True</span></em>, <em class="sig-param"><span class="n">filename</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/analysis/scenario.html#Scenario.history"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#covsirphy.analysis.scenario.Scenario.history" title="Permalink to this definition">¶</a></dt>
+<dd><p>Show the history of variables and parameter values to compare scenarios.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>target</strong> (<em>str</em>) – parameter or variable name to show (Rt, Infected etc.)</p></li>
+<li><p><strong>with_actual</strong> (<em>bool</em>) – if True and &#64;target is a variable name, show actual number of cases</p></li>
+<li><p><strong>y0_dict</strong> (<em>dict</em><em> or </em><em>None</em>) – dictionary of initial values or None
+- key (str): variable name
+- value (float): initial value</p></li>
+<li><p><strong>show_figure</strong> (<em>bool</em>) – If True, show the result as a figure</p></li>
+<li><p><strong>filename</strong> (<em>str</em>) – filename of the figure, or None (show figure)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>pandas.DataFrame</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="covsirphy.analysis.scenario.Scenario.history_rate">
+<code class="sig-name descname">history_rate</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">params</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">name</span><span class="o">=</span><span class="default_value">'Main'</span></em>, <em class="sig-param"><span class="n">show_figure</span><span class="o">=</span><span class="default_value">True</span></em>, <em class="sig-param"><span class="n">filename</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/analysis/scenario.html#Scenario.history_rate"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#covsirphy.analysis.scenario.Scenario.history_rate" title="Permalink to this definition">¶</a></dt>
+<dd><p>Show change rates of parameter values in one figure.
+We can find the parameters which increased/decreased significantly.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>params</strong> (<em>list</em><em>[</em><em>str</em><em>] or </em><em>None</em>) – parameters to show</p></li>
+<li><p><strong>name</strong> (<em>str</em>) – phase series name</p></li>
+<li><p><strong>show_figure</strong> (<em>bool</em>) – If True, show the result as a figure</p></li>
+<li><p><strong>filename</strong> (<em>str</em>) – filename of the figure, or None (show figure)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>pandas.DataFrame</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="covsirphy.analysis.scenario.Scenario.last_date">
+<em class="property">property </em><code class="sig-name descname">last_date</code><a class="headerlink" href="#covsirphy.analysis.scenario.Scenario.last_date" title="Permalink to this definition">¶</a></dt>
+<dd><p>the last date of the records</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="covsirphy.analysis.scenario.Scenario.param_history">
+<code class="sig-name descname">param_history</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="headerlink" href="#covsirphy.analysis.scenario.Scenario.param_history" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="covsirphy.analysis.scenario.Scenario.phase_estimator">
+<code class="sig-name descname">phase_estimator</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">phase</span></em>, <em class="sig-param"><span class="n">name</span><span class="o">=</span><span class="default_value">'Main'</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/analysis/scenario.html#Scenario.phase_estimator"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#covsirphy.analysis.scenario.Scenario.phase_estimator" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the estimator of the phase.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>phase</strong> (<em>str</em>) – phase name, like 1st, 2nd…</p></li>
+<li><p><strong>name</strong> (<em>str</em>) – phase series name</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>estimator of the phase</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference internal" href="covsirphy.html#covsirphy.Estimator" title="covsirphy.Estimator">covsirphy.Estimator</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="covsirphy.analysis.scenario.Scenario.retrospective">
+<code class="sig-name descname">retrospective</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">beginning_date</span></em>, <em class="sig-param"><span class="n">model</span></em>, <em class="sig-param"><span class="n">control</span><span class="o">=</span><span class="default_value">'Main'</span></em>, <em class="sig-param"><span class="n">target</span><span class="o">=</span><span class="default_value">'Target'</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/analysis/scenario.html#Scenario.retrospective"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#covsirphy.analysis.scenario.Scenario.retrospective" title="Permalink to this definition">¶</a></dt>
+<dd><p>Perform retrospective analysis.
+Compare the actual series of phases (control) and
+series of phases with specified parameters (target).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>beginning_date</strong> (<em>str</em>) – when the parameter values start to be changed from actual values</p></li>
+<li><p><strong>model</strong> (<a class="reference internal" href="covsirphy.html#covsirphy.ModelBase" title="covsirphy.ModelBase"><em>covsirphy.ModelBase</em></a>) – ODE model</p></li>
+<li><p><strong>control</strong> (<em>str</em>) – scenario name of control</p></li>
+<li><p><strong>target</strong> (<em>str</em>) – scenario name of target</p></li>
+<li><p><strong>kwargs</strong> – keyword argument of parameter values and Estimator.run()</p></li>
+</ul>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<p>When parameter values are not specified,
+actual values of the last date before the beginning date will be used.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="covsirphy.analysis.scenario.Scenario.score">
+<code class="sig-name descname">score</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">metrics</span><span class="o">=</span><span class="default_value">'RMSLE'</span></em>, <em class="sig-param"><span class="n">variables</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">phases</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">past_days</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">name</span><span class="o">=</span><span class="default_value">'Main'</span></em>, <em class="sig-param"><span class="n">y0_dict</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/analysis/scenario.html#Scenario.score"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#covsirphy.analysis.scenario.Scenario.score" title="Permalink to this definition">¶</a></dt>
+<dd><p>Evaluate accuracy of phase setting and parameter estimation of all enabled phases all some past days.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>metrics</strong> (<em>str</em>) – “MAE”, “MSE”, “MSLE”, “RMSE” or “RMSLE”</p></li>
+<li><p><strong>variables</strong> (<em>list</em><em>[</em><em>str</em><em>] or </em><em>None</em>) – variables to use in calculation</p></li>
+<li><p><strong>phases</strong> (<em>list</em><em>[</em><em>str</em><em>] or </em><em>None</em>) – phases to use in calculation</p></li>
+<li><p><strong>past_days</strong> (<em>int</em><em> or </em><em>None</em>) – how many past days to use in calculation, natural integer</p></li>
+<li><p><strong>name</strong> (<em>str</em>) – phase series name. If ‘Main’, main PhaseSeries will be used</p></li>
+<li><p><strong>y0_dict</strong> (<em>dict</em><em>[</em><em>str</em><em>, </em><em>float</em><em>] or </em><em>None</em>) – dictionary of initial values of variables</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>score with the specified metrics</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>float</p>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<p>If &#64;variables is None, [“Infected”, “Fatal”, “Recovered”] will be used.
+“Confirmed”, “Infected”, “Fatal” and “Recovered” can be used in &#64;variables.
+If &#64;phases is None, all phases will be used.
+&#64;phases and &#64;past_days can not be specified at the same time.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="covsirphy.analysis.scenario.Scenario.separate">
+<code class="sig-name descname">separate</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">date</span></em>, <em class="sig-param"><span class="n">name</span><span class="o">=</span><span class="default_value">'Main'</span></em>, <em class="sig-param"><span class="n">population</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/analysis/scenario.html#Scenario.separate"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#covsirphy.analysis.scenario.Scenario.separate" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create a new phase with the change point.
+New phase name will be automatically determined.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>date</strong> (<em>str</em>) – change point, i.e. start date of the new phase</p></li>
+<li><p><strong>name</strong> (<em>str</em>) – scenario name</p></li>
+<li><p><strong>population</strong> (<em>int</em>) – population value of the change point</p></li>
+<li><p><strong>kwargs</strong> – keyword arguments of PhaseUnit.set_ode() if update is necessary</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>self</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference internal" href="covsirphy.html#covsirphy.Scenario" title="covsirphy.Scenario">covsirphy.Scenario</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="covsirphy.analysis.scenario.Scenario.simulate">
+<code class="sig-name descname">simulate</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">name</span><span class="o">=</span><span class="default_value">'Main'</span></em>, <em class="sig-param"><span class="n">y0_dict</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">show_figure</span><span class="o">=</span><span class="default_value">True</span></em>, <em class="sig-param"><span class="n">filename</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/analysis/scenario.html#Scenario.simulate"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#covsirphy.analysis.scenario.Scenario.simulate" title="Permalink to this definition">¶</a></dt>
+<dd><p>Simulate ODE models with set/estimated parameter values and show it as a figure.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>name</strong> (<em>str</em>) – phase series name. If ‘Main’, main PhaseSeries will be used</p></li>
+<li><p><strong>y0_dict</strong> (<em>dict</em><em>[</em><em>str</em><em>, </em><em>float</em><em>] or </em><em>None</em>) – dictionary of initial values of variables</p></li>
+<li><p><strong>show_figure</strong> (<em>bool</em>) – if True, show the result as a figure</p></li>
+<li><p><strong>filename</strong> (<em>str</em>) – filename of the figure, or None (show figure)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><dl class="simple">
+<dt>pandas.DataFrame</dt><dd><dl class="simple">
+<dt>Index:</dt><dd><p>reset index</p>
+</dd>
+<dt>Columns:</dt><dd><ul class="simple">
+<li><p>Date (pd.TimeStamp): Observation date</p></li>
+<li><p>Country (str): country/region name</p></li>
+<li><p>Province (str): province/prefecture/state name</p></li>
+<li><p>Variables of the model and dataset (int): Confirmed etc.</p></li>
+</ul>
+</dd>
+</dl>
+</dd>
+</dl>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="covsirphy.analysis.scenario.Scenario.summary">
+<code class="sig-name descname">summary</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">columns</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">name</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/analysis/scenario.html#Scenario.summary"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#covsirphy.analysis.scenario.Scenario.summary" title="Permalink to this definition">¶</a></dt>
+<dd><p>Summarize the series of phases and return a dataframe.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>name</strong> (<em>str</em>) – phase series name
+- name of alternative phase series registered by Scenario.add()
+- if None, all phase series will be shown</p></li>
+<li><p><strong>columns</strong> (<em>list</em><em>[</em><em>str</em><em>] or </em><em>None</em>) – columns to show</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p>if &#64;name not None, as the same as PhaseSeries().summary()</p></li>
+<li><p>if &#64;name is None, index will be phase series name and phase name</p></li>
+</ul>
+</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>pandas.DataFrame</p>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<p>If ‘Main’ was used as &#64;name, main PhaseSeries will be used.
+If &#64;columns is None, all columns will be shown.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="covsirphy.analysis.scenario.Scenario.track">
+<code class="sig-name descname">track</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">with_actual</span><span class="o">=</span><span class="default_value">True</span></em>, <em class="sig-param"><span class="n">y0_dict</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/analysis/scenario.html#Scenario.track"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#covsirphy.analysis.scenario.Scenario.track" title="Permalink to this definition">¶</a></dt>
+<dd><p>Show values of parameters and variables in one dataframe.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>with_actual</strong> (<em>bool</em>) – if True, show actual number of cases will included as “Actual” scenario</p></li>
+<li><p><strong>y0_dict</strong> (<em>dict</em><em> or </em><em>None</em>) – dictionary of initial values or None
+- key (str): variable name
+- value (float): initial value</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><p>Index: reset index
+Columns:</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>Scenario (str)</p></li>
+<li><p>Date (pandas.TimeStamp)</p></li>
+<li><p>variables (int)</p></li>
+<li><p>Population (int)</p></li>
+<li><p>Rt (float)</p></li>
+<li><p>parameter values (float)</p></li>
+<li><p>day parameter values (float)</p></li>
+</ul>
+</div></blockquote>
+</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>pandas.DataFrame</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="covsirphy.analysis.scenario.Scenario.trend">
+<code class="sig-name descname">trend</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">force</span><span class="o">=</span><span class="default_value">True</span></em>, <em class="sig-param"><span class="n">name</span><span class="o">=</span><span class="default_value">'Main'</span></em>, <em class="sig-param"><span class="n">show_figure</span><span class="o">=</span><span class="default_value">True</span></em>, <em class="sig-param"><span class="n">filename</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/analysis/scenario.html#Scenario.trend"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#covsirphy.analysis.scenario.Scenario.trend" title="Permalink to this definition">¶</a></dt>
+<dd><p>Perform S-R trend analysis and set phases.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>force</strong> (<em>bool</em>) – if True, change points will be over-written</p></li>
+<li><p><strong>name</strong> (<em>str</em>) – phase series name</p></li>
+<li><p><strong>show_figure</strong> (<em>bool</em>) – if True, show the result as a figure</p></li>
+<li><p><strong>filename</strong> (<em>str</em>) – filename of the figure, or None (display)</p></li>
+<li><p><strong>kwargs</strong> – keyword arguments of ChangeFinder()</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>self</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference internal" href="covsirphy.html#covsirphy.Scenario" title="covsirphy.Scenario">covsirphy.Scenario</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
 </div>
 </div>
 
@@ -224,7 +1573,7 @@
   
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
       
-        <a href="covsirphy.analysis.data_handler.html" class="btn btn-neutral float-right" title="&lt;no title&gt;" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+        <a href="covsirphy.cleaning.html" class="btn btn-neutral float-right" title="covsirphy.cleaning package" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
       
       
         <a href="covsirphy.html" class="btn btn-neutral float-left" title="covsirphy package" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>

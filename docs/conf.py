@@ -75,3 +75,8 @@ html_static_path = ['_static']
 
 # If true, `todo` and `todoList` produce output, else they produce nothing.
 todo_include_todos = True
+
+# If true, the current module name will be prepended to all description
+# unit titles (such as .. function::).
+# https://stackoverflow.com/questions/20864406/remove-package-and-module-name-from-sphinx-function
+add_module_names = False
