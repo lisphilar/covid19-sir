@@ -382,7 +382,17 @@ class PCRData(CleaningBase):
         Raises:
             PCRIncorrectPreconditionError: the dataset has too many missing values
         """
-        if (not df[self.TESTS].max()) or ((df[self.TESTS] == 0).mean() >= 0.5):
+        df.fillna(0)
+        # Check if the values are zero or nan
+        check_zero = not df[self.TESTS].max()
+        # Check if the number of the missing values
+        # is more than 50% of the total values
+        check_missing = (df[self.TESTS] == 0).mean() >= 0.5
+        # Check if the number of the positive unique values
+        # is less than 1% of the total values
+        positive_df = df.loc[df[self.TESTS] > 0, self.TESTS]
+        check_unique = (positive_df.nunique() / positive_df.size) < 0.01
+        if check_zero or check_missing or check_unique:
             raise PCRIncorrectPreconditionError(
                 country=country, province=province, message="Too many missing Tests records") from None
 
