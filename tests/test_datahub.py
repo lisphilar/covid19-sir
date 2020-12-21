@@ -249,7 +249,7 @@ class TestPCRData(object):
         df, _ = pcr_data.records("Greece")
         assert set(df.columns) == set(PCRData.PCR_NLOC_COLUMNS)
 
-    @pytest.mark.parametrize("country", ["Greece", "Italy"])
+    @pytest.mark.parametrize("country", ["Greece", "Italy", "France"])
     def test_positive_rate(self, pcr_data, country):
         warnings.simplefilter("ignore", category=UserWarning)
         pcr_data.positive_rate(country, show_figure=True)
