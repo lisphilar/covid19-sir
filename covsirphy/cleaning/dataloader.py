@@ -279,8 +279,7 @@ class DataLoader(Term):
         # Update the values using "Our World In Data" dataset
         owid_filename = self.dir_path.joinpath(basename_owid)
         owid_force = self._download_necessity(filename=owid_filename)
-        pcr_data.update_with_ourworldindata(
-            filename=owid_filename, force=owid_force)
+        pcr_data.use_ourworldindata(filename=owid_filename, force=owid_force)
         # Replace Japan dataset with the government-announced data
         japan_data = self.japan()
         pcr_data.replace(japan_data)

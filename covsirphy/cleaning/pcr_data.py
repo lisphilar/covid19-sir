@@ -7,7 +7,7 @@ import pandas as pd
 from dask import dataframe as dd
 import swifter
 from covsirphy.util.plotting import line_plot
-from covsirphy.util.error import PCRIncorrectPreconditionError
+from covsirphy.util.error import PCRIncorrectPreconditionError, SubsetNotFoundError
 from covsirphy.cleaning.cbase import CleaningBase
 from covsirphy.cleaning.country_data import CountryData
 
@@ -44,6 +44,8 @@ class PCRData(CleaningBase):
         self.min_pcr_tests = self.ensure_natural_int(
             min_pcr_tests, name="min_pcr_tests")
         self._citation = citation or ""
+        # Cleaned dataset of "Our World In Data"
+        self._cleaned_df_owid = pd.DataFrame()
         # To avoid "imported but unused"
         self.__swifter = swifter
 
@@ -166,9 +168,9 @@ class PCRData(CleaningBase):
         df.to_csv(filename, index=False)
         return df
 
-    def update_with_ourworldindata(self, filename, force=False):
+    def use_ourworldindata(self, filename, force=False):
         """
-        Update the cleaned dataset using the data retrieved from "Our World In Data" site.
+        Set the cleaned dataset retrieved from "Our World In Data" site.
         https://github.com/owid/covid-19-data/tree/master/public/data
         https://ourworldindata.org/coronavirus
 
@@ -179,17 +181,30 @@ class PCRData(CleaningBase):
         # Retrieve dataset from "Our World In Data" if necessary
         Path(filename).parent.mkdir(exist_ok=True, parents=True)
         if Path(filename).exists() and not force:
-            new_df = self.load(filename, dtype={self.TESTS: np.int64})
+            df = self.load(filename, dtype={self.TESTS: np.int64})
         else:
-            new_df = self._download_ourworldindata(filename)
-        # Update the cleaned dataset
-        df = self._cleaned_df.copy()
-        df.index = df[self.ISO3].str.cat(df[self.DATE].astype(str), sep="_")
-        new_df.index = new_df[self.ISO3].str.cat(new_df[self.DATE], sep="_")
-        df.update(new_df)
+            df = self._download_ourworldindata(filename)
+        # Add "Country" and "Confirmed" column using "COVID-19 Data Hub" dataset
+        df[self.COUNTRY] = None
+        df[self.C] = None
+        series = df.loc[:, self.TESTS]
+        df.index = df[self.ISO3].str.cat(df[self.DATE], sep="_")
+        hub_df = self._cleaned_df.copy()
+        hub_df = hub_df.loc[hub_df[self.PROVINCE] == self.UNKNOWN]
+        hub_df.index = hub_df[self.ISO3].str.cat(
+            hub_df[self.DATE].astype(str), sep="_")
+        df.update(hub_df)
+        df[self.TESTS] = series
+        df = df.dropna().reset_index(drop=True)
+        # Add "Province" column (Unknown because not)
+        df[self.PROVINCE] = self.UNKNOWN
+        # Data types
         df[self.DATE] = pd.to_datetime(df[self.DATE])
+        df[self.COUNTRY] = df[self.COUNTRY].astype("category")
+        df[self.PROVINCE] = df[self.PROVINCE].astype("category")
+        df[self.C] = df[self.C].astype(np.int64)
         # Save the dataframe as the cleaned dataset
-        self._cleaned_df = df.reset_index(drop=True)
+        self._cleaned_df_owid = df.reset_index(drop=True)
         # Update citation
         self._citation += "\nHasell, J., Mathieu, E., Beltekian, D. et al." \
             " A cross-country database of COVID-19 testing. Sci Data 7, 345 (2020)." \
@@ -302,7 +317,8 @@ class PCRData(CleaningBase):
         Notes:
             Filling NA with 0 will be always applied.
         """
-        df = before_df.fillna(0)
+        df = before_df.copy()
+        df[self.TESTS].fillna(0, inplace=True)
         if not self._pcr_check_complement(df, variable):
             return df
         for col in df:
@@ -322,7 +338,7 @@ class PCRData(CleaningBase):
             window (int): window of moving average, >= 1
 
         Returns:
-            tuple(pandas.DataFrame, bool):
+            tuple (pandas.DataFrame, bool):
                 pandas.DataFrame
                     Index: reset index
                     Columns:
@@ -333,7 +349,8 @@ class PCRData(CleaningBase):
                         - Confirmed_diff (int): daily confirmed cases
                 bool: True if complement is needed or False
         """
-        df = before_df.fillna(method="ffill")
+        df = before_df.copy()
+        df[self.TESTS].fillna(method="ffill", inplace=True)
         # Confirmed must show monotonic increasing
         df = self._pcr_monotonic(df, self.C)
         df = self._pcr_partial_complement(df, self.TESTS)
@@ -376,25 +393,66 @@ class PCRData(CleaningBase):
             df (pandas.DataFrame):
                 Index: Date (pandas.TimeStamp)
                 Columns: Tests, Confirmed
-            country(str): country name or ISO3 code
-            province(str or None): province name
+            country (str): country name or ISO3 code
+            province (str or None): province name
 
-        Raises:
-            PCRIncorrectPreconditionError: the dataset has too many missing values
+        Return:
+            bool: whether the dataset has sufficient data or not
         """
-        df.fillna(0)
+        df[self.TESTS].fillna(0, inplace=True)
         # Check if the values are zero or nan
-        check_zero = not df[self.TESTS].max()
+        check_zero = df[self.TESTS].max()
         # Check if the number of the missing values
         # is more than 50% of the total values
-        check_missing = (df[self.TESTS] == 0).mean() >= 0.5
+        check_missing = (df[self.TESTS] == 0).mean() < 0.5
         # Check if the number of the positive unique values
         # is less than 1% of the total values
         positive_df = df.loc[df[self.TESTS] > 0, self.TESTS]
-        check_unique = (positive_df.nunique() / positive_df.size) < 0.01
-        if check_zero or check_missing or check_unique:
-            raise PCRIncorrectPreconditionError(
-                country=country, province=province, message="Too many missing Tests records") from None
+        try:
+            check_unique = (positive_df.nunique() / positive_df.size) >= 0.01
+        except ZeroDivisionError:
+            return False
+        # Result
+        return check_zero and check_missing and check_unique
+
+    def _subset_by_area(self, country, province, dataset="COVID-19 Data Hub"):
+        """
+        Return the subset of "Our World In Data".
+
+        Args:
+            country (str): country name
+            province (str): province name or "-"
+            dataset (str): 'COVID-19 Data Hub' or 'Our World In Data'
+        """
+        dataset_dict = {
+            "COVID-19 Data Hub": self._cleaned_df,
+            "Our World In Data": self._cleaned_df_owid,
+        }
+        df = dataset_dict[dataset].copy()
+        return df.loc[(df[self.COUNTRY] == country) & (df[self.PROVINCE] == province)]
+
+    def _subset_select(self, country, province):
+        """
+        When only "Our World In Data" has sufficient data, the subset of this dataset will be returned.
+        If not, "COVID-19 Data Hub" will be selected.
+
+        Args:
+            country (str): country name
+            province (str): province name or "-"
+        """
+        # If 'COVID-19 Data Hub' has sufficient data for the area, it will be used
+        hub_df = self._subset_by_area(
+            country, province, dataset="COVID-19 Data Hub")
+        if self._pcr_check_preconditions(hub_df, country, province):
+            return hub_df
+        # If 'Our World In Data' has sufficient data for the area, it will be used
+        owid_df = self._subset_by_area(
+            country, province, dataset="Our World In Data")
+        if self._pcr_check_preconditions(owid_df, country, province):
+            return owid_df
+        # Failed in retrieving sufficient data
+        raise PCRIncorrectPreconditionError(
+            country=country, province=province, message="Too many missing Tests records")
 
     def positive_rate(self, country, province=None, window=7, show_figure=True, filename=None):
         """
@@ -425,9 +483,14 @@ class PCRData(CleaningBase):
             "with partially complemented tests data" will be added to the title of the figure.
         """
         window = self.ensure_natural_int(window, name="window")
-        subset_df = self.subset(country, province=province)
-        # Check PCR data preconditions
-        self._pcr_check_preconditions(subset_df, country, province)
+        # Subset with area
+        country_alias = self.ensure_country_name(country)
+        province = province or self.UNKNOWN
+        try:
+            subset_df = self._subset_select(country_alias, province)
+        except PCRIncorrectPreconditionError:
+            raise PCRIncorrectPreconditionError(
+                country=country, province=province, message="Too many missing Tests records") from None
         # Process PCR data
         df, is_complemented = self._pcr_processing(subset_df, window)
         # Calculate PCR values
@@ -447,3 +510,40 @@ class PCRData(CleaningBase):
             show_legend=False,
         )
         return df
+
+    def subset(self, country, province=None, start_date=None, end_date=None, dataset="COVID-19 Data Hub"):
+        """
+        Return subset of the country/province and start/end date.
+
+        Args:
+            country (str): country name or ISO3 code
+            province (str or None): province name
+            start_date (str or None): start date, like 22Jan2020
+            end_date (str or None): end date, like 01Feb2020
+            dataset (str): 'COVID-19 Data Hub' or 'Our World In Data'
+
+        Returns:
+            pandas.DataFrame
+                Index: reset index
+                Columns:
+                    - Date (pd.TimeStamp): Observation date
+                    - Tests (int): the number of total tests performed
+                    - Confirmed (int): the number of confirmed cases
+        """
+        country_alias = self.ensure_country_name(country)
+        df = self._subset_by_area(
+            country=country_alias, province=province, dataset=dataset)
+        df = df.drop(
+            [self.COUNTRY, self.ISO3, self.PROVINCE], axis=1)
+        # Subset with Start/end date
+        if start_date is None and end_date is None:
+            return df.reset_index(drop=True)
+        series = df[self.DATE].copy()
+        start_obj = self.date_obj(date_str=start_date, default=series.min())
+        end_obj = self.date_obj(date_str=end_date, default=series.max())
+        df = df.loc[(start_obj <= series) & (series <= end_obj), :]
+        if df.empty:
+            raise SubsetNotFoundError(
+                country=country, country_alias=country_alias, province=province,
+                start_date=start_date, end_date=end_date)
+        return df.reset_index(drop=True)
