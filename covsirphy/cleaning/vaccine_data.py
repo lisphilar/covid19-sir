@@ -129,13 +129,34 @@ class VaccineData(CleaningBase):
         # Resampling
         df = df.set_index(self.DATE).resample("D").sum().reset_index()
         # Fill in the blanks
-        df[self.VAC] = df[self.VAC].replace(0, None).interpolate().fillna(0)
+        df[self.VAC] = df[self.VAC].replace(0, None)
+        df[self.VAC] = df[self.VAC].fillna(method="ffill").fillna(0)
         # Check records were found
         if df.empty:
             raise SubsetNotFoundError(
                 country=country, country_alias=country_alias, province=product,
                 start_date=start_date, end_date=end_date)
         return df
+
+    def records(self, country, product=None, start_date=None, end_date=None):
+        """
+        Return subset of the country/province and start/end date.
+
+        Args:
+            country (str or None): country name or ISO3 code
+            product (str or None): product name
+            start_date (str or None): start date, like 22Jan2020
+            end_date (str or None): end date, like 01Feb2020
+
+        Returns:
+            pandas.DataFrame
+                Index: reset index
+                Columns:
+                    - Date (pandas.TimeStamp): observation date
+                    - Vaccinations (int): the number of vaccinations
+        """
+        return self.subset(
+            country=country, product=product, start_date=start_date, end_date=end_date)
 
     def total(self):
         """
