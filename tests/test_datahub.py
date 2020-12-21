@@ -229,8 +229,8 @@ class TestPCRData(object):
         df = pcr_data.cleaned()
         assert isinstance(PCRData.from_dataframe(df), PCRData)
 
-    def test_update_with_ourworldindata(self, pcr_data):
-        pcr_data.update_with_ourworldindata(
+    def test_use_ourworldindata(self, pcr_data):
+        pcr_data.use_ourworldindata(
             filename="input/ourworldindata_pcr.csv")
 
     def test_subset(self, pcr_data):
@@ -249,7 +249,7 @@ class TestPCRData(object):
         df, _ = pcr_data.records("Greece")
         assert set(df.columns) == set(PCRData.PCR_NLOC_COLUMNS)
 
-    @pytest.mark.parametrize("country", ["Greece", "Italy", "France"])
+    @pytest.mark.parametrize("country", ["Greece", "Italy"])
     def test_positive_rate(self, pcr_data, country):
         warnings.simplefilter("ignore", category=UserWarning)
         pcr_data.positive_rate(country, show_figure=True)
