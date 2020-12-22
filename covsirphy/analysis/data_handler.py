@@ -251,9 +251,6 @@ class DataHandler(Term):
         df = df.diff().dropna()
         df = self._records_diff_fill_ending(df, variables)
         df = df.rolling(window=window).mean().dropna().astype(np.int64)
-        if self.CI in df.columns:
-            # Negative infected means greater recovery rate than infection rate
-            df.loc[df[self.CI] < 0, self.CI] = 0
         if not show_figure:
             return df
         if self._complemented:
