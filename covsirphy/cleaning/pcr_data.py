@@ -319,6 +319,8 @@ class PCRData(CleaningBase):
         """
         df = before_df.copy()
         df[self.TESTS].fillna(0, inplace=True)
+        if self.T_DIFF in df.columns:
+            df[self.T_DIFF].fillna(0, inplace=True)
         if not self._pcr_check_complement(df, variable):
             return df
         for col in df:
@@ -351,6 +353,8 @@ class PCRData(CleaningBase):
         """
         df = before_df.copy()
         df[self.TESTS].fillna(method="ffill", inplace=True)
+        if self.T_DIFF in df.columns:
+            df[self.T_DIFF].fillna(method="ffill", inplace=True)
         # Confirmed must show monotonic increasing
         df = self._pcr_monotonic(df, self.C)
         df = self._pcr_partial_complement(df, self.TESTS)
@@ -400,6 +404,8 @@ class PCRData(CleaningBase):
             bool: whether the dataset has sufficient data or not
         """
         df[self.TESTS].fillna(0, inplace=True)
+        if self.T_DIFF in df.columns:
+            df[self.T_DIFF].fillna(0, inplace=True)
         # Check if the values are zero or nan
         check_zero = df[self.TESTS].max()
         # Check if the number of the missing values

@@ -150,6 +150,8 @@ class PCRIncorrectPreconditionError(KeyError):
         Returns:
             str: area name
         """
+        if province == "-":
+            province = None
         country_str = (" in country " + country) if not province else ""
         province_str = "" if province is None else (" in province " + province)
         return f"{province_str}{country_str}"
