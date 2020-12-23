@@ -3,7 +3,6 @@
 
 import numpy as np
 import pandas as pd
-from datetime import timedelta
 from covsirphy.util.plotting import line_plot
 from covsirphy.cleaning.term import Term
 from covsirphy.cleaning.jhu_data import JHUData
@@ -159,66 +158,6 @@ class DataHandler(Term):
             df.set_index(self.DATE), title, y_integer=True, filename=filename, **kwargs)
         return df
 
-    def _records_diff_fill_ending(self, before_df, variables, max_ignored=100, eval_days=30):
-        """
-        If there are missing values in variables columns (diff values expected),
-        remove ending duplicates and apply partial compliment (bfill, ffill).
-
-        Args:
-            before_df (pandas.DataFrame):
-                Index:
-                    - Date (pd.TimeStamp): Observation date
-                Columns:
-                    - Confirmed (int): daily new cases of Confirmed, if calculated
-                    - Infected (int):  daily new cases of Infected, if calculated
-                    - Fatal (int):  daily new cases of Fatal, if calculated
-                    - Recovered (int):  daily new cases of Recovered, if calculated
-            variables: the desired columns to use
-            max_ignored (int): Max number of [col] cases to be ignored [cases]
-            eval_days (int): the number of last days to check if the pandemic is currently outbreaking
-
-        Returns:
-            pandas.DataFrame: complemented records
-                Index: Date (pandas.TimeStamp)
-                Columns: Confirmed, Fatal, Recovered (all daily values)
-        """
-        check_df = before_df.copy()
-        # Check first if it is currently
-        # (in the last eval_days days) outbreaking or not
-        # the values are expected to contain already diff values
-        check_df = check_df[-eval_days:]
-        check_df.replace(0, np.nan, inplace=True)
-        last_index = check_df[self.C].last_valid_index()
-        check_df = check_df[:last_index]
-
-        # Stopping is considered when either mean value of daily fatal is
-        # at most one person or if the daily rate of confirmed and recovered is negative
-        check_df.fillna(0, inplace=True)
-        sel_C = check_df[self.C] > max_ignored
-        sel_F = check_df[self.F].mean() <= 1
-        sel_R = check_df[self.R] > max_ignored
-        check_C = check_df[self.C].diff().mean() > 0
-        check_R = check_df[self.R].diff().mean() > 0
-        s_df_1 = check_df.loc[sel_C & check_C]
-        s_df_2 = check_df.loc[sel_R & check_R]
-        if s_df_1.empty and s_df_2.empty or sel_F:
-            return before_df
-
-        df = before_df.copy()
-        for col in variables:
-            df[col].replace(0, np.nan, inplace=True)
-            df_ending = df.copy()
-            # Replace duplicate values with NaN
-            df_ending.loc[df_ending.duplicated([col], keep=False), col] = None
-            # Find last valid index
-            non_zero_index_end = df_ending[col].last_valid_index()
-            df_ending.loc[non_zero_index_end + timedelta(days=1):, col] = None
-            # Update df with only the ending NaN values
-            df.loc[non_zero_index_end:, col] = df_ending.loc[non_zero_index_end:, col]
-            # Keep the previous valid value for the ending NaN
-            df[col].fillna(method="ffill", inplace=True)
-        return df
-
     def records_diff(self, variables=None, window=7, show_figure=True, filename=None, **kwargs):
         """
         Return the number of daily new cases (the first discreate difference of records).
@@ -249,7 +188,6 @@ class DataHandler(Term):
         window = self.ensure_natural_int(window, name="window")
         df = self.record_df.set_index(self.DATE)[variables]
         df = df.diff().dropna()
-        df = self._records_diff_fill_ending(df, variables)
         df = df.rolling(window=window).mean().dropna().astype(np.int64)
         if not show_figure:
             return df
