@@ -154,7 +154,8 @@ class PCRData(CleaningBase):
         col_dict = {
             "ISO code": self.ISO3,
             "Date": self.DATE,
-            "Cumulative total": self.TESTS
+            "Cumulative total": self.TESTS,
+            "Daily change in cumulative total": self.T_DIFF,
         }
         # Download the dataset
         df = self.load(url, columns=list(col_dict))
@@ -162,6 +163,15 @@ class PCRData(CleaningBase):
         df = df.rename(col_dict, axis=1)
         df[self.TESTS] = pd.to_numeric(df[self.TESTS], errors="coerce")
         df[self.TESTS] = df[self.TESTS].fillna(method="ffill").astype(np.int64)
+        # Calculate cumulative values if necessary
+        df[self.T_DIFF] = df[self.T_DIFF].fillna(0).astype(np.int64)
+        na_last_df = df.loc[
+            (df[self.TESTS].isna()) & (df[self.DATE] == df[self.DATE].max())]
+        re_countries_set = set(na_last_df[self.ISO3].unique())
+        df["cumsum"] = df.groupby(self.ISO3)[self.T_DIFF].cumsum()
+        df[self.TESTS] = df[[self.ISO3, self.TESTS, "cumsum"]].swifter.progress_bar(False).apply(
+            lambda x: x[1] if x[0] in re_countries_set else x[2], axis=1)
+        df = df.drop("cumsum", axis=1)
         # Drop duplicated records
         df = df.drop_duplicates(subset=[self.ISO3, self.DATE])
         # Save as CSV file
@@ -389,7 +399,7 @@ class PCRData(CleaningBase):
             [self.T_DIFF, self.C_DIFF], axis=1).equals(before_df)
         return (df, is_complemented)
 
-    def _pcr_check_preconditions(self, df, country, province):
+    def _pcr_check_preconditions(self, df):
         """
         Check preconditions in order to proceed with PCR data processing.
 
@@ -397,8 +407,6 @@ class PCRData(CleaningBase):
             df (pandas.DataFrame):
                 Index: Date (pandas.TimeStamp)
                 Columns: Tests, Confirmed
-            country (str): country name or ISO3 code
-            province (str or None): province name
 
         Return:
             bool: whether the dataset has sufficient data or not
@@ -449,12 +457,12 @@ class PCRData(CleaningBase):
         # If 'COVID-19 Data Hub' has sufficient data for the area, it will be used
         hub_df = self._subset_by_area(
             country, province, dataset="COVID-19 Data Hub")
-        if self._pcr_check_preconditions(hub_df, country, province):
+        if self._pcr_check_preconditions(hub_df):
             return hub_df
         # If 'Our World In Data' has sufficient data for the area, it will be used
         owid_df = self._subset_by_area(
             country, province, dataset="Our World In Data")
-        if self._pcr_check_preconditions(owid_df, country, province):
+        if self._pcr_check_preconditions(owid_df):
             return owid_df
         # Failed in retrieving sufficient data
         raise PCRIncorrectPreconditionError(
