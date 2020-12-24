@@ -197,8 +197,8 @@ class PCRData(CleaningBase):
         # Add "Country" and "Confirmed" column using "COVID-19 Data Hub" dataset
         df[self.COUNTRY] = None
         df[self.C] = None
-        series = df.loc[:, self.TESTS]
         df.index = df[self.ISO3].str.cat(df[self.DATE], sep="_")
+        series = df.loc[:, self.TESTS]
         hub_df = self._cleaned_df.copy()
         hub_df = hub_df.loc[hub_df[self.PROVINCE] == self.UNKNOWN]
         hub_df.index = hub_df[self.ISO3].str.cat(
