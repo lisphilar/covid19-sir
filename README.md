@@ -8,7 +8,7 @@
 [![GitHub license](https://img.shields.io/github/license/lisphilar/covid19-sir)](https://github.com/lisphilar/covid19-sir/blob/master/LICENSE)
 [![Maintainability](https://api.codeclimate.com/v1/badges/eb97eaf9804f436062b9/maintainability)](https://codeclimate.com/github/lisphilar/covid19-sir/maintainability)
 [![Test Coverage](https://api.codeclimate.com/v1/badges/eb97eaf9804f436062b9/test_coverage)](https://codeclimate.com/github/lisphilar/covid19-sir/test_coverage)
-
+[![Open Source Helpers](https://www.codetriage.com/lisphilar/covid19-sir/badges/users.svg)](https://www.codetriage.com/lisphilar/covid19-sir)
 
 # CovsirPhy introduction
 
@@ -23,14 +23,14 @@
 <img src="./docs/gif/covsirphy_demo.gif" width="600">
 
 ## Functionalities
-- Data preparation and data visualization
+- [Data preparation and data visualization](https://lisphilar.github.io/covid19-sir/usage_dataset.html)
 - [Phase setting with S-R Trend analysis](https://lisphilar.github.io/covid19-sir/usage_phases.html)
-- Numerical simulation of ODE models
+- [Numerical simulation of ODE models](https://lisphilar.github.io/covid19-sir/usage_theoretical.html)
     - Stable: SIR, SIR-D and SIR-F model
     - Development: SIR-FV and SEWIR-F model
-- Phase-dependent parameter estimation of ODE models
-- Scenario analysis: Simulate the number of cases with user-defined parameter values
-- (In development): Find the relationship of government response and parameter values
+- [Phase-dependent parameter estimation of ODE models](https://lisphilar.github.io/covid19-sir/usage_quickest.html)
+- [Scenario analysis](https://lisphilar.github.io/covid19-sir/usage_quick.html): Simulate the number of cases with user-defined parameter values
+- [(In development): Find the relationship of government response and parameter values](https://lisphilar.github.io/covid19-sir/usage_policy.html)
 
 ## Inspiration
 - Monitor the spread of COVID-19
@@ -81,13 +81,8 @@ _ = snl.simulate()
 
 Further information:
 
-- [Quickest version](https://lisphilar.github.io/covid19-sir/usage_quickest.html)
-- [Quick version](https://lisphilar.github.io/covid19-sir/usage_quick.html)
-- [Details: datasets](https://lisphilar.github.io/covid19-sir/usage_dataset.html)
-- [Details: phases](https://lisphilar.github.io/covid19-sir/usage_phases.html)
-- [Details: theoretical datasets](https://lisphilar.github.io/covid19-sir/usage_theoretical.html)
-- [Details: policy measures](https://lisphilar.github.io/covid19-sir/usage_policy.html)
-- Example codes in ["example" directory of this repository](https://github.com/lisphilar/covid19-sir/tree/master/example)
+- [CovsirPhy documentation](https://lisphilar.github.io/covid19-sir/index.html)
+- Example scripts in ["example" directory of this repository](https://github.com/lisphilar/covid19-sir/tree/master/example)
 - [Kaggle: COVID-19 data with SIR model](https://www.kaggle.com/lisphilar/covid-19-data-with-sir-model)
 
 
