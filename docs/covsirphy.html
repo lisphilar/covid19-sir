@@ -3154,9 +3154,41 @@ Columns:</p>
 </dd></dl>
 
 <dl class="py method">
-<dt id="covsirphy.PCRData.update_with_ourworldindata">
-<code class="sig-name descname">update_with_ourworldindata</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">filename</span></em>, <em class="sig-param"><span class="n">force</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/cleaning/pcr_data.html#PCRData.update_with_ourworldindata"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#covsirphy.PCRData.update_with_ourworldindata" title="Permalink to this definition">¶</a></dt>
-<dd><p>Update the cleaned dataset using the data retrieved from “Our World In Data” site.
+<dt id="covsirphy.PCRData.subset">
+<code class="sig-name descname">subset</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">country</span></em>, <em class="sig-param"><span class="n">province</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">start_date</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">end_date</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">dataset</span><span class="o">=</span><span class="default_value">'COVID-19 Data Hub'</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/cleaning/pcr_data.html#PCRData.subset"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#covsirphy.PCRData.subset" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return subset of the country/province and start/end date.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>country</strong> (<em>str</em>) – country name or ISO3 code</p></li>
+<li><p><strong>province</strong> (<em>str</em><em> or </em><em>None</em>) – province name</p></li>
+<li><p><strong>start_date</strong> (<em>str</em><em> or </em><em>None</em>) – start date, like 22Jan2020</p></li>
+<li><p><strong>end_date</strong> (<em>str</em><em> or </em><em>None</em>) – end date, like 01Feb2020</p></li>
+<li><p><strong>dataset</strong> (<em>str</em>) – ‘COVID-19 Data Hub’ or ‘Our World In Data’</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><dl>
+<dt>pandas.DataFrame</dt><dd><p>Index: reset index
+Columns:</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>Date (pd.TimeStamp): Observation date</p></li>
+<li><p>Tests (int): the number of total tests performed</p></li>
+<li><p>Confirmed (int): the number of confirmed cases</p></li>
+</ul>
+</div></blockquote>
+</dd>
+</dl>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="covsirphy.PCRData.use_ourworldindata">
+<code class="sig-name descname">use_ourworldindata</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">filename</span></em>, <em class="sig-param"><span class="n">force</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/cleaning/pcr_data.html#PCRData.use_ourworldindata"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#covsirphy.PCRData.use_ourworldindata" title="Permalink to this definition">¶</a></dt>
+<dd><p>Set the cleaned dataset retrieved from “Our World In Data” site.
 <a class="reference external" href="https://github.com/owid/covid-19-data/tree/master/public/data">https://github.com/owid/covid-19-data/tree/master/public/data</a>
 <a class="reference external" href="https://ourworldindata.org/coronavirus">https://ourworldindata.org/coronavirus</a></p>
 <dl class="field-list simple">
@@ -7141,6 +7173,36 @@ Index:</p>
 <dt id="covsirphy.VaccineData.VAC_COLS">
 <code class="sig-name descname">VAC_COLS</code><em class="property"> = ['Date', 'Country', 'Product', 'Vaccinations']</em><a class="headerlink" href="#covsirphy.VaccineData.VAC_COLS" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
+
+<dl class="py method">
+<dt id="covsirphy.VaccineData.records">
+<code class="sig-name descname">records</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">country</span></em>, <em class="sig-param"><span class="n">product</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">start_date</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">end_date</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/cleaning/vaccine_data.html#VaccineData.records"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#covsirphy.VaccineData.records" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return subset of the country/province and start/end date.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>country</strong> (<em>str</em><em> or </em><em>None</em>) – country name or ISO3 code</p></li>
+<li><p><strong>product</strong> (<em>str</em><em> or </em><em>None</em>) – product name</p></li>
+<li><p><strong>start_date</strong> (<em>str</em><em> or </em><em>None</em>) – start date, like 22Jan2020</p></li>
+<li><p><strong>end_date</strong> (<em>str</em><em> or </em><em>None</em>) – end date, like 01Feb2020</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><dl>
+<dt>pandas.DataFrame</dt><dd><p>Index: reset index
+Columns:</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>Date (pandas.TimeStamp): observation date</p></li>
+<li><p>Vaccinations (int): the number of vaccinations</p></li>
+</ul>
+</div></blockquote>
+</dd>
+</dl>
+</p>
+</dd>
+</dl>
+</dd></dl>
 
 <dl class="py method">
 <dt id="covsirphy.VaccineData.subset">

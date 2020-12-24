@@ -294,13 +294,34 @@
         <span class="c1"># Resampling</span>
         <span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">set_index</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">DATE</span><span class="p">)</span><span class="o">.</span><span class="n">resample</span><span class="p">(</span><span class="s2">&quot;D&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span><span class="o">.</span><span class="n">reset_index</span><span class="p">()</span>
         <span class="c1"># Fill in the blanks</span>
-        <span class="n">df</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">VAC</span><span class="p">]</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">VAC</span><span class="p">]</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span><span class="o">.</span><span class="n">interpolate</span><span class="p">()</span><span class="o">.</span><span class="n">fillna</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+        <span class="n">df</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">VAC</span><span class="p">]</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">VAC</span><span class="p">]</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+        <span class="n">df</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">VAC</span><span class="p">]</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">VAC</span><span class="p">]</span><span class="o">.</span><span class="n">fillna</span><span class="p">(</span><span class="n">method</span><span class="o">=</span><span class="s2">&quot;ffill&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">fillna</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
         <span class="c1"># Check records were found</span>
         <span class="k">if</span> <span class="n">df</span><span class="o">.</span><span class="n">empty</span><span class="p">:</span>
             <span class="k">raise</span> <span class="n">SubsetNotFoundError</span><span class="p">(</span>
                 <span class="n">country</span><span class="o">=</span><span class="n">country</span><span class="p">,</span> <span class="n">country_alias</span><span class="o">=</span><span class="n">country_alias</span><span class="p">,</span> <span class="n">province</span><span class="o">=</span><span class="n">product</span><span class="p">,</span>
                 <span class="n">start_date</span><span class="o">=</span><span class="n">start_date</span><span class="p">,</span> <span class="n">end_date</span><span class="o">=</span><span class="n">end_date</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">df</span></div>
+
+<div class="viewcode-block" id="VaccineData.records"><a class="viewcode-back" href="../../../covsirphy.cleaning.html#covsirphy.VaccineData.records">[docs]</a>    <span class="k">def</span> <span class="nf">records</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">country</span><span class="p">,</span> <span class="n">product</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">start_date</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">end_date</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Return subset of the country/province and start/end date.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            country (str or None): country name or ISO3 code</span>
+<span class="sd">            product (str or None): product name</span>
+<span class="sd">            start_date (str or None): start date, like 22Jan2020</span>
+<span class="sd">            end_date (str or None): end date, like 01Feb2020</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            pandas.DataFrame</span>
+<span class="sd">                Index: reset index</span>
+<span class="sd">                Columns:</span>
+<span class="sd">                    - Date (pandas.TimeStamp): observation date</span>
+<span class="sd">                    - Vaccinations (int): the number of vaccinations</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">subset</span><span class="p">(</span>
+            <span class="n">country</span><span class="o">=</span><span class="n">country</span><span class="p">,</span> <span class="n">product</span><span class="o">=</span><span class="n">product</span><span class="p">,</span> <span class="n">start_date</span><span class="o">=</span><span class="n">start_date</span><span class="p">,</span> <span class="n">end_date</span><span class="o">=</span><span class="n">end_date</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="VaccineData.total"><a class="viewcode-back" href="../../../covsirphy.cleaning.html#covsirphy.VaccineData.total">[docs]</a>    <span class="k">def</span> <span class="nf">total</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>

@@ -1,5 +1,6 @@
 | |PyPI version| |Downloads| |PyPI - Python Version| |Build Status|
-| |GitHub license| |Maintainability| |Test Coverage|
+| |GitHub license| |Maintainability| |Test Coverage| |Open Source
+  Helpers|
 
 CovsirPhy introduction
 ======================
@@ -24,19 +25,24 @@ to understand the methods.
 Functionalities
 ---------------
 
--  Data preparation and data visualization
+-  `Data preparation and data
+   visualization <https://lisphilar.github.io/covid19-sir/usage_dataset.html>`__
 -  `Phase setting with S-R Trend
    analysis <https://lisphilar.github.io/covid19-sir/usage_phases.html>`__
--  Numerical simulation of ODE models
+-  `Numerical simulation of ODE
+   models <https://lisphilar.github.io/covid19-sir/usage_theoretical.html>`__
 
    -  Stable: SIR, SIR-D and SIR-F model
    -  Development: SIR-FV and SEWIR-F model
 
--  Phase-dependent parameter estimation of ODE models
--  Scenario analysis: Simulate the number of cases with user-defined
-   parameter values
--  (In development): Find the relationship of government response and
-   parameter values
+-  `Phase-dependent parameter estimation of ODE
+   models <https://lisphilar.github.io/covid19-sir/usage_quickest.html>`__
+-  `Scenario
+   analysis <https://lisphilar.github.io/covid19-sir/usage_quick.html>`__:
+   Simulate the number of cases with user-defined parameter values
+-  `(In development): Find the relationship of government response and
+   parameter
+   values <https://lisphilar.github.io/covid19-sir/usage_policy.html>`__
 
 Inspiration
 -----------
@@ -104,19 +110,9 @@ records in Japan, but we can change the country name when creating
 
 Further information:
 
--  `Quickest
-   version <https://lisphilar.github.io/covid19-sir/usage_quickest.html>`__
--  `Quick
-   version <https://lisphilar.github.io/covid19-sir/usage_quick.html>`__
--  `Details:
-   datasets <https://lisphilar.github.io/covid19-sir/usage_dataset.html>`__
--  `Details:
-   phases <https://lisphilar.github.io/covid19-sir/usage_phases.html>`__
--  `Details: theoretical
-   datasets <https://lisphilar.github.io/covid19-sir/usage_theoretical.html>`__
--  `Details: policy
-   measures <https://lisphilar.github.io/covid19-sir/usage_policy.html>`__
--  Example codes in `"example" directory of this
+-  `CovsirPhy
+   documentation <https://lisphilar.github.io/covid19-sir/index.html>`__
+-  Example scripts in `"example" directory of this
    repository <https://github.com/lisphilar/covid19-sir/tree/master/example>`__
 -  `Kaggle: COVID-19 data with SIR
    model <https://www.kaggle.com/lisphilar/covid-19-data-with-sir-model>`__
@@ -172,5 +168,7 @@ Related work
    :target: https://codeclimate.com/github/lisphilar/covid19-sir/maintainability
 .. |Test Coverage| image:: https://api.codeclimate.com/v1/badges/eb97eaf9804f436062b9/test_coverage
    :target: https://codeclimate.com/github/lisphilar/covid19-sir/test_coverage
+.. |Open Source Helpers| image:: https://www.codetriage.com/lisphilar/covid19-sir/badges/users.svg
+   :target: https://www.codetriage.com/lisphilar/covid19-sir
 .. |Become a backer| image:: https://opencollective.com/covsirphy/tiers/backer.svg?avatarHeight=36&width=600
    :target: https://opencollective.com/covsirphy

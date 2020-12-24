@@ -172,7 +172,7 @@
 <span class="kn">from</span> <span class="nn">dask</span> <span class="kn">import</span> <span class="n">dataframe</span> <span class="k">as</span> <span class="n">dd</span>
 <span class="kn">import</span> <span class="nn">swifter</span>
 <span class="kn">from</span> <span class="nn">covsirphy.util.plotting</span> <span class="kn">import</span> <span class="n">line_plot</span>
-<span class="kn">from</span> <span class="nn">covsirphy.util.error</span> <span class="kn">import</span> <span class="n">PCRIncorrectPreconditionError</span>
+<span class="kn">from</span> <span class="nn">covsirphy.util.error</span> <span class="kn">import</span> <span class="n">PCRIncorrectPreconditionError</span><span class="p">,</span> <span class="n">SubsetNotFoundError</span>
 <span class="kn">from</span> <span class="nn">covsirphy.cleaning.cbase</span> <span class="kn">import</span> <span class="n">CleaningBase</span>
 <span class="kn">from</span> <span class="nn">covsirphy.cleaning.country_data</span> <span class="kn">import</span> <span class="n">CountryData</span>
 
@@ -209,6 +209,8 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">min_pcr_tests</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ensure_natural_int</span><span class="p">(</span>
             <span class="n">min_pcr_tests</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;min_pcr_tests&quot;</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_citation</span> <span class="o">=</span> <span class="n">citation</span> <span class="ow">or</span> <span class="s2">&quot;&quot;</span>
+        <span class="c1"># Cleaned dataset of &quot;Our World In Data&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_cleaned_df_owid</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">()</span>
         <span class="c1"># To avoid &quot;imported but unused&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">__swifter</span> <span class="o">=</span> <span class="n">swifter</span>
 
@@ -331,9 +333,9 @@
         <span class="n">df</span><span class="o">.</span><span class="n">to_csv</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">df</span>
 
-<div class="viewcode-block" id="PCRData.update_with_ourworldindata"><a class="viewcode-back" href="../../../covsirphy.cleaning.pcr_data.html#covsirphy.PCRData.update_with_ourworldindata">[docs]</a>    <span class="k">def</span> <span class="nf">update_with_ourworldindata</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="p">,</span> <span class="n">force</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+<div class="viewcode-block" id="PCRData.use_ourworldindata"><a class="viewcode-back" href="../../../covsirphy.cleaning.pcr_data.html#covsirphy.PCRData.use_ourworldindata">[docs]</a>    <span class="k">def</span> <span class="nf">use_ourworldindata</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="p">,</span> <span class="n">force</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Update the cleaned dataset using the data retrieved from &quot;Our World In Data&quot; site.</span>
+<span class="sd">        Set the cleaned dataset retrieved from &quot;Our World In Data&quot; site.</span>
 <span class="sd">        https://github.com/owid/covid-19-data/tree/master/public/data</span>
 <span class="sd">        https://ourworldindata.org/coronavirus</span>
 
@@ -344,17 +346,30 @@
         <span class="c1"># Retrieve dataset from &quot;Our World In Data&quot; if necessary</span>
         <span class="n">Path</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span><span class="o">.</span><span class="n">parent</span><span class="o">.</span><span class="n">mkdir</span><span class="p">(</span><span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">parents</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">Path</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span><span class="o">.</span><span class="n">exists</span><span class="p">()</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">force</span><span class="p">:</span>
-            <span class="n">new_df</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="p">{</span><span class="bp">self</span><span class="o">.</span><span class="n">TESTS</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">int64</span><span class="p">})</span>
+            <span class="n">df</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="p">{</span><span class="bp">self</span><span class="o">.</span><span class="n">TESTS</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">int64</span><span class="p">})</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="n">new_df</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_download_ourworldindata</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span>
-        <span class="c1"># Update the cleaned dataset</span>
-        <span class="n">df</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_cleaned_df</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
-        <span class="n">df</span><span class="o">.</span><span class="n">index</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">ISO3</span><span class="p">]</span><span class="o">.</span><span class="n">str</span><span class="o">.</span><span class="n">cat</span><span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">DATE</span><span class="p">]</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">str</span><span class="p">),</span> <span class="n">sep</span><span class="o">=</span><span class="s2">&quot;_&quot;</span><span class="p">)</span>
-        <span class="n">new_df</span><span class="o">.</span><span class="n">index</span> <span class="o">=</span> <span class="n">new_df</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">ISO3</span><span class="p">]</span><span class="o">.</span><span class="n">str</span><span class="o">.</span><span class="n">cat</span><span class="p">(</span><span class="n">new_df</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">DATE</span><span class="p">],</span> <span class="n">sep</span><span class="o">=</span><span class="s2">&quot;_&quot;</span><span class="p">)</span>
-        <span class="n">df</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">new_df</span><span class="p">)</span>
+            <span class="n">df</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_download_ourworldindata</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span>
+        <span class="c1"># Add &quot;Country&quot; and &quot;Confirmed&quot; column using &quot;COVID-19 Data Hub&quot; dataset</span>
+        <span class="n">df</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">COUNTRY</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="n">df</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">C</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="n">series</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">loc</span><span class="p">[:,</span> <span class="bp">self</span><span class="o">.</span><span class="n">TESTS</span><span class="p">]</span>
+        <span class="n">df</span><span class="o">.</span><span class="n">index</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">ISO3</span><span class="p">]</span><span class="o">.</span><span class="n">str</span><span class="o">.</span><span class="n">cat</span><span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">DATE</span><span class="p">],</span> <span class="n">sep</span><span class="o">=</span><span class="s2">&quot;_&quot;</span><span class="p">)</span>
+        <span class="n">hub_df</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_cleaned_df</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+        <span class="n">hub_df</span> <span class="o">=</span> <span class="n">hub_df</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">hub_df</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">PROVINCE</span><span class="p">]</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">UNKNOWN</span><span class="p">]</span>
+        <span class="n">hub_df</span><span class="o">.</span><span class="n">index</span> <span class="o">=</span> <span class="n">hub_df</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">ISO3</span><span class="p">]</span><span class="o">.</span><span class="n">str</span><span class="o">.</span><span class="n">cat</span><span class="p">(</span>
+            <span class="n">hub_df</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">DATE</span><span class="p">]</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">str</span><span class="p">),</span> <span class="n">sep</span><span class="o">=</span><span class="s2">&quot;_&quot;</span><span class="p">)</span>
+        <span class="n">df</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">hub_df</span><span class="p">)</span>
+        <span class="n">df</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">TESTS</span><span class="p">]</span> <span class="o">=</span> <span class="n">series</span>
+        <span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">dropna</span><span class="p">()</span><span class="o">.</span><span class="n">reset_index</span><span class="p">(</span><span class="n">drop</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="c1"># Add &quot;Province&quot; column (Unknown because not)</span>
+        <span class="n">df</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">PROVINCE</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">UNKNOWN</span>
+        <span class="c1"># Data types</span>
         <span class="n">df</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">DATE</span><span class="p">]</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">to_datetime</span><span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">DATE</span><span class="p">])</span>
+        <span class="n">df</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">COUNTRY</span><span class="p">]</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">COUNTRY</span><span class="p">]</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="s2">&quot;category&quot;</span><span class="p">)</span>
+        <span class="n">df</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">PROVINCE</span><span class="p">]</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">PROVINCE</span><span class="p">]</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="s2">&quot;category&quot;</span><span class="p">)</span>
+        <span class="n">df</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">C</span><span class="p">]</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">C</span><span class="p">]</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">int64</span><span class="p">)</span>
         <span class="c1"># Save the dataframe as the cleaned dataset</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_cleaned_df</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">reset_index</span><span class="p">(</span><span class="n">drop</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_cleaned_df_owid</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">reset_index</span><span class="p">(</span><span class="n">drop</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
         <span class="c1"># Update citation</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_citation</span> <span class="o">+=</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">Hasell, J., Mathieu, E., Beltekian, D. et al.&quot;</span> \
             <span class="s2">&quot; A cross-country database of COVID-19 testing. Sci Data 7, 345 (2020).&quot;</span> \
@@ -467,7 +482,10 @@
 <span class="sd">        Notes:</span>
 <span class="sd">            Filling NA with 0 will be always applied.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">df</span> <span class="o">=</span> <span class="n">before_df</span><span class="o">.</span><span class="n">fillna</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+        <span class="n">df</span> <span class="o">=</span> <span class="n">before_df</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+        <span class="n">df</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">TESTS</span><span class="p">]</span><span class="o">.</span><span class="n">fillna</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">T_DIFF</span> <span class="ow">in</span> <span class="n">df</span><span class="o">.</span><span class="n">columns</span><span class="p">:</span>
+            <span class="n">df</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">T_DIFF</span><span class="p">]</span><span class="o">.</span><span class="n">fillna</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_pcr_check_complement</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">variable</span><span class="p">):</span>
             <span class="k">return</span> <span class="n">df</span>
         <span class="k">for</span> <span class="n">col</span> <span class="ow">in</span> <span class="n">df</span><span class="p">:</span>
@@ -487,7 +505,7 @@
 <span class="sd">            window (int): window of moving average, &gt;= 1</span>
 
 <span class="sd">        Returns:</span>
-<span class="sd">            tuple(pandas.DataFrame, bool):</span>
+<span class="sd">            tuple (pandas.DataFrame, bool):</span>
 <span class="sd">                pandas.DataFrame</span>
 <span class="sd">                    Index: reset index</span>
 <span class="sd">                    Columns:</span>
@@ -498,7 +516,10 @@
 <span class="sd">                        - Confirmed_diff (int): daily confirmed cases</span>
 <span class="sd">                bool: True if complement is needed or False</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">df</span> <span class="o">=</span> <span class="n">before_df</span><span class="o">.</span><span class="n">fillna</span><span class="p">(</span><span class="n">method</span><span class="o">=</span><span class="s2">&quot;ffill&quot;</span><span class="p">)</span>
+        <span class="n">df</span> <span class="o">=</span> <span class="n">before_df</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+        <span class="n">df</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">TESTS</span><span class="p">]</span><span class="o">.</span><span class="n">fillna</span><span class="p">(</span><span class="n">method</span><span class="o">=</span><span class="s2">&quot;ffill&quot;</span><span class="p">,</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">T_DIFF</span> <span class="ow">in</span> <span class="n">df</span><span class="o">.</span><span class="n">columns</span><span class="p">:</span>
+            <span class="n">df</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">T_DIFF</span><span class="p">]</span><span class="o">.</span><span class="n">fillna</span><span class="p">(</span><span class="n">method</span><span class="o">=</span><span class="s2">&quot;ffill&quot;</span><span class="p">,</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
         <span class="c1"># Confirmed must show monotonic increasing</span>
         <span class="n">df</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_pcr_monotonic</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">C</span><span class="p">)</span>
         <span class="n">df</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_pcr_partial_complement</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">TESTS</span><span class="p">)</span>
@@ -541,15 +562,68 @@
 <span class="sd">            df (pandas.DataFrame):</span>
 <span class="sd">                Index: Date (pandas.TimeStamp)</span>
 <span class="sd">                Columns: Tests, Confirmed</span>
-<span class="sd">            country(str): country name or ISO3 code</span>
-<span class="sd">            province(str or None): province name</span>
+<span class="sd">            country (str): country name or ISO3 code</span>
+<span class="sd">            province (str or None): province name</span>
 
-<span class="sd">        Raises:</span>
-<span class="sd">            PCRIncorrectPreconditionError: the dataset has too many missing values</span>
+<span class="sd">        Return:</span>
+<span class="sd">            bool: whether the dataset has sufficient data or not</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">if</span> <span class="p">(</span><span class="ow">not</span> <span class="n">df</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">TESTS</span><span class="p">]</span><span class="o">.</span><span class="n">max</span><span class="p">())</span> <span class="ow">or</span> <span class="p">((</span><span class="n">df</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">TESTS</span><span class="p">]</span> <span class="o">==</span> <span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span> <span class="o">&gt;=</span> <span class="mf">0.5</span><span class="p">):</span>
-            <span class="k">raise</span> <span class="n">PCRIncorrectPreconditionError</span><span class="p">(</span>
-                <span class="n">country</span><span class="o">=</span><span class="n">country</span><span class="p">,</span> <span class="n">province</span><span class="o">=</span><span class="n">province</span><span class="p">,</span> <span class="n">message</span><span class="o">=</span><span class="s2">&quot;Too many missing Tests records&quot;</span><span class="p">)</span> <span class="kn">from</span> <span class="bp">None</span>
+        <span class="n">df</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">TESTS</span><span class="p">]</span><span class="o">.</span><span class="n">fillna</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">T_DIFF</span> <span class="ow">in</span> <span class="n">df</span><span class="o">.</span><span class="n">columns</span><span class="p">:</span>
+            <span class="n">df</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">T_DIFF</span><span class="p">]</span><span class="o">.</span><span class="n">fillna</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="c1"># Check if the values are zero or nan</span>
+        <span class="n">check_zero</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">TESTS</span><span class="p">]</span><span class="o">.</span><span class="n">max</span><span class="p">()</span>
+        <span class="c1"># Check if the number of the missing values</span>
+        <span class="c1"># is more than 50% of the total values</span>
+        <span class="n">check_missing</span> <span class="o">=</span> <span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">TESTS</span><span class="p">]</span> <span class="o">==</span> <span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span> <span class="o">&lt;</span> <span class="mf">0.5</span>
+        <span class="c1"># Check if the number of the positive unique values</span>
+        <span class="c1"># is less than 1% of the total values</span>
+        <span class="n">positive_df</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">df</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">TESTS</span><span class="p">]</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">TESTS</span><span class="p">]</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">check_unique</span> <span class="o">=</span> <span class="p">(</span><span class="n">positive_df</span><span class="o">.</span><span class="n">nunique</span><span class="p">()</span> <span class="o">/</span> <span class="n">positive_df</span><span class="o">.</span><span class="n">size</span><span class="p">)</span> <span class="o">&gt;=</span> <span class="mf">0.01</span>
+        <span class="k">except</span> <span class="ne">ZeroDivisionError</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">False</span>
+        <span class="c1"># Result</span>
+        <span class="k">return</span> <span class="n">check_zero</span> <span class="ow">and</span> <span class="n">check_missing</span> <span class="ow">and</span> <span class="n">check_unique</span>
+
+    <span class="k">def</span> <span class="nf">_subset_by_area</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">country</span><span class="p">,</span> <span class="n">province</span><span class="p">,</span> <span class="n">dataset</span><span class="o">=</span><span class="s2">&quot;COVID-19 Data Hub&quot;</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Return the subset of &quot;Our World In Data&quot;.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            country (str): country name</span>
+<span class="sd">            province (str): province name or &quot;-&quot;</span>
+<span class="sd">            dataset (str): &#39;COVID-19 Data Hub&#39; or &#39;Our World In Data&#39;</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">dataset_dict</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s2">&quot;COVID-19 Data Hub&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_cleaned_df</span><span class="p">,</span>
+            <span class="s2">&quot;Our World In Data&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_cleaned_df_owid</span><span class="p">,</span>
+        <span class="p">}</span>
+        <span class="n">df</span> <span class="o">=</span> <span class="n">dataset_dict</span><span class="p">[</span><span class="n">dataset</span><span class="p">]</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+        <span class="k">return</span> <span class="n">df</span><span class="o">.</span><span class="n">loc</span><span class="p">[(</span><span class="n">df</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">COUNTRY</span><span class="p">]</span> <span class="o">==</span> <span class="n">country</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">PROVINCE</span><span class="p">]</span> <span class="o">==</span> <span class="n">province</span><span class="p">)]</span>
+
+    <span class="k">def</span> <span class="nf">_subset_select</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">country</span><span class="p">,</span> <span class="n">province</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        When only &quot;Our World In Data&quot; has sufficient data, the subset of this dataset will be returned.</span>
+<span class="sd">        If not, &quot;COVID-19 Data Hub&quot; will be selected.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            country (str): country name</span>
+<span class="sd">            province (str): province name or &quot;-&quot;</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># If &#39;COVID-19 Data Hub&#39; has sufficient data for the area, it will be used</span>
+        <span class="n">hub_df</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_subset_by_area</span><span class="p">(</span>
+            <span class="n">country</span><span class="p">,</span> <span class="n">province</span><span class="p">,</span> <span class="n">dataset</span><span class="o">=</span><span class="s2">&quot;COVID-19 Data Hub&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_pcr_check_preconditions</span><span class="p">(</span><span class="n">hub_df</span><span class="p">,</span> <span class="n">country</span><span class="p">,</span> <span class="n">province</span><span class="p">):</span>
+            <span class="k">return</span> <span class="n">hub_df</span>
+        <span class="c1"># If &#39;Our World In Data&#39; has sufficient data for the area, it will be used</span>
+        <span class="n">owid_df</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_subset_by_area</span><span class="p">(</span>
+            <span class="n">country</span><span class="p">,</span> <span class="n">province</span><span class="p">,</span> <span class="n">dataset</span><span class="o">=</span><span class="s2">&quot;Our World In Data&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_pcr_check_preconditions</span><span class="p">(</span><span class="n">owid_df</span><span class="p">,</span> <span class="n">country</span><span class="p">,</span> <span class="n">province</span><span class="p">):</span>
+            <span class="k">return</span> <span class="n">owid_df</span>
+        <span class="c1"># Failed in retrieving sufficient data</span>
+        <span class="k">raise</span> <span class="n">PCRIncorrectPreconditionError</span><span class="p">(</span>
+            <span class="n">country</span><span class="o">=</span><span class="n">country</span><span class="p">,</span> <span class="n">province</span><span class="o">=</span><span class="n">province</span><span class="p">,</span> <span class="n">message</span><span class="o">=</span><span class="s2">&quot;Too many missing Tests records&quot;</span><span class="p">)</span>
 
 <div class="viewcode-block" id="PCRData.positive_rate"><a class="viewcode-back" href="../../../covsirphy.cleaning.pcr_data.html#covsirphy.PCRData.positive_rate">[docs]</a>    <span class="k">def</span> <span class="nf">positive_rate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">country</span><span class="p">,</span> <span class="n">province</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">window</span><span class="o">=</span><span class="mi">7</span><span class="p">,</span> <span class="n">show_figure</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">filename</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
@@ -580,9 +654,14 @@
 <span class="sd">            &quot;with partially complemented tests data&quot; will be added to the title of the figure.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">window</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ensure_natural_int</span><span class="p">(</span><span class="n">window</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;window&quot;</span><span class="p">)</span>
-        <span class="n">subset_df</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">subset</span><span class="p">(</span><span class="n">country</span><span class="p">,</span> <span class="n">province</span><span class="o">=</span><span class="n">province</span><span class="p">)</span>
-        <span class="c1"># Check PCR data preconditions</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_pcr_check_preconditions</span><span class="p">(</span><span class="n">subset_df</span><span class="p">,</span> <span class="n">country</span><span class="p">,</span> <span class="n">province</span><span class="p">)</span>
+        <span class="c1"># Subset with area</span>
+        <span class="n">country_alias</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ensure_country_name</span><span class="p">(</span><span class="n">country</span><span class="p">)</span>
+        <span class="n">province</span> <span class="o">=</span> <span class="n">province</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">UNKNOWN</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">subset_df</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_subset_select</span><span class="p">(</span><span class="n">country_alias</span><span class="p">,</span> <span class="n">province</span><span class="p">)</span>
+        <span class="k">except</span> <span class="n">PCRIncorrectPreconditionError</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">PCRIncorrectPreconditionError</span><span class="p">(</span>
+                <span class="n">country</span><span class="o">=</span><span class="n">country</span><span class="p">,</span> <span class="n">province</span><span class="o">=</span><span class="n">province</span><span class="p">,</span> <span class="n">message</span><span class="o">=</span><span class="s2">&quot;Too many missing Tests records&quot;</span><span class="p">)</span> <span class="kn">from</span> <span class="bp">None</span>
         <span class="c1"># Process PCR data</span>
         <span class="n">df</span><span class="p">,</span> <span class="n">is_complemented</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_pcr_processing</span><span class="p">(</span><span class="n">subset_df</span><span class="p">,</span> <span class="n">window</span><span class="p">)</span>
         <span class="c1"># Calculate PCR values</span>
@@ -601,7 +680,44 @@
             <span class="n">filename</span><span class="o">=</span><span class="n">filename</span><span class="p">,</span>
             <span class="n">show_legend</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
         <span class="p">)</span>
-        <span class="k">return</span> <span class="n">df</span></div></div>
+        <span class="k">return</span> <span class="n">df</span></div>
+
+<div class="viewcode-block" id="PCRData.subset"><a class="viewcode-back" href="../../../covsirphy.cleaning.pcr_data.html#covsirphy.PCRData.subset">[docs]</a>    <span class="k">def</span> <span class="nf">subset</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">country</span><span class="p">,</span> <span class="n">province</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">start_date</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">end_date</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">dataset</span><span class="o">=</span><span class="s2">&quot;COVID-19 Data Hub&quot;</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Return subset of the country/province and start/end date.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            country (str): country name or ISO3 code</span>
+<span class="sd">            province (str or None): province name</span>
+<span class="sd">            start_date (str or None): start date, like 22Jan2020</span>
+<span class="sd">            end_date (str or None): end date, like 01Feb2020</span>
+<span class="sd">            dataset (str): &#39;COVID-19 Data Hub&#39; or &#39;Our World In Data&#39;</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            pandas.DataFrame</span>
+<span class="sd">                Index: reset index</span>
+<span class="sd">                Columns:</span>
+<span class="sd">                    - Date (pd.TimeStamp): Observation date</span>
+<span class="sd">                    - Tests (int): the number of total tests performed</span>
+<span class="sd">                    - Confirmed (int): the number of confirmed cases</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">country_alias</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ensure_country_name</span><span class="p">(</span><span class="n">country</span><span class="p">)</span>
+        <span class="n">df</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_subset_by_area</span><span class="p">(</span>
+            <span class="n">country</span><span class="o">=</span><span class="n">country_alias</span><span class="p">,</span> <span class="n">province</span><span class="o">=</span><span class="n">province</span><span class="p">,</span> <span class="n">dataset</span><span class="o">=</span><span class="n">dataset</span><span class="p">)</span>
+        <span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">drop</span><span class="p">(</span>
+            <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">COUNTRY</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">ISO3</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">PROVINCE</span><span class="p">],</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+        <span class="c1"># Subset with Start/end date</span>
+        <span class="k">if</span> <span class="n">start_date</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">end_date</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">df</span><span class="o">.</span><span class="n">reset_index</span><span class="p">(</span><span class="n">drop</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="n">series</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">DATE</span><span class="p">]</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+        <span class="n">start_obj</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">date_obj</span><span class="p">(</span><span class="n">date_str</span><span class="o">=</span><span class="n">start_date</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="n">series</span><span class="o">.</span><span class="n">min</span><span class="p">())</span>
+        <span class="n">end_obj</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">date_obj</span><span class="p">(</span><span class="n">date_str</span><span class="o">=</span><span class="n">end_date</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="n">series</span><span class="o">.</span><span class="n">max</span><span class="p">())</span>
+        <span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">loc</span><span class="p">[(</span><span class="n">start_obj</span> <span class="o">&lt;=</span> <span class="n">series</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">series</span> <span class="o">&lt;=</span> <span class="n">end_obj</span><span class="p">),</span> <span class="p">:]</span>
+        <span class="k">if</span> <span class="n">df</span><span class="o">.</span><span class="n">empty</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">SubsetNotFoundError</span><span class="p">(</span>
+                <span class="n">country</span><span class="o">=</span><span class="n">country</span><span class="p">,</span> <span class="n">country_alias</span><span class="o">=</span><span class="n">country_alias</span><span class="p">,</span> <span class="n">province</span><span class="o">=</span><span class="n">province</span><span class="p">,</span>
+                <span class="n">start_date</span><span class="o">=</span><span class="n">start_date</span><span class="p">,</span> <span class="n">end_date</span><span class="o">=</span><span class="n">end_date</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">df</span><span class="o">.</span><span class="n">reset_index</span><span class="p">(</span><span class="n">drop</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span></div></div>
 </pre></div>
 
            </div>
