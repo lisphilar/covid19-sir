@@ -51,17 +51,36 @@ class LinelistData(CleaningBase):
     }
 
     def __init__(self, filename, force=False, verbose=1):
+        self._filename = filename
         if Path(filename).exists() and not force:
-            self._raw = self.load(filename)
+            raw_df = self.load(filename)
         else:
             Path(filename).parent.mkdir(exist_ok=True, parents=True)
-            self._raw = self._retrieve(filename=filename, verbose=verbose)
-        self._cleaned_df = self._cleaning()
+            raw_df = self._retrieve(filename=filename, verbose=verbose)
+        self._cleaned_df = self._cleaning(raw_df)
         self._citation = "Xu, B., Gutierrez, B., Mekaru, S. et al. " \
             "Epidemiological data from the COVID-19 outbreak, real-time case information. " \
             "Sci Data 7, 106 (2020). https://doi.org/10.1038/s41597-020-0448-0"
         # To avoid "imported but unused"
         self.__swifter = swifter
+
+    @property
+    def raw(self):
+        """
+        pandas.DataFrame: raw data
+        """
+        try:
+            return self.load(self._filename)
+        except FileNotFoundError:
+            raise FileNotFoundError(
+                "We cannot get the raw dataset because {self._filename} was removed.") from None
+
+    @property
+    def filename(self):
+        """
+        str: filename of the raw data
+        """
+        return self._filename
 
     def _retrieve(self, filename, verbose=1):
         """
@@ -84,14 +103,17 @@ class LinelistData(CleaningBase):
         df.to_csv(filename, index=False)
         return df
 
-    def _cleaning(self):
+    def _cleaning(self, raw_df):
         """
         Perform data cleaning of the raw data.
+
+        Args:
+            pandas.DataFrame: raw dataset
 
         Returns:
             pandas.DataFrame: cleaned data
         """
-        df = self._raw.copy()
+        df = raw_df.copy()
         # Rename columns
         df = df.rename(self.RAW_COL_DICT, axis=1)
         # Location
