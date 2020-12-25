@@ -126,6 +126,7 @@ test-pypi:
 .PHONY: clean
 clean:
 	@rm -rf input
+	@rm -rf kaggle
 	@rm -rf prof
 	@rm -rf .pytest_cache
 	@find -name __pycache__ | xargs --no-run-if-empty rm -r
