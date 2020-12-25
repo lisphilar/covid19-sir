@@ -64,6 +64,7 @@ class LinelistData(CleaningBase):
         # To avoid "imported but unused"
         self.__swifter = swifter
 
+    @property
     def raw(self):
         """
         pandas.DataFrame: raw data
