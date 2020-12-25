@@ -1,10 +1,11 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-from covsirphy.util.error import SubsetNotFoundError
+from pathlib import Path
 import pytest
 import warnings
 import pandas as pd
+from covsirphy.util.error import SubsetNotFoundError
 from covsirphy import CleaningBase, SIRF
 from covsirphy import LinelistData, ExampleData, VaccineData
 from covsirphy import Term, CountryData
@@ -12,6 +13,15 @@ from covsirphy import Word, Population
 
 
 class TestLinelistData(object):
+
+    def test_raw(self, linelist_data):
+        assert isinstance(linelist_data.raw, pd.DataFrame)
+        filepath = Path(linelist_data.filename)
+        filepath.rename(filepath.with_name("temp.csv"))
+        with pytest.raises(FileNotFoundError):
+            linelist_data.raw
+        filepath.with_name("temp.csv").rename(filepath)
+
     def test_linelist(self, linelist_data):
         with pytest.raises(NotImplementedError):
             linelist_data.total()
