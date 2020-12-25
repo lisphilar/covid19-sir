@@ -129,7 +129,8 @@ class TestVaccineData(object):
         df = vaccine_data.subset(country=country)
         assert set(df.columns) == set([Term.DATE, Term.VAC])
         clean_df = vaccine_data.cleaned()
-        product = clean_df.loc[clean_df.index[0], Term.PRODUCT]
+        df = clean_df.loc[clean_df[Term.COUNTRY] == country, :]
+        product = df.loc[df.index[0], Term.PRODUCT]
         vaccine_data.subset(
             country=country, product=product, start_date="15Dec2020", end_date="18Dec2020")
         with pytest.raises(SubsetNotFoundError):
