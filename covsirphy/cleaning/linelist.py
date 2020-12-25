@@ -4,7 +4,7 @@
 from pathlib import Path
 import pandas as pd
 import swifter
-from covsirphy.util.error import SubsetNotFoundError
+from covsirphy.util.error import deprecate, SubsetNotFoundError
 from covsirphy.cleaning.cbase import CleaningBase
 
 
@@ -65,6 +65,7 @@ class LinelistData(CleaningBase):
         self.__swifter = swifter
 
     @property
+    @deprecate(old="LinelistData.raw")
     def raw(self):
         """
         pandas.DataFrame: raw data

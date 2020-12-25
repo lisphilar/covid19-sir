@@ -15,6 +15,7 @@ from covsirphy import Word, Population
 class TestLinelistData(object):
 
     def test_raw(self, linelist_data):
+        warnings.simplefilter("ignore", category=DeprecationWarning)
         assert isinstance(linelist_data.raw, pd.DataFrame)
         filepath = Path(linelist_data.filename)
         filepath.rename(filepath.with_name("temp.csv"))
