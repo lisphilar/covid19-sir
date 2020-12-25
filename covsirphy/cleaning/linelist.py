@@ -53,7 +53,7 @@ class LinelistData(CleaningBase):
     def __init__(self, filename, force=False, verbose=1):
         self._filename = filename
         if Path(filename).exists() and not force:
-            raw_df = self.load(filename)
+            raw_df = self.load(filename, columns=list(self.RAW_COL_DICT))
         else:
             Path(filename).parent.mkdir(exist_ok=True, parents=True)
             raw_df = self._retrieve(filename=filename, verbose=verbose)
@@ -70,7 +70,7 @@ class LinelistData(CleaningBase):
         pandas.DataFrame: raw data
         """
         try:
-            return self.load(self._filename)
+            return self.load(self._filename, columns=list(self.RAW_COL_DICT))
         except FileNotFoundError:
             raise FileNotFoundError(
                 "We cannot get the raw dataset because {self._filename} was removed.") from None
