@@ -157,3 +157,7 @@ cache_clear:
 .PHONY: rm
 rm:
 	@pipenv --rm
+
+.PHONY: data
+data:
+	@pipenv run python ./data/japan_data.py
