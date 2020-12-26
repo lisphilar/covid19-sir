@@ -67,13 +67,6 @@ class LinelistData(CleaningBase):
         """
         return self._read_raw(self._filename, force=False, verbose=0)
 
-    @property
-    def filename(self):
-        """
-        str: filename of the raw dataset
-        """
-        return self._filename
-
     def _read_raw(self, filename, force, verbose):
         """
         Get raw dataset from a CSV file or retrieve the dataset from server.
