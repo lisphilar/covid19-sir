@@ -242,8 +242,6 @@ class JHUDataComplementHandler(Term):
         # Whether complement is necessary or not
         r_max = df[self.R].max()
         sel_0 = (df[self.R] == r_max).sum() > self.max_ending_unupdated
-        # keep first max value
-        min_index = df[self.R].idxmax() + timedelta(days=1)
         if not (r_max and sel_0):
             # full complement will be handled in _recovered_full()
             return df
@@ -251,6 +249,7 @@ class JHUDataComplementHandler(Term):
         # Fully complement last records that are not updated
         # for more than max_ending_unupdated days;
         # keep previous valid values as they are
+        min_index = df[self.R].idxmax() + timedelta(days=1)
         df.loc[min_index:, self.R] = (df[self.C] - df[self.F]).shift(
             periods=self.recovery_period, freq="D").loc[min_index:]
         return df
