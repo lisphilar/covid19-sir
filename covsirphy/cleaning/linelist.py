@@ -1,7 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-import gc
 from pathlib import Path
 import pandas as pd
 import swifter
@@ -52,20 +51,13 @@ class LinelistData(CleaningBase):
     }
 
     def __init__(self, filename, force=False, verbose=1):
-        # Read dataset
         self._filename = filename
         if Path(filename).exists() and not force:
             raw_df = self.load(filename, columns=list(self.RAW_COL_DICT))
         else:
             Path(filename).parent.mkdir(exist_ok=True, parents=True)
             raw_df = self._retrieve(filename=filename, verbose=verbose)
-        # Data cleaning
         self._cleaned_df = self._cleaning(raw_df)
-        # Remove raw data from memory
-        del raw_df
-        gc.collect()
-        del gc.garbage[:]
-        # Set citation
         self._citation = "Xu, B., Gutierrez, B., Mekaru, S. et al. " \
             "Epidemiological data from the COVID-19 outbreak, real-time case information. " \
             "Sci Data 7, 106 (2020). https://doi.org/10.1038/s41597-020-0448-0"
