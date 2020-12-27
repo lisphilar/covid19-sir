@@ -43,3 +43,8 @@ def pcr_data(data_loader):
 @pytest.fixture(scope="session")
 def vaccine_data(data_loader):
     return data_loader.vaccine()
+
+
+@pytest.fixture(scope="session")
+def pyramid_data(data_loader):
+    return data_loader.pyramid()

@@ -7,7 +7,7 @@ import warnings
 import pandas as pd
 from covsirphy import CleaningBase, SIRF
 from covsirphy import LinelistData, ExampleData, VaccineData
-from covsirphy import Term, CountryData
+from covsirphy import Term, CountryData, PopulationPyramidData
 from covsirphy import Word, Population
 
 
@@ -147,3 +147,21 @@ class TestVaccineData(object):
     def test_total(self, vaccine_data):
         df = vaccine_data.total()
         assert set(df.columns) == set([Term.DATE, Term.VAC])
+
+
+class TestPopulationPyramidData(object):
+    def test_retrieve(self, pyramid_data):
+        df = pyramid_data.retrieve("Japan")
+        assert set(df.columns) == set(PopulationPyramidData.PYRAMID_COLS)
+        with pytest.raises(SubsetNotFoundError):
+            pyramid_data.retrieve("Moon")
+
+    def test_cleaned(self, pyramid_data):
+        df = pyramid_data.cleaned()
+        assert set(df.columns) == set(PopulationPyramidData.PYRAMID_COLS)
+
+    @pytest.mark.parametrize("country", ["Japan"])
+    @pytest.mark.parametrize("sex", [None, "Female", "Male"])
+    def test_records(self, pyramid_data, country, sex):
+        df = pyramid_data.records(country, sex=sex)
+        assert set(df.columns) == set(PopulationPyramidData.SUBSET_COLS)
