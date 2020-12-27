@@ -1,0 +1,13 @@
+language: python
+python:
+  - "3.6"
+  - "3.7"
+  - "3.8"
+  - "3.9"
+# command to install dependencies
+install:
+  - pip install --upgrade "git+https://github.com/lisphilar/covid19-sir.git#egg=covsirphy"
+  - pip install pytest pytest-cov
+# command to run tests
+script:
+  - pytest -v --durations=0 --failed-first --maxfail=1 --cov=covsirphy --cov-report=xml --cov-report=term-missing
