@@ -15,7 +15,7 @@ install:
 .PHONY: install-lock
 install-lock:
 	@make pipenv-setting
-	@pipenv install --dev
+	@pipenv install --dev --python 3.8
 
 
 .PHONY: test
