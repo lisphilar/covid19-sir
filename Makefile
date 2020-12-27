@@ -142,7 +142,7 @@ update:
 	@export PIP_DEFAULT_TIMEOUT=7200
 	@export PIPENV_VENV_IN_PROJECT=true
 	@export PIPENV_TIMEOUT=7200
-	@rm Pipfile.lock
+	@rm -f Pipfile.lock
 	@pipenv update --outdated
 	@pipenv lock --clear
 
