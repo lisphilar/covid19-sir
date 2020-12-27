@@ -27,6 +27,7 @@ from covsirphy.cleaning.jhu_complement import JHUDataComplementHandler
 from covsirphy.cleaning.country_data import CountryData
 from covsirphy.cleaning.japan_data import JapanData
 from covsirphy.cleaning.population import PopulationData, Population
+from covsirphy.cleaning.pyramid import PopulationPyramidData
 from covsirphy.cleaning.oxcgrt import OxCGRTData
 from covsirphy.cleaning.pcr_data import PCRData
 from covsirphy.cleaning.covid19datahub import COVID19DataHub
@@ -72,6 +73,7 @@ __all__ = [
     "PhaseSeries", "PhaseUnit", "MPEstimator",
     "Term", "CleaningBase", "DataLoader", "COVID19DataHub",
     "JHUData", "CountryData", "PopulationData", "OxCGRTData", "VaccineData",
+    "PopulationPyramidData",
     "LinelistData", "PCRData", "JapanData", "JHUDataComplementHandler",
     "ModelBase", "SIR", "SIRD", "SIRF", "SIRFV", "SEWIRF",
     "Estimator", "Trend", "Optimizer",

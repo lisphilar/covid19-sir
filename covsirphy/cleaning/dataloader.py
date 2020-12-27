@@ -8,6 +8,7 @@ from covsirphy.cleaning.jhu_data import JHUData
 from covsirphy.cleaning.japan_data import JapanData
 from covsirphy.cleaning.oxcgrt import OxCGRTData
 from covsirphy.cleaning.population import PopulationData
+from covsirphy.cleaning.pyramid import PopulationPyramidData
 from covsirphy.cleaning.covid19datahub import COVID19DataHub
 from covsirphy.cleaning.linelist import LinelistData
 from covsirphy.cleaning.pcr_data import PCRData
@@ -301,3 +302,18 @@ class DataLoader(Term):
         filename = self.dir_path.joinpath(basename)
         force = self._download_necessity(filename=filename)
         return VaccineData(filename=filename, force=force, verbose=verbose)
+
+    def pyramid(self, basename="wbdata_population_pyramid.csv", verbose=1):
+        """
+        Load the dataset regarding population pyramid.
+        World Bank Group (2020), World Bank Open Data, https://data.worldbank.org/
+
+        Args:
+            basename (str): basename of the file to save the data
+            verbose (int): level of verbosity
+
+        Returns:
+            covsirphy.PopulationPyramidData: dataset regarding population pyramid
+        """
+        filename = self.dir_path.joinpath(basename)
+        return PopulationPyramidData(filename=filename, force=False, verbose=verbose)

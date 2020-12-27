@@ -61,6 +61,13 @@ def main():
     subset_df = vaccine_data.subset(country="Canada")
     subset_df.to_csv(
         output_dir.joinpath("vaccine_subset_canada.csv"), index=False)
+    # Load population pyramid dataset
+    print("<Population pyramid>")
+    pyramid_data = data_loader.pyramid()
+    print(pyramid_data.citation)
+    subset_df = pyramid_data.subset(country="Japan")
+    subset_df.to_csv(
+        output_dir.joinpath("pyramid_subset_japan.csv"), index=False)
 
 
 if __name__ == "__main__":
