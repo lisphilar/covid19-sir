@@ -242,7 +242,6 @@ class JHUDataComplementHandler(Term):
         # Whether complement is necessary or not
         r_max = df[self.R].max()
         sel_0 = (df[self.R] == r_max).sum() > self.max_ending_unupdated
-        min_index = df[self.R].idxmax() + timedelta(days=1)  # keep first max value
         if not (r_max and sel_0):
             # full complement will be handled in _recovered_full()
             return df
@@ -250,6 +249,7 @@ class JHUDataComplementHandler(Term):
         # Fully complement last records that are not updated
         # for more than max_ending_unupdated days;
         # keep previous valid values as they are
+        min_index = df[self.R].idxmax() + timedelta(days=1)
         df.loc[min_index:, self.R] = (df[self.C] - df[self.F]).shift(
             periods=self.recovery_period, freq="D").loc[min_index:]
         return df
@@ -275,10 +275,10 @@ class JHUDataComplementHandler(Term):
         if max_frequency <= self.interval:
             return df
         # Complement in-between values
-        df.loc[df.duplicated([self.R], keep="last"), self.R] = None
-        df[self.R].interpolate(
-            method="linear", inplace=True, limit_direction="both")
-        df[self.R] = df[self.R].fillna(method="bfill")
+        first_value = df.loc[df.index[0], self.R]
+        df.loc[df.duplicated([self.R], keep="first"), self.R] = None
+        diff_series = df[self.R].diff().ffill().fillna(0)
+        df[self.R] = first_value + diff_series.cumsum()
         return df
 
     def _recovered_sort(self, df):
