@@ -42,7 +42,7 @@ class TestPolicyMeasures(object):
             for (_, countries) in sorted(phase_len_dict.items())
             for country in countries
         ]
-        analyser.countries = countries_all[:2]
+        analyser.countries = countries_all[0]
         # Parameter estimation
         with pytest.raises(ValueError):
             analyser.track()
