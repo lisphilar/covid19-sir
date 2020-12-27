@@ -275,10 +275,10 @@ class JHUDataComplementHandler(Term):
         if max_frequency <= self.interval:
             return df
         # Complement in-between values
-        first_value = df.loc[df.index[0], self.R]
-        df.loc[df.duplicated([self.R], keep="first"), self.R] = None
-        diff_series = df[self.R].diff().ffill().fillna(0)
-        df[self.R] = first_value + diff_series.cumsum()
+        df.loc[df.duplicated([self.R], keep="last"), self.R] = None
+        df[self.R].interpolate(
+            method="linear", inplace=True, limit_direction="both")
+        df[self.R] = df[self.R].fillna(method="bfill")
         return df
 
     def _recovered_sort(self, df):
