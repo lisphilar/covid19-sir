@@ -51,17 +51,38 @@ class LinelistData(CleaningBase):
     }
 
     def __init__(self, filename, force=False, verbose=1):
-        if Path(filename).exists() and not force:
-            self._raw = self.load(filename)
-        else:
-            Path(filename).parent.mkdir(exist_ok=True, parents=True)
-            self._raw = self._retrieve(filename=filename, verbose=verbose)
-        self._cleaned_df = self._cleaning()
+        self._filename = filename
+        raw_df = self._read_raw(filename, force, verbose)
+        self._cleaned_df = self._cleaning(raw_df)
         self._citation = "Xu, B., Gutierrez, B., Mekaru, S. et al. " \
             "Epidemiological data from the COVID-19 outbreak, real-time case information. " \
             "Sci Data 7, 106 (2020). https://doi.org/10.1038/s41597-020-0448-0"
         # To avoid "imported but unused"
         self.__swifter = swifter
+
+    @property
+    def raw(self):
+        """
+        pandas.DataFrame: raw dataset
+        """
+        return self._read_raw(self._filename, force=False, verbose=0)
+
+    def _read_raw(self, filename, force, verbose):
+        """
+        Get raw dataset from a CSV file or retrieve the dataset from server.
+
+        Args:
+            filename (str or pathlib.path): CSV filename to save the raw dataset
+            force (bool): whether force retrieving from server or not when we have CSV file
+            verbose (int): level of verbosity
+
+        Returns:
+            pd.DataFrame: raw dataset
+        """
+        if Path(filename).exists() and not force:
+            return self.load(filename, columns=list(self.RAW_COL_DICT))
+        Path(filename).parent.mkdir(exist_ok=True, parents=True)
+        return self._retrieve(filename=filename, verbose=verbose)
 
     def _retrieve(self, filename, verbose=1):
         """
@@ -79,19 +100,22 @@ class LinelistData(CleaningBase):
             print(
                 "Retrieving linelist from Open COVID-19 Data Working Group repository: https://github.com/beoutbreakprepared/nCoV2019")
         # Download the dataset
-        df = self.load(self.URL, header=1, columns=None)
+        df = self.load(self.URL, header=1, columns=list(self.RAW_COL_DICT))
         # Save the raw data
         df.to_csv(filename, index=False)
         return df
 
-    def _cleaning(self):
+    def _cleaning(self, raw_df):
         """
         Perform data cleaning of the raw data.
+
+        Args:
+            raw_df (pandas.DataFrame): raw data
 
         Returns:
             pandas.DataFrame: cleaned data
         """
-        df = self._raw.copy()
+        df = raw_df.copy()
         # Rename columns
         df = df.rename(self.RAW_COL_DICT, axis=1)
         # Location

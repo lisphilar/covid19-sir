@@ -12,6 +12,10 @@ from covsirphy import Word, Population
 
 
 class TestLinelistData(object):
+
+    def test_raw(self, linelist_data):
+        assert isinstance(linelist_data.raw, pd.DataFrame)
+
     def test_linelist(self, linelist_data):
         with pytest.raises(NotImplementedError):
             linelist_data.total()
