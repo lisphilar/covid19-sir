@@ -143,7 +143,8 @@ update:
 	@export PIPENV_VENV_IN_PROJECT=true
 	@export PIPENV_TIMEOUT=7200
 	@pipenv update --outdated
-	@pipenv update
+	@rm Pipfile.lock
+	@pipenv lock --clear
 
 
 .PHONY: cache_clear
