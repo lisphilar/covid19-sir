@@ -1084,6 +1084,27 @@ Citation of COVID-19 Data Hub will be set as PopulationData.citation.</p>
 </dd></dl>
 
 <dl class="py method">
+<dt id="covsirphy.DataLoader.pyramid">
+<code class="sig-name descname">pyramid</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">basename</span><span class="o">=</span><span class="default_value">'wbdata_population_pyramid.csv'</span></em>, <em class="sig-param"><span class="n">verbose</span><span class="o">=</span><span class="default_value">1</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/cleaning/dataloader.html#DataLoader.pyramid"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#covsirphy.DataLoader.pyramid" title="Permalink to this definition">¶</a></dt>
+<dd><p>Load the dataset regarding population pyramid.
+World Bank Group (2020), World Bank Open Data, <a class="reference external" href="https://data.worldbank.org/">https://data.worldbank.org/</a></p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>basename</strong> (<em>str</em>) – basename of the file to save the data</p></li>
+<li><p><strong>verbose</strong> (<em>int</em>) – level of verbosity</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>dataset regarding population pyramid</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference internal" href="#covsirphy.PopulationPyramidData" title="covsirphy.PopulationPyramidData">covsirphy.PopulationPyramidData</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
 <dt id="covsirphy.DataLoader.vaccine">
 <code class="sig-name descname">vaccine</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">basename</span><span class="o">=</span><span class="default_value">'ourworldindata_vaccine.csv'</span></em>, <em class="sig-param"><span class="n">verbose</span><span class="o">=</span><span class="default_value">1</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/cleaning/dataloader.html#DataLoader.vaccine"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#covsirphy.DataLoader.vaccine" title="Permalink to this definition">¶</a></dt>
 <dd><p>Load the dataset regarding vaccination.
@@ -1999,6 +2020,17 @@ Columns:</p>
 </dd>
 </dl>
 </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="covsirphy.LinelistData.raw">
+<em class="property">property </em><code class="sig-name descname">raw</code><a class="headerlink" href="#covsirphy.LinelistData.raw" title="Permalink to this definition">¶</a></dt>
+<dd><p>raw dataset</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>pandas.DataFrame</p>
 </dd>
 </dl>
 </dd></dl>
@@ -4640,6 +4672,188 @@ If &#64;province is None, “-” will be used.</p>
 </dl>
 <p class="rubric">Notes</p>
 <p>If &#64;date is None, the created date of the instancewill be used</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt id="covsirphy.PopulationPyramidData">
+<em class="property">class </em><code class="sig-name descname">PopulationPyramidData</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">filename</span></em>, <em class="sig-param"><span class="n">force</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">verbose</span><span class="o">=</span><span class="default_value">1</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/cleaning/pyramid.html#PopulationPyramidData"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#covsirphy.PopulationPyramidData" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="covsirphy.cleaning.cbase.html#covsirphy.cleaning.cbase.CleaningBase" title="covsirphy.cleaning.cbase.CleaningBase"><code class="xref py py-class docutils literal notranslate"><span class="pre">covsirphy.cleaning.cbase.CleaningBase</span></code></a></p>
+<p>Population pyramid dataset.
+World Bank Group (2020), World Bank Open Data, <a class="reference external" href="https://data.worldbank.org/">https://data.worldbank.org/</a></p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>filename</strong> (<em>str</em><em> or </em><em>None</em>) – CSV filename to save the dataset</p></li>
+<li><p><strong>force</strong> (<em>bool</em>) – if True, always download the dataset from the server</p></li>
+<li><p><strong>verbose</strong> (<em>int</em>) – level of verbosity</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>If &#64;filename is None, empty dataframe will be set as raw data.
+If &#64;citation is None, citation will be empty string.</p>
+</dd>
+</dl>
+<dl class="py attribute">
+<dt id="covsirphy.PopulationPyramidData.AGE">
+<code class="sig-name descname">AGE</code><em class="property"> = 'Age'</em><a class="headerlink" href="#covsirphy.PopulationPyramidData.AGE" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="covsirphy.PopulationPyramidData.AGE_KEYS">
+<code class="sig-name descname">AGE_KEYS</code><em class="property"> = ['0004', '0509', '1014', '1519', '2024', '2529', '3034', '3539', '4044', '4549', '5054', '5559', '6064', '6569', '7579', '80UP']</em><a class="headerlink" href="#covsirphy.PopulationPyramidData.AGE_KEYS" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="covsirphy.PopulationPyramidData.ELDEST">
+<code class="sig-name descname">ELDEST</code><em class="property"> = 122</em><a class="headerlink" href="#covsirphy.PopulationPyramidData.ELDEST" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="covsirphy.PopulationPyramidData.INDICATOR_DICT">
+<code class="sig-name descname">INDICATOR_DICT</code><em class="property"> = {'SP.POP.0004.FE': '00-04-FE', 'SP.POP.0004.MA': '00-04-MA', 'SP.POP.0509.FE': '05-09-FE', 'SP.POP.0509.MA': '05-09-MA', 'SP.POP.1014.FE': '10-14-FE', 'SP.POP.1014.MA': '10-14-MA', 'SP.POP.1519.FE': '15-19-FE', 'SP.POP.1519.MA': '15-19-MA', 'SP.POP.2024.FE': '20-24-FE', 'SP.POP.2024.MA': '20-24-MA', 'SP.POP.2529.FE': '25-29-FE', 'SP.POP.2529.MA': '25-29-MA', 'SP.POP.3034.FE': '30-34-FE', 'SP.POP.3034.MA': '30-34-MA', 'SP.POP.3539.FE': '35-39-FE', 'SP.POP.3539.MA': '35-39-MA', 'SP.POP.4044.FE': '40-44-FE', 'SP.POP.4044.MA': '40-44-MA', 'SP.POP.4549.FE': '45-49-FE', 'SP.POP.4549.MA': '45-49-MA', 'SP.POP.5054.FE': '50-54-FE', 'SP.POP.5054.MA': '50-54-MA', 'SP.POP.5559.FE': '55-59-FE', 'SP.POP.5559.MA': '55-59-MA', 'SP.POP.6064.FE': '60-64-FE', 'SP.POP.6064.MA': '60-64-MA', 'SP.POP.6569.FE': '65-69-FE', 'SP.POP.6569.MA': '65-69-MA', 'SP.POP.7579.FE': '75-79-FE', 'SP.POP.7579.MA': '75-79-MA', 'SP.POP.80UP.FE': '80-UP-FE', 'SP.POP.80UP.MA': '80-UP-MA'}</em><a class="headerlink" href="#covsirphy.PopulationPyramidData.INDICATOR_DICT" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="covsirphy.PopulationPyramidData.PORTION">
+<code class="sig-name descname">PORTION</code><em class="property"> = 'Per_total'</em><a class="headerlink" href="#covsirphy.PopulationPyramidData.PORTION" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="covsirphy.PopulationPyramidData.PYRAMID_COLS">
+<code class="sig-name descname">PYRAMID_COLS</code><em class="property"> = ['Country', 'Year', 'Sex', 'Age', 'Population']</em><a class="headerlink" href="#covsirphy.PopulationPyramidData.PYRAMID_COLS" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="covsirphy.PopulationPyramidData.SEX">
+<code class="sig-name descname">SEX</code><em class="property"> = 'Sex'</em><a class="headerlink" href="#covsirphy.PopulationPyramidData.SEX" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="covsirphy.PopulationPyramidData.SUBSET_COLS">
+<code class="sig-name descname">SUBSET_COLS</code><em class="property"> = ['Age', 'Population', 'Per_total']</em><a class="headerlink" href="#covsirphy.PopulationPyramidData.SUBSET_COLS" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="covsirphy.PopulationPyramidData.YEAR">
+<code class="sig-name descname">YEAR</code><em class="property"> = 'Year'</em><a class="headerlink" href="#covsirphy.PopulationPyramidData.YEAR" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="covsirphy.PopulationPyramidData.cleaned">
+<code class="sig-name descname">cleaned</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/cleaning/pyramid.html#PopulationPyramidData.cleaned"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#covsirphy.PopulationPyramidData.cleaned" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the cleaned dataset.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p><p>Index: reset index
+Columns:</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>Country (pandas.Category): country name</p></li>
+<li><p>Year (int): year</p></li>
+<li><p>Sex (str): Female/Male</p></li>
+<li><p>Age (int): age</p></li>
+<li><p>Population (int): population value</p></li>
+</ul>
+</div></blockquote>
+</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>pandas.DataFrame</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="covsirphy.PopulationPyramidData.records">
+<code class="sig-name descname">records</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">country</span></em>, <em class="sig-param"><span class="n">year</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">sex</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/cleaning/pyramid.html#PopulationPyramidData.records"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#covsirphy.PopulationPyramidData.records" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the subset.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>country</strong> (<em>str</em>) – country name</p></li>
+<li><p><strong>year</strong> (<em>int</em><em> or </em><em>None</em>) – year or None (the last records)</p></li>
+<li><p><strong>sex</strong> (<em>str</em>) – Female/Male or None (total)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><dl>
+<dt>pandas.DataFrame</dt><dd><p>Index: reset index
+Columns:</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>Age (int): age</p></li>
+<li><p>Population (int): population value</p></li>
+<li><p>Per_total (float): portion of the total</p></li>
+</ul>
+</div></blockquote>
+</dd>
+</dl>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="covsirphy.PopulationPyramidData.retrieve">
+<code class="sig-name descname">retrieve</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">country</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/cleaning/pyramid.html#PopulationPyramidData.retrieve"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#covsirphy.PopulationPyramidData.retrieve" title="Permalink to this definition">¶</a></dt>
+<dd><p>Retrieve the dataset of the country from the local file or the server.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>country</strong> (<em>str</em>) – country name</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><dl>
+<dt>retrieved data</dt><dd><p>Index: reset index
+Columns:</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>Country (pandas.Category): country name</p></li>
+<li><p>Year (int): year</p></li>
+<li><p>Sex (str): Female/Male</p></li>
+<li><p>Age (int): age</p></li>
+<li><p>Population (int): population value</p></li>
+</ul>
+</div></blockquote>
+</dd>
+</dl>
+</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>pandas.DataFrame</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="covsirphy.PopulationPyramidData.subset">
+<code class="sig-name descname">subset</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">country</span></em>, <em class="sig-param"><span class="n">year</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">sex</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/cleaning/pyramid.html#PopulationPyramidData.subset"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#covsirphy.PopulationPyramidData.subset" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the subset.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>country</strong> (<em>str</em>) – country name</p></li>
+<li><p><strong>year</strong> (<em>int</em><em> or </em><em>None</em>) – year or None (the last records)</p></li>
+<li><p><strong>sex</strong> (<em>str</em>) – Female/Male or None (total)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><dl>
+<dt>pandas.DataFrame</dt><dd><p>Index: reset index
+Columns:</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>Age (int): age</p></li>
+<li><p>Population (int): population value</p></li>
+<li><p>Per_total (float): portion of the total</p></li>
+</ul>
+</div></blockquote>
+</dd>
+</dl>
+</p>
+</dd>
+</dl>
 </dd></dl>
 
 </dd></dl>
@@ -7400,6 +7614,7 @@ Columns:</p>
 <li class="toctree-l2"><a class="reference internal" href="covsirphy.cleaning.html#module-covsirphy.cleaning.oxcgrt">covsirphy.cleaning.oxcgrt module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="covsirphy.cleaning.html#module-covsirphy.cleaning.pcr_data">covsirphy.cleaning.pcr_data module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="covsirphy.cleaning.html#module-covsirphy.cleaning.population">covsirphy.cleaning.population module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="covsirphy.cleaning.html#module-covsirphy.cleaning.pyramid">covsirphy.cleaning.pyramid module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="covsirphy.cleaning.html#module-covsirphy.cleaning.term">covsirphy.cleaning.term module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="covsirphy.cleaning.html#module-covsirphy.cleaning.vaccine_data">covsirphy.cleaning.vaccine_data module</a></li>
 </ul>

@@ -97,6 +97,14 @@ covsirphy.cleaning.population module
    :undoc-members:
    :show-inheritance:
 
+covsirphy.cleaning.pyramid module
+---------------------------------
+
+.. automodule:: covsirphy.cleaning.pyramid
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
 covsirphy.cleaning.term module
 ------------------------------
 

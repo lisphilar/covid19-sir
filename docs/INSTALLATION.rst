@@ -50,6 +50,8 @@ to find the details of the datasets.
     pcr_data = data_loader.pcr()
     # The number of vaccines (will be prepared in 2.14.0)
     vaccine_data = data_loader.vaccine()
+    # Population pyramid (will be prepared in 2.14.0)
+    pyramid_data = data_loader.pyramid()
 
 The downloaded datasets were retrieved from the following sites.
 

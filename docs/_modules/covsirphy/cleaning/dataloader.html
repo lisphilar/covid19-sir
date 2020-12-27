@@ -172,6 +172,7 @@
 <span class="kn">from</span> <span class="nn">covsirphy.cleaning.japan_data</span> <span class="kn">import</span> <span class="n">JapanData</span>
 <span class="kn">from</span> <span class="nn">covsirphy.cleaning.oxcgrt</span> <span class="kn">import</span> <span class="n">OxCGRTData</span>
 <span class="kn">from</span> <span class="nn">covsirphy.cleaning.population</span> <span class="kn">import</span> <span class="n">PopulationData</span>
+<span class="kn">from</span> <span class="nn">covsirphy.cleaning.pyramid</span> <span class="kn">import</span> <span class="n">PopulationPyramidData</span>
 <span class="kn">from</span> <span class="nn">covsirphy.cleaning.covid19datahub</span> <span class="kn">import</span> <span class="n">COVID19DataHub</span>
 <span class="kn">from</span> <span class="nn">covsirphy.cleaning.linelist</span> <span class="kn">import</span> <span class="n">LinelistData</span>
 <span class="kn">from</span> <span class="nn">covsirphy.cleaning.pcr_data</span> <span class="kn">import</span> <span class="n">PCRData</span>
@@ -464,7 +465,22 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">filename</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dir_path</span><span class="o">.</span><span class="n">joinpath</span><span class="p">(</span><span class="n">basename</span><span class="p">)</span>
         <span class="n">force</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_download_necessity</span><span class="p">(</span><span class="n">filename</span><span class="o">=</span><span class="n">filename</span><span class="p">)</span>
-        <span class="k">return</span> <span class="n">VaccineData</span><span class="p">(</span><span class="n">filename</span><span class="o">=</span><span class="n">filename</span><span class="p">,</span> <span class="n">force</span><span class="o">=</span><span class="n">force</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="n">verbose</span><span class="p">)</span></div></div>
+        <span class="k">return</span> <span class="n">VaccineData</span><span class="p">(</span><span class="n">filename</span><span class="o">=</span><span class="n">filename</span><span class="p">,</span> <span class="n">force</span><span class="o">=</span><span class="n">force</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="n">verbose</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="DataLoader.pyramid"><a class="viewcode-back" href="../../../covsirphy.cleaning.dataloader.html#covsirphy.DataLoader.pyramid">[docs]</a>    <span class="k">def</span> <span class="nf">pyramid</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">basename</span><span class="o">=</span><span class="s2">&quot;wbdata_population_pyramid.csv&quot;</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Load the dataset regarding population pyramid.</span>
+<span class="sd">        World Bank Group (2020), World Bank Open Data, https://data.worldbank.org/</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            basename (str): basename of the file to save the data</span>
+<span class="sd">            verbose (int): level of verbosity</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            covsirphy.PopulationPyramidData: dataset regarding population pyramid</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">filename</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dir_path</span><span class="o">.</span><span class="n">joinpath</span><span class="p">(</span><span class="n">basename</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">PopulationPyramidData</span><span class="p">(</span><span class="n">filename</span><span class="o">=</span><span class="n">filename</span><span class="p">,</span> <span class="n">force</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="n">verbose</span><span class="p">)</span></div></div>
 </pre></div>
 
            </div>
