@@ -30,6 +30,9 @@ This is a list of term in CovsirPhy project. These terms are used as method name
 <dt><strong>simulation</strong></dt>
 <dd>Calculation of the number of cases with fixed parameter values and initial values.</dd>
 
+<dt><strong>scenario analysis</strong></dt>
+<dd>Analyse the number of cases in the future phases with some sets of ODE parameter values. With this analysis, we can estimate the impact of our activities against the outbreak on the number of cases.</dd>
+
 <dt><strong>tau parameter in models</strong></dt>
 <dd>Tau is a parameter used to convert actual time (with unit [min]) to time steps (without units).
 This conversion enables us to use actual dataset with ODE models. It is a divisor of 1440 [min] (= 1 day).
