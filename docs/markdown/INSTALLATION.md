@@ -59,6 +59,11 @@ Citation: Hasell, J., Mathieu, E., Beltekian, D. et al. A cross-country database
 - The number of tests
 - The number of vaccinations
 
+### [World Bank Open Data](https://data.worldbank.org/)
+Citation: World Bank Group (2020), World Bank Open Data, https://data.worldbank.org/
+
+- Population pyramid
+
 ### [Datasets for CovsirPhy](https://github.com/lisphilar/covid19-sir/tree/master/data)
 Lisphilar (2020), GitHub repository, COVID-19 dataset in Japan.  
 
