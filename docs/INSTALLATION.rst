@@ -85,6 +85,14 @@ https://doi.org/10.1038/s41597-020-00688-8
 -  The number of tests
 -  The number of vaccinations
 
+`World Bank Open Data <https://data.worldbank.org/>`__
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Citation: World Bank Group (2020), World Bank Open Data,
+https://data.worldbank.org/
+
+-  Population pyramid
+
 `Datasets for CovsirPhy <https://github.com/lisphilar/covid19-sir/tree/master/data>`__
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
