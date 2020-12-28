@@ -200,6 +200,28 @@ initial values.
 
    <dt>
 
+scenario analysis
+
+.. raw:: html
+
+   </dt>
+
+.. raw:: html
+
+   <dd>
+
+Analyse the number of cases in the future phases with some sets of ODE
+parameter values. With this analysis, we can estimate the impact of our
+activities against the outbreak on the number of cases.
+
+.. raw:: html
+
+   </dd>
+
+.. raw:: html
+
+   <dt>
+
 tau parameter in models
 
 .. raw:: html

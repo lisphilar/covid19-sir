@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Usage (quick version) &mdash; CovsirPhy  documentation</title>
+  <title>Usage: scenario analysis &mdash; CovsirPhy  documentation</title>
   
 
   
@@ -38,8 +38,8 @@
     
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="Usage (details: datasets)" href="usage_dataset.html" />
-    <link rel="prev" title="Usage (quickest version)" href="usage_quickest.html" /> 
+    <link rel="next" title="Usage: datasets" href="usage_dataset.html" />
+    <link rel="prev" title="Usage: quickest tour" href="usage_quickest.html" /> 
 </head>
 
 <body class="wy-body-for-nav">
@@ -89,11 +89,11 @@
 <li class="toctree-l1"><a class="reference internal" href="README.html">CovsirPhy introduction</a></li>
 <li class="toctree-l1"><a class="reference internal" href="INSTALLATION.html">Installation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="INSTALLATION.html#dataset-preparation">Dataset preparation</a></li>
-<li class="toctree-l1"><a class="reference internal" href="usage_quickest.html">Usage (quickest version)</a></li>
-<li class="toctree-l1 current"><a class="current reference internal" href="#">Usage (quick version)</a><ul>
+<li class="toctree-l1"><a class="reference internal" href="usage_quickest.html">Usage: quickest tour</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Usage: scenario analysis</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#Preparation">Preparation</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#Dataset-preparation">Dataset preparation</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="#Scenario-analysis">Scenario analysis</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#Start-scenario-analysis">Start scenario analysis</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#Check-records">Check records</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#S-R-trend-analysis">S-R trend analysis</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#Hyperparameter-estimation-of-ODE-models">Hyperparameter estimation of ODE models</a></li>
@@ -102,6 +102,7 @@
 <li class="toctree-l3"><a class="reference internal" href="#Show-parameter-history">Show parameter history</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#Show-the-history-of-reproduction-number">Show the history of reproduction number</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#Simulate-the-number-of-cases">Simulate the number of cases</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#Main-scenario">Main scenario</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#Simulate-another-scenario">Simulate another scenario</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#Compare-the-scenarios">Compare the scenarios</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#Change-rate-of-parameters-in-main-scenario">Change rate of parameters in main scenario</a></li>
@@ -110,10 +111,10 @@
 <li class="toctree-l2"><a class="reference internal" href="#Retrospective-analysis">Retrospective analysis</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="usage_dataset.html">Usage (details: datasets)</a></li>
-<li class="toctree-l1"><a class="reference internal" href="usage_phases.html">Usage (details: phases)</a></li>
-<li class="toctree-l1"><a class="reference internal" href="usage_theoretical.html">Usage (details: theoretical datasets)</a></li>
-<li class="toctree-l1"><a class="reference internal" href="usage_policy.html">Usage (details: policy measures)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="usage_dataset.html">Usage: datasets</a></li>
+<li class="toctree-l1"><a class="reference internal" href="usage_phases.html">Usage: phases</a></li>
+<li class="toctree-l1"><a class="reference internal" href="usage_theoretical.html">Usage: SIR-derived models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="usage_policy.html">Usage: policy measures</a></li>
 <li class="toctree-l1"><a class="reference internal" href="covsirphy.html">covsirphy package</a></li>
 <li class="toctree-l1"><a class="reference internal" href="TERM.html">Term definition</a></li>
 <li class="toctree-l1"><a class="reference internal" href="CODE_OF_CONDUCT.html">Contributor Covenant Code of Conduct</a></li>
@@ -165,7 +166,7 @@
     
       <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
         
-      <li>Usage (quick version)</li>
+      <li>Usage: scenario analysis</li>
     
     
       <li class="wy-breadcrumbs-aside">
@@ -454,9 +455,9 @@ div.rendered_html tbody tr:hover {
     text-align: unset;
 }
 </style>
-<div class="section" id="Usage-(quick-version)">
-<h1>Usage (quick version)<a class="headerlink" href="#Usage-(quick-version)" title="Permalink to this headline">¶</a></h1>
-<p>This is a quick tour of CovsirPhy. Details of datasets and scenario analysis will be explained.</p>
+<div class="section" id="Usage:-scenario-analysis">
+<h1>Usage: scenario analysis<a class="headerlink" href="#Usage:-scenario-analysis" title="Permalink to this headline">¶</a></h1>
+<p>This is a quick tour of CovsirPhy. Details scenario analysis will be explained. “Scenario analysis” means that we calculate the number of cases in the future phases with some sets of ODE parameter values. With this analysis, we can estimate the impact of our activities against the outbreak on the number of cases.</p>
 <div class="section" id="Preparation">
 <h2>Preparation<a class="headerlink" href="#Preparation" title="Permalink to this headline">¶</a></h2>
 <p>Prepare the packages.</p>
@@ -503,7 +504,10 @@ div.rendered_html tbody tr:hover {
 </div>
 <div class="section" id="Dataset-preparation">
 <h2>Dataset preparation<a class="headerlink" href="#Dataset-preparation" title="Permalink to this headline">¶</a></h2>
-<p>Download the datasets to “input” direcotry and load them.</p>
+<div class="line-block">
+<div class="line">Download the datasets to “input” direcotry and load them.</div>
+<div class="line">Please refer to <a class="reference external" href="https://lisphilar.github.io/covid19-sir/usage_dataset.html">Usage: datasets</a> for the details.</div>
+</div>
 <div class="nbinput nblast docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[4]:
 </pre></div>
@@ -514,13 +518,11 @@ div.rendered_html tbody tr:hover {
 <span class="n">jhu_data</span> <span class="o">=</span> <span class="n">data_loader</span><span class="o">.</span><span class="n">jhu</span><span class="p">(</span><span class="n">verbose</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 <span class="c1"># Population in each country</span>
 <span class="n">population_data</span> <span class="o">=</span> <span class="n">data_loader</span><span class="o">.</span><span class="n">population</span><span class="p">(</span><span class="n">verbose</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-<span class="c1"># Government Response Tracker (OxCGRT)</span>
-<span class="n">oxcgrt_data</span> <span class="o">=</span> <span class="n">data_loader</span><span class="o">.</span><span class="n">oxcgrt</span><span class="p">(</span><span class="n">verbose</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
-<div class="section" id="Scenario-analysis">
-<h3>Scenario analysis<a class="headerlink" href="#Scenario-analysis" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="Start-scenario-analysis">
+<h3>Start scenario analysis<a class="headerlink" href="#Start-scenario-analysis" title="Permalink to this headline">¶</a></h3>
 <p>As an example, we will analysis the number of cases in Japan.</p>
 <div class="nbinput nblast docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[5]:
@@ -534,7 +536,7 @@ div.rendered_html tbody tr:hover {
 </div>
 <div class="section" id="Check-records">
 <h3>Check records<a class="headerlink" href="#Check-records" title="Permalink to this headline">¶</a></h3>
-<p>Let’s see the records at first. <code class="docutils literal notranslate"><span class="pre">Scenario.records()</span></code> method return the records as a pandas dataframe and show a line plot.</p>
+<p>Let’s see the records at first. <code class="docutils literal notranslate"><span class="pre">Scenario.records()</span></code> method return the records as a pandas dataframe and show a line plot. Some kind of complement will be done for analysis, if necessary.</p>
 <div class="nbinput docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[6]:
 </pre></div>
@@ -621,7 +623,7 @@ div.rendered_html tbody tr:hover {
 </table>
 </div></div>
 </div>
-<p>We can calculate the number of new cases with <code class="docutils literal notranslate"><span class="pre">Scenario.record_diff()</span></code> method.</p>
+<p>We can calculate the number of daily new cases with <code class="docutils literal notranslate"><span class="pre">Scenario.record_diff()</span></code> method.</p>
 <div class="nbinput docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[7]:
 </pre></div>
@@ -807,19 +809,19 @@ div.rendered_html tbody tr:hover {
 
 &lt;SIR-F model: parameter estimation&gt;
 Running optimization with 4 CPUs...
-        12th phase (17Apr2020 - 15Jul2020): finished 2626 trials in 3 min  1 sec
-         2nd phase (11Dec2020 - 18Dec2020): finished  366 trials in 0 min 10 sec
-         5th phase (02Dec2020 - 10Dec2020): finished  681 trials in 0 min 20 sec
-         6th phase (11Nov2020 - 20Nov2020): finished  952 trials in 0 min 30 sec
-         3rd phase (16Aug2020 - 02Sep2020): finished  352 trials in 0 min 10 sec
-         0th phase (02Aug2020 - 15Aug2020): finished 3534 trials in 3 min  0 sec
-        10th phase (19Dec2020 - 27Dec2020): finished 3527 trials in 3 min  0 sec
-         7th phase (30Sep2020 - 23Oct2020): finished 3512 trials in 3 min  0 sec
-         8th phase (21Nov2020 - 01Dec2020): finished  624 trials in 0 min 20 sec
-         9th phase (03Sep2020 - 29Sep2020): finished 3420 trials in 3 min  0 sec
-         1st phase (24Oct2020 - 10Nov2020): finished 3450 trials in 3 min  0 sec
-        11th phase (06Feb2020 - 16Apr2020): finished 3394 trials in 3 min  0 sec
-         4th phase (16Jul2020 - 01Aug2020): finished 3497 trials in 3 min  0 sec
+         0th phase (30Sep2020 - 23Oct2020): finished 3414 trials in 3 min  1 sec
+         6th phase (02Dec2020 - 10Dec2020): finished  941 trials in 0 min 30 sec
+         3rd phase (17Apr2020 - 15Jul2020): finished 3395 trials in 3 min  0 sec
+        12th phase (24Oct2020 - 10Nov2020): finished 3472 trials in 3 min  0 sec
+         5th phase (02Aug2020 - 15Aug2020): finished 3455 trials in 3 min  0 sec
+         4th phase (21Nov2020 - 01Dec2020): finished 3415 trials in 3 min  0 sec
+        10th phase (16Jul2020 - 01Aug2020): finished  834 trials in 0 min 30 sec
+         9th phase (11Nov2020 - 20Nov2020): finished 1271 trials in 0 min 50 sec
+         1st phase (11Dec2020 - 18Dec2020): finished  805 trials in 0 min 30 sec
+         8th phase (03Sep2020 - 29Sep2020): finished  542 trials in 0 min 20 sec
+         7th phase (16Aug2020 - 02Sep2020): finished  293 trials in 0 min 10 sec
+        11th phase (06Feb2020 - 16Apr2020): finished 3364 trials in 3 min  0 sec
+         2nd phase (19Dec2020 - 27Dec2020): finished 3492 trials in 3 min  0 sec
 Completed optimization. Total: 9 min 34 sec
 </pre></div></div>
 </div>
@@ -867,10 +869,10 @@ Completed optimization. Total: 9 min 34 sec
       <th>rho</th>
       <th>sigma</th>
       <th>tau</th>
-      <th>alpha1 [-]</th>
       <th>1/gamma [day]</th>
-      <th>1/beta [day]</th>
       <th>1/alpha2 [day]</th>
+      <th>alpha1 [-]</th>
+      <th>1/beta [day]</th>
       <th>RMSLE</th>
       <th>Trials</th>
       <th>Runtime</th>
@@ -884,18 +886,18 @@ Completed optimization. Total: 9 min 34 sec
       <td>16Apr2020</td>
       <td>126529100</td>
       <td>SIR-F</td>
-      <td>4.62</td>
-      <td>0.018973</td>
-      <td>0.000151</td>
-      <td>0.020557</td>
-      <td>0.004215</td>
-      <td>288</td>
-      <td>0.019</td>
-      <td>47</td>
+      <td>4.60</td>
+      <td>0.018345</td>
+      <td>0.000166</td>
+      <td>0.034693</td>
+      <td>0.007244</td>
+      <td>480</td>
+      <td>46</td>
+      <td>2010</td>
+      <td>0.018</td>
       <td>9</td>
-      <td>1324</td>
-      <td>0.259382</td>
-      <td>3394</td>
+      <td>0.258368</td>
+      <td>3364</td>
       <td>3 min  0 sec</td>
     </tr>
     <tr>
@@ -905,19 +907,19 @@ Completed optimization. Total: 9 min 34 sec
       <td>15Jul2020</td>
       <td>126529100</td>
       <td>SIR-F</td>
-      <td>0.55</td>
-      <td>0.076974</td>
-      <td>0.000128</td>
-      <td>0.006934</td>
-      <td>0.011573</td>
-      <td>288</td>
-      <td>0.077</td>
-      <td>17</td>
-      <td>28</td>
-      <td>1561</td>
-      <td>0.355588</td>
-      <td>2626</td>
-      <td>3 min  1 sec</td>
+      <td>0.51</td>
+      <td>0.103931</td>
+      <td>0.000023</td>
+      <td>0.010274</td>
+      <td>0.017980</td>
+      <td>480</td>
+      <td>18</td>
+      <td>14781</td>
+      <td>0.104</td>
+      <td>32</td>
+      <td>0.354287</td>
+      <td>3395</td>
+      <td>3 min  0 sec</td>
     </tr>
     <tr>
       <th>2nd</th>
@@ -926,19 +928,19 @@ Completed optimization. Total: 9 min 34 sec
       <td>01Aug2020</td>
       <td>126529100</td>
       <td>SIR-F</td>
-      <td>2.00</td>
-      <td>0.000585</td>
-      <td>0.000051</td>
-      <td>0.028182</td>
-      <td>0.014031</td>
-      <td>288</td>
-      <td>0.001</td>
-      <td>14</td>
+      <td>1.94</td>
+      <td>0.000344</td>
+      <td>0.000079</td>
+      <td>0.047556</td>
+      <td>0.024392</td>
+      <td>480</td>
+      <td>13</td>
+      <td>4209</td>
+      <td>0.000</td>
       <td>7</td>
-      <td>3954</td>
-      <td>0.025613</td>
-      <td>3497</td>
-      <td>3 min  0 sec</td>
+      <td>0.026211</td>
+      <td>834</td>
+      <td>0 min 30 sec</td>
     </tr>
     <tr>
       <th>3rd</th>
@@ -947,18 +949,18 @@ Completed optimization. Total: 9 min 34 sec
       <td>15Aug2020</td>
       <td>126529100</td>
       <td>SIR-F</td>
-      <td>1.51</td>
-      <td>0.000864</td>
-      <td>0.000054</td>
-      <td>0.020451</td>
-      <td>0.013461</td>
-      <td>288</td>
-      <td>0.001</td>
+      <td>1.50</td>
+      <td>0.000173</td>
+      <td>0.000096</td>
+      <td>0.034042</td>
+      <td>0.022636</td>
+      <td>480</td>
       <td>14</td>
+      <td>3484</td>
+      <td>0.000</td>
       <td>9</td>
-      <td>3735</td>
-      <td>0.050528</td>
-      <td>3534</td>
+      <td>0.050961</td>
+      <td>3455</td>
       <td>3 min  0 sec</td>
     </tr>
     <tr>
@@ -968,18 +970,18 @@ Completed optimization. Total: 9 min 34 sec
       <td>02Sep2020</td>
       <td>126529100</td>
       <td>SIR-F</td>
-      <td>0.77</td>
-      <td>0.001759</td>
-      <td>0.000194</td>
-      <td>0.014593</td>
-      <td>0.018789</td>
-      <td>288</td>
-      <td>0.002</td>
-      <td>10</td>
-      <td>13</td>
-      <td>1031</td>
-      <td>0.013953</td>
-      <td>352</td>
+      <td>0.76</td>
+      <td>0.003344</td>
+      <td>0.000327</td>
+      <td>0.026373</td>
+      <td>0.034188</td>
+      <td>480</td>
+      <td>9</td>
+      <td>1020</td>
+      <td>0.003</td>
+      <td>12</td>
+      <td>0.022422</td>
+      <td>293</td>
       <td>0 min 10 sec</td>
     </tr>
     <tr>
@@ -989,19 +991,19 @@ Completed optimization. Total: 9 min 34 sec
       <td>29Sep2020</td>
       <td>126529100</td>
       <td>SIR-F</td>
-      <td>0.81</td>
-      <td>0.001162</td>
-      <td>0.000258</td>
-      <td>0.016896</td>
-      <td>0.020633</td>
-      <td>288</td>
-      <td>0.001</td>
-      <td>9</td>
-      <td>11</td>
-      <td>774</td>
-      <td>0.029102</td>
-      <td>3420</td>
-      <td>3 min  0 sec</td>
+      <td>0.80</td>
+      <td>0.000234</td>
+      <td>0.000453</td>
+      <td>0.025834</td>
+      <td>0.031888</td>
+      <td>480</td>
+      <td>10</td>
+      <td>736</td>
+      <td>0.000</td>
+      <td>12</td>
+      <td>0.027875</td>
+      <td>542</td>
+      <td>0 min 20 sec</td>
     </tr>
     <tr>
       <th>6th</th>
@@ -1011,18 +1013,18 @@ Completed optimization. Total: 9 min 34 sec
       <td>126529100</td>
       <td>SIR-F</td>
       <td>0.99</td>
-      <td>0.000496</td>
-      <td>0.000208</td>
-      <td>0.021713</td>
-      <td>0.021658</td>
-      <td>288</td>
+      <td>0.000187</td>
+      <td>0.000335</td>
+      <td>0.034197</td>
+      <td>0.034179</td>
+      <td>480</td>
+      <td>9</td>
+      <td>994</td>
       <td>0.000</td>
       <td>9</td>
-      <td>9</td>
-      <td>962</td>
-      <td>0.013476</td>
-      <td>3512</td>
-      <td>3 min  0 sec</td>
+      <td>0.012528</td>
+      <td>3414</td>
+      <td>3 min  1 sec</td>
     </tr>
     <tr>
       <th>7th</th>
@@ -1031,18 +1033,18 @@ Completed optimization. Total: 9 min 34 sec
       <td>10Nov2020</td>
       <td>126529100</td>
       <td>SIR-F</td>
-      <td>1.31</td>
-      <td>0.001943</td>
-      <td>0.000173</td>
-      <td>0.021455</td>
-      <td>0.016170</td>
-      <td>288</td>
-      <td>0.002</td>
-      <td>12</td>
-      <td>9</td>
-      <td>1155</td>
-      <td>0.022356</td>
-      <td>3450</td>
+      <td>1.29</td>
+      <td>0.002706</td>
+      <td>0.000267</td>
+      <td>0.038483</td>
+      <td>0.029526</td>
+      <td>480</td>
+      <td>11</td>
+      <td>1249</td>
+      <td>0.003</td>
+      <td>8</td>
+      <td>0.022350</td>
+      <td>3472</td>
       <td>3 min  0 sec</td>
     </tr>
     <tr>
@@ -1052,19 +1054,19 @@ Completed optimization. Total: 9 min 34 sec
       <td>20Nov2020</td>
       <td>126529100</td>
       <td>SIR-F</td>
-      <td>1.68</td>
-      <td>0.001356</td>
-      <td>0.000172</td>
-      <td>0.027581</td>
-      <td>0.016265</td>
-      <td>288</td>
+      <td>1.64</td>
+      <td>0.000828</td>
+      <td>0.000226</td>
+      <td>0.046814</td>
+      <td>0.028233</td>
+      <td>480</td>
+      <td>11</td>
+      <td>1476</td>
       <td>0.001</td>
-      <td>12</td>
       <td>7</td>
-      <td>1165</td>
-      <td>0.013209</td>
-      <td>952</td>
-      <td>0 min 30 sec</td>
+      <td>0.013243</td>
+      <td>1271</td>
+      <td>0 min 50 sec</td>
     </tr>
     <tr>
       <th>9th</th>
@@ -1073,19 +1075,19 @@ Completed optimization. Total: 9 min 34 sec
       <td>01Dec2020</td>
       <td>126529100</td>
       <td>SIR-F</td>
-      <td>1.35</td>
-      <td>0.000747</td>
-      <td>0.000157</td>
-      <td>0.023950</td>
-      <td>0.017517</td>
-      <td>288</td>
-      <td>0.001</td>
-      <td>11</td>
+      <td>1.41</td>
+      <td>0.000440</td>
+      <td>0.000284</td>
+      <td>0.038581</td>
+      <td>0.027129</td>
+      <td>480</td>
+      <td>12</td>
+      <td>1172</td>
+      <td>0.000</td>
       <td>8</td>
-      <td>1270</td>
-      <td>0.022211</td>
-      <td>624</td>
-      <td>0 min 20 sec</td>
+      <td>0.020966</td>
+      <td>3415</td>
+      <td>3 min  0 sec</td>
     </tr>
     <tr>
       <th>10th</th>
@@ -1094,19 +1096,19 @@ Completed optimization. Total: 9 min 34 sec
       <td>10Dec2020</td>
       <td>126529100</td>
       <td>SIR-F</td>
-      <td>1.13</td>
-      <td>0.000121</td>
-      <td>0.000294</td>
-      <td>0.020733</td>
-      <td>0.018021</td>
-      <td>288</td>
-      <td>0.000</td>
+      <td>1.16</td>
+      <td>0.000324</td>
+      <td>0.000579</td>
+      <td>0.034721</td>
+      <td>0.029334</td>
+      <td>480</td>
       <td>11</td>
+      <td>575</td>
+      <td>0.000</td>
       <td>9</td>
-      <td>679</td>
-      <td>0.009690</td>
-      <td>681</td>
-      <td>0 min 20 sec</td>
+      <td>0.008130</td>
+      <td>941</td>
+      <td>0 min 30 sec</td>
     </tr>
     <tr>
       <th>11th</th>
@@ -1115,19 +1117,19 @@ Completed optimization. Total: 9 min 34 sec
       <td>18Dec2020</td>
       <td>126529100</td>
       <td>SIR-F</td>
-      <td>1.16</td>
-      <td>0.000256</td>
-      <td>0.000257</td>
-      <td>0.020146</td>
-      <td>0.017164</td>
-      <td>288</td>
-      <td>0.000</td>
-      <td>11</td>
-      <td>9</td>
-      <td>779</td>
-      <td>0.012531</td>
-      <td>366</td>
-      <td>0 min 10 sec</td>
+      <td>1.18</td>
+      <td>0.000923</td>
+      <td>0.000436</td>
+      <td>0.037461</td>
+      <td>0.031357</td>
+      <td>480</td>
+      <td>10</td>
+      <td>765</td>
+      <td>0.001</td>
+      <td>8</td>
+      <td>0.011178</td>
+      <td>805</td>
+      <td>0 min 30 sec</td>
     </tr>
     <tr>
       <th>12th</th>
@@ -1136,18 +1138,18 @@ Completed optimization. Total: 9 min 34 sec
       <td>27Dec2020</td>
       <td>126529100</td>
       <td>SIR-F</td>
-      <td>1.19</td>
-      <td>0.000220</td>
-      <td>0.000316</td>
-      <td>0.020201</td>
-      <td>0.016610</td>
-      <td>288</td>
-      <td>0.000</td>
-      <td>12</td>
-      <td>9</td>
+      <td>1.17</td>
+      <td>0.000660</td>
+      <td>0.000527</td>
+      <td>0.035932</td>
+      <td>0.030195</td>
+      <td>480</td>
+      <td>11</td>
       <td>632</td>
-      <td>0.011156</td>
-      <td>3527</td>
+      <td>0.001</td>
+      <td>9</td>
+      <td>0.011626</td>
+      <td>3492</td>
       <td>3 min  0 sec</td>
     </tr>
   </tbody>
@@ -1176,6 +1178,7 @@ Completed optimization. Total: 9 min 34 sec
 </div>
 <div class="section" id="Get-parameter-value">
 <h3>Get parameter value<a class="headerlink" href="#Get-parameter-value" title="Permalink to this headline">¶</a></h3>
+<p>We can get the parameter values of a phase using <code class="docutils literal notranslate"><span class="pre">Scenario.get()</span></code> method.</p>
 <div class="nbinput docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[12]:
 </pre></div>
@@ -1191,18 +1194,19 @@ Completed optimization. Total: 9 min 34 sec
 </div>
 <div class="output_area docutils container">
 <div class="highlight"><pre>
-0.77
+0.76
 </pre></div></div>
 </div>
 </div>
 <div class="section" id="Show-parameter-history">
 <h3>Show parameter history<a class="headerlink" href="#Show-parameter-history" title="Permalink to this headline">¶</a></h3>
+<p><code class="docutils literal notranslate"><span class="pre">Scenario.history()</span></code> method shows the trajectories of parameters (and the number of cases).</p>
 <div class="nbinput docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[13]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="n">_</span> <span class="o">=</span> <span class="n">snl</span><span class="o">.</span><span class="n">history</span><span class="p">(</span><span class="n">target</span><span class="o">=</span><span class="s2">&quot;rho&quot;</span><span class="p">)</span>
+<span></span><span class="n">_</span> <span class="o">=</span> <span class="n">snl</span><span class="o">.</span><span class="n">history</span><span class="p">(</span><span class="n">target</span><span class="o">=</span><span class="s2">&quot;theta&quot;</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -1218,7 +1222,7 @@ Completed optimization. Total: 9 min 34 sec
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="n">_</span> <span class="o">=</span> <span class="n">snl</span><span class="o">.</span><span class="n">history</span><span class="p">(</span><span class="n">target</span><span class="o">=</span><span class="s2">&quot;sigma&quot;</span><span class="p">)</span>
+<span></span><span class="n">_</span> <span class="o">=</span> <span class="n">snl</span><span class="o">.</span><span class="n">history</span><span class="p">(</span><span class="n">target</span><span class="o">=</span><span class="s2">&quot;kappa&quot;</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -1229,11 +1233,51 @@ Completed optimization. Total: 9 min 34 sec
 <img alt="_images/usage_quick_24_0.png" src="_images/usage_quick_24_0.png" />
 </div>
 </div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[15]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">_</span> <span class="o">=</span> <span class="n">snl</span><span class="o">.</span><span class="n">history</span><span class="p">(</span><span class="n">target</span><span class="o">=</span><span class="s2">&quot;rho&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="_images/usage_quick_25_0.png" src="_images/usage_quick_25_0.png" />
+</div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[16]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">_</span> <span class="o">=</span> <span class="n">snl</span><span class="o">.</span><span class="n">history</span><span class="p">(</span><span class="n">target</span><span class="o">=</span><span class="s2">&quot;sigma&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="_images/usage_quick_26_0.png" src="_images/usage_quick_26_0.png" />
+</div>
+</div>
+<div class="line-block">
+<div class="line">Notes on the history of <span class="math notranslate nohighlight">\(\sigma\)</span> value in japan (last updated: 28Dec2020):</div>
+<div class="line">In Japan, we experienced two waves and we are in third wave. In the first wave (Apr - May), recovery period was too long because collapse of the medical care system occurred and no medicines were found.</div>
+</div>
+<p>Sigma values: the first wave &lt; the second wave &gt; the third wave</p>
+<p>However, in the second wave (Jul - Oct), recovery period appears short because we have some effective medicines (not approved, in clinical study), yonger people (people un-associated to sever diseases) were infected.</p>
+<p>In the third wave (Nov - ), older people tend to be infected and we are facing with medical collapse at this time…</p>
 </div>
 <div class="section" id="Show-the-history-of-reproduction-number">
 <h3>Show the history of reproduction number<a class="headerlink" href="#Show-the-history-of-reproduction-number" title="Permalink to this headline">¶</a></h3>
+<p><span class="math notranslate nohighlight">\(R_0\)</span> (“R naught”) means “the average number of secondary infections caused by an infected host” (<a class="reference external" href="https://towardsdatascience.com/infection-modeling-part-1-87e74645568a">Infection Modeling — Part 1</a>). When this value is larger than 1, the infection disease is outbreaking.</p>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[15]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[17]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
@@ -1245,22 +1289,46 @@ Completed optimization. Total: 9 min 34 sec
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area docutils container">
-<img alt="_images/usage_quick_26_0.png" src="_images/usage_quick_26_0.png" />
+<img alt="_images/usage_quick_29_0.png" src="_images/usage_quick_29_0.png" />
 </div>
 </div>
 </div>
 <div class="section" id="Simulate-the-number-of-cases">
 <h3>Simulate the number of cases<a class="headerlink" href="#Simulate-the-number-of-cases" title="Permalink to this headline">¶</a></h3>
+<p>We can compare the actual and simulated (with estimated parameter values) number of confirmed/infected/recovered/fatal cases using <code class="docutils literal notranslate"><span class="pre">Scenario.history()</span></code> method.</p>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[16]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[18]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="n">snl</span><span class="o">.</span><span class="n">clear</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;Main&quot;</span><span class="p">)</span>
+<span></span><span class="n">_</span> <span class="o">=</span> <span class="n">snl</span><span class="o">.</span><span class="n">history</span><span class="p">(</span><span class="s2">&quot;Infected&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="_images/usage_quick_31_0.png" src="_images/usage_quick_31_0.png" />
+</div>
+</div>
+</div>
+<div class="section" id="Main-scenario">
+<h3>Main scenario<a class="headerlink" href="#Main-scenario" title="Permalink to this headline">¶</a></h3>
+<p>If the parameter velues will not be changed until 01Apr2021, how many cases will be? We call this scenario as “Main” scenario.</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[19]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="c1"># Clear future phases in Main scenario</span>
+<span class="n">snl</span><span class="o">.</span><span class="n">clear</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;Main&quot;</span><span class="p">)</span>
+<span class="c1"># Add one future phase 30 days with the parameter set of the last past phase</span>
 <span class="n">snl</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">days</span><span class="o">=</span><span class="mi">30</span><span class="p">)</span>
+<span class="c1"># Add one future phase until 01Apr2021 with the same parameter set</span>
 <span class="n">snl</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">end_date</span><span class="o">=</span><span class="s2">&quot;01Apr2021&quot;</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;Main&quot;</span><span class="p">)</span>
-<span class="n">main_sim_df</span> <span class="o">=</span> <span class="n">snl</span><span class="o">.</span><span class="n">simulate</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;Main&quot;</span><span class="p">)</span>
-<span class="n">main_sim_df</span><span class="o">.</span><span class="n">tail</span><span class="p">()</span>
+<span class="c1"># Simulate the number of cases</span>
+<span class="n">snl</span><span class="o">.</span><span class="n">simulate</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;Main&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">tail</span><span class="p">()</span>
 </pre></div>
 </div>
 </div>
@@ -1268,11 +1336,11 @@ Completed optimization. Total: 9 min 34 sec
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area docutils container">
-<img alt="_images/usage_quick_28_0.png" src="_images/usage_quick_28_0.png" />
+<img alt="_images/usage_quick_33_0.png" src="_images/usage_quick_33_0.png" />
 </div>
 </div>
 <div class="nboutput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[16]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[19]:
 </pre></div>
 </div>
 <div class="output_area rendered_html docutils container">
@@ -1305,42 +1373,42 @@ Completed optimization. Total: 9 min 34 sec
     <tr>
       <th>417</th>
       <td>2021-03-29</td>
-      <td>864228</td>
-      <td>13521</td>
-      <td>133199</td>
-      <td>717508</td>
+      <td>873578</td>
+      <td>13306</td>
+      <td>122654</td>
+      <td>737618</td>
     </tr>
     <tr>
       <th>418</th>
       <td>2021-03-30</td>
-      <td>877696</td>
-      <td>13736</td>
-      <td>135301</td>
-      <td>728659</td>
+      <td>886807</td>
+      <td>13511</td>
+      <td>124484</td>
+      <td>748812</td>
     </tr>
     <tr>
       <th>419</th>
       <td>2021-03-31</td>
-      <td>891376</td>
-      <td>13955</td>
-      <td>137435</td>
-      <td>739986</td>
+      <td>900230</td>
+      <td>13718</td>
+      <td>126339</td>
+      <td>760173</td>
     </tr>
     <tr>
       <th>420</th>
       <td>2021-04-01</td>
-      <td>905268</td>
-      <td>14177</td>
-      <td>139601</td>
-      <td>751490</td>
+      <td>913852</td>
+      <td>13928</td>
+      <td>128221</td>
+      <td>771703</td>
     </tr>
     <tr>
       <th>421</th>
       <td>2021-04-02</td>
-      <td>919377</td>
-      <td>14402</td>
-      <td>141799</td>
-      <td>763176</td>
+      <td>927677</td>
+      <td>14142</td>
+      <td>130130</td>
+      <td>783405</td>
     </tr>
   </tbody>
 </table>
@@ -1349,59 +1417,64 @@ Completed optimization. Total: 9 min 34 sec
 </div>
 <div class="section" id="Simulate-another-scenario">
 <h3>Simulate another scenario<a class="headerlink" href="#Simulate-another-scenario" title="Permalink to this headline">¶</a></h3>
-<p>If <span class="math notranslate nohighlight">\(\sigma\)</span> will be double in 30 days, how many cases will be?</p>
+<p>If <span class="math notranslate nohighlight">\(\sigma\)</span> will be double in 30 days, how many cases will be? We will call this scenario as “Medicine” scenario.</p>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[17]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[20]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="n">sigma_current</span> <span class="o">=</span> <span class="n">snl</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;sigma&quot;</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;Main&quot;</span><span class="p">,</span> <span class="n">phase</span><span class="o">=</span><span class="s2">&quot;last&quot;</span><span class="p">)</span>
+<span></span><span class="c1"># Calcuate the current sigma value of the last phase</span>
+<span class="n">sigma_current</span> <span class="o">=</span> <span class="n">snl</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;sigma&quot;</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;Main&quot;</span><span class="p">,</span> <span class="n">phase</span><span class="o">=</span><span class="s2">&quot;last&quot;</span><span class="p">)</span>
 <span class="n">sigma_current</span>
 </pre></div>
 </div>
 </div>
 <div class="nboutput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[17]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[20]:
 </pre></div>
 </div>
 <div class="output_area docutils container">
 <div class="highlight"><pre>
-0.01661041462851606
+0.030194934403551678
 </pre></div></div>
 </div>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[18]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[21]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="n">sigma_new</span> <span class="o">=</span> <span class="n">sigma_current</span> <span class="o">*</span> <span class="mi">2</span>
+<span></span><span class="c1"># Sigma value will be double</span>
+<span class="n">sigma_new</span> <span class="o">=</span> <span class="n">sigma_current</span> <span class="o">*</span> <span class="mi">2</span>
 <span class="n">sigma_new</span>
 </pre></div>
 </div>
 </div>
 <div class="nboutput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[18]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[21]:
 </pre></div>
 </div>
 <div class="output_area docutils container">
 <div class="highlight"><pre>
-0.03322082925703212
+0.060389868807103356
 </pre></div></div>
 </div>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[19]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[22]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="n">snl</span><span class="o">.</span><span class="n">clear</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;Medicine&quot;</span><span class="p">)</span>
+<span></span><span class="c1"># Initialize &quot;Medicine&quot; scenario (with the same past phases as that of Main scenario)</span>
+<span class="n">snl</span><span class="o">.</span><span class="n">clear</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;Medicine&quot;</span><span class="p">)</span>
+<span class="c1"># Add 30 days as a new future phases with the same parameter set</span>
 <span class="n">snl</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;Medicine&quot;</span><span class="p">,</span> <span class="n">days</span><span class="o">=</span><span class="mi">30</span><span class="p">,</span> <span class="n">sigma</span><span class="o">=</span><span class="n">sigma_current</span><span class="p">)</span>
+<span class="c1"># Add a phase until 01Apr2021 with doubled sigma value</span>
 <span class="n">snl</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;Medicine&quot;</span><span class="p">,</span> <span class="n">end_date</span><span class="o">=</span><span class="s2">&quot;01Apr2021&quot;</span><span class="p">,</span> <span class="n">sigma</span><span class="o">=</span><span class="n">sigma_new</span><span class="p">)</span>
 <span class="n">snl</span><span class="o">.</span><span class="n">summary</span><span class="p">()</span>
 </pre></div>
 </div>
 </div>
 <div class="nboutput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[19]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[22]:
 </pre></div>
 </div>
 <div class="output_area rendered_html docutils container">
@@ -1435,10 +1508,10 @@ Completed optimization. Total: 9 min 34 sec
       <th>rho</th>
       <th>sigma</th>
       <th>tau</th>
-      <th>alpha1 [-]</th>
       <th>1/gamma [day]</th>
-      <th>1/beta [day]</th>
       <th>1/alpha2 [day]</th>
+      <th>alpha1 [-]</th>
+      <th>1/beta [day]</th>
       <th>RMSLE</th>
       <th>Trials</th>
       <th>Runtime</th>
@@ -1475,18 +1548,18 @@ Completed optimization. Total: 9 min 34 sec
       <td>16Apr2020</td>
       <td>126529100</td>
       <td>SIR-F</td>
-      <td>4.62</td>
-      <td>0.018973</td>
-      <td>0.000151</td>
-      <td>0.020557</td>
-      <td>0.004215</td>
-      <td>288</td>
-      <td>0.019</td>
-      <td>47</td>
+      <td>4.60</td>
+      <td>0.018345</td>
+      <td>0.000166</td>
+      <td>0.034693</td>
+      <td>0.007244</td>
+      <td>480</td>
+      <td>46</td>
+      <td>2010</td>
+      <td>0.018</td>
       <td>9</td>
-      <td>1324</td>
-      <td>0.259382</td>
-      <td>3394</td>
+      <td>0.258368</td>
+      <td>3364</td>
       <td>3 min  0 sec</td>
     </tr>
     <tr>
@@ -1496,19 +1569,19 @@ Completed optimization. Total: 9 min 34 sec
       <td>15Jul2020</td>
       <td>126529100</td>
       <td>SIR-F</td>
-      <td>0.55</td>
-      <td>0.076974</td>
-      <td>0.000128</td>
-      <td>0.006934</td>
-      <td>0.011573</td>
-      <td>288</td>
-      <td>0.077</td>
-      <td>17</td>
-      <td>28</td>
-      <td>1561</td>
-      <td>0.355588</td>
-      <td>2626</td>
-      <td>3 min  1 sec</td>
+      <td>0.51</td>
+      <td>0.103931</td>
+      <td>0.000023</td>
+      <td>0.010274</td>
+      <td>0.017980</td>
+      <td>480</td>
+      <td>18</td>
+      <td>14781</td>
+      <td>0.104</td>
+      <td>32</td>
+      <td>0.354287</td>
+      <td>3395</td>
+      <td>3 min  0 sec</td>
     </tr>
     <tr>
       <th>2nd</th>
@@ -1517,19 +1590,19 @@ Completed optimization. Total: 9 min 34 sec
       <td>01Aug2020</td>
       <td>126529100</td>
       <td>SIR-F</td>
-      <td>2.00</td>
-      <td>0.000585</td>
-      <td>0.000051</td>
-      <td>0.028182</td>
-      <td>0.014031</td>
-      <td>288</td>
-      <td>0.001</td>
-      <td>14</td>
+      <td>1.94</td>
+      <td>0.000344</td>
+      <td>0.000079</td>
+      <td>0.047556</td>
+      <td>0.024392</td>
+      <td>480</td>
+      <td>13</td>
+      <td>4209</td>
+      <td>0.000</td>
       <td>7</td>
-      <td>3954</td>
-      <td>0.0256134</td>
-      <td>3497</td>
-      <td>3 min  0 sec</td>
+      <td>0.0262112</td>
+      <td>834</td>
+      <td>0 min 30 sec</td>
     </tr>
     <tr>
       <th>3rd</th>
@@ -1538,18 +1611,18 @@ Completed optimization. Total: 9 min 34 sec
       <td>15Aug2020</td>
       <td>126529100</td>
       <td>SIR-F</td>
-      <td>1.51</td>
-      <td>0.000864</td>
-      <td>0.000054</td>
-      <td>0.020451</td>
-      <td>0.013461</td>
-      <td>288</td>
-      <td>0.001</td>
+      <td>1.50</td>
+      <td>0.000173</td>
+      <td>0.000096</td>
+      <td>0.034042</td>
+      <td>0.022636</td>
+      <td>480</td>
       <td>14</td>
+      <td>3484</td>
+      <td>0.000</td>
       <td>9</td>
-      <td>3735</td>
-      <td>0.0505277</td>
-      <td>3534</td>
+      <td>0.0509606</td>
+      <td>3455</td>
       <td>3 min  0 sec</td>
     </tr>
     <tr>
@@ -1559,18 +1632,18 @@ Completed optimization. Total: 9 min 34 sec
       <td>02Sep2020</td>
       <td>126529100</td>
       <td>SIR-F</td>
-      <td>0.77</td>
-      <td>0.001759</td>
-      <td>0.000194</td>
-      <td>0.014593</td>
-      <td>0.018789</td>
-      <td>288</td>
-      <td>0.002</td>
-      <td>10</td>
-      <td>13</td>
-      <td>1031</td>
-      <td>0.0139534</td>
-      <td>352</td>
+      <td>0.76</td>
+      <td>0.003344</td>
+      <td>0.000327</td>
+      <td>0.026373</td>
+      <td>0.034188</td>
+      <td>480</td>
+      <td>9</td>
+      <td>1020</td>
+      <td>0.003</td>
+      <td>12</td>
+      <td>0.0224218</td>
+      <td>293</td>
       <td>0 min 10 sec</td>
     </tr>
     <tr>
@@ -1580,19 +1653,19 @@ Completed optimization. Total: 9 min 34 sec
       <td>29Sep2020</td>
       <td>126529100</td>
       <td>SIR-F</td>
-      <td>0.81</td>
-      <td>0.001162</td>
-      <td>0.000258</td>
-      <td>0.016896</td>
-      <td>0.020633</td>
-      <td>288</td>
-      <td>0.001</td>
-      <td>9</td>
-      <td>11</td>
-      <td>774</td>
-      <td>0.0291025</td>
-      <td>3420</td>
-      <td>3 min  0 sec</td>
+      <td>0.80</td>
+      <td>0.000234</td>
+      <td>0.000453</td>
+      <td>0.025834</td>
+      <td>0.031888</td>
+      <td>480</td>
+      <td>10</td>
+      <td>736</td>
+      <td>0.000</td>
+      <td>12</td>
+      <td>0.0278752</td>
+      <td>542</td>
+      <td>0 min 20 sec</td>
     </tr>
     <tr>
       <th>6th</th>
@@ -1602,18 +1675,18 @@ Completed optimization. Total: 9 min 34 sec
       <td>126529100</td>
       <td>SIR-F</td>
       <td>0.99</td>
-      <td>0.000496</td>
-      <td>0.000208</td>
-      <td>0.021713</td>
-      <td>0.021658</td>
-      <td>288</td>
+      <td>0.000187</td>
+      <td>0.000335</td>
+      <td>0.034197</td>
+      <td>0.034179</td>
+      <td>480</td>
+      <td>9</td>
+      <td>994</td>
       <td>0.000</td>
       <td>9</td>
-      <td>9</td>
-      <td>962</td>
-      <td>0.0134764</td>
-      <td>3512</td>
-      <td>3 min  0 sec</td>
+      <td>0.0125278</td>
+      <td>3414</td>
+      <td>3 min  1 sec</td>
     </tr>
     <tr>
       <th>7th</th>
@@ -1622,18 +1695,18 @@ Completed optimization. Total: 9 min 34 sec
       <td>10Nov2020</td>
       <td>126529100</td>
       <td>SIR-F</td>
-      <td>1.31</td>
-      <td>0.001943</td>
-      <td>0.000173</td>
-      <td>0.021455</td>
-      <td>0.016170</td>
-      <td>288</td>
-      <td>0.002</td>
-      <td>12</td>
-      <td>9</td>
-      <td>1155</td>
-      <td>0.0223562</td>
-      <td>3450</td>
+      <td>1.29</td>
+      <td>0.002706</td>
+      <td>0.000267</td>
+      <td>0.038483</td>
+      <td>0.029526</td>
+      <td>480</td>
+      <td>11</td>
+      <td>1249</td>
+      <td>0.003</td>
+      <td>8</td>
+      <td>0.0223503</td>
+      <td>3472</td>
       <td>3 min  0 sec</td>
     </tr>
     <tr>
@@ -1643,19 +1716,19 @@ Completed optimization. Total: 9 min 34 sec
       <td>20Nov2020</td>
       <td>126529100</td>
       <td>SIR-F</td>
-      <td>1.68</td>
-      <td>0.001356</td>
-      <td>0.000172</td>
-      <td>0.027581</td>
-      <td>0.016265</td>
-      <td>288</td>
+      <td>1.64</td>
+      <td>0.000828</td>
+      <td>0.000226</td>
+      <td>0.046814</td>
+      <td>0.028233</td>
+      <td>480</td>
+      <td>11</td>
+      <td>1476</td>
       <td>0.001</td>
-      <td>12</td>
       <td>7</td>
-      <td>1165</td>
-      <td>0.0132091</td>
-      <td>952</td>
-      <td>0 min 30 sec</td>
+      <td>0.0132429</td>
+      <td>1271</td>
+      <td>0 min 50 sec</td>
     </tr>
     <tr>
       <th>9th</th>
@@ -1664,19 +1737,19 @@ Completed optimization. Total: 9 min 34 sec
       <td>01Dec2020</td>
       <td>126529100</td>
       <td>SIR-F</td>
-      <td>1.35</td>
-      <td>0.000747</td>
-      <td>0.000157</td>
-      <td>0.023950</td>
-      <td>0.017517</td>
-      <td>288</td>
-      <td>0.001</td>
-      <td>11</td>
+      <td>1.41</td>
+      <td>0.000440</td>
+      <td>0.000284</td>
+      <td>0.038581</td>
+      <td>0.027129</td>
+      <td>480</td>
+      <td>12</td>
+      <td>1172</td>
+      <td>0.000</td>
       <td>8</td>
-      <td>1270</td>
-      <td>0.0222113</td>
-      <td>624</td>
-      <td>0 min 20 sec</td>
+      <td>0.020966</td>
+      <td>3415</td>
+      <td>3 min  0 sec</td>
     </tr>
     <tr>
       <th>10th</th>
@@ -1685,19 +1758,19 @@ Completed optimization. Total: 9 min 34 sec
       <td>10Dec2020</td>
       <td>126529100</td>
       <td>SIR-F</td>
-      <td>1.13</td>
-      <td>0.000121</td>
-      <td>0.000294</td>
-      <td>0.020733</td>
-      <td>0.018021</td>
-      <td>288</td>
-      <td>0.000</td>
+      <td>1.16</td>
+      <td>0.000324</td>
+      <td>0.000579</td>
+      <td>0.034721</td>
+      <td>0.029334</td>
+      <td>480</td>
       <td>11</td>
+      <td>575</td>
+      <td>0.000</td>
       <td>9</td>
-      <td>679</td>
-      <td>0.0096897</td>
-      <td>681</td>
-      <td>0 min 20 sec</td>
+      <td>0.00812976</td>
+      <td>941</td>
+      <td>0 min 30 sec</td>
     </tr>
     <tr>
       <th>11th</th>
@@ -1706,19 +1779,19 @@ Completed optimization. Total: 9 min 34 sec
       <td>18Dec2020</td>
       <td>126529100</td>
       <td>SIR-F</td>
-      <td>1.16</td>
-      <td>0.000256</td>
-      <td>0.000257</td>
-      <td>0.020146</td>
-      <td>0.017164</td>
-      <td>288</td>
-      <td>0.000</td>
-      <td>11</td>
-      <td>9</td>
-      <td>779</td>
-      <td>0.0125308</td>
-      <td>366</td>
-      <td>0 min 10 sec</td>
+      <td>1.18</td>
+      <td>0.000923</td>
+      <td>0.000436</td>
+      <td>0.037461</td>
+      <td>0.031357</td>
+      <td>480</td>
+      <td>10</td>
+      <td>765</td>
+      <td>0.001</td>
+      <td>8</td>
+      <td>0.0111778</td>
+      <td>805</td>
+      <td>0 min 30 sec</td>
     </tr>
     <tr>
       <th>12th</th>
@@ -1727,18 +1800,18 @@ Completed optimization. Total: 9 min 34 sec
       <td>27Dec2020</td>
       <td>126529100</td>
       <td>SIR-F</td>
-      <td>1.19</td>
-      <td>0.000220</td>
-      <td>0.000316</td>
-      <td>0.020201</td>
-      <td>0.016610</td>
-      <td>288</td>
-      <td>0.000</td>
-      <td>12</td>
-      <td>9</td>
+      <td>1.17</td>
+      <td>0.000660</td>
+      <td>0.000527</td>
+      <td>0.035932</td>
+      <td>0.030195</td>
+      <td>480</td>
+      <td>11</td>
       <td>632</td>
-      <td>0.0111556</td>
-      <td>3527</td>
+      <td>0.001</td>
+      <td>9</td>
+      <td>0.011626</td>
+      <td>3492</td>
       <td>3 min  0 sec</td>
     </tr>
     <tr>
@@ -1748,16 +1821,16 @@ Completed optimization. Total: 9 min 34 sec
       <td>26Jan2021</td>
       <td>126529100</td>
       <td>SIR-F</td>
-      <td>1.19</td>
-      <td>0.000220</td>
-      <td>0.000316</td>
-      <td>0.020201</td>
-      <td>0.016610</td>
-      <td>288</td>
-      <td>0.000</td>
-      <td>12</td>
-      <td>9</td>
+      <td>1.17</td>
+      <td>0.000660</td>
+      <td>0.000527</td>
+      <td>0.035932</td>
+      <td>0.030195</td>
+      <td>480</td>
+      <td>11</td>
       <td>632</td>
+      <td>0.001</td>
+      <td>9</td>
       <td>-</td>
       <td>-</td>
       <td>-</td>
@@ -1769,16 +1842,16 @@ Completed optimization. Total: 9 min 34 sec
       <td>01Apr2021</td>
       <td>126529100</td>
       <td>SIR-F</td>
-      <td>1.19</td>
-      <td>0.000220</td>
-      <td>0.000316</td>
-      <td>0.020201</td>
-      <td>0.016610</td>
-      <td>288</td>
-      <td>0.000</td>
-      <td>12</td>
-      <td>9</td>
+      <td>1.17</td>
+      <td>0.000660</td>
+      <td>0.000527</td>
+      <td>0.035932</td>
+      <td>0.030195</td>
+      <td>480</td>
+      <td>11</td>
       <td>632</td>
+      <td>0.001</td>
+      <td>9</td>
       <td>-</td>
       <td>-</td>
       <td>-</td>
@@ -1791,18 +1864,18 @@ Completed optimization. Total: 9 min 34 sec
       <td>16Apr2020</td>
       <td>126529100</td>
       <td>SIR-F</td>
-      <td>4.62</td>
-      <td>0.018973</td>
-      <td>0.000151</td>
-      <td>0.020557</td>
-      <td>0.004215</td>
-      <td>288</td>
-      <td>0.019</td>
-      <td>47</td>
+      <td>4.60</td>
+      <td>0.018345</td>
+      <td>0.000166</td>
+      <td>0.034693</td>
+      <td>0.007244</td>
+      <td>480</td>
+      <td>46</td>
+      <td>2010</td>
+      <td>0.018</td>
       <td>9</td>
-      <td>1324</td>
-      <td>0.259382</td>
-      <td>3394</td>
+      <td>0.258368</td>
+      <td>3364</td>
       <td>3 min  0 sec</td>
     </tr>
     <tr>
@@ -1812,19 +1885,19 @@ Completed optimization. Total: 9 min 34 sec
       <td>15Jul2020</td>
       <td>126529100</td>
       <td>SIR-F</td>
-      <td>0.55</td>
-      <td>0.076974</td>
-      <td>0.000128</td>
-      <td>0.006934</td>
-      <td>0.011573</td>
-      <td>288</td>
-      <td>0.077</td>
-      <td>17</td>
-      <td>28</td>
-      <td>1561</td>
-      <td>0.355588</td>
-      <td>2626</td>
-      <td>3 min  1 sec</td>
+      <td>0.51</td>
+      <td>0.103931</td>
+      <td>0.000023</td>
+      <td>0.010274</td>
+      <td>0.017980</td>
+      <td>480</td>
+      <td>18</td>
+      <td>14781</td>
+      <td>0.104</td>
+      <td>32</td>
+      <td>0.354287</td>
+      <td>3395</td>
+      <td>3 min  0 sec</td>
     </tr>
     <tr>
       <th>2nd</th>
@@ -1833,19 +1906,19 @@ Completed optimization. Total: 9 min 34 sec
       <td>01Aug2020</td>
       <td>126529100</td>
       <td>SIR-F</td>
-      <td>2.00</td>
-      <td>0.000585</td>
-      <td>0.000051</td>
-      <td>0.028182</td>
-      <td>0.014031</td>
-      <td>288</td>
-      <td>0.001</td>
-      <td>14</td>
+      <td>1.94</td>
+      <td>0.000344</td>
+      <td>0.000079</td>
+      <td>0.047556</td>
+      <td>0.024392</td>
+      <td>480</td>
+      <td>13</td>
+      <td>4209</td>
+      <td>0.000</td>
       <td>7</td>
-      <td>3954</td>
-      <td>0.0256134</td>
-      <td>3497</td>
-      <td>3 min  0 sec</td>
+      <td>0.0262112</td>
+      <td>834</td>
+      <td>0 min 30 sec</td>
     </tr>
     <tr>
       <th>3rd</th>
@@ -1854,18 +1927,18 @@ Completed optimization. Total: 9 min 34 sec
       <td>15Aug2020</td>
       <td>126529100</td>
       <td>SIR-F</td>
-      <td>1.51</td>
-      <td>0.000864</td>
-      <td>0.000054</td>
-      <td>0.020451</td>
-      <td>0.013461</td>
-      <td>288</td>
-      <td>0.001</td>
+      <td>1.50</td>
+      <td>0.000173</td>
+      <td>0.000096</td>
+      <td>0.034042</td>
+      <td>0.022636</td>
+      <td>480</td>
       <td>14</td>
+      <td>3484</td>
+      <td>0.000</td>
       <td>9</td>
-      <td>3735</td>
-      <td>0.0505277</td>
-      <td>3534</td>
+      <td>0.0509606</td>
+      <td>3455</td>
       <td>3 min  0 sec</td>
     </tr>
     <tr>
@@ -1875,18 +1948,18 @@ Completed optimization. Total: 9 min 34 sec
       <td>02Sep2020</td>
       <td>126529100</td>
       <td>SIR-F</td>
-      <td>0.77</td>
-      <td>0.001759</td>
-      <td>0.000194</td>
-      <td>0.014593</td>
-      <td>0.018789</td>
-      <td>288</td>
-      <td>0.002</td>
-      <td>10</td>
-      <td>13</td>
-      <td>1031</td>
-      <td>0.0139534</td>
-      <td>352</td>
+      <td>0.76</td>
+      <td>0.003344</td>
+      <td>0.000327</td>
+      <td>0.026373</td>
+      <td>0.034188</td>
+      <td>480</td>
+      <td>9</td>
+      <td>1020</td>
+      <td>0.003</td>
+      <td>12</td>
+      <td>0.0224218</td>
+      <td>293</td>
       <td>0 min 10 sec</td>
     </tr>
     <tr>
@@ -1896,19 +1969,19 @@ Completed optimization. Total: 9 min 34 sec
       <td>29Sep2020</td>
       <td>126529100</td>
       <td>SIR-F</td>
-      <td>0.81</td>
-      <td>0.001162</td>
-      <td>0.000258</td>
-      <td>0.016896</td>
-      <td>0.020633</td>
-      <td>288</td>
-      <td>0.001</td>
-      <td>9</td>
-      <td>11</td>
-      <td>774</td>
-      <td>0.0291025</td>
-      <td>3420</td>
-      <td>3 min  0 sec</td>
+      <td>0.80</td>
+      <td>0.000234</td>
+      <td>0.000453</td>
+      <td>0.025834</td>
+      <td>0.031888</td>
+      <td>480</td>
+      <td>10</td>
+      <td>736</td>
+      <td>0.000</td>
+      <td>12</td>
+      <td>0.0278752</td>
+      <td>542</td>
+      <td>0 min 20 sec</td>
     </tr>
     <tr>
       <th>6th</th>
@@ -1918,18 +1991,18 @@ Completed optimization. Total: 9 min 34 sec
       <td>126529100</td>
       <td>SIR-F</td>
       <td>0.99</td>
-      <td>0.000496</td>
-      <td>0.000208</td>
-      <td>0.021713</td>
-      <td>0.021658</td>
-      <td>288</td>
+      <td>0.000187</td>
+      <td>0.000335</td>
+      <td>0.034197</td>
+      <td>0.034179</td>
+      <td>480</td>
+      <td>9</td>
+      <td>994</td>
       <td>0.000</td>
       <td>9</td>
-      <td>9</td>
-      <td>962</td>
-      <td>0.0134764</td>
-      <td>3512</td>
-      <td>3 min  0 sec</td>
+      <td>0.0125278</td>
+      <td>3414</td>
+      <td>3 min  1 sec</td>
     </tr>
     <tr>
       <th>7th</th>
@@ -1938,18 +2011,18 @@ Completed optimization. Total: 9 min 34 sec
       <td>10Nov2020</td>
       <td>126529100</td>
       <td>SIR-F</td>
-      <td>1.31</td>
-      <td>0.001943</td>
-      <td>0.000173</td>
-      <td>0.021455</td>
-      <td>0.016170</td>
-      <td>288</td>
-      <td>0.002</td>
-      <td>12</td>
-      <td>9</td>
-      <td>1155</td>
-      <td>0.0223562</td>
-      <td>3450</td>
+      <td>1.29</td>
+      <td>0.002706</td>
+      <td>0.000267</td>
+      <td>0.038483</td>
+      <td>0.029526</td>
+      <td>480</td>
+      <td>11</td>
+      <td>1249</td>
+      <td>0.003</td>
+      <td>8</td>
+      <td>0.0223503</td>
+      <td>3472</td>
       <td>3 min  0 sec</td>
     </tr>
     <tr>
@@ -1959,19 +2032,19 @@ Completed optimization. Total: 9 min 34 sec
       <td>20Nov2020</td>
       <td>126529100</td>
       <td>SIR-F</td>
-      <td>1.68</td>
-      <td>0.001356</td>
-      <td>0.000172</td>
-      <td>0.027581</td>
-      <td>0.016265</td>
-      <td>288</td>
+      <td>1.64</td>
+      <td>0.000828</td>
+      <td>0.000226</td>
+      <td>0.046814</td>
+      <td>0.028233</td>
+      <td>480</td>
+      <td>11</td>
+      <td>1476</td>
       <td>0.001</td>
-      <td>12</td>
       <td>7</td>
-      <td>1165</td>
-      <td>0.0132091</td>
-      <td>952</td>
-      <td>0 min 30 sec</td>
+      <td>0.0132429</td>
+      <td>1271</td>
+      <td>0 min 50 sec</td>
     </tr>
     <tr>
       <th>9th</th>
@@ -1980,19 +2053,19 @@ Completed optimization. Total: 9 min 34 sec
       <td>01Dec2020</td>
       <td>126529100</td>
       <td>SIR-F</td>
-      <td>1.35</td>
-      <td>0.000747</td>
-      <td>0.000157</td>
-      <td>0.023950</td>
-      <td>0.017517</td>
-      <td>288</td>
-      <td>0.001</td>
-      <td>11</td>
+      <td>1.41</td>
+      <td>0.000440</td>
+      <td>0.000284</td>
+      <td>0.038581</td>
+      <td>0.027129</td>
+      <td>480</td>
+      <td>12</td>
+      <td>1172</td>
+      <td>0.000</td>
       <td>8</td>
-      <td>1270</td>
-      <td>0.0222113</td>
-      <td>624</td>
-      <td>0 min 20 sec</td>
+      <td>0.020966</td>
+      <td>3415</td>
+      <td>3 min  0 sec</td>
     </tr>
     <tr>
       <th>10th</th>
@@ -2001,19 +2074,19 @@ Completed optimization. Total: 9 min 34 sec
       <td>10Dec2020</td>
       <td>126529100</td>
       <td>SIR-F</td>
-      <td>1.13</td>
-      <td>0.000121</td>
-      <td>0.000294</td>
-      <td>0.020733</td>
-      <td>0.018021</td>
-      <td>288</td>
-      <td>0.000</td>
+      <td>1.16</td>
+      <td>0.000324</td>
+      <td>0.000579</td>
+      <td>0.034721</td>
+      <td>0.029334</td>
+      <td>480</td>
       <td>11</td>
+      <td>575</td>
+      <td>0.000</td>
       <td>9</td>
-      <td>679</td>
-      <td>0.0096897</td>
-      <td>681</td>
-      <td>0 min 20 sec</td>
+      <td>0.00812976</td>
+      <td>941</td>
+      <td>0 min 30 sec</td>
     </tr>
     <tr>
       <th>11th</th>
@@ -2022,19 +2095,19 @@ Completed optimization. Total: 9 min 34 sec
       <td>18Dec2020</td>
       <td>126529100</td>
       <td>SIR-F</td>
-      <td>1.16</td>
-      <td>0.000256</td>
-      <td>0.000257</td>
-      <td>0.020146</td>
-      <td>0.017164</td>
-      <td>288</td>
-      <td>0.000</td>
-      <td>11</td>
-      <td>9</td>
-      <td>779</td>
-      <td>0.0125308</td>
-      <td>366</td>
-      <td>0 min 10 sec</td>
+      <td>1.18</td>
+      <td>0.000923</td>
+      <td>0.000436</td>
+      <td>0.037461</td>
+      <td>0.031357</td>
+      <td>480</td>
+      <td>10</td>
+      <td>765</td>
+      <td>0.001</td>
+      <td>8</td>
+      <td>0.0111778</td>
+      <td>805</td>
+      <td>0 min 30 sec</td>
     </tr>
     <tr>
       <th>12th</th>
@@ -2043,18 +2116,18 @@ Completed optimization. Total: 9 min 34 sec
       <td>27Dec2020</td>
       <td>126529100</td>
       <td>SIR-F</td>
-      <td>1.19</td>
-      <td>0.000220</td>
-      <td>0.000316</td>
-      <td>0.020201</td>
-      <td>0.016610</td>
-      <td>288</td>
-      <td>0.000</td>
-      <td>12</td>
-      <td>9</td>
+      <td>1.17</td>
+      <td>0.000660</td>
+      <td>0.000527</td>
+      <td>0.035932</td>
+      <td>0.030195</td>
+      <td>480</td>
+      <td>11</td>
       <td>632</td>
-      <td>0.0111556</td>
-      <td>3527</td>
+      <td>0.001</td>
+      <td>9</td>
+      <td>0.011626</td>
+      <td>3492</td>
       <td>3 min  0 sec</td>
     </tr>
     <tr>
@@ -2064,16 +2137,16 @@ Completed optimization. Total: 9 min 34 sec
       <td>26Jan2021</td>
       <td>126529100</td>
       <td>SIR-F</td>
-      <td>1.19</td>
-      <td>0.000220</td>
-      <td>0.000316</td>
-      <td>0.020201</td>
-      <td>0.016610</td>
-      <td>288</td>
-      <td>0.000</td>
-      <td>12</td>
-      <td>9</td>
+      <td>1.17</td>
+      <td>0.000660</td>
+      <td>0.000527</td>
+      <td>0.035932</td>
+      <td>0.030195</td>
+      <td>480</td>
+      <td>11</td>
       <td>632</td>
+      <td>0.001</td>
+      <td>9</td>
       <td>-</td>
       <td>-</td>
       <td>-</td>
@@ -2085,16 +2158,16 @@ Completed optimization. Total: 9 min 34 sec
       <td>01Apr2021</td>
       <td>126529100</td>
       <td>SIR-F</td>
-      <td>0.60</td>
-      <td>0.000220</td>
-      <td>0.000316</td>
-      <td>0.020201</td>
-      <td>0.033221</td>
-      <td>288</td>
-      <td>0.000</td>
-      <td>6</td>
-      <td>9</td>
+      <td>0.59</td>
+      <td>0.000660</td>
+      <td>0.000527</td>
+      <td>0.035932</td>
+      <td>0.060390</td>
+      <td>480</td>
+      <td>5</td>
       <td>632</td>
+      <td>0.001</td>
+      <td>9</td>
       <td>-</td>
       <td>-</td>
       <td>-</td>
@@ -2104,11 +2177,12 @@ Completed optimization. Total: 9 min 34 sec
 </div></div>
 </div>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[20]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[23]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="n">snl</span><span class="o">.</span><span class="n">simulate</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;Medicine&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">tail</span><span class="p">()</span>
+<span></span><span class="c1"># Simulate the number of cases</span>
+<span class="n">snl</span><span class="o">.</span><span class="n">simulate</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;Medicine&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">tail</span><span class="p">()</span>
 </pre></div>
 </div>
 </div>
@@ -2116,11 +2190,11 @@ Completed optimization. Total: 9 min 34 sec
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area docutils container">
-<img alt="_images/usage_quick_33_0.png" src="_images/usage_quick_33_0.png" />
+<img alt="_images/usage_quick_38_0.png" src="_images/usage_quick_38_0.png" />
 </div>
 </div>
 <div class="nboutput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[20]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[23]:
 </pre></div>
 </div>
 <div class="output_area rendered_html docutils container">
@@ -2153,42 +2227,42 @@ Completed optimization. Total: 9 min 34 sec
     <tr>
       <th>417</th>
       <td>2021-03-29</td>
-      <td>414936</td>
-      <td>6357</td>
-      <td>850</td>
-      <td>407729</td>
+      <td>416571</td>
+      <td>6264</td>
+      <td>495</td>
+      <td>409812</td>
     </tr>
     <tr>
       <th>418</th>
       <td>2021-03-30</td>
-      <td>415018</td>
-      <td>6358</td>
-      <td>795</td>
-      <td>407865</td>
+      <td>416622</td>
+      <td>6265</td>
+      <td>459</td>
+      <td>409898</td>
     </tr>
     <tr>
       <th>419</th>
       <td>2021-03-31</td>
-      <td>415096</td>
-      <td>6360</td>
-      <td>744</td>
-      <td>407992</td>
+      <td>416670</td>
+      <td>6265</td>
+      <td>426</td>
+      <td>409979</td>
     </tr>
     <tr>
       <th>420</th>
       <td>2021-04-01</td>
-      <td>415168</td>
-      <td>6361</td>
-      <td>696</td>
-      <td>408111</td>
+      <td>416714</td>
+      <td>6266</td>
+      <td>395</td>
+      <td>410053</td>
     </tr>
     <tr>
       <th>421</th>
       <td>2021-04-02</td>
-      <td>415235</td>
-      <td>6362</td>
-      <td>651</td>
-      <td>408222</td>
+      <td>416755</td>
+      <td>6267</td>
+      <td>366</td>
+      <td>410122</td>
     </tr>
   </tbody>
 </table>
@@ -2199,7 +2273,7 @@ Completed optimization. Total: 9 min 34 sec
 <h3>Compare the scenarios<a class="headerlink" href="#Compare-the-scenarios" title="Permalink to this headline">¶</a></h3>
 <p>We will compare the scenarios with representative values, reproduction number and parameter values.</p>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[21]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[24]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
@@ -2208,7 +2282,7 @@ Completed optimization. Total: 9 min 34 sec
 </div>
 </div>
 <div class="nboutput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[21]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[24]:
 </pre></div>
 </div>
 <div class="output_area rendered_html docutils container">
@@ -2241,28 +2315,28 @@ Completed optimization. Total: 9 min 34 sec
   <tbody>
     <tr>
       <th>Main</th>
-      <td>141799</td>
+      <td>130130</td>
       <td>02Apr2021</td>
-      <td>919377</td>
-      <td>141799</td>
-      <td>14402</td>
-      <td>1.19</td>
+      <td>927677</td>
+      <td>130130</td>
+      <td>14142</td>
+      <td>1.17</td>
     </tr>
     <tr>
       <th>Medicine</th>
-      <td>50482</td>
+      <td>48909</td>
       <td>27Jan2021</td>
-      <td>415235</td>
-      <td>651</td>
-      <td>6362</td>
-      <td>0.60</td>
+      <td>416755</td>
+      <td>366</td>
+      <td>6267</td>
+      <td>0.59</td>
     </tr>
   </tbody>
 </table>
 </div></div>
 </div>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[22]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[25]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
@@ -2274,11 +2348,11 @@ Completed optimization. Total: 9 min 34 sec
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area docutils container">
-<img alt="_images/usage_quick_36_0.png" src="_images/usage_quick_36_0.png" />
+<img alt="_images/usage_quick_41_0.png" src="_images/usage_quick_41_0.png" />
 </div>
 </div>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[23]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[26]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
@@ -2290,11 +2364,11 @@ Completed optimization. Total: 9 min 34 sec
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area docutils container">
-<img alt="_images/usage_quick_37_0.png" src="_images/usage_quick_37_0.png" />
+<img alt="_images/usage_quick_42_0.png" src="_images/usage_quick_42_0.png" />
 </div>
 </div>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[24]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[27]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
@@ -2306,11 +2380,11 @@ Completed optimization. Total: 9 min 34 sec
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area docutils container">
-<img alt="_images/usage_quick_38_0.png" src="_images/usage_quick_38_0.png" />
+<img alt="_images/usage_quick_43_0.png" src="_images/usage_quick_43_0.png" />
 </div>
 </div>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[25]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[28]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
@@ -2322,18 +2396,11 @@ Completed optimization. Total: 9 min 34 sec
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area docutils container">
-<img alt="_images/usage_quick_39_0.png" src="_images/usage_quick_39_0.png" />
+<img alt="_images/usage_quick_44_0.png" src="_images/usage_quick_44_0.png" />
 </div>
 </div>
-<div class="line-block">
-<div class="line">Notes on the history of <span class="math notranslate nohighlight">\(\sigma\)</span> value in japan (last updated: 18Dec2020):</div>
-<div class="line">In Japan, we experienced two waves and we are in third wave. In the first wave (Apr - May), recovery period was too long because collapse of the medical care system occurred and no medicines were found.</div>
-</div>
-<p>Sigma values: the first wave &lt; the second wave &gt; the third wave</p>
-<p>However, in the second wave (Jul - Oct), recovery period appears short because we have some effective medicines (not approved, in clinical study), yonger people (people un-associated to sever diseases) were infected.</p>
-<p>In the third wave (Nov - ), older people tend to be infected and we are facing with medical collapse at this time…</p>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[26]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[29]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
@@ -2345,11 +2412,11 @@ Completed optimization. Total: 9 min 34 sec
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area docutils container">
-<img alt="_images/usage_quick_41_0.png" src="_images/usage_quick_41_0.png" />
+<img alt="_images/usage_quick_45_0.png" src="_images/usage_quick_45_0.png" />
 </div>
 </div>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[27]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[30]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
@@ -2361,7 +2428,7 @@ Completed optimization. Total: 9 min 34 sec
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area docutils container">
-<img alt="_images/usage_quick_42_0.png" src="_images/usage_quick_42_0.png" />
+<img alt="_images/usage_quick_46_0.png" src="_images/usage_quick_46_0.png" />
 </div>
 </div>
 </div>
@@ -2369,7 +2436,7 @@ Completed optimization. Total: 9 min 34 sec
 <h3>Change rate of parameters in main scenario<a class="headerlink" href="#Change-rate-of-parameters-in-main-scenario" title="Permalink to this headline">¶</a></h3>
 <p>History of each parameter will be shown. Values will be divided by the values in 0th phase.</p>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[28]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[31]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
@@ -2381,7 +2448,7 @@ Completed optimization. Total: 9 min 34 sec
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area docutils container">
-<img alt="_images/usage_quick_44_0.png" src="_images/usage_quick_44_0.png" />
+<img alt="_images/usage_quick_48_0.png" src="_images/usage_quick_48_0.png" />
 </div>
 </div>
 </div>
@@ -2390,7 +2457,7 @@ Completed optimization. Total: 9 min 34 sec
 <h2>Retrospective analysis<a class="headerlink" href="#Retrospective-analysis" title="Permalink to this headline">¶</a></h2>
 <p>We can evaluate the impact of measures using past records. How many people were infected if the parameter values have not changed sinse 01Sep2020?</p>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[29]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[32]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
@@ -2408,29 +2475,29 @@ Completed optimization. Total: 9 min 34 sec
 
 &lt;SIR-F model: parameter estimation&gt;
 Running optimization with 4 CPUs...
-        12th phase (17Apr2020 - 15Jul2020): finished 2557 trials in 3 min  2 sec
-         2nd phase (11Dec2020 - 18Dec2020): finished  332 trials in 0 min 10 sec
-         5th phase (02Dec2020 - 10Dec2020): finished  637 trials in 0 min 20 sec
-         6th phase (11Nov2020 - 20Nov2020): finished  846 trials in 0 min 30 sec
-         3rd phase (16Aug2020 - 02Sep2020): finished  318 trials in 0 min 10 sec
-         0th phase (02Aug2020 - 15Aug2020): finished 3292 trials in 3 min  0 sec
-        10th phase (19Dec2020 - 27Dec2020): finished 3313 trials in 3 min  0 sec
-         7th phase (30Sep2020 - 23Oct2020): finished 3270 trials in 3 min  0 sec
-         8th phase (21Nov2020 - 01Dec2020): finished  554 trials in 0 min 20 sec
-         9th phase (03Sep2020 - 29Sep2020): finished 3213 trials in 3 min  0 sec
-         1st phase (24Oct2020 - 10Nov2020): finished 3262 trials in 3 min  0 sec        11th phase (06Feb2020 - 16Apr2020): finished 3217 trials in 3 min  0 sec
-
-         4th phase (16Jul2020 - 01Aug2020): finished 3334 trials in 3 min  0 sec
-Completed optimization. Total: 9 min 35 sec
+         0th phase (30Sep2020 - 23Oct2020): finished 2903 trials in 3 min  0 sec
+         6th phase (02Dec2020 - 10Dec2020): finished  850 trials in 0 min 30 sec
+        12th phase (24Oct2020 - 10Nov2020): finished 3197 trials in 3 min  0 sec
+         3rd phase (17Apr2020 - 15Jul2020): finished 3131 trials in 3 min  0 sec
+         5th phase (02Aug2020 - 15Aug2020): finished 3212 trials in 3 min  0 sec
+         4th phase (21Nov2020 - 01Dec2020): finished 3153 trials in 3 min  0 sec
+        10th phase (16Jul2020 - 01Aug2020): finished  770 trials in 0 min 30 sec
+         9th phase (11Nov2020 - 20Nov2020): finished 1190 trials in 0 min 50 sec
+         1st phase (11Dec2020 - 18Dec2020): finished  546 trials in 0 min 20 sec
+         7th phase (16Aug2020 - 02Sep2020): finished  272 trials in 0 min 10 sec
+         8th phase (03Sep2020 - 29Sep2020): finished  532 trials in 0 min 20 sec
+        11th phase (06Feb2020 - 16Apr2020): finished 3206 trials in 3 min  0 sec
+         2nd phase (19Dec2020 - 27Dec2020): finished 3323 trials in 3 min  0 sec
+Completed optimization. Total: 9 min 33 sec
 
 &lt;SIR-F model: parameter estimation&gt;
 Running optimization with 4 CPUs...
-         3rd phase (16Aug2020 - 27Dec2020): finished 10404 trials in 3 min  0 sec
-Completed optimization. Total: 3 min  0 sec
+         3rd phase (16Aug2020 - 27Dec2020): finished 10253 trials in 3 min  0 sec
+Completed optimization. Total: 3 min  1 sec
 </pre></div></div>
 </div>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[30]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[33]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
@@ -2441,7 +2508,7 @@ Completed optimization. Total: 3 min  0 sec
 </div>
 </div>
 <div class="nboutput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[30]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[33]:
 </pre></div>
 </div>
 <div class="output_area rendered_html docutils container">
@@ -2499,13 +2566,13 @@ Completed optimization. Total: 3 min  0 sec
       <td>06Feb2020</td>
       <td>16Apr2020</td>
       <td>SIR-F</td>
-      <td>4.62</td>
-      <td>0.018973</td>
-      <td>0.000151</td>
-      <td>0.020557</td>
-      <td>0.004215</td>
-      <td>0.259382</td>
-      <td>3217</td>
+      <td>4.60</td>
+      <td>0.018345</td>
+      <td>0.000166</td>
+      <td>0.034693</td>
+      <td>0.007244</td>
+      <td>0.258368</td>
+      <td>3206</td>
       <td>3 min  0 sec</td>
     </tr>
     <tr>
@@ -2513,41 +2580,41 @@ Completed optimization. Total: 3 min  0 sec
       <td>17Apr2020</td>
       <td>15Jul2020</td>
       <td>SIR-F</td>
-      <td>0.55</td>
-      <td>0.076974</td>
-      <td>0.000128</td>
-      <td>0.006934</td>
-      <td>0.011573</td>
-      <td>0.355588</td>
-      <td>2557</td>
-      <td>3 min  2 sec</td>
+      <td>0.52</td>
+      <td>0.091279</td>
+      <td>0.000141</td>
+      <td>0.010685</td>
+      <td>0.018415</td>
+      <td>0.354536</td>
+      <td>3131</td>
+      <td>3 min  0 sec</td>
     </tr>
     <tr>
       <th>2nd</th>
       <td>16Jul2020</td>
       <td>01Aug2020</td>
       <td>SIR-F</td>
-      <td>2.00</td>
-      <td>0.000585</td>
-      <td>0.000051</td>
-      <td>0.028182</td>
-      <td>0.014031</td>
-      <td>0.025613</td>
-      <td>3334</td>
-      <td>3 min  0 sec</td>
+      <td>1.94</td>
+      <td>0.000344</td>
+      <td>0.000079</td>
+      <td>0.047556</td>
+      <td>0.024392</td>
+      <td>0.026211</td>
+      <td>770</td>
+      <td>0 min 30 sec</td>
     </tr>
     <tr>
       <th>3rd</th>
       <td>02Aug2020</td>
       <td>15Aug2020</td>
       <td>SIR-F</td>
-      <td>1.51</td>
-      <td>0.000864</td>
-      <td>0.000054</td>
-      <td>0.020451</td>
-      <td>0.013461</td>
-      <td>0.050528</td>
-      <td>3292</td>
+      <td>1.50</td>
+      <td>0.000173</td>
+      <td>0.000096</td>
+      <td>0.034042</td>
+      <td>0.022636</td>
+      <td>0.050961</td>
+      <td>3212</td>
       <td>3 min  0 sec</td>
     </tr>
     <tr>
@@ -2555,13 +2622,13 @@ Completed optimization. Total: 3 min  0 sec
       <td>16Aug2020</td>
       <td>02Sep2020</td>
       <td>SIR-F</td>
-      <td>0.77</td>
-      <td>0.001759</td>
-      <td>0.000194</td>
-      <td>0.014593</td>
-      <td>0.018789</td>
-      <td>0.013953</td>
-      <td>318</td>
+      <td>0.76</td>
+      <td>0.003344</td>
+      <td>0.000327</td>
+      <td>0.026373</td>
+      <td>0.034188</td>
+      <td>0.022422</td>
+      <td>272</td>
       <td>0 min 10 sec</td>
     </tr>
     <tr>
@@ -2569,14 +2636,14 @@ Completed optimization. Total: 3 min  0 sec
       <td>03Sep2020</td>
       <td>29Sep2020</td>
       <td>SIR-F</td>
-      <td>0.81</td>
-      <td>0.001162</td>
-      <td>0.000258</td>
-      <td>0.016896</td>
-      <td>0.020633</td>
-      <td>0.029102</td>
-      <td>3213</td>
-      <td>3 min  0 sec</td>
+      <td>0.80</td>
+      <td>0.000234</td>
+      <td>0.000453</td>
+      <td>0.025834</td>
+      <td>0.031888</td>
+      <td>0.027875</td>
+      <td>532</td>
+      <td>0 min 20 sec</td>
     </tr>
     <tr>
       <th>6th</th>
@@ -2584,12 +2651,12 @@ Completed optimization. Total: 3 min  0 sec
       <td>23Oct2020</td>
       <td>SIR-F</td>
       <td>0.99</td>
-      <td>0.000496</td>
-      <td>0.000208</td>
-      <td>0.021713</td>
-      <td>0.021658</td>
-      <td>0.013476</td>
-      <td>3270</td>
+      <td>0.001695</td>
+      <td>0.000272</td>
+      <td>0.034247</td>
+      <td>0.034244</td>
+      <td>0.012618</td>
+      <td>2903</td>
       <td>3 min  0 sec</td>
     </tr>
     <tr>
@@ -2597,13 +2664,13 @@ Completed optimization. Total: 3 min  0 sec
       <td>24Oct2020</td>
       <td>10Nov2020</td>
       <td>SIR-F</td>
-      <td>1.31</td>
-      <td>0.001943</td>
-      <td>0.000173</td>
-      <td>0.021455</td>
-      <td>0.016170</td>
-      <td>0.022356</td>
-      <td>3262</td>
+      <td>1.29</td>
+      <td>0.002706</td>
+      <td>0.000267</td>
+      <td>0.038483</td>
+      <td>0.029526</td>
+      <td>0.022350</td>
+      <td>3197</td>
       <td>3 min  0 sec</td>
     </tr>
     <tr>
@@ -2611,42 +2678,42 @@ Completed optimization. Total: 3 min  0 sec
       <td>11Nov2020</td>
       <td>20Nov2020</td>
       <td>SIR-F</td>
-      <td>1.68</td>
-      <td>0.001356</td>
-      <td>0.000172</td>
-      <td>0.027581</td>
-      <td>0.016265</td>
-      <td>0.013209</td>
-      <td>846</td>
-      <td>0 min 30 sec</td>
+      <td>1.64</td>
+      <td>0.000828</td>
+      <td>0.000226</td>
+      <td>0.046814</td>
+      <td>0.028233</td>
+      <td>0.013243</td>
+      <td>1190</td>
+      <td>0 min 50 sec</td>
     </tr>
     <tr>
       <th>9th</th>
       <td>21Nov2020</td>
       <td>01Dec2020</td>
       <td>SIR-F</td>
-      <td>1.35</td>
-      <td>0.000747</td>
-      <td>0.000157</td>
-      <td>0.023950</td>
-      <td>0.017517</td>
-      <td>0.022211</td>
-      <td>554</td>
-      <td>0 min 20 sec</td>
+      <td>1.41</td>
+      <td>0.000440</td>
+      <td>0.000284</td>
+      <td>0.038581</td>
+      <td>0.027129</td>
+      <td>0.020966</td>
+      <td>3153</td>
+      <td>3 min  0 sec</td>
     </tr>
     <tr>
       <th>10th</th>
       <td>02Dec2020</td>
       <td>10Dec2020</td>
       <td>SIR-F</td>
-      <td>1.13</td>
-      <td>0.000121</td>
-      <td>0.000294</td>
-      <td>0.020733</td>
-      <td>0.018021</td>
-      <td>0.009690</td>
-      <td>637</td>
-      <td>0 min 20 sec</td>
+      <td>1.16</td>
+      <td>0.000324</td>
+      <td>0.000579</td>
+      <td>0.034721</td>
+      <td>0.029334</td>
+      <td>0.008130</td>
+      <td>850</td>
+      <td>0 min 30 sec</td>
     </tr>
     <tr>
       <th>11th</th>
@@ -2654,26 +2721,26 @@ Completed optimization. Total: 3 min  0 sec
       <td>18Dec2020</td>
       <td>SIR-F</td>
       <td>1.16</td>
-      <td>0.000256</td>
-      <td>0.000257</td>
-      <td>0.020146</td>
-      <td>0.017164</td>
-      <td>0.012531</td>
-      <td>332</td>
-      <td>0 min 10 sec</td>
+      <td>0.000575</td>
+      <td>0.000593</td>
+      <td>0.037095</td>
+      <td>0.031345</td>
+      <td>0.013160</td>
+      <td>546</td>
+      <td>0 min 20 sec</td>
     </tr>
     <tr>
       <th>12th</th>
       <td>19Dec2020</td>
       <td>27Dec2020</td>
       <td>SIR-F</td>
-      <td>1.19</td>
-      <td>0.000220</td>
-      <td>0.000316</td>
-      <td>0.020201</td>
-      <td>0.016610</td>
-      <td>0.011156</td>
-      <td>3313</td>
+      <td>1.17</td>
+      <td>0.000660</td>
+      <td>0.000527</td>
+      <td>0.035932</td>
+      <td>0.030195</td>
+      <td>0.011626</td>
+      <td>3323</td>
       <td>3 min  0 sec</td>
     </tr>
     <tr>
@@ -2682,13 +2749,13 @@ Completed optimization. Total: 3 min  0 sec
       <td>06Feb2020</td>
       <td>16Apr2020</td>
       <td>SIR-F</td>
-      <td>4.62</td>
-      <td>0.018973</td>
-      <td>0.000151</td>
-      <td>0.020557</td>
-      <td>0.004215</td>
-      <td>0.259382</td>
-      <td>3217</td>
+      <td>4.60</td>
+      <td>0.018345</td>
+      <td>0.000166</td>
+      <td>0.034693</td>
+      <td>0.007244</td>
+      <td>0.258368</td>
+      <td>3206</td>
       <td>3 min  0 sec</td>
     </tr>
     <tr>
@@ -2696,41 +2763,41 @@ Completed optimization. Total: 3 min  0 sec
       <td>17Apr2020</td>
       <td>15Jul2020</td>
       <td>SIR-F</td>
-      <td>0.55</td>
-      <td>0.076974</td>
-      <td>0.000128</td>
-      <td>0.006934</td>
-      <td>0.011573</td>
-      <td>0.355588</td>
-      <td>2557</td>
-      <td>3 min  2 sec</td>
+      <td>0.52</td>
+      <td>0.091279</td>
+      <td>0.000141</td>
+      <td>0.010685</td>
+      <td>0.018415</td>
+      <td>0.354536</td>
+      <td>3131</td>
+      <td>3 min  0 sec</td>
     </tr>
     <tr>
       <th>2nd</th>
       <td>16Jul2020</td>
       <td>01Aug2020</td>
       <td>SIR-F</td>
-      <td>2.00</td>
-      <td>0.000585</td>
-      <td>0.000051</td>
-      <td>0.028182</td>
-      <td>0.014031</td>
-      <td>0.025613</td>
-      <td>3334</td>
-      <td>3 min  0 sec</td>
+      <td>1.94</td>
+      <td>0.000344</td>
+      <td>0.000079</td>
+      <td>0.047556</td>
+      <td>0.024392</td>
+      <td>0.026211</td>
+      <td>770</td>
+      <td>0 min 30 sec</td>
     </tr>
     <tr>
       <th>3rd</th>
       <td>02Aug2020</td>
       <td>15Aug2020</td>
       <td>SIR-F</td>
-      <td>1.51</td>
-      <td>0.000864</td>
-      <td>0.000054</td>
-      <td>0.020451</td>
-      <td>0.013461</td>
-      <td>0.050528</td>
-      <td>3292</td>
+      <td>1.50</td>
+      <td>0.000173</td>
+      <td>0.000096</td>
+      <td>0.034042</td>
+      <td>0.022636</td>
+      <td>0.050961</td>
+      <td>3212</td>
       <td>3 min  0 sec</td>
     </tr>
     <tr>
@@ -2738,13 +2805,13 @@ Completed optimization. Total: 3 min  0 sec
       <td>16Aug2020</td>
       <td>27Dec2020</td>
       <td>SIR-F</td>
-      <td>1.51</td>
-      <td>0.000864</td>
-      <td>0.000054</td>
-      <td>0.020451</td>
-      <td>0.013461</td>
-      <td>1.861255</td>
-      <td>10404</td>
+      <td>1.50</td>
+      <td>0.000173</td>
+      <td>0.000096</td>
+      <td>0.034042</td>
+      <td>0.022636</td>
+      <td>1.815436</td>
+      <td>10253</td>
       <td>3 min  0 sec</td>
     </tr>
   </tbody>
@@ -2752,7 +2819,7 @@ Completed optimization. Total: 3 min  0 sec
 </div></div>
 </div>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[31]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[34]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
@@ -2765,11 +2832,11 @@ Completed optimization. Total: 3 min  0 sec
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area docutils container">
-<img alt="_images/usage_quick_48_0.png" src="_images/usage_quick_48_0.png" />
+<img alt="_images/usage_quick_52_0.png" src="_images/usage_quick_52_0.png" />
 </div>
 </div>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[32]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[35]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
@@ -2782,11 +2849,11 @@ Completed optimization. Total: 3 min  0 sec
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area docutils container">
-<img alt="_images/usage_quick_49_0.png" src="_images/usage_quick_49_0.png" />
+<img alt="_images/usage_quick_53_0.png" src="_images/usage_quick_53_0.png" />
 </div>
 </div>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[33]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[36]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
@@ -2796,7 +2863,7 @@ Completed optimization. Total: 3 min  0 sec
 </div>
 </div>
 <div class="nboutput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[33]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[36]:
 </pre></div>
 </div>
 <div class="output_area rendered_html docutils container">
@@ -2837,29 +2904,29 @@ Completed optimization. Total: 3 min  0 sec
   <tbody>
     <tr>
       <th>Main</th>
-      <td>31113</td>
+      <td>30888</td>
       <td>28Dec2020</td>
-      <td>219309</td>
-      <td>31113</td>
-      <td>3246</td>
-      <td>0.77</td>
-      <td>0.81</td>
+      <td>220970</td>
+      <td>30888</td>
+      <td>3257</td>
+      <td>0.76</td>
+      <td>0.8</td>
       <td>0.99</td>
-      <td>1.31</td>
-      <td>1.68</td>
-      <td>1.35</td>
-      <td>1.13</td>
+      <td>1.29</td>
+      <td>1.64</td>
+      <td>1.41</td>
       <td>1.16</td>
-      <td>1.19</td>
+      <td>1.16</td>
+      <td>1.17</td>
     </tr>
     <tr>
       <th>Retrospective</th>
-      <td>1270719</td>
+      <td>1166081</td>
       <td>28Dec2020</td>
-      <td>3889882</td>
-      <td>1270719</td>
-      <td>14599</td>
-      <td>1.51</td>
+      <td>3631824</td>
+      <td>1166081</td>
+      <td>11907</td>
+      <td>1.50</td>
       <td>-</td>
       <td>-</td>
       <td>-</td>
@@ -2884,10 +2951,10 @@ Completed optimization. Total: 3 min  0 sec
   
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
       
-        <a href="usage_dataset.html" class="btn btn-neutral float-right" title="Usage (details: datasets)" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+        <a href="usage_dataset.html" class="btn btn-neutral float-right" title="Usage: datasets" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
       
       
-        <a href="usage_quickest.html" class="btn btn-neutral float-left" title="Usage (quickest version)" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+        <a href="usage_quickest.html" class="btn btn-neutral float-left" title="Usage: quickest tour" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
       
     </div>
   
