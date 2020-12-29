@@ -45,7 +45,7 @@ Guidotti, E., Ardia, D., (2020), "COVID-19 Data Hub", Journal of Open Source Sof
 
 - The number of cases (JHU style)
 - Population in each country
-- Government Response Tracker (OxCGRT)
+- [Government Response Tracker (OxCGRT)](https://github.com/OxCGRT/covid-policy-tracker)
 - The number of tests
 
 ### [Open COVID-19 Data Working Group](https://github.com/beoutbreakprepared/nCoV2019)
