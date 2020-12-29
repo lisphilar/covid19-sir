@@ -1019,8 +1019,7 @@ class Scenario(DataHandler):
         # OxCGRT scores
         self.ensure_instance(oxcgrt_data, OxCGRTData, name="oxcgrt_data")
         oxcgrt_df = oxcgrt_data.subset(
-            country=self.country, province=self.province
-        ).set_index(self.DATE)[OxCGRTData.OXCGRT_VARS_INDICATORS]
+            country=self.country).set_index(self.DATE)[OxCGRTData.OXCGRT_VARS_INDICATORS]
         # Apply delay on OxCGRT data
         oxcgrt_df.index += timedelta(days=delay)
         # Create training/test dataset
