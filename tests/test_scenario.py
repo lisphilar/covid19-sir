@@ -312,3 +312,15 @@ class TestScenario(object):
         snl.score(past_days=60)
         with pytest.raises(ValueError):
             snl.score(phases=["1st"], past_days=60)
+
+    @pytest.mark.parametrize("country", ["Japan"])
+    def test_predict(self, jhu_data, population_data, oxcgrt_data, country):
+        snl = Scenario(jhu_data, population_data, country)
+        snl.trend(show_figure=False)
+        snl.estimate(SIRF, timeout=1, timeout_iteration=1)
+        score_train, score_test = snl.predict(oxcgrt_data, days=None)
+        assert isinstance(score_train, float)
+        assert isinstance(score_test, float)
+        assert Term.FUTURE in snl.summary()[Term.TENSE].unique()
+        with pytest.raises(NotImplementedError):
+            snl.predict(oxcgrt_data, days=100)

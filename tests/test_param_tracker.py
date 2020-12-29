@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*-
 
 
+from covsirphy.ode.mbase import ModelBase
 from covsirphy.phase.phase_unit import PhaseUnit
 import warnings
 import pytest
@@ -103,6 +104,9 @@ class TestParamTracker(object):
         tracker.estimate(SIRF, timeout=5, timeout_iteration=5)
         with pytest.raises(IndexError):
             tracker.estimate(SIRF, timeout=5, timeout_iteration=5)
+
+    def test_last_model(self, tracker):
+        assert isinstance(tracker.last_model, ModelBase)
 
     def test_simulate(self, tracker):
         tracker.simulate()
