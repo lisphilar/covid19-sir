@@ -48,7 +48,7 @@ to find the details of the datasets.
     oxcgrt_data = data_loader.oxcgrt()
     # The number of tests
     pcr_data = data_loader.pcr()
-    # The number of vaccines (will be prepared in 2.14.0)
+    # The number of vaccinations (will be prepared in 2.14.0)
     vaccine_data = data_loader.vaccine()
     # Population pyramid (will be prepared in 2.14.0)
     pyramid_data = data_loader.pyramid()
@@ -63,7 +63,8 @@ Source Software 5(51):2376, doi: 10.21105/joss.02376.
 
 -  The number of cases (JHU style)
 -  Population in each country
--  Government Response Tracker (OxCGRT)
+-  `Government Response Tracker
+   (OxCGRT) <https://github.com/OxCGRT/covid-policy-tracker>`__
 -  The number of tests
 
 `Open COVID-19 Data Working Group <https://github.com/beoutbreakprepared/nCoV2019>`__
