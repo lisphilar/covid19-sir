@@ -72,6 +72,13 @@ class ParamTracker(Term):
         """
         return self._series
 
+    @property
+    def last_model(self):
+        """
+        covsirphy.ModelBase: ODE model if the last phase
+        """
+        return self._series.unit(phase="last").model
+
     def trend(self, force=True, show_figure=False, filename=None, **kwargs):
         """
         Split the records with trend analysis.

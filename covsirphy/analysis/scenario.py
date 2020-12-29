@@ -2,11 +2,16 @@
 # -*- coding: utf-8 -*-
 
 import copy
+from datetime import timedelta
+from math import log10, floor
 import warnings
 import numpy as np
 import pandas as pd
+from sklearn.model_selection import train_test_split
+from sklearn import linear_model
 from covsirphy.util.error import deprecate, ScenarioNotFoundError, UnExecutedError
 from covsirphy.util.plotting import line_plot, box_plot
+from covsirphy.cleaning.oxcgrt import OxCGRTData
 from covsirphy.analysis.param_tracker import ParamTracker
 from covsirphy.analysis.data_handler import DataHandler
 
@@ -886,7 +891,7 @@ class Scenario(DataHandler):
             pandas.DataFrame
         """
         df = self._track_param(name=name)
-        model = self._tracker(name).series.unit("last").model
+        model = self._tracker(name).last_model
         cols = list(set(df.columns) & set(model.PARAMETERS))
         if params is not None:
             if not isinstance(params, (list, set)):
@@ -985,3 +990,76 @@ class Scenario(DataHandler):
             ]
         return tracker.score(
             metrics=metrics, variables=variables, phases=phases, y0_dict=y0_dict)
+
+    def predict(self, oxcgrt_data, days=None, name="Main", test_size=0.2, seed=0):
+        """
+        Predict parameter values of the future phases using ElasticNet regression with OxCGRT scores.
+        New future phases will be added (over-written).
+
+        Args:
+            oxcgrt_data (covsirphy.OxCGRTData): OxCGRT dataset
+            days (int or None): how many days to predict or None (max value)
+            name (str): scenario name
+            test_size (float): proportion of the test dataset of ElasticNet regression
+
+        Returns:
+            tuple(float, float): determination coefficient of train/test dataset
+        """
+        # Delay to OxCGRT scores' impact on parameter values
+        delay = self.jhu_data.recovery_period
+        # How many days to predict
+        days = self.ensure_natural_int(
+            days, name="days", none_ok=True) or delay
+        if days > delay:
+            raise NotImplementedError(
+                f"@days should be lower than {delay} days (length of recovery period calculated with JHU-type data).")
+        # Calculated parameter values
+        model = self._tracker(name).last_model
+        param_df = self._track_param(name=name)[model.PARAMETERS]
+        # OxCGRT scores
+        self.ensure_instance(oxcgrt_data, OxCGRTData, name="oxcgrt_data")
+        oxcgrt_df = oxcgrt_data.subset(
+            country=self.country, province=self.province
+        ).set_index(self.DATE)[OxCGRTData.OXCGRT_VARS_INDICATORS]
+        # Apply delay on OxCGRT data
+        oxcgrt_df.index += timedelta(days=delay)
+        # Create training/test dataset
+        merged_df = param_df.join(oxcgrt_df, how="inner")
+        merged_df = merged_df.rolling(window=delay).mean()
+        merged_df = merged_df.dropna().drop_duplicates()
+        X = merged_df.drop(model.PARAMETERS, axis=1)
+        y = merged_df.loc[:, model.PARAMETERS]
+        X_train, X_test, y_train, y_test = train_test_split(
+            X, y, test_size=test_size, random_state=seed)
+        # Optimize parameters of ElasticNet regression
+        cv = linear_model.MultiTaskElasticNetCV(
+            alphas=[0, 0.001, 0.01, 0.1, 1, 10, 100, 1000],
+            l1_ratio=[0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0],
+            cv=5, n_jobs=-1)
+        cv.fit(X_train, y_train)
+        # ElasticNet (Ridge & Lasso) regression
+        lm = linear_model.ElasticNet(alpha=cv.alpha_, l1_ratio=cv.l1_ratio_)
+        lm.fit(X_train, y_train)
+        # Predict the ODE parameter values
+        dates = pd.date_range(
+            start=param_df.index.max() + timedelta(days=1),
+            end=oxcgrt_df.index.max(),
+            freq="D")
+        X_target = oxcgrt_df.loc[dates]
+        # -> end_date/parameter values
+        df = pd.DataFrame(
+            lm.predict(X_target), index=X_target.index, columns=model.PARAMETERS)
+        df = df.applymap(
+            lambda x: np.around(x, 4 - int(floor(log10(abs(x)))) - 1))
+        df.index = [
+            date.strftime(self.DATE_FORMAT) for date in df.index]
+        df.index.name = "end_date"
+        phase_df = df.drop_duplicates(keep="last").reset_index()
+        # Set new future phases
+        self.clear(name=name)
+        for phase_dict in phase_df.to_dict(orient="records"):
+            self.add(name=name, **phase_dict)
+        # Calculate scores (determination coefficient)
+        score_train = lm.score(X_train, y_train)
+        score_test = lm.score(X_test, y_test)
+        return (score_train, score_test)

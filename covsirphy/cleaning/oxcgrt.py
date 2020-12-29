@@ -36,6 +36,8 @@ class OxCGRTData(CleaningBase):
     OXCGRT_COLS_WITHOUT_COUNTRY = [
         CleaningBase.DATE, *list(OXCGRT_COL_DICT.values())
     ]
+    OXCGRT_VARS_INDICATORS = [
+        v for v in OXCGRT_VARS if v != "Stringency_index"]
 
     def __init__(self, filename, citation=None):
         super().__init__(filename, citation)

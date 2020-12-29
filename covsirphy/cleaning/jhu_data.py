@@ -27,6 +27,7 @@ class JHUData(CleaningBase):
         """
         int: expected value of recovery period [days]
         """
+        self._recovery_period = self._recovery_period or self.calculate_recovery_period()
         return self._recovery_period
 
     @recovery_period.setter
