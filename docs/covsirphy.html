@@ -2988,6 +2988,11 @@ This method should be overwritten in subclass.</p>
 <code class="sig-name descname">OXCGRT_VARS</code><em class="property"> = ['School_closing', 'Workplace_closing', 'Cancel_events', 'Gatherings_restrictions', 'Transport_closing', 'Stay_home_restrictions', 'Internal_movement_restrictions', 'International_movement_restrictions', 'Information_campaigns', 'Testing_policy', 'Contact_tracing', 'Stringency_index']</em><a class="headerlink" href="#covsirphy.OxCGRTData.OXCGRT_VARS" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
+<dl class="py attribute">
+<dt id="covsirphy.OxCGRTData.OXCGRT_VARS_INDICATORS">
+<code class="sig-name descname">OXCGRT_VARS_INDICATORS</code><em class="property"> = ['School_closing', 'Workplace_closing', 'Cancel_events', 'Gatherings_restrictions', 'Transport_closing', 'Stay_home_restrictions', 'Internal_movement_restrictions', 'International_movement_restrictions', 'Information_campaigns', 'Testing_policy', 'Contact_tracing']</em><a class="headerlink" href="#covsirphy.OxCGRTData.OXCGRT_VARS_INDICATORS" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
 <dl class="py method">
 <dt id="covsirphy.OxCGRTData.subset">
 <code class="sig-name descname">subset</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">country</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/cleaning/oxcgrt.html#OxCGRTData.subset"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#covsirphy.OxCGRTData.subset" title="Permalink to this definition">¶</a></dt>
@@ -3485,6 +3490,17 @@ list[covsirphy.PhaseUnit]: list of phase units</p>
 </dd>
 <dt class="field-even">Return type</dt>
 <dd class="field-even"><p>tuple(list[str], list[<a class="reference internal" href="#covsirphy.PhaseUnit" title="covsirphy.PhaseUnit">covsirphy.PhaseUnit</a>])</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="covsirphy.ParamTracker.last_model">
+<em class="property">property </em><code class="sig-name descname">last_model</code><a class="headerlink" href="#covsirphy.ParamTracker.last_model" title="Permalink to this definition">¶</a></dt>
+<dd><p>ODE model if the last phase</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p><a class="reference internal" href="#covsirphy.ModelBase" title="covsirphy.ModelBase">covsirphy.ModelBase</a></p>
 </dd>
 </dl>
 </dd></dl>
@@ -6135,6 +6151,65 @@ If the last phase is not included, the dates will be assigned to the previous ph
 </dd></dl>
 
 <dl class="py method">
+<dt id="covsirphy.Scenario.fit">
+<code class="sig-name descname">fit</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">oxcgrt_data</span></em>, <em class="sig-param"><span class="n">name</span><span class="o">=</span><span class="default_value">'Main'</span></em>, <em class="sig-param"><span class="n">test_size</span><span class="o">=</span><span class="default_value">0.2</span></em>, <em class="sig-param"><span class="n">seed</span><span class="o">=</span><span class="default_value">0</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/analysis/scenario.html#Scenario.fit"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#covsirphy.Scenario.fit" title="Permalink to this definition">¶</a></dt>
+<dd><p>Learn the relationship of ODE parameter values and delayed OxCGRT scores using Elastic Net regression,
+assuming that OxCGRT scores will impact on ODE parameter values with delay (=recovery period).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>oxcgrt_data</strong> (<a class="reference internal" href="#covsirphy.OxCGRTData" title="covsirphy.OxCGRTData"><em>covsirphy.OxCGRTData</em></a>) – OxCGRT dataset</p></li>
+<li><p><strong>name</strong> (<em>str</em>) – scenario name</p></li>
+<li><p><strong>test_size</strong> (<em>float</em>) – proportion of the test dataset of Elastic Net regression</p></li>
+<li><p><strong>seed</strong> (<em>int</em>) – random seed when spliting the dataset to train/test data</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p>alpha (float): alpha value used in Elastic Net regression</p></li>
+<li><p>l1_ratio (float): l1_ratio value used in Elastic Net regression</p></li>
+<li><p>score_train (float): determination coefficient of train dataset</p></li>
+<li><p>score_test (float): determination coefficient of test dataset</p></li>
+<li><p>intercept (pandas.DataFrame): intercept values (Index: ODE parameters, Columns: OxCGRT indicators)</p></li>
+</ul>
+</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>dict(str, object)</p>
+</dd>
+<dt class="field-even">Raises</dt>
+<dd class="field-even"><p><a class="reference internal" href="#covsirphy.UnExecutedError" title="covsirphy.UnExecutedError"><strong>UnExecutedError</strong></a> – Scenario.estimate() or Scenario.add() were not performed</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="covsirphy.Scenario.fit_predict">
+<code class="sig-name descname">fit_predict</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">oxcgrt_data</span></em>, <em class="sig-param"><span class="n">name</span><span class="o">=</span><span class="default_value">'Main'</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/analysis/scenario.html#Scenario.fit_predict"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#covsirphy.Scenario.fit_predict" title="Permalink to this definition">¶</a></dt>
+<dd><p>Predict parameter values of the future phases using Elastic Net regression with OxCGRT scores,
+assuming that OxCGRT scores will impact on ODE parameter values with delay (=recovery period).
+New future phases will be added (over-written).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>oxcgrt_data</strong> (<a class="reference internal" href="#covsirphy.OxCGRTData" title="covsirphy.OxCGRTData"><em>covsirphy.OxCGRTData</em></a>) – OxCGRT dataset</p></li>
+<li><p><strong>name</strong> (<em>str</em>) – scenario name</p></li>
+<li><p><strong>kwargs</strong> – the other arguments of Scenario.fit()</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>self</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference internal" href="#covsirphy.Scenario" title="covsirphy.Scenario">covsirphy.Scenario</a></p>
+</dd>
+<dt class="field-even">Raises</dt>
+<dd class="field-even"><p><a class="reference internal" href="#covsirphy.UnExecutedError" title="covsirphy.UnExecutedError"><strong>UnExecutedError</strong></a> – Scenario.estimate() or Scenario.add() were not performed</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
 <dt id="covsirphy.Scenario.get">
 <code class="sig-name descname">get</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">param</span></em>, <em class="sig-param"><span class="n">phase</span><span class="o">=</span><span class="default_value">'last'</span></em>, <em class="sig-param"><span class="n">name</span><span class="o">=</span><span class="default_value">'Main'</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/analysis/scenario.html#Scenario.get"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#covsirphy.Scenario.get" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get the parameter value of the phase.</p>
@@ -6229,6 +6304,28 @@ We can find the parameters which increased/decreased significantly.</p>
 </dd>
 <dt class="field-odd">Return type</dt>
 <dd class="field-odd"><p><a class="reference internal" href="#covsirphy.Estimator" title="covsirphy.Estimator">covsirphy.Estimator</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="covsirphy.Scenario.predict">
+<code class="sig-name descname">predict</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">name</span><span class="o">=</span><span class="default_value">'Main'</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/analysis/scenario.html#Scenario.predict"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#covsirphy.Scenario.predict" title="Permalink to this definition">¶</a></dt>
+<dd><p>Predict parameter values of the future phases using Elastic Net regression with OxCGRT scores,
+assuming that OxCGRT scores will impact on ODE parameter values with delay (=recovery period).
+New future phases will be added (over-written).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>name</strong> (<em>str</em>) – scenario name</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>self</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference internal" href="#covsirphy.Scenario" title="covsirphy.Scenario">covsirphy.Scenario</a></p>
+</dd>
+<dt class="field-even">Raises</dt>
+<dd class="field-even"><p><a class="reference internal" href="#covsirphy.UnExecutedError" title="covsirphy.UnExecutedError"><strong>UnExecutedError</strong></a> – Scenario.fit() was not performed</p>
 </dd>
 </dl>
 </dd></dl>
