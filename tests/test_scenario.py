@@ -5,7 +5,7 @@ from datetime import datetime
 import warnings
 import pandas as pd
 import pytest
-from covsirphy import ScenarioNotFoundError
+from covsirphy import ScenarioNotFoundError, UnExecutedError
 from covsirphy import Scenario, DataHandler
 from covsirphy import Term, PhaseSeries, SIR, SIRF
 
@@ -314,13 +314,20 @@ class TestScenario(object):
             snl.score(phases=["1st"], past_days=60)
 
     @pytest.mark.parametrize("country", ["Japan"])
-    def test_predict(self, jhu_data, population_data, oxcgrt_data, country):
+    def test_fit_predict(self, jhu_data, population_data, oxcgrt_data, country):
         snl = Scenario(jhu_data, population_data, country)
         snl.trend(show_figure=False)
+        with pytest.raises(UnExecutedError):
+            snl.fit(oxcgrt_data)
         snl.estimate(SIRF, timeout=1, timeout_iteration=1)
-        score_train, score_test = snl.predict(oxcgrt_data, days=None)
-        assert isinstance(score_train, float)
-        assert isinstance(score_test, float)
+        # Fitting
+        with pytest.raises(UnExecutedError):
+            snl.predict()
+        info_dict = snl.fit(oxcgrt_data)
+        assert isinstance(info_dict, dict)
+        # Prediction
+        snl.predict()
         assert Term.FUTURE in snl.summary()[Term.TENSE].unique()
-        with pytest.raises(NotImplementedError):
-            snl.predict(oxcgrt_data, days=100)
+        # Fitting & predict
+        snl.fit_predict(oxcgrt_data)
+        assert Term.FUTURE in snl.summary()[Term.TENSE].unique()
