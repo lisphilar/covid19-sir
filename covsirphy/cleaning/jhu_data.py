@@ -600,7 +600,7 @@ class JHUData(CleaningBase):
         for cur_country in country:
             if cur_country == "Others":
                 continue
-            if province == None:
+            if province is None:
                 province = "-"
             country_alias = self.ensure_country_name(cur_country)
             subset_df = self._subset(
@@ -608,7 +608,7 @@ class JHUData(CleaningBase):
             if subset_df.empty:
                 raise SubsetNotFoundError(
                     country=cur_country, country_alias=country_alias) from None
-            
+
             handler = JHUDataComplementHandler(
                 recovery_period=self._recovery_period,
                 interval=interval,
