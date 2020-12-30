@@ -501,7 +501,7 @@ class JHUData(CleaningBase):
             max_ignored=max_ignored,
             max_ending_unupdated=max_ending_unupdated,
         )
-        df, status = handler.run(subset_df)
+        df, status, _ = handler.run(subset_df)
         # Calculate Susceptible
         df = self._calculate_susceptible(df, population)
         # Kind of complement or False
@@ -558,3 +558,64 @@ class JHUData(CleaningBase):
             raise SubsetNotFoundError(
                 country=country, country_alias=country_alias, province=province,
                 start_date=start_date, end_date=end_date, message="with 'Recovered > 0'") from None
+
+    def show_complement(self, country=None, province=None,
+                          start_date=None, end_date=None, population=None,
+                          interval=2, max_ignored=100, max_ending_unupdated=14):
+        """
+        To monitor effectivity and safety of complement on JHU subset,
+        we need to know what kind of complement was done for JHU subset
+        for each country (if country/countries specified) or for all countries.
+
+        Args:
+            country(str): country name or ISO3 code
+            province(str or None): province name
+            start_date(str or None): start date, like 22Jan2020
+            end_date(str or None): end date, like 01Feb2020
+            population(int or None): population value
+            interval (int): expected update interval of the number of recovered cases [days]
+            max_ignored (int): Max number of recovered cases to be ignored [cases]
+            max_ending_unupdated (int) : Max number of days to apply full complement,
+                 where ending recovered cases are not updated [days]
+
+        Returns:
+            pandas.DataFrame:
+                Index: reset index
+                Columns:
+                    - country(str): country name or ISO3 code
+                    - Monotonic_confirmed (str/bool): True if applied for confirmed cases or False otherwise
+                    - Monotonic_fatal (str/bool): True if applied for fatal cases or False otherwise
+                    - Monotonic_recovered (str/bool): True if applied for recovered or False otherwise
+                    - Full_recovered (str/bool): True if applied for recovered or False otherwise
+                    - Partial_recovered (str/bool): True if applied for recovered or False otherwise
+        """
+        complement_df = pd.DataFrame(columns=[self.COUNTRY, self.PROVINCE, *JHUDataComplementHandler.SHOW_COMPLEMENT_FULL_COLS])
+        complement_df.set_index(self.COUNTRY, inplace=True)
+        self._recovery_period = self._recovery_period or self.calculate_recovery_period()
+        if not country:
+            country = self._cleaned_df[self.COUNTRY].unique().tolist()
+
+        if type(country) is not list:
+            country = [country]
+        for cur_country in country:
+            if cur_country == "Others":
+                continue
+            if province == None:
+                province = "-"
+            country_alias = self.ensure_country_name(cur_country)
+            subset_df = self._subset(
+                country=cur_country, province=province, start_date=start_date, end_date=end_date)
+            if subset_df.empty:
+                raise SubsetNotFoundError(
+                    country=cur_country, country_alias=country_alias) from None
+            
+            handler = JHUDataComplementHandler(
+                recovery_period=self._recovery_period,
+                interval=interval,
+                max_ignored=max_ignored,
+                max_ending_unupdated=max_ending_unupdated,
+            )
+            _, _, complement_dict = handler.run(subset_df)
+            complement_dict_values = pd.Series(complement_dict.values(), dtype=bool).values
+            complement_df.loc[cur_country] = [province] + complement_dict_values.tolist()
+        return complement_df
