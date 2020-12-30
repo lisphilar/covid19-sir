@@ -1049,6 +1049,7 @@ class Scenario(DataHandler):
                 - l1_ratio (float): l1_ratio value used in Elastic Net regression
                 - score_train (float): determination coefficient of train dataset
                 - score_test (float): determination coefficient of test dataset
+                - intercept (pandas.DataFrame): intercept values (Index: ODE parameters, Columns: OxCGRT indicators)
 
         Raises:
             UnExecutedError: Scenario.estimate() or Scenario.add() were not performed
@@ -1092,7 +1093,7 @@ class Scenario(DataHandler):
 
     def predict(self, name="Main"):
         """
-        Predict parameter values of the future phases using ElasticNet regression with OxCGRT scores,
+        Predict parameter values of the future phases using Elastic Net regression with OxCGRT scores,
         assuming that OxCGRT scores will impact on ODE parameter values with delay (=recovery period).
         New future phases will be added (over-written).
 
@@ -1131,7 +1132,7 @@ class Scenario(DataHandler):
 
     def fit_predict(self, oxcgrt_data, name="Main", **kwargs):
         """
-        Predict parameter values of the future phases using ElasticNet regression with OxCGRT scores,
+        Predict parameter values of the future phases using Elastic Net regression with OxCGRT scores,
         assuming that OxCGRT scores will impact on ODE parameter values with delay (=recovery period).
         New future phases will be added (over-written).
 
