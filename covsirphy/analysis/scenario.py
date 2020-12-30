@@ -2,11 +2,16 @@
 # -*- coding: utf-8 -*-
 
 import copy
+from datetime import timedelta
+from math import log10, floor
 import warnings
 import numpy as np
 import pandas as pd
+from sklearn.model_selection import train_test_split
+from sklearn import linear_model
 from covsirphy.util.error import deprecate, ScenarioNotFoundError, UnExecutedError
 from covsirphy.util.plotting import line_plot, box_plot
+from covsirphy.cleaning.oxcgrt import OxCGRTData
 from covsirphy.analysis.param_tracker import ParamTracker
 from covsirphy.analysis.data_handler import DataHandler
 
@@ -29,6 +34,9 @@ class Scenario(DataHandler):
             jhu_data, population_data, country, province=province, auto_complement=auto_complement)
         self.tau = self.ensure_tau(tau)
         self._update_range(first_date=None, last_date=None)
+        # Linear regression modes for prediction of ODE parameters
+        self._oxcgrt_data = None
+        self._lm_dict = {}
 
     def __getitem__(self, key):
         """
@@ -886,7 +894,7 @@ class Scenario(DataHandler):
             pandas.DataFrame
         """
         df = self._track_param(name=name)
-        model = self._tracker(name).series.unit("last").model
+        model = self._tracker(name).last_model
         cols = list(set(df.columns) & set(model.PARAMETERS))
         if params is not None:
             if not isinstance(params, (list, set)):
@@ -985,3 +993,160 @@ class Scenario(DataHandler):
             ]
         return tracker.score(
             metrics=metrics, variables=variables, phases=phases, y0_dict=y0_dict)
+
+    def _fit_create_data(self, oxcgrt_data, model, name):
+        """
+        Create train/test dataset for Elastic Net regression,
+        assuming that OxCGRT scores will impact on ODE parameter values with delay (recovery period).
+
+        Args:
+            oxcgrt_data (covsirphy.OxCGRTData): OxCGRT dataset
+            model (covsirphy.ModelBase): ODE model
+            name (str): scenario name
+
+        Returns:
+            tuple(pandas.DataFrame):
+                - X dataset for linear regression
+                - y dataset for linear regression
+                - X dataset of the target dates
+        """
+        # Parameter values
+        param_df = self._track_param(name=name)[model.PARAMETERS]
+        # OxCGRT scores
+        oxcgrt_df = oxcgrt_data.subset(
+            country=self.country).set_index(self.DATE)[OxCGRTData.OXCGRT_VARS_INDICATORS]
+        # Apply delay on OxCGRT data
+        delay = self.jhu_data.recovery_period
+        oxcgrt_df.index += timedelta(days=delay)
+        # Create training/test dataset
+        df = param_df.join(oxcgrt_df, how="inner")
+        df = df.rolling(window=delay).mean()
+        df = df.dropna().drop_duplicates()
+        X = df.drop(model.PARAMETERS, axis=1)
+        y = df.loc[:, model.PARAMETERS]
+        # X dataset of the target dates
+        dates = pd.date_range(
+            start=param_df.index.max() + timedelta(days=1),
+            end=oxcgrt_df.index.max(),
+            freq="D")
+        X_target = oxcgrt_df.loc[dates]
+        return (X, y, X_target)
+
+    def fit(self, oxcgrt_data, name="Main", test_size=0.2, seed=0):
+        """
+        Learn the relationship of ODE parameter values and delayed OxCGRT scores using Elastic Net regression,
+        assuming that OxCGRT scores will impact on ODE parameter values with delay (=recovery period).
+
+        Args:
+            oxcgrt_data (covsirphy.OxCGRTData): OxCGRT dataset
+            name (str): scenario name
+            test_size (float): proportion of the test dataset of Elastic Net regression
+            seed (int): random seed when spliting the dataset to train/test data
+
+        Returns:
+            dict(str, object):
+                - alpha (float): alpha value used in Elastic Net regression
+                - l1_ratio (float): l1_ratio value used in Elastic Net regression
+                - score_train (float): determination coefficient of train dataset
+                - score_test (float): determination coefficient of test dataset
+                - intercept (pandas.DataFrame): intercept values (Index: ODE parameters, Columns: OxCGRT indicators)
+
+        Raises:
+            UnExecutedError: Scenario.estimate() or Scenario.add() were not performed
+        """
+        # Register OxCGRT data
+        self._oxcgrt_data = self.ensure_instance(
+            oxcgrt_data, OxCGRTData, name="oxcgrt_data")
+        # ODE model
+        model = self._tracker(name).last_model
+        if model is None:
+            raise UnExecutedError(
+                "Scenario.estimate() or Scenario.add()",
+                message=f", specifying @model (covsirphy.SIRF etc.) and @name='{name}'.")
+        # Create training/test dataset
+        X, y, *_ = self._fit_create_data(
+            oxcgrt_data=oxcgrt_data, model=model, name=name)
+        X_train, X_test, y_train, y_test = train_test_split(
+            X, y, test_size=test_size, random_state=seed)
+        # Optimize parameters of Elastic Net regression
+        cv = linear_model.MultiTaskElasticNetCV(
+            alphas=[0, 0.001, 0.01, 0.1, 1, 10, 100, 1000],
+            l1_ratio=[0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0],
+            cv=5, n_jobs=-1)
+        cv.fit(X_train, y_train)
+        info_dict = {"alpha": cv.alpha_, "l1_ratio": cv.l1_ratio_}
+        # Perform Elastic Net (Ridge & Lasso) regression
+        lm = linear_model.ElasticNet(**info_dict)
+        lm.fit(X_train, y_train)
+        # Register the regression model to self
+        self._lm_dict[name] = lm
+        # Return information regarding regression model
+        info_dict.update(
+            {
+                "score_train": lm.score(X_train, y_train),
+                "score_test": lm.score(X_test, y_test),
+                "intercept": pd.DataFrame(
+                    lm.coef_, index=y_train.columns, columns=X_train.columns),
+            }
+        )
+        return info_dict
+
+    def predict(self, name="Main"):
+        """
+        Predict parameter values of the future phases using Elastic Net regression with OxCGRT scores,
+        assuming that OxCGRT scores will impact on ODE parameter values with delay (=recovery period).
+        New future phases will be added (over-written).
+
+        Args:
+            name (str): scenario name
+
+        Returns:
+            covsirphy.Scenario: self
+
+        Raises:
+            UnExecutedError: Scenario.fit() was not performed
+        """
+        # Arguments
+        if name not in self._lm_dict:
+            raise UnExecutedError(f"Scenario.fit(oxcgrt_data, name={name})")
+        model = self._tracker(name).last_model
+        lm = self._lm_dict[name]
+        # Clear future phases
+        self.clear(name=name)
+        # Create X dataset of the target dates
+        *_, X_target = self._fit_create_data(
+            oxcgrt_data=self._oxcgrt_data, model=model, name=name)
+        # -> end_date/parameter values
+        df = pd.DataFrame(
+            lm.predict(X_target), index=X_target.index, columns=model.PARAMETERS)
+        df = df.applymap(
+            lambda x: np.around(x, 4 - int(floor(log10(abs(x)))) - 1))
+        df.index = [
+            date.strftime(self.DATE_FORMAT) for date in df.index]
+        df.index.name = "end_date"
+        phase_df = df.drop_duplicates(keep="last").reset_index()
+        # Set new future phases
+        for phase_dict in phase_df.to_dict(orient="records"):
+            self.add(name=name, **phase_dict)
+        return self
+
+    def fit_predict(self, oxcgrt_data, name="Main", **kwargs):
+        """
+        Predict parameter values of the future phases using Elastic Net regression with OxCGRT scores,
+        assuming that OxCGRT scores will impact on ODE parameter values with delay (=recovery period).
+        New future phases will be added (over-written).
+
+        Args:
+            oxcgrt_data (covsirphy.OxCGRTData): OxCGRT dataset
+            name (str): scenario name
+            kwargs: the other arguments of Scenario.fit()
+
+        Returns:
+            covsirphy.Scenario: self
+
+        Raises:
+            UnExecutedError: Scenario.estimate() or Scenario.add() were not performed
+        """
+        self.fit(oxcgrt_data=oxcgrt_data, name=name, **kwargs)
+        self.predict(name=name)
+        return self

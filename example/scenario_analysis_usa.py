@@ -36,6 +36,9 @@ def main():
     snl.history("Rt", filename=figpath("history_rt_past"))
     # Add future phase to main scenario
     snl.add(name="Main", days=7)
+    # Short-term prediction with linear regression and OxCGRT data
+    oxcgrt_data = data_loader.oxcgrt()
+    snl.fit_predict(oxcgrt_data, name="Forecast")
     # Simulation of the number of cases
     sim_df = snl.simulate(name="Main", filename=figpath("simulate"))
     save_df(sim_df, "simulate", output_dir, abbr, use_index=False)
