@@ -32,6 +32,7 @@ class JapanData(CountryData):
     GITHUB_URL = "https://raw.githubusercontent.com"
     URL_C = f"{GITHUB_URL}/lisphilar/covid19-sir/master/data/japan/covid_jpn_total.csv"
     URL_P = f"{GITHUB_URL}/lisphilar/covid19-sir/master/data/japan/covid_jpn_prefecture.csv"
+    URL_M = f"{GITHUB_URL}/lisphilar/covid19-sir/master/data/japan/covid_jpn_metadata.csv"
     # Moderate: cases who requires hospitalization but not severe
     MODERATE = "Moderate"
     # Severe
@@ -45,6 +46,17 @@ class JapanData(CountryData):
         CountryData.DATE, CountryData.COUNTRY, CountryData.PROVINCE,
         *JAPAN_VALUE_COLS,
     ]
+    # Meta data
+    JAPAN_META_CAT = ["Prefecture", "Admin_Capital", "Admin_Region"]
+    JAPAN_META_INT = [
+        "Admin_Num", "Area_Habitable", "Area_Total",
+        "Clinic_bed_Care", "Clinic_bed_Total",
+        "Hospital_bed_Care", "Hospital_bed_Specific", "Hospital_bed_Total",
+        "Hospital_bed_Tuberculosis", "Hospital_bed_Type-I", "Hospital_bed_Type-II",
+        "Population_Female", "Population_Male", "Population_Total",
+    ]
+    JAPAN_META_FLT = ["Location_Latitude", "Location_Longitude"]
+    JAPAN_META_COLS = [*JAPAN_META_CAT, *JAPAN_META_INT, *JAPAN_META_FLT]
 
     def __init__(self, filename, force=False, verbose=1):
         Path(filename).parent.mkdir(exist_ok=True, parents=True)
@@ -56,6 +68,8 @@ class JapanData(CountryData):
         self._country = "Japan"
         self._citation = "Lisphilar (2020), COVID-19 dataset in Japan, GitHub repository, " \
             "https://github.com/lisphilar/covid19-sir/data/japan"
+        self.dir_path = Path(filename).parent
+        self.verbose = verbose
 
     def _retrieve(self, filename, verbose=1):
         """
@@ -145,3 +159,77 @@ class JapanData(CountryData):
 
     def set_variables(self):
         raise NotImplementedError
+
+    def _retrieve_meta(self, filename, verbose=1):
+        """
+        Retrieve meta data from server.
+
+        Args:
+            filename (str or pathlib.path): CSV filename to save the raw dataset
+            verbose (int): level of verbosity
+
+        Returns:
+            pandas.DataFrame: raw dataset
+        """
+        # Show URL
+        if verbose:
+            print(
+                "Retrieving Metadata of Japan dataset from https://github.com/lisphilar/covid19-sir/data/japan")
+        df = self.load(self.URL_M)
+        df.to_csv(filename, index=False)
+        return df
+
+    def meta(self, basename="covid_japan_metadata.csv", cleaned=True, force=False):
+        """
+        Return metadata of Japan-specific dataset.
+
+        Args:
+            basename (str): basename of the CSV file to save the raw dataset
+            cleaned (bool): return cleaned (True) or raw (False) dataset
+            force (bool): if True, always download the dataset from the server
+
+        Returns:
+            pandas.DataFrame: (cleaned or raw) dataset
+                Index: reset index
+                Columns: for cleaned dataset,
+                    - Prefecture (pandas.Category)
+                    - Admin_Capital (pandas.Category)
+                    - Admin_Region (pandas.Category)
+                    - Admin_Num (int)
+                    - Area_Habitable (int)
+                    - Area_Total (int)
+                    - Clinic_bed_Care (int) 
+                    - Clinic_bed_Total (int)
+                    - Hospital_bed_Care (int)
+                    - Hospital_bed_Specific (int)
+                    - Hospital_bed_Total (int)
+                    - Hospital_bed_Tuberculosis (int)
+                    - Hospital_bed_Type-I (int)
+                    - Hospital_bed_Type-II (int)
+                    - Population_Female (int)
+                    - Population_Male (int)
+                    - Population_Total (int)
+                    - Location_Latitude (float)
+                    - Location_Longitude (float)
+
+        Note:
+            Please refer to https://github.com/lisphilar/covid19-sir/tree/master/data
+        """
+        filepath = self.dir_path.joinpath(basename)
+        if filepath.exists() and not force:
+            df = self.load(filepath)
+        else:
+            df = self._retrieve_meta(filename=filepath, verbose=self.verbose)
+        if not cleaned:
+            return df
+        # Data cleaning
+        df["Title"] = df["Category"].str.cat(df["Item"], sep="_")
+        df = df.pivot_table(
+            values="Value", index="Prefecture", columns="Title", aggfunc="last")
+        df.columns.name = None
+        df = df.reset_index()
+        df[self.JAPAN_META_CAT] = df[self.JAPAN_META_CAT].astype("category")
+        df[self.JAPAN_META_INT] = df[self.JAPAN_META_INT].astype(np.int64)
+        df[self.JAPAN_META_FLT] = df[self.JAPAN_META_FLT].astype(np.float64)
+        df = df.sort_values("Admin_Num").reset_index(drop=True)
+        return df.loc[:, self.JAPAN_META_COLS]
