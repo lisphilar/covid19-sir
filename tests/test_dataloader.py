@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
+from covsirphy.cleaning.japan_data import JapanData
 from covsirphy.util.error import SubsetNotFoundError
 import pytest
 import warnings
@@ -121,6 +122,12 @@ class TestCountryData(object):
             province=None)
         df = country_data.cleaned()
         assert set(df.columns) == set(Term.COLUMNS)
+
+    def test_japan_meta(self, japan_data):
+        raw_df = japan_data.meta(cleaned=False)
+        assert isinstance(raw_df, pd.DataFrame)
+        df = japan_data.meta(cleaned=True)
+        assert set(df.columns) == set(JapanData.JAPAN_META_COLS)
 
 
 class TestVaccineData(object):
