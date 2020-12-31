@@ -40,7 +40,7 @@ vaccine_data = data_loader.vaccine()
 # Population pyramid
 pyramid_data = data_loader.pyramid()
 # Japan-specific dataset
-japan_data = dataloader.japan()
+japan_data = data_loader.japan()
 ```
 
 The downloaded datasets were retrieved from the following sites.
