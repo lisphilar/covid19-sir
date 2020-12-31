@@ -22,20 +22,25 @@ import covsirphy as cs
 cs.__version__
 # Create DataLoader instance
 data_loader = cs.DataLoader("input")
-# The number of cases (JHU style)
+```
+
+```Python
+# (Main) The number of cases (JHU style)
 jhu_data = data_loader.jhu()
+# (Main) Population in each country
+population_data = data_loader.population()
+# (Main) Government Response Tracker (OxCGRT)
+oxcgrt_data = data_loader.oxcgrt()
 # Linelist of case reports
 linelist = data_loader.linelist()
-# Population in each country
-population_data = data_loader.population()
-# Government Response Tracker (OxCGRT)
-oxcgrt_data = data_loader.oxcgrt()
 # The number of tests
 pcr_data = data_loader.pcr()
 # The number of vaccinations
 vaccine_data = data_loader.vaccine()
 # Population pyramid
 pyramid_data = data_loader.pyramid()
+# Japan-specific dataset
+japan_data = dataloader.japan()
 ```
 
 The downloaded datasets were retrieved from the following sites.
@@ -67,7 +72,8 @@ Citation: World Bank Group (2020), World Bank Open Data, https://data.worldbank.
 ### [Datasets for CovsirPhy](https://github.com/lisphilar/covid19-sir/tree/master/data)
 Lisphilar (2020), GitHub repository, COVID-19 dataset in Japan.  
 
-- The number of cases in Japan
+- The number of cases in Japan (total/prefectures)
+- Metadata
 
 ## 2. How to request new data loader
 If you want to use a new dataset for your analysis, please kindly inform us via [GitHub Issues: Request new method of DataLoader class](https://github.com/lisphilar/covid19-sir/issues/new/?template=request-new-method-of-dataloader-class.md). Please read [Guideline of contribution](https://lisphilar.github.io/covid19-sir/CONTRIBUTING.html) in advance.
