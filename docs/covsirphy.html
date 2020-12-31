@@ -211,10 +211,7 @@
 <a class="reference external" href="https://covid19datahub.io/">https://covid19datahub.io/</a></p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>directory</strong> (<em>str</em><em> or </em><em>pathlib.Path</em>) – directory to save the downloaded datasets</p></li>
-<li><p><strong>filename</strong> (<em>str</em>) – CSV filename to save records</p></li>
-</ul>
+<dd class="field-odd"><p><strong>filename</strong> (<em>str</em>) – CSV filename to save records</p>
 </dd>
 </dl>
 <dl class="py attribute">
@@ -1826,7 +1823,7 @@ Columns:</p>
 <dt id="covsirphy.JapanData">
 <em class="property">class </em><code class="sig-name descname">JapanData</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">filename</span></em>, <em class="sig-param"><span class="n">force</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">verbose</span><span class="o">=</span><span class="default_value">1</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/cleaning/japan_data.html#JapanData"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#covsirphy.JapanData" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="covsirphy.cleaning.country_data.html#covsirphy.cleaning.country_data.CountryData" title="covsirphy.cleaning.country_data.CountryData"><code class="xref py py-class docutils literal notranslate"><span class="pre">covsirphy.cleaning.country_data.CountryData</span></code></a></p>
-<p>Linelist of case reports.</p>
+<p>Japan-specific dataset.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
@@ -1863,6 +1860,26 @@ Columns:</p>
 <dd></dd></dl>
 
 <dl class="py attribute">
+<dt id="covsirphy.JapanData.JAPAN_META_CAT">
+<code class="sig-name descname">JAPAN_META_CAT</code><em class="property"> = ['Prefecture', 'Admin_Capital', 'Admin_Region']</em><a class="headerlink" href="#covsirphy.JapanData.JAPAN_META_CAT" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="covsirphy.JapanData.JAPAN_META_COLS">
+<code class="sig-name descname">JAPAN_META_COLS</code><em class="property"> = ['Prefecture', 'Admin_Capital', 'Admin_Region', 'Admin_Num', 'Area_Habitable', 'Area_Total', 'Clinic_bed_Care', 'Clinic_bed_Total', 'Hospital_bed_Care', 'Hospital_bed_Specific', 'Hospital_bed_Total', 'Hospital_bed_Tuberculosis', 'Hospital_bed_Type-I', 'Hospital_bed_Type-II', 'Population_Female', 'Population_Male', 'Population_Total', 'Location_Latitude', 'Location_Longitude']</em><a class="headerlink" href="#covsirphy.JapanData.JAPAN_META_COLS" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="covsirphy.JapanData.JAPAN_META_FLT">
+<code class="sig-name descname">JAPAN_META_FLT</code><em class="property"> = ['Location_Latitude', 'Location_Longitude']</em><a class="headerlink" href="#covsirphy.JapanData.JAPAN_META_FLT" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="covsirphy.JapanData.JAPAN_META_INT">
+<code class="sig-name descname">JAPAN_META_INT</code><em class="property"> = ['Admin_Num', 'Area_Habitable', 'Area_Total', 'Clinic_bed_Care', 'Clinic_bed_Total', 'Hospital_bed_Care', 'Hospital_bed_Specific', 'Hospital_bed_Total', 'Hospital_bed_Tuberculosis', 'Hospital_bed_Type-I', 'Hospital_bed_Type-II', 'Population_Female', 'Population_Male', 'Population_Total']</em><a class="headerlink" href="#covsirphy.JapanData.JAPAN_META_INT" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
 <dt id="covsirphy.JapanData.JAPAN_VALUE_COLS">
 <code class="sig-name descname">JAPAN_VALUE_COLS</code><em class="property"> = ['Confirmed', 'Infected', 'Fatal', 'Recovered', 'Tests', 'Moderate', 'Severe']</em><a class="headerlink" href="#covsirphy.JapanData.JAPAN_VALUE_COLS" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
@@ -1883,9 +1900,67 @@ Columns:</p>
 <dd></dd></dl>
 
 <dl class="py attribute">
+<dt id="covsirphy.JapanData.URL_M">
+<code class="sig-name descname">URL_M</code><em class="property"> = 'https://raw.githubusercontent.com/lisphilar/covid19-sir/master/data/japan/covid_jpn_metadata.csv'</em><a class="headerlink" href="#covsirphy.JapanData.URL_M" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
 <dt id="covsirphy.JapanData.URL_P">
 <code class="sig-name descname">URL_P</code><em class="property"> = 'https://raw.githubusercontent.com/lisphilar/covid19-sir/master/data/japan/covid_jpn_prefecture.csv'</em><a class="headerlink" href="#covsirphy.JapanData.URL_P" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
+
+<dl class="py method">
+<dt id="covsirphy.JapanData.meta">
+<code class="sig-name descname">meta</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">basename</span><span class="o">=</span><span class="default_value">'covid_japan_metadata.csv'</span></em>, <em class="sig-param"><span class="n">cleaned</span><span class="o">=</span><span class="default_value">True</span></em>, <em class="sig-param"><span class="n">force</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/cleaning/japan_data.html#JapanData.meta"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#covsirphy.JapanData.meta" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return metadata of Japan-specific dataset.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>basename</strong> (<em>str</em>) – basename of the CSV file to save the raw dataset</p></li>
+<li><p><strong>cleaned</strong> (<em>bool</em>) – return cleaned (True) or raw (False) dataset</p></li>
+<li><p><strong>force</strong> (<em>bool</em>) – if True, always download the dataset from the server</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><dl>
+<dt>(cleaned or raw) dataset</dt><dd><p>Index: reset index
+Columns: for cleaned dataset,</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>Prefecture (pandas.Category)</p></li>
+<li><p>Admin_Capital (pandas.Category)</p></li>
+<li><p>Admin_Region (pandas.Category)</p></li>
+<li><p>Admin_Num (int)</p></li>
+<li><p>Area_Habitable (int)</p></li>
+<li><p>Area_Total (int)</p></li>
+<li><p>Clinic_bed_Care (int)</p></li>
+<li><p>Clinic_bed_Total (int)</p></li>
+<li><p>Hospital_bed_Care (int)</p></li>
+<li><p>Hospital_bed_Specific (int)</p></li>
+<li><p>Hospital_bed_Total (int)</p></li>
+<li><p>Hospital_bed_Tuberculosis (int)</p></li>
+<li><p>Hospital_bed_Type-I (int)</p></li>
+<li><p>Hospital_bed_Type-II (int)</p></li>
+<li><p>Population_Female (int)</p></li>
+<li><p>Population_Male (int)</p></li>
+<li><p>Population_Total (int)</p></li>
+<li><p>Location_Latitude (float)</p></li>
+<li><p>Location_Longitude (float)</p></li>
+</ul>
+</div></blockquote>
+</dd>
+</dl>
+</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>pandas.DataFrame</p>
+</dd>
+</dl>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Please refer to <a class="reference external" href="https://github.com/lisphilar/covid19-sir/tree/master/data">https://github.com/lisphilar/covid19-sir/tree/master/data</a></p>
+</div>
+</dd></dl>
 
 <dl class="py method">
 <dt id="covsirphy.JapanData.set_variables">

@@ -101,6 +101,7 @@
 <li class="toctree-l2"><a class="reference internal" href="#The-number-of-tests">The number of tests</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#The-number-of-vaccinations">The number of vaccinations</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#Population-pyramid">Population pyramid</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#Japan-specific-dataset">Japan-specific dataset</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="usage_phases.html">Usage: phases</a></li>
@@ -498,7 +499,7 @@ div.rendered_html tbody tr:hover {
 </div>
 <div class="output_area docutils container">
 <div class="highlight"><pre>
-&#39;2.13.3-iota.new.56.280.420.422.429.449.fix.438.441.450&#39;
+&#39;2.13.3-kappa.new.56.280.420.422.429.449.475.fix.438.441.450&#39;
 </pre></div></div>
 </div>
 </div>
@@ -506,26 +507,37 @@ div.rendered_html tbody tr:hover {
 <h2>Dataset preparation<a class="headerlink" href="#Dataset-preparation" title="Permalink to this headline">¶</a></h2>
 <p>Download the datasets to “input” directory and load them.</p>
 <p>If “input” directory has the datasets, <code class="docutils literal notranslate"><span class="pre">DataLoader</span></code> instance will load the local files. If the datasets were updated in remote servers, <code class="docutils literal notranslate"><span class="pre">DataLoader</span></code> will update the local files automatically and download the datasets to “input” directory and load them.</p>
-<div class="nbinput docutils container">
+<div class="nbinput nblast docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[5]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="n">data_loader</span> <span class="o">=</span> <span class="n">cs</span><span class="o">.</span><span class="n">DataLoader</span><span class="p">(</span><span class="s2">&quot;input&quot;</span><span class="p">)</span>
-<span class="c1"># The number of cases (JHU style)</span>
+<span></span><span class="c1"># Create DataLoader instance</span>
+<span class="n">data_loader</span> <span class="o">=</span> <span class="n">cs</span><span class="o">.</span><span class="n">DataLoader</span><span class="p">(</span><span class="s2">&quot;input&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[6]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="c1"># (Main) The number of cases (JHU style)</span>
 <span class="n">jhu_data</span> <span class="o">=</span> <span class="n">data_loader</span><span class="o">.</span><span class="n">jhu</span><span class="p">()</span>
+<span class="c1"># (Main) Population in each country</span>
+<span class="n">population_data</span> <span class="o">=</span> <span class="n">data_loader</span><span class="o">.</span><span class="n">population</span><span class="p">()</span>
+<span class="c1"># (Main) Government Response Tracker (OxCGRT)</span>
+<span class="n">oxcgrt_data</span> <span class="o">=</span> <span class="n">data_loader</span><span class="o">.</span><span class="n">oxcgrt</span><span class="p">()</span>
 <span class="c1"># Linelist of case reports</span>
 <span class="n">linelist</span> <span class="o">=</span> <span class="n">data_loader</span><span class="o">.</span><span class="n">linelist</span><span class="p">()</span>
-<span class="c1"># Population in each country</span>
-<span class="n">population_data</span> <span class="o">=</span> <span class="n">data_loader</span><span class="o">.</span><span class="n">population</span><span class="p">()</span>
-<span class="c1"># Government Response Tracker (OxCGRT)</span>
-<span class="n">oxcgrt_data</span> <span class="o">=</span> <span class="n">data_loader</span><span class="o">.</span><span class="n">oxcgrt</span><span class="p">()</span>
 <span class="c1"># The number of tests</span>
 <span class="n">pcr_data</span> <span class="o">=</span> <span class="n">data_loader</span><span class="o">.</span><span class="n">pcr</span><span class="p">()</span>
-<span class="c1"># The number of vaccinations (will be prepared in 2.14.0)</span>
+<span class="c1"># The number of vaccinations</span>
 <span class="n">vaccine_data</span> <span class="o">=</span> <span class="n">data_loader</span><span class="o">.</span><span class="n">vaccine</span><span class="p">()</span>
-<span class="c1"># Population pyramid (will be prepared in 2.14.0)</span>
+<span class="c1"># Population pyramid</span>
 <span class="n">pyramid_data</span> <span class="o">=</span> <span class="n">data_loader</span><span class="o">.</span><span class="n">pyramid</span><span class="p">()</span>
+<span class="c1"># Japan-specific dataset</span>
+<span class="n">japan_data</span> <span class="o">=</span> <span class="n">data_loader</span><span class="o">.</span><span class="n">japan</span><span class="p">()</span>
 </pre></div>
 </div>
 </div>
@@ -549,7 +561,7 @@ Retrieving COVID-19 vaccination dataset from https://covid.ourworldindata.org/da
 <h2>The number of cases (JHU style)<a class="headerlink" href="#The-number-of-cases-(JHU-style)" title="Permalink to this headline">¶</a></h2>
 <p>The main dataset is that of the number of cases and was saved as <code class="docutils literal notranslate"><span class="pre">jhu_data</span></code>, an instance of <code class="docutils literal notranslate"><span class="pre">JHUData</span></code> class. This includes “Confirmed”, “Infected”, “Recovered” and “Fatal”. “Infected” was calculated as “Confirmed - Recovered - Fatal”.</p>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[6]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[7]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
@@ -558,7 +570,7 @@ Retrieving COVID-19 vaccination dataset from https://covid.ourworldindata.org/da
 </div>
 </div>
 <div class="nboutput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[6]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[7]:
 </pre></div>
 </div>
 <div class="output_area docutils container">
@@ -568,7 +580,7 @@ covsirphy.cleaning.jhu_data.JHUData
 </div>
 <p>The dataset will be retrieved from <a class="reference external" href="https://covid19datahub.io/">COVID-19 Data Hub</a> and <a class="reference external" href="https://github.com/lisphilar/covid19-sir/tree/master/data">Data folder of CovsirPhy project</a>. Description of these projects will be shown as follows.</p>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[7]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[8]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
@@ -587,7 +599,7 @@ Lisphilar (2020), COVID-19 dataset in Japan, GitHub repository, https://github.c
 </pre></div></div>
 </div>
 <div class="nbinput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[8]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[9]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
@@ -597,7 +609,7 @@ Lisphilar (2020), COVID-19 dataset in Japan, GitHub repository, https://github.c
 </div>
 </div>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[9]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[10]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
@@ -607,7 +619,7 @@ Lisphilar (2020), COVID-19 dataset in Japan, GitHub repository, https://github.c
 </div>
 </div>
 <div class="nboutput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[9]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[10]:
 </pre></div>
 </div>
 <div class="output_area rendered_html docutils container">
@@ -654,31 +666,7 @@ Lisphilar (2020), COVID-19 dataset in Japan, GitHub repository, https://github.c
   </thead>
   <tbody>
     <tr>
-      <th>369290</th>
-      <td>2020-12-26</td>
-      <td>4983</td>
-      <td>1137.0</td>
-      <td>1106</td>
-      <td>14</td>
-      <td>107808.0</td>
-      <td>COL</td>
-      <td>Vichada</td>
-      <td>Colombia</td>
-      <td>3</td>
-      <td>...</td>
-      <td>1</td>
-      <td>3</td>
-      <td>1</td>
-      <td>1</td>
-      <td>1</td>
-      <td>4</td>
-      <td>2</td>
-      <td>2</td>
-      <td>2</td>
-      <td>60.19</td>
-    </tr>
-    <tr>
-      <th>369291</th>
+      <th>370304</th>
       <td>2020-12-27</td>
       <td>4984</td>
       <td>1137.0</td>
@@ -702,7 +690,7 @@ Lisphilar (2020), COVID-19 dataset in Japan, GitHub repository, https://github.c
       <td>60.19</td>
     </tr>
     <tr>
-      <th>369292</th>
+      <th>370305</th>
       <td>2020-12-28</td>
       <td>4997</td>
       <td>1141.0</td>
@@ -726,7 +714,7 @@ Lisphilar (2020), COVID-19 dataset in Japan, GitHub repository, https://github.c
       <td>60.19</td>
     </tr>
     <tr>
-      <th>369293</th>
+      <th>370306</th>
       <td>2020-12-29</td>
       <td>5026</td>
       <td>1148.0</td>
@@ -750,11 +738,35 @@ Lisphilar (2020), COVID-19 dataset in Japan, GitHub repository, https://github.c
       <td>60.19</td>
     </tr>
     <tr>
-      <th>369294</th>
+      <th>370307</th>
       <td>2020-12-30</td>
-      <td>5026</td>
+      <td>5028</td>
       <td>1148.0</td>
-      <td>1115</td>
+      <td>1124</td>
+      <td>14</td>
+      <td>107808.0</td>
+      <td>COL</td>
+      <td>Vichada</td>
+      <td>Colombia</td>
+      <td>3</td>
+      <td>...</td>
+      <td>1</td>
+      <td>3</td>
+      <td>1</td>
+      <td>1</td>
+      <td>1</td>
+      <td>4</td>
+      <td>2</td>
+      <td>2</td>
+      <td>2</td>
+      <td>60.19</td>
+    </tr>
+    <tr>
+      <th>370308</th>
+      <td>2020-12-31</td>
+      <td>5028</td>
+      <td>1148.0</td>
+      <td>1124</td>
       <td>14</td>
       <td>107808.0</td>
       <td>COL</td>
@@ -779,7 +791,7 @@ Lisphilar (2020), COVID-19 dataset in Japan, GitHub repository, https://github.c
 </div></div>
 </div>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[10]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[11]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
@@ -789,7 +801,7 @@ Lisphilar (2020), COVID-19 dataset in Japan, GitHub repository, https://github.c
 </div>
 </div>
 <div class="nboutput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[10]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[11]:
 </pre></div>
 </div>
 <div class="output_area rendered_html docutils container">
@@ -822,17 +834,7 @@ Lisphilar (2020), COVID-19 dataset in Japan, GitHub repository, https://github.c
   </thead>
   <tbody>
     <tr>
-      <th>14142</th>
-      <td>2020-12-26</td>
-      <td>Japan</td>
-      <td>-</td>
-      <td>213547</td>
-      <td>30204</td>
-      <td>3155</td>
-      <td>180188</td>
-    </tr>
-    <tr>
-      <th>14143</th>
+      <th>14191</th>
       <td>2020-12-27</td>
       <td>Japan</td>
       <td>-</td>
@@ -842,7 +844,7 @@ Lisphilar (2020), COVID-19 dataset in Japan, GitHub repository, https://github.c
       <td>182596</td>
     </tr>
     <tr>
-      <th>14144</th>
+      <th>14192</th>
       <td>2020-12-28</td>
       <td>Japan</td>
       <td>-</td>
@@ -852,7 +854,7 @@ Lisphilar (2020), COVID-19 dataset in Japan, GitHub repository, https://github.c
       <td>184662</td>
     </tr>
     <tr>
-      <th>14145</th>
+      <th>14193</th>
       <td>2020-12-29</td>
       <td>Japan</td>
       <td>-</td>
@@ -862,7 +864,7 @@ Lisphilar (2020), COVID-19 dataset in Japan, GitHub repository, https://github.c
       <td>186946</td>
     </tr>
     <tr>
-      <th>14146</th>
+      <th>14194</th>
       <td>2020-12-30</td>
       <td>Japan</td>
       <td>-</td>
@@ -871,12 +873,22 @@ Lisphilar (2020), COVID-19 dataset in Japan, GitHub repository, https://github.c
       <td>3349</td>
       <td>189466</td>
     </tr>
+    <tr>
+      <th>14195</th>
+      <td>2020-12-31</td>
+      <td>Japan</td>
+      <td>-</td>
+      <td>230304</td>
+      <td>35439</td>
+      <td>3414</td>
+      <td>191451</td>
+    </tr>
   </tbody>
 </table>
 </div></div>
 </div>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[11]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[12]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
@@ -890,24 +902,24 @@ Lisphilar (2020), COVID-19 dataset in Japan, GitHub repository, https://github.c
 <div class="output_area docutils container">
 <div class="highlight"><pre>
 &lt;class &#39;pandas.core.frame.DataFrame&#39;&gt;
-Int64Index: 365969 entries, 0 to 14146
+Int64Index: 366984 entries, 0 to 14195
 Data columns (total 7 columns):
  #   Column     Non-Null Count   Dtype
 ---  ------     --------------   -----
- 0   Date       365969 non-null  datetime64[ns]
- 1   Country    365969 non-null  category
- 2   Province   365969 non-null  category
- 3   Confirmed  365969 non-null  int64
- 4   Infected   365969 non-null  int64
- 5   Fatal      365969 non-null  int64
- 6   Recovered  365969 non-null  int64
+ 0   Date       366984 non-null  datetime64[ns]
+ 1   Country    366984 non-null  category
+ 2   Province   366984 non-null  category
+ 3   Confirmed  366984 non-null  int64
+ 4   Infected   366984 non-null  int64
+ 5   Fatal      366984 non-null  int64
+ 6   Recovered  366984 non-null  int64
 dtypes: category(2), datetime64[ns](1), int64(4)
-memory usage: 18.2 MB
+memory usage: 18.3 MB
 </pre></div></div>
 </div>
 <p>Total number of cases in all countries with <code class="docutils literal notranslate"><span class="pre">JHUData.total()</span></code> method.</p>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[12]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[13]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
@@ -918,7 +930,7 @@ memory usage: 18.2 MB
 </div>
 </div>
 <div class="nboutput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[12]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[13]:
 </pre></div>
 </div>
 <div class="output_area rendered_html docutils container">
@@ -961,61 +973,61 @@ memory usage: 18.2 MB
   </thead>
   <tbody>
     <tr>
-      <th>2020-12-26</th>
-      <td>80440694</td>
-      <td>26984889</td>
-      <td>1761141</td>
-      <td>51694664</td>
-      <td>0.021894</td>
-      <td>0.642643</td>
-      <td>0.032946</td>
-    </tr>
-    <tr>
       <th>2020-12-27</th>
-      <td>80878045</td>
-      <td>27146258</td>
-      <td>1768162</td>
-      <td>51963625</td>
-      <td>0.021862</td>
-      <td>0.642494</td>
-      <td>0.032907</td>
+      <td>80878698</td>
+      <td>27121799</td>
+      <td>1769102</td>
+      <td>51987797</td>
+      <td>0.021874</td>
+      <td>0.642787</td>
+      <td>0.032909</td>
     </tr>
     <tr>
       <th>2020-12-28</th>
-      <td>81378084</td>
-      <td>27369690</td>
-      <td>1776666</td>
-      <td>52231728</td>
-      <td>0.021832</td>
-      <td>0.641840</td>
-      <td>0.032896</td>
+      <td>81380944</td>
+      <td>27347025</td>
+      <td>1777679</td>
+      <td>52256240</td>
+      <td>0.021844</td>
+      <td>0.642119</td>
+      <td>0.032899</td>
     </tr>
     <tr>
       <th>2020-12-29</th>
-      <td>82019110</td>
-      <td>27676508</td>
-      <td>1790379</td>
-      <td>52552223</td>
-      <td>0.021829</td>
-      <td>0.640731</td>
-      <td>0.032946</td>
+      <td>82036575</td>
+      <td>27667456</td>
+      <td>1791665</td>
+      <td>52577454</td>
+      <td>0.021840</td>
+      <td>0.640903</td>
+      <td>0.032954</td>
     </tr>
     <tr>
       <th>2020-12-30</th>
-      <td>82035962</td>
-      <td>27688649</td>
-      <td>1790575</td>
-      <td>52556738</td>
-      <td>0.021827</td>
-      <td>0.640655</td>
-      <td>0.032947</td>
+      <td>82739904</td>
+      <td>28004754</td>
+      <td>1805002</td>
+      <td>52930148</td>
+      <td>0.021815</td>
+      <td>0.639717</td>
+      <td>0.032977</td>
+    </tr>
+    <tr>
+      <th>2020-12-31</th>
+      <td>82743806</td>
+      <td>28006578</td>
+      <td>1805067</td>
+      <td>52932161</td>
+      <td>0.021815</td>
+      <td>0.639711</td>
+      <td>0.032977</td>
     </tr>
   </tbody>
 </table>
 </div></div>
 </div>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[13]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[14]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
@@ -1028,11 +1040,11 @@ memory usage: 18.2 MB
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area docutils container">
-<img alt="_images/usage_dataset_18_0.png" src="_images/usage_dataset_18_0.png" />
+<img alt="_images/usage_dataset_19_0.png" src="_images/usage_dataset_19_0.png" />
 </div>
 </div>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[14]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[15]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
@@ -1042,7 +1054,7 @@ memory usage: 18.2 MB
 </div>
 </div>
 <div class="nboutput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[14]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[15]:
 </pre></div>
 </div>
 <div class="output_area rendered_html docutils container">
@@ -1077,35 +1089,35 @@ memory usage: 18.2 MB
   <tbody>
     <tr>
       <th>Fatal per Confirmed</th>
-      <td>364.0</td>
-      <td>0.038349</td>
-      <td>0.017303</td>
+      <td>365.0</td>
+      <td>0.038304</td>
+      <td>0.017300</td>
       <td>0.00000</td>
-      <td>0.024935</td>
-      <td>0.034078</td>
-      <td>0.049128</td>
+      <td>0.024854</td>
+      <td>0.034061</td>
+      <td>0.049115</td>
       <td>0.074103</td>
     </tr>
     <tr>
       <th>Recovered per Confirmed</th>
-      <td>364.0</td>
-      <td>0.431568</td>
-      <td>0.251752</td>
+      <td>365.0</td>
+      <td>0.432148</td>
+      <td>0.251650</td>
       <td>0.00132</td>
-      <td>0.200450</td>
-      <td>0.528685</td>
-      <td>0.647272</td>
+      <td>0.200600</td>
+      <td>0.532886</td>
+      <td>0.647441</td>
       <td>1.000000</td>
     </tr>
     <tr>
       <th>Fatal per (Fatal or Recovered)</th>
-      <td>364.0</td>
-      <td>0.201804</td>
-      <td>0.268669</td>
+      <td>365.0</td>
+      <td>0.201342</td>
+      <td>0.268445</td>
       <td>0.00000</td>
-      <td>0.040002</td>
-      <td>0.075403</td>
-      <td>0.221830</td>
+      <td>0.039911</td>
+      <td>0.075061</td>
+      <td>0.221680</td>
       <td>0.942029</td>
     </tr>
   </tbody>
@@ -1114,7 +1126,7 @@ memory usage: 18.2 MB
 </div>
 <p>We can create a subset for a country using <code class="docutils literal notranslate"><span class="pre">JHUData.subset()</span></code> method.</p>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[15]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[16]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
@@ -1128,7 +1140,7 @@ memory usage: 18.2 MB
 </div>
 </div>
 <div class="nboutput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[15]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[16]:
 </pre></div>
 </div>
 <div class="output_area rendered_html docutils container">
@@ -1158,14 +1170,6 @@ memory usage: 18.2 MB
     </tr>
   </thead>
   <tbody>
-    <tr>
-      <th>324</th>
-      <td>2020-12-26</td>
-      <td>213547</td>
-      <td>30204</td>
-      <td>3155</td>
-      <td>180188</td>
-    </tr>
     <tr>
       <th>325</th>
       <td>2020-12-27</td>
@@ -1198,13 +1202,21 @@ memory usage: 18.2 MB
       <td>3349</td>
       <td>189466</td>
     </tr>
+    <tr>
+      <th>329</th>
+      <td>2020-12-31</td>
+      <td>230304</td>
+      <td>35439</td>
+      <td>3414</td>
+      <td>191451</td>
+    </tr>
   </tbody>
 </table>
 </div></div>
 </div>
 <p>Province (“prefecture” for Japan) name can be specified.</p>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[16]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[17]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
@@ -1214,7 +1226,7 @@ memory usage: 18.2 MB
 </div>
 </div>
 <div class="nboutput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[16]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[17]:
 </pre></div>
 </div>
 <div class="output_area rendered_html docutils container">
@@ -1244,14 +1256,6 @@ memory usage: 18.2 MB
     </tr>
   </thead>
   <tbody>
-    <tr>
-      <th>265</th>
-      <td>2020-12-25</td>
-      <td>54902</td>
-      <td>10473</td>
-      <td>597</td>
-      <td>43832</td>
-    </tr>
     <tr>
       <th>266</th>
       <td>2020-12-26</td>
@@ -1284,12 +1288,20 @@ memory usage: 18.2 MB
       <td>618</td>
       <td>46210</td>
     </tr>
+    <tr>
+      <th>270</th>
+      <td>2020-12-30</td>
+      <td>58840</td>
+      <td>11528</td>
+      <td>622</td>
+      <td>46690</td>
+    </tr>
   </tbody>
 </table>
 </div></div>
 </div>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[17]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[18]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
@@ -1345,7 +1357,7 @@ memory usage: 18.2 MB
 <h2>Linelist of case reports<a class="headerlink" href="#Linelist-of-case-reports" title="Permalink to this headline">¶</a></h2>
 <p>The number of cases is important, but linelist of case reports will helpful to understand the situation deeply. Linelist data was saved as <code class="docutils literal notranslate"><span class="pre">linelist</span></code>, an instance of <code class="docutils literal notranslate"><span class="pre">LinelistData</span></code> class. This dataset is from <a class="reference external" href="https://github.com/beoutbreakprepared/nCoV2019">Open COVID-19 Data Working Group</a>.</p>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[18]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[19]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
@@ -1354,7 +1366,7 @@ memory usage: 18.2 MB
 </div>
 </div>
 <div class="nboutput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[18]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[19]:
 </pre></div>
 </div>
 <div class="output_area docutils container">
@@ -1363,7 +1375,7 @@ covsirphy.cleaning.linelist.LinelistData
 </pre></div></div>
 </div>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[19]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[20]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
@@ -1381,7 +1393,7 @@ Xu, B., Gutierrez, B., Mekaru, S. et al. Epidemiological data from the COVID-19 
 </pre></div></div>
 </div>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[20]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[21]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
@@ -1391,7 +1403,7 @@ Xu, B., Gutierrez, B., Mekaru, S. et al. Epidemiological data from the COVID-19 
 </div>
 </div>
 <div class="nboutput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[20]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[21]:
 </pre></div>
 </div>
 <div class="output_area rendered_html docutils container">
@@ -1496,7 +1508,7 @@ Xu, B., Gutierrez, B., Mekaru, S. et al. Epidemiological data from the COVID-19 
 </div></div>
 </div>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[21]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[22]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
@@ -1506,7 +1518,7 @@ Xu, B., Gutierrez, B., Mekaru, S. et al. Epidemiological data from the COVID-19 
 </div>
 </div>
 <div class="nboutput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[21]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[22]:
 </pre></div>
 </div>
 <div class="output_area rendered_html docutils container">
@@ -1629,7 +1641,7 @@ Xu, B., Gutierrez, B., Mekaru, S. et al. Epidemiological data from the COVID-19 
 </div></div>
 </div>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[22]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[23]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
@@ -1639,7 +1651,7 @@ Xu, B., Gutierrez, B., Mekaru, S. et al. Epidemiological data from the COVID-19 
 </div>
 </div>
 <div class="nboutput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[22]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[23]:
 </pre></div>
 </div>
 <div class="output_area rendered_html docutils container">
@@ -1750,7 +1762,7 @@ Xu, B., Gutierrez, B., Mekaru, S. et al. Epidemiological data from the COVID-19 
 </div></div>
 </div>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[23]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[24]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
@@ -1760,7 +1772,7 @@ Xu, B., Gutierrez, B., Mekaru, S. et al. Epidemiological data from the COVID-19 
 </div>
 </div>
 <div class="nboutput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[23]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[24]:
 </pre></div>
 </div>
 <div class="output_area rendered_html docutils container">
@@ -1860,7 +1872,7 @@ Xu, B., Gutierrez, B., Mekaru, S. et al. Epidemiological data from the COVID-19 
 </div>
 <p>As the median value of the period from confirmation to recovery, we can calculate recovery period.</p>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[24]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[25]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
@@ -1870,7 +1882,7 @@ Xu, B., Gutierrez, B., Mekaru, S. et al. Epidemiological data from the COVID-19 
 </div>
 </div>
 <div class="nboutput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[24]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[25]:
 </pre></div>
 </div>
 <div class="output_area docutils container">
@@ -1883,7 +1895,7 @@ Xu, B., Gutierrez, B., Mekaru, S. et al. Epidemiological data from the COVID-19 
 <h2>Population in each country<a class="headerlink" href="#Population-in-each-country" title="Permalink to this headline">¶</a></h2>
 <p>Population values are necessary to calculate the number of susceptible people. Susceptible is a variable of SIR-derived models. This dataset was saved as <code class="docutils literal notranslate"><span class="pre">population_data</span></code>, an instance of <code class="docutils literal notranslate"><span class="pre">PopulationData</span></code> class.</p>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[25]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[26]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
@@ -1892,7 +1904,7 @@ Xu, B., Gutierrez, B., Mekaru, S. et al. Epidemiological data from the COVID-19 
 </div>
 </div>
 <div class="nboutput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[25]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[26]:
 </pre></div>
 </div>
 <div class="output_area docutils container">
@@ -1901,7 +1913,7 @@ covsirphy.cleaning.population.PopulationData
 </pre></div></div>
 </div>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[26]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[27]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
@@ -1919,7 +1931,7 @@ covsirphy.cleaning.population.PopulationData
 </pre></div></div>
 </div>
 <div class="nbinput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[27]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[28]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
@@ -1929,7 +1941,7 @@ covsirphy.cleaning.population.PopulationData
 </div>
 </div>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[28]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[29]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
@@ -1939,7 +1951,7 @@ covsirphy.cleaning.population.PopulationData
 </div>
 </div>
 <div class="nboutput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[28]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[29]:
 </pre></div>
 </div>
 <div class="output_area rendered_html docutils container">
@@ -1970,15 +1982,7 @@ covsirphy.cleaning.population.PopulationData
   </thead>
   <tbody>
     <tr>
-      <th>317238</th>
-      <td>COL</td>
-      <td>Colombia</td>
-      <td>Vichada</td>
-      <td>2020-12-26</td>
-      <td>107808</td>
-    </tr>
-    <tr>
-      <th>317239</th>
+      <th>318109</th>
       <td>COL</td>
       <td>Colombia</td>
       <td>Vichada</td>
@@ -1986,7 +1990,7 @@ covsirphy.cleaning.population.PopulationData
       <td>107808</td>
     </tr>
     <tr>
-      <th>317240</th>
+      <th>318110</th>
       <td>COL</td>
       <td>Colombia</td>
       <td>Vichada</td>
@@ -1994,7 +1998,7 @@ covsirphy.cleaning.population.PopulationData
       <td>107808</td>
     </tr>
     <tr>
-      <th>317241</th>
+      <th>318111</th>
       <td>COL</td>
       <td>Colombia</td>
       <td>Vichada</td>
@@ -2002,11 +2006,19 @@ covsirphy.cleaning.population.PopulationData
       <td>107808</td>
     </tr>
     <tr>
-      <th>317242</th>
+      <th>318112</th>
       <td>COL</td>
       <td>Colombia</td>
       <td>Vichada</td>
       <td>2020-12-30</td>
+      <td>107808</td>
+    </tr>
+    <tr>
+      <th>318113</th>
+      <td>COL</td>
+      <td>Colombia</td>
+      <td>Vichada</td>
+      <td>2020-12-31</td>
       <td>107808</td>
     </tr>
   </tbody>
@@ -2015,7 +2027,7 @@ covsirphy.cleaning.population.PopulationData
 </div>
 <p>We will get the population values with <code class="docutils literal notranslate"><span class="pre">PopulationData.value()</span></code>.</p>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[29]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[30]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
@@ -2029,7 +2041,7 @@ covsirphy.cleaning.population.PopulationData
 </div>
 </div>
 <div class="nboutput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[29]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[30]:
 </pre></div>
 </div>
 <div class="output_area docutils container">
@@ -2039,7 +2051,7 @@ covsirphy.cleaning.population.PopulationData
 </div>
 <p>We can update the population values.</p>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[30]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[31]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
@@ -2071,7 +2083,7 @@ Before: 13942856
 <div class="line">With <code class="docutils literal notranslate"><span class="pre">DataLoader</span></code> class, the dataset was retrieved via <a class="reference external" href="https://covid19datahub.io/">COVID-19 Data Hub</a> and saved as <code class="docutils literal notranslate"><span class="pre">oxcgrt_data</span></code>, an instance of <code class="docutils literal notranslate"><span class="pre">OxCGRTData</span></code> class.</div>
 </div>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[31]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[32]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
@@ -2080,7 +2092,7 @@ Before: 13942856
 </div>
 </div>
 <div class="nboutput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[31]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[32]:
 </pre></div>
 </div>
 <div class="output_area docutils container">
@@ -2089,7 +2101,7 @@ covsirphy.cleaning.oxcgrt.OxCGRTData
 </pre></div></div>
 </div>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[32]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[33]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
@@ -2107,7 +2119,7 @@ covsirphy.cleaning.oxcgrt.OxCGRTData
 </pre></div></div>
 </div>
 <div class="nbinput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[33]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[34]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
@@ -2117,7 +2129,7 @@ covsirphy.cleaning.oxcgrt.OxCGRTData
 </div>
 </div>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[34]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[35]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
@@ -2127,7 +2139,7 @@ covsirphy.cleaning.oxcgrt.OxCGRTData
 </div>
 </div>
 <div class="nboutput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[34]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[35]:
 </pre></div>
 </div>
 <div class="output_area rendered_html docutils container">
@@ -2168,25 +2180,7 @@ covsirphy.cleaning.oxcgrt.OxCGRTData
   </thead>
   <tbody>
     <tr>
-      <th>369290</th>
-      <td>2020-12-26</td>
-      <td>Colombia</td>
-      <td>COL</td>
-      <td>3</td>
-      <td>1</td>
-      <td>1</td>
-      <td>3</td>
-      <td>1</td>
-      <td>1</td>
-      <td>1</td>
-      <td>4</td>
-      <td>2</td>
-      <td>2</td>
-      <td>2</td>
-      <td>60.19</td>
-    </tr>
-    <tr>
-      <th>369291</th>
+      <th>370304</th>
       <td>2020-12-27</td>
       <td>Colombia</td>
       <td>COL</td>
@@ -2204,7 +2198,7 @@ covsirphy.cleaning.oxcgrt.OxCGRTData
       <td>60.19</td>
     </tr>
     <tr>
-      <th>369292</th>
+      <th>370305</th>
       <td>2020-12-28</td>
       <td>Colombia</td>
       <td>COL</td>
@@ -2222,7 +2216,7 @@ covsirphy.cleaning.oxcgrt.OxCGRTData
       <td>60.19</td>
     </tr>
     <tr>
-      <th>369293</th>
+      <th>370306</th>
       <td>2020-12-29</td>
       <td>Colombia</td>
       <td>COL</td>
@@ -2240,8 +2234,26 @@ covsirphy.cleaning.oxcgrt.OxCGRTData
       <td>60.19</td>
     </tr>
     <tr>
-      <th>369294</th>
+      <th>370307</th>
       <td>2020-12-30</td>
+      <td>Colombia</td>
+      <td>COL</td>
+      <td>3</td>
+      <td>1</td>
+      <td>1</td>
+      <td>3</td>
+      <td>1</td>
+      <td>1</td>
+      <td>1</td>
+      <td>4</td>
+      <td>2</td>
+      <td>2</td>
+      <td>2</td>
+      <td>60.19</td>
+    </tr>
+    <tr>
+      <th>370308</th>
+      <td>2020-12-31</td>
       <td>Colombia</td>
       <td>COL</td>
       <td>3</td>
@@ -2262,7 +2274,7 @@ covsirphy.cleaning.oxcgrt.OxCGRTData
 </div></div>
 </div>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[35]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[36]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
@@ -2274,7 +2286,7 @@ covsirphy.cleaning.oxcgrt.OxCGRTData
 </div>
 </div>
 <div class="nboutput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[35]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[36]:
 </pre></div>
 </div>
 <div class="output_area rendered_html docutils container">
@@ -2312,22 +2324,6 @@ covsirphy.cleaning.oxcgrt.OxCGRTData
     </tr>
   </thead>
   <tbody>
-    <tr>
-      <th>360</th>
-      <td>2020-12-26</td>
-      <td>1</td>
-      <td>1</td>
-      <td>1</td>
-      <td>0</td>
-      <td>1</td>
-      <td>1</td>
-      <td>1</td>
-      <td>3</td>
-      <td>2</td>
-      <td>3</td>
-      <td>2</td>
-      <td>53.7</td>
-    </tr>
     <tr>
       <th>361</th>
       <td>2020-12-27</td>
@@ -2392,6 +2388,22 @@ covsirphy.cleaning.oxcgrt.OxCGRTData
       <td>2</td>
       <td>53.7</td>
     </tr>
+    <tr>
+      <th>365</th>
+      <td>2020-12-31</td>
+      <td>1</td>
+      <td>1</td>
+      <td>1</td>
+      <td>0</td>
+      <td>1</td>
+      <td>1</td>
+      <td>1</td>
+      <td>3</td>
+      <td>2</td>
+      <td>3</td>
+      <td>2</td>
+      <td>53.7</td>
+    </tr>
   </tbody>
 </table>
 </div></div>
@@ -2401,7 +2413,7 @@ covsirphy.cleaning.oxcgrt.OxCGRTData
 <h2>The number of tests<a class="headerlink" href="#The-number-of-tests" title="Permalink to this headline">¶</a></h2>
 <p>The number of tests is also key information to understand the situation. This dataset was saved as <code class="docutils literal notranslate"><span class="pre">pcr_data</span></code>, an instance of <code class="docutils literal notranslate"><span class="pre">PCRData</span></code> class.</p>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[36]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[37]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
@@ -2410,7 +2422,7 @@ covsirphy.cleaning.oxcgrt.OxCGRTData
 </div>
 </div>
 <div class="nboutput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[36]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[37]:
 </pre></div>
 </div>
 <div class="output_area docutils container">
@@ -2419,7 +2431,7 @@ covsirphy.cleaning.pcr_data.PCRData
 </pre></div></div>
 </div>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[37]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[38]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
@@ -2439,7 +2451,7 @@ Lisphilar (2020), COVID-19 dataset in Japan, GitHub repository, https://github.c
 </pre></div></div>
 </div>
 <div class="nbinput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[38]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[39]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
@@ -2449,7 +2461,7 @@ Lisphilar (2020), COVID-19 dataset in Japan, GitHub repository, https://github.c
 </div>
 </div>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[39]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[40]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
@@ -2459,7 +2471,7 @@ Lisphilar (2020), COVID-19 dataset in Japan, GitHub repository, https://github.c
 </div>
 </div>
 <div class="nboutput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[39]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[40]:
 </pre></div>
 </div>
 <div class="output_area rendered_html docutils container">
@@ -2490,15 +2502,7 @@ Lisphilar (2020), COVID-19 dataset in Japan, GitHub repository, https://github.c
   </thead>
   <tbody>
     <tr>
-      <th>14142</th>
-      <td>2020-12-26</td>
-      <td>Japan</td>
-      <td>-</td>
-      <td>4676504</td>
-      <td>213547</td>
-    </tr>
-    <tr>
-      <th>14143</th>
+      <th>14191</th>
       <td>2020-12-27</td>
       <td>Japan</td>
       <td>-</td>
@@ -2506,7 +2510,7 @@ Lisphilar (2020), COVID-19 dataset in Japan, GitHub repository, https://github.c
       <td>217312</td>
     </tr>
     <tr>
-      <th>14144</th>
+      <th>14192</th>
       <td>2020-12-28</td>
       <td>Japan</td>
       <td>-</td>
@@ -2514,7 +2518,7 @@ Lisphilar (2020), COVID-19 dataset in Japan, GitHub repository, https://github.c
       <td>220236</td>
     </tr>
     <tr>
-      <th>14145</th>
+      <th>14193</th>
       <td>2020-12-29</td>
       <td>Japan</td>
       <td>-</td>
@@ -2522,19 +2526,27 @@ Lisphilar (2020), COVID-19 dataset in Japan, GitHub repository, https://github.c
       <td>223120</td>
     </tr>
     <tr>
-      <th>14146</th>
+      <th>14194</th>
       <td>2020-12-30</td>
       <td>Japan</td>
       <td>-</td>
       <td>4829069</td>
       <td>226596</td>
     </tr>
+    <tr>
+      <th>14195</th>
+      <td>2020-12-31</td>
+      <td>Japan</td>
+      <td>-</td>
+      <td>4851937</td>
+      <td>230304</td>
+    </tr>
   </tbody>
 </table>
 </div></div>
 </div>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[40]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[41]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
@@ -2546,7 +2558,7 @@ Lisphilar (2020), COVID-19 dataset in Japan, GitHub repository, https://github.c
 </div>
 </div>
 <div class="nboutput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[40]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[41]:
 </pre></div>
 </div>
 <div class="output_area rendered_html docutils container">
@@ -2580,7 +2592,7 @@ Lisphilar (2020), COVID-19 dataset in Japan, GitHub repository, https://github.c
 </div>
 <p>Under the assumption that all tests were PCR test, we can calculate the positive rate of PCR tests as “the number of confirmed cases per the number of tests”.</p>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[41]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[42]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
@@ -2593,7 +2605,7 @@ Lisphilar (2020), COVID-19 dataset in Japan, GitHub repository, https://github.c
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area docutils container">
-<img alt="_images/usage_dataset_56_0.png" src="_images/usage_dataset_56_0.png" />
+<img alt="_images/usage_dataset_57_0.png" src="_images/usage_dataset_57_0.png" />
 </div>
 </div>
 </div>
@@ -2601,17 +2613,17 @@ Lisphilar (2020), COVID-19 dataset in Japan, GitHub repository, https://github.c
 <h2>The number of vaccinations<a class="headerlink" href="#The-number-of-vaccinations" title="Permalink to this headline">¶</a></h2>
 <p>The number of vaccinations is a key factor to end the outbreak as soon as possible. This dataset was saved as <code class="docutils literal notranslate"><span class="pre">vaccine_data</span></code>, an instance of <code class="docutils literal notranslate"><span class="pre">VaccineData</span></code> class.</p>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[42]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[43]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="c1"># The number of vaccinations (will be prepared in 2.14.0)</span>
+<span></span><span class="c1"># The number of vaccinations</span>
 <span class="nb">type</span><span class="p">(</span><span class="n">vaccine_data</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
 <div class="nboutput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[42]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[43]:
 </pre></div>
 </div>
 <div class="output_area docutils container">
@@ -2620,7 +2632,7 @@ covsirphy.cleaning.vaccine_data.VaccineData
 </pre></div></div>
 </div>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[43]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[44]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
@@ -2638,7 +2650,7 @@ Hasell, J., Mathieu, E., Beltekian, D. et al. A cross-country database of COVID-
 </pre></div></div>
 </div>
 <div class="nbinput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[44]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[45]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
@@ -2648,7 +2660,7 @@ Hasell, J., Mathieu, E., Beltekian, D. et al. A cross-country database of COVID-
 </div>
 </div>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[45]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[46]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
@@ -2658,7 +2670,7 @@ Hasell, J., Mathieu, E., Beltekian, D. et al. A cross-country database of COVID-
 </div>
 </div>
 <div class="nboutput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[45]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[46]:
 </pre></div>
 </div>
 <div class="output_area rendered_html docutils container">
@@ -2688,35 +2700,35 @@ Hasell, J., Mathieu, E., Beltekian, D. et al. A cross-country database of COVID-
   </thead>
   <tbody>
     <tr>
-      <th>76</th>
-      <td>2020-12-23</td>
-      <td>United States</td>
-      <td>Moderna, Pfizer/BioNTech</td>
-      <td>1008025</td>
-    </tr>
-    <tr>
-      <th>77</th>
+      <th>89</th>
       <td>2020-12-26</td>
       <td>United States</td>
       <td>Moderna, Pfizer/BioNTech</td>
       <td>1944585</td>
     </tr>
     <tr>
-      <th>78</th>
+      <th>90</th>
       <td>2020-12-28</td>
       <td>United States</td>
       <td>Moderna, Pfizer/BioNTech</td>
       <td>2127143</td>
     </tr>
     <tr>
-      <th>79</th>
+      <th>91</th>
+      <td>2020-12-30</td>
+      <td>United States</td>
+      <td>Moderna, Pfizer/BioNTech</td>
+      <td>2589125</td>
+    </tr>
+    <tr>
+      <th>92</th>
       <td>2020-12-13</td>
       <td>Wales</td>
       <td>Pfizer/BioNTech</td>
       <td>7852</td>
     </tr>
     <tr>
-      <th>80</th>
+      <th>93</th>
       <td>2020-12-20</td>
       <td>Wales</td>
       <td>Pfizer/BioNTech</td>
@@ -2727,7 +2739,7 @@ Hasell, J., Mathieu, E., Beltekian, D. et al. A cross-country database of COVID-
 </div></div>
 </div>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[46]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[47]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
@@ -2737,7 +2749,7 @@ Hasell, J., Mathieu, E., Beltekian, D. et al. A cross-country database of COVID-
 </div>
 </div>
 <div class="nboutput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[46]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[47]:
 </pre></div>
 </div>
 <div class="output_area docutils container">
@@ -2749,16 +2761,19 @@ Hasell, J., Mathieu, E., Beltekian, D. et al. A cross-country database of COVID-
  &#39;Chile&#39;,
  &#39;China&#39;,
  &#39;Costa Rica&#39;,
+ &#39;Croatia&#39;,
  &#39;Denmark&#39;,
  &#39;England&#39;,
  &#39;Estonia&#39;,
  &#39;Germany&#39;,
+ &#39;Greece&#39;,
  &#39;Hungary&#39;,
  &#39;Israel&#39;,
  &#39;Italy&#39;,
  &#39;Kuwait&#39;,
  &#39;Latvia&#39;,
  &#39;Lithuania&#39;,
+ &#39;Luxembourg&#39;,
  &#39;Mexico&#39;,
  &#39;Northern Ireland&#39;,
  &#39;Oman&#39;,
@@ -2773,7 +2788,7 @@ Hasell, J., Mathieu, E., Beltekian, D. et al. A cross-country database of COVID-
 </pre></div></div>
 </div>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[47]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[48]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
@@ -2785,7 +2800,7 @@ Hasell, J., Mathieu, E., Beltekian, D. et al. A cross-country database of COVID-
 </div>
 </div>
 <div class="nboutput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[47]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[48]:
 </pre></div>
 </div>
 <div class="output_area rendered_html docutils container">
@@ -2846,17 +2861,17 @@ Hasell, J., Mathieu, E., Beltekian, D. et al. A cross-country database of COVID-
 <h2>Population pyramid<a class="headerlink" href="#Population-pyramid" title="Permalink to this headline">¶</a></h2>
 <p>With population pyramid, we can divide the population to sub-groups. This will be useful when we analyse the meaning of parameters. For example, how many days go out is different between the sub-groups. This dataset was saved as <code class="docutils literal notranslate"><span class="pre">pyramid_data</span></code>, an instance of <code class="docutils literal notranslate"><span class="pre">PopulationPyramidData</span></code> class.</p>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[48]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[49]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="c1"># Population pyramid (will be prepared in 2.14.0)</span>
+<span></span><span class="c1"># Population pyramid</span>
 <span class="nb">type</span><span class="p">(</span><span class="n">pyramid_data</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
 <div class="nboutput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[48]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[49]:
 </pre></div>
 </div>
 <div class="output_area docutils container">
@@ -2865,7 +2880,7 @@ covsirphy.cleaning.pyramid.PopulationPyramidData
 </pre></div></div>
 </div>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[49]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[50]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
@@ -2883,7 +2898,7 @@ World Bank Group (2020), World Bank Open Data, https://data.worldbank.org/
 </pre></div></div>
 </div>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[50]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[51]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
@@ -2901,7 +2916,7 @@ Retrieving population pyramid dataset (Japan) from https://data.worldbank.org/
 </pre></div></div>
 </div>
 <div class="nboutput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[50]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[51]:
 </pre></div>
 </div>
 <div class="output_area rendered_html docutils container">
@@ -2958,6 +2973,339 @@ Retrieving population pyramid dataset (Japan) from https://data.worldbank.org/
       <td>122</td>
       <td>255035</td>
       <td>0.002174</td>
+    </tr>
+  </tbody>
+</table>
+</div></div>
+</div>
+</div>
+<div class="section" id="Japan-specific-dataset">
+<h2>Japan-specific dataset<a class="headerlink" href="#Japan-specific-dataset" title="Permalink to this headline">¶</a></h2>
+<p>This includes the number of confirmed/infected/fatal/recovered/tests/moderate/severe cases at country/prefecture level and metadata of each prefecture. This dataset was saved as <code class="docutils literal notranslate"><span class="pre">japan_data</span></code>, an instance of <code class="docutils literal notranslate"><span class="pre">JapanData</span></code> class.</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[52]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="c1"># Japan-specific dataset</span>
+<span class="nb">type</span><span class="p">(</span><span class="n">japan_data</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[52]:
+</pre></div>
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+covsirphy.cleaning.japan_data.JapanData
+</pre></div></div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[53]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="c1"># Description/citation</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">japan_data</span><span class="o">.</span><span class="n">citation</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+Lisphilar (2020), COVID-19 dataset in Japan, GitHub repository, https://github.com/lisphilar/covid19-sir/data/japan
+</pre></div></div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[54]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="c1"># Cleaned dataset</span>
+<span class="n">japan_data</span><span class="o">.</span><span class="n">cleaned</span><span class="p">()</span><span class="o">.</span><span class="n">tail</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[54]:
+</pre></div>
+</div>
+<div class="output_area rendered_html docutils container">
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>Date</th>
+      <th>Country</th>
+      <th>Province</th>
+      <th>Confirmed</th>
+      <th>Infected</th>
+      <th>Fatal</th>
+      <th>Recovered</th>
+      <th>Tests</th>
+      <th>Moderate</th>
+      <th>Severe</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>14191</th>
+      <td>2020-12-27</td>
+      <td>Japan</td>
+      <td>-</td>
+      <td>217312</td>
+      <td>31503</td>
+      <td>3213</td>
+      <td>182596</td>
+      <td>4711851</td>
+      <td>29846</td>
+      <td>659</td>
+    </tr>
+    <tr>
+      <th>14192</th>
+      <td>2020-12-28</td>
+      <td>Japan</td>
+      <td>-</td>
+      <td>220236</td>
+      <td>32322</td>
+      <td>3252</td>
+      <td>184662</td>
+      <td>4725966</td>
+      <td>30583</td>
+      <td>661</td>
+    </tr>
+    <tr>
+      <th>14193</th>
+      <td>2020-12-29</td>
+      <td>Japan</td>
+      <td>-</td>
+      <td>223120</td>
+      <td>32868</td>
+      <td>3306</td>
+      <td>186946</td>
+      <td>4802239</td>
+      <td>31169</td>
+      <td>675</td>
+    </tr>
+    <tr>
+      <th>14194</th>
+      <td>2020-12-30</td>
+      <td>Japan</td>
+      <td>-</td>
+      <td>226596</td>
+      <td>33781</td>
+      <td>3349</td>
+      <td>189466</td>
+      <td>4829069</td>
+      <td>31961</td>
+      <td>668</td>
+    </tr>
+    <tr>
+      <th>14195</th>
+      <td>2020-12-31</td>
+      <td>Japan</td>
+      <td>-</td>
+      <td>230304</td>
+      <td>35439</td>
+      <td>3414</td>
+      <td>191451</td>
+      <td>4851937</td>
+      <td>33485</td>
+      <td>681</td>
+    </tr>
+  </tbody>
+</table>
+</div></div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[55]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="c1"># Metadata</span>
+<span class="n">japan_data</span><span class="o">.</span><span class="n">meta</span><span class="p">()</span><span class="o">.</span><span class="n">tail</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+Retrieving Metadata of Japan dataset from https://github.com/lisphilar/covid19-sir/data/japan
+</pre></div></div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[55]:
+</pre></div>
+</div>
+<div class="output_area rendered_html docutils container">
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>Prefecture</th>
+      <th>Admin_Capital</th>
+      <th>Admin_Region</th>
+      <th>Admin_Num</th>
+      <th>Area_Habitable</th>
+      <th>Area_Total</th>
+      <th>Clinic_bed_Care</th>
+      <th>Clinic_bed_Total</th>
+      <th>Hospital_bed_Care</th>
+      <th>Hospital_bed_Specific</th>
+      <th>Hospital_bed_Total</th>
+      <th>Hospital_bed_Tuberculosis</th>
+      <th>Hospital_bed_Type-I</th>
+      <th>Hospital_bed_Type-II</th>
+      <th>Population_Female</th>
+      <th>Population_Male</th>
+      <th>Population_Total</th>
+      <th>Location_Latitude</th>
+      <th>Location_Longitude</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>42</th>
+      <td>Kumamoto</td>
+      <td>Kumamoto</td>
+      <td>Kyushu</td>
+      <td>43</td>
+      <td>2796</td>
+      <td>7409</td>
+      <td>497</td>
+      <td>4628</td>
+      <td>8340</td>
+      <td>0</td>
+      <td>33710</td>
+      <td>95</td>
+      <td>2</td>
+      <td>46</td>
+      <td>933</td>
+      <td>833</td>
+      <td>1765</td>
+      <td>32.790513</td>
+      <td>130.742388</td>
+    </tr>
+    <tr>
+      <th>43</th>
+      <td>Oita</td>
+      <td>Oita</td>
+      <td>Kyushu</td>
+      <td>44</td>
+      <td>1799</td>
+      <td>6341</td>
+      <td>269</td>
+      <td>3561</td>
+      <td>2618</td>
+      <td>0</td>
+      <td>19834</td>
+      <td>50</td>
+      <td>2</td>
+      <td>38</td>
+      <td>607</td>
+      <td>546</td>
+      <td>1152</td>
+      <td>33.238391</td>
+      <td>131.612658</td>
+    </tr>
+    <tr>
+      <th>44</th>
+      <td>Miyazaki</td>
+      <td>Miyazaki</td>
+      <td>Kyushu</td>
+      <td>45</td>
+      <td>1850</td>
+      <td>7735</td>
+      <td>206</td>
+      <td>2357</td>
+      <td>3682</td>
+      <td>0</td>
+      <td>18769</td>
+      <td>33</td>
+      <td>1</td>
+      <td>30</td>
+      <td>577</td>
+      <td>512</td>
+      <td>1089</td>
+      <td>31.911188</td>
+      <td>131.423873</td>
+    </tr>
+    <tr>
+      <th>45</th>
+      <td>Kagoshima</td>
+      <td>Kagoshima</td>
+      <td>Kyushu</td>
+      <td>46</td>
+      <td>3313</td>
+      <td>9187</td>
+      <td>652</td>
+      <td>4827</td>
+      <td>7750</td>
+      <td>0</td>
+      <td>32651</td>
+      <td>98</td>
+      <td>1</td>
+      <td>44</td>
+      <td>863</td>
+      <td>763</td>
+      <td>1626</td>
+      <td>31.560052</td>
+      <td>130.557745</td>
+    </tr>
+    <tr>
+      <th>46</th>
+      <td>Okinawa</td>
+      <td>Naha</td>
+      <td>Okinawa</td>
+      <td>47</td>
+      <td>1169</td>
+      <td>2281</td>
+      <td>83</td>
+      <td>914</td>
+      <td>3804</td>
+      <td>0</td>
+      <td>18710</td>
+      <td>47</td>
+      <td>4</td>
+      <td>20</td>
+      <td>734</td>
+      <td>709</td>
+      <td>1443</td>
+      <td>26.211761</td>
+      <td>127.681119</td>
     </tr>
   </tbody>
 </table>

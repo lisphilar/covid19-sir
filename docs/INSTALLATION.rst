@@ -38,20 +38,25 @@ to find the details of the datasets.
     cs.__version__
     # Create DataLoader instance
     data_loader = cs.DataLoader("input")
-    # The number of cases (JHU style)
+
+.. code:: python
+
+    # (Main) The number of cases (JHU style)
     jhu_data = data_loader.jhu()
+    # (Main) Population in each country
+    population_data = data_loader.population()
+    # (Main) Government Response Tracker (OxCGRT)
+    oxcgrt_data = data_loader.oxcgrt()
     # Linelist of case reports
     linelist = data_loader.linelist()
-    # Population in each country
-    population_data = data_loader.population()
-    # Government Response Tracker (OxCGRT)
-    oxcgrt_data = data_loader.oxcgrt()
     # The number of tests
     pcr_data = data_loader.pcr()
-    # The number of vaccinations (will be prepared in 2.14.0)
+    # The number of vaccinations
     vaccine_data = data_loader.vaccine()
-    # Population pyramid (will be prepared in 2.14.0)
+    # Population pyramid
     pyramid_data = data_loader.pyramid()
+    # Japan-specific dataset
+    japan_data = data_loader.japan()
 
 The downloaded datasets were retrieved from the following sites.
 
@@ -99,7 +104,8 @@ https://data.worldbank.org/
 
 Lisphilar (2020), GitHub repository, COVID-19 dataset in Japan.
 
--  The number of cases in Japan
+-  The number of cases in Japan (total/prefectures)
+-  Metadata
 
 2. How to request new data loader
 ---------------------------------

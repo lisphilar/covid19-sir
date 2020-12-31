@@ -173,7 +173,7 @@
 
 <div class="viewcode-block" id="JapanData"><a class="viewcode-back" href="../../../covsirphy.cleaning.japan_data.html#covsirphy.JapanData">[docs]</a><span class="k">class</span> <span class="nc">JapanData</span><span class="p">(</span><span class="n">CountryData</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Linelist of case reports.</span>
+<span class="sd">    Japan-specific dataset.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        filename (str or pathlib.path): CSV filename to save the raw dataset</span>
@@ -196,6 +196,7 @@
     <span class="n">GITHUB_URL</span> <span class="o">=</span> <span class="s2">&quot;https://raw.githubusercontent.com&quot;</span>
     <span class="n">URL_C</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">GITHUB_URL</span><span class="si">}</span><span class="s2">/lisphilar/covid19-sir/master/data/japan/covid_jpn_total.csv&quot;</span>
     <span class="n">URL_P</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">GITHUB_URL</span><span class="si">}</span><span class="s2">/lisphilar/covid19-sir/master/data/japan/covid_jpn_prefecture.csv&quot;</span>
+    <span class="n">URL_M</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">GITHUB_URL</span><span class="si">}</span><span class="s2">/lisphilar/covid19-sir/master/data/japan/covid_jpn_metadata.csv&quot;</span>
     <span class="c1"># Moderate: cases who requires hospitalization but not severe</span>
     <span class="n">MODERATE</span> <span class="o">=</span> <span class="s2">&quot;Moderate&quot;</span>
     <span class="c1"># Severe</span>
@@ -209,6 +210,17 @@
         <span class="n">CountryData</span><span class="o">.</span><span class="n">DATE</span><span class="p">,</span> <span class="n">CountryData</span><span class="o">.</span><span class="n">COUNTRY</span><span class="p">,</span> <span class="n">CountryData</span><span class="o">.</span><span class="n">PROVINCE</span><span class="p">,</span>
         <span class="o">*</span><span class="n">JAPAN_VALUE_COLS</span><span class="p">,</span>
     <span class="p">]</span>
+    <span class="c1"># Meta data</span>
+    <span class="n">JAPAN_META_CAT</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;Prefecture&quot;</span><span class="p">,</span> <span class="s2">&quot;Admin_Capital&quot;</span><span class="p">,</span> <span class="s2">&quot;Admin_Region&quot;</span><span class="p">]</span>
+    <span class="n">JAPAN_META_INT</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="s2">&quot;Admin_Num&quot;</span><span class="p">,</span> <span class="s2">&quot;Area_Habitable&quot;</span><span class="p">,</span> <span class="s2">&quot;Area_Total&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;Clinic_bed_Care&quot;</span><span class="p">,</span> <span class="s2">&quot;Clinic_bed_Total&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;Hospital_bed_Care&quot;</span><span class="p">,</span> <span class="s2">&quot;Hospital_bed_Specific&quot;</span><span class="p">,</span> <span class="s2">&quot;Hospital_bed_Total&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;Hospital_bed_Tuberculosis&quot;</span><span class="p">,</span> <span class="s2">&quot;Hospital_bed_Type-I&quot;</span><span class="p">,</span> <span class="s2">&quot;Hospital_bed_Type-II&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;Population_Female&quot;</span><span class="p">,</span> <span class="s2">&quot;Population_Male&quot;</span><span class="p">,</span> <span class="s2">&quot;Population_Total&quot;</span><span class="p">,</span>
+    <span class="p">]</span>
+    <span class="n">JAPAN_META_FLT</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;Location_Latitude&quot;</span><span class="p">,</span> <span class="s2">&quot;Location_Longitude&quot;</span><span class="p">]</span>
+    <span class="n">JAPAN_META_COLS</span> <span class="o">=</span> <span class="p">[</span><span class="o">*</span><span class="n">JAPAN_META_CAT</span><span class="p">,</span> <span class="o">*</span><span class="n">JAPAN_META_INT</span><span class="p">,</span> <span class="o">*</span><span class="n">JAPAN_META_FLT</span><span class="p">]</span>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="p">,</span> <span class="n">force</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
         <span class="n">Path</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span><span class="o">.</span><span class="n">parent</span><span class="o">.</span><span class="n">mkdir</span><span class="p">(</span><span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">parents</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
@@ -220,6 +232,8 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_country</span> <span class="o">=</span> <span class="s2">&quot;Japan&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_citation</span> <span class="o">=</span> <span class="s2">&quot;Lisphilar (2020), COVID-19 dataset in Japan, GitHub repository, &quot;</span> \
             <span class="s2">&quot;https://github.com/lisphilar/covid19-sir/data/japan&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">dir_path</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span><span class="o">.</span><span class="n">parent</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">verbose</span> <span class="o">=</span> <span class="n">verbose</span>
 
     <span class="k">def</span> <span class="nf">_retrieve</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
@@ -308,7 +322,81 @@
         <span class="k">return</span> <span class="n">df</span><span class="o">.</span><span class="n">loc</span><span class="p">[:,</span> <span class="bp">self</span><span class="o">.</span><span class="n">JAPAN_COLS</span><span class="p">]</span>
 
 <div class="viewcode-block" id="JapanData.set_variables"><a class="viewcode-back" href="../../../covsirphy.cleaning.japan_data.html#covsirphy.JapanData.set_variables">[docs]</a>    <span class="k">def</span> <span class="nf">set_variables</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="k">raise</span> <span class="ne">NotImplementedError</span></div></div>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span></div>
+
+    <span class="k">def</span> <span class="nf">_retrieve_meta</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Retrieve meta data from server.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            filename (str or pathlib.path): CSV filename to save the raw dataset</span>
+<span class="sd">            verbose (int): level of verbosity</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            pandas.DataFrame: raw dataset</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Show URL</span>
+        <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span>
+                <span class="s2">&quot;Retrieving Metadata of Japan dataset from https://github.com/lisphilar/covid19-sir/data/japan&quot;</span><span class="p">)</span>
+        <span class="n">df</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">URL_M</span><span class="p">)</span>
+        <span class="n">df</span><span class="o">.</span><span class="n">to_csv</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">df</span>
+
+<div class="viewcode-block" id="JapanData.meta"><a class="viewcode-back" href="../../../covsirphy.cleaning.japan_data.html#covsirphy.JapanData.meta">[docs]</a>    <span class="k">def</span> <span class="nf">meta</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">basename</span><span class="o">=</span><span class="s2">&quot;covid_japan_metadata.csv&quot;</span><span class="p">,</span> <span class="n">cleaned</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">force</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Return metadata of Japan-specific dataset.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            basename (str): basename of the CSV file to save the raw dataset</span>
+<span class="sd">            cleaned (bool): return cleaned (True) or raw (False) dataset</span>
+<span class="sd">            force (bool): if True, always download the dataset from the server</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            pandas.DataFrame: (cleaned or raw) dataset</span>
+<span class="sd">                Index: reset index</span>
+<span class="sd">                Columns: for cleaned dataset,</span>
+<span class="sd">                    - Prefecture (pandas.Category)</span>
+<span class="sd">                    - Admin_Capital (pandas.Category)</span>
+<span class="sd">                    - Admin_Region (pandas.Category)</span>
+<span class="sd">                    - Admin_Num (int)</span>
+<span class="sd">                    - Area_Habitable (int)</span>
+<span class="sd">                    - Area_Total (int)</span>
+<span class="sd">                    - Clinic_bed_Care (int) </span>
+<span class="sd">                    - Clinic_bed_Total (int)</span>
+<span class="sd">                    - Hospital_bed_Care (int)</span>
+<span class="sd">                    - Hospital_bed_Specific (int)</span>
+<span class="sd">                    - Hospital_bed_Total (int)</span>
+<span class="sd">                    - Hospital_bed_Tuberculosis (int)</span>
+<span class="sd">                    - Hospital_bed_Type-I (int)</span>
+<span class="sd">                    - Hospital_bed_Type-II (int)</span>
+<span class="sd">                    - Population_Female (int)</span>
+<span class="sd">                    - Population_Male (int)</span>
+<span class="sd">                    - Population_Total (int)</span>
+<span class="sd">                    - Location_Latitude (float)</span>
+<span class="sd">                    - Location_Longitude (float)</span>
+
+<span class="sd">        Note:</span>
+<span class="sd">            Please refer to https://github.com/lisphilar/covid19-sir/tree/master/data</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">filepath</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dir_path</span><span class="o">.</span><span class="n">joinpath</span><span class="p">(</span><span class="n">basename</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">filepath</span><span class="o">.</span><span class="n">exists</span><span class="p">()</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">force</span><span class="p">:</span>
+            <span class="n">df</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">filepath</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">df</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_retrieve_meta</span><span class="p">(</span><span class="n">filename</span><span class="o">=</span><span class="n">filepath</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">verbose</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">cleaned</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">df</span>
+        <span class="c1"># Data cleaning</span>
+        <span class="n">df</span><span class="p">[</span><span class="s2">&quot;Title&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="s2">&quot;Category&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">str</span><span class="o">.</span><span class="n">cat</span><span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="s2">&quot;Item&quot;</span><span class="p">],</span> <span class="n">sep</span><span class="o">=</span><span class="s2">&quot;_&quot;</span><span class="p">)</span>
+        <span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">pivot_table</span><span class="p">(</span>
+            <span class="n">values</span><span class="o">=</span><span class="s2">&quot;Value&quot;</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="s2">&quot;Prefecture&quot;</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="s2">&quot;Title&quot;</span><span class="p">,</span> <span class="n">aggfunc</span><span class="o">=</span><span class="s2">&quot;last&quot;</span><span class="p">)</span>
+        <span class="n">df</span><span class="o">.</span><span class="n">columns</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">reset_index</span><span class="p">()</span>
+        <span class="n">df</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">JAPAN_META_CAT</span><span class="p">]</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">JAPAN_META_CAT</span><span class="p">]</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="s2">&quot;category&quot;</span><span class="p">)</span>
+        <span class="n">df</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">JAPAN_META_INT</span><span class="p">]</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">JAPAN_META_INT</span><span class="p">]</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">int64</span><span class="p">)</span>
+        <span class="n">df</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">JAPAN_META_FLT</span><span class="p">]</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">JAPAN_META_FLT</span><span class="p">]</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span>
+        <span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">sort_values</span><span class="p">(</span><span class="s2">&quot;Admin_Num&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">reset_index</span><span class="p">(</span><span class="n">drop</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">df</span><span class="o">.</span><span class="n">loc</span><span class="p">[:,</span> <span class="bp">self</span><span class="o">.</span><span class="n">JAPAN_META_COLS</span><span class="p">]</span></div></div>
 </pre></div>
 
            </div>
