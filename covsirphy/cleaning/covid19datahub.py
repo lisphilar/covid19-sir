@@ -19,7 +19,6 @@ class COVID19DataHub(Term):
     https://covid19datahub.io/
 
     Args:
-        directory (str or pathlib.Path): directory to save the downloaded datasets
         filename (str): CSV filename to save records
     """
     # Citation

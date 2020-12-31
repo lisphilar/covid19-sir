@@ -9,7 +9,7 @@ from covsirphy.cleaning.country_data import CountryData
 
 class JapanData(CountryData):
     """
-    Linelist of case reports.
+    Japan-specific dataset.
 
     Args:
         filename (str or pathlib.path): CSV filename to save the raw dataset
