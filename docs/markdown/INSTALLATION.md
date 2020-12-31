@@ -32,9 +32,9 @@ population_data = data_loader.population()
 oxcgrt_data = data_loader.oxcgrt()
 # The number of tests
 pcr_data = data_loader.pcr()
-# The number of vaccinations (will be prepared in 2.14.0)
+# The number of vaccinations
 vaccine_data = data_loader.vaccine()
-# Population pyramid (will be prepared in 2.14.0)
+# Population pyramid
 pyramid_data = data_loader.pyramid()
 ```
 
