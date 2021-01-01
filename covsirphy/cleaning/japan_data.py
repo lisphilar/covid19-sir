@@ -198,7 +198,7 @@ class JapanData(CountryData):
                     - Admin_Num (int)
                     - Area_Habitable (int)
                     - Area_Total (int)
-                    - Clinic_bed_Care (int) 
+                    - Clinic_bed_Care (int)
                     - Clinic_bed_Total (int)
                     - Hospital_bed_Care (int)
                     - Hospital_bed_Specific (int)
