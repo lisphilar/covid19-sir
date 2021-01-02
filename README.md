@@ -41,16 +41,10 @@
 Any suggestions with [Github Issues](https://github.com/lisphilar/covid19-sir/issues/new/choose) are always welcomed. Please read [Guideline of contribution](https://lisphilar.github.io/covid19-sir/CONTRIBUTING.html) in advance.</strong>
 
 ## Installation
-The latest stable version of CovsirPhy is available at [PyPI (The Python Package Index): covsirphy](https://pypi.org/project/covsirphy/) and supports Python 3.6 or newer versions.
+The latest stable version of CovsirPhy is available at [PyPI (The Python Package Index): covsirphy](https://pypi.org/project/covsirphy/) and supports Python 3.7 or newer versions. Details are explained in [Documentation: Installation](https://lisphilar.github.io/covid19-sir/INSTALLATION.html).
 
 ```
 pip install --upgrade covsirphy
-```
-
-Development versions are in [GitHub repository: CovsirPhy](https://github.com/lisphilar/covid19-sir).
-
-```
-pip install --upgrade "git+https://github.com/lisphilar/covid19-sir.git#egg=covsirphy"
 ```
 
 ## Usage
