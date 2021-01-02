@@ -5,9 +5,9 @@ We hope this project contribute to COVID-19 outbreak research and we will overco
 When you contribute to [covid-sir repository](https://github.com/lisphilar/covid19-sir) including CovsirPhy package, please kindly follow [Code of conduct](https://lisphilar.github.io/covid19-sir/CODE_OF_CONDUCT.html) and the steps explained in this document. If you have any questions or any request to change about this guideline, please inform the author via issue page.
 
 Terms:
-- 'Maintainers' maintain this repository and merge the pull requests, update [sphinx document](https://lisphilar.github.io/covid19-sir/) and the version number.
-- 'Developers' create pull requests.
-- 'Users' uses this package and create issues.
+- 'Maintainers' (author/collaborators) maintain this repository. i.e. Merge pull requests, publish [sphinx document](https://lisphilar.github.io/covid19-sir/) and update the version number.
+- 'Developers' create issues/pull requests and update documentation.
+- 'Users' uses this package for analysing the datasets, publish the outputs, and create issues.
 
 ## Clone CovsirPhy repository and install dependencies
 Developers will clone CovsirPhy repository with `git clone` command and install dependencies with Poetry.
@@ -20,7 +20,7 @@ git clone https://github.com/lisphilar/covid19-sir.git
 cd covid19-sir
 ```
 
-Or, fork the repository and run the following commands with your account name `<your account>`. "remotes/upstream/master" will be added.
+Or, fork the repository and run the following commands with your account name `<your account>`. "remotes/upstream/master" will be shown by `git branch -a`.
 
 ```
 git clone https://github.com/<your account>/covid19-sir.git
@@ -46,10 +46,10 @@ poetry config virtualenvs.in-project true
 poetry config --list
 ```
 
-If you have `make` commands, run `make poetry-windows`. Make commands are defined in "Makefile" of the top directory.
+If you have `make` commands, run `make poetry-windows`. This is defined in "Makefile" of the top directory.
 
 ### Install Poetry (Linux, WSL, macOS)
-Please use make command.
+Please use `make` command.
 
 ```
 make poetry-linux
@@ -67,6 +67,7 @@ poetry install
 - New dependencies can be installed with `poetry add <name>` or `poetry add <name> --dev`.
 - Un-necessary dependencies will be removed with `poetry remove <name>` or `poetry remove <name> --dev`.
 - Start shell with `poetry shell; python`.
+- Run python scripts with `poetry run` command, like `poetry run examples/scenario_analysis.py`.
 
 ## Issues
 Kindly [create an issue](https://github.com/lisphilar/covid19-sir/issues) when you want to
@@ -101,7 +102,7 @@ Please use appropriate template if available, and specify the related issues and
 
 We use GitHub flow here. Default branch can be deployed always as the latest development version. Name of branch for pull requests will be linked to issue numbers, like "issue100".
 
-Update of version number and sphinx documents is not necessary for developers. After reviewing by assigned reviewers, maintainers will update them by editing "covsirphy/__version__.py" and "pyproject.toml" when merge the pull request.
+Update of version number and sphinx documents is not necessary for developers. After reviewing by assigned reviewers, maintainers will update them by editing "covsirphy/\_\_version\_\_.py" and "pyproject.toml" when merge the pull request.
 
 ## Run tests
 Before creating a pull request, please run tests with `make pytest` or the following commands.
