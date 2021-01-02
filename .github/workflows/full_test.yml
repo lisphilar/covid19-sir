@@ -1,16 +1,19 @@
-name: test of pip install
+name: full test for the all supported Python versions
 
 on:
   push:
     branches:
       - master
+    paths:
+      - "covsirphy/__version__.py"
+      - "pyproject.toml"
 
 jobs:
   pytest:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        python-version: [3.7, 3.8]
+        python-version: [3.7, 3.8, 3.9]
 
     steps:
     - name: Checkout
@@ -24,5 +27,7 @@ jobs:
     # pip install
     - name: pip install
       run: |
-        pip install "git+https://github.com/lisphilar/covid19-sir.git#egg=covsirphy"
-        python -c "import covsirphy as cs"
+        pip install pip --upgrade
+        pip install .
+        pip install pytest
+        pytest -v --maxfail=1 tests
