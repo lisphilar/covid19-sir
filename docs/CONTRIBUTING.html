@@ -99,9 +99,16 @@
 <li class="toctree-l1"><a class="reference internal" href="CODE_OF_CONDUCT.html">Contributor Covenant Code of Conduct</a></li>
 <li class="toctree-l1"><a class="reference internal" href="SECURITY.html">Security policy of CovsirPhy</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Guideline of contribution</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="#clone-covsirphy-repository-and-install-dependencies">Clone CovsirPhy repository and install dependencies</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#run-tests">Run tests</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#clone-covsirphy-repository-and-install-dependencies">Clone CovsirPhy repository and install dependencies</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#clone-fork-the-repository">Clone/Fork the repository</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#install-poetry-windows">Install Poetry (Windows)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#install-poetry-linux-wsl-macos">Install Poetry (Linux, WSL, macOS)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#install-dependencies">Install dependencies</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#issues">Issues</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#pull-request">Pull request</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#run-tests">Run tests</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#versioning">Versioning</a></li>
 </ul>
 </li>
@@ -197,126 +204,185 @@
 <div class="section" id="guideline-of-contribution">
 <h1>Guideline of contribution<a class="headerlink" href="#guideline-of-contribution" title="Permalink to this headline">¶</a></h1>
 <div class="line-block">
-<div class="line">Thank you always for your comments and using this repository!</div>
+<div class="line">Thank you always for using CovsirPhy and continuous supports!</div>
 <div class="line">We hope this project contribute to COVID-19 outbreak research and we
 will overcome the outbreak in the near future.</div>
 </div>
-<p>When you contribute to covid-sir repository including CovsirPhy package,
-please kindly follow <a class="reference external" href="https://lisphilar.github.io/covid19-sir/CODE_OF_CONDUCT.html">Code of
+<p>When you contribute to <a class="reference external" href="https://github.com/lisphilar/covid19-sir">covid-sir
+repository</a> including
+CovsirPhy package, please kindly follow <a class="reference external" href="https://lisphilar.github.io/covid19-sir/CODE_OF_CONDUCT.html">Code of
 conduct</a>
 and the steps explained in this document. If you have any questions or
 any request to change about this guideline, please inform the author via
 issue page.</p>
-<p>Terms: - ‘Maintainers’ maintain this repository and merge the pull
-requests, update <a class="reference external" href="https://lisphilar.github.io/covid19-sir/">sphinx
-document</a> and version
-number. - ‘Developers’ create pull requests. - ‘Users’ uses this package
-(and create issues).</p>
-<p>Currently, ‘maintainer(s)’ is/are the author (&#64;lisphilar) in this
-document.</p>
+<p>Terms: - ‘Maintainers’ (author/collaborators) maintain this repository.
+i.e. Merge pull requests, publish <a class="reference external" href="https://lisphilar.github.io/covid19-sir/">sphinx
+document</a> and update the
+version number. - ‘Developers’ create issues/pull requests, lead
+discussions, and update documentation. - ‘Users’ uses this package for
+analysing the datasets, publish the outputs, create issues, join
+discussions.</p>
 <div class="section" id="clone-covsirphy-repository-and-install-dependencies">
 <h2>Clone CovsirPhy repository and install dependencies<a class="headerlink" href="#clone-covsirphy-repository-and-install-dependencies" title="Permalink to this headline">¶</a></h2>
 <p>Developers will clone CovsirPhy repository with <code class="docutils literal notranslate"><span class="pre">git</span> <span class="pre">clone</span></code> command
-and install dependencies with pipenv.</p>
+and install dependencies with Poetry.</p>
+<div class="section" id="clone-fork-the-repository">
+<h3>Clone/Fork the repository<a class="headerlink" href="#clone-fork-the-repository" title="Permalink to this headline">¶</a></h3>
+<p>Please start by cloning the GitHub repository with git command.</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">git</span> <span class="n">clone</span> <span class="n">https</span><span class="p">:</span><span class="o">//</span><span class="n">github</span><span class="o">.</span><span class="n">com</span><span class="o">/</span><span class="n">lisphilar</span><span class="o">/</span><span class="n">covid19</span><span class="o">-</span><span class="n">sir</span><span class="o">.</span><span class="n">git</span>
 <span class="n">cd</span> <span class="n">covid19</span><span class="o">-</span><span class="n">sir</span>
-<span class="n">pip</span> <span class="n">install</span> <span class="n">wheel</span><span class="p">;</span> <span class="n">pip</span> <span class="n">install</span> <span class="o">--</span><span class="n">upgrade</span> <span class="n">pip</span><span class="p">;</span> <span class="n">pip</span> <span class="n">install</span> <span class="n">pipenv</span>
-<span class="n">export</span> <span class="n">PIPENV_VENV_IN_PROJECT</span><span class="o">=</span><span class="n">true</span>
-<span class="n">export</span> <span class="n">PIPENV_TIMEOUT</span><span class="o">=</span><span class="mi">7200</span>
-<span class="n">pipenv</span> <span class="n">sync</span> <span class="o">--</span><span class="n">dev</span>
 </pre></div>
 </div>
-<p>Shell will be started with <code class="docutils literal notranslate"><span class="pre">pipenv</span> <span class="pre">shell</span></code> and <code class="docutils literal notranslate"><span class="pre">python</span></code> command.
-Example codes are archived in “example” directory.</p>
-<p>If you can run <code class="docutils literal notranslate"><span class="pre">make</span></code> command,</p>
-<table class="docutils align-default">
-<colgroup>
-<col style="width: 28%" />
-<col style="width: 72%" />
-</colgroup>
-<tbody>
-<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">make</span> <span class="pre">install</span></code></p></td>
-<td><p>Install pipenv and the dependencies of CovsirPhy</p></td>
-</tr>
-<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">make</span> <span class="pre">test</span></code></p></td>
-<td><p>Run tests using Pytest</p></td>
-</tr>
-<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">make</span> <span class="pre">docs</span></code></p></td>
-<td><p>Update sphinx document</p></td>
-</tr>
-<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">make</span> <span class="pre">example</span></code></p></td>
-<td><p>Run example codes</p></td>
-</tr>
-<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">make</span> <span class="pre">clean</span></code></p></td>
-<td><p>Clean-up output files and pipenv environment</p></td>
-</tr>
-</tbody>
-</table>
+<p>Or, fork the repository and run the following commands with your account
+name <code class="docutils literal notranslate"><span class="pre">&lt;your</span> <span class="pre">account&gt;</span></code>. “remotes/upstream/master” will be shown by
+<code class="docutils literal notranslate"><span class="pre">git</span> <span class="pre">branch</span> <span class="pre">-a</span></code>.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">git</span> <span class="n">clone</span> <span class="n">https</span><span class="p">:</span><span class="o">//</span><span class="n">github</span><span class="o">.</span><span class="n">com</span><span class="o">/&lt;</span><span class="n">your</span> <span class="n">account</span><span class="o">&gt;/</span><span class="n">covid19</span><span class="o">-</span><span class="n">sir</span><span class="o">.</span><span class="n">git</span>
+<span class="n">git</span> <span class="n">remote</span> <span class="n">add</span> <span class="n">upstream</span> <span class="n">https</span><span class="p">:</span><span class="o">//</span><span class="n">github</span><span class="o">.</span><span class="n">com</span><span class="o">/</span><span class="n">lisphilar</span><span class="o">/</span><span class="n">covid19</span><span class="o">-</span><span class="n">sir</span><span class="o">.</span><span class="n">git</span>
+<span class="n">git</span> <span class="n">branch</span> <span class="o">-</span><span class="n">a</span>
+</pre></div>
 </div>
-<div class="section" id="run-tests">
-<h2>Run tests<a class="headerlink" href="#run-tests" title="Permalink to this headline">¶</a></h2>
-<p>Developers can perform tests with
-<code class="docutils literal notranslate"><span class="pre">pipenv</span> <span class="pre">run</span> <span class="pre">pytest</span> <span class="pre">tests</span> <span class="pre">-v</span> <span class="pre">--durations=0</span> <span class="pre">--failed-first</span> <span class="pre">--maxfail=1</span> <span class="pre">--cov=covsirphy</span> <span class="pre">--cov-report=term-missing</span> <span class="pre">--profile-svg</span></code>
-and call graph will be saved as SVG file (prof/combined.svg).</p>
+<p>Before editing the codes, please fetch and merge the upstream.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">git</span> <span class="n">fetch</span> <span class="n">upstream</span>
+<span class="n">git</span> <span class="n">checkout</span> <span class="n">master</span>
+<span class="n">git</span> <span class="n">merge</span> <span class="n">upstream</span><span class="o">/</span><span class="n">master</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="install-poetry-windows">
+<h3>Install Poetry (Windows)<a class="headerlink" href="#install-poetry-windows" title="Permalink to this headline">¶</a></h3>
+<p>Then, please install Poetry, a package management tool.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">(</span><span class="n">Invoke</span><span class="o">-</span><span class="n">WebRequest</span> <span class="o">-</span><span class="n">Uri</span> <span class="n">https</span><span class="p">:</span><span class="o">//</span><span class="n">raw</span><span class="o">.</span><span class="n">githubusercontent</span><span class="o">.</span><span class="n">com</span><span class="o">/</span><span class="n">python</span><span class="o">-</span><span class="n">poetry</span><span class="o">/</span><span class="n">poetry</span><span class="o">/</span><span class="n">master</span><span class="o">/</span><span class="n">get</span><span class="o">-</span><span class="n">poetry</span><span class="o">.</span><span class="n">py</span> <span class="o">-</span><span class="n">UseBasicParsing</span><span class="p">)</span><span class="o">.</span><span class="n">Content</span> <span class="o">|</span> <span class="n">python</span> <span class="o">-</span>
+<span class="n">poetry</span> <span class="o">--</span><span class="n">version</span>
+<span class="n">poetry</span> <span class="n">config</span> <span class="n">virtualenvs</span><span class="o">.</span><span class="ow">in</span><span class="o">-</span><span class="n">project</span> <span class="n">true</span>
+<span class="n">poetry</span> <span class="n">config</span> <span class="o">--</span><span class="nb">list</span>
+</pre></div>
+</div>
+<p>If you have <code class="docutils literal notranslate"><span class="pre">make</span></code> commands, run <code class="docutils literal notranslate"><span class="pre">make</span> <span class="pre">poetry-windows</span></code>. This is
+defined in “Makefile” of the top directory.</p>
+</div>
+<div class="section" id="install-poetry-linux-wsl-macos">
+<h3>Install Poetry (Linux, WSL, macOS)<a class="headerlink" href="#install-poetry-linux-wsl-macos" title="Permalink to this headline">¶</a></h3>
+<p>Please use <code class="docutils literal notranslate"><span class="pre">make</span></code> command.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">make</span> <span class="n">poetry</span><span class="o">-</span><span class="n">linux</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="install-dependencies">
+<h3>Install dependencies<a class="headerlink" href="#install-dependencies" title="Permalink to this headline">¶</a></h3>
+<p>To install dependencies with Poetry, run <code class="docutils literal notranslate"><span class="pre">make</span> <span class="pre">install</span></code> or the
+following commands before editing codes.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">pip</span> <span class="n">install</span> <span class="o">--</span><span class="n">upgrade</span>
+<span class="n">poetry</span> <span class="bp">self</span> <span class="n">update</span>
+<span class="n">poetry</span> <span class="n">install</span>
+</pre></div>
+</div>
 <ul class="simple">
-<li><p>Windows users need to install <a class="reference external" href="https://graphviz.org/_pages/Download/Download_windows.html">Graphviz for
-Windows</a>
-in advance.</p></li>
-<li><p>Debian/Ubuntu users need to install Graphviz with
-<code class="docutils literal notranslate"><span class="pre">sudo</span> <span class="pre">apt</span> <span class="pre">install</span> <span class="pre">graphviz</span></code> in advance. ## Issues All users can
-<a class="reference external" href="https://github.com/lisphilar/covid19-sir/issues">create an issue</a>
-when you want to</p></li>
+<li><p>New dependencies can be installed with <code class="docutils literal notranslate"><span class="pre">poetry</span> <span class="pre">add</span> <span class="pre">&lt;name&gt;</span></code> or
+<code class="docutils literal notranslate"><span class="pre">poetry</span> <span class="pre">add</span> <span class="pre">&lt;name&gt;</span> <span class="pre">--dev</span></code>.</p></li>
+<li><p>Un-necessary dependencies will be removed with
+<code class="docutils literal notranslate"><span class="pre">poetry</span> <span class="pre">remove</span> <span class="pre">&lt;name&gt;</span></code> or <code class="docutils literal notranslate"><span class="pre">poetry</span> <span class="pre">remove</span> <span class="pre">&lt;name&gt;</span> <span class="pre">--dev</span></code>.</p></li>
+<li><p>Start shell with <code class="docutils literal notranslate"><span class="pre">poetry</span> <span class="pre">shell;</span> <span class="pre">python</span></code>.</p></li>
+<li><p>Run python scripts with <code class="docutils literal notranslate"><span class="pre">poetry</span> <span class="pre">run</span></code> command, like
+<code class="docutils literal notranslate"><span class="pre">poetry</span> <span class="pre">run</span> <span class="pre">examples/scenario_analysis.py</span></code>.</p></li>
+</ul>
+</div>
+</div>
+<div class="section" id="issues">
+<h2>Issues<a class="headerlink" href="#issues" title="Permalink to this headline">¶</a></h2>
+<p>Kindly <a class="reference external" href="https://github.com/lisphilar/covid19-sir/issues">create an
+issue</a> when you want
+to</p>
+<ul class="simple">
 <li><p>ask a question</p></li>
-<li><p>request fix a bug,</p></li>
-<li><p>request update of documentation,</p></li>
+<li><p>request fixing a bug,</p></li>
+<li><p>request updating documentation,</p></li>
 <li><p>request a new feature,</p></li>
 <li><p>request a new data loader or new dataset,</p></li>
 <li><p>communicate with the maintainers and the user community.</p></li>
 </ul>
-<p>Please ensure that the issue - has one question/request, - uses
-appropriate issue template if available, - has appropriate title, and -
-explains your execution environment and codes.</p>
+<p>Please ensure that the issue</p>
+<ul class="simple">
+<li><p>has one question/request,</p></li>
+<li><p>uses appropriate issue template if available,</p></li>
+<li><p>has appropriate title, and</p></li>
+<li><p>explains your execution environment and codes.</p></li>
+</ul>
 <p>When requesting a new data loader, please confirm that the dataset
 follows ALCOA (Attributable, Legible, Contemporaneous, Original,
 Accurate) and we can retrieve the data with permitted APIs. If the data
 loaders included in this repository use un-permitted APIs, please inform
 maintainers. We will fix it as soon as possible.</p>
-<p>If the issue has already been discussed, maintainers will mark it with
-‘duplicate’ label.</p>
 </div>
 <div class="section" id="pull-request">
 <h2>Pull request<a class="headerlink" href="#pull-request" title="Permalink to this headline">¶</a></h2>
 <p>If you have any ideas, please <a class="reference external" href="https://github.com/lisphilar/covid19-sir/pulls">create a pull
 request</a> after
-explaining your idea in an issue. Please ensure that - you are using the
-latest version of CovsirPhy, - the codes are readable, - (if needed)
-test codes are added, - tests were successfully completed, and - the
-revision is well documented in docstring/README and so on.</p>
-<p>Test command is explained in <a class="reference external" href="https://lisphilar.github.io/covid19-sir/INSTALLATION.html">Installation and dataset
-preparation</a>
-for developers.</p>
+explaining your idea in an issue. Please ensure that</p>
+<ul class="simple">
+<li><p>you are using the latest version of CovsirPhy,</p></li>
+<li><p>the codes are readable,</p></li>
+<li><p>(if necessary) test codes are added,</p></li>
+<li><p>tests were successfully completed as discussed later, and</p></li>
+<li><p>the revision is well documented in docstring (Google-style)/README
+and so on.</p></li>
+</ul>
 <p>Please use appropriate template if available, and specify the related
 issues and the change.</p>
-<p>We use GitHub flow here. Mater (or main) branch can be deployed always
-as the latest development version. Name of branch for pull requests
-should be linked to issue numbers, like “issue100”.</p>
+<p>We use GitHub flow here. Default branch can be deployed always as the
+latest development version. Name of branch for pull requests will be
+linked to issue numbers, like “issue100”.</p>
+<p>To update tutorials in documentation, please update “.ipynb” (Jupyter
+Notebook) files in “example” directory.</p>
 <p>Update of version number and sphinx documents is not necessary for
 developers. After reviewing by assigned reviewers, maintainers will
-update them when merge the pull request.</p>
+update them by editing “covsirphy/__version__.py” and
+“pyproject.toml” when merge the pull request.</p>
+</div>
+<div class="section" id="run-tests">
+<h2>Run tests<a class="headerlink" href="#run-tests" title="Permalink to this headline">¶</a></h2>
+<p>Before creating a pull request, please run tests with <code class="docutils literal notranslate"><span class="pre">make</span> <span class="pre">pytest</span></code> or
+the following commands.</p>
+<p>All tests:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">poetry</span> <span class="n">run</span> <span class="n">flake8</span> <span class="n">covsirphy</span> <span class="o">--</span><span class="n">ignore</span><span class="o">=</span><span class="n">E501</span>
+<span class="n">poetry</span> <span class="n">run</span> <span class="n">pytest</span> <span class="n">tests</span> <span class="o">-</span><span class="n">v</span> <span class="o">--</span><span class="n">durations</span><span class="o">=</span><span class="mi">0</span> <span class="o">--</span><span class="n">failed</span><span class="o">-</span><span class="n">first</span> <span class="o">--</span><span class="n">maxfail</span><span class="o">=</span><span class="mi">1</span> <span class="o">--</span><span class="n">cov</span><span class="o">=</span><span class="n">covsirphy</span> <span class="o">--</span><span class="n">cov</span><span class="o">-</span><span class="n">report</span><span class="o">=</span><span class="n">term</span><span class="o">-</span><span class="n">missing</span>
+</pre></div>
+</div>
+<p>Selected tests: (e.g. when you updated codes related to
+tests/test_scenario.py)</p>
+<p>Run <code class="docutils literal notranslate"><span class="pre">make</span> <span class="pre">test</span> <span class="pre">target=/test_scenario.py</span></code> or commands as follows.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">poetry</span> <span class="n">run</span> <span class="n">flake8</span> <span class="n">covsirphy</span> <span class="o">--</span><span class="n">ignore</span><span class="o">=</span><span class="n">E501</span>
+<span class="n">poetry</span> <span class="n">run</span> <span class="n">pytest</span> <span class="n">tests</span><span class="o">/</span><span class="n">test_scenario</span><span class="o">.</span><span class="n">py</span> <span class="o">-</span><span class="n">v</span> <span class="o">--</span><span class="n">durations</span><span class="o">=</span><span class="mi">0</span> <span class="o">--</span><span class="n">failed</span><span class="o">-</span><span class="n">first</span> <span class="o">--</span><span class="n">maxfail</span><span class="o">=</span><span class="mi">1</span> \
+    <span class="o">--</span><span class="n">cov</span><span class="o">=</span><span class="n">covsirphy</span> <span class="o">--</span><span class="n">cov</span><span class="o">-</span><span class="n">report</span><span class="o">=</span><span class="n">term</span><span class="o">-</span><span class="n">missing</span>
+</pre></div>
+</div>
+<p>When you create a pull request to upstream repository, CI tools will
+test the codes with Python 3.7 and 3.8. When development version number
+is updated (i.e. a pull request merged), CI tools will test the codes
+with the all supported Python versions.</p>
 </div>
 <div class="section" id="versioning">
 <h2>Versioning<a class="headerlink" href="#versioning" title="Permalink to this headline">¶</a></h2>
 <p>CovsirPhy follows <a class="reference external" href="https://semver.org/">Semantic Versioning 2.0.0</a>:</p>
-<p>Milestones of minor update (from X.0.Z to X.1.Z) are documented in
+<ul class="simple">
+<li><p>Milestones of minor update (from X.0.Z to X.1.Z) are documented in
 <a class="reference external" href="https://github.com/lisphilar/covid19-sir/milestones">milestones of
-issues</a>. When
-the revisions do not change the codes of CovsirPhy, version number will
-not be updated.</p>
-<p>Maintainers will test the codes, update <a class="reference external" href="https://lisphilar.github.io/covid19-sir/">sphinx
-document</a>, update the
-version number, upload to <a class="reference external" href="https://pypi.org/">PyPI: The Python Package
-Index</a>, and create <a class="reference external" href="https://github.com/lisphilar/covid19-sir/releases">a release
-note</a>.</p>
+issues</a>.</p></li>
+<li><p>Development version number will be updated, like “version
+1.0.0-alpha.new.1.2” to “version 1.0.0-alpha.new.1.2.fix.3” when a
+bug was fixed with issue number 3.</p></li>
+<li><p>When the revisions do not change the codes of CovsirPhy, version
+number will not be updated.</p></li>
+</ul>
+<p>Maintainers will</p>
+<ul class="simple">
+<li><p>update <a class="reference external" href="https://lisphilar.github.io/covid19-sir/">sphinx document</a>
+with CI tools and <code class="docutils literal notranslate"><span class="pre">make</span> <span class="pre">docs</span></code>,</p></li>
+<li><p>update the version number of “pyproject.toml” and “poetry.lock”,</p></li>
+<li><p>upload to <a class="reference external" href="https://pypi.org/">PyPI: The Python Package Index</a>, and</p></li>
+<li><p>create <a class="reference external" href="https://github.com/lisphilar/covid19-sir/releases">a release
+note</a> for
+major/minor/batch update.</p></li>
+</ul>
 </div>
 </div>
 
