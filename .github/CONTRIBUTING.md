@@ -96,11 +96,13 @@ Please ensure that
 - the codes are readable,
 - (if necessary) test codes are added,
 - tests were successfully completed as discussed later, and
-- the revision is well documented in docstring/README and so on.
+- the revision is well documented in docstring (Google-style)/README and so on.
 
 Please use appropriate template if available, and specify the related issues and the change.
 
 We use GitHub flow here. Default branch can be deployed always as the latest development version. Name of branch for pull requests will be linked to issue numbers, like "issue100".
+
+To update tutorials in documentation, please update ".ipynb" (Jupyter Notebook) files in "example" directory.
 
 Update of version number and sphinx documents is not necessary for developers. After reviewing by assigned reviewers, maintainers will update them by editing "covsirphy/\_\_version\_\_.py" and "pyproject.toml" when merge the pull request.
 
