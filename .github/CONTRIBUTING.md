@@ -5,6 +5,7 @@ We hope this project contribute to COVID-19 outbreak research and we will overco
 When you contribute to [covid-sir repository](https://github.com/lisphilar/covid19-sir) including CovsirPhy package, please kindly follow [Code of conduct](https://lisphilar.github.io/covid19-sir/CODE_OF_CONDUCT.html) and the steps explained in this document. If you have any questions or any request to change about this guideline, please inform the author via issue page.
 
 Terms:
+
 - 'Maintainers' (author/collaborators) maintain this repository. i.e. Merge pull requests, publish [sphinx document](https://lisphilar.github.io/covid19-sir/) and update the version number.
 - 'Developers' create issues/pull requests, lead discussions, and update documentation.
 - 'Users' uses this package for analysing the datasets, publish the outputs, create issues, join discussions.

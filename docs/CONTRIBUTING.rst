@@ -13,13 +13,16 @@ and the steps explained in this document. If you have any questions or
 any request to change about this guideline, please inform the author via
 issue page.
 
-Terms: - 'Maintainers' (author/collaborators) maintain this repository.
-i.e. Merge pull requests, publish `sphinx
-document <https://lisphilar.github.io/covid19-sir/>`__ and update the
-version number. - 'Developers' create issues/pull requests, lead
-discussions, and update documentation. - 'Users' uses this package for
-analysing the datasets, publish the outputs, create issues, join
-discussions.
+Terms:
+
+-  'Maintainers' (author/collaborators) maintain this repository. i.e.
+   Merge pull requests, publish `sphinx
+   document <https://lisphilar.github.io/covid19-sir/>`__ and update the
+   version number.
+-  'Developers' create issues/pull requests, lead discussions, and
+   update documentation.
+-  'Users' uses this package for analysing the datasets, publish the
+   outputs, create issues, join discussions.
 
 Clone CovsirPhy repository and install dependencies
 ---------------------------------------------------
