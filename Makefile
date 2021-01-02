@@ -137,6 +137,8 @@ setup-latest-python:
 	@version=`pyenv install -l | grep -x '  [0-9]\.[0-9]\.[0-9]' | tail -n 1 | tr -d ' '`; echo python $version
 	@pyenv install $version; pyenv local $version; anyenv versions
 	@# Install dependencies
+	@rm -rf .venv
+	@rm -f poetry.lock
 	@pip install --upgrade pip
 	@poetry install
-	@poetry run python -V
+	@poetry env info
