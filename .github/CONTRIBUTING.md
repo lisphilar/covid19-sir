@@ -6,8 +6,8 @@ When you contribute to [covid-sir repository](https://github.com/lisphilar/covid
 
 Terms:
 - 'Maintainers' (author/collaborators) maintain this repository. i.e. Merge pull requests, publish [sphinx document](https://lisphilar.github.io/covid19-sir/) and update the version number.
-- 'Developers' create issues/pull requests and update documentation.
-- 'Users' uses this package for analysing the datasets, publish the outputs, and create issues.
+- 'Developers' create issues/pull requests, lead discussions, and update documentation.
+- 'Users' uses this package for analysing the datasets, publish the outputs, create issues, join discussions.
 
 ## Clone CovsirPhy repository and install dependencies
 Developers will clone CovsirPhy repository with `git clone` command and install dependencies with Poetry.
