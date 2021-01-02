@@ -3,7 +3,7 @@ poetry-linux:
 	@# Install poetry (Linux, OSX, WSL)
 	@# system Python should be installed in advance
 	@curl -sSL https://raw.githubusercontent.com/python-poetry/poetry/master/get-poetry.py | python
-	@echo '$HOME/.poetry/bin:$PATH' >> ~/.bashrc; source ~/.bashrc
+	@export PATH=$PATH:$HOME/.poetry/bin
 	@poetry --version
 	@poetry config virtualenvs.in-project true
 	@poetry config repositories.testpypi https://test.pypi.org/legacy/
