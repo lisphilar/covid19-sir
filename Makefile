@@ -26,7 +26,33 @@ install:
 
 .PHONY: update
 update:
+	@pip install --upgrade pip
+	@poetry self update
 	@poetry update
+
+.PHONY: add
+add:
+	@pip install --upgrade pip
+	@poetry self update
+	@poetry add ${target}
+
+.PHONY: add-dev
+add-dev:
+	@pip install --upgrade pip
+	@poetry self update
+	@poetry add ${target} --dev
+
+.PHONY: remove
+remove:
+	@pip install --upgrade pip
+	@poetry self update
+	@poetry remove ${target}
+
+.PHONY: remove-dev
+remove-dev:
+	@pip install --upgrade pip
+	@poetry self update
+	@poetry remove ${target} --dev
 
 .PHONY: test
 test:
@@ -93,3 +119,24 @@ clean:
 	@pip install --upgrade pip
 	@poetry self update
 	@poetry update
+
+.PHONY: setup-anyenv
+setup-anyenv:
+	@ # Set-up anyenv in Bash (Linux, WSL)
+	@git clone https://github.com/riywo/anyenv ~/.anyenv
+	@echo 'export PATH="$HOME/.anyenv/bin:$PATH"' >> ~/.bashrc; source ~/.bashrc
+	@anyenv install --init: echo 'eval "$(anyenv init -)"' >> ~/.bashrc; source ~/.bashrc
+	@/bin/mkdir -p $(anyenv root)/plugins; git clone https://github.com/znz/anyenv-update.git $(anyenv root)/plugins/anyenv-update
+	@ # set-up pyenv
+	@anyenv install pyenv;  exec $SHELL -l
+
+.PHONY: setup-latest-python
+setup-latest-python:
+	@# Install the latest stable version of Pythonand set default for CovsirPhy project
+	@anyenv update --force
+	@version=`pyenv install -l | grep -x '  [0-9]\.[0-9]\.[0-9]' | tail -n 1 | tr -d ' '`; echo python $version
+	@pyenv install $version; pyenv local $version; anyenv versions
+	@# Install dependencies
+	@pip install --upgrade pip
+	@poetry install
+	@poetry run python -V
