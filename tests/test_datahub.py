@@ -178,13 +178,17 @@ class TestJHUData(object):
             ("Greece", None),
             (["Greece", "Japan"], None),
             (None, None),
-            ("Moon", None),
             # raise ValueError
             (["Greece", "Japan"], "Tokyo"),
+            # raise SubsetNotFoundError
+            ("Moon", None),
         ]
     )
     def test_show_complement(self, jhu_data, country, province):
-        if not isinstance(country, str) and province is not None:
+        if country == "Moon":
+            with pytest.raises(SubsetNotFoundError):
+                jhu_data.show_complement(country=country, province=province)
+        elif not isinstance(country, str) and province is not None:
             with pytest.raises(ValueError):
                 jhu_data.show_complement(country=country, province=province)
         else:

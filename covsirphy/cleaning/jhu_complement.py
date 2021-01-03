@@ -31,9 +31,8 @@ class JHUDataComplementHandler(Term):
     FULL_RECOVERED = "Full_recovered"
     PARTIAL_RECOVERED = "Partial_recovered"
     RECOVERED_COLS = [MONOTONIC_RECOVERED, FULL_RECOVERED, PARTIAL_RECOVERED]
-    AVAILABLE_COL = "Available"
     SHOW_COMPLEMENT_FULL_COLS = [
-        AVAILABLE_COL, MONOTONIC_CONFIRMED, MONOTONIC_FATAL, *RECOVERED_COLS]
+        MONOTONIC_CONFIRMED, MONOTONIC_FATAL, *RECOVERED_COLS]
     # Kind of complement: {score: name}
     STATUS_NAME_DICT = {
         1: "sorting",
