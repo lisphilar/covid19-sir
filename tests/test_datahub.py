@@ -9,6 +9,7 @@ from covsirphy import SubsetNotFoundError, PCRIncorrectPreconditionError
 from covsirphy import COVID19DataHub, DataLoader, LinelistData
 from covsirphy import Term, JHUData, CountryData, PopulationData
 from covsirphy import OxCGRTData, PCRData, VaccineData
+from covsirphy import JHUDataComplementHandler
 
 
 class TestCOVID19DataHub(object):
@@ -170,6 +171,24 @@ class TestJHUData(object):
             response = jhu_data.ensure_country_name(applied)
             assert response == expected
             assert jhu_data.country_to_iso3(response) == iso3
+
+    @pytest.mark.parametrize(
+        "country, province",
+        [
+            ("Greece", None),
+            (["Greece", "Japan"], None),
+            (["Greece", "Japan"], "Tokyo"),
+            (None, None),
+        ]
+    )
+    def test_show_complement(self, jhu_data, country, province):
+        if isinstance(country, list) and (province is not None):
+            with pytest.raises(ValueError):
+                jhu_data.show_complement(country=country, province=province)
+        else:
+            complement_df = jhu_data.show_complement(country=country, province=province)
+            all_set = set(JHUDataComplementHandler.SHOW_COMPLEMENT_FULL_COLS)
+            assert all_set.issubset(complement_df.columns)
 
 
 class TestPopulationData(object):

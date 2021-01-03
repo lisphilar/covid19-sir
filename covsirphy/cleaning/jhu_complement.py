@@ -31,8 +31,8 @@ class JHUDataComplementHandler(Term):
     FULL_RECOVERED = "Full_recovered"
     PARTIAL_RECOVERED = "Partial_recovered"
     RECOVERED_COLS = [MONOTONIC_RECOVERED, FULL_RECOVERED, PARTIAL_RECOVERED]
-    SHOW_COMPLEMENT_COLS = [Term.C, Term.F, *RECOVERED_COLS]
-    SHOW_COMPLEMENT_FULL_COLS = [MONOTONIC_CONFIRMED, MONOTONIC_FATAL, *RECOVERED_COLS]
+    AVAILABLE_COL = "Available"
+    SHOW_COMPLEMENT_FULL_COLS = [AVAILABLE_COL, MONOTONIC_CONFIRMED, MONOTONIC_FATAL, *RECOVERED_COLS]
     # Kind of complement: {score: name}
     STATUS_NAME_DICT = {
         1: "sorting",
@@ -116,7 +116,7 @@ class JHUDataComplementHandler(Term):
         # Initialize
         after_df = subset_df.copy()
         status_dict = dict.fromkeys(self.RAW_COLS, 0)
-        self.complement_dict = dict.fromkeys(self.SHOW_COMPLEMENT_COLS, 0)
+        self.complement_dict = dict.fromkeys(self.SHOW_COMPLEMENT_FULL_COLS, False)
         # Perform complement one by one
         for (variable, func, score) in self._protocol():
             before_df, after_df = after_df.copy(), func(after_df)
@@ -197,10 +197,7 @@ class JHUDataComplementHandler(Term):
             # Reduce values to the previous date
             df.loc[:date, variable] = series * raw_last / series.iloc[-1]
             df[variable] = df[variable].fillna(0).astype(np.int64)
-        if variable in [self.C, self.F]:
-            self.complement_dict[variable] = True
-        else:
-            self.complement_dict["Monotonic_recovered"] = True
+        self.complement_dict[f"Monotonic_{variable.lower()}"] = True
         return df
 
     def _recovered_full(self, df):
@@ -234,7 +231,7 @@ class JHUDataComplementHandler(Term):
         # Estimate recovered records
         df[self.R] = (df[self.C] - df[self.F]).shift(
             periods=self.recovery_period, freq="D")
-        self.complement_dict["Full_recovered"] = True
+        self.complement_dict[self.FULL_RECOVERED] = True
         return df
 
     def _recovered_partial_ending(self, df):
@@ -278,7 +275,6 @@ class JHUDataComplementHandler(Term):
         diff_series.interpolate(
             method="linear", inplace=True, limit_direction="both")
         df.loc[min_index:, self.R] = first_value + diff_series[min_index:].cumsum()
-
         # Check if the ending complement is valid (too large recovered ending values)
         # If the validity check fails, then fully complement these ending values
         sel_C1 = df[self.C] > self.max_ignored
@@ -289,7 +285,7 @@ class JHUDataComplementHandler(Term):
         if not s_df_1.empty:
             df.loc[min_index:, self.R] = (df[self.C] - df[self.F]).shift(
                 periods=self.recovery_period, freq="D").loc[min_index:]
-        self.complement_dict["Partial_recovered"] = True
+        self.complement_dict[self.PARTIAL_RECOVERED] = True
         return df
 
     def _recovered_partial(self, df):
@@ -311,13 +307,13 @@ class JHUDataComplementHandler(Term):
         series = df.loc[df[self.R] > self.max_ignored, self.R]
         max_frequency = series.value_counts().max()
         if max_frequency <= self.interval:
-            return df     
+            return df
         # Complement in-between values
         df.loc[df.duplicated([self.R], keep="first"), self.R] = None
         df[self.R].interpolate(
             method="linear", inplace=True, limit_direction="both")
         df[self.R] = df[self.R].fillna(method="bfill")
-        self.complement_dict["Partial_recovered"] = True
+        self.complement_dict[self.PARTIAL_RECOVERED] = True
         return df
 
     def _recovered_sort(self, df):

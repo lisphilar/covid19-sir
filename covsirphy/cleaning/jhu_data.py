@@ -560,19 +560,19 @@ class JHUData(CleaningBase):
                 start_date=start_date, end_date=end_date, message="with 'Recovered > 0'") from None
 
     def show_complement(self, country=None, province=None,
-                          start_date=None, end_date=None, population=None,
-                          interval=2, max_ignored=100, max_ending_unupdated=14):
+                          start_date=None, end_date=None,
+                          interval=2, max_ignored=100,
+                          max_ending_unupdated=14):
         """
         To monitor effectivity and safety of complement on JHU subset,
         we need to know what kind of complement was done for JHU subset
         for each country (if country/countries specified) or for all countries.
 
         Args:
-            country(str): country name or ISO3 code
+            country (str or list[str] or None): country/countries name or None (all countries)
             province(str or None): province name
             start_date(str or None): start date, like 22Jan2020
             end_date(str or None): end date, like 01Feb2020
-            population(int or None): population value
             interval (int): expected update interval of the number of recovered cases [days]
             max_ignored (int): Max number of recovered cases to be ignored [cases]
             max_ending_unupdated (int) : Max number of days to apply full complement,
@@ -582,40 +582,39 @@ class JHUData(CleaningBase):
             pandas.DataFrame:
                 Index: reset index
                 Columns:
-                    - country(str): country name or ISO3 code
-                    - Monotonic_confirmed (str/bool): True if applied for confirmed cases or False otherwise
-                    - Monotonic_fatal (str/bool): True if applied for fatal cases or False otherwise
-                    - Monotonic_recovered (str/bool): True if applied for recovered or False otherwise
-                    - Full_recovered (str/bool): True if applied for recovered or False otherwise
-                    - Partial_recovered (str/bool): True if applied for recovered or False otherwise
+                    - country (str): country name
+                    - province (str): province name
+                    - Available (bool): True if complement information is available or False otherwise
+                    - Monotonic_confirmed (bool): True if applied for confirmed cases or False otherwise
+                    - Monotonic_fatal (bool): True if applied for fatal cases or False otherwise
+                    - Monotonic_recovered (bool): True if applied for recovered or False otherwise
+                    - Full_recovered (bool): True if applied for recovered or False otherwise
+                    - Partial_recovered (bool): True if applied for recovered or False otherwise
         """
-        complement_df = pd.DataFrame(columns=[self.COUNTRY, self.PROVINCE, *JHUDataComplementHandler.SHOW_COMPLEMENT_FULL_COLS])
+        complement_df = pd.DataFrame(columns=[self.COUNTRY, self.PROVINCE,
+                                              *JHUDataComplementHandler.SHOW_COMPLEMENT_FULL_COLS])
         complement_df.set_index(self.COUNTRY, inplace=True)
         self._recovery_period = self._recovery_period or self.calculate_recovery_period()
-        if not country:
-            country = self._cleaned_df[self.COUNTRY].unique().tolist()
-
-        if type(country) is not list:
+        if country is None:
+            country = [c for c in self._cleaned_df[self.COUNTRY].unique() if c != "Others"]
+        province = province or self.UNKNOWN
+        if not isinstance(country, str) and province != self.UNKNOWN:
+            raise ValueError("@province cannot be specified when @country is not a string.")
+        if not isinstance(country, list):
             country = [country]
         for cur_country in country:
-            if cur_country == "Others":
-                continue
-            if province == None:
-                province = "-"
-            country_alias = self.ensure_country_name(cur_country)
             subset_df = self._subset(
                 country=cur_country, province=province, start_date=start_date, end_date=end_date)
-            if subset_df.empty:
-                raise SubsetNotFoundError(
-                    country=cur_country, country_alias=country_alias) from None
-            
-            handler = JHUDataComplementHandler(
-                recovery_period=self._recovery_period,
-                interval=interval,
-                max_ignored=max_ignored,
-                max_ending_unupdated=max_ending_unupdated,
-            )
-            _, _, complement_dict = handler.run(subset_df)
-            complement_dict_values = pd.Series(complement_dict.values(), dtype=bool).values
-            complement_df.loc[cur_country] = [province] + complement_dict_values.tolist()
+            if not subset_df.empty:
+                handler = JHUDataComplementHandler(
+                    recovery_period=self._recovery_period,
+                    interval=interval,
+                    max_ignored=max_ignored,
+                    max_ending_unupdated=max_ending_unupdated,
+                )
+                _, _, complement_dict = handler.run(subset_df)
+                complement_dict_values = pd.Series(complement_dict.values(), dtype=bool).values
+                complement_df.loc[cur_country] = [province, True] + complement_dict_values[1:].tolist()
+            else:
+                complement_df.loc[cur_country] = [province, False, False, False, False, False, False]
         return complement_df
