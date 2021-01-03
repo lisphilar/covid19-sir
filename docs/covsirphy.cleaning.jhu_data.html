@@ -223,8 +223,10 @@ where recovered values are reported.</p>
 <dd class="field-even"><p>int</p>
 </dd>
 </dl>
-<p class="rubric">Notes</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
 <p>If no records we can use for calculation were registered, 17 [days] will be applied.</p>
+</div>
 </dd></dl>
 
 <dl class="py method">
@@ -256,8 +258,10 @@ where recovered values are reported.</p>
 </p>
 </dd>
 </dl>
-<p class="rubric">Notes</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
 <p>Cleaning method is defined by self._cleaning() method.</p>
+</div>
 </dd></dl>
 
 <dl class="py method">
@@ -338,9 +342,11 @@ Columns:</p>
 <dd class="field-odd"><p>tuple(pandas.DataFrame, bool)</p>
 </dd>
 </dl>
-<p class="rubric">Notes</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
 <p>If &#64; population is not None, the number of susceptible cases will be calculated.
 If necessary and &#64;auto_complement is True, complement recovered data.</p>
+</div>
 </dd></dl>
 
 <dl class="py method">
@@ -369,8 +375,56 @@ If necessary and &#64;auto_complement is True, complement recovered data.</p>
 <dd class="field-odd"><p><a class="reference internal" href="covsirphy.html#covsirphy.JHUData" title="covsirphy.JHUData">covsirphy.JHUData</a></p>
 </dd>
 </dl>
-<p class="rubric">Notes</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
 <p>Citation of the country data will be added to ‘JHUData.citation’ description.</p>
+</div>
+</dd></dl>
+
+<dl class="py method">
+<dt id="covsirphy.cleaning.jhu_data.JHUData.show_complement">
+<code class="sig-name descname">show_complement</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">country</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">province</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">start_date</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">end_date</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">interval</span><span class="o">=</span><span class="default_value">2</span></em>, <em class="sig-param"><span class="n">max_ignored</span><span class="o">=</span><span class="default_value">100</span></em>, <em class="sig-param"><span class="n">max_ending_unupdated</span><span class="o">=</span><span class="default_value">14</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/cleaning/jhu_data.html#JHUData.show_complement"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#covsirphy.cleaning.jhu_data.JHUData.show_complement" title="Permalink to this definition">¶</a></dt>
+<dd><p>To monitor effectivity and safety of complement on JHU subset,
+we need to know what kind of complement was done for JHU subset
+for each country (if country/countries specified) or for all countries.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>country</strong> (<em>str</em><em> or </em><em>list</em><em>[</em><em>str</em><em>] or </em><em>None</em>) – country/countries name or None (all countries)</p></li>
+<li><p><strong>province</strong> (<em>str</em><em> or </em><em>None</em>) – province name</p></li>
+<li><p><strong>start_date</strong> (<em>str</em><em> or </em><em>None</em>) – start date, like 22Jan2020</p></li>
+<li><p><strong>end_date</strong> (<em>str</em><em> or </em><em>None</em>) – end date, like 01Feb2020</p></li>
+<li><p><strong>interval</strong> (<em>int</em>) – expected update interval of the number of recovered cases [days]</p></li>
+<li><p><strong>max_ignored</strong> (<em>int</em>) – Max number of recovered cases to be ignored [cases]</p></li>
+<li><p><strong>max_ending_unupdated</strong> (<em>int</em>) – Max number of days to apply full complement, where ending recovered cases are not updated [days]</p></li>
+</ul>
+</dd>
+<dt class="field-even">Raises</dt>
+<dd class="field-even"><ul class="simple">
+<li><p><strong>ValueError</strong> – &#64;province was specified when &#64;country is not a string</p></li>
+<li><p><a class="reference internal" href="covsirphy.util.error.html#covsirphy.util.error.SubsetNotFoundError" title="covsirphy.util.error.SubsetNotFoundError"><strong>SubsetNotFoundError</strong></a> – No records were registered for the area/dates</p></li>
+</ul>
+</dd>
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p><p>Index: reset index
+Columns:</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>country (str): country name</p></li>
+<li><p>province (str): province name</p></li>
+<li><p>Monotonic_confirmed (bool): True if applied for confirmed cases or False otherwise</p></li>
+<li><p>Monotonic_fatal (bool): True if applied for fatal cases or False otherwise</p></li>
+<li><p>Monotonic_recovered (bool): True if applied for recovered or False otherwise</p></li>
+<li><p>Full_recovered (bool): True if applied for recovered or False otherwise</p></li>
+<li><p>Partial_recovered (bool): True if applied for recovered or False otherwise</p></li>
+</ul>
+</div></blockquote>
+</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>pandas.DataFrame</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py method">
@@ -407,8 +461,10 @@ If necessary and &#64;auto_complement is True, complement recovered data.</p>
 </p>
 </dd>
 </dl>
-<p class="rubric">Notes</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
 <p>If &#64;population is not None, the number of susceptible cases will be calculated.</p>
+</div>
 </dd></dl>
 
 <dl class="py method">
@@ -426,8 +482,7 @@ Records with Recovered &gt; 0 will be selected.</p>
 <li><p><strong>population</strong> (<em>int</em><em> or </em><em>None</em>) – population value</p></li>
 <li><p><strong>interval</strong> (<em>int</em>) – expected update interval of the number of recovered cases [days]</p></li>
 <li><p><strong>max_ignored</strong> (<em>int</em>) – Max number of recovered cases to be ignored [cases]</p></li>
-<li><p><strong>max_ending_unupdated</strong> (<em>int</em>) – Max number of days to apply full complement,
-where ending recovered cases are not updated [days]</p></li>
+<li><p><strong>max_ending_unupdated</strong> (<em>int</em>) – Max number of days to apply full complement, where ending recovered cases are not updated [days]</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
@@ -454,8 +509,10 @@ where ending recovered cases are not updated [days]</p></li>
 <dd class="field-odd"><p>tuple(pandas.DataFrame, str/bool)</p>
 </dd>
 </dl>
-<p class="rubric">Notes</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
 <p>If &#64;population is not None, the number of susceptible cases will be calculated.</p>
+</div>
 </dd></dl>
 
 <dl class="py method">
@@ -488,9 +545,11 @@ where ending recovered cases are not updated [days]</p></li>
 </p>
 </dd>
 </dl>
-<p class="rubric">Notes</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
 <p>&#64;population must be specified.
 Records with Recovered &gt; 0 will be used.</p>
+</div>
 </dd></dl>
 
 <dl class="py method">

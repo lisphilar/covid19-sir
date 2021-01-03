@@ -195,9 +195,9 @@ CovsirPhy follows `Semantic Versioning 2.0.0 <https://semver.org/>`__:
 -  Milestones of minor update (from X.0.Z to X.1.Z) are documented in
    `milestones of
    issues <https://github.com/lisphilar/covid19-sir/milestones>`__.
--  Development version number will be updated, like "version
-   1.0.0-alpha.new.1.2" to "version 1.0.0-alpha.new.1.2.fix.3" when a
-   bug was fixed with issue number 3.
+-  Development version number will be updated, e.g. "version
+   1.0.0-alpha" to "version 1.0.0-beta" (for closing an issue), "version
+   1.0.0-better-fu1" (for follow-up).
 -  When the revisions do not change the codes of CovsirPhy, version
    number will not be updated.
 
@@ -205,7 +205,10 @@ Maintainers will
 
 -  update `sphinx document <https://lisphilar.github.io/covid19-sir/>`__
    with CI tools and ``make docs``,
--  update the version number of "pyproject.toml" and "poetry.lock",
+-  update "pyproject.toml" and "poetry.lock" with ``make update``,
+-  update "covsirphy/\_\_init\_\_.py" to update development or stable
+   version number,
+-  update "pyproject.toml" to update stable version number,
 -  upload to `PyPI: The Python Package Index <https://pypi.org/>`__, and
 -  create `a release
    note <https://github.com/lisphilar/covid19-sir/releases>`__ for

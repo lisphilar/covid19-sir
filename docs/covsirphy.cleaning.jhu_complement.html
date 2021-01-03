@@ -203,18 +203,54 @@
 <li><p><strong>recovery_period</strong> (<em>int</em>) – expected value of recovery period [days]</p></li>
 <li><p><strong>interval</strong> (<em>int</em>) – expected update interval of the number of recovered cases [days]</p></li>
 <li><p><strong>max_ignored</strong> (<em>int</em>) – Max number of recovered cases to be ignored [cases]</p></li>
-<li><p><strong>max_ending_unupdated</strong> (<em>int</em>) – Max number of days to apply full complement,
-where max recovered cases are not updated [days]</p></li>
+<li><p><strong>max_ending_unupdated</strong> (<em>int</em>) – Max number of days to apply full complement, where max recovered cases are not updated [days]</p></li>
 </ul>
 </dd>
 </dl>
-<p class="rubric">Notes</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
 <p>To add new complement solutions, we need to update cls.STATUS_NAME_DICT and self._protocol().
 Status names with high socres will be prioritized when status code will be determined.
 Status code: ‘fully complemented recovered data’ and so on as noted in self.run() docstring.</p>
+</div>
+<dl class="py attribute">
+<dt id="covsirphy.cleaning.jhu_complement.JHUDataComplementHandler.FULL_RECOVERED">
+<code class="sig-name descname">FULL_RECOVERED</code><em class="property"> = 'Full_recovered'</em><a class="headerlink" href="#covsirphy.cleaning.jhu_complement.JHUDataComplementHandler.FULL_RECOVERED" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="covsirphy.cleaning.jhu_complement.JHUDataComplementHandler.MONOTONIC_CONFIRMED">
+<code class="sig-name descname">MONOTONIC_CONFIRMED</code><em class="property"> = 'Monotonic_confirmed'</em><a class="headerlink" href="#covsirphy.cleaning.jhu_complement.JHUDataComplementHandler.MONOTONIC_CONFIRMED" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="covsirphy.cleaning.jhu_complement.JHUDataComplementHandler.MONOTONIC_FATAL">
+<code class="sig-name descname">MONOTONIC_FATAL</code><em class="property"> = 'Monotonic_fatal'</em><a class="headerlink" href="#covsirphy.cleaning.jhu_complement.JHUDataComplementHandler.MONOTONIC_FATAL" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="covsirphy.cleaning.jhu_complement.JHUDataComplementHandler.MONOTONIC_RECOVERED">
+<code class="sig-name descname">MONOTONIC_RECOVERED</code><em class="property"> = 'Monotonic_recovered'</em><a class="headerlink" href="#covsirphy.cleaning.jhu_complement.JHUDataComplementHandler.MONOTONIC_RECOVERED" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="covsirphy.cleaning.jhu_complement.JHUDataComplementHandler.PARTIAL_RECOVERED">
+<code class="sig-name descname">PARTIAL_RECOVERED</code><em class="property"> = 'Partial_recovered'</em><a class="headerlink" href="#covsirphy.cleaning.jhu_complement.JHUDataComplementHandler.PARTIAL_RECOVERED" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
 <dl class="py attribute">
 <dt id="covsirphy.cleaning.jhu_complement.JHUDataComplementHandler.RAW_COLS">
 <code class="sig-name descname">RAW_COLS</code><em class="property"> = ['Confirmed', 'Fatal', 'Recovered']</em><a class="headerlink" href="#covsirphy.cleaning.jhu_complement.JHUDataComplementHandler.RAW_COLS" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="covsirphy.cleaning.jhu_complement.JHUDataComplementHandler.RECOVERED_COLS">
+<code class="sig-name descname">RECOVERED_COLS</code><em class="property"> = ['Monotonic_recovered', 'Full_recovered', 'Partial_recovered']</em><a class="headerlink" href="#covsirphy.cleaning.jhu_complement.JHUDataComplementHandler.RECOVERED_COLS" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="covsirphy.cleaning.jhu_complement.JHUDataComplementHandler.SHOW_COMPLEMENT_FULL_COLS">
+<code class="sig-name descname">SHOW_COMPLEMENT_FULL_COLS</code><em class="property"> = ['Monotonic_confirmed', 'Monotonic_fatal', 'Monotonic_recovered', 'Full_recovered', 'Partial_recovered']</em><a class="headerlink" href="#covsirphy.cleaning.jhu_complement.JHUDataComplementHandler.SHOW_COMPLEMENT_FULL_COLS" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="py attribute">
@@ -257,14 +293,16 @@ Columns:</p>
 </div></blockquote>
 </dd>
 </dl>
-<p>str: status code</p>
+<p>str: status code
+dict: status for each complement type</p>
 </p>
 </dd>
 <dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>tuple(pandas.DataFrame, str)</p>
+<dd class="field-odd"><p>tuple(pandas.DataFrame, str, dict)</p>
 </dd>
 </dl>
-<p class="rubric">Notes</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
 <dl class="simple">
 <dt>Status code will be selected from:</dt><dd><ul class="simple">
 <li><p>‘’ (not complemented)</p></li>
@@ -276,6 +314,7 @@ Columns:</p>
 </ul>
 </dd>
 </dl>
+</div>
 </dd></dl>
 
 </dd></dl>
