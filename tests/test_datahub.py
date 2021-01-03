@@ -177,8 +177,10 @@ class TestJHUData(object):
         [
             ("Greece", None),
             (["Greece", "Japan"], None),
-            (["Greece", "Japan"], "Tokyo"),
             (None, None),
+            ("Moon", None),
+            # raise ValueError
+            (["Greece", "Japan"], "Tokyo"),
         ]
     )
     def test_show_complement(self, jhu_data, country, province):
