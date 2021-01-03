@@ -63,6 +63,10 @@ test:
 	@poetry run pytest tests${target} -v --durations=0 --failed-first --maxfail=1 \
 	 --cov=covsirphy --cov-report=term-missing
 
+.PHONY: flake8
+flake8:
+	@poetry run flake8 covsirphy --ignore=E501
+
 # https://github.com/sphinx-doc/sphinx/issues/3382
 .PHONY: sphinx
 sphinx:
