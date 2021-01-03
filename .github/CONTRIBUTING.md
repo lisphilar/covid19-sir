@@ -134,7 +134,7 @@ When you create a pull request to upstream repository, CI tools will test the co
 CovsirPhy follows [Semantic Versioning 2.0.0](https://semver.org/):
 
 - Milestones of minor update (from X.0.Z to X.1.Z) are documented in [milestones of issues](https://github.com/lisphilar/covid19-sir/milestones).
-- Development version number will be updated, like "version 1.0.0-alpha.new.1.2" to "version 1.0.0-alpha.new.1.2.fix.3" when a bug was fixed with issue number 3.
+- Development version number will be updated, e.g. "version 1.0.0-alpha" to "version 1.0.0-beta" (for closing an issue), "version 1.0.0-better-fu1" (for follow-up).
 - When the revisions do not change the codes of CovsirPhy, version number will not be updated.
 
 Maintainers will
