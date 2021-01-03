@@ -575,13 +575,16 @@ class JHUData(CleaningBase):
             max_ignored (int): Max number of recovered cases to be ignored [cases]
             max_ending_unupdated (int) : Max number of days to apply full complement, where ending recovered cases are not updated [days]
 
+        Raises:
+            ValueError: @province was specified when @country is not a string
+            SubsetNotFoundError: No records were registered for the area/dates
+
         Returns:
             pandas.DataFrame:
                 Index: reset index
                 Columns:
                     - country (str): country name
                     - province (str): province name
-                    - Available (bool): True if complement information is available or False otherwise
                     - Monotonic_confirmed (bool): True if applied for confirmed cases or False otherwise
                     - Monotonic_fatal (bool): True if applied for fatal cases or False otherwise
                     - Monotonic_recovered (bool): True if applied for recovered or False otherwise
@@ -615,12 +618,11 @@ class JHUData(CleaningBase):
             subset_df = self._subset(
                 country=cur_country, province=province, start_date=start_date, end_date=end_date)
             if subset_df.empty:
-                complement_df.loc[cur_country] = [
-                    province, False, False, False, False, False, False]
-                continue
+                raise SubsetNotFoundError(
+                    country=cur_country, province=province, start_date=start_date, end_date=end_date)
             *_, complement_dict = handler.run(subset_df)
             complement_dict_values = pd.Series(
                 complement_dict.values(), dtype=bool).values
             complement_df.loc[cur_country] = [
-                province, True] + complement_dict_values[1:].tolist()
+                province, *complement_dict_values]
         return complement_df.reset_index()

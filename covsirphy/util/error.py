@@ -69,7 +69,7 @@ class SubsetNotFoundError(KeyError, ValueError):
             c_alias_str = ""
         else:
             c_alias_str = f" ({country_alias})"
-        province_str = "" if province is None else f"{province}, "
+        province_str = "" if province is None or province == "-" else f"{province}, "
         return f"{province_str}{country}{c_alias_str}"
 
     @staticmethod
