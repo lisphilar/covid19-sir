@@ -314,8 +314,10 @@ class JHUDataComplementHandler(Term):
         max_frequency = series.value_counts().max()
         if max_frequency <= self.interval:
             return df
-        # Complement in-between values
-        df.loc[df.duplicated([self.R], keep="first"), self.R] = None
+        # Complement in-between recovered values when confirmed > max_ignored
+        sel_C = df[self.C] > self.max_ignored
+        sel_duplicate = df.duplicated([self.R], keep="first")
+        df.loc[sel_C & sel_duplicate, self.R] = None
         df[self.R].interpolate(
             method="linear", inplace=True, limit_direction="both")
         df[self.R] = df[self.R].fillna(method="bfill")
