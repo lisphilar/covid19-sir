@@ -321,7 +321,7 @@ class PhaseSeries(Term):
             ValueError: Phases are not series.
         """
         sorted_units = sorted(units)
-        s = ", ".join([str(unit) for unit in sorted_units])
+        s = ", ".join(str(unit) for unit in sorted_units)
         for (i, unit) in enumerate(sorted_units):
             if i in [0, len(sorted_units) - 1]:
                 continue
