@@ -28,7 +28,7 @@ class ModelValidator(Term):
         n_trials (int): the number of trials
         seed (int): random seed
 
-    Notes:
+    Note:
         Population value and initial values are defined by model.EXAMPLE.
         Estimators know tau values before parameter estimation.
     """

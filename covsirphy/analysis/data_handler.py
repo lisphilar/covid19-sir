@@ -138,7 +138,7 @@ class DataHandler(Term):
                 Columns:
                     - Date (pd.TimeStamp): Observation date
                     - Columns set by @variables (int)
-        Notes:
+        Note:
             - Records with Recovered > 0 will be selected.
             - If complement was performed by Scenario.complement() or Scenario(auto_complement=True),
             The kind of complement will be added to the title of the figure.
@@ -179,7 +179,7 @@ class DataHandler(Term):
                     - Fatal (int):  daily new cases of Fatal, if calculated
                     - Recovered (int):  daily new cases of Recovered, if calculated
 
-        Notes:
+        Note:
             @variables will be selected from Confirmed, Infected, Fatal and Recovered.
             If None was set as @variables, ["Confirmed", "Fatal", "Recovered"] will be used.
         """

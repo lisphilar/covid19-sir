@@ -54,7 +54,7 @@ class COVID19DataHub(Term):
         Returns:
             covsirphy.CleaningBase: the dataset
 
-        Notes:
+        Note:
             If @verbose is 2, detailed citation list will be shown when downloading.
             If @verbose is 1, how to show the list will be explained.
             Citation of COVID-19 Data Hub will be set as JHUData.citation etc.
@@ -77,7 +77,7 @@ class COVID19DataHub(Term):
         Args:
             verbose (int): level of verbosity
 
-        Notes:
+        Note:
             If @verbose is 2, detailed citation list will be shown when downloading.
             If @verbose is 1, how to show the list will be explained.
         """
@@ -124,7 +124,7 @@ class COVID19DataHub(Term):
                 pandas.DataFrame: dataset at province level
                 str: the list of primary sources
 
-        Notes:
+        Note:
             For some countries, province-level data is included.
         """
         warnings.simplefilter("ignore", ResourceWarning)

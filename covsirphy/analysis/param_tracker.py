@@ -195,7 +195,7 @@ class ParamTracker(Term):
         Returns:
             covsirphy.PhaseSeries
 
-        Notes:
+        Note:
             - If the phases series has not been registered, new phase series will be created.
             - Either @end_date or @days must be specified.
             - If @end_date and @days are None, the end date will be the last date of the records.
@@ -331,7 +331,7 @@ class ParamTracker(Term):
                 list[str]: list of phase names
                 list[covsirphy.PhaseUnit]: list of phase units
 
-        Notes:
+        Note:
             If @phases is None, return the all past phases.
             If @phases is not None, intersection will be selected.
         """
@@ -388,7 +388,7 @@ class ParamTracker(Term):
         Returns:
             tuple(int, covsirphy.PhaseSeries): tau value [min] and phase series
 
-        Notes:
+        Note:
             - If @phases is None, all past phase will be used.
             - Phases with estimated parameter values will be ignored.
             - In kwargs, tau value cannot be included.
@@ -474,7 +474,7 @@ class ParamTracker(Term):
         Returns:
             float: score with the specified metrics
 
-        Notes:
+        Note:
             If @variables is None, ["Infected", "Fatal", "Recovered"] will be used.
             "Confirmed", "Infected", "Fatal" and "Recovered" can be used in @variables.
             If @phases is None, all phases will be used.

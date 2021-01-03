@@ -23,7 +23,7 @@ class DataLoader(Term):
         directory (str or pathlib.Path): directory to save the downloaded datasets
         update_interval (int): update interval of the local datasets
 
-    Notes:
+    Note:
         GitHub datasets will be always updated because headers of GET response
         does not have 'Last-Modified' keys.
         If @update_interval hours have passed since the last update of local datasets,
@@ -105,7 +105,7 @@ class DataLoader(Term):
         Returns:
             (bool): whether we need to get the data from remote servers or not
 
-        Notes:
+        Note:
             If the last updated date is unknown, returns True.
             If @self.update_interval hours have passed and the remote file was updated, return True.
         """
@@ -124,7 +124,7 @@ class DataLoader(Term):
             basename (str): basename of CSV file to save records
             verbose (int): level of verbosity
 
-        Notes:
+        Note:
             If @verbose is 2, detailed citation list will be shown when downloading.
             If @verbose is 1, how to show the list will be explained.
             Citation of COVID-19 Data Hub will be set as JHUData.citation etc.
@@ -156,7 +156,7 @@ class DataLoader(Term):
             local_file (str or None): if not None, load the data from this file
             verbose (int): level of verbosity
 
-        Notes:
+        Note:
             If @verbose is 2, detailed citation list will be shown when downloading.
             If @verbose is 1, how to show the list will be explained.
             Citation of COVID-19 Data Hub will be set as JHUData.citation.
@@ -183,7 +183,7 @@ class DataLoader(Term):
             local_file (str or None): if not None, load the data from this file
             verbose (int): level of verbosity
 
-        Notes:
+        Note:
             If @verbose is 2, detailed citation list will be shown when downloading.
             If @verbose is 1, how to show the list will be explained.
             Citation of COVID-19 Data Hub will be set as PopulationData.citation.
@@ -204,7 +204,7 @@ class DataLoader(Term):
             local_file (str or None): if not None, load the data from this file
             verbose (int): level of verbosity
 
-        Notes:
+        Note:
             If @verbose is 2, detailed citation list will be shown when downloading.
             If @verbose is 1, how to show the list will be explained.
             Citation of COVID-19 Data Hub will be set as OxCGRTData.citation.
@@ -264,7 +264,7 @@ class DataLoader(Term):
             basename_owid (str): basename of the file to save "Our World In Data" data
             verbose (int): level of verbosity
 
-        Notes:
+        Note:
             If @verbose is 2, detailed citation list will be shown when downloading.
             If @verbose is 1, how to show the list will be explained.
             Citation of COVID-19 Data Hub will be set as JHUData.citation.

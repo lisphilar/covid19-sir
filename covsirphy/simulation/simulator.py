@@ -77,7 +77,7 @@ class ODESimulator(Term):
         Returns:
             dict(str, str): dictionary of parameters
 
-        Notes:
+        Note:
             If a parameter value is not registered, None will be registered.
         """
         param_dict = param_dict or {}
@@ -104,7 +104,7 @@ class ODESimulator(Term):
         Returns:
             dict(str, str): dictionary of initial values
 
-        Notes:
+        Note:
             If initial value of a variable is not registered, None will be registered.
         """
         y0_dict = y0_dict or {}

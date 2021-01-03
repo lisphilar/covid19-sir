@@ -79,7 +79,7 @@ class ExampleData(JHUData):
             province (str or None): province name
             kwargs: the other keyword arguments of ODESimulator.add()
 
-        Notes:
+        Note:
             If country is None, the name of the model will be used.
             If province is None, '-' will be used.
         """
@@ -139,7 +139,7 @@ class ExampleData(JHUData):
             country (str or None): country name
             province (str or None): province name
 
-        Notes:
+        Note:
             If country is None, the name of the model will be used.
             If province is None, '-' will be used.
         """
@@ -159,7 +159,7 @@ class ExampleData(JHUData):
             country (str or None): country name
             province (str or None): province name
 
-        Notes:
+        Note:
             If country is None, the name of the model will be used.
             If province is None, '-' will be used.
         """
@@ -192,7 +192,7 @@ class ExampleData(JHUData):
                     - Recovered (int): the number of recovered cases (> 0)
                     - Susceptible (int): the number of susceptible cases, if calculated
 
-        Notes:
+        Note:
             If country is None, the name of the model will be used.
             If province is None, '-' will be used.
             If @population is not None, the number of susceptible cases will be calculated.

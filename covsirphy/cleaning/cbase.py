@@ -75,7 +75,7 @@ class CleaningBase(Term):
         """
         Return the cleaned dataset.
 
-        Notes:
+        Note:
             Cleaning method is defined by CleaningBase._cleaning() method.
 
         Returns:
@@ -146,7 +146,7 @@ class CleaningBase(Term):
         Returns:
             str: country name
 
-        Notes:
+        Note:
             If ISO3 codes are not registered, return the string as-si @iso3_code.
         """
         return self.ensure_country_name(iso3_code)
@@ -179,7 +179,7 @@ class CleaningBase(Term):
         Returns:
             str: area name
 
-        Notes:
+        Note:
             If province is None or '-', return country name.
             If not, return the area name, like 'Japan/Tokyo'
         """

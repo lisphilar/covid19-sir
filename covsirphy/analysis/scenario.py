@@ -168,7 +168,7 @@ class Scenario(DataHandler):
         Returns:
             covsirphy.Scenario: self
 
-        Notes:
+        Note:
             - If the phases series has not been registered, new phase series will be created.
             - Either @end_date or @days must be specified.
             - If @end_date and @days are None, the end date will be the last date of the records.
@@ -204,7 +204,7 @@ class Scenario(DataHandler):
         Returns:
             covsirphy.Scenario: self
 
-        Notes:
+        Note:
             If un-registered scenario name was specified, new scenario will be created.
             Future phases will be always deleted.
         """
@@ -242,7 +242,7 @@ class Scenario(DataHandler):
         Returns:
             covsirphy.Scenario: self
 
-        Notes:
+        Note:
             If @phases is None, the phase series will be deleted.
             When @phase is '0th', disable 0th phase. 0th phase will not be deleted.
             If the last phase is included in @phases, the dates will be released from phases.
@@ -337,7 +337,7 @@ class Scenario(DataHandler):
             - if @name not None, as the same as PhaseSeries().summary()
             - if @name is None, index will be phase series name and phase name
 
-        Notes:
+        Note:
             If 'Main' was used as @name, main PhaseSeries will be used.
         """
         if name is None:
@@ -368,7 +368,7 @@ class Scenario(DataHandler):
             - if @name not None, as the same as PhaseSeries().summary()
             - if @name is None, index will be phase series name and phase name
 
-        Notes:
+        Note:
             If 'Main' was used as @name, main PhaseSeries will be used.
             If @columns is None, all columns will be shown.
         """
@@ -433,7 +433,7 @@ class Scenario(DataHandler):
             n_jobs (int): the number of parallel jobs or -1 (CPU count)
             kwargs: keyword arguments of model parameters and covsirphy.Estimator.run()
 
-        Notes:
+        Note:
             - If 'Main' was used as @name, main PhaseSeries will be used.
             - If @name phase was not registered, new PhaseSeries will be created.
             - If @phases is None, all past phase will be used.
@@ -472,7 +472,7 @@ class Scenario(DataHandler):
             name (str): phase series name
             kwargs: keyword arguments of covsirphy.Estimator.history()
 
-        Notes:
+        Note:
             If 'Main' was used as @name, main PhaseSeries will be used.
         """
         estimator = self.phase_estimator(phase=phase, name=name)
@@ -487,7 +487,7 @@ class Scenario(DataHandler):
             name (str): phase series name
             kwargs: keyword arguments of covsirphy.Estimator.accuracy()
 
-        Notes:
+        Note:
             If 'Main' was used as @name, main PhaseSeries will be used.
         """
         estimator = self.phase_estimator(phase=phase, name=name)
@@ -547,7 +547,7 @@ class Scenario(DataHandler):
         Returns:
             str or int or float
 
-        Notes:
+        Note:
             If 'Main' was used as @name, main PhaseSeries will be used.
         """
         df = self.summary(name=name)
@@ -612,7 +612,7 @@ class Scenario(DataHandler):
         Returns:
             pandas.DataFrame
 
-        Notes:
+        Note:
             If 'Main' was used as @name, main PhaseSeries will be used.
         """
         self._tracker(name)
@@ -926,7 +926,7 @@ class Scenario(DataHandler):
             target (str): scenario name of target
             kwargs: keyword argument of parameter values and Estimator.run()
 
-        Notes:
+        Note:
             When parameter values are not specified,
             actual values of the last date before the beginning date will be used.
         """
@@ -966,7 +966,7 @@ class Scenario(DataHandler):
         Returns:
             float: score with the specified metrics
 
-        Notes:
+        Note:
             If @variables is None, ["Infected", "Fatal", "Recovered"] will be used.
             "Confirmed", "Infected", "Fatal" and "Recovered" can be used in @variables.
             If @phases is None, all phases will be used.

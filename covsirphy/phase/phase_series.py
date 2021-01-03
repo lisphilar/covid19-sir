@@ -42,7 +42,7 @@ class PhaseSeries(Term):
         Returns:
             covsirphy.PhaseUnit: the unit of the phase
 
-        Notes:
+        Note:
             When @phase is 'last' and no phases were registered, returns A phase
             with the start/end dates are the previous date of the first date and initial population value.
         """
@@ -106,7 +106,7 @@ class PhaseSeries(Term):
         Returns:
             covsirphy.PhaseSeries: self
 
-        Notes:
+        Note:
             If @population is None, the previous initial value will be used.
             When addition of past phases was not completed and the new phase is future phase, fill in the blank.
         """
@@ -151,7 +151,7 @@ class PhaseSeries(Term):
         Returns:
             covsirphy.PhaseSeries: self
 
-        Notes:
+        Note:
             When @phase is '0th', disable 0th phase. 0th phase will not be deleted.
             When @phase is 'last', the last phase will be deleted.
         """
@@ -286,7 +286,7 @@ class PhaseSeries(Term):
         Returns:
             covsirphy.PhaseSeries: self
 
-        Notes:
+        Note:
             If @phase is None and @keep_old is False, all old phases will be deleted.
             If @phase is not None, the phase will be deleted.
             @new_list must be specified.
