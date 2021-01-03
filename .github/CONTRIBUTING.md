@@ -140,6 +140,8 @@ CovsirPhy follows [Semantic Versioning 2.0.0](https://semver.org/):
 Maintainers will
 
 - update [sphinx document](https://lisphilar.github.io/covid19-sir/) with CI tools and `make docs`,
-- update the version number of "pyproject.toml" and "poetry.lock",
+- update "pyproject.toml" and "poetry.lock" with `make update`,
+- update "covsirphy/\_\_init\_\_.py" to update development or stable version number,
+- update "pyproject.toml" to update stable version number,
 - upload to [PyPI: The Python Package Index](https://pypi.org/), and
 - create [a release note](https://github.com/lisphilar/covid19-sir/releases) for major/minor/batch update.
