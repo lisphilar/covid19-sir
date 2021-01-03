@@ -16,14 +16,14 @@ class JHUDataComplementHandler(Term):
         recovery_period (int): expected value of recovery period [days]
         interval (int): expected update interval of the number of recovered cases [days]
         max_ignored (int): Max number of recovered cases to be ignored [cases]
-        max_ending_unupdated (int) : Max number of days to apply full complement,
-                         where max recovered cases are not updated [days]
+        max_ending_unupdated (int): Max number of days to apply full complement, where max recovered cases are not updated [days]
 
-    Notes:
+    Note:
         To add new complement solutions, we need to update cls.STATUS_NAME_DICT and self._protocol().
         Status names with high socres will be prioritized when status code will be determined.
         Status code: 'fully complemented recovered data' and so on as noted in self.run() docstring.
     """
+    # Column names
     RAW_COLS = [Term.C, Term.F, Term.R]
     MONOTONIC_CONFIRMED = "Monotonic_confirmed"
     MONOTONIC_FATAL = "Monotonic_fatal"
@@ -32,7 +32,8 @@ class JHUDataComplementHandler(Term):
     PARTIAL_RECOVERED = "Partial_recovered"
     RECOVERED_COLS = [MONOTONIC_RECOVERED, FULL_RECOVERED, PARTIAL_RECOVERED]
     AVAILABLE_COL = "Available"
-    SHOW_COMPLEMENT_FULL_COLS = [AVAILABLE_COL, MONOTONIC_CONFIRMED, MONOTONIC_FATAL, *RECOVERED_COLS]
+    SHOW_COMPLEMENT_FULL_COLS = [
+        AVAILABLE_COL, MONOTONIC_CONFIRMED, MONOTONIC_FATAL, *RECOVERED_COLS]
     # Kind of complement: {score: name}
     STATUS_NAME_DICT = {
         1: "sorting",
@@ -102,7 +103,7 @@ class JHUDataComplementHandler(Term):
                 str: status code
                 dict: status for each complement type
 
-        Notes:
+        Note:
             Status code will be selected from:
                 - '' (not complemented)
                 - 'monotonic increasing complemented confirmed data'
@@ -116,7 +117,8 @@ class JHUDataComplementHandler(Term):
         # Initialize
         after_df = subset_df.copy()
         status_dict = dict.fromkeys(self.RAW_COLS, 0)
-        self.complement_dict = dict.fromkeys(self.SHOW_COMPLEMENT_FULL_COLS, False)
+        self.complement_dict = dict.fromkeys(
+            self.SHOW_COMPLEMENT_FULL_COLS, False)
         # Perform complement one by one
         for (variable, func, score) in self._protocol():
             before_df, after_df = after_df.copy(), func(after_df)
@@ -252,7 +254,7 @@ class JHUDataComplementHandler(Term):
             pandas.DataFrame: complemented records
                 Index: Date (pandas.TimeStamp)
                 Columns: Confirmed, Fatal, Recovered
-        
+
         Note: _recovered_partial_ending() must always be called
               after _recovered_partial()
         """
@@ -265,21 +267,25 @@ class JHUDataComplementHandler(Term):
         # Complement any ending unupdated values that are not updated
         # for more than max_ending_unupdated days,
         # by keeping and propagating forward previous valid diff()
-        # min_index: index for first ending max R reoccurrence     
+        # min_index: index for first ending max R reoccurrence
         min_index = df[self.R].idxmax() + timedelta(days=1)
         first_value = df.loc[min_index, self.R]
         df_ending = df.copy()
-        df_ending.loc[df_ending.duplicated([self.R], keep="first"), self.R] = None
-        diff_series = df_ending[self.R].diff().ffill().fillna(0).astype(np.int64)
+        df_ending.loc[df_ending.duplicated(
+            [self.R], keep="first"), self.R] = None
+        diff_series = df_ending[self.R].diff(
+        ).ffill().fillna(0).astype(np.int64)
         diff_series.loc[diff_series.duplicated(keep="last")] = None
         diff_series.interpolate(
             method="linear", inplace=True, limit_direction="both")
-        df.loc[min_index:, self.R] = first_value + diff_series[min_index:].cumsum()
+        df.loc[min_index:, self.R] = first_value + \
+            diff_series[min_index:].cumsum()
         # Check if the ending complement is valid (too large recovered ending values)
         # If the validity check fails, then fully complement these ending values
         sel_C1 = df[self.C] > self.max_ignored
         sel_R1 = df[self.R] > self.max_ignored
-        cf_diff = df[self.C] - df[self.F] # check all values one-by-one, no rolling window
+        # check all values one-by-one, no rolling window
+        cf_diff = df[self.C] - df[self.F]
         sel_limit = df[self.R] > 0.99 * cf_diff
         s_df_1 = df.loc[sel_C1 & sel_R1 & sel_limit]
         if not s_df_1.empty:
@@ -329,9 +335,9 @@ class JHUDataComplementHandler(Term):
             pandas.DataFrame: complemented records
                 Index: Date (pandas.TimeStamp)
                 Columns: Confirmed, Fatal, Recovered
-        
-        Note: _recovered_sort() must always be called
-              after _recovered_partial_ending()
+
+        Note:
+            _recovered_sort() must always be called after _recovered_partial_ending()
         """
         df.loc[:, self.R] = sorted(df[self.R].abs())
         df[self.R].interpolate(method="time", inplace=True)
