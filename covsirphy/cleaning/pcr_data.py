@@ -64,7 +64,7 @@ class PCRData(CleaningBase):
                     - Tests (int): the number of total tests performed
                     - Confirmed (int): the number of confirmed cases
 
-        Notes:
+        Note:
             Cleaning method is defined by self._cleaning() method.
         """
         return self._cleaned_df.loc[:, self.PCR_COLUMNS]
@@ -324,7 +324,7 @@ class PCRData(CleaningBase):
                 Index: Date (pandas.TimeStamp)
                 Columns: Tests, Confirmed, Tests_diff, C_diff
 
-        Notes:
+        Note:
             Filling NA with 0 will be always applied.
         """
         df = before_df.copy()
@@ -492,7 +492,7 @@ class PCRData(CleaningBase):
                     - Confirmed_diff (int): daily confirmed cases
                     - Test_positive_rate (float): positive rate (%) of the daily cases over the total daily tests performed
 
-        Notes:
+        Note:
             If non monotonic records were found for either confirmed cases or tests,
             "with partially complemented tests data" will be added to the title of the figure.
         """

@@ -16,7 +16,7 @@ class JapanData(CountryData):
         force (bool): if True, always download the dataset from the server
         verbose (int): level of verbosity
 
-    Notes:
+    Note:
         Columns of JapanData.cleaned():
             - Date (pandas.TimeStamp): date
             - Country (pandas.Category): 'Japan'

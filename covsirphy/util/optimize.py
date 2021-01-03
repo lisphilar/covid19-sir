@@ -48,7 +48,7 @@ class Optimizer(object):
         Args:
             seed (int or None): random seed of hyperparameter optimization
 
-        Notes:
+        Note:
             @seed will effective when the number of CPUs is 1
         """
         self.study = optuna.create_study(
@@ -67,7 +67,7 @@ class Optimizer(object):
             n_jobs (int): the number of parallel jobs or -1 (CPU count)
             seed (int or None): random seed of hyperparameter optimization
 
-        Notes:
+        Note:
             @seed will effective when @n_jobs is 1
         """
         if seed is not None and n_jobs != 1:

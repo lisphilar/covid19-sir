@@ -105,7 +105,7 @@ class Estimator(Term):
             seed (int or None): random seed of hyperparameter optimization
             kwargs: other keyword arguments will be ignored
 
-        Notes:
+        Note:
             @n_jobs was obsoleted because this is not effective for Optuna.
         """
         # Create a study of optuna

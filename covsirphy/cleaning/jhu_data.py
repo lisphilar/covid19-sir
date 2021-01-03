@@ -54,7 +54,7 @@ class JHUData(CleaningBase):
                     - Fatal (int): the number of fatal cases
                     - Recovered (int): the number of recovered cases
 
-        Notes:
+        Note:
             Cleaning method is defined by self._cleaning() method.
         """
         if "population" in kwargs.keys():
@@ -133,7 +133,7 @@ class JHUData(CleaningBase):
         Returns:
             covsirphy.JHUData: self
 
-        Notes:
+        Note:
             Citation of the country data will be added to 'JHUData.citation' description.
         """
         self.ensure_instance(country_data, CountryData, name="country_data")
@@ -207,7 +207,7 @@ class JHUData(CleaningBase):
                     - Recovered (int): the number of recovered cases
                     - Susceptible (int): the number of susceptible cases, if calculated
 
-        Notes:
+        Note:
             If @population is not None, the number of susceptible cases will be calculated.
         """
         if population is None:
@@ -238,7 +238,7 @@ class JHUData(CleaningBase):
                     - Recovered (int): the number of recovered cases (> 0)
                     - Susceptible (int): the number of susceptible cases, if calculated
 
-        Notes:
+        Note:
             If @population is not None, the number of susceptible cases will be calculated.
         """
         country_alias = self.ensure_country_name(country)
@@ -279,7 +279,7 @@ class JHUData(CleaningBase):
                     - Recovered (int): the number of recovered cases (> 0)
                     - Susceptible (int): the number of susceptible cases
 
-        Notes:
+        Note:
             @population must be specified.
             Records with Recovered > 0 will be used.
         """
@@ -367,7 +367,7 @@ class JHUData(CleaningBase):
         Returns:
             int: closing period [days]
 
-        Notes:
+        Note:
             If no records we can use for calculation were registered, 12 [days] will be applied.
         """
         # Get cleaned dataset at country level
@@ -400,7 +400,7 @@ class JHUData(CleaningBase):
         Returns:
             int: recovery period [days]
 
-        Notes:
+        Note:
             If no records we can use for calculation were registered, 17 [days] will be applied.
         """
         # Get valid data for calculation
@@ -462,8 +462,7 @@ class JHUData(CleaningBase):
             population(int or None): population value
             interval (int): expected update interval of the number of recovered cases [days]
             max_ignored (int): Max number of recovered cases to be ignored [cases]
-            max_ending_unupdated (int) : Max number of days to apply full complement,
-                 where ending recovered cases are not updated [days]
+            max_ending_unupdated (int) : Max number of days to apply full complement, where ending recovered cases are not updated [days]
 
         Returns:
             tuple(pandas.DataFrame, str/bool):
@@ -479,7 +478,7 @@ class JHUData(CleaningBase):
                         - Susceptible(int): the number of susceptible cases, if calculated
                 str/bool: kind of complement or False
 
-        Notes:
+        Note:
             If @population is not None, the number of susceptible cases will be calculated.
         """
         # Arguments
@@ -538,7 +537,7 @@ class JHUData(CleaningBase):
                         - Susceptible(int): the number of susceptible cases, if calculated
                 str/bool: kind of complement or False
 
-        Notes:
+        Note:
             If @ population is not None, the number of susceptible cases will be calculated.
             If necessary and @auto_complement is True, complement recovered data.
         """
@@ -560,9 +559,8 @@ class JHUData(CleaningBase):
                 start_date=start_date, end_date=end_date, message="with 'Recovered > 0'") from None
 
     def show_complement(self, country=None, province=None,
-                          start_date=None, end_date=None,
-                          interval=2, max_ignored=100,
-                          max_ending_unupdated=14):
+                        start_date=None, end_date=None,
+                        interval=2, max_ignored=100, max_ending_unupdated=14):
         """
         To monitor effectivity and safety of complement on JHU subset,
         we need to know what kind of complement was done for JHU subset
@@ -575,8 +573,7 @@ class JHUData(CleaningBase):
             end_date(str or None): end date, like 01Feb2020
             interval (int): expected update interval of the number of recovered cases [days]
             max_ignored (int): Max number of recovered cases to be ignored [cases]
-            max_ending_unupdated (int) : Max number of days to apply full complement,
-                 where ending recovered cases are not updated [days]
+            max_ending_unupdated (int) : Max number of days to apply full complement, where ending recovered cases are not updated [days]
 
         Returns:
             pandas.DataFrame:
@@ -591,30 +588,39 @@ class JHUData(CleaningBase):
                     - Full_recovered (bool): True if applied for recovered or False otherwise
                     - Partial_recovered (bool): True if applied for recovered or False otherwise
         """
-        complement_df = pd.DataFrame(columns=[self.COUNTRY, self.PROVINCE,
-                                              *JHUDataComplementHandler.SHOW_COMPLEMENT_FULL_COLS])
-        complement_df.set_index(self.COUNTRY, inplace=True)
         self._recovery_period = self._recovery_period or self.calculate_recovery_period()
+        # Area name
         if country is None:
-            country = [c for c in self._cleaned_df[self.COUNTRY].unique() if c != "Others"]
+            country = [
+                c for c in self._cleaned_df[self.COUNTRY].unique() if c != "Others"]
         province = province or self.UNKNOWN
         if not isinstance(country, str) and province != self.UNKNOWN:
-            raise ValueError("@province cannot be specified when @country is not a string.")
+            raise ValueError(
+                "@province cannot be specified when @country is not a string.")
         if not isinstance(country, list):
             country = [country]
+        # Create complement handler
+        handler = JHUDataComplementHandler(
+            recovery_period=self._recovery_period,
+            interval=interval,
+            max_ignored=max_ignored,
+            max_ending_unupdated=max_ending_unupdated,
+        )
+        # Check each country
+        complement_df = pd.DataFrame(
+            columns=[
+                self.COUNTRY, self.PROVINCE, *JHUDataComplementHandler.SHOW_COMPLEMENT_FULL_COLS])
+        complement_df.set_index(self.COUNTRY, inplace=True)
         for cur_country in country:
             subset_df = self._subset(
                 country=cur_country, province=province, start_date=start_date, end_date=end_date)
-            if not subset_df.empty:
-                handler = JHUDataComplementHandler(
-                    recovery_period=self._recovery_period,
-                    interval=interval,
-                    max_ignored=max_ignored,
-                    max_ending_unupdated=max_ending_unupdated,
-                )
-                _, _, complement_dict = handler.run(subset_df)
-                complement_dict_values = pd.Series(complement_dict.values(), dtype=bool).values
-                complement_df.loc[cur_country] = [province, True] + complement_dict_values[1:].tolist()
-            else:
-                complement_df.loc[cur_country] = [province, False, False, False, False, False, False]
-        return complement_df
+            if subset_df.empty:
+                complement_df.loc[cur_country] = [
+                    province, False, False, False, False, False, False]
+                continue
+            *_, complement_dict = handler.run(subset_df)
+            complement_dict_values = pd.Series(
+                complement_dict.values(), dtype=bool).values
+            complement_df.loc[cur_country] = [
+                province, True] + complement_dict_values[1:].tolist()
+        return complement_df.reset_index()

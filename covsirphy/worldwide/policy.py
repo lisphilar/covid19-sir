@@ -110,7 +110,7 @@ class PolicyMeasures(Term):
         Returns:
             covsirphy.PolicyMeasures: self
 
-        Notes:
+        Note:
             Countries which do not have @min_len phases will be un-registered.
         """
         min_len = self.ensure_natural_int(min_len, name="min_len")
@@ -138,7 +138,7 @@ class PolicyMeasures(Term):
         Returns:
             pandas.DataFrame
 
-        Notes:
+        Note:
             If @columns is None, all columns will be shown.
         """
         countries = countries or self._countries

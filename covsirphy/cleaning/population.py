@@ -152,7 +152,7 @@ class PopulationData(CleaningBase):
         Returns:
             int: population in the place
 
-        Notes:
+        Note:
             If @date is None, the created date of the instancewill be used
         """
         country_alias = self.ensure_country_name(country)
@@ -178,7 +178,7 @@ class PopulationData(CleaningBase):
         Returns:
             covsirphy.PopulationData: self
 
-        Notes:
+        Note:
             If @date is None, the created date of the instance will be used.
             If @province is None, "-" will be used.
         """
@@ -212,7 +212,7 @@ class PopulationData(CleaningBase):
         Returns:
             list[str]: list of country names
 
-        Notes:
+        Note:
             Country 'Others' will be removed.
         """
         country_list = super().countries()

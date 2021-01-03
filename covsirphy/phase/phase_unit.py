@@ -419,7 +419,7 @@ class PhaseUnit(Term):
                     - any other columns will be ignored
             **kwargs: keyword arguments of Estimator.run()
 
-        Notes:
+        Note:
             If @record_df is None, registered records will be used.
         """
         self._model_is_registered()
@@ -521,7 +521,7 @@ class PhaseUnit(Term):
                     - Recovered (int): the number of recovered cases
                     - Variables of the model (int): Confirmed etc.
 
-        Notes:
+        Note:
             Simulation starts at the start date of the phase.
             Simulation end at the next date of the end date of the phase.
         """

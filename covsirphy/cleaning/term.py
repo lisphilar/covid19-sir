@@ -211,7 +211,7 @@ class Term(object):
         Returns:
             int: as-is the target
 
-        Notes:
+        Note:
             When @target is None and @none_ok is True, None will be returned.
             If the value is a natural number and the type was float or string,
             it will be converted to an integer.
@@ -399,7 +399,7 @@ class Term(object):
         Returns:
             datetime.datetime or None
 
-        Notes:
+        Note:
             If @date_str is None, returns @default value
         """
         if date_str is None:

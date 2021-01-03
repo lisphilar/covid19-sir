@@ -14,7 +14,7 @@ def save_dataframe(df, filename, index=True):
         filename (str or None): CSV filename
         index (bool): if True, include index column.
 
-    Notes:
+    Note:
         If @filename is None or OSError was raised, the dataframe will not be saved.
     """
     if not isinstance(df, pd.DataFrame):

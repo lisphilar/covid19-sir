@@ -177,18 +177,20 @@ class TestJHUData(object):
         [
             ("Greece", None),
             (["Greece", "Japan"], None),
-            (["Greece", "Japan"], "Tokyo"),
             (None, None),
+            ("Moon", None),
+            # raise ValueError
+            (["Greece", "Japan"], "Tokyo"),
         ]
     )
     def test_show_complement(self, jhu_data, country, province):
-        if isinstance(country, list) and (province is not None):
+        if not isinstance(country, str) and province is not None:
             with pytest.raises(ValueError):
                 jhu_data.show_complement(country=country, province=province)
         else:
-            complement_df = jhu_data.show_complement(country=country, province=province)
+            df = jhu_data.show_complement(country=country, province=province)
             all_set = set(JHUDataComplementHandler.SHOW_COMPLEMENT_FULL_COLS)
-            assert all_set.issubset(complement_df.columns)
+            assert all_set.issubset(df.columns)
 
 
 class TestPopulationData(object):

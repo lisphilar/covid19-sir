@@ -25,7 +25,7 @@ class ChangeFinder(Term):
         min_size (int): minimum value of phase length [days], over 2
         max_rmsle (float): minmum value of RMSLE score
 
-    Notes:
+    Note:
         When RMSLE score > max_rmsle, predicted values will be None
     """
 
@@ -147,7 +147,7 @@ class ChangeFinder(Term):
         Returns:
             tuple(list[str], list[str]): list of start/end dates
 
-        Notes:
+        Note:
             @change_dates must be specified if ChangeFinder.run() was not done.
         """
         change_dates = change_dates or self._change_dates[:]
@@ -170,7 +170,7 @@ class ChangeFinder(Term):
             change_dates (list[str] or None): list of change points
             filename (str): filename of the figure, or None (display)
 
-        Notes:
+        Note:
             @change_dates must be specified if ChangeFinder.run() was not done.
         """
         # Curve fitting

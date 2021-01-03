@@ -18,7 +18,7 @@ class VaccineData(CleaningBase):
         filename (str or pathlib.path): CSV filename to save the raw dataset
         force (bool): if True, always download the dataset from the server
         verbose (int): level of verbosity
-    Notes:
+    Note:
         Columns of VaccineData.cleaned():
             - Date (pandas.TimeStamp): observation dates
             - Country (pandas.Category): country (or province) names

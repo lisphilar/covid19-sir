@@ -32,7 +32,7 @@ class MPEstimator(Term):
         tau (int or None): tau value [min], a divisor of 1440
         kwargs: keyword arguments of model parameters
 
-    Notes:
+    Note:
         When @record_df is None, @jhu_data and @population_data must be specified.
     """
 

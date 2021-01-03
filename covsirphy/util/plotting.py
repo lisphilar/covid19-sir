@@ -53,7 +53,7 @@ def line_plot(df, title, xlabel=None, ylabel="Cases",
         color_dict (dict[str, str] or None): dictionary of column names (keys) and colors (values)
         filename (str): filename of the figure, or None (show figure)
 
-    Notes:
+    Note:
         If None is included in xlim/ylim, the values will be automatically determined by Matplotlib
     """
     colors = None if color_dict is None else [
