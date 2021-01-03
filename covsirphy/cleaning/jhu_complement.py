@@ -25,6 +25,14 @@ class JHUDataComplementHandler(Term):
         Status code: 'fully complemented recovered data' and so on as noted in self.run() docstring.
     """
     RAW_COLS = [Term.C, Term.F, Term.R]
+    MONOTONIC_CONFIRMED = "Monotonic_confirmed"
+    MONOTONIC_FATAL = "Monotonic_fatal"
+    MONOTONIC_RECOVERED = "Monotonic_recovered"
+    FULL_RECOVERED = "Full_recovered"
+    PARTIAL_RECOVERED = "Partial_recovered"
+    RECOVERED_COLS = [MONOTONIC_RECOVERED, FULL_RECOVERED, PARTIAL_RECOVERED]
+    AVAILABLE_COL = "Available"
+    SHOW_COMPLEMENT_FULL_COLS = [AVAILABLE_COL, MONOTONIC_CONFIRMED, MONOTONIC_FATAL, *RECOVERED_COLS]
     # Kind of complement: {score: name}
     STATUS_NAME_DICT = {
         1: "sorting",
@@ -42,6 +50,7 @@ class JHUDataComplementHandler(Term):
             max_ignored, name="max_ignored")
         self.max_ending_unupdated = self.ensure_natural_int(
             max_ending_unupdated, name="max_ending_unupdated")
+        self.complement_dict = None
 
     def _protocol(self):
         """
@@ -58,8 +67,9 @@ class JHUDataComplementHandler(Term):
             (self.R, self._recovered_full, 4),
             (self.R, self._recovered_sort, 1),
             (self.R, functools.partial(self._monotonic, variable=self.R), 2),
-            (self.R, self._recovered_partial_ending, 3),
             (self.R, self._recovered_partial, 3),
+            (self.R, self._recovered_partial_ending, 3),
+            (self.R, self._recovered_sort, 1),
             (self.R, functools.partial(self._monotonic, variable=self.R), 2),
             (self.R, self._recovered_sort, 1),
             (None, self._post_processing, 0)
@@ -80,7 +90,7 @@ class JHUDataComplementHandler(Term):
                     - The other columns will be ignored
 
         Returns:
-            tuple(pandas.DataFrame, str):
+            tuple(pandas.DataFrame, str, dict):
                 pandas.DataFrame:
                     Index: reset index
                     Columns:
@@ -90,6 +100,7 @@ class JHUDataComplementHandler(Term):
                         - Fatal(int): the number of fatal cases
                         - Recovered (int): the number of recovered cases
                 str: status code
+                dict: status for each complement type
 
         Notes:
             Status code will be selected from:
@@ -105,6 +116,7 @@ class JHUDataComplementHandler(Term):
         # Initialize
         after_df = subset_df.copy()
         status_dict = dict.fromkeys(self.RAW_COLS, 0)
+        self.complement_dict = dict.fromkeys(self.SHOW_COMPLEMENT_FULL_COLS, False)
         # Perform complement one by one
         for (variable, func, score) in self._protocol():
             before_df, after_df = after_df.copy(), func(after_df)
@@ -116,7 +128,7 @@ class JHUDataComplementHandler(Term):
             f"{self.STATUS_NAME_DICT[score]} complemented {v.lower()} data"
             for (v, score) in status_dict.items() if score]
         status = " and \n".join(status_list)
-        return (after_df, status)
+        return (after_df, status, self.complement_dict)
 
     def _pre_processing(self, subset_df):
         """
@@ -185,6 +197,7 @@ class JHUDataComplementHandler(Term):
             # Reduce values to the previous date
             df.loc[:date, variable] = series * raw_last / series.iloc[-1]
             df[variable] = df[variable].fillna(0).astype(np.int64)
+        self.complement_dict[f"Monotonic_{variable.lower()}"] = True
         return df
 
     def _recovered_full(self, df):
@@ -218,13 +231,14 @@ class JHUDataComplementHandler(Term):
         # Estimate recovered records
         df[self.R] = (df[self.C] - df[self.F]).shift(
             periods=self.recovery_period, freq="D")
+        self.complement_dict[self.FULL_RECOVERED] = True
         return df
 
     def _recovered_partial_ending(self, df):
         """
-        If ending recovered values do not change for more than applied 'self.interval' days
-        after reached 'self.max_ignored' cases, apply full complement only to these
-        unupdated values and keep the previous valid ones.
+        If ending recovered values do not change for more than applied 'self.max_ending_unupdated' days
+        after reached 'self.max_ignored' cases, apply either previous diff() (with some variance)
+        or full complement only to these ending unupdated values and keep the previous valid ones.
         _recovered_partial() does not handle well such values, because
         they are not in-between values and interpolation generates only similar values,
         but small compared to confirmed cases.
@@ -238,6 +252,9 @@ class JHUDataComplementHandler(Term):
             pandas.DataFrame: complemented records
                 Index: Date (pandas.TimeStamp)
                 Columns: Confirmed, Fatal, Recovered
+        
+        Note: _recovered_partial_ending() must always be called
+              after _recovered_partial()
         """
         # Whether complement is necessary or not
         r_max = df[self.R].max()
@@ -245,13 +262,30 @@ class JHUDataComplementHandler(Term):
         if not (r_max and sel_0):
             # full complement will be handled in _recovered_full()
             return df
-        # Complement any ending unupdated values.
-        # Fully complement last records that are not updated
-        # for more than max_ending_unupdated days;
-        # keep previous valid values as they are
+        # Complement any ending unupdated values that are not updated
+        # for more than max_ending_unupdated days,
+        # by keeping and propagating forward previous valid diff()
+        # min_index: index for first ending max R reoccurrence     
         min_index = df[self.R].idxmax() + timedelta(days=1)
-        df.loc[min_index:, self.R] = (df[self.C] - df[self.F]).shift(
-            periods=self.recovery_period, freq="D").loc[min_index:]
+        first_value = df.loc[min_index, self.R]
+        df_ending = df.copy()
+        df_ending.loc[df_ending.duplicated([self.R], keep="first"), self.R] = None
+        diff_series = df_ending[self.R].diff().ffill().fillna(0).astype(np.int64)
+        diff_series.loc[diff_series.duplicated(keep="last")] = None
+        diff_series.interpolate(
+            method="linear", inplace=True, limit_direction="both")
+        df.loc[min_index:, self.R] = first_value + diff_series[min_index:].cumsum()
+        # Check if the ending complement is valid (too large recovered ending values)
+        # If the validity check fails, then fully complement these ending values
+        sel_C1 = df[self.C] > self.max_ignored
+        sel_R1 = df[self.R] > self.max_ignored
+        cf_diff = df[self.C] - df[self.F] # check all values one-by-one, no rolling window
+        sel_limit = df[self.R] > 0.99 * cf_diff
+        s_df_1 = df.loc[sel_C1 & sel_R1 & sel_limit]
+        if not s_df_1.empty:
+            df.loc[min_index:, self.R] = (df[self.C] - df[self.F]).shift(
+                periods=self.recovery_period, freq="D").loc[min_index:]
+        self.complement_dict[self.PARTIAL_RECOVERED] = True
         return df
 
     def _recovered_partial(self, df):
@@ -275,10 +309,11 @@ class JHUDataComplementHandler(Term):
         if max_frequency <= self.interval:
             return df
         # Complement in-between values
-        df.loc[df.duplicated([self.R], keep="last"), self.R] = None
+        df.loc[df.duplicated([self.R], keep="first"), self.R] = None
         df[self.R].interpolate(
             method="linear", inplace=True, limit_direction="both")
         df[self.R] = df[self.R].fillna(method="bfill")
+        self.complement_dict[self.PARTIAL_RECOVERED] = True
         return df
 
     def _recovered_sort(self, df):
@@ -294,6 +329,9 @@ class JHUDataComplementHandler(Term):
             pandas.DataFrame: complemented records
                 Index: Date (pandas.TimeStamp)
                 Columns: Confirmed, Fatal, Recovered
+        
+        Note: _recovered_sort() must always be called
+              after _recovered_partial_ending()
         """
         df.loc[:, self.R] = sorted(df[self.R].abs())
         df[self.R].interpolate(method="time", inplace=True)
