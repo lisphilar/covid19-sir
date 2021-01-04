@@ -21,6 +21,8 @@ class JHUData(CleaningBase):
     def __init__(self, filename, citation=None):
         super().__init__(filename, citation)
         self._recovery_period = None
+        self._final_date = None
+        self._cleaned_df = self._cleaning()
 
     @property
     def recovery_period(self):
@@ -129,6 +131,8 @@ class JHUData(CleaningBase):
             [df.loc[df[self.COUNTRY] != "China"], p_chn_df], ignore_index=True)
         # Update data types to reduce memory
         df[self.AREA_ABBR_COLS] = df[self.AREA_ABBR_COLS].astype("category")
+        # Final date of the records
+        self._final_date = df[self.DATE].dt.date.max()
         return df
 
     def replace(self, country_data):
@@ -339,6 +343,8 @@ class JHUData(CleaningBase):
         df[r_cols[0]] = df[self.F] / total_series
         df[r_cols[1]] = df[self.R] / total_series
         df[r_cols[2]] = df[self.F] / (df[self.F] + df[self.R])
+        # Set the final date of the records
+        df = df.loc[df.index.date <= self._final_date]
         return df.loc[:, [*self.VALUE_COLUMNS, *r_cols]]
 
     def countries(self, complement=True, **kwargs):
