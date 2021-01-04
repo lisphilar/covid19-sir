@@ -112,9 +112,9 @@ class TestJHUData(object):
         assert is_complemented
         assert df[Term.C].is_monotonic_increasing
 
-    @pytest.mark.parametrize("country", ["Netherlands", "China", "Germany"])
+    @pytest.mark.parametrize("country", ["Netherlands", "Germany"])
     def test_subset_complement_full(self, jhu_data, country):
-        if country in set(["Netherlands", "China"]):
+        if country in set(["Netherlands"]):
             with pytest.raises(ValueError):
                 jhu_data.subset(country=country)
         df, is_complemented = jhu_data.subset_complement(country=country)
