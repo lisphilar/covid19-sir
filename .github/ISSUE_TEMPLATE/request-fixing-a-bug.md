@@ -8,13 +8,9 @@ assignees: ''
 ---
 
 ## Summary
-Please edit this to explain the summary of the bug.
-`` needs to return ..., but returns ...
 
-## (Optional) Related classes
-- `covsirphy.`
 
-## Codes and outputs:
+## Codes
 ```Python
 import covsirphy as cs
 # Dataset preparation
@@ -24,10 +20,12 @@ population_data = data_loader.population()
 # Scenario analysis
 snl = cs.Scenario(jhu_data, population_data, "Country name used")
 ```
-This code returns 
+
+## Outputs
+(dataframe, figures, stdout.)
 
 ## Environment
 - CovsirPhy version: 
-- Python version: 3.8
-- Installation: pipenv
+- Python version: 3.8.5
+- Installation: poetry/pipenv/conda/pip
 - System: WSL (Ubuntu)/Windows/Linux/Mac/Kaggle Notebook/Google Colaboratory
