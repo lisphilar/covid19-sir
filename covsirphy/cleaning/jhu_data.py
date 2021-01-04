@@ -339,6 +339,10 @@ class JHUData(CleaningBase):
         df[r_cols[0]] = df[self.F] / total_series
         df[r_cols[1]] = df[self.R] / total_series
         df[r_cols[2]] = df[self.F] / (df[self.F] + df[self.R])
+        # Set the final date of the records
+        raw_df = self._raw.rename({"ObservationDate": self.DATE}, axis=1)
+        final_date = pd.to_datetime(raw_df[self.DATE]).dt.date.max()
+        df = df.loc[df.index.date <= final_date]
         return df.loc[:, [*self.VALUE_COLUMNS, *r_cols]]
 
     def countries(self, complement=True, **kwargs):
