@@ -42,6 +42,10 @@ Recommended datasets for analysis can be downloaded and updated easily
 with ``DataLoader`` class. If you have CSV files in your environment,
 you can analyse them.
 
+All raw datasets are retrieved from public databases. No confidential
+information is included. If you find any issues, please let us know via
+GitHub issue page.
+
 1. Recommended datasets
 -----------------------
 
