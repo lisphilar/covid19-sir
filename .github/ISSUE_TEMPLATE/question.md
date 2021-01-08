@@ -1,7 +1,7 @@
 ---
 name: Question
 about: Question about CovsirPhy and this project.
-title: '[Docs] '
+title: '[Question/Docs] '
 labels: question
 assignees: ''
 
@@ -10,7 +10,7 @@ assignees: ''
 ## Summary of question
 
 
-## (Optional) What have you tried?
+## (Optional) What tried
 
 ```Python
 import covsirphy as cs
