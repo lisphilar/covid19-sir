@@ -4,7 +4,6 @@
 from itertools import chain
 import numpy as np
 import pandas as pd
-import swifter
 from covsirphy.cleaning.term import Term
 from covsirphy.ode.mbase import ModelBase
 from covsirphy.cleaning.population import PopulationData
@@ -42,8 +41,6 @@ class ModelValidator(Term):
         self.model_names = []
         # Dataframes of results created by ._get_result()
         self._results = []
-        # To avoid "imported but unused"
-        self.__swifter = swifter
 
     def run(self, model, timeout=180, allowance=(0.98, 1.02), n_jobs=-1):
         """
@@ -96,7 +93,7 @@ class ModelValidator(Term):
         df = pd.DataFrame(
             np.random.rand(n_trials, len(parameters)), columns=parameters)
         # Reproduction number
-        df[self.RT] = df.swifter.progress_bar(False).apply(
+        df[self.RT] = df.apply(
             lambda x: model(population, **x.to_dict()).calc_r0(),
             axis=1)
         # Tau value

@@ -5,7 +5,6 @@ from pathlib import Path
 import country_converter as coco
 import numpy as np
 import pandas as pd
-import swifter
 import wbdata
 from covsirphy.util.error import SubsetNotFoundError
 from covsirphy.cleaning.cbase import CleaningBase
@@ -52,8 +51,6 @@ class PopulationPyramidData(CleaningBase):
         self._citation = "World Bank Group (2020), World Bank Open Data, https://data.worldbank.org/"
         self._filename = filename
         self.verbose = verbose
-        # To avoid "imported but unused"
-        self.__swifter = swifter
 
     def _retrieve_from_server(self, country):
         """
@@ -96,9 +93,9 @@ class PopulationPyramidData(CleaningBase):
         df[self.YEAR] = df["Date"].dt.year
         df = df.drop("Date", axis=1)
         # Preprocessing (-> Country, Year, Sex, Age, Population)
-        df[self.AGE] = df[["Min", "Max"]].swifter.progress_bar(False).apply(
+        df[self.AGE] = df[["Min", "Max"]].apply(
             lambda x: range(x[0], x[1] + 1), axis=1)
-        df[self.N] = df[["Min", "Max", self.N]].swifter.progress_bar(False).apply(
+        df[self.N] = df[["Min", "Max", self.N]].apply(
             lambda x: x[2] / (x[1] - x[0] + 1), axis=1)
         df = df.explode(self.AGE).reset_index(drop=True)
         df[self.N] = df[self.N].astype(np.int64)

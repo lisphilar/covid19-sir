@@ -5,7 +5,6 @@ from pathlib import Path
 import numpy as np
 import pandas as pd
 from dask import dataframe as dd
-import swifter
 from covsirphy.util.plotting import line_plot
 from covsirphy.util.error import PCRIncorrectPreconditionError, SubsetNotFoundError
 from covsirphy.cleaning.cbase import CleaningBase
@@ -46,8 +45,6 @@ class PCRData(CleaningBase):
         self._citation = citation or ""
         # Cleaned dataset of "Our World In Data"
         self._cleaned_df_owid = pd.DataFrame()
-        # To avoid "imported but unused"
-        self.__swifter = swifter
 
     def cleaned(self):
         """
@@ -169,7 +166,7 @@ class PCRData(CleaningBase):
             (df[self.TESTS].isna()) & (df[self.DATE] == df[self.DATE].max())]
         re_countries_set = set(na_last_df[self.ISO3].unique())
         df["cumsum"] = df.groupby(self.ISO3)[self.T_DIFF].cumsum()
-        df[self.TESTS] = df[[self.ISO3, self.TESTS, "cumsum"]].swifter.progress_bar(False).apply(
+        df[self.TESTS] = df[[self.ISO3, self.TESTS, "cumsum"]].apply(
             lambda x: x[1] if x[0] in re_countries_set else x[2], axis=1)
         df = df.drop("cumsum", axis=1)
         # Drop duplicated records
@@ -508,7 +505,7 @@ class PCRData(CleaningBase):
         # Process PCR data
         df, is_complemented = self._pcr_processing(subset_df, window)
         # Calculate PCR values
-        df[self.PCR_RATE] = df[[self.C_DIFF, self.T_DIFF]].swifter.progress_bar(False).apply(
+        df[self.PCR_RATE] = df[[self.C_DIFF, self.T_DIFF]].apply(
             lambda x: x[0] / x[1] * 100 if x[1] > self.min_pcr_tests else 0, axis=1)
         if not show_figure:
             return df
