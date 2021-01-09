@@ -1,0 +1,50 @@
+covsirphy.analysis package
+==========================
+
+.. automodule:: covsirphy.analysis
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+Submodules
+----------
+
+covsirphy.analysis.data\_handler module
+---------------------------------------
+
+.. automodule:: covsirphy.analysis.data_handler
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+covsirphy.analysis.example\_data module
+---------------------------------------
+
+.. automodule:: covsirphy.analysis.example_data
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+covsirphy.analysis.model\_validator module
+------------------------------------------
+
+.. automodule:: covsirphy.analysis.model_validator
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+covsirphy.analysis.param\_tracker module
+----------------------------------------
+
+.. automodule:: covsirphy.analysis.param_tracker
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+covsirphy.analysis.scenario module
+----------------------------------
+
+.. automodule:: covsirphy.analysis.scenario
+   :members:
+   :undoc-members:
+   :show-inheritance:
