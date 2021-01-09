@@ -18,6 +18,10 @@ contribution <https://lisphilar.github.io/covid19-sir/CONTRIBUTING.html>`__.
 
     pip install --upgrade "git+https://github.com/lisphilar/covid19-sir.git#egg=covsirphy"
 
+| Note:
+| When using CovsirPhy in Google Colaboratory, please restart runtime
+  after installation.
+
 Dataset preparation
 ===================
 
