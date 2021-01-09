@@ -1,5 +1,5 @@
 # Installation
-The latest stable version of CovsirPhy is available at [PyPI (The Python Package Index): covsirphy](https://pypi.org/project/covsirphy/) and supports Python 3.7 or newer versions.
+The latest stable version of CovsirPhy is available at [PyPI (The Python Package Index): covsirphy](https://pypi.org/project/covsirphy/) and supports Python 3.6.9 or newer versions.
 
 ```
 pip install --upgrade covsirphy
@@ -9,22 +9,6 @@ The latest development version can be install from [GitHub repository: CovsirPhy
 
 ```
 pip install --upgrade "git+https://github.com/lisphilar/covid19-sir.git#egg=covsirphy"
-```
-
-Note:  
-When using CovsirPhy in Google Colaboratory with Python 3.6 (un-supported), please run
-
-```
-# Stable version
-!pip install --upgrade --no-python-version-warning -qq  pip covsirphy
-```
-
-or,
-
-```
-# Development version
-!pip install --upgrade --no-python-version-warning -qq \
- pip "git+https://github.com/lisphilar/covid19-sir.git#egg=covsirphy"
 ```
 
 # Dataset preparation
