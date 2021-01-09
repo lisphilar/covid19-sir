@@ -11,12 +11,7 @@ assignees: ''
 
 
 ## (Optional) Solution with the current version
-
-### CovsirPhy version
-
-
-### Details
-
 ```Python
 
 ```
+CovsirPhy version: 
