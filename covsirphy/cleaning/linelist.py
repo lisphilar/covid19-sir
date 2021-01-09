@@ -3,7 +3,6 @@
 
 from pathlib import Path
 import pandas as pd
-import swifter
 from covsirphy.util.error import SubsetNotFoundError
 from covsirphy.cleaning.cbase import CleaningBase
 
@@ -57,8 +56,6 @@ class LinelistData(CleaningBase):
         self._citation = "Xu, B., Gutierrez, B., Mekaru, S. et al. " \
             "Epidemiological data from the COVID-19 outbreak, real-time case information. " \
             "Sci Data 7, 106 (2020). https://doi.org/10.1038/s41597-020-0448-0"
-        # To avoid "imported but unused"
-        self.__swifter = swifter
 
     @property
     def raw(self):
@@ -137,7 +134,7 @@ class LinelistData(CleaningBase):
         df[self.F] = df[self.OUTCOME].str.lower().isin(
             ["deceased", "died", "death", "dead"]
         )
-        df[self.CI] = df[[self.C, self.R, self.F]].swifter.progress_bar(False).apply(
+        df[self.CI] = df[[self.C, self.R, self.F]].apply(
             lambda x: x[0] and not x[1] and x[2], axis=1)
         # Symptoms
         df[self.SYMPTOM] = df[self.SYMPTOM].str.replace(", ", ":")
