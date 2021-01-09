@@ -11,6 +11,9 @@ The latest development version can be install from [GitHub repository: CovsirPhy
 pip install --upgrade "git+https://github.com/lisphilar/covid19-sir.git#egg=covsirphy"
 ```
 
+Note:  
+When using CovsirPhy in Google Colaboratory, please restart runtime after installation.
+
 # Dataset preparation
 Recommended datasets for analysis can be downloaded and updated easily with `DataLoader` class. If you have CSV files in your environment, you can analyse them.
 
