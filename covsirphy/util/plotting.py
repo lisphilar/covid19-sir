@@ -56,10 +56,14 @@ def line_plot(df, title, xlabel=None, ylabel="Cases",
     Note:
         If None is included in xlim/ylim, the values will be automatically determined by Matplotlib
     """
-    colors = None if color_dict is None else [
-        color_dict.get(col) for col in df.columns]
+    # Color
+    if color_dict is None:
+        color_args = {"colormap": colormap}
+    else:
+        colors = [color_dict.get(col) for col in df.columns]
+        color_args = {"colormap": colormap, "colors": colors}
     try:
-        ax = df.plot(colormap=colormap, color=colors)
+        ax = df.plot(**color_args)
     except ValueError as e:
         raise ValueError(e.args[0]) from None
     # Scale
