@@ -811,7 +811,7 @@ class Scenario(DataHandler):
             df.insert(0, self.SERIES, name)
             append(df)
         if with_actual:
-            df = self.record_df.copy()
+            df = self.records(show_figure=False)
             df.insert(0, self.SERIES, self.ACTUAL)
             append(df)
         return pd.concat(dataframes, axis=0, sort=False)
