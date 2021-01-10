@@ -150,17 +150,27 @@ class ParamTracker(Term):
             date for base_date in base_dates
             for date in [self.yesterday(base_date), base_date, self.tomorrow(base_date)]]
 
+    def all_phases(self):
+        """
+        Return the names of all phases.
+
+        Returns:
+            list[str]: the names of all enabled phases
+        """
+        return [self.num2str(num) for (num, unit) in enumerate(self._series) if unit]
+
     def disable(self, phases):
         """
         The phases will be disabled.
 
         Args:
-            phase (list[str] or None): phase names
+            phase (list[str] or None): phase names or None (all enabled phases)
 
         Returns:
             covsirphy.PhaseSeries
         """
-        phases = self.ensure_list(phases, candidates=None, name="phases")
+        phases = self.ensure_list(
+            phases or self.all_phases(), candidates=None, name="phases")
         for phase in phases:
             self._series.disable(phase)
         return self._series
@@ -170,12 +180,15 @@ class ParamTracker(Term):
         The phases will be enabled.
 
         Args:
-            phase (list[str] or None): phase names
+            phase (list[str] or None): phase names or None (all disabled phases)
 
         Returns:
             covsirphy.PhaseSeries
         """
-        phases = self.ensure_list(phases, candidates=None, name="phases")
+        all_dis_phases = [
+            self.num2str(num) for (num, unit) in enumerate(self._series) if not unit]
+        phases = self.ensure_list(
+            phases or all_dis_phases, candidates=None, name="phases")
         for phase in phases:
             self._series.enable(phase)
         return self._series
@@ -242,8 +255,7 @@ class ParamTracker(Term):
         Returns:
             covsirphy.PhaseSeries
         """
-        all_phases = [
-            self.num2str(num) for (num, unit) in enumerate(self._series) if unit]
+        all_phases = self.all_phases()
         if "last" in set(phases):
             phases = [ph for ph in phases if ph != "last"] + [all_phases[-1]]
         self.ensure_list(phases, candidates=all_phases, name="phases")
@@ -268,8 +280,7 @@ class ParamTracker(Term):
         Returns:
             covsirphy.Scenario: self
         """
-        all_phases = [
-            self.num2str(num) for (num, unit) in enumerate(self._series) if unit]
+        all_phases = self.all_phases()
         if "last" in set(phases):
             phases.remove("last")
             phases = sorted(phases, key=self.str2num, reverse=False)
