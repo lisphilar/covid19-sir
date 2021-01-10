@@ -16,7 +16,7 @@ plt.rcParams["figure.figsize"] = (9, 6)
 plt.rcParams["legend.frameon"] = False
 
 
-def line_plot(df, title, xlabel=None, ylabel="Cases",
+def line_plot(df, title=None, xlabel=None, ylabel="Cases",
               v=None, h=None,
               xlim=(None, None), ylim=(0, None),
               math_scale=True, x_logscale=False, y_logscale=False, y_integer=False,
@@ -85,7 +85,7 @@ def line_plot(df, title, xlabel=None, ylabel="Cases",
         fmt.set_scientific(False)
         ax.yaxis.set_major_formatter(fmt)
     # Set metadata of figure
-    ax.set_title(title)
+    ax.set_title(title or "")
     ax.set_xlabel(xlabel)
     ax.set_ylabel(ylabel)
     ax.set_xlim(*xlim)
