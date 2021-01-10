@@ -17,6 +17,10 @@ class JHUDataComplementHandler(Term):
         interval (int): expected update interval of the number of recovered cases [days]
         max_ignored (int): Max number of recovered cases to be ignored [cases]
         max_ending_unupdated (int): Max number of days to apply full complement, where max recovered cases are not updated [days]
+        upper_limit_days (int): maximum number of valid partial recovery periods [days]
+        lower_limit_days (int): minimum number of valid partial recovery periods [days]
+        upper_percentage (float): fraction of partial recovery periods with value greater than upper_limit_days
+        lower_percentage (float): fraction of partial recovery periods with value less than lower_limit_days
 
     Note:
         To add new complement solutions, we need to update cls.STATUS_NAME_DICT and self._protocol().
@@ -41,7 +45,10 @@ class JHUDataComplementHandler(Term):
         4: "fully",
     }
 
-    def __init__(self, recovery_period, interval, max_ignored, max_ending_unupdated):
+    def __init__(self, recovery_period, interval=2, max_ignored=100,
+                 max_ending_unupdated=14, upper_limit_days=90,
+                 lower_limit_days=7, upper_percentage=0.5,
+                 lower_percentage=0.5):
         # Arguments for complement
         self.recovery_period = self.ensure_natural_int(
             recovery_period, name="recovery_period")
@@ -50,6 +57,14 @@ class JHUDataComplementHandler(Term):
             max_ignored, name="max_ignored")
         self.max_ending_unupdated = self.ensure_natural_int(
             max_ending_unupdated, name="max_ending_unupdated")
+        self.upper_limit_days = self.ensure_natural_int(
+            upper_limit_days, name="upper_limit_days")
+        self.lower_limit_days = self.ensure_natural_int(
+            lower_limit_days, name="lower_limit_days")
+        self.upper_percentage = self.ensure_float(
+            upper_percentage, name="upper_percentage")
+        self.lower_percentage = self.ensure_float(
+            lower_percentage, name="lower_percentage")
         self.complement_dict = None
 
     def _protocol(self):
@@ -145,6 +160,9 @@ class JHUDataComplementHandler(Term):
                 Index: Date (pandas.TimeStamp)
                 Columns: Confirmed, Fatal, Recovered
         """
+        sel_invalid_R = subset_df[self.C] - subset_df[self.F] < subset_df[self.R]
+        subset_df.loc[sel_invalid_R, self.R] = subset_df[self.C] - subset_df[self.F]
+        subset_df.loc[sel_invalid_R, self.CI] = subset_df[self.C] - subset_df[self.F] - subset_df[self.R]
         return subset_df.set_index(self.DATE).loc[:, self.RAW_COLS]
 
     def _post_processing(self, df):
@@ -197,9 +215,44 @@ class JHUDataComplementHandler(Term):
             series.fillna(method="ffill", inplace=True)
             # Reduce values to the previous date
             df.loc[:date, variable] = series * raw_last / series.iloc[-1]
-            df[variable] = df[variable].fillna(0).astype(np.int64)
+            df[variable] = df[variable].fillna(0)
+        df[variable] = df[variable].apply(np.ceil).astype(np.int64)
         self.complement_dict[f"Monotonic_{variable.lower()}"] = True
         return df
+
+    def _validate_recovery_period(self, df):
+        """
+        Calculates and validates recovery period for specific country
+        as an additional condition in order to apply full complement or not
+
+        Args:
+            df (pandas.DataFrame):
+                - Index: reset_index
+                - Columns: Date, Confirmed, Recovered, Fatal
+
+        Returns:
+            bool: true if recovery period is within valid range or false otherwise
+
+        Note: Passed argument df corresponds to specific country's df
+              upper_limit_days has default value of 3 months (90 days)
+              lower_limit_days has default value of 1 week (7 days)
+        """
+        # Calculate "Confirmed - Fatal"
+        df["diff"] = df[self.C] - df[self.F]
+        df = df.loc[:, ["diff", self.R]]
+        # Calculate how many days passed to reach the number of cases
+        df = df.unstack().reset_index()
+        df.columns = ["Variable", "Date", "Number"]
+        df["Days"] = (df[self.DATE] - df[self.DATE].min()).dt.days
+        # Calculate partial recovery periods
+        df = df.pivot_table(values="Days", index="Number", columns="Variable")
+        df = df.interpolate(limit_area="inside").dropna().astype(np.int64)
+        df["Elapsed"] = df[self.R] - df["diff"]
+        df = df.loc[df["Elapsed"] > 0]
+        # Check partial recovery periods
+        per_up = (df["Elapsed"] > self.upper_limit_days).sum() / len(df)
+        per_lw = (df["Elapsed"] < self.lower_limit_days).sum() / len(df)
+        return per_up < self.upper_percentage and per_lw < self.lower_percentage
 
     def _recovered_full(self, df):
         """
@@ -224,10 +277,8 @@ class JHUDataComplementHandler(Term):
             sel_2 = df[self.C].diff().diff().rolling(14).mean() > 0
             cf_diff = (df[self.C] - df[self.F]).rolling(14).mean()
             sel_3 = df[self.R] < 0.01 * cf_diff
-            sel_4 = df[self.R] > 0.99 * cf_diff
-            s_df_1 = df.loc[sel_C1 & sel_2 & sel_4]
-            s_df_2 = df.loc[sel_R1 & sel_2 & sel_3]
-            if s_df_1.empty and s_df_2.empty:
+            s_df = df.loc[sel_C1 & sel_R1 & sel_2 & sel_3]
+            if s_df.empty and self._validate_recovery_period(df):
                 return df
         # Estimate recovered records
         df[self.R] = (df[self.C] - df[self.F]).shift(

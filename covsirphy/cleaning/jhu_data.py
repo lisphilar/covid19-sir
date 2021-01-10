@@ -460,8 +460,8 @@ class JHUData(CleaningBase):
         return df["Elapsed"].mode().mean()
 
     def subset_complement(self, country, province=None,
-                          start_date=None, end_date=None, population=None,
-                          interval=2, max_ignored=100, max_ending_unupdated=14):
+                          start_date=None, end_date=None,
+                          population=None, **kwargs):
         """
         Return the subset of dataset and complement recovered data, if necessary.
         Records with Recovered > 0 will be selected.
@@ -472,9 +472,8 @@ class JHUData(CleaningBase):
             start_date(str or None): start date, like 22Jan2020
             end_date(str or None): end date, like 01Feb2020
             population(int or None): population value
-            interval (int): expected update interval of the number of recovered cases [days]
-            max_ignored (int): Max number of recovered cases to be ignored [cases]
-            max_ending_unupdated (int) : Max number of days to apply full complement, where ending recovered cases are not updated [days]
+            kwargs: keyword arguments of JHUDataComplementHandler(),
+                    control factors of complement
 
         Returns:
             tuple(pandas.DataFrame, str/bool):
@@ -493,9 +492,6 @@ class JHUData(CleaningBase):
         Note:
             If @population is not None, the number of susceptible cases will be calculated.
         """
-        # Arguments
-        interval = self.ensure_natural_int(interval, name="interval")
-        max_ignored = self.ensure_natural_int(max_ignored, name="max_ignored")
         # Subset with area, start/end date and calculate Susceptible
         country_alias = self.ensure_country_name(country)
         subset_df = self._subset(
@@ -508,9 +504,7 @@ class JHUData(CleaningBase):
         self._recovery_period = self._recovery_period or self.calculate_recovery_period()
         handler = JHUDataComplementHandler(
             recovery_period=self._recovery_period,
-            interval=interval,
-            max_ignored=max_ignored,
-            max_ending_unupdated=max_ending_unupdated,
+            **kwargs
         )
         df, status, _ = handler.run(subset_df)
         # Calculate Susceptible
@@ -571,8 +565,7 @@ class JHUData(CleaningBase):
                 start_date=start_date, end_date=end_date, message="with 'Recovered > 0'") from None
 
     def show_complement(self, country=None, province=None,
-                        start_date=None, end_date=None,
-                        interval=2, max_ignored=100, max_ending_unupdated=14):
+                        start_date=None, end_date=None, **kwargs):
         """
         To monitor effectivity and safety of complement on JHU subset,
         we need to know what kind of complement was done for JHU subset
@@ -583,9 +576,8 @@ class JHUData(CleaningBase):
             province(str or None): province name
             start_date(str or None): start date, like 22Jan2020
             end_date(str or None): end date, like 01Feb2020
-            interval (int): expected update interval of the number of recovered cases [days]
-            max_ignored (int): Max number of recovered cases to be ignored [cases]
-            max_ending_unupdated (int) : Max number of days to apply full complement, where ending recovered cases are not updated [days]
+            kwargs: keyword arguments of JHUDataComplementHandler(),
+                    control factors of complement
 
         Raises:
             ValueError: @province was specified when @country is not a string
@@ -617,9 +609,7 @@ class JHUData(CleaningBase):
         # Create complement handler
         handler = JHUDataComplementHandler(
             recovery_period=self._recovery_period,
-            interval=interval,
-            max_ignored=max_ignored,
-            max_ending_unupdated=max_ending_unupdated,
+            **kwargs
         )
         # Check each country
         complement_df = pd.DataFrame(
