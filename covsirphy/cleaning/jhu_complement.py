@@ -145,6 +145,9 @@ class JHUDataComplementHandler(Term):
                 Index: Date (pandas.TimeStamp)
                 Columns: Confirmed, Fatal, Recovered
         """
+        sel_valid_R = subset_df[self.C] - subset_df[self.F] < subset_df[self.R]
+        subset_df.loc[sel_valid_R, self.R] = subset_df[self.C] - subset_df[self.F]
+        subset_df.loc[sel_valid_R, self.CI] = subset_df[self.C] - subset_df[self.F] - subset_df[self.R]
         return subset_df.set_index(self.DATE).loc[:, self.RAW_COLS]
 
     def _post_processing(self, df):
@@ -162,6 +165,7 @@ class JHUDataComplementHandler(Term):
                 Columns: Date (pandas.TimeStamp), Confirmed, Infected, Fatal, Recovered (int)
         """
         df = df.astype(np.int64)
+        df = df.loc[df[self.C] > self.max_ignored]
         df[self.CI] = df[self.C] - df[self.F] - df[self.R]
         df = df.loc[:, self.VALUE_COLUMNS]
         return df.reset_index()
@@ -197,9 +201,52 @@ class JHUDataComplementHandler(Term):
             series.fillna(method="ffill", inplace=True)
             # Reduce values to the previous date
             df.loc[:date, variable] = series * raw_last / series.iloc[-1]
-            df[variable] = df[variable].fillna(0).astype(np.int64)
+            df[variable] = df[variable].fillna(0)
+        df[variable] = df[variable].apply(np.ceil).astype(np.int64)
         self.complement_dict[f"Monotonic_{variable.lower()}"] = True
         return df
+
+    def _validate_recovery_period(self, df, upper_limit_days=90, lower_limit_days=7,
+                                  upper_percentage=0.5, lower_percentage=0.5):
+        """
+        Calculates and validates recovery period for specific country
+        as an additional condition in order to apply full complement or not
+
+        Args:
+            df (pandas.DataFrame):
+                - Index: reset_index
+                - Columns: Date, Confirmed, Recovered, Fatal
+            upper_limit_days (int): maximum number of valid partial recovery periods [days]
+            lower_limit_days (int): minimum number of valid partial recovery periods [days]
+            upper_percentage (float): fraction of partial recovery periods with value greater than upper_limit_days
+            lower_percentage (float): fraction of partial recovery periods with value less than lower_limit_days
+
+        Returns:
+            bool: true if recovery period is within valid range or false otherwise
+
+        Note: Passed argument df corresponds to specific country's df
+              upper_limit_days has default value of 3 months (90 days)
+              lower_limit_days has default value of 1 week (7 days)
+        """
+        recovery_period_is_valid = True
+        check_df = df.copy()
+        # Calculate "Confirmed - Fatal"
+        check_df["diff"] = check_df[self.C] - check_df[self.F]
+        check_df = check_df.loc[:, ["diff", self.R]]
+        # Calculate how many days passed to reach the number of cases
+        check_df = check_df.unstack().reset_index()
+        check_df.columns = ["Variable", "Date", "Number"]
+        check_df["Days"] = (check_df[self.DATE] - check_df[self.DATE].min()).dt.days
+        # Calculate partial recovery periods
+        check_df = check_df.pivot_table(values="Days", index="Number", columns="Variable")
+        check_df = check_df.interpolate(limit_area="inside").dropna().astype(np.int64)
+        check_df["Elapsed"] = check_df[self.R] - check_df["diff"]
+        check_df = check_df.loc[check_df["Elapsed"] > 0]
+        # Check partial recovery periods
+        if sum(check_df["Elapsed"] > upper_limit_days)/len(check_df) > upper_percentage or \
+           sum(check_df["Elapsed"] < lower_limit_days)/len(check_df) > lower_percentage:
+            recovery_period_is_valid = False
+        return recovery_period_is_valid
 
     def _recovered_full(self, df):
         """
@@ -224,10 +271,9 @@ class JHUDataComplementHandler(Term):
             sel_2 = df[self.C].diff().diff().rolling(14).mean() > 0
             cf_diff = (df[self.C] - df[self.F]).rolling(14).mean()
             sel_3 = df[self.R] < 0.01 * cf_diff
-            sel_4 = df[self.R] > 0.99 * cf_diff
-            s_df_1 = df.loc[sel_C1 & sel_2 & sel_4]
-            s_df_2 = df.loc[sel_R1 & sel_2 & sel_3]
-            if s_df_1.empty and s_df_2.empty:
+            s_df = df.loc[sel_C1 & sel_R1 & sel_2 & sel_3]
+            recovery_period_is_valid = self._validate_recovery_period(df)
+            if s_df.empty and recovery_period_is_valid:
                 return df
         # Estimate recovered records
         df[self.R] = (df[self.C] - df[self.F]).shift(
