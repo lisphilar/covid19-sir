@@ -155,3 +155,18 @@ class PCRIncorrectPreconditionError(KeyError):
         country_str = (" in country " + country) if not province else ""
         province_str = "" if province is None else (" in province " + province)
         return f"{province_str}{country_str}"
+
+
+class NotInteractiveError(ValueError):
+    """
+    Error when interactive shell is not used but forced to use it.
+
+    Args:
+        message (str or None): the other messages
+    """
+
+    def __init__(self, message=None):
+        self.message = "" if message is None else f" {message}"
+
+    def __str__(self):
+        return f"Interactive shell is not used.{self.message}"

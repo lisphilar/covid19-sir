@@ -5,7 +5,7 @@ from datetime import datetime
 import warnings
 import pandas as pd
 import pytest
-from covsirphy import ScenarioNotFoundError, UnExecutedError
+from covsirphy import ScenarioNotFoundError, UnExecutedError, NotInteractiveError
 from covsirphy import Scenario, DataHandler
 from covsirphy import Term, PhaseSeries, SIR, SIRF
 
@@ -38,6 +38,22 @@ class TestDataHandler(object):
             dhl.last_date = tomorrow
 
     @pytest.mark.parametrize("country", ["Japan"])
+    def test_line_plot(self, jhu_data, population_data, country):
+        warnings.simplefilter("ignore", category=UserWarning)
+        # Setting
+        dhl = DataHandler(jhu_data, population_data, country)
+        dhl.init_records()
+        # Interactive / script mode
+        assert not dhl.interactive
+        with pytest.raises(NotInteractiveError):
+            dhl.interactive = True
+        dhl.interactive = False
+        # Change colors in plotting
+        dhl.records(
+            variables=["Confirmed", "Infected", "Fatal", "Recovered"],
+            color_dict={"Confirmed": "blue", "Infected": "orange", "Fatal": "red", "Recovered": "green"})
+
+    @pytest.mark.parametrize("country", ["Japan"])
     def test_records(self, jhu_data, population_data, country):
         warnings.simplefilter("ignore", category=UserWarning)
         # Setting
@@ -54,10 +70,6 @@ class TestDataHandler(object):
         assert dates.max() == Term.date_obj(dhl.last_date)
         df2 = dhl.records(variables=["Susceptible"], show_figure=True)
         assert set(df2.columns) == set([Term.DATE, Term.S])
-        # Change colors in plotting
-        dhl.records(
-            variables=["Confirmed", "Infected", "Fatal", "Recovered"],
-            color_dict={"Confirmed": "blue", "Infected": "orange", "Fatal": "red", "Recovered": "green"})
 
     @pytest.mark.parametrize("country", ["Japan"])
     def test_records_diff(self, jhu_data, population_data, country):
@@ -259,7 +271,7 @@ class TestScenario(object):
             snl.simulate()
         snl.estimate(SIRF, timeout=5, timeout_iteration=5)
         # Simulation
-        snl.simulate()
+        snl.simulate(variables=[Term.C, Term.CI, Term.F, Term.R])
         # Parameter history (Deprecated)
         snl.param_history([Term.RT], divide_by_first=False)
         snl.param_history(["rho"])

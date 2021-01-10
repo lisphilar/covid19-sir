@@ -16,7 +16,7 @@ from covsirphy.util.optimize import Optimizer
 from covsirphy.util.stopwatch import StopWatch
 from covsirphy.util.error import deprecate
 from covsirphy.util.error import SubsetNotFoundError, ScenarioNotFoundError, UnExecutedError
-from covsirphy.util.error import PCRIncorrectPreconditionError
+from covsirphy.util.error import PCRIncorrectPreconditionError, NotInteractiveError
 from covsirphy.util.file import save_dataframe
 from covsirphy.util.argument import find_args
 # cleaning
@@ -81,7 +81,7 @@ __all__ = [
     "save_dataframe",
     "PolicyMeasures",
     "SubsetNotFoundError", "ScenarioNotFoundError", "UnExecutedError",
-    "PCRIncorrectPreconditionError",
+    "PCRIncorrectPreconditionError", "NotInteractiveError",
     # Deprecated
     "Population", "Word",
 ]

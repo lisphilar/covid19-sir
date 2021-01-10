@@ -415,6 +415,9 @@ class Scenario(DataHandler):
             pass
         # S-R trend analysis
         tracker = self._tracker(name)
+        if not self._interactive and filename is None:
+            show_figure = False
+        filename = None if self._interactive else filename
         self[name] = tracker.trend(
             force=force, show_figure=show_figure, filename=filename, **kwargs)
         # Disable 0th phase, if necessary
@@ -493,15 +496,15 @@ class Scenario(DataHandler):
         estimator = self.phase_estimator(phase=phase, name=name)
         estimator.accuracy(**kwargs)
 
-    def simulate(self, name="Main", y0_dict=None, show_figure=True, filename=None):
+    def simulate(self, variables=None, name="Main", y0_dict=None, **kwargs):
         """
         Simulate ODE models with set/estimated parameter values and show it as a figure.
 
         Args:
+            variables (list[str] or None): variables to include, Infected/Fatal/Recovered when None
             name (str): phase series name. If 'Main', main PhaseSeries will be used
             y0_dict(dict[str, float] or None): dictionary of initial values of variables
-            show_figure (bool): if True, show the result as a figure
-            filename (str): filename of the figure, or None (show figure)
+            kwargs: the other keyword arguments of Scenario.line_plot()
 
         Returns:
             pandas.DataFrame
@@ -519,19 +522,13 @@ class Scenario(DataHandler):
         except UnExecutedError:
             raise UnExecutedError(
                 "Scenario.trend() or Scenario.add(), and Scenario.estimate(model)") from None
-        if not show_figure:
-            return sim_df
         # Show figure
         df = sim_df.set_index(self.DATE)
-        fig_cols_set = set(df.columns) & set(self.FIG_COLUMNS)
-        fig_cols = [col for col in self.FIG_COLUMNS if col in fig_cols_set]
-        line_plot(
-            df[fig_cols],
-            title=f"{self.area}: Simulated number of cases ({name} scenario)",
-            filename=filename,
-            y_integer=True,
-            v=tracker.change_dates()
-        )
+        fig_cols = self.ensure_list(
+            variables or [self.CI, self.F, self.R], candidates=df.columns.tolist(), name="variables")
+        title = f"{self.area}: Simulated number of cases ({name} scenario)"
+        self.line_plot(
+            df=df[fig_cols], title=title, y_integer=True, v=tracker.change_dates(), **kwargs)
         return sim_df
 
     def get(self, param, phase="last", name="Main"):
@@ -842,7 +839,7 @@ class Scenario(DataHandler):
         return df.pivot_table(
             values=target, index=self.DATE, columns=self.SERIES, aggfunc="last")
 
-    def history(self, target, with_actual=True, y0_dict=None, show_figure=True, filename=None):
+    def history(self, target, with_actual=True, y0_dict=None, **kwargs):
         """
         Show the history of variables and parameter values to compare scenarios.
 
@@ -852,16 +849,13 @@ class Scenario(DataHandler):
             y0_dict (dict or None): dictionary of initial values or None
                 - key (str): variable name
                 - value (float): initial value
-            show_figure (bool): If True, show the result as a figure
-            filename (str): filename of the figure, or None (show figure)
+            kwargs: the other keyword arguments of Scenario.line_plot()
 
         Returns:
             pandas.DataFrame
         """
         df = self._history(
             target=target, with_actual=with_actual, y0_dict=y0_dict)
-        if not show_figure:
-            return df
         if target == self.RT:
             ylabel = self.RT_FULL
         elif target in self.VALUE_COLUMNS:
@@ -870,16 +864,12 @@ class Scenario(DataHandler):
             ylabel = target
         title = f"{self.area}: {ylabel} over time"
         tracker = self._tracker(self.MAIN)
-        line_plot(
-            df, title, ylabel=ylabel,
-            h=1.0 if target == self.RT else None,
-            v=tracker.change_dates(),
-            math_scale=False,
-            filename=filename
-        )
+        self.line_plot(
+            df=df, title=title, ylabel=ylabel, v=tracker.change_dates(), math_scale=False,
+            h=1.0 if target == self.RT else None, **kwargs)
         return df
 
-    def history_rate(self, params=None, name="Main", show_figure=True, filename=None):
+    def history_rate(self, params=None, name="Main", **kwargs):
         """
         Show change rates of parameter values in one figure.
         We can find the parameters which increased/decreased significantly.
@@ -887,8 +877,7 @@ class Scenario(DataHandler):
         Args:
             params (list[str] or None): parameters to show
             name (str): phase series name
-            show_figure (bool): If True, show the result as a figure
-            filename (str): filename of the figure, or None (show figure)
+            kwargs: the other keyword arguments of Scenario.line_plot()
 
         Returns:
             pandas.DataFrame
@@ -902,15 +891,14 @@ class Scenario(DataHandler):
                     f"@params must be a list of parameters, but {params} were applied.")
             cols = list(set(cols) & set(params)) or cols
         df = df.loc[:, cols] / df.loc[df.index[0], cols]
-        if show_figure:
-            f_date = df.index[0].strftime(self.DATE_FORMAT)
-            title = f"{self.area}: {model.NAME} parameter change rates over time (1.0 on {f_date})"
-            ylabel = f"Value per that on {f_date}"
-            title = f"{self.area}: {ylabel} over time"
-            tracker = self._tracker(self.MAIN)
-            line_plot(
-                df, title, ylabel=ylabel, v=tracker.change_dates(),
-                math_scale=False, filename=filename)
+        # Show figure
+        f_date = df.index[0].strftime(self.DATE_FORMAT)
+        title = f"{self.area}: {model.NAME} parameter change rates over time (1.0 on {f_date})"
+        ylabel = f"Value per that on {f_date}"
+        title = f"{self.area}: {ylabel} over time"
+        tracker = self._tracker(self.MAIN)
+        self.line_plot(
+            df=df, title=title, ylabel=ylabel, v=tracker.change_dates(), math_scale=False, **kwargs)
         return df
 
     def retrospective(self, beginning_date, model, control="Main", target="Target", **kwargs):

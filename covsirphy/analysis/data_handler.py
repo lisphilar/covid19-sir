@@ -1,8 +1,10 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
+import sys
 import numpy as np
 import pandas as pd
+from covsirphy.util.error import NotInteractiveError
 from covsirphy.util.plotting import line_plot
 from covsirphy.cleaning.term import Term
 from covsirphy.cleaning.jhu_data import JHUData
@@ -40,6 +42,8 @@ class DataHandler(Term):
         self.record_df = pd.DataFrame()
         self._first_date = None
         self._last_date = None
+        # Interactive (True) / script (False) mode
+        self._interactive = hasattr(sys, "ps1")
 
     def init_records(self):
         """
@@ -87,6 +91,40 @@ class DataHandler(Term):
         self._last_date = date
         self.init_records()
 
+    @property
+    def interactive(self):
+        """
+        bool: interactive mode (display figures) or not
+
+        Note:
+            When running scripts, interactive mode cannot be selected.
+        """
+        return self._interactive
+
+    @interactive.setter
+    def interactive(self, is_interactive):
+        if not hasattr(sys, "ps1") and is_interactive:
+            raise NotInteractiveError
+        self._interactive = hasattr(sys, "ps1") and bool(is_interactive)
+
+    def line_plot(self, df, show_figure=True, filename=None, **kwargs):
+        """
+        Display or save a line plot of the dataframe.
+
+        Args:
+            show_figure (bool): whether show figure when interactive mode or not
+            filename (str or None): filename of the figure or None (not save) when script mode
+
+        Note:
+            When interactive mode and @show_figure is True, display the figure.
+            When script mode and filename is not None, save the figure.
+            When using interactive shell, we can change the modes by Scenario.interactive = True/False.
+        """
+        if self._interactive and show_figure:
+            return line_plot(df=df, filename=None, **kwargs)
+        if not self._interactive and filename is not None:
+            return line_plot(df=df, filename=filename, **kwargs)
+
     def complement(self, interval=2, max_ignored=100):
         """
         Complement the number of recovered cases, if necessary.
@@ -121,15 +159,14 @@ class DataHandler(Term):
         )
         return self
 
-    def records(self, variables=None, show_figure=True, filename=None, **kwargs):
+    def records(self, variables=None, **kwargs):
         """
         Return the records as a dataframe.
 
         Args:
             show_figure (bool): if True, show the records as a line-plot.
             variables (list[str] or None): variables to include, Infected/Fatal/Recovered when None
-            filename (str): filename of the figure, or None (show figure)
-            kwargs: the other keyword arguments of covsirphy.line_plot()
+            kwargs: the other keyword arguments of Scenario.line_plot()
 
         Returns:
             pandas.DataFrame
@@ -148,26 +185,22 @@ class DataHandler(Term):
             variables or [self.CI, self.F, self.R],
             candidates=[self.S, *self.VALUE_COLUMNS], name="variables")
         df = self.record_df.loc[:, [self.DATE, *variables]]
-        if not show_figure:
-            return df
         if self._complemented:
             title = f"{self.area}: Cases over time\nwith {self._complemented}"
         else:
             title = f"{self.area}: Cases over time"
-        line_plot(
-            df.set_index(self.DATE), title, y_integer=True, filename=filename, **kwargs)
+        self.line_plot(
+            df=df.set_index(self.DATE), title=title, y_integer=True, **kwargs)
         return df
 
-    def records_diff(self, variables=None, window=7, show_figure=True, filename=None, **kwargs):
+    def records_diff(self, variables=None, window=7, **kwargs):
         """
         Return the number of daily new cases (the first discreate difference of records).
 
         Args:
             variables (str or None): variables to show
             window (int): window of moving average, >= 1
-            show_figure (bool): if True, show the records as a line-plot.
-            filename (str): filename of the figure, or None (show figure)
-            kwargs: the other keyword arguments of covsirphy.line_plot()
+            kwargs: the other keyword arguments of Scenario.line_plot()
 
         Returns:
             pandas.DataFrame
@@ -189,11 +222,9 @@ class DataHandler(Term):
         df = self.record_df.set_index(self.DATE)[variables]
         df = df.diff().dropna()
         df = df.rolling(window=window).mean().dropna().astype(np.int64)
-        if not show_figure:
-            return df
         if self._complemented:
             title = f"{self.area}: Daily new cases\nwith {self._complemented}"
         else:
             title = f"{self.area}: Daily new cases"
-        line_plot(df, title, y_integer=True, filename=filename, **kwargs)
+        self.line_plot(df=df, title=title, y_integer=True, **kwargs)
         return df
