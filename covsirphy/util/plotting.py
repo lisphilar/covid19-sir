@@ -61,7 +61,7 @@ def line_plot(df, title, xlabel=None, ylabel="Cases",
         color_args = {"colormap": colormap}
     else:
         colors = [color_dict.get(col) for col in df.columns]
-        color_args = {"colormap": colormap, "colors": colors}
+        color_args = {"colormap": colormap, "color": colors}
     try:
         ax = df.plot(**color_args)
     except ValueError as e:

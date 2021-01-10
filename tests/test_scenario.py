@@ -54,6 +54,10 @@ class TestDataHandler(object):
         assert dates.max() == Term.date_obj(dhl.last_date)
         df2 = dhl.records(variables=["Susceptible"], show_figure=True)
         assert set(df2.columns) == set([Term.DATE, Term.S])
+        # Change colors in plotting
+        dhl.records(
+            variables=["Confirmed", "Infected", "Fatal", "Recovered"],
+            color_dict={"Confirmed": "blue", "Infected": "orange", "Fatal": "red", "Recovered": "green"})
 
     @pytest.mark.parametrize("country", ["Japan"])
     def test_records_diff(self, jhu_data, population_data, country):
