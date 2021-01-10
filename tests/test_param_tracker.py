@@ -33,6 +33,27 @@ class TestParamTracker(object):
         with pytest.raises(ValueError):
             tracker.add(end_date="01May2020")
 
+    def test_all_phases(self, tracker):
+        assert len(tracker) == len(tracker.all_phases())
+
+    def test_disable(self, tracker):
+        length = len(tracker)
+        # Disable selected phase
+        tracker.disable(phases=["1st"])
+        assert len(tracker) == length - 1
+        # Disable all phases
+        tracker.disable(phases=None)
+        assert not tracker
+
+    def test_enable(self, tracker):
+        length = len(tracker)
+        # Enable selected phase
+        tracker.enable(phases=["1st"])
+        assert len(tracker) == length + 1
+        # Enable all phases
+        tracker.enable(phases=None)
+        assert len(tracker) == sum(1 for _ in tracker.series)
+
     def test_delete(self, tracker):
         length = len(tracker)
         tracker.delete(phases=["1st", "last"])

@@ -261,8 +261,8 @@ class Scenario(DataHandler):
         The phases will be disabled and removed from summary.
 
         Args:
-            phase (list[str] or None): phase names
-            name (str): name of phase series
+            phase (list[str] or None): phase names or None (all enabled phases)
+            name (str): scenario name
 
         Returns:
             covsirphy.Scenario: self
@@ -275,8 +275,8 @@ class Scenario(DataHandler):
         The phases will be enabled and appear in summary.
 
         Args:
-            phase (list[str] or None): phase names
-            name (str): name of phase series
+            phase (list[str] or None): phase names or None (all disabled phases)
+            name (str): scenario name
 
         Returns:
             covsirphy.Scenario: self
