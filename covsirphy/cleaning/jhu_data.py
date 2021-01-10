@@ -427,9 +427,12 @@ class JHUData(CleaningBase):
             self._calculate_recovery_period_country(df, country)
             for country in df[self.COUNTRY].unique()
         ]
-        return int(pd.Series(periods).median())
+        valid_periods = list(filter(lambda x: x > 0, periods))
+        return int(pd.Series(valid_periods).median())
 
-    def _calculate_recovery_period_country(self, valid_df, country):
+    def _calculate_recovery_period_country(self, valid_df, country, upper_limit_days=90,
+                                           lower_limit_days=7, upper_percentage=0.5,
+                                           lower_percentage=0.5):
         """
         Calculate mode value of recovery period in the country.
         If many mode values were found, mean value of mode values will be returned.
@@ -438,6 +441,10 @@ class JHUData(CleaningBase):
             valid_df (pandas.DataFrame):
                 - Index: reset_index
                 - Columns: Date, Confirmed, Recovered, Fatal
+            upper_limit_days (int): maximum number of valid partial recovery periods [days]
+            lower_limit_days (int): minimum number of valid partial recovery periods [days]
+            upper_percentage (float): fraction of partial recovery periods with value greater than upper_limit_days
+            lower_percentage (float): fraction of partial recovery periods with value less than lower_limit_days
 
         Returns:
             int: mode value of recovery period [days]
@@ -457,6 +464,11 @@ class JHUData(CleaningBase):
         df = df.interpolate(limit_area="inside").dropna().astype(np.int64)
         df["Elapsed"] = df[self.R] - df["diff"]
         df = df.loc[df["Elapsed"] > 0]
+        # Check partial recovery periods
+        per_up = (df["Elapsed"] > upper_limit_days).sum() / len(df)
+        per_lw = (df["Elapsed"] < lower_limit_days).sum() / len(df)
+        if per_up >= upper_percentage or per_lw >= lower_percentage:
+            return -1
         return df["Elapsed"].mode().mean()
 
     def subset_complement(self, country, province=None,
