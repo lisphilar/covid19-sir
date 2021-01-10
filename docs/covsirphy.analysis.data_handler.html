@@ -266,6 +266,21 @@ Only when auto-complement mode, complement records if necessary.</p>
 </dd></dl>
 
 <dl class="py method">
+<dt id="covsirphy.analysis.data_handler.DataHandler.interactive">
+<em class="property">property </em><code class="sig-name descname">interactive</code><a class="headerlink" href="#covsirphy.analysis.data_handler.DataHandler.interactive" title="Permalink to this definition">¶</a></dt>
+<dd><p>interactive mode (display figures) or not</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>When running scripts, interactive mode cannot be selected.</p>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>bool</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
 <dt id="covsirphy.analysis.data_handler.DataHandler.last_date">
 <em class="property">property </em><code class="sig-name descname">last_date</code><a class="headerlink" href="#covsirphy.analysis.data_handler.DataHandler.last_date" title="Permalink to this definition">¶</a></dt>
 <dd><p>the last date of the records</p>
@@ -277,16 +292,35 @@ Only when auto-complement mode, complement records if necessary.</p>
 </dd></dl>
 
 <dl class="py method">
+<dt id="covsirphy.analysis.data_handler.DataHandler.line_plot">
+<code class="sig-name descname">line_plot</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">df</span></em>, <em class="sig-param"><span class="n">show_figure</span><span class="o">=</span><span class="default_value">True</span></em>, <em class="sig-param"><span class="n">filename</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/analysis/data_handler.html#DataHandler.line_plot"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#covsirphy.analysis.data_handler.DataHandler.line_plot" title="Permalink to this definition">¶</a></dt>
+<dd><p>Display or save a line plot of the dataframe.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>show_figure</strong> (<em>bool</em>) – whether show figure when interactive mode or not</p></li>
+<li><p><strong>filename</strong> (<em>str</em><em> or </em><em>None</em>) – filename of the figure or None (not save) when script mode</p></li>
+</ul>
+</dd>
+</dl>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>When interactive mode and &#64;show_figure is True, display the figure.
+When script mode and filename is not None, save the figure.
+When using interactive shell, we can change the modes by Scenario.interactive = True/False.</p>
+</div>
+</dd></dl>
+
+<dl class="py method">
 <dt id="covsirphy.analysis.data_handler.DataHandler.records">
-<code class="sig-name descname">records</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">variables</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">show_figure</span><span class="o">=</span><span class="default_value">True</span></em>, <em class="sig-param"><span class="n">filename</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/analysis/data_handler.html#DataHandler.records"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#covsirphy.analysis.data_handler.DataHandler.records" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">records</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">variables</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/analysis/data_handler.html#DataHandler.records"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#covsirphy.analysis.data_handler.DataHandler.records" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return the records as a dataframe.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>show_figure</strong> (<em>bool</em>) – if True, show the records as a line-plot.</p></li>
 <li><p><strong>variables</strong> (<em>list</em><em>[</em><em>str</em><em>] or </em><em>None</em>) – variables to include, Infected/Fatal/Recovered when None</p></li>
-<li><p><strong>filename</strong> (<em>str</em>) – filename of the figure, or None (show figure)</p></li>
-<li><p><strong>kwargs</strong> – the other keyword arguments of covsirphy.line_plot()</p></li>
+<li><p><strong>kwargs</strong> – the other keyword arguments of Scenario.line_plot()</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
@@ -318,16 +352,14 @@ Only when auto-complement mode, complement records if necessary.</p>
 
 <dl class="py method">
 <dt id="covsirphy.analysis.data_handler.DataHandler.records_diff">
-<code class="sig-name descname">records_diff</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">variables</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">window</span><span class="o">=</span><span class="default_value">7</span></em>, <em class="sig-param"><span class="n">show_figure</span><span class="o">=</span><span class="default_value">True</span></em>, <em class="sig-param"><span class="n">filename</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/analysis/data_handler.html#DataHandler.records_diff"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#covsirphy.analysis.data_handler.DataHandler.records_diff" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">records_diff</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">variables</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">window</span><span class="o">=</span><span class="default_value">7</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/analysis/data_handler.html#DataHandler.records_diff"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#covsirphy.analysis.data_handler.DataHandler.records_diff" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return the number of daily new cases (the first discreate difference of records).</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>variables</strong> (<em>str</em><em> or </em><em>None</em>) – variables to show</p></li>
 <li><p><strong>window</strong> (<em>int</em>) – window of moving average, &gt;= 1</p></li>
-<li><p><strong>show_figure</strong> (<em>bool</em>) – if True, show the records as a line-plot.</p></li>
-<li><p><strong>filename</strong> (<em>str</em>) – filename of the figure, or None (show figure)</p></li>
-<li><p><strong>kwargs</strong> – the other keyword arguments of covsirphy.line_plot()</p></li>
+<li><p><strong>kwargs</strong> – the other keyword arguments of Scenario.line_plot()</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>

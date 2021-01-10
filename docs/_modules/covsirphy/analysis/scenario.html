@@ -433,8 +433,8 @@
 <span class="sd">        The phases will be disabled and removed from summary.</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">            phase (list[str] or None): phase names</span>
-<span class="sd">            name (str): name of phase series</span>
+<span class="sd">            phase (list[str] or None): phase names or None (all enabled phases)</span>
+<span class="sd">            name (str): scenario name</span>
 
 <span class="sd">        Returns:</span>
 <span class="sd">            covsirphy.Scenario: self</span>
@@ -447,8 +447,8 @@
 <span class="sd">        The phases will be enabled and appear in summary.</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">            phase (list[str] or None): phase names</span>
-<span class="sd">            name (str): name of phase series</span>
+<span class="sd">            phase (list[str] or None): phase names or None (all disabled phases)</span>
+<span class="sd">            name (str): scenario name</span>
 
 <span class="sd">        Returns:</span>
 <span class="sd">            covsirphy.Scenario: self</span>
@@ -587,6 +587,9 @@
             <span class="k">pass</span>
         <span class="c1"># S-R trend analysis</span>
         <span class="n">tracker</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_tracker</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_interactive</span> <span class="ow">and</span> <span class="n">filename</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">show_figure</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="n">filename</span> <span class="o">=</span> <span class="kc">None</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_interactive</span> <span class="k">else</span> <span class="n">filename</span>
         <span class="bp">self</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">tracker</span><span class="o">.</span><span class="n">trend</span><span class="p">(</span>
             <span class="n">force</span><span class="o">=</span><span class="n">force</span><span class="p">,</span> <span class="n">show_figure</span><span class="o">=</span><span class="n">show_figure</span><span class="p">,</span> <span class="n">filename</span><span class="o">=</span><span class="n">filename</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
         <span class="c1"># Disable 0th phase, if necessary</span>
@@ -665,15 +668,15 @@
         <span class="n">estimator</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">phase_estimator</span><span class="p">(</span><span class="n">phase</span><span class="o">=</span><span class="n">phase</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">)</span>
         <span class="n">estimator</span><span class="o">.</span><span class="n">accuracy</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="Scenario.simulate"><a class="viewcode-back" href="../../../covsirphy.analysis.scenario.html#covsirphy.Scenario.simulate">[docs]</a>    <span class="k">def</span> <span class="nf">simulate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;Main&quot;</span><span class="p">,</span> <span class="n">y0_dict</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">show_figure</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">filename</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<div class="viewcode-block" id="Scenario.simulate"><a class="viewcode-back" href="../../../covsirphy.analysis.scenario.html#covsirphy.Scenario.simulate">[docs]</a>    <span class="k">def</span> <span class="nf">simulate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">variables</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;Main&quot;</span><span class="p">,</span> <span class="n">y0_dict</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Simulate ODE models with set/estimated parameter values and show it as a figure.</span>
 
 <span class="sd">        Args:</span>
+<span class="sd">            variables (list[str] or None): variables to include, Infected/Fatal/Recovered when None</span>
 <span class="sd">            name (str): phase series name. If &#39;Main&#39;, main PhaseSeries will be used</span>
 <span class="sd">            y0_dict(dict[str, float] or None): dictionary of initial values of variables</span>
-<span class="sd">            show_figure (bool): if True, show the result as a figure</span>
-<span class="sd">            filename (str): filename of the figure, or None (show figure)</span>
+<span class="sd">            kwargs: the other keyword arguments of Scenario.line_plot()</span>
 
 <span class="sd">        Returns:</span>
 <span class="sd">            pandas.DataFrame</span>
@@ -691,19 +694,13 @@
         <span class="k">except</span> <span class="n">UnExecutedError</span><span class="p">:</span>
             <span class="k">raise</span> <span class="n">UnExecutedError</span><span class="p">(</span>
                 <span class="s2">&quot;Scenario.trend() or Scenario.add(), and Scenario.estimate(model)&quot;</span><span class="p">)</span> <span class="kn">from</span> <span class="bp">None</span>
-        <span class="k">if</span> <span class="ow">not</span> <span class="n">show_figure</span><span class="p">:</span>
-            <span class="k">return</span> <span class="n">sim_df</span>
         <span class="c1"># Show figure</span>
         <span class="n">df</span> <span class="o">=</span> <span class="n">sim_df</span><span class="o">.</span><span class="n">set_index</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">DATE</span><span class="p">)</span>
-        <span class="n">fig_cols_set</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">df</span><span class="o">.</span><span class="n">columns</span><span class="p">)</span> <span class="o">&amp;</span> <span class="nb">set</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">FIG_COLUMNS</span><span class="p">)</span>
-        <span class="n">fig_cols</span> <span class="o">=</span> <span class="p">[</span><span class="n">col</span> <span class="k">for</span> <span class="n">col</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">FIG_COLUMNS</span> <span class="k">if</span> <span class="n">col</span> <span class="ow">in</span> <span class="n">fig_cols_set</span><span class="p">]</span>
-        <span class="n">line_plot</span><span class="p">(</span>
-            <span class="n">df</span><span class="p">[</span><span class="n">fig_cols</span><span class="p">],</span>
-            <span class="n">title</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">area</span><span class="si">}</span><span class="s2">: Simulated number of cases (</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2"> scenario)&quot;</span><span class="p">,</span>
-            <span class="n">filename</span><span class="o">=</span><span class="n">filename</span><span class="p">,</span>
-            <span class="n">y_integer</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-            <span class="n">v</span><span class="o">=</span><span class="n">tracker</span><span class="o">.</span><span class="n">change_dates</span><span class="p">()</span>
-        <span class="p">)</span>
+        <span class="n">fig_cols</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ensure_list</span><span class="p">(</span>
+            <span class="n">variables</span> <span class="ow">or</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">CI</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">F</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">R</span><span class="p">],</span> <span class="n">candidates</span><span class="o">=</span><span class="n">df</span><span class="o">.</span><span class="n">columns</span><span class="o">.</span><span class="n">tolist</span><span class="p">(),</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;variables&quot;</span><span class="p">)</span>
+        <span class="n">title</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">area</span><span class="si">}</span><span class="s2">: Simulated number of cases (</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2"> scenario)&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">line_plot</span><span class="p">(</span>
+            <span class="n">df</span><span class="o">=</span><span class="n">df</span><span class="p">[</span><span class="n">fig_cols</span><span class="p">],</span> <span class="n">title</span><span class="o">=</span><span class="n">title</span><span class="p">,</span> <span class="n">y_integer</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">v</span><span class="o">=</span><span class="n">tracker</span><span class="o">.</span><span class="n">change_dates</span><span class="p">(),</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">sim_df</span></div>
 
 <div class="viewcode-block" id="Scenario.get"><a class="viewcode-back" href="../../../covsirphy.analysis.scenario.html#covsirphy.Scenario.get">[docs]</a>    <span class="k">def</span> <span class="nf">get</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">param</span><span class="p">,</span> <span class="n">phase</span><span class="o">=</span><span class="s2">&quot;last&quot;</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;Main&quot;</span><span class="p">):</span>
@@ -1014,7 +1011,7 @@
         <span class="k">return</span> <span class="n">df</span><span class="o">.</span><span class="n">pivot_table</span><span class="p">(</span>
             <span class="n">values</span><span class="o">=</span><span class="n">target</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">DATE</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">SERIES</span><span class="p">,</span> <span class="n">aggfunc</span><span class="o">=</span><span class="s2">&quot;last&quot;</span><span class="p">)</span>
 
-<div class="viewcode-block" id="Scenario.history"><a class="viewcode-back" href="../../../covsirphy.analysis.scenario.html#covsirphy.Scenario.history">[docs]</a>    <span class="k">def</span> <span class="nf">history</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">target</span><span class="p">,</span> <span class="n">with_actual</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">y0_dict</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">show_figure</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">filename</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<div class="viewcode-block" id="Scenario.history"><a class="viewcode-back" href="../../../covsirphy.analysis.scenario.html#covsirphy.Scenario.history">[docs]</a>    <span class="k">def</span> <span class="nf">history</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">target</span><span class="p">,</span> <span class="n">with_actual</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">y0_dict</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Show the history of variables and parameter values to compare scenarios.</span>
 
@@ -1024,16 +1021,13 @@
 <span class="sd">            y0_dict (dict or None): dictionary of initial values or None</span>
 <span class="sd">                - key (str): variable name</span>
 <span class="sd">                - value (float): initial value</span>
-<span class="sd">            show_figure (bool): If True, show the result as a figure</span>
-<span class="sd">            filename (str): filename of the figure, or None (show figure)</span>
+<span class="sd">            kwargs: the other keyword arguments of Scenario.line_plot()</span>
 
 <span class="sd">        Returns:</span>
 <span class="sd">            pandas.DataFrame</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">df</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_history</span><span class="p">(</span>
             <span class="n">target</span><span class="o">=</span><span class="n">target</span><span class="p">,</span> <span class="n">with_actual</span><span class="o">=</span><span class="n">with_actual</span><span class="p">,</span> <span class="n">y0_dict</span><span class="o">=</span><span class="n">y0_dict</span><span class="p">)</span>
-        <span class="k">if</span> <span class="ow">not</span> <span class="n">show_figure</span><span class="p">:</span>
-            <span class="k">return</span> <span class="n">df</span>
         <span class="k">if</span> <span class="n">target</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">RT</span><span class="p">:</span>
             <span class="n">ylabel</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">RT_FULL</span>
         <span class="k">elif</span> <span class="n">target</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">VALUE_COLUMNS</span><span class="p">:</span>
@@ -1042,16 +1036,12 @@
             <span class="n">ylabel</span> <span class="o">=</span> <span class="n">target</span>
         <span class="n">title</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">area</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">ylabel</span><span class="si">}</span><span class="s2"> over time&quot;</span>
         <span class="n">tracker</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_tracker</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">MAIN</span><span class="p">)</span>
-        <span class="n">line_plot</span><span class="p">(</span>
-            <span class="n">df</span><span class="p">,</span> <span class="n">title</span><span class="p">,</span> <span class="n">ylabel</span><span class="o">=</span><span class="n">ylabel</span><span class="p">,</span>
-            <span class="n">h</span><span class="o">=</span><span class="mf">1.0</span> <span class="k">if</span> <span class="n">target</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">RT</span> <span class="k">else</span> <span class="kc">None</span><span class="p">,</span>
-            <span class="n">v</span><span class="o">=</span><span class="n">tracker</span><span class="o">.</span><span class="n">change_dates</span><span class="p">(),</span>
-            <span class="n">math_scale</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
-            <span class="n">filename</span><span class="o">=</span><span class="n">filename</span>
-        <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">line_plot</span><span class="p">(</span>
+            <span class="n">df</span><span class="o">=</span><span class="n">df</span><span class="p">,</span> <span class="n">title</span><span class="o">=</span><span class="n">title</span><span class="p">,</span> <span class="n">ylabel</span><span class="o">=</span><span class="n">ylabel</span><span class="p">,</span> <span class="n">v</span><span class="o">=</span><span class="n">tracker</span><span class="o">.</span><span class="n">change_dates</span><span class="p">(),</span> <span class="n">math_scale</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+            <span class="n">h</span><span class="o">=</span><span class="mf">1.0</span> <span class="k">if</span> <span class="n">target</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">RT</span> <span class="k">else</span> <span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">df</span></div>
 
-<div class="viewcode-block" id="Scenario.history_rate"><a class="viewcode-back" href="../../../covsirphy.analysis.scenario.html#covsirphy.Scenario.history_rate">[docs]</a>    <span class="k">def</span> <span class="nf">history_rate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">params</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;Main&quot;</span><span class="p">,</span> <span class="n">show_figure</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">filename</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<div class="viewcode-block" id="Scenario.history_rate"><a class="viewcode-back" href="../../../covsirphy.analysis.scenario.html#covsirphy.Scenario.history_rate">[docs]</a>    <span class="k">def</span> <span class="nf">history_rate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">params</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;Main&quot;</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Show change rates of parameter values in one figure.</span>
 <span class="sd">        We can find the parameters which increased/decreased significantly.</span>
@@ -1059,8 +1049,7 @@
 <span class="sd">        Args:</span>
 <span class="sd">            params (list[str] or None): parameters to show</span>
 <span class="sd">            name (str): phase series name</span>
-<span class="sd">            show_figure (bool): If True, show the result as a figure</span>
-<span class="sd">            filename (str): filename of the figure, or None (show figure)</span>
+<span class="sd">            kwargs: the other keyword arguments of Scenario.line_plot()</span>
 
 <span class="sd">        Returns:</span>
 <span class="sd">            pandas.DataFrame</span>
@@ -1074,15 +1063,14 @@
                     <span class="sa">f</span><span class="s2">&quot;@params must be a list of parameters, but </span><span class="si">{</span><span class="n">params</span><span class="si">}</span><span class="s2"> were applied.&quot;</span><span class="p">)</span>
             <span class="n">cols</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">cols</span><span class="p">)</span> <span class="o">&amp;</span> <span class="nb">set</span><span class="p">(</span><span class="n">params</span><span class="p">))</span> <span class="ow">or</span> <span class="n">cols</span>
         <span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">loc</span><span class="p">[:,</span> <span class="n">cols</span><span class="p">]</span> <span class="o">/</span> <span class="n">df</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">df</span><span class="o">.</span><span class="n">index</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">cols</span><span class="p">]</span>
-        <span class="k">if</span> <span class="n">show_figure</span><span class="p">:</span>
-            <span class="n">f_date</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">index</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">DATE_FORMAT</span><span class="p">)</span>
-            <span class="n">title</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">area</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">model</span><span class="o">.</span><span class="n">NAME</span><span class="si">}</span><span class="s2"> parameter change rates over time (1.0 on </span><span class="si">{</span><span class="n">f_date</span><span class="si">}</span><span class="s2">)&quot;</span>
-            <span class="n">ylabel</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;Value per that on </span><span class="si">{</span><span class="n">f_date</span><span class="si">}</span><span class="s2">&quot;</span>
-            <span class="n">title</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">area</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">ylabel</span><span class="si">}</span><span class="s2"> over time&quot;</span>
-            <span class="n">tracker</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_tracker</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">MAIN</span><span class="p">)</span>
-            <span class="n">line_plot</span><span class="p">(</span>
-                <span class="n">df</span><span class="p">,</span> <span class="n">title</span><span class="p">,</span> <span class="n">ylabel</span><span class="o">=</span><span class="n">ylabel</span><span class="p">,</span> <span class="n">v</span><span class="o">=</span><span class="n">tracker</span><span class="o">.</span><span class="n">change_dates</span><span class="p">(),</span>
-                <span class="n">math_scale</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">filename</span><span class="o">=</span><span class="n">filename</span><span class="p">)</span>
+        <span class="c1"># Show figure</span>
+        <span class="n">f_date</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">index</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">DATE_FORMAT</span><span class="p">)</span>
+        <span class="n">title</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">area</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">model</span><span class="o">.</span><span class="n">NAME</span><span class="si">}</span><span class="s2"> parameter change rates over time (1.0 on </span><span class="si">{</span><span class="n">f_date</span><span class="si">}</span><span class="s2">)&quot;</span>
+        <span class="n">ylabel</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;Value per that on </span><span class="si">{</span><span class="n">f_date</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="n">title</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">area</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">ylabel</span><span class="si">}</span><span class="s2"> over time&quot;</span>
+        <span class="n">tracker</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_tracker</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">MAIN</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">line_plot</span><span class="p">(</span>
+            <span class="n">df</span><span class="o">=</span><span class="n">df</span><span class="p">,</span> <span class="n">title</span><span class="o">=</span><span class="n">title</span><span class="p">,</span> <span class="n">ylabel</span><span class="o">=</span><span class="n">ylabel</span><span class="p">,</span> <span class="n">v</span><span class="o">=</span><span class="n">tracker</span><span class="o">.</span><span class="n">change_dates</span><span class="p">(),</span> <span class="n">math_scale</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">df</span></div>
 
 <div class="viewcode-block" id="Scenario.retrospective"><a class="viewcode-back" href="../../../covsirphy.analysis.scenario.html#covsirphy.Scenario.retrospective">[docs]</a>    <span class="k">def</span> <span class="nf">retrospective</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">beginning_date</span><span class="p">,</span> <span class="n">model</span><span class="p">,</span> <span class="n">control</span><span class="o">=</span><span class="s2">&quot;Main&quot;</span><span class="p">,</span> <span class="n">target</span><span class="o">=</span><span class="s2">&quot;Target&quot;</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>

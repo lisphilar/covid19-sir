@@ -378,8 +378,8 @@ If the last phase is not included, the dates will be assigned to the previous ph
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>phase</strong> (<em>list</em><em>[</em><em>str</em><em>] or </em><em>None</em>) – phase names</p></li>
-<li><p><strong>name</strong> (<em>str</em>) – name of phase series</p></li>
+<li><p><strong>phase</strong> (<em>list</em><em>[</em><em>str</em><em>] or </em><em>None</em>) – phase names or None (all enabled phases)</p></li>
+<li><p><strong>name</strong> (<em>str</em>) – scenario name</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
@@ -398,8 +398,8 @@ If the last phase is not included, the dates will be assigned to the previous ph
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>phase</strong> (<em>list</em><em>[</em><em>str</em><em>] or </em><em>None</em>) – phase names</p></li>
-<li><p><strong>name</strong> (<em>str</em>) – name of phase series</p></li>
+<li><p><strong>phase</strong> (<em>list</em><em>[</em><em>str</em><em>] or </em><em>None</em>) – phase names or None (all disabled phases)</p></li>
+<li><p><strong>name</strong> (<em>str</em>) – scenario name</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
@@ -571,7 +571,7 @@ New future phases will be added (over-written).</p>
 
 <dl class="py method">
 <dt id="covsirphy.analysis.scenario.Scenario.history">
-<code class="sig-name descname">history</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">target</span></em>, <em class="sig-param"><span class="n">with_actual</span><span class="o">=</span><span class="default_value">True</span></em>, <em class="sig-param"><span class="n">y0_dict</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">show_figure</span><span class="o">=</span><span class="default_value">True</span></em>, <em class="sig-param"><span class="n">filename</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/analysis/scenario.html#Scenario.history"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#covsirphy.analysis.scenario.Scenario.history" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">history</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">target</span></em>, <em class="sig-param"><span class="n">with_actual</span><span class="o">=</span><span class="default_value">True</span></em>, <em class="sig-param"><span class="n">y0_dict</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/analysis/scenario.html#Scenario.history"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#covsirphy.analysis.scenario.Scenario.history" title="Permalink to this definition">¶</a></dt>
 <dd><p>Show the history of variables and parameter values to compare scenarios.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -581,8 +581,7 @@ New future phases will be added (over-written).</p>
 <li><p><strong>y0_dict</strong> (<em>dict</em><em> or </em><em>None</em>) – dictionary of initial values or None
 - key (str): variable name
 - value (float): initial value</p></li>
-<li><p><strong>show_figure</strong> (<em>bool</em>) – If True, show the result as a figure</p></li>
-<li><p><strong>filename</strong> (<em>str</em>) – filename of the figure, or None (show figure)</p></li>
+<li><p><strong>kwargs</strong> – the other keyword arguments of Scenario.line_plot()</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
@@ -593,7 +592,7 @@ New future phases will be added (over-written).</p>
 
 <dl class="py method">
 <dt id="covsirphy.analysis.scenario.Scenario.history_rate">
-<code class="sig-name descname">history_rate</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">params</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">name</span><span class="o">=</span><span class="default_value">'Main'</span></em>, <em class="sig-param"><span class="n">show_figure</span><span class="o">=</span><span class="default_value">True</span></em>, <em class="sig-param"><span class="n">filename</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/analysis/scenario.html#Scenario.history_rate"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#covsirphy.analysis.scenario.Scenario.history_rate" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">history_rate</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">params</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">name</span><span class="o">=</span><span class="default_value">'Main'</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/analysis/scenario.html#Scenario.history_rate"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#covsirphy.analysis.scenario.Scenario.history_rate" title="Permalink to this definition">¶</a></dt>
 <dd><p>Show change rates of parameter values in one figure.
 We can find the parameters which increased/decreased significantly.</p>
 <dl class="field-list simple">
@@ -601,8 +600,7 @@ We can find the parameters which increased/decreased significantly.</p>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>params</strong> (<em>list</em><em>[</em><em>str</em><em>] or </em><em>None</em>) – parameters to show</p></li>
 <li><p><strong>name</strong> (<em>str</em>) – phase series name</p></li>
-<li><p><strong>show_figure</strong> (<em>bool</em>) – If True, show the result as a figure</p></li>
-<li><p><strong>filename</strong> (<em>str</em>) – filename of the figure, or None (show figure)</p></li>
+<li><p><strong>kwargs</strong> – the other keyword arguments of Scenario.line_plot()</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
@@ -749,15 +747,15 @@ New phase name will be automatically determined.</p>
 
 <dl class="py method">
 <dt id="covsirphy.analysis.scenario.Scenario.simulate">
-<code class="sig-name descname">simulate</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">name</span><span class="o">=</span><span class="default_value">'Main'</span></em>, <em class="sig-param"><span class="n">y0_dict</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">show_figure</span><span class="o">=</span><span class="default_value">True</span></em>, <em class="sig-param"><span class="n">filename</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/analysis/scenario.html#Scenario.simulate"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#covsirphy.analysis.scenario.Scenario.simulate" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">simulate</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">variables</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">name</span><span class="o">=</span><span class="default_value">'Main'</span></em>, <em class="sig-param"><span class="n">y0_dict</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/analysis/scenario.html#Scenario.simulate"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#covsirphy.analysis.scenario.Scenario.simulate" title="Permalink to this definition">¶</a></dt>
 <dd><p>Simulate ODE models with set/estimated parameter values and show it as a figure.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
+<li><p><strong>variables</strong> (<em>list</em><em>[</em><em>str</em><em>] or </em><em>None</em>) – variables to include, Infected/Fatal/Recovered when None</p></li>
 <li><p><strong>name</strong> (<em>str</em>) – phase series name. If ‘Main’, main PhaseSeries will be used</p></li>
 <li><p><strong>y0_dict</strong> (<em>dict</em><em>[</em><em>str</em><em>, </em><em>float</em><em>] or </em><em>None</em>) – dictionary of initial values of variables</p></li>
-<li><p><strong>show_figure</strong> (<em>bool</em>) – if True, show the result as a figure</p></li>
-<li><p><strong>filename</strong> (<em>str</em>) – filename of the figure, or None (show figure)</p></li>
+<li><p><strong>kwargs</strong> – the other keyword arguments of Scenario.line_plot()</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>

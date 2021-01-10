@@ -388,7 +388,7 @@ If necessary and &#64;auto_complement is True, complement recovered data.</p>
 
 <dl class="py method">
 <dt id="covsirphy.cleaning.jhu_data.JHUData.show_complement">
-<code class="sig-name descname">show_complement</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">country</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">province</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">start_date</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">end_date</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">interval</span><span class="o">=</span><span class="default_value">2</span></em>, <em class="sig-param"><span class="n">max_ignored</span><span class="o">=</span><span class="default_value">100</span></em>, <em class="sig-param"><span class="n">max_ending_unupdated</span><span class="o">=</span><span class="default_value">14</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/cleaning/jhu_data.html#JHUData.show_complement"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#covsirphy.cleaning.jhu_data.JHUData.show_complement" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">show_complement</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">country</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">province</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">start_date</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">end_date</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/cleaning/jhu_data.html#JHUData.show_complement"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#covsirphy.cleaning.jhu_data.JHUData.show_complement" title="Permalink to this definition">¶</a></dt>
 <dd><p>To monitor effectivity and safety of complement on JHU subset,
 we need to know what kind of complement was done for JHU subset
 for each country (if country/countries specified) or for all countries.</p>
@@ -399,9 +399,8 @@ for each country (if country/countries specified) or for all countries.</p>
 <li><p><strong>province</strong> (<em>str</em><em> or </em><em>None</em>) – province name</p></li>
 <li><p><strong>start_date</strong> (<em>str</em><em> or </em><em>None</em>) – start date, like 22Jan2020</p></li>
 <li><p><strong>end_date</strong> (<em>str</em><em> or </em><em>None</em>) – end date, like 01Feb2020</p></li>
-<li><p><strong>interval</strong> (<em>int</em>) – expected update interval of the number of recovered cases [days]</p></li>
-<li><p><strong>max_ignored</strong> (<em>int</em>) – Max number of recovered cases to be ignored [cases]</p></li>
-<li><p><strong>max_ending_unupdated</strong> (<em>int</em>) – Max number of days to apply full complement, where ending recovered cases are not updated [days]</p></li>
+<li><p><strong>kwargs</strong> – keyword arguments of JHUDataComplementHandler(),
+control factors of complement</p></li>
 </ul>
 </dd>
 <dt class="field-even">Raises</dt>
@@ -474,7 +473,7 @@ Columns:</p>
 
 <dl class="py method">
 <dt id="covsirphy.cleaning.jhu_data.JHUData.subset_complement">
-<code class="sig-name descname">subset_complement</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">country</span></em>, <em class="sig-param"><span class="n">province</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">start_date</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">end_date</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">population</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">interval</span><span class="o">=</span><span class="default_value">2</span></em>, <em class="sig-param"><span class="n">max_ignored</span><span class="o">=</span><span class="default_value">100</span></em>, <em class="sig-param"><span class="n">max_ending_unupdated</span><span class="o">=</span><span class="default_value">14</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/cleaning/jhu_data.html#JHUData.subset_complement"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#covsirphy.cleaning.jhu_data.JHUData.subset_complement" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">subset_complement</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">country</span></em>, <em class="sig-param"><span class="n">province</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">start_date</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">end_date</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">population</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/cleaning/jhu_data.html#JHUData.subset_complement"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#covsirphy.cleaning.jhu_data.JHUData.subset_complement" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return the subset of dataset and complement recovered data, if necessary.
 Records with Recovered &gt; 0 will be selected.</p>
 <dl class="field-list simple">
@@ -485,9 +484,8 @@ Records with Recovered &gt; 0 will be selected.</p>
 <li><p><strong>start_date</strong> (<em>str</em><em> or </em><em>None</em>) – start date, like 22Jan2020</p></li>
 <li><p><strong>end_date</strong> (<em>str</em><em> or </em><em>None</em>) – end date, like 01Feb2020</p></li>
 <li><p><strong>population</strong> (<em>int</em><em> or </em><em>None</em>) – population value</p></li>
-<li><p><strong>interval</strong> (<em>int</em>) – expected update interval of the number of recovered cases [days]</p></li>
-<li><p><strong>max_ignored</strong> (<em>int</em>) – Max number of recovered cases to be ignored [cases]</p></li>
-<li><p><strong>max_ending_unupdated</strong> (<em>int</em>) – Max number of days to apply full complement, where ending recovered cases are not updated [days]</p></li>
+<li><p><strong>kwargs</strong> – keyword arguments of JHUDataComplementHandler(),
+control factors of complement</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>

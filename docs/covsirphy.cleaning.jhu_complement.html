@@ -199,7 +199,7 @@
 <span id="covsirphy-cleaning-jhu-complement-module"></span><h1>covsirphy.cleaning.jhu_complement module<a class="headerlink" href="#module-covsirphy.cleaning.jhu_complement" title="Permalink to this headline">¶</a></h1>
 <dl class="py class">
 <dt id="covsirphy.cleaning.jhu_complement.JHUDataComplementHandler">
-<em class="property">class </em><code class="sig-name descname">JHUDataComplementHandler</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">recovery_period</span></em>, <em class="sig-param"><span class="n">interval</span></em>, <em class="sig-param"><span class="n">max_ignored</span></em>, <em class="sig-param"><span class="n">max_ending_unupdated</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/cleaning/jhu_complement.html#JHUDataComplementHandler"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#covsirphy.cleaning.jhu_complement.JHUDataComplementHandler" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-name descname">JHUDataComplementHandler</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">recovery_period</span></em>, <em class="sig-param"><span class="n">interval</span><span class="o">=</span><span class="default_value">2</span></em>, <em class="sig-param"><span class="n">max_ignored</span><span class="o">=</span><span class="default_value">100</span></em>, <em class="sig-param"><span class="n">max_ending_unupdated</span><span class="o">=</span><span class="default_value">14</span></em>, <em class="sig-param"><span class="n">upper_limit_days</span><span class="o">=</span><span class="default_value">90</span></em>, <em class="sig-param"><span class="n">lower_limit_days</span><span class="o">=</span><span class="default_value">7</span></em>, <em class="sig-param"><span class="n">upper_percentage</span><span class="o">=</span><span class="default_value">0.5</span></em>, <em class="sig-param"><span class="n">lower_percentage</span><span class="o">=</span><span class="default_value">0.5</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/cleaning/jhu_complement.html#JHUDataComplementHandler"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#covsirphy.cleaning.jhu_complement.JHUDataComplementHandler" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="covsirphy.cleaning.term.html#covsirphy.cleaning.term.Term" title="covsirphy.cleaning.term.Term"><code class="xref py py-class docutils literal notranslate"><span class="pre">covsirphy.cleaning.term.Term</span></code></a></p>
 <p>Complement JHU dataset, if necessary.</p>
 <dl class="field-list simple">
@@ -209,6 +209,10 @@
 <li><p><strong>interval</strong> (<em>int</em>) – expected update interval of the number of recovered cases [days]</p></li>
 <li><p><strong>max_ignored</strong> (<em>int</em>) – Max number of recovered cases to be ignored [cases]</p></li>
 <li><p><strong>max_ending_unupdated</strong> (<em>int</em>) – Max number of days to apply full complement, where max recovered cases are not updated [days]</p></li>
+<li><p><strong>upper_limit_days</strong> (<em>int</em>) – maximum number of valid partial recovery periods [days]</p></li>
+<li><p><strong>lower_limit_days</strong> (<em>int</em>) – minimum number of valid partial recovery periods [days]</p></li>
+<li><p><strong>upper_percentage</strong> (<em>float</em>) – fraction of partial recovery periods with value greater than upper_limit_days</p></li>
+<li><p><strong>lower_percentage</strong> (<em>float</em>) – fraction of partial recovery periods with value less than lower_limit_days</p></li>
 </ul>
 </dd>
 </dl>

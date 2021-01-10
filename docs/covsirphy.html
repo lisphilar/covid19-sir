@@ -796,6 +796,21 @@ Only when auto-complement mode, complement records if necessary.</p>
 </dd></dl>
 
 <dl class="py method">
+<dt id="covsirphy.DataHandler.interactive">
+<em class="property">property </em><code class="sig-name descname">interactive</code><a class="headerlink" href="#covsirphy.DataHandler.interactive" title="Permalink to this definition">¶</a></dt>
+<dd><p>interactive mode (display figures) or not</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>When running scripts, interactive mode cannot be selected.</p>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>bool</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
 <dt id="covsirphy.DataHandler.last_date">
 <em class="property">property </em><code class="sig-name descname">last_date</code><a class="headerlink" href="#covsirphy.DataHandler.last_date" title="Permalink to this definition">¶</a></dt>
 <dd><p>the last date of the records</p>
@@ -807,16 +822,35 @@ Only when auto-complement mode, complement records if necessary.</p>
 </dd></dl>
 
 <dl class="py method">
+<dt id="covsirphy.DataHandler.line_plot">
+<code class="sig-name descname">line_plot</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">df</span></em>, <em class="sig-param"><span class="n">show_figure</span><span class="o">=</span><span class="default_value">True</span></em>, <em class="sig-param"><span class="n">filename</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/analysis/data_handler.html#DataHandler.line_plot"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#covsirphy.DataHandler.line_plot" title="Permalink to this definition">¶</a></dt>
+<dd><p>Display or save a line plot of the dataframe.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>show_figure</strong> (<em>bool</em>) – whether show figure when interactive mode or not</p></li>
+<li><p><strong>filename</strong> (<em>str</em><em> or </em><em>None</em>) – filename of the figure or None (not save) when script mode</p></li>
+</ul>
+</dd>
+</dl>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>When interactive mode and &#64;show_figure is True, display the figure.
+When script mode and filename is not None, save the figure.
+When using interactive shell, we can change the modes by Scenario.interactive = True/False.</p>
+</div>
+</dd></dl>
+
+<dl class="py method">
 <dt id="covsirphy.DataHandler.records">
-<code class="sig-name descname">records</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">variables</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">show_figure</span><span class="o">=</span><span class="default_value">True</span></em>, <em class="sig-param"><span class="n">filename</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/analysis/data_handler.html#DataHandler.records"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#covsirphy.DataHandler.records" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">records</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">variables</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/analysis/data_handler.html#DataHandler.records"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#covsirphy.DataHandler.records" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return the records as a dataframe.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>show_figure</strong> (<em>bool</em>) – if True, show the records as a line-plot.</p></li>
 <li><p><strong>variables</strong> (<em>list</em><em>[</em><em>str</em><em>] or </em><em>None</em>) – variables to include, Infected/Fatal/Recovered when None</p></li>
-<li><p><strong>filename</strong> (<em>str</em>) – filename of the figure, or None (show figure)</p></li>
-<li><p><strong>kwargs</strong> – the other keyword arguments of covsirphy.line_plot()</p></li>
+<li><p><strong>kwargs</strong> – the other keyword arguments of Scenario.line_plot()</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
@@ -848,16 +882,14 @@ Only when auto-complement mode, complement records if necessary.</p>
 
 <dl class="py method">
 <dt id="covsirphy.DataHandler.records_diff">
-<code class="sig-name descname">records_diff</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">variables</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">window</span><span class="o">=</span><span class="default_value">7</span></em>, <em class="sig-param"><span class="n">show_figure</span><span class="o">=</span><span class="default_value">True</span></em>, <em class="sig-param"><span class="n">filename</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/analysis/data_handler.html#DataHandler.records_diff"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#covsirphy.DataHandler.records_diff" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">records_diff</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">variables</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">window</span><span class="o">=</span><span class="default_value">7</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/analysis/data_handler.html#DataHandler.records_diff"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#covsirphy.DataHandler.records_diff" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return the number of daily new cases (the first discreate difference of records).</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>variables</strong> (<em>str</em><em> or </em><em>None</em>) – variables to show</p></li>
 <li><p><strong>window</strong> (<em>int</em>) – window of moving average, &gt;= 1</p></li>
-<li><p><strong>show_figure</strong> (<em>bool</em>) – if True, show the records as a line-plot.</p></li>
-<li><p><strong>filename</strong> (<em>str</em>) – filename of the figure, or None (show figure)</p></li>
-<li><p><strong>kwargs</strong> – the other keyword arguments of covsirphy.line_plot()</p></li>
+<li><p><strong>kwargs</strong> – the other keyword arguments of Scenario.line_plot()</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
@@ -1632,7 +1664,7 @@ If necessary and &#64;auto_complement is True, complement recovered data.</p>
 
 <dl class="py method">
 <dt id="covsirphy.JHUData.show_complement">
-<code class="sig-name descname">show_complement</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">country</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">province</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">start_date</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">end_date</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">interval</span><span class="o">=</span><span class="default_value">2</span></em>, <em class="sig-param"><span class="n">max_ignored</span><span class="o">=</span><span class="default_value">100</span></em>, <em class="sig-param"><span class="n">max_ending_unupdated</span><span class="o">=</span><span class="default_value">14</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/cleaning/jhu_data.html#JHUData.show_complement"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#covsirphy.JHUData.show_complement" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">show_complement</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">country</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">province</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">start_date</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">end_date</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/cleaning/jhu_data.html#JHUData.show_complement"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#covsirphy.JHUData.show_complement" title="Permalink to this definition">¶</a></dt>
 <dd><p>To monitor effectivity and safety of complement on JHU subset,
 we need to know what kind of complement was done for JHU subset
 for each country (if country/countries specified) or for all countries.</p>
@@ -1643,9 +1675,8 @@ for each country (if country/countries specified) or for all countries.</p>
 <li><p><strong>province</strong> (<em>str</em><em> or </em><em>None</em>) – province name</p></li>
 <li><p><strong>start_date</strong> (<em>str</em><em> or </em><em>None</em>) – start date, like 22Jan2020</p></li>
 <li><p><strong>end_date</strong> (<em>str</em><em> or </em><em>None</em>) – end date, like 01Feb2020</p></li>
-<li><p><strong>interval</strong> (<em>int</em>) – expected update interval of the number of recovered cases [days]</p></li>
-<li><p><strong>max_ignored</strong> (<em>int</em>) – Max number of recovered cases to be ignored [cases]</p></li>
-<li><p><strong>max_ending_unupdated</strong> (<em>int</em>) – Max number of days to apply full complement, where ending recovered cases are not updated [days]</p></li>
+<li><p><strong>kwargs</strong> – keyword arguments of JHUDataComplementHandler(),
+control factors of complement</p></li>
 </ul>
 </dd>
 <dt class="field-even">Raises</dt>
@@ -1718,7 +1749,7 @@ Columns:</p>
 
 <dl class="py method">
 <dt id="covsirphy.JHUData.subset_complement">
-<code class="sig-name descname">subset_complement</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">country</span></em>, <em class="sig-param"><span class="n">province</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">start_date</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">end_date</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">population</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">interval</span><span class="o">=</span><span class="default_value">2</span></em>, <em class="sig-param"><span class="n">max_ignored</span><span class="o">=</span><span class="default_value">100</span></em>, <em class="sig-param"><span class="n">max_ending_unupdated</span><span class="o">=</span><span class="default_value">14</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/cleaning/jhu_data.html#JHUData.subset_complement"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#covsirphy.JHUData.subset_complement" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">subset_complement</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">country</span></em>, <em class="sig-param"><span class="n">province</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">start_date</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">end_date</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">population</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/cleaning/jhu_data.html#JHUData.subset_complement"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#covsirphy.JHUData.subset_complement" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return the subset of dataset and complement recovered data, if necessary.
 Records with Recovered &gt; 0 will be selected.</p>
 <dl class="field-list simple">
@@ -1729,9 +1760,8 @@ Records with Recovered &gt; 0 will be selected.</p>
 <li><p><strong>start_date</strong> (<em>str</em><em> or </em><em>None</em>) – start date, like 22Jan2020</p></li>
 <li><p><strong>end_date</strong> (<em>str</em><em> or </em><em>None</em>) – end date, like 01Feb2020</p></li>
 <li><p><strong>population</strong> (<em>int</em><em> or </em><em>None</em>) – population value</p></li>
-<li><p><strong>interval</strong> (<em>int</em>) – expected update interval of the number of recovered cases [days]</p></li>
-<li><p><strong>max_ignored</strong> (<em>int</em>) – Max number of recovered cases to be ignored [cases]</p></li>
-<li><p><strong>max_ending_unupdated</strong> (<em>int</em>) – Max number of days to apply full complement, where ending recovered cases are not updated [days]</p></li>
+<li><p><strong>kwargs</strong> – keyword arguments of JHUDataComplementHandler(),
+control factors of complement</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
@@ -1836,7 +1866,7 @@ Records with Recovered &gt; 0 will be used.</p>
 
 <dl class="py class">
 <dt id="covsirphy.JHUDataComplementHandler">
-<em class="property">class </em><code class="sig-name descname">JHUDataComplementHandler</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">recovery_period</span></em>, <em class="sig-param"><span class="n">interval</span></em>, <em class="sig-param"><span class="n">max_ignored</span></em>, <em class="sig-param"><span class="n">max_ending_unupdated</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/cleaning/jhu_complement.html#JHUDataComplementHandler"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#covsirphy.JHUDataComplementHandler" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-name descname">JHUDataComplementHandler</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">recovery_period</span></em>, <em class="sig-param"><span class="n">interval</span><span class="o">=</span><span class="default_value">2</span></em>, <em class="sig-param"><span class="n">max_ignored</span><span class="o">=</span><span class="default_value">100</span></em>, <em class="sig-param"><span class="n">max_ending_unupdated</span><span class="o">=</span><span class="default_value">14</span></em>, <em class="sig-param"><span class="n">upper_limit_days</span><span class="o">=</span><span class="default_value">90</span></em>, <em class="sig-param"><span class="n">lower_limit_days</span><span class="o">=</span><span class="default_value">7</span></em>, <em class="sig-param"><span class="n">upper_percentage</span><span class="o">=</span><span class="default_value">0.5</span></em>, <em class="sig-param"><span class="n">lower_percentage</span><span class="o">=</span><span class="default_value">0.5</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/cleaning/jhu_complement.html#JHUDataComplementHandler"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#covsirphy.JHUDataComplementHandler" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="covsirphy.cleaning.term.html#covsirphy.cleaning.term.Term" title="covsirphy.cleaning.term.Term"><code class="xref py py-class docutils literal notranslate"><span class="pre">covsirphy.cleaning.term.Term</span></code></a></p>
 <p>Complement JHU dataset, if necessary.</p>
 <dl class="field-list simple">
@@ -1846,6 +1876,10 @@ Records with Recovered &gt; 0 will be used.</p>
 <li><p><strong>interval</strong> (<em>int</em>) – expected update interval of the number of recovered cases [days]</p></li>
 <li><p><strong>max_ignored</strong> (<em>int</em>) – Max number of recovered cases to be ignored [cases]</p></li>
 <li><p><strong>max_ending_unupdated</strong> (<em>int</em>) – Max number of days to apply full complement, where max recovered cases are not updated [days]</p></li>
+<li><p><strong>upper_limit_days</strong> (<em>int</em>) – maximum number of valid partial recovery periods [days]</p></li>
+<li><p><strong>lower_limit_days</strong> (<em>int</em>) – minimum number of valid partial recovery periods [days]</p></li>
+<li><p><strong>upper_percentage</strong> (<em>float</em>) – fraction of partial recovery periods with value greater than upper_limit_days</p></li>
+<li><p><strong>lower_percentage</strong> (<em>float</em>) – fraction of partial recovery periods with value less than lower_limit_days</p></li>
 </ul>
 </dd>
 </dl>
@@ -2714,6 +2748,18 @@ Columns:</p>
 
 </dd></dl>
 
+<dl class="py exception">
+<dt id="covsirphy.NotInteractiveError">
+<em class="property">exception </em><code class="sig-name descname">NotInteractiveError</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">message</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/util/error.html#NotInteractiveError"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#covsirphy.NotInteractiveError" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">ValueError</span></code></p>
+<p>Error when interactive shell is not used but forced to use it.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>message</strong> (<em>str</em><em> or </em><em>None</em>) – the other messages</p>
+</dd>
+</dl>
+</dd></dl>
+
 <dl class="py class">
 <dt id="covsirphy.ODESimulator">
 <em class="property">class </em><code class="sig-name descname">ODESimulator</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">country</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">province</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/simulation/simulator.html#ODESimulator"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#covsirphy.ODESimulator" title="Permalink to this definition">¶</a></dt>
@@ -3555,6 +3601,20 @@ The start date will be the next date of the last registered phase.</p>
 </dd></dl>
 
 <dl class="py method">
+<dt id="covsirphy.ParamTracker.all_phases">
+<code class="sig-name descname">all_phases</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/analysis/param_tracker.html#ParamTracker.all_phases"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#covsirphy.ParamTracker.all_phases" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the names of all phases.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>the names of all enabled phases</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>list[str]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
 <dt id="covsirphy.ParamTracker.change_dates">
 <code class="sig-name descname">change_dates</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/analysis/param_tracker.html#ParamTracker.change_dates"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#covsirphy.ParamTracker.change_dates" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return the list of changed dates (start dates of phases since 1st phase).</p>
@@ -3642,7 +3702,7 @@ New phase name will be automatically determined.</p>
 <dd><p>The phases will be disabled.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>phase</strong> (<em>list</em><em>[</em><em>str</em><em>] or </em><em>None</em>) – phase names</p>
+<dd class="field-odd"><p><strong>phase</strong> (<em>list</em><em>[</em><em>str</em><em>] or </em><em>None</em>) – phase names or None (all enabled phases)</p>
 </dd>
 <dt class="field-even">Returns</dt>
 <dd class="field-even"><p>covsirphy.PhaseSeries</p>
@@ -3656,7 +3716,7 @@ New phase name will be automatically determined.</p>
 <dd><p>The phases will be enabled.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>phase</strong> (<em>list</em><em>[</em><em>str</em><em>] or </em><em>None</em>) – phase names</p>
+<dd class="field-odd"><p><strong>phase</strong> (<em>list</em><em>[</em><em>str</em><em>] or </em><em>None</em>) – phase names or None (all disabled phases)</p>
 </dd>
 <dt class="field-even">Returns</dt>
 <dd class="field-even"><p>covsirphy.PhaseSeries</p>
@@ -6312,8 +6372,8 @@ If the last phase is not included, the dates will be assigned to the previous ph
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>phase</strong> (<em>list</em><em>[</em><em>str</em><em>] or </em><em>None</em>) – phase names</p></li>
-<li><p><strong>name</strong> (<em>str</em>) – name of phase series</p></li>
+<li><p><strong>phase</strong> (<em>list</em><em>[</em><em>str</em><em>] or </em><em>None</em>) – phase names or None (all enabled phases)</p></li>
+<li><p><strong>name</strong> (<em>str</em>) – scenario name</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
@@ -6332,8 +6392,8 @@ If the last phase is not included, the dates will be assigned to the previous ph
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>phase</strong> (<em>list</em><em>[</em><em>str</em><em>] or </em><em>None</em>) – phase names</p></li>
-<li><p><strong>name</strong> (<em>str</em>) – name of phase series</p></li>
+<li><p><strong>phase</strong> (<em>list</em><em>[</em><em>str</em><em>] or </em><em>None</em>) – phase names or None (all disabled phases)</p></li>
+<li><p><strong>name</strong> (<em>str</em>) – scenario name</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
@@ -6505,7 +6565,7 @@ New future phases will be added (over-written).</p>
 
 <dl class="py method">
 <dt id="covsirphy.Scenario.history">
-<code class="sig-name descname">history</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">target</span></em>, <em class="sig-param"><span class="n">with_actual</span><span class="o">=</span><span class="default_value">True</span></em>, <em class="sig-param"><span class="n">y0_dict</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">show_figure</span><span class="o">=</span><span class="default_value">True</span></em>, <em class="sig-param"><span class="n">filename</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/analysis/scenario.html#Scenario.history"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#covsirphy.Scenario.history" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">history</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">target</span></em>, <em class="sig-param"><span class="n">with_actual</span><span class="o">=</span><span class="default_value">True</span></em>, <em class="sig-param"><span class="n">y0_dict</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/analysis/scenario.html#Scenario.history"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#covsirphy.Scenario.history" title="Permalink to this definition">¶</a></dt>
 <dd><p>Show the history of variables and parameter values to compare scenarios.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -6515,8 +6575,7 @@ New future phases will be added (over-written).</p>
 <li><p><strong>y0_dict</strong> (<em>dict</em><em> or </em><em>None</em>) – dictionary of initial values or None
 - key (str): variable name
 - value (float): initial value</p></li>
-<li><p><strong>show_figure</strong> (<em>bool</em>) – If True, show the result as a figure</p></li>
-<li><p><strong>filename</strong> (<em>str</em>) – filename of the figure, or None (show figure)</p></li>
+<li><p><strong>kwargs</strong> – the other keyword arguments of Scenario.line_plot()</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
@@ -6527,7 +6586,7 @@ New future phases will be added (over-written).</p>
 
 <dl class="py method">
 <dt id="covsirphy.Scenario.history_rate">
-<code class="sig-name descname">history_rate</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">params</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">name</span><span class="o">=</span><span class="default_value">'Main'</span></em>, <em class="sig-param"><span class="n">show_figure</span><span class="o">=</span><span class="default_value">True</span></em>, <em class="sig-param"><span class="n">filename</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/analysis/scenario.html#Scenario.history_rate"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#covsirphy.Scenario.history_rate" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">history_rate</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">params</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">name</span><span class="o">=</span><span class="default_value">'Main'</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/analysis/scenario.html#Scenario.history_rate"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#covsirphy.Scenario.history_rate" title="Permalink to this definition">¶</a></dt>
 <dd><p>Show change rates of parameter values in one figure.
 We can find the parameters which increased/decreased significantly.</p>
 <dl class="field-list simple">
@@ -6535,8 +6594,7 @@ We can find the parameters which increased/decreased significantly.</p>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>params</strong> (<em>list</em><em>[</em><em>str</em><em>] or </em><em>None</em>) – parameters to show</p></li>
 <li><p><strong>name</strong> (<em>str</em>) – phase series name</p></li>
-<li><p><strong>show_figure</strong> (<em>bool</em>) – If True, show the result as a figure</p></li>
-<li><p><strong>filename</strong> (<em>str</em>) – filename of the figure, or None (show figure)</p></li>
+<li><p><strong>kwargs</strong> – the other keyword arguments of Scenario.line_plot()</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
@@ -6683,15 +6741,15 @@ New phase name will be automatically determined.</p>
 
 <dl class="py method">
 <dt id="covsirphy.Scenario.simulate">
-<code class="sig-name descname">simulate</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">name</span><span class="o">=</span><span class="default_value">'Main'</span></em>, <em class="sig-param"><span class="n">y0_dict</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">show_figure</span><span class="o">=</span><span class="default_value">True</span></em>, <em class="sig-param"><span class="n">filename</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/analysis/scenario.html#Scenario.simulate"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#covsirphy.Scenario.simulate" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">simulate</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">variables</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">name</span><span class="o">=</span><span class="default_value">'Main'</span></em>, <em class="sig-param"><span class="n">y0_dict</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/analysis/scenario.html#Scenario.simulate"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#covsirphy.Scenario.simulate" title="Permalink to this definition">¶</a></dt>
 <dd><p>Simulate ODE models with set/estimated parameter values and show it as a figure.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
+<li><p><strong>variables</strong> (<em>list</em><em>[</em><em>str</em><em>] or </em><em>None</em>) – variables to include, Infected/Fatal/Recovered when None</p></li>
 <li><p><strong>name</strong> (<em>str</em>) – phase series name. If ‘Main’, main PhaseSeries will be used</p></li>
 <li><p><strong>y0_dict</strong> (<em>dict</em><em>[</em><em>str</em><em>, </em><em>float</em><em>] or </em><em>None</em>) – dictionary of initial values of variables</p></li>
-<li><p><strong>show_figure</strong> (<em>bool</em>) – if True, show the result as a figure</p></li>
-<li><p><strong>filename</strong> (<em>str</em>) – filename of the figure, or None (show figure)</p></li>
+<li><p><strong>kwargs</strong> – the other keyword arguments of Scenario.line_plot()</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
@@ -7914,7 +7972,7 @@ Columns:</p>
 
 <dl class="py function">
 <dt id="covsirphy.line_plot">
-<code class="sig-name descname">line_plot</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">df</span></em>, <em class="sig-param"><span class="n">title</span></em>, <em class="sig-param"><span class="n">xlabel</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">ylabel</span><span class="o">=</span><span class="default_value">'Cases'</span></em>, <em class="sig-param"><span class="n">v</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">h</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">xlim</span><span class="o">=</span><span class="default_value">(None, None)</span></em>, <em class="sig-param"><span class="n">ylim</span><span class="o">=</span><span class="default_value">(0, None)</span></em>, <em class="sig-param"><span class="n">math_scale</span><span class="o">=</span><span class="default_value">True</span></em>, <em class="sig-param"><span class="n">x_logscale</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">y_logscale</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">y_integer</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">show_legend</span><span class="o">=</span><span class="default_value">True</span></em>, <em class="sig-param"><span class="n">bbox_to_anchor</span><span class="o">=</span><span class="default_value">(1.02, 0)</span></em>, <em class="sig-param"><span class="n">bbox_loc</span><span class="o">=</span><span class="default_value">'lower left'</span></em>, <em class="sig-param"><span class="n">colormap</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">color_dict</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">filename</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/util/plotting.html#line_plot"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#covsirphy.line_plot" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">line_plot</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">df</span></em>, <em class="sig-param"><span class="n">title</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">xlabel</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">ylabel</span><span class="o">=</span><span class="default_value">'Cases'</span></em>, <em class="sig-param"><span class="n">v</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">h</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">xlim</span><span class="o">=</span><span class="default_value">(None, None)</span></em>, <em class="sig-param"><span class="n">ylim</span><span class="o">=</span><span class="default_value">(0, None)</span></em>, <em class="sig-param"><span class="n">math_scale</span><span class="o">=</span><span class="default_value">True</span></em>, <em class="sig-param"><span class="n">x_logscale</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">y_logscale</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">y_integer</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">show_legend</span><span class="o">=</span><span class="default_value">True</span></em>, <em class="sig-param"><span class="n">bbox_to_anchor</span><span class="o">=</span><span class="default_value">(1.02, 0)</span></em>, <em class="sig-param"><span class="n">bbox_loc</span><span class="o">=</span><span class="default_value">'lower left'</span></em>, <em class="sig-param"><span class="n">colormap</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">color_dict</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">filename</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/util/plotting.html#line_plot"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#covsirphy.line_plot" title="Permalink to this definition">¶</a></dt>
 <dd><p>Show chronological change of the data.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
