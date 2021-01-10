@@ -427,7 +427,7 @@ class JHUData(CleaningBase):
             self._calculate_recovery_period_country(df, country)
             for country in df[self.COUNTRY].unique()
         ]
-        valid_periods = list(filter(lambda x: x > 0, periods))
+        valid_periods = list(filter(lambda x: x >= 0, periods))
         return int(pd.Series(valid_periods).median())
 
     def _calculate_recovery_period_country(self, valid_df, country, upper_limit_days=90,
@@ -441,6 +441,7 @@ class JHUData(CleaningBase):
             valid_df (pandas.DataFrame):
                 - Index: reset_index
                 - Columns: Date, Confirmed, Recovered, Fatal
+            country(str): country name or ISO3 code
             upper_limit_days (int): maximum number of valid partial recovery periods [days]
             lower_limit_days (int): minimum number of valid partial recovery periods [days]
             upper_percentage (float): fraction of partial recovery periods with value greater than upper_limit_days
