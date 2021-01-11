@@ -220,13 +220,13 @@ class JHUDataComplementHandler(Term):
         self.complement_dict[f"Monotonic_{variable.lower()}"] = True
         return df
 
-    def _validate_recovery_period(self, df):
+    def _validate_recovery_period(self, country_df):
         """
         Calculates and validates recovery period for specific country
         as an additional condition in order to apply full complement or not
 
         Args:
-            df (pandas.DataFrame):
+            country_df (pandas.DataFrame):
                 - Index: reset_index
                 - Columns: Date, Confirmed, Recovered, Fatal
 
@@ -237,6 +237,7 @@ class JHUDataComplementHandler(Term):
               upper_limit_days has default value of 3 months (90 days)
               lower_limit_days has default value of 1 week (7 days)
         """
+        df = country_df.copy()
         # Calculate "Confirmed - Fatal"
         df["diff"] = df[self.C] - df[self.F]
         df = df.loc[:, ["diff", self.R]]
