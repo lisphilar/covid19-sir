@@ -496,12 +496,13 @@ class Scenario(DataHandler):
         estimator = self.phase_estimator(phase=phase, name=name)
         estimator.accuracy(**kwargs)
 
-    def simulate(self, variables=None, name="Main", y0_dict=None, **kwargs):
+    def simulate(self, variables=None, phases=None, name="Main", y0_dict=None, **kwargs):
         """
         Simulate ODE models with set/estimated parameter values and show it as a figure.
 
         Args:
             variables (list[str] or None): variables to include, Infected/Fatal/Recovered when None
+            phases (list[str] or None): phases to shoe or None (all phases)
             name (str): phase series name. If 'Main', main PhaseSeries will be used
             y0_dict(dict[str, float] or None): dictionary of initial values of variables
             kwargs: the other keyword arguments of Scenario.line_plot()
@@ -516,7 +517,12 @@ class Scenario(DataHandler):
                     - Province (str): province/prefecture/state name
                     - Variables of the model and dataset (int): Confirmed etc.
         """
-        tracker = self._tracker(name)
+        tracker = copy.deepcopy(self._tracker(name))
+        # Select phases
+        if phases is not None:
+            tracker.disable(phases=None)
+            tracker.enable(phases=phases)
+        # Simulation
         try:
             sim_df = tracker.simulate(y0_dict=y0_dict)
         except UnExecutedError:
@@ -751,11 +757,12 @@ class Scenario(DataHandler):
         df[self.N] = df[self.N].astype(np.int64)
         return df
 
-    def _track(self, name, y0_dict=None):
+    def _track(self, phases=None, name="Main", y0_dict=None):
         """
         Show values of parameters and variables in one dataframe for the scenario.
 
         Args:
+            phases (list[str] or None): phases to shoe or None (all phases)
             name (str): phase series name
             y0_dict (dict or None): dictionary of initial values or None
                 - key (str): variable name
@@ -772,18 +779,20 @@ class Scenario(DataHandler):
                     - parameter values (float)
                     - day parameter values (float)
         """
-        sim_df = self.simulate(name=name, y0_dict=y0_dict, show_figure=False)
+        sim_df = self.simulate(
+            phases=phases, name=name, y0_dict=y0_dict, show_figure=False)
         param_df = self._track_param(name=name)
         return pd.merge(
             sim_df, param_df, how="inner",
             left_on=self.DATE, right_index=True, sort=True
         )
 
-    def track(self, with_actual=True, y0_dict=None):
+    def track(self, phases=None, with_actual=True, y0_dict=None):
         """
         Show values of parameters and variables in one dataframe.
 
         Args:
+            phases (list[str] or None): phases to shoe or None (all phases)
             with_actual (bool): if True, show actual number of cases will included as "Actual" scenario
             y0_dict (dict or None): dictionary of initial values or None
                 - key (str): variable name
@@ -804,7 +813,7 @@ class Scenario(DataHandler):
         dataframes = []
         append = dataframes.append
         for name in self._tracker_dict.keys():
-            df = self._track(name=name, y0_dict=y0_dict)
+            df = self._track(phases=phases, name=name, y0_dict=y0_dict)
             df.insert(0, self.SERIES, name)
             append(df)
         if with_actual:
@@ -813,12 +822,13 @@ class Scenario(DataHandler):
             append(df)
         return pd.concat(dataframes, axis=0, sort=False)
 
-    def _history(self, target, with_actual=True, y0_dict=None):
+    def _history(self, target, phases=None, with_actual=True, y0_dict=None):
         """
         Show the history of variables and parameter values to compare scenarios.
 
         Args:
             target (str): parameter or variable name to show (Rt, Infected etc.)
+            phases (list[str] or None): phases to shoe or None (all phases)
             with_actual (bool): if True and @target is a variable name, show actual number of cases
             y0_dict (dict or None): dictionary of initial values or None
                 - key (str): variable name
@@ -830,7 +840,8 @@ class Scenario(DataHandler):
         # Include actual data or not
         with_actual = with_actual and target in self.VALUE_COLUMNS
         # Get tracking data
-        df = self.track(with_actual=with_actual, y0_dict=y0_dict)
+        df = self.track(
+            phases=phases, with_actual=with_actual, y0_dict=y0_dict)
         if target not in df.columns:
             col_str = ", ".join(list(df.columns))
             raise KeyError(
@@ -839,12 +850,13 @@ class Scenario(DataHandler):
         return df.pivot_table(
             values=target, index=self.DATE, columns=self.SERIES, aggfunc="last")
 
-    def history(self, target, with_actual=True, y0_dict=None, **kwargs):
+    def history(self, target, phases=None, with_actual=True, y0_dict=None, **kwargs):
         """
         Show the history of variables and parameter values to compare scenarios.
 
         Args:
             target (str): parameter or variable name to show (Rt, Infected etc.)
+            phases (list[str] or None): phases to shoe or None (all phases)
             with_actual (bool): if True and @target is a variable name, show actual number of cases
             y0_dict (dict or None): dictionary of initial values or None
                 - key (str): variable name
@@ -855,7 +867,8 @@ class Scenario(DataHandler):
             pandas.DataFrame
         """
         df = self._history(
-            target=target, with_actual=with_actual, y0_dict=y0_dict)
+            target=target, phases=phases, with_actual=with_actual, y0_dict=y0_dict)
+        df = df.dropna()
         if target == self.RT:
             ylabel = self.RT_FULL
         elif target in self.VALUE_COLUMNS:
