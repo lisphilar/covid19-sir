@@ -272,7 +272,7 @@ class TestScenario(object):
         snl.estimate(SIRF, timeout=5, timeout_iteration=5)
         # Simulation
         snl.simulate(variables=[Term.C, Term.CI, Term.F, Term.R])
-        snl.simulate(phases=["0th"])
+        snl.simulate(phases=all_phases[-1])
         # Parameter history (Deprecated)
         snl.param_history([Term.RT], divide_by_first=False)
         snl.param_history(["rho"])
@@ -286,7 +286,7 @@ class TestScenario(object):
         snl.history(target="Rt")
         snl.history(target="sigma")
         snl.history(target="rho", show_figure=False)
-        snl.history(target="Infected", phases=["0th"])
+        snl.history(target="Infected", phases=all_phases[-1])
         with pytest.raises(KeyError):
             snl.history(target="temperature")
         # Change rate of parameters
