@@ -121,6 +121,7 @@ clean:
 	@rm -rf dist covsirphy.egg-info
 	@rm -f README.rst
 	@rm -f .coverage*
+	@poetry cache clear . --all --no-interaction
 	@pip install --upgrade pip
 	@poetry self update
 	@poetry update
