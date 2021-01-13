@@ -152,7 +152,7 @@ class ParamTracker(Term):
 
     def all_phases(self):
         """
-        Return the names of all phases.
+        Return the names of all enabled phases.
 
         Returns:
             list[str]: the names of all enabled phases
