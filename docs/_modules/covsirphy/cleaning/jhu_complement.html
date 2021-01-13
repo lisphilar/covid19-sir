@@ -392,13 +392,13 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">complement_dict</span><span class="p">[</span><span class="sa">f</span><span class="s2">&quot;Monotonic_</span><span class="si">{</span><span class="n">variable</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">True</span>
         <span class="k">return</span> <span class="n">df</span>
 
-    <span class="k">def</span> <span class="nf">_validate_recovery_period</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">df</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">_validate_recovery_period</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">country_df</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Calculates and validates recovery period for specific country</span>
 <span class="sd">        as an additional condition in order to apply full complement or not</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">            df (pandas.DataFrame):</span>
+<span class="sd">            country_df (pandas.DataFrame):</span>
 <span class="sd">                - Index: reset_index</span>
 <span class="sd">                - Columns: Date, Confirmed, Recovered, Fatal</span>
 
@@ -409,6 +409,7 @@
 <span class="sd">              upper_limit_days has default value of 3 months (90 days)</span>
 <span class="sd">              lower_limit_days has default value of 1 week (7 days)</span>
 <span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">df</span> <span class="o">=</span> <span class="n">country_df</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
         <span class="c1"># Calculate &quot;Confirmed - Fatal&quot;</span>
         <span class="n">df</span><span class="p">[</span><span class="s2">&quot;diff&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">C</span><span class="p">]</span> <span class="o">-</span> <span class="n">df</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">F</span><span class="p">]</span>
         <span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">loc</span><span class="p">[:,</span> <span class="p">[</span><span class="s2">&quot;diff&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">R</span><span class="p">]]</span>
