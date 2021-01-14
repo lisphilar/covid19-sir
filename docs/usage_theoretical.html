@@ -102,10 +102,20 @@
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Usage: SIR-derived models</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#Preparation">Preparation</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#Create-example-dataset-with-theoretical-values">Create example dataset with theoretical values</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#SIR-model">SIR model</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#SIR-D-model">SIR-D model</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#SIR-F-model">SIR-F model</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#SIR-model">SIR model</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#Non-dimensional-SIR-model">Non-dimensional SIR model</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#SIR-D-model">SIR-D model</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#Non-dimensional-SIR-D-model">Non-dimensional SIR-D model</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#SIR-F-model">SIR-F model</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#Non-dimensional-SIR-F-model">Non-dimensional SIR-F model</a></li>
+</ul>
+</li>
 <li class="toctree-l2"><a class="reference internal" href="#SEWIR-F-model-(SIR-F-with-exposed/waiting-cases)">SEWIR-F model (SIR-F with exposed/waiting cases)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#Non-dimensional-SEWIR-F-model">Non-dimensional SEWIR-F model</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#SIR-FV-model-(SIR-F-model-with-vaccination)">SIR-FV model (SIR-F model with vaccination)</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#Scenario-analysis-with-theoretical-data">Scenario analysis with theoretical data</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#Compare-the-scenarios">Compare the scenarios</a></li>
@@ -508,7 +518,7 @@ div.rendered_html tbody tr:hover {
 </div>
 <div class="output_area docutils container">
 <div class="highlight"><pre>
-&#39;2.14.0-theta-fu1&#39;
+&#39;2.14.0-iota&#39;
 </pre></div></div>
 </div>
 <div class="nbinput docutils container">
@@ -669,6 +679,17 @@ True
 <div class="line">Note:</div>
 <div class="line">Though R in SIR model is “Recovered and have immunity”, we defines “R as Recovered or fatal”. This is because mortality rate cannot be ignored in the real COVID-19 data.</div>
 </div>
+<div class="section" id="Non-dimensional-SIR-model">
+<h3>Non-dimensional SIR model<a class="headerlink" href="#Non-dimensional-SIR-model" title="Permalink to this headline">¶</a></h3>
+<p>To simplify the model, we will remove the units of the variables from ODE.</p>
+<p>Set <span class="math notranslate nohighlight">\((S, I, R) = N \times (x, y, z)\)</span> and <span class="math notranslate nohighlight">\((T, \beta, \gamma) = (\tau t, \tau^{-1} \rho, \tau^{-1} \sigma)\)</span>.</p>
+<p>This results in the ODE</p>
+<div class="math notranslate nohighlight">
+\begin{align*}
+&amp; \frac{\mathrm{d}x}{\mathrm{d}t}= - \rho x y  \\
+&amp; \frac{\mathrm{d}y}{\mathrm{d}t}= \rho x y - \sigma y  \\
+&amp; \frac{\mathrm{d}z}{\mathrm{d}t}= \sigma y  \\
+\end{align*}</div><p>Where <span class="math notranslate nohighlight">\(N\)</span> is the total population and <span class="math notranslate nohighlight">\(\tau\)</span> is a coefficient ([min], is an integer to simplify).</p>
 <div class="nbinput docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[9]:
 </pre></div>
@@ -712,7 +733,8 @@ SIR
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area docutils container">
-<img alt="_images/usage_theoretical_14_0.png" src="_images/usage_theoretical_14_0.png" />
+<img alt="_images/usage_theoretical_15_0.png" src="_images/usage_theoretical_15_0.png" />
+</div>
 </div>
 </div>
 </div>
@@ -736,7 +758,17 @@ SIR
 <li><p><span class="math notranslate nohighlight">\(\beta\)</span>: Effective contact rate <span class="math notranslate nohighlight">\(\mathrm{[1/min]}\)</span></p></li>
 <li><p><span class="math notranslate nohighlight">\(\gamma\)</span>: Recovery rate <span class="math notranslate nohighlight">\(\mathrm{[1/min]}\)</span></p></li>
 </ul>
-<div class="nbinput docutils container">
+<div class="section" id="Non-dimensional-SIR-D-model">
+<h3>Non-dimensional SIR-D model<a class="headerlink" href="#Non-dimensional-SIR-D-model" title="Permalink to this headline">¶</a></h3>
+<p>Set <span class="math notranslate nohighlight">\((S, I, R, D) = N \times (x, y, z, w)\)</span> and <span class="math notranslate nohighlight">\((T, \alpha, \beta, \gamma) = (\tau t, \tau^{-1} \kappa, \tau^{-1} \rho, \tau^{-1} \sigma)\)</span>.
+This results in the ODE</p>
+<div class="math notranslate nohighlight">
+\begin{align*}
+&amp; \frac{\mathrm{d}x}{\mathrm{d}t}= - \rho x y  \\
+&amp; \frac{\mathrm{d}y}{\mathrm{d}t}= \rho x y - (\sigma + \kappa) y  \\
+&amp; \frac{\mathrm{d}z}{\mathrm{d}t}= \sigma y  \\
+&amp; \frac{\mathrm{d}w}{\mathrm{d}t}= \kappa y  \\
+\end{align*}</div><div class="nbinput docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[11]:
 </pre></div>
 </div>
@@ -782,7 +814,8 @@ SIR-D
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area docutils container">
-<img alt="_images/usage_theoretical_17_0.png" src="_images/usage_theoretical_17_0.png" />
+<img alt="_images/usage_theoretical_18_0.png" src="_images/usage_theoretical_18_0.png" />
+</div>
 </div>
 </div>
 </div>
@@ -818,7 +851,17 @@ SIR-D
 <div class="line">Notes on the difference of SIR-D and SIR-F model:</div>
 <div class="line"><span class="math notranslate nohighlight">\(\alpha_1\)</span> is small at this time because performance of PCR tests was improved, but we can use SIR-F model rather than SIR-D model as an enhanced model even now becase <span class="math notranslate nohighlight">\(\alpha_1\)</span> can be 0 in the ODE model.</div>
 </div>
-<div class="nbinput docutils container">
+<div class="section" id="Non-dimensional-SIR-F-model">
+<h3>Non-dimensional SIR-F model<a class="headerlink" href="#Non-dimensional-SIR-F-model" title="Permalink to this headline">¶</a></h3>
+<p>Set <span class="math notranslate nohighlight">\((S, I, R, F) = N \times (x, y, z, w)\)</span> and <span class="math notranslate nohighlight">\((T, \alpha_1, \alpha_2, \beta, \gamma) = (\tau t, \theta, \tau^{-1} \kappa, \tau^{-1} \rho, \tau^{-1} \sigma)\)</span>.
+This results in the ODE</p>
+<div class="math notranslate nohighlight">
+\begin{align*}
+&amp; \frac{\mathrm{d}x}{\mathrm{d}t}= - \rho x y  \\
+&amp; \frac{\mathrm{d}y}{\mathrm{d}t}= \rho (1-\theta) x y - (\sigma + \kappa) y  \\
+&amp; \frac{\mathrm{d}z}{\mathrm{d}t}= \sigma y  \\
+&amp; \frac{\mathrm{d}w}{\mathrm{d}t}= \rho \theta x y + \kappa y  \\
+\end{align*}</div><div class="nbinput docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[13]:
 </pre></div>
 </div>
@@ -864,7 +907,8 @@ SIR-F
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area docutils container">
-<img alt="_images/usage_theoretical_22_0.png" src="_images/usage_theoretical_22_0.png" />
+<img alt="_images/usage_theoretical_24_0.png" src="_images/usage_theoretical_24_0.png" />
+</div>
 </div>
 </div>
 </div>
@@ -895,7 +939,20 @@ SIR-F
 <li><p><span class="math notranslate nohighlight">\(\beta_3\)</span>: Inverse of waiting time for confirmation <span class="math notranslate nohighlight">\(\mathrm{[1/min]}\)</span></p></li>
 <li><p><span class="math notranslate nohighlight">\(\gamma\)</span>: Recovery rate <span class="math notranslate nohighlight">\(\mathrm{[1/min]}\)</span></p></li>
 </ul>
-<div class="nbinput docutils container">
+</div>
+<div class="section" id="Non-dimensional-SEWIR-F-model">
+<h2>Non-dimensional SEWIR-F model<a class="headerlink" href="#Non-dimensional-SEWIR-F-model" title="Permalink to this headline">¶</a></h2>
+<p>Set <span class="math notranslate nohighlight">\((S, E, W, I, R, F) = N \times (x_1, x_2, x_3, y, z, w)\)</span>, <span class="math notranslate nohighlight">\((T, \alpha_1) = (\tau t, \theta)\)</span> and <span class="math notranslate nohighlight">\((\alpha_2, \beta_i, \gamma) = \tau^{-1} \times (\kappa, \rho_i, \sigma)\)</span>.
+This results in the ODE</p>
+<div class="math notranslate nohighlight">
+\begin{align*}
+&amp; \frac{\mathrm{d}x_1}{\mathrm{d}t}= - \rho_1 x_1 (x_3 + y)  \\
+&amp; \frac{\mathrm{d}x_2}{\mathrm{d}t}= \rho_1 x_1 (x_3 + y) - \rho_2 x_2  \\
+&amp; \frac{\mathrm{d}x_3}{\mathrm{d}t}= \rho_2 x_2 - \rho_3 x_3  \\
+&amp; \frac{\mathrm{d}y}{\mathrm{d}t}= (1-\theta) \rho_3 x_3 - (\sigma + \kappa) y  \\
+&amp; \frac{\mathrm{d}z}{\mathrm{d}t}= \sigma y  \\
+&amp; \frac{\mathrm{d}w}{\mathrm{d}t}= \theta \rho_3 x_3 + \kappa y  \\
+\end{align*}</div><div class="nbinput docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[15]:
 </pre></div>
 </div>
@@ -948,7 +1005,7 @@ SEWIR-F
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area docutils container">
-<img alt="_images/usage_theoretical_26_0.png" src="_images/usage_theoretical_26_0.png" />
+<img alt="_images/usage_theoretical_28_0.png" src="_images/usage_theoretical_28_0.png" />
 </div>
 </div>
 </div>
@@ -1014,7 +1071,7 @@ SIR-FV
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area docutils container">
-<img alt="_images/usage_theoretical_29_0.png" src="_images/usage_theoretical_29_0.png" />
+<img alt="_images/usage_theoretical_31_0.png" src="_images/usage_theoretical_31_0.png" />
 </div>
 </div>
 </div>
@@ -1112,7 +1169,7 @@ SIR-FV
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area docutils container">
-<img alt="_images/usage_theoretical_33_0.png" src="_images/usage_theoretical_33_0.png" />
+<img alt="_images/usage_theoretical_35_0.png" src="_images/usage_theoretical_35_0.png" />
 </div>
 </div>
 <div class="nboutput docutils container">
@@ -1684,7 +1741,7 @@ SIR-FV
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area docutils container">
-<img alt="_images/usage_theoretical_39_0.png" src="_images/usage_theoretical_39_0.png" />
+<img alt="_images/usage_theoretical_41_0.png" src="_images/usage_theoretical_41_0.png" />
 </div>
 </div>
 <div class="nbinput docutils container">
@@ -1700,7 +1757,7 @@ SIR-FV
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area docutils container">
-<img alt="_images/usage_theoretical_40_0.png" src="_images/usage_theoretical_40_0.png" />
+<img alt="_images/usage_theoretical_42_0.png" src="_images/usage_theoretical_42_0.png" />
 </div>
 </div>
 <div class="nbinput docutils container">
@@ -1716,7 +1773,7 @@ SIR-FV
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area docutils container">
-<img alt="_images/usage_theoretical_41_0.png" src="_images/usage_theoretical_41_0.png" />
+<img alt="_images/usage_theoretical_43_0.png" src="_images/usage_theoretical_43_0.png" />
 </div>
 </div>
 </div>
@@ -1735,7 +1792,7 @@ SIR-FV
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area docutils container">
-<img alt="_images/usage_theoretical_43_0.png" src="_images/usage_theoretical_43_0.png" />
+<img alt="_images/usage_theoretical_45_0.png" src="_images/usage_theoretical_45_0.png" />
 </div>
 </div>
 <div class="nbinput docutils container">
@@ -1751,7 +1808,7 @@ SIR-FV
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area docutils container">
-<img alt="_images/usage_theoretical_44_0.png" src="_images/usage_theoretical_44_0.png" />
+<img alt="_images/usage_theoretical_46_0.png" src="_images/usage_theoretical_46_0.png" />
 </div>
 </div>
 <div class="nbinput docutils container">
@@ -1767,7 +1824,7 @@ SIR-FV
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area docutils container">
-<img alt="_images/usage_theoretical_45_0.png" src="_images/usage_theoretical_45_0.png" />
+<img alt="_images/usage_theoretical_47_0.png" src="_images/usage_theoretical_47_0.png" />
 </div>
 </div>
 <div class="nbinput docutils container">
@@ -1783,7 +1840,7 @@ SIR-FV
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area docutils container">
-<img alt="_images/usage_theoretical_46_0.png" src="_images/usage_theoretical_46_0.png" />
+<img alt="_images/usage_theoretical_48_0.png" src="_images/usage_theoretical_48_0.png" />
 </div>
 </div>
 </div>

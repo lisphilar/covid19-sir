@@ -668,12 +668,13 @@
         <span class="n">estimator</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">phase_estimator</span><span class="p">(</span><span class="n">phase</span><span class="o">=</span><span class="n">phase</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">)</span>
         <span class="n">estimator</span><span class="o">.</span><span class="n">accuracy</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="Scenario.simulate"><a class="viewcode-back" href="../../../covsirphy.analysis.scenario.html#covsirphy.Scenario.simulate">[docs]</a>    <span class="k">def</span> <span class="nf">simulate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">variables</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;Main&quot;</span><span class="p">,</span> <span class="n">y0_dict</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<div class="viewcode-block" id="Scenario.simulate"><a class="viewcode-back" href="../../../covsirphy.analysis.scenario.html#covsirphy.Scenario.simulate">[docs]</a>    <span class="k">def</span> <span class="nf">simulate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">variables</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">phases</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;Main&quot;</span><span class="p">,</span> <span class="n">y0_dict</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Simulate ODE models with set/estimated parameter values and show it as a figure.</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            variables (list[str] or None): variables to include, Infected/Fatal/Recovered when None</span>
+<span class="sd">            phases (list[str] or None): phases to shoe or None (all phases)</span>
 <span class="sd">            name (str): phase series name. If &#39;Main&#39;, main PhaseSeries will be used</span>
 <span class="sd">            y0_dict(dict[str, float] or None): dictionary of initial values of variables</span>
 <span class="sd">            kwargs: the other keyword arguments of Scenario.line_plot()</span>
@@ -688,7 +689,12 @@
 <span class="sd">                    - Province (str): province/prefecture/state name</span>
 <span class="sd">                    - Variables of the model and dataset (int): Confirmed etc.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">tracker</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_tracker</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
+        <span class="n">tracker</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_tracker</span><span class="p">(</span><span class="n">name</span><span class="p">))</span>
+        <span class="c1"># Select phases</span>
+        <span class="k">if</span> <span class="n">phases</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">tracker</span><span class="o">.</span><span class="n">disable</span><span class="p">(</span><span class="n">phases</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+            <span class="n">tracker</span><span class="o">.</span><span class="n">enable</span><span class="p">(</span><span class="n">phases</span><span class="o">=</span><span class="n">phases</span><span class="p">)</span>
+        <span class="c1"># Simulation</span>
         <span class="k">try</span><span class="p">:</span>
             <span class="n">sim_df</span> <span class="o">=</span> <span class="n">tracker</span><span class="o">.</span><span class="n">simulate</span><span class="p">(</span><span class="n">y0_dict</span><span class="o">=</span><span class="n">y0_dict</span><span class="p">)</span>
         <span class="k">except</span> <span class="n">UnExecutedError</span><span class="p">:</span>
@@ -923,11 +929,12 @@
         <span class="n">df</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">N</span><span class="p">]</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">N</span><span class="p">]</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">int64</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">df</span>
 
-    <span class="k">def</span> <span class="nf">_track</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">y0_dict</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">_track</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">phases</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;Main&quot;</span><span class="p">,</span> <span class="n">y0_dict</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Show values of parameters and variables in one dataframe for the scenario.</span>
 
 <span class="sd">        Args:</span>
+<span class="sd">            phases (list[str] or None): phases to shoe or None (all phases)</span>
 <span class="sd">            name (str): phase series name</span>
 <span class="sd">            y0_dict (dict or None): dictionary of initial values or None</span>
 <span class="sd">                - key (str): variable name</span>
@@ -944,18 +951,20 @@
 <span class="sd">                    - parameter values (float)</span>
 <span class="sd">                    - day parameter values (float)</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">sim_df</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">simulate</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">,</span> <span class="n">y0_dict</span><span class="o">=</span><span class="n">y0_dict</span><span class="p">,</span> <span class="n">show_figure</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+        <span class="n">sim_df</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">simulate</span><span class="p">(</span>
+            <span class="n">phases</span><span class="o">=</span><span class="n">phases</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">,</span> <span class="n">y0_dict</span><span class="o">=</span><span class="n">y0_dict</span><span class="p">,</span> <span class="n">show_figure</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
         <span class="n">param_df</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_track_param</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">pd</span><span class="o">.</span><span class="n">merge</span><span class="p">(</span>
             <span class="n">sim_df</span><span class="p">,</span> <span class="n">param_df</span><span class="p">,</span> <span class="n">how</span><span class="o">=</span><span class="s2">&quot;inner&quot;</span><span class="p">,</span>
             <span class="n">left_on</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">DATE</span><span class="p">,</span> <span class="n">right_index</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">sort</span><span class="o">=</span><span class="kc">True</span>
         <span class="p">)</span>
 
-<div class="viewcode-block" id="Scenario.track"><a class="viewcode-back" href="../../../covsirphy.analysis.scenario.html#covsirphy.Scenario.track">[docs]</a>    <span class="k">def</span> <span class="nf">track</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">with_actual</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">y0_dict</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<div class="viewcode-block" id="Scenario.track"><a class="viewcode-back" href="../../../covsirphy.analysis.scenario.html#covsirphy.Scenario.track">[docs]</a>    <span class="k">def</span> <span class="nf">track</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">phases</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">with_actual</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">y0_dict</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Show values of parameters and variables in one dataframe.</span>
 
 <span class="sd">        Args:</span>
+<span class="sd">            phases (list[str] or None): phases to shoe or None (all phases)</span>
 <span class="sd">            with_actual (bool): if True, show actual number of cases will included as &quot;Actual&quot; scenario</span>
 <span class="sd">            y0_dict (dict or None): dictionary of initial values or None</span>
 <span class="sd">                - key (str): variable name</span>
@@ -976,7 +985,7 @@
         <span class="n">dataframes</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="n">append</span> <span class="o">=</span> <span class="n">dataframes</span><span class="o">.</span><span class="n">append</span>
         <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_tracker_dict</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
-            <span class="n">df</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_track</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">,</span> <span class="n">y0_dict</span><span class="o">=</span><span class="n">y0_dict</span><span class="p">)</span>
+            <span class="n">df</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_track</span><span class="p">(</span><span class="n">phases</span><span class="o">=</span><span class="n">phases</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">,</span> <span class="n">y0_dict</span><span class="o">=</span><span class="n">y0_dict</span><span class="p">)</span>
             <span class="n">df</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">SERIES</span><span class="p">,</span> <span class="n">name</span><span class="p">)</span>
             <span class="n">append</span><span class="p">(</span><span class="n">df</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">with_actual</span><span class="p">:</span>
@@ -985,12 +994,13 @@
             <span class="n">append</span><span class="p">(</span><span class="n">df</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">(</span><span class="n">dataframes</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">sort</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span></div>
 
-    <span class="k">def</span> <span class="nf">_history</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">target</span><span class="p">,</span> <span class="n">with_actual</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">y0_dict</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">_history</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">target</span><span class="p">,</span> <span class="n">phases</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">with_actual</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">y0_dict</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Show the history of variables and parameter values to compare scenarios.</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            target (str): parameter or variable name to show (Rt, Infected etc.)</span>
+<span class="sd">            phases (list[str] or None): phases to shoe or None (all phases)</span>
 <span class="sd">            with_actual (bool): if True and @target is a variable name, show actual number of cases</span>
 <span class="sd">            y0_dict (dict or None): dictionary of initial values or None</span>
 <span class="sd">                - key (str): variable name</span>
@@ -1002,7 +1012,8 @@
         <span class="c1"># Include actual data or not</span>
         <span class="n">with_actual</span> <span class="o">=</span> <span class="n">with_actual</span> <span class="ow">and</span> <span class="n">target</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">VALUE_COLUMNS</span>
         <span class="c1"># Get tracking data</span>
-        <span class="n">df</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">track</span><span class="p">(</span><span class="n">with_actual</span><span class="o">=</span><span class="n">with_actual</span><span class="p">,</span> <span class="n">y0_dict</span><span class="o">=</span><span class="n">y0_dict</span><span class="p">)</span>
+        <span class="n">df</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">track</span><span class="p">(</span>
+            <span class="n">phases</span><span class="o">=</span><span class="n">phases</span><span class="p">,</span> <span class="n">with_actual</span><span class="o">=</span><span class="n">with_actual</span><span class="p">,</span> <span class="n">y0_dict</span><span class="o">=</span><span class="n">y0_dict</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">target</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">df</span><span class="o">.</span><span class="n">columns</span><span class="p">:</span>
             <span class="n">col_str</span> <span class="o">=</span> <span class="s2">&quot;, &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">df</span><span class="o">.</span><span class="n">columns</span><span class="p">))</span>
             <span class="k">raise</span> <span class="ne">KeyError</span><span class="p">(</span>
@@ -1011,12 +1022,13 @@
         <span class="k">return</span> <span class="n">df</span><span class="o">.</span><span class="n">pivot_table</span><span class="p">(</span>
             <span class="n">values</span><span class="o">=</span><span class="n">target</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">DATE</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">SERIES</span><span class="p">,</span> <span class="n">aggfunc</span><span class="o">=</span><span class="s2">&quot;last&quot;</span><span class="p">)</span>
 
-<div class="viewcode-block" id="Scenario.history"><a class="viewcode-back" href="../../../covsirphy.analysis.scenario.html#covsirphy.Scenario.history">[docs]</a>    <span class="k">def</span> <span class="nf">history</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">target</span><span class="p">,</span> <span class="n">with_actual</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">y0_dict</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<div class="viewcode-block" id="Scenario.history"><a class="viewcode-back" href="../../../covsirphy.analysis.scenario.html#covsirphy.Scenario.history">[docs]</a>    <span class="k">def</span> <span class="nf">history</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">target</span><span class="p">,</span> <span class="n">phases</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">with_actual</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">y0_dict</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Show the history of variables and parameter values to compare scenarios.</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            target (str): parameter or variable name to show (Rt, Infected etc.)</span>
+<span class="sd">            phases (list[str] or None): phases to shoe or None (all phases)</span>
 <span class="sd">            with_actual (bool): if True and @target is a variable name, show actual number of cases</span>
 <span class="sd">            y0_dict (dict or None): dictionary of initial values or None</span>
 <span class="sd">                - key (str): variable name</span>
@@ -1027,7 +1039,8 @@
 <span class="sd">            pandas.DataFrame</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">df</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_history</span><span class="p">(</span>
-            <span class="n">target</span><span class="o">=</span><span class="n">target</span><span class="p">,</span> <span class="n">with_actual</span><span class="o">=</span><span class="n">with_actual</span><span class="p">,</span> <span class="n">y0_dict</span><span class="o">=</span><span class="n">y0_dict</span><span class="p">)</span>
+            <span class="n">target</span><span class="o">=</span><span class="n">target</span><span class="p">,</span> <span class="n">phases</span><span class="o">=</span><span class="n">phases</span><span class="p">,</span> <span class="n">with_actual</span><span class="o">=</span><span class="n">with_actual</span><span class="p">,</span> <span class="n">y0_dict</span><span class="o">=</span><span class="n">y0_dict</span><span class="p">)</span>
+        <span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">dropna</span><span class="p">()</span>
         <span class="k">if</span> <span class="n">target</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">RT</span><span class="p">:</span>
             <span class="n">ylabel</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">RT_FULL</span>
         <span class="k">elif</span> <span class="n">target</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">VALUE_COLUMNS</span><span class="p">:</span>

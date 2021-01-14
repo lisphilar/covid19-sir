@@ -571,12 +571,13 @@ New future phases will be added (over-written).</p>
 
 <dl class="py method">
 <dt id="covsirphy.analysis.scenario.Scenario.history">
-<code class="sig-name descname">history</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">target</span></em>, <em class="sig-param"><span class="n">with_actual</span><span class="o">=</span><span class="default_value">True</span></em>, <em class="sig-param"><span class="n">y0_dict</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/analysis/scenario.html#Scenario.history"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#covsirphy.analysis.scenario.Scenario.history" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">history</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">target</span></em>, <em class="sig-param"><span class="n">phases</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">with_actual</span><span class="o">=</span><span class="default_value">True</span></em>, <em class="sig-param"><span class="n">y0_dict</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/analysis/scenario.html#Scenario.history"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#covsirphy.analysis.scenario.Scenario.history" title="Permalink to this definition">¶</a></dt>
 <dd><p>Show the history of variables and parameter values to compare scenarios.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>target</strong> (<em>str</em>) – parameter or variable name to show (Rt, Infected etc.)</p></li>
+<li><p><strong>phases</strong> (<em>list</em><em>[</em><em>str</em><em>] or </em><em>None</em>) – phases to shoe or None (all phases)</p></li>
 <li><p><strong>with_actual</strong> (<em>bool</em>) – if True and &#64;target is a variable name, show actual number of cases</p></li>
 <li><p><strong>y0_dict</strong> (<em>dict</em><em> or </em><em>None</em>) – dictionary of initial values or None
 - key (str): variable name
@@ -747,12 +748,13 @@ New phase name will be automatically determined.</p>
 
 <dl class="py method">
 <dt id="covsirphy.analysis.scenario.Scenario.simulate">
-<code class="sig-name descname">simulate</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">variables</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">name</span><span class="o">=</span><span class="default_value">'Main'</span></em>, <em class="sig-param"><span class="n">y0_dict</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/analysis/scenario.html#Scenario.simulate"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#covsirphy.analysis.scenario.Scenario.simulate" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">simulate</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">variables</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">phases</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">name</span><span class="o">=</span><span class="default_value">'Main'</span></em>, <em class="sig-param"><span class="n">y0_dict</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/analysis/scenario.html#Scenario.simulate"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#covsirphy.analysis.scenario.Scenario.simulate" title="Permalink to this definition">¶</a></dt>
 <dd><p>Simulate ODE models with set/estimated parameter values and show it as a figure.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>variables</strong> (<em>list</em><em>[</em><em>str</em><em>] or </em><em>None</em>) – variables to include, Infected/Fatal/Recovered when None</p></li>
+<li><p><strong>phases</strong> (<em>list</em><em>[</em><em>str</em><em>] or </em><em>None</em>) – phases to shoe or None (all phases)</p></li>
 <li><p><strong>name</strong> (<em>str</em>) – phase series name. If ‘Main’, main PhaseSeries will be used</p></li>
 <li><p><strong>y0_dict</strong> (<em>dict</em><em>[</em><em>str</em><em>, </em><em>float</em><em>] or </em><em>None</em>) – dictionary of initial values of variables</p></li>
 <li><p><strong>kwargs</strong> – the other keyword arguments of Scenario.line_plot()</p></li>
@@ -811,11 +813,12 @@ If &#64;columns is None, all columns will be shown.</p>
 
 <dl class="py method">
 <dt id="covsirphy.analysis.scenario.Scenario.track">
-<code class="sig-name descname">track</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">with_actual</span><span class="o">=</span><span class="default_value">True</span></em>, <em class="sig-param"><span class="n">y0_dict</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/analysis/scenario.html#Scenario.track"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#covsirphy.analysis.scenario.Scenario.track" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">track</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">phases</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">with_actual</span><span class="o">=</span><span class="default_value">True</span></em>, <em class="sig-param"><span class="n">y0_dict</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/analysis/scenario.html#Scenario.track"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#covsirphy.analysis.scenario.Scenario.track" title="Permalink to this definition">¶</a></dt>
 <dd><p>Show values of parameters and variables in one dataframe.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
+<li><p><strong>phases</strong> (<em>list</em><em>[</em><em>str</em><em>] or </em><em>None</em>) – phases to shoe or None (all phases)</p></li>
 <li><p><strong>with_actual</strong> (<em>bool</em>) – if True, show actual number of cases will included as “Actual” scenario</p></li>
 <li><p><strong>y0_dict</strong> (<em>dict</em><em> or </em><em>None</em>) – dictionary of initial values or None
 - key (str): variable name
