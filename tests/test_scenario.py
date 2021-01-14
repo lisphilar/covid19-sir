@@ -54,6 +54,19 @@ class TestDataHandler(object):
             color_dict={"Confirmed": "blue", "Infected": "orange", "Fatal": "red", "Recovered": "green"})
 
     @pytest.mark.parametrize("country", ["Japan"])
+    def test_show_complement(self, jhu_data, population_data, country):
+        # Setting
+        dhl = DataHandler(jhu_data, population_data, country)
+        dhl.init_records()
+        dhl.first_date = "01Apr2020"
+        dhl.last_date = "01Aug2020"
+        # Test
+        dhl_df = dhl.show_complement()
+        data_df = jhu_data.show_complement(
+            country=country, start_date="01Apr2020", end_date="01Aug2020")
+        assert dhl_df.equals(data_df)
+
+    @pytest.mark.parametrize("country", ["Japan"])
     def test_records(self, jhu_data, population_data, country):
         warnings.simplefilter("ignore", category=UserWarning)
         # Setting

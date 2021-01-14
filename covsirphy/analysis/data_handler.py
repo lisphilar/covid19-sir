@@ -159,6 +159,20 @@ class DataHandler(Term):
         )
         return self
 
+    def show_complement(self, **kwargs):
+        """
+        Show what kind of complement will be/was performed for the records.
+
+        Args:
+            kwargs: keyword arguments of JHUDataComplementHandler(), control factors of complement
+
+        Returns:
+            pandas.DataFrame: as the same as `JHUData.show_complement()
+        """
+        return self.jhu_data.show_complement(
+            country=self.country, province=self.province,
+            start_date=self._first_date, end_date=self._last_date, **kwargs)
+
     def records(self, variables=None, **kwargs):
         """
         Return the records as a dataframe.
