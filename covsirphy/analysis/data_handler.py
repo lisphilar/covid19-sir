@@ -161,7 +161,7 @@ class DataHandler(Term):
 
     def show_complement(self, **kwargs):
         """
-        Show what kind of complement will be/was performed for the records.
+        Show the details of complement that was (or will be) performed for the records.
 
         Args:
             kwargs: keyword arguments of JHUDataComplementHandler(), control factors of complement
