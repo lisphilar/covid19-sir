@@ -305,6 +305,48 @@ class PCRData(CleaningBase):
         max_frequency = df[variable].value_counts().max()
         return max_frequency > self.interval or not df.loc[df.index[-1], variable]
 
+    def _pcr_partial_complement_ending(self, df, window):
+        """
+        If ending test values do not change daily, while there are new cases,
+        apply previous diff() only to these ending unupdated values
+        and keep the previous valid ones.
+
+        Args:
+            df (pandas.DataFrame):
+                Index: Date (pandas.TimeStamp)
+                Columns: Tests, Confirmed
+            window (int): window of moving average, >= 1
+
+        Returns:
+            pandas.DataFrame: complemented test records
+                Index: Date (pandas.TimeStamp)
+                Columns: Tests, Confirmed
+        """
+        # Whether complement is necessary or not
+        tests_max = df[self.TESTS].max()
+        check_tests_ending = (df[self.TESTS] == tests_max).sum() > 1
+        last_new_C = df[self.C].diff().rolling(window).mean().iloc[-1]
+        check_C = last_new_C > self.min_pcr_tests
+        if not (check_tests_ending and check_C):
+            return df
+        # Complement any ending unupdated test values
+        # that are not updated daily, by keeping and
+        # propagating forward previous valid diff()
+        # min_index: index for first ending max test reoccurrence
+        min_index = df[self.TESTS].idxmax() + 1
+        first_value = df.loc[min_index, self.TESTS]
+        df_ending = df.copy()
+        df_ending.loc[df_ending.duplicated(
+            [self.TESTS], keep="first"), self.TESTS] = None
+        diff_series = df_ending[self.TESTS].diff(
+        ).ffill().fillna(0).astype(np.int64)
+        diff_series.loc[diff_series.duplicated(keep="last")] = None
+        diff_series.interpolate(
+            method="linear", inplace=True, limit_direction="both")
+        df.loc[min_index:, self.TESTS] = first_value + \
+            diff_series.loc[min_index:].cumsum()
+        return df
+
     def _pcr_partial_complement(self, before_df, variable):
         """
         If there are missing values in variable column,
@@ -368,6 +410,8 @@ class PCRData(CleaningBase):
         # If Tests values are all valid, with no missing values in-between,
         # they must be monotonically increasing as well
         df = self._pcr_monotonic(df, self.TESTS)
+        # Complement any ending unupdated test records
+        df = self._pcr_partial_complement_ending(df, window)
         # Calculate daily values for tests and confirmed (with window=1)
         df[self.T_DIFF] = df[self.TESTS].diff()
         df[self.C_DIFF] = df[self.C].diff()
