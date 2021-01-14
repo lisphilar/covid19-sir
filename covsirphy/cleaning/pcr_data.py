@@ -324,7 +324,7 @@ class PCRData(CleaningBase):
         """
         # Whether complement is necessary or not
         tests_max = df[self.TESTS].max()
-        check_tests_ending = (df[self.TESTS] == tests_max).sum() > 1
+        check_tests_ending = (df[self.TESTS] == tests_max).sum() > self.interval
         last_new_C = df[self.C].diff().rolling(window).mean().iloc[-1]
         check_C = last_new_C > self.min_pcr_tests
         if not (check_tests_ending and check_C):
@@ -402,16 +402,17 @@ class PCRData(CleaningBase):
         """
         df = before_df.copy()
         df[self.TESTS].fillna(method="ffill", inplace=True)
-        if self.T_DIFF in df.columns:
-            df[self.T_DIFF].fillna(method="ffill", inplace=True)
         # Confirmed must show monotonic increasing
         df = self._pcr_monotonic(df, self.C)
         df = self._pcr_partial_complement(df, self.TESTS)
         # If Tests values are all valid, with no missing values in-between,
         # they must be monotonically increasing as well
+        compare_df = df.copy()
         df = self._pcr_monotonic(df, self.TESTS)
         # Complement any ending unupdated test records
         df = self._pcr_partial_complement_ending(df, window)
+        # Complemented or not
+        is_complemented = not df.equals(compare_df)
         # Calculate daily values for tests and confirmed (with window=1)
         df[self.T_DIFF] = df[self.TESTS].diff()
         df[self.C_DIFF] = df[self.C].diff()
@@ -435,9 +436,6 @@ class PCRData(CleaningBase):
         df = df.replace(0, np.nan)
         non_zero_index_start = df[self.T_DIFF].first_valid_index()
         df = df.loc[non_zero_index_start:].reset_index(drop=True)
-        # Complemented or not
-        is_complemented = df.drop(
-            [self.T_DIFF, self.C_DIFF], axis=1).equals(before_df)
         return (df, is_complemented)
 
     def _pcr_check_preconditions(self, df):
