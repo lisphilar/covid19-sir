@@ -13,6 +13,7 @@
 import os
 import sys
 sys.path.insert(0, os.path.abspath('../'))
+import covsirphy as cs
 
 
 # -- Project information -----------------------------------------------------
@@ -20,7 +21,7 @@ sys.path.insert(0, os.path.abspath('../'))
 project = 'CovsirPhy'
 copyright = '2020, CovsirPhy Development Team'
 author = 'Lisphilar and CovsirPhy Development Team'
-
+version = cs.__version__
 
 # -- General configuration ---------------------------------------------------
 
