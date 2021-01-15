@@ -79,7 +79,7 @@ sphinx:
 	@pandoc --from markdown --to rst docs/markdown/INSTALLATION.md -o docs/INSTALLATION.rst
 	@pandoc --from markdown --to rst docs/markdown/TERM.md -o docs/TERM.rst
 	@# When new module was added, update docs/covsirphy.rst and docs/(module name).rst
-	@sphinx-apidoc -o docs covsirphy -fMT
+	@poetry run sphinx-apidoc -o docs covsirphy -fMT
 	@cd docs; poetry run make html; cp -a _build/html/. ../docs
 	@rm -rf docs/_modules
 	@rm -rf docs/_sources
