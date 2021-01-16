@@ -51,14 +51,7 @@ If for some reason tau would be set to more than 1 day, then many records would 
 <dd>Breaking down the series of records to phases.</dd>
 
 <dt><strong>recovery period</strong></dt>
-<dd>The time period between case confirmation and recovery (as it is subjectively defined per country).
-What we currently do is to calculate the difference between confirmed cases and fatal cases and try to match it to some recovered cases value in the future.
-
-We apply this method for every country that has valid recovery data and average the partial recovery periods in order to obtain a single (average) recovery period.
-During the calculations, we ignore time intervals that lead to very short (<7 days) or very long (>90 days) partial recovery periods, if these exist with high frequency (>50%) in the records.
-We have to assume temporarily invariable compartments for this analysis to extract an approximation of the average recovery period.
-
-Alternatively, we had tried to use linelist data to get precise value of recovery period (average of recovery date minus confirmation date for cases), but the number of records was too small.</dd>
+<dd>The time period between case confirmation and recovery (as it is subjectively defined per country).</dd>
 
 </dl>
 
