@@ -12,7 +12,11 @@ pip install --upgrade "git+https://github.com/lisphilar/covid19-sir.git#egg=covs
 ```
 
 Note:  
-When using CovsirPhy in Google Colaboratory, please restart runtime after installation.
+When using CovsirPhy in Kaggle Notebook, please run the following codes to remove third-party `typing` package.
+
+```Python
+!pip uninstall typing -y
+```
 
 # Dataset preparation
 Recommended datasets for analysis can be downloaded and updated easily with `DataLoader` class. If you have CSV files in your environment, you can analyse them.
