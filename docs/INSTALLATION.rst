@@ -19,8 +19,12 @@ contribution <https://lisphilar.github.io/covid19-sir/CONTRIBUTING.html>`__.
     pip install --upgrade "git+https://github.com/lisphilar/covid19-sir.git#egg=covsirphy"
 
 | Note:
-| When using CovsirPhy in Google Colaboratory, please restart runtime
-  after installation.
+| When using CovsirPhy in Kaggle Notebook, please run the following
+  codes to remove third-party ``typing`` package.
+
+.. code:: python
+
+    !pip uninstall typing -y
 
 Dataset preparation
 ===================
