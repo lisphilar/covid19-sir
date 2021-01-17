@@ -37,8 +37,11 @@ git checkout master
 git merge upstream/master
 ```
 
+### Setup Python
+Setup base Python with https://www.python.org/downloads/ (Windows) or some commands (anyenv and so on, Linux/WSL/macOS).
+
 ### Install Poetry (Windows)
-Then, please install Poetry, a package management tool.
+Then, please install Poetry, a package management tool, with command lien tools, including PowerShell.
 
 ```
 (Invoke-WebRequest -Uri https://raw.githubusercontent.com/python-poetry/poetry/master/get-poetry.py -UseBasicParsing).Content | python -
