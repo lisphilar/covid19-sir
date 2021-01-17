@@ -50,5 +50,8 @@ If for some reason tau would be set to more than 1 day, then many records would 
 <dt><strong>trend analysis</strong></dt>
 <dd>Breaking down the series of records to phases.</dd>
 
+<dt><strong>recovery period</strong></dt>
+<dd>The time period between case confirmation and recovery (as it is subjectively defined per country).</dd>
+
 </dl>
 
