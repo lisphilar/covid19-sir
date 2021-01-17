@@ -103,6 +103,7 @@ pypi:
 	@# poetry config http-basic.pypi <username> <password>
 	@rm -rf covsirphy.egg-info/*
 	@rm -rf dist/*
+	@pandoc --from markdown --to rst README.md -o README.rst
 	@poetry publish --build
 
 .PHONY: test-pypi
@@ -110,6 +111,7 @@ test-pypi:
 	@# poetry config http-basic.testpypi <username> <password>
 	@rm -rf covsirphy.egg-info/*
 	@rm -rf dist/*
+	@pandoc --from markdown --to rst README.md -o README.rst
 	@poetry publish -r testpypi --build
 
 .PHONY: clean
