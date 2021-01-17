@@ -27,6 +27,9 @@ This is a list of term in CovsirPhy project. These terms are used as method name
 <dt><strong>prediction</strong></dt>
 <dd>Prediction of parameter values in the future phases using relationship of estimated parameters and indexes regarding measures taken by countries and individuals.</dd>
 
+<dt><strong>recovery period</strong></dt>
+<dd>The time period between case confirmation and recovery (as it is subjectively defined per country).</dd>
+
 <dt><strong>simulation</strong></dt>
 <dd>Calculation of the number of cases with fixed parameter values and initial values.</dd>
 
@@ -49,9 +52,6 @@ If for some reason tau would be set to more than 1 day, then many records would 
 
 <dt><strong>trend analysis</strong></dt>
 <dd>Breaking down the series of records to phases.</dd>
-
-<dt><strong>recovery period</strong></dt>
-<dd>The time period between case confirmation and recovery (as it is subjectively defined per country).</dd>
 
 </dl>
 
