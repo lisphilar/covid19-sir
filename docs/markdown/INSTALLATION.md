@@ -12,7 +12,7 @@ pip install --upgrade "git+https://github.com/lisphilar/covid19-sir.git#egg=covs
 ```
 
 Note:  
-When using **development version** of CovsirPhy in Kaggle Notebook, please run the following codes to remove third-party `typing` package.
+When using **development versions** of CovsirPhy in Kaggle Notebook, please run the following codes to remove third-party `typing` package.
 
 ```Python
 !pip uninstall typing -y
