@@ -12,9 +12,10 @@ CovsirPhy introduction
 usage <https://lisphilar.github.io/covid19-sir/usage_quickest.html>`__
 \| `API
 reference <https://lisphilar.github.io/covid19-sir/covsirphy.html>`__ \|
-`Qiita (Japanese) <https://qiita.com/tags/covsirphy>`__
+`GitHub <https://github.com/lisphilar/covid19-sir>`__ \| `Qiita
+(Japanese) <https://qiita.com/tags/covsirphy>`__
 
-CovsirPhy is a Python package for COVID-19 (Coronavirus disease 2019)
+CovsirPhy is a Python library for COVID-19 (Coronavirus disease 2019)
 data analysis with phase-dependent SIR-derived ODE models. We can
 download datasets and analyse them easily. Scenario analysis with
 CovsirPhy enables us to make data-informed decisions. Please refer to
