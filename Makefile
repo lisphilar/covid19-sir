@@ -100,12 +100,14 @@ docs:
 
 .PHONY: pypi
 pypi:
+	@# poetry config http-basic.pypi <username> <password>
 	@rm -rf covsirphy.egg-info/*
 	@rm -rf dist/*
 	@poetry publish --build
 
 .PHONY: test-pypi
 test-pypi:
+	@# poetry config http-basic.testpypi <username> <password>
 	@rm -rf covsirphy.egg-info/*
 	@rm -rf dist/*
 	@poetry publish -r testpypi --build
