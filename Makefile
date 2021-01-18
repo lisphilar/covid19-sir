@@ -83,6 +83,7 @@ sphinx:
 	@cd docs; poetry run make html; cp -a _build/html/. ../docs
 	@rm -rf docs/_modules
 	@rm -rf docs/_sources
+	@rm -f docs/*.rst
 
 # https://github.com/sphinx-doc/sphinx/issues/3382
 .PHONY: docs
