@@ -1009,12 +1009,12 @@ class Scenario(DataHandler):
             Either an added New Confirmed column or cleaned records dataframe.
         """
         records = self.records(show_figure=False)
-        if not target in records.columns: 
+        if target not in records.columns: 
             print("Confirmed cases not found in records, target is set to Infecteds")
             target = "Infected"
         elif target == "New Confirmed":
             records["New Confirmed"] = records["Confirmed"].diff()
-        
+
         records.replace(0, np.nan, inplace=True)
         records.fillna(method="bfill", inplace=True)
         records.fillna(method="ffill", inplace=True)
