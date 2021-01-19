@@ -1036,7 +1036,6 @@ class Scenario(DataHandler):
         df_run = df.copy()
         if df_run.empty:
             raise ValueError("No records for this country")
-            return self.delay_days, default_df
         # Convert index to serial numbers
         serial_df = pd.DataFrame(np.arange(1, df_run.index.max() + 1, 1))
         serial_df.index += 1
