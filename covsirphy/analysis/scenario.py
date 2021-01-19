@@ -1030,7 +1030,8 @@ class Scenario(DataHandler):
         """
         records = self.record_df.set_index(self.DATE)
         default_df = pd.DataFrame()
-        oxcgrt_df = oxcgrt_data.subset(country=self.country).set_index("Date")
+        oxcgrt_df = oxcgrt_data.subset(
+            country=self.country).set_index(self.DATE)
         records[indicator] = oxcgrt_df.loc[:, indicator]
         records = records.reset_index()
         df = records.pivot_table(index=target, values=indicator)
@@ -1068,10 +1069,8 @@ class Scenario(DataHandler):
         sel1 = df["Period Length"] < df["Period Length"].quantile(0.99)
         sel2 = (df["Period Length"] < value_range[1])
         df_filtered = df.loc[sel1 & sel2]
-        if df_filtered.empty:
-            delay_days = self.delay_days
-        else:
-            delay_days = int(df_filtered["Period Length"].mean())
+        delay_days = self.delay_days if df_filtered else int(
+            df_filtered["Period Length"].mean())
         return delay_days, df[[target, indicator, "Period Length"]]
 
     def _fit_create_data(self, oxcgrt_data, model, name, delay=None):
