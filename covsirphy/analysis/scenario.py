@@ -1010,7 +1010,7 @@ class Scenario(DataHandler):
 
         Args:
             oxcgrt_data (covsirphy.OxCGRTData): OxCGRT dataset
-            indicator (str): column variable from the OxCGRT dataset.
+            indicator (str): column variable from the OxCGRT dataset
             target (str): one of the target columns to detect changes in,
                 options are ["Infected", "Confirmed", "Fatal", "Recovered"].
             value_range (int, int): tuple, giving the minimum and maximum
@@ -1020,8 +1020,8 @@ class Scenario(DataHandler):
 
         Returns:
             tuple(int, pandas.DataFrame):
-                - (int): the estimated number of days of delay for a given country.
-                - (pandas.DataFrame): dataframe of target, indicator and calculated periods of change (in days).
+                - int: the estimated number of days of delay for a given country.
+                - pandas.DataFrame: dataframe of target, indicator and calculated periods of change (in days).
 
         Note:
             Average recovered period of JHU dataset will be used as returned value
@@ -1060,7 +1060,7 @@ class Scenario(DataHandler):
         # Convert new_confirmed values to dates
         df = pd.merge_asof(
             results_df.sort_values(indicator),
-            df.reset_index().sort_values(indicator),
+            df.astype(np.float64).reset_index().sort_values(indicator),
             on=indicator, direction="nearest"
         )
         # Calculate number of days between the periods
