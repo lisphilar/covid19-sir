@@ -123,11 +123,12 @@ class OxCGRTData(CleaningBase):
         """
         country_arg = country
         country = self.ensure_country_name(country)
-        df = super().subset(country=country)
-        df = df.groupby(self.DATE).last().reset_index()
-        if df.empty:
+        try:
+            df = super().subset(country=country)
+        except SubsetNotFoundError:
             raise SubsetNotFoundError(
-                country=country_arg, country_alias=country)
+                country=country_arg, country_alias=country) from None
+        df = df.groupby(self.DATE).last().reset_index()
         return df.loc[:, self.OXCGRT_COLS_WITHOUT_COUNTRY]
 
     def total(self):
