@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*-
 
 import pandas as pd
+from covsirphy.util.error import SubsetNotFoundError
 from covsirphy.cleaning.cbase import CleaningBase
 
 
@@ -109,6 +110,9 @@ class OxCGRTData(CleaningBase):
             country (str): country name or ISO 3166-1 alpha-3, like JPN
             kwargs: the other arguments will be ignored in the latest version.
 
+        Raises:
+            SubsetNotFoundError: no records were found
+
         Returns:
             pandas.DataFrame
                 Index:
@@ -117,9 +121,13 @@ class OxCGRTData(CleaningBase):
                     - Date (pd.TimeStamp): Observation date
                     - other column names are defined by OxCGRTData.COL_DICT
         """
+        country_arg = country
         country = self.ensure_country_name(country)
         df = super().subset(country=country)
         df = df.groupby(self.DATE).last().reset_index()
+        if df.empty:
+            raise SubsetNotFoundError(
+                country=country_arg, country_alias=country)
         return df.loc[:, self.OXCGRT_COLS_WITHOUT_COUNTRY]
 
     def total(self):
