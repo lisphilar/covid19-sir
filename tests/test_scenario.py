@@ -361,3 +361,14 @@ class TestScenario(object):
         # Fitting & predict
         snl.fit_predict(oxcgrt_data)
         assert Term.FUTURE in snl.summary()[Term.TENSE].unique()
+
+    @pytest.mark.parametrize("indicator", ["Stringency_index", "School_closing"])
+    @pytest.mark.parametrize("target", ["Infected"])
+    def test_estimate_delay(self, jhu_data, population_data, oxcgrt_data, indicator, target):
+        warnings.simplefilter("ignore", category=UserWarning)
+        for country in jhu_data.countries():
+            snl = Scenario(jhu_data, population_data, country)
+            delay, df = snl.estimate_delay(
+                oxcgrt_data, indicator=indicator, target=target)
+            assert isinstance(delay, int)
+            assert isinstance(df, pd.DataFrame)

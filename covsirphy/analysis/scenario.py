@@ -998,45 +998,45 @@ class Scenario(DataHandler):
         return tracker.score(
             metrics=metrics, variables=variables, phases=phases, y0_dict=y0_dict)
 
-
-    def estimate_delay(self, oxcgrt_data, indicator="Stringency_index", 
-                        target="Infected", value_range=(7, 35)):
+    def estimate_delay(self, oxcgrt_data, indicator="Stringency_index",
+                       target="Infected", value_range=(7, 35)):
         """
-
         Estimate the average delay (in days) between a policy measure taken
         and the moment of change in for the given target value, for example
         `Infected`.The change over time is calculated with penalized change
         point analysis. More information about the method of change point
         detection can be found on:
         https://ctruong.perso.math.cnrs.fr/ruptures-docs/build/html/detection/pelt.html.
-        Very long periods are taken out, using df.quantile(0.99).
-        Note: average recovered period of JHU dataset will be used as returned
-        value when the estimated value was not in value_range.
 
         Args:
             oxcgrt_data (covsirphy.OxCGRTData): OxCGRT dataset
-            indicator (str): column variable from the OxCGRT dataset.
+            indicator (str): column variable from the OxCGRT dataset
             target (str): one of the target columns to detect changes in,
-                options are["Infected", "Confirmed", "Fatal", "Recovered"].
-                Uses self.records(). 
+                options are ["Infected", "Confirmed", "Fatal", "Recovered"].
             value_range (int, int): tuple, giving the minimum and maximum
             range to search for change over time. It is assumed that when a
             policy measure is taken, change will occur after at least 7 days
             and before 35 days (=default).
+
         Returns:
-            days: The estimated number of days of delay for a given country.
-            df: dataframe of target, indicator and calculated periods of change (in days).
+            tuple(int, pandas.DataFrame):
+                - int: the estimated number of days of delay for a given country.
+                - pandas.DataFrame: dataframe of target, indicator and calculated periods of change (in days).
+
+        Note:
+            Average recovered period of JHU dataset will be used as returned value
+            when the estimated value was not in value_range.
+            Very long periods (outside of 99% quantile) are taken out.
         """
+        warnings.simplefilter("ignore", category=RuntimeWarning)
         records = self.record_df.set_index(self.DATE)
         default_df = pd.DataFrame()
-        oxcgrt_df = oxcgrt_data.subset(country=self.country).set_index("Date")
+        oxcgrt_df = oxcgrt_data.subset(
+            country=self.country).set_index(self.DATE)
         records[indicator] = oxcgrt_df.loc[:, indicator]
         records = records.reset_index()
         df = records.pivot_table(index=target, values=indicator)
         df_run = df.copy()
-        if df_run.empty:
-            raise ValueError("No records for this country")
-            return self.delay_days, default_df
         # Convert index to serial numbers
         serial_df = pd.DataFrame(np.arange(1, df_run.index.max() + 1, 1))
         serial_df.index += 1
@@ -1049,28 +1049,29 @@ class Scenario(DataHandler):
         algorithm = rpt.Pelt(model="rbf", jump=1, min_size=value_range[0])
         try:
             results = algorithm.fit_predict(series.values, pen=0.5)
-        except:
-            warnings.warn("Delay days could not be estimated for {self.country} and delay set to default: {self.delay_days} [days]", UserWarning, stacklevel=2)
+        except ValueError:
+            warnings.warn(
+                "Delay days could not be estimated for {self.country} and delay set to default: {self.delay_days} [days]",
+                UserWarning, stacklevel=1
+            )
             return self.delay_days, default_df
         results_df = reset_series[results].reset_index()
-        results_df = results_df.interpolate(method="linear").dropna().astype(np.float64)
+        results_df = results_df.interpolate(
+            method="linear").dropna().astype(np.float64)
         # Convert new_confirmed values to dates
         df = pd.merge_asof(
             results_df.sort_values(indicator),
-            df.reset_index().sort_values(indicator),
+            df.astype(np.float64).reset_index().sort_values(indicator),
             on=indicator, direction="nearest"
         )
         # Calculate number of days between the periods
         df["Period Length"] = df["index"].sort_values(ignore_index=True).diff()
         # Filter out very long periods
-        df_filtered = df[
-            (df["Period Length"] < df["Period Length"].quantile(0.99)) &
-            (df["Period Length"] < value_range[1])
-        ]
-        if df_filtered.empty:
-            delay_days = self.delay_days
-        else:
-            delay_days = int(df_filtered["Period Length"].mean())
+        sel1 = df["Period Length"] < df["Period Length"].quantile(0.99)
+        sel2 = (df["Period Length"] < value_range[1])
+        df_filtered = df.loc[sel1 & sel2]
+        delay_days = self.delay_days if df_filtered.empty else int(
+            df_filtered["Period Length"].mean())
         return delay_days, df[[target, indicator, "Period Length"]]
 
     def _fit_create_data(self, oxcgrt_data, model, name, delay=None):
@@ -1082,7 +1083,7 @@ class Scenario(DataHandler):
             oxcgrt_data (covsirphy.OxCGRTData): OxCGRT dataset
             model (covsirphy.ModelBase): ODE model
             name (str): scenario name
-            delay (int): number of days of delay between policy measure and effect 
+            delay (int): number of days of delay between policy measure and effect
             on number of confirmed cases.
 
         Returns:
@@ -1096,7 +1097,7 @@ class Scenario(DataHandler):
         # OxCGRT scores
         oxcgrt_df = oxcgrt_data.subset(
             country=self.country).set_index(self.DATE)[OxCGRTData.OXCGRT_VARS_INDICATORS]
-         # Apply delay on OxCGRT data
+        # Apply delay on OxCGRT data
         if delay is None:
             delay, _ = self.estimate_delay(oxcgrt_data)
         oxcgrt_df.index += timedelta(days=delay)
@@ -1124,7 +1125,7 @@ class Scenario(DataHandler):
             name (str): scenario name
             test_size (float): proportion of the test dataset of Elastic Net regression
             seed (int): random seed when spliting the dataset to train/test data
-            delay (int): number of days of delay between policy measure and effect 
+            delay (int): number of days of delay between policy measure and effect
             on number of confirmed cases.
 
         Returns:
@@ -1134,8 +1135,9 @@ class Scenario(DataHandler):
                 - score_train (float): determination coefficient of train dataset
                 - score_test (float): determination coefficient of test dataset
                 - intercept (pandas.DataFrame): intercept values (Index: ODE parameters, Columns: OxCGRT indicators)
-                - delay (int): number of days of delay between policy measure and effect 
+                - delay (int): number of days of delay between policy measure and effect
                   on number of confirmed cases.
+
         Raises:
             UnExecutedError: Scenario.estimate() or Scenario.add() were not performed
         """
