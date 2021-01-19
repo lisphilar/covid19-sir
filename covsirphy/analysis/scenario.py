@@ -1069,7 +1069,7 @@ class Scenario(DataHandler):
         sel1 = df["Period Length"] < df["Period Length"].quantile(0.99)
         sel2 = (df["Period Length"] < value_range[1])
         df_filtered = df.loc[sel1 & sel2]
-        delay_days = self.delay_days if df_filtered else int(
+        delay_days = self.delay_days if df_filtered.empty else int(
             df_filtered["Period Length"].mean())
         return delay_days, df[[target, indicator, "Period Length"]]
 
