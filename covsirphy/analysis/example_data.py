@@ -43,6 +43,7 @@ class ExampleData(JHUData):
         self.start_date = self.ensure_date(start_date, name="start_date")
         self._specialized_dict = {}
         self.nondim_dict = {}
+        self._recovery_period = None
 
     def _model_to_area(self, model=None, country=None, province=None):
         """
