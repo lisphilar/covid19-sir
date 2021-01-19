@@ -415,20 +415,24 @@ class JHUData(CleaningBase):
         Note:
             If no records we can use for calculation were registered, 17 [days] will be applied.
         """
+        default = 17
         # Get valid data for calculation
         df = self._cleaned_df.copy()
         df = df.loc[df[self.PROVINCE] == self.UNKNOWN]
         df = df.groupby(self.COUNTRY).filter(lambda x: x[self.R].sum() != 0)
-        # If no records were found 17 days will be returned
+        # If no records were found the default value will be returned
         if df.empty:
-            return 17
+            return default
         # Calculate median value of recovery period in all countries with valid data
         periods = [
             self._calculate_recovery_period_country(df, country)
             for country in df[self.COUNTRY].unique()
         ]
         valid_periods = list(filter(lambda x: x >= 0, periods))
-        return int(pd.Series(valid_periods).median())
+        try:
+            return int(pd.Series(valid_periods).median())
+        except ValueError:
+            return default
 
     def _calculate_recovery_period_country(self, valid_df, country, upper_limit_days=90,
                                            lower_limit_days=7, upper_percentage=0.5,
