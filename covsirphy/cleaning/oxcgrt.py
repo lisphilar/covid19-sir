@@ -77,6 +77,8 @@ class OxCGRTData(CleaningBase):
                 "Congo, the Democratic Republic of the": "Democratic Republic of the Congo",
                 # COG
                 "Congo": "Republic of the Congo",
+                # South Korea
+                "Korea, South": "South Korea",
                 # Diamond princess
                 "Diamond Princess": "Others",
             }

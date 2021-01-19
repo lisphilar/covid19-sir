@@ -1051,7 +1051,7 @@ class Scenario(DataHandler):
         except ValueError:
             warnings.warn(
                 "Delay days could not be estimated for {self.country} and delay set to default: {self.delay_days} [days]",
-                UserWarning, stacklevel=2
+                UserWarning, stacklevel=1
             )
             return self.delay_days, default_df
         results_df = reset_series[results].reset_index()
