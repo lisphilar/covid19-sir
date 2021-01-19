@@ -1028,6 +1028,7 @@ class Scenario(DataHandler):
             when the estimated value was not in value_range.
             Very long periods (outside of 99% quantile) are taken out.
         """
+        warnings.simplefilter("ignore", category=RuntimeWarning)
         records = self.record_df.set_index(self.DATE)
         default_df = pd.DataFrame()
         oxcgrt_df = oxcgrt_data.subset(
