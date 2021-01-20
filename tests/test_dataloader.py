@@ -136,7 +136,6 @@ class TestCountryData(object):
         raw_df.to_csv(filename)
         # Create CountryData instance
         country_data = CountryData(filename=filename, country="Italy")
-        country_data.raw = raw_df.copy()
         country_data.set_variables(
             date="date", confirmed="confirmed", recovered="recovered", fatal="deaths",
             province="administrative_area_level_2"
