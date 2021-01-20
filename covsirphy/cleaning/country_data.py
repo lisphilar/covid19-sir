@@ -16,7 +16,7 @@ class CountryData(CleaningBase):
         country (str): country name
         province (str or None): province name
 
-    Returns:
+    Note:
         If province name will be set in CountryData.set_variables(), @province will be ignored.
     """
 
@@ -131,7 +131,8 @@ class CountryData(CleaningBase):
                     - Fatal (int): the number of fatal cases
                     - Recovered (int): the number of recovered cases
         """
-        self._cleaned_df = self._cleaning()
+        if self._cleaned_df.empty:
+            self._cleaned_df = self._cleaning()
         return self._cleaned_df
 
     def total(self):
@@ -177,3 +178,26 @@ class CountryData(CleaningBase):
             list[str]: list of country names
         """
         return [self._country]
+
+    def register_total(self):
+        """
+        Register total value of all provinces as country level data.
+
+        Returns:
+            covsirphy.CountryData: self
+
+        Note:
+            If country level data was registered, this will be overwritten.
+        """
+        # Calculate total values at province level
+        clean_df = self.cleaned()
+        clean_df = clean_df.loc[clean_df[self.PROVINCE] != self.UNKNOWN]
+        total_df = clean_df.groupby(self.DATE).sum().reset_index()
+        total_df[self.COUNTRY] = self._country
+        total_df[self.PROVINCE] = self.UNKNOWN
+        # Add/overwrite country level data
+        df = clean_df.loc[clean_df[self.PROVINCE] != self.UNKNOWN]
+        df = pd.concat([df, total_df], ignore_index=True, sort=True)
+        df[self.STR_COLUMNS] = df[self.STR_COLUMNS].astype("category")
+        self._cleaned_df = df.loc[:, self.COLUMNS]
+        return self
