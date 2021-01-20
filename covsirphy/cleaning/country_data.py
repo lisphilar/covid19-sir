@@ -101,6 +101,8 @@ class CountryData(CleaningBase):
             df[self.PROVINCE] = self._province or self.UNKNOWN
         # Values
         v_cols = [self.C, self.F, self.R]
+        for col in v_cols:
+            df[col] = pd.to_numeric(df[col], errors="coerce")
         df[v_cols] = df[v_cols].fillna(0).astype(np.int64)
         df[self.CI] = df[self.C] - df[self.F] - df[self.R]
         # Groupby date and province
