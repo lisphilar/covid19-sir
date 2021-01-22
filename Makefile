@@ -71,15 +71,13 @@ flake8:
 .PHONY: docs
 docs:
 	# docs/index.rst must be updated to include the notebooks
-	@cp -f --no-clobber example/usage_*.ipynb docs/
-	# Convert markdown files to rst files and save them in docs directory
-	@# sudo apt install pandoc
-	@pandoc --from markdown --to rst README.md -o docs/README.rst
-	@pandoc --from markdown --to rst .github/CODE_OF_CONDUCT.md -o docs/CODE_OF_CONDUCT.rst
-	@pandoc --from markdown --to rst .github/CONTRIBUTING.md -o docs/CONTRIBUTING.rst
-	@pandoc --from markdown --to rst SECURITY.md -o docs/SECURITY.rst
-	@pandoc --from markdown --to rst docs/markdown/INSTALLATION.md -o docs/INSTALLATION.rst
-	@pandoc --from markdown --to rst docs/markdown/TERM.md -o docs/TERM.rst
+	@cp --no-clobber example/usage_*.ipynb docs/
+	# Save markdown files in docs directory
+	# docs/markdown/*md will be automatically included
+	@#cp --no-clobber README.md docs/README.md
+	@#cp --no-clobber .github/CODE_OF_CONDUCT.md docs/CODE_OF_CONDUCT.md
+	@#cp --no-clobber .github/CONTRIBUTING.md docs/CONTRIBUTING.md
+	@#cp --no-clobber SECURITY.md docs/SECURITY.md
 	# Create API reference
 	@poetry run sphinx-apidoc -o docs covsirphy -fMT
 	# Execute sphinx
