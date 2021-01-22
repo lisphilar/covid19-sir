@@ -84,18 +84,24 @@ sphinx:
 	@rm -rf docs/_modules
 	@rm -rf docs/_sources
 
+.PHONY: note_convert
+note_convert:
+	@poetry run jupyter nbconvert --to notebook --inplace --ExecutePreprocessor.timeout=600 docs/${target}.ipynb
+
+
 # https://github.com/sphinx-doc/sphinx/issues/3382
 .PHONY: docs
 docs:
 	@rm -rf docs/_images
 	@rm -f docs/*ipynb
+	@cp -f example/usage_*.ipynb docs/
 	@# docs/index.rst must be updated to include the notebooks
-	@poetry run runipy example/usage_quick.ipynb docs/usage_quick.ipynb
-	@poetry run runipy example/usage_dataset.ipynb docs/usage_dataset.ipynb
-	@poetry run runipy example/usage_quickest.ipynb docs/usage_quickest.ipynb
-	@poetry run runipy example/usage_phases.ipynb docs/usage_phases.ipynb
-	@poetry run runipy example/usage_theoretical.ipynb docs/usage_theoretical.ipynb
-	@poetry run runipy example/usage_policy.ipynb docs/usage_policy.ipynb
+	@make note_convert target=usage_quickest
+	@make note_convert target=usage_quick
+	@make note_convert target=usage_dataset
+	@make note_convert target=usage_phases
+	@make note_convert target=usage_theoretical
+	@make note_convert target=usage_policy
 	@make sphinx
 
 .PHONY: pypi

@@ -82,3 +82,6 @@ todo_include_todos = True
 # unit titles (such as .. function::).
 # https://stackoverflow.com/questions/20864406/remove-package-and-module-name-from-sphinx-function
 add_module_names = False
+
+# nbsphinx
+nbsphinx_execute = "never"
