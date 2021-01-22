@@ -74,10 +74,12 @@ docs:
 	@cp --no-clobber example/usage_*.ipynb docs/
 	# Save markdown files in docs directory
 	# docs/markdown/*md will be automatically included
-	@#cp --no-clobber README.md docs/README.md
-	@#cp --no-clobber .github/CODE_OF_CONDUCT.md docs/CODE_OF_CONDUCT.md
-	@#cp --no-clobber .github/CONTRIBUTING.md docs/CONTRIBUTING.md
-	@#cp --no-clobber SECURITY.md docs/SECURITY.md
+	@cp --no-clobber .github/CODE_OF_CONDUCT.md docs/CODE_OF_CONDUCT.md
+	@cp --no-clobber .github/CONTRIBUTING.md docs/CONTRIBUTING.md
+	@cp --no-clobber SECURITY.md docs/SECURITY.md
+	# Convert README.md to README.rst
+	@# sudo apt install pandoc
+	@pandoc --from markdown --to rst README.md -o docs/README.rst
 	# Create API reference
 	@poetry run sphinx-apidoc -o docs covsirphy -fMT
 	# Execute sphinx
