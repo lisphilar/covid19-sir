@@ -1,0 +1,1017 @@
+{
+ "cells": [
+  {
+   "cell_type": "markdown",
+   "id": "stretch-commercial",
+   "metadata": {},
+   "source": [
+    "# Usage: datasets\n",
+    "Here, we will review the raw/cleaned datasets. `Scenario` class performs data cleaning internally using `JHUData` class and so on, but it is important to review the features and data types before analysing them."
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "overhead-recipient",
+   "metadata": {},
+   "source": [
+    "### Preparation\n",
+    "Prepare the packages."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "protective-classic",
+   "metadata": {
+    "collapsed": false
+   },
+   "outputs": [],
+   "source": [
+    "# Standard users\n",
+    "# !pip install covsirphy"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "danish-sport",
+   "metadata": {
+    "collapsed": false
+   },
+   "outputs": [],
+   "source": [
+    "# Developers (Note: this notebook is in example directory)\n",
+    "import os\n",
+    "os.chdir(\"../\")"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "stopped-contrast",
+   "metadata": {
+    "collapsed": false
+   },
+   "outputs": [],
+   "source": [
+    "from pprint import pprint"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "amber-refrigerator",
+   "metadata": {
+    "collapsed": false,
+    "tags": []
+   },
+   "outputs": [],
+   "source": [
+    "import covsirphy as cs\n",
+    "cs.__version__"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "applied-standard",
+   "metadata": {},
+   "source": [
+    "### Dataset preparation\n",
+    "Download the datasets to \"input\" directory and load them.\n",
+    "\n",
+    "If \"input\" directory has the datasets, `DataLoader` instance will load the local files. If the datasets were updated in remote servers, `DataLoader` will update the local files automatically and download the datasets to \"input\" directory and load them."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "yellow-roads",
+   "metadata": {
+    "collapsed": false
+   },
+   "outputs": [],
+   "source": [
+    "# Create DataLoader instance\n",
+    "data_loader = cs.DataLoader(\"input\")"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "handled-thomas",
+   "metadata": {
+    "collapsed": false,
+    "tags": []
+   },
+   "outputs": [],
+   "source": [
+    "# (Main) The number of cases (JHU style)\n",
+    "jhu_data = data_loader.jhu()\n",
+    "# (Main) Population in each country\n",
+    "population_data = data_loader.population()\n",
+    "# (Main) Government Response Tracker (OxCGRT)\n",
+    "oxcgrt_data = data_loader.oxcgrt()\n",
+    "# Linelist of case reports\n",
+    "linelist = data_loader.linelist()\n",
+    "# The number of tests\n",
+    "pcr_data = data_loader.pcr()\n",
+    "# The number of vaccinations\n",
+    "vaccine_data = data_loader.vaccine()\n",
+    "# Population pyramid\n",
+    "pyramid_data = data_loader.pyramid()\n",
+    "# Japan-specific dataset\n",
+    "japan_data = data_loader.japan()"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "moving-accident",
+   "metadata": {},
+   "source": [
+    "### The number of cases (JHU style)\n",
+    "The main dataset is that of the number of cases and was saved as `jhu_data`, an instance of `JHUData` class. This includes \"Confirmed\", \"Infected\", \"Recovered\" and \"Fatal\". \"Infected\" was calculated as \"Confirmed - Recovered - Fatal\"."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "behavioral-bibliography",
+   "metadata": {
+    "collapsed": false
+   },
+   "outputs": [],
+   "source": [
+    "type(jhu_data)"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "universal-chuck",
+   "metadata": {},
+   "source": [
+    "The dataset will be retrieved from [COVID-19 Data Hub](https://covid19datahub.io/) and [Data folder of CovsirPhy project](https://github.com/lisphilar/covid19-sir/tree/master/data). Description of these projects will be shown as follows."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "executive-interest",
+   "metadata": {
+    "collapsed": false,
+    "tags": []
+   },
+   "outputs": [],
+   "source": [
+    "# Description/citation\n",
+    "print(jhu_data.citation)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "royal-priest",
+   "metadata": {
+    "collapsed": false,
+    "tags": []
+   },
+   "outputs": [],
+   "source": [
+    "# Detailed citation list of COVID-19 Data Hub\n",
+    "# print(data_loader.covid19dh_citation)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "floral-radical",
+   "metadata": {
+    "collapsed": false
+   },
+   "outputs": [],
+   "source": [
+    "# Raw data\n",
+    "jhu_data.raw.tail()"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "jewish-sponsorship",
+   "metadata": {
+    "collapsed": false
+   },
+   "outputs": [],
+   "source": [
+    "# Cleaned data\n",
+    "jhu_data.cleaned().tail()"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "interim-jersey",
+   "metadata": {
+    "collapsed": false
+   },
+   "outputs": [],
+   "source": [
+    "jhu_data.cleaned().info()"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "single-immigration",
+   "metadata": {},
+   "source": [
+    "Total number of cases in all countries with `JHUData.total()` method."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "fuzzy-welsh",
+   "metadata": {
+    "collapsed": false
+   },
+   "outputs": [],
+   "source": [
+    "# Calculate total values\n",
+    "total_df = jhu_data.total()\n",
+    "total_df.tail()"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "exclusive-physiology",
+   "metadata": {
+    "collapsed": false
+   },
+   "outputs": [],
+   "source": [
+    "# Plot the total values\n",
+    "cs.line_plot(total_df[[\"Infected\", \"Fatal\", \"Recovered\"]], \"Total number of cases over time\")"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "professional-unemployment",
+   "metadata": {
+    "collapsed": false
+   },
+   "outputs": [],
+   "source": [
+    "# Statistics of rate values in all countries\n",
+    "total_df.loc[:, total_df.columns.str.contains(\"per\")].describe().T"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "characteristic-cradle",
+   "metadata": {},
+   "source": [
+    "We can create a subset for a country using `JHUData.subset()` method."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "automated-occasion",
+   "metadata": {
+    "collapsed": false
+   },
+   "outputs": [],
+   "source": [
+    "# Subset for a country\n",
+    "df, _ = jhu_data.records(\"Japan\")\n",
+    "df.tail()\n",
+    "# We can use ISO3 code etc.\n",
+    "# df, _ = jhu_data.records(\"JPN\")\n",
+    "# df.tail()"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "patient-question",
+   "metadata": {},
+   "source": [
+    "Province (\"prefecture\" for Japan) name can be specified."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "extreme-disabled",
+   "metadata": {
+    "collapsed": false
+   },
+   "outputs": [],
+   "source": [
+    "df, _ = jhu_data.records(\"Japan\", province=\"Tokyo\")\n",
+    "df.tail()"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "appreciated-tractor",
+   "metadata": {
+    "collapsed": false
+   },
+   "outputs": [],
+   "source": [
+    "# Countries we can select\n",
+    "pprint(jhu_data.countries(), compact=True)"
+   ]
+  },
+  {
+   "source": [
+    "`JHUData.records()` automatically complement the records, if necesssary and `auto_complement=True` (default). Each country can have either none or one or multiple complements, depending on the records and their preprocessing analysis."
+   ],
+   "cell_type": "markdown",
+   "metadata": {}
+  },
+  {
+   "source": [
+    "We can show the specific kind of complements that were applied to the records of each country with `JHUData.show_complement()` method. The possible kinds of complement for each country are the following:  \n",
+    "\n",
+    "1. \"Monotonic_confirmed/fatal/recovered\" (monotonic increasing complement)  \n",
+    "Force the variable show monotonic increasing.\n",
+    "\n",
+    "2. \"Full_recovered\" (full complement of recovered data)  \n",
+    "Estimate the number of recovered cases using the value of estimated average recovery period.\n",
+    "\n",
+    "3. \"Partial_recovered\" (partial complement of recovered data)  \n",
+    "When recovered values are not updated for some days, extrapolate the values."
+   ],
+   "cell_type": "markdown",
+   "metadata": {}
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "# Show the details of complement for all countries\n",
+    "jhu_data.show_complement().tail()"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "# For selected country\n",
+    "# jhu_data.show_complement(country=\"Japan\")\n",
+    "# For selected province\n",
+    "# jhu_data.show_complement(country=\"Japan\", province=\"Tokyo\")\n",
+    "# For selected countries\n",
+    "# jhu_data.show_complement(country=[\"Greece\", \"Japan\"])"
+   ]
+  },
+  {
+   "source": [
+    "Note for recovery period:  \n",
+    "With the global cases records, we estimate the average recovery period using `JHUData.calculate_recovery_period()`.  \n",
+    "\n",
+    "What we currently do is to calculate the difference between confirmed cases and fatal cases and try to match it to some recovered cases value in the future. We apply this method for every country that has valid recovery data and average the partial recovery periods in order to obtain a single (average) recovery period. During the calculations, we ignore time intervals that lead to very short (<7 days) or very long (>90 days) partial recovery periods, if these exist with high frequency (>50%) in the records. We have to assume temporarily invariable compartments for this analysis to extract an approximation of the average recovery period.\n",
+    "\n",
+    "Alternatively, we had tried to use linelist data to get precise value of recovery period (average of recovery date minus confirmation date for cases), but the number of records was too small."
+   ],
+   "cell_type": "markdown",
+   "metadata": {}
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "recovery_period = jhu_data.calculate_recovery_period()\n",
+    "print(f\"Average recovery period: {recovery_period} [days]\")"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "express-tennessee",
+   "metadata": {},
+   "source": [
+    "### Linelist of case reports\n",
+    "The number of cases is important, but linelist of case reports will helpful to understand the situation deeply. Linelist data was saved as `linelist`, an instance of `LinelistData` class. This dataset is from [Open COVID-19 Data Working Group](https://github.com/beoutbreakprepared/nCoV2019)."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "similar-disposition",
+   "metadata": {
+    "collapsed": false
+   },
+   "outputs": [],
+   "source": [
+    "type(linelist)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "everyday-least",
+   "metadata": {
+    "collapsed": false
+   },
+   "outputs": [],
+   "source": [
+    "# Citation\n",
+    "print(linelist.citation)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "serious-helena",
+   "metadata": {
+    "collapsed": false
+   },
+   "outputs": [],
+   "source": [
+    "# Raw dataset\n",
+    "linelist.raw.tail()"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "outstanding-dietary",
+   "metadata": {
+    "collapsed": false
+   },
+   "outputs": [],
+   "source": [
+    "# Cleaned dataset\n",
+    "linelist.cleaned().tail()"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "finished-package",
+   "metadata": {
+    "collapsed": false
+   },
+   "outputs": [],
+   "source": [
+    "# Subset for specified area\n",
+    "linelist.subset(\"Japan\", province=\"Tokyo\").tail()"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "fuzzy-topic",
+   "metadata": {
+    "collapsed": false
+   },
+   "outputs": [],
+   "source": [
+    "# Subset for outcome (\"Recovered\" or \"Fatal\")\n",
+    "linelist.closed(outcome=\"Recovered\").tail()"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "ignored-deployment",
+   "metadata": {},
+   "source": [
+    "As the median value of the period from confirmation to recovery, we can calculate recovery period."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "broken-publicity",
+   "metadata": {
+    "collapsed": false
+   },
+   "outputs": [],
+   "source": [
+    "# Recovery period (integer) [days]\n",
+    "linelist.recovery_period()"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "flush-mauritius",
+   "metadata": {},
+   "source": [
+    "### Population in each country\n",
+    "Population values are necessary to calculate the number of susceptible people. Susceptible is a variable of SIR-derived models. This dataset was saved as `population_data`, an instance of `PopulationData` class."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "scenic-fellow",
+   "metadata": {
+    "collapsed": false
+   },
+   "outputs": [],
+   "source": [
+    "type(population_data)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "romance-hungary",
+   "metadata": {
+    "collapsed": false,
+    "tags": []
+   },
+   "outputs": [],
+   "source": [
+    "# Description/citation\n",
+    "print(population_data.citation)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "streaming-egyptian",
+   "metadata": {
+    "collapsed": false
+   },
+   "outputs": [],
+   "source": [
+    "# Raw data (the same as jhu_data)\n",
+    "# population_data.raw.tail()"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "verbal-intellectual",
+   "metadata": {
+    "collapsed": false
+   },
+   "outputs": [],
+   "source": [
+    "# Cleaned data\n",
+    "population_data.cleaned().tail()"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "private-chosen",
+   "metadata": {},
+   "source": [
+    "We will get the population values with `PopulationData.value()`."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "optional-ceremony",
+   "metadata": {
+    "collapsed": false
+   },
+   "outputs": [],
+   "source": [
+    "# In a country\n",
+    "population_data.value(\"Japan\", province=None)\n",
+    "# In a country with ISO3 code\n",
+    "# population_data.value(\"JPN\", province=None)\n",
+    "# In a province (prefecture)\n",
+    "# population_data.value(\"Japan\", province=\"Tokyo\")"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "accepted-austria",
+   "metadata": {},
+   "source": [
+    "We can update the population values."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "coordinate-phrase",
+   "metadata": {
+    "collapsed": false
+   },
+   "outputs": [],
+   "source": [
+    "# Before\n",
+    "population_before = population_data.value(\"Japan\", province=\"Tokyo\")\n",
+    "print(f\"Before: {population_before}\")\n",
+    "# Register population value of Tokyo in Japan\n",
+    "# https://www.metro.tokyo.lg.jp/tosei/hodohappyo/press/2020/06/11/07.html\n",
+    "population_data.update(14_002_973, \"Japan\", province=\"Tokyo\")\n",
+    "population_after = population_data.value(\"Japan\", province=\"Tokyo\")\n",
+    "print(f\" After: {population_after}\")"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "limiting-brazil",
+   "metadata": {},
+   "source": [
+    "### Government Response Tracker (OxCGRT)\n",
+    "Government responses are tracked with [Oxford Covid-19 Government Response Tracker (OxCGRT)](https://github.com/OxCGRT/covid-policy-tracker). Because government responses and activities of persons change the parameter values of SIR-derived models, this dataset is significant when we try to forcast the number of cases.  \n",
+    "With `DataLoader` class, the dataset was retrieved via [COVID-19 Data Hub](https://covid19datahub.io/) and saved as `oxcgrt_data`, an instance of `OxCGRTData` class."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "parliamentary-circus",
+   "metadata": {
+    "collapsed": false
+   },
+   "outputs": [],
+   "source": [
+    "type(oxcgrt_data)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "coral-visiting",
+   "metadata": {
+    "collapsed": false,
+    "tags": []
+   },
+   "outputs": [],
+   "source": [
+    "# Description/citation\n",
+    "print(oxcgrt_data.citation)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "incomplete-algorithm",
+   "metadata": {
+    "collapsed": false
+   },
+   "outputs": [],
+   "source": [
+    "# Raw data (the same as jhu_data)\n",
+    "# oxcgrt_data.raw.tail()"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "floral-benchmark",
+   "metadata": {
+    "collapsed": false
+   },
+   "outputs": [],
+   "source": [
+    "# Cleaned data\n",
+    "oxcgrt_data.cleaned().tail()"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "lonely-certification",
+   "metadata": {
+    "collapsed": false
+   },
+   "outputs": [],
+   "source": [
+    "# Subset for a country\n",
+    "oxcgrt_data.subset(\"Japan\").tail()\n",
+    "# We can use ISO3 codes\n",
+    "# oxcgrt_data.subset(\"JPN\").tail()"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "vertical-formula",
+   "metadata": {},
+   "source": [
+    "### The number of tests\n",
+    "The number of tests is also key information to understand the situation.\n",
+    "This dataset was saved as `pcr_data`, an instance of `PCRData` class."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "controversial-subscription",
+   "metadata": {
+    "collapsed": false
+   },
+   "outputs": [],
+   "source": [
+    "type(pcr_data)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "breathing-diesel",
+   "metadata": {
+    "collapsed": false
+   },
+   "outputs": [],
+   "source": [
+    "# Description/citation\n",
+    "print(pcr_data.citation)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "confirmed-sweden",
+   "metadata": {
+    "collapsed": false
+   },
+   "outputs": [],
+   "source": [
+    "# Raw data (the same as jhu_data)\n",
+    "# pcr_data.raw.tail()"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "acceptable-barbados",
+   "metadata": {
+    "collapsed": false
+   },
+   "outputs": [],
+   "source": [
+    "# Cleaned data\n",
+    "pcr_data.cleaned().tail()"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "differential-humanity",
+   "metadata": {
+    "collapsed": false
+   },
+   "outputs": [],
+   "source": [
+    "# Subset for a country\n",
+    "pcr_data.subset(\"Japan\").tail()\n",
+    "# We can use ISO3 codes\n",
+    "# pcr_data.subset(\"JPN\").tail()"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "restricted-solution",
+   "metadata": {},
+   "source": [
+    "Under the assumption that all tests were PCR test, we can calculate the positive rate of PCR tests as \"the number of confirmed cases per the number of tests\"."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "nominated-egypt",
+   "metadata": {
+    "collapsed": false
+   },
+   "outputs": [],
+   "source": [
+    "# Positive rate in Japan\n",
+    "_ = pcr_data.positive_rate(\"Japan\")"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "thorough-worst",
+   "metadata": {},
+   "source": [
+    "### The number of vaccinations\n",
+    "The number of vaccinations is a key factor to end the outbreak as soon as possible. This dataset was saved as `vaccine_data`, an instance of `VaccineData` class."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "champion-debut",
+   "metadata": {
+    "collapsed": false
+   },
+   "outputs": [],
+   "source": [
+    "# The number of vaccinations\n",
+    "type(vaccine_data)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "afraid-potter",
+   "metadata": {
+    "collapsed": false
+   },
+   "outputs": [],
+   "source": [
+    "# Description/citation\n",
+    "print(vaccine_data.citation)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "devoted-purse",
+   "metadata": {
+    "collapsed": false
+   },
+   "outputs": [],
+   "source": [
+    "# Raw data\n",
+    "# vaccine_data.raw.tail()"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "finite-level",
+   "metadata": {
+    "collapsed": false
+   },
+   "outputs": [],
+   "source": [
+    "# Cleaned data\n",
+    "vaccine_data.cleaned().tail()"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "selected-seating",
+   "metadata": {
+    "collapsed": false
+   },
+   "outputs": [],
+   "source": [
+    "# Registered countries\n",
+    "vaccine_data.countries()"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "subtle-forge",
+   "metadata": {
+    "collapsed": false
+   },
+   "outputs": [],
+   "source": [
+    "# Subset for a country\n",
+    "vaccine_data.subset(\"United Kingdom\").tail()\n",
+    "# We can use ISO3 codes\n",
+    "# pcr_data.subset(\"GBR\").tail()"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "private-shade",
+   "metadata": {},
+   "source": [
+    "### Population pyramid\n",
+    "With population pyramid, we can divide the population to sub-groups. This will be useful when we analyse the meaning of parameters. For example, how many days go out is different between the sub-groups.\n",
+    "This dataset was saved as `pyramid_data`, an instance of `PopulationPyramidData` class."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "hourly-truck",
+   "metadata": {
+    "collapsed": false
+   },
+   "outputs": [],
+   "source": [
+    "# Population pyramid\n",
+    "type(pyramid_data)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "internal-detection",
+   "metadata": {
+    "collapsed": false
+   },
+   "outputs": [],
+   "source": [
+    "# Description/citation\n",
+    "print(pyramid_data.citation)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "unauthorized-immigration",
+   "metadata": {
+    "collapsed": false
+   },
+   "outputs": [],
+   "source": [
+    "# Subset will retrieved from the server when set\n",
+    "pyramid_data.subset(\"Japan\").tail()"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "indoor-sperm",
+   "metadata": {},
+   "source": [
+    "### Japan-specific dataset\n",
+    "This includes the number of confirmed/infected/fatal/recovered/tests/moderate/severe cases at country/prefecture level and metadata of each prefecture.\n",
+    "This dataset was saved as `japan_data`, an instance of `JapanData` class."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "horizontal-yahoo",
+   "metadata": {
+    "collapsed": false
+   },
+   "outputs": [],
+   "source": [
+    "# Japan-specific dataset\n",
+    "type(japan_data)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "genuine-biotechnology",
+   "metadata": {
+    "collapsed": false
+   },
+   "outputs": [],
+   "source": [
+    "# Description/citation\n",
+    "print(japan_data.citation)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "previous-signature",
+   "metadata": {
+    "collapsed": false
+   },
+   "outputs": [],
+   "source": [
+    "# Cleaned dataset\n",
+    "japan_data.cleaned().tail()"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "rental-black",
+   "metadata": {
+    "collapsed": false
+   },
+   "outputs": [],
+   "source": [
+    "# Metadata\n",
+    "japan_data.meta().tail()"
+   ]
+  }
+ ],
+ "metadata": {
+  "kernelspec": {
+   "name": "python3",
+   "display_name": "Python 3.9.1 64-bit ('.venv')",
+   "metadata": {
+    "interpreter": {
+     "hash": "aa53c8c6e6798222a2084c11cc25017700a8d3ad495b587e3a634f357767115f"
+    }
+   }
+  },
+  "language_info": {
+   "codemirror_mode": {
+    "name": "ipython",
+    "version": 3
+   },
+   "file_extension": ".py",
+   "mimetype": "text/x-python",
+   "name": "python",
+   "nbconvert_exporter": "python",
+   "pygments_lexer": "ipython3",
+   "version": "3.9.1-final"
+  }
+ },
+ "nbformat": 4,
+ "nbformat_minor": 5
+}

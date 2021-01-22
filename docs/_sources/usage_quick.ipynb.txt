@@ -1,0 +1,655 @@
+{
+ "cells": [
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "# Usage: scenario analysis\n",
+    "This is a quick tour of CovsirPhy. Details scenario analysis will be explained.\n",
+    "\"Scenario analysis\" means that we calculate the number of cases in the future phases with some sets of ODE parameter values. With this analysis, we can estimate the impact of our activities against the outbreak on the number of cases."
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "### Preparation\n",
+    "Prepare the packages."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "# Standard users\n",
+    "# !pip install covsirphy"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "# Developers (Note: this notebook is in example directory)\n",
+    "import os\n",
+    "os.chdir(\"../\")"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {
+    "tags": []
+   },
+   "outputs": [],
+   "source": [
+    "import covsirphy as cs\n",
+    "cs.__version__"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "### Dataset preparation\n",
+    "Download the datasets to \"input\" direcotry and load them.  \n",
+    "Please refer to [Usage: datasets](https://lisphilar.github.io/covid19-sir/usage_dataset.html) for the details."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {
+    "tags": []
+   },
+   "outputs": [],
+   "source": [
+    "data_loader = cs.DataLoader(\"input\")\n",
+    "# The number of cases (JHU style)\n",
+    "jhu_data = data_loader.jhu(verbose=True)\n",
+    "# Population in each country\n",
+    "population_data = data_loader.population(verbose=True)\n",
+    "# Government Response Tracker (OxCGRT)\n",
+    "oxcgrt_data = data_loader.oxcgrt()"
+   ]
+  },
+  {
+   "source": [
+    "### Start scenario analysis\n",
+    "As an example, we will analysis the number of cases in Japan."
+   ],
+   "cell_type": "markdown",
+   "metadata": {}
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "snl = cs.Scenario(jhu_data, population_data, country=\"Japan\", province=None)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "# If you want to stop displaying figures when using interactive shell,\n",
+    "# snl.interactive = False\n",
+    "# For temporally, plese use snl.records(show_figure=False) etc.\n",
+    "# If you want save figures,\n",
+    "# snl.interactive = False\n",
+    "# and please use snl.records(filename=\"records.jpg\") etc."
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "### Check records\n",
+    "Let's see the records at first. `Scenario.records()` method return the records as a pandas dataframe and show a line plot. Some kind of complement will be done for analysis, if necessary."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "record_df = snl.records()\n",
+    "record_df.tail()"
+   ]
+  },
+  {
+   "source": [
+    "We can calculate the number of daily new cases with `Scenario.record_diff()` method."
+   ],
+   "cell_type": "markdown",
+   "metadata": {}
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "_ = snl.records_diff(variables=[\"Confirmed\"], window=7)"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "`Scenario.show_complement()` method is useful to show the kinds of complement. The details of complement are explained in [Usage: datasets](https://lisphilar.github.io/covid19-sir/usage_dataset.html#The-number-of-cases-(JHU-style)) section."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "complement_snl_df = snl.show_complement()\n",
+    "complement_snl_df.tail()"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "### S-R trend analysis\n",
+    "S-R trend analysis finds the change points of SIR-derived ODE parameters. Details will be explained in [Usage (details: phases)](https://lisphilar.github.io/covid19-sir/usage_phases.html)."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "# Perform S-R trend analysis and set phases\n",
+    "snl.trend(set_phases=True)\n",
+    "snl.summary()"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "### Hyperparameter estimation of ODE models\n",
+    "Here, we will estimate the parameter values of SIR-derived models. As an example, we use SIR-F model. Details of models will be explained in [Usage (details: theoritical datasets)](https://lisphilar.github.io/covid19-sir/usage_theoretical.html)."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {
+    "tags": []
+   },
+   "outputs": [],
+   "source": [
+    "# Estimate the parameter values of SIR-F model\n",
+    "# Default value of timeout is 180 sec\n",
+    "snl.estimate(cs.SIRF, timeout=60)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "# Show the sumamry of parameter estimation\n",
+    "snl.summary()"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "### Accuracy of estimation"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "snl.estimate_accuracy(phase=\"1st\")"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "### Get parameter value\n",
+    "We can get the parameter values of a phase using `Scenario.get()` method."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "snl.get(\"Rt\", phase=\"4th\")"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "### Show parameter history\n",
+    "`Scenario.history()` method shows the trajectories of parameters (and the number of cases)."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "_ = snl.history(target=\"theta\")"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "_ = snl.history(target=\"kappa\")"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "_ = snl.history(target=\"rho\")"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "_ = snl.history(target=\"sigma\")"
+   ]
+  },
+  {
+   "source": [
+    "Notes on the history of $\\sigma$ value in japan (last updated: 28Dec2020):  \n",
+    "In Japan, we experienced two waves and we are in third wave. In the first wave (Apr - May), recovery period was too long because collapse of the medical care system occurred and no medicines were found.\n",
+    "\n",
+    "Sigma values: the first wave < the second wave > the third wave\n",
+    "\n",
+    "However, in the second wave (Jul - Oct), recovery period appears short because we have some effective medicines (not approved, in clinical study), yonger people (people un-associated to sever diseases) were infected.\n",
+    "\n",
+    "In the third wave (Nov - ), older people tend to be infected and we are facing with medical collapse at this time..."
+   ],
+   "cell_type": "markdown",
+   "metadata": {}
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "### Show the history of reproduction number\n",
+    "$R_0$ (\"R naught\") means \"the average number of secondary infections caused by an infected host\" ([Infection Modeling — Part 1](https://towardsdatascience.com/infection-modeling-part-1-87e74645568a)). When this value is larger than 1, the infection disease is outbreaking."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "_ = snl.history(target=\"Rt\")"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "### Simulate the number of cases\n",
+    "We can compare the actual and simulated (with estimated parameter values) number of confirmed/infected/recovered/fatal cases using `Scenario.history()` method."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "_ = snl.history(\"Infected\")"
+   ]
+  },
+  {
+   "source": [
+    "### Main scenario\n",
+    "To investigate the effect of parameter changes, we will perform scenario analysis. In the main scenario, we will assume that the parameter values do not change after the last past phase.\n",
+    "\n",
+    "i.e. If the parameter velues will not be changed until 01Apr2021, how many cases will be? We call this scenario as \"Main\" scenario."
+   ],
+   "cell_type": "markdown",
+   "metadata": {}
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "# Clear future phases in Main scenario\n",
+    "snl.clear(name=\"Main\")\n",
+    "# Add one future phase 30 days with the parameter set of the last past phase\n",
+    "snl.add(days=30)\n",
+    "# Add one future phase until 01Apr2021 with the same parameter set\n",
+    "snl.add(end_date=\"01Apr2021\", name=\"Main\")\n",
+    "# Simulate the number of cases\n",
+    "snl.simulate(name=\"Main\").tail()"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "### Medicine scenario\n",
+    "To investigate the effect of new medicines, we will assume that $\\sigma$ will be changed in the future phases.\n",
+    "\n",
+    "If $\\sigma$ will be double in 30 days, how many cases will be? We will call this scenario as \"Medicine\" scenario."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "# Calcuate the current sigma value of the last phase\n",
+    "sigma_current = snl.get(\"sigma\", name=\"Main\", phase=\"last\")\n",
+    "sigma_current"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "# Sigma value will be double\n",
+    "sigma_new = sigma_current * 2\n",
+    "sigma_new"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "# Initialize \"Medicine\" scenario (with the same past phases as that of Main scenario)\n",
+    "snl.clear(name=\"Medicine\")\n",
+    "# Add 30 days as a new future phases with the same parameter set\n",
+    "snl.add(name=\"Medicine\", days=30, sigma=sigma_current)\n",
+    "# Add a phase until 01Apr2021 with doubled sigma value\n",
+    "snl.add(name=\"Medicine\", end_date=\"01Apr2021\", sigma=sigma_new)\n",
+    "snl.summary(name=\"Medicine\")"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "# Simulate the number of cases\n",
+    "snl.simulate(name=\"Medicine\").tail()"
+   ]
+  },
+  {
+   "source": [
+    "### Short-term prediction of parameter values\n",
+    "With OxCGRT data, we can predict the parameter values of the future phases because [OxCGRT indicators](https://github.com/OxCGRT/covid-policy-tracker) (policy measures) impact on parameter values with delay period (calculated with `cenario.estimate_delay()` with version > 2.15.0-beta or set as recovery period).  \n",
+    "\n",
+    "OxCGRT indicators are\n",
+    "\n",
+    "- school_closing,\n",
+    "- workplace_closing,\n",
+    "- cancel_events, \n",
+    "- gatherings_restrictions,\n",
+    "- transport_closing,\n",
+    "- stay_home_restrictions,\n",
+    "- internal_movement_restrictions,\n",
+    "- international_movement_restrictions,\n",
+    "- information_campaigns,\n",
+    "- testing_policy, and\n",
+    "- contact_tracing."
+   ],
+   "cell_type": "markdown",
+   "metadata": {}
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "# Fitting with linear regression model (Elastic Net regression)\n",
+    "fit_dict = snl.fit(oxcgrt_data=oxcgrt_data, name=\"Forecast\")\n",
+    "print(f\"Determination coefficient: {fit_dict['score_train']} (train)\")\n",
+    "print(f\"Determination coefficient: {fit_dict['score_test']} (test)\")\n",
+    "print(\"Intercept:\")\n",
+    "fit_dict[\"intercept\"].style.background_gradient(axis=None)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "# Short-term prediction\n",
+    "snl.predict(name=\"Forecast\").summary(name=\"Forecast\")"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "# Or, when you do not need 'fit_dict'\n",
+    "# snl.fit_predict(oxcgrt_data=oxcgrt_data, name=\"Forecast\").summary(name=\"Forecast\")"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "### Compare the scenarios\n",
+    "We will compare the scenarios with representative values, reproduction number and parameter values. Currently, we can compare the scenarios with the following indexes.\n",
+    "\n",
+    "- max(Infected): max value of Infected\n",
+    "- argmax(Infected): the date when Infected shows max value\n",
+    "- Infected on …: Infected on the end date of the last phase\n",
+    "- Fatal on …: Fatal on the end date of the last phase"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "snl.describe()"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "_ = snl.history(target=\"Infected\")"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "_ = snl.history(target=\"Rt\")"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "_ = snl.history(target=\"rho\")"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "_ = snl.history(target=\"sigma\")"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "_ = snl.history(target=\"theta\")"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "_ = snl.history(target=\"kappa\")"
+   ]
+  },
+  {
+   "source": [
+    "### Change rate of parameters in main scenario\n",
+    "History of each parameter will be shown. Values will be divided by the values in 0th phase."
+   ],
+   "cell_type": "markdown",
+   "metadata": {}
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "_ = snl.history_rate(name=\"Main\")"
+   ]
+  },
+  {
+   "source": [
+    "## Retrospective analysis\n",
+    "We can evaluate the impact of measures using past records. How many people were infected if the parameter values have not changed sinse 01Sep2020?"
+   ],
+   "cell_type": "markdown",
+   "metadata": {}
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "# Perform retrospective analysis\n",
+    "snl_retro = cs.Scenario(jhu_data, population_data, \"Japan\")\n",
+    "snl_retro.retrospective(\"01Sep2020\", model=cs.SIRF, control=\"Main\", target=\"Retrospective\")"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "# Show the summary of estimation\n",
+    "cols = [\"Start\", \"End\", \"ODE\", \"Rt\", *cs.SIRF.PARAMETERS] + [\"RMSLE\", \"Trials\", \"Runtime\"]\n",
+    "snl_retro.summary(columns=cols)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "# History of reproduction number\n",
+    "_ = snl_retro.history(\"Rt\")"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "# History of Infected\n",
+    "_ = snl_retro.history(\"Infected\")"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "# Show the representative values\n",
+    "snl_retro.describe()"
+   ]
+  }
+ ],
+ "metadata": {
+  "language_info": {
+   "codemirror_mode": {
+    "name": "ipython",
+    "version": 3
+   },
+   "file_extension": ".py",
+   "mimetype": "text/x-python",
+   "name": "python",
+   "nbconvert_exporter": "python",
+   "pygments_lexer": "ipython3",
+   "version": "3.8.5-final"
+  },
+  "orig_nbformat": 2,
+  "kernelspec": {
+   "name": "python3",
+   "display_name": "Python 3.8.5 64-bit ('covid19-sir': pipenv)",
+   "metadata": {
+    "interpreter": {
+     "hash": "aa53c8c6e6798222a2084c11cc25017700a8d3ad495b587e3a634f357767115f"
+    }
+   }
+  }
+ },
+ "nbformat": 4,
+ "nbformat_minor": 2
+}

@@ -1,0 +1,341 @@
+{
+ "metadata": {
+  "language_info": {
+   "codemirror_mode": {
+    "name": "ipython",
+    "version": 3
+   },
+   "file_extension": ".py",
+   "mimetype": "text/x-python",
+   "name": "python",
+   "nbconvert_exporter": "python",
+   "pygments_lexer": "ipython3",
+   "version": "3.9.1-final"
+  },
+  "orig_nbformat": 2,
+  "kernelspec": {
+   "name": "python3",
+   "display_name": "Python 3.9.1 64-bit ('.venv')",
+   "metadata": {
+    "interpreter": {
+     "hash": "aa53c8c6e6798222a2084c11cc25017700a8d3ad495b587e3a634f357767115f"
+    }
+   }
+  }
+ },
+ "nbformat": 4,
+ "nbformat_minor": 2,
+ "cells": [
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "# Usage: phases\n",
+    "Here, how to set phases in scenario analysis will be explained. As an example, use the records in India."
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "## Preperation"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "# Standard users\n",
+    "# !pip install covsirphy"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "# Developers (Note: this notebook is in example directory)\n",
+    "import os\n",
+    "os.chdir(\"../\")"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {
+    "tags": []
+   },
+   "outputs": [],
+   "source": [
+    "import covsirphy as cs\n",
+    "cs.__version__"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {
+    "tags": []
+   },
+   "outputs": [],
+   "source": [
+    "# Load datasets\n",
+    "data_loader = cs.DataLoader(\"input\")\n",
+    "jhu_data = data_loader.jhu(verbose=False)\n",
+    "population_data = data_loader.population(verbose=False)\n",
+    "print(jhu_data.citation)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "# Create instance of `Scenario` class\n",
+    "snl = cs.Scenario(jhu_data, population_data, country=\"India\", province=None)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {
+    "tags": []
+   },
+   "outputs": [],
+   "source": [
+    "# Summarize main scenario\n",
+    "snl.summary()"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "Note:  \n",
+    "This is empty because no phases are registered. Term \"phase\" means a sequential dates in which the parameters of SIR-derived models are fixed. The details will be explained later."
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "Just for demonstration, we will fix the first/end date of the records here. This is un-necessary for your analysis."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {
+    "tags": []
+   },
+   "outputs": [],
+   "source": [
+    "# Fix the first date of records\n",
+    "snl.first_date = \"01Mar2020\"\n",
+    "# Fix the last date of records\n",
+    "snl.last_date = \"16Jul2020\"\n",
+    "# Summarize (Empty because no phases are registered)\n",
+    "snl.summary()"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "## Set phases with S-R trend analysis\n",
+    "How can we set phases?\n",
+    "\n",
+    "Here, we will use \"S-R trend analysis\" explained in [S-R trend analysis section in \"Kaggle: COVID-19 data with SIR model\"](https://www.kaggle.com/lisphilar/covid-19-data-with-sir-model#S-R-trend-analysis). $S$ (Susceptible) and $R$ (Recovered) show the following relationship in SIR-derived models. $S_{(R)}$ means $S$ as a function of $R$.\n",
+    "\n",
+    "$$S_{(R)} = N e^{-a R}$$\n",
+    "\n",
+    "where $N$ is total population and $a=\\cfrac{\\beta}{N \\gamma}$ is a constant.  \n",
+    "This leads to\n",
+    "$$\\log S_{(R)} = - a R + \\log N$$"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "$\\log S$ decreases constantly with increase of $R$, when the records follow a SIR-derived model and the parameter values of the model are constant. With logarithmic y-axis scale, plot of $(x, y) = (R, S)$ shows a line. "
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "The slope of the line may change when the parameter values ($\\beta$ and $\\gamma$) are changed. To detect the dates when the parameter values were changed, we will find the change points of $\\log S$ as a function of $R$, using [ruptures: change point detection in Python](https://github.com/deepcharles/ruptures). We call the period from a change point to the next change point as a \"phase\" in this analysis."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {
+    "tags": []
+   },
+   "outputs": [],
+   "source": [
+    "# Set phase with S-R trend analysis\n",
+    "snl.trend()\n",
+    "snl.summary()\n",
+    "# If necessary, initial (0th) phase can be disabled\n",
+    "# scenario.disable(phases=[\"0th\"])"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "## Remove un-necessary change points manually\n",
+    "The slope of 4th phase seems to equal to that of 3rd phase. Here, we will combine 3rd phase and 4th phase here and reset phase names."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {
+    "tags": []
+   },
+   "outputs": [],
+   "source": [
+    "# Before: 3rd is 12Jun2020-19Jun2020, 4th is 20Jun2020-29Jun2020\n",
+    "# After: 3rd is 12Jun2020-29Jun2020, 4th is the same as old 5th\n",
+    "snl.combine(phases=[\"3rd\", \"4th\"])\n",
+    "snl.summary()"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "Show the trend with manually set change points."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {
+    "tags": []
+   },
+   "outputs": [],
+   "source": [
+    "snl.trend(force=False)"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "## Separate phases manually\n",
+    "Because point of $(x, y) = (S, R)$ jumped on 29May2020, we will separete the 1st phase with this change point and reset phase names."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {
+    "tags": []
+   },
+   "outputs": [],
+   "source": [
+    "# Before: 1st is 20May2020-02Jun2020\n",
+    "# After: 1st is 20May2020-28May2020, 2nd is 29May2020-02Jun2020\n",
+    "snl.separate(date=\"29May2020\", phase=\"1st\")\n",
+    "snl.summary()"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {
+    "tags": []
+   },
+   "outputs": [],
+   "source": [
+    "snl.trend(force=False)"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "## Disable/enable phases manually\n",
+    "Phases can be disable for parameter eatimation. Disabled phases can be enabled with `Scenario.enable()` method."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "# Disable 0th phase\n",
+    "snl.disable(phases=[\"0th\"])\n",
+    "snl.summary()"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "snl.trend(force=False)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "# Enable 0th phase\n",
+    "snl.enable(phases=[\"0th\"])\n",
+    "snl.summary()"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "## Add phases one by one\n",
+    "In the previous sections, we started with S-R trend analysis. We can create phases without this analysis when you have a new idea to find change points."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "# Clear all phases\n",
+    "snl.clear(include_past=True).summary()"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "# Set 0th phase to set the start date of 1st phase\n",
+    "snl.add(end_date=\"19May2020\")\n",
+    "# Add 1st phase and disable 0th phase\n",
+    "snl.add(end_date=\"28May2020\").disable(phases=[\"0th\"])\n",
+    "# Add 2nd phase\n",
+    "snl.add(end_date=\"02Jun2020\")\n",
+    "# Add 3rd phase\n",
+    "snl.add(end_date=\"11Jun2020\")\n",
+    "# Add 4th phase\n",
+    "snl.add(end_date=\"29Jun2020\")\n",
+    "# Add 5th phase to the last of the records\n",
+    "snl.add().summary()"
+   ]
+  }
+ ]
+}

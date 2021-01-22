@@ -1,0 +1,292 @@
+{
+ "cells": [
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "# Usage: quickest tour\n",
+    "Thank you for using CovsirPhy!!  \n",
+    "This is the quickest tour to get an overview of CovsirPhy.\n",
+    "\n",
+    "- Download datasets\n",
+    "- Parameter estimation with phase-dependent SIR-derived models\n",
+    "- Simulate the number of cases"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "## Preparation\n",
+    "Prepare the packages."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "# Standard users\n",
+    "# !pip install covsirphy"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "# Developers (Note: this notebook is in example directory)\n",
+    "import os\n",
+    "os.chdir(\"../\")"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "from pprint import pprint"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {
+    "tags": []
+   },
+   "outputs": [],
+   "source": [
+    "import covsirphy as cs\n",
+    "cs.__version__"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "## Dataset preparation\n",
+    "Download the datasets to \"input\" directory and load them.\n",
+    "If \"input\" directory has the datasets, `DataLoader` will load the local files. If the datasets were updated in remote servers, `DataLoader` will update the local files automatically.\n",
+    "Please refer to [Usage: datasets](https://lisphilar.github.io/covid19-sir/usage_dataset.html) for the details."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {
+    "tags": []
+   },
+   "outputs": [],
+   "source": [
+    "# Standard users and developers\n",
+    "data_loader = cs.DataLoader(\"input\")\n",
+    "# The number of cases (JHU style)\n",
+    "jhu_data = data_loader.jhu(verbose=False)\n",
+    "# Population in each country\n",
+    "population_data = data_loader.population(verbose=False)"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "We can select the following countries."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {
+    "tags": []
+   },
+   "outputs": [],
+   "source": [
+    "pprint(set(jhu_data.countries()) & set(population_data.countries()), compact=True)"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "## Start scenario analysis\n",
+    "As an example, we will analysis the number of cases in Italy using `Scenario` class. To initialize this class, we need to specify the country name."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "snl = cs.Scenario(jhu_data, population_data, country=\"Italy\")"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "## Check records\n",
+    "Let's see the records at first. `Scenario.records()` method return the records as a pandas dataframe and show a line plot. Some kind of complement will be done for analysis, if necessary."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "df = snl.records()\n",
+    "df.tail()"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "## S-R trend analysis\n",
+    "S-R trend analysis finds the change points of SIR-derived ODE parameters. This is a significant step of analysis because we assume that ODE parameter values will be changed phase by phase (not daily basis, not constant through the outbreak).  \n",
+    "Details will be explained in [Usage: phases](https://lisphilar.github.io/covid19-sir/usage_phases.html)."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "_ = snl.trend()"
+   ]
+  },
+  {
+   "source": [
+    "Summarize the phases.\n",
+    "\n",
+    "- Type: \"Past\" or \"Future\"\n",
+    "- Start: start date of the phases\n",
+    "- End: end date of the phases\n",
+    "- Population: total population in the phases"
+   ],
+   "cell_type": "markdown",
+   "metadata": {}
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "snl.summary()"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "## Hyperparameter estimation of ODE models\n",
+    "Here, we will estimate the parameter values of SIR-derived models. As an example, we use SIR-F model. Details of models will be explained in [Usage: SIR-derived models](https://lisphilar.github.io/covid19-sir/usage_theoretical.html)."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {
+    "tags": []
+   },
+   "outputs": [],
+   "source": [
+    "# Default value of timeout is 180 sec\n",
+    "snl.estimate(cs.SIRF, timeout=60)"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "## History of reproduction number\n",
+    "Let's see the history of parameter values. Reproduction number is here."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "_ = snl.history(target=\"Rt\")"
+   ]
+  },
+  {
+   "source": [
+    "## History of parameters\n",
+    "History of each parameter. Values will be divided by the values in 0th phase."
+   ],
+   "cell_type": "markdown",
+   "metadata": {}
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "_ = snl.history_rate()"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "## Simulate the number of cases\n",
+    "How many cases will be in 30 days if the parameter values will not be changed from today?"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "# Add a phase with 30 days from the date of the last record\n",
+    "snl.add(days=30)\n",
+    "_ = snl.simulate()"
+   ]
+  },
+  {
+   "source": [
+    "Next, please see [Usage: scenario analysis](https://lisphilar.github.io/covid19-sir/usage_quick.html) to find details of datasets and how to perform scenario analysis.  \n",
+    "Thank you!"
+   ],
+   "cell_type": "markdown",
+   "metadata": {}
+  }
+ ],
+ "metadata": {
+  "language_info": {
+   "codemirror_mode": {
+    "name": "ipython",
+    "version": 3
+   },
+   "file_extension": ".py",
+   "mimetype": "text/x-python",
+   "name": "python",
+   "nbconvert_exporter": "python",
+   "pygments_lexer": "ipython3",
+   "version": "3.9.1-final"
+  },
+  "orig_nbformat": 2,
+  "kernelspec": {
+   "name": "python3",
+   "display_name": "Python 3.9.1 64-bit ('.venv')",
+   "metadata": {
+    "interpreter": {
+     "hash": "aa53c8c6e6798222a2084c11cc25017700a8d3ad495b587e3a634f357767115f"
+    }
+   }
+  }
+ },
+ "nbformat": 4,
+ "nbformat_minor": 2
+}

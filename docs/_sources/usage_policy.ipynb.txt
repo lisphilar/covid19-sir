@@ -1,0 +1,392 @@
+{
+ "metadata": {
+  "language_info": {
+   "codemirror_mode": {
+    "name": "ipython",
+    "version": 3
+   },
+   "file_extension": ".py",
+   "mimetype": "text/x-python",
+   "name": "python",
+   "nbconvert_exporter": "python",
+   "pygments_lexer": "ipython3",
+   "version": "3.9.1-final"
+  },
+  "orig_nbformat": 2,
+  "kernelspec": {
+   "name": "python3",
+   "display_name": "Python 3.9.1 64-bit ('.venv')",
+   "metadata": {
+    "interpreter": {
+     "hash": "aa53c8c6e6798222a2084c11cc25017700a8d3ad495b587e3a634f357767115f"
+    }
+   }
+  }
+ },
+ "nbformat": 4,
+ "nbformat_minor": 2,
+ "cells": [
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "# Usage: policy measures\n",
+    "Here, we will analyse the relationship of policy measures and parameter values of SIR-derived ODE models. Policy measures are tracked by [Oxford Covid-19 Government Response Tracker (OxCGRT)](https://github.com/OxCGRT/covid-policy-tracker)."
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "## Preparation"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "# Standard users\n",
+    "# !pip install covsirphy\n",
+    "# Developers (Note: this notebook is in example directory)\n",
+    "import os\n",
+    "os.chdir(\"../\")"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "from pprint import pprint"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "import covsirphy as cs\n",
+    "cs.__version__"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {
+    "tags": []
+   },
+   "outputs": [],
+   "source": [
+    "# Standard users and developers\n",
+    "data_loader = cs.DataLoader(\"input\")\n",
+    "# The number of cases (JHU style)\n",
+    "jhu_data = data_loader.jhu(verbose=False)\n",
+    "# Population in each country\n",
+    "population_data = data_loader.population(verbose=False)\n",
+    "# Government Response Tracker (OxCGRT)\n",
+    "oxcgrt_data = data_loader.oxcgrt(verbose=False)\n",
+    "# Description/citation\n",
+    "print(oxcgrt_data.citation)"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "## Class for policy measure analysis\n",
+    "We will `PolicyMeasures` class to find relationship of policy measures and parameter values of SIR-derived ODE models."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {
+    "tags": []
+   },
+   "outputs": [],
+   "source": [
+    "# Create analyser with tau value 360 [min] (can be changed)\n",
+    "analyser = cs.PolicyMeasures(jhu_data, population_data, oxcgrt_data, tau=360)\n",
+    "# The number of registerd countries\n",
+    "len(analyser.countries)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "# We can get Scenario instance for detailed scenario analysis\n",
+    "type(analyser.scenario(\"Japan\"))"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "## Set phases with S-R trend analysis\n",
+    "We will perform S-R trend analysis to set phases in all countries. Countries which do not have **19th phases** will be un-registered for the next analysis. This number will be adjusted for your analysis."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "# Show the number of phases of all countries\n",
+    "analyser.trend()\n",
+    "pprint(analyser.phase_len(), compact=True)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "# Set phases with S-R trend analysis\n",
+    "analyser.trend(min_len=19)\n",
+    "# The number of countries\n",
+    "len(analyser.countries)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {
+    "tags": []
+   },
+   "outputs": [],
+   "source": [
+    "phase_len_dict = analyser.phase_len()\n",
+    "pprint(phase_len_dict, compact=True)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {
+    "tags": []
+   },
+   "outputs": [],
+   "source": [
+    "# Here, only show the countries which have the most phases\n",
+    "countries_show = max(phase_len_dict.items(), key=lambda x: x[0])[1]\n",
+    "# Show summary\n",
+    "analyser.summary(countries=countries_show)"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "## Parameter estimation\n",
+    "we will estimate the parameter values with SIR-derived ODE models in each country."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {
+    "tags": []
+   },
+   "outputs": [],
+   "source": [
+    "# Parameter estimation with SIR-F model\n",
+    "# Caution! This takes too much time.\n",
+    "# analyser.estimate(cs.SIRF, timeout=60)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "# Show summary\n",
+    "# analyser.summary(countries=countries_show)"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "## Compare the history of parameters\n",
+    "Here, compare the history of parameter values if countries."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "# All parameter/day parameter/Rt/OxCGRT\n",
+    "# analyser.track().head()"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "### $Rt$: Reprodcution number $\\mathrm{[-]}$"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "# analyser.history(\"Rt\", roll_window=None).tail()"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "### $\\rho$: Effective contact rate $\\mathrm{[-]}$"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "# analyser.history(\"rho\", roll_window=None).tail()"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "### $\\sigma$: Recovery rate $\\mathrm{[-]}$"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "# analyser.history(\"sigma\", roll_window=None).tail()"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "### $\\kappa$: Mortality rate of infected cases $\\mathrm{[-]}$"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "# analyser.history(\"kappa\", roll_window=None).tail()"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "### $\\theta$: Mortality rate of S$^\\ast$ cases $\\mathrm{[-]}$"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "# analyser.history(\"theta\", roll_window=None).tail()"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "## (Experimental): Relationship of OxCGRT index and parameter values\n",
+    "Government responses will impact on parameter values of ODE models about 14 days later. Here, we will investigate on the relationship of [stringency index (from OxCGRT)](https://github.com/OxCGRT/covid-policy-tracker/blob/master/documentation/index_methodology.md) and reproduction number/model parameters.\n"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "%matplotlib inline\n",
+    "from matplotlib import pyplot as plt\n",
+    "import seaborn as sns\n",
+    "import pandas as pd"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "\"\"\"\n",
+    "df = analyser.track()\n",
+    "param_cols = [\"Rt\", *cs.SIRF.PARAMETERS]\n",
+    "oxcgrt_cols = oxcgrt_data.OXCGRT_VARS[:]\n",
+    "cols = param_cols + oxcgrt_cols\n",
+    "delay = 14\n",
+    "\n",
+    "for col in param_cols:\n",
+    "    df[col] = pd.to_numeric(df[col], errors=\"coerce\")\n",
+    "    df[col] = df.groupby(\"Country\")[col].shift(0 - delay)\n",
+    "\n",
+    "df = df.dropna(how=\"any\")\n",
+    "df = df.loc[:, [\"Date\", \"Country\", *cols]]\n",
+    "track_df = df.copy()\n",
+    "track_df.info()\n",
+    "\"\"\"\n",
+    "None"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "# Correlation\n",
+    "# df = track_df.copy()\n",
+    "# df.corr().style.background_gradient(axis=None)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "\"\"\"\n",
+    "# Scatter plot of Stringency index and Rt\n",
+    "df = track_df.copy()\n",
+    "sns.scatterplot(data=df, x=\"Stringency_index\", y=\"Rt\", hue=\"Country\", legend=\"brief\", marker=\"+\")\n",
+    "bbox_to_anchor=(1.02, 0)\n",
+    "bbox_loc=\"lower left\"\n",
+    "plt.legend(bbox_to_anchor=bbox_to_anchor, loc=bbox_loc, borderaxespad=0)\n",
+    "plt.title(\"Relationship of Stringency index and reproduction number\")\n",
+    "plt.ylabel(\"Reproduction number\")\n",
+    "plt.xlabel(\"Stringency index\")\n",
+    "plt.show()\n",
+    "\"\"\"\n",
+    "None"
+   ]
+  }
+ ]
+}

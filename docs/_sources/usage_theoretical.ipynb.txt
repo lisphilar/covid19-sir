@@ -1,0 +1,685 @@
+{
+ "cells": [
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "# Usage: SIR-derived models\n",
+    "Here, we will create an example dataset with theoretical values of SIR-derived model. Then, we will perform scenario analysis with it."
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "## Preparation"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "# Standard users\n",
+    "# !pip install covsirphy"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "# Developers (Note: this notebook is in example directory)\n",
+    "import os\n",
+    "os.chdir(\"../\")"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "from pprint import pprint"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {
+    "tags": []
+   },
+   "outputs": [],
+   "source": [
+    "import covsirphy as cs\n",
+    "cs.__version__"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {
+    "tags": []
+   },
+   "outputs": [],
+   "source": [
+    "# Instance to save population values\n",
+    "population_data = cs.PopulationData(filename=None)\n",
+    "population_data.cleaned()"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "## Create example dataset with theoretical values\n",
+    "We will use `ExampleData` class to produce theoretical values. Model descriptions (`SIR` class etc.) have preset of parameter values. Then, $\\tau$ (coeficient for non-dimensionalization) will be set as $1440\\ \\mathrm{[min]}$. The first date of records will be 01Jan2020 as an example."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "# Set tau value and start date of records\n",
+    "example_data = cs.ExampleData(tau=1440, start_date=\"01Jan2020\")\n",
+    "# No records has been registered\n",
+    "example_data.cleaned()"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "`ExampleData` class is a child class of `JHUData`. This means that we can use the example data in scenario analysis. Example codes will be shown in \"Scenario analysis with theoretical data\" subsection."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "issubclass(cs.ExampleData, cs.JHUData)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "isinstance(example_data, cs.JHUData)"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "## SIR model\n",
+    "Let's start with simle SIR model. Details of models are explained in [Kaggle: COVID-19 data with SIR model](https://www.kaggle.com/lisphilar/covid-19-data-with-sir-model#SIR-to-SIR-F).\n",
+    "\\begin{align*}\n",
+    "\\mathrm{S} \\overset{\\beta I}{\\longrightarrow} \\mathrm{I} \\overset{\\gamma}{\\longrightarrow} \\mathrm{R}  \\\\\n",
+    "\\end{align*}\n",
+    "\n",
+    "Variables:  \n",
+    "\n",
+    "* $\\mathrm{S}$: Susceptible (= Population - Confirmed)  \n",
+    "* $\\mathrm{I}$: Infected (=Confirmed - Recovered - Fatal)  \n",
+    "* $\\mathrm{R}$: Recovered or Fatal (= Recovered + Fatal)  \n",
+    "\n",
+    "Parameters:  \n",
+    "\n",
+    "* $\\beta$: Effective contact rate $\\mathrm{[1/min]}$  \n",
+    "* $\\gamma$: Recovery (+ Mortality) rate $\\mathrm{[1/min]}$  \n",
+    "\n",
+    "Note:  \n",
+    "Though R in SIR model is \"Recovered and have immunity\", we defines \"R as Recovered or fatal\". This is because mortality rate cannot be ignored in the real COVID-19 data."
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "### Non-dimensional SIR model\n",
+    "To simplify the model, we will remove the units of the variables from ODE.\n",
+    "\n",
+    "Set $(S, I, R) = N \\times (x, y, z)$ and $(T, \\beta, \\gamma) = (\\tau t, \\tau^{-1} \\rho, \\tau^{-1} \\sigma)$.  \n",
+    "\n",
+    "This results in the ODE  \n",
+    "\\begin{align*}\n",
+    "& \\frac{\\mathrm{d}x}{\\mathrm{d}t}= - \\rho x y  \\\\\n",
+    "& \\frac{\\mathrm{d}y}{\\mathrm{d}t}= \\rho x y - \\sigma y  \\\\\n",
+    "& \\frac{\\mathrm{d}z}{\\mathrm{d}t}= \\sigma y  \\\\\n",
+    "\\end{align*}\n",
+    "\n",
+    "Where $N$ is the total population and $\\tau$ is a coefficient ([min], is an integer to simplify).  "
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {
+    "tags": []
+   },
+   "outputs": [],
+   "source": [
+    "# Model name\n",
+    "print(cs.SIR.NAME)\n",
+    "# Example parameter values\n",
+    "pprint(cs.SIR.EXAMPLE, compact=True)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "model = cs.SIR\n",
+    "area = {\"country\": \"Full\", \"province\": model.NAME}\n",
+    "# Add records with SIR model\n",
+    "example_data.add(model, **area)\n",
+    "# Records with model variables\n",
+    "df = example_data.specialized(model, **area)\n",
+    "cs.line_plot(df.set_index(\"Date\"), title=f\"Example data of {model.NAME} model\", y_integer=True)"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "## SIR-D model\n",
+    "Because we are measuring the number of fatal cases and recovered cases separately, we can use two variables (\"Recovered\" and \"Deaths\") instead of \"Recovered + Deaths\" in the mathematical model.\n",
+    "\\begin{align*}\n",
+    "\\mathrm{S} \\overset{\\beta  I}{\\longrightarrow}\\ & \\mathrm{I} \\overset{\\gamma}{\\longrightarrow} \\mathrm{R}  \\\\\n",
+    "& \\mathrm{I} \\overset{\\alpha}{\\longrightarrow} \\mathrm{D}  \\\\\n",
+    "\\end{align*}\n",
+    "\n",
+    "Variables:  \n",
+    "\n",
+    "* $\\mathrm{S}$: Susceptible (= Population - Confirmed)  \n",
+    "* $\\mathrm{I}$: Infected (=Confirmed - Recovered - Fatal)  \n",
+    "* $\\mathrm{R}$: Recovered  \n",
+    "* $\\mathrm{D}$: Fatal  \n",
+    "\n",
+    "Parameters:  \n",
+    "\n",
+    "* $\\alpha$: Mortality rate $\\mathrm{[1/min]}$  \n",
+    "* $\\beta$: Effective contact rate $\\mathrm{[1/min]}$  \n",
+    "* $\\gamma$: Recovery rate $\\mathrm{[1/min]}$  \n",
+    "\n",
+    "### Non-dimensional SIR-D model\n",
+    "Set $(S, I, R, D) = N \\times (x, y, z, w)$ and $(T, \\alpha, \\beta, \\gamma) = (\\tau t, \\tau^{-1} \\kappa, \\tau^{-1} \\rho, \\tau^{-1} \\sigma)$.  \n",
+    "This results in the ODE  \n",
+    "\\begin{align*}\n",
+    "& \\frac{\\mathrm{d}x}{\\mathrm{d}t}= - \\rho x y  \\\\\n",
+    "& \\frac{\\mathrm{d}y}{\\mathrm{d}t}= \\rho x y - (\\sigma + \\kappa) y  \\\\\n",
+    "& \\frac{\\mathrm{d}z}{\\mathrm{d}t}= \\sigma y  \\\\\n",
+    "& \\frac{\\mathrm{d}w}{\\mathrm{d}t}= \\kappa y  \\\\\n",
+    "\\end{align*}\n"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {
+    "tags": []
+   },
+   "outputs": [],
+   "source": [
+    "# Model name\n",
+    "print(cs.SIRD.NAME)\n",
+    "# Example parameter values\n",
+    "pprint(cs.SIRD.EXAMPLE, compact=True)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "model = cs.SIRD\n",
+    "area = {\"country\": \"Full\", \"province\": model.NAME}\n",
+    "# Add records with SIR model\n",
+    "example_data.add(model, **area)\n",
+    "# Records with model variables\n",
+    "df = example_data.specialized(model, **area)\n",
+    "cs.line_plot(df.set_index(\"Date\"), title=f\"Example data of {model.NAME} model\", y_integer=True)"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "## SIR-F model\n",
+    "In the initial phase of COVID-19 outbreak, many cases were confirmed after they died. To consider this issue, \"S + I $\\to$ Fatal + I\" will be added to the model. When $\\alpha_{1}=0$, SIR-F model will be the same as SIR-D model.\n",
+    "\\begin{align*}\n",
+    "\\mathrm{S} \\overset{\\beta I}{\\longrightarrow} \\mathrm{S}^\\ast \\overset{\\alpha_1}{\\longrightarrow}\\ & \\mathrm{F}    \\\\\n",
+    "\\mathrm{S}^\\ast \\overset{1 - \\alpha_1}{\\longrightarrow}\\ & \\mathrm{I} \\overset{\\gamma}{\\longrightarrow} \\mathrm{R}    \\\\\n",
+    "& \\mathrm{I} \\overset{\\alpha_2}{\\longrightarrow} \\mathrm{F}    \\\\\n",
+    "\\end{align*}\n",
+    "\n",
+    "Variables:  \n",
+    "\n",
+    "* $\\mathrm{S}$: Susceptible (= Population - Confirmed)  \n",
+    "* $\\mathrm{S}^\\ast$: Confirmed and un-categorized  \n",
+    "* $\\mathrm{I}$: Confirmed and categorized as Infected  \n",
+    "* $\\mathrm{R}$: Confirmed and categorized as Recovered  \n",
+    "* $\\mathrm{F}$: Confirmed and categorzied as Fatal  \n",
+    "\n",
+    "Parameters:  \n",
+    "\n",
+    "* $\\alpha_1$: Direct fatality probability of $\\mathrm{S}^\\ast$ (non-dimensional) \n",
+    "* $\\alpha_2$: Mortality rate of Infected cases $\\mathrm{[1/min]}$  \n",
+    "* $\\beta$: Effective contact rate $\\mathrm{[1/min]}$  \n",
+    "* $\\gamma$: Recovery rate $\\mathrm{[1/min]}$  "
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "Notes on $\\mathrm{S}^\\ast$ variable:  \n",
+    "$\\mathrm{S}^\\ast$ describes the cases who are actually carriers of the disease without anyone (including themselves) knowing about it, who either die and they are confirmed positive after death, while some others are moved to infected after being confirmed.\n",
+    "\n",
+    "In JHU-style dataset, we know the number of cases who were confirmed with COVID-19, but we do not know the number of died cases who died without COVID-19.\n",
+    "Essentially $\\mathrm{S}^\\ast$ serves as an auxiliary compartment in SIR-F model to separate the two death situations and insert a probability factor of {$\\alpha_1$, $1 - \\alpha_1$}."
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "Notes on the difference of SIR-D and SIR-F model:  \n",
+    "$\\alpha_1$ is small at this time because performance of PCR tests was improved, but we can use SIR-F model rather than SIR-D model as an enhanced model even now becase $\\alpha_1$ can be 0 in the ODE model."
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "### Non-dimensional SIR-F model\n",
+    "Set $(S, I, R, F) = N \\times (x, y, z, w)$ and $(T, \\alpha_1, \\alpha_2, \\beta, \\gamma) = (\\tau t, \\theta, \\tau^{-1} \\kappa, \\tau^{-1} \\rho, \\tau^{-1} \\sigma)$.  \n",
+    "This results in the ODE  \n",
+    "\\begin{align*}\n",
+    "& \\frac{\\mathrm{d}x}{\\mathrm{d}t}= - \\rho x y  \\\\\n",
+    "& \\frac{\\mathrm{d}y}{\\mathrm{d}t}= \\rho (1-\\theta) x y - (\\sigma + \\kappa) y  \\\\\n",
+    "& \\frac{\\mathrm{d}z}{\\mathrm{d}t}= \\sigma y  \\\\\n",
+    "& \\frac{\\mathrm{d}w}{\\mathrm{d}t}= \\rho \\theta x y + \\kappa y  \\\\\n",
+    "\\end{align*}\n"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {
+    "tags": []
+   },
+   "outputs": [],
+   "source": [
+    "# Model name\n",
+    "print(cs.SIRF.NAME)\n",
+    "# Example parameter values\n",
+    "pprint(cs.SIRF.EXAMPLE, compact=True)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "model = cs.SIRF\n",
+    "area = {\"country\": \"Full\", \"province\": model.NAME}\n",
+    "# Add records with SIR model\n",
+    "example_data.add(model, **area)\n",
+    "# Records with model variables\n",
+    "df = example_data.specialized(model, **area)\n",
+    "cs.line_plot(df.set_index(\"Date\"), title=f\"Example data of {model.NAME} model\", y_integer=True)"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "## SEWIR-F model (SIR-F with exposed/waiting cases)\n",
+    "The number of exposed cases in latent period (E) and wating cases for confirmation (W) are un-measurable variables, but key variables as well as S, I, R, F. If E and W are large, outbreak will occur in the near future. Let's replace S$\\overset{\\beta I}{\\longrightarrow}$S$^\\ast$ as follows because W also has infectivity.\n",
+    "\\begin{align*}\n",
+    "\\mathrm{S} \\overset{\\beta_1 (W+I)}{\\longrightarrow} \\mathrm{E} \\overset{\\beta_2}{\\longrightarrow} \\mathrm{W} \\overset{\\beta_3}{\\longrightarrow} \\mathrm{S}^\\ast \\overset{\\alpha_1}{\\longrightarrow}\\ & \\mathrm{F}    \\\\\n",
+    "\\mathrm{S}^\\ast \\overset{1 - \\alpha_1}{\\longrightarrow}\\ & \\mathrm{I} \\overset{\\gamma}{\\longrightarrow} \\mathrm{R}    \\\\\n",
+    "& \\mathrm{I} \\overset{\\alpha_2}{\\longrightarrow} \\mathrm{F}    \\\\\n",
+    "\\end{align*}"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "Variables:  \n",
+    "\n",
+    "* $\\mathrm{S}$: Susceptible  \n",
+    "* $\\mathrm{E}$: <u>Exposed and in latent period (without infectivity)</u>  \n",
+    "* $\\mathrm{W}$: <u>Waiting for confirmaion fiagnosis (with infectivity)</u>  \n",
+    "* $\\mathrm{S}^\\ast$: Confirmed and un-categorized  \n",
+    "* $\\mathrm{I}$: Confirmed and categorized as Infected  \n",
+    "* $\\mathrm{R}$: Confirmed and categorized as Recovered  \n",
+    "* $\\mathrm{F}$: Confirmed and categorzied as Fatal  \n",
+    "\n",
+    "Parameters:  \n",
+    "\n",
+    "* $\\alpha_1$: Direct fatality probability of $\\mathrm{S}^\\ast$ (non-dimensional) \n",
+    "* $\\alpha_2$: Mortality rate of Infected cases $\\mathrm{[1/min]}$  \n",
+    "* $\\beta_1$: <u>Exposure rate (the nymber of encounter with the virus in a minute)</u> $\\mathrm{[1/min]}$  \n",
+    "* $\\beta_2$: <u>Inverse of latent period</u> $\\mathrm{[1/min]}$  \n",
+    "* $\\beta_3$: <u>Inverse of waiting time for confirmation</u> $\\mathrm{[1/min]}$  \n",
+    "* $\\gamma$: Recovery rate $\\mathrm{[1/min]}$ \n",
+    "\n",
+    "## Non-dimensional SEWIR-F model\n",
+    "Set $(S, E, W, I, R, F) = N \\times (x_1, x_2, x_3, y, z, w)$, $(T, \\alpha_1) = (\\tau t, \\theta)$ and $(\\alpha_2, \\beta_i, \\gamma) = \\tau^{-1} \\times (\\kappa, \\rho_i, \\sigma)$.  \n",
+    "This results in the ODE  \n",
+    "\\begin{align*}\n",
+    "& \\frac{\\mathrm{d}x_1}{\\mathrm{d}t}= - \\rho_1 x_1 (x_3 + y)  \\\\\n",
+    "& \\frac{\\mathrm{d}x_2}{\\mathrm{d}t}= \\rho_1 x_1 (x_3 + y) - \\rho_2 x_2  \\\\\n",
+    "& \\frac{\\mathrm{d}x_3}{\\mathrm{d}t}= \\rho_2 x_2 - \\rho_3 x_3  \\\\\n",
+    "& \\frac{\\mathrm{d}y}{\\mathrm{d}t}= (1-\\theta) \\rho_3 x_3 - (\\sigma + \\kappa) y  \\\\\n",
+    "& \\frac{\\mathrm{d}z}{\\mathrm{d}t}= \\sigma y  \\\\\n",
+    "& \\frac{\\mathrm{d}w}{\\mathrm{d}t}= \\theta \\rho_3 x_3 + \\kappa y  \\\\\n",
+    "\\end{align*}"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {
+    "tags": []
+   },
+   "outputs": [],
+   "source": [
+    "# Model name\n",
+    "print(cs.SEWIRF.NAME)\n",
+    "# Example parameter values\n",
+    "pprint(cs.SEWIRF.EXAMPLE, compact=True)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "model = cs.SEWIRF\n",
+    "area = {\"country\": \"Full\", \"province\": model.NAME}\n",
+    "# Add records with SIR model\n",
+    "example_data.add(model, **area)\n",
+    "# Records with model variables\n",
+    "df = example_data.specialized(model, **area)\n",
+    "cs.line_plot(df.set_index(\"Date\"), title=f\"Example data of {model.NAME} model\", y_integer=True)"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "## SIR-FV model (SIR-F model with vaccination)\n",
+    "This model considers vacctnation of sussceptible people as follows. $\\omega \\times N$ persons will be vaccinated in a day. $N$ is the total population.\n",
+    "\\begin{align*}\n",
+    "\\mathrm{S} \\overset{\\beta I}{\\longrightarrow} \\mathrm{S}^\\ast \\overset{\\alpha_1}{\\longrightarrow}\\ & \\mathrm{F}    \\\\\n",
+    "\\mathrm{S}^\\ast \\overset{1 - \\alpha_1}{\\longrightarrow}\\ & \\mathrm{I} \\overset{\\gamma}{\\longrightarrow} \\mathrm{R}    \\\\\n",
+    "& \\mathrm{I} \\overset{\\alpha_2}{\\longrightarrow} \\mathrm{F}    \\\\\n",
+    "\\end{align*}\n",
+    "\n",
+    "With\n",
+    "$$\n",
+    "\\frac{\\mathrm{d}S}{\\mathrm{d}T}= - \\beta S I - \\omega N  \\\\\n",
+    "$$"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {
+    "tags": []
+   },
+   "outputs": [],
+   "source": [
+    "# Model name\n",
+    "print(cs.SIRFV.NAME)\n",
+    "# Example parameter values\n",
+    "pprint(cs.SIRFV.EXAMPLE, compact=True)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {
+    "tags": []
+   },
+   "outputs": [],
+   "source": [
+    "model = cs.SIRFV\n",
+    "area = {\"country\": \"Full\", \"province\": model.NAME}\n",
+    "# Add records with SIR model\n",
+    "example_data.add(model, **area)\n",
+    "# Records with model variables\n",
+    "df = example_data.specialized(model, **area)\n",
+    "cs.line_plot(df.set_index(\"Date\"), title=f\"Example data of {model.NAME} model\", y_integer=True)"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "## Scenario analysis with theoretical data\n",
+    "Because `ExampleData` class is a subclass of `JHUData`, we can perform scenario analysis with example datasets easily. Here, we will use the following scenarios. For explanation, $\\tau=1440$, the start date is 01Jan2020, population is 1,000,000 and country name is \"Theoretical\". This is not based on actual data.\n",
+    "\n",
+    "| name | 01Jan2020 - 31Jan2020 | 01Feb2020 - 31Dec2020 |\n",
+    "|:---:|:---:|:---|\n",
+    "| Main | SIR-F | SIR-F|\n",
+    "| Lockdown | SIR-F | SIR-F with half value of $\\rho$ |\n",
+    "| Medicine | SIR-F | SIR-F with half value of $\\kappa$ and double value of $\\sigma$ |\n",
+    "| Vaccine | SIR-F | SIR-FV with $\\omega=0.01$|"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {
+    "tags": []
+   },
+   "outputs": [],
+   "source": [
+    "# Preset of SIR-F parameters\n",
+    "preset_dict = cs.SIRF.EXAMPLE[\"param_dict\"]\n",
+    "preset_dict"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "area = {\"country\": \"Theoretical\"}\n",
+    "# Create dataset from 01Jan2020 to 31Jan2020\n",
+    "example_data.add(cs.SIRF, step_n=30, **area)\n",
+    "# Register population value\n",
+    "population_data.update(cs.SIRF.EXAMPLE[\"population\"], **area)\n",
+    "population_data.value(**area)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "# Show records with Scenario class\n",
+    "snl = cs.Scenario(example_data, population_data, tau=1440, **area)\n",
+    "record_df = snl.records()\n",
+    "display(record_df.head())\n",
+    "display(record_df.tail())"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "Note:  \n",
+    "Record on 01Jan2020 was removed because the number of recovered cases is 0 and this sometimes causes error in estimation."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "# Set 0th phase from 02Jan2020 to 31Jan2020 with preset parameter values\n",
+    "snl.clear(include_past=True)\n",
+    "snl.add(end_date=\"31Jan2020\", model=cs.SIRF, **preset_dict)\n",
+    "snl.summary()"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "# Add main scenario\n",
+    "snl.add(end_date=\"31Dec2020\", name=\"Main\")\n",
+    "# Add lockdown scenario\n",
+    "snl.clear(name=\"Lockdown\")\n",
+    "rho_lock = snl.get(\"rho\", phase=\"0th\") / 2\n",
+    "snl.add(end_date=\"31Dec2020\", name=\"Lockdown\", rho=rho_lock)\n",
+    "# Add medicine scenario\n",
+    "snl.clear(name=\"Medicine\")\n",
+    "kappa_med = snl.get(\"kappa\", phase=\"0th\") / 2\n",
+    "sigma_med = snl.get(\"sigma\", phase=\"0th\") * 2\n",
+    "snl.add(end_date=\"31Dec2020\", name=\"Medicine\", kappa=kappa_med, sigma=sigma_med)\n",
+    "# Add vaccine scenario\n",
+    "snl.clear(name=\"Vaccine\")\n",
+    "snl.add(end_date=\"31Dec2020\", name=\"Vaccine\", model=cs.SIRFV, omega=0.01)\n",
+    "# Summarize\n",
+    "snl.summary()"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "### Compare the scenarios"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {
+    "tags": []
+   },
+   "outputs": [],
+   "source": [
+    "# Apply initial value of Vaccinated because this variable is not included in first model (SIR-F)\n",
+    "snl.describe(y0_dict={\"Vaccinated\": 0})"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "_ = snl.history(target=\"Rt\")"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "_ = snl.history(target=\"Infected\")"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "_ = snl.history(target=\"Fatal\")"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "### Simulation of each scenario"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "_ = snl.simulate(name=\"Main\")"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "_ = snl.simulate(name=\"Lockdown\")"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "_ = snl.simulate(name=\"Medicine\")"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {
+    "tags": []
+   },
+   "outputs": [],
+   "source": [
+    "_ = snl.simulate(name=\"Vaccine\", y0_dict={\"Vaccinated\": 0})"
+   ]
+  }
+ ],
+ "metadata": {
+  "kernelspec": {
+   "display_name": "Python 3",
+   "language": "python",
+   "name": "python3"
+  },
+  "language_info": {
+   "codemirror_mode": {
+    "name": "ipython",
+    "version": 3
+   },
+   "file_extension": ".py",
+   "mimetype": "text/x-python",
+   "name": "python",
+   "nbconvert_exporter": "python",
+   "pygments_lexer": "ipython3",
+   "version": "3.7.1"
+  }
+ },
+ "nbformat": 4,
+ "nbformat_minor": 4
+}

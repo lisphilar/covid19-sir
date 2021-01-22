@@ -1,0 +1,466 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>covsirphy.cleaning.word &mdash; CovsirPhy  documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+
+  
+  
+  
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
+        <script src="../../../_static/jquery.js"></script>
+        <script src="../../../_static/underscore.js"></script>
+        <script src="../../../_static/doctools.js"></script>
+        <script src="../../../_static/language_data.js"></script>
+        <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+        <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+        <script type="text/x-mathjax-config">MathJax.Hub.Config({"tex2jax": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "processEscapes": true, "ignoreClass": "document", "processClass": "math|output_area"}})</script>
+    
+    <script type="text/javascript" src="../../../_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../../../index.html" class="icon icon-home" alt="Documentation Home"> CovsirPhy
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../README.html">CovsirPhy introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../INSTALLATION.html">Installation and dataset preparation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../usage_quickest.html">Usage (quickest version)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../usage_quick.html">Usage (quick version)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../usage_phases.html">Usage (details: phases)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../usage_theoretical.html">Usage (details: theoretical datasets)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../usage_policy.html">Usage (details: policy measures)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../covsirphy.html">API reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../CONTRIBUTING.html">Guideline of contribution</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">CovsirPhy</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../../index.html" class="icon icon-home"></a> &raquo;</li>
+        
+          <li><a href="../../index.html">Module code</a> &raquo;</li>
+        
+      <li>covsirphy.cleaning.word</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for covsirphy.cleaning.word</h1><div class="highlight"><pre>
+<span></span><span class="ch">#!/usr/bin/env python</span>
+<span class="c1"># -*- coding: utf-8 -*-</span>
+
+<span class="kn">from</span> <span class="nn">collections</span> <span class="kn">import</span> <span class="n">defaultdict</span>
+<span class="kn">from</span> <span class="nn">datetime</span> <span class="kn">import</span> <span class="n">datetime</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+
+
+<div class="viewcode-block" id="Word"><a class="viewcode-back" href="../../../covsirphy.cleaning.html#covsirphy.cleaning.word.Word">[docs]</a><span class="k">class</span> <span class="nc">Word</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Word definition.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># Variables of SIR-like model</span>
+    <span class="n">N</span> <span class="o">=</span> <span class="s2">&quot;Population&quot;</span>
+    <span class="n">S</span> <span class="o">=</span> <span class="s2">&quot;Susceptible&quot;</span>
+    <span class="n">C</span> <span class="o">=</span> <span class="s2">&quot;Confirmed&quot;</span>
+    <span class="n">CI</span> <span class="o">=</span> <span class="s2">&quot;Infected&quot;</span>
+    <span class="n">F</span> <span class="o">=</span> <span class="s2">&quot;Fatal&quot;</span>
+    <span class="n">R</span> <span class="o">=</span> <span class="s2">&quot;Recovered&quot;</span>
+    <span class="n">FR</span> <span class="o">=</span> <span class="s2">&quot;Fatal or Recovered&quot;</span>
+    <span class="n">V</span> <span class="o">=</span> <span class="s2">&quot;Vaccinated&quot;</span>
+    <span class="n">E</span> <span class="o">=</span> <span class="s2">&quot;Exposed&quot;</span>
+    <span class="n">W</span> <span class="o">=</span> <span class="s2">&quot;Waiting&quot;</span>
+    <span class="c1"># Column names</span>
+    <span class="n">DATE</span> <span class="o">=</span> <span class="s2">&quot;Date&quot;</span>
+    <span class="n">START</span> <span class="o">=</span> <span class="s2">&quot;Start&quot;</span>
+    <span class="n">END</span> <span class="o">=</span> <span class="s2">&quot;End&quot;</span>
+    <span class="n">T</span> <span class="o">=</span> <span class="s2">&quot;Elapsed&quot;</span>
+    <span class="n">TS</span> <span class="o">=</span> <span class="s2">&quot;t&quot;</span>
+    <span class="n">TAU</span> <span class="o">=</span> <span class="s2">&quot;tau&quot;</span>
+    <span class="n">COUNTRY</span> <span class="o">=</span> <span class="s2">&quot;Country&quot;</span>
+    <span class="n">ISO3</span> <span class="o">=</span> <span class="s2">&quot;ISO3&quot;</span>
+    <span class="n">PROVINCE</span> <span class="o">=</span> <span class="s2">&quot;Province&quot;</span>
+    <span class="n">AREA_COLUMNS</span> <span class="o">=</span> <span class="p">[</span><span class="n">COUNTRY</span><span class="p">,</span> <span class="n">PROVINCE</span><span class="p">]</span>
+    <span class="n">STR_COLUMNS</span> <span class="o">=</span> <span class="p">[</span><span class="n">DATE</span><span class="p">,</span> <span class="o">*</span><span class="n">AREA_COLUMNS</span><span class="p">]</span>
+    <span class="n">COLUMNS</span> <span class="o">=</span> <span class="p">[</span><span class="o">*</span><span class="n">STR_COLUMNS</span><span class="p">,</span> <span class="n">C</span><span class="p">,</span> <span class="n">CI</span><span class="p">,</span> <span class="n">F</span><span class="p">,</span> <span class="n">R</span><span class="p">]</span>
+    <span class="n">NLOC_COLUMNS</span> <span class="o">=</span> <span class="p">[</span><span class="n">DATE</span><span class="p">,</span> <span class="n">C</span><span class="p">,</span> <span class="n">CI</span><span class="p">,</span> <span class="n">F</span><span class="p">,</span> <span class="n">R</span><span class="p">]</span>
+    <span class="n">VALUE_COLUMNS</span> <span class="o">=</span> <span class="p">[</span><span class="n">C</span><span class="p">,</span> <span class="n">CI</span><span class="p">,</span> <span class="n">F</span><span class="p">,</span> <span class="n">R</span><span class="p">]</span>
+    <span class="n">FIG_COLUMNS</span> <span class="o">=</span> <span class="p">[</span><span class="n">CI</span><span class="p">,</span> <span class="n">F</span><span class="p">,</span> <span class="n">R</span><span class="p">,</span> <span class="n">FR</span><span class="p">,</span> <span class="n">V</span><span class="p">,</span> <span class="n">E</span><span class="p">,</span> <span class="n">W</span><span class="p">]</span>
+    <span class="c1"># Date format: 22Jan2020 etc.</span>
+    <span class="n">DATE_FORMAT</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">%d</span><span class="s2">%b%Y&quot;</span>
+    <span class="c1"># Separator of country and province</span>
+    <span class="n">SEP</span> <span class="o">=</span> <span class="s2">&quot;/&quot;</span>
+    <span class="c1"># EDA</span>
+    <span class="n">RATE_COLUMNS</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="s2">&quot;Fatal per Confirmed&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;Recovered per Confirmed&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;Fatal per (Fatal or Recovered)&quot;</span>
+    <span class="p">]</span>
+    <span class="c1"># Optimization</span>
+    <span class="n">A</span> <span class="o">=</span> <span class="s2">&quot;_actual&quot;</span>
+    <span class="n">P</span> <span class="o">=</span> <span class="s2">&quot;_predicted&quot;</span>
+    <span class="c1"># Phase name</span>
+    <span class="n">SUFFIX_DICT</span> <span class="o">=</span> <span class="n">defaultdict</span><span class="p">(</span><span class="k">lambda</span><span class="p">:</span> <span class="s2">&quot;th&quot;</span><span class="p">)</span>
+    <span class="n">SUFFIX_DICT</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="mi">1</span><span class="p">:</span> <span class="s2">&quot;st&quot;</span><span class="p">,</span> <span class="mi">2</span><span class="p">:</span> <span class="s2">&quot;nd&quot;</span><span class="p">,</span> <span class="mi">3</span><span class="p">:</span> <span class="s2">&quot;rd&quot;</span><span class="p">})</span>
+    <span class="n">TENSE</span> <span class="o">=</span> <span class="s2">&quot;Type&quot;</span>
+    <span class="n">PAST</span> <span class="o">=</span> <span class="s2">&quot;Past&quot;</span>
+    <span class="n">FUTURE</span> <span class="o">=</span> <span class="s2">&quot;Future&quot;</span>
+    <span class="n">INITIAL</span> <span class="o">=</span> <span class="s2">&quot;Initial&quot;</span>
+    <span class="n">ODE</span> <span class="o">=</span> <span class="s2">&quot;ODE&quot;</span>
+    <span class="n">RT</span> <span class="o">=</span> <span class="s2">&quot;Rt&quot;</span>
+    <span class="c1"># Scenario analysis</span>
+    <span class="n">PHASE</span> <span class="o">=</span> <span class="s2">&quot;Phase&quot;</span>
+    <span class="n">SERIES</span> <span class="o">=</span> <span class="s2">&quot;Scenario&quot;</span>
+    <span class="n">MAIN</span> <span class="o">=</span> <span class="s2">&quot;Main&quot;</span>
+    <span class="c1"># Flag</span>
+    <span class="n">UNKNOWN</span> <span class="o">=</span> <span class="s2">&quot;-&quot;</span>
+
+<div class="viewcode-block" id="Word.num2str"><a class="viewcode-back" href="../../../covsirphy.cleaning.html#covsirphy.cleaning.word.Word.num2str">[docs]</a>    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">num2str</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">num</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Convert numbers to 1st, 2nd etc.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">        @num (int): number</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            (str)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">num</span><span class="p">,</span> <span class="nb">int</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">&quot;@num must be an integer.&quot;</span><span class="p">)</span>
+        <span class="n">q</span><span class="p">,</span> <span class="n">mod</span> <span class="o">=</span> <span class="nb">divmod</span><span class="p">(</span><span class="n">num</span><span class="p">,</span> <span class="mi">10</span><span class="p">)</span>
+        <span class="n">suffix</span> <span class="o">=</span> <span class="s2">&quot;th&quot;</span> <span class="k">if</span> <span class="n">q</span> <span class="o">==</span> <span class="mi">1</span> <span class="k">else</span> <span class="bp">cls</span><span class="o">.</span><span class="n">SUFFIX_DICT</span><span class="p">[</span><span class="n">mod</span><span class="p">]</span>
+        <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">num</span><span class="si">}{</span><span class="n">suffix</span><span class="si">}</span><span class="s2">&quot;</span></div>
+
+<div class="viewcode-block" id="Word.negative_exp"><a class="viewcode-back" href="../../../covsirphy.cleaning.html#covsirphy.cleaning.word.Word.negative_exp">[docs]</a>    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">negative_exp</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Negative exponential function f(x)=A exp(-Bx).</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            x (float): x values</span>
+<span class="sd">            a (float): the first parameters of the function</span>
+<span class="sd">            b (float): the second parameters of the function</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">a</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="n">b</span> <span class="o">*</span> <span class="n">x</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Word.date_obj"><a class="viewcode-back" href="../../../covsirphy.cleaning.html#covsirphy.cleaning.word.Word.date_obj">[docs]</a>    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">date_obj</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">date_str</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Convert a string to a datetime object.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            date_str (str): date, like 22Jan2020</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            (datetime.datetime)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">obj</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">strptime</span><span class="p">(</span><span class="n">date_str</span><span class="p">,</span> <span class="bp">cls</span><span class="o">.</span><span class="n">DATE_FORMAT</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">obj</span></div>
+
+<div class="viewcode-block" id="Word.flatten"><a class="viewcode-back" href="../../../covsirphy.cleaning.html#covsirphy.cleaning.word.Word.flatten">[docs]</a>    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">flatten</span><span class="p">(</span><span class="n">nested_list</span><span class="p">,</span> <span class="n">unique</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Flatten the nested list.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            nested_list (list[list[object]]): nested list</span>
+<span class="sd">            unique (bool): if True, only unique values will remain</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            (list[object])</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">flattened</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span><span class="n">nested_list</span><span class="p">,</span> <span class="nb">list</span><span class="p">())</span>
+        <span class="k">if</span> <span class="n">unique</span><span class="p">:</span>
+            <span class="k">return</span> <span class="nb">list</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">flattened</span><span class="p">))</span>
+        <span class="k">return</span> <span class="n">flattened</span></div>
+
+<div class="viewcode-block" id="Word.validate_dataframe"><a class="viewcode-back" href="../../../covsirphy.cleaning.html#covsirphy.cleaning.word.Word.validate_dataframe">[docs]</a>    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">validate_dataframe</span><span class="p">(</span><span class="n">target</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;df&quot;</span><span class="p">,</span> <span class="n">time_index</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Validate the dataframe has the columns.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            target (pandas.DataFrame): the dataframe to validate</span>
+<span class="sd">            name (str): argument name of the dataframe</span>
+<span class="sd">            time_index (bool): if True, the dataframe must has DatetimeIndex</span>
+<span class="sd">            columns (list[str] or None): the columns the dataframe must have</span>
+<span class="sd">            df (pandas.DataFrame): as-is the target</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">df</span> <span class="o">=</span> <span class="n">target</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;@</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2"> must be a instance of (pandas.DataFrame).&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">time_index</span> <span class="ow">and</span> <span class="p">(</span><span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">df</span><span class="o">.</span><span class="n">index</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">DatetimeIndex</span><span class="p">)):</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Index of @</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2"> must be &lt;pd.DatetimeIndex&gt;.&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">columns</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">df</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">set</span><span class="p">(</span><span class="n">columns</span><span class="p">)</span><span class="o">.</span><span class="n">issubset</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">df</span><span class="o">.</span><span class="n">columns</span><span class="p">)):</span>
+            <span class="n">cols_str</span> <span class="o">=</span> <span class="s1">&#39;, &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span>
+                <span class="p">[</span><span class="n">col</span> <span class="k">for</span> <span class="n">col</span> <span class="ow">in</span> <span class="n">columns</span> <span class="k">if</span> <span class="n">col</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">df</span><span class="o">.</span><span class="n">columns</span><span class="p">]</span>
+            <span class="p">)</span>
+            <span class="k">raise</span> <span class="ne">KeyError</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;Expected columns were not included in </span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2">. </span><span class="si">{</span><span class="n">cols_str</span><span class="si">}</span><span class="s2"> must be included.&quot;</span>
+            <span class="p">)</span>
+        <span class="k">return</span> <span class="n">df</span></div>
+
+<div class="viewcode-block" id="Word.validate_natural_int"><a class="viewcode-back" href="../../../covsirphy.cleaning.html#covsirphy.cleaning.word.Word.validate_natural_int">[docs]</a>    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">validate_natural_int</span><span class="p">(</span><span class="n">target</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;number&quot;</span><span class="p">,</span> <span class="n">include_zero</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Validate the natural (non-negative) number.</span>
+<span class="sd">        If the value is natural number and the type was float,</span>
+<span class="sd">        will be converted to an integer.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            target (int or float or str): value to validate</span>
+<span class="sd">            name (str): argument name of the value</span>
+<span class="sd">            include_zero (bool): include 0 or not</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            (int): as-is the target</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">s</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;@</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2"> must be a natural number, but </span><span class="si">{</span><span class="n">target</span><span class="si">}</span><span class="s2"> was applied&quot;</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">number</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">target</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">TypeError</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">s</span><span class="si">}</span><span class="s2"> and not converted to integer.&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">number</span> <span class="o">!=</span> <span class="n">target</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">s</span><span class="si">}</span><span class="s2">. |</span><span class="si">{</span><span class="n">target</span><span class="si">}</span><span class="s2"> - </span><span class="si">{</span><span class="n">number</span><span class="si">}</span><span class="s2">| &gt; 0&quot;</span><span class="p">)</span>
+        <span class="n">min_value</span> <span class="o">=</span> <span class="mi">0</span> <span class="k">if</span> <span class="n">include_zero</span> <span class="k">else</span> <span class="mi">1</span>
+        <span class="k">if</span> <span class="n">number</span> <span class="o">&lt;</span> <span class="n">min_value</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">s</span><span class="si">}</span><span class="s2">. This value is under </span><span class="si">{</span><span class="n">min_value</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">number</span></div>
+
+<div class="viewcode-block" id="Word.validate_subclass"><a class="viewcode-back" href="../../../covsirphy.cleaning.html#covsirphy.cleaning.word.Word.validate_subclass">[docs]</a>    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">validate_subclass</span><span class="p">(</span><span class="n">target</span><span class="p">,</span> <span class="n">parent</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;target&quot;</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Validate the target is a subclass of the parent class.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            target (object): target to validate</span>
+<span class="sd">            parent (object): parent class</span>
+<span class="sd">            name (str): argument name of the target</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            (int): as-is the target</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">s</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;@</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2"> must be an sub class of </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">parent</span><span class="p">)</span><span class="si">}</span><span class="s2">, but </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">target</span><span class="p">)</span><span class="si">}</span><span class="s2"> was applied.&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">issubclass</span><span class="p">(</span><span class="n">target</span><span class="p">,</span> <span class="n">parent</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="n">s</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">target</span></div>
+
+<div class="viewcode-block" id="Word.validate_instance"><a class="viewcode-back" href="../../../covsirphy.cleaning.html#covsirphy.cleaning.word.Word.validate_instance">[docs]</a>    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">validate_instance</span><span class="p">(</span><span class="n">target</span><span class="p">,</span> <span class="n">class_obj</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;target&quot;</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Validate the target is a instance of the class object.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            target (instance): target to validate</span>
+<span class="sd">            parent (class): class object</span>
+<span class="sd">            name (str): argument name of the target</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            (instance): as-is target</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">s</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;@</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2"> must be an instance of </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">class_obj</span><span class="p">)</span><span class="si">}</span><span class="s2">, but </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">target</span><span class="p">)</span><span class="si">}</span><span class="s2"> was applied.&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">target</span><span class="p">,</span> <span class="n">class_obj</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="n">s</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">target</span></div>
+
+<div class="viewcode-block" id="Word.divisors"><a class="viewcode-back" href="../../../covsirphy.cleaning.html#covsirphy.cleaning.word.Word.divisors">[docs]</a>    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">divisors</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Return the list of divisors of the value.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            value (int): target value</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            (list[int]): the list of divisors</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">value</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">validate_natural_int</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+        <span class="n">divisors</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="n">i</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">value</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="k">if</span> <span class="n">value</span> <span class="o">%</span> <span class="n">i</span> <span class="o">==</span> <span class="mi">0</span>
+        <span class="p">]</span>
+        <span class="k">return</span> <span class="n">divisors</span></div>
+
+<div class="viewcode-block" id="Word.to_date_obj"><a class="viewcode-back" href="../../../covsirphy.cleaning.html#covsirphy.cleaning.word.Word.to_date_obj">[docs]</a>    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">to_date_obj</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">date_str</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Convert a string to a datatime object.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            date_str (str or None, optional): string, like 22Jan2020</span>
+<span class="sd">            default (datetime.datetime or None, optional): default value to return</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            (datetime.datetime or None)</span>
+
+<span class="sd">        Notes:</span>
+<span class="sd">            If @date_str is None, returns @default value</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">date_str</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">default</span>
+        <span class="n">date_obj</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">strptime</span><span class="p">(</span><span class="n">date_str</span><span class="p">,</span> <span class="bp">cls</span><span class="o">.</span><span class="n">DATE_FORMAT</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">date_obj</span></div></div>
+</pre></div>
+
+           </div>
+           
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        
+        &copy; Copyright 2020, CovsirPhy Development Team
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>
