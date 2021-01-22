@@ -71,7 +71,7 @@ flake8:
 .PHONY: docs
 docs:
 	# docs/index.rst must be updated to include the notebooks
-	@cp -f example/usage_*.ipynb docs/
+	@cp -f --no-clobber example/usage_*.ipynb docs/
 	# Convert markdown files to rst files and save them in docs directory
 	@# sudo apt install pandoc
 	@pandoc --from markdown --to rst README.md -o docs/README.rst
@@ -83,7 +83,6 @@ docs:
 	# Create API reference
 	@poetry run sphinx-apidoc -o docs covsirphy -fMT
 	# Execute sphinx
-	# If `NoSuchKernel` error occurs for notebooks, change kernel to python3
 	@cd docs; poetry run make html; cp -a _build/html/. ../docs
 
 .PHONY: pypi
