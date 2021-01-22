@@ -84,4 +84,4 @@ todo_include_todos = True
 add_module_names = False
 
 # nbsphinx
-nbsphinx_execute = "never"
+nbsphinx_execute = "auto"
