@@ -68,41 +68,23 @@ flake8:
 	@poetry run flake8 covsirphy --ignore=E501
 
 # https://github.com/sphinx-doc/sphinx/issues/3382
-.PHONY: sphinx
-sphinx:
+.PHONY: docs
+docs:
+	# docs/index.rst must be updated to include the notebooks
+	@cp -f example/usage_*.ipynb docs/
+	# Convert markdown files to rst files and save them in docs directory
 	@# sudo apt install pandoc
-	@# update docs/index.rst as well as the following codes
 	@pandoc --from markdown --to rst README.md -o docs/README.rst
 	@pandoc --from markdown --to rst .github/CODE_OF_CONDUCT.md -o docs/CODE_OF_CONDUCT.rst
 	@pandoc --from markdown --to rst .github/CONTRIBUTING.md -o docs/CONTRIBUTING.rst
 	@pandoc --from markdown --to rst SECURITY.md -o docs/SECURITY.rst
 	@pandoc --from markdown --to rst docs/markdown/INSTALLATION.md -o docs/INSTALLATION.rst
 	@pandoc --from markdown --to rst docs/markdown/TERM.md -o docs/TERM.rst
-	@# When new module was added, update docs/covsirphy.rst and docs/(module name).rst
+	# Create API reference
 	@poetry run sphinx-apidoc -o docs covsirphy -fMT
+	# Execute sphinx
+	# If `NoSuchKernel` error occurs for notebooks, change kernel to python3
 	@cd docs; poetry run make html; cp -a _build/html/. ../docs
-	@rm -rf docs/_modules
-	@rm -rf docs/_sources
-
-.PHONY: note_convert
-note_convert:
-	@poetry run jupyter nbconvert --to notebook --inplace --ExecutePreprocessor.timeout=600 docs/${target}.ipynb
-
-
-# https://github.com/sphinx-doc/sphinx/issues/3382
-.PHONY: docs
-docs:
-	@rm -rf docs/_images
-	@rm -f docs/*ipynb
-	@cp -f example/usage_*.ipynb docs/
-	@# docs/index.rst must be updated to include the notebooks
-	@make note_convert target=usage_quickest
-	@make note_convert target=usage_quick
-	@make note_convert target=usage_dataset
-	@make note_convert target=usage_phases
-	@make note_convert target=usage_theoretical
-	@make note_convert target=usage_policy
-	@make sphinx
 
 .PHONY: pypi
 pypi:
