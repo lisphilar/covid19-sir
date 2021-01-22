@@ -97,13 +97,13 @@ Please refer to [LICENSE](https://github.com/lisphilar/covid19-sir/blob/master/L
 
 We have no original papers the author and contributors wrote, but please cite this package as follows.
 
-CovsirPhy Development Team (2020), CovsirPhy, Python package for COVID-19 analysis with SIR-derived ODE models, [https://github.com/lisphilar/covid19-sir]
+CovsirPhy Development Team (2020), CovsirPhy, Python package for COVID-19 analysis with SIR-derived ODE models, [https://github.com/lisphilar/covid19-sir](https://github.com/lisphilar/covid19-sir)
 
 If you want to use SIR-F/SIR-FV/SEWIR-F model, S-R trend analysis, phase-dependent approach to SIR-derived models, and other scientific method performed with CovsirPhy, please cite the next Kaggle notebook.
 
-Lisphilar (2020), Kaggle notebook, COVID-19 data with SIR model, [https://www.kaggle.com/lisphilar/covid-19-data-with-sir-model]
+Lisphilar (2020), Kaggle notebook, COVID-19 data with SIR model, [https://www.kaggle.com/lisphilar/covid-19-data-with-sir-model](https://www.kaggle.com/lisphilar/covid-19-data-with-sir-model)
 
 ## Related work
 
 Reproduction number evolution in each country:  
-Ilyass Tabiai and Houda Kaddioui (2020), GitHub pages, COVID19 R0 tracker, [https://ilylabs.github.io/projects/COVID-trackers/]
+Ilyass Tabiai and Houda Kaddioui (2020), GitHub pages, COVID19 R0 tracker, [https://ilylabs.github.io/projects/COVID-trackers/](https://ilylabs.github.io/projects/COVID-trackers/)
