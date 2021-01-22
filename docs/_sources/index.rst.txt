@@ -14,7 +14,7 @@
    :caption: Contents:
 
    README
-   INSTALLATION
+   markdown/INSTALLATION
    usage_quickest
    usage_quick
    usage_dataset
@@ -22,7 +22,7 @@
    usage_theoretical
    usage_policy
    covsirphy
-   TERM
+   markdown/TERM
    CODE_OF_CONDUCT
    SECURITY
    CONTRIBUTING

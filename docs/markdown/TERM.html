@@ -14,8 +14,6 @@
   <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
   <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
   <link rel="stylesheet" href="../_static/copybutton.css" type="text/css" />
-  <link rel="stylesheet" href="../_static/togglebutton.css" type="text/css" />
-  <link rel="stylesheet" href="../_static/mystnb.css" type="text/css" />
 
   
   
@@ -37,14 +35,17 @@
         <script src="../_static/doctools.js"></script>
         <script src="../_static/clipboard.min.js"></script>
         <script src="../_static/copybutton.js"></script>
-        <script src="../_static/togglebutton.js"></script>
-        <script >var togglebuttonSelector = '.toggle, .admonition.dropdown, .tag_hide_input div.cell_input, .tag_hide-input div.cell_input, .tag_hide_output div.cell_output, .tag_hide-output div.cell_output, .tag_hide_cell.cell, .tag_hide-cell.cell';</script>
+        <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+        <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+        <script type="text/x-mathjax-config">MathJax.Hub.Config({"tex2jax": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "processEscapes": true, "ignoreClass": "document", "processClass": "math|output_area"}})</script>
     
     <script type="text/javascript" src="../_static/js/theme.js"></script>
 
     
     <link rel="index" title="Index" href="../genindex.html" />
-    <link rel="search" title="Search" href="../search.html" /> 
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Contributor Covenant Code of Conduct" href="../CODE_OF_CONDUCT.html" />
+    <link rel="prev" title="covsirphy.worldwide package" href="../covsirphy.worldwide.html" /> 
 </head>
 
 <body class="wy-body-for-nav">
@@ -94,12 +95,18 @@
             
             
               <p class="caption"><span class="caption-text">Contents:</span></p>
-<ul>
+<ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="../README.html">CovsirPhy introduction</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../INSTALLATION.html">Installation</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../INSTALLATION.html#dataset-preparation">Dataset preparation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="INSTALLATION.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="INSTALLATION.html#dataset-preparation">Dataset preparation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../usage_quickest.html">Usage: quickest tour</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../usage_quick.html">Usage: scenario analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../usage_dataset.html">Usage: datasets</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../usage_phases.html">Usage: phases</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../usage_theoretical.html">Usage: SIR-derived models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../usage_policy.html">Usage: policy measures</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../covsirphy.html">covsirphy package</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../TERM.html">Term definition</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Term definition</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../CODE_OF_CONDUCT.html">Contributor Covenant Code of Conduct</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../SECURITY.html">Security policy of CovsirPhy</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../CONTRIBUTING.html">Guideline of contribution</a></li>
@@ -170,52 +177,64 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
             
-  <div class="section" id="term-definition">
+  
+<style>
+/* CSS overrides for sphinx_rtd_theme */
+
+/* 24px margin */
+.nbinput.nblast.container,
+.nboutput.nblast.container {
+    margin-bottom: 19px;  /* padding has already 5px */
+}
+
+/* ... except between code cells! */
+.nblast.container + .nbinput.container {
+    margin-top: -19px;
+}
+
+.admonition > p:before {
+    margin-right: 4px;  /* make room for the exclamation icon */
+}
+
+/* Fix math alignment, see https://github.com/rtfd/sphinx_rtd_theme/pull/686 */
+.math {
+    text-align: unset;
+}
+</style>
+<div class="section" id="term-definition">
 <h1>Term definition<a class="headerlink" href="#term-definition" title="Permalink to this headline">¶</a></h1>
 <p>This is a list of term in CovsirPhy project. These terms are used as method names and figure titles.</p>
-<dl>
-<dt><strong>accuracy of models</strong></dt>
-<dd>Whether variables and parameters of a model are represent the currenct situation of the outbreak or not.</dd>
-<dt><strong>accuracy of parameter estimation</strong></dt>
-<dd>How small the difference of actual number of cases and simulated number of cases with the estimated parameter values in a phase. This will be scored with RMSLE.</dd>
-<dt><strong>accuracy of trend analysis</strong></dt>
-<dd>Whether the change date of phases are effective or not.</dd>
-<dt><strong>forecasting</strong></dt>
-<dd>Forecasting of the number of cases in the future phases. This needs trend analysis, parameter estimation, simulation and prediction.</dd>
-<dt><strong>model</strong></dt>
-<dd>ODE models derived from the simple SIR model.</dd>
-<dt><strong>parameter estimation</strong></dt>
-<dd>Optimization of model parameter values with actual records of a phase.</dd>
-<dt><strong>phase</strong></dt>
-<dd>A sequential dates in which parameter values of SIR-derived models are fixed. </dd>
-<dt><strong>prediction</strong></dt>
-<dd>Prediction of parameter values in the future phases using relationship of estimated parameters and indexes regarding measures taken by countries and individuals.</dd>
-<dt><strong>recovery period</strong></dt>
-<dd>The time period between case confirmation and recovery (as it is subjectively defined per country).</dd>
-<dt><strong>simulation</strong></dt>
-<dd>Calculation of the number of cases with fixed parameter values and initial values.</dd>
-<dt><strong>scenario analysis</strong></dt>
-<dd>Analyse the number of cases in the future phases with some sets of ODE parameter values. With this analysis, we can estimate the impact of our activities against the outbreak on the number of cases.</dd>
-<dt><strong>tau parameter in models</strong></dt>
+<dl><dt><strong>accuracy of models</strong></dt>
+<dd>Whether variables and parameters of a model are represent the currenct situation of the outbreak or not.</dd><dt><strong>accuracy of parameter estimation</strong></dt>
+<dd>How small the difference of actual number of cases and simulated number of cases with the estimated parameter values in a phase. This will be scored with RMSLE.</dd><dt><strong>accuracy of trend analysis</strong></dt>
+<dd>Whether the change date of phases are effective or not.</dd><dt><strong>forecasting</strong></dt>
+<dd>Forecasting of the number of cases in the future phases. This needs trend analysis, parameter estimation, simulation and prediction.</dd><dt><strong>model</strong></dt>
+<dd>ODE models derived from the simple SIR model.</dd><dt><strong>parameter estimation</strong></dt>
+<dd>Optimization of model parameter values with actual records of a phase.</dd><dt><strong>phase</strong></dt>
+<dd>A sequential dates in which parameter values of SIR-derived models are fixed. </dd><dt><strong>prediction</strong></dt>
+<dd>Prediction of parameter values in the future phases using relationship of estimated parameters and indexes regarding measures taken by countries and individuals.</dd><dt><strong>recovery period</strong></dt>
+<dd>The time period between case confirmation and recovery (as it is subjectively defined per country).</dd><dt><strong>simulation</strong></dt>
+<dd>Calculation of the number of cases with fixed parameter values and initial values.</dd><dt><strong>scenario analysis</strong></dt>
+<dd>Analyse the number of cases in the future phases with some sets of ODE parameter values. With this analysis, we can estimate the impact of our activities against the outbreak on the number of cases.</dd><dt><strong>tau parameter in models</strong></dt>
 <dd>Tau is a parameter used to convert actual time (with unit [min]) to time steps (without units).
-This conversion enables us to use actual dataset with ODE models. It is a divisor of 1440 [min] (= 1 day).
-<p>Tau is generally considered as a parameter and is not set to a predetermined value.
+This conversion enables us to use actual dataset with ODE models. It is a divisor of 1440 [min] (= 1 day).<p>Tau is generally considered as a parameter and is not set to a predetermined value.
 Its value is determined by the estimator only during the last phase and then uses that value for all the previous phases as well.</p>
 <p>Because the refresh rate of the data is per day, the unit of tau value should be equal to or under 1 day.
 So when tau is estimated to be for example 360 [min] instead of 1440 [min], that would mean the analysis is more effective if we study the records per 6 hours (since 360/1440 = 1/4 of the day) and not as a whole day.
 If for some reason tau would be set to more than 1 day, then many records would be ignored and that is the reason tau is bound to max 1 day = 1440 [min].</dd></p>
 <dt><strong>trend</strong></dt>
-<dd>Parameter set of a phase.</dd>
-<dt><strong>trend analysis</strong></dt>
-<dd>Breaking down the series of records to phases.</dd>
-</dl>
-</div>
+<dd>Parameter set of a phase.</dd><dt><strong>trend analysis</strong></dt>
+<dd>Breaking down the series of records to phases.</dd></dl></div>
 
 
            </div>
            
           </div>
           <footer>
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+        <a href="../CODE_OF_CONDUCT.html" class="btn btn-neutral float-right" title="Contributor Covenant Code of Conduct" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="../covsirphy.worldwide.html" class="btn btn-neutral float-left" title="covsirphy.worldwide package" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+    </div>
 
   <hr/>
 
