@@ -36,8 +36,6 @@
         <script src="_static/clipboard.min.js"></script>
         <script src="_static/copybutton.js"></script>
         <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
-        <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
-        <script type="text/x-mathjax-config">MathJax.Hub.Config({"tex2jax": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "processEscapes": true, "ignoreClass": "document", "processClass": "math|output_area"}})</script>
     
     <script type="text/javascript" src="_static/js/theme.js"></script>
 
@@ -69,7 +67,7 @@
             
             
               <div class="version">
-                2.15.0
+                2.15.0-gamma
               </div>
             
           
@@ -99,12 +97,6 @@
 <li class="toctree-l1"><a class="reference internal" href="README.html">CovsirPhy introduction</a></li>
 <li class="toctree-l1"><a class="reference internal" href="INSTALLATION.html">Installation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="INSTALLATION.html#dataset-preparation">Dataset preparation</a></li>
-<li class="toctree-l1"><a class="reference internal" href="usage_quickest.html">Usage: quickest tour</a></li>
-<li class="toctree-l1"><a class="reference internal" href="usage_quick.html">Usage: scenario analysis</a></li>
-<li class="toctree-l1"><a class="reference internal" href="usage_dataset.html">Usage: datasets</a></li>
-<li class="toctree-l1"><a class="reference internal" href="usage_phases.html">Usage: phases</a></li>
-<li class="toctree-l1"><a class="reference internal" href="usage_theoretical.html">Usage: SIR-derived models</a></li>
-<li class="toctree-l1"><a class="reference internal" href="usage_policy.html">Usage: policy measures</a></li>
 <li class="toctree-l1 current"><a class="reference internal" href="covsirphy.html">covsirphy package</a><ul class="current">
 <li class="toctree-l2 current"><a class="reference internal" href="covsirphy.html#subpackages">Subpackages</a><ul class="current">
 <li class="toctree-l3 current"><a class="current reference internal" href="#">covsirphy.analysis package</a><ul>
@@ -233,7 +225,7 @@
 <dl class="py class">
 <dt id="covsirphy.analysis.data_handler.DataHandler">
 <em class="property">class </em><code class="sig-name descname">DataHandler</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">jhu_data</span></em>, <em class="sig-param"><span class="n">population_data</span></em>, <em class="sig-param"><span class="n">country</span></em>, <em class="sig-param"><span class="n">province</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">auto_complement</span><span class="o">=</span><span class="default_value">True</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/analysis/data_handler.html#DataHandler"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#covsirphy.analysis.data_handler.DataHandler" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference internal" href="covsirphy.cleaning.term.html#covsirphy.cleaning.term.Term" title="covsirphy.cleaning.term.Term"><code class="xref py py-class docutils literal notranslate"><span class="pre">covsirphy.cleaning.term.Term</span></code></a></p>
+<dd><p>Bases: <a class="reference internal" href="covsirphy.cleaning.html#covsirphy.cleaning.term.Term" title="covsirphy.cleaning.term.Term"><code class="xref py py-class docutils literal notranslate"><span class="pre">covsirphy.cleaning.term.Term</span></code></a></p>
 <p>Data handler for scenario analysis.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -447,7 +439,7 @@ If None was set as &#64;variables, [“Confirmed”, “Fatal”, “Recovered�
 <dl class="py class">
 <dt id="covsirphy.analysis.example_data.ExampleData">
 <em class="property">class </em><code class="sig-name descname">ExampleData</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">clean_df</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">tau</span><span class="o">=</span><span class="default_value">1440</span></em>, <em class="sig-param"><span class="n">start_date</span><span class="o">=</span><span class="default_value">'22Jan2020'</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/analysis/example_data.html#ExampleData"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#covsirphy.analysis.example_data.ExampleData" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference internal" href="covsirphy.cleaning.jhu_data.html#covsirphy.cleaning.jhu_data.JHUData" title="covsirphy.cleaning.jhu_data.JHUData"><code class="xref py py-class docutils literal notranslate"><span class="pre">covsirphy.cleaning.jhu_data.JHUData</span></code></a></p>
+<dd><p>Bases: <a class="reference internal" href="covsirphy.cleaning.html#covsirphy.cleaning.jhu_data.JHUData" title="covsirphy.cleaning.jhu_data.JHUData"><code class="xref py py-class docutils literal notranslate"><span class="pre">covsirphy.cleaning.jhu_data.JHUData</span></code></a></p>
 <p>Example dataset as a child class of JHUData.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -602,7 +594,7 @@ Complement will not be done.</p>
 <dl class="py class">
 <dt id="covsirphy.analysis.model_validator.ModelValidator">
 <em class="property">class </em><code class="sig-name descname">ModelValidator</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">tau</span><span class="o">=</span><span class="default_value">1440</span></em>, <em class="sig-param"><span class="n">n_trials</span><span class="o">=</span><span class="default_value">8</span></em>, <em class="sig-param"><span class="n">seed</span><span class="o">=</span><span class="default_value">0</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/analysis/model_validator.html#ModelValidator"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#covsirphy.analysis.model_validator.ModelValidator" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference internal" href="covsirphy.cleaning.term.html#covsirphy.cleaning.term.Term" title="covsirphy.cleaning.term.Term"><code class="xref py py-class docutils literal notranslate"><span class="pre">covsirphy.cleaning.term.Term</span></code></a></p>
+<dd><p>Bases: <a class="reference internal" href="covsirphy.cleaning.html#covsirphy.cleaning.term.Term" title="covsirphy.cleaning.term.Term"><code class="xref py py-class docutils literal notranslate"><span class="pre">covsirphy.cleaning.term.Term</span></code></a></p>
 <p>Validate a ODE model as follows.
 - Create a model parameter set, phase length and initial values randomly.
 - Simulate the number of cases with an user-defined parameter set.
@@ -684,7 +676,7 @@ Columns:</p>
 <dl class="py class">
 <dt id="covsirphy.analysis.param_tracker.ParamTracker">
 <em class="property">class </em><code class="sig-name descname">ParamTracker</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">record_df</span></em>, <em class="sig-param"><span class="n">phase_series</span></em>, <em class="sig-param"><span class="n">area</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">tau</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/analysis/param_tracker.html#ParamTracker"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#covsirphy.analysis.param_tracker.ParamTracker" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference internal" href="covsirphy.cleaning.term.html#covsirphy.cleaning.term.Term" title="covsirphy.cleaning.term.Term"><code class="xref py py-class docutils literal notranslate"><span class="pre">covsirphy.cleaning.term.Term</span></code></a></p>
+<dd><p>Bases: <a class="reference internal" href="covsirphy.cleaning.html#covsirphy.cleaning.term.Term" title="covsirphy.cleaning.term.Term"><code class="xref py py-class docutils literal notranslate"><span class="pre">covsirphy.cleaning.term.Term</span></code></a></p>
 <p>Split records with S-R trend analysis and estimate parameter values of the phases.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -1357,6 +1349,48 @@ If the last phase is not included, the dates will be assigned to the previous ph
 </dd></dl>
 
 <dl class="py method">
+<dt id="covsirphy.analysis.scenario.Scenario.estimate_delay">
+<code class="sig-name descname">estimate_delay</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">oxcgrt_data</span></em>, <em class="sig-param"><span class="n">indicator</span><span class="o">=</span><span class="default_value">'Stringency_index'</span></em>, <em class="sig-param"><span class="n">target</span><span class="o">=</span><span class="default_value">'Infected'</span></em>, <em class="sig-param"><span class="n">value_range</span><span class="o">=</span><span class="default_value">(7, 35)</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/analysis/scenario.html#Scenario.estimate_delay"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#covsirphy.analysis.scenario.Scenario.estimate_delay" title="Permalink to this definition">¶</a></dt>
+<dd><p>Estimate the average delay (in days) between a policy measure taken
+and the moment of change in for the given target value, for example
+<cite>Infected</cite>.The change over time is calculated with penalized change
+point analysis. More information about the method of change point
+detection can be found on:
+<a class="reference external" href="https://ctruong.perso.math.cnrs.fr/ruptures-docs/build/html/detection/pelt.html">https://ctruong.perso.math.cnrs.fr/ruptures-docs/build/html/detection/pelt.html</a>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>oxcgrt_data</strong> (<a class="reference internal" href="covsirphy.html#covsirphy.OxCGRTData" title="covsirphy.OxCGRTData"><em>covsirphy.OxCGRTData</em></a>) – OxCGRT dataset</p></li>
+<li><p><strong>indicator</strong> (<em>str</em>) – column variable from the OxCGRT dataset</p></li>
+<li><p><strong>target</strong> (<em>str</em>) – one of the target columns to detect changes in,
+options are [“Infected”, “Confirmed”, “Fatal”, “Recovered”].</p></li>
+<li><p><strong>value_range</strong> (<em>int</em><em>, </em><em>int</em>) – tuple, giving the minimum and maximum</p></li>
+<li><p><strong>to search for change over time. It is assumed that when a</strong> (<em>range</em>) – </p></li>
+<li><p><strong>measure is taken</strong> (<em>policy</em>) – </p></li>
+<li><p><strong>will occur after at least 7 days</strong> (<em>change</em>) – </p></li>
+<li><p><strong>before 35 days</strong> (<em>and</em>) – </p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p>int: the estimated number of days of delay for a given country.</p></li>
+<li><p>pandas.DataFrame: dataframe of target, indicator and calculated periods of change (in days).</p></li>
+</ul>
+</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>tuple(int, pandas.DataFrame)</p>
+</dd>
+</dl>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Average recovered period of JHU dataset will be used as returned value
+when the estimated value was not in value_range.
+Very long periods (outside of 99% quantile) are taken out.</p>
+</div>
+</dd></dl>
+
+<dl class="py method">
 <dt id="covsirphy.analysis.scenario.Scenario.estimate_history">
 <code class="sig-name descname">estimate_history</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">phase</span></em>, <em class="sig-param"><span class="n">name</span><span class="o">=</span><span class="default_value">'Main'</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/analysis/scenario.html#Scenario.estimate_history"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#covsirphy.analysis.scenario.Scenario.estimate_history" title="Permalink to this definition">¶</a></dt>
 <dd><p>Show the history of optimization.</p>
@@ -1388,7 +1422,7 @@ If the last phase is not included, the dates will be assigned to the previous ph
 
 <dl class="py method">
 <dt id="covsirphy.analysis.scenario.Scenario.fit">
-<code class="sig-name descname">fit</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">oxcgrt_data</span></em>, <em class="sig-param"><span class="n">name</span><span class="o">=</span><span class="default_value">'Main'</span></em>, <em class="sig-param"><span class="n">test_size</span><span class="o">=</span><span class="default_value">0.2</span></em>, <em class="sig-param"><span class="n">seed</span><span class="o">=</span><span class="default_value">0</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/analysis/scenario.html#Scenario.fit"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#covsirphy.analysis.scenario.Scenario.fit" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">fit</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">oxcgrt_data</span></em>, <em class="sig-param"><span class="n">name</span><span class="o">=</span><span class="default_value">'Main'</span></em>, <em class="sig-param"><span class="n">test_size</span><span class="o">=</span><span class="default_value">0.2</span></em>, <em class="sig-param"><span class="n">seed</span><span class="o">=</span><span class="default_value">0</span></em>, <em class="sig-param"><span class="n">delay</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/analysis/scenario.html#Scenario.fit"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#covsirphy.analysis.scenario.Scenario.fit" title="Permalink to this definition">¶</a></dt>
 <dd><p>Learn the relationship of ODE parameter values and delayed OxCGRT scores using Elastic Net regression,
 assuming that OxCGRT scores will impact on ODE parameter values with delay (=recovery period).</p>
 <dl class="field-list simple">
@@ -1398,6 +1432,8 @@ assuming that OxCGRT scores will impact on ODE parameter values with delay (=rec
 <li><p><strong>name</strong> (<em>str</em>) – scenario name</p></li>
 <li><p><strong>test_size</strong> (<em>float</em>) – proportion of the test dataset of Elastic Net regression</p></li>
 <li><p><strong>seed</strong> (<em>int</em>) – random seed when spliting the dataset to train/test data</p></li>
+<li><p><strong>delay</strong> (<em>int</em>) – number of days of delay between policy measure and effect</p></li>
+<li><p><strong>number of confirmed cases.</strong> (<em>on</em>) – </p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
@@ -1407,6 +1443,8 @@ assuming that OxCGRT scores will impact on ODE parameter values with delay (=rec
 <li><p>score_train (float): determination coefficient of train dataset</p></li>
 <li><p>score_test (float): determination coefficient of test dataset</p></li>
 <li><p>intercept (pandas.DataFrame): intercept values (Index: ODE parameters, Columns: OxCGRT indicators)</p></li>
+<li><p>delay (int): number of days of delay between policy measure and effect
+on number of confirmed cases.</p></li>
 </ul>
 </p>
 </dd>
@@ -1414,7 +1452,7 @@ assuming that OxCGRT scores will impact on ODE parameter values with delay (=rec
 <dd class="field-odd"><p>dict(str, object)</p>
 </dd>
 <dt class="field-even">Raises</dt>
-<dd class="field-even"><p><a class="reference internal" href="covsirphy.util.html#covsirphy.util.error.UnExecutedError" title="covsirphy.util.error.UnExecutedError"><strong>UnExecutedError</strong></a> – Scenario.estimate() or Scenario.add() were not performed</p>
+<dd class="field-even"><p><a class="reference internal" href="covsirphy.html#covsirphy.UnExecutedError" title="covsirphy.UnExecutedError"><strong>UnExecutedError</strong></a> – Scenario.estimate() or Scenario.add() were not performed</p>
 </dd>
 </dl>
 </dd></dl>
@@ -1440,7 +1478,7 @@ New future phases will be added (over-written).</p>
 <dd class="field-odd"><p><a class="reference internal" href="covsirphy.html#covsirphy.Scenario" title="covsirphy.Scenario">covsirphy.Scenario</a></p>
 </dd>
 <dt class="field-even">Raises</dt>
-<dd class="field-even"><p><a class="reference internal" href="covsirphy.util.html#covsirphy.util.error.UnExecutedError" title="covsirphy.util.error.UnExecutedError"><strong>UnExecutedError</strong></a> – Scenario.estimate() or Scenario.add() were not performed</p>
+<dd class="field-even"><p><a class="reference internal" href="covsirphy.html#covsirphy.UnExecutedError" title="covsirphy.UnExecutedError"><strong>UnExecutedError</strong></a> – Scenario.estimate() or Scenario.add() were not performed</p>
 </dd>
 </dl>
 </dd></dl>
@@ -1562,7 +1600,7 @@ New future phases will be added (over-written).</p>
 <dd class="field-odd"><p><a class="reference internal" href="covsirphy.html#covsirphy.Scenario" title="covsirphy.Scenario">covsirphy.Scenario</a></p>
 </dd>
 <dt class="field-even">Raises</dt>
-<dd class="field-even"><p><a class="reference internal" href="covsirphy.util.html#covsirphy.util.error.UnExecutedError" title="covsirphy.util.error.UnExecutedError"><strong>UnExecutedError</strong></a> – Scenario.fit() was not performed</p>
+<dd class="field-even"><p><a class="reference internal" href="covsirphy.html#covsirphy.UnExecutedError" title="covsirphy.UnExecutedError"><strong>UnExecutedError</strong></a> – Scenario.fit() was not performed</p>
 </dd>
 </dl>
 </dd></dl>

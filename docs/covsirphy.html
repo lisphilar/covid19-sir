@@ -36,8 +36,6 @@
         <script src="_static/clipboard.min.js"></script>
         <script src="_static/copybutton.js"></script>
         <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
-        <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
-        <script type="text/x-mathjax-config">MathJax.Hub.Config({"tex2jax": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "processEscapes": true, "ignoreClass": "document", "processClass": "math|output_area"}})</script>
     
     <script type="text/javascript" src="_static/js/theme.js"></script>
 
@@ -45,7 +43,7 @@
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
     <link rel="next" title="covsirphy.analysis package" href="covsirphy.analysis.html" />
-    <link rel="prev" title="Usage: policy measures" href="usage_policy.html" /> 
+    <link rel="prev" title="Installation" href="INSTALLATION.html" /> 
 </head>
 
 <body class="wy-body-for-nav">
@@ -69,7 +67,7 @@
             
             
               <div class="version">
-                2.15.0
+                2.15.0-gamma
               </div>
             
           
@@ -99,12 +97,6 @@
 <li class="toctree-l1"><a class="reference internal" href="README.html">CovsirPhy introduction</a></li>
 <li class="toctree-l1"><a class="reference internal" href="INSTALLATION.html">Installation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="INSTALLATION.html#dataset-preparation">Dataset preparation</a></li>
-<li class="toctree-l1"><a class="reference internal" href="usage_quickest.html">Usage: quickest tour</a></li>
-<li class="toctree-l1"><a class="reference internal" href="usage_quick.html">Usage: scenario analysis</a></li>
-<li class="toctree-l1"><a class="reference internal" href="usage_dataset.html">Usage: datasets</a></li>
-<li class="toctree-l1"><a class="reference internal" href="usage_phases.html">Usage: phases</a></li>
-<li class="toctree-l1"><a class="reference internal" href="usage_theoretical.html">Usage: SIR-derived models</a></li>
-<li class="toctree-l1"><a class="reference internal" href="usage_policy.html">Usage: policy measures</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">covsirphy package</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#subpackages">Subpackages</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="covsirphy.analysis.html">covsirphy.analysis package</a></li>
@@ -218,7 +210,7 @@
 <dl class="py class">
 <dt id="covsirphy.COVID19DataHub">
 <em class="property">class </em><code class="sig-name descname">COVID19DataHub</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">filename</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/cleaning/covid19datahub.html#COVID19DataHub"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#covsirphy.COVID19DataHub" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference internal" href="covsirphy.cleaning.term.html#covsirphy.cleaning.term.Term" title="covsirphy.cleaning.term.Term"><code class="xref py py-class docutils literal notranslate"><span class="pre">covsirphy.cleaning.term.Term</span></code></a></p>
+<dd><p>Bases: <a class="reference internal" href="covsirphy.cleaning.html#covsirphy.cleaning.term.Term" title="covsirphy.cleaning.term.Term"><code class="xref py py-class docutils literal notranslate"><span class="pre">covsirphy.cleaning.term.Term</span></code></a></p>
 <p>Load datasets retrieved from COVID-19 Data Hub.
 <a class="reference external" href="https://covid19datahub.io/">https://covid19datahub.io/</a></p>
 <dl class="field-list simple">
@@ -279,7 +271,7 @@ Citation of COVID-19 Data Hub will be set as JHUData.citation etc.</p>
 <dl class="py class">
 <dt id="covsirphy.ChangeFinder">
 <em class="property">class </em><code class="sig-name descname">ChangeFinder</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">sr_df</span></em>, <em class="sig-param"><span class="n">min_size</span><span class="o">=</span><span class="default_value">5</span></em>, <em class="sig-param"><span class="n">max_rmsle</span><span class="o">=</span><span class="default_value">20.0</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/phase/sr_change.html#ChangeFinder"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#covsirphy.ChangeFinder" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference internal" href="covsirphy.cleaning.term.html#covsirphy.cleaning.term.Term" title="covsirphy.cleaning.term.Term"><code class="xref py py-class docutils literal notranslate"><span class="pre">covsirphy.cleaning.term.Term</span></code></a></p>
+<dd><p>Bases: <a class="reference internal" href="covsirphy.cleaning.html#covsirphy.cleaning.term.Term" title="covsirphy.cleaning.term.Term"><code class="xref py py-class docutils literal notranslate"><span class="pre">covsirphy.cleaning.term.Term</span></code></a></p>
 <p>Find change points of S-R trend.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -363,7 +355,7 @@ Citation of COVID-19 Data Hub will be set as JHUData.citation etc.</p>
 <dl class="py class">
 <dt id="covsirphy.CleaningBase">
 <em class="property">class </em><code class="sig-name descname">CleaningBase</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">filename</span></em>, <em class="sig-param"><span class="n">citation</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/cleaning/cbase.html#CleaningBase"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#covsirphy.CleaningBase" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference internal" href="covsirphy.cleaning.term.html#covsirphy.cleaning.term.Term" title="covsirphy.cleaning.term.Term"><code class="xref py py-class docutils literal notranslate"><span class="pre">covsirphy.cleaning.term.Term</span></code></a></p>
+<dd><p>Bases: <a class="reference internal" href="covsirphy.cleaning.html#covsirphy.cleaning.term.Term" title="covsirphy.cleaning.term.Term"><code class="xref py py-class docutils literal notranslate"><span class="pre">covsirphy.cleaning.term.Term</span></code></a></p>
 <p>Basic class for data cleaning.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -599,7 +591,7 @@ Columns: without ISO3, Country, Province column</p>
 <dl class="py class">
 <dt id="covsirphy.CountryData">
 <em class="property">class </em><code class="sig-name descname">CountryData</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">filename</span></em>, <em class="sig-param"><span class="n">country</span></em>, <em class="sig-param"><span class="n">province</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/cleaning/country_data.html#CountryData"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#covsirphy.CountryData" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference internal" href="covsirphy.cleaning.cbase.html#covsirphy.cleaning.cbase.CleaningBase" title="covsirphy.cleaning.cbase.CleaningBase"><code class="xref py py-class docutils literal notranslate"><span class="pre">covsirphy.cleaning.cbase.CleaningBase</span></code></a></p>
+<dd><p>Bases: <a class="reference internal" href="covsirphy.cleaning.html#covsirphy.cleaning.cbase.CleaningBase" title="covsirphy.cleaning.cbase.CleaningBase"><code class="xref py py-class docutils literal notranslate"><span class="pre">covsirphy.cleaning.cbase.CleaningBase</span></code></a></p>
 <p>Data cleaning of country level data.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -609,10 +601,11 @@ Columns: without ISO3, Country, Province column</p>
 <li><p><strong>province</strong> (<em>str</em><em> or </em><em>None</em>) – province name</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p>If province name will be set in CountryData.set_variables(), &#64;province will be ignored.</p>
-</dd>
 </dl>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>If province name will be set in CountryData.set_variables(), &#64;province will be ignored.</p>
+</div>
 <dl class="py method">
 <dt id="covsirphy.CountryData.cleaned">
 <code class="sig-name descname">cleaned</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/cleaning/country_data.html#CountryData.cleaned"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#covsirphy.CountryData.cleaned" title="Permalink to this definition">¶</a></dt>
@@ -682,6 +675,24 @@ Cleaning method is defined by CountryData._cleaning() method.</p>
 </dd></dl>
 
 <dl class="py method">
+<dt id="covsirphy.CountryData.register_total">
+<code class="sig-name descname">register_total</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/cleaning/country_data.html#CountryData.register_total"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#covsirphy.CountryData.register_total" title="Permalink to this definition">¶</a></dt>
+<dd><p>Register total value of all provinces as country level data.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>self</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><a class="reference internal" href="#covsirphy.CountryData" title="covsirphy.CountryData">covsirphy.CountryData</a></p>
+</dd>
+</dl>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>If country level data was registered, this will be overwritten.</p>
+</div>
+</dd></dl>
+
+<dl class="py method">
 <dt id="covsirphy.CountryData.set_variables">
 <code class="sig-name descname">set_variables</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">date</span></em>, <em class="sig-param"><span class="n">confirmed</span></em>, <em class="sig-param"><span class="n">fatal</span></em>, <em class="sig-param"><span class="n">recovered</span></em>, <em class="sig-param"><span class="n">province</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/cleaning/country_data.html#CountryData.set_variables"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#covsirphy.CountryData.set_variables" title="Permalink to this definition">¶</a></dt>
 <dd><p>Set the correspondence of the variables and columns of the raw data.</p>
@@ -734,7 +745,7 @@ Cleaning method is defined by CountryData._cleaning() method.</p>
 <dl class="py class">
 <dt id="covsirphy.DataHandler">
 <em class="property">class </em><code class="sig-name descname">DataHandler</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">jhu_data</span></em>, <em class="sig-param"><span class="n">population_data</span></em>, <em class="sig-param"><span class="n">country</span></em>, <em class="sig-param"><span class="n">province</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">auto_complement</span><span class="o">=</span><span class="default_value">True</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/analysis/data_handler.html#DataHandler"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#covsirphy.DataHandler" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference internal" href="covsirphy.cleaning.term.html#covsirphy.cleaning.term.Term" title="covsirphy.cleaning.term.Term"><code class="xref py py-class docutils literal notranslate"><span class="pre">covsirphy.cleaning.term.Term</span></code></a></p>
+<dd><p>Bases: <a class="reference internal" href="covsirphy.cleaning.html#covsirphy.cleaning.term.Term" title="covsirphy.cleaning.term.Term"><code class="xref py py-class docutils literal notranslate"><span class="pre">covsirphy.cleaning.term.Term</span></code></a></p>
 <p>Data handler for scenario analysis.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -945,7 +956,7 @@ If None was set as &#64;variables, [“Confirmed”, “Fatal”, “Recovered�
 <dl class="py class">
 <dt id="covsirphy.DataLoader">
 <em class="property">class </em><code class="sig-name descname">DataLoader</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">directory</span><span class="o">=</span><span class="default_value">'input'</span></em>, <em class="sig-param"><span class="n">update_interval</span><span class="o">=</span><span class="default_value">12</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/cleaning/dataloader.html#DataLoader"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#covsirphy.DataLoader" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference internal" href="covsirphy.cleaning.term.html#covsirphy.cleaning.term.Term" title="covsirphy.cleaning.term.Term"><code class="xref py py-class docutils literal notranslate"><span class="pre">covsirphy.cleaning.term.Term</span></code></a></p>
+<dd><p>Bases: <a class="reference internal" href="covsirphy.cleaning.html#covsirphy.cleaning.term.Term" title="covsirphy.cleaning.term.Term"><code class="xref py py-class docutils literal notranslate"><span class="pre">covsirphy.cleaning.term.Term</span></code></a></p>
 <p>Download the dataset and perform data cleaning.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -1215,7 +1226,7 @@ World Bank Group (2020), World Bank Open Data, <a class="reference external" hre
 <dl class="py class">
 <dt id="covsirphy.Estimator">
 <em class="property">class </em><code class="sig-name descname">Estimator</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">record_df</span></em>, <em class="sig-param"><span class="n">model</span></em>, <em class="sig-param"><span class="n">population</span></em>, <em class="sig-param"><span class="n">tau</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/simulation/estimator.html#Estimator"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#covsirphy.Estimator" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference internal" href="covsirphy.cleaning.term.html#covsirphy.cleaning.term.Term" title="covsirphy.cleaning.term.Term"><code class="xref py py-class docutils literal notranslate"><span class="pre">covsirphy.cleaning.term.Term</span></code></a></p>
+<dd><p>Bases: <a class="reference internal" href="covsirphy.cleaning.html#covsirphy.cleaning.term.Term" title="covsirphy.cleaning.term.Term"><code class="xref py py-class docutils literal notranslate"><span class="pre">covsirphy.cleaning.term.Term</span></code></a></p>
 <p>Hyperparameter optimization of an ODE model.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -1345,7 +1356,7 @@ If the result satisfied the following conditions, optimization ends.
 <dl class="py class">
 <dt id="covsirphy.ExampleData">
 <em class="property">class </em><code class="sig-name descname">ExampleData</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">clean_df</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">tau</span><span class="o">=</span><span class="default_value">1440</span></em>, <em class="sig-param"><span class="n">start_date</span><span class="o">=</span><span class="default_value">'22Jan2020'</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/analysis/example_data.html#ExampleData"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#covsirphy.ExampleData" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference internal" href="covsirphy.cleaning.jhu_data.html#covsirphy.cleaning.jhu_data.JHUData" title="covsirphy.cleaning.jhu_data.JHUData"><code class="xref py py-class docutils literal notranslate"><span class="pre">covsirphy.cleaning.jhu_data.JHUData</span></code></a></p>
+<dd><p>Bases: <a class="reference internal" href="covsirphy.cleaning.html#covsirphy.cleaning.jhu_data.JHUData" title="covsirphy.cleaning.jhu_data.JHUData"><code class="xref py py-class docutils literal notranslate"><span class="pre">covsirphy.cleaning.jhu_data.JHUData</span></code></a></p>
 <p>Example dataset as a child class of JHUData.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -1497,7 +1508,7 @@ Complement will not be done.</p>
 <dl class="py class">
 <dt id="covsirphy.JHUData">
 <em class="property">class </em><code class="sig-name descname">JHUData</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">filename</span></em>, <em class="sig-param"><span class="n">citation</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/cleaning/jhu_data.html#JHUData"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#covsirphy.JHUData" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference internal" href="covsirphy.cleaning.cbase.html#covsirphy.cleaning.cbase.CleaningBase" title="covsirphy.cleaning.cbase.CleaningBase"><code class="xref py py-class docutils literal notranslate"><span class="pre">covsirphy.cleaning.cbase.CleaningBase</span></code></a></p>
+<dd><p>Bases: <a class="reference internal" href="covsirphy.cleaning.html#covsirphy.cleaning.cbase.CleaningBase" title="covsirphy.cleaning.cbase.CleaningBase"><code class="xref py py-class docutils literal notranslate"><span class="pre">covsirphy.cleaning.cbase.CleaningBase</span></code></a></p>
 <p>Data cleaning of JHU-style dataset.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -1888,7 +1899,7 @@ Records with Recovered &gt; 0 will be used.</p>
 <dl class="py class">
 <dt id="covsirphy.JHUDataComplementHandler">
 <em class="property">class </em><code class="sig-name descname">JHUDataComplementHandler</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">recovery_period</span></em>, <em class="sig-param"><span class="n">interval</span><span class="o">=</span><span class="default_value">2</span></em>, <em class="sig-param"><span class="n">max_ignored</span><span class="o">=</span><span class="default_value">100</span></em>, <em class="sig-param"><span class="n">max_ending_unupdated</span><span class="o">=</span><span class="default_value">14</span></em>, <em class="sig-param"><span class="n">upper_limit_days</span><span class="o">=</span><span class="default_value">90</span></em>, <em class="sig-param"><span class="n">lower_limit_days</span><span class="o">=</span><span class="default_value">7</span></em>, <em class="sig-param"><span class="n">upper_percentage</span><span class="o">=</span><span class="default_value">0.5</span></em>, <em class="sig-param"><span class="n">lower_percentage</span><span class="o">=</span><span class="default_value">0.5</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/cleaning/jhu_complement.html#JHUDataComplementHandler"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#covsirphy.JHUDataComplementHandler" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference internal" href="covsirphy.cleaning.term.html#covsirphy.cleaning.term.Term" title="covsirphy.cleaning.term.Term"><code class="xref py py-class docutils literal notranslate"><span class="pre">covsirphy.cleaning.term.Term</span></code></a></p>
+<dd><p>Bases: <a class="reference internal" href="covsirphy.cleaning.html#covsirphy.cleaning.term.Term" title="covsirphy.cleaning.term.Term"><code class="xref py py-class docutils literal notranslate"><span class="pre">covsirphy.cleaning.term.Term</span></code></a></p>
 <p>Complement JHU dataset, if necessary.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -2019,7 +2030,7 @@ dict: status for each complement type</p>
 <dl class="py class">
 <dt id="covsirphy.JapanData">
 <em class="property">class </em><code class="sig-name descname">JapanData</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">filename</span></em>, <em class="sig-param"><span class="n">force</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">verbose</span><span class="o">=</span><span class="default_value">1</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/cleaning/japan_data.html#JapanData"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#covsirphy.JapanData" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference internal" href="covsirphy.cleaning.country_data.html#covsirphy.cleaning.country_data.CountryData" title="covsirphy.cleaning.country_data.CountryData"><code class="xref py py-class docutils literal notranslate"><span class="pre">covsirphy.cleaning.country_data.CountryData</span></code></a></p>
+<dd><p>Bases: <a class="reference internal" href="covsirphy.cleaning.html#covsirphy.cleaning.country_data.CountryData" title="covsirphy.cleaning.country_data.CountryData"><code class="xref py py-class docutils literal notranslate"><span class="pre">covsirphy.cleaning.country_data.CountryData</span></code></a></p>
 <p>Japan-specific dataset.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -2183,7 +2194,7 @@ Columns: for cleaned dataset,</p>
 <dl class="py class">
 <dt id="covsirphy.LinelistData">
 <em class="property">class </em><code class="sig-name descname">LinelistData</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">filename</span></em>, <em class="sig-param"><span class="n">force</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">verbose</span><span class="o">=</span><span class="default_value">1</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/cleaning/linelist.html#LinelistData"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#covsirphy.LinelistData" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference internal" href="covsirphy.cleaning.cbase.html#covsirphy.cleaning.cbase.CleaningBase" title="covsirphy.cleaning.cbase.CleaningBase"><code class="xref py py-class docutils literal notranslate"><span class="pre">covsirphy.cleaning.cbase.CleaningBase</span></code></a></p>
+<dd><p>Bases: <a class="reference internal" href="covsirphy.cleaning.html#covsirphy.cleaning.cbase.CleaningBase" title="covsirphy.cleaning.cbase.CleaningBase"><code class="xref py py-class docutils literal notranslate"><span class="pre">covsirphy.cleaning.cbase.CleaningBase</span></code></a></p>
 <p>Linelist of case reports.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -2372,7 +2383,7 @@ Columns: for cleaned dataset,</p>
 <dl class="py class">
 <dt id="covsirphy.MPEstimator">
 <em class="property">class </em><code class="sig-name descname">MPEstimator</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">model</span></em>, <em class="sig-param"><span class="n">jhu_data</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">population_data</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">record_df</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">tau</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/phase/phase_estimator.html#MPEstimator"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#covsirphy.MPEstimator" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference internal" href="covsirphy.cleaning.term.html#covsirphy.cleaning.term.Term" title="covsirphy.cleaning.term.Term"><code class="xref py py-class docutils literal notranslate"><span class="pre">covsirphy.cleaning.term.Term</span></code></a></p>
+<dd><p>Bases: <a class="reference internal" href="covsirphy.cleaning.html#covsirphy.cleaning.term.Term" title="covsirphy.cleaning.term.Term"><code class="xref py py-class docutils literal notranslate"><span class="pre">covsirphy.cleaning.term.Term</span></code></a></p>
 <p>Perform multiprocessing of Phaseunit.estimate()</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -2453,7 +2464,7 @@ Columns: for cleaned dataset,</p>
 <dl class="py class">
 <dt id="covsirphy.ModelBase">
 <em class="property">class </em><code class="sig-name descname">ModelBase</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">population</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/ode/mbase.html#ModelBase"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#covsirphy.ModelBase" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference internal" href="covsirphy.cleaning.term.html#covsirphy.cleaning.term.Term" title="covsirphy.cleaning.term.Term"><code class="xref py py-class docutils literal notranslate"><span class="pre">covsirphy.cleaning.term.Term</span></code></a></p>
+<dd><p>Bases: <a class="reference internal" href="covsirphy.cleaning.html#covsirphy.cleaning.term.Term" title="covsirphy.cleaning.term.Term"><code class="xref py py-class docutils literal notranslate"><span class="pre">covsirphy.cleaning.term.Term</span></code></a></p>
 <p>Base class of ODE models.</p>
 <dl class="py attribute">
 <dt id="covsirphy.ModelBase.DAY_PARAMETERS">
@@ -2693,7 +2704,7 @@ and saved in t column.</p>
 <dl class="py class">
 <dt id="covsirphy.ModelValidator">
 <em class="property">class </em><code class="sig-name descname">ModelValidator</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">tau</span><span class="o">=</span><span class="default_value">1440</span></em>, <em class="sig-param"><span class="n">n_trials</span><span class="o">=</span><span class="default_value">8</span></em>, <em class="sig-param"><span class="n">seed</span><span class="o">=</span><span class="default_value">0</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/analysis/model_validator.html#ModelValidator"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#covsirphy.ModelValidator" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference internal" href="covsirphy.cleaning.term.html#covsirphy.cleaning.term.Term" title="covsirphy.cleaning.term.Term"><code class="xref py py-class docutils literal notranslate"><span class="pre">covsirphy.cleaning.term.Term</span></code></a></p>
+<dd><p>Bases: <a class="reference internal" href="covsirphy.cleaning.html#covsirphy.cleaning.term.Term" title="covsirphy.cleaning.term.Term"><code class="xref py py-class docutils literal notranslate"><span class="pre">covsirphy.cleaning.term.Term</span></code></a></p>
 <p>Validate a ODE model as follows.
 - Create a model parameter set, phase length and initial values randomly.
 - Simulate the number of cases with an user-defined parameter set.
@@ -2784,7 +2795,7 @@ Columns:</p>
 <dl class="py class">
 <dt id="covsirphy.ODESimulator">
 <em class="property">class </em><code class="sig-name descname">ODESimulator</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">country</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">province</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/simulation/simulator.html#ODESimulator"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#covsirphy.ODESimulator" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference internal" href="covsirphy.cleaning.term.html#covsirphy.cleaning.term.Term" title="covsirphy.cleaning.term.Term"><code class="xref py py-class docutils literal notranslate"><span class="pre">covsirphy.cleaning.term.Term</span></code></a></p>
+<dd><p>Bases: <a class="reference internal" href="covsirphy.cleaning.html#covsirphy.cleaning.term.Term" title="covsirphy.cleaning.term.Term"><code class="xref py py-class docutils literal notranslate"><span class="pre">covsirphy.cleaning.term.Term</span></code></a></p>
 <p>Simulation of an ODE model for one phase.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -3245,7 +3256,7 @@ This method should be overwritten in subclass.</p>
 <dl class="py class">
 <dt id="covsirphy.OxCGRTData">
 <em class="property">class </em><code class="sig-name descname">OxCGRTData</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">filename</span></em>, <em class="sig-param"><span class="n">citation</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/cleaning/oxcgrt.html#OxCGRTData"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#covsirphy.OxCGRTData" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference internal" href="covsirphy.cleaning.cbase.html#covsirphy.cleaning.cbase.CleaningBase" title="covsirphy.cleaning.cbase.CleaningBase"><code class="xref py py-class docutils literal notranslate"><span class="pre">covsirphy.cleaning.cbase.CleaningBase</span></code></a></p>
+<dd><p>Bases: <a class="reference internal" href="covsirphy.cleaning.html#covsirphy.cleaning.cbase.CleaningBase" title="covsirphy.cleaning.cbase.CleaningBase"><code class="xref py py-class docutils literal notranslate"><span class="pre">covsirphy.cleaning.cbase.CleaningBase</span></code></a></p>
 <p>Data cleaning of OxCGRT dataset.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -3296,8 +3307,11 @@ This method should be overwritten in subclass.</p>
 <li><p><strong>kwargs</strong> – the other arguments will be ignored in the latest version.</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p><dl class="simple">
+<dt class="field-even">Raises</dt>
+<dd class="field-even"><p><a class="reference internal" href="#covsirphy.SubsetNotFoundError" title="covsirphy.SubsetNotFoundError"><strong>SubsetNotFoundError</strong></a> – no records were found</p>
+</dd>
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p><dl class="simple">
 <dt>pandas.DataFrame</dt><dd><dl class="simple">
 <dt>Index:</dt><dd><p>reset index</p>
 </dd>
@@ -3325,7 +3339,7 @@ This method should be overwritten in subclass.</p>
 <dl class="py class">
 <dt id="covsirphy.PCRData">
 <em class="property">class </em><code class="sig-name descname">PCRData</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">filename</span></em>, <em class="sig-param"><span class="n">interval</span><span class="o">=</span><span class="default_value">2</span></em>, <em class="sig-param"><span class="n">min_pcr_tests</span><span class="o">=</span><span class="default_value">100</span></em>, <em class="sig-param"><span class="n">citation</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/cleaning/pcr_data.html#PCRData"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#covsirphy.PCRData" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference internal" href="covsirphy.cleaning.cbase.html#covsirphy.cleaning.cbase.CleaningBase" title="covsirphy.cleaning.cbase.CleaningBase"><code class="xref py py-class docutils literal notranslate"><span class="pre">covsirphy.cleaning.cbase.CleaningBase</span></code></a></p>
+<dd><p>Bases: <a class="reference internal" href="covsirphy.cleaning.html#covsirphy.cleaning.cbase.CleaningBase" title="covsirphy.cleaning.cbase.CleaningBase"><code class="xref py py-class docutils literal notranslate"><span class="pre">covsirphy.cleaning.cbase.CleaningBase</span></code></a></p>
 <p>Data cleaning of PCR dataset.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -3554,7 +3568,7 @@ Columns:</p>
 <dl class="py class">
 <dt id="covsirphy.ParamTracker">
 <em class="property">class </em><code class="sig-name descname">ParamTracker</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">record_df</span></em>, <em class="sig-param"><span class="n">phase_series</span></em>, <em class="sig-param"><span class="n">area</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">tau</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/analysis/param_tracker.html#ParamTracker"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#covsirphy.ParamTracker" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference internal" href="covsirphy.cleaning.term.html#covsirphy.cleaning.term.Term" title="covsirphy.cleaning.term.Term"><code class="xref py py-class docutils literal notranslate"><span class="pre">covsirphy.cleaning.term.Term</span></code></a></p>
+<dd><p>Bases: <a class="reference internal" href="covsirphy.cleaning.html#covsirphy.cleaning.term.Term" title="covsirphy.cleaning.term.Term"><code class="xref py py-class docutils literal notranslate"><span class="pre">covsirphy.cleaning.term.Term</span></code></a></p>
 <p>Split records with S-R trend analysis and estimate parameter values of the phases.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -3966,7 +3980,7 @@ New phase name will be automatically determined.</p>
 <dl class="py class">
 <dt id="covsirphy.PhaseSeries">
 <em class="property">class </em><code class="sig-name descname">PhaseSeries</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">first_date</span></em>, <em class="sig-param"><span class="n">last_date</span></em>, <em class="sig-param"><span class="n">population</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/phase/phase_series.html#PhaseSeries"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#covsirphy.PhaseSeries" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference internal" href="covsirphy.cleaning.term.html#covsirphy.cleaning.term.Term" title="covsirphy.cleaning.term.Term"><code class="xref py py-class docutils literal notranslate"><span class="pre">covsirphy.cleaning.term.Term</span></code></a></p>
+<dd><p>Bases: <a class="reference internal" href="covsirphy.cleaning.html#covsirphy.cleaning.term.Term" title="covsirphy.cleaning.term.Term"><code class="xref py py-class docutils literal notranslate"><span class="pre">covsirphy.cleaning.term.Term</span></code></a></p>
 <p>A series of phases.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -4322,7 +4336,7 @@ with the start/end dates are the previous date of the first date and initial pop
 <dl class="py class">
 <dt id="covsirphy.PhaseUnit">
 <em class="property">class </em><code class="sig-name descname">PhaseUnit</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">start_date</span></em>, <em class="sig-param"><span class="n">end_date</span></em>, <em class="sig-param"><span class="n">population</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/phase/phase_unit.html#PhaseUnit"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#covsirphy.PhaseUnit" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference internal" href="covsirphy.cleaning.term.html#covsirphy.cleaning.term.Term" title="covsirphy.cleaning.term.Term"><code class="xref py py-class docutils literal notranslate"><span class="pre">covsirphy.cleaning.term.Term</span></code></a></p>
+<dd><p>Bases: <a class="reference internal" href="covsirphy.cleaning.html#covsirphy.cleaning.term.Term" title="covsirphy.cleaning.term.Term"><code class="xref py py-class docutils literal notranslate"><span class="pre">covsirphy.cleaning.term.Term</span></code></a></p>
 <p>Save information of  a phase.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -4720,7 +4734,7 @@ Simulation end at the next date of the end date of the phase.</p>
 <dl class="py class">
 <dt id="covsirphy.PolicyMeasures">
 <em class="property">class </em><code class="sig-name descname">PolicyMeasures</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">jhu_data</span></em>, <em class="sig-param"><span class="n">population_data</span></em>, <em class="sig-param"><span class="n">oxcgrt_data</span></em>, <em class="sig-param"><span class="n">tau</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/worldwide/policy.html#PolicyMeasures"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#covsirphy.PolicyMeasures" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference internal" href="covsirphy.cleaning.term.html#covsirphy.cleaning.term.Term" title="covsirphy.cleaning.term.Term"><code class="xref py py-class docutils literal notranslate"><span class="pre">covsirphy.cleaning.term.Term</span></code></a></p>
+<dd><p>Bases: <a class="reference internal" href="covsirphy.cleaning.html#covsirphy.cleaning.term.Term" title="covsirphy.cleaning.term.Term"><code class="xref py py-class docutils literal notranslate"><span class="pre">covsirphy.cleaning.term.Term</span></code></a></p>
 <p>Analyse the relationship of policy measures and parameters of ODE models.
 This analysis will be done at country level because OxCGRT tracks policies at country level.</p>
 <dl class="field-list simple">
@@ -4905,13 +4919,13 @@ Columns:</p>
 <dl class="py class">
 <dt id="covsirphy.Population">
 <em class="property">class </em><code class="sig-name descname">Population</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/cleaning/population.html#Population"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#covsirphy.Population" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference internal" href="covsirphy.cleaning.population.html#covsirphy.cleaning.population.PopulationData" title="covsirphy.cleaning.population.PopulationData"><code class="xref py py-class docutils literal notranslate"><span class="pre">covsirphy.cleaning.population.PopulationData</span></code></a></p>
+<dd><p>Bases: <a class="reference internal" href="covsirphy.cleaning.html#covsirphy.cleaning.population.PopulationData" title="covsirphy.cleaning.population.PopulationData"><code class="xref py py-class docutils literal notranslate"><span class="pre">covsirphy.cleaning.population.PopulationData</span></code></a></p>
 </dd></dl>
 
 <dl class="py class">
 <dt id="covsirphy.PopulationData">
 <em class="property">class </em><code class="sig-name descname">PopulationData</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">filename</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">citation</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/cleaning/population.html#PopulationData"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#covsirphy.PopulationData" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference internal" href="covsirphy.cleaning.cbase.html#covsirphy.cleaning.cbase.CleaningBase" title="covsirphy.cleaning.cbase.CleaningBase"><code class="xref py py-class docutils literal notranslate"><span class="pre">covsirphy.cleaning.cbase.CleaningBase</span></code></a></p>
+<dd><p>Bases: <a class="reference internal" href="covsirphy.cleaning.html#covsirphy.cleaning.cbase.CleaningBase" title="covsirphy.cleaning.cbase.CleaningBase"><code class="xref py py-class docutils literal notranslate"><span class="pre">covsirphy.cleaning.cbase.CleaningBase</span></code></a></p>
 <p>Data cleaning of total population dataset.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -5035,7 +5049,7 @@ If &#64;province is None, “-” will be used.</p>
 <dl class="py class">
 <dt id="covsirphy.PopulationPyramidData">
 <em class="property">class </em><code class="sig-name descname">PopulationPyramidData</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">filename</span></em>, <em class="sig-param"><span class="n">force</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">verbose</span><span class="o">=</span><span class="default_value">1</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/cleaning/pyramid.html#PopulationPyramidData"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#covsirphy.PopulationPyramidData" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference internal" href="covsirphy.cleaning.cbase.html#covsirphy.cleaning.cbase.CleaningBase" title="covsirphy.cleaning.cbase.CleaningBase"><code class="xref py py-class docutils literal notranslate"><span class="pre">covsirphy.cleaning.cbase.CleaningBase</span></code></a></p>
+<dd><p>Bases: <a class="reference internal" href="covsirphy.cleaning.html#covsirphy.cleaning.cbase.CleaningBase" title="covsirphy.cleaning.cbase.CleaningBase"><code class="xref py py-class docutils literal notranslate"><span class="pre">covsirphy.cleaning.cbase.CleaningBase</span></code></a></p>
 <p>Population pyramid dataset.
 World Bank Group (2020), World Bank Open Data, <a class="reference external" href="https://data.worldbank.org/">https://data.worldbank.org/</a></p>
 <dl class="field-list simple">
@@ -5217,7 +5231,7 @@ Columns:</p>
 <dl class="py class">
 <dt id="covsirphy.SEWIRF">
 <em class="property">class </em><code class="sig-name descname">SEWIRF</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">population</span></em>, <em class="sig-param"><span class="n">theta</span></em>, <em class="sig-param"><span class="n">kappa</span></em>, <em class="sig-param"><span class="n">rho1</span></em>, <em class="sig-param"><span class="n">rho2</span></em>, <em class="sig-param"><span class="n">rho3</span></em>, <em class="sig-param"><span class="n">sigma</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/ode/sewirf.html#SEWIRF"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#covsirphy.SEWIRF" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference internal" href="covsirphy.ode.mbase.html#covsirphy.ode.mbase.ModelBase" title="covsirphy.ode.mbase.ModelBase"><code class="xref py py-class docutils literal notranslate"><span class="pre">covsirphy.ode.mbase.ModelBase</span></code></a></p>
+<dd><p>Bases: <a class="reference internal" href="covsirphy.ode.html#covsirphy.ode.mbase.ModelBase" title="covsirphy.ode.mbase.ModelBase"><code class="xref py py-class docutils literal notranslate"><span class="pre">covsirphy.ode.mbase.ModelBase</span></code></a></p>
 <p>SEWIR-F model.</p>
 <dl class="py attribute">
 <dt id="covsirphy.SEWIRF.DAY_PARAMETERS">
@@ -5412,7 +5426,7 @@ Columns:</p>
 <dl class="py class">
 <dt id="covsirphy.SIR">
 <em class="property">class </em><code class="sig-name descname">SIR</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">population</span></em>, <em class="sig-param"><span class="n">rho</span></em>, <em class="sig-param"><span class="n">sigma</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/ode/sir.html#SIR"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#covsirphy.SIR" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference internal" href="covsirphy.ode.mbase.html#covsirphy.ode.mbase.ModelBase" title="covsirphy.ode.mbase.ModelBase"><code class="xref py py-class docutils literal notranslate"><span class="pre">covsirphy.ode.mbase.ModelBase</span></code></a></p>
+<dd><p>Bases: <a class="reference internal" href="covsirphy.ode.html#covsirphy.ode.mbase.ModelBase" title="covsirphy.ode.mbase.ModelBase"><code class="xref py py-class docutils literal notranslate"><span class="pre">covsirphy.ode.mbase.ModelBase</span></code></a></p>
 <p>SIR model.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -5612,7 +5626,7 @@ Columns:</p>
 <dl class="py class">
 <dt id="covsirphy.SIRD">
 <em class="property">class </em><code class="sig-name descname">SIRD</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">population</span></em>, <em class="sig-param"><span class="n">kappa</span></em>, <em class="sig-param"><span class="n">rho</span></em>, <em class="sig-param"><span class="n">sigma</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/ode/sird.html#SIRD"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#covsirphy.SIRD" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference internal" href="covsirphy.ode.mbase.html#covsirphy.ode.mbase.ModelBase" title="covsirphy.ode.mbase.ModelBase"><code class="xref py py-class docutils literal notranslate"><span class="pre">covsirphy.ode.mbase.ModelBase</span></code></a></p>
+<dd><p>Bases: <a class="reference internal" href="covsirphy.ode.html#covsirphy.ode.mbase.ModelBase" title="covsirphy.ode.mbase.ModelBase"><code class="xref py py-class docutils literal notranslate"><span class="pre">covsirphy.ode.mbase.ModelBase</span></code></a></p>
 <p>SIR-D model.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -5810,7 +5824,7 @@ Columns:</p>
 <dl class="py class">
 <dt id="covsirphy.SIRF">
 <em class="property">class </em><code class="sig-name descname">SIRF</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">population</span></em>, <em class="sig-param"><span class="n">theta</span></em>, <em class="sig-param"><span class="n">kappa</span></em>, <em class="sig-param"><span class="n">rho</span></em>, <em class="sig-param"><span class="n">sigma</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/ode/sirf.html#SIRF"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#covsirphy.SIRF" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference internal" href="covsirphy.ode.mbase.html#covsirphy.ode.mbase.ModelBase" title="covsirphy.ode.mbase.ModelBase"><code class="xref py py-class docutils literal notranslate"><span class="pre">covsirphy.ode.mbase.ModelBase</span></code></a></p>
+<dd><p>Bases: <a class="reference internal" href="covsirphy.ode.html#covsirphy.ode.mbase.ModelBase" title="covsirphy.ode.mbase.ModelBase"><code class="xref py py-class docutils literal notranslate"><span class="pre">covsirphy.ode.mbase.ModelBase</span></code></a></p>
 <p>SIR-F model.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -6012,7 +6026,7 @@ specialized_df (pandas.DataFrame): dataframe with the variables</p>
 <dl class="py class">
 <dt id="covsirphy.SIRFV">
 <em class="property">class </em><code class="sig-name descname">SIRFV</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">population</span></em>, <em class="sig-param"><span class="n">theta</span></em>, <em class="sig-param"><span class="n">kappa</span></em>, <em class="sig-param"><span class="n">rho</span></em>, <em class="sig-param"><span class="n">sigma</span></em>, <em class="sig-param"><span class="n">omega</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">v_per_day</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/ode/sirfv.html#SIRFV"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#covsirphy.SIRFV" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference internal" href="covsirphy.ode.mbase.html#covsirphy.ode.mbase.ModelBase" title="covsirphy.ode.mbase.ModelBase"><code class="xref py py-class docutils literal notranslate"><span class="pre">covsirphy.ode.mbase.ModelBase</span></code></a></p>
+<dd><p>Bases: <a class="reference internal" href="covsirphy.ode.html#covsirphy.ode.mbase.ModelBase" title="covsirphy.ode.mbase.ModelBase"><code class="xref py py-class docutils literal notranslate"><span class="pre">covsirphy.ode.mbase.ModelBase</span></code></a></p>
 <p>SIR-FV model.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -6473,6 +6487,48 @@ If the last phase is not included, the dates will be assigned to the previous ph
 </dd></dl>
 
 <dl class="py method">
+<dt id="covsirphy.Scenario.estimate_delay">
+<code class="sig-name descname">estimate_delay</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">oxcgrt_data</span></em>, <em class="sig-param"><span class="n">indicator</span><span class="o">=</span><span class="default_value">'Stringency_index'</span></em>, <em class="sig-param"><span class="n">target</span><span class="o">=</span><span class="default_value">'Infected'</span></em>, <em class="sig-param"><span class="n">value_range</span><span class="o">=</span><span class="default_value">(7, 35)</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/analysis/scenario.html#Scenario.estimate_delay"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#covsirphy.Scenario.estimate_delay" title="Permalink to this definition">¶</a></dt>
+<dd><p>Estimate the average delay (in days) between a policy measure taken
+and the moment of change in for the given target value, for example
+<cite>Infected</cite>.The change over time is calculated with penalized change
+point analysis. More information about the method of change point
+detection can be found on:
+<a class="reference external" href="https://ctruong.perso.math.cnrs.fr/ruptures-docs/build/html/detection/pelt.html">https://ctruong.perso.math.cnrs.fr/ruptures-docs/build/html/detection/pelt.html</a>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>oxcgrt_data</strong> (<a class="reference internal" href="#covsirphy.OxCGRTData" title="covsirphy.OxCGRTData"><em>covsirphy.OxCGRTData</em></a>) – OxCGRT dataset</p></li>
+<li><p><strong>indicator</strong> (<em>str</em>) – column variable from the OxCGRT dataset</p></li>
+<li><p><strong>target</strong> (<em>str</em>) – one of the target columns to detect changes in,
+options are [“Infected”, “Confirmed”, “Fatal”, “Recovered”].</p></li>
+<li><p><strong>value_range</strong> (<em>int</em><em>, </em><em>int</em>) – tuple, giving the minimum and maximum</p></li>
+<li><p><strong>to search for change over time. It is assumed that when a</strong> (<em>range</em>) – </p></li>
+<li><p><strong>measure is taken</strong> (<em>policy</em>) – </p></li>
+<li><p><strong>will occur after at least 7 days</strong> (<em>change</em>) – </p></li>
+<li><p><strong>before 35 days</strong> (<em>and</em>) – </p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p>int: the estimated number of days of delay for a given country.</p></li>
+<li><p>pandas.DataFrame: dataframe of target, indicator and calculated periods of change (in days).</p></li>
+</ul>
+</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>tuple(int, pandas.DataFrame)</p>
+</dd>
+</dl>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Average recovered period of JHU dataset will be used as returned value
+when the estimated value was not in value_range.
+Very long periods (outside of 99% quantile) are taken out.</p>
+</div>
+</dd></dl>
+
+<dl class="py method">
 <dt id="covsirphy.Scenario.estimate_history">
 <code class="sig-name descname">estimate_history</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">phase</span></em>, <em class="sig-param"><span class="n">name</span><span class="o">=</span><span class="default_value">'Main'</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/analysis/scenario.html#Scenario.estimate_history"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#covsirphy.Scenario.estimate_history" title="Permalink to this definition">¶</a></dt>
 <dd><p>Show the history of optimization.</p>
@@ -6504,7 +6560,7 @@ If the last phase is not included, the dates will be assigned to the previous ph
 
 <dl class="py method">
 <dt id="covsirphy.Scenario.fit">
-<code class="sig-name descname">fit</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">oxcgrt_data</span></em>, <em class="sig-param"><span class="n">name</span><span class="o">=</span><span class="default_value">'Main'</span></em>, <em class="sig-param"><span class="n">test_size</span><span class="o">=</span><span class="default_value">0.2</span></em>, <em class="sig-param"><span class="n">seed</span><span class="o">=</span><span class="default_value">0</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/analysis/scenario.html#Scenario.fit"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#covsirphy.Scenario.fit" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">fit</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">oxcgrt_data</span></em>, <em class="sig-param"><span class="n">name</span><span class="o">=</span><span class="default_value">'Main'</span></em>, <em class="sig-param"><span class="n">test_size</span><span class="o">=</span><span class="default_value">0.2</span></em>, <em class="sig-param"><span class="n">seed</span><span class="o">=</span><span class="default_value">0</span></em>, <em class="sig-param"><span class="n">delay</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/analysis/scenario.html#Scenario.fit"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#covsirphy.Scenario.fit" title="Permalink to this definition">¶</a></dt>
 <dd><p>Learn the relationship of ODE parameter values and delayed OxCGRT scores using Elastic Net regression,
 assuming that OxCGRT scores will impact on ODE parameter values with delay (=recovery period).</p>
 <dl class="field-list simple">
@@ -6514,6 +6570,8 @@ assuming that OxCGRT scores will impact on ODE parameter values with delay (=rec
 <li><p><strong>name</strong> (<em>str</em>) – scenario name</p></li>
 <li><p><strong>test_size</strong> (<em>float</em>) – proportion of the test dataset of Elastic Net regression</p></li>
 <li><p><strong>seed</strong> (<em>int</em>) – random seed when spliting the dataset to train/test data</p></li>
+<li><p><strong>delay</strong> (<em>int</em>) – number of days of delay between policy measure and effect</p></li>
+<li><p><strong>number of confirmed cases.</strong> (<em>on</em>) – </p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
@@ -6523,6 +6581,8 @@ assuming that OxCGRT scores will impact on ODE parameter values with delay (=rec
 <li><p>score_train (float): determination coefficient of train dataset</p></li>
 <li><p>score_test (float): determination coefficient of test dataset</p></li>
 <li><p>intercept (pandas.DataFrame): intercept values (Index: ODE parameters, Columns: OxCGRT indicators)</p></li>
+<li><p>delay (int): number of days of delay between policy measure and effect
+on number of confirmed cases.</p></li>
 </ul>
 </p>
 </dd>
@@ -7659,7 +7719,7 @@ it will be converted to an integer.</p>
 <dl class="py class">
 <dt id="covsirphy.Trend">
 <em class="property">class </em><code class="sig-name descname">Trend</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">sr_df</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/phase/trend.html#Trend"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#covsirphy.Trend" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference internal" href="covsirphy.cleaning.term.html#covsirphy.cleaning.term.Term" title="covsirphy.cleaning.term.Term"><code class="xref py py-class docutils literal notranslate"><span class="pre">covsirphy.cleaning.term.Term</span></code></a></p>
+<dd><p>Bases: <a class="reference internal" href="covsirphy.cleaning.html#covsirphy.cleaning.term.Term" title="covsirphy.cleaning.term.Term"><code class="xref py py-class docutils literal notranslate"><span class="pre">covsirphy.cleaning.term.Term</span></code></a></p>
 <p>S-R trend analysis in a phase.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -7806,7 +7866,7 @@ Index:</p>
 <dl class="py class">
 <dt id="covsirphy.VaccineData">
 <em class="property">class </em><code class="sig-name descname">VaccineData</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">filename</span></em>, <em class="sig-param"><span class="n">force</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">verbose</span><span class="o">=</span><span class="default_value">1</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/cleaning/vaccine_data.html#VaccineData"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#covsirphy.VaccineData" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference internal" href="covsirphy.cleaning.cbase.html#covsirphy.cleaning.cbase.CleaningBase" title="covsirphy.cleaning.cbase.CleaningBase"><code class="xref py py-class docutils literal notranslate"><span class="pre">covsirphy.cleaning.cbase.CleaningBase</span></code></a></p>
+<dd><p>Bases: <a class="reference internal" href="covsirphy.cleaning.html#covsirphy.cleaning.cbase.CleaningBase" title="covsirphy.cleaning.cbase.CleaningBase"><code class="xref py py-class docutils literal notranslate"><span class="pre">covsirphy.cleaning.cbase.CleaningBase</span></code></a></p>
 <p>Dataset regarding vaccination retrieved from “Our World In Data”.
 <a class="reference external" href="https://github.com/owid/covid-19-data/tree/master/public/data">https://github.com/owid/covid-19-data/tree/master/public/data</a>
 <a class="reference external" href="https://ourworldindata.org/coronavirus">https://ourworldindata.org/coronavirus</a></p>
@@ -7938,7 +7998,7 @@ Columns:</p>
 <dl class="py class">
 <dt id="covsirphy.Word">
 <em class="property">class </em><code class="sig-name descname">Word</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/cleaning/term.html#Word"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#covsirphy.Word" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference internal" href="covsirphy.cleaning.term.html#covsirphy.cleaning.term.Term" title="covsirphy.cleaning.term.Term"><code class="xref py py-class docutils literal notranslate"><span class="pre">covsirphy.cleaning.term.Term</span></code></a></p>
+<dd><p>Bases: <a class="reference internal" href="covsirphy.cleaning.html#covsirphy.cleaning.term.Term" title="covsirphy.cleaning.term.Term"><code class="xref py py-class docutils literal notranslate"><span class="pre">covsirphy.cleaning.term.Term</span></code></a></p>
 </dd></dl>
 
 <dl class="py function">
@@ -8140,7 +8200,7 @@ Columns:</p>
           <footer>
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
         <a href="covsirphy.analysis.html" class="btn btn-neutral float-right" title="covsirphy.analysis package" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
-        <a href="usage_policy.html" class="btn btn-neutral float-left" title="Usage: policy measures" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="INSTALLATION.html" class="btn btn-neutral float-left" title="Installation" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
     </div>
 
   <hr/>
