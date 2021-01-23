@@ -33,7 +33,7 @@ class Scenario(DataHandler):
     def __init__(self, jhu_data, population_data, country, province=None, tau=None, auto_complement=True):
         super().__init__(
             jhu_data, population_data, country, province=province, auto_complement=auto_complement)
-        self.tau = self.ensure_tau(tau)
+        self.tau = self._ensure_tau(tau)
         self._update_range(first_date=None, last_date=None)
         # Linear regression modes for prediction of ODE parameters
         self._oxcgrt_data = None

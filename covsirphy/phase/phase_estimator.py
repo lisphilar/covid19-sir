@@ -52,7 +52,7 @@ class MPEstimator(Term):
             self.from_dataset = False
         # Arguments
         self.model = self.ensure_subclass(model, ModelBase, "model")
-        self._tau = self.ensure_tau(tau)
+        self._tau = self._ensure_tau(tau)
         self.param_dict = {
             k: v for (k, v) in kwargs.items() if k in model.PARAMETERS}
         self._units = []

@@ -37,7 +37,7 @@ class PolicyMeasures(Term):
         self.oxcgrt_data = self.ensure_instance(
             oxcgrt_data, OxCGRTData, name="oxcgrt_data")
         # tau value must be shared
-        self.tau = self.ensure_tau(tau)
+        self.tau = self._ensure_tau(tau)
         # Init
         self._countries = self._all_countries()
         self._init_scenario()

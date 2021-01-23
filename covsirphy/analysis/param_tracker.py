@@ -44,7 +44,7 @@ class ParamTracker(Term):
         self._series = self.ensure_instance(
             phase_series, PhaseSeries, name="phase_seres")
         self.area = area or ""
-        self.tau = self.ensure_tau(tau)
+        self.tau = self._ensure_tau(tau)
 
     def __len__(self):
         return len(self._series)

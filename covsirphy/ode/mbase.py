@@ -210,7 +210,7 @@ class ModelBase(Term):
         if tau is None:
             df = df.drop(cls.DATE, axis=1)
             return cls.specialize(df, population=population).reset_index(drop=True)
-        tau = cls.ensure_tau(tau)
+        tau = cls._ensure_tau(tau)
         df = cls._ensure_dataframe(
             df, name="data_df", columns=cls.NLOC_COLUMNS)
         # Calculate elapsed time from the first date [min]

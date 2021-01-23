@@ -36,7 +36,7 @@ class ModelValidator(Term):
         self.n_trials = self._ensure_natural_int(n_trials, name="n_trials")
         self.seed = self._ensure_natural_int(
             seed, name="seed", include_zero=True)
-        self.tau = self.ensure_tau(tau)
+        self.tau = self._ensure_tau(tau)
         # Validated models
         self.model_names = []
         # Dataframes of results created by ._get_result()

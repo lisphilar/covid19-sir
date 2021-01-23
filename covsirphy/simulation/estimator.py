@@ -67,7 +67,7 @@ class Estimator(Term):
         self.total_trials = 0
         self.runtime = 0
         # Tau value
-        self.tau_final = self.ensure_tau(tau)
+        self.tau_final = self._ensure_tau(tau)
         self.tau_candidates = self.divisors(1440)
         self.tau = tau
         if tau is None:

@@ -39,7 +39,7 @@ class ExampleData(JHUData):
         self._raw = clean_df.copy()
         self._cleaned_df = clean_df.copy()
         self._citation = str()
-        self.tau = self.ensure_tau(tau)
+        self.tau = self._ensure_tau(tau)
         self.start_date = self.ensure_date(start_date, name="start_date")
         self._specialized_dict = {}
         self.nondim_dict = {}

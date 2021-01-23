@@ -231,7 +231,7 @@ class Term(object):
         return number
 
     @classmethod
-    def ensure_tau(cls, tau):
+    def _ensure_tau(cls, tau):
         """
         Ensure that the value can be used as tau value [min].
 
@@ -462,7 +462,7 @@ class Term(object):
         """
         sta = cls.date_obj(start_date)
         end = cls.date_obj(end_date)
-        tau = cls.ensure_tau(tau)
+        tau = cls._ensure_tau(tau)
         return math.ceil((end - sta) / timedelta(minutes=tau))
 
     @classmethod

@@ -260,7 +260,7 @@ class PhaseUnit(Term):
     @ tau.setter
     def tau(self, value):
         if self._ode_dict[self.TAU] is None:
-            self._ode_dict[self.TAU] = self.ensure_tau(value)
+            self._ode_dict[self.TAU] = self._ensure_tau(value)
             return
         raise AttributeError(
             f"PhaseUnit.tau is not None ({self._ode_dict[self.TAU]}) and cannot be changed.")
@@ -344,7 +344,7 @@ class PhaseUnit(Term):
             covsirphy.PhaseUnit: self
         """
         # Tau value
-        tau = self.ensure_tau(tau) or self._ode_dict[self.TAU]
+        tau = self._ensure_tau(tau) or self._ode_dict[self.TAU]
         # Model
         model = model or self._model
         if model is None:
