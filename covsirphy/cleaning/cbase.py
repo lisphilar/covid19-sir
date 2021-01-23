@@ -223,8 +223,10 @@ class CleaningBase(Term):
 
         Returns:
             pandas.DataFrame
-                Index: reset index
-                Columns: without ISO3, Country, Province column
+                Index
+                    reset index
+                Columns
+                    without ISO3, Country, Province column
         """
         country_alias = self.ensure_country_name(country)
         df = self._subset_by_area(country=country, province=province)
@@ -272,8 +274,9 @@ class CleaningBase(Term):
 
         Returns:
             pandas.DataFrame
-                Index: reset index
-                Columns:
+                Index
+                    reset index
+                Columns
                     without ISO3, Country, Province column
         """
         country_alias = self.ensure_country_name(country)

@@ -17,10 +17,11 @@ class ParamTracker(Term):
 
     Args:
         record_df (pandas.DataFrame): records
-            Index:
+
+            Index
                 reset index
-            Columns:
-                - Date (pd.TimeStamp): Observation date
+            Columns
+                - Date (pandas.TimeStamp): Observation date
                 - Confirmed (int): the number of confirmed cases
                 - Infected (int): the number of currently infected cases
                 - Fatal (int): the number of fatal cases
@@ -433,9 +434,9 @@ class ParamTracker(Term):
 
         Returns:
             pandas.DataFrame
-                Index:
+                Index
                     reset index
-                Columns:
+                Columns
                     - Date (pd.TimeStamp): Observation date
                     - Country (str): country/region name
                     - Province (str): province/prefecture/state name
@@ -458,11 +459,11 @@ class ParamTracker(Term):
         Returns:
             tuple(pandas.DataFrame, pandas.DataFrame):
                 - actual (pandas.DataFrame):
-                    Index: Date (pd.TimeStamp)
-                    Columns: variables defined by @variables
+                    Index Date (pd.TimeStamp)
+                    Columns variables defined by @variables
                 - simulated (pandas.DataFrame):
-                    Index: Date (pd.TimeStamp)
-                    Columns: variables defined by @variables
+                    Index Date (pd.TimeStamp)
+                    Columns variables defined by @variables
         """
         record_df = self.record_df.copy().set_index(self.DATE)
         simulated_df = self.simulate(y0_dict=y0_dict).set_index(self.DATE)

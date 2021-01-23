@@ -52,8 +52,8 @@ class VaccineData(CleaningBase):
             verbose (int): level of verbosity
         Returns:
             pd.DataFrame:
-                Index: reset index
-                Columns: Date, Country, Product, Vaccinations
+                Index reset index
+                Columns Date, Country, Product, Vaccinations
         """
         # Show URL
         if verbose:
@@ -80,8 +80,8 @@ class VaccineData(CleaningBase):
 
         Returns:
             pandas.DataFrame:
-                Index: reset index
-                Columns: Date, Country, Product, Vaccinations
+                Index reset index
+                Columns Date, Country, Product, Vaccinations
         """
         df = self._raw.copy()
         # Date
@@ -108,8 +108,9 @@ class VaccineData(CleaningBase):
 
         Returns:
             pandas.DataFrame
-                Index: reset index
-                Columns:
+                Index
+                    reset index
+                Columns
                     - Date (pandas.TimeStamp): observation date
                     - Vaccinations (int): the number of vaccinations
         """
@@ -150,8 +151,9 @@ class VaccineData(CleaningBase):
 
         Returns:
             pandas.DataFrame
-                Index: reset index
-                Columns:
+                Index
+                    reset index
+                Columns
                     - Date (pandas.TimeStamp): observation date
                     - Vaccinations (int): the number of vaccinations
         """
@@ -163,9 +165,10 @@ class VaccineData(CleaningBase):
         Calculate total values of the cleaned dataset.
 
         Returns:
-            pandas.DataFrame
-                Index: reset index
-                Columns:
+            pandas.DataFrame:
+                Index
+                    reset index
+                Columns
                     - Date (pandas.TimeStamp): observation date
                     - Vaccinations (int): the number of vaccinations
         """

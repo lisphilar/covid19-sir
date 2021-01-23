@@ -16,9 +16,9 @@ class ChangeFinder(Term):
 
     Args:
         sr_df (pandas.DataFrame)
-            Index:
+            Index
                 Date (pd.TimeStamp): Observation date
-            Columns:
+            Columns
                 - Recovered (int): the number of recovered cases (> 0)
                 - Susceptible (int): the number of susceptible cases
                 - any other columns will be ignored
@@ -109,8 +109,8 @@ class ChangeFinder(Term):
         Returns:
             tuple
                 (pandas.DataFrame): Result of curve fitting
-                    Index: reset index
-                    Columns:
+                    Index reset index
+                    Columns
                         - (phase name)_predicted: predicted value of Susceptible
                         - (phase_name)_actual: actual value of Susceptible
                         - (phase_name)_Recovered: Recovered

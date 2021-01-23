@@ -96,8 +96,10 @@ class JHUDataComplementHandler(Term):
 
         Args:
             subset_df (pandas.DataFrame): Subset of records
-                Index: reset index
-                Columns:
+
+                Index
+                    reset index
+                Columns
                     - Date (pd.TimeStamp): Observation date
                     - Confirmed (int): the number of confirmed cases
                     - Fatal (int): the number of fatal cases
@@ -106,25 +108,28 @@ class JHUDataComplementHandler(Term):
 
         Returns:
             tuple(pandas.DataFrame, str, dict):
-                pandas.DataFrame:
-                    Index: reset index
-                    Columns:
+                pandas.DataFrame
+
+                    Index
+                        reset index
+                    Columns
                         - Date(pd.TimeStamp): Observation date
                         - Confirmed(int): the number of confirmed cases
                         - Infected(int): the number of currently infected cases
                         - Fatal(int): the number of fatal cases
                         - Recovered (int): the number of recovered cases
+
                 str: status code
                 dict: status for each complement type
 
         Note:
             Status code will be selected from:
-                - '' (not complemented)
-                - 'monotonic increasing complemented confirmed data'
-                - 'monotonic increasing complemented fatal data'
-                - 'monotonic increasing complemented recovered data'
-                - 'fully complemented recovered data'
-                - 'partially complemented recovered data'
+            - '' (not complemented)
+            - 'monotonic increasing complemented confirmed data'
+            - 'monotonic increasing complemented fatal data'
+            - 'monotonic increasing complemented recovered data'
+            - 'fully complemented recovered data'
+            - 'partially complemented recovered data'
         """
         self._ensure_dataframe(
             subset_df, name="subset_df", columns=[self.DATE, *self.RAW_COLS])
@@ -152,13 +157,17 @@ class JHUDataComplementHandler(Term):
 
         Args:
             subset_df (pandas.DataFrame): Subset of records
-                Index: reset index
-                Columns: Date, Confirmed, Fatal, Recovered (the others will be ignored)
+                Index
+                    reset index
+                Columns
+                    Date, Confirmed, Fatal, Recovered (the others will be ignored)
 
         Returns:
-            pandas.DataFrame
-                Index: Date (pandas.TimeStamp)
-                Columns: Confirmed, Fatal, Recovered
+            pandas.DataFrame:
+                Index
+                    Date (pandas.TimeStamp)
+                Columns
+                    Confirmed, Fatal, Recovered
         """
         sel_invalid_R = subset_df[self.C] - \
             subset_df[self.F] < subset_df[self.R]
@@ -174,13 +183,17 @@ class JHUDataComplementHandler(Term):
 
         Args:
             df (pandas.DataFrame)
-                Index: Date (pandas.TimeStamp)
-                Columns: Confirmed, Fatal, Recovered
+                Index
+                    Date (pandas.TimeStamp)
+                Columns
+                    Confirmed, Fatal, Recovered
 
         Returns:
             pandas.DataFrame: complemented records
-                Index: reset index
-                Columns: Date (pandas.TimeStamp), Confirmed, Infected, Fatal, Recovered (int)
+                Index
+                    reset index
+                Columns
+                    Date (pandas.TimeStamp), Confirmed, Infected, Fatal, Recovered (int)
         """
         df = df.astype(np.int64)
         df[self.CI] = df[self.C] - df[self.F] - df[self.R]
@@ -192,15 +205,19 @@ class JHUDataComplementHandler(Term):
         Force the variable show monotonic increasing.
 
         Args:
-            df (pandas.DataFrame):
-                Index: Date (pandas.TimeStamp)
-                Columns: Confirmed, Fatal, Recovered
+            df (pandas.DataFrame)
+                Index
+                    Date (pandas.TimeStamp)
+                Columns
+                    Confirmed, Fatal, Recovered
             variable (str): variable name to show monotonic increasing
 
         Returns:
             pandas.DataFrame: complemented records
-                Index: Date (pandas.TimeStamp)
-                Columns: Confirmed, Fatal, Recovered
+                Index
+                    Date (pandas.TimeStamp)
+                Columns
+                    Confirmed, Fatal, Recovered
         """
         warnings.simplefilter("ignore", UserWarning)
         # Whether complement is necessary or not
@@ -229,9 +246,11 @@ class JHUDataComplementHandler(Term):
         as an additional condition in order to apply full complement or not
 
         Args:
-            country_df (pandas.DataFrame):
-                - Index: reset_index
-                - Columns: Date, Confirmed, Recovered, Fatal
+            country_df (pandas.DataFrame)
+                Index
+                    reset_index
+                Columns
+                    Date, Confirmed, Recovered, Fatal
 
         Returns:
             bool: true if recovery period is within valid range or false otherwise
@@ -263,14 +282,18 @@ class JHUDataComplementHandler(Term):
         Estimate the number of recovered cases with the value of recovery period.
 
         Args:
-            df (pandas.DataFrame):
-                Index: Date (pandas.TimeStamp)
-                Columns: Confirmed, Fatal, Recovered
+            df (pandas.DataFrame)
+                Index
+                    Date (pandas.TimeStamp)
+                Columns
+                    Confirmed, Fatal, Recovered
 
         Returns:
             pandas.DataFrame: complemented records
-                Index: Date (pandas.TimeStamp)
-                Columns: Confirmed, Fatal, Recovered
+                Index
+                    Date (pandas.TimeStamp)
+                Columns
+                    Confirmed, Fatal, Recovered
         """
         # Whether complement is necessary or not
         if df[self.R].max() > self.max_ignored:
@@ -300,14 +323,18 @@ class JHUDataComplementHandler(Term):
         but small compared to confirmed cases.
 
         Args:
-            df (pandas.DataFrame):
-                Index: Date (pandas.TimeStamp)
-                Columns: Confirmed, Fatal, Recovered
+            df (pandas.DataFrame)
+                Index
+                    Date (pandas.TimeStamp)
+                Columns
+                    Confirmed, Fatal, Recovered
 
         Returns:
             pandas.DataFrame: complemented records
-                Index: Date (pandas.TimeStamp)
-                Columns: Confirmed, Fatal, Recovered
+                Index
+                    Date (pandas.TimeStamp)
+                Columns
+                    Confirmed, Fatal, Recovered
 
         Note: _recovered_partial_ending() must always be called
               after _recovered_partial()
@@ -354,14 +381,18 @@ class JHUDataComplementHandler(Term):
         after reached 'self.max_ignored' cases, interpolate the recovered values.
 
         Args:
-            df (pandas.DataFrame):
-                Index: Date (pandas.TimeStamp)
-                Columns: Confirmed, Fatal, Recovered
+            df (pandas.DataFrame)
+                Index
+                    Date (pandas.TimeStamp)
+                Columns
+                    Confirmed, Fatal, Recovered
 
         Returns:
             pandas.DataFrame: complemented records
-                Index: Date (pandas.TimeStamp)
-                Columns: Confirmed, Fatal, Recovered
+                Index
+                    Date (pandas.TimeStamp)
+                Columns
+                    Confirmed, Fatal, Recovered
         """
         # Whether complement is necessary or not
         series = df.loc[df[self.R] > self.max_ignored, self.R]
@@ -383,14 +414,18 @@ class JHUDataComplementHandler(Term):
         Sort the absolute values of recovered data.
 
         Args:
-            df (pandas.DataFrame):
-                Index: Date (pandas.TimeStamp)
-                Columns: Confirmed, Fatal, Recovered
+            df (pandas.DataFrame)
+                Index
+                    Date (pandas.TimeStamp)
+                Columns
+                    Confirmed, Fatal, Recovered
 
         Returns:
             pandas.DataFrame: complemented records
-                Index: Date (pandas.TimeStamp)
-                Columns: Confirmed, Fatal, Recovered
+                Index
+                    Date (pandas.TimeStamp)
+                Columns
+                    Confirmed, Fatal, Recovered
 
         Note:
             _recovered_sort() must always be called after _recovered_partial_ending()

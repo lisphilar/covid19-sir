@@ -419,12 +419,13 @@ If not, the correct country name will be found.</p>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
-<dd class="field-even"><p><dl>
-<dt>pandas.DataFrame</dt><dd><p>Index: reset index
-Columns:</p>
-<blockquote>
-<div><p>without ISO3, Country, Province column</p>
-</div></blockquote>
+<dd class="field-even"><p><dl class="simple">
+<dt>pandas.DataFrame</dt><dd><dl class="simple">
+<dt>Index</dt><dd><p>reset index</p>
+</dd>
+<dt>Columns</dt><dd><p>without ISO3, Country, Province column</p>
+</dd>
+</dl>
 </dd>
 </dl>
 </p>
@@ -447,8 +448,12 @@ Columns:</p>
 </dd>
 <dt class="field-even">Returns</dt>
 <dd class="field-even"><p><dl class="simple">
-<dt>pandas.DataFrame</dt><dd><p>Index: reset index
-Columns: without ISO3, Country, Province column</p>
+<dt>pandas.DataFrame</dt><dd><dl class="simple">
+<dt>Index</dt><dd><p>reset index</p>
+</dd>
+<dt>Columns</dt><dd><p>without ISO3, Country, Province column</p>
+</dd>
+</dl>
 </dd>
 </dl>
 </p>
@@ -504,9 +509,9 @@ Cleaning method is defined by CountryData._cleaning() method.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns</dt>
 <dd class="field-odd"><p><dl class="simple">
-<dt>Index:</dt><dd><p>reset index</p>
+<dt>Index</dt><dd><p>reset index</p>
 </dd>
-<dt>Columns:</dt><dd><ul class="simple">
+<dt>Columns</dt><dd><ul class="simple">
 <li><p>Date (pd.TimeStamp): Observation date</p></li>
 <li><p>Country (pandas.Category): country/region name</p></li>
 <li><p>Province (pandas.Category): province/prefecture/sstate name</p></li>
@@ -608,9 +613,9 @@ Cleaning method is defined by CountryData._cleaning() method.</p>
 <dd class="field-odd"><p><p>group-by Date, sum of the values</p>
 <blockquote>
 <div><dl class="simple">
-<dt>Index:</dt><dd><p>Date (pd.TimeStamp): Observation date</p>
+<dt>Index</dt><dd><p>Date (pd.TimeStamp): Observation date</p>
 </dd>
-<dt>Columns:</dt><dd><ul class="simple">
+<dt>Columns</dt><dd><ul class="simple">
 <li><p>Confirmed (int): the number of confirmed cases</p></li>
 <li><p>Infected (int): the number of currently infected cases</p></li>
 <li><p>Fatal (int): the number of fatal cases</p></li>
@@ -1077,11 +1082,11 @@ World Bank Group (2020), World Bank Open Data, <a class="reference external" hre
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
-<dd class="field-even"><p><dl>
-<dt>(cleaned or raw) dataset</dt><dd><p>Index: reset index
-Columns: for cleaned dataset,</p>
-<blockquote>
-<div><ul class="simple">
+<dd class="field-even"><p><dl class="simple">
+<dt>(cleaned or raw) dataset</dt><dd><dl class="simple">
+<dt>Index</dt><dd><p>reset index</p>
+</dd>
+<dt>Columns for cleaned dataset,</dt><dd><ul class="simple">
 <li><p>Prefecture (pandas.Category)</p></li>
 <li><p>Admin_Capital (pandas.Category)</p></li>
 <li><p>Admin_Region (pandas.Category)</p></li>
@@ -1102,7 +1107,8 @@ Columns: for cleaned dataset,</p>
 <li><p>Location_Latitude (float)</p></li>
 <li><p>Location_Longitude (float)</p></li>
 </ul>
-</div></blockquote>
+</dd>
+</dl>
 </dd>
 </dl>
 </p>
@@ -1215,35 +1221,37 @@ Status code: ‘fully complemented recovered data’ and so on as noted in self.
 <dd><p>Perform complement.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>subset_df</strong> (<em>pandas.DataFrame</em>) – <p>Subset of records
-Index: reset index
-Columns:</p>
-<blockquote>
-<div><ul class="simple">
+<dd class="field-odd"><p><strong>subset_df</strong> (<em>pandas.DataFrame</em>) – <p>Subset of records</p>
+<dl class="simple">
+<dt>Index</dt><dd><p>reset index</p>
+</dd>
+<dt>Columns</dt><dd><ul class="simple">
 <li><p>Date (pd.TimeStamp): Observation date</p></li>
 <li><p>Confirmed (int): the number of confirmed cases</p></li>
 <li><p>Fatal (int): the number of fatal cases</p></li>
 <li><p>Recovered (int): the number of recovered cases</p></li>
 <li><p>The other columns will be ignored</p></li>
 </ul>
-</div></blockquote>
+</dd>
+</dl>
 </p>
 </dd>
 <dt class="field-even">Returns</dt>
-<dd class="field-even"><p><dl>
-<dt>pandas.DataFrame:</dt><dd><p>Index: reset index
-Columns:</p>
+<dd class="field-even"><p><p>pandas.DataFrame</p>
 <blockquote>
-<div><ul class="simple">
+<div><dl class="simple">
+<dt>Index</dt><dd><p>reset index</p>
+</dd>
+<dt>Columns</dt><dd><ul class="simple">
 <li><p>Date(pd.TimeStamp): Observation date</p></li>
 <li><p>Confirmed(int): the number of confirmed cases</p></li>
 <li><p>Infected(int): the number of currently infected cases</p></li>
 <li><p>Fatal(int): the number of fatal cases</p></li>
 <li><p>Recovered (int): the number of recovered cases</p></li>
 </ul>
-</div></blockquote>
 </dd>
 </dl>
+</div></blockquote>
 <p>str: status code
 dict: status for each complement type</p>
 </p>
@@ -1254,17 +1262,13 @@ dict: status for each complement type</p>
 </dl>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
-<dl class="simple">
-<dt>Status code will be selected from:</dt><dd><ul class="simple">
-<li><p>‘’ (not complemented)</p></li>
-<li><p>‘monotonic increasing complemented confirmed data’</p></li>
-<li><p>‘monotonic increasing complemented fatal data’</p></li>
-<li><p>‘monotonic increasing complemented recovered data’</p></li>
-<li><p>‘fully complemented recovered data’</p></li>
-<li><p>‘partially complemented recovered data’</p></li>
-</ul>
-</dd>
-</dl>
+<p>Status code will be selected from:
+- ‘’ (not complemented)
+- ‘monotonic increasing complemented confirmed data’
+- ‘monotonic increasing complemented fatal data’
+- ‘monotonic increasing complemented recovered data’
+- ‘fully complemented recovered data’
+- ‘partially complemented recovered data’</p>
 </div>
 </dd></dl>
 
@@ -1321,9 +1325,9 @@ where recovered values are reported.</p>
 <dt class="field-even">Returns</dt>
 <dd class="field-even"><p><dl class="simple">
 <dt>pandas.DataFrame</dt><dd><dl class="simple">
-<dt>Index:</dt><dd><p>reset index</p>
+<dt>Index</dt><dd><p>reset index</p>
 </dd>
-<dt>Columns:</dt><dd><ul class="simple">
+<dt>Columns</dt><dd><ul class="simple">
 <li><p>Date (pd.TimeStamp): Observation date</p></li>
 <li><p>Country (pandas.Category): country/region name</p></li>
 <li><p>Province (pandas.Category): province/prefecture/state name</p></li>
@@ -1401,11 +1405,12 @@ Records with Recovered &gt; 0 will be selected.</p>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
-<dd class="field-even"><p><dl>
-<dt>pandas.DataFrame:</dt><dd><p>Index: reset index
-Columns:</p>
+<dd class="field-even"><p><p>pandas.DataFrame:</p>
 <blockquote>
-<div><ul class="simple">
+<div><dl class="simple">
+<dt>Index</dt><dd><p>reset index</p>
+</dd>
+<dt>Columns</dt><dd><ul class="simple">
 <li><p>Date(pd.TimeStamp): Observation date</p></li>
 <li><p>Confirmed(int): the number of confirmed cases</p></li>
 <li><p>Infected(int): the number of currently infected cases</p></li>
@@ -1413,10 +1418,10 @@ Columns:</p>
 <li><p>Recovered (int): the number of recovered cases ( &gt; 0)</p></li>
 <li><p>Susceptible(int): the number of susceptible cases, if calculated</p></li>
 </ul>
-</div></blockquote>
 </dd>
 </dl>
-<p>str/bool: kind of complement or False</p>
+</div></blockquote>
+<p>str or bool: kind of complement or False</p>
 </p>
 </dd>
 <dt class="field-odd">Return type</dt>
@@ -1425,8 +1430,10 @@ Columns:</p>
 </dl>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
-<p>If &#64; population is not None, the number of susceptible cases will be calculated.
-If necessary and &#64;auto_complement is True, complement recovered data.</p>
+<ul class="simple">
+<li><p>If &#64; population is not None, the number of susceptible cases will be calculated.</p></li>
+<li><p>If necessary and &#64;auto_complement is True, complement recovered data.</p></li>
+</ul>
 </div>
 </dd></dl>
 
@@ -1475,21 +1482,22 @@ for each country (if country/countries specified) or for all countries.</p>
 <li><p><strong>province</strong> (<em>str</em><em> or </em><em>None</em>) – province name</p></li>
 <li><p><strong>start_date</strong> (<em>str</em><em> or </em><em>None</em>) – start date, like 22Jan2020</p></li>
 <li><p><strong>end_date</strong> (<em>str</em><em> or </em><em>None</em>) – end date, like 01Feb2020</p></li>
-<li><p><strong>kwargs</strong> – keyword arguments of JHUDataComplementHandler(),
-control factors of complement</p></li>
+<li><p><strong>kwargs</strong> – keyword arguments of JHUDataComplementHandler(), control factors of complement</p></li>
 </ul>
 </dd>
 <dt class="field-even">Raises</dt>
 <dd class="field-even"><ul class="simple">
 <li><p><strong>ValueError</strong> – &#64;province was specified when &#64;country is not a string</p></li>
-<li><p><a class="reference internal" href="covsirphy.html#covsirphy.SubsetNotFoundError" title="covsirphy.SubsetNotFoundError"><strong>SubsetNotFoundError</strong></a> – No records were registered for the area/dates</p></li>
+<li><p><a class="reference internal" href="covsirphy.html#covsirphy.SubsetNotFoundError" title="covsirphy.SubsetNotFoundError"><strong>covsirphy.SubsetNotFoundError</strong></a> – No records were registered for the area/dates</p></li>
 </ul>
 </dd>
 <dt class="field-odd">Returns</dt>
-<dd class="field-odd"><p><p>Index: reset index
-Columns:</p>
+<dd class="field-odd"><p><p>pandas.DataFrame</p>
 <blockquote>
-<div><ul class="simple">
+<div><dl class="simple">
+<dt>Index</dt><dd><p>reset index</p>
+</dd>
+<dt>Columns</dt><dd><ul class="simple">
 <li><p>country (str): country name</p></li>
 <li><p>province (str): province name</p></li>
 <li><p>Monotonic_confirmed (bool): True if applied for confirmed cases or False otherwise</p></li>
@@ -1498,11 +1506,10 @@ Columns:</p>
 <li><p>Full_recovered (bool): True if applied for recovered or False otherwise</p></li>
 <li><p>Partial_recovered (bool): True if applied for recovered or False otherwise</p></li>
 </ul>
+</dd>
+</dl>
 </div></blockquote>
 </p>
-</dd>
-<dt class="field-even">Return type</dt>
-<dd class="field-even"><p>pandas.DataFrame</p>
 </dd>
 </dl>
 </dd></dl>
@@ -1524,9 +1531,9 @@ Columns:</p>
 <dt class="field-even">Returns</dt>
 <dd class="field-even"><p><dl class="simple">
 <dt>pandas.DataFrame</dt><dd><dl class="simple">
-<dt>Index:</dt><dd><p>reset index</p>
+<dt>Index</dt><dd><p>reset index</p>
 </dd>
-<dt>Columns:</dt><dd><ul class="simple">
+<dt>Columns</dt><dd><ul class="simple">
 <li><p>Date (pd.TimeStamp): Observation date</p></li>
 <li><p>Confirmed (int): the number of confirmed cases</p></li>
 <li><p>Infected (int): the number of currently infected cases</p></li>
@@ -1560,16 +1567,15 @@ Records with Recovered &gt; 0 will be selected.</p>
 <li><p><strong>start_date</strong> (<em>str</em><em> or </em><em>None</em>) – start date, like 22Jan2020</p></li>
 <li><p><strong>end_date</strong> (<em>str</em><em> or </em><em>None</em>) – end date, like 01Feb2020</p></li>
 <li><p><strong>population</strong> (<em>int</em><em> or </em><em>None</em>) – population value</p></li>
-<li><p><strong>kwargs</strong> – keyword arguments of JHUDataComplementHandler(),
-control factors of complement</p></li>
+<li><p><strong>kwargs</strong> – keyword arguments of JHUDataComplementHandler(), control factors of complement</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
 <dd class="field-even"><p><dl class="simple">
 <dt>pandas.DataFrame:</dt><dd><dl class="simple">
-<dt>Index:</dt><dd><p>reset index</p>
+<dt>Index</dt><dd><p>reset index</p>
 </dd>
-<dt>Columns:</dt><dd><ul class="simple">
+<dt>Columns</dt><dd><ul class="simple">
 <li><p>Date(pd.TimeStamp): Observation date</p></li>
 <li><p>Confirmed(int): the number of confirmed cases</p></li>
 <li><p>Infected(int): the number of currently infected cases</p></li>
@@ -1581,11 +1587,11 @@ control factors of complement</p></li>
 </dl>
 </dd>
 </dl>
-<p>str/bool: kind of complement or False</p>
+<p>str or bool: kind of complement or False</p>
 </p>
 </dd>
 <dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>tuple(pandas.DataFrame, str/bool)</p>
+<dd class="field-odd"><p>tuple(pandas.DataFrame, str or bool)</p>
 </dd>
 </dl>
 <div class="admonition note">
@@ -1611,9 +1617,9 @@ control factors of complement</p></li>
 <dt class="field-even">Returns</dt>
 <dd class="field-even"><p><dl class="simple">
 <dt>pandas.DataFrame</dt><dd><dl class="simple">
-<dt>Index:</dt><dd><p>Date (pd.TimeStamp): Observation date</p>
+<dt>Index</dt><dd><p>Date (pd.TimeStamp): Observation date</p>
 </dd>
-<dt>Columns:</dt><dd><ul class="simple">
+<dt>Columns</dt><dd><ul class="simple">
 <li><p>Recovered (int): the number of recovered cases (&gt; 0)</p></li>
 <li><p>Susceptible (int): the number of susceptible cases</p></li>
 </ul>
@@ -1640,9 +1646,9 @@ Records with Recovered &gt; 0 will be used.</p>
 <dd class="field-odd"><p><p>group-by Date, sum of the values</p>
 <blockquote>
 <div><dl class="simple">
-<dt>Index:</dt><dd><p>Date (pd.TimeStamp): Observation date</p>
+<dt>Index</dt><dd><p>Date (pandas.TimeStamp): Observation date</p>
 </dd>
-<dt>Columns:</dt><dd><ul class="simple">
+<dt>Columns</dt><dd><ul class="simple">
 <li><p>Confirmed (int): the number of confirmed cases</p></li>
 <li><p>Infected (int): the number of currently infected cases</p></li>
 <li><p>Fatal (int): the number of fatal cases</p></li>
@@ -1762,9 +1768,9 @@ Records with Recovered &gt; 0 will be used.</p>
 <dt class="field-even">Returns</dt>
 <dd class="field-even"><p><dl class="simple">
 <dt>pandas.DataFrame</dt><dd><dl class="simple">
-<dt>Index:</dt><dd><p>reset index</p>
+<dt>Index</dt><dd><p>reset index</p>
 </dd>
-<dt>Columns:</dt><dd><ul class="simple">
+<dt>Columns</dt><dd><ul class="simple">
 <li><p>Country (pandas.Category): country name</p></li>
 <li><p>Province (pandas.Category): province name or “-“</p></li>
 <li><p>Hospitalized_date (pandas.TimeStamp or NT)</p></li>
@@ -1824,9 +1830,9 @@ Records with Recovered &gt; 0 will be used.</p>
 <dt class="field-even">Returns</dt>
 <dd class="field-even"><p><dl class="simple">
 <dt>pandas.DataFrame</dt><dd><dl class="simple">
-<dt>Index:</dt><dd><p>reset index</p>
+<dt>Index</dt><dd><p>reset index</p>
 </dd>
-<dt>Columns:</dt><dd><ul class="simple">
+<dt>Columns</dt><dd><ul class="simple">
 <li><p>Hospitalized_date (pandas.TimeStamp or NT)</p></li>
 <li><p>Confirmation_date (pandas.TimeStamp or NT)</p></li>
 <li><p>Outcome_date (pandas.TimeStamp or NT)</p></li>
@@ -1914,14 +1920,14 @@ Records with Recovered &gt; 0 will be used.</p>
 </ul>
 </dd>
 <dt class="field-even">Raises</dt>
-<dd class="field-even"><p><a class="reference internal" href="covsirphy.html#covsirphy.SubsetNotFoundError" title="covsirphy.SubsetNotFoundError"><strong>SubsetNotFoundError</strong></a> – no records were found</p>
+<dd class="field-even"><p><a class="reference internal" href="covsirphy.html#covsirphy.SubsetNotFoundError" title="covsirphy.SubsetNotFoundError"><strong>covsirphy.SubsetNotFoundError</strong></a> – no records were found</p>
 </dd>
 <dt class="field-odd">Returns</dt>
 <dd class="field-odd"><p><dl class="simple">
 <dt>pandas.DataFrame</dt><dd><dl class="simple">
-<dt>Index:</dt><dd><p>reset index</p>
+<dt>Index</dt><dd><p>reset index</p>
 </dd>
-<dt>Columns:</dt><dd><ul class="simple">
+<dt>Columns</dt><dd><ul class="simple">
 <li><p>Date (pd.TimeStamp): Observation date</p></li>
 <li><p>other column names are defined by OxCGRTData.COL_DICT</p></li>
 </ul>
@@ -1998,9 +2004,9 @@ Records with Recovered &gt; 0 will be used.</p>
 <dt class="field-odd">Returns</dt>
 <dd class="field-odd"><p><dl class="simple">
 <dt>pandas.DataFrame</dt><dd><dl class="simple">
-<dt>Index:</dt><dd><p>reset index</p>
+<dt>Index</dt><dd><p>reset index</p>
 </dd>
-<dt>Columns:</dt><dd><ul class="simple">
+<dt>Columns</dt><dd><ul class="simple">
 <li><p>Date (pd.TimeStamp): Observation date</p></li>
 <li><p>Country (pandas.Category): country/region name</p></li>
 <li><p>Province (pandas.Category): province/prefecture/state name</p></li>
@@ -2052,13 +2058,15 @@ Records with Recovered &gt; 0 will be used.</p>
 </ul>
 </dd>
 <dt class="field-even">Raises</dt>
-<dd class="field-even"><p><a class="reference internal" href="covsirphy.html#covsirphy.PCRIncorrectPreconditionError" title="covsirphy.PCRIncorrectPreconditionError"><strong>PCRIncorrectPreconditionError</strong></a> – the dataset has too many missing values</p>
+<dd class="field-even"><p><a class="reference internal" href="covsirphy.html#covsirphy.PCRIncorrectPreconditionError" title="covsirphy.PCRIncorrectPreconditionError"><strong>covsirphy.PCRIncorrectPreconditionError</strong></a> – the dataset has too many missing values</p>
 </dd>
 <dt class="field-odd">Returns</dt>
 <dd class="field-odd"><p><dl class="simple">
 <dt>pandas.DataFrame</dt><dd><dl class="simple">
-<dt>Columns:</dt><dd><ul class="simple">
-<li><p>Date (pd.TimeStamp): Observation date</p></li>
+<dt>Index</dt><dd><p>reset index</p>
+</dd>
+<dt>Columns</dt><dd><ul class="simple">
+<li><p>Date (pandas.TimeStamp): Observation date</p></li>
 <li><p>Tests (int): the number of total tests performed</p></li>
 <li><p>Confirmed (int): the number of confirmed cases</p></li>
 <li><p>Tests_diff (int): daily tests performed</p></li>
@@ -2085,18 +2093,19 @@ Records with Recovered &gt; 0 will be used.</p>
 <dd><p>Replace a part of cleaned dataset with a dataframe.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>country_data</strong> (<a class="reference internal" href="covsirphy.html#covsirphy.CountryData" title="covsirphy.CountryData"><em>covsirphy.CountryData</em></a>) – <p>dataset object of the country
-Index: reset index
-Columns:</p>
-<blockquote>
-<div><ul class="simple">
-<li><p>Date (pd.TimeStamp): Observation date</p></li>
+<dd class="field-odd"><p><strong>country_data</strong> (<a class="reference internal" href="covsirphy.html#covsirphy.CountryData" title="covsirphy.CountryData"><em>covsirphy.CountryData</em></a>) – <p>dataset object of the country</p>
+<dl class="simple">
+<dt>Index</dt><dd><p>reset index</p>
+</dd>
+<dt>Columns</dt><dd><ul class="simple">
+<li><p>Date (pandas.TimeStamp): Observation date</p></li>
 <li><p>Province (pandas.Category): province name</p></li>
 <li><p>Tests (int): the number of total tests performed</p></li>
 <li><p>Confirmed (int): the number of confirmed cases</p></li>
 <li><p>The other columns will be ignored</p></li>
 </ul>
-</div></blockquote>
+</dd>
+</dl>
 </p>
 </dd>
 <dt class="field-even">Returns</dt>
@@ -2123,16 +2132,17 @@ Columns:</p>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
-<dd class="field-even"><p><dl>
-<dt>pandas.DataFrame</dt><dd><p>Index: reset index
-Columns:</p>
-<blockquote>
-<div><ul class="simple">
+<dd class="field-even"><p><dl class="simple">
+<dt>pandas.DataFrame</dt><dd><dl class="simple">
+<dt>Index</dt><dd><p>reset index</p>
+</dd>
+<dt>Columns</dt><dd><ul class="simple">
 <li><p>Date (pd.TimeStamp): Observation date</p></li>
 <li><p>Tests (int): the number of total tests performed</p></li>
 <li><p>Confirmed (int): the number of confirmed cases</p></li>
 </ul>
-</div></blockquote>
+</dd>
+</dl>
 </dd>
 </dl>
 </p>
@@ -2364,17 +2374,18 @@ If &#64;citation is None, citation will be empty string.</p>
 <dd><p>Return the cleaned dataset.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns</dt>
-<dd class="field-odd"><p><p>Index: reset index
-Columns:</p>
-<blockquote>
-<div><ul class="simple">
+<dd class="field-odd"><p><dl class="simple">
+<dt>Index</dt><dd><p>reset index</p>
+</dd>
+<dt>Columns</dt><dd><ul class="simple">
 <li><p>Country (pandas.Category): country name</p></li>
 <li><p>Year (int): year</p></li>
 <li><p>Sex (str): Female/Male</p></li>
 <li><p>Age (int): age</p></li>
 <li><p>Population (int): population value</p></li>
 </ul>
-</div></blockquote>
+</dd>
+</dl>
 </p>
 </dd>
 <dt class="field-even">Return type</dt>
@@ -2396,16 +2407,17 @@ Columns:</p>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
-<dd class="field-even"><p><dl>
-<dt>pandas.DataFrame</dt><dd><p>Index: reset index
-Columns:</p>
-<blockquote>
-<div><ul class="simple">
+<dd class="field-even"><p><dl class="simple">
+<dt>pandas.DataFrame</dt><dd><dl class="simple">
+<dt>Index</dt><dd><p>reset index</p>
+</dd>
+<dt>Columns</dt><dd><ul class="simple">
 <li><p>Age (int): age</p></li>
 <li><p>Population (int): population value</p></li>
 <li><p>Per_total (float): portion of the total</p></li>
 </ul>
-</div></blockquote>
+</dd>
+</dl>
 </dd>
 </dl>
 </p>
@@ -2422,18 +2434,19 @@ Columns:</p>
 <dd class="field-odd"><p><strong>country</strong> (<em>str</em>) – country name</p>
 </dd>
 <dt class="field-even">Returns</dt>
-<dd class="field-even"><p><dl>
-<dt>retrieved data</dt><dd><p>Index: reset index
-Columns:</p>
-<blockquote>
-<div><ul class="simple">
+<dd class="field-even"><p><dl class="simple">
+<dt>retrieved data</dt><dd><dl class="simple">
+<dt>Index</dt><dd><p>reset index</p>
+</dd>
+<dt>Columns</dt><dd><ul class="simple">
 <li><p>Country (pandas.Category): country name</p></li>
 <li><p>Year (int): year</p></li>
 <li><p>Sex (str): Female/Male</p></li>
 <li><p>Age (int): age</p></li>
 <li><p>Population (int): population value</p></li>
 </ul>
-</div></blockquote>
+</dd>
+</dl>
 </dd>
 </dl>
 </p>
@@ -2457,16 +2470,17 @@ Columns:</p>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
-<dd class="field-even"><p><dl>
-<dt>pandas.DataFrame</dt><dd><p>Index: reset index
-Columns:</p>
-<blockquote>
-<div><ul class="simple">
+<dd class="field-even"><p><dl class="simple">
+<dt>pandas.DataFrame</dt><dd><dl class="simple">
+<dt>Index</dt><dd><p>reset index</p>
+</dd>
+<dt>Columns</dt><dd><ul class="simple">
 <li><p>Age (int): age</p></li>
 <li><p>Population (int): population value</p></li>
 <li><p>Per_total (float): portion of the total</p></li>
 </ul>
-</div></blockquote>
+</dd>
+</dl>
 </dd>
 </dl>
 </p>
@@ -3033,15 +3047,16 @@ Columns:</p>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
-<dd class="field-even"><p><dl>
-<dt>pandas.DataFrame</dt><dd><p>Index: reset index
-Columns:</p>
-<blockquote>
-<div><ul class="simple">
+<dd class="field-even"><p><dl class="simple">
+<dt>pandas.DataFrame</dt><dd><dl class="simple">
+<dt>Index</dt><dd><p>reset index</p>
+</dd>
+<dt>Columns</dt><dd><ul class="simple">
 <li><p>Date (pandas.TimeStamp): observation date</p></li>
 <li><p>Vaccinations (int): the number of vaccinations</p></li>
 </ul>
-</div></blockquote>
+</dd>
+</dl>
 </dd>
 </dl>
 </p>
@@ -3063,15 +3078,16 @@ Columns:</p>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
-<dd class="field-even"><p><dl>
-<dt>pandas.DataFrame</dt><dd><p>Index: reset index
-Columns:</p>
-<blockquote>
-<div><ul class="simple">
+<dd class="field-even"><p><dl class="simple">
+<dt>pandas.DataFrame</dt><dd><dl class="simple">
+<dt>Index</dt><dd><p>reset index</p>
+</dd>
+<dt>Columns</dt><dd><ul class="simple">
 <li><p>Date (pandas.TimeStamp): observation date</p></li>
 <li><p>Vaccinations (int): the number of vaccinations</p></li>
 </ul>
-</div></blockquote>
+</dd>
+</dl>
 </dd>
 </dl>
 </p>
@@ -3085,18 +3101,19 @@ Columns:</p>
 <dd><p>Calculate total values of the cleaned dataset.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns</dt>
-<dd class="field-odd"><p><dl>
-<dt>pandas.DataFrame</dt><dd><p>Index: reset index
-Columns:</p>
-<blockquote>
-<div><ul class="simple">
+<dd class="field-odd"><p><dl class="simple">
+<dt>Index</dt><dd><p>reset index</p>
+</dd>
+<dt>Columns</dt><dd><ul class="simple">
 <li><p>Date (pandas.TimeStamp): observation date</p></li>
 <li><p>Vaccinations (int): the number of vaccinations</p></li>
 </ul>
-</div></blockquote>
 </dd>
 </dl>
 </p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>pandas.DataFrame</p>
 </dd>
 </dl>
 </dd></dl>

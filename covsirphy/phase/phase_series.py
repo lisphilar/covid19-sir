@@ -222,9 +222,9 @@ class PhaseSeries(Term):
 
         Returns:
             (pandas.DataFrame):
-                Index:
+                Index
                     - phase name, like 1st, 2nd, 3rd...
-                Columns:
+                Columns
                     - Type: 'Past' or 'Future'
                     - Start: start date of the phase
                     - End: end date of the phase
@@ -341,9 +341,10 @@ class PhaseSeries(Term):
 
         Args:
             sr_df (pandas.DataFrame): susceptible and recovered records
-                Index:
+
+                Index
                     Date (pd.TimeStamp): Observation date
-                Columns:
+                Columns
                     - Recovered (int): the number of recovered cases (> 0)
                     - Susceptible (int): the number of susceptible cases
                     - any other columns will be ignored
@@ -370,9 +371,10 @@ class PhaseSeries(Term):
 
         Args:
             sr_df (pandas.DataFrame): susceptible and recovered records
-                Index:
-                    Date (pd.TimeStamp): Observation date
-                Columns:
+
+                Index
+                    Date (pandas.TimeStamp): Observation date
+                Columns
                     - Recovered (int): the number of recovered cases (> 0)
                     - Susceptible (int): the number of susceptible cases
                     - any other columns will be ignored
@@ -399,9 +401,9 @@ class PhaseSeries(Term):
 
         Args:
             record_df (pandas.DataFrame):
-                Index:
+                Index
                     reset index
-                Columns:
+                Columns
                     - Date (pd.TimeStamp): Observation date
                     - Confirmed (int): the number of confirmed cases
                     - Infected (int): the number of currently infected cases
@@ -414,9 +416,9 @@ class PhaseSeries(Term):
 
         Returns:
             pandas.DataFrame
-                Index:
+                Index
                     reset index
-                Columns:
+                Columns
                     - Date (pd.TimeStamp): Observation date
                     - Country (str): country/region name
                     - Province (str): province/prefecture/state name

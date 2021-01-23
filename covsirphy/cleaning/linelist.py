@@ -163,9 +163,9 @@ class LinelistData(CleaningBase):
 
         Returns:
             pandas.DataFrame
-                Index:
+                Index
                     reset index
-                Columns:
+                Columns
                     - Hospitalized_date (pandas.TimeStamp or NT)
                     - Confirmation_date (pandas.TimeStamp or NT)
                     - Outcome_date (pandas.TimeStamp or NT)
@@ -202,9 +202,9 @@ class LinelistData(CleaningBase):
 
         Returns:
             pandas.DataFrame
-                Index:
+                Index
                     reset index
-                Columns:
+                Columns
                     - Country (pandas.Category): country name
                     - Province (pandas.Category): province name or "-"
                     - Hospitalized_date (pandas.TimeStamp or NT)

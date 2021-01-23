@@ -86,9 +86,9 @@ class SIRF(ModelBase):
 
         Args:
             taufree_df (pandas.DataFrame):
-                Index:
+                Index
                     reset index
-                Columns:
+                Columns
                     - t (int): time steps (tau-free)
                     - columns with dimensional variables
             population (int): total population
@@ -124,9 +124,9 @@ class SIRF(ModelBase):
 
         Args:
             data_df (pandas.DataFrame):
-                Index:
+                Index
                     reset index
-                Columns:
+                Columns
                     - Confirmed (int): the number of confirmed cases
                     - Infected (int): the number of currently infected cases
                     - Fatal (int): the number of fatal cases
@@ -136,9 +136,9 @@ class SIRF(ModelBase):
 
         Returns:
             (pandas.DataFrame)
-                Index:
+                Index
                     reset index
-                Columns:
+                Columns
                     - any columns @data_df has
                     - Susceptible (int): the number of susceptible cases
         """
@@ -157,9 +157,9 @@ class SIRF(ModelBase):
         Args:
         specialized_df (pandas.DataFrame): dataframe with the variables
 
-            Index:
+            Index
                 (object)
-            Columns:
+            Columns
                 - Susceptible (int): the number of susceptible cases
                 - Infected (int): the number of currently infected cases
                 - Recovered (int): the number of recovered cases
@@ -168,9 +168,9 @@ class SIRF(ModelBase):
 
         Returns:
             (pandas.DataFrame)
-                Index:
+                Index
                     (object): as-is
-                Columns:
+                Columns
                     - Confirmed (int): the number of confirmed cases
                     - Infected (int): the number of currently infected cases
                     - Fatal (int): the number of fatal cases

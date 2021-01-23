@@ -182,7 +182,7 @@
 <span class="kn">from</span> <span class="nn">covsirphy.cleaning.cbase</span> <span class="kn">import</span> <span class="n">CleaningBase</span>
 
 
-<div class="viewcode-block" id="OxCGRTData"><a class="viewcode-back" href="../../../covsirphy.cleaning.html#covsirphy.OxCGRTData">[docs]</a><span class="k">class</span> <span class="nc">OxCGRTData</span><span class="p">(</span><span class="n">CleaningBase</span><span class="p">):</span>
+<div class="viewcode-block" id="OxCGRTData"><a class="viewcode-back" href="../../../covsirphy.html#covsirphy.OxCGRTData">[docs]</a><span class="k">class</span> <span class="nc">OxCGRTData</span><span class="p">(</span><span class="n">CleaningBase</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Data cleaning of OxCGRT dataset.</span>
 
@@ -229,9 +229,9 @@
 
 <span class="sd">        Returns:</span>
 <span class="sd">            pandas.DataFrame</span>
-<span class="sd">                Index:</span>
+<span class="sd">                Index</span>
 <span class="sd">                    reset index</span>
-<span class="sd">                Columns:</span>
+<span class="sd">                Columns</span>
 <span class="sd">                    - Date (pd.TimeStamp): Observation date</span>
 <span class="sd">                    - Country (pandas.Category): country/region name</span>
 <span class="sd">                    - ISO3 (str): ISO 3166-1 alpha-3, like JPN</span>
@@ -280,7 +280,7 @@
         <span class="n">df</span><span class="p">[</span><span class="n">cat_cols</span><span class="p">]</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="n">cat_cols</span><span class="p">]</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="s2">&quot;category&quot;</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">df</span>
 
-<div class="viewcode-block" id="OxCGRTData.subset"><a class="viewcode-back" href="../../../covsirphy.cleaning.html#covsirphy.OxCGRTData.subset">[docs]</a>    <span class="k">def</span> <span class="nf">subset</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">country</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<div class="viewcode-block" id="OxCGRTData.subset"><a class="viewcode-back" href="../../../covsirphy.html#covsirphy.OxCGRTData.subset">[docs]</a>    <span class="k">def</span> <span class="nf">subset</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">country</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Create a subset for a country.</span>
 
@@ -289,13 +289,13 @@
 <span class="sd">            kwargs: the other arguments will be ignored in the latest version.</span>
 
 <span class="sd">        Raises:</span>
-<span class="sd">            SubsetNotFoundError: no records were found</span>
+<span class="sd">            covsirphy.SubsetNotFoundError: no records were found</span>
 
 <span class="sd">        Returns:</span>
 <span class="sd">            pandas.DataFrame</span>
-<span class="sd">                Index:</span>
+<span class="sd">                Index</span>
 <span class="sd">                    reset index</span>
-<span class="sd">                Columns:</span>
+<span class="sd">                Columns</span>
 <span class="sd">                    - Date (pd.TimeStamp): Observation date</span>
 <span class="sd">                    - other column names are defined by OxCGRTData.COL_DICT</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -309,7 +309,7 @@
         <span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">DATE</span><span class="p">)</span><span class="o">.</span><span class="n">last</span><span class="p">()</span><span class="o">.</span><span class="n">reset_index</span><span class="p">()</span>
         <span class="k">return</span> <span class="n">df</span><span class="o">.</span><span class="n">loc</span><span class="p">[:,</span> <span class="bp">self</span><span class="o">.</span><span class="n">OXCGRT_COLS_WITHOUT_COUNTRY</span><span class="p">]</span></div>
 
-<div class="viewcode-block" id="OxCGRTData.total"><a class="viewcode-back" href="../../../covsirphy.cleaning.html#covsirphy.OxCGRTData.total">[docs]</a>    <span class="k">def</span> <span class="nf">total</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="OxCGRTData.total"><a class="viewcode-back" href="../../../covsirphy.html#covsirphy.OxCGRTData.total">[docs]</a>    <span class="k">def</span> <span class="nf">total</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        This method is not defined for OxCGRTData class.</span>
 <span class="sd">        &quot;&quot;&quot;</span>

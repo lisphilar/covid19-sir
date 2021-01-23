@@ -227,9 +227,12 @@ class PolicyMeasures(Term):
 
         Returns:
             pandas.DataFrame:
-                Index: Date (pd.TimeStamp) date
-                Columns: (str) country names
-                Values: parameter values
+                Index
+                    Date (pd.TimeStamp) date
+                Columns
+                    (str) country names
+                Values:
+                    parameter values
         """
         # Get the parameter value of each date
         df = self.track()
@@ -269,16 +272,16 @@ class PolicyMeasures(Term):
             kwargs: keword arguments of pd.DataFrame.plot or line_plot()
 
         Returns:
-            pandas.DataFrame:
-                Index: reset index
-                Columns:
+            pandas.DataFrame: parameter values
+                Index
+                    reset index
+                Columns
                     - Country (str): country name
                     - Date (pd.TimeStamp): date
                     - (float): model parameters
                     - (float): model day parameters
                     - Rt (float): reproduction number
                     - (float): OxCGRT values
-                Values: parameter values
         """
         if self.model is None:
             raise UnExecutedError("PolicyMeasures.estimate(model)")

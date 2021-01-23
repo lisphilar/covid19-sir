@@ -18,9 +18,9 @@ class Optimizer(object):
     Args:
         train_df (pandas.DataFrame): training dataset
 
-            Index:
+            Index
                 reset index
-            Columns:
+            Columns
                 - Explanatory variable defined by @x
                 - Response variables which is not @x
         kwargs: keyword arguments of fixed parameter values
@@ -108,9 +108,9 @@ class Optimizer(object):
                 - value (int or float): parameter value
             train_df (pandas.DataFrame): actual data
 
-                Index:
+                Index
                     reset index
-                Columns:
+                Columns
                     - t: time step, 0, 1, 2,...
                     - includes columns defined by @variables
 
@@ -134,9 +134,9 @@ class Optimizer(object):
 
         Returns:
             pandas.DataFrame:
-                Index:
+                Index
                     reset index
-                Columns:
+                Columns
                     - Explanatory variable defined by self.x
                     - Response variables which defined by self.y_list
         """
@@ -150,25 +150,25 @@ class Optimizer(object):
         Args:
             actual_df (pandas.DataFrame): actual data
 
-                Index:
+                Index
                     reset index
-                Columns:
+                Columns
                     - t: time step, 0, 1, 2,...
                     - includes columns defined by self.y_list
 
             predicted_df (pandas.DataFrame): predicted data
 
-                Index:
+                Index
                     reset index
-                Columns:
+                Columns
                     - t: time step, 0, 1, 2,...
                     - includes columns defined by self.y_list
 
         Returns:
             pandas.DataFrame:
-                Index:
+                Index
                     (str): time step
-                Columns:
+                Columns
                     - columns with "_actual"
                     - columns with "_predicted:
                     - columns are defined by self.y_list
@@ -201,9 +201,9 @@ class Optimizer(object):
 
         Returns:
             pandas.DataFrame:
-                Index:
+                Index
                     reset index
-                Columns:
+                Columns
                     - (estimated parameters)
                     - Trials: the number of trials
                     - Runtime: run time of estimation
@@ -224,9 +224,9 @@ class Optimizer(object):
         Args:
             train_df (pandas.DataFrame): actual data
 
-                Index:
+                Index
                     reset index
-                Columns:
+                Columns
                     - t: time step, 0, 1, 2,...
                     - includes columns defined by self.y_list
             dim (int or float): dimension where comparison will be performed
@@ -293,9 +293,9 @@ class Optimizer(object):
         Args:
             train_df (pandas.DataFrame): actual data
 
-                Index:
+                Index
                     reset index
-                Columns:
+                Columns
                     - t: time step, 0, 1, 2,...
                     - includes columns defined by self.y_list
 

@@ -80,8 +80,8 @@ class ModelValidator(Term):
 
         Returns:
             pandas.DataFrame:
-                Index: reset index
-                Columns:
+                Index reset index
+                Columns
                     - (float): parameter values from 0 to 1.0
                     - Rt (float): reproduction number
                     - step_n (int): step number of simulation
@@ -111,8 +111,8 @@ class ModelValidator(Term):
         Args:
             model (covsirphy.ModelBase): ODE model
             setting_df (pandas.DataFrame):
-                Index: reset index
-                Columns:
+                Index reset index
+                Columns
                     - (float): parameter values from 0 to 1.0
                     - Rt (float): reproduction number
                     - step_n (int): step number of simulation
@@ -155,8 +155,8 @@ class ModelValidator(Term):
         Args:
             model (covsirphy.ModelBase): ODE model
             setting_df (pandas.DataFrame):
-                Index: reset index
-                Columns:
+                Index reset index
+                Columns
                     - (float): parameter values from 0 to 1.0
                     - Rt (float): reproduction number
                     - step_n (int): step number of simulation
@@ -164,8 +164,8 @@ class ModelValidator(Term):
 
         Returns:
             pandas.DataFrame:
-                Index: reset index
-                Columns:
+                Index reset index
+                Columns
                     - ID (str): ID, like SIR_0
                     - ODE (str): model name
                     - Rt (float): reproduction number set by ._setup() method
@@ -196,8 +196,9 @@ class ModelValidator(Term):
 
         Returns:
             pandas.DataFrame:
-                Index: reset index
-                Columns:
+                Index
+                    reset index
+                Columns
                     - ID (str): ID, like SIR_0
                     - ODE (str): model name
                     - Rt (float): reproduction number set by ._setup() method

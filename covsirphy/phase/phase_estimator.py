@@ -20,9 +20,9 @@ class MPEstimator(Term):
         jhu_data (covsirphy.JHUData): object of records
         population_data (covsirphy.PopulationData): PopulationData object
         record_df (pandas.DataFrame)
-            Index:
+            Index
                 reset index
-            Columns:
+            Columns
                 - Date (pd.TimeStamp): Observation date
                 - Confirmed (int): the number of confirmed cases
                 - Infected (int): the number of currently infected cases

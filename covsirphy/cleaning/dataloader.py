@@ -138,7 +138,7 @@ class DataLoader(Term):
             force = self._download_necessity(filename)
         return self.covid19dh.load(name=name, force=force, verbose=verbose)
 
-    @ property
+    @property
     def covid19dh_citation(self):
         """
         Return the list of primary sources of COVID-19 Data Hub.

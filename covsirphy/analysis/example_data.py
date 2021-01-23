@@ -16,9 +16,9 @@ class ExampleData(JHUData):
     Args:
         clean_df (pandas.DataFrame or None): cleaned data
 
-            Index:
+            Index
                 - reset index
-            Columns:
+            Columns
                 - Date (pd.TimeStamp): Observation date
                 - Country (pandas.Category): country/region name
                 - Province (pandas.Category): province/prefecture/sstate name
@@ -183,9 +183,9 @@ class ExampleData(JHUData):
 
         Returns:
             (pandas.DataFrame)
-                Index:
+                Index
                     reset index
-                Columns:
+                Columns
                     - Date (pd.TimeStamp): Observation date
                     - Confirmed (int): the number of confirmed cases
                     - Infected (int): the number of currently infected cases

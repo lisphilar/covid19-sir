@@ -20,9 +20,9 @@ class Trend(Term):
 
     Args:
         sr_df (pandas.DataFrame)
-            Index:
+            Index
                 Date (pd.TimeStamp): Observation date
-            Columns:
+            Columns
                 - Recovered (int): the number of recovered cases (> 0)
                 - Susceptible (int): the number of susceptible cases
                 - any other columns will be ignored
@@ -45,9 +45,10 @@ class Trend(Term):
     def result_df(self):
         """
         pandas.DataFrame: results of fitting
-            Index:
-                - index (Date) (pd.TimeStamp): Observation date
-            Columns:
+
+            Index
+                - Date (pandas.TimeStamp): Observation date
+            Columns
                 - Recovered: The number of recovered cases
                 - Susceptible_actual: Actual values of Susceptible
                 - columns defined by @columns
@@ -85,9 +86,9 @@ class Trend(Term):
 
         Returns:
             pandas.DataFrame: results of fitting
-                Index:
+                Index
                     - index (Date) (pd.TimeStamp): Observation date
-                Columns:
+                Columns
                     - Recovered: The number of recovered cases
                     - Susceptible_actual: Actual values of Susceptible
                     - columns defined by @columns
@@ -101,17 +102,17 @@ class Trend(Term):
 
         Args:
             sr_df (pandas.DataFrame): training dataset
-                Index:
+                Index
                     - index (Date) (pd.TimeStamp): Observation date
-                Columns:
+                Columns
                     - Recovered: The number of recovered cases
                     - Susceptible: Actual data of Susceptible
 
         Returns:
             pandas.DataFrame
-                Index:
+                Index
                     - index (Date) (pd.TimeStamp): Observation date
-                Columns:
+                Columns
                     - Recovered (int): The number of recovered cases
                     - Susceptible_actual (int): Actual values of Susceptible
                     - Susceptible_predicted (int): Predicted values of Susceptible
@@ -145,7 +146,7 @@ class Trend(Term):
         Return the best RMSLE score.
 
         Returns:
-            (float): RMSLE score
+            float: RMSLE score
         """
         if self._result_df.empty:
             self.run()
@@ -157,15 +158,15 @@ class Trend(Term):
 
         Args:
             fit_df (pandas.DataFrame):
-                Index:
+                Index
                     - index (Date) (pd.TimeStamp): Observation date
-                Columns:
+                Columns
                     - Recovered (int): The number of recovered cases
                     - Susceptible_actual (int): Actual values of Susceptible
                     - Susceptible_predicted (int): Predicted values of Susceptible
 
         Returns:
-            (float): RMSLE score
+            float: RMSLE score
         """
         df = fit_df.replace(np.inf, 0)
         df = df.loc[df[f"{self.S}{self.A}"] > 0, :]
@@ -208,9 +209,10 @@ class Trend(Term):
 
         Args:
             result_df (pandas.DataFrame): results of fitting
-                Index:
-                    - index (Date) (pd.TimeStamp): Observation date
-                Columns:
+
+                Index
+                    Date (pandas.TimeStamp): Observation date
+                Columns
                     - Recovered: The number of recovered cases
                     - Susceptible_actual: Actual values of Susceptible
                     - columns defined by @predicted_cols

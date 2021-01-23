@@ -77,9 +77,9 @@ class SIR(ModelBase):
 
         Args:
             taufree_df (pandas.DataFrame):
-                Index:
+                Index
                     reset index
-                Columns:
+                Columns
                     - t (int): time steps (tau-free)
                     - columns with dimensional variables
             population (int): total population
@@ -112,9 +112,9 @@ class SIR(ModelBase):
 
         Args:
             data_df (pandas.DataFrame):
-                Index:
+                Index
                     reset index
-                Columns:
+                Columns
                     - Confirmed (int): the number of confirmed cases
                     - Infected (int): the number of currently infected cases
                     - Fatal (int): the number of fatal cases
@@ -124,9 +124,9 @@ class SIR(ModelBase):
 
         Returns:
             (pandas.DataFrame):
-                    Index:
+                    Index
                         reset index
-                    Columns:
+                    Columns
                         - any columns @data_df has
                         - Susceptible (int): the number of susceptible cases
                         - Fatal or Recovered (int): total number of fatal/recovered cases
@@ -147,9 +147,9 @@ class SIR(ModelBase):
         Args:
             specialized_df (pandas.DataFrame): dataframe with the variables
 
-                Index:
+                Index
                     reset index
-                Columns:
+                Columns
                     - Susceptible (int): the number of susceptible cases
                     - Infected (int): the number of currently infected cases
                     - Fatal or Recovered (int): the number of fatal/recovered cases
@@ -157,9 +157,9 @@ class SIR(ModelBase):
 
         Returns:
             (pandas.DataFrame):
-                Index:
+                Index
                     reset index
-                Columns:
+                Columns
                     - Confirmed (int): the number of confirmed cases
                     - Infected (int): the number of currently infected cases
                     - Fatal (int): the number of fatal cases

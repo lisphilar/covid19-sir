@@ -184,7 +184,7 @@
 <span class="kn">from</span> <span class="nn">covsirphy.cleaning.term</span> <span class="kn">import</span> <span class="n">Term</span>
 
 
-<div class="viewcode-block" id="JHUDataComplementHandler"><a class="viewcode-back" href="../../../covsirphy.cleaning.html#covsirphy.JHUDataComplementHandler">[docs]</a><span class="k">class</span> <span class="nc">JHUDataComplementHandler</span><span class="p">(</span><span class="n">Term</span><span class="p">):</span>
+<div class="viewcode-block" id="JHUDataComplementHandler"><a class="viewcode-back" href="../../../covsirphy.html#covsirphy.JHUDataComplementHandler">[docs]</a><span class="k">class</span> <span class="nc">JHUDataComplementHandler</span><span class="p">(</span><span class="n">Term</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Complement JHU dataset, if necessary.</span>
 
@@ -266,14 +266,16 @@
             <span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_post_processing</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
         <span class="p">]</span>
 
-<div class="viewcode-block" id="JHUDataComplementHandler.run"><a class="viewcode-back" href="../../../covsirphy.cleaning.html#covsirphy.JHUDataComplementHandler.run">[docs]</a>    <span class="k">def</span> <span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">subset_df</span><span class="p">):</span>
+<div class="viewcode-block" id="JHUDataComplementHandler.run"><a class="viewcode-back" href="../../../covsirphy.html#covsirphy.JHUDataComplementHandler.run">[docs]</a>    <span class="k">def</span> <span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">subset_df</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Perform complement.</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            subset_df (pandas.DataFrame): Subset of records</span>
-<span class="sd">                Index: reset index</span>
-<span class="sd">                Columns:</span>
+
+<span class="sd">                Index</span>
+<span class="sd">                    reset index</span>
+<span class="sd">                Columns</span>
 <span class="sd">                    - Date (pd.TimeStamp): Observation date</span>
 <span class="sd">                    - Confirmed (int): the number of confirmed cases</span>
 <span class="sd">                    - Fatal (int): the number of fatal cases</span>
@@ -282,25 +284,28 @@
 
 <span class="sd">        Returns:</span>
 <span class="sd">            tuple(pandas.DataFrame, str, dict):</span>
-<span class="sd">                pandas.DataFrame:</span>
-<span class="sd">                    Index: reset index</span>
-<span class="sd">                    Columns:</span>
+<span class="sd">                pandas.DataFrame</span>
+
+<span class="sd">                    Index</span>
+<span class="sd">                        reset index</span>
+<span class="sd">                    Columns</span>
 <span class="sd">                        - Date(pd.TimeStamp): Observation date</span>
 <span class="sd">                        - Confirmed(int): the number of confirmed cases</span>
 <span class="sd">                        - Infected(int): the number of currently infected cases</span>
 <span class="sd">                        - Fatal(int): the number of fatal cases</span>
 <span class="sd">                        - Recovered (int): the number of recovered cases</span>
+
 <span class="sd">                str: status code</span>
 <span class="sd">                dict: status for each complement type</span>
 
 <span class="sd">        Note:</span>
 <span class="sd">            Status code will be selected from:</span>
-<span class="sd">                - &#39;&#39; (not complemented)</span>
-<span class="sd">                - &#39;monotonic increasing complemented confirmed data&#39;</span>
-<span class="sd">                - &#39;monotonic increasing complemented fatal data&#39;</span>
-<span class="sd">                - &#39;monotonic increasing complemented recovered data&#39;</span>
-<span class="sd">                - &#39;fully complemented recovered data&#39;</span>
-<span class="sd">                - &#39;partially complemented recovered data&#39;</span>
+<span class="sd">            - &#39;&#39; (not complemented)</span>
+<span class="sd">            - &#39;monotonic increasing complemented confirmed data&#39;</span>
+<span class="sd">            - &#39;monotonic increasing complemented fatal data&#39;</span>
+<span class="sd">            - &#39;monotonic increasing complemented recovered data&#39;</span>
+<span class="sd">            - &#39;fully complemented recovered data&#39;</span>
+<span class="sd">            - &#39;partially complemented recovered data&#39;</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_ensure_dataframe</span><span class="p">(</span>
             <span class="n">subset_df</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;subset_df&quot;</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">DATE</span><span class="p">,</span> <span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">RAW_COLS</span><span class="p">])</span>
@@ -328,13 +333,17 @@
 
 <span class="sd">        Args:</span>
 <span class="sd">            subset_df (pandas.DataFrame): Subset of records</span>
-<span class="sd">                Index: reset index</span>
-<span class="sd">                Columns: Date, Confirmed, Fatal, Recovered (the others will be ignored)</span>
+<span class="sd">                Index</span>
+<span class="sd">                    reset index</span>
+<span class="sd">                Columns</span>
+<span class="sd">                    Date, Confirmed, Fatal, Recovered (the others will be ignored)</span>
 
 <span class="sd">        Returns:</span>
-<span class="sd">            pandas.DataFrame</span>
-<span class="sd">                Index: Date (pandas.TimeStamp)</span>
-<span class="sd">                Columns: Confirmed, Fatal, Recovered</span>
+<span class="sd">            pandas.DataFrame:</span>
+<span class="sd">                Index</span>
+<span class="sd">                    Date (pandas.TimeStamp)</span>
+<span class="sd">                Columns</span>
+<span class="sd">                    Confirmed, Fatal, Recovered</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">sel_invalid_R</span> <span class="o">=</span> <span class="n">subset_df</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">C</span><span class="p">]</span> <span class="o">-</span> \
             <span class="n">subset_df</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">F</span><span class="p">]</span> <span class="o">&lt;</span> <span class="n">subset_df</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">R</span><span class="p">]</span>
@@ -350,13 +359,17 @@
 
 <span class="sd">        Args:</span>
 <span class="sd">            df (pandas.DataFrame)</span>
-<span class="sd">                Index: Date (pandas.TimeStamp)</span>
-<span class="sd">                Columns: Confirmed, Fatal, Recovered</span>
+<span class="sd">                Index</span>
+<span class="sd">                    Date (pandas.TimeStamp)</span>
+<span class="sd">                Columns</span>
+<span class="sd">                    Confirmed, Fatal, Recovered</span>
 
 <span class="sd">        Returns:</span>
 <span class="sd">            pandas.DataFrame: complemented records</span>
-<span class="sd">                Index: reset index</span>
-<span class="sd">                Columns: Date (pandas.TimeStamp), Confirmed, Infected, Fatal, Recovered (int)</span>
+<span class="sd">                Index</span>
+<span class="sd">                    reset index</span>
+<span class="sd">                Columns</span>
+<span class="sd">                    Date (pandas.TimeStamp), Confirmed, Infected, Fatal, Recovered (int)</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">int64</span><span class="p">)</span>
         <span class="n">df</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">CI</span><span class="p">]</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">C</span><span class="p">]</span> <span class="o">-</span> <span class="n">df</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">F</span><span class="p">]</span> <span class="o">-</span> <span class="n">df</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">R</span><span class="p">]</span>
@@ -368,15 +381,19 @@
 <span class="sd">        Force the variable show monotonic increasing.</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">            df (pandas.DataFrame):</span>
-<span class="sd">                Index: Date (pandas.TimeStamp)</span>
-<span class="sd">                Columns: Confirmed, Fatal, Recovered</span>
+<span class="sd">            df (pandas.DataFrame)</span>
+<span class="sd">                Index</span>
+<span class="sd">                    Date (pandas.TimeStamp)</span>
+<span class="sd">                Columns</span>
+<span class="sd">                    Confirmed, Fatal, Recovered</span>
 <span class="sd">            variable (str): variable name to show monotonic increasing</span>
 
 <span class="sd">        Returns:</span>
 <span class="sd">            pandas.DataFrame: complemented records</span>
-<span class="sd">                Index: Date (pandas.TimeStamp)</span>
-<span class="sd">                Columns: Confirmed, Fatal, Recovered</span>
+<span class="sd">                Index</span>
+<span class="sd">                    Date (pandas.TimeStamp)</span>
+<span class="sd">                Columns</span>
+<span class="sd">                    Confirmed, Fatal, Recovered</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">warnings</span><span class="o">.</span><span class="n">simplefilter</span><span class="p">(</span><span class="s2">&quot;ignore&quot;</span><span class="p">,</span> <span class="ne">UserWarning</span><span class="p">)</span>
         <span class="c1"># Whether complement is necessary or not</span>
@@ -405,9 +422,11 @@
 <span class="sd">        as an additional condition in order to apply full complement or not</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">            country_df (pandas.DataFrame):</span>
-<span class="sd">                - Index: reset_index</span>
-<span class="sd">                - Columns: Date, Confirmed, Recovered, Fatal</span>
+<span class="sd">            country_df (pandas.DataFrame)</span>
+<span class="sd">                Index</span>
+<span class="sd">                    reset_index</span>
+<span class="sd">                Columns</span>
+<span class="sd">                    Date, Confirmed, Recovered, Fatal</span>
 
 <span class="sd">        Returns:</span>
 <span class="sd">            bool: true if recovery period is within valid range or false otherwise</span>
@@ -439,14 +458,18 @@
 <span class="sd">        Estimate the number of recovered cases with the value of recovery period.</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">            df (pandas.DataFrame):</span>
-<span class="sd">                Index: Date (pandas.TimeStamp)</span>
-<span class="sd">                Columns: Confirmed, Fatal, Recovered</span>
+<span class="sd">            df (pandas.DataFrame)</span>
+<span class="sd">                Index</span>
+<span class="sd">                    Date (pandas.TimeStamp)</span>
+<span class="sd">                Columns</span>
+<span class="sd">                    Confirmed, Fatal, Recovered</span>
 
 <span class="sd">        Returns:</span>
 <span class="sd">            pandas.DataFrame: complemented records</span>
-<span class="sd">                Index: Date (pandas.TimeStamp)</span>
-<span class="sd">                Columns: Confirmed, Fatal, Recovered</span>
+<span class="sd">                Index</span>
+<span class="sd">                    Date (pandas.TimeStamp)</span>
+<span class="sd">                Columns</span>
+<span class="sd">                    Confirmed, Fatal, Recovered</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="c1"># Whether complement is necessary or not</span>
         <span class="k">if</span> <span class="n">df</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">R</span><span class="p">]</span><span class="o">.</span><span class="n">max</span><span class="p">()</span> <span class="o">&gt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">max_ignored</span><span class="p">:</span>
@@ -476,14 +499,18 @@
 <span class="sd">        but small compared to confirmed cases.</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">            df (pandas.DataFrame):</span>
-<span class="sd">                Index: Date (pandas.TimeStamp)</span>
-<span class="sd">                Columns: Confirmed, Fatal, Recovered</span>
+<span class="sd">            df (pandas.DataFrame)</span>
+<span class="sd">                Index</span>
+<span class="sd">                    Date (pandas.TimeStamp)</span>
+<span class="sd">                Columns</span>
+<span class="sd">                    Confirmed, Fatal, Recovered</span>
 
 <span class="sd">        Returns:</span>
 <span class="sd">            pandas.DataFrame: complemented records</span>
-<span class="sd">                Index: Date (pandas.TimeStamp)</span>
-<span class="sd">                Columns: Confirmed, Fatal, Recovered</span>
+<span class="sd">                Index</span>
+<span class="sd">                    Date (pandas.TimeStamp)</span>
+<span class="sd">                Columns</span>
+<span class="sd">                    Confirmed, Fatal, Recovered</span>
 
 <span class="sd">        Note: _recovered_partial_ending() must always be called</span>
 <span class="sd">              after _recovered_partial()</span>
@@ -530,14 +557,18 @@
 <span class="sd">        after reached &#39;self.max_ignored&#39; cases, interpolate the recovered values.</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">            df (pandas.DataFrame):</span>
-<span class="sd">                Index: Date (pandas.TimeStamp)</span>
-<span class="sd">                Columns: Confirmed, Fatal, Recovered</span>
+<span class="sd">            df (pandas.DataFrame)</span>
+<span class="sd">                Index</span>
+<span class="sd">                    Date (pandas.TimeStamp)</span>
+<span class="sd">                Columns</span>
+<span class="sd">                    Confirmed, Fatal, Recovered</span>
 
 <span class="sd">        Returns:</span>
 <span class="sd">            pandas.DataFrame: complemented records</span>
-<span class="sd">                Index: Date (pandas.TimeStamp)</span>
-<span class="sd">                Columns: Confirmed, Fatal, Recovered</span>
+<span class="sd">                Index</span>
+<span class="sd">                    Date (pandas.TimeStamp)</span>
+<span class="sd">                Columns</span>
+<span class="sd">                    Confirmed, Fatal, Recovered</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="c1"># Whether complement is necessary or not</span>
         <span class="n">series</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">df</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">R</span><span class="p">]</span> <span class="o">&gt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">max_ignored</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">R</span><span class="p">]</span>
@@ -559,14 +590,18 @@
 <span class="sd">        Sort the absolute values of recovered data.</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">            df (pandas.DataFrame):</span>
-<span class="sd">                Index: Date (pandas.TimeStamp)</span>
-<span class="sd">                Columns: Confirmed, Fatal, Recovered</span>
+<span class="sd">            df (pandas.DataFrame)</span>
+<span class="sd">                Index</span>
+<span class="sd">                    Date (pandas.TimeStamp)</span>
+<span class="sd">                Columns</span>
+<span class="sd">                    Confirmed, Fatal, Recovered</span>
 
 <span class="sd">        Returns:</span>
 <span class="sd">            pandas.DataFrame: complemented records</span>
-<span class="sd">                Index: Date (pandas.TimeStamp)</span>
-<span class="sd">                Columns: Confirmed, Fatal, Recovered</span>
+<span class="sd">                Index</span>
+<span class="sd">                    Date (pandas.TimeStamp)</span>
+<span class="sd">                Columns</span>
+<span class="sd">                    Confirmed, Fatal, Recovered</span>
 
 <span class="sd">        Note:</span>
 <span class="sd">            _recovered_sort() must always be called after _recovered_partial_ending()</span>

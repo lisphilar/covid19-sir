@@ -29,9 +29,9 @@ def line_plot(df, title=None, xlabel=None, ylabel="Cases",
     Args:
         df (pandas.DataFrame): target data
 
-            Index:
+            Index
                 reset index
-            Columns:
+            Columns
                 field names
             Values:
                 data values
@@ -123,9 +123,9 @@ def box_plot(df, title, xlabel=None, ylabel=None,
     Args:
         df (pandas.DataFrame): target data
 
-            Index:
+            Index
                 reset index
-            Columns:
+            Columns
                 field names
             Values:
                 data values

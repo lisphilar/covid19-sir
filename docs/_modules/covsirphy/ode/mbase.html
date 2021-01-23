@@ -181,7 +181,7 @@
 <span class="kn">from</span> <span class="nn">covsirphy.cleaning.term</span> <span class="kn">import</span> <span class="n">Term</span>
 
 
-<div class="viewcode-block" id="ModelBase"><a class="viewcode-back" href="../../../covsirphy.ode.html#covsirphy.ModelBase">[docs]</a><span class="k">class</span> <span class="nc">ModelBase</span><span class="p">(</span><span class="n">Term</span><span class="p">):</span>
+<div class="viewcode-block" id="ModelBase"><a class="viewcode-back" href="../../../covsirphy.html#covsirphy.ModelBase">[docs]</a><span class="k">class</span> <span class="nc">ModelBase</span><span class="p">(</span><span class="n">Term</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Base class of ODE models.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
@@ -222,7 +222,8 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">non_param_dict</span> <span class="o">=</span> <span class="p">{}</span>
 
     <span class="k">def</span> <span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="n">param_str</span> <span class="o">=</span> <span class="s2">&quot;, &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">p</span><span class="si">}</span><span class="s2">=</span><span class="si">{</span><span class="n">v</span><span class="si">}</span><span class="s2">&quot;</span> <span class="k">for</span> <span class="p">(</span><span class="n">p</span><span class="p">,</span> <span class="n">v</span><span class="p">)</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">non_param_dict</span><span class="o">.</span><span class="n">items</span><span class="p">())</span>
+        <span class="n">param_str</span> <span class="o">=</span> <span class="s2">&quot;, &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">p</span><span class="si">}</span><span class="s2">=</span><span class="si">{</span><span class="n">v</span><span class="si">}</span><span class="s2">&quot;</span> <span class="k">for</span> <span class="p">(</span>
+            <span class="n">p</span><span class="p">,</span> <span class="n">v</span><span class="p">)</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">non_param_dict</span><span class="o">.</span><span class="n">items</span><span class="p">())</span>
         <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">NAME</span><span class="si">}</span><span class="s2"> model with </span><span class="si">{</span><span class="n">param_str</span><span class="si">}</span><span class="s2">&quot;</span>
 
     <span class="k">def</span> <span class="fm">__getitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">):</span>
@@ -244,7 +245,7 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">raise</span> <span class="ne">NotImplementedError</span>
 
-<div class="viewcode-block" id="ModelBase.param_range"><a class="viewcode-back" href="../../../covsirphy.ode.html#covsirphy.ModelBase.param_range">[docs]</a>    <span class="nd">@classmethod</span>
+<div class="viewcode-block" id="ModelBase.param_range"><a class="viewcode-back" href="../../../covsirphy.html#covsirphy.ModelBase.param_range">[docs]</a>    <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">param_range</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">taufree_df</span><span class="p">,</span> <span class="n">population</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Define the range of parameters (not including tau value).</span>
@@ -252,9 +253,9 @@
 
 <span class="sd">        Args:</span>
 <span class="sd">            taufree_df (pandas.DataFrame):</span>
-<span class="sd">                Index:</span>
+<span class="sd">                Index</span>
 <span class="sd">                    reset index</span>
-<span class="sd">                Columns:</span>
+<span class="sd">                Columns</span>
 <span class="sd">                    - t (int): time steps (tau-free)</span>
 <span class="sd">                    - columns with dimensional variables</span>
 <span class="sd">            population (int): total population</span>
@@ -266,7 +267,7 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">raise</span> <span class="ne">NotImplementedError</span></div>
 
-<div class="viewcode-block" id="ModelBase.specialize"><a class="viewcode-back" href="../../../covsirphy.ode.html#covsirphy.ModelBase.specialize">[docs]</a>    <span class="nd">@classmethod</span>
+<div class="viewcode-block" id="ModelBase.specialize"><a class="viewcode-back" href="../../../covsirphy.html#covsirphy.ModelBase.specialize">[docs]</a>    <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">specialize</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">data_df</span><span class="p">,</span> <span class="n">population</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Specialize the dataset for this model.</span>
@@ -274,9 +275,9 @@
 
 <span class="sd">        Args:</span>
 <span class="sd">            data_df (pandas.DataFrame):</span>
-<span class="sd">                Index:</span>
+<span class="sd">                Index</span>
 <span class="sd">                    reset index</span>
-<span class="sd">                Columns:</span>
+<span class="sd">                Columns</span>
 <span class="sd">                    - Confirmed (int): the number of confirmed cases</span>
 <span class="sd">                    - Infected (int): the number of currently infected cases</span>
 <span class="sd">                    - Fatal (int): the number of fatal cases</span>
@@ -286,15 +287,15 @@
 
 <span class="sd">        Returns:</span>
 <span class="sd">            (pandas.DataFrame):</span>
-<span class="sd">                Index:</span>
+<span class="sd">                Index</span>
 <span class="sd">                    reset index</span>
-<span class="sd">                Columns:</span>
+<span class="sd">                Columns</span>
 <span class="sd">                    - any columns @data_df has</span>
 <span class="sd">                    - columns with dimensional variables</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">raise</span> <span class="ne">NotImplementedError</span></div>
 
-<div class="viewcode-block" id="ModelBase.restore"><a class="viewcode-back" href="../../../covsirphy.ode.html#covsirphy.ModelBase.restore">[docs]</a>    <span class="nd">@classmethod</span>
+<div class="viewcode-block" id="ModelBase.restore"><a class="viewcode-back" href="../../../covsirphy.html#covsirphy.ModelBase.restore">[docs]</a>    <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">restore</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">specialized_df</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Restore Confirmed/Infected/Recovered/Fatal using a dataframe with the variables of the model.</span>
@@ -303,17 +304,17 @@
 <span class="sd">        Args:</span>
 <span class="sd">            specialized_df (pandas.DataFrame): dataframe with the variables</span>
 
-<span class="sd">                Index:</span>
+<span class="sd">                Index</span>
 <span class="sd">                    (object):</span>
-<span class="sd">                Columns:</span>
+<span class="sd">                Columns</span>
 <span class="sd">                    - variables of the models (int)</span>
 <span class="sd">                    - any columns</span>
 
 <span class="sd">        Returns:</span>
 <span class="sd">            (pandas.DataFrame):</span>
-<span class="sd">                Index:</span>
+<span class="sd">                Index</span>
 <span class="sd">                    (object): as-is</span>
-<span class="sd">                Columns:</span>
+<span class="sd">                Columns</span>
 <span class="sd">                    - Confirmed (int): the number of confirmed cases</span>
 <span class="sd">                    - Infected (int): the number of currently infected cases</span>
 <span class="sd">                    - Fatal (int): the number of fatal cases</span>
@@ -328,7 +329,7 @@
         <span class="n">df</span><span class="p">[</span><span class="bp">cls</span><span class="o">.</span><span class="n">R</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="k">return</span> <span class="n">df</span><span class="o">.</span><span class="n">loc</span><span class="p">[:,</span> <span class="p">[</span><span class="o">*</span><span class="bp">cls</span><span class="o">.</span><span class="n">VALUE_COLUMNS</span><span class="p">,</span> <span class="o">*</span><span class="n">other_cols</span><span class="p">]]</span></div>
 
-<div class="viewcode-block" id="ModelBase.calc_r0"><a class="viewcode-back" href="../../../covsirphy.ode.html#covsirphy.ModelBase.calc_r0">[docs]</a>    <span class="k">def</span> <span class="nf">calc_r0</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="ModelBase.calc_r0"><a class="viewcode-back" href="../../../covsirphy.html#covsirphy.ModelBase.calc_r0">[docs]</a>    <span class="k">def</span> <span class="nf">calc_r0</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Calculate (basic) reproduction number.</span>
 <span class="sd">        This method should be overwritten in subclass.</span>
@@ -338,7 +339,7 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">raise</span> <span class="ne">NotImplementedError</span></div>
 
-<div class="viewcode-block" id="ModelBase.calc_days_dict"><a class="viewcode-back" href="../../../covsirphy.ode.html#covsirphy.ModelBase.calc_days_dict">[docs]</a>    <span class="k">def</span> <span class="nf">calc_days_dict</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tau</span><span class="p">):</span>
+<div class="viewcode-block" id="ModelBase.calc_days_dict"><a class="viewcode-back" href="../../../covsirphy.html#covsirphy.ModelBase.calc_days_dict">[docs]</a>    <span class="k">def</span> <span class="nf">calc_days_dict</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tau</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Calculate 1/beta [day] etc.</span>
 <span class="sd">        This method should be overwritten in subclass.</span>
@@ -351,7 +352,7 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">raise</span> <span class="ne">NotImplementedError</span></div>
 
-<div class="viewcode-block" id="ModelBase.tau_free"><a class="viewcode-back" href="../../../covsirphy.ode.html#covsirphy.ModelBase.tau_free">[docs]</a>    <span class="nd">@classmethod</span>
+<div class="viewcode-block" id="ModelBase.tau_free"><a class="viewcode-back" href="../../../covsirphy.html#covsirphy.ModelBase.tau_free">[docs]</a>    <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">tau_free</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">subset_df</span><span class="p">,</span> <span class="n">population</span><span class="p">,</span> <span class="n">tau</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Create a dataframe specialized to the model.</span>
@@ -360,9 +361,9 @@
 
 <span class="sd">        Args:</span>
 <span class="sd">            subset_df (pandas.DataFrame):</span>
-<span class="sd">                Index:</span>
+<span class="sd">                Index</span>
 <span class="sd">                    reset index</span>
-<span class="sd">                Columns:</span>
+<span class="sd">                Columns</span>
 <span class="sd">                    - Date (pd.TimeStamp): Observation date</span>
 <span class="sd">                    - Confirmed (int): the number of confirmed cases</span>
 <span class="sd">                    - Infected (int): the number of currently infected cases</span>
@@ -374,9 +375,9 @@
 
 <span class="sd">        Returns:</span>
 <span class="sd">            (pandas.DataFrame):</span>
-<span class="sd">                Index:</span>
+<span class="sd">                Index</span>
 <span class="sd">                    reset index</span>
-<span class="sd">                Columns:</span>
+<span class="sd">                Columns</span>
 <span class="sd">                    - t (int): if tau is not None</span>
 <span class="sd">                    - columns with dimensional variables</span>
 <span class="sd">        &quot;&quot;&quot;</span>

@@ -168,7 +168,7 @@ class PhaseUnit(Term):
         date = self.date_obj(date)
         return sta <= date <= end
 
-    @ property
+    @property
     def id_dict(self):
         """
         tuple(str): id_dict of the phase
@@ -229,28 +229,28 @@ class PhaseUnit(Term):
     def __bool__(self):
         return self._enabled
 
-    @ property
+    @property
     def start_date(self):
         """
         str: start date
         """
         return self._start_date
 
-    @ property
+    @property
     def end_date(self):
         """
         str: end date
         """
         return self._end_date
 
-    @ property
+    @property
     def population(self):
         """
         str: population value
         """
         return self._population
 
-    @ property
+    @property
     def tau(self):
         """
         int or None: tau value [min]
@@ -265,14 +265,14 @@ class PhaseUnit(Term):
         raise AttributeError(
             f"PhaseUnit.tau is not None ({self._ode_dict[self.TAU]}) and cannot be changed.")
 
-    @ property
+    @property
     def model(self):
         """
         covsirphy.ModelBase or None: model description
         """
         return self._model
 
-    @ property
+    @property
     def estimator(self):
         """
         covsirphy.Estimator or None: estimator object
@@ -311,9 +311,9 @@ class PhaseUnit(Term):
 
         Returns:
             pandas.DataFrame:
-                Index:
+                Index
                     reset index
-                Columns:
+                Columns
                     - Start: start date of the phase
                     - End: end date of the phase
                     - Population: population value of the start date
@@ -370,13 +370,14 @@ class PhaseUnit(Term):
             self.day_param_dict = model_instance.calc_days_dict(tau)
         return self
 
-    @ property
+    @property
     def record_df(self):
         """
         pandas.DataFrame: records of the phase
-            Index:
+
+            Index
                 reset index
-            Columns:
+            Columns
                 - Date (pd.TimeStamp): Observation date
                 - Confirmed (int): the number of confirmed cases
                 - Infected (int): the number of currently infected cases
@@ -408,9 +409,9 @@ class PhaseUnit(Term):
 
         Args:
             record_df (pandas.DataFrame or None)
-                Index:
+                Index
                     reset index
-                Columns:
+                Columns
                     - Date (pd.TimeStamp): Observation date
                     - Confirmed (int): the number of confirmed cases
                     - Infected (int): the number of currently infected cases
@@ -451,9 +452,9 @@ class PhaseUnit(Term):
         Args:
             estimator (covsirphy.Estimator): estimator which finished estimation
             record_df (pandas.DataFrame)
-                Index:
+                Index
                     reset index
-                Columns:
+                Columns
                     - Date (pd.TimeStamp): Observation date
                     - Confirmed (int): the number of confirmed cases
                     - Infected (int): the number of currently infected cases
@@ -481,9 +482,9 @@ class PhaseUnit(Term):
 
         Args:
             record_df (pandas.DataFrame)
-                Index:
+                Index
                     reset index
-                Columns:
+                Columns
                     - Date (pd.TimeStamp): Observation date
                     - Confirmed (int): the number of confirmed cases
                     - Infected (int): the number of currently infected cases
@@ -511,9 +512,9 @@ class PhaseUnit(Term):
 
         Returns:
             pandas.DataFrame
-                Index:
+                Index
                     reset index
-                Columns:
+                Columns
                     - Date (pd.TimeStamp): Observation date
                     - Confirmed (int): the number of confirmed cases
                     - Infected (int): the number of currently infected cases

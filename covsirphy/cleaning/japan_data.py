@@ -190,8 +190,9 @@ class JapanData(CountryData):
 
         Returns:
             pandas.DataFrame: (cleaned or raw) dataset
-                Index: reset index
-                Columns: for cleaned dataset,
+                Index
+                    reset index
+                Columns for cleaned dataset,
                     - Prefecture (pandas.Category)
                     - Admin_Capital (pandas.Category)
                     - Admin_Region (pandas.Category)

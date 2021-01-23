@@ -22,9 +22,9 @@ class Estimator(Term):
 
     Args:
         record_df (pandas.DataFrame)
-            Index:
+            Index
                 reset index
-            Columns:
+            Columns
                 - Date (pd.TimeStamp): Observation date
                 - Confirmed (int): the number of confirmed cases
                 - Infected (int): the number of currently infected cases
@@ -239,9 +239,9 @@ class Estimator(Term):
 
         Returns:
             pandas.DataFrame:
-                Index:
+                Index
                     reset index
-                Columns:
+                Columns
                     - t (int): Elapsed time divided by tau value [-]
                     - columns with dimensionalized variables
         """
@@ -265,9 +265,9 @@ class Estimator(Term):
 
         Returns:
             pandas.DataFrame:
-                Index:
+                Index
                     t (int): Elapsed time divided by tau value [-]
-                Columns:
+                Columns
                     - columns with "_actual"
                     - columns with "_predicted:
                     - columns are defined by self.variables
@@ -378,9 +378,9 @@ class Estimator(Term):
 
         Returns:
             pandas.DataFrame:
-                Index:
+                Index
                     t (int): Elapsed time divided by tau value [-]
-                Columns:
+                Columns
                     - columns with "_actual"
                     - columns with "_predicted:
                     - columns are defined by self.variables

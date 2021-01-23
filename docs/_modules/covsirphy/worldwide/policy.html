@@ -191,7 +191,7 @@
 <span class="kn">from</span> <span class="nn">covsirphy.analysis.scenario</span> <span class="kn">import</span> <span class="n">Scenario</span>
 
 
-<div class="viewcode-block" id="PolicyMeasures"><a class="viewcode-back" href="../../../covsirphy.worldwide.html#covsirphy.PolicyMeasures">[docs]</a><span class="k">class</span> <span class="nc">PolicyMeasures</span><span class="p">(</span><span class="n">Term</span><span class="p">):</span>
+<div class="viewcode-block" id="PolicyMeasures"><a class="viewcode-back" href="../../../covsirphy.html#covsirphy.PolicyMeasures">[docs]</a><span class="k">class</span> <span class="nc">PolicyMeasures</span><span class="p">(</span><span class="n">Term</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Analyse the relationship of policy measures and parameters of ODE models.</span>
 <span class="sd">    This analysis will be done at country level because OxCGRT tracks policies at country level.</span>
@@ -241,7 +241,7 @@
             <span class="k">for</span> <span class="n">country</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_countries</span>
         <span class="p">}</span>
 
-<div class="viewcode-block" id="PolicyMeasures.scenario"><a class="viewcode-back" href="../../../covsirphy.worldwide.html#covsirphy.PolicyMeasures.scenario">[docs]</a>    <span class="k">def</span> <span class="nf">scenario</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">country</span><span class="p">):</span>
+<div class="viewcode-block" id="PolicyMeasures.scenario"><a class="viewcode-back" href="../../../covsirphy.html#covsirphy.PolicyMeasures.scenario">[docs]</a>    <span class="k">def</span> <span class="nf">scenario</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">country</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Return Scenario instance of the country.</span>
 
@@ -276,7 +276,7 @@
                 <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">un_selectable</span><span class="si">}</span><span class="s2"> cannot be selected because records are not registered.&quot;</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_countries</span> <span class="o">=</span> <span class="n">country_list</span>
 
-<div class="viewcode-block" id="PolicyMeasures.trend"><a class="viewcode-back" href="../../../covsirphy.worldwide.html#covsirphy.PolicyMeasures.trend">[docs]</a>    <span class="k">def</span> <span class="nf">trend</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">min_len</span><span class="o">=</span><span class="mi">2</span><span class="p">):</span>
+<div class="viewcode-block" id="PolicyMeasures.trend"><a class="viewcode-back" href="../../../covsirphy.html#covsirphy.PolicyMeasures.trend">[docs]</a>    <span class="k">def</span> <span class="nf">trend</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">min_len</span><span class="o">=</span><span class="mi">2</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Perform S-R trend analysis for all registered countries.</span>
 
@@ -303,7 +303,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">countries</span> <span class="o">=</span> <span class="n">countries</span>
         <span class="k">return</span> <span class="bp">self</span></div>
 
-<div class="viewcode-block" id="PolicyMeasures.summary"><a class="viewcode-back" href="../../../covsirphy.worldwide.html#covsirphy.PolicyMeasures.summary">[docs]</a>    <span class="k">def</span> <span class="nf">summary</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">countries</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<div class="viewcode-block" id="PolicyMeasures.summary"><a class="viewcode-back" href="../../../covsirphy.html#covsirphy.PolicyMeasures.summary">[docs]</a>    <span class="k">def</span> <span class="nf">summary</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">countries</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Summarize of scenarios.</span>
 
@@ -330,7 +330,7 @@
         <span class="n">summary_df</span> <span class="o">=</span> <span class="n">summary_df</span><span class="o">.</span><span class="n">set_index</span><span class="p">([</span><span class="bp">self</span><span class="o">.</span><span class="n">COUNTRY</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">PHASE</span><span class="p">])</span>
         <span class="k">return</span> <span class="n">summary_df</span><span class="o">.</span><span class="n">fillna</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">UNKNOWN</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="PolicyMeasures.phase_len"><a class="viewcode-back" href="../../../covsirphy.worldwide.html#covsirphy.PolicyMeasures.phase_len">[docs]</a>    <span class="k">def</span> <span class="nf">phase_len</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="PolicyMeasures.phase_len"><a class="viewcode-back" href="../../../covsirphy.html#covsirphy.PolicyMeasures.phase_len">[docs]</a>    <span class="k">def</span> <span class="nf">phase_len</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Make groups of countries with the length of phases.</span>
 
@@ -347,7 +347,7 @@
             <span class="k">for</span> <span class="p">(</span><span class="n">length</span><span class="p">,</span> <span class="n">records</span><span class="p">)</span> <span class="ow">in</span> <span class="n">groupby</span><span class="p">(</span><span class="n">sorted_nest</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="n">itemgetter</span><span class="p">(</span><span class="mi">1</span><span class="p">))</span>
         <span class="p">}</span></div>
 
-<div class="viewcode-block" id="PolicyMeasures.estimate"><a class="viewcode-back" href="../../../covsirphy.worldwide.html#covsirphy.PolicyMeasures.estimate">[docs]</a>    <span class="k">def</span> <span class="nf">estimate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model</span><span class="p">,</span> <span class="n">n_jobs</span><span class="o">=-</span><span class="mi">1</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<div class="viewcode-block" id="PolicyMeasures.estimate"><a class="viewcode-back" href="../../../covsirphy.html#covsirphy.PolicyMeasures.estimate">[docs]</a>    <span class="k">def</span> <span class="nf">estimate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model</span><span class="p">,</span> <span class="n">n_jobs</span><span class="o">=-</span><span class="mi">1</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Estimate the parameter values of phases in the registered countries.</span>
 
@@ -390,7 +390,7 @@
     <span class="k">def</span> <span class="nf">param_history</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">param</span><span class="p">,</span> <span class="n">roll_window</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">show_figure</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">filename</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">history</span><span class="p">(</span><span class="n">param</span><span class="p">,</span> <span class="n">roll_window</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">show_figure</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">filename</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
 
-<div class="viewcode-block" id="PolicyMeasures.history"><a class="viewcode-back" href="../../../covsirphy.worldwide.html#covsirphy.PolicyMeasures.history">[docs]</a>    <span class="k">def</span> <span class="nf">history</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">param</span><span class="p">,</span> <span class="n">roll_window</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">show_figure</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">filename</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<div class="viewcode-block" id="PolicyMeasures.history"><a class="viewcode-back" href="../../../covsirphy.html#covsirphy.PolicyMeasures.history">[docs]</a>    <span class="k">def</span> <span class="nf">history</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">param</span><span class="p">,</span> <span class="n">roll_window</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">show_figure</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">filename</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Return subset of summary and show a figure to show the history of all countries.</span>
 
@@ -403,9 +403,12 @@
 
 <span class="sd">        Returns:</span>
 <span class="sd">            pandas.DataFrame:</span>
-<span class="sd">                Index: Date (pd.TimeStamp) date</span>
-<span class="sd">                Columns: (str) country names</span>
-<span class="sd">                Values: parameter values</span>
+<span class="sd">                Index</span>
+<span class="sd">                    Date (pd.TimeStamp) date</span>
+<span class="sd">                Columns</span>
+<span class="sd">                    (str) country names</span>
+<span class="sd">                Values:</span>
+<span class="sd">                    parameter values</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="c1"># Get the parameter value of each date</span>
         <span class="n">df</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">track</span><span class="p">()</span>
@@ -433,7 +436,7 @@
         <span class="p">)</span>
         <span class="k">return</span> <span class="n">df</span></div>
 
-<div class="viewcode-block" id="PolicyMeasures.track"><a class="viewcode-back" href="../../../covsirphy.worldwide.html#covsirphy.PolicyMeasures.track">[docs]</a>    <span class="k">def</span> <span class="nf">track</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="PolicyMeasures.track"><a class="viewcode-back" href="../../../covsirphy.html#covsirphy.PolicyMeasures.track">[docs]</a>    <span class="k">def</span> <span class="nf">track</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Return subset of summary and show a figure to show the history in each country.</span>
 
@@ -445,16 +448,16 @@
 <span class="sd">            kwargs: keword arguments of pd.DataFrame.plot or line_plot()</span>
 
 <span class="sd">        Returns:</span>
-<span class="sd">            pandas.DataFrame:</span>
-<span class="sd">                Index: reset index</span>
-<span class="sd">                Columns:</span>
+<span class="sd">            pandas.DataFrame: parameter values</span>
+<span class="sd">                Index</span>
+<span class="sd">                    reset index</span>
+<span class="sd">                Columns</span>
 <span class="sd">                    - Country (str): country name</span>
 <span class="sd">                    - Date (pd.TimeStamp): date</span>
 <span class="sd">                    - (float): model parameters</span>
 <span class="sd">                    - (float): model day parameters</span>
 <span class="sd">                    - Rt (float): reproduction number</span>
 <span class="sd">                    - (float): OxCGRT values</span>
-<span class="sd">                Values: parameter values</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">raise</span> <span class="n">UnExecutedError</span><span class="p">(</span><span class="s2">&quot;PolicyMeasures.estimate(model)&quot;</span><span class="p">)</span>

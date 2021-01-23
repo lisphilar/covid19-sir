@@ -46,7 +46,8 @@ class ModelBase(Term):
         self.non_param_dict = {}
 
     def __str__(self):
-        param_str = ", ".join(f"{p}={v}" for (p, v) in self.non_param_dict.items())
+        param_str = ", ".join(f"{p}={v}" for (
+            p, v) in self.non_param_dict.items())
         return f"{self.NAME} model with {param_str}"
 
     def __getitem__(self, key):
@@ -76,9 +77,9 @@ class ModelBase(Term):
 
         Args:
             taufree_df (pandas.DataFrame):
-                Index:
+                Index
                     reset index
-                Columns:
+                Columns
                     - t (int): time steps (tau-free)
                     - columns with dimensional variables
             population (int): total population
@@ -98,9 +99,9 @@ class ModelBase(Term):
 
         Args:
             data_df (pandas.DataFrame):
-                Index:
+                Index
                     reset index
-                Columns:
+                Columns
                     - Confirmed (int): the number of confirmed cases
                     - Infected (int): the number of currently infected cases
                     - Fatal (int): the number of fatal cases
@@ -110,9 +111,9 @@ class ModelBase(Term):
 
         Returns:
             (pandas.DataFrame):
-                Index:
+                Index
                     reset index
-                Columns:
+                Columns
                     - any columns @data_df has
                     - columns with dimensional variables
         """
@@ -127,17 +128,17 @@ class ModelBase(Term):
         Args:
             specialized_df (pandas.DataFrame): dataframe with the variables
 
-                Index:
+                Index
                     (object):
-                Columns:
+                Columns
                     - variables of the models (int)
                     - any columns
 
         Returns:
             (pandas.DataFrame):
-                Index:
+                Index
                     (object): as-is
-                Columns:
+                Columns
                     - Confirmed (int): the number of confirmed cases
                     - Infected (int): the number of currently infected cases
                     - Fatal (int): the number of fatal cases
@@ -184,9 +185,9 @@ class ModelBase(Term):
 
         Args:
             subset_df (pandas.DataFrame):
-                Index:
+                Index
                     reset index
-                Columns:
+                Columns
                     - Date (pd.TimeStamp): Observation date
                     - Confirmed (int): the number of confirmed cases
                     - Infected (int): the number of currently infected cases
@@ -198,9 +199,9 @@ class ModelBase(Term):
 
         Returns:
             (pandas.DataFrame):
-                Index:
+                Index
                     reset index
-                Columns:
+                Columns
                     - t (int): if tau is not None
                     - columns with dimensional variables
         """

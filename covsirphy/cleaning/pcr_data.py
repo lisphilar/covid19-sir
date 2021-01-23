@@ -52,9 +52,9 @@ class PCRData(CleaningBase):
 
         Returns:
             pandas.DataFrame
-                Index:
+                Index
                     reset index
-                Columns:
+                Columns
                     - Date (pd.TimeStamp): Observation date
                     - Country (pandas.Category): country/region name
                     - Province (pandas.Category): province/prefecture/state name
@@ -73,9 +73,9 @@ class PCRData(CleaningBase):
 
         Returns:
             pandas.DataFrame
-                Index:
+                Index
                     reset index
-                Columns:
+                Columns
                     - Date (pd.TimeStamp): Observation date
                     - ISO3 (str): ISO3 code
                     - Country (pandas.Category): country/region name
@@ -224,9 +224,11 @@ class PCRData(CleaningBase):
 
         Args:
             country_data (covsirphy.CountryData): dataset object of the country
-                Index: reset index
-                Columns:
-                    - Date (pd.TimeStamp): Observation date
+
+                Index
+                    reset index
+                Columns
+                    - Date (pandas.TimeStamp): Observation date
                     - Province (pandas.Category): province name
                     - Tests (int): the number of total tests performed
                     - Confirmed (int): the number of confirmed cases
@@ -261,14 +263,18 @@ class PCRData(CleaningBase):
 
         Args:
             df (pandas.DataFrame):
-                Index: Date (pandas.TimeStamp)
-                Columns: Tests, Confirmed
+                Index
+                    Date (pandas.TimeStamp)
+                Columns
+                    Tests, Confirmed
             variable (str): variable name to show monotonic increasing
 
         Returns:
             pandas.DataFrame: complemented records
-                Index: Date (pandas.TimeStamp)
-                Columns: Tests, Confirmed
+                Index
+                    Date (pandas.TimeStamp)
+                Columns
+                    Tests, Confirmed
         """
         # Whether complement is necessary or not
         if df[variable].is_monotonic_increasing:
@@ -295,8 +301,10 @@ class PCRData(CleaningBase):
 
         Args:
             df (pandas.DataFrame):
-                Index: Date (pandas.TimeStamp)
-                Columns: Tests, Confirmed, Tests_diff, C_diff
+                Index
+                    Sate (pandas.TimeStamp)
+                Columns
+                    Tests, Confirmed, Tests_diff, C_diff
             variable: the desired column to use
 
         Returns:
@@ -313,14 +321,18 @@ class PCRData(CleaningBase):
 
         Args:
             df (pandas.DataFrame):
-                Index: Date (pandas.TimeStamp)
-                Columns: Tests, Confirmed
+                Index
+                    Date (pandas.TimeStamp)
+                Columns
+                    Tests, Confirmed
             window (int): window of moving average, >= 1
 
         Returns:
             pandas.DataFrame: complemented test records
-                Index: Date (pandas.TimeStamp)
-                Columns: Tests, Confirmed
+                Index
+                    Date (pandas.TimeStamp)
+                Columns
+                    Tests, Confirmed
         """
         # Whether complement is necessary or not
         tests_max = df[self.TESTS].max()
@@ -355,14 +367,18 @@ class PCRData(CleaningBase):
 
         Args:
             before_df (pandas.DataFrame):
-                Index: Date (pandas.TimeStamp)
-                Columns: Tests, Confirmed, Tests_diff, C_diff
+                Index
+                    Date (pandas.TimeStamp)
+                Columns
+                    Tests, Confirmed, Tests_diff, C_diff
             variable: the desired column to use
 
         Returns:
             pandas.DataFrame: complemented records
-                Index: Date (pandas.TimeStamp)
-                Columns: Tests, Confirmed, Tests_diff, C_diff
+                Index
+                    Date (pandas.TimeStamp)
+                Columns
+                    Tests, Confirmed, Tests_diff, C_diff
 
         Note:
             Filling NA with 0 will be always applied.
@@ -385,15 +401,16 @@ class PCRData(CleaningBase):
 
         Args:
             before_df (pandas.DataFrame):
-                Index: reset index
-                Columns: Date (pandas.TimeStamp), Tests, Confirmed
+                Index reset index
+                Columns Date (pandas.TimeStamp), Tests, Confirmed
             window (int): window of moving average, >= 1
 
         Returns:
             tuple (pandas.DataFrame, bool):
                 pandas.DataFrame
-                    Index: reset index
-                    Columns:
+                    Index
+                        reset index
+                    Columns
                         - Date (pd.TimeStamp): Observation date
                         - Tests (int): the number of total tests performed
                         - Confirmed (int): the number of confirmed cases
@@ -445,8 +462,8 @@ class PCRData(CleaningBase):
 
         Args:
             df (pandas.DataFrame):
-                Index: Date (pandas.TimeStamp)
-                Columns: Tests, Confirmed
+                Index Date (pandas.TimeStamp)
+                Columns Tests, Confirmed
 
         Return:
             bool: whether the dataset has sufficient data or not
@@ -520,12 +537,14 @@ class PCRData(CleaningBase):
             filename (str): filename of the figure, or None (display figure)
 
         Raises:
-            PCRIncorrectPreconditionError: the dataset has too many missing values
+            covsirphy.PCRIncorrectPreconditionError: the dataset has too many missing values
 
         Returns:
             pandas.DataFrame
-                Columns:
-                    - Date (pd.TimeStamp): Observation date
+                Index
+                    reset index
+                Columns
+                    - Date (pandas.TimeStamp): Observation date
                     - Tests (int): the number of total tests performed
                     - Confirmed (int): the number of confirmed cases
                     - Tests_diff (int): daily tests performed
@@ -578,8 +597,9 @@ class PCRData(CleaningBase):
 
         Returns:
             pandas.DataFrame
-                Index: reset index
-                Columns:
+                Index
+                    reset index
+                Columns
                     - Date (pd.TimeStamp): Observation date
                     - Tests (int): the number of total tests performed
                     - Confirmed (int): the number of confirmed cases

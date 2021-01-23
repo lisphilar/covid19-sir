@@ -512,9 +512,9 @@ class Scenario(DataHandler):
 
         Returns:
             pandas.DataFrame
-                Index:
+                Index
                     reset index
-                Columns:
+                Columns
                     - Date (pd.TimeStamp): Observation date
                     - Country (str): country/region name
                     - Province (str): province/prefecture/state name
@@ -657,9 +657,9 @@ class Scenario(DataHandler):
 
         Returns:
             pandas.DataFrame
-                Index:
+                Index
                     (int): scenario name
-                Columns:
+                Columns
                     - max(Infected): max value of Infected
                     - argmax(Infected): the date when Infected shows max value
                     - Confirmed({date}): Confirmed on the next date of the last phase
@@ -705,9 +705,9 @@ class Scenario(DataHandler):
 
         Returns:
             pandas.DataFrame:
-                Index:
+                Index
                     str: scenario name
-                Columns:
+                Columns
                     - max(Infected): max value of Infected
                     - argmax(Infected): the date when Infected shows max value
                     - Confirmed({date}): Confirmed on the next date of the last phase
@@ -736,8 +736,8 @@ class Scenario(DataHandler):
 
         Returns:
             pandas.DataFrame:
-                Index: Date (pandas.TimeStamp)
-                Columns:
+                Index Date (pandas.TimeStamp)
+                Columns
                     - Population (int)
                     - Rt (float)
                     - parameter values (float)
@@ -773,8 +773,8 @@ class Scenario(DataHandler):
 
         Returns:
             pandas.DataFrame:
-                Index: reset index
-                Columns:
+                Index reset index
+                Columns
                     - Date (pandas.TimeStamp)
                     - variables (int)
                     - Population (int)
@@ -802,9 +802,10 @@ class Scenario(DataHandler):
                 - value (float): initial value
 
         Returns:
-            pandas.DataFrame:
-                Index: reset index
-                Columns:
+            pandas.DataFrame: tracking records
+                Index
+                    reset index
+                Columns
                     - Scenario (str)
                     - Date (pandas.TimeStamp)
                     - variables (int)
@@ -1134,12 +1135,12 @@ class Scenario(DataHandler):
                 - l1_ratio (float): l1_ratio value used in Elastic Net regression
                 - score_train (float): determination coefficient of train dataset
                 - score_test (float): determination coefficient of test dataset
-                - intercept (pandas.DataFrame): intercept values (Index: ODE parameters, Columns: OxCGRT indicators)
+                - intercept (pandas.DataFrame): intercept values (Index ODE parameters, Columns OxCGRT indicators)
                 - delay (int): number of days of delay between policy measure and effect
                   on number of confirmed cases.
 
         Raises:
-            UnExecutedError: Scenario.estimate() or Scenario.add() were not performed
+            covsirphy.UnExecutedError: Scenario.estimate() or Scenario.add() were not performed
         """
         # Register OxCGRT data
         self._oxcgrt_data = self._ensure_instance(
@@ -1192,7 +1193,7 @@ class Scenario(DataHandler):
             covsirphy.Scenario: self
 
         Raises:
-            UnExecutedError: Scenario.fit() was not performed
+            covsirphy.UnExecutedError: Scenario.fit() was not performed
         """
         # Arguments
         if name not in self._lm_dict:
@@ -1233,7 +1234,7 @@ class Scenario(DataHandler):
             covsirphy.Scenario: self
 
         Raises:
-            UnExecutedError: Scenario.estimate() or Scenario.add() were not performed
+            covsirphy.UnExecutedError: Scenario.estimate() or Scenario.add() were not performed
         """
         self.fit(oxcgrt_data=oxcgrt_data, name=name, **kwargs)
         self.predict(name=name)

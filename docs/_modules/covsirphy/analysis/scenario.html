@@ -688,9 +688,9 @@
 
 <span class="sd">        Returns:</span>
 <span class="sd">            pandas.DataFrame</span>
-<span class="sd">                Index:</span>
+<span class="sd">                Index</span>
 <span class="sd">                    reset index</span>
-<span class="sd">                Columns:</span>
+<span class="sd">                Columns</span>
 <span class="sd">                    - Date (pd.TimeStamp): Observation date</span>
 <span class="sd">                    - Country (str): country/region name</span>
 <span class="sd">                    - Province (str): province/prefecture/state name</span>
@@ -833,9 +833,9 @@
 
 <span class="sd">        Returns:</span>
 <span class="sd">            pandas.DataFrame</span>
-<span class="sd">                Index:</span>
+<span class="sd">                Index</span>
 <span class="sd">                    (int): scenario name</span>
-<span class="sd">                Columns:</span>
+<span class="sd">                Columns</span>
 <span class="sd">                    - max(Infected): max value of Infected</span>
 <span class="sd">                    - argmax(Infected): the date when Infected shows max value</span>
 <span class="sd">                    - Confirmed({date}): Confirmed on the next date of the last phase</span>
@@ -881,9 +881,9 @@
 
 <span class="sd">        Returns:</span>
 <span class="sd">            pandas.DataFrame:</span>
-<span class="sd">                Index:</span>
+<span class="sd">                Index</span>
 <span class="sd">                    str: scenario name</span>
-<span class="sd">                Columns:</span>
+<span class="sd">                Columns</span>
 <span class="sd">                    - max(Infected): max value of Infected</span>
 <span class="sd">                    - argmax(Infected): the date when Infected shows max value</span>
 <span class="sd">                    - Confirmed({date}): Confirmed on the next date of the last phase</span>
@@ -912,8 +912,8 @@
 
 <span class="sd">        Returns:</span>
 <span class="sd">            pandas.DataFrame:</span>
-<span class="sd">                Index: Date (pandas.TimeStamp)</span>
-<span class="sd">                Columns:</span>
+<span class="sd">                Index Date (pandas.TimeStamp)</span>
+<span class="sd">                Columns</span>
 <span class="sd">                    - Population (int)</span>
 <span class="sd">                    - Rt (float)</span>
 <span class="sd">                    - parameter values (float)</span>
@@ -949,8 +949,8 @@
 
 <span class="sd">        Returns:</span>
 <span class="sd">            pandas.DataFrame:</span>
-<span class="sd">                Index: reset index</span>
-<span class="sd">                Columns:</span>
+<span class="sd">                Index reset index</span>
+<span class="sd">                Columns</span>
 <span class="sd">                    - Date (pandas.TimeStamp)</span>
 <span class="sd">                    - variables (int)</span>
 <span class="sd">                    - Population (int)</span>
@@ -978,9 +978,10 @@
 <span class="sd">                - value (float): initial value</span>
 
 <span class="sd">        Returns:</span>
-<span class="sd">            pandas.DataFrame:</span>
-<span class="sd">                Index: reset index</span>
-<span class="sd">                Columns:</span>
+<span class="sd">            pandas.DataFrame: tracking records</span>
+<span class="sd">                Index</span>
+<span class="sd">                    reset index</span>
+<span class="sd">                Columns</span>
 <span class="sd">                    - Scenario (str)</span>
 <span class="sd">                    - Date (pandas.TimeStamp)</span>
 <span class="sd">                    - variables (int)</span>
@@ -1310,12 +1311,12 @@
 <span class="sd">                - l1_ratio (float): l1_ratio value used in Elastic Net regression</span>
 <span class="sd">                - score_train (float): determination coefficient of train dataset</span>
 <span class="sd">                - score_test (float): determination coefficient of test dataset</span>
-<span class="sd">                - intercept (pandas.DataFrame): intercept values (Index: ODE parameters, Columns: OxCGRT indicators)</span>
+<span class="sd">                - intercept (pandas.DataFrame): intercept values (Index ODE parameters, Columns OxCGRT indicators)</span>
 <span class="sd">                - delay (int): number of days of delay between policy measure and effect</span>
 <span class="sd">                  on number of confirmed cases.</span>
 
 <span class="sd">        Raises:</span>
-<span class="sd">            UnExecutedError: Scenario.estimate() or Scenario.add() were not performed</span>
+<span class="sd">            covsirphy.UnExecutedError: Scenario.estimate() or Scenario.add() were not performed</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="c1"># Register OxCGRT data</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_oxcgrt_data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ensure_instance</span><span class="p">(</span>
@@ -1368,7 +1369,7 @@
 <span class="sd">            covsirphy.Scenario: self</span>
 
 <span class="sd">        Raises:</span>
-<span class="sd">            UnExecutedError: Scenario.fit() was not performed</span>
+<span class="sd">            covsirphy.UnExecutedError: Scenario.fit() was not performed</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="c1"># Arguments</span>
         <span class="k">if</span> <span class="n">name</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_lm_dict</span><span class="p">:</span>
@@ -1409,7 +1410,7 @@
 <span class="sd">            covsirphy.Scenario: self</span>
 
 <span class="sd">        Raises:</span>
-<span class="sd">            UnExecutedError: Scenario.estimate() or Scenario.add() were not performed</span>
+<span class="sd">            covsirphy.UnExecutedError: Scenario.estimate() or Scenario.add() were not performed</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">oxcgrt_data</span><span class="o">=</span><span class="n">oxcgrt_data</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">)</span>

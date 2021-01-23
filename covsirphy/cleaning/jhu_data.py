@@ -44,9 +44,9 @@ class JHUData(CleaningBase):
 
         Returns:
             pandas.DataFrame
-                Index:
+                Index
                     reset index
-                Columns:
+                Columns
                     - Date (pd.TimeStamp): Observation date
                     - Country (pandas.Category): country/region name
                     - Province (pandas.Category): province/prefecture/state name
@@ -70,9 +70,9 @@ class JHUData(CleaningBase):
 
         Returns:
             pandas.DataFrame
-                Index:
+                Index
                     reset index
-                Columns:
+                Columns
                     - Date (pd.TimeStamp): Observation date
                     - ISO3 (str): ISO3 code
                     - Country (pandas.Category): country/region name
@@ -174,9 +174,9 @@ class JHUData(CleaningBase):
 
         Returns:
             pandas.DataFrame
-                Index:
+                Index
                     reset index
-                Columns:
+                Columns
                     - Date (pd.TimeStamp): Observation date
                     - Confirmed (int): the number of confirmed cases
                     - Infected (int): the number of currently infected cases
@@ -195,8 +195,9 @@ class JHUData(CleaningBase):
 
         Args:
             subset_df (pandas.DataFrame)
-                Index: reset index
-                Columns:
+                Index
+                    reset index
+                Columns
                     - Date (pd.TimeStamp): Observation date
                     - Confirmed (int): the number of confirmed cases
                     - Infected (int): the number of currently infected cases
@@ -206,9 +207,9 @@ class JHUData(CleaningBase):
 
         Returns:
             pandas.DataFrame
-                Index:
+                Index
                     reset index
-                Columns:
+                Columns
                     - Date (pd.TimeStamp): Observation date
                     - Confirmed (int): the number of confirmed cases
                     - Infected (int): the number of currently infected cases
@@ -237,9 +238,9 @@ class JHUData(CleaningBase):
 
         Returns:
             pandas.DataFrame
-                Index:
+                Index
                     reset index
-                Columns:
+                Columns
                     - Date (pd.TimeStamp): Observation date
                     - Confirmed (int): the number of confirmed cases
                     - Infected (int): the number of currently infected cases
@@ -282,9 +283,9 @@ class JHUData(CleaningBase):
 
         Returns:
             pandas.DataFrame
-                Index:
+                Index
                     Date (pd.TimeStamp): Observation date
-                Columns:
+                Columns
                     - Recovered (int): the number of recovered cases (> 0)
                     - Susceptible (int): the number of susceptible cases
 
@@ -321,9 +322,9 @@ class JHUData(CleaningBase):
         Returns:
             pandas.DataFrame: group-by Date, sum of the values
 
-                Index:
-                    Date (pd.TimeStamp): Observation date
-                Columns:
+                Index
+                    Date (pandas.TimeStamp): Observation date
+                Columns
                     - Confirmed (int): the number of confirmed cases
                     - Infected (int): the number of currently infected cases
                     - Fatal (int): the number of fatal cases
@@ -437,16 +438,17 @@ class JHUData(CleaningBase):
             return default
 
     def _calculate_recovery_period_country(self, valid_df, country, upper_limit_days=90,
-                                           lower_limit_days=7, upper_percentage=0.5,
-                                           lower_percentage=0.5):
+                                           lower_limit_days=7, upper_percentage=0.5, lower_percentage=0.5):
         """
         Calculate mode value of recovery period in the country.
         If many mode values were found, mean value of mode values will be returned.
 
         Args:
             valid_df (pandas.DataFrame):
-                - Index: reset_index
-                - Columns: Date, Confirmed, Recovered, Fatal
+                Index
+                    reset_index
+                Columns
+                    Date, Confirmed, Recovered, Fatal
             country(str): country name or ISO3 code
             upper_limit_days (int): maximum number of valid partial recovery periods [days]
             lower_limit_days (int): minimum number of valid partial recovery periods [days]
@@ -479,8 +481,7 @@ class JHUData(CleaningBase):
         return df["Elapsed"].mode().mean()
 
     def subset_complement(self, country, province=None,
-                          start_date=None, end_date=None,
-                          population=None, **kwargs):
+                          start_date=None, end_date=None, population=None, **kwargs):
         """
         Return the subset of dataset and complement recovered data, if necessary.
         Records with Recovered > 0 will be selected.
@@ -491,22 +492,21 @@ class JHUData(CleaningBase):
             start_date(str or None): start date, like 22Jan2020
             end_date(str or None): end date, like 01Feb2020
             population(int or None): population value
-            kwargs: keyword arguments of JHUDataComplementHandler(),
-                    control factors of complement
+            kwargs: keyword arguments of JHUDataComplementHandler(), control factors of complement
 
         Returns:
-            tuple(pandas.DataFrame, str/bool):
+            tuple(pandas.DataFrame, str or bool):
                 pandas.DataFrame:
-                    Index:
+                    Index
                         reset index
-                    Columns:
+                    Columns
                         - Date(pd.TimeStamp): Observation date
                         - Confirmed(int): the number of confirmed cases
                         - Infected(int): the number of currently infected cases
                         - Fatal(int): the number of fatal cases
                         - Recovered (int): the number of recovered cases ( > 0)
                         - Susceptible(int): the number of susceptible cases, if calculated
-                str/bool: kind of complement or False
+                str or bool: kind of complement or False
 
         Note:
             If @population is not None, the number of susceptible cases will be calculated.
@@ -522,9 +522,7 @@ class JHUData(CleaningBase):
         # Complement, if necessary
         self._recovery_period = self._recovery_period or self.calculate_recovery_period()
         handler = JHUDataComplementHandler(
-            recovery_period=self._recovery_period,
-            **kwargs
-        )
+            recovery_period=self._recovery_period, **kwargs)
         df, status, _ = handler.run(subset_df)
         # Calculate Susceptible
         df = self._calculate_susceptible(df, population)
@@ -552,19 +550,21 @@ class JHUData(CleaningBase):
         Returns:
             tuple(pandas.DataFrame, bool):
                 pandas.DataFrame:
-                    Index: reset index
-                    Columns:
+
+                    Index
+                        reset index
+                    Columns
                         - Date(pd.TimeStamp): Observation date
                         - Confirmed(int): the number of confirmed cases
                         - Infected(int): the number of currently infected cases
                         - Fatal(int): the number of fatal cases
                         - Recovered (int): the number of recovered cases ( > 0)
                         - Susceptible(int): the number of susceptible cases, if calculated
-                str/bool: kind of complement or False
+                str or bool: kind of complement or False
 
         Note:
-            If @ population is not None, the number of susceptible cases will be calculated.
-            If necessary and @auto_complement is True, complement recovered data.
+            - If @ population is not None, the number of susceptible cases will be calculated.
+            - If necessary and @auto_complement is True, complement recovered data.
         """
         country_alias = self.ensure_country_name(country)
         subset_arg_dict = {
@@ -595,17 +595,18 @@ class JHUData(CleaningBase):
             province(str or None): province name
             start_date(str or None): start date, like 22Jan2020
             end_date(str or None): end date, like 01Feb2020
-            kwargs: keyword arguments of JHUDataComplementHandler(),
-                    control factors of complement
+            kwargs: keyword arguments of JHUDataComplementHandler(), control factors of complement
 
         Raises:
             ValueError: @province was specified when @country is not a string
-            SubsetNotFoundError: No records were registered for the area/dates
+            covsirphy.SubsetNotFoundError: No records were registered for the area/dates
 
         Returns:
-            pandas.DataFrame:
-                Index: reset index
-                Columns:
+            pandas.DataFrame
+
+                Index
+                    reset index
+                Columns
                     - country (str): country name
                     - province (str): province name
                     - Monotonic_confirmed (bool): True if applied for confirmed cases or False otherwise
@@ -627,9 +628,7 @@ class JHUData(CleaningBase):
             country = [country]
         # Create complement handler
         handler = JHUDataComplementHandler(
-            recovery_period=self._recovery_period,
-            **kwargs
-        )
+            recovery_period=self._recovery_period, **kwargs)
         # Check each country
         complement_df = pd.DataFrame(
             columns=[

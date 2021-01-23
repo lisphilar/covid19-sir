@@ -43,9 +43,9 @@ class PopulationData(CleaningBase):
 
         Returns:
             pandas.DataFrame
-                Index:
+                Index
                     reset index
-                Columns:
+                Columns
                     - ISO3 (str): ISO3 code or "-"
                     - Country (pandas.Category): country/region name
                     - Province (pandas.Category): province/prefecture/state name

@@ -53,9 +53,9 @@ class OxCGRTData(CleaningBase):
 
         Returns:
             pandas.DataFrame
-                Index:
+                Index
                     reset index
-                Columns:
+                Columns
                     - Date (pd.TimeStamp): Observation date
                     - Country (pandas.Category): country/region name
                     - ISO3 (str): ISO 3166-1 alpha-3, like JPN
@@ -113,13 +113,13 @@ class OxCGRTData(CleaningBase):
             kwargs: the other arguments will be ignored in the latest version.
 
         Raises:
-            SubsetNotFoundError: no records were found
+            covsirphy.SubsetNotFoundError: no records were found
 
         Returns:
             pandas.DataFrame
-                Index:
+                Index
                     reset index
-                Columns:
+                Columns
                     - Date (pd.TimeStamp): Observation date
                     - other column names are defined by OxCGRTData.COL_DICT
         """

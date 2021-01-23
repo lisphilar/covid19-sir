@@ -181,7 +181,7 @@
 <span class="kn">from</span> <span class="nn">covsirphy.ode.mbase</span> <span class="kn">import</span> <span class="n">ModelBase</span>
 
 
-<div class="viewcode-block" id="SIR"><a class="viewcode-back" href="../../../covsirphy.ode.html#covsirphy.SIR">[docs]</a><span class="k">class</span> <span class="nc">SIR</span><span class="p">(</span><span class="n">ModelBase</span><span class="p">):</span>
+<div class="viewcode-block" id="SIR"><a class="viewcode-back" href="../../../covsirphy.html#covsirphy.SIR">[docs]</a><span class="k">class</span> <span class="nc">SIR</span><span class="p">(</span><span class="n">ModelBase</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    SIR model.</span>
 
@@ -246,16 +246,16 @@
         <span class="n">didt</span> <span class="o">=</span> <span class="mi">0</span> <span class="o">-</span> <span class="n">dsdt</span> <span class="o">-</span> <span class="n">drdt</span>
         <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">dsdt</span><span class="p">,</span> <span class="n">didt</span><span class="p">,</span> <span class="n">drdt</span><span class="p">])</span>
 
-<div class="viewcode-block" id="SIR.param_range"><a class="viewcode-back" href="../../../covsirphy.ode.html#covsirphy.SIR.param_range">[docs]</a>    <span class="nd">@classmethod</span>
+<div class="viewcode-block" id="SIR.param_range"><a class="viewcode-back" href="../../../covsirphy.html#covsirphy.SIR.param_range">[docs]</a>    <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">param_range</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">taufree_df</span><span class="p">,</span> <span class="n">population</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Define the range of parameters (not including tau value).</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            taufree_df (pandas.DataFrame):</span>
-<span class="sd">                Index:</span>
+<span class="sd">                Index</span>
 <span class="sd">                    reset index</span>
-<span class="sd">                Columns:</span>
+<span class="sd">                Columns</span>
 <span class="sd">                    - t (int): time steps (tau-free)</span>
 <span class="sd">                    - columns with dimensional variables</span>
 <span class="sd">            population (int): total population</span>
@@ -281,16 +281,16 @@
         <span class="p">}</span>
         <span class="k">return</span> <span class="n">_dict</span></div>
 
-<div class="viewcode-block" id="SIR.specialize"><a class="viewcode-back" href="../../../covsirphy.ode.html#covsirphy.SIR.specialize">[docs]</a>    <span class="nd">@classmethod</span>
+<div class="viewcode-block" id="SIR.specialize"><a class="viewcode-back" href="../../../covsirphy.html#covsirphy.SIR.specialize">[docs]</a>    <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">specialize</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">data_df</span><span class="p">,</span> <span class="n">population</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Specialize the dataset for this model.</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            data_df (pandas.DataFrame):</span>
-<span class="sd">                Index:</span>
+<span class="sd">                Index</span>
 <span class="sd">                    reset index</span>
-<span class="sd">                Columns:</span>
+<span class="sd">                Columns</span>
 <span class="sd">                    - Confirmed (int): the number of confirmed cases</span>
 <span class="sd">                    - Infected (int): the number of currently infected cases</span>
 <span class="sd">                    - Fatal (int): the number of fatal cases</span>
@@ -300,9 +300,9 @@
 
 <span class="sd">        Returns:</span>
 <span class="sd">            (pandas.DataFrame):</span>
-<span class="sd">                    Index:</span>
+<span class="sd">                    Index</span>
 <span class="sd">                        reset index</span>
-<span class="sd">                    Columns:</span>
+<span class="sd">                    Columns</span>
 <span class="sd">                        - any columns @data_df has</span>
 <span class="sd">                        - Susceptible (int): the number of susceptible cases</span>
 <span class="sd">                        - Fatal or Recovered (int): total number of fatal/recovered cases</span>
@@ -314,7 +314,7 @@
         <span class="n">df</span><span class="p">[</span><span class="bp">cls</span><span class="o">.</span><span class="n">FR</span><span class="p">]</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="bp">cls</span><span class="o">.</span><span class="n">F</span><span class="p">]</span> <span class="o">+</span> <span class="n">df</span><span class="p">[</span><span class="bp">cls</span><span class="o">.</span><span class="n">R</span><span class="p">]</span>
         <span class="k">return</span> <span class="n">df</span></div>
 
-<div class="viewcode-block" id="SIR.restore"><a class="viewcode-back" href="../../../covsirphy.ode.html#covsirphy.SIR.restore">[docs]</a>    <span class="nd">@classmethod</span>
+<div class="viewcode-block" id="SIR.restore"><a class="viewcode-back" href="../../../covsirphy.html#covsirphy.SIR.restore">[docs]</a>    <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">restore</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">specialized_df</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Restore Confirmed/Infected/Recovered/Fatal.</span>
@@ -323,9 +323,9 @@
 <span class="sd">        Args:</span>
 <span class="sd">            specialized_df (pandas.DataFrame): dataframe with the variables</span>
 
-<span class="sd">                Index:</span>
+<span class="sd">                Index</span>
 <span class="sd">                    reset index</span>
-<span class="sd">                Columns:</span>
+<span class="sd">                Columns</span>
 <span class="sd">                    - Susceptible (int): the number of susceptible cases</span>
 <span class="sd">                    - Infected (int): the number of currently infected cases</span>
 <span class="sd">                    - Fatal or Recovered (int): the number of fatal/recovered cases</span>
@@ -333,9 +333,9 @@
 
 <span class="sd">        Returns:</span>
 <span class="sd">            (pandas.DataFrame):</span>
-<span class="sd">                Index:</span>
+<span class="sd">                Index</span>
 <span class="sd">                    reset index</span>
-<span class="sd">                Columns:</span>
+<span class="sd">                Columns</span>
 <span class="sd">                    - Confirmed (int): the number of confirmed cases</span>
 <span class="sd">                    - Infected (int): the number of currently infected cases</span>
 <span class="sd">                    - Fatal (int): the number of fatal cases</span>
@@ -349,7 +349,7 @@
         <span class="n">df</span><span class="p">[</span><span class="bp">cls</span><span class="o">.</span><span class="n">R</span><span class="p">]</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="bp">cls</span><span class="o">.</span><span class="n">FR</span><span class="p">]</span>
         <span class="k">return</span> <span class="n">df</span><span class="o">.</span><span class="n">loc</span><span class="p">[:,</span> <span class="p">[</span><span class="o">*</span><span class="bp">cls</span><span class="o">.</span><span class="n">VALUE_COLUMNS</span><span class="p">,</span> <span class="o">*</span><span class="n">other_cols</span><span class="p">]]</span></div>
 
-<div class="viewcode-block" id="SIR.calc_r0"><a class="viewcode-back" href="../../../covsirphy.ode.html#covsirphy.SIR.calc_r0">[docs]</a>    <span class="k">def</span> <span class="nf">calc_r0</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="SIR.calc_r0"><a class="viewcode-back" href="../../../covsirphy.html#covsirphy.SIR.calc_r0">[docs]</a>    <span class="k">def</span> <span class="nf">calc_r0</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Calculate (basic) reproduction number.</span>
 
@@ -362,7 +362,7 @@
             <span class="k">return</span> <span class="kc">None</span>
         <span class="k">return</span> <span class="nb">round</span><span class="p">(</span><span class="n">rt</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="SIR.calc_days_dict"><a class="viewcode-back" href="../../../covsirphy.ode.html#covsirphy.SIR.calc_days_dict">[docs]</a>    <span class="k">def</span> <span class="nf">calc_days_dict</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tau</span><span class="p">):</span>
+<div class="viewcode-block" id="SIR.calc_days_dict"><a class="viewcode-back" href="../../../covsirphy.html#covsirphy.SIR.calc_days_dict">[docs]</a>    <span class="k">def</span> <span class="nf">calc_days_dict</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tau</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Calculate 1/beta [day] etc.</span>
 

@@ -135,9 +135,9 @@ class ODESimulator(Term):
 
         Returns:
             (pandas.DataFrame):
-                Index:
+                Index
                     reset index
-                Columns:
+                Columns
                     - t (int): Elapsed time divided by tau value [-]
                     - columns with dimensional variables
         """
@@ -172,9 +172,9 @@ class ODESimulator(Term):
 
         Returns:
             (pandas.DataFrame):
-                Index:
+                Index
                     reset index
-                Columns:
+                Columns
                     - t (int): Elapsed time divided by tau value [-]
                     - columns with dimensionalized variables
         """
@@ -188,9 +188,9 @@ class ODESimulator(Term):
 
         Returns:
             (pandas.DataFrame):
-                Index:
+                Index
                     reset index
-                Columns:
+                Columns
                     - t (int): Elapsed time divided by tau value [-]
                     - non-dimensionalized variables of Susceptible etc.
         """
@@ -212,9 +212,9 @@ class ODESimulator(Term):
 
         Returns:
             pandas.DataFrame
-                Index:
+                Index
                     reset index
-                Columns:
+                Columns
                     - Date (pd.TimeStamp): Observation date
                     - Country (str): country/region name
                     - Province (str): province/prefecture/state name

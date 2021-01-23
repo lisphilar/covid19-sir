@@ -164,7 +164,7 @@ class DataHandler(Term):
         Show the details of complement that was (or will be) performed for the records.
 
         Args:
-            kwargs: keyword arguments of JHUDataComplementHandler(), control factors of complement
+            kwargs: keyword arguments of JHUDataComplementHandler() i.e. control factors of complement
 
         Returns:
             pandas.DataFrame: as the same as `JHUData.show_complement()
@@ -184,11 +184,13 @@ class DataHandler(Term):
 
         Returns:
             pandas.DataFrame
-                Index:
+
+                Index
                     reset index
-                Columns:
+                Columns
                     - Date (pd.TimeStamp): Observation date
                     - Columns set by @variables (int)
+
         Note:
             - Records with Recovered > 0 will be selected.
             - If complement was performed by Scenario.complement() or Scenario(auto_complement=True),
@@ -218,9 +220,9 @@ class DataHandler(Term):
 
         Returns:
             pandas.DataFrame
-                Index:
+                Index
                     - Date (pd.TimeStamp): Observation date
-                Columns:
+                Columns
                     - Confirmed (int): daily new cases of Confirmed, if calculated
                     - Infected (int):  daily new cases of Infected, if calculated
                     - Fatal (int):  daily new cases of Fatal, if calculated

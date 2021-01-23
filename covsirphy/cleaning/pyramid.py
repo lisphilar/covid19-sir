@@ -61,8 +61,9 @@ class PopulationPyramidData(CleaningBase):
 
         Returns:
             pandas.DataFrame: retrieved data
-                Index: reset index
-                Columns:
+                Index
+                    reset index
+                Columns
                     - Country (object): country name
                     - Year (int): year
                     - Sex (object): Female/Male
@@ -110,8 +111,9 @@ class PopulationPyramidData(CleaningBase):
 
         Returns:
             pandas.DataFrame: retrieved data
-                Index: reset index
-                Columns:
+                Index
+                    reset index
+                Columns
                     - Country (pandas.Category): country name
                     - Year (int): year
                     - Sex (str): Female/Male
@@ -142,8 +144,9 @@ class PopulationPyramidData(CleaningBase):
 
         Returns:
             pandas.DataFrame:
-                Index: reset index
-                Columns:
+                Index
+                    reset index
+                Columns
                     - Country (pandas.Category): country name
                     - Year (int): year
                     - Sex (str): Female/Male
@@ -163,8 +166,9 @@ class PopulationPyramidData(CleaningBase):
 
         Returns:
             pandas.DataFrame
-                Index: reset index
-                Columns:
+                Index
+                    reset index
+                Columns
                     - Age (int): age
                     - Population (int): population value
                     - Per_total (float): portion of the total
@@ -194,8 +198,9 @@ class PopulationPyramidData(CleaningBase):
 
         Returns:
             pandas.DataFrame
-                Index: reset index
-                Columns:
+                Index
+                    reset index
+                Columns
                     - Age (int): age
                     - Population (int): population value
                     - Per_total (float): portion of the total
