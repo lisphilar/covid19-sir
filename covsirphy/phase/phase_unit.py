@@ -62,7 +62,7 @@ class PhaseUnit(Term):
         self.ensure_date_order(start_date, end_date, name="end_date")
         self._start_date = start_date
         self._end_date = end_date
-        self._population = self.ensure_population(population)
+        self._population = self._ensure_population(population)
         # Summary of information
         self.info_dict = {
             self.START: start_date,

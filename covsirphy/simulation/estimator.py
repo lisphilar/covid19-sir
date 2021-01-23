@@ -53,7 +53,7 @@ class Estimator(Term):
         self.record_df = self._ensure_dataframe(
             record_df, name="record_df", columns=self.NLOC_COLUMNS)
         # Settings for simulation
-        self.population = self.ensure_population(population)
+        self.population = self._ensure_population(population)
         df = model.tau_free(self.record_df, population, tau=None)
         self.y0_dict = {
             k: df.loc[df.index[0], k] for k in model.VARIABLES}

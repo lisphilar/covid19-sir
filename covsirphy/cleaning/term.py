@@ -251,7 +251,7 @@ class Term(object):
         )
 
     @classmethod
-    def ensure_population(cls, population):
+    def _ensure_population(cls, population):
         """
         Ensure that the population value is valid.
 

@@ -292,7 +292,7 @@ class JHUData(CleaningBase):
             @population must be specified.
             Records with Recovered > 0 will be used.
         """
-        population = self.ensure_population(population)
+        population = self._ensure_population(population)
         subset_df = self.subset(
             country=country, province=province,
             start_date=start_date, end_date=end_date, population=population)

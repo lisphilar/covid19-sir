@@ -21,7 +21,7 @@ class PhaseSeries(Term):
     def __init__(self, first_date, last_date, population):
         self.first_date = self.ensure_date(first_date, "first_date")
         self.last_date = self.ensure_date(last_date, "last_date")
-        self.init_population = self.ensure_population(population)
+        self.init_population = self._ensure_population(population)
         # List of PhaseUnit
         self._units = []
         self.clear(include_past=True)
@@ -115,7 +115,8 @@ class PhaseSeries(Term):
         start_date = self.tomorrow(last_unit.end_date)
         end_date = self._calc_end_date(
             start_date, end_date=end_date, days=days)
-        population = self.ensure_population(population or last_unit.population)
+        population = self._ensure_population(
+            population or last_unit.population)
         model = model or last_unit.model
         tau = last_unit.tau or tau
         if model is None:
