@@ -108,7 +108,13 @@
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="#how-to-request-new-data-loader">2. How to request new data loader</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#use-a-local-csv-file-which-has-the-number-of-cases">3. Use a local CSV file which has the number of cases</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#use-a-local-csv-file-which-has-the-number-of-cases">3. Use a local CSV file which has the number of cases</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#create-countrydata-instance">3.1. Create CountryData instance</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#convert-to-jhudata-instance">3.2. Convert to JHUData instance</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#set-population-values">3.3. Set population values</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#acknowledgement">4. Acknowledgement</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../usage_quickest.html">Usage: quickest tour</a></li>
@@ -216,11 +222,11 @@
 <div class="section" id="installation">
 <h1>Installation<a class="headerlink" href="#installation" title="Permalink to this headline">¶</a></h1>
 <p>The latest stable version of CovsirPhy is available at <a class="reference external" href="https://pypi.org/project/covsirphy/">PyPI (The Python Package Index): covsirphy</a> and supports Python 3.6.9 or newer versions. It is recommended to use virtual environment.</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">pip</span> <span class="n">install</span> <span class="o">--</span><span class="n">upgrade</span> <span class="n">covsirphy</span>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>pip install --upgrade covsirphy
 </pre></div>
 </div>
 <p>The latest development version can be install from <a class="reference external" href="https://github.com/lisphilar/covid19-sir">GitHub repository: CovsirPhy</a>. Please refer to <a class="reference external" href="https://lisphilar.github.io/covid19-sir/CONTRIBUTING.html">Guideline of contribution</a>.</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">pip</span> <span class="n">install</span> <span class="o">--</span><span class="n">upgrade</span> <span class="s2">&quot;git+https://github.com/lisphilar/covid19-sir.git#egg=covsirphy&quot;</span>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>pip install --upgrade <span class="s2">&quot;git+https://github.com/lisphilar/covid19-sir.git#egg=covsirphy&quot;</span>
 </pre></div>
 </div>
 <p>Note:<br />When using <strong>development versions</strong> of CovsirPhy in Kaggle Notebook, please run the following codes to remove third-party <code class="docutils literal notranslate"><span class="pre">typing</span></code> package.</p>
@@ -298,7 +304,7 @@
 <p>Lisphilar (2020), GitHub repository, COVID-19 dataset in Japan.</p>
 <ul class="simple">
 <li><p>The number of cases in Japan (total/prefectures)</p></li>
-<li><p>Metadata</p></li>
+<li><p>Metadata regarding Japan prefectures</p></li>
 </ul>
 </div>
 </div>
@@ -308,34 +314,57 @@
 </div>
 <div class="section" id="use-a-local-csv-file-which-has-the-number-of-cases">
 <h2>3. Use a local CSV file which has the number of cases<a class="headerlink" href="#use-a-local-csv-file-which-has-the-number-of-cases" title="Permalink to this headline">¶</a></h2>
-<p>We can replace <code class="docutils literal notranslate"><span class="pre">jhu_data</span></code> instance created by <code class="docutils literal notranslate"><span class="pre">DataLoader</span></code> class with your dataset saved in a CSV file.</p>
-<p>As an example, we have a CSV file (“oslo.csv”) with the following columns.</p>
+<p>We can replace <code class="docutils literal notranslate"><span class="pre">jhu_data</span></code> instance created by <code class="docutils literal notranslate"><span class="pre">DataLoader</span></code> class with your dataset saved in a CSV file. At this time, <code class="docutils literal notranslate"><span class="pre">covsirphy</span></code> supports country and province level data.</p>
+<div class="section" id="create-countrydata-instance">
+<h3>3.1. Create CountryData instance<a class="headerlink" href="#create-countrydata-instance" title="Permalink to this headline">¶</a></h3>
+<p>Please create <code class="docutils literal notranslate"><span class="pre">CountryData</span></code> instance at first. Let’s say we have a CSV file (“oslo.csv”) with the following columns.</p>
 <ul class="simple">
 <li><p>“date”: reported dates</p></li>
 <li><p>“confirmed”: the number of confirmed cases</p></li>
 <li><p>“recovered”: the number of recovered cases</p></li>
 <li><p>“fatal”: the number of fatal cases</p></li>
-<li><p>“province”: province names</p></li>
+<li><p>“province”: (optional) province names</p></li>
 </ul>
-<p>Please create <code class="docutils literal notranslate"><span class="pre">CountryData</span></code> instance at first.</p>
-<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Create CountryData instance</span>
+<p>Country level data will be set as total values of provinces with <code class="docutils literal notranslate"><span class="pre">CountryData.register_total()</span></code> method optionally.</p>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Create CountryData instance specifying filename and country name</span>
 <span class="n">country_data</span> <span class="o">=</span> <span class="n">cs</span><span class="o">.</span><span class="n">CountryData</span><span class="p">(</span><span class="s2">&quot;oslo.csv&quot;</span><span class="p">,</span> <span class="n">country</span><span class="o">=</span><span class="s2">&quot;Norway&quot;</span><span class="p">)</span>
+<span class="c1"># Specify column names</span>
 <span class="n">country_data</span><span class="o">.</span><span class="n">set_variables</span><span class="p">(</span>
     <span class="n">date</span><span class="o">=</span><span class="s2">&quot;date&quot;</span><span class="p">,</span> <span class="n">confirmed</span><span class="o">=</span><span class="s2">&quot;confirmed&quot;</span><span class="p">,</span> <span class="n">recovered</span><span class="o">=</span><span class="s2">&quot;recovered&quot;</span><span class="p">,</span> <span class="n">fatal</span><span class="o">=</span><span class="s2">&quot;fatal&quot;</span><span class="p">,</span> <span class="n">province</span><span class="o">=</span><span class="s2">&quot;province&quot;</span><span class="p">,</span>
 <span class="p">)</span>
-<span class="c1"># If you do not have province column, you can specify with province argument</span>
-<span class="c1"># country_data = cs.CountryData(&quot;oslo.csv&quot;, country=&quot;Norway&quot;, province=&quot;Oslo&quot;)</span>
-<span class="c1"># country_data.set_variables(</span>
-<span class="c1">#     date=&quot;date&quot;, confirmed=&quot;confirmed&quot;, recovered=&quot;recovered&quot;, fatal=&quot;fatal&quot;,</span>
-<span class="c1"># )</span>
-<span class="c1"># If the dataset does not have province-level records,</span>
-<span class="c1"># country_data = cs.CountryData(&quot;oslo.csv&quot;, country=&quot;Norway&quot;)</span>
-<span class="c1"># country_data.set_variables(</span>
-<span class="c1">#     date=&quot;date&quot;, confirmed=&quot;confirmed&quot;, recovered=&quot;recovered&quot;, fatal=&quot;fatal&quot;,</span>
-<span class="c1"># )</span>
+<span class="c1"># (Optional) register total values of provinces as country level data</span>
+<span class="n">country_data</span><span class="o">.</span><span class="n">register_total</span><span class="p">()</span>
+<span class="c1"># Check records -&gt; pandas.DataFrame</span>
+<span class="c1"># reset index, Date/Country/Province/Confirmed/Infected/Fatal/Recovered column</span>
+<span class="n">country_data</span><span class="o">.</span><span class="n">cleaned</span><span class="p">()</span>
 </pre></div>
 </div>
-<p>Then, convert it to <code class="docutils literal notranslate"><span class="pre">JHUData</span></code> instance.</p>
+<p>When we don’t have province column and the all records are for one province, we can specify the province name as follows.</p>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Create CountryData instance specifying filename and country/province name</span>
+<span class="n">country_data</span> <span class="o">=</span> <span class="n">cs</span><span class="o">.</span><span class="n">CountryData</span><span class="p">(</span><span class="s2">&quot;oslo.csv&quot;</span><span class="p">,</span> <span class="n">country</span><span class="o">=</span><span class="s2">&quot;Norway&quot;</span><span class="p">,</span> <span class="n">province</span><span class="o">=</span><span class="s2">&quot;Oslo&quot;</span><span class="p">)</span>
+<span class="c1"># Specify column names except for province</span>
+<span class="n">country_data</span><span class="o">.</span><span class="n">set_variables</span><span class="p">(</span>
+    <span class="n">date</span><span class="o">=</span><span class="s2">&quot;date&quot;</span><span class="p">,</span> <span class="n">confirmed</span><span class="o">=</span><span class="s2">&quot;confirmed&quot;</span><span class="p">,</span> <span class="n">recovered</span><span class="o">=</span><span class="s2">&quot;recovered&quot;</span><span class="p">,</span> <span class="n">fatal</span><span class="o">=</span><span class="s2">&quot;fatal&quot;</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="c1"># Check records</span>
+<span class="n">country_data</span><span class="o">.</span><span class="n">cleaned</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>When we don’t have province column and the all records are country level data, we can skip province name setting.</p>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Create CountryData instance specifying filename and country name</span>
+<span class="n">country_data</span> <span class="o">=</span> <span class="n">cs</span><span class="o">.</span><span class="n">CountryData</span><span class="p">(</span><span class="s2">&quot;oslo.csv&quot;</span><span class="p">,</span> <span class="n">country</span><span class="o">=</span><span class="s2">&quot;Norway&quot;</span><span class="p">)</span>
+<span class="c1"># Specify column names except for province</span>
+<span class="n">country_data</span><span class="o">.</span><span class="n">set_variables</span><span class="p">(</span>
+    <span class="n">date</span><span class="o">=</span><span class="s2">&quot;date&quot;</span><span class="p">,</span> <span class="n">confirmed</span><span class="o">=</span><span class="s2">&quot;confirmed&quot;</span><span class="p">,</span> <span class="n">recovered</span><span class="o">=</span><span class="s2">&quot;recovered&quot;</span><span class="p">,</span> <span class="n">fatal</span><span class="o">=</span><span class="s2">&quot;fatal&quot;</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="c1"># Check records</span>
+<span class="n">country_data</span><span class="o">.</span><span class="n">cleaned</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="convert-to-jhudata-instance">
+<h3>3.2. Convert to JHUData instance<a class="headerlink" href="#convert-to-jhudata-instance" title="Permalink to this headline">¶</a></h3>
+<p>Then, convert the <code class="docutils literal notranslate"><span class="pre">CountryData</span></code> instance to a <code class="docutils literal notranslate"><span class="pre">JHUData</span></code> instance.</p>
 <div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Create JHUData instance using cleaned dataset (pandas.DataFrame)</span>
 <span class="n">jhu_data</span> <span class="o">=</span> <span class="n">cs</span><span class="o">.</span><span class="n">JHUData</span><span class="o">.</span><span class="n">from_dataframe</span><span class="p">(</span><span class="n">country_data</span><span class="o">.</span><span class="n">cleaned</span><span class="p">())</span>
 <span class="c1"># Or, we can use and update the output of DataLoader.jhu()</span>
@@ -343,27 +372,32 @@
 <span class="c1"># jhu_data.replace(country_data)</span>
 </pre></div>
 </div>
+</div>
+<div class="section" id="set-population-values">
+<h3>3.3. Set population values<a class="headerlink" href="#set-population-values" title="Permalink to this headline">¶</a></h3>
 <p>Additionally, you may need to register population values to <code class="docutils literal notranslate"><span class="pre">PopulationData</span></code> instance manually.</p>
 <div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Create PopulationData instance with empty dataset</span>
 <span class="n">population_data</span> <span class="o">=</span> <span class="n">cs</span><span class="o">.</span><span class="n">PopulationData</span><span class="p">()</span>
 <span class="c1"># Or, we can use the output of DataLoader.population()</span>
 <span class="c1"># population_data = data_loader.population()</span>
-<span class="c1"># Update the population value</span>
+<span class="c1"># Update the population value: province is optional</span>
 <span class="n">population_data</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="mi">693494</span><span class="p">,</span> <span class="n">country</span><span class="o">=</span><span class="s2">&quot;Norway&quot;</span><span class="p">,</span> <span class="n">province</span><span class="o">=</span><span class="s2">&quot;Oslo&quot;</span><span class="p">)</span>
 </pre></div>
 </div>
-<p>Notes:
-This is also effective in <a class="reference external" href="https://www.kaggle.com/">Kaggle</a> Notebook. The datasets are saved in “/kaggle/input/” directory.</p>
-<p>Notes:
-If you have Kaggle API, you can download Kaggle datasets by updating and executing <a class="reference external" href="https://github.com/lisphilar/covid19-sir/blob/master/input.py">input.py</a> script. CSV files will be saved in “/kaggle/input/” directory.</p>
+<p>Note:<br />This is also effective in <a class="reference external" href="https://www.kaggle.com/">Kaggle</a> Notebook. The datasets are saved in “/kaggle/input/” directory.</p>
+<p>Note:<br />If you have Kaggle API, you can download Kaggle datasets by updating and executing <a class="reference external" href="https://github.com/lisphilar/covid19-sir/blob/master/input.py">input.py</a> script. CSV files will be saved in “/kaggle/input/” directory.</p>
 <p>Kaggle API: Move to account page of Kaggle and download “kaggle.json” by selecting “API &gt; Create New API Token” button. Copy the json file to the top directory of the local repository or “~/.kaggle”. Please refer to <a class="reference external" href="https://www.kaggle.com/docs/api">How to Use Kaggle: Public API</a> and <a class="reference external" href="https://stackoverflow.com/questions/55934733/documentation-for-kaggle-api-within-python#:~:text=Here%20are%20the%20steps%20involved%20in%20using%20the%20Kaggle%20API%20from%20Python.&amp;text=Go%20to%20your%20Kaggle%20account,json%20will%20be%20downloaded">stackoverflow: documentation for Kaggle API <em>within</em> python?</a></p>
-<p>Notes:
-CovsirPhy project started in Kaggle platform with the following datasets.</p>
+</div>
+</div>
+<div class="section" id="acknowledgement">
+<h2>4. Acknowledgement<a class="headerlink" href="#acknowledgement" title="Permalink to this headline">¶</a></h2>
+<p>On Feb2020, CovsirPhy project started in Kaggle platform with <a class="reference external" href="https://www.kaggle.com/lisphilar/covid-19-data-with-sir-model">COVID-19 data with SIR model</a> notebook using the following datasets.</p>
 <ul class="simple">
 <li><p>The number of cases (JHU) and linelist: <a class="reference external" href="https://www.kaggle.com/sudalairajkumar/novel-corona-virus-2019-dataset">Novel Corona Virus 2019 Dataset by SRK</a></p></li>
 <li><p>Population in each country:  <a class="reference external" href="https://www.kaggle.com/dgrechka/covid19-global-forecasting-locations-population">covid19 global forecasting: locations population by Dmitry A. Grechka</a></p></li>
 <li><p>The number of cases in Japan: <a class="reference external" href="https://www.kaggle.com/lisphilar/covid19-dataset-in-japan">COVID-19 dataset in Japan by Lisphilar</a></p></li>
 </ul>
+<p>Best Regards.</p>
 </div>
 </div>
 
