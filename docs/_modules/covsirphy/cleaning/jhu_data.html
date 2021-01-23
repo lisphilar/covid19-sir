@@ -67,7 +67,7 @@
             
             
               <div class="version">
-                2.15.0-gamma
+                2.15.0-delta
               </div>
             
           
@@ -209,7 +209,7 @@
 
     <span class="nd">@recovery_period</span><span class="o">.</span><span class="n">setter</span>
     <span class="k">def</span> <span class="nf">recovery_period</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_recovery_period</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ensure_natural_int</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_recovery_period</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ensure_natural_int</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
 
 <div class="viewcode-block" id="JHUData.cleaned"><a class="viewcode-back" href="../../../covsirphy.cleaning.html#covsirphy.JHUData.cleaned">[docs]</a>    <span class="k">def</span> <span class="nf">cleaned</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
@@ -273,7 +273,7 @@
         <span class="n">expected_cols</span> <span class="o">=</span> <span class="p">[</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">DATE</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">ISO3</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">COUNTRY</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">PROVINCE</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">C</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">F</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">R</span>
         <span class="p">]</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">ensure_dataframe</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;the raw data&quot;</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="n">expected_cols</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_ensure_dataframe</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;the raw data&quot;</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="n">expected_cols</span><span class="p">)</span>
         <span class="c1"># Datetime columns</span>
         <span class="n">df</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">DATE</span><span class="p">]</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">to_datetime</span><span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">DATE</span><span class="p">])</span>
         <span class="c1"># Country</span>
@@ -321,7 +321,7 @@
 <span class="sd">        Note:</span>
 <span class="sd">            Citation of the country data will be added to &#39;JHUData.citation&#39; description.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">ensure_instance</span><span class="p">(</span><span class="n">country_data</span><span class="p">,</span> <span class="n">CountryData</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;country_data&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_ensure_instance</span><span class="p">(</span><span class="n">country_data</span><span class="p">,</span> <span class="n">CountryData</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;country_data&quot;</span><span class="p">)</span>
         <span class="c1"># Read new dataset</span>
         <span class="n">country</span> <span class="o">=</span> <span class="n">country_data</span><span class="o">.</span><span class="n">country</span>
         <span class="n">new</span> <span class="o">=</span> <span class="n">country_data</span><span class="o">.</span><span class="n">cleaned</span><span class="p">()</span><span class="o">.</span><span class="n">loc</span><span class="p">[:,</span> <span class="bp">self</span><span class="o">.</span><span class="n">COLUMNS</span><span class="p">]</span>
@@ -468,7 +468,7 @@
 <span class="sd">            @population must be specified.</span>
 <span class="sd">            Records with Recovered &gt; 0 will be used.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">population</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ensure_population</span><span class="p">(</span><span class="n">population</span><span class="p">)</span>
+        <span class="n">population</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ensure_population</span><span class="p">(</span><span class="n">population</span><span class="p">)</span>
         <span class="n">subset_df</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">subset</span><span class="p">(</span>
             <span class="n">country</span><span class="o">=</span><span class="n">country</span><span class="p">,</span> <span class="n">province</span><span class="o">=</span><span class="n">province</span><span class="p">,</span>
             <span class="n">start_date</span><span class="o">=</span><span class="n">start_date</span><span class="p">,</span> <span class="n">end_date</span><span class="o">=</span><span class="n">end_date</span><span class="p">,</span> <span class="n">population</span><span class="o">=</span><span class="n">population</span><span class="p">)</span>
@@ -486,7 +486,7 @@
 <span class="sd">            covsirphy.JHUData: JHU-style dataset</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">instance</span> <span class="o">=</span> <span class="bp">cls</span><span class="p">(</span><span class="n">filename</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
-        <span class="n">instance</span><span class="o">.</span><span class="n">_cleaned_df</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">ensure_dataframe</span><span class="p">(</span>
+        <span class="n">instance</span><span class="o">.</span><span class="n">_cleaned_df</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_ensure_dataframe</span><span class="p">(</span>
             <span class="n">dataframe</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;dataframe&quot;</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="bp">cls</span><span class="o">.</span><span class="n">COLUMNS</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">instance</span></div>
 

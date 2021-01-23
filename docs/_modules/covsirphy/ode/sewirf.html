@@ -67,7 +67,7 @@
             
             
               <div class="version">
-                2.15.0-gamma
+                2.15.0-delta
               </div>
             
           
@@ -236,7 +236,7 @@
 <span class="sd">            - @sigma (float)</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="c1"># Total population</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">population</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ensure_natural_int</span><span class="p">(</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">population</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ensure_natural_int</span><span class="p">(</span>
             <span class="n">population</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;population&quot;</span>
         <span class="p">)</span>
         <span class="c1"># Non-dim parameters</span>
@@ -293,7 +293,7 @@
 <span class="sd">                - key (str): parameter name</span>
 <span class="sd">                - value (tuple(float, float)): min value and max value</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">df</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">ensure_dataframe</span><span class="p">(</span>
+        <span class="n">df</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_ensure_dataframe</span><span class="p">(</span>
             <span class="n">taufree_df</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;taufree_df&quot;</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="bp">cls</span><span class="o">.</span><span class="n">TS</span><span class="p">,</span> <span class="o">*</span><span class="bp">cls</span><span class="o">.</span><span class="n">VARIABLES</span><span class="p">]</span>
         <span class="p">)</span>
         <span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">loc</span><span class="p">[(</span><span class="n">df</span><span class="p">[</span><span class="bp">cls</span><span class="o">.</span><span class="n">S</span><span class="p">]</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="bp">cls</span><span class="o">.</span><span class="n">CI</span><span class="p">]</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">)]</span>
@@ -302,7 +302,8 @@
         <span class="n">sigma_series</span> <span class="o">=</span> <span class="n">r</span><span class="o">.</span><span class="n">diff</span><span class="p">()</span> <span class="o">/</span> <span class="n">t</span><span class="o">.</span><span class="n">diff</span><span class="p">()</span> <span class="o">/</span> <span class="n">i</span>
         <span class="c1"># Calculate range</span>
         <span class="n">_dict</span> <span class="o">=</span> <span class="p">{</span><span class="n">param</span><span class="p">:</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span> <span class="k">for</span> <span class="n">param</span> <span class="ow">in</span> <span class="bp">cls</span><span class="o">.</span><span class="n">PARAMETERS</span><span class="p">}</span>
-        <span class="n">_dict</span><span class="p">[</span><span class="s2">&quot;sigma&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">sigma_series</span><span class="o">.</span><span class="n">quantile</span><span class="p">(</span><span class="bp">cls</span><span class="o">.</span><span class="n">QUANTILE_RANGE</span><span class="p">)</span><span class="o">.</span><span class="n">clip</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">))</span>
+        <span class="n">_dict</span><span class="p">[</span><span class="s2">&quot;sigma&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">sigma_series</span><span class="o">.</span><span class="n">quantile</span><span class="p">(</span>
+            <span class="bp">cls</span><span class="o">.</span><span class="n">QUANTILE_RANGE</span><span class="p">)</span><span class="o">.</span><span class="n">clip</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">))</span>
         <span class="k">return</span> <span class="n">_dict</span></div>
 
 <div class="viewcode-block" id="SEWIRF.specialize"><a class="viewcode-back" href="../../../covsirphy.ode.html#covsirphy.SEWIRF.specialize">[docs]</a>    <span class="nd">@classmethod</span>
@@ -332,7 +333,7 @@
 <span class="sd">                    - Exposed (int): 0</span>
 <span class="sd">                    - Waiting (int): 0</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">df</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">ensure_dataframe</span><span class="p">(</span>
+        <span class="n">df</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_ensure_dataframe</span><span class="p">(</span>
             <span class="n">data_df</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;data_df&quot;</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="bp">cls</span><span class="o">.</span><span class="n">VALUE_COLUMNS</span><span class="p">)</span>
         <span class="c1"># Calculate dimensional variables</span>
         <span class="n">df</span><span class="p">[</span><span class="bp">cls</span><span class="o">.</span><span class="n">S</span><span class="p">]</span> <span class="o">=</span> <span class="n">population</span> <span class="o">-</span> <span class="n">df</span><span class="p">[</span><span class="bp">cls</span><span class="o">.</span><span class="n">C</span><span class="p">]</span>

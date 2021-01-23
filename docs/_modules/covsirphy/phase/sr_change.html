@@ -67,7 +67,7 @@
             
             
               <div class="version">
-                2.15.0-gamma
+                2.15.0-delta
               </div>
             
           
@@ -207,12 +207,12 @@
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sr_df</span><span class="p">,</span> <span class="n">min_size</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span> <span class="n">max_rmsle</span><span class="o">=</span><span class="mf">20.0</span><span class="p">):</span>
         <span class="c1"># Dataset</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">sr_df</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ensure_dataframe</span><span class="p">(</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">sr_df</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ensure_dataframe</span><span class="p">(</span>
             <span class="n">sr_df</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;sr_df&quot;</span><span class="p">,</span> <span class="n">time_index</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">S</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">R</span><span class="p">])</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">dates</span> <span class="o">=</span> <span class="p">[</span>
             <span class="n">date_obj</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">DATE_FORMAT</span><span class="p">)</span> <span class="k">for</span> <span class="n">date_obj</span> <span class="ow">in</span> <span class="n">sr_df</span><span class="o">.</span><span class="n">index</span><span class="p">]</span>
         <span class="c1"># Minimum size of records</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">min_size</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ensure_natural_int</span><span class="p">(</span><span class="n">min_size</span><span class="p">,</span> <span class="s2">&quot;min_size&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">min_size</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ensure_natural_int</span><span class="p">(</span><span class="n">min_size</span><span class="p">,</span> <span class="s2">&quot;min_size&quot;</span><span class="p">)</span>
         <span class="c1"># Check length of records</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">min_size</span> <span class="o">&lt;</span> <span class="mi">3</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
@@ -221,7 +221,7 @@
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
                 <span class="sa">f</span><span class="s2">&quot;More than </span><span class="si">{</span><span class="n">min_size</span> <span class="o">*</span> <span class="mi">2</span><span class="si">}</span><span class="s2"> records must be included.&quot;</span><span class="p">)</span>
         <span class="c1"># Minimum value of RMSLE score</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">max_rmsle</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ensure_float</span><span class="p">(</span><span class="n">max_rmsle</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">max_rmsle</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ensure_float</span><span class="p">(</span><span class="n">max_rmsle</span><span class="p">)</span>
         <span class="c1"># Setting for optimization</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_change_dates</span> <span class="o">=</span> <span class="p">[]</span>
 

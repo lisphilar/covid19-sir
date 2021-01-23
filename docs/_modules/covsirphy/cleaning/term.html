@@ -67,7 +67,7 @@
             
             
               <div class="version">
-                2.15.0-gamma
+                2.15.0-delta
               </div>
             
           
@@ -273,7 +273,7 @@
 <span class="sd">        Returns:</span>
 <span class="sd">            str</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">num</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">ensure_natural_int</span><span class="p">(</span><span class="n">num</span><span class="p">,</span> <span class="n">include_zero</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="n">num</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_ensure_natural_int</span><span class="p">(</span><span class="n">num</span><span class="p">,</span> <span class="n">include_zero</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
         <span class="n">q</span><span class="p">,</span> <span class="n">mod</span> <span class="o">=</span> <span class="nb">divmod</span><span class="p">(</span><span class="n">num</span><span class="p">,</span> <span class="mi">10</span><span class="p">)</span>
         <span class="n">suffix</span> <span class="o">=</span> <span class="s2">&quot;th&quot;</span> <span class="k">if</span> <span class="n">q</span> <span class="o">%</span> <span class="mi">10</span> <span class="o">==</span> <span class="mi">1</span> <span class="k">else</span> <span class="bp">cls</span><span class="o">.</span><span class="n">SUFFIX_DICT</span><span class="p">[</span><span class="n">mod</span><span class="p">]</span>
         <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">num</span><span class="si">}{</span><span class="n">suffix</span><span class="si">}</span><span class="s2">&quot;</span></div>
@@ -343,8 +343,8 @@
             <span class="k">return</span> <span class="nb">list</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">flattened</span><span class="p">))</span>
         <span class="k">return</span> <span class="n">flattened</span></div>
 
-<div class="viewcode-block" id="Term.ensure_dataframe"><a class="viewcode-back" href="../../../covsirphy.cleaning.html#covsirphy.Term.ensure_dataframe">[docs]</a>    <span class="nd">@staticmethod</span>
-    <span class="k">def</span> <span class="nf">ensure_dataframe</span><span class="p">(</span><span class="n">target</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;df&quot;</span><span class="p">,</span> <span class="n">time_index</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">_ensure_dataframe</span><span class="p">(</span><span class="n">target</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;df&quot;</span><span class="p">,</span> <span class="n">time_index</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Ensure the dataframe has the columns.</span>
 
@@ -371,10 +371,10 @@
             <span class="k">raise</span> <span class="ne">KeyError</span><span class="p">(</span>
                 <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">s1</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="n">cols_str</span><span class="si">}</span><span class="s2"> must be included.&quot;</span>
             <span class="p">)</span>
-        <span class="k">return</span> <span class="n">df</span></div>
+        <span class="k">return</span> <span class="n">df</span>
 
-<div class="viewcode-block" id="Term.ensure_natural_int"><a class="viewcode-back" href="../../../covsirphy.cleaning.html#covsirphy.Term.ensure_natural_int">[docs]</a>    <span class="nd">@staticmethod</span>
-    <span class="k">def</span> <span class="nf">ensure_natural_int</span><span class="p">(</span><span class="n">target</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;number&quot;</span><span class="p">,</span> <span class="n">include_zero</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">none_ok</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">_ensure_natural_int</span><span class="p">(</span><span class="n">target</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;number&quot;</span><span class="p">,</span> <span class="n">include_zero</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">none_ok</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Ensure a natural (non-negative) number.</span>
 
@@ -404,10 +404,10 @@
         <span class="n">min_value</span> <span class="o">=</span> <span class="mi">0</span> <span class="k">if</span> <span class="n">include_zero</span> <span class="k">else</span> <span class="mi">1</span>
         <span class="k">if</span> <span class="n">number</span> <span class="o">&lt;</span> <span class="n">min_value</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">s</span><span class="si">}</span><span class="s2">. This value is under </span><span class="si">{</span><span class="n">min_value</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-        <span class="k">return</span> <span class="n">number</span></div>
+        <span class="k">return</span> <span class="n">number</span>
 
-<div class="viewcode-block" id="Term.ensure_tau"><a class="viewcode-back" href="../../../covsirphy.cleaning.html#covsirphy.Term.ensure_tau">[docs]</a>    <span class="nd">@classmethod</span>
-    <span class="k">def</span> <span class="nf">ensure_tau</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">tau</span><span class="p">):</span>
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">_ensure_tau</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">tau</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Ensure that the value can be used as tau value [min].</span>
 
@@ -419,15 +419,15 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="n">tau</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">return</span> <span class="kc">None</span>
-        <span class="n">tau</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">ensure_natural_int</span><span class="p">(</span><span class="n">tau</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;tau&quot;</span><span class="p">)</span>
+        <span class="n">tau</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_ensure_natural_int</span><span class="p">(</span><span class="n">tau</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;tau&quot;</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">tau</span> <span class="ow">in</span> <span class="nb">set</span><span class="p">(</span><span class="bp">cls</span><span class="o">.</span><span class="n">divisors</span><span class="p">(</span><span class="mi">1440</span><span class="p">)):</span>
             <span class="k">return</span> <span class="n">tau</span>
         <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
             <span class="sa">f</span><span class="s2">&quot;@tau must be a divisor of 1440 [min], but </span><span class="si">{</span><span class="n">tau</span><span class="si">}</span><span class="s2"> was applied.&quot;</span>
-        <span class="p">)</span></div>
+        <span class="p">)</span>
 
-<div class="viewcode-block" id="Term.ensure_population"><a class="viewcode-back" href="../../../covsirphy.cleaning.html#covsirphy.Term.ensure_population">[docs]</a>    <span class="nd">@classmethod</span>
-    <span class="k">def</span> <span class="nf">ensure_population</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">population</span><span class="p">):</span>
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">_ensure_population</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">population</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Ensure that the population value is valid.</span>
 
@@ -437,12 +437,12 @@
 <span class="sd">        Returns:</span>
 <span class="sd">            int: as-is</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="bp">cls</span><span class="o">.</span><span class="n">ensure_natural_int</span><span class="p">(</span>
+        <span class="k">return</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_ensure_natural_int</span><span class="p">(</span>
             <span class="n">population</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;population&quot;</span><span class="p">,</span> <span class="n">include_zero</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">none_ok</span><span class="o">=</span><span class="kc">False</span>
-        <span class="p">)</span></div>
+        <span class="p">)</span>
 
-<div class="viewcode-block" id="Term.ensure_float"><a class="viewcode-back" href="../../../covsirphy.cleaning.html#covsirphy.Term.ensure_float">[docs]</a>    <span class="nd">@staticmethod</span>
-    <span class="k">def</span> <span class="nf">ensure_float</span><span class="p">(</span><span class="n">target</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;value&quot;</span><span class="p">):</span>
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">_ensure_float</span><span class="p">(</span><span class="n">target</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;value&quot;</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Ensure a float value.</span>
 <span class="sd">        If the value is a float value and the type was string,</span>
@@ -460,10 +460,10 @@
             <span class="n">value</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">target</span><span class="p">)</span>
         <span class="k">except</span> <span class="ne">TypeError</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">s</span><span class="si">}</span><span class="s2"> and not converted to float.&quot;</span><span class="p">)</span>
-        <span class="k">return</span> <span class="n">value</span></div>
+        <span class="k">return</span> <span class="n">value</span>
 
-<div class="viewcode-block" id="Term.ensure_date"><a class="viewcode-back" href="../../../covsirphy.cleaning.html#covsirphy.Term.ensure_date">[docs]</a>    <span class="nd">@classmethod</span>
-    <span class="k">def</span> <span class="nf">ensure_date</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">target</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;date&quot;</span><span class="p">):</span>
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">_ensure_date</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">target</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;date&quot;</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Ensure the format of the string.</span>
 
@@ -479,10 +479,10 @@
         <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
                 <span class="sa">f</span><span class="s2">&quot;@</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2"> needs to match </span><span class="si">{</span><span class="bp">cls</span><span class="o">.</span><span class="n">DATE_FORMAT_DESC</span><span class="si">}</span><span class="s2">, but </span><span class="si">{</span><span class="n">target</span><span class="si">}</span><span class="s2"> was applied.&quot;</span><span class="p">)</span>
-        <span class="k">return</span> <span class="n">target</span></div>
+        <span class="k">return</span> <span class="n">target</span>
 
-<div class="viewcode-block" id="Term.ensure_subclass"><a class="viewcode-back" href="../../../covsirphy.cleaning.html#covsirphy.Term.ensure_subclass">[docs]</a>    <span class="nd">@staticmethod</span>
-    <span class="k">def</span> <span class="nf">ensure_subclass</span><span class="p">(</span><span class="n">target</span><span class="p">,</span> <span class="n">parent</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;target&quot;</span><span class="p">):</span>
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">_ensure_subclass</span><span class="p">(</span><span class="n">target</span><span class="p">,</span> <span class="n">parent</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;target&quot;</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Ensure the target is a subclass of the parent class.</span>
 
@@ -497,10 +497,10 @@
         <span class="n">s</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;@</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2"> must be an sub class of </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">parent</span><span class="p">)</span><span class="si">}</span><span class="s2">, but </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">target</span><span class="p">)</span><span class="si">}</span><span class="s2"> was applied.&quot;</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="nb">issubclass</span><span class="p">(</span><span class="n">target</span><span class="p">,</span> <span class="n">parent</span><span class="p">):</span>
             <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="n">s</span><span class="p">)</span>
-        <span class="k">return</span> <span class="n">target</span></div>
+        <span class="k">return</span> <span class="n">target</span>
 
-<div class="viewcode-block" id="Term.ensure_instance"><a class="viewcode-back" href="../../../covsirphy.cleaning.html#covsirphy.Term.ensure_instance">[docs]</a>    <span class="nd">@staticmethod</span>
-    <span class="k">def</span> <span class="nf">ensure_instance</span><span class="p">(</span><span class="n">target</span><span class="p">,</span> <span class="n">class_obj</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;target&quot;</span><span class="p">):</span>
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">_ensure_instance</span><span class="p">(</span><span class="n">target</span><span class="p">,</span> <span class="n">class_obj</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;target&quot;</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Ensure the target is a instance of the class object.</span>
 
@@ -515,10 +515,10 @@
         <span class="n">s</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;@</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2"> must be an instance of </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">class_obj</span><span class="p">)</span><span class="si">}</span><span class="s2">, but </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">target</span><span class="p">)</span><span class="si">}</span><span class="s2"> was applied.&quot;</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">target</span><span class="p">,</span> <span class="n">class_obj</span><span class="p">):</span>
             <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="n">s</span><span class="p">)</span>
-        <span class="k">return</span> <span class="n">target</span></div>
+        <span class="k">return</span> <span class="n">target</span>
 
-<div class="viewcode-block" id="Term.ensure_list"><a class="viewcode-back" href="../../../covsirphy.cleaning.html#covsirphy.Term.ensure_list">[docs]</a>    <span class="nd">@staticmethod</span>
-    <span class="k">def</span> <span class="nf">ensure_list</span><span class="p">(</span><span class="n">target</span><span class="p">,</span> <span class="n">candidates</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;target&quot;</span><span class="p">):</span>
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">_ensure_list</span><span class="p">(</span><span class="n">target</span><span class="p">,</span> <span class="n">candidates</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;target&quot;</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Ensure the target is a sub-list of the candidates.</span>
 
@@ -545,7 +545,7 @@
         <span class="k">if</span> <span class="nb">all</span><span class="p">(</span><span class="n">ok_list</span><span class="p">):</span>
             <span class="k">return</span> <span class="n">target</span>
         <span class="k">raise</span> <span class="ne">KeyError</span><span class="p">(</span>
-            <span class="sa">f</span><span class="s2">&quot;@</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2"> must be a sub-list of </span><span class="si">{</span><span class="n">candidate_str</span><span class="si">}</span><span class="s2">, but </span><span class="si">{</span><span class="n">target</span><span class="si">}</span><span class="s2"> was applied.&quot;</span><span class="p">)</span> <span class="kn">from</span> <span class="bp">None</span></div>
+            <span class="sa">f</span><span class="s2">&quot;@</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2"> must be a sub-list of </span><span class="si">{</span><span class="n">candidate_str</span><span class="si">}</span><span class="s2">, but </span><span class="si">{</span><span class="n">target</span><span class="si">}</span><span class="s2"> was applied.&quot;</span><span class="p">)</span> <span class="kn">from</span> <span class="bp">None</span>
 
 <div class="viewcode-block" id="Term.divisors"><a class="viewcode-back" href="../../../covsirphy.cleaning.html#covsirphy.Term.divisors">[docs]</a>    <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">divisors</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
@@ -558,7 +558,7 @@
 <span class="sd">        Returns:</span>
 <span class="sd">            list[int]: the list of divisors</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">value</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">ensure_natural_int</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+        <span class="n">value</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_ensure_natural_int</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
         <span class="k">return</span> <span class="p">[</span>
             <span class="n">i</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">value</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="k">if</span> <span class="n">value</span> <span class="o">%</span> <span class="n">i</span> <span class="o">==</span> <span class="mi">0</span>
         <span class="p">]</span></div>
@@ -638,11 +638,11 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">sta</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">date_obj</span><span class="p">(</span><span class="n">start_date</span><span class="p">)</span>
         <span class="n">end</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">date_obj</span><span class="p">(</span><span class="n">end_date</span><span class="p">)</span>
-        <span class="n">tau</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">ensure_tau</span><span class="p">(</span><span class="n">tau</span><span class="p">)</span>
+        <span class="n">tau</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_ensure_tau</span><span class="p">(</span><span class="n">tau</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">math</span><span class="o">.</span><span class="n">ceil</span><span class="p">((</span><span class="n">end</span> <span class="o">-</span> <span class="n">sta</span><span class="p">)</span> <span class="o">/</span> <span class="n">timedelta</span><span class="p">(</span><span class="n">minutes</span><span class="o">=</span><span class="n">tau</span><span class="p">))</span></div>
 
-<div class="viewcode-block" id="Term.ensure_date_order"><a class="viewcode-back" href="../../../covsirphy.cleaning.html#covsirphy.Term.ensure_date_order">[docs]</a>    <span class="nd">@classmethod</span>
-    <span class="k">def</span> <span class="nf">ensure_date_order</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">previous_date</span><span class="p">,</span> <span class="n">following_date</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;following_date&quot;</span><span class="p">):</span>
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">_ensure_date_order</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">previous_date</span><span class="p">,</span> <span class="n">following_date</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;following_date&quot;</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Ensure that the order of dates.</span>
 
@@ -660,7 +660,7 @@
             <span class="k">return</span> <span class="kc">None</span>
         <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
             <span class="sa">f</span><span class="s2">&quot;@</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2"> must be the same as/over </span><span class="si">{</span><span class="n">previous_date</span><span class="si">}</span><span class="s2">, but </span><span class="si">{</span><span class="n">following_date</span><span class="si">}</span><span class="s2"> was applied.&quot;</span>
-        <span class="p">)</span></div></div>
+        <span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="Word"><a class="viewcode-back" href="../../../covsirphy.cleaning.html#covsirphy.Word">[docs]</a><span class="k">class</span> <span class="nc">Word</span><span class="p">(</span><span class="n">Term</span><span class="p">):</span>

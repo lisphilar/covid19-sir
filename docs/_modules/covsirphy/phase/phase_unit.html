@@ -67,7 +67,7 @@
             
             
               <div class="version">
-                2.15.0-gamma
+                2.15.0-delta
               </div>
             
           
@@ -235,10 +235,10 @@
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">start_date</span><span class="p">,</span> <span class="n">end_date</span><span class="p">,</span> <span class="n">population</span><span class="p">):</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">ensure_date_order</span><span class="p">(</span><span class="n">start_date</span><span class="p">,</span> <span class="n">end_date</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;end_date&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_ensure_date_order</span><span class="p">(</span><span class="n">start_date</span><span class="p">,</span> <span class="n">end_date</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;end_date&quot;</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_start_date</span> <span class="o">=</span> <span class="n">start_date</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_end_date</span> <span class="o">=</span> <span class="n">end_date</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_population</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ensure_population</span><span class="p">(</span><span class="n">population</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_population</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ensure_population</span><span class="p">(</span><span class="n">population</span><span class="p">)</span>
         <span class="c1"># Summary of information</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">info_dict</span> <span class="o">=</span> <span class="p">{</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">START</span><span class="p">:</span> <span class="n">start_date</span><span class="p">,</span>
@@ -436,7 +436,7 @@
     <span class="o">@</span> <span class="n">tau</span><span class="o">.</span><span class="n">setter</span>
     <span class="k">def</span> <span class="nf">tau</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ode_dict</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">TAU</span><span class="p">]</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_ode_dict</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">TAU</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ensure_tau</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_ode_dict</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">TAU</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ensure_tau</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
             <span class="k">return</span>
         <span class="k">raise</span> <span class="ne">AttributeError</span><span class="p">(</span>
             <span class="sa">f</span><span class="s2">&quot;PhaseUnit.tau is not None (</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_ode_dict</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">TAU</span><span class="p">]</span><span class="si">}</span><span class="s2">) and cannot be changed.&quot;</span><span class="p">)</span>
@@ -520,13 +520,13 @@
 <span class="sd">            covsirphy.PhaseUnit: self</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="c1"># Tau value</span>
-        <span class="n">tau</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ensure_tau</span><span class="p">(</span><span class="n">tau</span><span class="p">)</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ode_dict</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">TAU</span><span class="p">]</span>
+        <span class="n">tau</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ensure_tau</span><span class="p">(</span><span class="n">tau</span><span class="p">)</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ode_dict</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">TAU</span><span class="p">]</span>
         <span class="c1"># Model</span>
         <span class="n">model</span> <span class="o">=</span> <span class="n">model</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">_model</span>
         <span class="k">if</span> <span class="n">model</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_ode_dict</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">TAU</span><span class="p">]</span> <span class="o">=</span> <span class="n">tau</span>
             <span class="k">return</span> <span class="bp">self</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_model</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ensure_subclass</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">ModelBase</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;model&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_model</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ensure_subclass</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">ModelBase</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;model&quot;</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">info_dict</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">ODE</span><span class="p">]</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">NAME</span>
         <span class="c1"># Parameter values</span>
         <span class="n">param_dict</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ode_dict</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
@@ -564,7 +564,7 @@
 
     <span class="o">@</span> <span class="n">record_df</span><span class="o">.</span><span class="n">setter</span>
     <span class="k">def</span> <span class="nf">record_df</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">df</span><span class="p">):</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_record_df</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ensure_dataframe</span><span class="p">(</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_record_df</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ensure_dataframe</span><span class="p">(</span>
             <span class="n">df</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;df&quot;</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">NLOC_COLUMNS</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">set_y0</span><span class="p">(</span><span class="n">df</span><span class="p">)</span>
 
@@ -605,7 +605,7 @@
         <span class="k">if</span> <span class="n">record_df</span><span class="o">.</span><span class="n">empty</span><span class="p">:</span>
             <span class="k">raise</span> <span class="n">UnExecutedError</span><span class="p">(</span>
                 <span class="s2">&quot;PhaseUnit.record_df = ...&quot;</span><span class="p">,</span> <span class="n">message</span><span class="o">=</span><span class="s2">&quot;or specify @record_df argument&quot;</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">ensure_dataframe</span><span class="p">(</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_ensure_dataframe</span><span class="p">(</span>
             <span class="n">record_df</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;record_df&quot;</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">NLOC_COLUMNS</span><span class="p">)</span>
         <span class="c1"># Check dates</span>
         <span class="n">sta</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">date_obj</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">start_date</span><span class="p">)</span>

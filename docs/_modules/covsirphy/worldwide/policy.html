@@ -67,7 +67,7 @@
             
             
               <div class="version">
-                2.15.0-gamma
+                2.15.0-delta
               </div>
             
           
@@ -204,16 +204,16 @@
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">jhu_data</span><span class="p">,</span> <span class="n">population_data</span><span class="p">,</span> <span class="n">oxcgrt_data</span><span class="p">,</span> <span class="n">tau</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="c1"># Records</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">jhu_data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ensure_instance</span><span class="p">(</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">jhu_data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ensure_instance</span><span class="p">(</span>
             <span class="n">jhu_data</span><span class="p">,</span> <span class="n">JHUData</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;jhu_data&quot;</span><span class="p">)</span>
         <span class="c1"># Population</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">population_data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ensure_instance</span><span class="p">(</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">population_data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ensure_instance</span><span class="p">(</span>
             <span class="n">population_data</span><span class="p">,</span> <span class="n">PopulationData</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;population_data&quot;</span><span class="p">)</span>
         <span class="c1"># OxCGRT</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">oxcgrt_data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ensure_instance</span><span class="p">(</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">oxcgrt_data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ensure_instance</span><span class="p">(</span>
             <span class="n">oxcgrt_data</span><span class="p">,</span> <span class="n">OxCGRTData</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;oxcgrt_data&quot;</span><span class="p">)</span>
         <span class="c1"># tau value must be shared</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">tau</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ensure_tau</span><span class="p">(</span><span class="n">tau</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">tau</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ensure_tau</span><span class="p">(</span><span class="n">tau</span><span class="p">)</span>
         <span class="c1"># Init</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_countries</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_all_countries</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_init_scenario</span><span class="p">()</span>
@@ -289,7 +289,7 @@
 <span class="sd">        Note:</span>
 <span class="sd">            Countries which do not have @min_len phases will be un-registered.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">min_len</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ensure_natural_int</span><span class="p">(</span><span class="n">min_len</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;min_len&quot;</span><span class="p">)</span>
+        <span class="n">min_len</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ensure_natural_int</span><span class="p">(</span><span class="n">min_len</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;min_len&quot;</span><span class="p">)</span>
         <span class="k">for</span> <span class="n">country</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_countries</span><span class="p">:</span>
             <span class="k">try</span><span class="p">:</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">scenario_dict</span><span class="p">[</span><span class="n">country</span><span class="p">]</span><span class="o">.</span><span class="n">trend</span><span class="p">(</span>
@@ -356,7 +356,7 @@
 <span class="sd">            n_jobs (int): the number of parallel jobs or -1 (CPU count)</span>
 <span class="sd">            kwargs: keyword arguments of model parameters and covsirphy.Estimator.run()</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">model</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ensure_subclass</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">ModelBase</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;model&quot;</span><span class="p">)</span>
+        <span class="n">model</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ensure_subclass</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">ModelBase</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;model&quot;</span><span class="p">)</span>
         <span class="n">unit_nest</span> <span class="o">=</span> <span class="p">[</span>
             <span class="p">[</span>
                 <span class="n">unit</span><span class="o">.</span><span class="n">set_id</span><span class="p">(</span>
@@ -418,7 +418,7 @@
             <span class="n">values</span><span class="o">=</span><span class="n">param</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">DATE</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">COUNTRY</span><span class="p">,</span> <span class="n">aggfunc</span><span class="o">=</span><span class="s2">&quot;last&quot;</span><span class="p">)</span>
         <span class="c1"># Rolling mean</span>
         <span class="k">if</span> <span class="n">roll_window</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">roll_window</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ensure_natural_int</span><span class="p">(</span>
+            <span class="n">roll_window</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ensure_natural_int</span><span class="p">(</span>
                 <span class="n">roll_window</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;roll_window&quot;</span><span class="p">)</span>
             <span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">rolling</span><span class="p">(</span><span class="n">window</span><span class="o">=</span><span class="n">roll_window</span><span class="p">)</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span>
         <span class="c1"># Show figure</span>

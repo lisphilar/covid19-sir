@@ -67,7 +67,7 @@
             
             
               <div class="version">
-                2.15.0-gamma
+                2.15.0-delta
               </div>
             
           
@@ -215,8 +215,8 @@
                 <span class="n">filename</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;Province/State&quot;</span><span class="p">:</span> <span class="s2">&quot;object&quot;</span><span class="p">}</span>
             <span class="p">)</span><span class="o">.</span><span class="n">compute</span><span class="p">()</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_cleaned_df</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_cleaning</span><span class="p">()</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">interval</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ensure_natural_int</span><span class="p">(</span><span class="n">interval</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;interval&quot;</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">min_pcr_tests</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ensure_natural_int</span><span class="p">(</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">interval</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ensure_natural_int</span><span class="p">(</span><span class="n">interval</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;interval&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">min_pcr_tests</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ensure_natural_int</span><span class="p">(</span>
             <span class="n">min_pcr_tests</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;min_pcr_tests&quot;</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_citation</span> <span class="o">=</span> <span class="n">citation</span> <span class="ow">or</span> <span class="s2">&quot;&quot;</span>
         <span class="c1"># Cleaned dataset of &quot;Our World In Data&quot;</span>
@@ -270,7 +270,7 @@
             <span class="n">axis</span><span class="o">=</span><span class="mi">1</span>
         <span class="p">)</span>
         <span class="c1"># Confirm the expected columns are in raw data</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">ensure_dataframe</span><span class="p">(</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_ensure_dataframe</span><span class="p">(</span>
             <span class="n">df</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;the raw data&quot;</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">PCR_COLUMNS</span><span class="p">)</span>
         <span class="c1"># Datetime columns</span>
         <span class="n">df</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">DATE</span><span class="p">]</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">to_datetime</span><span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">DATE</span><span class="p">])</span>
@@ -310,7 +310,7 @@
 <span class="sd">            covsirphy.PCRData: PCR dataset</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">instance</span> <span class="o">=</span> <span class="bp">cls</span><span class="p">(</span><span class="n">filename</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
-        <span class="n">instance</span><span class="o">.</span><span class="n">_cleaned_df</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">ensure_dataframe</span><span class="p">(</span>
+        <span class="n">instance</span><span class="o">.</span><span class="n">_cleaned_df</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_ensure_dataframe</span><span class="p">(</span>
             <span class="n">dataframe</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;dataframe&quot;</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="bp">cls</span><span class="o">.</span><span class="n">PCR_COLUMNS</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">instance</span></div>
 
@@ -411,10 +411,10 @@
 <span class="sd">        Returns:</span>
 <span class="sd">            covsirphy.PCRData: self</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">ensure_instance</span><span class="p">(</span><span class="n">country_data</span><span class="p">,</span> <span class="n">CountryData</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;country_data&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_ensure_instance</span><span class="p">(</span><span class="n">country_data</span><span class="p">,</span> <span class="n">CountryData</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;country_data&quot;</span><span class="p">)</span>
         <span class="c1"># Read new dataset</span>
         <span class="n">country</span> <span class="o">=</span> <span class="n">country_data</span><span class="o">.</span><span class="n">country</span>
-        <span class="n">new</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ensure_dataframe</span><span class="p">(</span>
+        <span class="n">new</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ensure_dataframe</span><span class="p">(</span>
             <span class="n">country_data</span><span class="o">.</span><span class="n">cleaned</span><span class="p">(),</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;the raw data&quot;</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">PCR_COLUMNS</span><span class="p">)</span>
         <span class="n">new</span> <span class="o">=</span> <span class="n">new</span><span class="o">.</span><span class="n">loc</span><span class="p">[:,</span> <span class="bp">self</span><span class="o">.</span><span class="n">PCR_COLUMNS</span><span class="p">]</span>
         <span class="n">new</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">ISO3</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">country_to_iso3</span><span class="p">(</span><span class="n">country</span><span class="p">)</span>
@@ -500,7 +500,8 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="c1"># Whether complement is necessary or not</span>
         <span class="n">tests_max</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">TESTS</span><span class="p">]</span><span class="o">.</span><span class="n">max</span><span class="p">()</span>
-        <span class="n">check_tests_ending</span> <span class="o">=</span> <span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">TESTS</span><span class="p">]</span> <span class="o">==</span> <span class="n">tests_max</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span> <span class="o">&gt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">interval</span>
+        <span class="n">check_tests_ending</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="n">df</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">TESTS</span><span class="p">]</span> <span class="o">==</span> <span class="n">tests_max</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span> <span class="o">&gt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">interval</span>
         <span class="n">last_new_C</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">C</span><span class="p">]</span><span class="o">.</span><span class="n">diff</span><span class="p">()</span><span class="o">.</span><span class="n">rolling</span><span class="p">(</span><span class="n">window</span><span class="p">)</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
         <span class="n">check_C</span> <span class="o">=</span> <span class="n">last_new_C</span> <span class="o">&gt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">min_pcr_tests</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="p">(</span><span class="n">check_tests_ending</span> <span class="ow">and</span> <span class="n">check_C</span><span class="p">):</span>
@@ -711,7 +712,7 @@
 <span class="sd">            If non monotonic records were found for either confirmed cases or tests,</span>
 <span class="sd">            &quot;with partially complemented tests data&quot; will be added to the title of the figure.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">window</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ensure_natural_int</span><span class="p">(</span><span class="n">window</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;window&quot;</span><span class="p">)</span>
+        <span class="n">window</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ensure_natural_int</span><span class="p">(</span><span class="n">window</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;window&quot;</span><span class="p">)</span>
         <span class="c1"># Subset with area</span>
         <span class="n">country_alias</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ensure_country_name</span><span class="p">(</span><span class="n">country</span><span class="p">)</span>
         <span class="n">province</span> <span class="o">=</span> <span class="n">province</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">UNKNOWN</span>

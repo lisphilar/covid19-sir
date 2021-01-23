@@ -67,7 +67,7 @@
             
             
               <div class="version">
-                2.15.0-gamma
+                2.15.0-delta
               </div>
             
           
@@ -195,9 +195,9 @@
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">first_date</span><span class="p">,</span> <span class="n">last_date</span><span class="p">,</span> <span class="n">population</span><span class="p">):</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">first_date</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ensure_date</span><span class="p">(</span><span class="n">first_date</span><span class="p">,</span> <span class="s2">&quot;first_date&quot;</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">last_date</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ensure_date</span><span class="p">(</span><span class="n">last_date</span><span class="p">,</span> <span class="s2">&quot;last_date&quot;</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">init_population</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ensure_population</span><span class="p">(</span><span class="n">population</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">first_date</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ensure_date</span><span class="p">(</span><span class="n">first_date</span><span class="p">,</span> <span class="s2">&quot;first_date&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">last_date</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ensure_date</span><span class="p">(</span><span class="n">last_date</span><span class="p">,</span> <span class="s2">&quot;last_date&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">init_population</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ensure_population</span><span class="p">(</span><span class="n">population</span><span class="p">)</span>
         <span class="c1"># List of PhaseUnit</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_units</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">clear</span><span class="p">(</span><span class="n">include_past</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
@@ -261,7 +261,7 @@
 <span class="sd">            str: end date</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="n">end_date</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">ensure_date_order</span><span class="p">(</span><span class="n">start_date</span><span class="p">,</span> <span class="n">end_date</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;end_date&quot;</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_ensure_date_order</span><span class="p">(</span><span class="n">start_date</span><span class="p">,</span> <span class="n">end_date</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;end_date&quot;</span><span class="p">)</span>
             <span class="k">return</span> <span class="n">end_date</span>
         <span class="k">if</span> <span class="n">days</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">last_date</span>
@@ -291,7 +291,8 @@
         <span class="n">start_date</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">tomorrow</span><span class="p">(</span><span class="n">last_unit</span><span class="o">.</span><span class="n">end_date</span><span class="p">)</span>
         <span class="n">end_date</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_calc_end_date</span><span class="p">(</span>
             <span class="n">start_date</span><span class="p">,</span> <span class="n">end_date</span><span class="o">=</span><span class="n">end_date</span><span class="p">,</span> <span class="n">days</span><span class="o">=</span><span class="n">days</span><span class="p">)</span>
-        <span class="n">population</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ensure_population</span><span class="p">(</span><span class="n">population</span> <span class="ow">or</span> <span class="n">last_unit</span><span class="o">.</span><span class="n">population</span><span class="p">)</span>
+        <span class="n">population</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ensure_population</span><span class="p">(</span>
+            <span class="n">population</span> <span class="ow">or</span> <span class="n">last_unit</span><span class="o">.</span><span class="n">population</span><span class="p">)</span>
         <span class="n">model</span> <span class="o">=</span> <span class="n">model</span> <span class="ow">or</span> <span class="n">last_unit</span><span class="o">.</span><span class="n">model</span>
         <span class="n">tau</span> <span class="o">=</span> <span class="n">last_unit</span><span class="o">.</span><span class="n">tau</span> <span class="ow">or</span> <span class="n">tau</span>
         <span class="k">if</span> <span class="n">model</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>

@@ -67,7 +67,7 @@
             
             
               <div class="version">
-                2.15.0-gamma
+                2.15.0-delta
               </div>
             
           
@@ -209,7 +209,7 @@
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">jhu_data</span><span class="p">,</span> <span class="n">population_data</span><span class="p">,</span> <span class="n">country</span><span class="p">,</span> <span class="n">province</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">tau</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">auto_complement</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span>
             <span class="n">jhu_data</span><span class="p">,</span> <span class="n">population_data</span><span class="p">,</span> <span class="n">country</span><span class="p">,</span> <span class="n">province</span><span class="o">=</span><span class="n">province</span><span class="p">,</span> <span class="n">auto_complement</span><span class="o">=</span><span class="n">auto_complement</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">tau</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ensure_tau</span><span class="p">(</span><span class="n">tau</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">tau</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ensure_tau</span><span class="p">(</span><span class="n">tau</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_update_range</span><span class="p">(</span><span class="n">first_date</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">last_date</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
         <span class="c1"># Linear regression modes for prediction of ODE parameters</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_oxcgrt_data</span> <span class="o">=</span> <span class="kc">None</span>
@@ -277,21 +277,21 @@
 <span class="sd">            last_date (str or None): the last date of the records</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="n">first_date</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_first_date</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ensure_date_in_range</span><span class="p">(</span><span class="n">first_date</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_first_date</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__ensure_date_in_range</span><span class="p">(</span><span class="n">first_date</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">last_date</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_last_date</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ensure_date_in_range</span><span class="p">(</span><span class="n">last_date</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_last_date</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__ensure_date_in_range</span><span class="p">(</span><span class="n">last_date</span><span class="p">)</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">init_records</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_init_trackers</span><span class="p">()</span>
 
-    <span class="k">def</span> <span class="nf">_ensure_date_in_range</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">date</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__ensure_date_in_range</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">date</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Ensure that the date is in the range of (the first date, the last date).</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            date (str): date, like 01Jan2020</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">ensure_date_order</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_first_date</span><span class="p">,</span> <span class="n">date</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;date&quot;</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">ensure_date_order</span><span class="p">(</span><span class="n">date</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_last_date</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;date&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_ensure_date_order</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_first_date</span><span class="p">,</span> <span class="n">date</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;date&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_ensure_date_order</span><span class="p">(</span><span class="n">date</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_last_date</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;date&quot;</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">date</span>
 
     <span class="k">def</span> <span class="nf">_init_trackers</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
@@ -358,7 +358,7 @@
 <span class="sd">            - kwargs: Default values are the parameter values of the last phase.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="n">end_date</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">ensure_date</span><span class="p">(</span><span class="n">end_date</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;end_date&quot;</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_ensure_date</span><span class="p">(</span><span class="n">end_date</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;end_date&quot;</span><span class="p">)</span>
         <span class="n">tracker</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_tracker</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
         <span class="k">try</span><span class="p">:</span>
             <span class="n">tracker</span><span class="o">.</span><span class="n">add</span><span class="p">(</span>
@@ -557,7 +557,7 @@
             <span class="n">all_cols</span> <span class="o">=</span> <span class="p">[</span><span class="n">col</span> <span class="k">for</span> <span class="n">col</span> <span class="ow">in</span> <span class="n">all_cols</span> <span class="k">if</span> <span class="n">col</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">EST_COLS</span><span class="p">]</span>
             <span class="n">all_cols</span> <span class="o">+=</span> <span class="bp">self</span><span class="o">.</span><span class="n">EST_COLS</span>
         <span class="n">columns</span> <span class="o">=</span> <span class="n">columns</span> <span class="ow">or</span> <span class="n">all_cols</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">ensure_list</span><span class="p">(</span><span class="n">columns</span><span class="p">,</span> <span class="n">candidates</span><span class="o">=</span><span class="n">all_cols</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;columns&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_ensure_list</span><span class="p">(</span><span class="n">columns</span><span class="p">,</span> <span class="n">candidates</span><span class="o">=</span><span class="n">all_cols</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;columns&quot;</span><span class="p">)</span>
         <span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">loc</span><span class="p">[:,</span> <span class="n">columns</span><span class="p">]</span>
         <span class="k">return</span> <span class="n">df</span><span class="o">.</span><span class="n">dropna</span><span class="p">(</span><span class="n">how</span><span class="o">=</span><span class="s2">&quot;all&quot;</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">fillna</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">UNKNOWN</span><span class="p">)</span></div>
 
@@ -709,7 +709,7 @@
                 <span class="s2">&quot;Scenario.trend() or Scenario.add(), and Scenario.estimate(model)&quot;</span><span class="p">)</span> <span class="kn">from</span> <span class="bp">None</span>
         <span class="c1"># Show figure</span>
         <span class="n">df</span> <span class="o">=</span> <span class="n">sim_df</span><span class="o">.</span><span class="n">set_index</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">DATE</span><span class="p">)</span>
-        <span class="n">fig_cols</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ensure_list</span><span class="p">(</span>
+        <span class="n">fig_cols</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ensure_list</span><span class="p">(</span>
             <span class="n">variables</span> <span class="ow">or</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">CI</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">F</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">R</span><span class="p">],</span> <span class="n">candidates</span><span class="o">=</span><span class="n">df</span><span class="o">.</span><span class="n">columns</span><span class="o">.</span><span class="n">tolist</span><span class="p">(),</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;variables&quot;</span><span class="p">)</span>
         <span class="n">title</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">area</span><span class="si">}</span><span class="s2">: Simulated number of cases (</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2"> scenario)&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">line_plot</span><span class="p">(</span>
@@ -1157,7 +1157,7 @@
             <span class="k">if</span> <span class="n">phases</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
                 <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
                     <span class="s2">&quot;@phases and @past_days cannot be specified at the same time.&quot;</span><span class="p">)</span>
-            <span class="n">past_days</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ensure_natural_int</span><span class="p">(</span><span class="n">past_days</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;past_days&quot;</span><span class="p">)</span>
+            <span class="n">past_days</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ensure_natural_int</span><span class="p">(</span><span class="n">past_days</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;past_days&quot;</span><span class="p">)</span>
             <span class="c1"># Separate a phase, if possible</span>
             <span class="n">beginning_date</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">date_change</span><span class="p">(</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">_last_date</span><span class="p">,</span> <span class="n">days</span><span class="o">=</span><span class="mi">0</span> <span class="o">-</span> <span class="n">past_days</span><span class="p">)</span>
@@ -1318,7 +1318,7 @@
 <span class="sd">            UnExecutedError: Scenario.estimate() or Scenario.add() were not performed</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="c1"># Register OxCGRT data</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_oxcgrt_data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ensure_instance</span><span class="p">(</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_oxcgrt_data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ensure_instance</span><span class="p">(</span>
             <span class="n">oxcgrt_data</span><span class="p">,</span> <span class="n">OxCGRTData</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;oxcgrt_data&quot;</span><span class="p">)</span>
         <span class="c1"># ODE model</span>
         <span class="n">model</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_tracker</span><span class="p">(</span><span class="n">name</span><span class="p">)</span><span class="o">.</span><span class="n">last_model</span>
