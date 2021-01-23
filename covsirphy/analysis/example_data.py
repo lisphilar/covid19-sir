@@ -65,7 +65,7 @@ class ExampleData(JHUData):
             return (country, province)
         if model is None:
             raise ValueError("@model or @country must be specified.")
-        model = self.ensure_subclass(model, ModelBase, name="model")
+        model = self._ensure_subclass(model, ModelBase, name="model")
         return (model.NAME, province)
 
     def add(self, model, country=None, province=None, **kwargs):
@@ -85,7 +85,7 @@ class ExampleData(JHUData):
             If province is None, '-' will be used.
         """
         # Arguments
-        model = self.ensure_subclass(model, ModelBase, name="model")
+        model = self._ensure_subclass(model, ModelBase, name="model")
         arg_dict = model.EXAMPLE.copy()
         arg_dict.update(kwargs)
         population = arg_dict["population"]

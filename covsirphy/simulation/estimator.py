@@ -43,7 +43,7 @@ class Estimator(Term):
 
     def __init__(self, record_df, model, population, tau=None, **kwargs):
         # ODE model
-        self.model = self.ensure_subclass(model, ModelBase, name="model")
+        self.model = self._ensure_subclass(model, ModelBase, name="model")
         self.variables = model.VARIABLES[:]
         self.variables_evaluate = [
             v for (v, p) in zip(model.VARIABLES, model.WEIGHTS) if p > 0]

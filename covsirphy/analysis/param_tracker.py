@@ -405,7 +405,7 @@ class ParamTracker(Term):
             - In kwargs, tau value cannot be included.
         """
         self._ensure_phase_setting()
-        model = self.ensure_subclass(model, ModelBase, "model")
+        model = self._ensure_subclass(model, ModelBase, "model")
         units = [
             unit.set_id(phase=phase)
             for (phase, unit) in zip(*self.past_phases(phases=phases))

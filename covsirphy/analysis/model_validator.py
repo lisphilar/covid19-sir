@@ -55,7 +55,7 @@ class ModelValidator(Term):
         Returns:
             covsirphy.ModelValidator: self
         """
-        model = self.ensure_subclass(model, ModelBase, name="model")
+        model = self._ensure_subclass(model, ModelBase, name="model")
         if model.NAME in self.model_names:
             raise ValueError(f"{model.NAME} has been validated.")
         self.model_names.append(model.NAME)

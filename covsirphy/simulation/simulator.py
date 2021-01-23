@@ -55,7 +55,7 @@ class ODESimulator(Term):
                 "Simulation for two phases is not supported from version 2.7.0")
         # Register the setting
         self.setting = {
-            "model": self.ensure_subclass(model, ModelBase, name="model"),
+            "model": self._ensure_subclass(model, ModelBase, name="model"),
             self.STEP_N: self._ensure_natural_int(step_n, name="step_n"),
             "population": self._ensure_population(population),
             ModelBase.PARAM_DICT: self._ensure_parameters(model, param_dict),

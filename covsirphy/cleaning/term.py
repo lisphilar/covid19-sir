@@ -306,7 +306,7 @@ class Term(object):
         return target
 
     @staticmethod
-    def ensure_subclass(target, parent, name="target"):
+    def _ensure_subclass(target, parent, name="target"):
         """
         Ensure the target is a subclass of the parent class.
 

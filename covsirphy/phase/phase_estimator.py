@@ -51,7 +51,7 @@ class MPEstimator(Term):
                 record_df, name="record_df", columns=self.NLOC_COLUMNS)
             self.from_dataset = False
         # Arguments
-        self.model = self.ensure_subclass(model, ModelBase, "model")
+        self.model = self._ensure_subclass(model, ModelBase, "model")
         self._tau = self._ensure_tau(tau)
         self.param_dict = {
             k: v for (k, v) in kwargs.items() if k in model.PARAMETERS}

@@ -350,7 +350,7 @@ class PhaseUnit(Term):
         if model is None:
             self._ode_dict[self.TAU] = tau
             return self
-        self._model = self.ensure_subclass(model, ModelBase, name="model")
+        self._model = self._ensure_subclass(model, ModelBase, name="model")
         self.info_dict[self.ODE] = model.NAME
         # Parameter values
         param_dict = self._ode_dict.copy()
