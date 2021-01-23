@@ -388,7 +388,7 @@ class PhaseUnit(Term):
 
     @ record_df.setter
     def record_df(self, df):
-        self._record_df = self.ensure_dataframe(
+        self._record_df = self._ensure_dataframe(
             df, name="df", columns=self.NLOC_COLUMNS)
         self.set_y0(df)
 
@@ -429,7 +429,7 @@ class PhaseUnit(Term):
         if record_df.empty:
             raise UnExecutedError(
                 "PhaseUnit.record_df = ...", message="or specify @record_df argument")
-        self.ensure_dataframe(
+        self._ensure_dataframe(
             record_df, name="record_df", columns=self.NLOC_COLUMNS)
         # Check dates
         sta = self.date_obj(self.start_date)

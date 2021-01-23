@@ -89,7 +89,7 @@ class SIR(ModelBase):
                 - key (str): parameter name
                 - value (tuple(float, float)): min value and max value
         """
-        df = cls.ensure_dataframe(
+        df = cls._ensure_dataframe(
             taufree_df, name="taufree_df", columns=[cls.TS, *cls.VARIABLES]
         )
         df = df.loc[(df[cls.S] > 0) & (df[cls.CI] > 0)]
@@ -131,7 +131,7 @@ class SIR(ModelBase):
                         - Susceptible (int): the number of susceptible cases
                         - Fatal or Recovered (int): total number of fatal/recovered cases
         """
-        df = cls.ensure_dataframe(
+        df = cls._ensure_dataframe(
             data_df, name="data_df", columns=cls.VALUE_COLUMNS)
         # Calculate dimensional variables
         df[cls.S] = population - df[cls.C]

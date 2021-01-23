@@ -97,7 +97,7 @@ class JHUData(CleaningBase):
         expected_cols = [
             self.DATE, self.ISO3, self.COUNTRY, self.PROVINCE, self.C, self.F, self.R
         ]
-        self.ensure_dataframe(df, name="the raw data", columns=expected_cols)
+        self._ensure_dataframe(df, name="the raw data", columns=expected_cols)
         # Datetime columns
         df[self.DATE] = pd.to_datetime(df[self.DATE])
         # Country
@@ -310,7 +310,7 @@ class JHUData(CleaningBase):
             covsirphy.JHUData: JHU-style dataset
         """
         instance = cls(filename=None)
-        instance._cleaned_df = cls.ensure_dataframe(
+        instance._cleaned_df = cls._ensure_dataframe(
             dataframe, name="dataframe", columns=cls.COLUMNS)
         return instance
 

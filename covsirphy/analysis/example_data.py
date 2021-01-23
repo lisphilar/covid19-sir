@@ -34,7 +34,7 @@ class ExampleData(JHUData):
     def __init__(self, clean_df=None, tau=1440, start_date="22Jan2020"):
         if clean_df is None:
             clean_df = pd.DataFrame(columns=self.COLUMNS)
-        clean_df = self.ensure_dataframe(
+        clean_df = self._ensure_dataframe(
             clean_df, name="clean_df", columns=self.COLUMNS)
         self._raw = clean_df.copy()
         self._cleaned_df = clean_df.copy()

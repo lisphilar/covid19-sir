@@ -48,7 +48,7 @@ class CleaningBase(Term):
         """
         pandas.DataFrame: raw dataset
         """
-        self._raw = self.ensure_dataframe(dataframe, name="dataframe")
+        self._raw = self._ensure_dataframe(dataframe, name="dataframe")
 
     @staticmethod
     def load(urlpath, header=0, columns=None, dtype="object"):
@@ -114,7 +114,7 @@ class CleaningBase(Term):
         Returns:
             str: country name
         """
-        df = self.ensure_dataframe(
+        df = self._ensure_dataframe(
             self._cleaned_df, name="the cleaned dataset", columns=[self.COUNTRY])
         selectable_set = set(df[self.COUNTRY].unique())
         # return country name as-is if selectable
@@ -200,14 +200,14 @@ class CleaningBase(Term):
         """
         # Country level
         country = self.ensure_country_name(country)
-        df = self.ensure_dataframe(
+        df = self._ensure_dataframe(
             self._cleaned_df, name="the cleaned dataset", columns=[self.COUNTRY])
         df = df.loc[df[self.COUNTRY] == country, :]
         # Province level
         province = province or self.UNKNOWN
         if self.PROVINCE not in df.columns and province == self.UNKNOWN:
             return df
-        df = self.ensure_dataframe(
+        df = self._ensure_dataframe(
             df, "the cleaned dataset", columns=[self.PROVINCE])
         return df.loc[df[self.PROVINCE] == province, :]
 
@@ -236,7 +236,7 @@ class CleaningBase(Term):
         # Subset with Start/end date
         if start_date is None and end_date is None:
             return df.reset_index(drop=True)
-        df = self.ensure_dataframe(
+        df = self._ensure_dataframe(
             df, name="the cleaned dataset", columns=[self.DATE])
         series = df[self.DATE].copy()
         start_obj = self.date_obj(date_str=start_date, default=series.min())
@@ -304,7 +304,7 @@ class CleaningBase(Term):
         Returns:
             list[str]: list of country names
         """
-        df = self.ensure_dataframe(
+        df = self._ensure_dataframe(
             self._cleaned_df, name="the cleaned dataset", columns=[self.COUNTRY])
         return list(df[self.COUNTRY].unique())
 

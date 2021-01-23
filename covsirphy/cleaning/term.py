@@ -168,7 +168,7 @@ class Term(object):
         return flattened
 
     @staticmethod
-    def ensure_dataframe(target, name="df", time_index=False, columns=None):
+    def _ensure_dataframe(target, name="df", time_index=False, columns=None):
         """
         Ensure the dataframe has the columns.
 

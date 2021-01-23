@@ -91,7 +91,7 @@ class CountryData(CleaningBase):
         expected_cols = [
             self.DATE, self.C, self.F, self.R
         ]
-        self.ensure_dataframe(df, name="the raw data", columns=expected_cols)
+        self._ensure_dataframe(df, name="the raw data", columns=expected_cols)
         # Remove empty rows
         df = df.dropna(subset=[self.DATE])
         # Add province column

@@ -31,7 +31,7 @@ class ChangeFinder(Term):
 
     def __init__(self, sr_df, min_size=5, max_rmsle=20.0):
         # Dataset
-        self.sr_df = self.ensure_dataframe(
+        self.sr_df = self._ensure_dataframe(
             sr_df, name="sr_df", time_index=True, columns=[self.S, self.R])
         self.dates = [
             date_obj.strftime(self.DATE_FORMAT) for date_obj in sr_df.index]

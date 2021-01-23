@@ -211,7 +211,7 @@ class ModelBase(Term):
             df = df.drop(cls.DATE, axis=1)
             return cls.specialize(df, population=population).reset_index(drop=True)
         tau = cls.ensure_tau(tau)
-        df = cls.ensure_dataframe(
+        df = cls._ensure_dataframe(
             df, name="data_df", columns=cls.NLOC_COLUMNS)
         # Calculate elapsed time from the first date [min]
         df[cls.T] = (df[cls.DATE] - df[cls.DATE].min()).dt.total_seconds()

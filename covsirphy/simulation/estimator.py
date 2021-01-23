@@ -50,7 +50,7 @@ class Estimator(Term):
         # Dataset
         if not set(self.NLOC_COLUMNS).issubset(record_df.columns):
             record_df = model.restore(record_df)
-        self.record_df = self.ensure_dataframe(
+        self.record_df = self._ensure_dataframe(
             record_df, name="record_df", columns=self.NLOC_COLUMNS)
         # Settings for simulation
         self.population = self.ensure_population(population)

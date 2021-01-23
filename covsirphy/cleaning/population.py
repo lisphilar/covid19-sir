@@ -68,7 +68,7 @@ class PopulationData(CleaningBase):
         expected_cols = [
             self.COUNTRY, self.PROVINCE, self.N
         ]
-        self.ensure_dataframe(df, name="the raw data", columns=expected_cols)
+        self._ensure_dataframe(df, name="the raw data", columns=expected_cols)
         # ISO3
         df[self.ISO3] = df[self.ISO3] if self.ISO3 in df.columns else self.UNKNOWN
         # Date

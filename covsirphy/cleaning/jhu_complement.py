@@ -126,7 +126,7 @@ class JHUDataComplementHandler(Term):
                 - 'fully complemented recovered data'
                 - 'partially complemented recovered data'
         """
-        self.ensure_dataframe(
+        self._ensure_dataframe(
             subset_df, name="subset_df", columns=[self.DATE, *self.RAW_COLS])
         # Initialize
         after_df = subset_df.copy()
@@ -160,9 +160,12 @@ class JHUDataComplementHandler(Term):
                 Index: Date (pandas.TimeStamp)
                 Columns: Confirmed, Fatal, Recovered
         """
-        sel_invalid_R = subset_df[self.C] - subset_df[self.F] < subset_df[self.R]
-        subset_df.loc[sel_invalid_R, self.R] = subset_df[self.C] - subset_df[self.F]
-        subset_df.loc[sel_invalid_R, self.CI] = subset_df[self.C] - subset_df[self.F] - subset_df[self.R]
+        sel_invalid_R = subset_df[self.C] - \
+            subset_df[self.F] < subset_df[self.R]
+        subset_df.loc[sel_invalid_R,
+                      self.R] = subset_df[self.C] - subset_df[self.F]
+        subset_df.loc[sel_invalid_R, self.CI] = subset_df[self.C] - \
+            subset_df[self.F] - subset_df[self.R]
         return subset_df.set_index(self.DATE).loc[:, self.RAW_COLS]
 
     def _post_processing(self, df):

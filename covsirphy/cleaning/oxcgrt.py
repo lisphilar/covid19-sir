@@ -84,7 +84,7 @@ class OxCGRTData(CleaningBase):
             }
         )
         # Confirm the expected columns are in raw data
-        self.ensure_dataframe(
+        self._ensure_dataframe(
             df, name="the raw data", columns=self.OXCGRT_COLS
         )
         # Read date records
