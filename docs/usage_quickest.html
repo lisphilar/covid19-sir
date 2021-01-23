@@ -477,8 +477,8 @@ div.rendered_html tbody tr:hover {
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="c1"># Standard users</span>
-<span class="c1"># !pip install covsirphy</span>
+<span></span># Standard users
+# !pip install covsirphy
 </pre></div>
 </div>
 </div>
@@ -487,9 +487,9 @@ div.rendered_html tbody tr:hover {
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="c1"># Developers (Note: this notebook is in example directory)</span>
-<span class="kn">import</span> <span class="nn">os</span>
-<span class="n">os</span><span class="o">.</span><span class="n">chdir</span><span class="p">(</span><span class="s2">&quot;../&quot;</span><span class="p">)</span>
+<span></span># Developers (Note: this notebook is in example directory)
+import os
+os.chdir(&quot;../&quot;)
 </pre></div>
 </div>
 </div>
@@ -498,7 +498,7 @@ div.rendered_html tbody tr:hover {
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="kn">from</span> <span class="nn">pprint</span> <span class="kn">import</span> <span class="n">pprint</span>
+<span></span>from pprint import pprint
 </pre></div>
 </div>
 </div>
@@ -507,8 +507,8 @@ div.rendered_html tbody tr:hover {
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="kn">import</span> <span class="nn">covsirphy</span> <span class="k">as</span> <span class="nn">cs</span>
-<span class="n">cs</span><span class="o">.</span><span class="n">__version__</span>
+<span></span>import covsirphy as cs
+cs.__version__
 </pre></div>
 </div>
 </div>
@@ -530,12 +530,12 @@ div.rendered_html tbody tr:hover {
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="c1"># Standard users and developers</span>
-<span class="n">data_loader</span> <span class="o">=</span> <span class="n">cs</span><span class="o">.</span><span class="n">DataLoader</span><span class="p">(</span><span class="s2">&quot;input&quot;</span><span class="p">)</span>
-<span class="c1"># The number of cases (JHU style)</span>
-<span class="n">jhu_data</span> <span class="o">=</span> <span class="n">data_loader</span><span class="o">.</span><span class="n">jhu</span><span class="p">(</span><span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
-<span class="c1"># Population in each country</span>
-<span class="n">population_data</span> <span class="o">=</span> <span class="n">data_loader</span><span class="o">.</span><span class="n">population</span><span class="p">(</span><span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<span></span># Standard users and developers
+data_loader = cs.DataLoader(&quot;input&quot;)
+# The number of cases (JHU style)
+jhu_data = data_loader.jhu(verbose=False)
+# Population in each country
+population_data = data_loader.population(verbose=False)
 </pre></div>
 </div>
 </div>
@@ -553,7 +553,7 @@ Retrieving COVID-19 dataset in Japan from https://github.com/lisphilar/covid19-s
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="n">pprint</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">jhu_data</span><span class="o">.</span><span class="n">countries</span><span class="p">())</span> <span class="o">&amp;</span> <span class="nb">set</span><span class="p">(</span><span class="n">population_data</span><span class="o">.</span><span class="n">countries</span><span class="p">()),</span> <span class="n">compact</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span></span>pprint(set(jhu_data.countries()) &amp; set(population_data.countries()), compact=True)
 </pre></div>
 </div>
 </div>
@@ -608,7 +608,7 @@ Retrieving COVID-19 dataset in Japan from https://github.com/lisphilar/covid19-s
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="n">snl</span> <span class="o">=</span> <span class="n">cs</span><span class="o">.</span><span class="n">Scenario</span><span class="p">(</span><span class="n">jhu_data</span><span class="p">,</span> <span class="n">population_data</span><span class="p">,</span> <span class="n">country</span><span class="o">=</span><span class="s2">&quot;Italy&quot;</span><span class="p">)</span>
+<span></span>snl = cs.Scenario(jhu_data, population_data, country=&quot;Italy&quot;)
 </pre></div>
 </div>
 </div>
@@ -621,8 +621,8 @@ Retrieving COVID-19 dataset in Japan from https://github.com/lisphilar/covid19-s
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="n">df</span> <span class="o">=</span> <span class="n">snl</span><span class="o">.</span><span class="n">records</span><span class="p">()</span>
-<span class="n">df</span><span class="o">.</span><span class="n">tail</span><span class="p">()</span>
+<span></span>df = snl.records()
+df.tail()
 </pre></div>
 </div>
 </div>
@@ -714,7 +714,7 @@ Retrieving COVID-19 dataset in Japan from https://github.com/lisphilar/covid19-s
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="n">_</span> <span class="o">=</span> <span class="n">snl</span><span class="o">.</span><span class="n">trend</span><span class="p">()</span>
+<span></span>_ = snl.trend()
 </pre></div>
 </div>
 </div>
@@ -737,7 +737,7 @@ Retrieving COVID-19 dataset in Japan from https://github.com/lisphilar/covid19-s
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="n">snl</span><span class="o">.</span><span class="n">summary</span><span class="p">()</span>
+<span></span>snl.summary()
 </pre></div>
 </div>
 </div>
@@ -917,8 +917,8 @@ Retrieving COVID-19 dataset in Japan from https://github.com/lisphilar/covid19-s
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="c1"># Default value of timeout is 180 sec</span>
-<span class="n">snl</span><span class="o">.</span><span class="n">estimate</span><span class="p">(</span><span class="n">cs</span><span class="o">.</span><span class="n">SIRF</span><span class="p">,</span> <span class="n">timeout</span><span class="o">=</span><span class="mi">60</span><span class="p">)</span>
+<span></span># Default value of timeout is 180 sec
+snl.estimate(cs.SIRF, timeout=60)
 </pre></div>
 </div>
 </div>
@@ -961,7 +961,7 @@ Completed optimization. Total: 2 min 44 sec
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="n">_</span> <span class="o">=</span> <span class="n">snl</span><span class="o">.</span><span class="n">history</span><span class="p">(</span><span class="n">target</span><span class="o">=</span><span class="s2">&quot;Rt&quot;</span><span class="p">)</span>
+<span></span>_ = snl.history(target=&quot;Rt&quot;)
 </pre></div>
 </div>
 </div>
@@ -981,7 +981,7 @@ Completed optimization. Total: 2 min 44 sec
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="n">_</span> <span class="o">=</span> <span class="n">snl</span><span class="o">.</span><span class="n">history_rate</span><span class="p">()</span>
+<span></span>_ = snl.history_rate()
 </pre></div>
 </div>
 </div>
@@ -1001,9 +1001,9 @@ Completed optimization. Total: 2 min 44 sec
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="c1"># Add a phase with 30 days from the date of the last record</span>
-<span class="n">snl</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">days</span><span class="o">=</span><span class="mi">30</span><span class="p">)</span>
-<span class="n">_</span> <span class="o">=</span> <span class="n">snl</span><span class="o">.</span><span class="n">simulate</span><span class="p">()</span>
+<span></span># Add a phase with 30 days from the date of the last record
+snl.add(days=30)
+_ = snl.simulate()
 </pre></div>
 </div>
 </div>
