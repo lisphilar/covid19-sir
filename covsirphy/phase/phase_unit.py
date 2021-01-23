@@ -59,7 +59,7 @@ class PhaseUnit(Term):
     """
 
     def __init__(self, start_date, end_date, population):
-        self.ensure_date_order(start_date, end_date, name="end_date")
+        self._ensure_date_order(start_date, end_date, name="end_date")
         self._start_date = start_date
         self._end_date = end_date
         self._population = self._ensure_population(population)

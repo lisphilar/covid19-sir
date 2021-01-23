@@ -72,8 +72,8 @@ class DataHandler(Term):
 
     @first_date.setter
     def first_date(self, date):
-        self.ensure_date_order(self._first_date, date, name="date")
-        self.ensure_date_order(date, self._last_date, name="date")
+        self._ensure_date_order(self._first_date, date, name="date")
+        self._ensure_date_order(date, self._last_date, name="date")
         self._first_date = date
         self.init_records()
 
@@ -86,8 +86,8 @@ class DataHandler(Term):
 
     @last_date.setter
     def last_date(self, date):
-        self.ensure_date_order(self._first_date, date, name="date")
-        self.ensure_date_order(date, self._last_date, name="date")
+        self._ensure_date_order(self._first_date, date, name="date")
+        self._ensure_date_order(date, self._last_date, name="date")
         self._last_date = date
         self.init_records()
 

@@ -287,7 +287,7 @@ class Term(object):
         return value
 
     @classmethod
-    def ensure_date(cls, target, name="date"):
+    def _ensure_date(cls, target, name="date"):
         """
         Ensure the format of the string.
 
@@ -466,7 +466,7 @@ class Term(object):
         return math.ceil((end - sta) / timedelta(minutes=tau))
 
     @classmethod
-    def ensure_date_order(cls, previous_date, following_date, name="following_date"):
+    def _ensure_date_order(cls, previous_date, following_date, name="following_date"):
         """
         Ensure that the order of dates.
 

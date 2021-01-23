@@ -19,8 +19,8 @@ class PhaseSeries(Term):
     """
 
     def __init__(self, first_date, last_date, population):
-        self.first_date = self.ensure_date(first_date, "first_date")
-        self.last_date = self.ensure_date(last_date, "last_date")
+        self.first_date = self._ensure_date(first_date, "first_date")
+        self.last_date = self._ensure_date(last_date, "last_date")
         self.init_population = self._ensure_population(population)
         # List of PhaseUnit
         self._units = []
@@ -85,7 +85,7 @@ class PhaseSeries(Term):
             str: end date
         """
         if end_date is not None:
-            self.ensure_date_order(start_date, end_date, name="end_date")
+            self._ensure_date_order(start_date, end_date, name="end_date")
             return end_date
         if days is None:
             return self.last_date

@@ -120,7 +120,7 @@ class ParamTracker(Term):
                 covsirphy.PhaseUnit: phase unit
         """
         self._ensure_phase_setting()
-        self.ensure_date(date)
+        self._ensure_date(date)
         phase_nest = [
             (self.num2str(i), unit) for (i, unit) in enumerate(self._series) if date in unit]
         try:
@@ -219,7 +219,7 @@ class ParamTracker(Term):
             - kwargs: Default values are the parameter values of the last phase.
         """
         if end_date is not None:
-            self.ensure_date(end_date, name="end_date")
+            self._ensure_date(end_date, name="end_date")
         try:
             self._series.add(
                 end_date=end_date, days=days, population=population,

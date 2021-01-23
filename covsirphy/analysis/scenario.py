@@ -101,21 +101,21 @@ class Scenario(DataHandler):
             last_date (str or None): the last date of the records
         """
         if first_date is not None:
-            self._first_date = self._ensure_date_in_range(first_date)
+            self._first_date = self.__ensure_date_in_range(first_date)
         if last_date is not None:
-            self._last_date = self._ensure_date_in_range(last_date)
+            self._last_date = self.__ensure_date_in_range(last_date)
         super().init_records()
         self._init_trackers()
 
-    def _ensure_date_in_range(self, date):
+    def __ensure_date_in_range(self, date):
         """
         Ensure that the date is in the range of (the first date, the last date).
 
         Args:
             date (str): date, like 01Jan2020
         """
-        self.ensure_date_order(self._first_date, date, name="date")
-        self.ensure_date_order(date, self._last_date, name="date")
+        self._ensure_date_order(self._first_date, date, name="date")
+        self._ensure_date_order(date, self._last_date, name="date")
         return date
 
     def _init_trackers(self):
@@ -182,7 +182,7 @@ class Scenario(DataHandler):
             - kwargs: Default values are the parameter values of the last phase.
         """
         if end_date is not None:
-            self.ensure_date(end_date, name="end_date")
+            self._ensure_date(end_date, name="end_date")
         tracker = self._tracker(name)
         try:
             tracker.add(
