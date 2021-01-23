@@ -40,10 +40,10 @@ class MPEstimator(Term):
                  record_df=None, tau=None, **kwargs):
         # Records
         if jhu_data is not None and population_data is not None:
-            self.jhu_data = self.ensure_instance(
+            self.jhu_data = self._ensure_instance(
                 jhu_data, JHUData, name="jhu_data")
             # Population
-            self.population_data = self.ensure_instance(
+            self.population_data = self._ensure_instance(
                 population_data, PopulationData, name="population_data")
             self.from_dataset = True
         else:

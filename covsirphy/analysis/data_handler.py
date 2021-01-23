@@ -25,11 +25,11 @@ class DataHandler(Term):
 
     def __init__(self, jhu_data, population_data, country, province=None, auto_complement=True):
         # Population
-        population_data = self.ensure_instance(
+        population_data = self._ensure_instance(
             population_data, PopulationData, name="population_data")
         self.population = population_data.value(country, province=province)
         # Records
-        self.jhu_data = self.ensure_instance(
+        self.jhu_data = self._ensure_instance(
             jhu_data, JHUData, name="jhu_data")
         # Area name
         self.country = country

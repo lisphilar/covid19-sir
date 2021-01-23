@@ -235,7 +235,7 @@ class PCRData(CleaningBase):
         Returns:
             covsirphy.PCRData: self
         """
-        self.ensure_instance(country_data, CountryData, name="country_data")
+        self._ensure_instance(country_data, CountryData, name="country_data")
         # Read new dataset
         country = country_data.country
         new = self._ensure_dataframe(

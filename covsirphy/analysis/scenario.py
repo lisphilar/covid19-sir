@@ -1142,7 +1142,7 @@ class Scenario(DataHandler):
             UnExecutedError: Scenario.estimate() or Scenario.add() were not performed
         """
         # Register OxCGRT data
-        self._oxcgrt_data = self.ensure_instance(
+        self._oxcgrt_data = self._ensure_instance(
             oxcgrt_data, OxCGRTData, name="oxcgrt_data")
         # ODE model
         model = self._tracker(name).last_model

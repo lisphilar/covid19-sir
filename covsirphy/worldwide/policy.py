@@ -28,13 +28,13 @@ class PolicyMeasures(Term):
 
     def __init__(self, jhu_data, population_data, oxcgrt_data, tau=None):
         # Records
-        self.jhu_data = self.ensure_instance(
+        self.jhu_data = self._ensure_instance(
             jhu_data, JHUData, name="jhu_data")
         # Population
-        self.population_data = self.ensure_instance(
+        self.population_data = self._ensure_instance(
             population_data, PopulationData, name="population_data")
         # OxCGRT
-        self.oxcgrt_data = self.ensure_instance(
+        self.oxcgrt_data = self._ensure_instance(
             oxcgrt_data, OxCGRTData, name="oxcgrt_data")
         # tau value must be shared
         self.tau = self._ensure_tau(tau)

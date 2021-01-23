@@ -145,7 +145,7 @@ class JHUData(CleaningBase):
         Note:
             Citation of the country data will be added to 'JHUData.citation' description.
         """
-        self.ensure_instance(country_data, CountryData, name="country_data")
+        self._ensure_instance(country_data, CountryData, name="country_data")
         # Read new dataset
         country = country_data.country
         new = country_data.cleaned().loc[:, self.COLUMNS]

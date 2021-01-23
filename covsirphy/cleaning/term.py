@@ -324,7 +324,7 @@ class Term(object):
         return target
 
     @staticmethod
-    def ensure_instance(target, class_obj, name="target"):
+    def _ensure_instance(target, class_obj, name="target"):
         """
         Ensure the target is a instance of the class object.
 

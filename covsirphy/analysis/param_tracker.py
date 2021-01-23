@@ -41,7 +41,7 @@ class ParamTracker(Term):
     def __init__(self, record_df, phase_series, area=None, tau=None):
         self.record_df = self._ensure_dataframe(
             record_df, name="record_df", columns=self.SUB_COLUMNS)
-        self._series = self.ensure_instance(
+        self._series = self._ensure_instance(
             phase_series, PhaseSeries, name="phase_seres")
         self.area = area or ""
         self.tau = self._ensure_tau(tau)
