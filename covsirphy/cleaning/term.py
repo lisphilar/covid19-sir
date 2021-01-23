@@ -266,7 +266,7 @@ class Term(object):
         )
 
     @staticmethod
-    def ensure_float(target, name="value"):
+    def _ensure_float(target, name="value"):
         """
         Ensure a float value.
         If the value is a float value and the type was string,

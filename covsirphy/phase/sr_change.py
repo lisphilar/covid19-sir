@@ -45,7 +45,7 @@ class ChangeFinder(Term):
             raise ValueError(
                 f"More than {min_size * 2} records must be included.")
         # Minimum value of RMSLE score
-        self.max_rmsle = self.ensure_float(max_rmsle)
+        self.max_rmsle = self._ensure_float(max_rmsle)
         # Setting for optimization
         self._change_dates = []
 

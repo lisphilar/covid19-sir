@@ -61,9 +61,9 @@ class JHUDataComplementHandler(Term):
             upper_limit_days, name="upper_limit_days")
         self.lower_limit_days = self._ensure_natural_int(
             lower_limit_days, name="lower_limit_days")
-        self.upper_percentage = self.ensure_float(
+        self.upper_percentage = self._ensure_float(
             upper_percentage, name="upper_percentage")
-        self.lower_percentage = self.ensure_float(
+        self.lower_percentage = self._ensure_float(
             lower_percentage, name="lower_percentage")
         self.complement_dict = None
 
