@@ -33,7 +33,7 @@ class JHUData(CleaningBase):
 
     @recovery_period.setter
     def recovery_period(self, value):
-        self._recovery_period = self.ensure_natural_int(value)
+        self._recovery_period = self._ensure_natural_int(value)
 
     def cleaned(self, **kwargs):
         """

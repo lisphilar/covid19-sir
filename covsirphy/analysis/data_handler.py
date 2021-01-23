@@ -232,7 +232,7 @@ class DataHandler(Term):
         """
         variables = self.ensure_list(
             variables or [self.C, self.F, self.R], candidates=self.VALUE_COLUMNS, name="variables")
-        window = self.ensure_natural_int(window, name="window")
+        window = self._ensure_natural_int(window, name="window")
         df = self.record_df.set_index(self.DATE)[variables]
         df = df.diff().dropna()
         df = df.rolling(window=window).mean().dropna().astype(np.int64)

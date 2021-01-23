@@ -113,7 +113,7 @@ class PolicyMeasures(Term):
         Note:
             Countries which do not have @min_len phases will be un-registered.
         """
-        min_len = self.ensure_natural_int(min_len, name="min_len")
+        min_len = self._ensure_natural_int(min_len, name="min_len")
         for country in self._countries:
             try:
                 self.scenario_dict[country].trend(
@@ -242,7 +242,7 @@ class PolicyMeasures(Term):
             values=param, index=self.DATE, columns=self.COUNTRY, aggfunc="last")
         # Rolling mean
         if roll_window is not None:
-            roll_window = self.ensure_natural_int(
+            roll_window = self._ensure_natural_int(
                 roll_window, name="roll_window")
             df = df.rolling(window=roll_window).mean()
         # Show figure

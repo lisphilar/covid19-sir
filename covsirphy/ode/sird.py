@@ -46,7 +46,7 @@ class SIRD(ModelBase):
 
     def __init__(self, population, kappa, rho, sigma):
         # Total population
-        self.population = self.ensure_natural_int(
+        self.population = self._ensure_natural_int(
             population, name="population"
         )
         # Non-dim parameters

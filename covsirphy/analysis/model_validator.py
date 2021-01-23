@@ -33,8 +33,8 @@ class ModelValidator(Term):
     """
 
     def __init__(self, tau=1440, n_trials=8, seed=0):
-        self.n_trials = self.ensure_natural_int(n_trials, name="n_trials")
-        self.seed = self.ensure_natural_int(
+        self.n_trials = self._ensure_natural_int(n_trials, name="n_trials")
+        self.seed = self._ensure_natural_int(
             seed, name="seed", include_zero=True)
         self.tau = self.ensure_tau(tau)
         # Validated models

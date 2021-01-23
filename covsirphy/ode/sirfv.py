@@ -55,7 +55,7 @@ class SIRFV(ModelBase):
     def __init__(self, population, theta, kappa, rho, sigma,
                  omega=None, v_per_day=None):
         # Total population
-        self.population = self.ensure_natural_int(
+        self.population = self._ensure_natural_int(
             population, name="population"
         )
         # Non-dim parameters

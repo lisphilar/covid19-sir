@@ -50,16 +50,16 @@ class JHUDataComplementHandler(Term):
                  lower_limit_days=7, upper_percentage=0.5,
                  lower_percentage=0.5):
         # Arguments for complement
-        self.recovery_period = self.ensure_natural_int(
+        self.recovery_period = self._ensure_natural_int(
             recovery_period, name="recovery_period")
-        self.interval = self.ensure_natural_int(interval, name="interval")
-        self.max_ignored = self.ensure_natural_int(
+        self.interval = self._ensure_natural_int(interval, name="interval")
+        self.max_ignored = self._ensure_natural_int(
             max_ignored, name="max_ignored")
-        self.max_ending_unupdated = self.ensure_natural_int(
+        self.max_ending_unupdated = self._ensure_natural_int(
             max_ending_unupdated, name="max_ending_unupdated")
-        self.upper_limit_days = self.ensure_natural_int(
+        self.upper_limit_days = self._ensure_natural_int(
             upper_limit_days, name="upper_limit_days")
-        self.lower_limit_days = self.ensure_natural_int(
+        self.lower_limit_days = self._ensure_natural_int(
             lower_limit_days, name="lower_limit_days")
         self.upper_percentage = self.ensure_float(
             upper_percentage, name="upper_percentage")

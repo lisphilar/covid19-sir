@@ -97,7 +97,7 @@ class Term(object):
         Returns:
             str
         """
-        num = cls.ensure_natural_int(num, include_zero=True)
+        num = cls._ensure_natural_int(num, include_zero=True)
         q, mod = divmod(num, 10)
         suffix = "th" if q % 10 == 1 else cls.SUFFIX_DICT[mod]
         return f"{num}{suffix}"
@@ -198,7 +198,7 @@ class Term(object):
         return df
 
     @staticmethod
-    def ensure_natural_int(target, name="number", include_zero=False, none_ok=False):
+    def _ensure_natural_int(target, name="number", include_zero=False, none_ok=False):
         """
         Ensure a natural (non-negative) number.
 
@@ -243,7 +243,7 @@ class Term(object):
         """
         if tau is None:
             return None
-        tau = cls.ensure_natural_int(tau, name="tau")
+        tau = cls._ensure_natural_int(tau, name="tau")
         if tau in set(cls.divisors(1440)):
             return tau
         raise ValueError(
@@ -261,7 +261,7 @@ class Term(object):
         Returns:
             int: as-is
         """
-        return cls.ensure_natural_int(
+        return cls._ensure_natural_int(
             population, name="population", include_zero=False, none_ok=False
         )
 
@@ -382,7 +382,7 @@ class Term(object):
         Returns:
             list[int]: the list of divisors
         """
-        value = cls.ensure_natural_int(value)
+        value = cls._ensure_natural_int(value)
         return [
             i for i in range(1, value + 1) if value % i == 0
         ]

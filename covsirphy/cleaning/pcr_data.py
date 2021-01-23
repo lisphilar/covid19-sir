@@ -39,8 +39,8 @@ class PCRData(CleaningBase):
                 filename, dtype={"Province/State": "object"}
             ).compute()
             self._cleaned_df = self._cleaning()
-        self.interval = self.ensure_natural_int(interval, name="interval")
-        self.min_pcr_tests = self.ensure_natural_int(
+        self.interval = self._ensure_natural_int(interval, name="interval")
+        self.min_pcr_tests = self._ensure_natural_int(
             min_pcr_tests, name="min_pcr_tests")
         self._citation = citation or ""
         # Cleaned dataset of "Our World In Data"
@@ -536,7 +536,7 @@ class PCRData(CleaningBase):
             If non monotonic records were found for either confirmed cases or tests,
             "with partially complemented tests data" will be added to the title of the figure.
         """
-        window = self.ensure_natural_int(window, name="window")
+        window = self._ensure_natural_int(window, name="window")
         # Subset with area
         country_alias = self.ensure_country_name(country)
         province = province or self.UNKNOWN

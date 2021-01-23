@@ -981,7 +981,7 @@ class Scenario(DataHandler):
             if phases is not None:
                 raise ValueError(
                     "@phases and @past_days cannot be specified at the same time.")
-            past_days = self.ensure_natural_int(past_days, name="past_days")
+            past_days = self._ensure_natural_int(past_days, name="past_days")
             # Separate a phase, if possible
             beginning_date = self.date_change(
                 self._last_date, days=0 - past_days)

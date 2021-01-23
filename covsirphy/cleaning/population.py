@@ -184,7 +184,7 @@ class PopulationData(CleaningBase):
             If @date is None, the created date of the instance will be used.
             If @province is None, "-" will be used.
         """
-        population = self.ensure_natural_int(value, "value")
+        population = self._ensure_natural_int(value, "value")
         province = province or self.UNKNOWN
         date_stamp = pd.to_datetime(date or self._created_date())
         df = self._cleaned_df.copy()

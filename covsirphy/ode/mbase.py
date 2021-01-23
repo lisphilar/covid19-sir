@@ -39,7 +39,7 @@ class ModelBase(Term):
             population (int): total population
         """
         # Total population
-        self.population = self.ensure_natural_int(
+        self.population = self._ensure_natural_int(
             population, name="population"
         )
         # Dictionary of non-dim parameters: {name: value}

@@ -70,7 +70,7 @@ class DataLoader(Term):
         except TypeError:
             raise TypeError(
                 f"@directory should be a path-like object, but {directory} was applied.")
-        self.update_interval = self.ensure_natural_int(
+        self.update_interval = self._ensure_natural_int(
             update_interval, name="update_interval", include_zero=True)
         # Create the directory if not exist
         self.dir_path.mkdir(parents=True, exist_ok=True)

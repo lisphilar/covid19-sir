@@ -36,7 +36,7 @@ class ChangeFinder(Term):
         self.dates = [
             date_obj.strftime(self.DATE_FORMAT) for date_obj in sr_df.index]
         # Minimum size of records
-        self.min_size = self.ensure_natural_int(min_size, "min_size")
+        self.min_size = self._ensure_natural_int(min_size, "min_size")
         # Check length of records
         if self.min_size < 3:
             raise ValueError(
