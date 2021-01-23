@@ -342,7 +342,7 @@ class Term(object):
         return target
 
     @staticmethod
-    def ensure_list(target, candidates=None, name="target"):
+    def _ensure_list(target, candidates=None, name="target"):
         """
         Ensure the target is a sub-list of the candidates.
 

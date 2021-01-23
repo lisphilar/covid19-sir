@@ -169,7 +169,7 @@ class ParamTracker(Term):
         Returns:
             covsirphy.PhaseSeries
         """
-        phases = self.ensure_list(
+        phases = self._ensure_list(
             phases or self.all_phases(), candidates=None, name="phases")
         for phase in phases:
             self._series.disable(phase)
@@ -187,7 +187,7 @@ class ParamTracker(Term):
         """
         all_dis_phases = [
             self.num2str(num) for (num, unit) in enumerate(self._series) if not unit]
-        phases = self.ensure_list(
+        phases = self._ensure_list(
             phases or all_dis_phases, candidates=None, name="phases")
         for phase in phases:
             self._series.enable(phase)
@@ -258,7 +258,7 @@ class ParamTracker(Term):
         all_phases = self.all_phases()
         if "last" in set(phases):
             phases = [ph for ph in phases if ph != "last"] + [all_phases[-1]]
-        self.ensure_list(phases, candidates=all_phases, name="phases")
+        self._ensure_list(phases, candidates=all_phases, name="phases")
         phases = sorted(list(set(phases)), key=self.str2num, reverse=True)
         for ph in phases:
             self._series.delete(ph)
@@ -288,7 +288,7 @@ class ParamTracker(Term):
         else:
             phases = sorted(phases, key=self.str2num, reverse=False)
             last_phase = phases[-1]
-        self.ensure_list(phases, candidates=all_phases, name="phases")
+        self._ensure_list(phases, candidates=all_phases, name="phases")
         # Setting of the new phase
         start_date = self._series.unit(phases[0]).start_date
         end_date = self._series.unit(last_phase).end_date
@@ -356,7 +356,7 @@ class ParamTracker(Term):
         ]
         past_phases, past_units = zip(*past_nest)
         # Select phases to use
-        selected_phases = self.ensure_list(
+        selected_phases = self._ensure_list(
             phases or past_phases, candidates=past_phases, name="phases")
         final_phases = list(set(selected_phases) & set(past_phases))
         # Convert phase names to phase units
@@ -496,7 +496,7 @@ class ParamTracker(Term):
             raise ValueError(
                 f"@metrics must be selected from {metrics_str}, but {metrics} was applied.")
         variables = variables or [self.CI, self.F, self.R]
-        variables = self.ensure_list(
+        variables = self._ensure_list(
             variables, self.VALUE_COLUMNS, name="variables")
         # Disable the non-target phases
         all_phases, _ = self.past_phases(phases=None)

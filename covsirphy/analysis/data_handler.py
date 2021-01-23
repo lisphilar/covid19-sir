@@ -195,7 +195,7 @@ class DataHandler(Term):
             The kind of complement will be added to the title of the figure.
             - @variables can be selected from Susceptible/Confirmed/Infected/Fatal/Recovered.
         """
-        variables = self.ensure_list(
+        variables = self._ensure_list(
             variables or [self.CI, self.F, self.R],
             candidates=[self.S, *self.VALUE_COLUMNS], name="variables")
         df = self.record_df.loc[:, [self.DATE, *variables]]
@@ -230,7 +230,7 @@ class DataHandler(Term):
             @variables will be selected from Confirmed, Infected, Fatal and Recovered.
             If None was set as @variables, ["Confirmed", "Fatal", "Recovered"] will be used.
         """
-        variables = self.ensure_list(
+        variables = self._ensure_list(
             variables or [self.C, self.F, self.R], candidates=self.VALUE_COLUMNS, name="variables")
         window = self._ensure_natural_int(window, name="window")
         df = self.record_df.set_index(self.DATE)[variables]

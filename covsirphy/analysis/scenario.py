@@ -381,7 +381,7 @@ class Scenario(DataHandler):
             all_cols = [col for col in all_cols if col not in self.EST_COLS]
             all_cols += self.EST_COLS
         columns = columns or all_cols
-        self.ensure_list(columns, candidates=all_cols, name="columns")
+        self._ensure_list(columns, candidates=all_cols, name="columns")
         df = df.loc[:, columns]
         return df.dropna(how="all", axis=1).fillna(self.UNKNOWN)
 
@@ -533,7 +533,7 @@ class Scenario(DataHandler):
                 "Scenario.trend() or Scenario.add(), and Scenario.estimate(model)") from None
         # Show figure
         df = sim_df.set_index(self.DATE)
-        fig_cols = self.ensure_list(
+        fig_cols = self._ensure_list(
             variables or [self.CI, self.F, self.R], candidates=df.columns.tolist(), name="variables")
         title = f"{self.area}: Simulated number of cases ({name} scenario)"
         self.line_plot(
