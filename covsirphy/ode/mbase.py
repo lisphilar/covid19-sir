@@ -46,9 +46,7 @@ class ModelBase(Term):
         self.non_param_dict = {}
 
     def __str__(self):
-        param_str = ", ".join(
-            [f"{p}={v}" for (p, v) in self.non_param_dict.items()]
-        )
+        param_str = ", ".join(f"{p}={v}" for (p, v) in self.non_param_dict.items())
         return f"{self.NAME} model with {param_str}"
 
     def __getitem__(self, key):
