@@ -50,20 +50,20 @@ class JHUDataComplementHandler(Term):
                  lower_limit_days=7, upper_percentage=0.5,
                  lower_percentage=0.5):
         # Arguments for complement
-        self.recovery_period = self.ensure_natural_int(
+        self.recovery_period = self._ensure_natural_int(
             recovery_period, name="recovery_period")
-        self.interval = self.ensure_natural_int(interval, name="interval")
-        self.max_ignored = self.ensure_natural_int(
+        self.interval = self._ensure_natural_int(interval, name="interval")
+        self.max_ignored = self._ensure_natural_int(
             max_ignored, name="max_ignored")
-        self.max_ending_unupdated = self.ensure_natural_int(
+        self.max_ending_unupdated = self._ensure_natural_int(
             max_ending_unupdated, name="max_ending_unupdated")
-        self.upper_limit_days = self.ensure_natural_int(
+        self.upper_limit_days = self._ensure_natural_int(
             upper_limit_days, name="upper_limit_days")
-        self.lower_limit_days = self.ensure_natural_int(
+        self.lower_limit_days = self._ensure_natural_int(
             lower_limit_days, name="lower_limit_days")
-        self.upper_percentage = self.ensure_float(
+        self.upper_percentage = self._ensure_float(
             upper_percentage, name="upper_percentage")
-        self.lower_percentage = self.ensure_float(
+        self.lower_percentage = self._ensure_float(
             lower_percentage, name="lower_percentage")
         self.complement_dict = None
 
@@ -126,7 +126,7 @@ class JHUDataComplementHandler(Term):
                 - 'fully complemented recovered data'
                 - 'partially complemented recovered data'
         """
-        self.ensure_dataframe(
+        self._ensure_dataframe(
             subset_df, name="subset_df", columns=[self.DATE, *self.RAW_COLS])
         # Initialize
         after_df = subset_df.copy()
@@ -160,9 +160,12 @@ class JHUDataComplementHandler(Term):
                 Index: Date (pandas.TimeStamp)
                 Columns: Confirmed, Fatal, Recovered
         """
-        sel_invalid_R = subset_df[self.C] - subset_df[self.F] < subset_df[self.R]
-        subset_df.loc[sel_invalid_R, self.R] = subset_df[self.C] - subset_df[self.F]
-        subset_df.loc[sel_invalid_R, self.CI] = subset_df[self.C] - subset_df[self.F] - subset_df[self.R]
+        sel_invalid_R = subset_df[self.C] - \
+            subset_df[self.F] < subset_df[self.R]
+        subset_df.loc[sel_invalid_R,
+                      self.R] = subset_df[self.C] - subset_df[self.F]
+        subset_df.loc[sel_invalid_R, self.CI] = subset_df[self.C] - \
+            subset_df[self.F] - subset_df[self.R]
         return subset_df.set_index(self.DATE).loc[:, self.RAW_COLS]
 
     def _post_processing(self, df):

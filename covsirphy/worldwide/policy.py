@@ -28,16 +28,16 @@ class PolicyMeasures(Term):
 
     def __init__(self, jhu_data, population_data, oxcgrt_data, tau=None):
         # Records
-        self.jhu_data = self.ensure_instance(
+        self.jhu_data = self._ensure_instance(
             jhu_data, JHUData, name="jhu_data")
         # Population
-        self.population_data = self.ensure_instance(
+        self.population_data = self._ensure_instance(
             population_data, PopulationData, name="population_data")
         # OxCGRT
-        self.oxcgrt_data = self.ensure_instance(
+        self.oxcgrt_data = self._ensure_instance(
             oxcgrt_data, OxCGRTData, name="oxcgrt_data")
         # tau value must be shared
-        self.tau = self.ensure_tau(tau)
+        self.tau = self._ensure_tau(tau)
         # Init
         self._countries = self._all_countries()
         self._init_scenario()
@@ -113,7 +113,7 @@ class PolicyMeasures(Term):
         Note:
             Countries which do not have @min_len phases will be un-registered.
         """
-        min_len = self.ensure_natural_int(min_len, name="min_len")
+        min_len = self._ensure_natural_int(min_len, name="min_len")
         for country in self._countries:
             try:
                 self.scenario_dict[country].trend(
@@ -180,7 +180,7 @@ class PolicyMeasures(Term):
             n_jobs (int): the number of parallel jobs or -1 (CPU count)
             kwargs: keyword arguments of model parameters and covsirphy.Estimator.run()
         """
-        model = self.ensure_subclass(model, ModelBase, name="model")
+        model = self._ensure_subclass(model, ModelBase, name="model")
         unit_nest = [
             [
                 unit.set_id(
@@ -242,7 +242,7 @@ class PolicyMeasures(Term):
             values=param, index=self.DATE, columns=self.COUNTRY, aggfunc="last")
         # Rolling mean
         if roll_window is not None:
-            roll_window = self.ensure_natural_int(
+            roll_window = self._ensure_natural_int(
                 roll_window, name="roll_window")
             df = df.rolling(window=roll_window).mean()
         # Show figure

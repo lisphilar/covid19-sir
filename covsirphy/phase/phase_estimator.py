@@ -40,19 +40,19 @@ class MPEstimator(Term):
                  record_df=None, tau=None, **kwargs):
         # Records
         if jhu_data is not None and population_data is not None:
-            self.jhu_data = self.ensure_instance(
+            self.jhu_data = self._ensure_instance(
                 jhu_data, JHUData, name="jhu_data")
             # Population
-            self.population_data = self.ensure_instance(
+            self.population_data = self._ensure_instance(
                 population_data, PopulationData, name="population_data")
             self.from_dataset = True
         else:
-            self.record_df = self.ensure_dataframe(
+            self.record_df = self._ensure_dataframe(
                 record_df, name="record_df", columns=self.NLOC_COLUMNS)
             self.from_dataset = False
         # Arguments
-        self.model = self.ensure_subclass(model, ModelBase, "model")
-        self._tau = self.ensure_tau(tau)
+        self.model = self._ensure_subclass(model, ModelBase, "model")
+        self._tau = self._ensure_tau(tau)
         self.param_dict = {
             k: v for (k, v) in kwargs.items() if k in model.PARAMETERS}
         self._units = []

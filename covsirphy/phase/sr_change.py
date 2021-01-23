@@ -31,12 +31,12 @@ class ChangeFinder(Term):
 
     def __init__(self, sr_df, min_size=5, max_rmsle=20.0):
         # Dataset
-        self.sr_df = self.ensure_dataframe(
+        self.sr_df = self._ensure_dataframe(
             sr_df, name="sr_df", time_index=True, columns=[self.S, self.R])
         self.dates = [
             date_obj.strftime(self.DATE_FORMAT) for date_obj in sr_df.index]
         # Minimum size of records
-        self.min_size = self.ensure_natural_int(min_size, "min_size")
+        self.min_size = self._ensure_natural_int(min_size, "min_size")
         # Check length of records
         if self.min_size < 3:
             raise ValueError(
@@ -45,7 +45,7 @@ class ChangeFinder(Term):
             raise ValueError(
                 f"More than {min_size * 2} records must be included.")
         # Minimum value of RMSLE score
-        self.max_rmsle = self.ensure_float(max_rmsle)
+        self.max_rmsle = self._ensure_float(max_rmsle)
         # Setting for optimization
         self._change_dates = []
 

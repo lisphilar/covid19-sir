@@ -32,7 +32,7 @@ class Trend(Term):
 
     def __init__(self, sr_df):
         # Dataset
-        self.sr_df = self.ensure_dataframe(
+        self.sr_df = self._ensure_dataframe(
             sr_df, name="sr_df", time_index=True, columns=[self.S, self.R])
         # Dataset for analysis
         if len(self.sr_df) < 3:
@@ -219,7 +219,7 @@ class Trend(Term):
             vlines (list[int]): list of Recovered values to show vertical lines
             filename (str): filename of the figure, or None (show figure)
         """
-        result_df = cls.ensure_dataframe(
+        result_df = cls._ensure_dataframe(
             result_df, name="result_df", time_index=True,
             columns=[cls.R, f"{cls.S}{cls.A}", *predicted_cols]
         )

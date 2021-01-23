@@ -60,7 +60,7 @@ class SEWIRF(ModelBase):
             - @sigma (float)
         """
         # Total population
-        self.population = self.ensure_natural_int(
+        self.population = self._ensure_natural_int(
             population, name="population"
         )
         # Non-dim parameters
@@ -117,7 +117,7 @@ class SEWIRF(ModelBase):
                 - key (str): parameter name
                 - value (tuple(float, float)): min value and max value
         """
-        df = cls.ensure_dataframe(
+        df = cls._ensure_dataframe(
             taufree_df, name="taufree_df", columns=[cls.TS, *cls.VARIABLES]
         )
         df = df.loc[(df[cls.S] > 0) & (df[cls.CI] > 0)]
@@ -126,7 +126,8 @@ class SEWIRF(ModelBase):
         sigma_series = r.diff() / t.diff() / i
         # Calculate range
         _dict = {param: (0, 1) for param in cls.PARAMETERS}
-        _dict["sigma"] = tuple(sigma_series.quantile(cls.QUANTILE_RANGE).clip(0, 1))
+        _dict["sigma"] = tuple(sigma_series.quantile(
+            cls.QUANTILE_RANGE).clip(0, 1))
         return _dict
 
     @classmethod
@@ -156,7 +157,7 @@ class SEWIRF(ModelBase):
                     - Exposed (int): 0
                     - Waiting (int): 0
         """
-        df = cls.ensure_dataframe(
+        df = cls._ensure_dataframe(
             data_df, name="data_df", columns=cls.VALUE_COLUMNS)
         # Calculate dimensional variables
         df[cls.S] = population - df[cls.C]

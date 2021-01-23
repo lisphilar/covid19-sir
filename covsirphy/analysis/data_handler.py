@@ -25,11 +25,11 @@ class DataHandler(Term):
 
     def __init__(self, jhu_data, population_data, country, province=None, auto_complement=True):
         # Population
-        population_data = self.ensure_instance(
+        population_data = self._ensure_instance(
             population_data, PopulationData, name="population_data")
         self.population = population_data.value(country, province=province)
         # Records
-        self.jhu_data = self.ensure_instance(
+        self.jhu_data = self._ensure_instance(
             jhu_data, JHUData, name="jhu_data")
         # Area name
         self.country = country
@@ -72,8 +72,8 @@ class DataHandler(Term):
 
     @first_date.setter
     def first_date(self, date):
-        self.ensure_date_order(self._first_date, date, name="date")
-        self.ensure_date_order(date, self._last_date, name="date")
+        self._ensure_date_order(self._first_date, date, name="date")
+        self._ensure_date_order(date, self._last_date, name="date")
         self._first_date = date
         self.init_records()
 
@@ -86,8 +86,8 @@ class DataHandler(Term):
 
     @last_date.setter
     def last_date(self, date):
-        self.ensure_date_order(self._first_date, date, name="date")
-        self.ensure_date_order(date, self._last_date, name="date")
+        self._ensure_date_order(self._first_date, date, name="date")
+        self._ensure_date_order(date, self._last_date, name="date")
         self._last_date = date
         self.init_records()
 
@@ -195,7 +195,7 @@ class DataHandler(Term):
             The kind of complement will be added to the title of the figure.
             - @variables can be selected from Susceptible/Confirmed/Infected/Fatal/Recovered.
         """
-        variables = self.ensure_list(
+        variables = self._ensure_list(
             variables or [self.CI, self.F, self.R],
             candidates=[self.S, *self.VALUE_COLUMNS], name="variables")
         df = self.record_df.loc[:, [self.DATE, *variables]]
@@ -230,9 +230,9 @@ class DataHandler(Term):
             @variables will be selected from Confirmed, Infected, Fatal and Recovered.
             If None was set as @variables, ["Confirmed", "Fatal", "Recovered"] will be used.
         """
-        variables = self.ensure_list(
+        variables = self._ensure_list(
             variables or [self.C, self.F, self.R], candidates=self.VALUE_COLUMNS, name="variables")
-        window = self.ensure_natural_int(window, name="window")
+        window = self._ensure_natural_int(window, name="window")
         df = self.record_df.set_index(self.DATE)[variables]
         df = df.diff().dropna()
         df = df.rolling(window=window).mean().dropna().astype(np.int64)

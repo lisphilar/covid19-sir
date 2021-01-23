@@ -39,16 +39,14 @@ class ModelBase(Term):
             population (int): total population
         """
         # Total population
-        self.population = self.ensure_natural_int(
+        self.population = self._ensure_natural_int(
             population, name="population"
         )
         # Dictionary of non-dim parameters: {name: value}
         self.non_param_dict = {}
 
     def __str__(self):
-        param_str = ", ".join(
-            [f"{p}={v}" for (p, v) in self.non_param_dict.items()]
-        )
+        param_str = ", ".join(f"{p}={v}" for (p, v) in self.non_param_dict.items())
         return f"{self.NAME} model with {param_str}"
 
     def __getitem__(self, key):
@@ -210,8 +208,8 @@ class ModelBase(Term):
         if tau is None:
             df = df.drop(cls.DATE, axis=1)
             return cls.specialize(df, population=population).reset_index(drop=True)
-        tau = cls.ensure_tau(tau)
-        df = cls.ensure_dataframe(
+        tau = cls._ensure_tau(tau)
+        df = cls._ensure_dataframe(
             df, name="data_df", columns=cls.NLOC_COLUMNS)
         # Calculate elapsed time from the first date [min]
         df[cls.T] = (df[cls.DATE] - df[cls.DATE].min()).dt.total_seconds()

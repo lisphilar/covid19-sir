@@ -33,7 +33,7 @@ class JHUData(CleaningBase):
 
     @recovery_period.setter
     def recovery_period(self, value):
-        self._recovery_period = self.ensure_natural_int(value)
+        self._recovery_period = self._ensure_natural_int(value)
 
     def cleaned(self, **kwargs):
         """
@@ -97,7 +97,7 @@ class JHUData(CleaningBase):
         expected_cols = [
             self.DATE, self.ISO3, self.COUNTRY, self.PROVINCE, self.C, self.F, self.R
         ]
-        self.ensure_dataframe(df, name="the raw data", columns=expected_cols)
+        self._ensure_dataframe(df, name="the raw data", columns=expected_cols)
         # Datetime columns
         df[self.DATE] = pd.to_datetime(df[self.DATE])
         # Country
@@ -145,7 +145,7 @@ class JHUData(CleaningBase):
         Note:
             Citation of the country data will be added to 'JHUData.citation' description.
         """
-        self.ensure_instance(country_data, CountryData, name="country_data")
+        self._ensure_instance(country_data, CountryData, name="country_data")
         # Read new dataset
         country = country_data.country
         new = country_data.cleaned().loc[:, self.COLUMNS]
@@ -292,7 +292,7 @@ class JHUData(CleaningBase):
             @population must be specified.
             Records with Recovered > 0 will be used.
         """
-        population = self.ensure_population(population)
+        population = self._ensure_population(population)
         subset_df = self.subset(
             country=country, province=province,
             start_date=start_date, end_date=end_date, population=population)
@@ -310,7 +310,7 @@ class JHUData(CleaningBase):
             covsirphy.JHUData: JHU-style dataset
         """
         instance = cls(filename=None)
-        instance._cleaned_df = cls.ensure_dataframe(
+        instance._cleaned_df = cls._ensure_dataframe(
             dataframe, name="dataframe", columns=cls.COLUMNS)
         return instance
 

@@ -97,7 +97,7 @@ class Term(object):
         Returns:
             str
         """
-        num = cls.ensure_natural_int(num, include_zero=True)
+        num = cls._ensure_natural_int(num, include_zero=True)
         q, mod = divmod(num, 10)
         suffix = "th" if q % 10 == 1 else cls.SUFFIX_DICT[mod]
         return f"{num}{suffix}"
@@ -168,7 +168,7 @@ class Term(object):
         return flattened
 
     @staticmethod
-    def ensure_dataframe(target, name="df", time_index=False, columns=None):
+    def _ensure_dataframe(target, name="df", time_index=False, columns=None):
         """
         Ensure the dataframe has the columns.
 
@@ -198,7 +198,7 @@ class Term(object):
         return df
 
     @staticmethod
-    def ensure_natural_int(target, name="number", include_zero=False, none_ok=False):
+    def _ensure_natural_int(target, name="number", include_zero=False, none_ok=False):
         """
         Ensure a natural (non-negative) number.
 
@@ -231,7 +231,7 @@ class Term(object):
         return number
 
     @classmethod
-    def ensure_tau(cls, tau):
+    def _ensure_tau(cls, tau):
         """
         Ensure that the value can be used as tau value [min].
 
@@ -243,7 +243,7 @@ class Term(object):
         """
         if tau is None:
             return None
-        tau = cls.ensure_natural_int(tau, name="tau")
+        tau = cls._ensure_natural_int(tau, name="tau")
         if tau in set(cls.divisors(1440)):
             return tau
         raise ValueError(
@@ -251,7 +251,7 @@ class Term(object):
         )
 
     @classmethod
-    def ensure_population(cls, population):
+    def _ensure_population(cls, population):
         """
         Ensure that the population value is valid.
 
@@ -261,12 +261,12 @@ class Term(object):
         Returns:
             int: as-is
         """
-        return cls.ensure_natural_int(
+        return cls._ensure_natural_int(
             population, name="population", include_zero=False, none_ok=False
         )
 
     @staticmethod
-    def ensure_float(target, name="value"):
+    def _ensure_float(target, name="value"):
         """
         Ensure a float value.
         If the value is a float value and the type was string,
@@ -287,7 +287,7 @@ class Term(object):
         return value
 
     @classmethod
-    def ensure_date(cls, target, name="date"):
+    def _ensure_date(cls, target, name="date"):
         """
         Ensure the format of the string.
 
@@ -306,7 +306,7 @@ class Term(object):
         return target
 
     @staticmethod
-    def ensure_subclass(target, parent, name="target"):
+    def _ensure_subclass(target, parent, name="target"):
         """
         Ensure the target is a subclass of the parent class.
 
@@ -324,7 +324,7 @@ class Term(object):
         return target
 
     @staticmethod
-    def ensure_instance(target, class_obj, name="target"):
+    def _ensure_instance(target, class_obj, name="target"):
         """
         Ensure the target is a instance of the class object.
 
@@ -342,7 +342,7 @@ class Term(object):
         return target
 
     @staticmethod
-    def ensure_list(target, candidates=None, name="target"):
+    def _ensure_list(target, candidates=None, name="target"):
         """
         Ensure the target is a sub-list of the candidates.
 
@@ -382,7 +382,7 @@ class Term(object):
         Returns:
             list[int]: the list of divisors
         """
-        value = cls.ensure_natural_int(value)
+        value = cls._ensure_natural_int(value)
         return [
             i for i in range(1, value + 1) if value % i == 0
         ]
@@ -462,11 +462,11 @@ class Term(object):
         """
         sta = cls.date_obj(start_date)
         end = cls.date_obj(end_date)
-        tau = cls.ensure_tau(tau)
+        tau = cls._ensure_tau(tau)
         return math.ceil((end - sta) / timedelta(minutes=tau))
 
     @classmethod
-    def ensure_date_order(cls, previous_date, following_date, name="following_date"):
+    def _ensure_date_order(cls, previous_date, following_date, name="following_date"):
         """
         Ensure that the order of dates.
 

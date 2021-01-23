@@ -43,17 +43,17 @@ class Estimator(Term):
 
     def __init__(self, record_df, model, population, tau=None, **kwargs):
         # ODE model
-        self.model = self.ensure_subclass(model, ModelBase, name="model")
+        self.model = self._ensure_subclass(model, ModelBase, name="model")
         self.variables = model.VARIABLES[:]
         self.variables_evaluate = [
             v for (v, p) in zip(model.VARIABLES, model.WEIGHTS) if p > 0]
         # Dataset
         if not set(self.NLOC_COLUMNS).issubset(record_df.columns):
             record_df = model.restore(record_df)
-        self.record_df = self.ensure_dataframe(
+        self.record_df = self._ensure_dataframe(
             record_df, name="record_df", columns=self.NLOC_COLUMNS)
         # Settings for simulation
-        self.population = self.ensure_population(population)
+        self.population = self._ensure_population(population)
         df = model.tau_free(self.record_df, population, tau=None)
         self.y0_dict = {
             k: df.loc[df.index[0], k] for k in model.VARIABLES}
@@ -67,7 +67,7 @@ class Estimator(Term):
         self.total_trials = 0
         self.runtime = 0
         # Tau value
-        self.tau_final = self.ensure_tau(tau)
+        self.tau_final = self._ensure_tau(tau)
         self.tau_candidates = self.divisors(1440)
         self.tau = tau
         if tau is None:

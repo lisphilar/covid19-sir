@@ -39,8 +39,8 @@ class PCRData(CleaningBase):
                 filename, dtype={"Province/State": "object"}
             ).compute()
             self._cleaned_df = self._cleaning()
-        self.interval = self.ensure_natural_int(interval, name="interval")
-        self.min_pcr_tests = self.ensure_natural_int(
+        self.interval = self._ensure_natural_int(interval, name="interval")
+        self.min_pcr_tests = self._ensure_natural_int(
             min_pcr_tests, name="min_pcr_tests")
         self._citation = citation or ""
         # Cleaned dataset of "Our World In Data"
@@ -94,7 +94,7 @@ class PCRData(CleaningBase):
             axis=1
         )
         # Confirm the expected columns are in raw data
-        self.ensure_dataframe(
+        self._ensure_dataframe(
             df, name="the raw data", columns=self.PCR_COLUMNS)
         # Datetime columns
         df[self.DATE] = pd.to_datetime(df[self.DATE])
@@ -134,7 +134,7 @@ class PCRData(CleaningBase):
             covsirphy.PCRData: PCR dataset
         """
         instance = cls(filename=None)
-        instance._cleaned_df = cls.ensure_dataframe(
+        instance._cleaned_df = cls._ensure_dataframe(
             dataframe, name="dataframe", columns=cls.PCR_COLUMNS)
         return instance
 
@@ -235,10 +235,10 @@ class PCRData(CleaningBase):
         Returns:
             covsirphy.PCRData: self
         """
-        self.ensure_instance(country_data, CountryData, name="country_data")
+        self._ensure_instance(country_data, CountryData, name="country_data")
         # Read new dataset
         country = country_data.country
-        new = self.ensure_dataframe(
+        new = self._ensure_dataframe(
             country_data.cleaned(), name="the raw data", columns=self.PCR_COLUMNS)
         new = new.loc[:, self.PCR_COLUMNS]
         new[self.ISO3] = self.country_to_iso3(country)
@@ -324,7 +324,8 @@ class PCRData(CleaningBase):
         """
         # Whether complement is necessary or not
         tests_max = df[self.TESTS].max()
-        check_tests_ending = (df[self.TESTS] == tests_max).sum() > self.interval
+        check_tests_ending = (
+            df[self.TESTS] == tests_max).sum() > self.interval
         last_new_C = df[self.C].diff().rolling(window).mean().iloc[-1]
         check_C = last_new_C > self.min_pcr_tests
         if not (check_tests_ending and check_C):
@@ -535,7 +536,7 @@ class PCRData(CleaningBase):
             If non monotonic records were found for either confirmed cases or tests,
             "with partially complemented tests data" will be added to the title of the figure.
         """
-        window = self.ensure_natural_int(window, name="window")
+        window = self._ensure_natural_int(window, name="window")
         # Subset with area
         country_alias = self.ensure_country_name(country)
         province = province or self.UNKNOWN

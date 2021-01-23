@@ -59,10 +59,10 @@ class PhaseUnit(Term):
     """
 
     def __init__(self, start_date, end_date, population):
-        self.ensure_date_order(start_date, end_date, name="end_date")
+        self._ensure_date_order(start_date, end_date, name="end_date")
         self._start_date = start_date
         self._end_date = end_date
-        self._population = self.ensure_population(population)
+        self._population = self._ensure_population(population)
         # Summary of information
         self.info_dict = {
             self.START: start_date,
@@ -260,7 +260,7 @@ class PhaseUnit(Term):
     @ tau.setter
     def tau(self, value):
         if self._ode_dict[self.TAU] is None:
-            self._ode_dict[self.TAU] = self.ensure_tau(value)
+            self._ode_dict[self.TAU] = self._ensure_tau(value)
             return
         raise AttributeError(
             f"PhaseUnit.tau is not None ({self._ode_dict[self.TAU]}) and cannot be changed.")
@@ -344,13 +344,13 @@ class PhaseUnit(Term):
             covsirphy.PhaseUnit: self
         """
         # Tau value
-        tau = self.ensure_tau(tau) or self._ode_dict[self.TAU]
+        tau = self._ensure_tau(tau) or self._ode_dict[self.TAU]
         # Model
         model = model or self._model
         if model is None:
             self._ode_dict[self.TAU] = tau
             return self
-        self._model = self.ensure_subclass(model, ModelBase, name="model")
+        self._model = self._ensure_subclass(model, ModelBase, name="model")
         self.info_dict[self.ODE] = model.NAME
         # Parameter values
         param_dict = self._ode_dict.copy()
@@ -388,7 +388,7 @@ class PhaseUnit(Term):
 
     @ record_df.setter
     def record_df(self, df):
-        self._record_df = self.ensure_dataframe(
+        self._record_df = self._ensure_dataframe(
             df, name="df", columns=self.NLOC_COLUMNS)
         self.set_y0(df)
 
@@ -429,7 +429,7 @@ class PhaseUnit(Term):
         if record_df.empty:
             raise UnExecutedError(
                 "PhaseUnit.record_df = ...", message="or specify @record_df argument")
-        self.ensure_dataframe(
+        self._ensure_dataframe(
             record_df, name="record_df", columns=self.NLOC_COLUMNS)
         # Check dates
         sta = self.date_obj(self.start_date)
