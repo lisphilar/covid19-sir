@@ -67,7 +67,7 @@
             
             
               <div class="version">
-                2.15.0-delta
+                2.15.0-epsilon
               </div>
             
           
@@ -184,7 +184,7 @@
 <span class="kn">from</span> <span class="nn">covsirphy.cleaning.cbase</span> <span class="kn">import</span> <span class="n">CleaningBase</span>
 
 
-<div class="viewcode-block" id="VaccineData"><a class="viewcode-back" href="../../../covsirphy.html#covsirphy.VaccineData">[docs]</a><span class="k">class</span> <span class="nc">VaccineData</span><span class="p">(</span><span class="n">CleaningBase</span><span class="p">):</span>
+<div class="viewcode-block" id="VaccineData"><a class="viewcode-back" href="../../../covsirphy.cleaning.html#covsirphy.VaccineData">[docs]</a><span class="k">class</span> <span class="nc">VaccineData</span><span class="p">(</span><span class="n">CleaningBase</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Dataset regarding vaccination retrieved from &quot;Our World In Data&quot;.</span>
 <span class="sd">    https://github.com/owid/covid-19-data/tree/master/public/data</span>
@@ -272,7 +272,7 @@
         <span class="n">df</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">VAC</span><span class="p">]</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">VAC</span><span class="p">]</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">int64</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">df</span><span class="o">.</span><span class="n">loc</span><span class="p">[:,</span> <span class="bp">self</span><span class="o">.</span><span class="n">VAC_COLS</span><span class="p">]</span>
 
-<div class="viewcode-block" id="VaccineData.subset"><a class="viewcode-back" href="../../../covsirphy.html#covsirphy.VaccineData.subset">[docs]</a>    <span class="k">def</span> <span class="nf">subset</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">country</span><span class="p">,</span> <span class="n">product</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">start_date</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">end_date</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<div class="viewcode-block" id="VaccineData.subset"><a class="viewcode-back" href="../../../covsirphy.cleaning.html#covsirphy.VaccineData.subset">[docs]</a>    <span class="k">def</span> <span class="nf">subset</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">country</span><span class="p">,</span> <span class="n">product</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">start_date</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">end_date</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Return subset of the country/province and start/end date.</span>
 
@@ -315,7 +315,7 @@
                 <span class="n">start_date</span><span class="o">=</span><span class="n">start_date</span><span class="p">,</span> <span class="n">end_date</span><span class="o">=</span><span class="n">end_date</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">df</span></div>
 
-<div class="viewcode-block" id="VaccineData.records"><a class="viewcode-back" href="../../../covsirphy.html#covsirphy.VaccineData.records">[docs]</a>    <span class="k">def</span> <span class="nf">records</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">country</span><span class="p">,</span> <span class="n">product</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">start_date</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">end_date</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<div class="viewcode-block" id="VaccineData.records"><a class="viewcode-back" href="../../../covsirphy.cleaning.html#covsirphy.VaccineData.records">[docs]</a>    <span class="k">def</span> <span class="nf">records</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">country</span><span class="p">,</span> <span class="n">product</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">start_date</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">end_date</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Return subset of the country/province and start/end date.</span>
 
@@ -336,7 +336,7 @@
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">subset</span><span class="p">(</span>
             <span class="n">country</span><span class="o">=</span><span class="n">country</span><span class="p">,</span> <span class="n">product</span><span class="o">=</span><span class="n">product</span><span class="p">,</span> <span class="n">start_date</span><span class="o">=</span><span class="n">start_date</span><span class="p">,</span> <span class="n">end_date</span><span class="o">=</span><span class="n">end_date</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="VaccineData.total"><a class="viewcode-back" href="../../../covsirphy.html#covsirphy.VaccineData.total">[docs]</a>    <span class="k">def</span> <span class="nf">total</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="VaccineData.total"><a class="viewcode-back" href="../../../covsirphy.cleaning.html#covsirphy.VaccineData.total">[docs]</a>    <span class="k">def</span> <span class="nf">total</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Calculate total values of the cleaned dataset.</span>
 
