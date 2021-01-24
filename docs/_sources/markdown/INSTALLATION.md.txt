@@ -22,28 +22,35 @@ When using **development versions** of CovsirPhy in Kaggle Notebook, please run 
 
 # Dataset preparation
 
-Recommended datasets for analysis can be downloaded and updated easily with `DataLoader` class. If you have CSV files in your environment, you can analyse them.
+With `DataLoader` class, we can download recommended datasets for analysis and save/update them in your local environment. Optionally, you can use your local dataset which is saved in a CSV file.
 
-All raw datasets are retrieved from public databases. No confidential information is included. If you find any issues, please let us know via GitHub issue page.
+All raw datasets are retrieved from public databases. No confidential information is included. If you find any issues, please let us know via [GitHub issue page](https://github.com/lisphilar/covid19-sir/issues).
 
 ## 1. Recommended datasets
 
-With the following codes,  we can download the latest recommended datasets and save them in "input" folder of the current directory. Please refer to [Usage (datasets)](https://lisphilar.github.io/covid19-sir/usage_dataset.html) to find the details of the datasets.
+With the following codes, we can download the latest recommended datasets and save them in "input" folder of the current directory. Please refer to [Usage (datasets)](https://lisphilar.github.io/covid19-sir/usage_dataset.html) to find the details of the datasets.
+
+At first, import CovsirPhy package and check the version number.
 
 ```Python
 import covsirphy as cs
 cs.__version__
+```
+
+Save the recommended datasets in "input" folder of the current directory.  
+
+```Python
 # Create DataLoader instance
 data_loader = cs.DataLoader("input")
+# The number of cases (JHU style)
+jhu_data = data_loader.jhu()
+# Population in each country
+population_data = data_loader.population()
+# Government Response Tracker (OxCGRT)
+oxcgrt_data = data_loader.oxcgrt()
 ```
 
 ```Python
-# (Main) The number of cases (JHU style)
-jhu_data = data_loader.jhu()
-# (Main) Population in each country
-population_data = data_loader.population()
-# (Main) Government Response Tracker (OxCGRT)
-oxcgrt_data = data_loader.oxcgrt()
 # Linelist of case reports
 linelist = data_loader.linelist()
 # The number of tests
@@ -75,20 +82,20 @@ Xu, B., Gutierrez, B., Mekaru, S. et al. Epidemiological data from the COVID-19 
 
 ### [Our World In Data](https://github.com/owid/covid-19-data/tree/master/public/data)
 
-Citation: Hasell, J., Mathieu, E., Beltekian, D. et al. A cross-country database of COVID-19 testing. Sci Data 7, 345 (2020). https://doi.org/10.1038/s41597-020-00688-8
+Citation: Hasell, J., Mathieu, E., Beltekian, D. et al. A cross-country database of COVID-19 testing. Sci Data 7, 345 (2020). [https://doi.org/10.1038/s41597-020-00688-8](https://doi.org/10.1038/s41597-020-00688-8)
 
 - The number of tests
 - The number of vaccinations
 
 ### [World Bank Open Data](https://data.worldbank.org/)
 
-Citation: World Bank Group (2020), World Bank Open Data, https://data.worldbank.org/
+Citation: World Bank Group (2020), World Bank Open Data, [https://data.worldbank.org/](https://data.worldbank.org/)
 
 - Population pyramid
 
 ### [Datasets for CovsirPhy](https://github.com/lisphilar/covid19-sir/tree/master/data)
 
-Lisphilar (2020), GitHub repository, COVID-19 dataset in Japan.  
+Lisphilar (2020), GitHub repository, COVID-19 dataset in Japan, [https://github.com/lisphilar/covid19-sir/tree/master/data](https://github.com/lisphilar/covid19-sir/tree/master/data).  
 
 - The number of cases in Japan (total/prefectures)
 - Metadata regarding Japan prefectures
@@ -188,7 +195,7 @@ Kaggle API: Move to account page of Kaggle and download "kaggle.json" by selecti
 
 ## 4. Acknowledgement
 
-On Feb2020, CovsirPhy project started in Kaggle platform with [COVID-19 data with SIR model](https://www.kaggle.com/lisphilar/covid-19-data-with-sir-model) notebook using the following datasets.
+In Feb2020, CovsirPhy project started in Kaggle platform with [COVID-19 data with SIR model](https://www.kaggle.com/lisphilar/covid-19-data-with-sir-model) notebook using the following datasets.
 
 - The number of cases (JHU) and linelist: [Novel Corona Virus 2019 Dataset by SRK](https://www.kaggle.com/sudalairajkumar/novel-corona-virus-2019-dataset)
 - Population in each country:  [covid19 global forecasting: locations population by Dmitry A. Grechka](https://www.kaggle.com/dgrechka/covid19-global-forecasting-locations-population)

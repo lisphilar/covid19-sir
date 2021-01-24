@@ -187,7 +187,7 @@
 <span class="kn">import</span> <span class="nn">seaborn</span> <span class="k">as</span> <span class="nn">sns</span>
 
 
-<div class="viewcode-block" id="Optimizer"><a class="viewcode-back" href="../../../covsirphy.util.html#covsirphy.Optimizer">[docs]</a><span class="k">class</span> <span class="nc">Optimizer</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+<div class="viewcode-block" id="Optimizer"><a class="viewcode-back" href="../../../covsirphy.html#covsirphy.Optimizer">[docs]</a><span class="k">class</span> <span class="nc">Optimizer</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Hyperparameter optimization with Optuna package.</span>
 
@@ -232,7 +232,7 @@
             <span class="n">sampler</span><span class="o">=</span><span class="n">optuna</span><span class="o">.</span><span class="n">samplers</span><span class="o">.</span><span class="n">TPESampler</span><span class="p">(</span><span class="n">seed</span><span class="o">=</span><span class="n">seed</span><span class="p">)</span>
         <span class="p">)</span>
 
-<div class="viewcode-block" id="Optimizer.run"><a class="viewcode-back" href="../../../covsirphy.util.html#covsirphy.Optimizer.run">[docs]</a>    <span class="k">def</span> <span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">n_trials</span><span class="p">,</span> <span class="n">timeout</span><span class="p">,</span> <span class="n">n_jobs</span><span class="o">=-</span><span class="mi">1</span><span class="p">,</span> <span class="n">seed</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<div class="viewcode-block" id="Optimizer.run"><a class="viewcode-back" href="../../../covsirphy.html#covsirphy.Optimizer.run">[docs]</a>    <span class="k">def</span> <span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">n_trials</span><span class="p">,</span> <span class="n">timeout</span><span class="p">,</span> <span class="n">n_jobs</span><span class="o">=-</span><span class="mi">1</span><span class="p">,</span> <span class="n">seed</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Run optimization.</span>
 <span class="sd">        This method can be overwritten in subclass.</span>
@@ -258,7 +258,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">runtime</span> <span class="o">+=</span> <span class="p">(</span><span class="n">end_time</span> <span class="o">-</span> <span class="n">start_time</span><span class="p">)</span><span class="o">.</span><span class="n">total_seconds</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">total_trials</span> <span class="o">+=</span> <span class="n">n_trials</span></div>
 
-<div class="viewcode-block" id="Optimizer.objective"><a class="viewcode-back" href="../../../covsirphy.util.html#covsirphy.Optimizer.objective">[docs]</a>    <span class="k">def</span> <span class="nf">objective</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">trial</span><span class="p">):</span>
+<div class="viewcode-block" id="Optimizer.objective"><a class="viewcode-back" href="../../../covsirphy.html#covsirphy.Optimizer.objective">[docs]</a>    <span class="k">def</span> <span class="nf">objective</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">trial</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Objective function of Optuna study.</span>
 <span class="sd">        This defines the parameter values using Optuna.</span>
@@ -273,7 +273,7 @@
         <span class="n">param_dict</span> <span class="o">=</span> <span class="p">{}</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">error_f</span><span class="p">(</span><span class="n">param_dict</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">train_df</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="Optimizer.error_f"><a class="viewcode-back" href="../../../covsirphy.util.html#covsirphy.Optimizer.error_f">[docs]</a>    <span class="k">def</span> <span class="nf">error_f</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">param_dict</span><span class="p">,</span> <span class="n">train_df</span><span class="p">):</span>
+<div class="viewcode-block" id="Optimizer.error_f"><a class="viewcode-back" href="../../../covsirphy.html#covsirphy.Optimizer.error_f">[docs]</a>    <span class="k">def</span> <span class="nf">error_f</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">param_dict</span><span class="p">,</span> <span class="n">train_df</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Definition of error score to minimize in the study.</span>
 <span class="sd">        This method should be overwritten in subclass.</span>
@@ -298,7 +298,7 @@
         <span class="n">_</span> <span class="o">=</span> <span class="p">(</span><span class="n">sim_df</span><span class="p">,</span> <span class="n">comp_df</span><span class="p">)</span>
         <span class="k">return</span> <span class="mi">0</span></div>
 
-<div class="viewcode-block" id="Optimizer.simulate"><a class="viewcode-back" href="../../../covsirphy.util.html#covsirphy.Optimizer.simulate">[docs]</a>    <span class="k">def</span> <span class="nf">simulate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">param_dict</span><span class="p">):</span>
+<div class="viewcode-block" id="Optimizer.simulate"><a class="viewcode-back" href="../../../covsirphy.html#covsirphy.Optimizer.simulate">[docs]</a>    <span class="k">def</span> <span class="nf">simulate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">param_dict</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Simulate the values with the parameters.</span>
 <span class="sd">        This method should be overwritten in subclass.</span>
@@ -319,7 +319,7 @@
         <span class="n">_</span> <span class="o">=</span> <span class="n">param_dict</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
         <span class="k">return</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">x</span><span class="p">,</span> <span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">y_list</span><span class="p">])</span></div>
 
-<div class="viewcode-block" id="Optimizer.compare"><a class="viewcode-back" href="../../../covsirphy.util.html#covsirphy.Optimizer.compare">[docs]</a>    <span class="k">def</span> <span class="nf">compare</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">actual_df</span><span class="p">,</span> <span class="n">predicted_df</span><span class="p">):</span>
+<div class="viewcode-block" id="Optimizer.compare"><a class="viewcode-back" href="../../../covsirphy.html#covsirphy.Optimizer.compare">[docs]</a>    <span class="k">def</span> <span class="nf">compare</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">actual_df</span><span class="p">,</span> <span class="n">predicted_df</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Return comparison table.</span>
 
@@ -354,7 +354,7 @@
             <span class="n">predicted_df</span><span class="p">,</span> <span class="n">on</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">x</span><span class="p">,</span> <span class="n">suffixes</span><span class="o">=</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">A</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">P</span><span class="p">))</span>
         <span class="k">return</span> <span class="n">df</span><span class="o">.</span><span class="n">set_index</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">x</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="Optimizer.param"><a class="viewcode-back" href="../../../covsirphy.util.html#covsirphy.Optimizer.param">[docs]</a>    <span class="k">def</span> <span class="nf">param</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="Optimizer.param"><a class="viewcode-back" href="../../../covsirphy.html#covsirphy.Optimizer.param">[docs]</a>    <span class="k">def</span> <span class="nf">param</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Return the estimated parameters as a dictionary.</span>
 
@@ -367,7 +367,7 @@
         <span class="n">param_dict</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">fixed_dict</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">param_dict</span></div>
 
-<div class="viewcode-block" id="Optimizer.result"><a class="viewcode-back" href="../../../covsirphy.util.html#covsirphy.Optimizer.result">[docs]</a>    <span class="k">def</span> <span class="nf">result</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">):</span>
+<div class="viewcode-block" id="Optimizer.result"><a class="viewcode-back" href="../../../covsirphy.html#covsirphy.Optimizer.result">[docs]</a>    <span class="k">def</span> <span class="nf">result</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Return the estimated parameters as a dataframe.</span>
 <span class="sd">        This method should be overwritten in subclass.</span>
@@ -392,7 +392,7 @@
         <span class="n">param_dict</span><span class="p">[</span><span class="s2">&quot;Runtime&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">minutes</span><span class="si">}</span><span class="s2"> min </span><span class="si">{</span><span class="n">seconds</span><span class="si">}</span><span class="s2"> sec&quot;</span>
         <span class="k">return</span> <span class="n">param_dict</span></div>
 
-<div class="viewcode-block" id="Optimizer.rmsle"><a class="viewcode-back" href="../../../covsirphy.util.html#covsirphy.Optimizer.rmsle">[docs]</a>    <span class="k">def</span> <span class="nf">rmsle</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">train_df</span><span class="p">,</span> <span class="n">dim</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
+<div class="viewcode-block" id="Optimizer.rmsle"><a class="viewcode-back" href="../../../covsirphy.html#covsirphy.Optimizer.rmsle">[docs]</a>    <span class="k">def</span> <span class="nf">rmsle</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">train_df</span><span class="p">,</span> <span class="n">dim</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Calculate RMSLE score.</span>
 <span class="sd">        This method can be overwritten in child class.</span>
@@ -420,7 +420,7 @@
         <span class="n">diffs</span> <span class="o">=</span> <span class="p">[((</span><span class="n">a</span> <span class="o">-</span> <span class="n">p</span><span class="p">)</span> <span class="o">**</span> <span class="mi">2</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span> <span class="k">for</span> <span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">p</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">a_list</span><span class="p">,</span> <span class="n">p_list</span><span class="p">)]</span>
         <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="nb">sum</span><span class="p">(</span><span class="n">diffs</span><span class="p">)</span> <span class="o">/</span> <span class="nb">len</span><span class="p">(</span><span class="n">diffs</span><span class="p">))</span></div>
 
-<div class="viewcode-block" id="Optimizer.predict"><a class="viewcode-back" href="../../../covsirphy.util.html#covsirphy.Optimizer.predict">[docs]</a>    <span class="k">def</span> <span class="nf">predict</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="Optimizer.predict"><a class="viewcode-back" href="../../../covsirphy.html#covsirphy.Optimizer.predict">[docs]</a>    <span class="k">def</span> <span class="nf">predict</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Predict the values with the calculated values.</span>
 <span class="sd">        This method can be overwritten in subclass.</span>
@@ -428,7 +428,7 @@
         <span class="n">param_dict</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">param</span><span class="p">()</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">simulate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">step_n</span><span class="p">,</span> <span class="n">param_dict</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="Optimizer.history"><a class="viewcode-back" href="../../../covsirphy.util.html#covsirphy.Optimizer.history">[docs]</a>    <span class="k">def</span> <span class="nf">history</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">show_figure</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">filename</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<div class="viewcode-block" id="Optimizer.history"><a class="viewcode-back" href="../../../covsirphy.html#covsirphy.Optimizer.history">[docs]</a>    <span class="k">def</span> <span class="nf">history</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">show_figure</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">filename</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Show the history of optimization as a figure</span>
 <span class="sd">            and return it as dataframe.</span>
@@ -461,7 +461,7 @@
         <span class="n">plt</span><span class="o">.</span><span class="n">clf</span><span class="p">()</span>
         <span class="k">return</span> <span class="n">df</span></div>
 
-<div class="viewcode-block" id="Optimizer.accuracy"><a class="viewcode-back" href="../../../covsirphy.util.html#covsirphy.Optimizer.accuracy">[docs]</a>    <span class="k">def</span> <span class="nf">accuracy</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">train_df</span><span class="p">,</span> <span class="n">variables</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">show_figure</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">filename</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<div class="viewcode-block" id="Optimizer.accuracy"><a class="viewcode-back" href="../../../covsirphy.html#covsirphy.Optimizer.accuracy">[docs]</a>    <span class="k">def</span> <span class="nf">accuracy</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">train_df</span><span class="p">,</span> <span class="n">variables</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">show_figure</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">filename</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Show the accuracy as a figure.</span>
 <span class="sd">        This method can be overwritten in child class.</span>

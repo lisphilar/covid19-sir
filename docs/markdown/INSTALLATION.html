@@ -237,24 +237,28 @@
 </div>
 <div class="section" id="dataset-preparation">
 <h1>Dataset preparation<a class="headerlink" href="#dataset-preparation" title="Permalink to this headline">¶</a></h1>
-<p>Recommended datasets for analysis can be downloaded and updated easily with <code class="docutils literal notranslate"><span class="pre">DataLoader</span></code> class. If you have CSV files in your environment, you can analyse them.</p>
-<p>All raw datasets are retrieved from public databases. No confidential information is included. If you find any issues, please let us know via GitHub issue page.</p>
+<p>With <code class="docutils literal notranslate"><span class="pre">DataLoader</span></code> class, we can download recommended datasets for analysis and save/update them in your local environment. Optionally, you can use your local dataset which is saved in a CSV file.</p>
+<p>All raw datasets are retrieved from public databases. No confidential information is included. If you find any issues, please let us know via <a class="reference external" href="https://github.com/lisphilar/covid19-sir/issues">GitHub issue page</a>.</p>
 <div class="section" id="recommended-datasets">
 <h2>1. Recommended datasets<a class="headerlink" href="#recommended-datasets" title="Permalink to this headline">¶</a></h2>
-<p>With the following codes,  we can download the latest recommended datasets and save them in “input” folder of the current directory. Please refer to <a class="reference external" href="https://lisphilar.github.io/covid19-sir/usage_dataset.html">Usage (datasets)</a> to find the details of the datasets.</p>
+<p>With the following codes, we can download the latest recommended datasets and save them in “input” folder of the current directory. Please refer to <a class="reference external" href="https://lisphilar.github.io/covid19-sir/usage_dataset.html">Usage (datasets)</a> to find the details of the datasets.</p>
+<p>At first, import CovsirPhy package and check the version number.</p>
 <div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">covsirphy</span> <span class="k">as</span> <span class="nn">cs</span>
 <span class="n">cs</span><span class="o">.</span><span class="n">__version__</span>
-<span class="c1"># Create DataLoader instance</span>
-<span class="n">data_loader</span> <span class="o">=</span> <span class="n">cs</span><span class="o">.</span><span class="n">DataLoader</span><span class="p">(</span><span class="s2">&quot;input&quot;</span><span class="p">)</span>
 </pre></div>
 </div>
-<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="c1"># (Main) The number of cases (JHU style)</span>
+<p>Save the recommended datasets in “input” folder of the current directory.</p>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Create DataLoader instance</span>
+<span class="n">data_loader</span> <span class="o">=</span> <span class="n">cs</span><span class="o">.</span><span class="n">DataLoader</span><span class="p">(</span><span class="s2">&quot;input&quot;</span><span class="p">)</span>
+<span class="c1"># The number of cases (JHU style)</span>
 <span class="n">jhu_data</span> <span class="o">=</span> <span class="n">data_loader</span><span class="o">.</span><span class="n">jhu</span><span class="p">()</span>
-<span class="c1"># (Main) Population in each country</span>
+<span class="c1"># Population in each country</span>
 <span class="n">population_data</span> <span class="o">=</span> <span class="n">data_loader</span><span class="o">.</span><span class="n">population</span><span class="p">()</span>
-<span class="c1"># (Main) Government Response Tracker (OxCGRT)</span>
+<span class="c1"># Government Response Tracker (OxCGRT)</span>
 <span class="n">oxcgrt_data</span> <span class="o">=</span> <span class="n">data_loader</span><span class="o">.</span><span class="n">oxcgrt</span><span class="p">()</span>
-<span class="c1"># Linelist of case reports</span>
+</pre></div>
+</div>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Linelist of case reports</span>
 <span class="n">linelist</span> <span class="o">=</span> <span class="n">data_loader</span><span class="o">.</span><span class="n">linelist</span><span class="p">()</span>
 <span class="c1"># The number of tests</span>
 <span class="n">pcr_data</span> <span class="o">=</span> <span class="n">data_loader</span><span class="o">.</span><span class="n">pcr</span><span class="p">()</span>
@@ -286,7 +290,7 @@
 </div>
 <div class="section" id="our-world-in-data">
 <h3><a class="reference external" href="https://github.com/owid/covid-19-data/tree/master/public/data">Our World In Data</a><a class="headerlink" href="#our-world-in-data" title="Permalink to this headline">¶</a></h3>
-<p>Citation: Hasell, J., Mathieu, E., Beltekian, D. et al. A cross-country database of COVID-19 testing. Sci Data 7, 345 (2020). https://doi.org/10.1038/s41597-020-00688-8</p>
+<p>Citation: Hasell, J., Mathieu, E., Beltekian, D. et al. A cross-country database of COVID-19 testing. Sci Data 7, 345 (2020). <a class="reference external" href="https://doi.org/10.1038/s41597-020-00688-8">https://doi.org/10.1038/s41597-020-00688-8</a></p>
 <ul class="simple">
 <li><p>The number of tests</p></li>
 <li><p>The number of vaccinations</p></li>
@@ -294,14 +298,14 @@
 </div>
 <div class="section" id="world-bank-open-data">
 <h3><a class="reference external" href="https://data.worldbank.org/">World Bank Open Data</a><a class="headerlink" href="#world-bank-open-data" title="Permalink to this headline">¶</a></h3>
-<p>Citation: World Bank Group (2020), World Bank Open Data, https://data.worldbank.org/</p>
+<p>Citation: World Bank Group (2020), World Bank Open Data, <a class="reference external" href="https://data.worldbank.org/">https://data.worldbank.org/</a></p>
 <ul class="simple">
 <li><p>Population pyramid</p></li>
 </ul>
 </div>
 <div class="section" id="datasets-for-covsirphy">
 <h3><a class="reference external" href="https://github.com/lisphilar/covid19-sir/tree/master/data">Datasets for CovsirPhy</a><a class="headerlink" href="#datasets-for-covsirphy" title="Permalink to this headline">¶</a></h3>
-<p>Lisphilar (2020), GitHub repository, COVID-19 dataset in Japan.</p>
+<p>Lisphilar (2020), GitHub repository, COVID-19 dataset in Japan, <a class="reference external" href="https://github.com/lisphilar/covid19-sir/tree/master/data">https://github.com/lisphilar/covid19-sir/tree/master/data</a>.</p>
 <ul class="simple">
 <li><p>The number of cases in Japan (total/prefectures)</p></li>
 <li><p>Metadata regarding Japan prefectures</p></li>
@@ -391,7 +395,7 @@
 </div>
 <div class="section" id="acknowledgement">
 <h2>4. Acknowledgement<a class="headerlink" href="#acknowledgement" title="Permalink to this headline">¶</a></h2>
-<p>On Feb2020, CovsirPhy project started in Kaggle platform with <a class="reference external" href="https://www.kaggle.com/lisphilar/covid-19-data-with-sir-model">COVID-19 data with SIR model</a> notebook using the following datasets.</p>
+<p>In Feb2020, CovsirPhy project started in Kaggle platform with <a class="reference external" href="https://www.kaggle.com/lisphilar/covid-19-data-with-sir-model">COVID-19 data with SIR model</a> notebook using the following datasets.</p>
 <ul class="simple">
 <li><p>The number of cases (JHU) and linelist: <a class="reference external" href="https://www.kaggle.com/sudalairajkumar/novel-corona-virus-2019-dataset">Novel Corona Virus 2019 Dataset by SRK</a></p></li>
 <li><p>Population in each country:  <a class="reference external" href="https://www.kaggle.com/dgrechka/covid19-global-forecasting-locations-population">covid19 global forecasting: locations population by Dmitry A. Grechka</a></p></li>
