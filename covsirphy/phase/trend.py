@@ -131,7 +131,7 @@ class Trend(Term):
             self.fit_fnc, x_series, y_series,
             p0=[a_ini, b_ini],
             # Increase mux number of iteration in curve fitting from 600 (default)
-            maxfev=5000
+            maxfev=10000
         )
         # Predict the values with the parameters
         f_partial = functools.partial(
