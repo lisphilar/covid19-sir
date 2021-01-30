@@ -4,8 +4,11 @@
 import numpy as np
 import sklearn
 from covsirphy.util.error import UnExecutedError
+from covsirphy.util.argument import find_args
+from covsirphy.util.plotting import line_plot_multiple
 from covsirphy.cleaning.term import Term
 from covsirphy.ode.mbase import ModelBase
+from covsirphy.phase.sr_change import ChangeFinder
 from covsirphy.phase.phase_unit import PhaseUnit
 from covsirphy.phase.phase_estimator import MPEstimator
 from covsirphy.phase.phase_series import PhaseSeries
@@ -80,25 +83,25 @@ class ParamTracker(Term):
         """
         return self._series.unit(phase="last").model
 
-    def trend(self, force=True, show_figure=False, filename=None, **kwargs):
+    def trend(self, force=True, show_figure=False, **kwargs):
         """
         Split the records with trend analysis.
 
         Args:
             force (bool): if True, change points will be over-written
             show_figure (bool): if True, show the result as a figure
-            filename (str): filename of the figure, or None (show figure)
-            kwargs: keyword arguments of ChangeFinder()
+            kwargs: keyword arguments of covsirphy.ChangeFinder() and covsirphy.line_plot_multiple()
 
         Returns:
             covsirphy.PhaseSeries
         """
         sr_df = self.record_df.set_index(self.DATE).loc[:, [self.R, self.S]]
         if force or not self._series:
-            self._series.trend(sr_df=sr_df, **kwargs)
+            trend_kwargs = find_args(ChangeFinder, **kwargs)
+            self._series.trend(sr_df=sr_df, **trend_kwargs)
         if show_figure:
-            self._series.trend_show(
-                sr_df=sr_df, area=self.area, filename=filename)
+            show_kwargs = find_args(line_plot_multiple, **kwargs)
+            self._series.trend_show(sr_df=sr_df, area=self.area, **show_kwargs)
         return self._series
 
     def _ensure_phase_setting(self):
