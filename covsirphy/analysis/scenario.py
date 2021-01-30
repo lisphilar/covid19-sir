@@ -39,7 +39,7 @@ class Scenario(DataHandler):
         self._oxcgrt_data = None
         self._lm_dict = {}
         # Default delay days
-        self.delay_days = jhu_data.recovery_period
+        self.delay_days = self.jhu_data.recovery_period
 
     def __getitem__(self, key):
         """
@@ -1055,7 +1055,7 @@ class Scenario(DataHandler):
                 "Delay days could not be estimated for {self.country} and delay set to default: {self.delay_days} [days]",
                 UserWarning, stacklevel=1
             )
-            return self.delay_days, default_df
+            return self.jhu_data.recovery_period, default_df
         results_df = reset_series[results].reset_index()
         results_df = results_df.interpolate(
             method="linear").dropna().astype(np.float64)
@@ -1075,7 +1075,7 @@ class Scenario(DataHandler):
             df_filtered["Period Length"].mean())
         return delay_days, df[[target, indicator, "Period Length"]]
 
-    def _fit_create_data(self, oxcgrt_data, model, name, delay=None):
+    def _fit_create_data(self, oxcgrt_data, model, name, delay):
         """
         Create train/test dataset for Elastic Net regression,
         assuming that OxCGRT scores will impact on ODE parameter values with delay (recovery period).
@@ -1084,8 +1084,7 @@ class Scenario(DataHandler):
             oxcgrt_data (covsirphy.OxCGRTData): OxCGRT dataset
             model (covsirphy.ModelBase): ODE model
             name (str): scenario name
-            delay (int): number of days of delay between policy measure and effect
-            on number of confirmed cases.
+            delay (int): number of days of delay between policy measure and effect on number of confirmed cases
 
         Returns:
             tuple(pandas.DataFrame):
@@ -1099,8 +1098,6 @@ class Scenario(DataHandler):
         oxcgrt_df = oxcgrt_data.subset(
             country=self.country).set_index(self.DATE)[OxCGRTData.OXCGRT_VARS_INDICATORS]
         # Apply delay on OxCGRT data
-        if delay is None:
-            delay, _ = self.estimate_delay(oxcgrt_data)
         oxcgrt_df.index += timedelta(days=delay)
         # Create training/test dataset
         df = param_df.join(oxcgrt_df, how="inner")
@@ -1151,6 +1148,10 @@ class Scenario(DataHandler):
             raise UnExecutedError(
                 "Scenario.estimate() or Scenario.add()",
                 message=f", specifying @model (covsirphy.SIRF etc.) and @name='{name}'.")
+        # Set delay effect
+        if delay is None:
+            delay, _ = self.estimate_delay(oxcgrt_data)
+        self.delay_days = delay
         # Create training/test dataset
         X, y, *_ = self._fit_create_data(
             oxcgrt_data=oxcgrt_data, model=model, name=name, delay=delay)
@@ -1204,7 +1205,7 @@ class Scenario(DataHandler):
         self.clear(name=name)
         # Create X dataset of the target dates
         *_, X_target = self._fit_create_data(
-            oxcgrt_data=self._oxcgrt_data, model=model, name=name)
+            oxcgrt_data=self._oxcgrt_data, model=model, name=name, delay=self.delay_days)
         # -> end_date/parameter values
         df = pd.DataFrame(
             lm.predict(X_target), index=X_target.index, columns=model.PARAMETERS)
