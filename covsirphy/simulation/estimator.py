@@ -398,13 +398,12 @@ class Estimator(Term):
         # Prepare figure object
         val_len = len(variables) + 1
         fig, axes = plt.subplots(
-            ncols=1, nrows=val_len, figsize=(9, 6 * val_len / 2)
-        )
+            ncols=1, nrows=val_len, figsize=(9, 6 * val_len / 2))
         # Comparison of each variable
         for (ax, v) in zip(axes.ravel()[1:], variables):
             df[[f"{v}{self.A}", f"{v}{self.P}"]].plot.line(
                 ax=ax, ylim=(0, None), sharex=True,
-                title=f"{self.model.NAME}: Comparison of observed/estimated {v}(t)"
+                title=f"{self.model.NAME}: Comparison regarding {v}(t)"
             )
             ax.yaxis.set_major_formatter(ScalarFormatter(useMathText=True))
             ax.ticklabel_format(style="sci", axis="y", scilimits=(0, 0))
@@ -423,8 +422,8 @@ class Estimator(Term):
             ScalarFormatter(useMathText=True))
         axes.ravel()[0].ticklabel_format(
             style="sci", axis="y", scilimits=(0, 0))
-        axes.ravel()[0].legend(bbox_to_anchor=(1.02, 0),
-                               loc="lower left", borderaxespad=0)
+        axes.ravel()[0].legend(
+            bbox_to_anchor=(1.02, 0), loc="lower left", borderaxespad=0)
         fig.tight_layout()
         # Save figure or show figure
         if filename is None:
