@@ -2,15 +2,11 @@
 # -*- coding: utf-8 -*-
 
 import functools
-import sys
 import warnings
-import matplotlib
-if not hasattr(sys, "ps1"):
-    matplotlib.use("Agg")
-import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 from scipy.optimize import curve_fit, OptimizeWarning
+from covsirphy.util.plotting import line_plot_multiple
 from covsirphy.cleaning.term import Term
 
 
@@ -179,13 +175,13 @@ class Trend(Term):
         )
         return scores.sum()
 
-    def show(self, area, filename=None):
+    def show(self, area, **kwargs):
         """
         show the result as a figure.
 
         Args:
             area (str): area name
-            filename (str): filename of the figure, or None (display)
+            kwargs: keyword arguments of covsirphy.line_plot_multiple()
         """
         df = self._result_df.copy()
         df = df.rename({f"{self.S}{self.P}": "Predicted"}, axis=1)
@@ -195,15 +191,10 @@ class Trend(Term):
         # Plotting
         title = f"{area}: S-R trend from {start_date} to {end_date}"
         self.show_with_many(
-            result_df=df,
-            predicted_cols=["Predicted"],
-            title=title,
-            filename=filename
-        )
+            result_df=df, predicted_cols=["Predicted"], title=title, **kwargs)
 
     @classmethod
-    def show_with_many(cls, result_df, predicted_cols,
-                       title, vlines=None, filename=None):
+    def show_with_many(cls, result_df, predicted_cols, title, **kwargs):
         """
         show the result as a figure.
 
@@ -218,69 +209,18 @@ class Trend(Term):
                     - columns defined by @predicted_cols
             predicted_cols (list[str]): list of columns which have predicted values
             title (str): title of the figure
-            vlines (list[int]): list of Recovered values to show vertical lines
-            filename (str): filename of the figure, or None (show figure)
+            kwargs: keyword arguments of covsirphy.line_plot_multiple()
         """
         result_df = cls._ensure_dataframe(
             result_df, name="result_df", time_index=True,
             columns=[cls.R, f"{cls.S}{cls.A}", *predicted_cols]
         )
-        df = result_df.replace(np.inf, np.nan)
-        x_series = df[cls.R]
-        actual = df[f"{cls.S}{cls.A}"]
-        # Plot the actual values
-        warnings.simplefilter("ignore", FutureWarning)
-        plt.plot(
-            x_series, actual,
-            label="Actual", color="black",
-            marker=".", markeredgewidth=0, linewidth=0
-        )
-        # Plot the predicted values
-        for col in predicted_cols:
-            plt.plot(x_series, df[col], label=col.replace(cls.P, str()))
-        # x-axis
-        plt.xlabel(cls.R)
-        plt.xlim(0, None)
-        # y-axis
-        plt.ylabel(cls.S)
-        try:
-            plt.yscale("log", base=10)
-        except Exception:
-            plt.yscale("log", basey=10)
-        # Delete y-labels of log-scale (minor) axis
-        plt.setp(plt.gca().get_yticklabels(minor=True), visible=False)
-        plt.gca().tick_params(left=False, which="minor")
-        # Set new y-labels of major axis
-        ymin, ymax = plt.ylim()
-        ydiff_scale = int(np.log10(ymax - ymin))
-        yticks = np.linspace(
-            round(ymin, - ydiff_scale),
-            round(ymax, - ydiff_scale),
-            5,
-            dtype=np.int64
-        )
-        plt.gca().set_yticks(yticks)
-        fmt = matplotlib.ticker.ScalarFormatter(useOffset=False)
-        fmt.set_scientific(False)
-        plt.gca().yaxis.set_major_formatter(fmt)
-        # Title
-        plt.title(title)
-        # Vertical lines
-        if isinstance(vlines, (list, tuple)):
-            for value in vlines:
-                plt.axvline(x=value, color="black", linestyle=":")
-        # Legend
-        plt.legend(
-            bbox_to_anchor=(1.02, 0), loc="lower left", borderaxespad=0
-        )
-        # Save figure or show figure
-        warnings.simplefilter("ignore", UserWarning)
-        plt.tight_layout()
-        if filename is None:
-            plt.show()
-            return None
-        plt.savefig(
-            filename, bbox_inches="tight", transparent=False, dpi=300
-        )
-        plt.clf()
-        return None
+        result_df.rename(columns={f"{cls.S}{cls.A}": cls.ACTUAL}, inplace=True)
+        result_df.rename(columns=lambda x: x.replace(cls.P, ""), inplace=True)
+        predicted_cols = [
+            col.replace(cls.P, "") for col in predicted_cols]
+        # Line plotting
+        line_plot_multiple(
+            df=result_df.replace(np.inf, np.nan),
+            x_col=cls.R, actual_col=cls.ACTUAL, predicted_cols=predicted_cols,
+            title=title, ylabel=cls.S, y_logscale=True, **kwargs)

@@ -161,14 +161,14 @@ class ChangeFinder(Term):
         end_dates.append(self.dates[-1])
         return (start_dates, end_dates)
 
-    def show(self, area, change_dates=None, filename=None):
+    def show(self, area, change_dates=None, **kwargs):
         """
         show the S-R trend in a figure.
 
         Args:
             area (str): area name
             change_dates (list[str] or None): list of change points
-            filename (str): filename of the figure, or None (display)
+            kwargs: keyword arguments of covsirphy.line_plot_multiple()
 
         Note:
             @change_dates must be specified if ChangeFinder.run() was not done.
@@ -201,9 +201,4 @@ class ChangeFinder(Term):
             change_str = ",\n".join(strings)
             title = f"{area}: S-R trend changed on\n{change_str}"
         Trend.show_with_many(
-            result_df=comp_df,
-            predicted_cols=pred_cols,
-            title=title,
-            vlines=vlines[1:],
-            filename=filename
-        )
+            result_df=comp_df, predicted_cols=pred_cols, title=title, v=vlines[1:], **kwargs)

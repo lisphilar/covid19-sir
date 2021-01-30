@@ -348,7 +348,7 @@ class PhaseSeries(Term):
                     - Recovered (int): the number of recovered cases (> 0)
                     - Susceptible (int): the number of susceptible cases
                     - any other columns will be ignored
-            kwargs: keyword arguments of ChangeFinder()
+            kwargs: keyword arguments of covsirphy.ChangeFinder()
 
         Returns:
             covsirphy.PhaseSeries: self
@@ -365,7 +365,7 @@ class PhaseSeries(Term):
         [self.add(end_date=end_date) for end_date in end_dates]
         return self
 
-    def trend_show(self, sr_df, area=None, filename=None):
+    def trend_show(self, sr_df, area=None, **kwargs):
         """
         Show S-R plane, indicating change points found with S-R trend analysis.
 
@@ -379,8 +379,7 @@ class PhaseSeries(Term):
                     - Susceptible (int): the number of susceptible cases
                     - any other columns will be ignored
             area (str or None): area name
-            filename (str): filename of the figure, or None (display)
-            kwargs: keyword arguments of ChangeFinder()
+            kwargs: keyword arguments of covsirphy.line_plot_multiple()
 
         Returns:
             covsirphy.PhaseSeries: self
@@ -392,8 +391,7 @@ class PhaseSeries(Term):
         finder = ChangeFinder(sr_df)
         change_dates = [
             unit.start_date for unit in self._units[1:] if unit <= self.last_date]
-        finder.show(
-            area=area, change_dates=change_dates, filename=filename)
+        finder.show(area=area, change_dates=change_dates, **kwargs)
 
     def simulate(self, record_df, y0_dict=None):
         """

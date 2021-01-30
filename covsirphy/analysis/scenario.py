@@ -394,7 +394,7 @@ class Scenario(DataHandler):
             name (str): phase series name
             show_figure (bool): if True, show the result as a figure
             filename (str): filename of the figure, or None (display)
-            kwargs: keyword arguments of ChangeFinder()
+            kwargs: keyword arguments of covsirphy.ChangeFinder() and covsirphy.line_plot_multiple()
 
         Returns:
             covsirphy.Scenario: self

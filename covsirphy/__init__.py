@@ -10,7 +10,7 @@ except ImportError:
 # version
 from covsirphy.__version__ import __version__
 # util
-from covsirphy.util.plotting import line_plot
+from covsirphy.util.plotting import line_plot, line_plot_multiple
 from covsirphy.util.map import jpn_map
 from covsirphy.util.optimize import Optimizer
 from covsirphy.util.stopwatch import StopWatch
@@ -78,6 +78,7 @@ __all__ = [
     "ModelBase", "SIR", "SIRD", "SIRF", "SIRFV", "SEWIRF",
     "Estimator", "Trend", "Optimizer",
     "line_plot", "jpn_map", "StopWatch", "deprecate", "find_args",
+    "line_plot_multiple",
     "save_dataframe",
     "PolicyMeasures",
     "SubsetNotFoundError", "ScenarioNotFoundError", "UnExecutedError",
