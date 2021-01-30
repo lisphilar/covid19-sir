@@ -402,7 +402,7 @@ class Estimator(Term):
         # Comparison of each variable
         for (ax, v) in zip(axes.ravel()[1:], variables):
             df[[f"{v}{self.A}", f"{v}{self.P}"]].plot.line(
-                ax=ax, ylim=(0, None), sharex=True,
+                ax=ax, ylim=(None, None), sharex=True,
                 title=f"{self.model.NAME}: Comparison regarding {v}(t)"
             )
             ax.yaxis.set_major_formatter(ScalarFormatter(useMathText=True))
