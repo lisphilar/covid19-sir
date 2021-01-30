@@ -69,7 +69,7 @@
             
             
               <div class="version">
-                2.15.0-eta
+                2.15.0-eta-fu1
               </div>
             
           
@@ -465,8 +465,8 @@ div.rendered_html tbody tr:hover {
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span># Standard users
-# !pip install covsirphy
+<span></span><span class="c1"># Standard users</span>
+<span class="c1"># !pip install covsirphy</span>
 </pre></div>
 </div>
 </div>
@@ -475,9 +475,9 @@ div.rendered_html tbody tr:hover {
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span># Developers (Note: this notebook is in example directory)
-import os
-os.chdir(&quot;../&quot;)
+<span></span><span class="c1"># Developers (Note: this notebook is in example directory)</span>
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="n">os</span><span class="o">.</span><span class="n">chdir</span><span class="p">(</span><span class="s2">&quot;../&quot;</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -486,8 +486,8 @@ os.chdir(&quot;../&quot;)
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span>import covsirphy as cs
-cs.__version__
+<span></span><span class="kn">import</span> <span class="nn">covsirphy</span> <span class="k">as</span> <span class="nn">cs</span>
+<span class="n">cs</span><span class="o">.</span><span class="n">__version__</span>
 </pre></div>
 </div>
 </div>
@@ -505,11 +505,11 @@ cs.__version__
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span># Load datasets
-data_loader = cs.DataLoader(&quot;input&quot;)
-jhu_data = data_loader.jhu(verbose=False)
-population_data = data_loader.population(verbose=False)
-print(jhu_data.citation)
+<span></span><span class="c1"># Load datasets</span>
+<span class="n">data_loader</span> <span class="o">=</span> <span class="n">cs</span><span class="o">.</span><span class="n">DataLoader</span><span class="p">(</span><span class="s2">&quot;input&quot;</span><span class="p">)</span>
+<span class="n">jhu_data</span> <span class="o">=</span> <span class="n">data_loader</span><span class="o">.</span><span class="n">jhu</span><span class="p">(</span><span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<span class="n">population_data</span> <span class="o">=</span> <span class="n">data_loader</span><span class="o">.</span><span class="n">population</span><span class="p">(</span><span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">jhu_data</span><span class="o">.</span><span class="n">citation</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -527,8 +527,8 @@ Lisphilar (2020), COVID-19 dataset in Japan, GitHub repository, https://github.c
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span># Create instance of `Scenario` class
-snl = cs.Scenario(jhu_data, population_data, country=&quot;India&quot;, province=None)
+<span></span><span class="c1"># Create instance of `Scenario` class</span>
+<span class="n">snl</span> <span class="o">=</span> <span class="n">cs</span><span class="o">.</span><span class="n">Scenario</span><span class="p">(</span><span class="n">jhu_data</span><span class="p">,</span> <span class="n">population_data</span><span class="p">,</span> <span class="n">country</span><span class="o">=</span><span class="s2">&quot;India&quot;</span><span class="p">,</span> <span class="n">province</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -537,8 +537,8 @@ snl = cs.Scenario(jhu_data, population_data, country=&quot;India&quot;, province
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span># Summarize main scenario
-snl.summary()
+<span></span><span class="c1"># Summarize main scenario</span>
+<span class="n">snl</span><span class="o">.</span><span class="n">summary</span><span class="p">()</span>
 </pre></div>
 </div>
 </div>
@@ -582,12 +582,12 @@ snl.summary()
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span># Fix the first date of records
-snl.first_date = &quot;01Mar2020&quot;
-# Fix the last date of records
-snl.last_date = &quot;16Jul2020&quot;
-# Summarize (Empty because no phases are registered)
-snl.summary()
+<span></span><span class="c1"># Fix the first date of records</span>
+<span class="n">snl</span><span class="o">.</span><span class="n">first_date</span> <span class="o">=</span> <span class="s2">&quot;01Mar2020&quot;</span>
+<span class="c1"># Fix the last date of records</span>
+<span class="n">snl</span><span class="o">.</span><span class="n">last_date</span> <span class="o">=</span> <span class="s2">&quot;16Jul2020&quot;</span>
+<span class="c1"># Summarize (Empty because no phases are registered)</span>
+<span class="n">snl</span><span class="o">.</span><span class="n">summary</span><span class="p">()</span>
 </pre></div>
 </div>
 </div>
@@ -643,11 +643,11 @@ snl.summary()
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span># Set phase with S-R trend analysis
-snl.trend()
-snl.summary()
-# If necessary, initial (0th) phase can be disabled
-# scenario.disable(phases=[&quot;0th&quot;])
+<span></span><span class="c1"># Set phase with S-R trend analysis</span>
+<span class="n">snl</span><span class="o">.</span><span class="n">trend</span><span class="p">()</span>
+<span class="n">snl</span><span class="o">.</span><span class="n">summary</span><span class="p">()</span>
+<span class="c1"># If necessary, initial (0th) phase can be disabled</span>
+<span class="c1"># scenario.disable(phases=[&quot;0th&quot;])</span>
 </pre></div>
 </div>
 </div>
@@ -757,10 +757,10 @@ snl.summary()
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span># Before: 3rd is 12Jun2020-19Jun2020, 4th is 20Jun2020-29Jun2020
-# After: 3rd is 12Jun2020-29Jun2020, 4th is the same as old 5th
-snl.combine(phases=[&quot;3rd&quot;, &quot;4th&quot;])
-snl.summary()
+<span></span><span class="c1"># Before: 3rd is 12Jun2020-19Jun2020, 4th is 20Jun2020-29Jun2020</span>
+<span class="c1"># After: 3rd is 12Jun2020-29Jun2020, 4th is the same as old 5th</span>
+<span class="n">snl</span><span class="o">.</span><span class="n">combine</span><span class="p">(</span><span class="n">phases</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;3rd&quot;</span><span class="p">,</span> <span class="s2">&quot;4th&quot;</span><span class="p">])</span>
+<span class="n">snl</span><span class="o">.</span><span class="n">summary</span><span class="p">()</span>
 </pre></div>
 </div>
 </div>
@@ -853,7 +853,7 @@ snl.summary()
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span>snl.trend(force=False)
+<span></span><span class="n">snl</span><span class="o">.</span><span class="n">trend</span><span class="p">(</span><span class="n">force</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -882,10 +882,10 @@ snl.summary()
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span># Before: 1st is 20May2020-02Jun2020
-# After: 1st is 20May2020-28May2020, 2nd is 29May2020-02Jun2020
-snl.separate(date=&quot;29May2020&quot;, phase=&quot;1st&quot;)
-snl.summary()
+<span></span><span class="c1"># Before: 1st is 20May2020-02Jun2020</span>
+<span class="c1"># After: 1st is 20May2020-28May2020, 2nd is 29May2020-02Jun2020</span>
+<span class="n">snl</span><span class="o">.</span><span class="n">separate</span><span class="p">(</span><span class="n">date</span><span class="o">=</span><span class="s2">&quot;29May2020&quot;</span><span class="p">,</span> <span class="n">phase</span><span class="o">=</span><span class="s2">&quot;1st&quot;</span><span class="p">)</span>
+<span class="n">snl</span><span class="o">.</span><span class="n">summary</span><span class="p">()</span>
 </pre></div>
 </div>
 </div>
@@ -984,7 +984,7 @@ snl.summary()
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span>snl.trend(force=False)
+<span></span><span class="n">snl</span><span class="o">.</span><span class="n">trend</span><span class="p">(</span><span class="n">force</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -1013,9 +1013,9 @@ snl.summary()
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span># Disable 0th phase
-snl.disable(phases=[&quot;0th&quot;])
-snl.summary()
+<span></span><span class="c1"># Disable 0th phase</span>
+<span class="n">snl</span><span class="o">.</span><span class="n">disable</span><span class="p">(</span><span class="n">phases</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;0th&quot;</span><span class="p">])</span>
+<span class="n">snl</span><span class="o">.</span><span class="n">summary</span><span class="p">()</span>
 </pre></div>
 </div>
 </div>
@@ -1107,7 +1107,7 @@ snl.summary()
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span>snl.trend(force=False)
+<span></span><span class="n">snl</span><span class="o">.</span><span class="n">trend</span><span class="p">(</span><span class="n">force</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -1132,9 +1132,9 @@ snl.summary()
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span># Enable 0th phase
-snl.enable(phases=[&quot;0th&quot;])
-snl.summary()
+<span></span><span class="c1"># Enable 0th phase</span>
+<span class="n">snl</span><span class="o">.</span><span class="n">enable</span><span class="p">(</span><span class="n">phases</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;0th&quot;</span><span class="p">])</span>
+<span class="n">snl</span><span class="o">.</span><span class="n">summary</span><span class="p">()</span>
 </pre></div>
 </div>
 </div>
@@ -1237,8 +1237,8 @@ snl.summary()
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span># Clear all phases
-snl.clear(include_past=True).summary()
+<span></span><span class="c1"># Clear all phases</span>
+<span class="n">snl</span><span class="o">.</span><span class="n">clear</span><span class="p">(</span><span class="n">include_past</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span><span class="o">.</span><span class="n">summary</span><span class="p">()</span>
 </pre></div>
 </div>
 </div>
@@ -1277,18 +1277,18 @@ snl.clear(include_past=True).summary()
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span># Set 0th phase to set the start date of 1st phase
-snl.add(end_date=&quot;19May2020&quot;)
-# Add 1st phase and disable 0th phase
-snl.add(end_date=&quot;28May2020&quot;).disable(phases=[&quot;0th&quot;])
-# Add 2nd phase
-snl.add(end_date=&quot;02Jun2020&quot;)
-# Add 3rd phase
-snl.add(end_date=&quot;11Jun2020&quot;)
-# Add 4th phase
-snl.add(end_date=&quot;29Jun2020&quot;)
-# Add 5th phase to the last of the records
-snl.add().summary()
+<span></span><span class="c1"># Set 0th phase to set the start date of 1st phase</span>
+<span class="n">snl</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">end_date</span><span class="o">=</span><span class="s2">&quot;19May2020&quot;</span><span class="p">)</span>
+<span class="c1"># Add 1st phase and disable 0th phase</span>
+<span class="n">snl</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">end_date</span><span class="o">=</span><span class="s2">&quot;28May2020&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">disable</span><span class="p">(</span><span class="n">phases</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;0th&quot;</span><span class="p">])</span>
+<span class="c1"># Add 2nd phase</span>
+<span class="n">snl</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">end_date</span><span class="o">=</span><span class="s2">&quot;02Jun2020&quot;</span><span class="p">)</span>
+<span class="c1"># Add 3rd phase</span>
+<span class="n">snl</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">end_date</span><span class="o">=</span><span class="s2">&quot;11Jun2020&quot;</span><span class="p">)</span>
+<span class="c1"># Add 4th phase</span>
+<span class="n">snl</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">end_date</span><span class="o">=</span><span class="s2">&quot;29Jun2020&quot;</span><span class="p">)</span>
+<span class="c1"># Add 5th phase to the last of the records</span>
+<span class="n">snl</span><span class="o">.</span><span class="n">add</span><span class="p">()</span><span class="o">.</span><span class="n">summary</span><span class="p">()</span>
 </pre></div>
 </div>
 </div>

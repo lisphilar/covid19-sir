@@ -69,7 +69,7 @@
             
             
               <div class="version">
-                2.15.0-eta
+                2.15.0-eta-fu1
               </div>
             
           
@@ -472,11 +472,11 @@ div.rendered_html tbody tr:hover {
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span># Standard users
-# !pip install covsirphy
-# Developers (Note: this notebook is in example directory)
-import os
-os.chdir(&quot;../&quot;)
+<span></span><span class="c1"># Standard users</span>
+<span class="c1"># !pip install covsirphy</span>
+<span class="c1"># Developers (Note: this notebook is in example directory)</span>
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="n">os</span><span class="o">.</span><span class="n">chdir</span><span class="p">(</span><span class="s2">&quot;../&quot;</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -485,7 +485,7 @@ os.chdir(&quot;../&quot;)
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span>from pprint import pprint
+<span></span><span class="kn">from</span> <span class="nn">pprint</span> <span class="kn">import</span> <span class="n">pprint</span>
 </pre></div>
 </div>
 </div>
@@ -494,8 +494,8 @@ os.chdir(&quot;../&quot;)
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span>import covsirphy as cs
-cs.__version__
+<span></span><span class="kn">import</span> <span class="nn">covsirphy</span> <span class="k">as</span> <span class="nn">cs</span>
+<span class="n">cs</span><span class="o">.</span><span class="n">__version__</span>
 </pre></div>
 </div>
 </div>
@@ -513,16 +513,16 @@ cs.__version__
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span># Standard users and developers
-data_loader = cs.DataLoader(&quot;input&quot;)
-# The number of cases (JHU style)
-jhu_data = data_loader.jhu(verbose=False)
-# Population in each country
-population_data = data_loader.population(verbose=False)
-# Government Response Tracker (OxCGRT)
-oxcgrt_data = data_loader.oxcgrt(verbose=False)
-# Description/citation
-print(oxcgrt_data.citation)
+<span></span><span class="c1"># Standard users and developers</span>
+<span class="n">data_loader</span> <span class="o">=</span> <span class="n">cs</span><span class="o">.</span><span class="n">DataLoader</span><span class="p">(</span><span class="s2">&quot;input&quot;</span><span class="p">)</span>
+<span class="c1"># The number of cases (JHU style)</span>
+<span class="n">jhu_data</span> <span class="o">=</span> <span class="n">data_loader</span><span class="o">.</span><span class="n">jhu</span><span class="p">(</span><span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<span class="c1"># Population in each country</span>
+<span class="n">population_data</span> <span class="o">=</span> <span class="n">data_loader</span><span class="o">.</span><span class="n">population</span><span class="p">(</span><span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<span class="c1"># Government Response Tracker (OxCGRT)</span>
+<span class="n">oxcgrt_data</span> <span class="o">=</span> <span class="n">data_loader</span><span class="o">.</span><span class="n">oxcgrt</span><span class="p">(</span><span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<span class="c1"># Description/citation</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">oxcgrt_data</span><span class="o">.</span><span class="n">citation</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -543,10 +543,10 @@ print(oxcgrt_data.citation)
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span># Create analyser with tau value 360 [min] (can be changed)
-analyser = cs.PolicyMeasures(jhu_data, population_data, oxcgrt_data, tau=360)
-# The number of registerd countries
-len(analyser.countries)
+<span></span><span class="c1"># Create analyser with tau value 360 [min] (can be changed)</span>
+<span class="n">analyser</span> <span class="o">=</span> <span class="n">cs</span><span class="o">.</span><span class="n">PolicyMeasures</span><span class="p">(</span><span class="n">jhu_data</span><span class="p">,</span> <span class="n">population_data</span><span class="p">,</span> <span class="n">oxcgrt_data</span><span class="p">,</span> <span class="n">tau</span><span class="o">=</span><span class="mi">360</span><span class="p">)</span>
+<span class="c1"># The number of registerd countries</span>
+<span class="nb">len</span><span class="p">(</span><span class="n">analyser</span><span class="o">.</span><span class="n">countries</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -564,8 +564,8 @@ len(analyser.countries)
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span># We can get Scenario instance for detailed scenario analysis
-type(analyser.scenario(&quot;Japan&quot;))
+<span></span><span class="c1"># We can get Scenario instance for detailed scenario analysis</span>
+<span class="nb">type</span><span class="p">(</span><span class="n">analyser</span><span class="o">.</span><span class="n">scenario</span><span class="p">(</span><span class="s2">&quot;Japan&quot;</span><span class="p">))</span>
 </pre></div>
 </div>
 </div>
@@ -587,9 +587,9 @@ covsirphy.analysis.scenario.Scenario
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span># Show the number of phases of all countries
-analyser.trend()
-pprint(analyser.phase_len(), compact=True)
+<span></span><span class="c1"># Show the number of phases of all countries</span>
+<span class="n">analyser</span><span class="o">.</span><span class="n">trend</span><span class="p">()</span>
+<span class="n">pprint</span><span class="p">(</span><span class="n">analyser</span><span class="o">.</span><span class="n">phase_len</span><span class="p">(),</span> <span class="n">compact</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -648,10 +648,10 @@ pprint(analyser.phase_len(), compact=True)
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span># Set phases with S-R trend analysis
-analyser.trend(min_len=19)
-# The number of countries
-len(analyser.countries)
+<span></span><span class="c1"># Set phases with S-R trend analysis</span>
+<span class="n">analyser</span><span class="o">.</span><span class="n">trend</span><span class="p">(</span><span class="n">min_len</span><span class="o">=</span><span class="mi">19</span><span class="p">)</span>
+<span class="c1"># The number of countries</span>
+<span class="nb">len</span><span class="p">(</span><span class="n">analyser</span><span class="o">.</span><span class="n">countries</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -669,8 +669,8 @@ len(analyser.countries)
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span>phase_len_dict = analyser.phase_len()
-pprint(phase_len_dict, compact=True)
+<span></span><span class="n">phase_len_dict</span> <span class="o">=</span> <span class="n">analyser</span><span class="o">.</span><span class="n">phase_len</span><span class="p">()</span>
+<span class="n">pprint</span><span class="p">(</span><span class="n">phase_len_dict</span><span class="p">,</span> <span class="n">compact</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -687,10 +687,10 @@ pprint(phase_len_dict, compact=True)
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span># Here, only show the countries which have the most phases
-countries_show = max(phase_len_dict.items(), key=lambda x: x[0])[1]
-# Show summary
-analyser.summary(countries=countries_show)
+<span></span><span class="c1"># Here, only show the countries which have the most phases</span>
+<span class="n">countries_show</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">phase_len_dict</span><span class="o">.</span><span class="n">items</span><span class="p">(),</span> <span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">])[</span><span class="mi">1</span><span class="p">]</span>
+<span class="c1"># Show summary</span>
+<span class="n">analyser</span><span class="o">.</span><span class="n">summary</span><span class="p">(</span><span class="n">countries</span><span class="o">=</span><span class="n">countries_show</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -1028,9 +1028,9 @@ analyser.summary(countries=countries_show)
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span># Parameter estimation with SIR-F model
-# Caution! This takes too much time.
-# analyser.estimate(cs.SIRF, timeout=60)
+<span></span><span class="c1"># Parameter estimation with SIR-F model</span>
+<span class="c1"># Caution! This takes too much time.</span>
+<span class="c1"># analyser.estimate(cs.SIRF, timeout=60)</span>
 </pre></div>
 </div>
 </div>
@@ -1039,8 +1039,8 @@ analyser.summary(countries=countries_show)
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span># Show summary
-# analyser.summary(countries=countries_show)
+<span></span><span class="c1"># Show summary</span>
+<span class="c1"># analyser.summary(countries=countries_show)</span>
 </pre></div>
 </div>
 </div>
@@ -1053,8 +1053,8 @@ analyser.summary(countries=countries_show)
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span># All parameter/day parameter/Rt/OxCGRT
-# analyser.track().head()
+<span></span><span class="c1"># All parameter/day parameter/Rt/OxCGRT</span>
+<span class="c1"># analyser.track().head()</span>
 </pre></div>
 </div>
 </div>
@@ -1065,7 +1065,7 @@ analyser.summary(countries=countries_show)
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span># analyser.history(&quot;Rt&quot;, roll_window=None).tail()
+<span></span><span class="c1"># analyser.history(&quot;Rt&quot;, roll_window=None).tail()</span>
 </pre></div>
 </div>
 </div>
@@ -1077,7 +1077,7 @@ analyser.summary(countries=countries_show)
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span># analyser.history(&quot;rho&quot;, roll_window=None).tail()
+<span></span><span class="c1"># analyser.history(&quot;rho&quot;, roll_window=None).tail()</span>
 </pre></div>
 </div>
 </div>
@@ -1089,7 +1089,7 @@ analyser.summary(countries=countries_show)
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span># analyser.history(&quot;sigma&quot;, roll_window=None).tail()
+<span></span><span class="c1"># analyser.history(&quot;sigma&quot;, roll_window=None).tail()</span>
 </pre></div>
 </div>
 </div>
@@ -1101,7 +1101,7 @@ analyser.summary(countries=countries_show)
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span># analyser.history(&quot;kappa&quot;, roll_window=None).tail()
+<span></span><span class="c1"># analyser.history(&quot;kappa&quot;, roll_window=None).tail()</span>
 </pre></div>
 </div>
 </div>
@@ -1113,7 +1113,7 @@ analyser.summary(countries=countries_show)
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span># analyser.history(&quot;theta&quot;, roll_window=None).tail()
+<span></span><span class="c1"># analyser.history(&quot;theta&quot;, roll_window=None).tail()</span>
 </pre></div>
 </div>
 </div>
@@ -1127,10 +1127,10 @@ analyser.summary(countries=countries_show)
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span>%matplotlib inline
-from matplotlib import pyplot as plt
-import seaborn as sns
-import pandas as pd
+<span></span><span class="o">%</span><span class="k">matplotlib</span> inline
+<span class="kn">from</span> <span class="nn">matplotlib</span> <span class="kn">import</span> <span class="n">pyplot</span> <span class="k">as</span> <span class="n">plt</span>
+<span class="kn">import</span> <span class="nn">seaborn</span> <span class="k">as</span> <span class="nn">sns</span>
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
 </pre></div>
 </div>
 </div>
@@ -1139,23 +1139,23 @@ import pandas as pd
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span>&quot;&quot;&quot;
-df = analyser.track()
-param_cols = [&quot;Rt&quot;, *cs.SIRF.PARAMETERS]
-oxcgrt_cols = oxcgrt_data.OXCGRT_VARS[:]
-cols = param_cols + oxcgrt_cols
-delay = 14
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">df = analyser.track()</span>
+<span class="sd">param_cols = [&quot;Rt&quot;, *cs.SIRF.PARAMETERS]</span>
+<span class="sd">oxcgrt_cols = oxcgrt_data.OXCGRT_VARS[:]</span>
+<span class="sd">cols = param_cols + oxcgrt_cols</span>
+<span class="sd">delay = 14</span>
 
-for col in param_cols:
-    df[col] = pd.to_numeric(df[col], errors=&quot;coerce&quot;)
-    df[col] = df.groupby(&quot;Country&quot;)[col].shift(0 - delay)
+<span class="sd">for col in param_cols:</span>
+<span class="sd">    df[col] = pd.to_numeric(df[col], errors=&quot;coerce&quot;)</span>
+<span class="sd">    df[col] = df.groupby(&quot;Country&quot;)[col].shift(0 - delay)</span>
 
-df = df.dropna(how=&quot;any&quot;)
-df = df.loc[:, [&quot;Date&quot;, &quot;Country&quot;, *cols]]
-track_df = df.copy()
-track_df.info()
-&quot;&quot;&quot;
-None
+<span class="sd">df = df.dropna(how=&quot;any&quot;)</span>
+<span class="sd">df = df.loc[:, [&quot;Date&quot;, &quot;Country&quot;, *cols]]</span>
+<span class="sd">track_df = df.copy()</span>
+<span class="sd">track_df.info()</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="kc">None</span>
 </pre></div>
 </div>
 </div>
@@ -1164,9 +1164,9 @@ None
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span># Correlation
-# df = track_df.copy()
-# df.corr().style.background_gradient(axis=None)
+<span></span><span class="c1"># Correlation</span>
+<span class="c1"># df = track_df.copy()</span>
+<span class="c1"># df.corr().style.background_gradient(axis=None)</span>
 </pre></div>
 </div>
 </div>
@@ -1175,19 +1175,19 @@ None
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span>&quot;&quot;&quot;
-# Scatter plot of Stringency index and Rt
-df = track_df.copy()
-sns.scatterplot(data=df, x=&quot;Stringency_index&quot;, y=&quot;Rt&quot;, hue=&quot;Country&quot;, legend=&quot;brief&quot;, marker=&quot;+&quot;)
-bbox_to_anchor=(1.02, 0)
-bbox_loc=&quot;lower left&quot;
-plt.legend(bbox_to_anchor=bbox_to_anchor, loc=bbox_loc, borderaxespad=0)
-plt.title(&quot;Relationship of Stringency index and reproduction number&quot;)
-plt.ylabel(&quot;Reproduction number&quot;)
-plt.xlabel(&quot;Stringency index&quot;)
-plt.show()
-&quot;&quot;&quot;
-None
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd"># Scatter plot of Stringency index and Rt</span>
+<span class="sd">df = track_df.copy()</span>
+<span class="sd">sns.scatterplot(data=df, x=&quot;Stringency_index&quot;, y=&quot;Rt&quot;, hue=&quot;Country&quot;, legend=&quot;brief&quot;, marker=&quot;+&quot;)</span>
+<span class="sd">bbox_to_anchor=(1.02, 0)</span>
+<span class="sd">bbox_loc=&quot;lower left&quot;</span>
+<span class="sd">plt.legend(bbox_to_anchor=bbox_to_anchor, loc=bbox_loc, borderaxespad=0)</span>
+<span class="sd">plt.title(&quot;Relationship of Stringency index and reproduction number&quot;)</span>
+<span class="sd">plt.ylabel(&quot;Reproduction number&quot;)</span>
+<span class="sd">plt.xlabel(&quot;Stringency index&quot;)</span>
+<span class="sd">plt.show()</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="kc">None</span>
 </pre></div>
 </div>
 </div>
