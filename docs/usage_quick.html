@@ -69,7 +69,7 @@
             
             
               <div class="version">
-                2.15.0-epsilon
+                2.15.0-eta
               </div>
             
           
@@ -479,8 +479,8 @@ div.rendered_html tbody tr:hover {
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="c1"># Standard users</span>
-<span class="c1"># !pip install covsirphy</span>
+<span></span># Standard users
+# !pip install covsirphy
 </pre></div>
 </div>
 </div>
@@ -489,9 +489,9 @@ div.rendered_html tbody tr:hover {
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="c1"># Developers (Note: this notebook is in example directory)</span>
-<span class="kn">import</span> <span class="nn">os</span>
-<span class="n">os</span><span class="o">.</span><span class="n">chdir</span><span class="p">(</span><span class="s2">&quot;../&quot;</span><span class="p">)</span>
+<span></span># Developers (Note: this notebook is in example directory)
+import os
+os.chdir(&quot;../&quot;)
 </pre></div>
 </div>
 </div>
@@ -500,8 +500,8 @@ div.rendered_html tbody tr:hover {
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="kn">import</span> <span class="nn">covsirphy</span> <span class="k">as</span> <span class="nn">cs</span>
-<span class="n">cs</span><span class="o">.</span><span class="n">__version__</span>
+<span></span>import covsirphy as cs
+cs.__version__
 </pre></div>
 </div>
 </div>
@@ -526,13 +526,13 @@ div.rendered_html tbody tr:hover {
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="n">data_loader</span> <span class="o">=</span> <span class="n">cs</span><span class="o">.</span><span class="n">DataLoader</span><span class="p">(</span><span class="s2">&quot;input&quot;</span><span class="p">)</span>
-<span class="c1"># The number of cases (JHU style)</span>
-<span class="n">jhu_data</span> <span class="o">=</span> <span class="n">data_loader</span><span class="o">.</span><span class="n">jhu</span><span class="p">(</span><span class="n">verbose</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-<span class="c1"># Population in each country</span>
-<span class="n">population_data</span> <span class="o">=</span> <span class="n">data_loader</span><span class="o">.</span><span class="n">population</span><span class="p">(</span><span class="n">verbose</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-<span class="c1"># Government Response Tracker (OxCGRT)</span>
-<span class="n">oxcgrt_data</span> <span class="o">=</span> <span class="n">data_loader</span><span class="o">.</span><span class="n">oxcgrt</span><span class="p">()</span>
+<span></span>data_loader = cs.DataLoader(&quot;input&quot;)
+# The number of cases (JHU style)
+jhu_data = data_loader.jhu(verbose=True)
+# Population in each country
+population_data = data_loader.population(verbose=True)
+# Government Response Tracker (OxCGRT)
+oxcgrt_data = data_loader.oxcgrt()
 </pre></div>
 </div>
 </div>
@@ -545,7 +545,7 @@ div.rendered_html tbody tr:hover {
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="n">snl</span> <span class="o">=</span> <span class="n">cs</span><span class="o">.</span><span class="n">Scenario</span><span class="p">(</span><span class="n">jhu_data</span><span class="p">,</span> <span class="n">population_data</span><span class="p">,</span> <span class="n">country</span><span class="o">=</span><span class="s2">&quot;Japan&quot;</span><span class="p">,</span> <span class="n">province</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+<span></span>snl = cs.Scenario(jhu_data, population_data, country=&quot;Japan&quot;, province=None)
 </pre></div>
 </div>
 </div>
@@ -554,12 +554,12 @@ div.rendered_html tbody tr:hover {
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="c1"># If you want to stop displaying figures when using interactive shell,</span>
-<span class="c1"># snl.interactive = False</span>
-<span class="c1"># For temporally, plese use snl.records(show_figure=False) etc.</span>
-<span class="c1"># If you want save figures,</span>
-<span class="c1"># snl.interactive = False</span>
-<span class="c1"># and please use snl.records(filename=&quot;records.jpg&quot;) etc.</span>
+<span></span># If you want to stop displaying figures when using interactive shell,
+# snl.interactive = False
+# For temporally, plese use snl.records(show_figure=False) etc.
+# If you want save figures,
+# snl.interactive = False
+# and please use snl.records(filename=&quot;records.jpg&quot;) etc.
 </pre></div>
 </div>
 </div>
@@ -572,8 +572,8 @@ div.rendered_html tbody tr:hover {
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="n">record_df</span> <span class="o">=</span> <span class="n">snl</span><span class="o">.</span><span class="n">records</span><span class="p">()</span>
-<span class="n">record_df</span><span class="o">.</span><span class="n">tail</span><span class="p">()</span>
+<span></span>record_df = snl.records()
+record_df.tail()
 </pre></div>
 </div>
 </div>
@@ -659,7 +659,7 @@ div.rendered_html tbody tr:hover {
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="n">_</span> <span class="o">=</span> <span class="n">snl</span><span class="o">.</span><span class="n">records_diff</span><span class="p">(</span><span class="n">variables</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;Confirmed&quot;</span><span class="p">],</span> <span class="n">window</span><span class="o">=</span><span class="mi">7</span><span class="p">)</span>
+<span></span>_ = snl.records_diff(variables=[&quot;Confirmed&quot;], window=7)
 </pre></div>
 </div>
 </div>
@@ -676,8 +676,8 @@ div.rendered_html tbody tr:hover {
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="n">complement_snl_df</span> <span class="o">=</span> <span class="n">snl</span><span class="o">.</span><span class="n">show_complement</span><span class="p">()</span>
-<span class="n">complement_snl_df</span><span class="o">.</span><span class="n">tail</span><span class="p">()</span>
+<span></span>complement_snl_df = snl.show_complement()
+complement_snl_df.tail()
 </pre></div>
 </div>
 </div>
@@ -737,9 +737,9 @@ div.rendered_html tbody tr:hover {
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="c1"># Perform S-R trend analysis and set phases</span>
-<span class="n">snl</span><span class="o">.</span><span class="n">trend</span><span class="p">(</span><span class="n">set_phases</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-<span class="n">snl</span><span class="o">.</span><span class="n">summary</span><span class="p">()</span>
+<span></span># Perform S-R trend analysis and set phases
+snl.trend(set_phases=True)
+snl.summary()
 </pre></div>
 </div>
 </div>
@@ -898,9 +898,9 @@ div.rendered_html tbody tr:hover {
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="c1"># Estimate the parameter values of SIR-F model</span>
-<span class="c1"># Default value of timeout is 180 sec</span>
-<span class="n">snl</span><span class="o">.</span><span class="n">estimate</span><span class="p">(</span><span class="n">cs</span><span class="o">.</span><span class="n">SIRF</span><span class="p">,</span> <span class="n">timeout</span><span class="o">=</span><span class="mi">60</span><span class="p">)</span>
+<span></span># Estimate the parameter values of SIR-F model
+# Default value of timeout is 180 sec
+snl.estimate(cs.SIRF, timeout=60)
 </pre></div>
 </div>
 </div>
@@ -935,8 +935,8 @@ Completed optimization. Total: 2 min 23 sec
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="c1"># Show the sumamry of parameter estimation</span>
-<span class="n">snl</span><span class="o">.</span><span class="n">summary</span><span class="p">()</span>
+<span></span># Show the sumamry of parameter estimation
+snl.summary()
 </pre></div>
 </div>
 </div>
@@ -1311,7 +1311,7 @@ Completed optimization. Total: 2 min 23 sec
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="n">snl</span><span class="o">.</span><span class="n">estimate_accuracy</span><span class="p">(</span><span class="n">phase</span><span class="o">=</span><span class="s2">&quot;1st&quot;</span><span class="p">)</span>
+<span></span>snl.estimate_accuracy(phase=&quot;1st&quot;)
 </pre></div>
 </div>
 </div>
@@ -1331,7 +1331,7 @@ Completed optimization. Total: 2 min 23 sec
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="n">snl</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;Rt&quot;</span><span class="p">,</span> <span class="n">phase</span><span class="o">=</span><span class="s2">&quot;4th&quot;</span><span class="p">)</span>
+<span></span>snl.get(&quot;Rt&quot;, phase=&quot;4th&quot;)
 </pre></div>
 </div>
 </div>
@@ -1353,7 +1353,7 @@ Completed optimization. Total: 2 min 23 sec
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="n">_</span> <span class="o">=</span> <span class="n">snl</span><span class="o">.</span><span class="n">history</span><span class="p">(</span><span class="n">target</span><span class="o">=</span><span class="s2">&quot;theta&quot;</span><span class="p">)</span>
+<span></span>_ = snl.history(target=&quot;theta&quot;)
 </pre></div>
 </div>
 </div>
@@ -1369,7 +1369,7 @@ Completed optimization. Total: 2 min 23 sec
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="n">_</span> <span class="o">=</span> <span class="n">snl</span><span class="o">.</span><span class="n">history</span><span class="p">(</span><span class="n">target</span><span class="o">=</span><span class="s2">&quot;kappa&quot;</span><span class="p">)</span>
+<span></span>_ = snl.history(target=&quot;kappa&quot;)
 </pre></div>
 </div>
 </div>
@@ -1385,7 +1385,7 @@ Completed optimization. Total: 2 min 23 sec
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="n">_</span> <span class="o">=</span> <span class="n">snl</span><span class="o">.</span><span class="n">history</span><span class="p">(</span><span class="n">target</span><span class="o">=</span><span class="s2">&quot;rho&quot;</span><span class="p">)</span>
+<span></span>_ = snl.history(target=&quot;rho&quot;)
 </pre></div>
 </div>
 </div>
@@ -1401,7 +1401,7 @@ Completed optimization. Total: 2 min 23 sec
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="n">_</span> <span class="o">=</span> <span class="n">snl</span><span class="o">.</span><span class="n">history</span><span class="p">(</span><span class="n">target</span><span class="o">=</span><span class="s2">&quot;sigma&quot;</span><span class="p">)</span>
+<span></span>_ = snl.history(target=&quot;sigma&quot;)
 </pre></div>
 </div>
 </div>
@@ -1428,7 +1428,7 @@ Completed optimization. Total: 2 min 23 sec
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="n">_</span> <span class="o">=</span> <span class="n">snl</span><span class="o">.</span><span class="n">history</span><span class="p">(</span><span class="n">target</span><span class="o">=</span><span class="s2">&quot;Rt&quot;</span><span class="p">)</span>
+<span></span>_ = snl.history(target=&quot;Rt&quot;)
 </pre></div>
 </div>
 </div>
@@ -1448,7 +1448,7 @@ Completed optimization. Total: 2 min 23 sec
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="n">_</span> <span class="o">=</span> <span class="n">snl</span><span class="o">.</span><span class="n">history</span><span class="p">(</span><span class="s2">&quot;Infected&quot;</span><span class="p">)</span>
+<span></span>_ = snl.history(&quot;Infected&quot;)
 </pre></div>
 </div>
 </div>
@@ -1469,14 +1469,14 @@ Completed optimization. Total: 2 min 23 sec
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="c1"># Clear future phases in Main scenario</span>
-<span class="n">snl</span><span class="o">.</span><span class="n">clear</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;Main&quot;</span><span class="p">)</span>
-<span class="c1"># Add one future phase 30 days with the parameter set of the last past phase</span>
-<span class="n">snl</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">days</span><span class="o">=</span><span class="mi">30</span><span class="p">)</span>
-<span class="c1"># Add one future phase until 01Apr2021 with the same parameter set</span>
-<span class="n">snl</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">end_date</span><span class="o">=</span><span class="s2">&quot;01Apr2021&quot;</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;Main&quot;</span><span class="p">)</span>
-<span class="c1"># Simulate the number of cases</span>
-<span class="n">snl</span><span class="o">.</span><span class="n">simulate</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;Main&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">tail</span><span class="p">()</span>
+<span></span># Clear future phases in Main scenario
+snl.clear(name=&quot;Main&quot;)
+# Add one future phase 30 days with the parameter set of the last past phase
+snl.add(days=30)
+# Add one future phase until 01Apr2021 with the same parameter set
+snl.add(end_date=&quot;01Apr2021&quot;, name=&quot;Main&quot;)
+# Simulate the number of cases
+snl.simulate(name=&quot;Main&quot;).tail()
 </pre></div>
 </div>
 </div>
@@ -1572,9 +1572,9 @@ Completed optimization. Total: 2 min 23 sec
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="c1"># Calcuate the current sigma value of the last phase</span>
-<span class="n">sigma_current</span> <span class="o">=</span> <span class="n">snl</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;sigma&quot;</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;Main&quot;</span><span class="p">,</span> <span class="n">phase</span><span class="o">=</span><span class="s2">&quot;last&quot;</span><span class="p">)</span>
-<span class="n">sigma_current</span>
+<span></span># Calcuate the current sigma value of the last phase
+sigma_current = snl.get(&quot;sigma&quot;, name=&quot;Main&quot;, phase=&quot;last&quot;)
+sigma_current
 </pre></div>
 </div>
 </div>
@@ -1592,9 +1592,9 @@ Completed optimization. Total: 2 min 23 sec
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="c1"># Sigma value will be double</span>
-<span class="n">sigma_new</span> <span class="o">=</span> <span class="n">sigma_current</span> <span class="o">*</span> <span class="mi">2</span>
-<span class="n">sigma_new</span>
+<span></span># Sigma value will be double
+sigma_new = sigma_current * 2
+sigma_new
 </pre></div>
 </div>
 </div>
@@ -1612,13 +1612,13 @@ Completed optimization. Total: 2 min 23 sec
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="c1"># Initialize &quot;Medicine&quot; scenario (with the same past phases as that of Main scenario)</span>
-<span class="n">snl</span><span class="o">.</span><span class="n">clear</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;Medicine&quot;</span><span class="p">)</span>
-<span class="c1"># Add 30 days as a new future phases with the same parameter set</span>
-<span class="n">snl</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;Medicine&quot;</span><span class="p">,</span> <span class="n">days</span><span class="o">=</span><span class="mi">30</span><span class="p">,</span> <span class="n">sigma</span><span class="o">=</span><span class="n">sigma_current</span><span class="p">)</span>
-<span class="c1"># Add a phase until 01Apr2021 with doubled sigma value</span>
-<span class="n">snl</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;Medicine&quot;</span><span class="p">,</span> <span class="n">end_date</span><span class="o">=</span><span class="s2">&quot;01Apr2021&quot;</span><span class="p">,</span> <span class="n">sigma</span><span class="o">=</span><span class="n">sigma_new</span><span class="p">)</span>
-<span class="n">snl</span><span class="o">.</span><span class="n">summary</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;Medicine&quot;</span><span class="p">)</span>
+<span></span># Initialize &quot;Medicine&quot; scenario (with the same past phases as that of Main scenario)
+snl.clear(name=&quot;Medicine&quot;)
+# Add 30 days as a new future phases with the same parameter set
+snl.add(name=&quot;Medicine&quot;, days=30, sigma=sigma_current)
+# Add a phase until 01Apr2021 with doubled sigma value
+snl.add(name=&quot;Medicine&quot;, end_date=&quot;01Apr2021&quot;, sigma=sigma_new)
+snl.summary(name=&quot;Medicine&quot;)
 </pre></div>
 </div>
 </div>
@@ -2032,8 +2032,8 @@ Completed optimization. Total: 2 min 23 sec
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="c1"># Simulate the number of cases</span>
-<span class="n">snl</span><span class="o">.</span><span class="n">simulate</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;Medicine&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">tail</span><span class="p">()</span>
+<span></span># Simulate the number of cases
+snl.simulate(name=&quot;Medicine&quot;).tail()
 </pre></div>
 </div>
 </div>
@@ -2142,12 +2142,12 @@ Completed optimization. Total: 2 min 23 sec
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="c1"># Fitting with linear regression model (Elastic Net regression)</span>
-<span class="n">fit_dict</span> <span class="o">=</span> <span class="n">snl</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">oxcgrt_data</span><span class="o">=</span><span class="n">oxcgrt_data</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;Forecast&quot;</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Determination coefficient: </span><span class="si">{</span><span class="n">fit_dict</span><span class="p">[</span><span class="s1">&#39;score_train&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2"> (train)&quot;</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Determination coefficient: </span><span class="si">{</span><span class="n">fit_dict</span><span class="p">[</span><span class="s1">&#39;score_test&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2"> (test)&quot;</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Intercept:&quot;</span><span class="p">)</span>
-<span class="n">fit_dict</span><span class="p">[</span><span class="s2">&quot;intercept&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">style</span><span class="o">.</span><span class="n">background_gradient</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+<span></span># Fitting with linear regression model (Elastic Net regression)
+fit_dict = snl.fit(oxcgrt_data=oxcgrt_data, name=&quot;Forecast&quot;)
+print(f&quot;Determination coefficient: {fit_dict[&#39;score_train&#39;]} (train)&quot;)
+print(f&quot;Determination coefficient: {fit_dict[&#39;score_test&#39;]} (test)&quot;)
+print(&quot;Intercept:&quot;)
+fit_dict[&quot;intercept&quot;].style.background_gradient(axis=None)
 </pre></div>
 </div>
 </div>
@@ -2321,8 +2321,8 @@ Intercept:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="c1"># Short-term prediction</span>
-<span class="n">snl</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;Forecast&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">summary</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;Forecast&quot;</span><span class="p">)</span>
+<span></span># Short-term prediction
+snl.predict(name=&quot;Forecast&quot;).summary(name=&quot;Forecast&quot;)
 </pre></div>
 </div>
 </div>
@@ -2715,8 +2715,8 @@ Intercept:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="c1"># Or, when you do not need &#39;fit_dict&#39;</span>
-<span class="c1"># snl.fit_predict(oxcgrt_data=oxcgrt_data, name=&quot;Forecast&quot;).summary(name=&quot;Forecast&quot;)</span>
+<span></span># Or, when you do not need &#39;fit_dict&#39;
+# snl.fit_predict(oxcgrt_data=oxcgrt_data, name=&quot;Forecast&quot;).summary(name=&quot;Forecast&quot;)
 </pre></div>
 </div>
 </div>
@@ -2735,7 +2735,7 @@ Intercept:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="n">snl</span><span class="o">.</span><span class="n">describe</span><span class="p">()</span>
+<span></span>snl.describe()
 </pre></div>
 </div>
 </div>
@@ -2823,7 +2823,7 @@ Intercept:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="n">_</span> <span class="o">=</span> <span class="n">snl</span><span class="o">.</span><span class="n">history</span><span class="p">(</span><span class="n">target</span><span class="o">=</span><span class="s2">&quot;Infected&quot;</span><span class="p">)</span>
+<span></span>_ = snl.history(target=&quot;Infected&quot;)
 </pre></div>
 </div>
 </div>
@@ -2839,7 +2839,7 @@ Intercept:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="n">_</span> <span class="o">=</span> <span class="n">snl</span><span class="o">.</span><span class="n">history</span><span class="p">(</span><span class="n">target</span><span class="o">=</span><span class="s2">&quot;Rt&quot;</span><span class="p">)</span>
+<span></span>_ = snl.history(target=&quot;Rt&quot;)
 </pre></div>
 </div>
 </div>
@@ -2855,7 +2855,7 @@ Intercept:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="n">_</span> <span class="o">=</span> <span class="n">snl</span><span class="o">.</span><span class="n">history</span><span class="p">(</span><span class="n">target</span><span class="o">=</span><span class="s2">&quot;rho&quot;</span><span class="p">)</span>
+<span></span>_ = snl.history(target=&quot;rho&quot;)
 </pre></div>
 </div>
 </div>
@@ -2871,7 +2871,7 @@ Intercept:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="n">_</span> <span class="o">=</span> <span class="n">snl</span><span class="o">.</span><span class="n">history</span><span class="p">(</span><span class="n">target</span><span class="o">=</span><span class="s2">&quot;sigma&quot;</span><span class="p">)</span>
+<span></span>_ = snl.history(target=&quot;sigma&quot;)
 </pre></div>
 </div>
 </div>
@@ -2887,7 +2887,7 @@ Intercept:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="n">_</span> <span class="o">=</span> <span class="n">snl</span><span class="o">.</span><span class="n">history</span><span class="p">(</span><span class="n">target</span><span class="o">=</span><span class="s2">&quot;theta&quot;</span><span class="p">)</span>
+<span></span>_ = snl.history(target=&quot;theta&quot;)
 </pre></div>
 </div>
 </div>
@@ -2903,7 +2903,7 @@ Intercept:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="n">_</span> <span class="o">=</span> <span class="n">snl</span><span class="o">.</span><span class="n">history</span><span class="p">(</span><span class="n">target</span><span class="o">=</span><span class="s2">&quot;kappa&quot;</span><span class="p">)</span>
+<span></span>_ = snl.history(target=&quot;kappa&quot;)
 </pre></div>
 </div>
 </div>
@@ -2923,7 +2923,7 @@ Intercept:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="n">_</span> <span class="o">=</span> <span class="n">snl</span><span class="o">.</span><span class="n">history_rate</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;Main&quot;</span><span class="p">)</span>
+<span></span>_ = snl.history_rate(name=&quot;Main&quot;)
 </pre></div>
 </div>
 </div>
@@ -2942,9 +2942,9 @@ Intercept:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="c1"># Perform retrospective analysis</span>
-<span class="n">snl_retro</span> <span class="o">=</span> <span class="n">cs</span><span class="o">.</span><span class="n">Scenario</span><span class="p">(</span><span class="n">jhu_data</span><span class="p">,</span> <span class="n">population_data</span><span class="p">,</span> <span class="s2">&quot;Japan&quot;</span><span class="p">)</span>
-<span class="n">snl_retro</span><span class="o">.</span><span class="n">retrospective</span><span class="p">(</span><span class="s2">&quot;01Sep2020&quot;</span><span class="p">,</span> <span class="n">model</span><span class="o">=</span><span class="n">cs</span><span class="o">.</span><span class="n">SIRF</span><span class="p">,</span> <span class="n">control</span><span class="o">=</span><span class="s2">&quot;Main&quot;</span><span class="p">,</span> <span class="n">target</span><span class="o">=</span><span class="s2">&quot;Retrospective&quot;</span><span class="p">)</span>
+<span></span># Perform retrospective analysis
+snl_retro = cs.Scenario(jhu_data, population_data, &quot;Japan&quot;)
+snl_retro.retrospective(&quot;01Sep2020&quot;, model=cs.SIRF, control=&quot;Main&quot;, target=&quot;Retrospective&quot;)
 </pre></div>
 </div>
 </div>
@@ -2985,9 +2985,9 @@ Completed optimization. Total: 3 min  2 sec
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="c1"># Show the summary of estimation</span>
-<span class="n">cols</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;Start&quot;</span><span class="p">,</span> <span class="s2">&quot;End&quot;</span><span class="p">,</span> <span class="s2">&quot;ODE&quot;</span><span class="p">,</span> <span class="s2">&quot;Rt&quot;</span><span class="p">,</span> <span class="o">*</span><span class="n">cs</span><span class="o">.</span><span class="n">SIRF</span><span class="o">.</span><span class="n">PARAMETERS</span><span class="p">]</span> <span class="o">+</span> <span class="p">[</span><span class="s2">&quot;RMSLE&quot;</span><span class="p">,</span> <span class="s2">&quot;Trials&quot;</span><span class="p">,</span> <span class="s2">&quot;Runtime&quot;</span><span class="p">]</span>
-<span class="n">snl_retro</span><span class="o">.</span><span class="n">summary</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="n">cols</span><span class="p">)</span>
+<span></span># Show the summary of estimation
+cols = [&quot;Start&quot;, &quot;End&quot;, &quot;ODE&quot;, &quot;Rt&quot;, *cs.SIRF.PARAMETERS] + [&quot;RMSLE&quot;, &quot;Trials&quot;, &quot;Runtime&quot;]
+snl_retro.summary(columns=cols)
 </pre></div>
 </div>
 </div>
@@ -3363,8 +3363,8 @@ Completed optimization. Total: 3 min  2 sec
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="c1"># History of reproduction number</span>
-<span class="n">_</span> <span class="o">=</span> <span class="n">snl_retro</span><span class="o">.</span><span class="n">history</span><span class="p">(</span><span class="s2">&quot;Rt&quot;</span><span class="p">)</span>
+<span></span># History of reproduction number
+_ = snl_retro.history(&quot;Rt&quot;)
 </pre></div>
 </div>
 </div>
@@ -3380,8 +3380,8 @@ Completed optimization. Total: 3 min  2 sec
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="c1"># History of Infected</span>
-<span class="n">_</span> <span class="o">=</span> <span class="n">snl_retro</span><span class="o">.</span><span class="n">history</span><span class="p">(</span><span class="s2">&quot;Infected&quot;</span><span class="p">)</span>
+<span></span># History of Infected
+_ = snl_retro.history(&quot;Infected&quot;)
 </pre></div>
 </div>
 </div>
@@ -3397,8 +3397,8 @@ Completed optimization. Total: 3 min  2 sec
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="c1"># Show the representative values</span>
-<span class="n">snl_retro</span><span class="o">.</span><span class="n">describe</span><span class="p">()</span>
+<span></span># Show the representative values
+snl_retro.describe()
 </pre></div>
 </div>
 </div>

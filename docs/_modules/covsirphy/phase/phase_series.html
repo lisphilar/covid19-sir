@@ -67,7 +67,7 @@
             
             
               <div class="version">
-                2.15.0-epsilon
+                2.15.0-eta
               </div>
             
           
@@ -524,7 +524,7 @@
 <span class="sd">                    - Recovered (int): the number of recovered cases (&gt; 0)</span>
 <span class="sd">                    - Susceptible (int): the number of susceptible cases</span>
 <span class="sd">                    - any other columns will be ignored</span>
-<span class="sd">            kwargs: keyword arguments of ChangeFinder()</span>
+<span class="sd">            kwargs: keyword arguments of covsirphy.ChangeFinder()</span>
 
 <span class="sd">        Returns:</span>
 <span class="sd">            covsirphy.PhaseSeries: self</span>
@@ -541,7 +541,7 @@
         <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">end_date</span><span class="o">=</span><span class="n">end_date</span><span class="p">)</span> <span class="k">for</span> <span class="n">end_date</span> <span class="ow">in</span> <span class="n">end_dates</span><span class="p">]</span>
         <span class="k">return</span> <span class="bp">self</span></div>
 
-<div class="viewcode-block" id="PhaseSeries.trend_show"><a class="viewcode-back" href="../../../covsirphy.phase.html#covsirphy.PhaseSeries.trend_show">[docs]</a>    <span class="k">def</span> <span class="nf">trend_show</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sr_df</span><span class="p">,</span> <span class="n">area</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">filename</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<div class="viewcode-block" id="PhaseSeries.trend_show"><a class="viewcode-back" href="../../../covsirphy.phase.html#covsirphy.PhaseSeries.trend_show">[docs]</a>    <span class="k">def</span> <span class="nf">trend_show</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sr_df</span><span class="p">,</span> <span class="n">area</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Show S-R plane, indicating change points found with S-R trend analysis.</span>
 
@@ -555,8 +555,7 @@
 <span class="sd">                    - Susceptible (int): the number of susceptible cases</span>
 <span class="sd">                    - any other columns will be ignored</span>
 <span class="sd">            area (str or None): area name</span>
-<span class="sd">            filename (str): filename of the figure, or None (display)</span>
-<span class="sd">            kwargs: keyword arguments of ChangeFinder()</span>
+<span class="sd">            kwargs: keyword arguments of covsirphy.line_plot_multiple()</span>
 
 <span class="sd">        Returns:</span>
 <span class="sd">            covsirphy.PhaseSeries: self</span>
@@ -568,8 +567,7 @@
         <span class="n">finder</span> <span class="o">=</span> <span class="n">ChangeFinder</span><span class="p">(</span><span class="n">sr_df</span><span class="p">)</span>
         <span class="n">change_dates</span> <span class="o">=</span> <span class="p">[</span>
             <span class="n">unit</span><span class="o">.</span><span class="n">start_date</span> <span class="k">for</span> <span class="n">unit</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_units</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span> <span class="k">if</span> <span class="n">unit</span> <span class="o">&lt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">last_date</span><span class="p">]</span>
-        <span class="n">finder</span><span class="o">.</span><span class="n">show</span><span class="p">(</span>
-            <span class="n">area</span><span class="o">=</span><span class="n">area</span><span class="p">,</span> <span class="n">change_dates</span><span class="o">=</span><span class="n">change_dates</span><span class="p">,</span> <span class="n">filename</span><span class="o">=</span><span class="n">filename</span><span class="p">)</span></div>
+        <span class="n">finder</span><span class="o">.</span><span class="n">show</span><span class="p">(</span><span class="n">area</span><span class="o">=</span><span class="n">area</span><span class="p">,</span> <span class="n">change_dates</span><span class="o">=</span><span class="n">change_dates</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="PhaseSeries.simulate"><a class="viewcode-back" href="../../../covsirphy.phase.html#covsirphy.PhaseSeries.simulate">[docs]</a>    <span class="k">def</span> <span class="nf">simulate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">record_df</span><span class="p">,</span> <span class="n">y0_dict</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>

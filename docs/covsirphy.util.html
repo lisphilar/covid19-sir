@@ -69,7 +69,7 @@
             
             
               <div class="version">
-                2.15.0-epsilon
+                2.15.0-eta
               </div>
             
           
@@ -786,6 +786,44 @@ This method should be overwritten in subclass.</p>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
 <p>If None is included in xlim/ylim, the values will be automatically determined by Matplotlib</p>
+</div>
+</dd></dl>
+
+<dl class="py function">
+<dt id="covsirphy.util.plotting.line_plot_multiple">
+<code class="sig-name descname">line_plot_multiple</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">df</span></em>, <em class="sig-param"><span class="n">x_col</span></em>, <em class="sig-param"><span class="n">actual_col</span></em>, <em class="sig-param"><span class="n">predicted_cols</span></em>, <em class="sig-param"><span class="n">title</span></em>, <em class="sig-param"><span class="n">ylabel</span></em>, <em class="sig-param"><span class="n">xlim</span><span class="o">=</span><span class="default_value">(None, None)</span></em>, <em class="sig-param"><span class="n">v</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">y_logscale</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">filename</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/util/plotting.html#line_plot_multiple"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#covsirphy.util.plotting.line_plot_multiple" title="Permalink to this definition">¶</a></dt>
+<dd><p>show multiple line graph of chronological change with actual plots.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>df</strong> (<em>pandas.DataFrame</em>) – <p>data</p>
+<dl class="simple">
+<dt>Index</dt><dd><p>Date (pandas.TimeStamp): Observation date</p>
+</dd>
+<dt>Columns</dt><dd><ul>
+<li><p>column defined by &#64;x_col, values for x-axis</p></li>
+<li><p>column defined by &#64;actual_col, actual values for y-axis</p></li>
+<li><p>columns defined by &#64;predicted_cols, predicted values for y-axis</p></li>
+</ul>
+</dd>
+</dl>
+</p></li>
+<li><p><strong>x_col</strong> (<em>str</em>) – column name for x-axis</p></li>
+<li><p><strong>actual_col</strong> (<em>str</em>) – column name for y-axis</p></li>
+<li><p><strong>predicted_cols</strong> (<em>list</em><em>[</em><em>str</em><em>]</em>) – list of columns which have predicted values</p></li>
+<li><p><strong>title</strong> (<em>str</em>) – title of the figure</p></li>
+<li><p><strong>y_label</strong> (<em>str</em>) – label for y-axis</p></li>
+<li><p><strong>xlim</strong> (<em>tuple</em><em>(</em><em>int</em><em> or </em><em>float</em><em>, </em><em>int</em><em> or </em><em>float</em><em>)</em>) – limit of x dimain</p></li>
+<li><p><strong>y_logscale</strong> (<em>bool</em>) – whether use log-scale in y-axis or not</p></li>
+<li><p><strong>v</strong> (<em>list</em><em>[</em><em>int</em><em>]</em>) – list of Recovered values to show vertical lines</p></li>
+<li><p><strong>filename</strong> (<em>str</em>) – filename of the figure, or None (show figure)</p></li>
+</ul>
+</dd>
+</dl>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>When xlim[0] is None and lower x-axis limit determined by matplotlib automatically is lower than 0,
+lower x-axis limit will be set to 0.</p>
 </div>
 </dd></dl>
 

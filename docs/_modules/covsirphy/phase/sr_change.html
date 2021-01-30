@@ -67,7 +67,7 @@
             
             
               <div class="version">
-                2.15.0-epsilon
+                2.15.0-eta
               </div>
             
           
@@ -337,14 +337,14 @@
         <span class="n">end_dates</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dates</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
         <span class="k">return</span> <span class="p">(</span><span class="n">start_dates</span><span class="p">,</span> <span class="n">end_dates</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="ChangeFinder.show"><a class="viewcode-back" href="../../../covsirphy.phase.html#covsirphy.ChangeFinder.show">[docs]</a>    <span class="k">def</span> <span class="nf">show</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">area</span><span class="p">,</span> <span class="n">change_dates</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">filename</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<div class="viewcode-block" id="ChangeFinder.show"><a class="viewcode-back" href="../../../covsirphy.phase.html#covsirphy.ChangeFinder.show">[docs]</a>    <span class="k">def</span> <span class="nf">show</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">area</span><span class="p">,</span> <span class="n">change_dates</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        show the S-R trend in a figure.</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            area (str): area name</span>
 <span class="sd">            change_dates (list[str] or None): list of change points</span>
-<span class="sd">            filename (str): filename of the figure, or None (display)</span>
+<span class="sd">            kwargs: keyword arguments of covsirphy.line_plot_multiple()</span>
 
 <span class="sd">        Note:</span>
 <span class="sd">            @change_dates must be specified if ChangeFinder.run() was not done.</span>
@@ -377,12 +377,7 @@
             <span class="n">change_str</span> <span class="o">=</span> <span class="s2">&quot;,</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">strings</span><span class="p">)</span>
             <span class="n">title</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">area</span><span class="si">}</span><span class="s2">: S-R trend changed on</span><span class="se">\n</span><span class="si">{</span><span class="n">change_str</span><span class="si">}</span><span class="s2">&quot;</span>
         <span class="n">Trend</span><span class="o">.</span><span class="n">show_with_many</span><span class="p">(</span>
-            <span class="n">result_df</span><span class="o">=</span><span class="n">comp_df</span><span class="p">,</span>
-            <span class="n">predicted_cols</span><span class="o">=</span><span class="n">pred_cols</span><span class="p">,</span>
-            <span class="n">title</span><span class="o">=</span><span class="n">title</span><span class="p">,</span>
-            <span class="n">vlines</span><span class="o">=</span><span class="n">vlines</span><span class="p">[</span><span class="mi">1</span><span class="p">:],</span>
-            <span class="n">filename</span><span class="o">=</span><span class="n">filename</span>
-        <span class="p">)</span></div></div>
+            <span class="n">result_df</span><span class="o">=</span><span class="n">comp_df</span><span class="p">,</span> <span class="n">predicted_cols</span><span class="o">=</span><span class="n">pred_cols</span><span class="p">,</span> <span class="n">title</span><span class="o">=</span><span class="n">title</span><span class="p">,</span> <span class="n">v</span><span class="o">=</span><span class="n">vlines</span><span class="p">[</span><span class="mi">1</span><span class="p">:],</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div></div>
 </pre></div>
 
            </div>

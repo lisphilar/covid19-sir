@@ -67,7 +67,7 @@
             
             
               <div class="version">
-                2.15.0-epsilon
+                2.15.0-eta
               </div>
             
           
@@ -178,10 +178,12 @@
 <span class="c1"># -*- coding: utf-8 -*-</span>
 
 <span class="kn">import</span> <span class="nn">sys</span>
+<span class="kn">import</span> <span class="nn">warnings</span>
 <span class="kn">import</span> <span class="nn">matplotlib</span>
 <span class="k">if</span> <span class="ow">not</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">sys</span><span class="p">,</span> <span class="s2">&quot;ps1&quot;</span><span class="p">):</span>
     <span class="n">matplotlib</span><span class="o">.</span><span class="n">use</span><span class="p">(</span><span class="s2">&quot;Agg&quot;</span><span class="p">)</span>
 <span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 
 <span class="c1"># plt.style.use(&quot;seaborn-ticks&quot;)</span>
 <span class="n">plt</span><span class="o">.</span><span class="n">style</span><span class="o">.</span><span class="n">use</span><span class="p">(</span><span class="s2">&quot;fast&quot;</span><span class="p">)</span>
@@ -331,6 +333,89 @@
     <span class="p">)</span>
     <span class="n">plt</span><span class="o">.</span><span class="n">clf</span><span class="p">()</span>
     <span class="k">return</span> <span class="kc">None</span></div>
+
+
+<div class="viewcode-block" id="line_plot_multiple"><a class="viewcode-back" href="../../../covsirphy.util.html#covsirphy.line_plot_multiple">[docs]</a><span class="k">def</span> <span class="nf">line_plot_multiple</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">x_col</span><span class="p">,</span> <span class="n">actual_col</span><span class="p">,</span> <span class="n">predicted_cols</span><span class="p">,</span>
+                       <span class="n">title</span><span class="p">,</span> <span class="n">ylabel</span><span class="p">,</span> <span class="n">xlim</span><span class="o">=</span><span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">),</span> <span class="n">v</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">y_logscale</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">filename</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    show multiple line graph of chronological change with actual plots.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        df (pandas.DataFrame): data</span>
+
+<span class="sd">            Index</span>
+<span class="sd">                Date (pandas.TimeStamp): Observation date</span>
+<span class="sd">            Columns</span>
+<span class="sd">                - column defined by @x_col, values for x-axis</span>
+<span class="sd">                - column defined by @actual_col, actual values for y-axis</span>
+<span class="sd">                - columns defined by @predicted_cols, predicted values for y-axis</span>
+<span class="sd">        x_col (str): column name for x-axis</span>
+<span class="sd">        actual_col (str): column name for y-axis</span>
+<span class="sd">        predicted_cols (list[str]): list of columns which have predicted values</span>
+<span class="sd">        title (str): title of the figure</span>
+<span class="sd">        y_label (str): label for y-axis</span>
+<span class="sd">        xlim (tuple(int or float, int or float)): limit of x dimain</span>
+<span class="sd">        y_logscale (bool): whether use log-scale in y-axis or not</span>
+<span class="sd">        v (list[int]): list of Recovered values to show vertical lines</span>
+<span class="sd">        filename (str): filename of the figure, or None (show figure)</span>
+
+<span class="sd">    Note:</span>
+<span class="sd">        When xlim[0] is None and lower x-axis limit determined by matplotlib automatically is lower than 0,</span>
+<span class="sd">        lower x-axis limit will be set to 0.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">warnings</span><span class="o">.</span><span class="n">simplefilter</span><span class="p">(</span><span class="s2">&quot;ignore&quot;</span><span class="p">,</span> <span class="ne">FutureWarning</span><span class="p">)</span>
+    <span class="n">warnings</span><span class="o">.</span><span class="n">simplefilter</span><span class="p">(</span><span class="s2">&quot;ignore&quot;</span><span class="p">,</span> <span class="ne">UserWarning</span><span class="p">)</span>
+    <span class="n">x_series</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="n">x_col</span><span class="p">]</span>
+    <span class="n">actual</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="n">actual_col</span><span class="p">]</span>
+    <span class="c1"># Plot the actual values</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span>
+        <span class="n">x_series</span><span class="p">,</span> <span class="n">actual</span><span class="p">,</span>
+        <span class="n">label</span><span class="o">=</span><span class="n">actual_col</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;black&quot;</span><span class="p">,</span> <span class="n">marker</span><span class="o">=</span><span class="s2">&quot;.&quot;</span><span class="p">,</span> <span class="n">markeredgewidth</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">linewidth</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+    <span class="c1"># Plot the predicted values</span>
+    <span class="k">for</span> <span class="n">col</span> <span class="ow">in</span> <span class="n">predicted_cols</span><span class="p">:</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">x_series</span><span class="p">,</span> <span class="n">df</span><span class="p">[</span><span class="n">col</span><span class="p">],</span> <span class="n">label</span><span class="o">=</span><span class="n">col</span><span class="p">)</span>
+    <span class="c1"># x-axis</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="n">x_col</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">xlim</span><span class="p">(</span><span class="nb">max</span><span class="p">(</span><span class="n">plt</span><span class="o">.</span><span class="n">xlim</span><span class="p">()[</span><span class="mi">0</span><span class="p">],</span> <span class="n">xlim</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="ow">or</span> <span class="mi">0</span><span class="p">),</span> <span class="n">xlim</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+    <span class="c1"># y-axis</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="n">ylabel</span><span class="p">)</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">yscale</span><span class="p">(</span><span class="s2">&quot;log&quot;</span><span class="p">,</span> <span class="n">base</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span>
+    <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">yscale</span><span class="p">(</span><span class="s2">&quot;log&quot;</span><span class="p">,</span> <span class="n">basey</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span>
+    <span class="c1"># Delete y-labels of log-scale (minor) axis</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">setp</span><span class="p">(</span><span class="n">plt</span><span class="o">.</span><span class="n">gca</span><span class="p">()</span><span class="o">.</span><span class="n">get_yticklabels</span><span class="p">(</span><span class="n">minor</span><span class="o">=</span><span class="kc">True</span><span class="p">),</span> <span class="n">visible</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">gca</span><span class="p">()</span><span class="o">.</span><span class="n">tick_params</span><span class="p">(</span><span class="n">left</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">which</span><span class="o">=</span><span class="s2">&quot;minor&quot;</span><span class="p">)</span>
+    <span class="c1"># Set new y-labels of major axis</span>
+    <span class="k">if</span> <span class="n">y_logscale</span><span class="p">:</span>
+        <span class="n">ymin</span><span class="p">,</span> <span class="n">ymax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">ylim</span><span class="p">()</span>
+        <span class="n">ydiff_scale</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">log10</span><span class="p">(</span><span class="n">ymax</span> <span class="o">-</span> <span class="n">ymin</span><span class="p">))</span>
+        <span class="n">yticks</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span>
+            <span class="nb">round</span><span class="p">(</span><span class="n">ymin</span><span class="p">,</span> <span class="o">-</span> <span class="n">ydiff_scale</span><span class="p">),</span>
+            <span class="nb">round</span><span class="p">(</span><span class="n">ymax</span><span class="p">,</span> <span class="o">-</span> <span class="n">ydiff_scale</span><span class="p">),</span> <span class="mi">5</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">int64</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">gca</span><span class="p">()</span><span class="o">.</span><span class="n">set_yticks</span><span class="p">(</span><span class="n">yticks</span><span class="p">)</span>
+        <span class="n">fmt</span> <span class="o">=</span> <span class="n">matplotlib</span><span class="o">.</span><span class="n">ticker</span><span class="o">.</span><span class="n">ScalarFormatter</span><span class="p">(</span><span class="n">useOffset</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+        <span class="n">fmt</span><span class="o">.</span><span class="n">set_scientific</span><span class="p">(</span><span class="kc">False</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">gca</span><span class="p">()</span><span class="o">.</span><span class="n">yaxis</span><span class="o">.</span><span class="n">set_major_formatter</span><span class="p">(</span><span class="n">fmt</span><span class="p">)</span>
+    <span class="c1"># Title</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="n">title</span><span class="p">)</span>
+    <span class="c1"># Vertical lines</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">v</span><span class="p">,</span> <span class="p">(</span><span class="nb">list</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">)):</span>
+        <span class="k">for</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">v</span><span class="p">:</span>
+            <span class="n">plt</span><span class="o">.</span><span class="n">axvline</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="n">value</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;black&quot;</span><span class="p">,</span> <span class="n">linestyle</span><span class="o">=</span><span class="s2">&quot;:&quot;</span><span class="p">)</span>
+    <span class="c1"># Legend</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span>
+        <span class="n">bbox_to_anchor</span><span class="o">=</span><span class="p">(</span><span class="mf">1.02</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span> <span class="n">loc</span><span class="o">=</span><span class="s2">&quot;lower left&quot;</span><span class="p">,</span> <span class="n">borderaxespad</span><span class="o">=</span><span class="mi">0</span>
+    <span class="p">)</span>
+    <span class="c1"># Save figure or show figure</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
+    <span class="k">if</span> <span class="n">filename</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+        <span class="k">return</span> <span class="kc">None</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span>
+        <span class="n">filename</span><span class="p">,</span> <span class="n">bbox_inches</span><span class="o">=</span><span class="s2">&quot;tight&quot;</span><span class="p">,</span> <span class="n">transparent</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">dpi</span><span class="o">=</span><span class="mi">300</span>
+    <span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">clf</span><span class="p">()</span></div>
 </pre></div>
 
            </div>
