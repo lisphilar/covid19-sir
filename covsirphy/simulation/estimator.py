@@ -76,24 +76,39 @@ class Estimator(Term):
         else:
             self._set_taufree()
 
-    def _init_study(self, seed):
+    def _init_study(self, seed, pruner, upper, percentile):
         """
         Initialize Optuna study.
 
         Args:
             seed (int or None): random seed of hyperparameter optimization
+            pruner (str): Hyperband, Median, Threshold or Percentile
+            upper (float): works for "threshold" pruner,
+                intermediate RMSLE score is larger than this value, it prunes
+            percentile (float): works for "threshold" pruner,
+                the best intermediate value is in the bottom percentile among trials, it prunes
         """
-        self.study = optuna.create_study(
-            direction="minimize",
-            sampler=optuna.samplers.TPESampler(seed=seed)
-        )
+        pruner_dict = {
+            "hyperband": optuna.pruners.HyperbandPruner(),
+            "median": optuna.pruners.MedianPruner(),
+            "threshold": optuna.pruners.ThresholdPruner(upper=upper),
+            "percentile": optuna.pruners.PercentilePruner(percentile=percentile),
+        }
+        try:
+            self.study = optuna.create_study(
+                direction="minimize",
+                sampler=optuna.samplers.TPESampler(seed=seed),
+                pruner=pruner_dict[pruner.lower()],
+            )
+        except KeyError:
+            raise KeyError(
+                f"@pruner should be selected from {', '.join(pruner_dict.keys())}.")
 
-    def run(self, timeout=180, reset_n_max=3,
-            timeout_iteration=10, allowance=(0.98, 1.02), seed=0, **kwargs):
+    def run(self, timeout=180, reset_n_max=3, timeout_iteration=10, allowance=(0.98, 1.02),
+            seed=0, pruner="median", upper=0.5, percentile=50, **kwargs):
         """
         Run optimization.
         If the result satisfied the following conditions, optimization ends.
-        - all values are not under than 0
         - values of monotonic increasing variables increases monotonically
         - predicted values are in the allowance when each actual value shows max value
 
@@ -103,6 +118,11 @@ class Estimator(Term):
             timeout_iteration (int): time-out of one iteration
             allowance (tuple(float, float)): the allowance of the predicted value
             seed (int or None): random seed of hyperparameter optimization
+            pruner (str): hyperband, median, threshold or percentile
+            upper (float): works for "threshold" pruner,
+                intermediate RMSLE score is larger than this value, it prunes
+            percentile (float): works for "Percentile" pruner,
+                the best intermediate value is in the bottom percentile among trials, it prunes
             kwargs: other keyword arguments will be ignored
 
         Note:
@@ -110,7 +130,8 @@ class Estimator(Term):
         """
         # Create a study of optuna
         if self.study is None:
-            self._init_study(seed=seed)
+            self._init_study(
+                seed=seed, pruner=pruner, upper=upper, percentile=percentile)
         reset_n = 0
         iteration_n = math.ceil(timeout / timeout_iteration)
         increasing_cols = [f"{v}{self.P}" for v in self.model.VARS_INCLEASE]
