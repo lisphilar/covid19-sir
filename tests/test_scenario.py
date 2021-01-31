@@ -241,8 +241,11 @@ class TestScenario(object):
         # Parameter estimation
         with pytest.raises(KeyError):
             snl.estimate(SIR, phases=["30th"])
+        with pytest.raises(KeyError):
+            snl.estimate(SIR, pruner="unknown")
         with pytest.raises(ValueError):
             snl.estimate(model=SIR, tau=1440)
+        snl.trend()
         snl.estimate(SIR, timeout=1, timeout_iteration=1)
         # Estimation history
         snl.estimate_history(phase="last")
