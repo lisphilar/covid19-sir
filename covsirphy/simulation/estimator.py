@@ -104,18 +104,20 @@ class Estimator(Term):
             raise KeyError(
                 f"@pruner should be selected from {', '.join(pruner_dict.keys())}.")
 
-    def run(self, timeout=180, reset_n_max=3, timeout_iteration=10, allowance=(0.98, 1.02),
+    def run(self, timeout=180, reset_n_max=3, timeout_iteration=10, tail_n=4, allowance=(0.98, 1.02),
             seed=0, pruner="median", upper=0.5, percentile=50, **kwargs):
         """
         Run optimization.
         If the result satisfied the following conditions, optimization ends.
-        - values of monotonic increasing variables increases monotonically
-        - predicted values are in the allowance when each actual value shows max value
+        - RMSLE score did not change in the last @tail_n iterations.
+        - Monotonic increasing variables increases monotonically.
+        - Predicted values are in the allowance when each actual value shows max value.
 
         Args:
             timeout (int): timeout of optimization
             reset_n_max (int): if study was reset @reset_n_max times, will not be reset anymore
             timeout_iteration (int): time-out of one iteration
+            tail_n (int): the number of iterations to decide whether RMSLE score did not change for the last iterations
             allowance (tuple(float, float)): the allowance of the predicted value
             seed (int or None): random seed of hyperparameter optimization
             pruner (str): hyperband, median, threshold or percentile
@@ -136,12 +138,18 @@ class Estimator(Term):
         iteration_n = math.ceil(timeout / timeout_iteration)
         increasing_cols = [f"{v}{self.P}" for v in self.model.VARS_INCLEASE]
         stopwatch = StopWatch()
+        rmsle_scores = []
         for _ in range(iteration_n):
             # Perform optimization
             self.study.optimize(
                 self._objective, n_jobs=1, timeout=timeout_iteration)
+            # If RMSLE did not change in the last iterations, stop running
+            tau, param_dict = self._param()
+            rmsle_scores.append(self._rmsle(tau=tau, param_dict=param_dict))
+            if len(rmsle_scores) >= tail_n and len(set(rmsle_scores[-tail_n:])) == 1:
+                break
             # Create a table to compare observed/estimated values
-            comp_df = self._compare(*self._param())
+            comp_df = self._compare(tau=tau, param_dict=param_dict)
             # Check monotonic variables
             mono_ok_list = [
                 comp_df[col].is_monotonic_increasing for col in increasing_cols
