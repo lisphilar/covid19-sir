@@ -358,15 +358,14 @@ class ParamTracker(Term):
             for (num, unit) in enumerate(self._series)
             if unit and unit <= last_date
         ]
-        past_phases, past_units = zip(*past_nest)
+        past_phases, _ = zip(*past_nest)
         # Select phases to use
         selected_phases = self._ensure_list(
             phases or past_phases, candidates=past_phases, name="phases")
-        final_phases = list(set(selected_phases) & set(past_phases))
+        final_phases = [
+            ph for ph in past_phases if ph in set(selected_phases)]
         # Convert phase names to phase units
-        selected_units = [self._series.unit(ph) for ph in selected_phases]
-        final_units = list(set(selected_units) & set(past_units))
-        return (final_phases, final_units)
+        return (final_phases, [self._series.unit(ph) for ph in final_phases])
 
     def future_phases(self):
         """
