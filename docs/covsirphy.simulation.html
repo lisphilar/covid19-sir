@@ -69,7 +69,7 @@
             
             
               <div class="version">
-                2.15.0-eta-fu1
+                2.15.0-kappa
               </div>
             
           
@@ -308,20 +308,26 @@
 
 <dl class="py method">
 <dt id="covsirphy.simulation.estimator.Estimator.run">
-<code class="sig-name descname">run</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">timeout</span><span class="o">=</span><span class="default_value">180</span></em>, <em class="sig-param"><span class="n">reset_n_max</span><span class="o">=</span><span class="default_value">3</span></em>, <em class="sig-param"><span class="n">timeout_iteration</span><span class="o">=</span><span class="default_value">10</span></em>, <em class="sig-param"><span class="n">allowance</span><span class="o">=</span><span class="default_value">(0.98, 1.02)</span></em>, <em class="sig-param"><span class="n">seed</span><span class="o">=</span><span class="default_value">0</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/simulation/estimator.html#Estimator.run"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#covsirphy.simulation.estimator.Estimator.run" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">run</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">timeout</span><span class="o">=</span><span class="default_value">180</span></em>, <em class="sig-param"><span class="n">reset_n_max</span><span class="o">=</span><span class="default_value">3</span></em>, <em class="sig-param"><span class="n">timeout_iteration</span><span class="o">=</span><span class="default_value">10</span></em>, <em class="sig-param"><span class="n">tail_n</span><span class="o">=</span><span class="default_value">4</span></em>, <em class="sig-param"><span class="n">allowance</span><span class="o">=</span><span class="default_value">(0.98, 1.02)</span></em>, <em class="sig-param"><span class="n">seed</span><span class="o">=</span><span class="default_value">0</span></em>, <em class="sig-param"><span class="n">pruner</span><span class="o">=</span><span class="default_value">'median'</span></em>, <em class="sig-param"><span class="n">upper</span><span class="o">=</span><span class="default_value">0.5</span></em>, <em class="sig-param"><span class="n">percentile</span><span class="o">=</span><span class="default_value">50</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/simulation/estimator.html#Estimator.run"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#covsirphy.simulation.estimator.Estimator.run" title="Permalink to this definition">¶</a></dt>
 <dd><p>Run optimization.
 If the result satisfied the following conditions, optimization ends.
-- all values are not under than 0
-- values of monotonic increasing variables increases monotonically
-- predicted values are in the allowance when each actual value shows max value</p>
+- RMSLE score did not change in the last &#64;tail_n iterations.
+- Monotonic increasing variables increases monotonically.
+- Predicted values are in the allowance when each actual value shows max value.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>timeout</strong> (<em>int</em>) – timeout of optimization</p></li>
 <li><p><strong>reset_n_max</strong> (<em>int</em>) – if study was reset &#64;reset_n_max times, will not be reset anymore</p></li>
 <li><p><strong>timeout_iteration</strong> (<em>int</em>) – time-out of one iteration</p></li>
+<li><p><strong>tail_n</strong> (<em>int</em>) – the number of iterations to decide whether RMSLE score did not change for the last iterations</p></li>
 <li><p><strong>allowance</strong> (<em>tuple</em><em>(</em><em>float</em><em>, </em><em>float</em><em>)</em>) – the allowance of the predicted value</p></li>
 <li><p><strong>seed</strong> (<em>int</em><em> or </em><em>None</em>) – random seed of hyperparameter optimization</p></li>
+<li><p><strong>pruner</strong> (<em>str</em>) – hyperband, median, threshold or percentile</p></li>
+<li><p><strong>upper</strong> (<em>float</em>) – works for “threshold” pruner,
+intermediate RMSLE score is larger than this value, it prunes</p></li>
+<li><p><strong>percentile</strong> (<em>float</em>) – works for “Percentile” pruner,
+the best intermediate value is in the bottom percentile among trials, it prunes</p></li>
 <li><p><strong>kwargs</strong> – other keyword arguments will be ignored</p></li>
 </ul>
 </dd>

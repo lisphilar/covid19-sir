@@ -67,7 +67,7 @@
             
             
               <div class="version">
-                2.15.0-eta-fu1
+                2.15.0-kappa
               </div>
             
           
@@ -534,15 +534,14 @@
             <span class="k">for</span> <span class="p">(</span><span class="n">num</span><span class="p">,</span> <span class="n">unit</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_series</span><span class="p">)</span>
             <span class="k">if</span> <span class="n">unit</span> <span class="ow">and</span> <span class="n">unit</span> <span class="o">&lt;=</span> <span class="n">last_date</span>
         <span class="p">]</span>
-        <span class="n">past_phases</span><span class="p">,</span> <span class="n">past_units</span> <span class="o">=</span> <span class="nb">zip</span><span class="p">(</span><span class="o">*</span><span class="n">past_nest</span><span class="p">)</span>
+        <span class="n">past_phases</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="nb">zip</span><span class="p">(</span><span class="o">*</span><span class="n">past_nest</span><span class="p">)</span>
         <span class="c1"># Select phases to use</span>
         <span class="n">selected_phases</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ensure_list</span><span class="p">(</span>
             <span class="n">phases</span> <span class="ow">or</span> <span class="n">past_phases</span><span class="p">,</span> <span class="n">candidates</span><span class="o">=</span><span class="n">past_phases</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;phases&quot;</span><span class="p">)</span>
-        <span class="n">final_phases</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">selected_phases</span><span class="p">)</span> <span class="o">&amp;</span> <span class="nb">set</span><span class="p">(</span><span class="n">past_phases</span><span class="p">))</span>
+        <span class="n">final_phases</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="n">ph</span> <span class="k">for</span> <span class="n">ph</span> <span class="ow">in</span> <span class="n">past_phases</span> <span class="k">if</span> <span class="n">ph</span> <span class="ow">in</span> <span class="nb">set</span><span class="p">(</span><span class="n">selected_phases</span><span class="p">)]</span>
         <span class="c1"># Convert phase names to phase units</span>
-        <span class="n">selected_units</span> <span class="o">=</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_series</span><span class="o">.</span><span class="n">unit</span><span class="p">(</span><span class="n">ph</span><span class="p">)</span> <span class="k">for</span> <span class="n">ph</span> <span class="ow">in</span> <span class="n">selected_phases</span><span class="p">]</span>
-        <span class="n">final_units</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">selected_units</span><span class="p">)</span> <span class="o">&amp;</span> <span class="nb">set</span><span class="p">(</span><span class="n">past_units</span><span class="p">))</span>
-        <span class="k">return</span> <span class="p">(</span><span class="n">final_phases</span><span class="p">,</span> <span class="n">final_units</span><span class="p">)</span></div>
+        <span class="k">return</span> <span class="p">(</span><span class="n">final_phases</span><span class="p">,</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_series</span><span class="o">.</span><span class="n">unit</span><span class="p">(</span><span class="n">ph</span><span class="p">)</span> <span class="k">for</span> <span class="n">ph</span> <span class="ow">in</span> <span class="n">final_phases</span><span class="p">])</span></div>
 
 <div class="viewcode-block" id="ParamTracker.future_phases"><a class="viewcode-back" href="../../../covsirphy.analysis.html#covsirphy.ParamTracker.future_phases">[docs]</a>    <span class="k">def</span> <span class="nf">future_phases</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>

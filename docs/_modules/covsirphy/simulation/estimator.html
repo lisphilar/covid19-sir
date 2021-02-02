@@ -67,7 +67,7 @@
             
             
               <div class="version">
-                2.15.0-eta-fu1
+                2.15.0-kappa
               </div>
             
           
@@ -252,33 +252,55 @@
         <span class="k">else</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_set_taufree</span><span class="p">()</span>
 
-    <span class="k">def</span> <span class="nf">_init_study</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">seed</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">_init_study</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">seed</span><span class="p">,</span> <span class="n">pruner</span><span class="p">,</span> <span class="n">upper</span><span class="p">,</span> <span class="n">percentile</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Initialize Optuna study.</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            seed (int or None): random seed of hyperparameter optimization</span>
+<span class="sd">            pruner (str): Hyperband, Median, Threshold or Percentile</span>
+<span class="sd">            upper (float): works for &quot;threshold&quot; pruner,</span>
+<span class="sd">                intermediate RMSLE score is larger than this value, it prunes</span>
+<span class="sd">            percentile (float): works for &quot;threshold&quot; pruner,</span>
+<span class="sd">                the best intermediate value is in the bottom percentile among trials, it prunes</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">study</span> <span class="o">=</span> <span class="n">optuna</span><span class="o">.</span><span class="n">create_study</span><span class="p">(</span>
-            <span class="n">direction</span><span class="o">=</span><span class="s2">&quot;minimize&quot;</span><span class="p">,</span>
-            <span class="n">sampler</span><span class="o">=</span><span class="n">optuna</span><span class="o">.</span><span class="n">samplers</span><span class="o">.</span><span class="n">TPESampler</span><span class="p">(</span><span class="n">seed</span><span class="o">=</span><span class="n">seed</span><span class="p">)</span>
-        <span class="p">)</span>
+        <span class="n">pruner_dict</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s2">&quot;hyperband&quot;</span><span class="p">:</span> <span class="n">optuna</span><span class="o">.</span><span class="n">pruners</span><span class="o">.</span><span class="n">HyperbandPruner</span><span class="p">(),</span>
+            <span class="s2">&quot;median&quot;</span><span class="p">:</span> <span class="n">optuna</span><span class="o">.</span><span class="n">pruners</span><span class="o">.</span><span class="n">MedianPruner</span><span class="p">(),</span>
+            <span class="s2">&quot;threshold&quot;</span><span class="p">:</span> <span class="n">optuna</span><span class="o">.</span><span class="n">pruners</span><span class="o">.</span><span class="n">ThresholdPruner</span><span class="p">(</span><span class="n">upper</span><span class="o">=</span><span class="n">upper</span><span class="p">),</span>
+            <span class="s2">&quot;percentile&quot;</span><span class="p">:</span> <span class="n">optuna</span><span class="o">.</span><span class="n">pruners</span><span class="o">.</span><span class="n">PercentilePruner</span><span class="p">(</span><span class="n">percentile</span><span class="o">=</span><span class="n">percentile</span><span class="p">),</span>
+        <span class="p">}</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">study</span> <span class="o">=</span> <span class="n">optuna</span><span class="o">.</span><span class="n">create_study</span><span class="p">(</span>
+                <span class="n">direction</span><span class="o">=</span><span class="s2">&quot;minimize&quot;</span><span class="p">,</span>
+                <span class="n">sampler</span><span class="o">=</span><span class="n">optuna</span><span class="o">.</span><span class="n">samplers</span><span class="o">.</span><span class="n">TPESampler</span><span class="p">(</span><span class="n">seed</span><span class="o">=</span><span class="n">seed</span><span class="p">),</span>
+                <span class="n">pruner</span><span class="o">=</span><span class="n">pruner_dict</span><span class="p">[</span><span class="n">pruner</span><span class="o">.</span><span class="n">lower</span><span class="p">()],</span>
+            <span class="p">)</span>
+        <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">KeyError</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;@pruner should be selected from </span><span class="si">{</span><span class="s1">&#39;, &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">pruner_dict</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span><span class="si">}</span><span class="s2">.&quot;</span><span class="p">)</span>
 
-<div class="viewcode-block" id="Estimator.run"><a class="viewcode-back" href="../../../covsirphy.simulation.html#covsirphy.Estimator.run">[docs]</a>    <span class="k">def</span> <span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">timeout</span><span class="o">=</span><span class="mi">180</span><span class="p">,</span> <span class="n">reset_n_max</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span>
-            <span class="n">timeout_iteration</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">allowance</span><span class="o">=</span><span class="p">(</span><span class="mf">0.98</span><span class="p">,</span> <span class="mf">1.02</span><span class="p">),</span> <span class="n">seed</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<div class="viewcode-block" id="Estimator.run"><a class="viewcode-back" href="../../../covsirphy.simulation.html#covsirphy.Estimator.run">[docs]</a>    <span class="k">def</span> <span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">timeout</span><span class="o">=</span><span class="mi">180</span><span class="p">,</span> <span class="n">reset_n_max</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">timeout_iteration</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">tail_n</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span> <span class="n">allowance</span><span class="o">=</span><span class="p">(</span><span class="mf">0.98</span><span class="p">,</span> <span class="mf">1.02</span><span class="p">),</span>
+            <span class="n">seed</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">pruner</span><span class="o">=</span><span class="s2">&quot;median&quot;</span><span class="p">,</span> <span class="n">upper</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span> <span class="n">percentile</span><span class="o">=</span><span class="mi">50</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Run optimization.</span>
 <span class="sd">        If the result satisfied the following conditions, optimization ends.</span>
-<span class="sd">        - all values are not under than 0</span>
-<span class="sd">        - values of monotonic increasing variables increases monotonically</span>
-<span class="sd">        - predicted values are in the allowance when each actual value shows max value</span>
+<span class="sd">        - RMSLE score did not change in the last @tail_n iterations.</span>
+<span class="sd">        - Monotonic increasing variables increases monotonically.</span>
+<span class="sd">        - Predicted values are in the allowance when each actual value shows max value.</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            timeout (int): timeout of optimization</span>
 <span class="sd">            reset_n_max (int): if study was reset @reset_n_max times, will not be reset anymore</span>
 <span class="sd">            timeout_iteration (int): time-out of one iteration</span>
+<span class="sd">            tail_n (int): the number of iterations to decide whether RMSLE score did not change for the last iterations</span>
 <span class="sd">            allowance (tuple(float, float)): the allowance of the predicted value</span>
 <span class="sd">            seed (int or None): random seed of hyperparameter optimization</span>
+<span class="sd">            pruner (str): hyperband, median, threshold or percentile</span>
+<span class="sd">            upper (float): works for &quot;threshold&quot; pruner,</span>
+<span class="sd">                intermediate RMSLE score is larger than this value, it prunes</span>
+<span class="sd">            percentile (float): works for &quot;Percentile&quot; pruner,</span>
+<span class="sd">                the best intermediate value is in the bottom percentile among trials, it prunes</span>
 <span class="sd">            kwargs: other keyword arguments will be ignored</span>
 
 <span class="sd">        Note:</span>
@@ -286,17 +308,24 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="c1"># Create a study of optuna</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">study</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_init_study</span><span class="p">(</span><span class="n">seed</span><span class="o">=</span><span class="n">seed</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_init_study</span><span class="p">(</span>
+                <span class="n">seed</span><span class="o">=</span><span class="n">seed</span><span class="p">,</span> <span class="n">pruner</span><span class="o">=</span><span class="n">pruner</span><span class="p">,</span> <span class="n">upper</span><span class="o">=</span><span class="n">upper</span><span class="p">,</span> <span class="n">percentile</span><span class="o">=</span><span class="n">percentile</span><span class="p">)</span>
         <span class="n">reset_n</span> <span class="o">=</span> <span class="mi">0</span>
         <span class="n">iteration_n</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">ceil</span><span class="p">(</span><span class="n">timeout</span> <span class="o">/</span> <span class="n">timeout_iteration</span><span class="p">)</span>
         <span class="n">increasing_cols</span> <span class="o">=</span> <span class="p">[</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">v</span><span class="si">}{</span><span class="bp">self</span><span class="o">.</span><span class="n">P</span><span class="si">}</span><span class="s2">&quot;</span> <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">VARS_INCLEASE</span><span class="p">]</span>
         <span class="n">stopwatch</span> <span class="o">=</span> <span class="n">StopWatch</span><span class="p">()</span>
+        <span class="n">rmsle_scores</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">iteration_n</span><span class="p">):</span>
             <span class="c1"># Perform optimization</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">study</span><span class="o">.</span><span class="n">optimize</span><span class="p">(</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">_objective</span><span class="p">,</span> <span class="n">n_jobs</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">timeout</span><span class="o">=</span><span class="n">timeout_iteration</span><span class="p">)</span>
+            <span class="c1"># If RMSLE did not change in the last iterations, stop running</span>
+            <span class="n">tau</span><span class="p">,</span> <span class="n">param_dict</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_param</span><span class="p">()</span>
+            <span class="n">rmsle_scores</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_rmsle</span><span class="p">(</span><span class="n">tau</span><span class="o">=</span><span class="n">tau</span><span class="p">,</span> <span class="n">param_dict</span><span class="o">=</span><span class="n">param_dict</span><span class="p">))</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">rmsle_scores</span><span class="p">)</span> <span class="o">&gt;=</span> <span class="n">tail_n</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">rmsle_scores</span><span class="p">[</span><span class="o">-</span><span class="n">tail_n</span><span class="p">:]))</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+                <span class="k">break</span>
             <span class="c1"># Create a table to compare observed/estimated values</span>
-            <span class="n">comp_df</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_compare</span><span class="p">(</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">_param</span><span class="p">())</span>
+            <span class="n">comp_df</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_compare</span><span class="p">(</span><span class="n">tau</span><span class="o">=</span><span class="n">tau</span><span class="p">,</span> <span class="n">param_dict</span><span class="o">=</span><span class="n">param_dict</span><span class="p">)</span>
             <span class="c1"># Check monotonic variables</span>
             <span class="n">mono_ok_list</span> <span class="o">=</span> <span class="p">[</span>
                 <span class="n">comp_df</span><span class="p">[</span><span class="n">col</span><span class="p">]</span><span class="o">.</span><span class="n">is_monotonic_increasing</span> <span class="k">for</span> <span class="n">col</span> <span class="ow">in</span> <span class="n">increasing_cols</span>
