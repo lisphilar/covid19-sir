@@ -85,5 +85,5 @@ todo_include_todos = True
 add_module_names = False
 
 # nbsphinx
-nbsphinx_execute = "auto"
+nbsphinx_execute = "always"
 nbsphinx_kernel_name = "python3"
