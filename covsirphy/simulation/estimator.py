@@ -105,7 +105,7 @@ class Estimator(Term):
                 f"@pruner should be selected from {', '.join(pruner_dict.keys())}.")
 
     def run(self, timeout=180, reset_n_max=3, timeout_iteration=10, tail_n=4, allowance=(0.98, 1.02),
-            seed=0, pruner="median", upper=0.5, percentile=50, **kwargs):
+            seed=0, pruner="threshold", upper=0.5, percentile=50, **kwargs):
         """
         Run optimization.
         If the result satisfied the following conditions, optimization ends.
