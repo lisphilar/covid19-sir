@@ -19,8 +19,8 @@ from covsirphy.util.error import SubsetNotFoundError, ScenarioNotFoundError, UnE
 from covsirphy.util.error import PCRIncorrectPreconditionError, NotInteractiveError
 from covsirphy.util.file import save_dataframe
 from covsirphy.util.argument import find_args
+from covsirphy.util.term import Term, Word
 # cleaning
-from covsirphy.cleaning.term import Term, Word
 from covsirphy.cleaning.cbase import CleaningBase
 from covsirphy.cleaning.jhu_data import JHUData
 from covsirphy.cleaning.jhu_complement import JHUDataComplementHandler

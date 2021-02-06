@@ -11,7 +11,7 @@ import pandas as pd
 import seaborn as sns
 from sklearn.metrics import mean_squared_log_error
 from covsirphy.util.stopwatch import StopWatch
-from covsirphy.cleaning.term import Term
+from covsirphy.util.term import Term
 from covsirphy.ode.mbase import ModelBase
 from covsirphy.simulation.simulator import ODESimulator
 

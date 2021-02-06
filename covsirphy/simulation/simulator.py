@@ -6,7 +6,7 @@ import numpy as np
 import pandas as pd
 from scipy.integrate import solve_ivp
 from covsirphy.util.error import deprecate
-from covsirphy.cleaning.term import Term
+from covsirphy.util.term import Term
 from covsirphy.ode.mbase import ModelBase
 
 

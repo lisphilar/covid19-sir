@@ -3,7 +3,7 @@
 
 from datetime import datetime, timezone, timedelta
 from pathlib import Path
-from covsirphy.cleaning.term import Term
+from covsirphy.util.term import Term
 from covsirphy.cleaning.jhu_data import JHUData
 from covsirphy.cleaning.japan_data import JapanData
 from covsirphy.cleaning.oxcgrt import OxCGRTData

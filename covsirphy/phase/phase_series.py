@@ -3,7 +3,7 @@
 
 import numpy as np
 import pandas as pd
-from covsirphy.cleaning.term import Term
+from covsirphy.util.term import Term
 from covsirphy.phase.phase_unit import PhaseUnit
 from covsirphy.phase.sr_change import ChangeFinder
 

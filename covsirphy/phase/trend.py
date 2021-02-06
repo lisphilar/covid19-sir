@@ -7,7 +7,7 @@ import numpy as np
 import pandas as pd
 from scipy.optimize import curve_fit, OptimizeWarning
 from covsirphy.util.plotting import line_plot_multiple
-from covsirphy.cleaning.term import Term
+from covsirphy.util.term import Term
 
 
 class Trend(Term):

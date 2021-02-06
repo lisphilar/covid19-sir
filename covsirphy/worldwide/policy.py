@@ -9,7 +9,7 @@ from covsirphy.util.plotting import line_plot
 from covsirphy.cleaning.jhu_data import JHUData
 from covsirphy.cleaning.population import PopulationData
 from covsirphy.cleaning.oxcgrt import OxCGRTData
-from covsirphy.cleaning.term import Term
+from covsirphy.util.term import Term
 from covsirphy.ode.mbase import ModelBase
 from covsirphy.phase.phase_estimator import MPEstimator
 from covsirphy.analysis.scenario import Scenario

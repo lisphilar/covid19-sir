@@ -6,7 +6,7 @@ import warnings
 import covid19dh
 import pandas as pd
 from covsirphy.util.file import save_dataframe
-from covsirphy.cleaning.term import Term
+from covsirphy.util.term import Term
 from covsirphy.cleaning.jhu_data import JHUData
 from covsirphy.cleaning.oxcgrt import OxCGRTData
 from covsirphy.cleaning.population import PopulationData

@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 import numpy as np
-from covsirphy.cleaning.term import Term
+from covsirphy.util.term import Term
 
 
 class ModelBase(Term):

@@ -7,7 +7,7 @@ import country_converter as coco
 from dask import dataframe as dd
 import pandas as pd
 from covsirphy.util.error import deprecate, SubsetNotFoundError
-from covsirphy.cleaning.term import Term
+from covsirphy.util.term import Term
 
 
 class CleaningBase(Term):
