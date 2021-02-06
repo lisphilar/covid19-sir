@@ -126,8 +126,9 @@ class JHUData(CleaningBase):
         p_chn_df = p_chn_df.groupby(self.DATE).sum().reset_index()
         p_chn_df.insert(0, self.COUNTRY, "China")
         p_chn_df.insert(0, self.PROVINCE, self.UNKNOWN)
-        df = pd.concat(
-            [df.loc[df[self.COUNTRY] != "China"], p_chn_df], ignore_index=True)
+        without_c_chn_df = df.loc[
+            (df[self.COUNTRY] != "China") | (df[self.PROVINCE] != self.UNKNOWN)]
+        df = pd.concat([without_c_chn_df, p_chn_df], ignore_index=True)
         # Update data types to reduce memory
         df[self.AREA_ABBR_COLS] = df[self.AREA_ABBR_COLS].astype("category")
         return df
