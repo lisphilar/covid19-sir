@@ -22,6 +22,7 @@ from covsirphy.util.argument import find_args
 from covsirphy.util.term import Term, Word
 # visualization
 from covsirphy.visualization.vbase import VisualizeBase
+from covsirphy.visualization.colored_map import ColoredMap
 # cleaning
 from covsirphy.cleaning.cbase import CleaningBase
 from covsirphy.cleaning.jhu_data import JHUData
@@ -85,7 +86,8 @@ __all__ = [
     "PolicyMeasures",
     "SubsetNotFoundError", "ScenarioNotFoundError", "UnExecutedError",
     "PCRIncorrectPreconditionError", "NotInteractiveError",
-    "VisualizeBase",
+    "UnExpectedValueError",
+    "VisualizeBase", "ColoredMap",
     # Deprecated
     "Population", "Word", "jpn_map",
 ]
