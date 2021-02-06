@@ -79,7 +79,7 @@ __all__ = [
     "LinelistData", "PCRData", "JapanData", "JHUDataComplementHandler",
     "ModelBase", "SIR", "SIRD", "SIRF", "SIRFV", "SEWIRF",
     "Estimator", "Trend", "Optimizer",
-    "line_plot", "jpn_map", "StopWatch", "deprecate", "find_args",
+    "line_plot", "StopWatch", "deprecate", "find_args",
     "line_plot_multiple",
     "save_dataframe",
     "PolicyMeasures",
@@ -87,7 +87,7 @@ __all__ = [
     "PCRIncorrectPreconditionError", "NotInteractiveError",
     "VisualizeBase",
     # Deprecated
-    "Population", "Word",
+    "Population", "Word", "jpn_map",
 ]
 
 # Show exceptions in better format if used from command line
