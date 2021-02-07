@@ -8,6 +8,7 @@ from dask import dataframe as dd
 import geopandas as gpd
 from matplotlib import pyplot as plt
 from mpl_toolkits.axes_grid1 import make_axes_locatable
+import numpy as np
 import pandas as pd
 from covsirphy.util.argument import find_args
 from covsirphy.util.error import deprecate, SubsetNotFoundError, UnExpectedValueError
@@ -352,9 +353,11 @@ class CleaningBase(Term):
                 "cmap": "coolwarm",
                 "ax": cm.ax,
                 "cax": cax,
+                "legend_kwds": {"label": "in log10 scale"}
             }
             plot_kwargs.update(find_args(gpd.GeoDataFrame.plot, **kwargs))
             # Plotting
+            series = np.log10(series + 1)
             cm.plot(series=series, index_name=index_name, **plot_kwargs)
 
     def _colored_map_global(self, variable, title, date, filename, **kwargs):
