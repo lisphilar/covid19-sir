@@ -157,12 +157,13 @@ class CleaningBase(Term):
         """
         return self.ensure_country_name(iso3_code)
 
-    def country_to_iso3(self, country):
+    def country_to_iso3(self, country, check_data=True):
         """
         Convert country name to ISO3 code if records are available.
 
         Args:
             country (str): country name
+            check_data (bool): whether validate the country name with the dataset
 
         Raises:
             KeyError: ISO3 code of the country is not registered
@@ -170,7 +171,7 @@ class CleaningBase(Term):
         Returns:
             str: ISO3 code or "---" (when unknown)
         """
-        name = self.ensure_country_name(country)
+        name = self.ensure_country_name(country) if check_data else country
         return coco.convert(name, to="ISO3", not_found="---")
 
     @classmethod
@@ -360,7 +361,7 @@ class CleaningBase(Term):
             series = np.log10(series + 1)
             cm.plot(series=series, index_name=index_name, **plot_kwargs)
 
-    def _colored_map_global(self, variable, title, date, filename, **kwargs):
+    def _colored_map_global(self, variable, title, date, included, excluded, filename, **kwargs):
         """
         Create global colored map to show the values at country level.
 
@@ -368,6 +369,8 @@ class CleaningBase(Term):
             variable (str): variable name to show
             title (str): title of the figure
             date (str or None): date of the records or None (the last value)
+            included (list[str] or None): included countries or None (all-included)
+            excluded (list[str] or None): excluded countries or None (no-excluded)
             filename (str or None): image filename or None (display)
             kwargs: arguments of matplotlib.pyplot.savefig() and geopandas.GeoDataFrame.plot() except for 'column'
         """
@@ -387,6 +390,9 @@ class CleaningBase(Term):
             df.dropna(inplace=True)
         # Select country level data
         df = df.loc[df[self.PROVINCE] == self.UNKNOWN]
+        # Included/excluded countries
+        sel = set(included or df[self.COUNTRY].unique()) - set(excluded or [])
+        df = df.loc[df[self.COUNTRY].isin(sel)]
         # Select date
         if date is not None:
             self._ensure_dataframe(
@@ -397,7 +403,7 @@ class CleaningBase(Term):
         self._colored_map(
             series=df[variable], index_name=self.ISO3, title=title, filename=filename, **kwargs)
 
-    def _colored_map_country(self, country, variable, title, date, filename, **kwargs):
+    def _colored_map_country(self, country, variable, title, date, included, excluded, filename, **kwargs):
         """
         Create country-specific colored map to show the values at province level.
 
@@ -406,6 +412,8 @@ class CleaningBase(Term):
             variable (str): variable name to show
             title (str): title of the figure
             date (str or None): date of the records or None (the last value)
+            included (list[str] or None): included countries or None (all-included)
+            excluded (list[str] or None): excluded countries or None (no-excluded)
             filename (str or None): image filename or None (display)
             kwargs: arguments of matplotlib.pyplot.savefig() and geopandas.GeoDataFrame.plot() except for 'column'
         """
@@ -422,6 +430,9 @@ class CleaningBase(Term):
             df, name="cleaned dataset", columns=[self.COUNTRY, self.PROVINCE])
         df = df.loc[df[self.COUNTRY] == country]
         df = df.loc[df[self.PROVINCE] != self.UNKNOWN]
+        # Included/excluded provinces
+        sel = set(included or df[self.PROVINCE].unique()) - set(excluded or [])
+        df = df.loc[df[self.PROVINCE].isin(sel)]
         # Select date
         if date is not None:
             self._ensure_dataframe(
