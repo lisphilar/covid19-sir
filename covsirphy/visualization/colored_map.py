@@ -5,7 +5,8 @@ from pathlib import Path
 import geopandas as gpd
 import pandas as pd
 import requests
-from covsirphy.util.error import UnExpectedValueError
+from unidecode import unidecode
+from covsirphy.util.error import SubsetNotFoundError, UnExpectedValueError
 from covsirphy.visualization.vbase import VisualizeBase
 
 
@@ -55,21 +56,22 @@ class ColoredMap(VisualizeBase):
         # Values of ISO3 column should be unique
         if not df[index_name].is_unique:
             raise ValueError(
-                f"'{index_name}' column of the dataframe should be unique.")
+                f"'{index_name}' index of the dataframe should be unique.")
         # Geometry information from Natural Earth
         if index_name in (self.ISO3, self.COUNTRY):
             # pop_est, continent, name, iso_a3, gdp_md_est, geometry
             geopath = gpd.datasets.get_path("naturalearth_lowres")
         else:
             geopath = self._load_geo_provinces(directory=directory)
-        geo_gdf = gpd.read_file(geopath)
+        gdf = gpd.read_file(geopath)
         # Merge the data with geometry information
-        try:
-            gdf = geo_gdf.merge(
-                df, how="inner", left_on=key_dict[index_name], right_on=index_name)
-        except ValueError:
-            raise ValueError(
-                f"Index of the pandas.Series is not {index_name}.") from None
+        df[index_name] = df[index_name].apply(unidecode)
+        gdf["name"] = gdf["name"].fillna("").apply(unidecode)
+        gdf = gdf.merge(
+            df, how="inner", left_on=key_dict[index_name], right_on=index_name)
+        if gdf.empty:
+            raise SubsetNotFoundError(
+                country="the selected country", message="(geometry data)")
         # Plotting
         gdf.plot(column="Value", **kwargs)
         # Remove all ticks
