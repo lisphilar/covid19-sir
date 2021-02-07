@@ -15,12 +15,11 @@ class ColoredMap(VisualizeBase):
 
     Args:
         filename (str or None): filename to save the figure or None (display)
-        bbox_inches (str): bounding box in inches when creating the figure
         kwargs: the other arguments of matplotlib.pyplot.savefig()
     """
 
-    def __init__(self, filename, bbox_inches, **kwargs):
-        super().__init__(filename=filename, bbox_inches=bbox_inches, **kwargs)
+    def __init__(self, filename, **kwargs):
+        super().__init__(filename=filename, **kwargs)
 
     def plot(self, series, index_name="ISO3", directory="input", **kwargs):
         """
