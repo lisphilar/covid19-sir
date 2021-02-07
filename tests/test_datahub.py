@@ -205,7 +205,7 @@ class TestJHUData(object):
         # Country map
         for variable in Term.VALUE_COLUMNS:
             jhu_data.map(country="Japan", variable=variable)
-        jhu_data.map(country="Country", excluded=["Tokyo"])
+        jhu_data.map(country="Japan", excluded=["Tokyo"])
         # Error handling
         with pytest.raises(SubsetNotFoundError):
             jhu_data.map(country="Greece")
