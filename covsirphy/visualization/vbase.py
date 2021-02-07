@@ -43,11 +43,10 @@ class VisualizeBase(Term):
         # Display the figure if filename is None
         if self._filename is None:
             plt.show()
-            return exc_info
-        # Save the image as a file
-        plt.savefig(self._filename, **self._savefig_dict)
-        plt.clf()
-        return exc_info
+        else:
+            # Save the image as a file
+            plt.savefig(self._filename, **self._savefig_dict)
+            plt.clf()
 
     @property
     def title(self):
