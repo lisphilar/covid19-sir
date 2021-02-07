@@ -67,7 +67,7 @@
             
             
               <div class="version">
-                2.15.0-kappa-fu1
+                2.15.0-mu
               </div>
             
           
@@ -181,9 +181,15 @@
 <span class="kn">import</span> <span class="nn">warnings</span>
 <span class="kn">import</span> <span class="nn">country_converter</span> <span class="k">as</span> <span class="nn">coco</span>
 <span class="kn">from</span> <span class="nn">dask</span> <span class="kn">import</span> <span class="n">dataframe</span> <span class="k">as</span> <span class="n">dd</span>
+<span class="kn">import</span> <span class="nn">geopandas</span> <span class="k">as</span> <span class="nn">gpd</span>
+<span class="kn">from</span> <span class="nn">matplotlib</span> <span class="kn">import</span> <span class="n">pyplot</span> <span class="k">as</span> <span class="n">plt</span>
+<span class="kn">from</span> <span class="nn">mpl_toolkits.axes_grid1</span> <span class="kn">import</span> <span class="n">make_axes_locatable</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
-<span class="kn">from</span> <span class="nn">covsirphy.util.error</span> <span class="kn">import</span> <span class="n">deprecate</span><span class="p">,</span> <span class="n">SubsetNotFoundError</span>
-<span class="kn">from</span> <span class="nn">covsirphy.cleaning.term</span> <span class="kn">import</span> <span class="n">Term</span>
+<span class="kn">from</span> <span class="nn">covsirphy.util.argument</span> <span class="kn">import</span> <span class="n">find_args</span>
+<span class="kn">from</span> <span class="nn">covsirphy.util.error</span> <span class="kn">import</span> <span class="n">deprecate</span><span class="p">,</span> <span class="n">SubsetNotFoundError</span><span class="p">,</span> <span class="n">UnExpectedValueError</span>
+<span class="kn">from</span> <span class="nn">covsirphy.util.term</span> <span class="kn">import</span> <span class="n">Term</span>
+<span class="kn">from</span> <span class="nn">covsirphy.visualization.colored_map</span> <span class="kn">import</span> <span class="n">ColoredMap</span>
 
 
 <div class="viewcode-block" id="CleaningBase"><a class="viewcode-back" href="../../../covsirphy.cleaning.html#covsirphy.CleaningBase">[docs]</a><span class="k">class</span> <span class="nc">CleaningBase</span><span class="p">(</span><span class="n">Term</span><span class="p">):</span>
@@ -327,12 +333,13 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">ensure_country_name</span><span class="p">(</span><span class="n">iso3_code</span><span class="p">)</span>
 
-<div class="viewcode-block" id="CleaningBase.country_to_iso3"><a class="viewcode-back" href="../../../covsirphy.cleaning.html#covsirphy.CleaningBase.country_to_iso3">[docs]</a>    <span class="k">def</span> <span class="nf">country_to_iso3</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">country</span><span class="p">):</span>
+<div class="viewcode-block" id="CleaningBase.country_to_iso3"><a class="viewcode-back" href="../../../covsirphy.cleaning.html#covsirphy.CleaningBase.country_to_iso3">[docs]</a>    <span class="k">def</span> <span class="nf">country_to_iso3</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">country</span><span class="p">,</span> <span class="n">check_data</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Convert country name to ISO3 code if records are available.</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            country (str): country name</span>
+<span class="sd">            check_data (bool): whether validate the country name with the dataset</span>
 
 <span class="sd">        Raises:</span>
 <span class="sd">            KeyError: ISO3 code of the country is not registered</span>
@@ -340,7 +347,7 @@
 <span class="sd">        Returns:</span>
 <span class="sd">            str: ISO3 code or &quot;---&quot; (when unknown)</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">name</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ensure_country_name</span><span class="p">(</span><span class="n">country</span><span class="p">)</span>
+        <span class="n">name</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ensure_country_name</span><span class="p">(</span><span class="n">country</span><span class="p">)</span> <span class="k">if</span> <span class="n">check_data</span> <span class="k">else</span> <span class="n">country</span>
         <span class="k">return</span> <span class="n">coco</span><span class="o">.</span><span class="n">convert</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">to</span><span class="o">=</span><span class="s2">&quot;ISO3&quot;</span><span class="p">,</span> <span class="n">not_found</span><span class="o">=</span><span class="s2">&quot;---&quot;</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="CleaningBase.area_name"><a class="viewcode-back" href="../../../covsirphy.cleaning.html#covsirphy.CleaningBase.area_name">[docs]</a>    <span class="nd">@classmethod</span>
@@ -491,7 +498,134 @@
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Calculate total values of the cleaned dataset.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">raise</span> <span class="ne">NotImplementedError</span></div></div>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span></div>
+
+    <span class="k">def</span> <span class="nf">_colored_map</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">series</span><span class="p">,</span> <span class="n">index_name</span><span class="p">,</span> <span class="n">usa</span><span class="p">,</span> <span class="n">title</span><span class="p">,</span> <span class="n">filename</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Create global colored map to show the values.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            series (pandas.Series): data to show</span>
+<span class="sd">                Index</span>
+<span class="sd">                    ISO3 codes, country names or province names</span>
+<span class="sd">                Values</span>
+<span class="sd">                    - (int or float): values to color the map</span>
+<span class="sd">            index_name (str): index name, &#39;ISO3&#39;, &#39;Country&#39; or &#39;Province&#39;</span>
+<span class="sd">            usa (bool): if True, not show islands of USA when @index_name is &#39;Province&#39;</span>
+<span class="sd">            title (str): title of the figure</span>
+<span class="sd">            filename (str or None): image filename or None (display)</span>
+<span class="sd">            kwargs: arguments of matplotlib.pyplot.savefig() and geopandas.GeoDataFrame.plot() except for &#39;column&#39;</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Arguments for saving image</span>
+        <span class="n">savefig_kwargs</span> <span class="o">=</span> <span class="n">find_args</span><span class="p">(</span><span class="n">plt</span><span class="o">.</span><span class="n">savefig</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="c1"># Create map</span>
+        <span class="k">with</span> <span class="n">ColoredMap</span><span class="p">(</span><span class="n">filename</span><span class="o">=</span><span class="n">filename</span><span class="p">,</span> <span class="o">**</span><span class="n">savefig_kwargs</span><span class="p">)</span> <span class="k">as</span> <span class="n">cm</span><span class="p">:</span>
+            <span class="c1"># Title</span>
+            <span class="n">cm</span><span class="o">.</span><span class="n">title</span> <span class="o">=</span> <span class="n">title</span>
+            <span class="c1"># Colorbar</span>
+            <span class="n">divider</span> <span class="o">=</span> <span class="n">make_axes_locatable</span><span class="p">(</span><span class="n">cm</span><span class="o">.</span><span class="n">ax</span><span class="p">)</span>
+            <span class="n">cax</span> <span class="o">=</span> <span class="n">divider</span><span class="o">.</span><span class="n">append_axes</span><span class="p">(</span><span class="s2">&quot;right&quot;</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="s2">&quot;5%&quot;</span><span class="p">,</span> <span class="n">pad</span><span class="o">=</span><span class="mf">0.1</span><span class="p">)</span>
+            <span class="c1"># Arguments of plotting with GeoPandas</span>
+            <span class="n">plot_kwargs</span> <span class="o">=</span> <span class="p">{</span>
+                <span class="s2">&quot;legend&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
+                <span class="s2">&quot;cmap&quot;</span><span class="p">:</span> <span class="s2">&quot;coolwarm&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;ax&quot;</span><span class="p">:</span> <span class="n">cm</span><span class="o">.</span><span class="n">ax</span><span class="p">,</span>
+                <span class="s2">&quot;cax&quot;</span><span class="p">:</span> <span class="n">cax</span><span class="p">,</span>
+                <span class="s2">&quot;legend_kwds&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;label&quot;</span><span class="p">:</span> <span class="s2">&quot;in log10 scale&quot;</span><span class="p">}</span>
+            <span class="p">}</span>
+            <span class="n">plot_kwargs</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">find_args</span><span class="p">(</span><span class="n">gpd</span><span class="o">.</span><span class="n">GeoDataFrame</span><span class="o">.</span><span class="n">plot</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">))</span>
+            <span class="c1"># Plotting</span>
+            <span class="n">series</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">log10</span><span class="p">(</span><span class="n">series</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
+            <span class="n">cm</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span>
+                <span class="n">series</span><span class="o">=</span><span class="n">series</span><span class="p">,</span> <span class="n">index_name</span><span class="o">=</span><span class="n">index_name</span><span class="p">,</span> <span class="n">usa</span><span class="o">=</span><span class="n">usa</span><span class="p">,</span> <span class="o">**</span><span class="n">plot_kwargs</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_colored_map_global</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">variable</span><span class="p">,</span> <span class="n">title</span><span class="p">,</span> <span class="n">date</span><span class="p">,</span> <span class="n">included</span><span class="p">,</span> <span class="n">excluded</span><span class="p">,</span> <span class="n">filename</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Create global colored map to show the values at country level.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            variable (str): variable name to show</span>
+<span class="sd">            title (str): title of the figure</span>
+<span class="sd">            date (str or None): date of the records or None (the last value)</span>
+<span class="sd">            included (list[str] or None): included countries or None (all-included)</span>
+<span class="sd">            excluded (list[str] or None): excluded countries or None (no-excluded)</span>
+<span class="sd">            filename (str or None): image filename or None (display)</span>
+<span class="sd">            kwargs: arguments of matplotlib.pyplot.savefig() and geopandas.GeoDataFrame.plot() except for &#39;column&#39;</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">df</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_cleaned_df</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+        <span class="c1"># Check variable name</span>
+        <span class="k">if</span> <span class="n">variable</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">df</span><span class="o">.</span><span class="n">columns</span><span class="p">:</span>
+            <span class="n">candidates</span> <span class="o">=</span> <span class="p">[</span>
+                <span class="n">col</span> <span class="k">for</span> <span class="n">col</span> <span class="ow">in</span> <span class="n">df</span><span class="o">.</span><span class="n">columns</span> <span class="k">if</span> <span class="n">col</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">AREA_ABBR_COLS</span><span class="p">]</span>
+            <span class="k">raise</span> <span class="n">UnExpectedValueError</span><span class="p">(</span>
+                <span class="n">name</span><span class="o">=</span><span class="s2">&quot;variable&quot;</span><span class="p">,</span> <span class="n">value</span><span class="o">=</span><span class="n">variable</span><span class="p">,</span> <span class="n">candidates</span><span class="o">=</span><span class="n">candidates</span><span class="p">)</span>
+        <span class="c1"># Create ISO3 codes, if necessary</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">ISO3</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">df</span><span class="o">.</span><span class="n">columns</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_ensure_dataframe</span><span class="p">(</span>
+                <span class="n">df</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;cleaned dataset&quot;</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">COUNTRY</span><span class="p">])</span>
+            <span class="n">df</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">ISO3</span><span class="p">]</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">COUNTRY</span><span class="p">]</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span>
+                <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">coco</span><span class="o">.</span><span class="n">convert</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">to</span><span class="o">=</span><span class="s2">&quot;ISO3&quot;</span><span class="p">,</span> <span class="n">not_found</span><span class="o">=</span><span class="kc">None</span><span class="p">))</span>
+            <span class="n">df</span><span class="o">.</span><span class="n">dropna</span><span class="p">(</span><span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="c1"># Select country level data</span>
+        <span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">df</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">PROVINCE</span><span class="p">]</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">UNKNOWN</span><span class="p">]</span>
+        <span class="c1"># Included/excluded countries</span>
+        <span class="n">sel</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">included</span> <span class="ow">or</span> <span class="n">df</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">COUNTRY</span><span class="p">]</span><span class="o">.</span><span class="n">unique</span><span class="p">())</span> <span class="o">-</span> <span class="nb">set</span><span class="p">(</span><span class="n">excluded</span> <span class="ow">or</span> <span class="p">[])</span>
+        <span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">df</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">COUNTRY</span><span class="p">]</span><span class="o">.</span><span class="n">isin</span><span class="p">(</span><span class="n">sel</span><span class="p">)]</span>
+        <span class="c1"># Select date</span>
+        <span class="k">if</span> <span class="n">date</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_ensure_dataframe</span><span class="p">(</span>
+                <span class="n">df</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;cleaned dataset&quot;</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">DATE</span><span class="p">])</span>
+            <span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">df</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">DATE</span><span class="p">]</span> <span class="o">==</span> <span class="n">pd</span><span class="o">.</span><span class="n">to_datetime</span><span class="p">(</span><span class="n">date</span><span class="p">)]</span>
+        <span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">ISO3</span><span class="p">)</span><span class="o">.</span><span class="n">last</span><span class="p">()</span>
+        <span class="c1"># Plotting</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_colored_map</span><span class="p">(</span>
+            <span class="n">series</span><span class="o">=</span><span class="n">df</span><span class="p">[</span><span class="n">variable</span><span class="p">],</span> <span class="n">index_name</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">ISO3</span><span class="p">,</span> <span class="n">usa</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+            <span class="n">title</span><span class="o">=</span><span class="n">title</span><span class="p">,</span> <span class="n">filename</span><span class="o">=</span><span class="n">filename</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_colored_map_country</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">country</span><span class="p">,</span> <span class="n">variable</span><span class="p">,</span> <span class="n">title</span><span class="p">,</span> <span class="n">date</span><span class="p">,</span> <span class="n">included</span><span class="p">,</span> <span class="n">excluded</span><span class="p">,</span> <span class="n">filename</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Create country-specific colored map to show the values at province level.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            country (str): country name</span>
+<span class="sd">            variable (str): variable name to show</span>
+<span class="sd">            title (str): title of the figure</span>
+<span class="sd">            date (str or None): date of the records or None (the last value)</span>
+<span class="sd">            included (list[str] or None): included countries or None (all-included)</span>
+<span class="sd">            excluded (list[str] or None): excluded countries or None (no-excluded)</span>
+<span class="sd">            filename (str or None): image filename or None (display)</span>
+<span class="sd">            kwargs: arguments of matplotlib.pyplot.savefig() and geopandas.GeoDataFrame.plot() except for &#39;column&#39;</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">df</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_cleaned_df</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+        <span class="n">country_alias</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ensure_country_name</span><span class="p">(</span><span class="n">country</span><span class="p">)</span>
+        <span class="c1"># Check variable name</span>
+        <span class="k">if</span> <span class="n">variable</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">df</span><span class="o">.</span><span class="n">columns</span><span class="p">:</span>
+            <span class="n">candidates</span> <span class="o">=</span> <span class="p">[</span>
+                <span class="n">col</span> <span class="k">for</span> <span class="n">col</span> <span class="ow">in</span> <span class="n">df</span><span class="o">.</span><span class="n">columns</span> <span class="k">if</span> <span class="n">col</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">AREA_ABBR_COLS</span><span class="p">]</span>
+            <span class="k">raise</span> <span class="n">UnExpectedValueError</span><span class="p">(</span>
+                <span class="n">name</span><span class="o">=</span><span class="s2">&quot;variable&quot;</span><span class="p">,</span> <span class="n">value</span><span class="o">=</span><span class="n">variable</span><span class="p">,</span> <span class="n">candidates</span><span class="o">=</span><span class="n">candidates</span><span class="p">)</span>
+        <span class="c1"># Select country-specific data</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_ensure_dataframe</span><span class="p">(</span>
+            <span class="n">df</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;cleaned dataset&quot;</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">COUNTRY</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">PROVINCE</span><span class="p">])</span>
+        <span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">df</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">COUNTRY</span><span class="p">]</span> <span class="o">==</span> <span class="n">country_alias</span><span class="p">]</span>
+        <span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">df</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">PROVINCE</span><span class="p">]</span> <span class="o">!=</span> <span class="bp">self</span><span class="o">.</span><span class="n">UNKNOWN</span><span class="p">]</span>
+        <span class="k">if</span> <span class="n">df</span><span class="o">.</span><span class="n">empty</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">SubsetNotFoundError</span><span class="p">(</span>
+                <span class="n">country</span><span class="o">=</span><span class="n">country</span><span class="p">,</span> <span class="n">country_alias</span><span class="o">=</span><span class="n">country_alias</span><span class="p">,</span> <span class="n">message</span><span class="o">=</span><span class="s2">&quot;at province level&quot;</span><span class="p">)</span>
+        <span class="c1"># Included/excluded provinces</span>
+        <span class="n">sel</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">included</span> <span class="ow">or</span> <span class="n">df</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">PROVINCE</span><span class="p">]</span><span class="o">.</span><span class="n">unique</span><span class="p">())</span> <span class="o">-</span> <span class="nb">set</span><span class="p">(</span><span class="n">excluded</span> <span class="ow">or</span> <span class="p">[])</span>
+        <span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">df</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">PROVINCE</span><span class="p">]</span><span class="o">.</span><span class="n">isin</span><span class="p">(</span><span class="n">sel</span><span class="p">)]</span>
+        <span class="c1"># Select date</span>
+        <span class="k">if</span> <span class="n">date</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_ensure_dataframe</span><span class="p">(</span>
+                <span class="n">df</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;cleaned dataset&quot;</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">DATE</span><span class="p">])</span>
+            <span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">df</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">DATE</span><span class="p">]</span> <span class="o">==</span> <span class="n">pd</span><span class="o">.</span><span class="n">to_datetime</span><span class="p">(</span><span class="n">date</span><span class="p">)]</span>
+        <span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">PROVINCE</span><span class="p">)</span><span class="o">.</span><span class="n">last</span><span class="p">()</span>
+        <span class="c1"># Plotting</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_colored_map</span><span class="p">(</span>
+            <span class="n">series</span><span class="o">=</span><span class="n">df</span><span class="p">[</span><span class="n">variable</span><span class="p">],</span> <span class="n">index_name</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">PROVINCE</span><span class="p">,</span>
+            <span class="n">usa</span><span class="o">=</span><span class="p">(</span><span class="n">country_alias</span> <span class="o">==</span> <span class="s2">&quot;United States&quot;</span><span class="p">),</span>
+            <span class="n">title</span><span class="o">=</span><span class="n">title</span><span class="p">,</span> <span class="n">filename</span><span class="o">=</span><span class="n">filename</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
 </pre></div>
 
            </div>

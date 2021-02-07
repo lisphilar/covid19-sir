@@ -69,7 +69,7 @@
             
             
               <div class="version">
-                2.15.0-kappa-fu1
+                2.15.0-mu
               </div>
             
           
@@ -122,7 +122,6 @@
 <li class="toctree-l4"><a class="reference internal" href="#module-covsirphy.cleaning.pcr_data">covsirphy.cleaning.pcr_data module</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#module-covsirphy.cleaning.population">covsirphy.cleaning.population module</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#module-covsirphy.cleaning.pyramid">covsirphy.cleaning.pyramid module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#module-covsirphy.cleaning.term">covsirphy.cleaning.term module</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#module-covsirphy.cleaning.vaccine_data">covsirphy.cleaning.vaccine_data module</a></li>
 </ul>
 </li>
@@ -130,6 +129,7 @@
 <li class="toctree-l3"><a class="reference internal" href="covsirphy.phase.html">covsirphy.phase package</a></li>
 <li class="toctree-l3"><a class="reference internal" href="covsirphy.simulation.html">covsirphy.simulation package</a></li>
 <li class="toctree-l3"><a class="reference internal" href="covsirphy.util.html">covsirphy.util package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="covsirphy.visualization.html">covsirphy.visualization package</a></li>
 <li class="toctree-l3"><a class="reference internal" href="covsirphy.worldwide.html">covsirphy.worldwide package</a></li>
 </ul>
 </li>
@@ -242,7 +242,7 @@
 <dl class="py class">
 <dt id="covsirphy.cleaning.cbase.CleaningBase">
 <em class="property">class </em><code class="sig-name descname">CleaningBase</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">filename</span></em>, <em class="sig-param"><span class="n">citation</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/cleaning/cbase.html#CleaningBase"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#covsirphy.cleaning.cbase.CleaningBase" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference internal" href="#covsirphy.cleaning.term.Term" title="covsirphy.cleaning.term.Term"><code class="xref py py-class docutils literal notranslate"><span class="pre">covsirphy.cleaning.term.Term</span></code></a></p>
+<dd><p>Bases: <a class="reference internal" href="covsirphy.util.html#covsirphy.util.term.Term" title="covsirphy.util.term.Term"><code class="xref py py-class docutils literal notranslate"><span class="pre">covsirphy.util.term.Term</span></code></a></p>
 <p>Basic class for data cleaning.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -329,11 +329,14 @@ If not, return the area name, like ‘Japan/Tokyo’</p>
 
 <dl class="py method">
 <dt id="covsirphy.cleaning.cbase.CleaningBase.country_to_iso3">
-<code class="sig-name descname">country_to_iso3</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">country</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/cleaning/cbase.html#CleaningBase.country_to_iso3"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#covsirphy.cleaning.cbase.CleaningBase.country_to_iso3" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">country_to_iso3</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">country</span></em>, <em class="sig-param"><span class="n">check_data</span><span class="o">=</span><span class="default_value">True</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/cleaning/cbase.html#CleaningBase.country_to_iso3"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#covsirphy.cleaning.cbase.CleaningBase.country_to_iso3" title="Permalink to this definition">¶</a></dt>
 <dd><p>Convert country name to ISO3 code if records are available.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>country</strong> (<em>str</em>) – country name</p>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>country</strong> (<em>str</em>) – country name</p></li>
+<li><p><strong>check_data</strong> (<em>bool</em>) – whether validate the country name with the dataset</p></li>
+</ul>
 </dd>
 <dt class="field-even">Raises</dt>
 <dd class="field-even"><p><strong>KeyError</strong> – ISO3 code of the country is not registered</p>
@@ -643,7 +646,7 @@ Cleaning method is defined by CountryData._cleaning() method.</p>
 <dl class="py class">
 <dt id="covsirphy.cleaning.covid19datahub.COVID19DataHub">
 <em class="property">class </em><code class="sig-name descname">COVID19DataHub</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">filename</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/cleaning/covid19datahub.html#COVID19DataHub"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#covsirphy.cleaning.covid19datahub.COVID19DataHub" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference internal" href="#covsirphy.cleaning.term.Term" title="covsirphy.cleaning.term.Term"><code class="xref py py-class docutils literal notranslate"><span class="pre">covsirphy.cleaning.term.Term</span></code></a></p>
+<dd><p>Bases: <a class="reference internal" href="covsirphy.util.html#covsirphy.util.term.Term" title="covsirphy.util.term.Term"><code class="xref py py-class docutils literal notranslate"><span class="pre">covsirphy.util.term.Term</span></code></a></p>
 <p>Load datasets retrieved from COVID-19 Data Hub.
 <a class="reference external" href="https://covid19datahub.io/">https://covid19datahub.io/</a></p>
 <dl class="field-list simple">
@@ -707,7 +710,7 @@ Citation of COVID-19 Data Hub will be set as JHUData.citation etc.</p>
 <dl class="py class">
 <dt id="covsirphy.cleaning.dataloader.DataLoader">
 <em class="property">class </em><code class="sig-name descname">DataLoader</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">directory</span><span class="o">=</span><span class="default_value">'input'</span></em>, <em class="sig-param"><span class="n">update_interval</span><span class="o">=</span><span class="default_value">12</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/cleaning/dataloader.html#DataLoader"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#covsirphy.cleaning.dataloader.DataLoader" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference internal" href="#covsirphy.cleaning.term.Term" title="covsirphy.cleaning.term.Term"><code class="xref py py-class docutils literal notranslate"><span class="pre">covsirphy.cleaning.term.Term</span></code></a></p>
+<dd><p>Bases: <a class="reference internal" href="covsirphy.util.html#covsirphy.util.term.Term" title="covsirphy.util.term.Term"><code class="xref py py-class docutils literal notranslate"><span class="pre">covsirphy.util.term.Term</span></code></a></p>
 <p>Download the dataset and perform data cleaning.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -1148,7 +1151,7 @@ World Bank Group (2020), World Bank Open Data, <a class="reference external" hre
 <dl class="py class">
 <dt id="covsirphy.cleaning.jhu_complement.JHUDataComplementHandler">
 <em class="property">class </em><code class="sig-name descname">JHUDataComplementHandler</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">recovery_period</span></em>, <em class="sig-param"><span class="n">interval</span><span class="o">=</span><span class="default_value">2</span></em>, <em class="sig-param"><span class="n">max_ignored</span><span class="o">=</span><span class="default_value">100</span></em>, <em class="sig-param"><span class="n">max_ending_unupdated</span><span class="o">=</span><span class="default_value">14</span></em>, <em class="sig-param"><span class="n">upper_limit_days</span><span class="o">=</span><span class="default_value">90</span></em>, <em class="sig-param"><span class="n">lower_limit_days</span><span class="o">=</span><span class="default_value">7</span></em>, <em class="sig-param"><span class="n">upper_percentage</span><span class="o">=</span><span class="default_value">0.5</span></em>, <em class="sig-param"><span class="n">lower_percentage</span><span class="o">=</span><span class="default_value">0.5</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/cleaning/jhu_complement.html#JHUDataComplementHandler"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#covsirphy.cleaning.jhu_complement.JHUDataComplementHandler" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference internal" href="#covsirphy.cleaning.term.Term" title="covsirphy.cleaning.term.Term"><code class="xref py py-class docutils literal notranslate"><span class="pre">covsirphy.cleaning.term.Term</span></code></a></p>
+<dd><p>Bases: <a class="reference internal" href="covsirphy.util.html#covsirphy.util.term.Term" title="covsirphy.util.term.Term"><code class="xref py py-class docutils literal notranslate"><span class="pre">covsirphy.util.term.Term</span></code></a></p>
 <p>Complement JHU dataset, if necessary.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -1385,6 +1388,30 @@ where recovered values are reported.</p>
 <dd class="field-odd"><p><a class="reference internal" href="covsirphy.html#covsirphy.JHUData" title="covsirphy.JHUData">covsirphy.JHUData</a></p>
 </dd>
 </dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="covsirphy.cleaning.jhu_data.JHUData.map">
+<code class="sig-name descname">map</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">country</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">variable</span><span class="o">=</span><span class="default_value">'Confirmed'</span></em>, <em class="sig-param"><span class="n">date</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">included</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">excluded</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">filename</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/cleaning/jhu_data.html#JHUData.map"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#covsirphy.cleaning.jhu_data.JHUData.map" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create global colored map to show the values.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>country</strong> (<em>str</em><em> or </em><em>None</em>) – country name or None (global map)</p></li>
+<li><p><strong>variable</strong> (<em>str</em>) – variable name to show</p></li>
+<li><p><strong>date</strong> (<em>str</em><em> or </em><em>None</em>) – date of the records or None (the last value)</p></li>
+<li><p><strong>included</strong> (<em>list</em><em>[</em><em>str</em><em>] or </em><em>None</em>) – included countries/provinces or None (all)</p></li>
+<li><p><strong>excluded</strong> (<em>list</em><em>[</em><em>str</em><em>] or </em><em>None</em>) – excluded countries/provinces or None (all)</p></li>
+<li><p><strong>filename</strong> (<em>str</em><em> or </em><em>None</em>) – image filename or None (display)</p></li>
+<li><p><strong>kwargs</strong> – arguments of matplotlib.pyplot.savefig() and geopandas.GeoDataFrame.plot() except for ‘column’</p></li>
+</ul>
+</dd>
+</dl>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>When &#64;country is None, country level data will be shown on global map.
+When &#64;country is a country name, province level data will be shown on country map.</p>
+</div>
 </dd></dl>
 
 <dl class="py method">
@@ -2488,498 +2515,6 @@ If &#64;citation is None, citation will be empty string.</p>
 </dl>
 </dd></dl>
 
-</dd></dl>
-
-</div>
-<div class="section" id="module-covsirphy.cleaning.term">
-<span id="covsirphy-cleaning-term-module"></span><h2>covsirphy.cleaning.term module<a class="headerlink" href="#module-covsirphy.cleaning.term" title="Permalink to this headline">¶</a></h2>
-<dl class="py class">
-<dt id="covsirphy.cleaning.term.Term">
-<em class="property">class </em><code class="sig-name descname">Term</code><a class="reference internal" href="_modules/covsirphy/cleaning/term.html#Term"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#covsirphy.cleaning.term.Term" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
-<p>Term definition.</p>
-<dl class="py attribute">
-<dt id="covsirphy.cleaning.term.Term.A">
-<code class="sig-name descname">A</code><em class="property"> = '_actual'</em><a class="headerlink" href="#covsirphy.cleaning.term.Term.A" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt id="covsirphy.cleaning.term.Term.ACTUAL">
-<code class="sig-name descname">ACTUAL</code><em class="property"> = 'Actual'</em><a class="headerlink" href="#covsirphy.cleaning.term.Term.ACTUAL" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt id="covsirphy.cleaning.term.Term.AREA_ABBR_COLS">
-<code class="sig-name descname">AREA_ABBR_COLS</code><em class="property"> = ['ISO3', 'Country', 'Province']</em><a class="headerlink" href="#covsirphy.cleaning.term.Term.AREA_ABBR_COLS" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt id="covsirphy.cleaning.term.Term.AREA_COLUMNS">
-<code class="sig-name descname">AREA_COLUMNS</code><em class="property"> = ['Country', 'Province']</em><a class="headerlink" href="#covsirphy.cleaning.term.Term.AREA_COLUMNS" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt id="covsirphy.cleaning.term.Term.C">
-<code class="sig-name descname">C</code><em class="property"> = 'Confirmed'</em><a class="headerlink" href="#covsirphy.cleaning.term.Term.C" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt id="covsirphy.cleaning.term.Term.CI">
-<code class="sig-name descname">CI</code><em class="property"> = 'Infected'</em><a class="headerlink" href="#covsirphy.cleaning.term.Term.CI" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt id="covsirphy.cleaning.term.Term.COLUMNS">
-<code class="sig-name descname">COLUMNS</code><em class="property"> = ['Date', 'Country', 'Province', 'Confirmed', 'Infected', 'Fatal', 'Recovered']</em><a class="headerlink" href="#covsirphy.cleaning.term.Term.COLUMNS" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt id="covsirphy.cleaning.term.Term.COUNTRY">
-<code class="sig-name descname">COUNTRY</code><em class="property"> = 'Country'</em><a class="headerlink" href="#covsirphy.cleaning.term.Term.COUNTRY" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt id="covsirphy.cleaning.term.Term.DATE">
-<code class="sig-name descname">DATE</code><em class="property"> = 'Date'</em><a class="headerlink" href="#covsirphy.cleaning.term.Term.DATE" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt id="covsirphy.cleaning.term.Term.DATE_FORMAT">
-<code class="sig-name descname">DATE_FORMAT</code><em class="property"> = '%d%b%Y'</em><a class="headerlink" href="#covsirphy.cleaning.term.Term.DATE_FORMAT" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt id="covsirphy.cleaning.term.Term.DATE_FORMAT_DESC">
-<code class="sig-name descname">DATE_FORMAT_DESC</code><em class="property"> = 'DDMmmYYYY'</em><a class="headerlink" href="#covsirphy.cleaning.term.Term.DATE_FORMAT_DESC" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt id="covsirphy.cleaning.term.Term.E">
-<code class="sig-name descname">E</code><em class="property"> = 'Exposed'</em><a class="headerlink" href="#covsirphy.cleaning.term.Term.E" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt id="covsirphy.cleaning.term.Term.END">
-<code class="sig-name descname">END</code><em class="property"> = 'End'</em><a class="headerlink" href="#covsirphy.cleaning.term.Term.END" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt id="covsirphy.cleaning.term.Term.EST_COLS">
-<code class="sig-name descname">EST_COLS</code><em class="property"> = ['RMSLE', 'Trials', 'Runtime']</em><a class="headerlink" href="#covsirphy.cleaning.term.Term.EST_COLS" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt id="covsirphy.cleaning.term.Term.F">
-<code class="sig-name descname">F</code><em class="property"> = 'Fatal'</em><a class="headerlink" href="#covsirphy.cleaning.term.Term.F" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt id="covsirphy.cleaning.term.Term.FIG_COLUMNS">
-<code class="sig-name descname">FIG_COLUMNS</code><em class="property"> = ['Infected', 'Fatal', 'Recovered', 'Fatal or Recovered', 'Vaccinated', 'Exposed', 'Waiting']</em><a class="headerlink" href="#covsirphy.cleaning.term.Term.FIG_COLUMNS" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt id="covsirphy.cleaning.term.Term.FR">
-<code class="sig-name descname">FR</code><em class="property"> = 'Fatal or Recovered'</em><a class="headerlink" href="#covsirphy.cleaning.term.Term.FR" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt id="covsirphy.cleaning.term.Term.FUTURE">
-<code class="sig-name descname">FUTURE</code><em class="property"> = 'Future'</em><a class="headerlink" href="#covsirphy.cleaning.term.Term.FUTURE" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt id="covsirphy.cleaning.term.Term.INITIAL">
-<code class="sig-name descname">INITIAL</code><em class="property"> = 'Initial'</em><a class="headerlink" href="#covsirphy.cleaning.term.Term.INITIAL" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt id="covsirphy.cleaning.term.Term.ISO3">
-<code class="sig-name descname">ISO3</code><em class="property"> = 'ISO3'</em><a class="headerlink" href="#covsirphy.cleaning.term.Term.ISO3" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt id="covsirphy.cleaning.term.Term.MAIN">
-<code class="sig-name descname">MAIN</code><em class="property"> = 'Main'</em><a class="headerlink" href="#covsirphy.cleaning.term.Term.MAIN" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt id="covsirphy.cleaning.term.Term.MONO_COLUMNS">
-<code class="sig-name descname">MONO_COLUMNS</code><em class="property"> = ['Confirmed', 'Fatal', 'Recovered']</em><a class="headerlink" href="#covsirphy.cleaning.term.Term.MONO_COLUMNS" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt id="covsirphy.cleaning.term.Term.N">
-<code class="sig-name descname">N</code><em class="property"> = 'Population'</em><a class="headerlink" href="#covsirphy.cleaning.term.Term.N" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt id="covsirphy.cleaning.term.Term.NLOC_COLUMNS">
-<code class="sig-name descname">NLOC_COLUMNS</code><em class="property"> = ['Date', 'Confirmed', 'Infected', 'Fatal', 'Recovered']</em><a class="headerlink" href="#covsirphy.cleaning.term.Term.NLOC_COLUMNS" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt id="covsirphy.cleaning.term.Term.ODE">
-<code class="sig-name descname">ODE</code><em class="property"> = 'ODE'</em><a class="headerlink" href="#covsirphy.cleaning.term.Term.ODE" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt id="covsirphy.cleaning.term.Term.P">
-<code class="sig-name descname">P</code><em class="property"> = '_predicted'</em><a class="headerlink" href="#covsirphy.cleaning.term.Term.P" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt id="covsirphy.cleaning.term.Term.PARAM_DICT">
-<code class="sig-name descname">PARAM_DICT</code><em class="property"> = 'param_dict'</em><a class="headerlink" href="#covsirphy.cleaning.term.Term.PARAM_DICT" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt id="covsirphy.cleaning.term.Term.PAST">
-<code class="sig-name descname">PAST</code><em class="property"> = 'Past'</em><a class="headerlink" href="#covsirphy.cleaning.term.Term.PAST" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt id="covsirphy.cleaning.term.Term.PHASE">
-<code class="sig-name descname">PHASE</code><em class="property"> = 'Phase'</em><a class="headerlink" href="#covsirphy.cleaning.term.Term.PHASE" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt id="covsirphy.cleaning.term.Term.PRODUCT">
-<code class="sig-name descname">PRODUCT</code><em class="property"> = 'Product'</em><a class="headerlink" href="#covsirphy.cleaning.term.Term.PRODUCT" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt id="covsirphy.cleaning.term.Term.PROVINCE">
-<code class="sig-name descname">PROVINCE</code><em class="property"> = 'Province'</em><a class="headerlink" href="#covsirphy.cleaning.term.Term.PROVINCE" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt id="covsirphy.cleaning.term.Term.R">
-<code class="sig-name descname">R</code><em class="property"> = 'Recovered'</em><a class="headerlink" href="#covsirphy.cleaning.term.Term.R" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt id="covsirphy.cleaning.term.Term.RATE_COLUMNS">
-<code class="sig-name descname">RATE_COLUMNS</code><em class="property"> = ['Fatal per Confirmed', 'Recovered per Confirmed', 'Fatal per (Fatal or Recovered)']</em><a class="headerlink" href="#covsirphy.cleaning.term.Term.RATE_COLUMNS" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt id="covsirphy.cleaning.term.Term.RMSLE">
-<code class="sig-name descname">RMSLE</code><em class="property"> = 'RMSLE'</em><a class="headerlink" href="#covsirphy.cleaning.term.Term.RMSLE" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt id="covsirphy.cleaning.term.Term.RT">
-<code class="sig-name descname">RT</code><em class="property"> = 'Rt'</em><a class="headerlink" href="#covsirphy.cleaning.term.Term.RT" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt id="covsirphy.cleaning.term.Term.RT_FULL">
-<code class="sig-name descname">RT_FULL</code><em class="property"> = 'Reproduction number'</em><a class="headerlink" href="#covsirphy.cleaning.term.Term.RT_FULL" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt id="covsirphy.cleaning.term.Term.RUNTIME">
-<code class="sig-name descname">RUNTIME</code><em class="property"> = 'Runtime'</em><a class="headerlink" href="#covsirphy.cleaning.term.Term.RUNTIME" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt id="covsirphy.cleaning.term.Term.S">
-<code class="sig-name descname">S</code><em class="property"> = 'Susceptible'</em><a class="headerlink" href="#covsirphy.cleaning.term.Term.S" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt id="covsirphy.cleaning.term.Term.SEP">
-<code class="sig-name descname">SEP</code><em class="property"> = '/'</em><a class="headerlink" href="#covsirphy.cleaning.term.Term.SEP" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt id="covsirphy.cleaning.term.Term.SERIES">
-<code class="sig-name descname">SERIES</code><em class="property"> = 'Scenario'</em><a class="headerlink" href="#covsirphy.cleaning.term.Term.SERIES" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt id="covsirphy.cleaning.term.Term.START">
-<code class="sig-name descname">START</code><em class="property"> = 'Start'</em><a class="headerlink" href="#covsirphy.cleaning.term.Term.START" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt id="covsirphy.cleaning.term.Term.STEP_N">
-<code class="sig-name descname">STEP_N</code><em class="property"> = 'step_n'</em><a class="headerlink" href="#covsirphy.cleaning.term.Term.STEP_N" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt id="covsirphy.cleaning.term.Term.STR_COLUMNS">
-<code class="sig-name descname">STR_COLUMNS</code><em class="property"> = ['Date', 'Country', 'Province']</em><a class="headerlink" href="#covsirphy.cleaning.term.Term.STR_COLUMNS" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt id="covsirphy.cleaning.term.Term.SUB_COLUMNS">
-<code class="sig-name descname">SUB_COLUMNS</code><em class="property"> = ['Date', 'Confirmed', 'Infected', 'Fatal', 'Recovered', 'Susceptible']</em><a class="headerlink" href="#covsirphy.cleaning.term.Term.SUB_COLUMNS" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt id="covsirphy.cleaning.term.Term.SUFFIX_DICT">
-<code class="sig-name descname">SUFFIX_DICT</code><em class="property"> = {1: 'st', 2: 'nd', 3: 'rd'}</em><a class="headerlink" href="#covsirphy.cleaning.term.Term.SUFFIX_DICT" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt id="covsirphy.cleaning.term.Term.T">
-<code class="sig-name descname">T</code><em class="property"> = 'Elapsed'</em><a class="headerlink" href="#covsirphy.cleaning.term.Term.T" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt id="covsirphy.cleaning.term.Term.TAU">
-<code class="sig-name descname">TAU</code><em class="property"> = 'tau'</em><a class="headerlink" href="#covsirphy.cleaning.term.Term.TAU" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt id="covsirphy.cleaning.term.Term.TENSE">
-<code class="sig-name descname">TENSE</code><em class="property"> = 'Type'</em><a class="headerlink" href="#covsirphy.cleaning.term.Term.TENSE" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt id="covsirphy.cleaning.term.Term.TESTS">
-<code class="sig-name descname">TESTS</code><em class="property"> = 'Tests'</em><a class="headerlink" href="#covsirphy.cleaning.term.Term.TESTS" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt id="covsirphy.cleaning.term.Term.TRIALS">
-<code class="sig-name descname">TRIALS</code><em class="property"> = 'Trials'</em><a class="headerlink" href="#covsirphy.cleaning.term.Term.TRIALS" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt id="covsirphy.cleaning.term.Term.TS">
-<code class="sig-name descname">TS</code><em class="property"> = 't'</em><a class="headerlink" href="#covsirphy.cleaning.term.Term.TS" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt id="covsirphy.cleaning.term.Term.UNKNOWN">
-<code class="sig-name descname">UNKNOWN</code><em class="property"> = '-'</em><a class="headerlink" href="#covsirphy.cleaning.term.Term.UNKNOWN" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt id="covsirphy.cleaning.term.Term.V">
-<code class="sig-name descname">V</code><em class="property"> = 'Vaccinated'</em><a class="headerlink" href="#covsirphy.cleaning.term.Term.V" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt id="covsirphy.cleaning.term.Term.VAC">
-<code class="sig-name descname">VAC</code><em class="property"> = 'Vaccinations'</em><a class="headerlink" href="#covsirphy.cleaning.term.Term.VAC" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt id="covsirphy.cleaning.term.Term.VALUE_COLUMNS">
-<code class="sig-name descname">VALUE_COLUMNS</code><em class="property"> = ['Confirmed', 'Infected', 'Fatal', 'Recovered']</em><a class="headerlink" href="#covsirphy.cleaning.term.Term.VALUE_COLUMNS" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt id="covsirphy.cleaning.term.Term.W">
-<code class="sig-name descname">W</code><em class="property"> = 'Waiting'</em><a class="headerlink" href="#covsirphy.cleaning.term.Term.W" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt id="covsirphy.cleaning.term.Term.Y0_DICT">
-<code class="sig-name descname">Y0_DICT</code><em class="property"> = 'y0_dict'</em><a class="headerlink" href="#covsirphy.cleaning.term.Term.Y0_DICT" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py method">
-<dt id="covsirphy.cleaning.term.Term.date_change">
-<em class="property">classmethod </em><code class="sig-name descname">date_change</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">date_str</span></em>, <em class="sig-param"><span class="n">days</span><span class="o">=</span><span class="default_value">0</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/cleaning/term.html#Term.date_change"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#covsirphy.cleaning.term.Term.date_change" title="Permalink to this definition">¶</a></dt>
-<dd><p>Return &#64;days days ago or &#64;days days later.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>date_str</strong> (<em>str</em>) – today</p></li>
-<li><p><strong>days</strong> (<em>int</em>) – (negative) days ago or (positive) days later</p></li>
-</ul>
-</dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p>the date</p>
-</dd>
-<dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>str</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt id="covsirphy.cleaning.term.Term.date_obj">
-<em class="property">classmethod </em><code class="sig-name descname">date_obj</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">date_str</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">default</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/cleaning/term.html#Term.date_obj"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#covsirphy.cleaning.term.Term.date_obj" title="Permalink to this definition">¶</a></dt>
-<dd><p>Convert a string to a datatime object.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>date_str</strong> (<em>str</em><em> or </em><em>None</em><em>, </em><em>optional</em>) – string, like 22Jan2020</p></li>
-<li><p><strong>default</strong> (<em>datetime.datetime</em><em> or </em><em>None</em><em>, </em><em>optional</em>) – default value to return</p></li>
-</ul>
-</dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p>datetime.datetime or None</p>
-</dd>
-</dl>
-<div class="admonition note">
-<p class="admonition-title">Note</p>
-<p>If &#64;date_str is None, returns &#64;default value</p>
-</div>
-</dd></dl>
-
-<dl class="py method">
-<dt id="covsirphy.cleaning.term.Term.divisors">
-<em class="property">classmethod </em><code class="sig-name descname">divisors</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">value</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/cleaning/term.html#Term.divisors"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#covsirphy.cleaning.term.Term.divisors" title="Permalink to this definition">¶</a></dt>
-<dd><p>Return the list of divisors of the value.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>value</strong> (<em>int</em>) – target value</p>
-</dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p>the list of divisors</p>
-</dd>
-<dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>list[int]</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt id="covsirphy.cleaning.term.Term.flatten">
-<em class="property">static </em><code class="sig-name descname">flatten</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">nested_list</span></em>, <em class="sig-param"><span class="n">unique</span><span class="o">=</span><span class="default_value">True</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/cleaning/term.html#Term.flatten"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#covsirphy.cleaning.term.Term.flatten" title="Permalink to this definition">¶</a></dt>
-<dd><p>Flatten the nested list.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>nested_list</strong> (<em>list</em><em>[</em><em>list</em><em>[</em><em>object</em><em>]</em><em>]</em>) – nested list</p></li>
-<li><p><strong>unique</strong> (<em>bool</em>) – if True, only unique values will remain</p></li>
-</ul>
-</dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p>list[object]</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt id="covsirphy.cleaning.term.Term.linear">
-<em class="property">static </em><code class="sig-name descname">linear</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">x</span></em>, <em class="sig-param"><span class="n">a</span></em>, <em class="sig-param"><span class="n">b</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/cleaning/term.html#Term.linear"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#covsirphy.cleaning.term.Term.linear" title="Permalink to this definition">¶</a></dt>
-<dd><p>Linear function f(x)=A x + b.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>x</strong> (<em>float</em>) – x values</p></li>
-<li><p><strong>a</strong> (<em>float</em>) – the first parameter of the function</p></li>
-<li><p><strong>b</strong> (<em>float</em>) – the second parameter of the function</p></li>
-</ul>
-</dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p>float</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt id="covsirphy.cleaning.term.Term.negative_exp">
-<em class="property">static </em><code class="sig-name descname">negative_exp</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">x</span></em>, <em class="sig-param"><span class="n">a</span></em>, <em class="sig-param"><span class="n">b</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/cleaning/term.html#Term.negative_exp"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#covsirphy.cleaning.term.Term.negative_exp" title="Permalink to this definition">¶</a></dt>
-<dd><p>Negative exponential function f(x)=A exp(-Bx).</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>x</strong> (<em>float</em>) – x values</p></li>
-<li><p><strong>a</strong> (<em>float</em>) – the first parameters of the function</p></li>
-<li><p><strong>b</strong> (<em>float</em>) – the second parameters of the function</p></li>
-</ul>
-</dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p>float</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt id="covsirphy.cleaning.term.Term.num2str">
-<em class="property">classmethod </em><code class="sig-name descname">num2str</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">num</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/cleaning/term.html#Term.num2str"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#covsirphy.cleaning.term.Term.num2str" title="Permalink to this definition">¶</a></dt>
-<dd><p>Convert numbers to 1st, 2nd etc.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>num</strong> (<em>int</em>) – number</p>
-</dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p>str</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt id="covsirphy.cleaning.term.Term.steps">
-<em class="property">classmethod </em><code class="sig-name descname">steps</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">start_date</span></em>, <em class="sig-param"><span class="n">end_date</span></em>, <em class="sig-param"><span class="n">tau</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/cleaning/term.html#Term.steps"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#covsirphy.cleaning.term.Term.steps" title="Permalink to this definition">¶</a></dt>
-<dd><p>Return the number of days (round up).</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>start_date</strong> (<em>str</em>) – start date, like 01Jan2020</p></li>
-<li><p><strong>end_date</strong> (<em>str</em>) – end date, like 01Jan2020</p></li>
-<li><p><strong>tau</strong> (<em>int</em>) – tau value [min]</p></li>
-</ul>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt id="covsirphy.cleaning.term.Term.str2num">
-<em class="property">static </em><code class="sig-name descname">str2num</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">string</span></em>, <em class="sig-param"><span class="n">name</span><span class="o">=</span><span class="default_value">'phase names'</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/cleaning/term.html#Term.str2num"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#covsirphy.cleaning.term.Term.str2num" title="Permalink to this definition">¶</a></dt>
-<dd><p>Convert 1st to 1 and so on.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>string</strong> (<em>str</em>) – like 1st, 2nd, 3rd,…</p></li>
-<li><p><strong>name</strong> (<em>str</em>) – name of the string</p></li>
-</ul>
-</dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p>int</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt id="covsirphy.cleaning.term.Term.tomorrow">
-<em class="property">classmethod </em><code class="sig-name descname">tomorrow</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">date_str</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/cleaning/term.html#Term.tomorrow"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#covsirphy.cleaning.term.Term.tomorrow" title="Permalink to this definition">¶</a></dt>
-<dd><p>Tomorrow of the date.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>date_str</strong> (<em>str</em>) – today</p>
-</dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p>tomorrow</p>
-</dd>
-<dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>str</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt id="covsirphy.cleaning.term.Term.yesterday">
-<em class="property">classmethod </em><code class="sig-name descname">yesterday</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">date_str</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/cleaning/term.html#Term.yesterday"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#covsirphy.cleaning.term.Term.yesterday" title="Permalink to this definition">¶</a></dt>
-<dd><p>Yesterday of the date.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>date_str</strong> (<em>str</em>) – today</p>
-</dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p>yesterday</p>
-</dd>
-<dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>str</p>
-</dd>
-</dl>
-</dd></dl>
-
-</dd></dl>
-
-<dl class="py class">
-<dt id="covsirphy.cleaning.term.Word">
-<em class="property">class </em><code class="sig-name descname">Word</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/cleaning/term.html#Word"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#covsirphy.cleaning.term.Word" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference internal" href="#covsirphy.cleaning.term.Term" title="covsirphy.cleaning.term.Term"><code class="xref py py-class docutils literal notranslate"><span class="pre">covsirphy.cleaning.term.Term</span></code></a></p>
 </dd></dl>
 
 </div>

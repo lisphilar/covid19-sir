@@ -18,4 +18,5 @@ Subpackages
    covsirphy.phase
    covsirphy.simulation
    covsirphy.util
+   covsirphy.visualization
    covsirphy.worldwide

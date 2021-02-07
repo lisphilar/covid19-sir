@@ -67,7 +67,7 @@
             
             
               <div class="version">
-                2.15.0-kappa-fu1
+                2.15.0-mu
               </div>
             
           
@@ -302,8 +302,11 @@
         <span class="n">p_chn_df</span> <span class="o">=</span> <span class="n">p_chn_df</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">DATE</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span><span class="o">.</span><span class="n">reset_index</span><span class="p">()</span>
         <span class="n">p_chn_df</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">COUNTRY</span><span class="p">,</span> <span class="s2">&quot;China&quot;</span><span class="p">)</span>
         <span class="n">p_chn_df</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">PROVINCE</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">UNKNOWN</span><span class="p">)</span>
-        <span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">(</span>
-            <span class="p">[</span><span class="n">df</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">df</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">COUNTRY</span><span class="p">]</span> <span class="o">!=</span> <span class="s2">&quot;China&quot;</span><span class="p">],</span> <span class="n">p_chn_df</span><span class="p">],</span> <span class="n">ignore_index</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="n">p_chn_df</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">ISO3</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">country_to_iso3</span><span class="p">(</span>
+            <span class="n">country</span><span class="o">=</span><span class="s2">&quot;China&quot;</span><span class="p">,</span> <span class="n">check_data</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+        <span class="n">without_c_chn_df</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span>
+            <span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">COUNTRY</span><span class="p">]</span> <span class="o">!=</span> <span class="s2">&quot;China&quot;</span><span class="p">)</span> <span class="o">|</span> <span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">PROVINCE</span><span class="p">]</span> <span class="o">!=</span> <span class="bp">self</span><span class="o">.</span><span class="n">UNKNOWN</span><span class="p">)]</span>
+        <span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">([</span><span class="n">without_c_chn_df</span><span class="p">,</span> <span class="n">p_chn_df</span><span class="p">],</span> <span class="n">ignore_index</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
         <span class="c1"># Update data types to reduce memory</span>
         <span class="n">df</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">AREA_ABBR_COLS</span><span class="p">]</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">AREA_ABBR_COLS</span><span class="p">]</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="s2">&quot;category&quot;</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">df</span>
@@ -821,7 +824,40 @@
                 <span class="n">complement_dict</span><span class="o">.</span><span class="n">values</span><span class="p">(),</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">bool</span><span class="p">)</span><span class="o">.</span><span class="n">values</span>
             <span class="n">complement_df</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">cur_country</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span>
                 <span class="n">province</span><span class="p">,</span> <span class="o">*</span><span class="n">complement_dict_values</span><span class="p">]</span>
-        <span class="k">return</span> <span class="n">complement_df</span><span class="o">.</span><span class="n">reset_index</span><span class="p">()</span></div></div>
+        <span class="k">return</span> <span class="n">complement_df</span><span class="o">.</span><span class="n">reset_index</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="JHUData.map"><a class="viewcode-back" href="../../../covsirphy.cleaning.html#covsirphy.JHUData.map">[docs]</a>    <span class="k">def</span> <span class="nf">map</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">country</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">variable</span><span class="o">=</span><span class="s2">&quot;Confirmed&quot;</span><span class="p">,</span> <span class="n">date</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+            <span class="n">included</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">excluded</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">filename</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Create global colored map to show the values.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            country (str or None): country name or None (global map)</span>
+<span class="sd">            variable (str): variable name to show</span>
+<span class="sd">            date (str or None): date of the records or None (the last value)</span>
+<span class="sd">            included (list[str] or None): included countries/provinces or None (all)</span>
+<span class="sd">            excluded (list[str] or None): excluded countries/provinces or None (all)</span>
+<span class="sd">            filename (str or None): image filename or None (display)</span>
+<span class="sd">            kwargs: arguments of matplotlib.pyplot.savefig() and geopandas.GeoDataFrame.plot() except for &#39;column&#39;</span>
+
+<span class="sd">        Note:</span>
+<span class="sd">            When @country is None, country level data will be shown on global map.</span>
+<span class="sd">            When @country is a country name, province level data will be shown on country map.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Date</span>
+        <span class="n">date_str</span> <span class="o">=</span> <span class="n">date</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">cleaned</span><span class="p">(</span>
+        <span class="p">)[</span><span class="bp">self</span><span class="o">.</span><span class="n">DATE</span><span class="p">]</span><span class="o">.</span><span class="n">max</span><span class="p">()</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">DATE_FORMAT</span><span class="p">)</span>
+        <span class="n">country_str</span> <span class="o">=</span> <span class="n">country</span> <span class="ow">or</span> <span class="s2">&quot;Global&quot;</span>
+        <span class="n">title</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">country_str</span><span class="si">}</span><span class="s2">: the number of </span><span class="si">{</span><span class="n">variable</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span><span class="si">}</span><span class="s2"> cases on </span><span class="si">{</span><span class="n">date_str</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="c1"># Global map</span>
+        <span class="k">if</span> <span class="n">country</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_colored_map_global</span><span class="p">(</span>
+                <span class="n">variable</span><span class="o">=</span><span class="n">variable</span><span class="p">,</span> <span class="n">title</span><span class="o">=</span><span class="n">title</span><span class="p">,</span> <span class="n">date</span><span class="o">=</span><span class="n">date</span><span class="p">,</span>
+                <span class="n">included</span><span class="o">=</span><span class="n">included</span><span class="p">,</span> <span class="n">excluded</span><span class="o">=</span><span class="n">excluded</span><span class="p">,</span> <span class="n">filename</span><span class="o">=</span><span class="n">filename</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="c1"># Country-specific map</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_colored_map_country</span><span class="p">(</span>
+            <span class="n">country</span><span class="o">=</span><span class="n">country</span><span class="p">,</span> <span class="n">variable</span><span class="o">=</span><span class="n">variable</span><span class="p">,</span> <span class="n">title</span><span class="o">=</span><span class="n">title</span><span class="p">,</span> <span class="n">date</span><span class="o">=</span><span class="n">date</span><span class="p">,</span>
+            <span class="n">included</span><span class="o">=</span><span class="n">included</span><span class="p">,</span> <span class="n">excluded</span><span class="o">=</span><span class="n">excluded</span><span class="p">,</span> <span class="n">filename</span><span class="o">=</span><span class="n">filename</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div></div>
 </pre></div>
 
            </div>

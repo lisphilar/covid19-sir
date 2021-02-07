@@ -105,14 +105,6 @@ covsirphy.cleaning.pyramid module
    :undoc-members:
    :show-inheritance:
 
-covsirphy.cleaning.term module
-------------------------------
-
-.. automodule:: covsirphy.cleaning.term
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
 covsirphy.cleaning.vaccine\_data module
 ---------------------------------------
 

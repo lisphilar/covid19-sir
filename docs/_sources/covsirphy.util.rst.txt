@@ -64,3 +64,11 @@ covsirphy.util.stopwatch module
    :members:
    :undoc-members:
    :show-inheritance:
+
+covsirphy.util.term module
+--------------------------
+
+.. automodule:: covsirphy.util.term
+   :members:
+   :undoc-members:
+   :show-inheritance:
