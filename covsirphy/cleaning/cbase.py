@@ -5,9 +5,13 @@ from pathlib import Path
 import warnings
 import country_converter as coco
 from dask import dataframe as dd
+import geopandas as gpd
+from matplotlib import pyplot as plt
 import pandas as pd
-from covsirphy.util.error import deprecate, SubsetNotFoundError
+from covsirphy.util.argument import find_args
+from covsirphy.util.error import deprecate, SubsetNotFoundError, UnExpectedValueError
 from covsirphy.util.term import Term
+from covsirphy.visualization.colored_map import ColoredMap
 
 
 class CleaningBase(Term):
@@ -316,3 +320,46 @@ class CleaningBase(Term):
         Calculate total values of the cleaned dataset.
         """
         raise NotImplementedError
+
+    def _colored_map_global(self, variable, title, date=None, filename=None, **kwargs):
+        """
+        Create global colored map to show the values.
+
+        Args:
+            variable (str): variable name to show
+            title (str): title of the figure
+            date (str or None): date of the records or None (the last value)
+            filename (str or None): image filename or None (display)
+            kwargs: arguments of matplotlib.pyplot.savefig() and geopandas.GeoDataFrame.plot() except for 'column'
+        """
+        df = self._cleaned_df.copy()
+        # Check variable name
+        if variable not in df.columns:
+            candidates = [
+                col for col in df.columns if col not in self.AREA_ABBR_COLS]
+            raise UnExpectedValueError(
+                name="variable", value=variable, candidates=candidates)
+        # Create ISO3 codes, if necessary
+        if self.ISO3 not in df.columns:
+            self._ensure_dataframe(
+                df, name="cleaned dataset", columns=[self.COUNTRY])
+            df[self.ISO3] = df[self.COUNTRY].apply(
+                lambda x: coco.convert(x, to="ISO3", not_found=None))
+            df.dropna(inplace=True)
+        # Select country level data
+        df = df.loc[df[self.PROVINCE] == self.UNKNOWN]
+        if date is not None:
+            self._ensure_dataframe(
+                df, name="cleaned dataset", columns=[self.DATE])
+            df = df.loc[df[self.DATE] == pd.to_datetime(date)]
+        df = df.groupby(self.ISO3).last()
+        # Plotting
+        savefig_kwargs = find_args(plt.savefig, **kwargs)
+        plot_kwargs = {
+            "legend": True,
+            "cmap": "coolwarm",
+        }
+        plot_kwargs.update(find_args(gpd.GeoDataFrame.plot, **kwargs))
+        with ColoredMap(filename=filename, **savefig_kwargs) as cm:
+            cm.title = title
+            cm.plot(series=df[variable], index_name=self.ISO3, **plot_kwargs)

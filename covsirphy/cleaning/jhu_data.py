@@ -647,3 +647,27 @@ class JHUData(CleaningBase):
             complement_df.loc[cur_country] = [
                 province, *complement_dict_values]
         return complement_df.reset_index()
+
+    def map(self, country=None, variable="Confirmed", date=None, filename=None, **kwargs):
+        """
+        Create global colored map to show the values.
+
+        Args:
+            country (str or None): country name or None (global map)
+            variable (str): variable name to show
+            date (str or None): date of the records or None (the last value)
+            filename (str or None): image filename or None (display)
+            kwargs: arguments of matplotlib.pyplot.savefig() and geopandas.GeoDataFrame.plot() except for 'column'
+
+        Note:
+            When @country is None, country level data will be shown on global map.
+            When @country is a country name, province level data will be shown on country map.
+        """
+        # Date
+        date = date or self.cleaned(
+        )[self.DATE].max().strftime(self.DATE_FORMAT)
+        # Show legend as default
+        if country is None:
+            title = f"Global: the number of {variable.lower()} cases on {date}"
+            self._colored_map_global(
+                variable=variable, title=title, date=date, filename=filename, **kwargs)
