@@ -16,7 +16,7 @@ from covsirphy.util.optimize import Optimizer
 from covsirphy.util.stopwatch import StopWatch
 from covsirphy.util.error import deprecate
 from covsirphy.util.error import SubsetNotFoundError, ScenarioNotFoundError, UnExecutedError
-from covsirphy.util.error import PCRIncorrectPreconditionError, NotInteractiveError
+from covsirphy.util.error import PCRIncorrectPreconditionError, NotInteractiveError, UnExpectedValueError
 from covsirphy.util.file import save_dataframe
 from covsirphy.util.argument import find_args
 from covsirphy.util.term import Term, Word

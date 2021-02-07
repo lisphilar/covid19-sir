@@ -174,7 +174,7 @@ class NotInteractiveError(ValueError):
 
 class UnExpectedValueError(ValueError):
     """
-    Error when unexpected value was applied as the value of an argugment.
+    Error when unexpected value was applied as the value of an argument.
 
     Args:
         name (str): argument name
