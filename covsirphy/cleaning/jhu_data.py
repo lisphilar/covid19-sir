@@ -664,10 +664,15 @@ class JHUData(CleaningBase):
             When @country is a country name, province level data will be shown on country map.
         """
         # Date
-        date = date or self.cleaned(
+        date_str = date or self.cleaned(
         )[self.DATE].max().strftime(self.DATE_FORMAT)
-        # Show legend as default
+        country_str = country or "Global"
+        title = f"{country_str}: the number of {variable.lower()} cases on {date_str}"
+        # Global map
         if country is None:
-            title = f"Global: the number of {variable.lower()} cases on {date}"
             self._colored_map_global(
                 variable=variable, title=title, date=date, filename=filename, **kwargs)
+            return
+        # Country-specific map
+        self._colored_map_country(
+            country=country, variable=variable, title=title, date=date, filename=filename, **kwargs)
