@@ -322,7 +322,42 @@ class CleaningBase(Term):
         """
         raise NotImplementedError
 
-    def _colored_map_global(self, variable, title, date=None, filename=None, **kwargs):
+    def _colored_map(self, series, title, filename, **kwargs):
+        """
+        Create global colored map to show the values.
+
+        Args:
+            series (pandas.Series): data to show
+                Index
+                    ISO3 codes, country names or province names
+                Values
+                    - (int or float): values to color the map
+            variable (str): variable name to show
+            title (str): title of the figure
+            filename (str or None): image filename or None (display)
+            kwargs: arguments of matplotlib.pyplot.savefig() and geopandas.GeoDataFrame.plot() except for 'column'
+        """
+        # Arguments for saving image
+        savefig_kwargs = find_args(plt.savefig, **kwargs)
+        # Create map
+        with ColoredMap(filename=filename, **savefig_kwargs) as cm:
+            # Title
+            cm.title = title
+            # Legend
+            divider = make_axes_locatable(cm.ax)
+            cax = divider.append_axes("right", size="5%", pad=0.1)
+            # Arguments of plotting with GeoPandas
+            plot_kwargs = {
+                "legend": True,
+                "cmap": "coolwarm",
+                "ax": cm.ax,
+                "cax": cax,
+            }
+            plot_kwargs.update(find_args(gpd.GeoDataFrame.plot, **kwargs))
+            # Plotting
+            cm.plot(series=series, index_name=self.ISO3, **plot_kwargs)
+
+    def _colored_map_global(self, variable, title, date, filename, **kwargs):
         """
         Create global colored map to show the values.
 
@@ -355,16 +390,5 @@ class CleaningBase(Term):
             df = df.loc[df[self.DATE] == pd.to_datetime(date)]
         df = df.groupby(self.ISO3).last()
         # Plotting
-        savefig_kwargs = find_args(plt.savefig, **kwargs)
-        with ColoredMap(filename=filename, **savefig_kwargs) as cm:
-            cm.title = title
-            divider = make_axes_locatable(cm.ax)
-            cax = divider.append_axes("right", size="5%", pad=0.1)
-            plot_kwargs = {
-                "legend": True,
-                "cmap": "coolwarm",
-                "ax": cm.ax,
-                "cax": cax,
-            }
-            plot_kwargs.update(find_args(gpd.GeoDataFrame.plot, **kwargs))
-            cm.plot(series=df[variable], index_name=self.ISO3, **plot_kwargs)
+        self._colored_map(
+            series=df[variable], title=title, filename=filename, **kwargs)
