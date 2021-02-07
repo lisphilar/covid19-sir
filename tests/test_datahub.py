@@ -196,6 +196,20 @@ class TestJHUData(object):
             all_set = set(JHUDataComplementHandler.SHOW_COMPLEMENT_FULL_COLS)
             assert all_set.issubset(df.columns)
 
+    def test_map(self, jhu_data):
+        warnings.filterwarnings("ignore", category=UserWarning)
+        # Global map
+        for variable in Term.VALUE_COLUMNS:
+            jhu_data.map(country=None, variable=variable)
+        jhu_data.map(country=None, included=["Japan", "Greece"])
+        # Country map
+        for variable in Term.VALUE_COLUMNS:
+            jhu_data.map(country="Japan", variable=variable)
+        jhu_data.map(country="Japan", excluded=["Tokyo"])
+        # Error handling
+        with pytest.raises(SubsetNotFoundError):
+            jhu_data.map(country="Greece")
+
 
 class TestPopulationData(object):
     def test_cleaning(self, population_data):

@@ -126,6 +126,8 @@ class JHUData(CleaningBase):
         p_chn_df = p_chn_df.groupby(self.DATE).sum().reset_index()
         p_chn_df.insert(0, self.COUNTRY, "China")
         p_chn_df.insert(0, self.PROVINCE, self.UNKNOWN)
+        p_chn_df[self.ISO3] = self.country_to_iso3(
+            country="China", check_data=False)
         without_c_chn_df = df.loc[
             (df[self.COUNTRY] != "China") | (df[self.PROVINCE] != self.UNKNOWN)]
         df = pd.concat([without_c_chn_df, p_chn_df], ignore_index=True)
@@ -647,3 +649,36 @@ class JHUData(CleaningBase):
             complement_df.loc[cur_country] = [
                 province, *complement_dict_values]
         return complement_df.reset_index()
+
+    def map(self, country=None, variable="Confirmed", date=None,
+            included=None, excluded=None, filename=None, **kwargs):
+        """
+        Create global colored map to show the values.
+
+        Args:
+            country (str or None): country name or None (global map)
+            variable (str): variable name to show
+            date (str or None): date of the records or None (the last value)
+            included (list[str] or None): included countries/provinces or None (all)
+            excluded (list[str] or None): excluded countries/provinces or None (all)
+            filename (str or None): image filename or None (display)
+            kwargs: arguments of matplotlib.pyplot.savefig() and geopandas.GeoDataFrame.plot() except for 'column'
+
+        Note:
+            When @country is None, country level data will be shown on global map.
+            When @country is a country name, province level data will be shown on country map.
+        """
+        # Date
+        date_str = date or self.cleaned(
+        )[self.DATE].max().strftime(self.DATE_FORMAT)
+        country_str = country or "Global"
+        title = f"{country_str}: the number of {variable.lower()} cases on {date_str}"
+        # Global map
+        if country is None:
+            return self._colored_map_global(
+                variable=variable, title=title, date=date,
+                included=included, excluded=excluded, filename=filename, **kwargs)
+        # Country-specific map
+        return self._colored_map_country(
+            country=country, variable=variable, title=title, date=date,
+            included=included, excluded=excluded, filename=filename, **kwargs)

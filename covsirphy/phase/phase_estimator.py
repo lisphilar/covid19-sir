@@ -4,7 +4,7 @@
 import functools
 from multiprocessing import cpu_count, Pool
 from covsirphy.util.stopwatch import StopWatch
-from covsirphy.cleaning.term import Term
+from covsirphy.util.term import Term
 from covsirphy.cleaning.jhu_data import JHUData
 from covsirphy.cleaning.population import PopulationData
 from covsirphy.ode.mbase import ModelBase

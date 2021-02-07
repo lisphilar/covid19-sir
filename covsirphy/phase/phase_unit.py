@@ -3,7 +3,7 @@
 
 import pandas as pd
 from covsirphy.util.error import UnExecutedError
-from covsirphy.cleaning.term import Term
+from covsirphy.util.term import Term
 from covsirphy.ode.mbase import ModelBase
 from covsirphy.simulation.estimator import Estimator
 from covsirphy.simulation.simulator import ODESimulator

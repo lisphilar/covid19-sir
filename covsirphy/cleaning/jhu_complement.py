@@ -5,7 +5,7 @@ import functools
 import warnings
 import numpy as np
 from datetime import timedelta
-from covsirphy.cleaning.term import Term
+from covsirphy.util.term import Term
 
 
 class JHUDataComplementHandler(Term):

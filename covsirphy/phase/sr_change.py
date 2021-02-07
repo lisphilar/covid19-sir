@@ -6,7 +6,7 @@ import warnings
 import numpy as np
 import pandas as pd
 import ruptures as rpt
-from covsirphy.cleaning.term import Term
+from covsirphy.util.term import Term
 from covsirphy.phase.trend import Trend
 
 

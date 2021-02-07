@@ -5,9 +5,15 @@ from pathlib import Path
 import warnings
 import country_converter as coco
 from dask import dataframe as dd
+import geopandas as gpd
+from matplotlib import pyplot as plt
+from mpl_toolkits.axes_grid1 import make_axes_locatable
+import numpy as np
 import pandas as pd
-from covsirphy.util.error import deprecate, SubsetNotFoundError
-from covsirphy.cleaning.term import Term
+from covsirphy.util.argument import find_args
+from covsirphy.util.error import deprecate, SubsetNotFoundError, UnExpectedValueError
+from covsirphy.util.term import Term
+from covsirphy.visualization.colored_map import ColoredMap
 
 
 class CleaningBase(Term):
@@ -151,12 +157,13 @@ class CleaningBase(Term):
         """
         return self.ensure_country_name(iso3_code)
 
-    def country_to_iso3(self, country):
+    def country_to_iso3(self, country, check_data=True):
         """
         Convert country name to ISO3 code if records are available.
 
         Args:
             country (str): country name
+            check_data (bool): whether validate the country name with the dataset
 
         Raises:
             KeyError: ISO3 code of the country is not registered
@@ -164,7 +171,7 @@ class CleaningBase(Term):
         Returns:
             str: ISO3 code or "---" (when unknown)
         """
-        name = self.ensure_country_name(country)
+        name = self.ensure_country_name(country) if check_data else country
         return coco.convert(name, to="ISO3", not_found="---")
 
     @classmethod
@@ -316,3 +323,130 @@ class CleaningBase(Term):
         Calculate total values of the cleaned dataset.
         """
         raise NotImplementedError
+
+    def _colored_map(self, series, index_name, usa, title, filename, **kwargs):
+        """
+        Create global colored map to show the values.
+
+        Args:
+            series (pandas.Series): data to show
+                Index
+                    ISO3 codes, country names or province names
+                Values
+                    - (int or float): values to color the map
+            index_name (str): index name, 'ISO3', 'Country' or 'Province'
+            usa (bool): if True, not show islands of USA when @index_name is 'Province'
+            title (str): title of the figure
+            filename (str or None): image filename or None (display)
+            kwargs: arguments of matplotlib.pyplot.savefig() and geopandas.GeoDataFrame.plot() except for 'column'
+        """
+        # Arguments for saving image
+        savefig_kwargs = find_args(plt.savefig, **kwargs)
+        # Create map
+        with ColoredMap(filename=filename, **savefig_kwargs) as cm:
+            # Title
+            cm.title = title
+            # Colorbar
+            divider = make_axes_locatable(cm.ax)
+            cax = divider.append_axes("right", size="5%", pad=0.1)
+            # Arguments of plotting with GeoPandas
+            plot_kwargs = {
+                "legend": True,
+                "cmap": "coolwarm",
+                "ax": cm.ax,
+                "cax": cax,
+                "legend_kwds": {"label": "in log10 scale"}
+            }
+            plot_kwargs.update(find_args(gpd.GeoDataFrame.plot, **kwargs))
+            # Plotting
+            series = np.log10(series + 1)
+            cm.plot(
+                series=series, index_name=index_name, usa=usa, **plot_kwargs)
+
+    def _colored_map_global(self, variable, title, date, included, excluded, filename, **kwargs):
+        """
+        Create global colored map to show the values at country level.
+
+        Args:
+            variable (str): variable name to show
+            title (str): title of the figure
+            date (str or None): date of the records or None (the last value)
+            included (list[str] or None): included countries or None (all-included)
+            excluded (list[str] or None): excluded countries or None (no-excluded)
+            filename (str or None): image filename or None (display)
+            kwargs: arguments of matplotlib.pyplot.savefig() and geopandas.GeoDataFrame.plot() except for 'column'
+        """
+        df = self._cleaned_df.copy()
+        # Check variable name
+        if variable not in df.columns:
+            candidates = [
+                col for col in df.columns if col not in self.AREA_ABBR_COLS]
+            raise UnExpectedValueError(
+                name="variable", value=variable, candidates=candidates)
+        # Create ISO3 codes, if necessary
+        if self.ISO3 not in df.columns:
+            self._ensure_dataframe(
+                df, name="cleaned dataset", columns=[self.COUNTRY])
+            df[self.ISO3] = df[self.COUNTRY].apply(
+                lambda x: coco.convert(x, to="ISO3", not_found=None))
+            df.dropna(inplace=True)
+        # Select country level data
+        df = df.loc[df[self.PROVINCE] == self.UNKNOWN]
+        # Included/excluded countries
+        sel = set(included or df[self.COUNTRY].unique()) - set(excluded or [])
+        df = df.loc[df[self.COUNTRY].isin(sel)]
+        # Select date
+        if date is not None:
+            self._ensure_dataframe(
+                df, name="cleaned dataset", columns=[self.DATE])
+            df = df.loc[df[self.DATE] == pd.to_datetime(date)]
+        df = df.groupby(self.ISO3).last()
+        # Plotting
+        self._colored_map(
+            series=df[variable], index_name=self.ISO3, usa=False,
+            title=title, filename=filename, **kwargs)
+
+    def _colored_map_country(self, country, variable, title, date, included, excluded, filename, **kwargs):
+        """
+        Create country-specific colored map to show the values at province level.
+
+        Args:
+            country (str): country name
+            variable (str): variable name to show
+            title (str): title of the figure
+            date (str or None): date of the records or None (the last value)
+            included (list[str] or None): included countries or None (all-included)
+            excluded (list[str] or None): excluded countries or None (no-excluded)
+            filename (str or None): image filename or None (display)
+            kwargs: arguments of matplotlib.pyplot.savefig() and geopandas.GeoDataFrame.plot() except for 'column'
+        """
+        df = self._cleaned_df.copy()
+        country_alias = self.ensure_country_name(country)
+        # Check variable name
+        if variable not in df.columns:
+            candidates = [
+                col for col in df.columns if col not in self.AREA_ABBR_COLS]
+            raise UnExpectedValueError(
+                name="variable", value=variable, candidates=candidates)
+        # Select country-specific data
+        self._ensure_dataframe(
+            df, name="cleaned dataset", columns=[self.COUNTRY, self.PROVINCE])
+        df = df.loc[df[self.COUNTRY] == country_alias]
+        df = df.loc[df[self.PROVINCE] != self.UNKNOWN]
+        if df.empty:
+            raise SubsetNotFoundError(
+                country=country, country_alias=country_alias, message="at province level")
+        # Included/excluded provinces
+        sel = set(included or df[self.PROVINCE].unique()) - set(excluded or [])
+        df = df.loc[df[self.PROVINCE].isin(sel)]
+        # Select date
+        if date is not None:
+            self._ensure_dataframe(
+                df, name="cleaned dataset", columns=[self.DATE])
+            df = df.loc[df[self.DATE] == pd.to_datetime(date)]
+        df = df.groupby(self.PROVINCE).last()
+        # Plotting
+        self._colored_map(
+            series=df[variable], index_name=self.PROVINCE,
+            usa=(country_alias == "United States"),
+            title=title, filename=filename, **kwargs)

@@ -6,7 +6,7 @@ import sklearn
 from covsirphy.util.error import UnExecutedError
 from covsirphy.util.argument import find_args
 from covsirphy.util.plotting import line_plot_multiple
-from covsirphy.cleaning.term import Term
+from covsirphy.util.term import Term
 from covsirphy.ode.mbase import ModelBase
 from covsirphy.phase.sr_change import ChangeFinder
 from covsirphy.phase.phase_unit import PhaseUnit

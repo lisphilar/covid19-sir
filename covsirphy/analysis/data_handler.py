@@ -6,7 +6,7 @@ import numpy as np
 import pandas as pd
 from covsirphy.util.error import NotInteractiveError
 from covsirphy.util.plotting import line_plot
-from covsirphy.cleaning.term import Term
+from covsirphy.util.term import Term
 from covsirphy.cleaning.jhu_data import JHUData
 from covsirphy.cleaning.population import PopulationData
 

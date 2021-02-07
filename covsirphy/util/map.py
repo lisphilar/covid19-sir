@@ -6,8 +6,10 @@ import matplotlib.cm as cm
 import matplotlib
 import japanmap
 import pandas as pd
+from covsirphy.util.error import deprecate
 
 
+@deprecate
 def jpn_map(prefectures, values, title, cmap_name="Reds", filename=None):
     """
     Show colored Japan prefecture map.
