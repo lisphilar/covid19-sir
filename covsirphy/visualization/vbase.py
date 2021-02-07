@@ -32,6 +32,7 @@ class VisualizeBase(Term):
         self._savefig_dict = {"bbox_inches": bbox_inches, **kwargs}
         # Properties
         self._title = ""
+        _, self._ax = plt.subplots(1, 1)
 
     def __enter__(self):
         return self
@@ -39,7 +40,7 @@ class VisualizeBase(Term):
     def __exit__(self, *exc_info):
         # Settings
         if self._title:
-            plt.title(self._title)
+            self._ax.title.set_text(self._title)
         # Display the figure if filename is None
         if self._filename is None:
             plt.show()
@@ -59,6 +60,17 @@ class VisualizeBase(Term):
     def title(self, title):
         self._title = str(title)
 
+    @property
+    def ax(self):
+        """
+        matplotlib.axis: axis
+        """
+        return self._ax
+
+    @ax.setter
+    def ax(self, ax):
+        self._ax = self._ensure_instance(ax, matplotlib.axes.Axes, name="ax")
+
     def plot(self):
         """
         Method for plotting. This will be defined in child classes.
@@ -76,4 +88,4 @@ class VisualizeBase(Term):
         Args:
             kwargs: arguments of matplotlib.pyplot.tick_params
         """
-        plt.tick_params(**kwargs)
+        self._ax.tick_params(**kwargs)

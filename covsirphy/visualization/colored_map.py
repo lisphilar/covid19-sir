@@ -75,7 +75,7 @@ class ColoredMap(VisualizeBase):
         # Plotting
         gdf.plot(column="Value", **kwargs)
         # Remove all ticks
-        self.tick_params(
+        self._ax.tick_params(
             labelbottom=False, labelleft=False, left=False, bottom=False)
 
     @staticmethod

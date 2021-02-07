@@ -7,6 +7,7 @@ import country_converter as coco
 from dask import dataframe as dd
 import geopandas as gpd
 from matplotlib import pyplot as plt
+from mpl_toolkits.axes_grid1 import make_axes_locatable
 import pandas as pd
 from covsirphy.util.argument import find_args
 from covsirphy.util.error import deprecate, SubsetNotFoundError, UnExpectedValueError
@@ -355,11 +356,15 @@ class CleaningBase(Term):
         df = df.groupby(self.ISO3).last()
         # Plotting
         savefig_kwargs = find_args(plt.savefig, **kwargs)
-        plot_kwargs = {
-            "legend": True,
-            "cmap": "coolwarm",
-        }
-        plot_kwargs.update(find_args(gpd.GeoDataFrame.plot, **kwargs))
         with ColoredMap(filename=filename, **savefig_kwargs) as cm:
             cm.title = title
+            divider = make_axes_locatable(cm.ax)
+            cax = divider.append_axes("right", size="5%", pad=0.1)
+            plot_kwargs = {
+                "legend": True,
+                "cmap": "coolwarm",
+                "ax": cm.ax,
+                "cax": cax,
+            }
+            plot_kwargs.update(find_args(gpd.GeoDataFrame.plot, **kwargs))
             cm.plot(series=df[variable], index_name=self.ISO3, **plot_kwargs)
