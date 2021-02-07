@@ -433,6 +433,9 @@ class CleaningBase(Term):
             df, name="cleaned dataset", columns=[self.COUNTRY, self.PROVINCE])
         df = df.loc[df[self.COUNTRY] == country_alias]
         df = df.loc[df[self.PROVINCE] != self.UNKNOWN]
+        if df.empty:
+            raise SubsetNotFoundError(
+                country=country, country_alias=country_alias, message="at province level")
         # Included/excluded provinces
         sel = set(included or df[self.PROVINCE].unique()) - set(excluded or [])
         df = df.loc[df[self.PROVINCE].isin(sel)]
