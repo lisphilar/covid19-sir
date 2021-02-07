@@ -50,25 +50,28 @@ class ColoredMap(VisualizeBase):
             raise UnExpectedValueError(
                 name="index_name", value=index_name, candidates=list(key_dict.keys()))
         self._ensure_instance(series, pd.Series, name="series")
-        df = series.reset_index().dropna()
+        df = pd.DataFrame(series).reset_index().dropna()
         df.columns = [index_name, "Value"]
-        df.dropna(inplace=True)
         # Values of ISO3 column should be unique
         if not df[index_name].is_unique:
             raise ValueError(
-                f"{self.ISO3} column of the dataframe should be unique.")
+                f"'{index_name}' column of the dataframe should be unique.")
         # Geometry information from Natural Earth
         if index_name in (self.ISO3, self.COUNTRY):
             # pop_est, continent, name, iso_a3, gdp_md_est, geometry
-            geopath = gpd.datasets.get_path("naturalearth_loweres")
+            geopath = gpd.datasets.get_path("naturalearth_lowres")
         else:
             geopath = self._load_geo_provinces(directory=directory)
-        geo_df = gpd.read_file(geopath)
+        geo_gdf = gpd.read_file(geopath)
         # Merge the data with geometry information
-        df = geo_df.merge(
-            df, how="inner", left_on=key_dict[index_name], right_on=index_name)
+        try:
+            gdf = geo_gdf.merge(
+                df, how="inner", left_on=key_dict[index_name], right_on=index_name)
+        except ValueError:
+            raise ValueError(
+                f"Index of the pandas.Series is not {index_name}.") from None
         # Plotting
-        df.plot(column="Value", **kwargs)
+        gdf.plot(column="Value", **kwargs)
         # Remove all ticks
         self.tick_params(
             labelbottom=False, labelleft=False, left=False, bottom=False)
