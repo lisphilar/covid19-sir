@@ -4,6 +4,7 @@
 from covsirphy.util.error import SubsetNotFoundError
 from pathlib import Path
 import warnings
+import matplotlib
 import pytest
 from covsirphy import VisualizeBase, ColoredMap
 from covsirphy import UnExpectedValueError, Term
@@ -38,6 +39,8 @@ class TestVisualizeBase(object):
     def test_setting(self, imgfile):
         with VisualizeBase(filename=imgfile) as vb:
             assert not vb.title
+            assert isinstance(vb.ax, matplotlib.axes.Axes)
+            vb.ax = vb.ax
             vb.title = "title"
             vb.tick_params(
                 labelbottom=False, labelleft=False, left=False, bottom=False)
