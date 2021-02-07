@@ -18,8 +18,14 @@ class ColoredMap(VisualizeBase):
         kwargs: the other arguments of matplotlib.pyplot.savefig()
     """
 
-    def __init__(self, filename, **kwargs):
+    def __init__(self, filename=None, **kwargs):
         super().__init__(filename=filename, **kwargs)
+
+    def __enter__(self):
+        return super().__enter__()
+
+    def __exit__(self, *exc_info):
+        return super().__exit__(*exc_info)
 
     def plot(self, series, index_name="ISO3", directory="input", **kwargs):
         """
