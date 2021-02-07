@@ -71,12 +71,12 @@ flake8:
 .PHONY: docs
 docs:
 	# docs/index.rst must be updated to include the notebooks
-	@cp --no-clobber example/usage_*.ipynb docs/
+	@cp --force example/usage_*.ipynb docs/
 	# Save markdown files in docs directory
 	# docs/markdown/*md will be automatically included
-	@cp --no-clobber .github/CODE_OF_CONDUCT.md docs/CODE_OF_CONDUCT.md
-	@cp --no-clobber .github/CONTRIBUTING.md docs/CONTRIBUTING.md
-	@cp --no-clobber SECURITY.md docs/SECURITY.md
+	@cp --force .github/CODE_OF_CONDUCT.md docs/CODE_OF_CONDUCT.md
+	@cp --force .github/CONTRIBUTING.md docs/CONTRIBUTING.md
+	@cp --force SECURITY.md docs/SECURITY.md
 	# Convert README.md to README.rst
 	@# sudo apt install pandoc
 	@pandoc --from markdown --to rst README.md -o docs/README.rst
