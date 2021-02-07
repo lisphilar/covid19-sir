@@ -343,7 +343,7 @@ class CleaningBase(Term):
         with ColoredMap(filename=filename, **savefig_kwargs) as cm:
             # Title
             cm.title = title
-            # Legend
+            # Colorbar
             divider = make_axes_locatable(cm.ax)
             cax = divider.append_axes("right", size="5%", pad=0.1)
             # Arguments of plotting with GeoPandas
