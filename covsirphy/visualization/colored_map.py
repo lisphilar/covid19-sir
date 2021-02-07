@@ -28,7 +28,7 @@ class ColoredMap(VisualizeBase):
     def __exit__(self, *exc_info):
         return super().__exit__(*exc_info)
 
-    def plot(self, series, index_name="ISO3", directory="input", **kwargs):
+    def plot(self, series, index_name="ISO3", directory="input", usa=False, **kwargs):
         """
         Set dataframe and the variable to show in a colored map.
 
@@ -40,6 +40,7 @@ class ColoredMap(VisualizeBase):
                     - (int or float): values to color the map
             index_name (str): index name, 'ISO3', 'Country' or 'Province'
             directory (str): directory to save the downloaded files of geometry information
+            usa (bool): if True, not show islands of USA when @index_name is 'Province'
             kwargs: arguments of geopandas.GeoDataFrame.plot() except for 'column'
 
         Raises:
@@ -62,7 +63,9 @@ class ColoredMap(VisualizeBase):
             # pop_est, continent, name, iso_a3, gdp_md_est, geometry
             geopath = gpd.datasets.get_path("naturalearth_lowres")
         else:
-            geopath = self._load_geo_provinces(directory=directory)
+            scale = "50m" if usa else "10m"
+            geopath = self._load_geo_provinces(
+                directory=directory, scale=scale)
         gdf = gpd.read_file(geopath)
         # Merge the data with geometry information
         df[index_name] = df[index_name].apply(unidecode)
@@ -79,18 +82,19 @@ class ColoredMap(VisualizeBase):
             labelbottom=False, labelleft=False, left=False, bottom=False)
 
     @staticmethod
-    def _load_geo_provinces(directory):
+    def _load_geo_provinces(directory, scale="10m"):
         """
         Load the shape file (1:10 million scale) from 'Natural Earth Vector'.
         https://github.com/nvkelso/natural-earth-vector
 
         Args:
             directory (str): directory to save the downloaded files of geometry information
+            scale (str): scale of geographic shapes, '10m', '50m' or '110m'
 
         Returns:
             str: filename of the shape file
         """
-        title = "ne_10m_admin_1_states_provinces"
+        title = f"ne_{scale}_admin_1_states_provinces"
         extensions = [
             ".README.html", ".VERSION.txt", ".cpg", ".dbf", ".sbn", ".sbx", ".shp", ".shx"]
         geo_dirpath = Path(directory).joinpath(title)
@@ -101,7 +105,7 @@ class ColoredMap(VisualizeBase):
             basename = f"{title}{ext}"
             if geo_dirpath.joinpath(basename).exists():
                 continue
-            url = f"https://github.com/nvkelso/natural-earth-vector/blob/master/10m_cultural/{basename}?raw=true"
+            url = f"https://github.com/nvkelso/natural-earth-vector/blob/master/{scale}_cultural/{basename}?raw=true"
             response = requests.get(url=url)
             with geo_dirpath.joinpath(basename).open("wb") as fh:
                 fh.write(response.content)

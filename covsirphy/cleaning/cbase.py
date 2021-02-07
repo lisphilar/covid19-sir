@@ -324,7 +324,7 @@ class CleaningBase(Term):
         """
         raise NotImplementedError
 
-    def _colored_map(self, series, index_name, title, filename, **kwargs):
+    def _colored_map(self, series, index_name, usa, title, filename, **kwargs):
         """
         Create global colored map to show the values.
 
@@ -335,6 +335,7 @@ class CleaningBase(Term):
                 Values
                     - (int or float): values to color the map
             index_name (str): index name, 'ISO3', 'Country' or 'Province'
+            usa (bool): if True, not show islands of USA when @index_name is 'Province'
             title (str): title of the figure
             filename (str or None): image filename or None (display)
             kwargs: arguments of matplotlib.pyplot.savefig() and geopandas.GeoDataFrame.plot() except for 'column'
@@ -359,7 +360,8 @@ class CleaningBase(Term):
             plot_kwargs.update(find_args(gpd.GeoDataFrame.plot, **kwargs))
             # Plotting
             series = np.log10(series + 1)
-            cm.plot(series=series, index_name=index_name, **plot_kwargs)
+            cm.plot(
+                series=series, index_name=index_name, usa=usa, **plot_kwargs)
 
     def _colored_map_global(self, variable, title, date, included, excluded, filename, **kwargs):
         """
@@ -401,7 +403,8 @@ class CleaningBase(Term):
         df = df.groupby(self.ISO3).last()
         # Plotting
         self._colored_map(
-            series=df[variable], index_name=self.ISO3, title=title, filename=filename, **kwargs)
+            series=df[variable], index_name=self.ISO3, usa=False,
+            title=title, filename=filename, **kwargs)
 
     def _colored_map_country(self, country, variable, title, date, included, excluded, filename, **kwargs):
         """
@@ -418,7 +421,7 @@ class CleaningBase(Term):
             kwargs: arguments of matplotlib.pyplot.savefig() and geopandas.GeoDataFrame.plot() except for 'column'
         """
         df = self._cleaned_df.copy()
-        country = self.ensure_country_name(country)
+        country_alias = self.ensure_country_name(country)
         # Check variable name
         if variable not in df.columns:
             candidates = [
@@ -428,7 +431,7 @@ class CleaningBase(Term):
         # Select country-specific data
         self._ensure_dataframe(
             df, name="cleaned dataset", columns=[self.COUNTRY, self.PROVINCE])
-        df = df.loc[df[self.COUNTRY] == country]
+        df = df.loc[df[self.COUNTRY] == country_alias]
         df = df.loc[df[self.PROVINCE] != self.UNKNOWN]
         # Included/excluded provinces
         sel = set(included or df[self.PROVINCE].unique()) - set(excluded or [])
@@ -441,4 +444,6 @@ class CleaningBase(Term):
         df = df.groupby(self.PROVINCE).last()
         # Plotting
         self._colored_map(
-            series=df[variable], index_name=self.PROVINCE, title=title, filename=filename, **kwargs)
+            series=df[variable], index_name=self.PROVINCE,
+            usa=(country_alias == "United States"),
+            title=title, filename=filename, **kwargs)
