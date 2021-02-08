@@ -76,8 +76,9 @@ class ColoredMap(VisualizeBase):
                 "Fr. S. Antarctic Lands": "French Southern and Antarctic Lands",
                 "S. Sudan": "South Sudan"
             }, inplace=True)
-        gdf["iso_a3"] = gdf[["name", "iso_a3"]].apply(
-            lambda x: coco.convert(x[0], to="ISO3", not_found=x[1]), axis=1)
+        if index_name in (self.ISO3, self.COUNTRY):
+            gdf["iso_a3"] = gdf[["name", "iso_a3"]].apply(
+                lambda x: coco.convert(x[0], to="ISO3", not_found=x[1]), axis=1)
         gdf = gdf.merge(
             df, how="inner", left_on=key_dict[index_name], right_on=index_name)
         if gdf.empty:
