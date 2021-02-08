@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*-
 
 from pathlib import Path
+import country_converter as coco
 import geopandas as gpd
 import pandas as pd
 import requests
@@ -70,6 +71,14 @@ class ColoredMap(VisualizeBase):
         # Merge the data with geometry information
         df[index_name] = df[index_name].apply(unidecode)
         gdf["name"] = gdf["name"].fillna("").apply(unidecode)
+        gdf["name"].replace(
+            {
+                "Fr. S. Antarctic Lands": "French Southern and Antarctic Lands",
+                "S. Sudan": "South Sudan"
+            }, inplace=True)
+        if index_name in (self.ISO3, self.COUNTRY):
+            gdf["iso_a3"] = gdf[["name", "iso_a3"]].apply(
+                lambda x: coco.convert(x[0], to="ISO3", not_found=x[1]), axis=1)
         gdf = gdf.merge(
             df, how="inner", left_on=key_dict[index_name], right_on=index_name)
         if gdf.empty:
@@ -81,7 +90,7 @@ class ColoredMap(VisualizeBase):
         self._ax.tick_params(
             labelbottom=False, labelleft=False, left=False, bottom=False)
 
-    @staticmethod
+    @ staticmethod
     def _load_geo_provinces(directory, scale="10m"):
         """
         Load the shape file (1:10 million scale) from 'Natural Earth Vector'.
