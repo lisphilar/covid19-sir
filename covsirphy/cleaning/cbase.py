@@ -348,6 +348,8 @@ class CleaningBase(Term):
         if variable not in df.columns:
             candidates = [col for col in df.columns if col not in self.AREA_ABBR_COLS]
             raise UnExpectedValueError(name="variable", value=variable, candidates=candidates)
+        # Remove cruise ships
+        df = df.loc[df[self.COUNTRY] != self.OTHERS]
         # Select country level data
         df = df.loc[df[self.PROVINCE] == self.UNKNOWN]
         # Select date
