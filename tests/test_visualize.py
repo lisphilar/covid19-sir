@@ -47,39 +47,12 @@ class TestVisualizeBase(object):
 
 
 class TestColoredMap(object):
-    def test_error_index_name(self, imgfile, jhu_data):
-        df = jhu_data.cleaned().set_index(Term.COUNTRY)
-        with pytest.raises(UnExpectedValueError):
-            with ColoredMap(filename=imgfile) as cm:
-                cm.plot(series=df[Term.C], index_name="feeling")
-
-    def test_not_unique(self, imgfile, jhu_data):
-        df = jhu_data.cleaned().set_index(Term.COUNTRY)
-        with pytest.raises(ValueError):
-            with ColoredMap(filename=imgfile) as cm:
-                cm.plot(series=df[Term.C], index_name=Term.COUNTRY)
-
-    def test_unset_index(self, imgfile, jhu_data):
-        # Not set country as index
-        df = jhu_data.cleaned()
-        df = df.loc[df[Term.PROVINCE] == Term.UNKNOWN]
-        with pytest.raises(ValueError):
-            with ColoredMap(filename=imgfile) as cm:
-                cm.plot(series=df[Term.C], index_name=Term.COUNTRY)
-
     def test_global_country(self, imgfile, jhu_data):
         df = jhu_data.cleaned()
         df = df.loc[df[Term.PROVINCE] == Term.UNKNOWN]
         df = df.groupby(Term.COUNTRY).last()
         with ColoredMap(filename=imgfile) as cm:
             cm.plot(series=df[Term.C], index_name=Term.COUNTRY)
-
-    def test_global_iso3(self, imgfile, jhu_data):
-        df = jhu_data._cleaned_df.copy()
-        df = df.loc[df[Term.PROVINCE] == Term.UNKNOWN]
-        df = df.groupby(Term.ISO3).last()
-        with ColoredMap(filename=imgfile) as cm:
-            cm.plot(series=df[Term.C], index_name=Term.ISO3)
 
     @pytest.mark.parametrize("country", ["Japan", "United States", "China"])
     def test_in_a_country(self, imgfile, jhu_data, country):
