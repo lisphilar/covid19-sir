@@ -5,6 +5,8 @@ from pathlib import Path
 import warnings
 import country_converter as coco
 from dask import dataframe as dd
+import geopandas as gpd
+from matplotlib import pyplot as plt
 import pandas as pd
 from covsirphy.util.argument import find_args
 from covsirphy.util.error import deprecate, SubsetNotFoundError, UnExpectedValueError
@@ -321,19 +323,41 @@ class CleaningBase(Term):
         raise NotImplementedError
 
     @staticmethod
-    def _colored_map(title, **kwargs):
+    def _colored_map(title, data, level, included, excluded, filename, **kwargs):
         """
         Create global colored map to show the values.
 
         Args:
             title (str): title of the figure
-            kwargs: arguments of covsirphy.ColoredMap() and covsirphy.ColoredMap.plot()
+            data (pandas.DataFrame): data to show
+                Index
+                    reset index
+                Columns
+                    - Country (str or pandas.Category): country name(s)
+                    - Province (str or pandas.Category): province names, necessary when @level is 'Province'
+                    - Value (int or float or None): values to coloring the map
+            level (str): 'Country' (global map) or 'Province' (country-specific map)
+            included (list[str] or None): included countries/provinces or None (all)
+            excluded (list[str] or None): excluded countries/provinces or None (all)
+            filename (str or None): filename to save the figure or None (display)
+            kwargs: arguments of matplotlib.pyplot.savefig() and geopandas.GeoDataFrame.plot() except for 'column'
         """
-        with ColoredMap(**find_args(ColoredMap, **kwargs)) as cm:
+        save_kwargs = {
+            "filename": filename,
+            **find_args(plt.savefig, **kwargs)
+        }
+        plot_kwargs = {
+            "data": data,
+            "level": level,
+            "included": included,
+            "excluded": excluded,
+            **find_args(gpd.GeoDataFrame.plot, **kwargs)
+        }
+        with ColoredMap(**save_kwargs) as cm:
             cm.title = title
-            cm.plot(**find_args(ColoredMap.plot, **kwargs))
+            cm.plot(**plot_kwargs)
 
-    def _colored_map_global(self, variable, title, date, **kwargs):
+    def _colored_map_global(self, variable, title, date, included, excluded, filename, **kwargs):
         """
         Create global colored map to show the values at country level.
 
@@ -341,6 +365,9 @@ class CleaningBase(Term):
             variable (str): variable name to show
             title (str): title of the figure
             date (str or None): date of the records or None (the last value)
+            included (list[str] or None): included countries or None (all)
+            excluded (list[str] or None): excluded countries or None (all)
+            filename (str or None): filename to save the figure or None (display)
             kwargs: arguments of covsirphy.ColoredMap() and covsirphy.ColoredMap.plot()
         """
         df = self._cleaned_df.copy()
@@ -359,9 +386,15 @@ class CleaningBase(Term):
         df = df.groupby(self.COUNTRY).last().reset_index()
         # Plotting
         df.rename(columns={variable: "Value"}, inplace=True)
-        self._colored_map(title=title, data=df, level=self.COUNTRY, **kwargs)
+        plot_kwargs = {
+            "data": df,
+            "level": self.COUNTRY,
+            "included": included,
+            "excluded": excluded,
+        }
+        self._colored_map(title=title, filename=filename, **plot_kwargs, **kwargs)
 
-    def _colored_map_country(self, country, variable, title, date, **kwargs):
+    def _colored_map_country(self, country, variable, title, date, included, excluded, filename, **kwargs):
         """
         Create country-specific colored map to show the values at province level.
 
@@ -370,6 +403,9 @@ class CleaningBase(Term):
             variable (str): variable name to show
             title (str): title of the figure
             date (str or None): date of the records or None (the last value)
+            included (list[str] or None): included countries/provinces or None (all)
+            excluded (list[str] or None): excluded countries/provinces or None (all)
+            filename (str or None): filename to save the figure or None (display)
             kwargs: arguments of covsirphy.ColoredMap() and covsirphy.ColoredMap.plot()
         """
         df = self._cleaned_df.copy()
@@ -393,4 +429,10 @@ class CleaningBase(Term):
         # Plotting
         df[self.COUNTRY] = country_alias
         df.rename(columns={variable: "Value"}, inplace=True)
-        self._colored_map(title=title, data=df, level=self.PROVINCE, **kwargs)
+        plot_kwargs = {
+            "data": df,
+            "level": self.PROVINCE,
+            "included": included,
+            "excluded": excluded,
+        }
+        self._colored_map(title=title, filename=filename, **plot_kwargs, **kwargs)
