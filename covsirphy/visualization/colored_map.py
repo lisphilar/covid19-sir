@@ -1,10 +1,12 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
+from functools import partial
 from pathlib import Path
 import country_converter as coco
 import geopandas as gpd
-import pandas as pd
+from mpl_toolkits.axes_grid1 import make_axes_locatable
+import numpy as np
 import requests
 from unidecode import unidecode
 from covsirphy.util.error import SubsetNotFoundError, UnExpectedValueError
@@ -22,6 +24,8 @@ class ColoredMap(VisualizeBase):
 
     def __init__(self, filename=None, **kwargs):
         super().__init__(filename=filename, **kwargs)
+        self._to_iso3 = partial(coco.convert, to="ISO3", not_found=None)
+        self._geo_dirpath = "input"
 
     def __enter__(self):
         return super().__enter__()
@@ -29,86 +33,192 @@ class ColoredMap(VisualizeBase):
     def __exit__(self, *exc_info):
         return super().__exit__(*exc_info)
 
-    def plot(self, series, index_name="ISO3", directory="input", usa=False, **kwargs):
+    @property
+    def directory(self):
+        """
+        str: directory to save the downloaded files of geometry information
+        """
+        return self._geo_dirpath
+
+    @directory.setter
+    def directory(self, name):
+        self._geo_dirpath = Path(name)
+
+    def plot(self, data, level="Country", included=None, excluded=None, **kwargs):
         """
         Set dataframe and the variable to show in a colored map.
 
         Args:
-            series (pandas.Series): data to show
+            data (pandas.DataFrame): data to show
                 Index
-                    ISO3 codes, country names or province names
-                Values
-                    - (int or float): values to color the map
-            index_name (str): index name, 'ISO3', 'Country' or 'Province'
-            directory (str): directory to save the downloaded files of geometry information
-            usa (bool): if True, not show islands of USA when @index_name is 'Province'
+                    reset index
+                Columns
+                    - Country (str or pandas.Category): country name(s)
+                    - Province (str or pandas.Category): province names, necessary when @level is 'Province'
+                    - Value (int or float or None): values to coloring the map
+            level (str): 'Country' (global map) or 'Province' (country-specific map)
+            included (list[str] or None): included countries/provinces or None (all)
+            excluded (list[str] or None): excluded countries/provinces or None (all)
             kwargs: arguments of geopandas.GeoDataFrame.plot() except for 'column'
 
         Raises:
-            UnExpectedValueError: incorrect value was applied as @index_name
+            ValueError: labels for data are not unique
+            UnExpectedValueError: some countries' records are included when @level is 'Province'
+            SubsetNotFoundError: no geometry information available for the labels
         """
-        key_dict = {
-            self.ISO3: "iso_a3", self.COUNTRY: "name", self.PROVINCE: "name"}
-        if index_name not in key_dict:
-            raise UnExpectedValueError(
-                name="index_name", value=index_name, candidates=list(key_dict.keys()))
-        self._ensure_instance(series, pd.Series, name="series")
-        df = pd.DataFrame(series).reset_index().dropna()
-        df.columns = [index_name, "Value"]
-        # Values of ISO3 column should be unique
-        if not df[index_name].is_unique:
-            raise ValueError(
-                f"'{index_name}' index of the dataframe should be unique.")
-        # Geometry information from Natural Earth
-        if index_name in (self.ISO3, self.COUNTRY):
-            # pop_est, continent, name, iso_a3, gdp_md_est, geometry
-            geopath = gpd.datasets.get_path("naturalearth_lowres")
+        self._ensure_dataframe(
+            data, name="data", columns=[self.COUNTRY, self.PROVINCE, "Value"])
+        if level == self.COUNTRY:
+            # Global map with country level data
+            if not data[self.COUNTRY].is_unique:
+                raise ValueError(f"{self.COUNTRY} column of data should be unique.")
+            gdf = self._global_data(data=data, included=included, excluded=excluded)
         else:
-            scale = "50m" if usa else "10m"
-            geopath = self._load_geo_provinces(
-                directory=directory, scale=scale)
-        gdf = gpd.read_file(geopath)
+            # Country-specific map with province level data
+            if data[self.COUNTRY].nunique() != 1:
+                raise UnExpectedValueError(
+                    f"{self.COUNTRY} column of data should have only one country name.")
+            country = data[self.COUNTRY].value_counts().index[0]
+            if not data[self.PROVINCE].is_unique:
+                raise ValueError(f"{self.PROVINCE} column of data should be unique.")
+            gdf = self._country_specific_data(data, included=included, excluded=excluded, country=country)
+        if gdf.empty:
+            raise SubsetNotFoundError(country="the selected country", message="(geometry data)")
+        # Convert to log10 scale
+        gdf["Value"] = np.log10(gdf["Value"] + 1)
+        # Colorbar
+        divider = make_axes_locatable(self._ax)
+        cax = divider.append_axes("right", size="5%", pad=0.1)
+        # Arguments of plotting with GeoPandas
+        plot_kwargs = {
+            "legend": True,
+            "cmap": "coolwarm",
+            "ax": self._ax,
+            "cax": cax,
+            "legend_kwds": {"label": "in log10 scale"}
+        }
+        plot_kwargs.update(kwargs)
+        # Plotting
+        gdf.plot(column="Value", **plot_kwargs)
+        # Remove all ticks
+        self._ax.tick_params(labelbottom=False, labelleft=False, left=False, bottom=False)
+
+    def _global_data(self, data, included, excluded):
+        """
+        Create global map data with geometry information.
+
+        Args:
+            data (pandas.DataFrame): data to show
+                Index
+                    reset index
+                Columns
+                    - Country (str): country names
+                    - Value (int or float or None): values to plot
+            included (list[str] or None): included countries or None (all)
+            excluded (list[str] or None): excluded countries or None (all)
+
+        Returns:
+            geopandas.GeoDataFrame:
+                Index
+                    reset index
+                Columns
+                    - Value (int or float or None)
+                    - geometry (geopandas.GeoDataFrame.geometry): geometry information
+        """
+        # data to plot
+        df = data.copy()
+        df[self.ISO3] = df[self.COUNTRY].apply(self._to_iso3)
+        # Geometry
+        gdf = self._load_geo_global()
+        # Merge them
+        gdf = gdf.merge(df, how="left", on=self.ISO3)
+        # Select countries
+        sel = set(included or gdf[self.COUNTRY].unique()) - set(excluded or [])
+        return gdf.loc[gdf[self.COUNTRY].isin(sel), ["Value", "geometry"]]
+
+    def _country_specific_data(self, data, included, excluded, country):
+        """
+        Create country-specific map data with geometry information.
+
+        Args:
+            data (pandas.DataFrame): data to show
+                Index
+                    reset index
+                Columns
+                    - Province (str): province names
+                    - Value (int or float or None): values to plot
+            included (list[str] or None): included countries or None (all)
+            excluded (list[str] or None): excluded countries or None (all)
+            country (str): country name
+            scale (str): scale of geographic shapes, '10m', '50m' or '110m'
+
+        Returns:
+            geopandas.GeoDataFrame:
+                Index
+                    reset index
+                Columns
+                    - Value (int or float or None)
+                    - geometry (geopandas.GeoDataFrame.geometry): geometry information
+        """
+        # Get geometry information of the country
+        iso3 = self._to_iso3(country)
+        scale = "50m" if iso3 == "USA" else "10m"
+        gdf = self._load_geo_country_specific(scale=scale)
+        gdf = gdf.loc[gdf[self.ISO3] == iso3]
         # Merge the data with geometry information
-        df[index_name] = df[index_name].apply(unidecode)
-        gdf["name"] = gdf["name"].fillna("").apply(unidecode)
+        gdf = gdf.merge(data, how="left", on=self.PROVINCE)
+        # Select countries
+        sel = set(included or gdf[self.PROVINCE].unique()) - set(excluded or [])
+        return gdf.loc[gdf[self.PROVINCE].isin(sel), ["Value", "geometry"]]
+
+    def _load_geo_global(self):
+        """
+        Retrieve geometry information for global map.
+
+        Returns:
+            geopandas.GeoDataFrame:
+                Index
+                    reset index
+                Columns
+                    - ISO3 (str): ISO3 codes
+                    - geometry (geopandas.GeoDataFrame.geometry): geometry information
+        """
+        # Geometry information from Natural Earth
+        # pop_est, continent, name, iso_a3, gdp_md_est, geometry
+        geopath = gpd.datasets.get_path("naturalearth_lowres")
+        gdf = gpd.read_file(geopath)
+        # Data cleaning
+        gdf["name"] = gdf["name"].apply(unidecode)
         gdf["name"].replace(
             {
                 "Fr. S. Antarctic Lands": "French Southern and Antarctic Lands",
                 "S. Sudan": "South Sudan"
             }, inplace=True)
-        if index_name in (self.ISO3, self.COUNTRY):
-            gdf["iso_a3"] = gdf[["name", "iso_a3"]].apply(
-                lambda x: coco.convert(x[0], to="ISO3", not_found=x[1]), axis=1)
-        gdf = gdf.merge(
-            df, how="inner", left_on=key_dict[index_name], right_on=index_name)
-        if gdf.empty:
-            raise SubsetNotFoundError(
-                country="the selected country", message="(geometry data)")
-        # Plotting
-        gdf.plot(column="Value", **kwargs)
-        # Remove all ticks
-        self._ax.tick_params(
-            labelbottom=False, labelleft=False, left=False, bottom=False)
+        # Get ISO3 codes
+        gdf[self.ISO3] = gdf["name"].apply(self._to_iso3)
+        return gdf.loc[:, [self.ISO3, "geometry"]]
 
-    @ staticmethod
-    def _load_geo_provinces(directory, scale="10m"):
+    def _load_geo_country_specific(self, scale):
         """
-        Load the shape file (1:10 million scale) from 'Natural Earth Vector'.
+        Load shape file from 'Natural Earth Vector'.
         https://github.com/nvkelso/natural-earth-vector
 
         Args:
-            directory (str): directory to save the downloaded files of geometry information
             scale (str): scale of geographic shapes, '10m', '50m' or '110m'
 
         Returns:
-            str: filename of the shape file
+            geopandas.GeoDataFrame:
+                Index
+                    reset index
+                Columns
+                    - ISO3 (str): ISO3 codes
+                    - Province (str): province name
+                    - geometry (geopandas.GeoDataFrame.geometry): geometry information
         """
         title = f"ne_{scale}_admin_1_states_provinces"
-        extensions = [
-            ".README.html", ".VERSION.txt", ".cpg", ".dbf", ".sbn", ".sbx", ".shp", ".shx"]
-        geo_dirpath = Path(directory).joinpath(title)
+        extensions = [".README.html", ".VERSION.txt", ".cpg", ".dbf", ".sbn", ".sbx", ".shp", ".shx"]
+        geo_dirpath = self._geo_dirpath.joinpath(title)
         geo_dirpath.mkdir(parents=True, exist_ok=True)
-        shapefile = geo_dirpath.joinpath(f"{title}.shp")
         # Download files, if necessary
         for ext in extensions:
             basename = f"{title}{ext}"
@@ -118,4 +228,8 @@ class ColoredMap(VisualizeBase):
             response = requests.get(url=url)
             with geo_dirpath.joinpath(basename).open("wb") as fh:
                 fh.write(response.content)
-        return shapefile
+        # Data cleaning
+        gdf = gpd.read_file(geo_dirpath.joinpath(f"{title}.shp"))
+        gdf["name"] = gdf["name"].apply(unidecode)
+        gdf.rename(columns={"name": self.PROVINCE, "iso_a3": self.ISO3}, inplace=True)
+        return gdf.loc[:, [self.ISO3, self.PROVINCE, "geometry"]]
