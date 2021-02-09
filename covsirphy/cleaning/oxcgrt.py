@@ -79,10 +79,12 @@ class OxCGRTData(CleaningBase):
                 "Congo": "Republic of the Congo",
                 # South Korea
                 "Korea, South": "South Korea",
-                # Diamond princess
-                "Diamond Princess": "Others",
             }
         )
+        # Set 'Others' as the country name of cruise ships
+        ships = ["Diamond Princess", "Costa Atlantica", "Grand Princess", "MS Zaandam"]
+        for ship in ships:
+            df.loc[df[self.COUNTRY] == ship, self.COUNTRY] = self.OTHERS
         # Confirm the expected columns are in raw data
         self._ensure_dataframe(
             df, name="the raw data", columns=self.OXCGRT_COLS
