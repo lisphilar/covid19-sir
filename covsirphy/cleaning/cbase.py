@@ -383,6 +383,7 @@ class CleaningBase(Term):
         if date is not None:
             self._ensure_dataframe(df, name="cleaned dataset", columns=[self.DATE])
             df = df.loc[df[self.DATE] == pd.to_datetime(date)]
+        df[self.COUNTRY] = df[self.COUNTRY].astype(str)
         df = df.groupby(self.COUNTRY).last().reset_index()
         # Plotting
         df.rename(columns={variable: "Value"}, inplace=True)
