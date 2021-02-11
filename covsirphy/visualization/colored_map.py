@@ -3,6 +3,7 @@
 
 from functools import partial
 from pathlib import Path
+import warnings
 import country_converter as coco
 import geopandas as gpd
 from mpl_toolkits.axes_grid1 import make_axes_locatable
@@ -103,6 +104,7 @@ class ColoredMap(VisualizeBase):
         }
         plot_kwargs.update(kwargs)
         # Plotting
+        warnings.filterwarnings("ignore", category=UserWarning)
         gdf.plot(column="Value", **plot_kwargs)
         # Remove all ticks
         self._ax.tick_params(labelbottom=False, labelleft=False, left=False, bottom=False)
