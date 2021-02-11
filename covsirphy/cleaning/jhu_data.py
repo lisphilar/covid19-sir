@@ -652,8 +652,7 @@ class JHUData(CleaningBase):
                 province, *complement_dict_values]
         return complement_df.reset_index()
 
-    def map(self, country=None, variable="Confirmed", date=None,
-            included=None, excluded=None, filename=None, **kwargs):
+    def map(self, country=None, variable="Confirmed", date=None, **kwargs):
         """
         Create global colored map to show the values.
 
@@ -661,10 +660,7 @@ class JHUData(CleaningBase):
             country (str or None): country name or None (global map)
             variable (str): variable name to show
             date (str or None): date of the records or None (the last value)
-            included (list[str] or None): included countries/provinces or None (all)
-            excluded (list[str] or None): excluded countries/provinces or None (all)
-            filename (str or None): image filename or None (display)
-            kwargs: arguments of matplotlib.pyplot.savefig() and geopandas.GeoDataFrame.plot() except for 'column'
+            kwargs: arguments of ColoredMap() and ColoredMap.plot()
 
         Note:
             When @country is None, country level data will be shown on global map.
@@ -678,9 +674,7 @@ class JHUData(CleaningBase):
         # Global map
         if country is None:
             return self._colored_map_global(
-                variable=variable, title=title, date=date,
-                included=included, excluded=excluded, filename=filename, **kwargs)
+                variable=variable, title=title, date=date, **kwargs)
         # Country-specific map
         return self._colored_map_country(
-            country=country, variable=variable, title=title, date=date,
-            included=included, excluded=excluded, filename=filename, **kwargs)
+            country=country, variable=variable, title=title, date=date, **kwargs)
