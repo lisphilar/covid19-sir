@@ -82,7 +82,6 @@ class ColoredMap(VisualizeBase):
             if not data[self.PROVINCE].is_unique:
                 raise ValueError(f"{self.PROVINCE} column of data should be unique.")
             gdf = self._country_specific_data(data, included=included, excluded=excluded, country=country)
-        gdf = gdf.fillna(0)
         # Convert to log10 scale
         gdf.loc[gdf["Value"] < 0, "Value"] = 0
         gdf["Value"] = np.log10(gdf["Value"] + 1)
@@ -95,7 +94,12 @@ class ColoredMap(VisualizeBase):
             "cmap": "coolwarm",
             "ax": self._ax,
             "cax": cax,
-            "legend_kwds": {"label": "in log10 scale"}
+            "legend_kwds": {"label": "in log10 scale"},
+            "missing_kwds": {
+                "color": "lightgrey",
+                "edgecolor": "white",
+                "hatch": "///",
+            }
         }
         plot_kwargs.update(kwargs)
         # Plotting
@@ -196,6 +200,8 @@ class ColoredMap(VisualizeBase):
             }, inplace=True)
         # Get ISO3 codes
         gdf[self.ISO3] = gdf["name"].apply(self._to_iso3)
+        # Remove Antarctica and
+        gdf = gdf.loc[gdf[self.ISO3] != "ATA"]
         return gdf.loc[:, [self.ISO3, "geometry"]]
 
     def _load_geo_country_specific(self, scale):
