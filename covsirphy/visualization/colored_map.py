@@ -201,7 +201,9 @@ class ColoredMap(VisualizeBase):
                 "S. Sudan": "South Sudan"
             }, inplace=True)
         # Get ISO3 codes
-        gdf[self.ISO3] = gdf["name"].apply(self._to_iso3)
+        gdf.rename(columns={"iso_a3": self.ISO3}, inplace=True)
+        sel = gdf[self.ISO3] == "-99"
+        gdf.loc[sel, self.ISO3] = gdf.loc[sel, "name"].apply(self._to_iso3)
         # Remove Antarctica and
         gdf = gdf.loc[gdf[self.ISO3] != "ATA"]
         return gdf.loc[:, [self.ISO3, "geometry"]]
