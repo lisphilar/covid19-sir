@@ -84,6 +84,7 @@ class ColoredMap(VisualizeBase):
             gdf = self._country_specific_data(data, included=included, excluded=excluded, country=country)
         gdf = gdf.fillna(0)
         # Convert to log10 scale
+        gdf.loc[gdf["Value"] < 0, "Value"] = 0
         gdf["Value"] = np.log10(gdf["Value"] + 1)
         # Colorbar
         divider = make_axes_locatable(self._ax)
