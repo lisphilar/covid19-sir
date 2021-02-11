@@ -39,6 +39,8 @@ class CleaningBase(Term):
             ).compute()
             self._cleaned_df = self._cleaning()
         self._citation = citation or ""
+        # Directory that save the file
+        self._dirpath = Path(filename).resolve().parent
 
     @property
     def raw(self):
@@ -322,8 +324,7 @@ class CleaningBase(Term):
         """
         raise NotImplementedError
 
-    @staticmethod
-    def _colored_map(title, data, level, included, excluded, filename, **kwargs):
+    def _colored_map(self, title, data, level, included, excluded, filename, **kwargs):
         """
         Create global colored map to show the values.
 
@@ -355,6 +356,7 @@ class CleaningBase(Term):
         }
         with ColoredMap(**save_kwargs) as cm:
             cm.title = title
+            cm.directory = self._dirpath
             cm.plot(**plot_kwargs)
 
     def _colored_map_global(self, variable, title, date, included, excluded, filename, **kwargs):
