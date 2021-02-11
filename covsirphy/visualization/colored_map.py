@@ -9,7 +9,6 @@ from mpl_toolkits.axes_grid1 import make_axes_locatable
 import numpy as np
 import requests
 from unidecode import unidecode
-from covsirphy.util.error import SubsetNotFoundError, UnExpectedValueError
 from covsirphy.visualization.vbase import VisualizeBase
 
 
@@ -25,7 +24,7 @@ class ColoredMap(VisualizeBase):
     def __init__(self, filename=None, **kwargs):
         super().__init__(filename=filename, **kwargs)
         self._to_iso3 = partial(coco.convert, to="ISO3", not_found=None)
-        self._geo_dirpath = "input"
+        self._geo_dirpath = Path("input")
 
     def __enter__(self):
         return super().__enter__()
@@ -75,15 +74,15 @@ class ColoredMap(VisualizeBase):
             gdf = self._global_data(data=data, included=included, excluded=excluded)
         else:
             # Country-specific map with province level data
-            if data[self.COUNTRY].nunique() != 1:
-                raise UnExpectedValueError(
-                    f"{self.COUNTRY} column of data should have only one country name.")
+            unique_n = data[self.COUNTRY].nunique()
+            if unique_n > 1:
+                raise ValueError(
+                    f"{self.COUNTRY} column of data should have only one country name when @level is {self.PROVINCE}, but {unique_n} found.")
             country = data[self.COUNTRY].value_counts().index[0]
             if not data[self.PROVINCE].is_unique:
                 raise ValueError(f"{self.PROVINCE} column of data should be unique.")
             gdf = self._country_specific_data(data, included=included, excluded=excluded, country=country)
-        if gdf.empty:
-            raise SubsetNotFoundError(country="the selected country", message="(geometry data)")
+        gdf = gdf.fillna(0)
         # Convert to log10 scale
         gdf["Value"] = np.log10(gdf["Value"] + 1)
         # Colorbar
@@ -230,6 +229,6 @@ class ColoredMap(VisualizeBase):
                 fh.write(response.content)
         # Data cleaning
         gdf = gpd.read_file(geo_dirpath.joinpath(f"{title}.shp"))
-        gdf["name"] = gdf["name"].apply(unidecode)
-        gdf.rename(columns={"name": self.PROVINCE, "iso_a3": self.ISO3}, inplace=True)
+        gdf["name"] = gdf["name"].fillna("").apply(unidecode)
+        gdf.rename(columns={"name": self.PROVINCE, "adm0_a3": self.ISO3}, inplace=True)
         return gdf.loc[:, [self.ISO3, self.PROVINCE, "geometry"]]
