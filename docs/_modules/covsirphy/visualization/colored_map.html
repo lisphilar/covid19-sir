@@ -67,7 +67,7 @@
             
             
               <div class="version">
-                2.15.0-mu
+                2.16.1
               </div>
             
           
@@ -178,6 +178,7 @@
 <span class="c1"># -*- coding: utf-8 -*-</span>
 
 <span class="kn">from</span> <span class="nn">pathlib</span> <span class="kn">import</span> <span class="n">Path</span>
+<span class="kn">import</span> <span class="nn">country_converter</span> <span class="k">as</span> <span class="nn">coco</span>
 <span class="kn">import</span> <span class="nn">geopandas</span> <span class="k">as</span> <span class="nn">gpd</span>
 <span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
 <span class="kn">import</span> <span class="nn">requests</span>
@@ -246,6 +247,14 @@
         <span class="c1"># Merge the data with geometry information</span>
         <span class="n">df</span><span class="p">[</span><span class="n">index_name</span><span class="p">]</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="n">index_name</span><span class="p">]</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="n">unidecode</span><span class="p">)</span>
         <span class="n">gdf</span><span class="p">[</span><span class="s2">&quot;name&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">gdf</span><span class="p">[</span><span class="s2">&quot;name&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">fillna</span><span class="p">(</span><span class="s2">&quot;&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="n">unidecode</span><span class="p">)</span>
+        <span class="n">gdf</span><span class="p">[</span><span class="s2">&quot;name&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span>
+            <span class="p">{</span>
+                <span class="s2">&quot;Fr. S. Antarctic Lands&quot;</span><span class="p">:</span> <span class="s2">&quot;French Southern and Antarctic Lands&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;S. Sudan&quot;</span><span class="p">:</span> <span class="s2">&quot;South Sudan&quot;</span>
+            <span class="p">},</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">index_name</span> <span class="ow">in</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">ISO3</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">COUNTRY</span><span class="p">):</span>
+            <span class="n">gdf</span><span class="p">[</span><span class="s2">&quot;iso_a3&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">gdf</span><span class="p">[[</span><span class="s2">&quot;name&quot;</span><span class="p">,</span> <span class="s2">&quot;iso_a3&quot;</span><span class="p">]]</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span>
+                <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">coco</span><span class="o">.</span><span class="n">convert</span><span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">to</span><span class="o">=</span><span class="s2">&quot;ISO3&quot;</span><span class="p">,</span> <span class="n">not_found</span><span class="o">=</span><span class="n">x</span><span class="p">[</span><span class="mi">1</span><span class="p">]),</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
         <span class="n">gdf</span> <span class="o">=</span> <span class="n">gdf</span><span class="o">.</span><span class="n">merge</span><span class="p">(</span>
             <span class="n">df</span><span class="p">,</span> <span class="n">how</span><span class="o">=</span><span class="s2">&quot;inner&quot;</span><span class="p">,</span> <span class="n">left_on</span><span class="o">=</span><span class="n">key_dict</span><span class="p">[</span><span class="n">index_name</span><span class="p">],</span> <span class="n">right_on</span><span class="o">=</span><span class="n">index_name</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">gdf</span><span class="o">.</span><span class="n">empty</span><span class="p">:</span>
@@ -257,7 +266,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_ax</span><span class="o">.</span><span class="n">tick_params</span><span class="p">(</span>
             <span class="n">labelbottom</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">labelleft</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">left</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">bottom</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span></div>
 
-    <span class="nd">@staticmethod</span>
+    <span class="o">@</span> <span class="nb">staticmethod</span>
     <span class="k">def</span> <span class="nf">_load_geo_provinces</span><span class="p">(</span><span class="n">directory</span><span class="p">,</span> <span class="n">scale</span><span class="o">=</span><span class="s2">&quot;10m&quot;</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Load the shape file (1:10 million scale) from &#39;Natural Earth Vector&#39;.</span>
