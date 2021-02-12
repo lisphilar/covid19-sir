@@ -1,7 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-import warnings
 import numpy as np
 import pandas as pd
 from covsirphy.util.error import SubsetNotFoundError, deprecate
@@ -434,10 +433,11 @@ class JHUData(CleaningBase):
             for country in df[self.COUNTRY].unique()
         ]
         valid_periods = list(filter(lambda x: x >= 0, periods))
-        warnings.simplefilter("error", category=DeprecationWarning)
+        if not valid_periods:
+            return default
         try:
             return int(pd.Series(valid_periods).median())
-        except (ValueError, DeprecationWarning):
+        except ValueError:
             return default
 
     def _calculate_recovery_period_country(self, valid_df, country, upper_limit_days=90,
