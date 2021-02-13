@@ -84,7 +84,7 @@ class COVID19DataHub(Term):
         # Country level
         if verbose:
             print(
-                "Retrieving datasets from COVID-19 Data Hub: https://covid19datahub.io/")
+                "Retrieving datasets from COVID-19 Data Hub https://covid19datahub.io/")
         c_df, p_df, self.primary_list = self._download()
         # Change column names and select columns to use
         # All columns: https://covid19datahub.io/articles/doc/data.html
@@ -109,8 +109,7 @@ class COVID19DataHub(Term):
                 print("\nDetailed citaition list:")
                 print(self.primary_list)
             else:
-                print("\nPlease set verbose=2 to see the detailed citation list.")
-            print("\n")
+                print("\tPlease set verbose=2 to see the detailed citation list.")
         return df
 
     def _download(self):
