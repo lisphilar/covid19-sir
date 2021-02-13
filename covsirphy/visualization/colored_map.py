@@ -139,8 +139,10 @@ class ColoredMap(VisualizeBase):
         # Merge them
         gdf = gdf.merge(df, how="left", on=self.ISO3)
         # Select countries
-        sel = set(included or gdf[self.COUNTRY].unique()) - set(excluded or [])
-        return gdf.loc[gdf[self.COUNTRY].isin(sel), ["Value", "geometry"]]
+        included_codes = gdf[self.ISO3].tolist() if included is None else [self._to_iso3(c) for c in included]
+        excluded_codes = [] if excluded is None else [self._to_iso3(c) for c in excluded]
+        sel = set(included_codes) - set(excluded_codes)
+        return gdf.loc[gdf[self.ISO3].isin(sel), ["Value", "geometry"]]
 
     def _country_specific_data(self, data, included, excluded, country):
         """
