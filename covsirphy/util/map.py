@@ -2,7 +2,6 @@
 # -*- coding: utf-8 -*-
 
 import matplotlib.pyplot as plt
-import matplotlib.cm as cm
 import matplotlib
 import japanmap
 import pandas as pd
@@ -49,10 +48,9 @@ def jpn_map(prefectures, values, title, cmap_name="Reds", filename=None):
     # Data to dataframe
     df = pd.DataFrame({"Name": prefectures, "Value": values})
     df["Code"] = df["Name"].map(pref_code_dict)
-    df["Japanese_name"] = df["Code"].apply(lambda x: japanmap.pref_names[int(x)])
-    df = df.set_index("Japanese_name")
+    df.index = df["Code"].apply(lambda x: japanmap.pref_names[int(x)])
     # Color code
-    cmap = cm.get_cmap(cmap_name)
+    cmap = matplotlib.cm.get_cmap(cmap_name)
     norm = matplotlib.colors.Normalize(
         vmin=df["Value"].min(), vmax=df["Value"].max())
     # Show figure
@@ -63,7 +61,7 @@ def jpn_map(prefectures, values, title, cmap_name="Reds", filename=None):
         japanmap.picture(df["Value"].apply(
             lambda x: "#" + bytes(cmap(norm(x), bytes=True)[:3]).hex()
         )))
-    mappable = cm.ScalarMappable(norm=norm, cmap=cmap)
+    mappable = matplotlib.cm.ScalarMappable(norm=norm, cmap=cmap)
     mappable._A = []
     plt.colorbar(mappable)
     plt.title(title)
@@ -74,4 +72,3 @@ def jpn_map(prefectures, values, title, cmap_name="Reds", filename=None):
         filename, bbox_inches="tight", transparent=False, dpi=300
     )
     plt.clf()
-    return None
