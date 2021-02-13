@@ -9,7 +9,7 @@ import pandas as pd
 from covsirphy.util.error import deprecate
 
 
-@deprecate
+@deprecate(old="covsirphy.jpn_map", new="JHUData.map('Japan')", version="2.16")
 def jpn_map(prefectures, values, title, cmap_name="Reds", filename=None):
     """
     Show colored Japan prefecture map.
@@ -49,7 +49,7 @@ def jpn_map(prefectures, values, title, cmap_name="Reds", filename=None):
     # Data to dataframe
     df = pd.DataFrame({"Name": prefectures, "Value": values})
     df["Code"] = df["Name"].map(pref_code_dict)
-    df["Japanese_name"] = df["Code"].apply(lambda x: japanmap.pref_names[x])
+    df["Japanese_name"] = df["Code"].apply(lambda x: japanmap.pref_names[int(x)])
     df = df.set_index("Japanese_name")
     # Color code
     cmap = cm.get_cmap(cmap_name)
