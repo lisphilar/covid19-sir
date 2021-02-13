@@ -22,9 +22,11 @@ class CleaningBase(Term):
         filename (str or None): CSV filename of the dataset
         citation (str or None): citation
 
-    Returns:
-        If @filename is None, empty dataframe will be set as raw data.
-        If @citation is None, citation will be empty string.
+    Note:
+        - If @filename is None, empty dataframe will be set as raw data and geometry information will be saved in "input" directory.
+        - If @filename is not None, geometry information will be saved in the directory which has the file.
+        - The directory of geometry information could be changed with .directory property.
+        - If @citation is None, citation will be empty string.
     """
 
     def __init__(self, filename, citation=None):
@@ -40,7 +42,10 @@ class CleaningBase(Term):
             self._cleaned_df = self._cleaning()
         self._citation = citation or ""
         # Directory that save the file
-        self._dirpath = Path(filename).resolve().parent
+        if filename is None:
+            self._dirpath = Path("input")
+        else:
+            self._dirpath = Path(filename).resolve().parent
 
     @property
     def raw(self):
@@ -55,6 +60,17 @@ class CleaningBase(Term):
         pandas.DataFrame: raw dataset
         """
         self._raw = self._ensure_dataframe(dataframe, name="dataframe")
+
+    @property
+    def directory(self):
+        """
+        str: directory name to save geometry information
+        """
+        return str(self._dirpath)
+
+    @directory.setter
+    def directory(self, name):
+        self._dirpath = Path(name)
 
     @staticmethod
     def load(urlpath, header=0, columns=None, dtype="object"):

@@ -304,17 +304,19 @@ class JHUData(CleaningBase):
         return subset_df.set_index(self.DATE).loc[:, [self.R, self.S]]
 
     @classmethod
-    def from_dataframe(cls, dataframe):
+    def from_dataframe(cls, dataframe, directory="input"):
         """
         Create JHUData instance using a pandas dataframe.
 
         Args:
             dataframe (pd.DataFrame): cleaned dataset
+            directory (str): directory to save geometry information (for .map() method)
 
         Returns:
             covsirphy.JHUData: JHU-style dataset
         """
         instance = cls(filename=None)
+        instance.directory = str(directory)
         instance._cleaned_df = cls._ensure_dataframe(
             dataframe, name="dataframe", columns=cls.COLUMNS)
         return instance
