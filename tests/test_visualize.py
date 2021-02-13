@@ -6,6 +6,7 @@ import warnings
 import matplotlib
 import pytest
 from covsirphy import VisualizeBase, ColoredMap
+from covsirphy import jpn_map
 from covsirphy import Term
 
 
@@ -101,3 +102,30 @@ class TestColoredMap(object):
         with pytest.raises(ValueError):
             with ColoredMap(filename=imgfile) as cm:
                 cm.plot(data=df, level=Term.PROVINCE)
+
+
+class TestJapanMap(object):
+
+    @pytest.mark.parametrize("variable", ["Infected"])
+    def test_japan_map_display(self, jhu_data, variable):
+        warnings.filterwarnings("ignore", category=UserWarning)
+        warnings.filterwarnings("ignore", category=DeprecationWarning)
+        df = jhu_data.cleaned()
+        df = df.loc[(df[Term.COUNTRY] == "Japan") & (df[Term.PROVINCE] != "-")]
+        df = df.groupby(Term.PROVINCE).last().reset_index().dropna()
+        jpn_map(
+            prefectures=df[Term.PROVINCE], values=df[variable],
+            title="Japan: the number of {variable/lower()} cases"
+        )
+
+    @pytest.mark.parametrize("variable", ["Infected"])
+    def test_japan_map(self, jhu_data, imgfile, variable):
+        warnings.filterwarnings("ignore", category=DeprecationWarning)
+        df = jhu_data.cleaned()
+        df = df.loc[(df[Term.COUNTRY] == "Japan") & (df[Term.PROVINCE] != "-")]
+        df = df.groupby(Term.PROVINCE).last().reset_index().dropna()
+        jpn_map(
+            prefectures=df[Term.PROVINCE], values=df[variable],
+            title="Japan: the number of {variable.lower()} cases",
+            filename=imgfile
+        )
