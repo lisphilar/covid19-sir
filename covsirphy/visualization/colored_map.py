@@ -56,6 +56,7 @@ class ColoredMap(VisualizeBase):
                     - Country (str or pandas.Category): country name(s)
                     - Province (str or pandas.Category): province names, necessary when @level is 'Province'
                     - Value (int or float or None): values to coloring the map
+                    - ISO3 (str): ISO3 codes, optional
             level (str): 'Country' (global map) or 'Province' (country-specific map)
             included (list[str] or None): included countries/provinces or None (all)
             excluded (list[str] or None): excluded countries/provinces or None (all)
@@ -120,6 +121,7 @@ class ColoredMap(VisualizeBase):
                 Columns
                     - Country (str): country names
                     - Value (int or float or None): values to plot
+                    - ISO3 (str): ISO3 codes, optional
             included (list[str] or None): included countries or None (all)
             excluded (list[str] or None): excluded countries or None (all)
 
@@ -133,7 +135,7 @@ class ColoredMap(VisualizeBase):
         """
         # data to plot
         df = data.copy()
-        df[self.ISO3] = df[self.COUNTRY].apply(self._to_iso3)
+        df[self.ISO3] = df[self.COUNTRY].apply(self._to_iso3) if self.ISO3 not in df else df[self.ISO3]
         # Geometry
         gdf = self._load_geo_global()
         # Merge them
