@@ -38,7 +38,7 @@ class ColoredMap(VisualizeBase):
         """
         str: directory to save the downloaded files of geometry information
         """
-        return self._geo_dirpath
+        return str(self._geo_dirpath)
 
     @directory.setter
     def directory(self, name):
