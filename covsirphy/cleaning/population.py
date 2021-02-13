@@ -86,8 +86,10 @@ class PopulationData(CleaningBase):
         )
         # Province
         df[self.PROVINCE] = df[self.PROVINCE].fillna(self.UNKNOWN)
-        df.loc[df[self.COUNTRY] == "Diamond Princess", [
-            self.COUNTRY, self.PROVINCE]] = ["Others", "Diamond Princess"]
+        # Set 'Others' as the country name of cruise ships
+        ships = ["Diamond Princess", "Costa Atlantica", "Grand Princess", "MS Zaandam"]
+        for ship in ships:
+            df.loc[df[self.COUNTRY] == ship, [self.COUNTRY, self.PROVINCE]] = [self.OTHERS, ship]
         # Values
         df = df.dropna(subset=[self.N]).reset_index(drop=True)
         df[self.N] = df[self.N].astype(np.int64)

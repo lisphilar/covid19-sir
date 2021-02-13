@@ -112,8 +112,10 @@ class JHUData(CleaningBase):
         )
         # Province
         df[self.PROVINCE] = df[self.PROVINCE].fillna(self.UNKNOWN)
-        df.loc[df[self.COUNTRY] == "Diamond Princess", [
-            self.COUNTRY, self.PROVINCE]] = ["Others", "Diamond Princess"]
+        # Set 'Others' as the country name of cruise ships
+        ships = ["Diamond Princess", "Costa Atlantica", "Grand Princess", "MS Zaandam"]
+        for ship in ships:
+            df.loc[df[self.COUNTRY] == ship, [self.COUNTRY, self.PROVINCE]] = [self.OTHERS, ship]
         # Values
         df = df.fillna(method="ffill").fillna(0)
         df[self.CI] = df[self.C] - df[self.F] - df[self.R]
@@ -302,17 +304,19 @@ class JHUData(CleaningBase):
         return subset_df.set_index(self.DATE).loc[:, [self.R, self.S]]
 
     @classmethod
-    def from_dataframe(cls, dataframe):
+    def from_dataframe(cls, dataframe, directory="input"):
         """
         Create JHUData instance using a pandas dataframe.
 
         Args:
             dataframe (pd.DataFrame): cleaned dataset
+            directory (str): directory to save geometry information (for .map() method)
 
         Returns:
             covsirphy.JHUData: JHU-style dataset
         """
         instance = cls(filename=None)
+        instance.directory = str(directory)
         instance._cleaned_df = cls._ensure_dataframe(
             dataframe, name="dataframe", columns=cls.COLUMNS)
         return instance
@@ -650,8 +654,7 @@ class JHUData(CleaningBase):
                 province, *complement_dict_values]
         return complement_df.reset_index()
 
-    def map(self, country=None, variable="Confirmed", date=None,
-            included=None, excluded=None, filename=None, **kwargs):
+    def map(self, country=None, variable="Confirmed", date=None, **kwargs):
         """
         Create global colored map to show the values.
 
@@ -659,10 +662,7 @@ class JHUData(CleaningBase):
             country (str or None): country name or None (global map)
             variable (str): variable name to show
             date (str or None): date of the records or None (the last value)
-            included (list[str] or None): included countries/provinces or None (all)
-            excluded (list[str] or None): excluded countries/provinces or None (all)
-            filename (str or None): image filename or None (display)
-            kwargs: arguments of matplotlib.pyplot.savefig() and geopandas.GeoDataFrame.plot() except for 'column'
+            kwargs: arguments of ColoredMap() and ColoredMap.plot()
 
         Note:
             When @country is None, country level data will be shown on global map.
@@ -676,9 +676,7 @@ class JHUData(CleaningBase):
         # Global map
         if country is None:
             return self._colored_map_global(
-                variable=variable, title=title, date=date,
-                included=included, excluded=excluded, filename=filename, **kwargs)
+                variable=variable, title=title, date=date, **kwargs)
         # Country-specific map
         return self._colored_map_country(
-            country=country, variable=variable, title=title, date=date,
-            included=included, excluded=excluded, filename=filename, **kwargs)
+            country=country, variable=variable, title=title, date=date, **kwargs)

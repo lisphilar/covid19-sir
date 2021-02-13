@@ -85,6 +85,7 @@ class Term(object):
     MAIN = "Main"
     # Flag
     UNKNOWN = "-"
+    OTHERS = "Others"
 
     @classmethod
     def num2str(cls, num):

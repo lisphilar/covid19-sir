@@ -1,13 +1,12 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-from covsirphy.util.error import SubsetNotFoundError
 from pathlib import Path
 import warnings
 import matplotlib
 import pytest
 from covsirphy import VisualizeBase, ColoredMap
-from covsirphy import UnExpectedValueError, Term
+from covsirphy import Term
 
 
 @pytest.fixture(scope="function")
@@ -47,57 +46,58 @@ class TestVisualizeBase(object):
 
 
 class TestColoredMap(object):
-    def test_error_index_name(self, imgfile, jhu_data):
-        df = jhu_data.cleaned().set_index(Term.COUNTRY)
-        with pytest.raises(UnExpectedValueError):
-            with ColoredMap(filename=imgfile) as cm:
-                cm.plot(series=df[Term.C], index_name="feeling")
+    def test_directory(self):
+        with ColoredMap(filename=imgfile) as cm:
+            cm.directory = "input"
+            assert cm.directory == "input"
 
-    def test_not_unique(self, imgfile, jhu_data):
-        df = jhu_data.cleaned().set_index(Term.COUNTRY)
-        with pytest.raises(ValueError):
-            with ColoredMap(filename=imgfile) as cm:
-                cm.plot(series=df[Term.C], index_name=Term.COUNTRY)
-
-    def test_unset_index(self, imgfile, jhu_data):
-        # Not set country as index
+    @pytest.mark.parametrize("variable", ["Infected"])
+    def test_global_country(self, imgfile, jhu_data, variable):
         df = jhu_data.cleaned()
         df = df.loc[df[Term.PROVINCE] == Term.UNKNOWN]
-        with pytest.raises(ValueError):
-            with ColoredMap(filename=imgfile) as cm:
-                cm.plot(series=df[Term.C], index_name=Term.COUNTRY)
+        df = df.groupby(Term.COUNTRY).last().reset_index()
+        df.rename(columns={variable: "Value"}, inplace=True)
+        with ColoredMap(filename=imgfile) as cm:
+            cm.plot(data=df, level=Term.COUNTRY)
 
-    def test_global_country(self, imgfile, jhu_data):
+    @pytest.mark.parametrize("variable", ["Infected"])
+    def test_global_country_ununique(self, imgfile, jhu_data, variable):
         df = jhu_data.cleaned()
         df = df.loc[df[Term.PROVINCE] == Term.UNKNOWN]
-        df = df.groupby(Term.COUNTRY).last()
-        with ColoredMap(filename=imgfile) as cm:
-            cm.plot(series=df[Term.C], index_name=Term.COUNTRY)
-
-    def test_global_iso3(self, imgfile, jhu_data):
-        df = jhu_data._cleaned_df.copy()
-        df = df.loc[df[Term.PROVINCE] == Term.UNKNOWN]
-        df = df.groupby(Term.ISO3).last()
-        with ColoredMap(filename=imgfile) as cm:
-            cm.plot(series=df[Term.C], index_name=Term.ISO3)
+        df.rename(columns={variable: "Value"}, inplace=True)
+        with pytest.raises(ValueError):
+            with ColoredMap(filename=imgfile) as cm:
+                cm.plot(data=df, level=Term.COUNTRY)
 
     @pytest.mark.parametrize("country", ["Japan", "United States", "China"])
-    def test_in_a_country(self, imgfile, jhu_data, country):
+    @pytest.mark.parametrize("variable", ["Infected"])
+    def test_in_a_country(self, imgfile, jhu_data, country, variable):
         df = jhu_data.cleaned()
         df = df.loc[df[Term.COUNTRY] == country]
         df = df.loc[df[Term.PROVINCE] != Term.UNKNOWN]
-        df = df.groupby(Term.PROVINCE).last().dropna()
+        df = df.groupby(Term.PROVINCE).last().dropna().reset_index()
+        df.rename(columns={variable: "Value"}, inplace=True)
         with ColoredMap(filename=imgfile) as cm:
-            cm.plot(series=df[Term.C], index_name=Term.PROVINCE)
+            cm.plot(data=df, level=Term.PROVINCE)
 
-    @pytest.mark.parametrize("country", ["Greece"])
-    def test_in_a_country_error(self, imgfile, jhu_data, country):
+    @pytest.mark.parametrize("variable", ["Infected"])
+    def test_in_a_country_unselected_country(self, imgfile, jhu_data, variable):
+        df = jhu_data.cleaned()
+        df = df.loc[df[Term.PROVINCE] != Term.UNKNOWN]
+        df = df.groupby(Term.PROVINCE).last().dropna().reset_index()
+        df.rename(columns={variable: "Value"}, inplace=True)
+        with pytest.raises(ValueError):
+            with ColoredMap(filename=imgfile) as cm:
+                cm.plot(data=df, level=Term.PROVINCE)
+
+    @pytest.mark.parametrize("country", ["Japan"])
+    @pytest.mark.parametrize("variable", ["Infected"])
+    def test_in_a_country_ununique(self, imgfile, jhu_data, country, variable):
         df = jhu_data.cleaned()
         df = df.loc[df[Term.COUNTRY] == country]
         df = df.loc[df[Term.PROVINCE] != Term.UNKNOWN]
-        # No records found at province level
-        assert df.empty
-        df = df.groupby(Term.PROVINCE).last().dropna()
-        with pytest.raises(SubsetNotFoundError):
+        df = df.dropna().reset_index()
+        df.rename(columns={variable: "Value"}, inplace=True)
+        with pytest.raises(ValueError):
             with ColoredMap(filename=imgfile) as cm:
-                cm.plot(series=df[Term.C], index_name=Term.PROVINCE)
+                cm.plot(data=df, level=Term.PROVINCE)

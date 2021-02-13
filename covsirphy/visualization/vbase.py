@@ -41,13 +41,16 @@ class VisualizeBase(Term):
         # Settings
         if self._title:
             self._ax.title.set_text(self._title)
-        # Display the figure if filename is None
-        if self._filename is None:
-            plt.show()
-        else:
-            # Save the image as a file
-            plt.savefig(self._filename, **self._savefig_dict)
-            plt.clf()
+        # Display the figure if filename is None after plotting
+        try:
+            if self._filename is None:
+                plt.show()
+            else:
+                # Save the image as a file
+                plt.savefig(self._filename, **self._savefig_dict)
+                plt.clf()
+        except AttributeError:
+            pass
 
     @property
     def title(self):
