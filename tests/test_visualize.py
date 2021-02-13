@@ -46,6 +46,11 @@ class TestVisualizeBase(object):
 
 
 class TestColoredMap(object):
+    def test_directory(self):
+        with ColoredMap(filename=imgfile) as cm:
+            cm.directory = "input"
+            assert cm.directory == "input"
+
     @pytest.mark.parametrize("variable", ["Infected"])
     def test_global_country(self, imgfile, jhu_data, variable):
         df = jhu_data.cleaned()
@@ -54,6 +59,15 @@ class TestColoredMap(object):
         df.rename(columns={variable: "Value"}, inplace=True)
         with ColoredMap(filename=imgfile) as cm:
             cm.plot(data=df, level=Term.COUNTRY)
+
+    @pytest.mark.parametrize("variable", ["Infected"])
+    def test_global_country_ununique(self, imgfile, jhu_data, variable):
+        df = jhu_data.cleaned()
+        df = df.loc[df[Term.PROVINCE] == Term.UNKNOWN]
+        df.rename(columns={variable: "Value"}, inplace=True)
+        with pytest.raises(ValueError):
+            with ColoredMap(filename=imgfile) as cm:
+                cm.plot(data=df, level=Term.COUNTRY)
 
     @pytest.mark.parametrize("country", ["Japan", "United States", "China"])
     @pytest.mark.parametrize("variable", ["Infected"])
@@ -65,3 +79,25 @@ class TestColoredMap(object):
         df.rename(columns={variable: "Value"}, inplace=True)
         with ColoredMap(filename=imgfile) as cm:
             cm.plot(data=df, level=Term.PROVINCE)
+
+    @pytest.mark.parametrize("variable", ["Infected"])
+    def test_in_a_country_unselected_country(self, imgfile, jhu_data, variable):
+        df = jhu_data.cleaned()
+        df = df.loc[df[Term.PROVINCE] != Term.UNKNOWN]
+        df = df.groupby(Term.PROVINCE).last().dropna().reset_index()
+        df.rename(columns={variable: "Value"}, inplace=True)
+        with pytest.raises(ValueError):
+            with ColoredMap(filename=imgfile) as cm:
+                cm.plot(data=df, level=Term.PROVINCE)
+
+    @pytest.mark.parametrize("country", ["Japan"])
+    @pytest.mark.parametrize("variable", ["Infected"])
+    def test_in_a_country_ununique(self, imgfile, jhu_data, country, variable):
+        df = jhu_data.cleaned()
+        df = df.loc[df[Term.COUNTRY] == country]
+        df = df.loc[df[Term.PROVINCE] != Term.UNKNOWN]
+        df = df.dropna().reset_index()
+        df.rename(columns={variable: "Value"}, inplace=True)
+        with pytest.raises(ValueError):
+            with ColoredMap(filename=imgfile) as cm:
+                cm.plot(data=df, level=Term.PROVINCE)
