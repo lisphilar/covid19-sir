@@ -55,14 +55,14 @@ def jpn_map(prefectures, values, title, cmap_name="Reds", filename=None):
     cmap = cm.get_cmap(cmap_name)
     norm = matplotlib.colors.Normalize(
         vmin=df["Value"].min(), vmax=df["Value"].max())
-
-    def fcol(x):
-        return "#" + bytes(cmap(norm(x), bytes=True)[:3]).hex()
     # Show figure
     plt.xticks(color="None")
     plt.yticks(color="None")
     plt.tick_params(length=0)
-    plt.imshow(japanmap.picture(df["Value"].apply(fcol)))
+    plt.imshow(
+        japanmap.picture(df["Value"].apply(
+            lambda x: "#" + bytes(cmap(norm(x), bytes=True)[:3]).hex()
+        )))
     mappable = cm.ScalarMappable(norm=norm, cmap=cmap)
     mappable._A = []
     plt.colorbar(mappable)
