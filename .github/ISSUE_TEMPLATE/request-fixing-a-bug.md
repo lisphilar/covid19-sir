@@ -11,6 +11,7 @@ assignees: ''
 
 
 ## Codes
+
 ```Python
 import covsirphy as cs
 # Dataset preparation
@@ -22,10 +23,12 @@ snl = cs.Scenario(jhu_data, population_data, "Country name used")
 ```
 
 ## Outputs
+
 (dataframe, figures, stdout.)
 
 ## Environment
+
 - CovsirPhy version: 
-- Python version: 3.8.5
+- Python version: 
 - Installation: poetry/pipenv/conda/pip
 - System: WSL (Ubuntu)/Windows/Linux/Mac/Kaggle Notebook/Google Colaboratory
