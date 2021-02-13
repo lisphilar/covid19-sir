@@ -67,7 +67,7 @@
             
             
               <div class="version">
-                2.16.1
+                2.16.2
               </div>
             
           
@@ -255,10 +255,12 @@
                 <span class="s2">&quot;Congo&quot;</span><span class="p">:</span> <span class="s2">&quot;Republic of the Congo&quot;</span><span class="p">,</span>
                 <span class="c1"># South Korea</span>
                 <span class="s2">&quot;Korea, South&quot;</span><span class="p">:</span> <span class="s2">&quot;South Korea&quot;</span><span class="p">,</span>
-                <span class="c1"># Diamond princess</span>
-                <span class="s2">&quot;Diamond Princess&quot;</span><span class="p">:</span> <span class="s2">&quot;Others&quot;</span><span class="p">,</span>
             <span class="p">}</span>
         <span class="p">)</span>
+        <span class="c1"># Set &#39;Others&#39; as the country name of cruise ships</span>
+        <span class="n">ships</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;Diamond Princess&quot;</span><span class="p">,</span> <span class="s2">&quot;Costa Atlantica&quot;</span><span class="p">,</span> <span class="s2">&quot;Grand Princess&quot;</span><span class="p">,</span> <span class="s2">&quot;MS Zaandam&quot;</span><span class="p">]</span>
+        <span class="k">for</span> <span class="n">ship</span> <span class="ow">in</span> <span class="n">ships</span><span class="p">:</span>
+            <span class="n">df</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">df</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">COUNTRY</span><span class="p">]</span> <span class="o">==</span> <span class="n">ship</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">COUNTRY</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">OTHERS</span>
         <span class="c1"># Confirm the expected columns are in raw data</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_ensure_dataframe</span><span class="p">(</span>
             <span class="n">df</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;the raw data&quot;</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">OXCGRT_COLS</span>

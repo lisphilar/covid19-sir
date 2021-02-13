@@ -141,13 +141,6 @@ method performed with CovsirPhy, please cite the next Kaggle notebook.
 Lisphilar (2020), Kaggle notebook, COVID-19 data with SIR model,
 https://www.kaggle.com/lisphilar/covid-19-data-with-sir-model
 
-Related work
-------------
-
-| Reproduction number evolution in each country:
-| Ilyass Tabiai and Houda Kaddioui (2020), GitHub pages, COVID19 R0
-  tracker, https://ilylabs.github.io/projects/COVID-trackers/
-
 .. |PyPI version| image:: https://badge.fury.io/py/covsirphy.svg
    :target: https://badge.fury.io/py/covsirphy
 .. |Downloads| image:: https://pepy.tech/badge/covsirphy

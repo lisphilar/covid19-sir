@@ -67,7 +67,7 @@
             
             
               <div class="version">
-                2.16.1
+                2.16.2
               </div>
             
           
@@ -177,13 +177,15 @@
 <span></span><span class="ch">#!/usr/bin/env python</span>
 <span class="c1"># -*- coding: utf-8 -*-</span>
 
+<span class="kn">from</span> <span class="nn">functools</span> <span class="kn">import</span> <span class="n">partial</span>
 <span class="kn">from</span> <span class="nn">pathlib</span> <span class="kn">import</span> <span class="n">Path</span>
+<span class="kn">import</span> <span class="nn">warnings</span>
 <span class="kn">import</span> <span class="nn">country_converter</span> <span class="k">as</span> <span class="nn">coco</span>
 <span class="kn">import</span> <span class="nn">geopandas</span> <span class="k">as</span> <span class="nn">gpd</span>
-<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<span class="kn">from</span> <span class="nn">mpl_toolkits.axes_grid1</span> <span class="kn">import</span> <span class="n">make_axes_locatable</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="kn">import</span> <span class="nn">requests</span>
 <span class="kn">from</span> <span class="nn">unidecode</span> <span class="kn">import</span> <span class="n">unidecode</span>
-<span class="kn">from</span> <span class="nn">covsirphy.util.error</span> <span class="kn">import</span> <span class="n">SubsetNotFoundError</span><span class="p">,</span> <span class="n">UnExpectedValueError</span>
 <span class="kn">from</span> <span class="nn">covsirphy.visualization.vbase</span> <span class="kn">import</span> <span class="n">VisualizeBase</span>
 
 
@@ -198,6 +200,8 @@
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">filename</span><span class="o">=</span><span class="n">filename</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_to_iso3</span> <span class="o">=</span> <span class="n">partial</span><span class="p">(</span><span class="n">coco</span><span class="o">.</span><span class="n">convert</span><span class="p">,</span> <span class="n">to</span><span class="o">=</span><span class="s2">&quot;ISO3&quot;</span><span class="p">,</span> <span class="n">not_found</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_geo_dirpath</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="s2">&quot;input&quot;</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="fm">__enter__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">return</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__enter__</span><span class="p">()</span>
@@ -205,86 +209,209 @@
     <span class="k">def</span> <span class="fm">__exit__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">exc_info</span><span class="p">):</span>
         <span class="k">return</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__exit__</span><span class="p">(</span><span class="o">*</span><span class="n">exc_info</span><span class="p">)</span>
 
-<div class="viewcode-block" id="ColoredMap.plot"><a class="viewcode-back" href="../../../covsirphy.visualization.html#covsirphy.ColoredMap.plot">[docs]</a>    <span class="k">def</span> <span class="nf">plot</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">series</span><span class="p">,</span> <span class="n">index_name</span><span class="o">=</span><span class="s2">&quot;ISO3&quot;</span><span class="p">,</span> <span class="n">directory</span><span class="o">=</span><span class="s2">&quot;input&quot;</span><span class="p">,</span> <span class="n">usa</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">directory</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        str: directory to save the downloaded files of geometry information</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_geo_dirpath</span><span class="p">)</span>
+
+    <span class="nd">@directory</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span> <span class="nf">directory</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_geo_dirpath</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
+
+<div class="viewcode-block" id="ColoredMap.plot"><a class="viewcode-back" href="../../../covsirphy.visualization.html#covsirphy.ColoredMap.plot">[docs]</a>    <span class="k">def</span> <span class="nf">plot</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">level</span><span class="o">=</span><span class="s2">&quot;Country&quot;</span><span class="p">,</span> <span class="n">included</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">excluded</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Set dataframe and the variable to show in a colored map.</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">            series (pandas.Series): data to show</span>
+<span class="sd">            data (pandas.DataFrame): data to show</span>
 <span class="sd">                Index</span>
-<span class="sd">                    ISO3 codes, country names or province names</span>
-<span class="sd">                Values</span>
-<span class="sd">                    - (int or float): values to color the map</span>
-<span class="sd">            index_name (str): index name, &#39;ISO3&#39;, &#39;Country&#39; or &#39;Province&#39;</span>
-<span class="sd">            directory (str): directory to save the downloaded files of geometry information</span>
-<span class="sd">            usa (bool): if True, not show islands of USA when @index_name is &#39;Province&#39;</span>
+<span class="sd">                    reset index</span>
+<span class="sd">                Columns</span>
+<span class="sd">                    - Country (str or pandas.Category): country name(s)</span>
+<span class="sd">                    - Province (str or pandas.Category): province names, necessary when @level is &#39;Province&#39;</span>
+<span class="sd">                    - Value (int or float or None): values to coloring the map</span>
+<span class="sd">                    - ISO3 (str): ISO3 codes, optional</span>
+<span class="sd">            level (str): &#39;Country&#39; (global map) or &#39;Province&#39; (country-specific map)</span>
+<span class="sd">            included (list[str] or None): included countries/provinces or None (all)</span>
+<span class="sd">            excluded (list[str] or None): excluded countries/provinces or None (all)</span>
 <span class="sd">            kwargs: arguments of geopandas.GeoDataFrame.plot() except for &#39;column&#39;</span>
 
 <span class="sd">        Raises:</span>
-<span class="sd">            UnExpectedValueError: incorrect value was applied as @index_name</span>
+<span class="sd">            ValueError: labels for data are not unique</span>
+<span class="sd">            UnExpectedValueError: some countries&#39; records are included when @level is &#39;Province&#39;</span>
+<span class="sd">            SubsetNotFoundError: no geometry information available for the labels</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">key_dict</span> <span class="o">=</span> <span class="p">{</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">ISO3</span><span class="p">:</span> <span class="s2">&quot;iso_a3&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">COUNTRY</span><span class="p">:</span> <span class="s2">&quot;name&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">PROVINCE</span><span class="p">:</span> <span class="s2">&quot;name&quot;</span><span class="p">}</span>
-        <span class="k">if</span> <span class="n">index_name</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">key_dict</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="n">UnExpectedValueError</span><span class="p">(</span>
-                <span class="n">name</span><span class="o">=</span><span class="s2">&quot;index_name&quot;</span><span class="p">,</span> <span class="n">value</span><span class="o">=</span><span class="n">index_name</span><span class="p">,</span> <span class="n">candidates</span><span class="o">=</span><span class="nb">list</span><span class="p">(</span><span class="n">key_dict</span><span class="o">.</span><span class="n">keys</span><span class="p">()))</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_ensure_instance</span><span class="p">(</span><span class="n">series</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;series&quot;</span><span class="p">)</span>
-        <span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">series</span><span class="p">)</span><span class="o">.</span><span class="n">reset_index</span><span class="p">()</span><span class="o">.</span><span class="n">dropna</span><span class="p">()</span>
-        <span class="n">df</span><span class="o">.</span><span class="n">columns</span> <span class="o">=</span> <span class="p">[</span><span class="n">index_name</span><span class="p">,</span> <span class="s2">&quot;Value&quot;</span><span class="p">]</span>
-        <span class="c1"># Values of ISO3 column should be unique</span>
-        <span class="k">if</span> <span class="ow">not</span> <span class="n">df</span><span class="p">[</span><span class="n">index_name</span><span class="p">]</span><span class="o">.</span><span class="n">is_unique</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
-                <span class="sa">f</span><span class="s2">&quot;&#39;</span><span class="si">{</span><span class="n">index_name</span><span class="si">}</span><span class="s2">&#39; index of the dataframe should be unique.&quot;</span><span class="p">)</span>
-        <span class="c1"># Geometry information from Natural Earth</span>
-        <span class="k">if</span> <span class="n">index_name</span> <span class="ow">in</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">ISO3</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">COUNTRY</span><span class="p">):</span>
-            <span class="c1"># pop_est, continent, name, iso_a3, gdp_md_est, geometry</span>
-            <span class="n">geopath</span> <span class="o">=</span> <span class="n">gpd</span><span class="o">.</span><span class="n">datasets</span><span class="o">.</span><span class="n">get_path</span><span class="p">(</span><span class="s2">&quot;naturalearth_lowres&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_ensure_dataframe</span><span class="p">(</span>
+            <span class="n">data</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;data&quot;</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">COUNTRY</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">PROVINCE</span><span class="p">,</span> <span class="s2">&quot;Value&quot;</span><span class="p">])</span>
+        <span class="k">if</span> <span class="n">level</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">COUNTRY</span><span class="p">:</span>
+            <span class="c1"># Global map with country level data</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">data</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">COUNTRY</span><span class="p">]</span><span class="o">.</span><span class="n">is_unique</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">COUNTRY</span><span class="si">}</span><span class="s2"> column of data should be unique.&quot;</span><span class="p">)</span>
+            <span class="n">gdf</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_global_data</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">data</span><span class="p">,</span> <span class="n">included</span><span class="o">=</span><span class="n">included</span><span class="p">,</span> <span class="n">excluded</span><span class="o">=</span><span class="n">excluded</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="n">scale</span> <span class="o">=</span> <span class="s2">&quot;50m&quot;</span> <span class="k">if</span> <span class="n">usa</span> <span class="k">else</span> <span class="s2">&quot;10m&quot;</span>
-            <span class="n">geopath</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_load_geo_provinces</span><span class="p">(</span>
-                <span class="n">directory</span><span class="o">=</span><span class="n">directory</span><span class="p">,</span> <span class="n">scale</span><span class="o">=</span><span class="n">scale</span><span class="p">)</span>
-        <span class="n">gdf</span> <span class="o">=</span> <span class="n">gpd</span><span class="o">.</span><span class="n">read_file</span><span class="p">(</span><span class="n">geopath</span><span class="p">)</span>
+            <span class="c1"># Country-specific map with province level data</span>
+            <span class="n">unique_n</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">COUNTRY</span><span class="p">]</span><span class="o">.</span><span class="n">nunique</span><span class="p">()</span>
+            <span class="k">if</span> <span class="n">unique_n</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                    <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">COUNTRY</span><span class="si">}</span><span class="s2"> column of data should have only one country name when @level is </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">PROVINCE</span><span class="si">}</span><span class="s2">, but </span><span class="si">{</span><span class="n">unique_n</span><span class="si">}</span><span class="s2"> found.&quot;</span><span class="p">)</span>
+            <span class="n">country</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">COUNTRY</span><span class="p">]</span><span class="o">.</span><span class="n">value_counts</span><span class="p">()</span><span class="o">.</span><span class="n">index</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">data</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">PROVINCE</span><span class="p">]</span><span class="o">.</span><span class="n">is_unique</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">PROVINCE</span><span class="si">}</span><span class="s2"> column of data should be unique.&quot;</span><span class="p">)</span>
+            <span class="n">gdf</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_country_specific_data</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">included</span><span class="o">=</span><span class="n">included</span><span class="p">,</span> <span class="n">excluded</span><span class="o">=</span><span class="n">excluded</span><span class="p">,</span> <span class="n">country</span><span class="o">=</span><span class="n">country</span><span class="p">)</span>
+        <span class="c1"># Convert to log10 scale</span>
+        <span class="n">gdf</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">gdf</span><span class="p">[</span><span class="s2">&quot;Value&quot;</span><span class="p">]</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">,</span> <span class="s2">&quot;Value&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="n">gdf</span><span class="p">[</span><span class="s2">&quot;Value&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">log10</span><span class="p">(</span><span class="n">gdf</span><span class="p">[</span><span class="s2">&quot;Value&quot;</span><span class="p">]</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
+        <span class="c1"># Colorbar</span>
+        <span class="n">divider</span> <span class="o">=</span> <span class="n">make_axes_locatable</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_ax</span><span class="p">)</span>
+        <span class="n">cax</span> <span class="o">=</span> <span class="n">divider</span><span class="o">.</span><span class="n">append_axes</span><span class="p">(</span><span class="s2">&quot;right&quot;</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="s2">&quot;5%&quot;</span><span class="p">,</span> <span class="n">pad</span><span class="o">=</span><span class="mf">0.1</span><span class="p">)</span>
+        <span class="c1"># Arguments of plotting with GeoPandas</span>
+        <span class="n">plot_kwargs</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s2">&quot;legend&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
+            <span class="s2">&quot;cmap&quot;</span><span class="p">:</span> <span class="s2">&quot;coolwarm&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;ax&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ax</span><span class="p">,</span>
+            <span class="s2">&quot;cax&quot;</span><span class="p">:</span> <span class="n">cax</span><span class="p">,</span>
+            <span class="s2">&quot;legend_kwds&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;label&quot;</span><span class="p">:</span> <span class="s2">&quot;in log10 scale&quot;</span><span class="p">},</span>
+            <span class="s2">&quot;missing_kwds&quot;</span><span class="p">:</span> <span class="p">{</span>
+                <span class="s2">&quot;color&quot;</span><span class="p">:</span> <span class="s2">&quot;lightgrey&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;edgecolor&quot;</span><span class="p">:</span> <span class="s2">&quot;white&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;hatch&quot;</span><span class="p">:</span> <span class="s2">&quot;///&quot;</span><span class="p">,</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
+        <span class="n">plot_kwargs</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="c1"># Plotting</span>
+        <span class="n">warnings</span><span class="o">.</span><span class="n">filterwarnings</span><span class="p">(</span><span class="s2">&quot;ignore&quot;</span><span class="p">,</span> <span class="n">category</span><span class="o">=</span><span class="ne">UserWarning</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">gdf</span><span class="p">[</span><span class="s2">&quot;Value&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">isna</span><span class="p">()</span><span class="o">.</span><span class="n">sum</span><span class="p">():</span>
+            <span class="c1"># Missing values are not included</span>
+            <span class="n">plot_kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;missing_kwds&quot;</span><span class="p">)</span>
+        <span class="n">gdf</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">column</span><span class="o">=</span><span class="s2">&quot;Value&quot;</span><span class="p">,</span> <span class="o">**</span><span class="n">plot_kwargs</span><span class="p">)</span>
+        <span class="c1"># Remove all ticks</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_ax</span><span class="o">.</span><span class="n">tick_params</span><span class="p">(</span><span class="n">labelbottom</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">labelleft</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">left</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">bottom</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span></div>
+
+    <span class="k">def</span> <span class="nf">_global_data</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">included</span><span class="p">,</span> <span class="n">excluded</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Create global map data with geometry information.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            data (pandas.DataFrame): data to show</span>
+<span class="sd">                Index</span>
+<span class="sd">                    reset index</span>
+<span class="sd">                Columns</span>
+<span class="sd">                    - Country (str): country names</span>
+<span class="sd">                    - Value (int or float or None): values to plot</span>
+<span class="sd">                    - ISO3 (str): ISO3 codes, optional</span>
+<span class="sd">            included (list[str] or None): included countries or None (all)</span>
+<span class="sd">            excluded (list[str] or None): excluded countries or None (all)</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            geopandas.GeoDataFrame:</span>
+<span class="sd">                Index</span>
+<span class="sd">                    reset index</span>
+<span class="sd">                Columns</span>
+<span class="sd">                    - Value (int or float or None)</span>
+<span class="sd">                    - geometry (geopandas.GeoDataFrame.geometry): geometry information</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># data to plot</span>
+        <span class="n">df</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+        <span class="n">df</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">ISO3</span><span class="p">]</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">COUNTRY</span><span class="p">]</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_to_iso3</span><span class="p">)</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">ISO3</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">df</span> <span class="k">else</span> <span class="n">df</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">ISO3</span><span class="p">]</span>
+        <span class="c1"># Geometry</span>
+        <span class="n">gdf</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_load_geo_global</span><span class="p">()</span>
+        <span class="c1"># Merge them</span>
+        <span class="n">gdf</span> <span class="o">=</span> <span class="n">gdf</span><span class="o">.</span><span class="n">merge</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">how</span><span class="o">=</span><span class="s2">&quot;left&quot;</span><span class="p">,</span> <span class="n">on</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">ISO3</span><span class="p">)</span>
+        <span class="c1"># Select countries</span>
+        <span class="n">included_codes</span> <span class="o">=</span> <span class="n">gdf</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">ISO3</span><span class="p">]</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span> <span class="k">if</span> <span class="n">included</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_to_iso3</span><span class="p">(</span><span class="n">c</span><span class="p">)</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">included</span><span class="p">]</span>
+        <span class="n">excluded_codes</span> <span class="o">=</span> <span class="p">[]</span> <span class="k">if</span> <span class="n">excluded</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_to_iso3</span><span class="p">(</span><span class="n">c</span><span class="p">)</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">excluded</span><span class="p">]</span>
+        <span class="n">sel</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">included_codes</span><span class="p">)</span> <span class="o">-</span> <span class="nb">set</span><span class="p">(</span><span class="n">excluded_codes</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">gdf</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">gdf</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">ISO3</span><span class="p">]</span><span class="o">.</span><span class="n">isin</span><span class="p">(</span><span class="n">sel</span><span class="p">),</span> <span class="p">[</span><span class="s2">&quot;Value&quot;</span><span class="p">,</span> <span class="s2">&quot;geometry&quot;</span><span class="p">]]</span>
+
+    <span class="k">def</span> <span class="nf">_country_specific_data</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">included</span><span class="p">,</span> <span class="n">excluded</span><span class="p">,</span> <span class="n">country</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Create country-specific map data with geometry information.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            data (pandas.DataFrame): data to show</span>
+<span class="sd">                Index</span>
+<span class="sd">                    reset index</span>
+<span class="sd">                Columns</span>
+<span class="sd">                    - Province (str): province names</span>
+<span class="sd">                    - Value (int or float or None): values to plot</span>
+<span class="sd">            included (list[str] or None): included countries or None (all)</span>
+<span class="sd">            excluded (list[str] or None): excluded countries or None (all)</span>
+<span class="sd">            country (str): country name</span>
+<span class="sd">            scale (str): scale of geographic shapes, &#39;10m&#39;, &#39;50m&#39; or &#39;110m&#39;</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            geopandas.GeoDataFrame:</span>
+<span class="sd">                Index</span>
+<span class="sd">                    reset index</span>
+<span class="sd">                Columns</span>
+<span class="sd">                    - Value (int or float or None)</span>
+<span class="sd">                    - geometry (geopandas.GeoDataFrame.geometry): geometry information</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Get geometry information of the country</span>
+        <span class="n">iso3</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_to_iso3</span><span class="p">(</span><span class="n">country</span><span class="p">)</span>
+        <span class="n">scale</span> <span class="o">=</span> <span class="s2">&quot;50m&quot;</span> <span class="k">if</span> <span class="n">iso3</span> <span class="o">==</span> <span class="s2">&quot;USA&quot;</span> <span class="k">else</span> <span class="s2">&quot;10m&quot;</span>
+        <span class="n">gdf</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_load_geo_country_specific</span><span class="p">(</span><span class="n">scale</span><span class="o">=</span><span class="n">scale</span><span class="p">)</span>
+        <span class="n">gdf</span> <span class="o">=</span> <span class="n">gdf</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">gdf</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">ISO3</span><span class="p">]</span> <span class="o">==</span> <span class="n">iso3</span><span class="p">]</span>
         <span class="c1"># Merge the data with geometry information</span>
-        <span class="n">df</span><span class="p">[</span><span class="n">index_name</span><span class="p">]</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="n">index_name</span><span class="p">]</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="n">unidecode</span><span class="p">)</span>
-        <span class="n">gdf</span><span class="p">[</span><span class="s2">&quot;name&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">gdf</span><span class="p">[</span><span class="s2">&quot;name&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">fillna</span><span class="p">(</span><span class="s2">&quot;&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="n">unidecode</span><span class="p">)</span>
+        <span class="n">gdf</span> <span class="o">=</span> <span class="n">gdf</span><span class="o">.</span><span class="n">merge</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">how</span><span class="o">=</span><span class="s2">&quot;left&quot;</span><span class="p">,</span> <span class="n">on</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">PROVINCE</span><span class="p">)</span>
+        <span class="c1"># Select countries</span>
+        <span class="n">sel</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">included</span> <span class="ow">or</span> <span class="n">gdf</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">PROVINCE</span><span class="p">]</span><span class="o">.</span><span class="n">unique</span><span class="p">())</span> <span class="o">-</span> <span class="nb">set</span><span class="p">(</span><span class="n">excluded</span> <span class="ow">or</span> <span class="p">[])</span>
+        <span class="k">return</span> <span class="n">gdf</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">gdf</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">PROVINCE</span><span class="p">]</span><span class="o">.</span><span class="n">isin</span><span class="p">(</span><span class="n">sel</span><span class="p">),</span> <span class="p">[</span><span class="s2">&quot;Value&quot;</span><span class="p">,</span> <span class="s2">&quot;geometry&quot;</span><span class="p">]]</span>
+
+    <span class="k">def</span> <span class="nf">_load_geo_global</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Retrieve geometry information for global map.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            geopandas.GeoDataFrame:</span>
+<span class="sd">                Index</span>
+<span class="sd">                    reset index</span>
+<span class="sd">                Columns</span>
+<span class="sd">                    - ISO3 (str): ISO3 codes</span>
+<span class="sd">                    - geometry (geopandas.GeoDataFrame.geometry): geometry information</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Geometry information from Natural Earth</span>
+        <span class="c1"># pop_est, continent, name, iso_a3, gdp_md_est, geometry</span>
+        <span class="n">geopath</span> <span class="o">=</span> <span class="n">gpd</span><span class="o">.</span><span class="n">datasets</span><span class="o">.</span><span class="n">get_path</span><span class="p">(</span><span class="s2">&quot;naturalearth_lowres&quot;</span><span class="p">)</span>
+        <span class="n">gdf</span> <span class="o">=</span> <span class="n">gpd</span><span class="o">.</span><span class="n">read_file</span><span class="p">(</span><span class="n">geopath</span><span class="p">)</span>
+        <span class="c1"># Data cleaning</span>
+        <span class="n">gdf</span><span class="p">[</span><span class="s2">&quot;name&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">gdf</span><span class="p">[</span><span class="s2">&quot;name&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="n">unidecode</span><span class="p">)</span>
         <span class="n">gdf</span><span class="p">[</span><span class="s2">&quot;name&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span>
             <span class="p">{</span>
                 <span class="s2">&quot;Fr. S. Antarctic Lands&quot;</span><span class="p">:</span> <span class="s2">&quot;French Southern and Antarctic Lands&quot;</span><span class="p">,</span>
                 <span class="s2">&quot;S. Sudan&quot;</span><span class="p">:</span> <span class="s2">&quot;South Sudan&quot;</span>
             <span class="p">},</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-        <span class="k">if</span> <span class="n">index_name</span> <span class="ow">in</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">ISO3</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">COUNTRY</span><span class="p">):</span>
-            <span class="n">gdf</span><span class="p">[</span><span class="s2">&quot;iso_a3&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">gdf</span><span class="p">[[</span><span class="s2">&quot;name&quot;</span><span class="p">,</span> <span class="s2">&quot;iso_a3&quot;</span><span class="p">]]</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span>
-                <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">coco</span><span class="o">.</span><span class="n">convert</span><span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">to</span><span class="o">=</span><span class="s2">&quot;ISO3&quot;</span><span class="p">,</span> <span class="n">not_found</span><span class="o">=</span><span class="n">x</span><span class="p">[</span><span class="mi">1</span><span class="p">]),</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
-        <span class="n">gdf</span> <span class="o">=</span> <span class="n">gdf</span><span class="o">.</span><span class="n">merge</span><span class="p">(</span>
-            <span class="n">df</span><span class="p">,</span> <span class="n">how</span><span class="o">=</span><span class="s2">&quot;inner&quot;</span><span class="p">,</span> <span class="n">left_on</span><span class="o">=</span><span class="n">key_dict</span><span class="p">[</span><span class="n">index_name</span><span class="p">],</span> <span class="n">right_on</span><span class="o">=</span><span class="n">index_name</span><span class="p">)</span>
-        <span class="k">if</span> <span class="n">gdf</span><span class="o">.</span><span class="n">empty</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="n">SubsetNotFoundError</span><span class="p">(</span>
-                <span class="n">country</span><span class="o">=</span><span class="s2">&quot;the selected country&quot;</span><span class="p">,</span> <span class="n">message</span><span class="o">=</span><span class="s2">&quot;(geometry data)&quot;</span><span class="p">)</span>
-        <span class="c1"># Plotting</span>
-        <span class="n">gdf</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">column</span><span class="o">=</span><span class="s2">&quot;Value&quot;</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
-        <span class="c1"># Remove all ticks</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_ax</span><span class="o">.</span><span class="n">tick_params</span><span class="p">(</span>
-            <span class="n">labelbottom</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">labelleft</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">left</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">bottom</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span></div>
+        <span class="c1"># Get ISO3 codes</span>
+        <span class="n">gdf</span><span class="o">.</span><span class="n">rename</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;iso_a3&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">ISO3</span><span class="p">},</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="n">sel</span> <span class="o">=</span> <span class="n">gdf</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">ISO3</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;-99&quot;</span>
+        <span class="n">gdf</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">sel</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">ISO3</span><span class="p">]</span> <span class="o">=</span> <span class="n">gdf</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">sel</span><span class="p">,</span> <span class="s2">&quot;name&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_to_iso3</span><span class="p">)</span>
+        <span class="c1"># Remove Antarctica and</span>
+        <span class="n">gdf</span> <span class="o">=</span> <span class="n">gdf</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">gdf</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">ISO3</span><span class="p">]</span> <span class="o">!=</span> <span class="s2">&quot;ATA&quot;</span><span class="p">]</span>
+        <span class="k">return</span> <span class="n">gdf</span><span class="o">.</span><span class="n">loc</span><span class="p">[:,</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">ISO3</span><span class="p">,</span> <span class="s2">&quot;geometry&quot;</span><span class="p">]]</span>
 
-    <span class="o">@</span> <span class="nb">staticmethod</span>
-    <span class="k">def</span> <span class="nf">_load_geo_provinces</span><span class="p">(</span><span class="n">directory</span><span class="p">,</span> <span class="n">scale</span><span class="o">=</span><span class="s2">&quot;10m&quot;</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">_load_geo_country_specific</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">scale</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Load the shape file (1:10 million scale) from &#39;Natural Earth Vector&#39;.</span>
+<span class="sd">        Load shape file from &#39;Natural Earth Vector&#39;.</span>
 <span class="sd">        https://github.com/nvkelso/natural-earth-vector</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">            directory (str): directory to save the downloaded files of geometry information</span>
 <span class="sd">            scale (str): scale of geographic shapes, &#39;10m&#39;, &#39;50m&#39; or &#39;110m&#39;</span>
 
 <span class="sd">        Returns:</span>
-<span class="sd">            str: filename of the shape file</span>
+<span class="sd">            geopandas.GeoDataFrame:</span>
+<span class="sd">                Index</span>
+<span class="sd">                    reset index</span>
+<span class="sd">                Columns</span>
+<span class="sd">                    - ISO3 (str): ISO3 codes</span>
+<span class="sd">                    - Province (str): province name</span>
+<span class="sd">                    - geometry (geopandas.GeoDataFrame.geometry): geometry information</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">title</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;ne_</span><span class="si">{</span><span class="n">scale</span><span class="si">}</span><span class="s2">_admin_1_states_provinces&quot;</span>
-        <span class="n">extensions</span> <span class="o">=</span> <span class="p">[</span>
-            <span class="s2">&quot;.README.html&quot;</span><span class="p">,</span> <span class="s2">&quot;.VERSION.txt&quot;</span><span class="p">,</span> <span class="s2">&quot;.cpg&quot;</span><span class="p">,</span> <span class="s2">&quot;.dbf&quot;</span><span class="p">,</span> <span class="s2">&quot;.sbn&quot;</span><span class="p">,</span> <span class="s2">&quot;.sbx&quot;</span><span class="p">,</span> <span class="s2">&quot;.shp&quot;</span><span class="p">,</span> <span class="s2">&quot;.shx&quot;</span><span class="p">]</span>
-        <span class="n">geo_dirpath</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">directory</span><span class="p">)</span><span class="o">.</span><span class="n">joinpath</span><span class="p">(</span><span class="n">title</span><span class="p">)</span>
+        <span class="n">extensions</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;.README.html&quot;</span><span class="p">,</span> <span class="s2">&quot;.VERSION.txt&quot;</span><span class="p">,</span> <span class="s2">&quot;.cpg&quot;</span><span class="p">,</span> <span class="s2">&quot;.dbf&quot;</span><span class="p">,</span> <span class="s2">&quot;.sbn&quot;</span><span class="p">,</span> <span class="s2">&quot;.sbx&quot;</span><span class="p">,</span> <span class="s2">&quot;.shp&quot;</span><span class="p">,</span> <span class="s2">&quot;.shx&quot;</span><span class="p">]</span>
+        <span class="n">geo_dirpath</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_geo_dirpath</span><span class="o">.</span><span class="n">joinpath</span><span class="p">(</span><span class="n">title</span><span class="p">)</span>
         <span class="n">geo_dirpath</span><span class="o">.</span><span class="n">mkdir</span><span class="p">(</span><span class="n">parents</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-        <span class="n">shapefile</span> <span class="o">=</span> <span class="n">geo_dirpath</span><span class="o">.</span><span class="n">joinpath</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">title</span><span class="si">}</span><span class="s2">.shp&quot;</span><span class="p">)</span>
         <span class="c1"># Download files, if necessary</span>
         <span class="k">for</span> <span class="n">ext</span> <span class="ow">in</span> <span class="n">extensions</span><span class="p">:</span>
             <span class="n">basename</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">title</span><span class="si">}{</span><span class="n">ext</span><span class="si">}</span><span class="s2">&quot;</span>
@@ -294,7 +421,11 @@
             <span class="n">response</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">url</span><span class="o">=</span><span class="n">url</span><span class="p">)</span>
             <span class="k">with</span> <span class="n">geo_dirpath</span><span class="o">.</span><span class="n">joinpath</span><span class="p">(</span><span class="n">basename</span><span class="p">)</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="s2">&quot;wb&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">fh</span><span class="p">:</span>
                 <span class="n">fh</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">response</span><span class="o">.</span><span class="n">content</span><span class="p">)</span>
-        <span class="k">return</span> <span class="n">shapefile</span></div>
+        <span class="c1"># Data cleaning</span>
+        <span class="n">gdf</span> <span class="o">=</span> <span class="n">gpd</span><span class="o">.</span><span class="n">read_file</span><span class="p">(</span><span class="n">geo_dirpath</span><span class="o">.</span><span class="n">joinpath</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">title</span><span class="si">}</span><span class="s2">.shp&quot;</span><span class="p">))</span>
+        <span class="n">gdf</span><span class="p">[</span><span class="s2">&quot;name&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">gdf</span><span class="p">[</span><span class="s2">&quot;name&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">fillna</span><span class="p">(</span><span class="s2">&quot;&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="n">unidecode</span><span class="p">)</span>
+        <span class="n">gdf</span><span class="o">.</span><span class="n">rename</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">PROVINCE</span><span class="p">,</span> <span class="s2">&quot;adm0_a3&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">ISO3</span><span class="p">},</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">gdf</span><span class="o">.</span><span class="n">loc</span><span class="p">[:,</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">ISO3</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">PROVINCE</span><span class="p">,</span> <span class="s2">&quot;geometry&quot;</span><span class="p">]]</span></div>
 </pre></div>
 
            </div>

@@ -67,7 +67,7 @@
             
             
               <div class="version">
-                2.16.1
+                2.16.2
               </div>
             
           
@@ -262,8 +262,10 @@
         <span class="p">)</span>
         <span class="c1"># Province</span>
         <span class="n">df</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">PROVINCE</span><span class="p">]</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">PROVINCE</span><span class="p">]</span><span class="o">.</span><span class="n">fillna</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">UNKNOWN</span><span class="p">)</span>
-        <span class="n">df</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">df</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">COUNTRY</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;Diamond Princess&quot;</span><span class="p">,</span> <span class="p">[</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">COUNTRY</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">PROVINCE</span><span class="p">]]</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;Others&quot;</span><span class="p">,</span> <span class="s2">&quot;Diamond Princess&quot;</span><span class="p">]</span>
+        <span class="c1"># Set &#39;Others&#39; as the country name of cruise ships</span>
+        <span class="n">ships</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;Diamond Princess&quot;</span><span class="p">,</span> <span class="s2">&quot;Costa Atlantica&quot;</span><span class="p">,</span> <span class="s2">&quot;Grand Princess&quot;</span><span class="p">,</span> <span class="s2">&quot;MS Zaandam&quot;</span><span class="p">]</span>
+        <span class="k">for</span> <span class="n">ship</span> <span class="ow">in</span> <span class="n">ships</span><span class="p">:</span>
+            <span class="n">df</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">df</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">COUNTRY</span><span class="p">]</span> <span class="o">==</span> <span class="n">ship</span><span class="p">,</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">COUNTRY</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">PROVINCE</span><span class="p">]]</span> <span class="o">=</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">OTHERS</span><span class="p">,</span> <span class="n">ship</span><span class="p">]</span>
         <span class="c1"># Values</span>
         <span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">dropna</span><span class="p">(</span><span class="n">subset</span><span class="o">=</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">N</span><span class="p">])</span><span class="o">.</span><span class="n">reset_index</span><span class="p">(</span><span class="n">drop</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
         <span class="n">df</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">N</span><span class="p">]</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">N</span><span class="p">]</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">int64</span><span class="p">)</span>

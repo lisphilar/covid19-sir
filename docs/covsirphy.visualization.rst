@@ -17,6 +17,14 @@ covsirphy.visualization.colored\_map module
    :undoc-members:
    :show-inheritance:
 
+covsirphy.visualization.japan\_map module
+-----------------------------------------
+
+.. automodule:: covsirphy.visualization.japan_map
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
 covsirphy.visualization.vbase module
 ------------------------------------
 
