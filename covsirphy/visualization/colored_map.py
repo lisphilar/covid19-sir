@@ -137,12 +137,14 @@ class ColoredMap(VisualizeBase):
         # Geometry
         gdf = self._load_geo_global()
         # Merge them
-        gdf = gdf.merge(df, how="left", on=self.ISO3)
+        if included is None and excluded is None:
+            return gdf.merge(df, how="left", on=self.ISO3).loc[:, ["Value", "geometry"]]
         # Select countries
-        included_codes = gdf[self.ISO3].tolist() if included is None else [self._to_iso3(c) for c in included]
+        included_codes = df[self.ISO3].tolist() if included is None else [self._to_iso3(c) for c in included]
         excluded_codes = [] if excluded is None else [self._to_iso3(c) for c in excluded]
         sel = set(included_codes) - set(excluded_codes)
-        return gdf.loc[gdf[self.ISO3].isin(sel), ["Value", "geometry"]]
+        df = df.loc[df[self.ISO3].isin(sel)]
+        return gdf.merge(df, how="right", on=self.ISO3).loc[:, ["Value", "geometry"]]
 
     def _country_specific_data(self, data, included, excluded, country):
         """
