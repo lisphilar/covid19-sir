@@ -12,6 +12,25 @@ This is a COVID-19 dataset in Japan.  This does not include the cases in Diamond
 - The number of cases at prefecture level
 - Metadata of each prefecture
 
+This dataset can be retrieved with CovsirPhy (Python library).
+
+```bash
+pip install covsirphy --upgrade
+```
+
+```Python
+import covsirphy as cs
+data_loader = cs.DataLoader()
+japan_data = data_loader.japan()
+# The number of cases (Total/each province)
+clean_df = japan_data.cleaned()
+# Metadata
+meta_df = japan_data.meta()
+```
+
+Please refer to [CovsirPhy Documentation: Japan-specific dataset](https://lisphilar.github.io/covid19-sir/usage_dataset.html#Japan-specific-dataset).
+
+
 Before analysing the data, please refer to [Kaggle notebook: EDA of Japan dataset](https://www.kaggle.com/lisphilar/eda-of-japan-dataset) and [COVID-19: Government/JHU data in Japan](https://www.kaggle.com/lisphilar/covid-19-government-jhu-data-in-japan).
 The detailed explanation of the build process is discussed in [Steps to build the dataset in Japan](https://www.kaggle.com/lisphilar/covid19-dataset-in-japan/discussion/148766).
 
