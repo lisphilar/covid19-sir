@@ -48,6 +48,7 @@ def jpn_map(prefectures, values, title, cmap_name="Reds", filename=None):
     # Data to dataframe
     df = pd.DataFrame({"Name": prefectures, "Value": values})
     df["Code"] = df["Name"].map(pref_code_dict)
+    df = df.dropna().reset_index()
     df.index = df["Code"].apply(lambda x: japanmap.pref_names[int(x)])
     # Color code
     cmap = matplotlib.cm.get_cmap(cmap_name)
