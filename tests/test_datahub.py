@@ -64,8 +64,9 @@ class TestJHUData(object):
 
     def test_from_dataframe(self, japan_data):
         df = japan_data.cleaned()
-        jhu_data_df = JHUData.from_dataframe(df)
+        jhu_data_df = JHUData.from_dataframe(df, directory="input_dir")
         assert isinstance(jhu_data_df, JHUData)
+        assert jhu_data_df.directory == "input_dir"
         jhu_data_df.records("Japan")
 
     def test_subset(self, jhu_data):
