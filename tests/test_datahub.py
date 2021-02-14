@@ -243,6 +243,13 @@ class TestPopulationData(object):
     def test_countries(self, population_data):
         assert isinstance(population_data.countries(), list)
 
+    def test_map(self, population_data):
+        warnings.filterwarnings("ignore", category=UserWarning)
+        population_data.map(country=None)
+        population_data.map(country="Japan")
+        with pytest.raises(NotImplementedError):
+            population_data.map(variable="Feeling")
+
 
 class TestOxCGRTData(object):
     def test_cleaning(self, oxcgrt_data):
