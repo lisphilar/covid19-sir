@@ -171,6 +171,14 @@ class TestVaccineData(object):
         df = vaccine_data.total()
         assert set(df.columns) == set([Term.DATE, Term.VAC])
 
+    def test_map(self, vaccine_data):
+        warnings.filterwarnings("ignore", category=UserWarning)
+        vaccine_data.map()
+        with pytest.raises(NotImplementedError):
+            vaccine_data.map(country="GBR")
+        with pytest.raises(NotImplementedError):
+            vaccine_data.map(variable="Feeling")
+
 
 class TestPopulationPyramidData(object):
     def test_retrieve(self, pyramid_data):

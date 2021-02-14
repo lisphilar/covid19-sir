@@ -67,8 +67,8 @@ class ColoredMap(VisualizeBase):
             UnExpectedValueError: some countries' records are included when @level is 'Province'
             SubsetNotFoundError: no geometry information available for the labels
         """
-        self._ensure_dataframe(
-            data, name="data", columns=[self.COUNTRY, self.PROVINCE, "Value"])
+        expected_cols = [self.COUNTRY, "Value"] + [] if level == self.COUNTRY else [self.PROVINCE]
+        self._ensure_dataframe(data, name="data", columns=expected_cols)
         if level == self.COUNTRY:
             # Global map with country level data
             if not data[self.COUNTRY].is_unique:
