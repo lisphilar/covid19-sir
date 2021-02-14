@@ -481,9 +481,9 @@ class JHUData(CleaningBase):
         df["Elapsed"] = df[self.R] - df["diff"]
         df = df.loc[df["Elapsed"] > 0]
         # Check partial recovery periods
-        per_up = (df["Elapsed"] > upper_limit_days).sum() / len(df)
-        per_lw = (df["Elapsed"] < lower_limit_days).sum() / len(df)
-        if per_up >= upper_percentage or per_lw >= lower_percentage:
+        per_up = (df["Elapsed"] > upper_limit_days).sum()
+        per_lw = (df["Elapsed"] < lower_limit_days).sum()
+        if df.empty or per_up / len(df) >= upper_percentage or per_lw / len(df) >= lower_percentage:
             return -1
         return df["Elapsed"].mode().mean()
 
