@@ -195,7 +195,7 @@ class VaccineData(CleaningBase):
             kwargs: arguments of ColoredMap() and ColoredMap.plot()
 
         Raises:
-            NotImplementedError: either @country or @variable was specified.
+            NotImplementedError: either @country or @variable was specified
         """
         if country is not None:
             raise NotImplementedError("@country cannot be specified, always None.")

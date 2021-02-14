@@ -627,19 +627,25 @@ class PCRData(CleaningBase):
                 start_date=start_date, end_date=end_date)
         return df.reset_index(drop=True)
 
-    def map(self, country=None, date=None, **kwargs):
+    def map(self, country=None, variable="Tests", date=None, **kwargs):
         """
         Create colored map with the number of tests.
 
         Args:
             country (str or None): country name or None (global map)
+            variable (str): always 'vaccinations'
             date (str or None): date of the records or None (the last value)
             kwargs: arguments of ColoredMap() and ColoredMap.plot()
+
+        Raises:
+            NotImplementedError: @variable was specified
 
         Note:
             When @country is None, country level data will be shown on global map.
             When @country is a country name, province level data will be shown on country map.
         """
+        if variable != self.TESTS:
+            raise NotImplementedError(f"@variable cannot be changed, always {self.TESTS}.")
         variable = self.TESTS
         # Date
         date_str = date or self.cleaned(

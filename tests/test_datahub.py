@@ -308,7 +308,7 @@ class TestPCRData(object):
 
     def test_map(self, pcr_data):
         warnings.filterwarnings("ignore", category=UserWarning)
-        # Global map
         pcr_data.map(country=None)
-        # Country map
         pcr_data.map(country="Japan")
+        with pytest.raises(NotImplementedError):
+            pcr_data.map(variable="Feeling")
