@@ -591,7 +591,7 @@ class PCRData(CleaningBase):
         )
         return df
 
-    def subset(self, country, province=None, start_date=None, end_date=None, dataset="COVID-19 Data Hub"):
+    def subset(self, country, province=None, start_date=None, end_date=None):
         """
         Return subset of the country/province and start/end date.
 
@@ -600,7 +600,6 @@ class PCRData(CleaningBase):
             province (str or None): province name
             start_date (str or None): start date, like 22Jan2020
             end_date (str or None): end date, like 01Feb2020
-            dataset (str): 'COVID-19 Data Hub' or 'Our World In Data'
 
         Returns:
             pandas.DataFrame
@@ -612,8 +611,7 @@ class PCRData(CleaningBase):
                     - Confirmed (int): the number of confirmed cases
         """
         country_alias = self.ensure_country_name(country)
-        df = self._subset_by_area(
-            country=country_alias, province=province, dataset=dataset)
+        df = self._subset_select(country=country_alias, province=province or self.UNKNOWN)
         df = df.drop(
             [self.COUNTRY, self.ISO3, self.PROVINCE], axis=1)
         # Subset with Start/end date
