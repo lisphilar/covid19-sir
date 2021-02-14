@@ -190,6 +190,6 @@ class UnExpectedValueError(ValueError):
         self.message = "" if message is None else f" {message}"
 
     def __str__(self):
-        s1 = f"@ {self.name} must be selected from '{self.candidates_str}',"
+        s1 = f"@{self.name} must be selected from '{self.candidates_str}',"
         s2 = f"but {self.value} was applied.{self.message}"
         return f"{s1} {s2}"
