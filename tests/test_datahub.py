@@ -301,3 +301,10 @@ class TestPCRData(object):
     def test_positive_rate_error(self, pcr_data, country):
         with pytest.raises(PCRIncorrectPreconditionError):
             pcr_data.positive_rate(country, show_figure=False)
+
+    def test_map(self, pcr_data):
+        warnings.filterwarnings("ignore", category=UserWarning)
+        # Global map
+        pcr_data.map(country=None)
+        # Country map
+        pcr_data.map(country="Japan")

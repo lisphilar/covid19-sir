@@ -45,6 +45,11 @@ class PCRData(CleaningBase):
         self._citation = citation or ""
         # Cleaned dataset of "Our World In Data"
         self._cleaned_df_owid = pd.DataFrame()
+        # Directory that save the file
+        if filename is None:
+            self._dirpath = Path("input")
+        else:
+            self._dirpath = Path(filename).resolve().parent
 
     def cleaned(self):
         """
@@ -123,17 +128,19 @@ class PCRData(CleaningBase):
         return df
 
     @classmethod
-    def from_dataframe(cls, dataframe):
+    def from_dataframe(cls, dataframe, directory="input"):
         """
         Create PCRData instance using a pandas dataframe.
 
         Args:
             dataframe (pd.DataFrame): cleaned dataset
+            directory (str): directory to save geometry information (for .map() method)
 
         Returns:
             covsirphy.PCRData: PCR dataset
         """
         instance = cls(filename=None)
+        instance.directory = str(directory)
         instance._cleaned_df = cls._ensure_dataframe(
             dataframe, name="dataframe", columns=cls.PCR_COLUMNS)
         return instance
@@ -621,3 +628,30 @@ class PCRData(CleaningBase):
                 country=country, country_alias=country_alias, province=province,
                 start_date=start_date, end_date=end_date)
         return df.reset_index(drop=True)
+
+    def map(self, country=None, date=None, **kwargs):
+        """
+        Create global colored map with the number of tests.
+
+        Args:
+            country (str or None): country name or None (global map)
+            date (str or None): date of the records or None (the last value)
+            kwargs: arguments of ColoredMap() and ColoredMap.plot()
+
+        Note:
+            When @country is None, country level data will be shown on global map.
+            When @country is a country name, province level data will be shown on country map.
+        """
+        variable = self.TESTS
+        # Date
+        date_str = date or self.cleaned(
+        )[self.DATE].max().strftime(self.DATE_FORMAT)
+        country_str = country or "Global"
+        title = f"{country_str}: the number of {variable.lower()} on {date_str}"
+        # Global map
+        if country is None:
+            return self._colored_map_global(
+                variable=variable, title=title, date=date, **kwargs)
+        # Country-specific map
+        return self._colored_map_country(
+            country=country, variable=variable, title=title, date=date, **kwargs)
