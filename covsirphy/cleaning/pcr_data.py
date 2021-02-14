@@ -629,7 +629,7 @@ class PCRData(CleaningBase):
 
     def map(self, country=None, date=None, **kwargs):
         """
-        Create global colored map with the number of tests.
+        Create colored map with the number of tests.
 
         Args:
             country (str or None): country name or None (global map)
