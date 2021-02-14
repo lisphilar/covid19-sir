@@ -60,6 +60,9 @@ class TestColoredMap(object):
         df.rename(columns={variable: "Value"}, inplace=True)
         with ColoredMap(filename=imgfile) as cm:
             cm.plot(data=df, level=Term.COUNTRY)
+        # Not with log10 scale
+        with ColoredMap(filename=imgfile) as cm:
+            cm.plot(data=df, level=Term.COUNTRY, logscale=False)
 
     @pytest.mark.parametrize("variable", ["Infected"])
     def test_global_country_ununique(self, imgfile, jhu_data, variable):
