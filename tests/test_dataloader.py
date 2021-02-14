@@ -145,6 +145,12 @@ class TestCountryData(object):
         provinces = country_data.cleaned()[Term.PROVINCE].unique()
         assert Term.UNKNOWN in provinces
 
+    def test_map(self, japan_data):
+        warnings.filterwarnings("ignore", category=UserWarning)
+        japan_data.map()
+        with pytest.raises(NotImplementedError):
+            japan_data.map(country="GBR")
+
 
 class TestVaccineData(object):
     def test_cleaning(self, vaccine_data):

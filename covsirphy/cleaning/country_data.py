@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
+from pathlib import Path
 import numpy as np
 import pandas as pd
 from covsirphy.util.error import UnExecutedError
@@ -28,6 +29,11 @@ class CountryData(CleaningBase):
         self.var_dict = {}
         self._cleaned_df = pd.DataFrame()
         self._citation = str()
+        # Directory that save the file
+        if filename is None:
+            self._dirpath = Path("input")
+        else:
+            self._dirpath = Path(filename).resolve().parent
 
     @property
     def country(self):
@@ -203,3 +209,25 @@ class CountryData(CleaningBase):
         df[self.STR_COLUMNS] = df[self.STR_COLUMNS].astype("category")
         self._cleaned_df = df.loc[:, self.COLUMNS]
         return self
+
+    def map(self, country=None, variable="Confirmed", date=None, **kwargs):
+        """
+        Create colored map to show the values.
+
+        Args:
+            country (None): None
+            variable (str): variable name to show
+            date (str or None): date of the records or None (the last value)
+            kwargs: arguments of ColoredMap() and ColoredMap.plot()
+
+        Raises:
+            NotImplementedError: @country was specified
+        """
+        if country is not None:
+            raise NotImplementedError("@country cannot be specified, always None.")
+        # Date
+        date_str = date or self.cleaned()[self.DATE].max().strftime(self.DATE_FORMAT)
+        title = f"{self._country}: the number of {variable.lower()} cases on {date_str}"
+        # Country-specific map
+        return self._colored_map_country(
+            country=self._country, variable=variable, title=title, date=date, **kwargs)
