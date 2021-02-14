@@ -186,7 +186,7 @@ class VaccineData(CleaningBase):
 
     def map(self, country=None, variable="Vaccinations", date=None, **kwargs):
         """
-        Create colored map with the number of tests.
+        Create colored map with the number of vaccinations.
 
         Args:
             country (None): always None
