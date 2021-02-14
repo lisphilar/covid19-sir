@@ -190,7 +190,7 @@ class VaccineData(CleaningBase):
 
         Args:
             country (None): always None
-            variable (str): always 'vaccinations'
+            variable (str): always 'Vaccinations'
             date (str or None): date of the records or None (the last value)
             kwargs: arguments of ColoredMap() and ColoredMap.plot()
 

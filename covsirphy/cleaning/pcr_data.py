@@ -646,7 +646,6 @@ class PCRData(CleaningBase):
         """
         if variable != self.TESTS:
             raise NotImplementedError(f"@variable cannot be changed, always {self.TESTS}.")
-        variable = self.TESTS
         # Date
         date_str = date or self.cleaned(
         )[self.DATE].max().strftime(self.DATE_FORMAT)
