@@ -43,6 +43,11 @@ class VaccineData(CleaningBase):
         self._citation = "Hasell, J., Mathieu, E., Beltekian, D. et al." \
             " A cross-country database of COVID-19 testing. Sci Data 7, 345 (2020)." \
             " https://doi.org/10.1038/s41597-020-00688-8"
+        # Directory that save the file
+        if filename is None:
+            self._dirpath = Path("input")
+        else:
+            self._dirpath = Path(filename).resolve().parent
 
     def _retrieve(self, filename, verbose=1):
         """
@@ -178,3 +183,27 @@ class VaccineData(CleaningBase):
         # Resampling
         df = df.set_index(self.DATE).resample("D").sum()
         return df.reset_index()
+
+    def map(self, country=None, variable="Vaccinations", date=None, **kwargs):
+        """
+        Create colored map with the number of vaccinations.
+
+        Args:
+            country (None): always None
+            variable (str): always 'Vaccinations'
+            date (str or None): date of the records or None (the last value)
+            kwargs: arguments of ColoredMap() and ColoredMap.plot()
+
+        Raises:
+            NotImplementedError: either @country or @variable was specified
+        """
+        if country is not None:
+            raise NotImplementedError("@country cannot be specified, always None.")
+        if variable != self.VAC:
+            raise NotImplementedError(f"@variable cannot be changed, always {self.VAC}.")
+        # Date
+        date_str = date or self.cleaned()[self.DATE].max().strftime(self.DATE_FORMAT)
+        country_str = "Global"
+        title = f"{country_str}: the number of {variable.lower()} on {date_str}"
+        # Global map
+        return self._colored_map_global(variable=variable, title=title, date=date, **kwargs)

@@ -145,6 +145,12 @@ class TestCountryData(object):
         provinces = country_data.cleaned()[Term.PROVINCE].unique()
         assert Term.UNKNOWN in provinces
 
+    def test_map(self, japan_data):
+        warnings.filterwarnings("ignore", category=UserWarning)
+        japan_data.map()
+        with pytest.raises(NotImplementedError):
+            japan_data.map(country="GBR")
+
 
 class TestVaccineData(object):
     def test_cleaning(self, vaccine_data):
@@ -170,6 +176,14 @@ class TestVaccineData(object):
     def test_total(self, vaccine_data):
         df = vaccine_data.total()
         assert set(df.columns) == set([Term.DATE, Term.VAC])
+
+    def test_map(self, vaccine_data):
+        warnings.filterwarnings("ignore", category=UserWarning)
+        vaccine_data.map()
+        with pytest.raises(NotImplementedError):
+            vaccine_data.map(country="GBR")
+        with pytest.raises(NotImplementedError):
+            vaccine_data.map(variable="Feeling")
 
 
 class TestPopulationPyramidData(object):

@@ -481,9 +481,9 @@ class JHUData(CleaningBase):
         df["Elapsed"] = df[self.R] - df["diff"]
         df = df.loc[df["Elapsed"] > 0]
         # Check partial recovery periods
-        per_up = (df["Elapsed"] > upper_limit_days).sum() / len(df)
-        per_lw = (df["Elapsed"] < lower_limit_days).sum() / len(df)
-        if per_up >= upper_percentage or per_lw >= lower_percentage:
+        per_up = (df["Elapsed"] > upper_limit_days).sum()
+        per_lw = (df["Elapsed"] < lower_limit_days).sum()
+        if df.empty or per_up / len(df) >= upper_percentage or per_lw / len(df) >= lower_percentage:
             return -1
         return df["Elapsed"].mode().mean()
 
@@ -669,8 +669,7 @@ class JHUData(CleaningBase):
             When @country is a country name, province level data will be shown on country map.
         """
         # Date
-        date_str = date or self.cleaned(
-        )[self.DATE].max().strftime(self.DATE_FORMAT)
+        date_str = date or self.cleaned()[self.DATE].max().strftime(self.DATE_FORMAT)
         country_str = country or "Global"
         title = f"{country_str}: the number of {variable.lower()} cases on {date_str}"
         # Global map

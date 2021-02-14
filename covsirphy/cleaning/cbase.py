@@ -371,7 +371,8 @@ class CleaningBase(Term):
         # Remove cruise ships
         df = df.loc[df[self.COUNTRY] != self.OTHERS]
         # Select country level data
-        df = df.loc[df[self.PROVINCE] == self.UNKNOWN]
+        if self.PROVINCE in df.columns:
+            df = df.loc[df[self.PROVINCE] == self.UNKNOWN]
         # Select date
         if date is not None:
             self._ensure_dataframe(df, name="cleaned dataset", columns=[self.DATE])

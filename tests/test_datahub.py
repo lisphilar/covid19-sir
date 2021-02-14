@@ -243,6 +243,13 @@ class TestPopulationData(object):
     def test_countries(self, population_data):
         assert isinstance(population_data.countries(), list)
 
+    def test_map(self, population_data):
+        warnings.filterwarnings("ignore", category=UserWarning)
+        population_data.map(country=None)
+        population_data.map(country="Japan")
+        with pytest.raises(NotImplementedError):
+            population_data.map(variable="Feeling")
+
 
 class TestOxCGRTData(object):
     def test_cleaning(self, oxcgrt_data):
@@ -259,6 +266,12 @@ class TestOxCGRTData(object):
         with pytest.raises(NotImplementedError):
             oxcgrt_data.total()
 
+    def test_map(self, oxcgrt_data):
+        warnings.filterwarnings("ignore", category=UserWarning)
+        oxcgrt_data.map(country=None)
+        with pytest.raises(NotImplementedError):
+            oxcgrt_data.map(country="Japan")
+
 
 class TestPCRData(object):
     def test_cleaning(self, pcr_data):
@@ -273,20 +286,24 @@ class TestPCRData(object):
         pcr_data.use_ourworldindata(
             filename="input/ourworldindata_pcr.csv")
 
-    def test_subset(self, pcr_data):
+    @pytest.mark.parametrize("country", ["Japan"])
+    def test_subset(self, pcr_data, country):
         with pytest.raises(SubsetNotFoundError):
-            pcr_data.subset("Greece", end_date="01Jan2000")
-        df = pcr_data.subset("Greece")
+            pcr_data.subset(country, end_date="01Jan2000")
+        df = pcr_data.subset(country)
+        df = pcr_data.subset(country, end_date="01Jan2021")
         assert set(df.columns) == set(PCRData.PCR_NLOC_COLUMNS)
 
-    def test_subset_complement(self, pcr_data):
+    @pytest.mark.parametrize("country", ["Greece"])
+    def test_subset_complement(self, pcr_data, country):
         with pytest.raises(NotImplementedError):
-            pcr_data.subset_complement("Greece")
+            pcr_data.subset_complement(country)
 
-    def test_records(self, pcr_data):
+    @pytest.mark.parametrize("country", ["Greece"])
+    def test_records(self, pcr_data, country):
         with pytest.raises(SubsetNotFoundError):
-            pcr_data.records("Greece", end_date="01Jan2000")
-        df, _ = pcr_data.records("Greece")
+            pcr_data.records(country, end_date="01Jan2000")
+        df, _ = pcr_data.records(country)
         assert set(df.columns) == set(PCRData.PCR_NLOC_COLUMNS)
 
     @pytest.mark.parametrize("country", ["Greece", "Italy", "Sweden"])
@@ -301,3 +318,10 @@ class TestPCRData(object):
     def test_positive_rate_error(self, pcr_data, country):
         with pytest.raises(PCRIncorrectPreconditionError):
             pcr_data.positive_rate(country, show_figure=False)
+
+    def test_map(self, pcr_data):
+        warnings.filterwarnings("ignore", category=UserWarning)
+        pcr_data.map(country=None)
+        pcr_data.map(country="Japan")
+        with pytest.raises(NotImplementedError):
+            pcr_data.map(variable="Feeling")

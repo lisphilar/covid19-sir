@@ -25,7 +25,7 @@ class JapanData(CountryData):
             - Infected (int): the number of currently infected cases
             - Fatal (int): the number of fatal cases
             - Recovered (int): the number of recovered cases
-            - Tested (int): the number of tested persons
+            - Tests (int): the number of tested persons
             - Moderate (int): the number of cases who requires hospitalization but not severe
             - Severe (int): the number of severe cases
     """
@@ -70,6 +70,11 @@ class JapanData(CountryData):
             "https://github.com/lisphilar/covid19-sir/data/japan"
         self.dir_path = Path(filename).parent
         self.verbose = verbose
+        # Directory that save the file
+        if filename is None:
+            self._dirpath = Path("input")
+        else:
+            self._dirpath = Path(filename).resolve().parent
 
     def _retrieve(self, filename, verbose=1):
         """

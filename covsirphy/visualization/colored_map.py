@@ -44,7 +44,7 @@ class ColoredMap(VisualizeBase):
     def directory(self, name):
         self._geo_dirpath = Path(name)
 
-    def plot(self, data, level="Country", included=None, excluded=None, **kwargs):
+    def plot(self, data, level="Country", included=None, excluded=None, logscale=True, **kwargs):
         """
         Set dataframe and the variable to show in a colored map.
 
@@ -58,6 +58,7 @@ class ColoredMap(VisualizeBase):
                     - Value (int or float or None): values to coloring the map
                     - ISO3 (str): ISO3 codes, optional
             level (str): 'Country' (global map) or 'Province' (country-specific map)
+            logscale (bool): whether convert the value to log10 scale values or not
             included (list[str] or None): included countries/provinces or None (all)
             excluded (list[str] or None): excluded countries/provinces or None (all)
             kwargs: arguments of geopandas.GeoDataFrame.plot() except for 'column'
@@ -67,8 +68,8 @@ class ColoredMap(VisualizeBase):
             UnExpectedValueError: some countries' records are included when @level is 'Province'
             SubsetNotFoundError: no geometry information available for the labels
         """
-        self._ensure_dataframe(
-            data, name="data", columns=[self.COUNTRY, self.PROVINCE, "Value"])
+        expected_cols = [self.COUNTRY, "Value"] + [] if level == self.COUNTRY else [self.PROVINCE]
+        self._ensure_dataframe(data, name="data", columns=expected_cols)
         if level == self.COUNTRY:
             # Global map with country level data
             if not data[self.COUNTRY].is_unique:
@@ -84,9 +85,7 @@ class ColoredMap(VisualizeBase):
             if not data[self.PROVINCE].is_unique:
                 raise ValueError(f"{self.PROVINCE} column of data should be unique.")
             gdf = self._country_specific_data(data, included=included, excluded=excluded, country=country)
-        # Convert to log10 scale
         gdf.loc[gdf["Value"] < 0, "Value"] = 0
-        gdf["Value"] = np.log10(gdf["Value"] + 1)
         # Colorbar
         divider = make_axes_locatable(self._ax)
         cax = divider.append_axes("right", size="5%", pad=0.1)
@@ -96,7 +95,6 @@ class ColoredMap(VisualizeBase):
             "cmap": "coolwarm",
             "ax": self._ax,
             "cax": cax,
-            "legend_kwds": {"label": "in log10 scale"},
             "missing_kwds": {
                 "color": "lightgrey",
                 "edgecolor": "white",
@@ -104,6 +102,10 @@ class ColoredMap(VisualizeBase):
             }
         }
         plot_kwargs.update(kwargs)
+        # Convert to log10 scale
+        if logscale:
+            gdf["Value"] = np.log10(gdf["Value"] + 1)
+            plot_kwargs["legend_kwds"] = {"label": "in log10 scale"}
         # Plotting
         warnings.filterwarnings("ignore", category=UserWarning)
         if not gdf["Value"].isna().sum():

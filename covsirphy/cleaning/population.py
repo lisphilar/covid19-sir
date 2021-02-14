@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*-
 
 from datetime import datetime
+from pathlib import Path
 from dask import dataframe as dd
 import numpy as np
 import pandas as pd
@@ -36,6 +37,11 @@ class PopulationData(CleaningBase):
             ).compute()
             self._cleaned_df = self._cleaning()
         self._citation = citation or ""
+        # Directory that save the file
+        if filename is None:
+            self._dirpath = Path("input")
+        else:
+            self._dirpath = Path(filename).resolve().parent
 
     def _cleaning(self):
         """
@@ -223,6 +229,37 @@ class PopulationData(CleaningBase):
         removed_countries = ["Others"]
         country_list = list(set(country_list) - set(removed_countries))
         return country_list
+
+    def map(self, country=None, variable="Population", date=None, **kwargs):
+        """
+        Create colored map with the number of tests.
+
+        Args:
+            country (str or None): country name or None (global map)
+            variable (str): always 'Population'
+            date (str or None): date of the records or None (the last value)
+            kwargs: arguments of ColoredMap() and ColoredMap.plot()
+
+        Raises:
+            NotImplementedError: @variable was specified
+
+        Note:
+            When @country is None, country level data will be shown on global map.
+            When @country is a country name, province level data will be shown on country map.
+        """
+        if variable != self.N:
+            raise NotImplementedError(f"@variable cannot be changed, always {self.N}.")
+        # Date
+        date_str = date or self.cleaned()[self.DATE].max().strftime(self.DATE_FORMAT)
+        country_str = country or "Global"
+        title = f"{country_str}: {variable.lower()} on {date_str}"
+        # Global map
+        if country is None:
+            return self._colored_map_global(
+                variable=variable, title=title, date=date, **kwargs)
+        # Country-specific map
+        return self._colored_map_country(
+            country=country, variable=variable, title=title, date=date, **kwargs)
 
 
 class Population(PopulationData):
