@@ -159,6 +159,6 @@ class OxCGRTData(CleaningBase):
         # Date
         date_str = date or self.cleaned()[self.DATE].max().strftime(self.DATE_FORMAT)
         country_str = country or "Global"
-        title = f"{country_str}: {variable.lower().replace('_', '')} on {date_str}"
+        title = f"{country_str}: {variable.lower().replace('_', ' ')} on {date_str}"
         # Global map
         return self._colored_map_global(variable=variable, title=title, date=date, **kwargs)
