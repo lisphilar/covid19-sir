@@ -9,6 +9,7 @@ In this directory, datasets for analysing COVID-19 outbreak are archived.
 This is a COVID-19 dataset in Japan.  This does not include the cases in Diamond Princess cruise ship (Yokohama city, Kanagawa prefecture) and Costa Atlantica cruise ship (Nagasaki city, Nagasaki prefecture).
 
 - Total number of cases in Japan
+- The number of vaccinated people (New/experimental)
 - The number of cases at prefecture level
 - Metadata of each prefecture
 
@@ -55,6 +56,13 @@ In primary source, some variables were removed on 09May2020. Values are NA in th
 Manually collected the data from Ministry of Health, Labour and Welfare HP:  
 [厚生労働省 HP (in Japanese)](https://www.mhlw.go.jp/)  
 [Ministry of Health, Labour and Welfare HP (in English)](https://www.mhlw.go.jp/english/)
+
+The number of vaccinated people:
+
+- `Vaccinated_1st`: the number of vaccinated persons for the first time on the date
+- `Vaccinated_2nd`: the number of vaccinated persons with the second dose on the date
+
+Data source: [厚生労働省 HP 新型コロナワクチンの接種実績(in Japanese)](https://www.mhlw.go.jp/stf/seisakunitsuite/bunya/vaccine_sesshujisseki.html)
 
 ### 1.2 The number of cases at prefecture level
 
