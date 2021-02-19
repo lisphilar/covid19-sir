@@ -86,6 +86,7 @@ class CleaningBase(Term):
         Returns:
             pd.DataFrame: raw dataset
         """
+        warnings.filterwarnings("ignore", category=DeprecationWarning)
         kwargs = {
             "low_memory": False, "dtype": dtype, "header": header, "usecols": columns}
         try:
