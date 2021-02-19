@@ -26,7 +26,7 @@ class VaccineData(CleaningBase):
             - Vaccinations (int): the number of vaccinations
     """
     # URL
-    URL = "https://covid.ourworldindata.org/data/vaccinations/"
+    URL = "https://raw.githubusercontent.com/owid/covid-19-data/master/public/data/vaccinations/"
     URL_REC = f"{URL}vaccinations.csv"
     URL_LOC = f"{URL}locations.csv"
     # Columns
@@ -62,8 +62,7 @@ class VaccineData(CleaningBase):
         """
         # Show URL
         if verbose:
-            print(
-                "Retrieving COVID-19 vaccination dataset from https://covid.ourworldindata.org/data/")
+            print("Retrieving COVID-19 vaccination dataset from https://github.com/owid/covid-19-data/")
         # Download datasets and merge them
         rec_df = self.load(
             self.URL_REC, columns=["location", "date", "total_vaccinations"])
