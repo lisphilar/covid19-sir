@@ -154,7 +154,7 @@ class PCRData(CleaningBase):
         Args:
             filename (str): CSV filename to save the datasetretrieved from "Our World In Data"
         """
-        url = "https://covid.ourworldindata.org/data/testing/covid-testing-all-observations.csv"
+        url = "https://github.com/owid/covid-19-data/tree/master/public/data/testing/covid-testing-all-observations.csv"
         col_dict = {
             "ISO code": self.ISO3,
             "Date": self.DATE,
