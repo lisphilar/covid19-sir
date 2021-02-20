@@ -67,7 +67,7 @@
             
             
               <div class="version">
-                2.16.2-beta
+                2.16.2-gamma
               </div>
             
           
@@ -366,18 +366,24 @@ If not, return the area name, like ‘Japan/Tokyo’</p>
 
 <dl class="py method">
 <dt id="covsirphy.cleaning.cbase.CleaningBase.ensure_country_name">
-<code class="sig-name descname"><span class="pre">ensure_country_name</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">country</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/cleaning/cbase.html#CleaningBase.ensure_country_name"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#covsirphy.cleaning.cbase.CleaningBase.ensure_country_name" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname"><span class="pre">ensure_country_name</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">country</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">errors</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'raise'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/cleaning/cbase.html#CleaningBase.ensure_country_name"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#covsirphy.cleaning.cbase.CleaningBase.ensure_country_name" title="Permalink to this definition">¶</a></dt>
 <dd><p>Ensure that the country name is correct.
 If not, the correct country name will be found.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>country</strong> (<em>str</em>) – country name</p>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>country</strong> (<em>str</em>) – country name</p></li>
+<li><p><strong>errors</strong> (<em>str</em>) – ‘raise’ or ‘coerce’</p></li>
+</ul>
 </dd>
 <dt class="field-even">Returns</dt>
 <dd class="field-even"><p>country name</p>
 </dd>
 <dt class="field-odd">Return type</dt>
 <dd class="field-odd"><p>str</p>
+</dd>
+<dt class="field-even">Raises</dt>
+<dd class="field-even"><p><a class="reference internal" href="covsirphy.html#covsirphy.SubsetNotFoundError" title="covsirphy.SubsetNotFoundError"><strong>SubsetNotFoundError</strong></a> – no records were found for the country and &#64;errors is ‘raise’</p>
 </dd>
 </dl>
 </dd></dl>
@@ -386,6 +392,42 @@ If not, the correct country name will be found.</p>
 <dt id="covsirphy.cleaning.cbase.CleaningBase.iso3_to_country">
 <code class="sig-name descname"><span class="pre">iso3_to_country</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#covsirphy.cleaning.cbase.CleaningBase.iso3_to_country" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
+
+<dl class="py method">
+<dt id="covsirphy.cleaning.cbase.CleaningBase.layer">
+<code class="sig-name descname"><span class="pre">layer</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">country</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/cleaning/cbase.html#CleaningBase.layer"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#covsirphy.cleaning.cbase.CleaningBase.layer" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the cleaned data at the selected layer.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>country</strong> (<em>str</em><em> or </em><em>None</em>) – country name or None (country level data or country-specific dataset)</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><dl class="simple">
+<dt>Index</dt><dd><p>reset index</p>
+</dd>
+</dl>
+<p>Columns
+- Country (str): country names
+- Province (str): province names (or removed when country level data)
+- any other columns of the cleaned data</p>
+</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>pandas.DataFrame</p>
+</dd>
+<dt class="field-even">Raises</dt>
+<dd class="field-even"><ul class="simple">
+<li><p><a class="reference internal" href="covsirphy.html#covsirphy.SubsetNotFoundError" title="covsirphy.SubsetNotFoundError"><strong>SubsetNotFoundError</strong></a> – no records were found for the country (when &#64;country is not None)</p></li>
+<li><p><strong>KeyError</strong> – &#64;country was None, but country names were not registered in the dataset</p></li>
+</ul>
+</dd>
+</dl>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>When &#64;country is None, country level data will be returned.
+When &#64;country is a country name, province level data in the selected country will be returned.</p>
+</div>
+</dd></dl>
 
 <dl class="py method">
 <dt id="covsirphy.cleaning.cbase.CleaningBase.load">
@@ -453,7 +495,7 @@ If not, the correct country name will be found.</p>
 <dl class="py method">
 <dt id="covsirphy.cleaning.cbase.CleaningBase.subset">
 <code class="sig-name descname"><span class="pre">subset</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">country</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">province</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">start_date</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">end_date</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/cleaning/cbase.html#CleaningBase.subset"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#covsirphy.cleaning.cbase.CleaningBase.subset" title="Permalink to this definition">¶</a></dt>
-<dd><p>Return subset of the country/province and start/end date.</p>
+<dd><p>Return subset with country/province name and start/end date.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
@@ -474,6 +516,9 @@ If not, the correct country name will be found.</p>
 </dd>
 </dl>
 </p>
+</dd>
+<dt class="field-odd">Raises</dt>
+<dd class="field-odd"><p><a class="reference internal" href="covsirphy.html#covsirphy.SubsetNotFoundError" title="covsirphy.SubsetNotFoundError"><strong>SubsetNotFoundError</strong></a> – no records were found for the condition</p>
 </dd>
 </dl>
 </dd></dl>
@@ -1852,6 +1897,42 @@ Records with Recovered &gt; 0 will be used.</p>
 </dd></dl>
 
 <dl class="py method">
+<dt id="covsirphy.cleaning.linelist.LinelistData.layer">
+<code class="sig-name descname"><span class="pre">layer</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/cleaning/linelist.html#LinelistData.layer"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#covsirphy.cleaning.linelist.LinelistData.layer" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the cleaned data at the selected layer.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>country</strong> (<em>str</em><em> or </em><em>None</em>) – country name or None (country level data or country-specific dataset)</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><dl class="simple">
+<dt>Index</dt><dd><p>reset index</p>
+</dd>
+</dl>
+<p>Columns
+- Country (str): country names
+- Province (str): province names (or removed when country level data)
+- any other columns of the cleaned data</p>
+</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>pandas.DataFrame</p>
+</dd>
+<dt class="field-even">Raises</dt>
+<dd class="field-even"><ul class="simple">
+<li><p><a class="reference internal" href="covsirphy.html#covsirphy.SubsetNotFoundError" title="covsirphy.SubsetNotFoundError"><strong>SubsetNotFoundError</strong></a> – no records were found for the country (when &#64;country is not None)</p></li>
+<li><p><strong>KeyError</strong> – &#64;country was None, but country names were not registered in the dataset</p></li>
+</ul>
+</dd>
+</dl>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>When &#64;country is None, country level data will be returned.
+When &#64;country is a country name, province level data in the selected country will be returned.</p>
+</div>
+</dd></dl>
+
+<dl class="py method">
 <dt id="covsirphy.cleaning.linelist.LinelistData.raw">
 <em class="property"><span class="pre">property</span> </em><code class="sig-name descname"><span class="pre">raw</span></code><a class="headerlink" href="#covsirphy.cleaning.linelist.LinelistData.raw" title="Permalink to this definition">¶</a></dt>
 <dd><p>raw dataset</p>
@@ -2524,6 +2605,42 @@ If &#64;citation is None, citation will be empty string.</p>
 </dd></dl>
 
 <dl class="py method">
+<dt id="covsirphy.cleaning.pyramid.PopulationPyramidData.layer">
+<code class="sig-name descname"><span class="pre">layer</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">country</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/cleaning/pyramid.html#PopulationPyramidData.layer"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#covsirphy.cleaning.pyramid.PopulationPyramidData.layer" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the cleaned data at the selected layer.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>country</strong> (<em>str</em><em> or </em><em>None</em>) – country name or None (country level data or country-specific dataset)</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><dl class="simple">
+<dt>Index</dt><dd><p>reset index</p>
+</dd>
+</dl>
+<p>Columns
+- Country (str): country names
+- Province (str): province names (or removed when country level data)
+- any other columns of the cleaned data</p>
+</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>pandas.DataFrame</p>
+</dd>
+<dt class="field-even">Raises</dt>
+<dd class="field-even"><ul class="simple">
+<li><p><a class="reference internal" href="covsirphy.html#covsirphy.SubsetNotFoundError" title="covsirphy.SubsetNotFoundError"><strong>SubsetNotFoundError</strong></a> – no records were found for the country (when &#64;country is not None)</p></li>
+<li><p><strong>KeyError</strong> – &#64;country was None, but country names were not registered in the dataset</p></li>
+</ul>
+</dd>
+</dl>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>When &#64;country is None, country level data will be returned.
+When &#64;country is a country name, province level data in the selected country will be returned.</p>
+</div>
+</dd></dl>
+
+<dl class="py method">
 <dt id="covsirphy.cleaning.pyramid.PopulationPyramidData.records">
 <code class="sig-name descname"><span class="pre">records</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">country</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">year</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sex</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/cleaning/pyramid.html#PopulationPyramidData.records"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#covsirphy.cleaning.pyramid.PopulationPyramidData.records" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return the subset.</p>
@@ -2652,17 +2769,17 @@ If &#64;citation is None, citation will be empty string.</p>
 </div>
 <dl class="py attribute">
 <dt id="covsirphy.cleaning.vaccine_data.VaccineData.URL">
-<code class="sig-name descname"><span class="pre">URL</span></code><em class="property"> <span class="pre">=</span> <span class="pre">'https://covid.ourworldindata.org/data/vaccinations/'</span></em><a class="headerlink" href="#covsirphy.cleaning.vaccine_data.VaccineData.URL" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname"><span class="pre">URL</span></code><em class="property"> <span class="pre">=</span> <span class="pre">'https://raw.githubusercontent.com/owid/covid-19-data/master/public/data/vaccinations/'</span></em><a class="headerlink" href="#covsirphy.cleaning.vaccine_data.VaccineData.URL" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="py attribute">
 <dt id="covsirphy.cleaning.vaccine_data.VaccineData.URL_LOC">
-<code class="sig-name descname"><span class="pre">URL_LOC</span></code><em class="property"> <span class="pre">=</span> <span class="pre">'https://covid.ourworldindata.org/data/vaccinations/locations.csv'</span></em><a class="headerlink" href="#covsirphy.cleaning.vaccine_data.VaccineData.URL_LOC" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname"><span class="pre">URL_LOC</span></code><em class="property"> <span class="pre">=</span> <span class="pre">'https://raw.githubusercontent.com/owid/covid-19-data/master/public/data/vaccinations/locations.csv'</span></em><a class="headerlink" href="#covsirphy.cleaning.vaccine_data.VaccineData.URL_LOC" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="py attribute">
 <dt id="covsirphy.cleaning.vaccine_data.VaccineData.URL_REC">
-<code class="sig-name descname"><span class="pre">URL_REC</span></code><em class="property"> <span class="pre">=</span> <span class="pre">'https://covid.ourworldindata.org/data/vaccinations/vaccinations.csv'</span></em><a class="headerlink" href="#covsirphy.cleaning.vaccine_data.VaccineData.URL_REC" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname"><span class="pre">URL_REC</span></code><em class="property"> <span class="pre">=</span> <span class="pre">'https://raw.githubusercontent.com/owid/covid-19-data/master/public/data/vaccinations/vaccinations.csv'</span></em><a class="headerlink" href="#covsirphy.cleaning.vaccine_data.VaccineData.URL_REC" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="py attribute">
