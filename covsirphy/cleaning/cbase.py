@@ -237,11 +237,12 @@ class CleaningBase(Term):
         """
         df = self._cleaned_df.copy()
         self._ensure_dataframe(df, name="the cleaned dataset", columns=[self.COUNTRY])
+        if self.PROVINCE not in df:
+            df[self.PROVINCE] = self.UNKNOWN
+        df[self.AREA_COLUMNS] = df[self.AREA_COLUMNS].astype(str)
         # Country level data
         if country is None:
-            if self.PROVINCE in df:
-                df = df.loc[df[self.PROVINCE] == self.UNKNOWN]
-            df[self.AREA_COLUMNS] = df[self.AREA_COLUMNS].astype(str)
+            df = df.loc[df[self.PROVINCE] == self.UNKNOWN]
             return df.reset_index(drop=True)
         # Province level data at the selected country
         try:
@@ -249,9 +250,7 @@ class CleaningBase(Term):
         except SubsetNotFoundError:
             raise SubsetNotFoundError(country=country) from None
         df = df.loc[df[self.COUNTRY] == country_alias]
-        self._ensure_dataframe(df, name="the cleaned dataset", columns=[self.PROVINCE])
         df = df.loc[df[self.PROVINCE] != self.UNKNOWN]
-        df[self.AREA_COLUMNS] = df[self.AREA_COLUMNS].astype(str)
         return df.reset_index(drop=True)
 
     def _subset_by_area(self, country, province=None):
