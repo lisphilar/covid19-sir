@@ -19,9 +19,15 @@ class TestCleaningBase(object):
     @pytest.mark.parametrize("country", [None, "Japan"])
     def test_layer(self, data, country):
         # Country level data
-        data.layer(country=None)
+        try:
+            data.layer(country=None)
+        except NotImplementedError:
+            pass
         # Province level data
-        data.layer(country=country)
+        try:
+            data.layer(country=country)
+        except NotImplementedError:
+            pass
 
     @pytest.mark.parametrize("country", ["Moon"])
     def test_layer_error(self, japan_data, country):
