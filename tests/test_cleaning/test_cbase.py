@@ -3,7 +3,7 @@
 
 import pytest
 import warnings
-from covsirphy import CleaningBase, Word, Population
+from covsirphy import CleaningBase, Word, Population, SubsetNotFoundError
 
 
 class TestCleaningBase(object):
@@ -15,6 +15,18 @@ class TestCleaningBase(object):
             cbase.total()
         cbase.citation = "citation"
         assert cbase.citation == "citation"
+
+    @pytest.mark.parametrize("country", [None, "Japan"])
+    def test_layer(self, data, country):
+        # Country level data
+        data.layer(country=None)
+        # Province level data
+        data.layer(country=country)
+
+    @pytest.mark.parametrize("country", ["Moon"])
+    def test_layer_error(self, japan_data, country):
+        with pytest.raises(SubsetNotFoundError):
+            japan_data.layer(country=country)
 
 
 class TestObsoleted(object):
