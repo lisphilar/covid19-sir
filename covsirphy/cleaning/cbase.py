@@ -126,16 +126,20 @@ class CleaningBase(Term):
     def citation(self, description):
         self._citation = str(description)
 
-    def ensure_country_name(self, country):
+    def ensure_country_name(self, country, errors="raise"):
         """
         Ensure that the country name is correct.
         If not, the correct country name will be found.
 
         Args:
             country (str): country name
+            errors (str): 'raise' or 'coerce'
 
         Returns:
             str: country name
+
+        Raises:
+            SubsetNotFoundError: no records were found for the country and @errors is 'raise'
         """
         df = self._cleaned_df.copy()
         self._ensure_dataframe(df, name="the cleaned dataset", columns=[self.COUNTRY])
@@ -156,7 +160,8 @@ class CleaningBase(Term):
         # Return the name if registered in the dataset
         if name in selectable_set:
             return name
-        raise SubsetNotFoundError(country=country, country_alias=name)
+        if errors == "raise":
+            raise SubsetNotFoundError(country=country, country_alias=name)
 
     @deprecate("CleaningBase.iso3_to_country()", new="CleaningBase.ensure_country_name()")
     def iso3_to_country(self, iso3_code):
@@ -245,11 +250,10 @@ class CleaningBase(Term):
             df = df.loc[df[self.PROVINCE] == self.UNKNOWN]
             return df.reset_index(drop=True)
         # Province level data at the selected country
-        try:
-            country_alias = self.ensure_country_name(country)
-        except SubsetNotFoundError:
-            raise SubsetNotFoundError(country=country) from None
+        country_alias = self.ensure_country_name(country, errors="coerce")
         df = df.loc[df[self.COUNTRY] == country_alias]
+        if df.empty:
+            raise SubsetNotFoundError(country=country, country_alias=country_alias) from None
         df = df.loc[df[self.PROVINCE] != self.UNKNOWN]
         return df.reset_index(drop=True)
 
@@ -259,27 +263,30 @@ class CleaningBase(Term):
 
         Args:
             country (str): country name
-            province (str or None): province name
+            province (str or None): province name or None (country level data)
 
         Returns:
-            pandas.DataFrame: subset for the country/province
+            pandas.DataFrame: subset for the country/province, columns are not changed
+
+        Raises:
+            SubsetNotFoundError: no records were found for the condition
         """
         # Country level
-        country = self.ensure_country_name(country)
-        df = self._ensure_dataframe(
-            self._cleaned_df, name="the cleaned dataset", columns=[self.COUNTRY])
-        df = df.loc[df[self.COUNTRY] == country, :]
+        if province is None or province == self.UNKNOWN:
+            df = self.layer(country=None)
+            country_alias = self.ensure_country_name(country)
+            df = df.loc[df[self.COUNTRY] == country_alias]
+            return df.reset_index(drop=True)
         # Province level
-        province = province or self.UNKNOWN
-        if self.PROVINCE not in df.columns and province == self.UNKNOWN:
-            return df
-        df = self._ensure_dataframe(
-            df, "the cleaned dataset", columns=[self.PROVINCE])
-        return df.loc[df[self.PROVINCE] == province, :]
+        df = self.layer(country=country)
+        df = df.loc[df[self.PROVINCE] == province]
+        if df.empty:
+            raise SubsetNotFoundError
+        return df.reset_index(drop=True)
 
     def subset(self, country, province=None, start_date=None, end_date=None):
         """
-        Return subset of the country/province and start/end date.
+        Return subset with country/province name and start/end date.
 
         Args:
             country (str): country name or ISO3 code
@@ -293,19 +300,21 @@ class CleaningBase(Term):
                     reset index
                 Columns
                     without ISO3, Country, Province column
+
+        Raises:
+            SubsetNotFoundError: no records were found for the condition
         """
-        country_alias = self.ensure_country_name(country)
-        df = self._subset_by_area(country=country, province=province)
-        df = df.drop(
-            [self.COUNTRY, self.ISO3, self.PROVINCE], axis=1, errors="ignore")
-        if df.empty:
+        country_alias = self.ensure_country_name(country, errors="coerce")
+        try:
+            df = self._subset_by_area(country=country, province=province)
+        except SubsetNotFoundError:
             raise SubsetNotFoundError(
-                country=country, country_alias=country_alias, province=province)
+                country=country, country_alias=country_alias, province=province) from None
+        df = df.drop([self.COUNTRY, self.ISO3, self.PROVINCE], axis=1, errors="ignore")
         # Subset with Start/end date
         if start_date is None and end_date is None:
             return df.reset_index(drop=True)
-        df = self._ensure_dataframe(
-            df, name="the cleaned dataset", columns=[self.DATE])
+        df = self._ensure_dataframe(df, name="the cleaned dataset", columns=[self.DATE])
         series = df[self.DATE].copy()
         start_obj = self.date_obj(date_str=start_date, default=series.min())
         end_obj = self.date_obj(date_str=end_date, default=series.max())
@@ -313,7 +322,7 @@ class CleaningBase(Term):
         if df.empty:
             raise SubsetNotFoundError(
                 country=country, country_alias=country_alias, province=province,
-                start_date=start_date, end_date=end_date)
+                start_date=start_date, end_date=end_date) from None
         return df.reset_index(drop=True)
 
     def subset_complement(self, country, **kwargs):
