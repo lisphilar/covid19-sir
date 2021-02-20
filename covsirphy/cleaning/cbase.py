@@ -281,7 +281,7 @@ class CleaningBase(Term):
         df = self.layer(country=country)
         df = df.loc[df[self.PROVINCE] == province]
         if df.empty:
-            raise SubsetNotFoundError
+            raise SubsetNotFoundError(country=country)
         return df.reset_index(drop=True)
 
     def subset(self, country, province=None, start_date=None, end_date=None):
