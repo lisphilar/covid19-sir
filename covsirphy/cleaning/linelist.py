@@ -153,6 +153,9 @@ class LinelistData(CleaningBase):
         # Select columns
         return df.loc[:, self.LINELIST_COLS]
 
+    def layer(self, **kwargs):
+        raise NotImplementedError
+
     def subset(self, country, province=None):
         """
         Return subset of the country/province.
