@@ -228,6 +228,7 @@ class CleaningBase(Term):
                 - any other columns of the cleaned data
 
         Raises:
+            SubsetNotFoundError: no records were found for the country (when @country is not None)
             KeyError: @country was None, but country names were not registered in the dataset
 
         Note:
@@ -235,22 +236,22 @@ class CleaningBase(Term):
             When @country is a country name, province level data in the selected country will be returned.
         """
         df = self._cleaned_df.copy()
-        if hasattr(self, "_country"):
-            country = self._country
+        self._ensure_dataframe(df, name="the cleaned dataset", columns=[self.COUNTRY])
         # Country level data
         if country is None:
             if self.PROVINCE in df:
                 df = df.loc[df[self.PROVINCE] == self.UNKNOWN]
-            self._ensure_dataframe(df, name="the cleaned dataset", columns=[self.COUNTRY])
-            df[self.COUNTRY] = df[self.COUNTRY].astype(str)
+            df[self.AREA_COLUMNS] = df[self.AREA_COLUMNS].astype(str)
             return df.reset_index(drop=True)
         # Province level data at the selected country
-        if self.COUNTRY in df:
+        try:
             country_alias = self.ensure_country_name(country)
-            df = df.loc[df[self.COUNTRY] == country_alias]
+        except SubsetNotFoundError:
+            raise SubsetNotFoundError(country=country) from None
+        df = df.loc[df[self.COUNTRY] == country_alias]
         self._ensure_dataframe(df, name="the cleaned dataset", columns=[self.PROVINCE])
         df = df.loc[df[self.PROVINCE] != self.UNKNOWN]
-        df[self.PROVINCE] = df[self.PROVINCE].astype(str)
+        df[self.AREA_COLUMNS] = df[self.AREA_COLUMNS].astype(str)
         return df.reset_index(drop=True)
 
     def _subset_by_area(self, country, province=None):
