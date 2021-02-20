@@ -365,7 +365,7 @@ class TestScenario(object):
         snl.fit_predict(oxcgrt_data)
         assert Term.FUTURE in snl.summary()[Term.TENSE].unique()
 
-    @pytest.mark.parametrize("indicator", ["Stringency_index", "School_closing"])
+    @pytest.mark.parametrize("indicator", ["Stringency_index"])
     @pytest.mark.parametrize("target", ["Infected"])
     def test_estimate_delay(self, jhu_data, population_data, oxcgrt_data, indicator, target):
         warnings.simplefilter("ignore", category=UserWarning)
