@@ -137,8 +137,8 @@ class CleaningBase(Term):
         Returns:
             str: country name
         """
-        df = self._ensure_dataframe(
-            self._cleaned_df, name="the cleaned dataset", columns=[self.COUNTRY])
+        df = self._cleaned_df.copy()
+        self._ensure_dataframe(df, name="the cleaned dataset", columns=[self.COUNTRY])
         selectable_set = set(df[self.COUNTRY].unique())
         # return country name as-is if selectable
         if country in selectable_set:
@@ -210,6 +210,48 @@ class CleaningBase(Term):
         if province in [None, cls.UNKNOWN]:
             return country
         return f"{country}{cls.SEP}{province}"
+
+    def layer(self, country=None):
+        """
+        Return the cleaned data at the selected layer.
+
+        Args:
+            country (str or None): country name or None (country level data or country-specific dataset)
+
+        Returns:
+            pandas.DataFrame:
+                Index
+                    reset index
+                Columns
+                - Country (str): country names
+                - Province (str): province names (or "-" when country level data)
+                - any other columns of the cleaned data
+
+        Raises:
+            KeyError: @country was None, but country names were not registered in the dataset
+
+        Note:
+            When @country is None, country level data will be returned.
+            When @country is a country name, province level data in the selected country will be returned.
+        """
+        df = self._cleaned_df.copy()
+        if hasattr(self, "_country"):
+            country = self._country
+        # Country level data
+        if country is None:
+            if self.PROVINCE in df:
+                df = df.loc[df[self.PROVINCE] == self.UNKNOWN]
+            self._ensure_dataframe(df, name="the cleaned dataset", columns=[self.COUNTRY])
+            df[self.COUNTRY] = df[self.COUNTRY].astype(str)
+            return df.reset_index(drop=True)
+        # Province level data at the selected country
+        if self.COUNTRY in df:
+            country_alias = self.ensure_country_name(country)
+            df = df.loc[df[self.COUNTRY] == country_alias]
+        self._ensure_dataframe(df, name="the cleaned dataset", columns=[self.PROVINCE])
+        df = df.loc[df[self.PROVINCE] != self.UNKNOWN]
+        df[self.PROVINCE] = df[self.PROVINCE].astype(str)
+        return df.reset_index(drop=True)
 
     def _subset_by_area(self, country, province=None):
         """
