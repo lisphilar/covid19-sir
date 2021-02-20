@@ -48,6 +48,7 @@ class PopulationPyramidData(CleaningBase):
             self._raw = self.load(filename)
         else:
             self._raw = pd.DataFrame(columns=self.PYRAMID_COLS)
+        self._cleaned_df = self._raw.copy()
         self._citation = "World Bank Group (2020), World Bank Open Data, https://data.worldbank.org/"
         self._filename = filename
         self.verbose = verbose
@@ -120,8 +121,8 @@ class PopulationPyramidData(CleaningBase):
                     - Age (int): age
                     - Population (int): population value
         """
-        if not self._raw.empty and country in self._raw[self.COUNTRY].unique():
-            df = self._raw.copy()
+        if not self._cleaned_df.empty and country in self._cleaned_df[self.COUNTRY].unique():
+            df = self._cleaned_df.copy()
             df = df.loc[df[self.COUNTRY] == country, :].reset_index(drop=True)
         else:
             # Retrieve from World Bank Open Data
@@ -130,8 +131,8 @@ class PopulationPyramidData(CleaningBase):
             except SubsetNotFoundError:
                 raise SubsetNotFoundError(country=country) from None
             # Add to raw dataset
-            self._raw = pd.concat([self._raw, df], ignore_index=True, axis=0)
-            self._raw.to_csv(self._filename, index=False)
+            self._cleaned_df = pd.concat([self._cleaned_df, df], ignore_index=True, axis=0)
+            self._cleaned_df.to_csv(self._filename, index=False)
         # Data types
         cat_cols, int_cols = [self.COUNTRY, self.SEX], [self.AGE, self.N]
         df[cat_cols] = df[cat_cols].astype("category")
@@ -153,7 +154,10 @@ class PopulationPyramidData(CleaningBase):
                     - Age (int): age
                     - Population (int): population value
         """
-        return self._raw
+        return self._cleaned_df
+
+    def layer(self, country=None):
+        raise NotImplementedError
 
     def subset(self, country, year=None, sex=None):
         """
