@@ -229,7 +229,7 @@ class CleaningBase(Term):
                     reset index
                 Columns
                 - Country (str): country names
-                - Province (str): province names (or "-" when country level data)
+                - Province (str): province names (or removed when country level data)
                 - any other columns of the cleaned data
 
         Raises:
@@ -248,7 +248,7 @@ class CleaningBase(Term):
         # Country level data
         if country is None:
             df = df.loc[df[self.PROVINCE] == self.UNKNOWN]
-            return df.reset_index(drop=True)
+            return df.drop(self.PROVINCE, axis=1).reset_index(drop=True)
         # Province level data at the selected country
         country_alias = self.ensure_country_name(country, errors="coerce")
         df = df.loc[df[self.COUNTRY] == country_alias]
