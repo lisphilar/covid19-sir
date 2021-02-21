@@ -150,13 +150,86 @@ class TestScenario(object):
         snl.trend(force=False, include_init_phase=False)
 
     def test_estimate(self, snl):
+        # Error test
         with pytest.raises(UnExecutedError):
             snl.phase_estimator(phase="1st")
-        snl.estimate(SIRF, timeout=5, timeout_interation=5)
+        with pytest.raises(UnExecutedError):
+            snl.simulate()
         with pytest.raises(ValueError):
             snl.estimate(SIRF, tau=1440)
+        # Deprecated
+        warnings.filterwarnings("ignore", category=DeprecationWarning)
+        with pytest.raises(UnExecutedError):
+            snl.param_history()
+        # Parameter estimation
+        snl.estimate(SIRF, timeout=2, timeout_interation=2)
+        snl.summary()
 
     def test_estimator(self, snl):
         assert isinstance(snl.phase_estimator(phase="1st"), Estimator)
         snl.estimate_history(phase="1st")
         snl.estimate_accuracy(phase="1st")
+
+    def test_simulate(self, snl):
+        snl.simulate()
+        snl.simulate(phases=["1st", "2nd"])
+
+    def test_get(self, snl):
+        with pytest.raises(KeyError):
+            snl.get("feeling", phase="last")
+        assert isinstance(snl.get("rho", phase="last"), float)
+
+    def test_param_history(self, snl):
+        warnings.filterwarnings("ignore", category=UserWarning)
+        warnings.filterwarnings("ignore", category=DeprecationWarning)
+        snl.param_history()
+        with pytest.raises(KeyError):
+            snl.param_history(targets=["feeling"])
+        snl.param_history(divide_by_first=False, show_figure=False)
+        snl.param_history(show_box_plot=False)
+
+    def test_describe(self, snl):
+        snl.add(days=100)
+        snl.describe()
+        snl.clear(name="New", include_past=False, template="Main")
+        snl.add(days=100, rho=0.01, name="New")
+        snl.describe()
+        snl.delete(name="New")
+
+    def test_track(self, snl):
+        snl.track()
+
+    @pytest.mark.parametrize("target", ["rho", "Infected"])
+    def test_history(self, snl, target):
+        snl.history(target=target)
+
+    def test_history_error(self, snl):
+        with pytest.raises(KeyError):
+            snl.history(target="feeling")
+
+    def test_history_rate(self, snl):
+        snl.history_rate(params=None)
+        with pytest.raises(TypeError):
+            snl.history_rate(params="rho")
+
+    def test_retrospective(self, snl):
+        date = snl.summary().loc["5th", Term.START]
+        snl.retrospective(
+            beginning_date=date, model=SIRF,
+            control="Main", target="Retro", timeout=1, timeout_iteration=1)
+
+    @pytest.mark.parametrize("metrics", ["MAE", "MSE", "MSLE", "RMSE", "RMSLE"])
+    def test_score(self, snl, metrics):
+        assert isinstance(snl.score(metrics=metrics), float)
+        # Selected phases
+        df = snl.summary(name="Main")
+        all_phases = df.index.tolist()
+        sel_score = snl.score(phases=all_phases[-2:])
+        # Selected past days (when the begging date is a start date)
+        beginning_date = df.loc[df.index[-2], Term.START]
+        past_days = Term.steps(beginning_date, snl.last_date, tau=1440)
+        assert snl.score(past_days=past_days) == sel_score
+        # Selected past days
+        snl.score(past_days=60)
+        with pytest.raises(ValueError):
+            snl.score(phases=["1st"], past_days=60)
