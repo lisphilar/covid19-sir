@@ -225,7 +225,11 @@ class TestScenario(object):
 
     @pytest.mark.parametrize("metrics", ["MAE", "MSE", "MSLE", "RMSE", "RMSLE"])
     def test_score(self, snl, metrics):
-        snl.clear("Score", template="Main")
+        try:
+            snl.delete(name="Score")
+        except KeyError:
+            pass
+        snl.clear(name="Score", template="Main")
         assert isinstance(snl.score(metrics=metrics, name="Score"), float)
         # Selected phases
         df = snl.summary(name="Score")
