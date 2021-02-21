@@ -49,6 +49,7 @@ class VisualizeBase(Term):
                 # Save the image as a file
                 plt.savefig(self._filename, **self._savefig_dict)
                 plt.clf()
+                plt.close()
         except AttributeError:
             pass
 
