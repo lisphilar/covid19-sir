@@ -8,23 +8,20 @@ from covsirphy import PolicyMeasures
 from covsirphy import SIRF, Scenario
 
 
-class TestPolicyMeasures(object):
+class UnTestPolicyMeasures(object):
+    # Skip this test at this time
     def test_start(self, jhu_data, population_data, oxcgrt_data):
         warnings.simplefilter("ignore", category=UserWarning)
         # Create instance
-        analyser = PolicyMeasures(
-            jhu_data, population_data, oxcgrt_data, tau=360)
+        analyser = PolicyMeasures(jhu_data, population_data, oxcgrt_data, tau=360)
         # List of countries
         assert isinstance(analyser.countries, list)
         # Return Scenario class
         assert isinstance(analyser.scenario("Japan"), Scenario)
         with pytest.raises(KeyError):
             analyser.scenario("Moon")
-        assert isinstance(analyser.countries, list)
 
-    # Skip this test at this time
-    # def test_analysis(self, jhu_data, population_data, oxcgrt_data):
-    def analysis(self, jhu_data, population_data, oxcgrt_data):
+    def test_analysis(self, jhu_data, population_data, oxcgrt_data):
         warnings.simplefilter("ignore", category=UserWarning)
         warnings.simplefilter("error", category=RuntimeWarning)
         # Create instance
