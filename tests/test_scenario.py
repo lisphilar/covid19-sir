@@ -203,7 +203,7 @@ class TestScenario(object):
     def test_track(self, snl):
         snl.track()
 
-    @pytest.mark.parametrize("target", ["rho", "Infected"])
+    @pytest.mark.parametrize("target", ["rho", "Infected", "Rt"])
     def test_history(self, snl, target):
         snl.history(target=target)
 
@@ -213,6 +213,7 @@ class TestScenario(object):
 
     def test_history_rate(self, snl):
         snl.history_rate(params=None)
+        snl.history_rate(params=["rho", "sigma"])
         with pytest.raises(TypeError):
             snl.history_rate(params="rho")
 
