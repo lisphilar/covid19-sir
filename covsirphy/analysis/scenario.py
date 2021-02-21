@@ -154,8 +154,7 @@ class Scenario(DataHandler):
     def add_phase(self, **kwargs):
         return self.add(**kwargs)
 
-    def add(self, name="Main", end_date=None, days=None,
-            population=None, model=None, **kwargs):
+    def add(self, name="Main", end_date=None, days=None, population=None, model=None, **kwargs):
         """
         Add a new phase.
         The start date will be the next date of the last registered phase.
@@ -186,8 +185,7 @@ class Scenario(DataHandler):
         tracker = self._tracker(name)
         try:
             tracker.add(
-                end_date=end_date, days=days, population=population,
-                model=model, **kwargs)
+                end_date=end_date, days=days, population=population, model=model, **kwargs)
         except ValueError:
             last_date = tracker.series.unit("last").end_date
             raise ValueError(
