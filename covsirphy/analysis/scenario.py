@@ -154,8 +154,7 @@ class Scenario(DataHandler):
     def add_phase(self, **kwargs):
         return self.add(**kwargs)
 
-    def add(self, name="Main", end_date=None, days=None,
-            population=None, model=None, **kwargs):
+    def add(self, name="Main", end_date=None, days=None, population=None, model=None, **kwargs):
         """
         Add a new phase.
         The start date will be the next date of the last registered phase.
@@ -186,8 +185,7 @@ class Scenario(DataHandler):
         tracker = self._tracker(name)
         try:
             tracker.add(
-                end_date=end_date, days=days, population=population,
-                model=model, **kwargs)
+                end_date=end_date, days=days, population=population, model=model, **kwargs)
         except ValueError:
             last_date = tracker.series.unit("last").end_date
             raise ValueError(
@@ -403,8 +401,7 @@ class Scenario(DataHandler):
         if "n_points" in kwargs.keys():
             raise ValueError(
                 "@n_points argument is un-necessary"
-                " because the number of change points will be automatically determined."
-            )
+                " because the number of change points will be automatically determined.")
         try:
             include_init_phase = kwargs.pop("include_init_phase")
             warnings.warn(
@@ -465,8 +462,7 @@ class Scenario(DataHandler):
         """
         estimator = self._tracker_dict[name].series.unit(phase).estimator
         if estimator is None:
-            raise UnExecutedError(
-                f'Scenario.estimate(model, phases=["{phase}"], name={name})')
+            raise UnExecutedError(f'Scenario.estimate(model, phases=["{phase}"], name={name})')
         return estimator
 
     def estimate_history(self, phase, name="Main", **kwargs):
@@ -536,8 +532,7 @@ class Scenario(DataHandler):
         fig_cols = self._ensure_list(
             variables or [self.CI, self.F, self.R], candidates=df.columns.tolist(), name="variables")
         title = f"{self.area}: Simulated number of cases ({name} scenario)"
-        self.line_plot(
-            df=df[fig_cols], title=title, y_integer=True, v=tracker.change_dates(), **kwargs)
+        self.line_plot(df=df[fig_cols], title=title, y_integer=True, v=tracker.change_dates(), **kwargs)
         return sim_df
 
     def get(self, param, phase="last", name="Main"):
@@ -720,8 +715,7 @@ class Scenario(DataHandler):
             return df
         # History of reproduction number
         rt_df = self.summary().reset_index()
-        rt_df = rt_df.pivot_table(
-            index=self.SERIES, columns=self.PHASE, values=self.RT)
+        rt_df = rt_df.pivot_table(index=self.SERIES, columns=self.PHASE, values=self.RT)
         rt_df = rt_df.fillna(self.UNKNOWN)
         rt_df = rt_df.loc[:, rt_df.nunique() > 1]
         cols = sorted(rt_df, key=self.str2num)
@@ -782,13 +776,10 @@ class Scenario(DataHandler):
                     - parameter values (float)
                     - day parameter values (float)
         """
-        sim_df = self.simulate(
-            phases=phases, name=name, y0_dict=y0_dict, show_figure=False)
+        sim_df = self.simulate(phases=phases, name=name, y0_dict=y0_dict, show_figure=False)
         param_df = self._track_param(name=name)
         return pd.merge(
-            sim_df, param_df, how="inner",
-            left_on=self.DATE, right_index=True, sort=True
-        )
+            sim_df, param_df, how="inner", left_on=self.DATE, right_index=True, sort=True)
 
     def track(self, phases=None, with_actual=True, y0_dict=None):
         """
@@ -844,12 +835,10 @@ class Scenario(DataHandler):
         # Include actual data or not
         with_actual = with_actual and target in self.VALUE_COLUMNS
         # Get tracking data
-        df = self.track(
-            phases=phases, with_actual=with_actual, y0_dict=y0_dict)
+        df = self.track(phases=phases, with_actual=with_actual, y0_dict=y0_dict)
         if target not in df.columns:
             col_str = ", ".join(list(df.columns))
-            raise KeyError(
-                f"@target must be selected from {col_str}, but {target} was applied.")
+            raise KeyError(f"@target must be selected from {col_str}, but {target} was applied.")
         # Select the records of target variable
         return df.pivot_table(
             values=target, index=self.DATE, columns=self.SERIES, aggfunc="last")
@@ -904,8 +893,7 @@ class Scenario(DataHandler):
         cols = list(set(df.columns) & set(model.PARAMETERS))
         if params is not None:
             if not isinstance(params, (list, set)):
-                raise TypeError(
-                    f"@params must be a list of parameters, but {params} were applied.")
+                raise TypeError(f"@params must be a list of parameters, but {params} were applied.")
             cols = list(set(cols) & set(params)) or cols
         df = df.loc[:, cols] / df.loc[df.index[0], cols]
         # Show figure
@@ -935,8 +923,7 @@ class Scenario(DataHandler):
             When parameter values are not specified,
             actual values of the last date before the beginning date will be used.
         """
-        param_dict = {
-            k: v for (k, v) in kwargs.items() if k in model.PARAMETERS}
+        param_dict = {k: v for (k, v) in kwargs.items() if k in model.PARAMETERS}
         est_kwargs = dict(kwargs.items() - param_dict.items())
         # Control
         self.clear(name=control, include_past=True)
@@ -950,8 +937,7 @@ class Scenario(DataHandler):
         self.clear(name=target, include_past=False, template=control)
         phases_changed = [
             self.num2str(i) for (i, ph) in enumerate(self._tracker(target).series)
-            if ph >= beginning_date
-        ]
+            if ph >= beginning_date]
         self.delete(phases=phases_changed, name=target)
         self.add(name=target, **param_dict)
         self.estimate(model, name=target, **est_kwargs)

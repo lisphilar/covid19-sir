@@ -10,20 +10,6 @@ from covsirphy import jpn_map
 from covsirphy import Term
 
 
-@pytest.fixture(scope="function")
-def imgfile():
-    dirpath = Path("input")
-    dirpath.mkdir(exist_ok=True)
-    filepath = dirpath.joinpath("test.jpg")
-    yield str(filepath)
-    try:
-        filepath.unlink(missing_ok=True)
-    except TypeError:
-        # Python 3.7
-        if filepath.exists():
-            filepath.unlink()
-
-
 class TestVisualizeBase(object):
     def test_base(self):
         warnings.filterwarnings("ignore", category=UserWarning)
@@ -47,7 +33,7 @@ class TestVisualizeBase(object):
 
 
 class TestColoredMap(object):
-    def test_directory(self):
+    def test_directory(self, imgfile):
         with ColoredMap(filename=imgfile) as cm:
             cm.directory = "input"
             assert cm.directory == "input"
