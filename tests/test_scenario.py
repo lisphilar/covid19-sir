@@ -3,22 +3,23 @@
 
 from datetime import datetime
 import warnings
-import pandas as pd
 import pytest
 from covsirphy import ScenarioNotFoundError, UnExecutedError, NotInteractiveError
 from covsirphy import Scenario, DataHandler
-from covsirphy import Term, PhaseSeries, SIR, SIRF
+from covsirphy import Term, SIRF
+
+
+@pytest.fixture(scope="module")
+def snl(jhu_data, population_data):
+    return Scenario(
+        jhu_data=jhu_data, population_data=population_data,
+        country="Japan", province=None, tau=None, auto_complement=True)
 
 
 class TestDataHandler(object):
-    @pytest.mark.parametrize("country", ["Italy", "Japan", "Netherlands", "Greece"])
+    @pytest.mark.parametrize("country", ["Italy"])
     @pytest.mark.parametrize("province", [None, "Abruzzo"])
     def test_start(self, jhu_data, population_data, country, province):
-        if province == "Abruzzo" and country != "Italy":
-            with pytest.raises(KeyError):
-                DataHandler(
-                    jhu_data, population_data, country, province=province)
-            return
         DataHandler(jhu_data, population_data, country, province=province)
 
     @pytest.mark.parametrize("country", ["Japan"])
@@ -38,340 +39,50 @@ class TestDataHandler(object):
             dhl.last_date = tomorrow
 
     @pytest.mark.parametrize("country", ["Japan"])
-    def test_line_plot(self, jhu_data, population_data, country):
-        warnings.simplefilter("ignore", category=UserWarning)
+    def test_interactive(self, jhu_data, population_data, country):
         # Setting
         dhl = DataHandler(jhu_data, population_data, country)
         dhl.init_records()
-        # Interactive / script mode
-        assert not dhl.interactive
-        with pytest.raises(NotInteractiveError):
-            dhl.interactive = True
-        dhl.interactive = False
-        # Change colors in plotting
-        dhl.records(
-            variables=["Confirmed", "Infected", "Fatal", "Recovered"],
-            color_dict={"Confirmed": "blue", "Infected": "orange", "Fatal": "red", "Recovered": "green"})
-
-    @pytest.mark.parametrize("country", ["Japan"])
-    def test_show_complement(self, jhu_data, population_data, country):
-        # Setting
-        dhl = DataHandler(jhu_data, population_data, country)
-        dhl.init_records()
-        dhl.first_date = "01Apr2020"
-        dhl.last_date = "01Aug2020"
-        # Test
-        dhl_df = dhl.show_complement()
-        data_df = jhu_data.show_complement(
-            country=country, start_date="01Apr2020", end_date="01Aug2020")
-        assert dhl_df.equals(data_df)
-
-    @pytest.mark.parametrize("country", ["Japan"])
-    def test_records(self, jhu_data, population_data, country):
-        warnings.simplefilter("ignore", category=UserWarning)
-        # Setting
-        dhl = DataHandler(jhu_data, population_data, country)
-        dhl.init_records()
-        dhl.first_date = "01Apr2020"
-        dhl.last_date = "01Aug2020"
-        # Test
-        df = dhl.records(variables=None, show_figure=False)
-        assert isinstance(df, pd.DataFrame)
-        assert set(df.columns) == set([Term.DATE, Term.CI, Term.F, Term.R])
-        dates = df[Term.DATE]
-        assert dates.min() == Term.date_obj(dhl.first_date)
-        assert dates.max() == Term.date_obj(dhl.last_date)
-        df2 = dhl.records(variables=["Susceptible"], show_figure=True)
-        assert set(df2.columns) == set([Term.DATE, Term.S])
-
-    @pytest.mark.parametrize("country", ["Japan"])
-    def test_records_diff(self, jhu_data, population_data, country):
-        warnings.simplefilter("ignore", category=UserWarning)
-        dhl = DataHandler(jhu_data, population_data, country)
-        dhl.init_records()
-        dhl.records_diff(window=7, show_figure=False)
-        dhl.records_diff(window=100, show_figure=True)
+        # Force interactive
+        dhl._interactive = True
+        warnings.filterwarnings("ignore", category=UserWarning)
+        dhl.records(show_figure=True)
 
 
 class TestScenario(object):
-    @pytest.mark.parametrize("country", ["Japan"])
-    def test_class_as_dict(self, jhu_data, population_data, country):
-        # Setting
-        snl = Scenario(jhu_data, population_data, country)
-        # Create a phase series
-        population = population_data.value(country)
-        series = PhaseSeries("01Apr2020", "01Aug2020", population)
-        with pytest.raises(ScenarioNotFoundError):
-            assert snl["New"]
-        # Add scenario
-        snl["New"] = series
-        # Get scenario
-        assert snl["New"] == series
-
-    @pytest.mark.parametrize("country", ["Japan"])
-    def test_edit_series(self, jhu_data, population_data, country):
-        # Setting
-        snl = Scenario(jhu_data, population_data, country)
-        snl.first_date = "01Apr2020"
-        snl.last_date = "01Aug2020"
-        assert snl.first_date == "01Apr2020"
-        assert snl.last_date == "01Aug2020"
-        # Add and clear
-        assert snl.summary().empty
-        snl.add(end_date="05May2020")
+    @pytest.mark.parametrize("start_date", ["01Mar2020"])
+    @pytest.mark.parametrize("end_date", ["31Dec2020"])
+    def test_record_range(self, snl, start_date, end_date):
+        snl.first_date = start_date
+        snl.last_date = end_date
+        assert snl.first_date == start_date
+        assert snl.last_date == end_date
         with pytest.raises(ValueError):
-            snl.add(end_date="20Apr2020")
-        snl.add(days=20)
-        snl.add()
-        snl.add(end_date="01Sep2020")
-        assert len(snl["Main"]) == 4
-        snl.clear(include_past=True)
-        with pytest.raises(ScenarioNotFoundError):
-            snl.clear("New", template="Un-registered")
-        snl.add(end_date="01Sep2020", name="New")
-        assert len(snl["New"]) == 2
-        # Delete
-        snl.delete(name="Main")
-        assert len(snl["Main"]) == 0
-        with pytest.raises(TypeError):
-            snl.delete(phases="1st", name="New")
-        snl.delete(phases=["1st"], name="New")
-        assert len(snl["New"]) == 1
-        snl.delete(name="New")
-        with pytest.raises(KeyError):
-            assert len(snl["New"]) == 1
-
-    @pytest.mark.parametrize("country", ["Japan"])
-    def test_add_phase_dep(self, jhu_data, population_data, country):
-        # Setting
-        snl = Scenario(jhu_data, population_data, country)
-        snl.first_date = "01Apr2020"
-        snl.last_date = "01Aug2020"
-        # Test
-        warnings.simplefilter("error")
-        with pytest.raises(DeprecationWarning):
-            snl.add_phase(end_date="01May2020")
-        warnings.simplefilter("ignore")
-        snl.add_phase(end_date="01May2020")
-
-    @pytest.mark.parametrize("country", ["Japan"])
-    def test_trend(self, jhu_data, population_data, country):
-        # Setting
-        snl = Scenario(jhu_data, population_data, country)
-        snl.first_date = "01Apr2020"
-        snl.last_date = "01Aug2020"
-        # Deprecated
-        warnings.simplefilter("error")
-        with pytest.raises(DeprecationWarning):
-            snl.trend(include_init_phase=False, show_figure=False)
-        warnings.simplefilter("ignore")
-        snl.trend(include_init_phase=False, show_figure=False)
-        # S-R trend analysis
-        snl.trend(show_figure=False)
-        assert snl["Main"]
+            snl.first_date = "01Jan2019"
         with pytest.raises(ValueError):
-            snl.trend(show_figure=False, n_points=3)
-        # Disable/enable
-        length = len(snl["Main"])
-        snl.disable(phases=["0th"], name="Main")
-        assert len(snl["Main"]) == length - 1
-        snl.enable(phases=["0th"], name="Main")
-        assert len(snl["Main"]) == length
-        with pytest.raises(TypeError):
-            snl.enable(phases="0th", name="Main")
-        with pytest.raises(TypeError):
-            snl.disable(phases="1st", name="Main")
+            snl.last_date = Term.tomorrow(datetime.now().strftime(Term.DATE_FORMAT))
 
-    @pytest.mark.parametrize("country", ["Japan"])
-    def test_edit(self, jhu_data, population_data, country):
-        # Setting
-        snl = Scenario(jhu_data, population_data, country)
-        snl.first_date = "01Apr2020"
-        snl.last_date = "01Aug2020"
-        snl.trend(show_figure=False)
-        # Combine
-        length = len(snl["Main"])
-        snl.combine(["1st", "2nd"])
-        n_changed = int(population_data.value(country) * 0.98)
-        snl.combine(["2nd", "3rd"], population=n_changed)
-        assert len(snl["Main"]) == length - 2
-        # Separate
-        snl.separate(date="01May2020")
-        assert len(snl["Main"]) == length - 1
-
-    @pytest.mark.parametrize("country", ["Japan"])
-    def test_summary(self, jhu_data, population_data, country):
-        # Setting
-        snl = Scenario(jhu_data, population_data, country)
-        snl.first_date = "01Apr2020"
-        snl.last_date = "01Aug2020"
-        snl.trend(show_figure=False)
-        # One scenario
-        assert set(snl.summary().columns) == set(
-            [Term.TENSE, Term.START, Term.END, Term.N])
-        # Show two scenarios
-        snl.clear(name="New")
-        cols = snl.summary().reset_index().columns
-        assert set([Term.SERIES, Term.PHASE]).issubset(cols)
-        # Show selected scenario
-        cols_sel = snl.summary(name="New").reset_index().columns
-        assert not set([Term.SERIES, Term.PHASE]).issubset(cols_sel)
-        # Columns to show
-        show_cols = [Term.N, Term.START]
-        assert set(snl.summary(columns=show_cols).columns) == set(show_cols)
-        with pytest.raises(TypeError):
-            snl.summary(columns=Term.N)
-        with pytest.raises(KeyError):
-            snl.summary(columns=[Term.N, "Temperature"])
-        # To markdown
-        snl.summary().to_markdown()
-
-    @pytest.mark.parametrize("country", ["Japan"])
-    def test_estimate(self, jhu_data, population_data, country):
+    def test_line_plot(self, snl, imgfile):
         warnings.simplefilter("ignore", category=UserWarning)
-        # Setting
-        snl = Scenario(jhu_data, population_data, country)
-        snl.first_date = "01Apr2020"
-        snl.last_date = "01Aug2020"
-        with pytest.raises(ValueError):
-            snl.estimate(SIR)
-        snl.trend(show_figure=False)
-        with pytest.raises(AttributeError):
-            snl.estimate_history(phase="last")
-        # Parameter estimation
-        with pytest.raises(KeyError):
-            snl.estimate(SIR, phases=["30th"])
-        with pytest.raises(KeyError):
-            snl.estimate(SIR, pruner="unknown")
-        with pytest.raises(ValueError):
-            snl.estimate(model=SIR, tau=1440)
-        snl.trend()
-        snl.estimate(SIR, timeout=1, timeout_iteration=1)
-        # Estimation history
-        snl.estimate_history(phase="last")
-        # Estimation accuracy
-        snl.estimate_accuracy(phase="last")
-        # Get a value
-        snl.get(Term.RT)
-        with pytest.raises(KeyError):
-            snl.get("feeling")
+        # Interactive / script mode
+        assert not snl.interactive
+        with pytest.raises(NotInteractiveError):
+            snl.interactive = True
+        snl.interactive = False
+        # Change colors in plotting
+        snl.records(
+            variables=["Confirmed", "Infected", "Fatal", "Recovered"],
+            color_dict={"Confirmed": "blue", "Infected": "orange", "Fatal": "red", "Recovered": "green"},
+            filename=imgfile,
+        )
 
-    @pytest.mark.parametrize("country", ["Japan"])
-    def test_estimate_tau(self, jhu_data, population_data, country):
-        # Setting
-        snl = Scenario(jhu_data, population_data, country)
-        snl.trend(show_figure=False)
-        with pytest.raises(ValueError):
-            snl.estimate(SIRF, tau=1440, timeout=20)
+    def test_complement_reverse(self, snl):
+        snl.complement_reverse()
+        snl.records()
+        snl.records_diff()
 
-    @pytest.mark.parametrize("country", ["Japan"])
-    def test_simulate(self, jhu_data, population_data, country):
-        warnings.simplefilter("ignore", category=UserWarning)
-        warnings.simplefilter("ignore", category=DeprecationWarning)
-        # Setting
-        snl = Scenario(jhu_data, population_data, country)
-        snl.first_date = "01Apr2020"
-        snl.last_date = "01May2020"
-        with pytest.raises(ValueError):
-            snl.simulate()
-        with pytest.raises(ValueError):
-            snl.track()
-        snl.trend(show_figure=False)
-        # Parameter estimation
-        with pytest.raises(ValueError):
-            # Deprecated
-            snl.param_history(["rho"])
-        all_phases = snl.summary().index.tolist()
-        snl.disable(all_phases[:-2])
-        with pytest.raises(NameError):
-            snl.simulate()
-        snl.estimate(SIRF, timeout=5, timeout_iteration=5)
-        # Simulation
-        snl.simulate(variables=[Term.C, Term.CI, Term.F, Term.R])
-        snl.simulate(phases=all_phases[-2:])
-        # Parameter history (Deprecated)
-        snl.param_history([Term.RT], divide_by_first=False)
-        snl.param_history(["rho"])
-        snl.param_history(["rho"], show_figure=False)
-        snl.param_history(["rho"], show_box_plot=False)
-        with pytest.raises(KeyError):
-            snl.param_history(["feeling"])
-        # Comparison of scenarios
-        snl.describe()
-        snl.track()
-        snl.history(target="Rt")
-        snl.history(target="sigma")
-        snl.history(target="rho", show_figure=False)
-        snl.history(target="Infected", phases=all_phases[-2:])
-        with pytest.raises(KeyError):
-            snl.history(target="temperature")
-        # Change rate of parameters
-        snl.history_rate(name="Main")
-        snl.history_rate(
-            name="Main", params=["theta", "kappa"], show_figure=False)
-        with pytest.raises(TypeError):
-            snl.history_rate(params="", name="Main")
-        # Add new scenario
-        snl.add(end_date="01Sep2020", name="New")
-        snl.describe()
-
-    @pytest.mark.parametrize("country", ["Japan"])
-    def test_retrospective(self, jhu_data, population_data, country):
-        # Setting
-        snl = Scenario(jhu_data, population_data, country)
-        snl.first_date = "01Apr2020"
-        snl.last_date = "01Jun2020"
-        snl.trend(show_figure=False)
-        # Retrospective analysis
-        snl.retrospective(
-            "01May2020", model=SIRF, control="Main", target="Retrospective",
-            timeout=1, timeout_iteration=1)
-
-    @pytest.mark.parametrize("country", ["Italy"])
-    def test_score(self, jhu_data, population_data, country):
-        snl = Scenario(jhu_data, population_data, country, tau=360)
-        snl.trend(show_figure=False)
-        snl.estimate(SIRF, timeout=1, timeout_iteration=1)
-        assert isinstance(snl.score(metrics="RMSLE"), float)
-        # Selected phases
-        df = snl.summary()
-        all_phases = df.index.tolist()
-        sel_score = snl.score(phases=all_phases[-2:])
-        # Selected past days (when the begging date is a start date)
-        beginning_date = df.loc[df.index[-2], Term.START]
-        past_days = Term.steps(beginning_date, snl.last_date, tau=1440)
-        assert snl.score(past_days=past_days) == sel_score
-        # Selected past days
-        snl.score(past_days=60)
-        with pytest.raises(ValueError):
-            snl.score(phases=["1st"], past_days=60)
-
-    @pytest.mark.parametrize("country", ["Japan"])
-    def test_fit_predict(self, jhu_data, population_data, oxcgrt_data, country):
-        snl = Scenario(jhu_data, population_data, country)
-        snl.trend(show_figure=False)
-        with pytest.raises(UnExecutedError):
-            snl.fit(oxcgrt_data)
-        snl.estimate(SIRF, timeout=1, timeout_iteration=1)
-        # Fitting
-        with pytest.raises(UnExecutedError):
-            snl.predict()
-        info_dict = snl.fit(oxcgrt_data)
-        assert isinstance(info_dict, dict)
-        # Prediction
-        snl.predict()
-        assert Term.FUTURE in snl.summary()[Term.TENSE].unique()
-        # Fitting & predict
-        snl.fit_predict(oxcgrt_data)
-        assert Term.FUTURE in snl.summary()[Term.TENSE].unique()
-
-    @pytest.mark.parametrize("indicator", ["Stringency_index"])
-    @pytest.mark.parametrize("target", ["Infected"])
-    def test_estimate_delay(self, jhu_data, population_data, oxcgrt_data, indicator, target):
-        warnings.simplefilter("ignore", category=UserWarning)
-        for country in jhu_data.countries():
-            snl = Scenario(jhu_data, population_data, country)
-            delay, df = snl.estimate_delay(
-                oxcgrt_data, indicator=indicator, target=target)
-            assert isinstance(delay, int)
-            assert isinstance(df, pd.DataFrame)
+    def test_complement(self, snl):
+        snl.complement()
+        snl.show_complement()
+        snl.records()
+        snl.records_diff()
