@@ -4,6 +4,7 @@
 from datetime import datetime
 import warnings
 import pytest
+import pandas as pd
 from covsirphy import ScenarioNotFoundError, UnExecutedError, NotInteractiveError
 from covsirphy import Scenario, DataHandler
 from covsirphy import Term, PhaseSeries, Estimator, SIRF
@@ -149,12 +150,14 @@ class TestScenario(object):
         warnings.filterwarnings("ignore", category=DeprecationWarning)
         snl.trend(force=False, include_init_phase=False)
 
-    def test_estimate(self, snl):
+    def test_estimate(self, snl, oxcgrt_data):
         # Error test
         with pytest.raises(UnExecutedError):
             snl.phase_estimator(phase="1st")
         with pytest.raises(UnExecutedError):
             snl.simulate()
+        with pytest.raises(UnExecutedError):
+            snl.fit(oxcgrt_data)
         with pytest.raises(ValueError):
             snl.estimate(SIRF, tau=1440)
         # Deprecated
@@ -162,7 +165,7 @@ class TestScenario(object):
         with pytest.raises(UnExecutedError):
             snl.param_history()
         # Parameter estimation
-        snl.estimate(SIRF, timeout=2, timeout_interation=2)
+        snl.estimate(SIRF, timeout=1, timeout_interation=1)
         snl.summary()
 
     def test_estimator(self, snl):
@@ -195,6 +198,7 @@ class TestScenario(object):
         snl.add(days=100, rho=0.01, name="New")
         snl.describe()
         snl.delete(name="New")
+        snl.clear(name="Main")
 
     def test_track(self, snl):
         snl.track()
@@ -214,22 +218,45 @@ class TestScenario(object):
 
     def test_retrospective(self, snl):
         date = snl.summary().loc["5th", Term.START]
+        snl.clear(name="Control", template="Main")
         snl.retrospective(
             beginning_date=date, model=SIRF,
-            control="Main", target="Retro", timeout=1, timeout_iteration=1)
+            control="Control", target="Retro", timeout=1, timeout_iteration=1)
 
     @pytest.mark.parametrize("metrics", ["MAE", "MSE", "MSLE", "RMSE", "RMSLE"])
     def test_score(self, snl, metrics):
-        assert isinstance(snl.score(metrics=metrics), float)
+        snl.clear("Score", template="Main")
+        assert isinstance(snl.score(metrics=metrics, name="Score"), float)
         # Selected phases
-        df = snl.summary(name="Main")
+        df = snl.summary(name="Score")
         all_phases = df.index.tolist()
-        sel_score = snl.score(phases=all_phases[-2:])
+        sel_score = snl.score(phases=all_phases[-2:], name="Score")
         # Selected past days (when the begging date is a start date)
         beginning_date = df.loc[df.index[-2], Term.START]
         past_days = Term.steps(beginning_date, snl.last_date, tau=1440)
-        assert snl.score(past_days=past_days) == sel_score
+        assert snl.score(past_days=past_days, name="Score") == sel_score
         # Selected past days
-        snl.score(past_days=60)
+        snl.score(past_days=60, name="Score")
         with pytest.raises(ValueError):
-            snl.score(phases=["1st"], past_days=60)
+            snl.score(phases=["1st"], past_days=60, name="Score")
+
+    @pytest.mark.parametrize("indicator", ["Stringency_index"])
+    @pytest.mark.parametrize("target", ["Infected", "Confirmed"])
+    def test_estimate_delay(self, snl, indicator, target, oxcgrt_data):
+        warnings.simplefilter("ignore", category=UserWarning)
+        delay, df = snl.estimate_delay(oxcgrt_data, indicator=indicator, target=target)
+        assert isinstance(delay, int)
+        assert isinstance(df, pd.DataFrame)
+
+    def test_fit_predict(self, snl, oxcgrt_data):
+        # Fitting
+        with pytest.raises(UnExecutedError):
+            snl.predict()
+        info_dict = snl.fit(oxcgrt_data)
+        assert isinstance(info_dict, dict)
+        # Prediction
+        snl.predict()
+        assert Term.FUTURE in snl.summary()[Term.TENSE].unique()
+        # Fitting & predict
+        snl.fit_predict(oxcgrt_data)
+        assert Term.FUTURE in snl.summary()[Term.TENSE].unique()
