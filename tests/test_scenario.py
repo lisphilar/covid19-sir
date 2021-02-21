@@ -5,8 +5,8 @@ from datetime import datetime
 import warnings
 import pytest
 from covsirphy import ScenarioNotFoundError, UnExecutedError, NotInteractiveError
-from covsirphy import Scenario, DataHandler, PhaseSeries
-from covsirphy import Term, SIRF
+from covsirphy import Scenario, DataHandler
+from covsirphy import Term, PhaseSeries, Estimator, SIRF
 
 
 @pytest.fixture(scope="module")
@@ -92,6 +92,7 @@ class TestScenario(object):
             snl.clear(name="New", include_past=True, template="Un-registered")
         snl.clear(name="New", include_past=True, template="Main")
         assert isinstance(snl["New"], PhaseSeries)
+        snl.summary()
         snl.delete(name="New")
         with pytest.raises(ScenarioNotFoundError):
             snl["New"]
@@ -110,6 +111,8 @@ class TestScenario(object):
         snl.add()
         # Delete phases
         snl.delete(phases=["last"])
+        snl.clear(include_past=False)
+        snl.delete(phases=None)
         snl.clear(include_past=True)
 
     def test_enable(self, snl):
@@ -127,5 +130,33 @@ class TestScenario(object):
         # Clear all phases
         snl.clear(include_past=True)
 
+    def test_combine_separate(self, snl):
+        # Setting
+        snl.add(end_date="01May2020")
+        snl.add(end_date="01Sep2020")
+        snl.add(end_date="01Nov2020")
+        # Combine
+        snl.combine(phases=["0th", "1st"])
+        snl.separate(date="01Jun2020")
+        assert len(snl.summary()) == 3
+        # Clear all phases
+        snl.clear(include_past=True)
+
     def test_trend(self, snl):
         snl.trend()
+        with pytest.raises(ValueError):
+            snl.trend(n_points=2)
+        warnings.filterwarnings("ignore", category=DeprecationWarning)
+        snl.trend(force=False, include_init_phase=False)
+
+    def test_estimate(self, snl):
+        with pytest.raises(UnExecutedError):
+            snl.phase_estimator(phase="1st")
+        snl.estimate(SIRF, timeout=5, timeout_interation=5)
+        with pytest.raises(ValueError):
+            snl.estimate(SIRF, tau=1440)
+
+    def test_estimator(self, snl):
+        assert isinstance(snl.phase_estimator(phase="1st"), Estimator)
+        snl.estimate_history(phase="1st")
+        snl.estimate_accuracy(phase="1st")
