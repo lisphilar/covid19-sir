@@ -34,9 +34,11 @@ class TestDataHandler(object):
     @pytest.mark.parametrize("country", ["Japan"])
     def test_population(self, jhu_data, population_data, country):
         dhl = DataHandler(country=country, province=None)
+        assert not dhl.main_satisfied
         with pytest.raises(NotRegisteredMainError):
             assert dhl.population == population_data.value(country=country)
         dhl.register(jhu_data=jhu_data, population_data=population_data)
+        assert dhl.main_satisfied
         assert dhl.population == population_data.value(country=country)
 
     @pytest.mark.parametrize("country", ["Japan"])
