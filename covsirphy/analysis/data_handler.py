@@ -229,16 +229,21 @@ class DataHandler(Term):
         self._main_cols = list(set(df.columns) - set([self.DATE]))
         return df
 
-    def switch_complement(self, whether, **kwargs):
+    def switch_complement(self, whether=None, **kwargs):
         """
         Switch whether perform auto complement or not. (Default: True)
 
         Args:
-            whether (bool): if True and necessary, the number of cases will be complemented
+            whether (bool or None): if True and necessary, the number of cases will be complemented
             kwargs: the other arguments of JHUData.subset_complement()
+
+        Note:
+            When @whether is None, @whether will not be changed.
         """
         comp_dict = self._complement_dict.copy()
-        comp_dict.update({"auto_complement": bool(whether), **kwargs})
+        if whether is not None:
+            comp_dict["auto_complement"] = bool(whether)
+        comp_dict.update(kwargs)
         self._complement_dict = comp_dict.copy()
 
     def show_complement(self):
