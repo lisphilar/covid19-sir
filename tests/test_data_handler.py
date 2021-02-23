@@ -77,3 +77,40 @@ class TestDataHandler(object):
         series = dhl.records_extras()[Term.DATE]
         assert series.min().strftime(Term.DATE_FORMAT) == dhl.first_date == "01Apr2020"
         assert series.max().strftime(Term.DATE_FORMAT) == dhl.last_date == "01Sep2020"
+
+    @pytest.mark.parametrize("country", ["Japan"])
+    @pytest.mark.parametrize("main", [True, False])
+    @pytest.mark.parametrize("extras", [True, False])
+    @pytest.mark.parametrize("past", [True, False])
+    @pytest.mark.parametrize("future", [True, False])
+    def test_records(self, jhu_data, population_data, country,
+                     japan_data, oxcgrt_data, pcr_data, vaccine_data,
+                     main, extras, past, future):
+        dhl = DataHandler(country=country, province=None)
+        # Combination of arguments
+        if (not main and not extras) or (not past and not future):
+            with pytest.raises(ValueError):
+                dhl.records(main=main, extras=extras, past=past, future=future)
+            return
+        # Register main datasets
+        if main:
+            with pytest.raises(NotRegisteredMainError):
+                dhl.records(main=main, extras=extras, past=past, future=future)
+        dhl.register(jhu_data=jhu_data, population_data=population_data)
+        dhl.timepoints(first_date="01Apr2020", last_date="01Sep2020", today="01Jun2020")
+        # Register extra datasets
+        if extras:
+            with pytest.raises(NotRegisteredExtraError):
+                dhl.records(main=main, extras=extras, past=past, future=future)
+        dhl.register(extras=[japan_data, oxcgrt_data, pcr_data, vaccine_data])
+        # Get records
+        df = dhl.records(main=main, extras=extras, past=past, future=future)
+        # Check the start/end date of the records
+        if past and future:
+            sta, end = "01Apr2020", "01Sep2020"
+        elif past:
+            sta, end = "01Apr2020", "01Jun2020"
+        else:
+            sta, end = "02Jun2020", "01Sep2020"
+        assert df[Term.DATE].min().strftime(Term.DATE_FORMAT) == sta
+        assert df[Term.DATE].max().strftime(Term.DATE_FORMAT) == end
