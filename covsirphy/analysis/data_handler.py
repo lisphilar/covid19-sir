@@ -2,6 +2,8 @@
 # -*- coding: utf-8 -*-
 
 import itertools
+import numpy as np
+import pandas as pd
 from varname import nameof
 from covsirphy.util.error import SubsetNotFoundError, UnExpectedValueError, UnExecutedError
 from covsirphy.util.term import Term
@@ -48,7 +50,9 @@ class DataHandler(Term):
         self._first_date = None
         self._last_date = None
         self._today = None
-        # Register datasets
+        # Columns which is included in the main datasets (updated in .records_main()) except for 'Date'
+        self._main_cols = None
+        # Register datasets: date and main columns will be set internally if main data available
         self.register(**kwargs)
 
     @property
@@ -135,11 +139,16 @@ class DataHandler(Term):
             # Check the data can be accepted as an extra dataset
             if type(extra_data) in self.EXTRA_DICT.values():
                 continue
+            if set(type(extra_data).__bases__) & set(self.EXTRA_DICT.values()):
+                # A child class of an acceptable class
+                continue
             raise UnExpectedValueError(
                 name=statement, value=type(extra_data), candidates=list(self.EXTRA_DICT.keys()))
         # Register the datasets
-        for (extra_data, name) in itertools.product(extras, self.EXTRA_DICT.keys()):
-            self._data_dict[name] = extra_data
+        extra_iter = itertools.product(extras, self.EXTRA_DICT.items())
+        for (extra_data, (name, data_class)) in extra_iter:
+            if isinstance(extra_data, data_class):
+                self._data_dict[name] = extra_data
 
     def switch_complement(self, whether, **kwargs):
         """
@@ -153,7 +162,7 @@ class DataHandler(Term):
 
     def records_main(self):
         """
-        Return main dataset of all dates as a dataframe.
+        Return records of the main datasets as a dataframe.
 
         Raises:
             UnExecutedError: either JHUData or PopulationData was not registered
@@ -173,14 +182,18 @@ class DataHandler(Term):
         """
         jhu_data = self._data_dict[nameof(JHUData)]
         population_data = self._data_dict[nameof(PopulationData)]
+        # Main datasets should be registered
         if None in [jhu_data, population_data]:
             raise UnExecutedError("DataHandler.register(jhu_data, population_data)")
+        # Subsetting
         df, self._complemented = jhu_data.records(
             **self._area_dict,
             start_date=self._first_date, end_date=self._last_date,
             population=population_data.value(**self._area_dict),
             **self._complement_dict,
         )
+        # Columns which are included in the main dataset except for 'Date'
+        self._main_cols = list(set(df.columns) - set([self.DATE]))
         return df
 
     def timepoints(self, first_date=None, last_date=None, today=None):
@@ -219,3 +232,48 @@ class DataHandler(Term):
             self._ensure_date_order(self._first_date, today, name=nameof(today))
             self._ensure_date_order(today, self._last_date, name=nameof(today))
             self._today = today
+
+    def records_extra(self):
+        """
+        Return records of the extra datasets of all dates as a dataframe.
+
+        Raises:
+            UnExecutedError: either JHUData or PopulationData was not registered
+
+        Returns:
+            pandas.DataFrame:
+                Index
+                    reset index
+                Columns:
+                    - Date(pd.TimeStamp): Observation date
+                    - columns defined in the extra datasets
+        """
+        if not set(self._data_dict) - set(self.MAIN_DICT) or None in self._data_dict.values():
+            raise UnExecutedError("DataHandler.register(jhu_data, population_data, extras=[...])")
+        # Get all subset
+        df = pd.DataFrame(columns=[self.DATE])
+        for (name, data) in self._data_dict.items():
+            if name in self.MAIN_DICT:
+                continue
+            try:
+                subset_df = data.subset(**self._area_dict)
+            except TypeError:
+                subset_df = data.subset(country=self._area_dict["country"])
+            except SubsetNotFoundError:
+                continue
+            new_cols = (set(subset_df) - set(df.columns)) | set([self.DATE])
+            subset_df = subset_df.loc[:, subset_df.columns.isin(new_cols)]
+            df = df.merge(subset_df, how="outer", on=self.DATE)
+        # Remove columns which is included in the main datasets
+        df = df.loc[:, ~df.columns.isin(self._main_cols)]
+        # Data cleaning
+        df = df.set_index(self.DATE).resample("D").last()
+        df = df.fillna(method="ffill").fillna(0)
+        # Subsetting by dates
+        df = df.loc[pd.to_datetime(self._first_date): pd.to_datetime(self._last_date)]
+        # Convert float values to integer if values will not be changed
+        for col in df.columns:
+            converted2int = df[col].astype(np.int64)
+            if np.array_equal(converted2int, df[col]):
+                df[col] = converted2int
+        return df.reset_index()
