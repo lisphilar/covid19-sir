@@ -169,16 +169,6 @@ class DataHandler(Term):
             if isinstance(extra_data, data_class):
                 self._data_dict[name] = extra_data
 
-    def switch_complement(self, whether, **kwargs):
-        """
-        Switch whether perform auto complement or not. (Default: True)
-
-        Args:
-            whether (bool): if True and necessary, the number of cases will be complemented
-            kwargs: the other arguments of JHUData.subset_complement()
-        """
-        self._complement_dict = {"auto_complement": bool(whether), **kwargs}
-
     def recovery_period(self):
         """
         Return representative value of recovery period of all countries.
@@ -231,6 +221,37 @@ class DataHandler(Term):
         # Columns which are included in the main dataset except for 'Date'
         self._main_cols = list(set(df.columns) - set([self.DATE]))
         return df
+
+    def switch_complement(self, whether, **kwargs):
+        """
+        Switch whether perform auto complement or not. (Default: True)
+
+        Args:
+            whether (bool): if True and necessary, the number of cases will be complemented
+            kwargs: the other arguments of JHUData.subset_complement()
+        """
+        self._complement_dict = {"auto_complement": bool(whether), **kwargs}
+
+    def show_complement(self):
+        """
+        Show the details of complement that was (or will be) performed for the records.
+
+        Raises:
+            NotRegisteredMainError: JHUData was not registered
+
+        Returns:
+            pandas.DataFrame: as the same as JHUData.show_complement()
+
+        Note:
+            Keyword arguments of JHUData,subset_complement() can be specified with DataHandler.switch_complement().
+        """
+        jhu_data = self._data_dict[nameof(JHUData)]
+        if jhu_data is None:
+            raise NotRegisteredMainError(".register(jhu_data)")
+        comp_dict = self._complement_dict.copy()
+        comp_dict.pop("auto_complement")
+        return jhu_data.show_complement(
+            start_date=self._first_date, end_date=self._last_date, **self._area_dict, ** comp_dict)
 
     def timepoints(self, first_date=None, last_date=None, today=None):
         """
