@@ -104,7 +104,7 @@ class DataHandler(Term):
             self._data_dict[nameof(PopulationData)] = population_data
         # Update date range
         try:
-            self.set_date(
+            self.timepoints(
                 first_date=self._first_date, last_date=self._last_date, today=self._today)
         except UnExecutedError:
             # Some of main datasets were not registered
@@ -183,7 +183,7 @@ class DataHandler(Term):
         )
         return df
 
-    def set_date(self, first_date=None, last_date=None, today=None):
+    def timepoints(self, first_date=None, last_date=None, today=None):
         """
         Set the range of data and reference date to determine past/future of phases.
 

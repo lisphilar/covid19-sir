@@ -50,10 +50,10 @@ class TestDataHandler(object):
         assert dhl.complemented
 
     @pytest.mark.parametrize("country", ["Japan"])
-    def test_set_date(self, jhu_data, population_data, country):
+    def test_timepoints(self, jhu_data, population_data, country):
         dhl = DataHandler(
             country=country, province=None, jhu_data=jhu_data, population_data=population_data)
-        dhl.set_date(first_date="01Apr2020", last_date="01Sep2020", today="01Jun2020")
+        dhl.timepoints(first_date="01Apr2020", last_date="01Sep2020", today="01Jun2020")
         series = dhl.records_main()[Term.DATE]
         assert series.min().strftime(Term.DATE_FORMAT) == dhl.first_date == "01Apr2020"
         assert series.max().strftime(Term.DATE_FORMAT) == dhl.last_date == "01Sep2020"
