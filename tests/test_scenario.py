@@ -10,20 +10,26 @@ from covsirphy import Scenario, Term, PhaseSeries, Estimator, SIRF
 
 
 @pytest.fixture(scope="module")
-def snl(jhu_data, population_data):
-    return Scenario(
-        jhu_data=jhu_data, population_data=population_data,
-        country="Japan", province=None, tau=None, auto_complement=True)
+def snl(jhu_data, population_data, japan_data, oxcgrt_data, vaccine_data, pcr_data):
+    snl = Scenario(country="Japan", province=None, tau=None, auto_complement=True)
+    snl.register(
+        jhu_data, population_data,
+        extras=[japan_data, oxcgrt_data, pcr_data, vaccine_data])
+    return snl
 
 
 class TestScenario(object):
-    @pytest.mark.parametrize("start_date", ["01Mar2020"])
-    @pytest.mark.parametrize("end_date", ["31Dec2020"])
-    def test_record_range(self, snl, start_date, end_date):
-        snl.first_date = start_date
-        snl.last_date = end_date
-        assert snl.first_date == start_date
-        assert snl.last_date == end_date
+    @pytest.mark.parametrize("first_date", ["01Mar2020"])
+    @pytest.mark.parametrize("last_date", ["31Dec2020"])
+    @pytest.mark.parametrize("today", ["30Nov2020"])
+    def test_record_range(self, snl, first_date, last_date, today):
+        snl.timepoints()
+        snl.first_date = first_date
+        snl.last_date = last_date
+        snl.today = today
+        assert snl.first_date == first_date
+        assert snl.last_date == last_date
+        assert snl.today == today
         with pytest.raises(ValueError):
             snl.first_date = "01Jan2019"
         with pytest.raises(ValueError):
@@ -45,8 +51,11 @@ class TestScenario(object):
 
     @pytest.mark.parametrize("country", ["Japan"])
     def test_interactive(self, jhu_data, population_data, country):
+        with pytest.raises(ValueError):
+            Scenario()
         # Setting
-        scenario = Scenario(jhu_data, population_data, country)
+        scenario = Scenario(country=country)
+        scenario.register(jhu_data, population_data)
         # Force interactive
         scenario._interactive = True
         warnings.filterwarnings("ignore", category=UserWarning)
@@ -125,14 +134,14 @@ class TestScenario(object):
         warnings.filterwarnings("ignore", category=DeprecationWarning)
         snl.trend(force=False, include_init_phase=False)
 
-    def test_estimate(self, snl, oxcgrt_data):
+    def test_estimate(self, snl):
         # Error test
         with pytest.raises(UnExecutedError):
             snl.phase_estimator(phase="1st")
         with pytest.raises(UnExecutedError):
             snl.simulate()
         with pytest.raises(UnExecutedError):
-            snl.fit(oxcgrt_data)
+            snl.fit()
         with pytest.raises(ValueError):
             snl.estimate(SIRF, tau=1440)
         # Deprecated
@@ -221,9 +230,11 @@ class TestScenario(object):
             snl.score(phases=["1st"], past_days=60, name="Score")
 
     @pytest.mark.parametrize("indicator", ["Stringency_index"])
-    @pytest.mark.parametrize("target", ["Infected", "Confirmed"])
+    @pytest.mark.parametrize("target", ["Confirmed"])
     def test_estimate_delay(self, snl, indicator, target, oxcgrt_data):
         warnings.simplefilter("ignore", category=UserWarning)
+        delay, df = snl.estimate_delay(indicator=indicator, target=target)
+        warnings.filterwarnings("ignore", category=DeprecationWarning)
         delay, df = snl.estimate_delay(oxcgrt_data, indicator=indicator, target=target)
         assert isinstance(delay, int)
         assert isinstance(df, pd.DataFrame)
@@ -232,11 +243,14 @@ class TestScenario(object):
         # Fitting
         with pytest.raises(UnExecutedError):
             snl.predict()
-        info_dict = snl.fit(oxcgrt_data)
+        info_dict = snl.fit()
         assert isinstance(info_dict, dict)
+        # Deprecated: fit with oxcgrt_data
+        warnings.filterwarnings("ignore", category=DeprecationWarning)
+        snl.fit(oxcgrt_data)
         # Prediction
         snl.predict()
         assert Term.FUTURE in snl.summary()[Term.TENSE].unique()
         # Fitting & predict
-        snl.fit_predict(oxcgrt_data)
+        snl.fit_predict()
         assert Term.FUTURE in snl.summary()[Term.TENSE].unique()
