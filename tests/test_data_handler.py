@@ -5,7 +5,7 @@ from covsirphy.util.error import SubsetNotFoundError
 import pytest
 from covsirphy import DataHandler, JHUData, PopulationData, Term
 from covsirphy import CountryData, JapanData, OxCGRTData, PCRData, VaccineData
-from covsirphy import UnExpectedValueError, UnExecutedError
+from covsirphy import UnExpectedValueError, NotRegisteredMainError, NotRegisteredExtraError
 
 
 class TestDataHandler(object):
@@ -33,7 +33,7 @@ class TestDataHandler(object):
 
     @pytest.mark.parametrize("country", ["Japan"])
     def test_records_main(self, jhu_data, population_data, country):
-        with pytest.raises(UnExecutedError):
+        with pytest.raises(NotRegisteredMainError):
             dhl_error = DataHandler(country=country, province=None)
             dhl_error.records_main()
         dhl = DataHandler(
@@ -43,7 +43,7 @@ class TestDataHandler(object):
     @pytest.mark.parametrize("country", ["Japan"])
     def test_complement(self, jhu_data, population_data, country):
         dhl = DataHandler(country=country, province=None)
-        with pytest.raises(UnExecutedError):
+        with pytest.raises(NotRegisteredMainError):
             assert dhl.complemented is None
         dhl.register(jhu_data=jhu_data, population_data=population_data)
         dhl.switch_complement(whether=False)
@@ -64,14 +64,16 @@ class TestDataHandler(object):
         assert dhl.today == "01Jun2020"
 
     @pytest.mark.parametrize("country", ["Japan", "France"])
-    def test_records_extra(self, jhu_data, population_data, country,
-                           japan_data, oxcgrt_data, pcr_data, vaccine_data):
-        dhl = DataHandler(
-            country=country, province=None, jhu_data=jhu_data, population_data=population_data)
+    def test_records_extras(self, jhu_data, population_data, country,
+                            japan_data, oxcgrt_data, pcr_data, vaccine_data):
+        dhl = DataHandler(country=country, province=None)
+        with pytest.raises(NotRegisteredMainError):
+            dhl.records_extras()
+        dhl.register(jhu_data=jhu_data, population_data=population_data)
         dhl.timepoints(first_date="01Apr2020", last_date="01Sep2020")
-        with pytest.raises(UnExecutedError):
-            dhl.records_extra()
+        with pytest.raises(NotRegisteredExtraError):
+            dhl.records_extras()
         dhl.register(extras=[japan_data, oxcgrt_data, pcr_data, vaccine_data])
-        series = dhl.records_extra()[Term.DATE]
+        series = dhl.records_extras()[Term.DATE]
         assert series.min().strftime(Term.DATE_FORMAT) == dhl.first_date == "01Apr2020"
         assert series.max().strftime(Term.DATE_FORMAT) == dhl.last_date == "01Sep2020"

@@ -5,7 +5,8 @@ import itertools
 import numpy as np
 import pandas as pd
 from varname import nameof
-from covsirphy.util.error import SubsetNotFoundError, UnExpectedValueError, UnExecutedError
+from covsirphy.util.error import SubsetNotFoundError, UnExpectedValueError
+from covsirphy.util.error import NotRegisteredMainError, NotRegisteredExtraError
 from covsirphy.util.term import Term
 from covsirphy.cleaning.cbase import CleaningBase
 from covsirphy.cleaning.country_data import CountryData
@@ -58,10 +59,13 @@ class DataHandler(Term):
     @property
     def complemented(self):
         """
-        bool or str or None: whether complemented or not and the details, None when not confirmed
+        bool or str: whether complemented or not and the details, None when not confirmed
+
+        Raises:
+            NotRegisteredMainError: no information because either JHUData or PopulationData was not registered
         """
         if self._complemented is None:
-            raise UnExecutedError("DataHandler.records_main()")
+            raise NotRegisteredMainError("DataHandler.register(jhu_data, population_data)")
         return self._complemented
 
     @property
@@ -110,7 +114,7 @@ class DataHandler(Term):
         try:
             self.timepoints(
                 first_date=self._first_date, last_date=self._last_date, today=self._today)
-        except UnExecutedError:
+        except NotRegisteredMainError:
             # Some of main datasets were not registered
             pass
         except SubsetNotFoundError as e:
@@ -165,7 +169,7 @@ class DataHandler(Term):
         Return records of the main datasets as a dataframe.
 
         Raises:
-            UnExecutedError: either JHUData or PopulationData was not registered
+            NotRegisteredMainError: either JHUData or PopulationData was not registered
             SubsetNotFoundError: failed in subsetting because of lack of data
 
         Returns:
@@ -184,7 +188,7 @@ class DataHandler(Term):
         population_data = self._data_dict[nameof(PopulationData)]
         # Main datasets should be registered
         if None in [jhu_data, population_data]:
-            raise UnExecutedError("DataHandler.register(jhu_data, population_data)")
+            raise NotRegisteredMainError("DataHandler.register(jhu_data, population_data)")
         # Subsetting
         df, self._complemented = jhu_data.records(
             **self._area_dict,
@@ -206,7 +210,7 @@ class DataHandler(Term):
             today (str or None): reference date to determine whether a phase is a past phase or a future phase
 
         Raises:
-            UnExecutedError: either JHUData or PopulationData was not registered
+            NotRegisteredMainError: either JHUData or PopulationData was not registered
             SubsetNotFoundError: failed in subsetting because of lack of data
 
         Note:
@@ -233,12 +237,13 @@ class DataHandler(Term):
             self._ensure_date_order(today, self._last_date, name=nameof(today))
             self._today = today
 
-    def records_extra(self):
+    def records_extras(self):
         """
-        Return records of the extra datasets of all dates as a dataframe.
+        Return records of the extra datasets as a dataframe.
 
         Raises:
-            UnExecutedError: either JHUData or PopulationData was not registered
+            NotRegisteredMainError: either JHUData or PopulationData was not registered
+            NotRegisteredExtraError: no extra datasets were registered
 
         Returns:
             pandas.DataFrame:
@@ -248,8 +253,13 @@ class DataHandler(Term):
                     - Date(pd.TimeStamp): Observation date
                     - columns defined in the extra datasets
         """
-        if not set(self._data_dict) - set(self.MAIN_DICT) or None in self._data_dict.values():
-            raise UnExecutedError("DataHandler.register(jhu_data, population_data, extras=[...])")
+        if None in self._data_dict.values():
+            raise NotRegisteredMainError("DataHandler.register(jhu_data, population_data)")
+        if not set(self._data_dict) - set(self.MAIN_DICT):
+            raise NotRegisteredExtraError(
+                "DataHandler.register(jhu_data, population_data, extras=[...])",
+                message="with extra datasets"
+            )
         # Get all subset
         df = pd.DataFrame(columns=[self.DATE])
         for (name, data) in self._data_dict.items():

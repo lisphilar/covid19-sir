@@ -121,6 +121,20 @@ class UnExecutedError(AttributeError, NameError, ValueError):
         return f"Please execute {self.method_name} in advance{self.message}"
 
 
+class NotRegisteredMainError(UnExecutedError):
+    """
+    Error when main datasets were not registered.
+    """
+    pass
+
+
+class NotRegisteredExtraError(UnExecutedError):
+    """
+    Error when extra datasets were not registered.
+    """
+    pass
+
+
 class PCRIncorrectPreconditionError(KeyError):
     """
     Error when checking preconditions in the PCR data.
