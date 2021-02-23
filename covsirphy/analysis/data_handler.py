@@ -163,7 +163,7 @@ class DataHandler(Term):
             # Check the data is a data cleaning class
             self._ensure_instance(extra_data, CleaningBase, name=statement)
             # Check the data can be accepted as an extra dataset
-            if type(extra_data) in self.EXTRA_DICT.values():
+            if isinstance(extra_data, self.EXTRA_DICT.values()):
                 continue
             if set(type(extra_data).__bases__) & set(self.EXTRA_DICT.values()):
                 # A child class of an acceptable class
