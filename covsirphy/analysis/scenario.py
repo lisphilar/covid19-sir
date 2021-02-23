@@ -11,15 +11,15 @@ import pandas as pd
 import ruptures as rpt
 from sklearn.model_selection import train_test_split
 from sklearn import linear_model
+from sklearn.exceptions import ConvergenceWarning
 from covsirphy.util.error import deprecate, ScenarioNotFoundError, UnExecutedError
+from covsirphy.util.error import NotRegisteredMainError, NotRegisteredExtraError
 from covsirphy.util.plotting import line_plot, box_plot
 from covsirphy.util.error import NotInteractiveError
 from covsirphy.util.term import Term
 from covsirphy.cleaning.jhu_data import JHUData
-from covsirphy.cleaning.population import PopulationData
-from covsirphy.cleaning.oxcgrt import OxCGRTData
 from covsirphy.analysis.param_tracker import ParamTracker
-# from covsirphy.analysis.data_handler import DataHandler
+from covsirphy.analysis.data_handler import DataHandler
 
 
 class Scenario(Term):
@@ -27,60 +27,43 @@ class Scenario(Term):
     Scenario analysis.
 
     Args:
-        jhu_data (covsirphy.JHUData): object of records
-        population_data (covsirphy.PopulationData): PopulationData object
-        country (str): country name
+        jhu_data (covsirphy.JHUData or None): object of records
+        population_data (covsirphy.PopulationData or None): PopulationData object
+        country (str): country name (must not be None)
         province (str or None): province name
         tau (int or None): tau value
         auto_complement (bool): if True and necessary, the number of cases will be complemented
+
+    Note:
+        @jhu_data and @population_data must be registered with Scenario.register() if not specified here.
     """
 
-    def __init__(self, jhu_data, population_data, country, province=None, tau=None, auto_complement=True):
-        # Population
-        population_data = self._ensure_instance(
-            population_data, PopulationData, name="population_data")
-        self.population = population_data.value(country, province=province)
-        # Records
-        self.jhu_data = self._ensure_instance(
-            jhu_data, JHUData, name="jhu_data")
+    def __init__(self, jhu_data=None, population_data=None,
+                 country=None, province=None, tau=None, auto_complement=True):
         # Area name
-        self.country = country
-        self.province = province or self.UNKNOWN
+        if country is None:
+            raise ValueError("@country must be specified.")
+        self.country = str(country)
+        self.province = str(province or self.UNKNOWN)
         self.area = JHUData.area_name(country, province)
-        # Whether complement the number of cases or not
-        self._auto_complement = bool(auto_complement)
-        self._complemented = False
-        # Create {scenario_name: PhaseSeries} and set records
-        self.record_df = pd.DataFrame()
-        self._first_date = None
-        self._last_date = None
+        # Initialize data handler
+        self._data = DataHandler(country=self.country, province=self.province)
+        self._data.switch_complement(whether=auto_complement)
+        # Tau value
+        self.tau = self._ensure_tau(tau)
+        # Register datasets
+        self._tracker_dict = {}
+        self.register(jhu_data=jhu_data, population_data=population_data, extras=None)
+        # Initialize parameter tracker
+        try:
+            self._init_trackers()
+        except NotRegisteredMainError:
+            pass
         # Interactive (True) / script (False) mode
         self._interactive = hasattr(sys, "ps1")
-        self.tau = self._ensure_tau(tau)
-        self._update_range(first_date=None, last_date=None)
-        # Linear regression modes for prediction of ODE parameters
-        self._oxcgrt_data = None
+        # Prediction of parameter values in the future phases
+        self.delay_days = None
         self._lm_dict = {}
-        # Default delay days
-        self.delay_days = self.jhu_data.recovery_period
-
-    def init_records(self):
-        """
-        Set records.
-        Only when auto-complement mode, complement records if necessary.
-        """
-        # Set records (complement records, if necessary)
-        self.record_df, self._complemented = self.jhu_data.records(
-            country=self.country, province=self.province,
-            start_date=self._first_date, end_date=self._last_date,
-            population=self.population,
-            auto_complement=self._auto_complement
-        )
-        # First/last date of the records
-        if self._first_date is None:
-            series = self.record_df.loc[:, self.DATE]
-            self._first_date = series.min().strftime(self.DATE_FORMAT)
-            self._last_date = series.max().strftime(self.DATE_FORMAT)
 
     def __getitem__(self, key):
         """
@@ -108,56 +91,49 @@ class Scenario(Term):
             value (covsirphy.PhaseSeries): phase series object
         """
         self._tracker_dict[key] = ParamTracker(
-            self.record_df, value, area=self.area, tau=self.tau)
+            self._data.records(extras=False), value, area=self.area, tau=self.tau)
 
     @property
     def first_date(self):
         """
         str: the first date of the records
         """
-        return self._first_date
+        return self._data.first_date
 
     @first_date.setter
     def first_date(self, date):
-        self._update_range(first_date=date)
+        self._data.timepoints(
+            first_date=date, last_date=self._data.last_date, today=self._data.today)
 
     @property
     def last_date(self):
         """
         str: the last date of the records
         """
-        return self._last_date
+        return self._data.last_date
 
     @last_date.setter
     def last_date(self, date):
-        self._update_range(last_date=date)
+        try:
+            self._ensure_date_order(self._data.today, date)
+        except ValueError:
+            today = date
+        else:
+            today = self._data.today
+        self.timepoints(
+            first_date=self._data.first_date, last_date=date, today=today)
 
-    def _update_range(self, first_date=None, last_date=None):
+    @property
+    def today(self):
         """
-        Set first/last dates of the records.
-        Records to analyse will be updated and all scenarios will be cleared.
+        str: reference date to determine whether a phase is a past phase or a future phase
+        """
+        return self._data.today
 
-        Args:
-            first_date (str or None): the first date of the records
-            last_date (str or None): the last date of the records
-        """
-        if first_date is not None:
-            self._first_date = self.__ensure_date_in_range(first_date)
-        if last_date is not None:
-            self._last_date = self.__ensure_date_in_range(last_date)
-        self.init_records()
-        self._init_trackers()
-
-    def __ensure_date_in_range(self, date):
-        """
-        Ensure that the date is in the range of (the first date, the last date).
-
-        Args:
-            date (str): date, like 01Jan2020
-        """
-        self._ensure_date_order(self._first_date, date, name="date")
-        self._ensure_date_order(date, self._last_date, name="date")
-        return date
+    @today.setter
+    def today(self, date):
+        self.timepoints(
+            first_date=self._data.first_date, last_date=self._data.last_date, today=date)
 
     @property
     def interactive(self):
@@ -174,6 +150,44 @@ class Scenario(Term):
         if not hasattr(sys, "ps1") and is_interactive:
             raise NotInteractiveError
         self._interactive = hasattr(sys, "ps1") and bool(is_interactive)
+
+    def register(self, jhu_data=None, population_data=None, extras=None):
+        """
+        Register datasets.
+
+        Args:
+            jhu_data (covsirphy.JHUData or None): object of records
+            population_data (covsirphy.PopulationData or None): PopulationData object
+            extras (list[covsirphy.CleaningBase] or None): extra datasets
+
+        Raises:
+            TypeError: non-data cleaning instance was included
+            UnExpectedValueError: instance of un-expected data cleaning class was included as an extra dataset
+        """
+        self._data.register(jhu_data=jhu_data, population_data=population_data, extras=extras)
+        if self._data.main_satisfied and not self._tracker_dict:
+            self.timepoints()
+        if jhu_data is not None:
+            self.delay_days = self._data.recovery_period()
+
+    def timepoints(self, first_date=None, last_date=None, today=None):
+        """
+        Set the range of data and reference date to determine past/future of phases.
+
+        Args:
+            first_date (str or None): the first date of the records or None (min date of main dataset)
+            last_date (str or None): the first date of the records or None (max date of main dataset)
+            today (str or None): reference date to determine whether a phase is a past phase or a future phase
+
+        Raises:
+            NotRegisteredMainError: either JHUData or PopulationData was not registered
+            SubsetNotFoundError: failed in subsetting because of lack of data
+
+        Note:
+            When @today is None, the reference date will be the same as @last_date (or max date).
+        """
+        self._data.timepoints(first_date=first_date, last_date=last_date, today=today)
+        self._init_trackers()
 
     def line_plot(self, df, show_figure=True, filename=None, **kwargs):
         """
@@ -193,23 +207,17 @@ class Scenario(Term):
         if not self._interactive and filename is not None:
             return line_plot(df=df, filename=filename, **kwargs)
 
-    def complement(self, interval=2, max_ignored=100):
+    def complement(self, **kwargs):
         """
         Complement the number of recovered cases, if necessary.
 
         Args:
-            interval (int): expected update interval of the number of recovered cases [days]
-            max_ignored (int): Max number of recovered cases to be ignored [cases]
+            kwargs: the other arguments of JHUData.subset_complement()
 
         Returns:
             covsirphy.Scenario: self
         """
-        self.record_df, self._complemented = self.jhu_data.records(
-            country=self.country, province=self.province,
-            start_date=self._first_date, end_date=self._last_date,
-            population=self.population,
-            auto_complement=True, interval=interval, max_ignored=max_ignored
-        )
+        self._data.switch_complement(whether=True, **kwargs)
         return self
 
     def complement_reverse(self):
@@ -219,12 +227,7 @@ class Scenario(Term):
         Returns:
             covsirphy.Scenario: self
         """
-        self.record_df, self._complemented = self.jhu_data.records(
-            country=self.country, province=self.province,
-            start_date=self._first_date, end_date=self._last_date,
-            population=self.population,
-            auto_complement=False
-        )
+        self._data.switch_complement(whether=False)
         return self
 
     def show_complement(self, **kwargs):
@@ -235,11 +238,10 @@ class Scenario(Term):
             kwargs: keyword arguments of JHUDataComplementHandler() i.e. control factors of complement
 
         Returns:
-            pandas.DataFrame: as the same as `JHUData.show_complement()
+            pandas.DataFrame: as the same as JHUData.show_complement()
         """
-        return self.jhu_data.show_complement(
-            country=self.country, province=self.province,
-            start_date=self._first_date, end_date=self._last_date, **kwargs)
+        self._data.switch_complement(whether=None, **kwargs)
+        return self._data.show_complement()
 
     def records(self, variables=None, **kwargs):
         """
@@ -268,9 +270,9 @@ class Scenario(Term):
         variables = self._ensure_list(
             variables or [self.CI, self.F, self.R],
             candidates=[self.S, *self.VALUE_COLUMNS], name="variables")
-        df = self.record_df.loc[:, [self.DATE, *variables]]
-        if self._complemented:
-            title = f"{self.area}: Cases over time\nwith {self._complemented}"
+        df = self._data.records(extras=False).loc[:, [self.DATE, *variables]]
+        if self._data.complemented:
+            title = f"{self.area}: Cases over time\nwith {self._data.complemented}"
         else:
             title = f"{self.area}: Cases over time"
         self.line_plot(
@@ -303,11 +305,11 @@ class Scenario(Term):
         variables = self._ensure_list(
             variables or [self.C, self.F, self.R], candidates=self.VALUE_COLUMNS, name="variables")
         window = self._ensure_natural_int(window, name="window")
-        df = self.record_df.set_index(self.DATE)[variables]
+        df = self._data.records(extras=False).set_index(self.DATE)[variables]
         df = df.diff().dropna()
         df = df.rolling(window=window).mean().dropna().astype(np.int64)
-        if self._complemented:
-            title = f"{self.area}: Daily new cases\nwith {self._complemented}"
+        if self._data.complemented:
+            title = f"{self.area}: Daily new cases\nwith {self._data.complemented}"
         else:
             title = f"{self.area}: Daily new cases"
         self.line_plot(df=df, title=title, y_integer=True, **kwargs)
@@ -317,10 +319,11 @@ class Scenario(Term):
         """
         Initialize dictionary of trackers.
         """
+        data = copy.deepcopy(self._data)
         series = ParamTracker.create_series(
-            first_date=self._first_date, last_date=self._last_date, population=self.population)
+            first_date=data.first_date, last_date=data.last_date, population=data.population)
         tracker = ParamTracker(
-            record_df=self.record_df, phase_series=series, area=self.area, tau=self.tau)
+            record_df=self._data.records(extras=False), phase_series=series, area=self.area, tau=self.tau)
         self._tracker_dict = {self.MAIN: tracker}
 
     def _tracker(self, name, template="Main"):
@@ -1007,7 +1010,7 @@ class Scenario(Term):
             df.insert(0, self.SERIES, name)
             append(df)
         if with_actual:
-            df = self.record_df.copy()
+            df = self._data.records(extras=False)
             df.insert(0, self.SERIES, self.ACTUAL)
             append(df)
         return pd.concat(dataframes, axis=0, sort=False)
@@ -1165,8 +1168,7 @@ class Scenario(Term):
                     "@phases and @past_days cannot be specified at the same time.")
             past_days = self._ensure_natural_int(past_days, name="past_days")
             # Separate a phase, if possible
-            beginning_date = self.date_change(
-                self._last_date, days=0 - past_days)
+            beginning_date = self.date_change(self._data.last_date, days=0 - past_days)
             try:
                 tracker.separate(date=beginning_date)
             except ValueError:
@@ -1180,7 +1182,7 @@ class Scenario(Term):
         return tracker.score(
             metrics=metrics, variables=variables, phases=phases, y0_dict=y0_dict)
 
-    def estimate_delay(self, oxcgrt_data, indicator="Stringency_index",
+    def estimate_delay(self, oxcgrt_data=None, indicator="Stringency_index",
                        target="Infected", value_range=(7, 35)):
         """
         Estimate the average delay (in days) between a policy measure taken
@@ -1209,13 +1211,20 @@ class Scenario(Term):
             Average recovered period of JHU dataset will be used as returned value
             when the estimated value was not in value_range.
             Very long periods (outside of 99% quantile) are taken out.
+            @oxcgrt_data argument was deprecated. Please use Scenario.register(extras=[oxcgrt_data]).
         """
+        # Register OxCGRT data
+        if oxcgrt_data is not None:
+            warnings.warn(
+                "Please use Scenario.register(extras=[oxcgrt_data]) rather than Scenario.fit(oxcgrt_data).",
+                DeprecationWarning, stacklevel=1)
+            self.register(extras=[oxcgrt_data])
+        # Datasets
         warnings.simplefilter("ignore", category=RuntimeWarning)
-        records = self.record_df.set_index(self.DATE)
+        records = self._data.records(extras=False).set_index(self.DATE)
         default_df = pd.DataFrame()
-        oxcgrt_df = oxcgrt_data.subset(
-            country=self.country).set_index(self.DATE)
-        records[indicator] = oxcgrt_df.loc[:, indicator]
+        extras_df = self._data.records(main=False, extras=True, past=True, future=True)
+        records[indicator] = extras_df.set_index(self.DATE).loc[:, indicator]
         records = records.reset_index()
         df = records.pivot_table(index=target, values=indicator)
         df_run = df.copy()
@@ -1234,9 +1243,8 @@ class Scenario(Term):
         except ValueError:
             warnings.warn(
                 "Delay days could not be estimated for {self.country} and delay set to default: {self.delay_days} [days]",
-                UserWarning, stacklevel=1
-            )
-            return self.jhu_data.recovery_period, default_df
+                UserWarning, stacklevel=1)
+            return self._data.recovery_period(), default_df
         results_df = reset_series[results].reset_index()
         results_df = results_df.interpolate(
             method="linear").dropna().astype(np.float64)
@@ -1244,8 +1252,7 @@ class Scenario(Term):
         df = pd.merge_asof(
             results_df.sort_values(indicator),
             df.astype(np.float64).reset_index().sort_values(indicator),
-            on=indicator, direction="nearest"
-        )
+            on=indicator, direction="nearest")
         # Calculate number of days between the periods
         df["Period Length"] = df["index"].sort_values(ignore_index=True).diff()
         # Filter out very long periods
@@ -1256,13 +1263,12 @@ class Scenario(Term):
             df_filtered["Period Length"].mean())
         return delay_days, df[[target, indicator, "Period Length"]]
 
-    def _fit_create_data(self, oxcgrt_data, model, name, delay):
+    def _fit_create_data(self, model, name, delay):
         """
         Create train/test dataset for Elastic Net regression,
-        assuming that OxCGRT scores will impact on ODE parameter values with delay (recovery period).
+        assuming that extra variables will impact on ODE parameter values with delay.
 
         Args:
-            oxcgrt_data (covsirphy.OxCGRTData): OxCGRT dataset
             model (covsirphy.ModelBase): ODE model
             name (str): scenario name
             delay (int): number of days of delay between policy measure and effect on number of confirmed cases
@@ -1275,13 +1281,13 @@ class Scenario(Term):
         """
         # Parameter values
         param_df = self._track_param(name=name)[model.PARAMETERS]
-        # OxCGRT scores
-        oxcgrt_df = oxcgrt_data.subset(
-            country=self.country).set_index(self.DATE)[OxCGRTData.OXCGRT_VARS_INDICATORS]
+        # Extra datasets (explanatory variables)
+        extras_df = self._data.records(main=False, extras=True, past=True, future=True)
+        extras_df = extras_df.set_index(self.DATE)
         # Apply delay on OxCGRT data
-        oxcgrt_df.index += timedelta(days=delay)
+        extras_df.index += timedelta(days=delay)
         # Create training/test dataset
-        df = param_df.join(oxcgrt_df, how="inner")
+        df = param_df.join(extras_df, how="inner")
         df = df.rolling(window=delay).mean()
         df = df.dropna().drop_duplicates()
         X = df.drop(model.PARAMETERS, axis=1)
@@ -1289,15 +1295,15 @@ class Scenario(Term):
         # X dataset of the target dates
         dates = pd.date_range(
             start=param_df.index.max() + timedelta(days=1),
-            end=oxcgrt_df.index.max(),
+            end=extras_df.index.max(),
             freq="D")
-        X_target = oxcgrt_df.loc[dates]
+        X_target = extras_df.loc[dates]
         return (X, y, X_target)
 
-    def fit(self, oxcgrt_data, name="Main", test_size=0.2, seed=0, delay=None):
+    def fit(self, oxcgrt_data=None, name="Main", test_size=0.2, seed=0, delay=None):
         """
         Learn the relationship of ODE parameter values and delayed OxCGRT scores using Elastic Net regression,
-        assuming that OxCGRT scores will impact on ODE parameter values with delay (=recovery period).
+        assuming that OxCGRT scores will impact on ODE parameter values with delay.
 
         Args:
             oxcgrt_data (covsirphy.OxCGRTData): OxCGRT dataset
@@ -1306,6 +1312,9 @@ class Scenario(Term):
             seed (int): random seed when spliting the dataset to train/test data
             delay (int): number of days of delay between policy measure and effect
             on number of confirmed cases.
+
+        Raises:
+            covsirphy.UnExecutedError: Scenario.estimate() or Scenario.add() were not performed
 
         Returns:
             dict(str, object):
@@ -1317,12 +1326,16 @@ class Scenario(Term):
                 - delay (int): number of days of delay between policy measure and effect
                   on number of confirmed cases.
 
-        Raises:
-            covsirphy.UnExecutedError: Scenario.estimate() or Scenario.add() were not performed
+        Note:
+            @oxcgrt_data argument was deprecated. Please use Scenario.register(extras=[oxcgrt_data]).
         """
+        warnings.simplefilter("ignore", category=ConvergenceWarning)
         # Register OxCGRT data
-        self._oxcgrt_data = self._ensure_instance(
-            oxcgrt_data, OxCGRTData, name="oxcgrt_data")
+        if oxcgrt_data is not None:
+            warnings.warn(
+                "Please use Scenario.register(extras=[oxcgrt_data]) rather than Scenario.fit(oxcgrt_data).",
+                DeprecationWarning, stacklevel=1)
+            self.register(extras=[oxcgrt_data])
         # ODE model
         model = self._tracker(name).last_model
         if model is None:
@@ -1334,8 +1347,12 @@ class Scenario(Term):
             delay, _ = self.estimate_delay(oxcgrt_data)
         self.delay_days = delay
         # Create training/test dataset
-        X, y, *_ = self._fit_create_data(
-            oxcgrt_data=oxcgrt_data, model=model, name=name, delay=delay)
+        try:
+            X, y, *_ = self._fit_create_data(model=model, name=name, delay=delay)
+        except NotRegisteredExtraError:
+            raise NotRegisteredExtraError(
+                "Scenario.register(jhu_data, population_data, extras=[...])",
+                message="with extra datasets") from None
         X_train, X_test, y_train, y_test = train_test_split(
             X, y, test_size=test_size, random_state=seed)
         # Optimize parameters of Elastic Net regression
@@ -1365,17 +1382,18 @@ class Scenario(Term):
     def predict(self, name="Main"):
         """
         Predict parameter values of the future phases using Elastic Net regression with OxCGRT scores,
-        assuming that OxCGRT scores will impact on ODE parameter values with delay (=recovery period).
+        assuming that OxCGRT scores will impact on ODE parameter values with delay.
         New future phases will be added (over-written).
 
         Args:
             name (str): scenario name
 
-        Returns:
-            covsirphy.Scenario: self
-
         Raises:
             covsirphy.UnExecutedError: Scenario.fit() was not performed
+            NotRegisteredExtraError: no extra datasets were registered
+
+        Returns:
+            covsirphy.Scenario: self
         """
         # Arguments
         if name not in self._lm_dict:
@@ -1385,15 +1403,11 @@ class Scenario(Term):
         # Clear future phases
         self.clear(name=name)
         # Create X dataset of the target dates
-        *_, X_target = self._fit_create_data(
-            oxcgrt_data=self._oxcgrt_data, model=model, name=name, delay=self.delay_days)
+        *_, X_target = self._fit_create_data(model=model, name=name, delay=self.delay_days)
         # -> end_date/parameter values
-        df = pd.DataFrame(
-            lm.predict(X_target), index=X_target.index, columns=model.PARAMETERS)
-        df = df.applymap(
-            lambda x: np.around(x, 4 - int(floor(log10(abs(x)))) - 1))
-        df.index = [
-            date.strftime(self.DATE_FORMAT) for date in df.index]
+        df = pd.DataFrame(lm.predict(X_target), index=X_target.index, columns=model.PARAMETERS)
+        df = df.applymap(lambda x: np.around(x, 4 - int(floor(log10(abs(x)))) - 1))
+        df.index = [date.strftime(self.DATE_FORMAT) for date in df.index]
         df.index.name = "end_date"
         phase_df = df.drop_duplicates(keep="last").reset_index()
         # Set new future phases
@@ -1401,22 +1415,26 @@ class Scenario(Term):
             self.add(name=name, **phase_dict)
         return self
 
-    def fit_predict(self, oxcgrt_data, name="Main", **kwargs):
+    def fit_predict(self, oxcgrt_data=None, name="Main", **kwargs):
         """
         Predict parameter values of the future phases using Elastic Net regression with OxCGRT scores,
-        assuming that OxCGRT scores will impact on ODE parameter values with delay (=recovery period).
+        assuming that OxCGRT scores will impact on ODE parameter values with delay.
         New future phases will be added (over-written).
 
         Args:
-            oxcgrt_data (covsirphy.OxCGRTData): OxCGRT dataset
+            oxcgrt_data (covsirphy.OxCGRTData or None): OxCGRT dataset
             name (str): scenario name
             kwargs: the other arguments of Scenario.fit()
+
+        Raises:
+            covsirphy.UnExecutedError: Scenario.estimate() or Scenario.add() were not performed
+            NotRegisteredExtraError: no extra datasets were registered
 
         Returns:
             covsirphy.Scenario: self
 
-        Raises:
-            covsirphy.UnExecutedError: Scenario.estimate() or Scenario.add() were not performed
+        Note:
+            @oxcgrt_data argument was deprecated. Please use Scenario.register(extras=[oxcgrt_data]).
         """
         self.fit(oxcgrt_data=oxcgrt_data, name=name, **kwargs)
         self.predict(name=name)

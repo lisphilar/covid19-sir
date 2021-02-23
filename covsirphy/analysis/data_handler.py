@@ -62,7 +62,7 @@ class DataHandler(Term):
     @property
     def main_satisfied(self):
         """
-        bool: all main datasets were registred or not
+        bool: all main datasets were registered or not
         """
         return all(self._data_dict[name] for name in self.MAIN_DICT.keys())
 
