@@ -45,6 +45,8 @@ class DataHandler(Term):
         self._area_dict = {"country": str(country), "province": str(province or self.UNKNOWN)}
         # Data {str: instance}
         self._data_dict = dict.fromkeys(self.MAIN_DICT.keys(), None)
+        # Population
+        self._population = None
         # Auto complement
         self._complement_dict = {"auto_complement": True}
         self._complemented = None
@@ -68,6 +70,18 @@ class DataHandler(Term):
         if self._complemented is None:
             raise NotRegisteredMainError("DataHandler.register(jhu_data, population_data)")
         return self._complemented
+
+    @property
+    def population(self):
+        """
+        int: population value
+
+        Raises:
+            NotRegisteredMainError: no information because either JHUData or PopulationData was not registered
+        """
+        if self._population is None:
+            raise NotRegisteredMainError("DataHandler.register(jhu_data, population_data)")
+        return self._population
 
     @property
     def first_date(self):
@@ -190,11 +204,13 @@ class DataHandler(Term):
         # Main datasets should be registered
         if None in [jhu_data, population_data]:
             raise NotRegisteredMainError("DataHandler.register(jhu_data, population_data)")
+        # Population
+        self._population = population_data.value(**self._area_dict)
         # Subsetting
         df, self._complemented = jhu_data.records(
             **self._area_dict,
             start_date=self._first_date, end_date=self._last_date,
-            population=population_data.value(**self._area_dict),
+            population=self._population,
             **self._complement_dict,
         )
         # Columns which are included in the main dataset except for 'Date'
