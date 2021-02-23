@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
+from datetime import timedelta
 import itertools
 import numpy as np
 import pandas as pd
@@ -287,3 +288,83 @@ class DataHandler(Term):
             if np.array_equal(converted2int, df[col]):
                 df[col] = converted2int
         return df.reset_index()
+
+    def _records(self, main=True, extras=True):
+        """
+        Return records of the datasets as a dataframe.
+
+        Args:
+            main (bool): whether include main datasets or not
+            extras (bool): whether include extra datasets or not
+
+        Raises:
+            NotRegisteredMainError: either JHUData or PopulationData was not registered
+            SubsetNotFoundError: failed in subsetting because of lack of data
+            NotRegisteredExtraError: @extras is True and no extra datasets were registered
+            ValueError: both of @main and @extras were False
+
+        Returns:
+            pandas.DataFrame:
+                Index
+                    reset index
+                Columns:
+                    - Date(pd.TimeStamp): Observation date
+                    - if @main is True,
+                        - Confirmed(int): the number of confirmed cases
+                        - Infected(int): the number of currently infected cases
+                        - Fatal(int): the number of fatal cases
+                        - Recovered (int): the number of recovered cases ( > 0)
+                        - Susceptible(int): the number of susceptible cases
+                    - if @extra is True,
+                        - columns defined in the extra datasets
+        """
+        if main and extras:
+            main_df = self.records_main()
+            extra_df = self.records_extras()
+            return main_df.merge(extra_df, on=self.DATE)
+        if main:
+            return self.records_main()
+        if extras:
+            return self.records_extras()
+        raise ValueError("Either @main or @extras must be True.")
+
+    def records(self, main=True, extras=True, past=True, future=True):
+        """
+        Return records of the datasets as a dataframe.
+
+        Args:
+            main (bool): whether include main datasets or not
+            extras (bool): whether include extra datasets or not
+            past (bool): whether include past records or not
+            future (bool): whether include future records or not
+
+        Raises:
+            NotRegisteredMainError: either JHUData or PopulationData was not registered
+            SubsetNotFoundError: failed in subsetting because of lack of data
+            NotRegisteredExtraError: @extras is True and no extra datasets were registered
+            ValueError: both of @main and @extras were False, or both of @past and @future were False
+
+        Returns:
+            pandas.DataFrame:
+                Index
+                    reset index
+                Columns:
+                    - Date(pd.TimeStamp): Observation date
+                    - if @main is True,
+                        - Confirmed(int): the number of confirmed cases
+                        - Infected(int): the number of currently infected cases
+                        - Fatal(int): the number of fatal cases
+                        - Recovered (int): the number of recovered cases ( > 0)
+                        - Susceptible(int): the number of susceptible cases
+                    - if @extra is True,
+                        - columns defined in the extra datasets
+        """
+        if past and future:
+            return self._records(main=main, extras=extras)
+        if not past and not future:
+            raise ValueError("Either @past or @future must be True.")
+        df = self._records(main=main, extras=extras).set_index(self.DATE)
+        if past:
+            return df.loc[:pd.to_datetime(self._today)].reset_index()
+        if future:
+            return df.loc[pd.to_datetime(self._today) + timedelta(days=1):].reset_index()
