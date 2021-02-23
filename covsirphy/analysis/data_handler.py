@@ -230,7 +230,9 @@ class DataHandler(Term):
             whether (bool): if True and necessary, the number of cases will be complemented
             kwargs: the other arguments of JHUData.subset_complement()
         """
-        self._complement_dict = {"auto_complement": bool(whether), **kwargs}
+        comp_dict = self._complement_dict.copy()
+        comp_dict.update({"auto_complement": bool(whether), **kwargs})
+        self._complement_dict = comp_dict.copy()
 
     def show_complement(self):
         """
