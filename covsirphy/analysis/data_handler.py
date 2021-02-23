@@ -68,7 +68,7 @@ class DataHandler(Term):
             NotRegisteredMainError: no information because either JHUData or PopulationData was not registered
         """
         if self._complemented is None:
-            raise NotRegisteredMainError("DataHandler.register(jhu_data, population_data)")
+            raise NotRegisteredMainError(".register(jhu_data, population_data)")
         return self._complemented
 
     @property
@@ -80,7 +80,7 @@ class DataHandler(Term):
             NotRegisteredMainError: no information because either JHUData or PopulationData was not registered
         """
         if self._population is None:
-            raise NotRegisteredMainError("DataHandler.register(jhu_data, population_data)")
+            raise NotRegisteredMainError(".register(jhu_data, population_data)")
         return self._population
 
     @property
@@ -179,6 +179,21 @@ class DataHandler(Term):
         """
         self._complement_dict = {"auto_complement": bool(whether), **kwargs}
 
+    def recovery_period(self):
+        """
+        Return representative value of recovery period of all countries.
+
+        Raises:
+            NotRegisteredMainError: JHUData was not registered
+
+        Returns:
+            int: recovery period [days]
+        """
+        jhu_data = self._data_dict[nameof(JHUData)]
+        if jhu_data is None:
+            raise NotRegisteredMainError(".register(jhu_data)")
+        return jhu_data.recovery_period
+
     def records_main(self):
         """
         Return records of the main datasets as a dataframe.
@@ -203,7 +218,7 @@ class DataHandler(Term):
         population_data = self._data_dict[nameof(PopulationData)]
         # Main datasets should be registered
         if None in [jhu_data, population_data]:
-            raise NotRegisteredMainError("DataHandler.register(jhu_data, population_data)")
+            raise NotRegisteredMainError(".register(jhu_data, population_data)")
         # Population
         self._population = population_data.value(**self._area_dict)
         # Subsetting
@@ -271,12 +286,11 @@ class DataHandler(Term):
                     - columns defined in the extra datasets
         """
         if None in self._data_dict.values():
-            raise NotRegisteredMainError("DataHandler.register(jhu_data, population_data)")
+            raise NotRegisteredMainError(".register(jhu_data, population_data)")
         if not set(self._data_dict) - set(self.MAIN_DICT):
             raise NotRegisteredExtraError(
-                "DataHandler.register(jhu_data, population_data, extras=[...])",
-                message="with extra datasets"
-            )
+                ".register(jhu_data, population_data, extras=[...])",
+                message="with extra datasets")
         # Get all subset
         df = pd.DataFrame(columns=[self.DATE])
         for (name, data) in self._data_dict.items():
