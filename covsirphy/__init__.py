@@ -16,6 +16,7 @@ from covsirphy.util.stopwatch import StopWatch
 from covsirphy.util.error import deprecate
 from covsirphy.util.error import SubsetNotFoundError, ScenarioNotFoundError, UnExecutedError
 from covsirphy.util.error import PCRIncorrectPreconditionError, NotInteractiveError, UnExpectedValueError
+from covsirphy.util.error import NotRegisteredMainError, NotRegisteredExtraError
 from covsirphy.util.file import save_dataframe
 from covsirphy.util.argument import find_args
 from covsirphy.util.term import Term, Word
@@ -86,7 +87,7 @@ __all__ = [
     "PolicyMeasures",
     "SubsetNotFoundError", "ScenarioNotFoundError", "UnExecutedError",
     "PCRIncorrectPreconditionError", "NotInteractiveError",
-    "UnExpectedValueError",
+    "UnExpectedValueError", "NotRegisteredMainError", "NotRegisteredExtraError",
     "VisualizeBase", "ColoredMap",
     # Deprecated
     "Population", "Word", "jpn_map",

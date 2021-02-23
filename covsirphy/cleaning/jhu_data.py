@@ -554,6 +554,9 @@ class JHUData(CleaningBase):
             auto_complement (bool): if True and necessary, the number of cases will be complemented
             kwargs: the other arguments of JHUData.subset_complement()
 
+        Raises:
+            SubsetNotFoundError: failed in subsetting because of lack of data
+
         Returns:
             tuple(pandas.DataFrame, bool):
                 pandas.DataFrame:
