@@ -32,26 +32,47 @@ class TestDataHandler(object):
             dhl.register(population_data=population_data)
 
     @pytest.mark.parametrize("country", ["Japan"])
-    def test_records_main(self, jhu_data, population_data, country):
+    def test_population(self, jhu_data, population_data, country):
+        dhl = DataHandler(country=country, province=None)
         with pytest.raises(NotRegisteredMainError):
-            dhl_error = DataHandler(country=country, province=None)
-            dhl_error.records_main()
-        dhl = DataHandler(
-            country=country, province=None, jhu_data=jhu_data, population_data=population_data)
-        dhl.records_main()
+            assert dhl.population == population_data.value(country=country)
+        dhl.register(jhu_data=jhu_data, population_data=population_data)
+        assert dhl.population == population_data.value(country=country)
 
     @pytest.mark.parametrize("country", ["Japan"])
     def test_complement(self, jhu_data, population_data, country):
         dhl = DataHandler(country=country, province=None)
         with pytest.raises(NotRegisteredMainError):
             assert dhl.complemented is None
+        with pytest.raises(NotRegisteredMainError):
+            dhl.show_complement()
         dhl.register(jhu_data=jhu_data, population_data=population_data)
+        # Not complemented
         dhl.switch_complement(whether=False)
         dhl.records_main()
+        dhl.show_complement()
         assert not dhl.complemented
+        # Complemented
         dhl.switch_complement(whether=True)
         dhl.records_main()
+        dhl.show_complement()
         assert dhl.complemented
+
+    @pytest.mark.parametrize("country", ["Japan"])
+    def test_recovery_period(self, jhu_data, country):
+        dhl = DataHandler(country=country, province=None)
+        with pytest.raises(NotRegisteredMainError):
+            assert isinstance(dhl.recovery_period(), int)
+        dhl.register(jhu_data=jhu_data)
+        assert isinstance(dhl.recovery_period(), int)
+
+    @pytest.mark.parametrize("country", ["Japan"])
+    def test_records_main(self, jhu_data, population_data, country):
+        dhl = DataHandler(country=country, province=None)
+        with pytest.raises(NotRegisteredMainError):
+            dhl.records_main()
+        dhl.register(jhu_data=jhu_data, population_data=population_data)
+        assert dhl.population == population_data.value(country=country)
 
     @pytest.mark.parametrize("country", ["Japan"])
     def test_timepoints(self, jhu_data, population_data, country):
