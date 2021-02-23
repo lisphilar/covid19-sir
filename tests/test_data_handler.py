@@ -4,6 +4,7 @@
 from covsirphy.util.error import SubsetNotFoundError
 import pytest
 from covsirphy import DataHandler, JHUData, PopulationData, Term
+from covsirphy import CountryData, JapanData, OxCGRTData, PCRData, VaccineData
 from covsirphy import UnExpectedValueError, UnExecutedError
 
 
@@ -11,12 +12,15 @@ class TestDataHandler(object):
     @pytest.mark.parametrize("country", ["Japan"])
     def test_register(self, data, country):
         dhl = DataHandler(country=country, province=None)
+        # Main datasets
         if isinstance(data, JHUData):
             return dhl.register(jhu_data=data)
         if isinstance(data, PopulationData):
             return dhl.register(population_data=data)
-        if type(data) in DataHandler.EXTRA_DICT.values():
+        # Extra datasets
+        if type(data) in [CountryData, JapanData, OxCGRTData, PCRData, VaccineData]:
             return dhl.register(extras=[data])
+        # Un-acceptable datasets
         with pytest.raises(UnExpectedValueError):
             dhl.register(extras=[data])
 
@@ -58,3 +62,16 @@ class TestDataHandler(object):
         assert series.min().strftime(Term.DATE_FORMAT) == dhl.first_date == "01Apr2020"
         assert series.max().strftime(Term.DATE_FORMAT) == dhl.last_date == "01Sep2020"
         assert dhl.today == "01Jun2020"
+
+    @pytest.mark.parametrize("country", ["Japan", "France"])
+    def test_records_extra(self, jhu_data, population_data, country,
+                           japan_data, oxcgrt_data, pcr_data, vaccine_data):
+        dhl = DataHandler(
+            country=country, province=None, jhu_data=jhu_data, population_data=population_data)
+        dhl.timepoints(first_date="01Apr2020", last_date="01Sep2020")
+        with pytest.raises(UnExecutedError):
+            dhl.records_extra()
+        dhl.register(extras=[japan_data, oxcgrt_data, pcr_data, vaccine_data])
+        series = dhl.records_extra()[Term.DATE]
+        assert series.min().strftime(Term.DATE_FORMAT) == dhl.first_date == "01Apr2020"
+        assert series.max().strftime(Term.DATE_FORMAT) == dhl.last_date == "01Sep2020"
