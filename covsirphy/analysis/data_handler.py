@@ -47,7 +47,7 @@ class DataHandler(Term):
         self._data_dict = dict.fromkeys(self.MAIN_DICT.keys(), None)
         # Population
         self._population = None
-        # Auto complement
+        # Auto complement: manually changed with DataHandler.switch_complement()
         self._complement_dict = {"auto_complement": True}
         self._complemented = None
         # Date
@@ -58,6 +58,13 @@ class DataHandler(Term):
         self._main_cols = None
         # Register datasets: date and main columns will be set internally if main data available
         self.register(**kwargs)
+
+    @property
+    def main_satisfied(self):
+        """
+        bool: all main datasets were registred or not
+        """
+        return all(self._data_dict[name] for name in self.MAIN_DICT.keys())
 
     @property
     def complemented(self):
