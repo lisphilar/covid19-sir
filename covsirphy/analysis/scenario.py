@@ -314,7 +314,7 @@ class Scenario(Term):
             If None was set as @variables, ["Confirmed", "Fatal", "Recovered"] will be used.
         """
         window = self._ensure_natural_int(window, name="window")
-        df = self.records(variables=variables).set_index(self.DATE)
+        df = self.records(variables=variables, show_figure=False).set_index(self.DATE)
         df = df.diff().dropna()
         df = df.rolling(window=window).mean().dropna().astype(np.int64)
         if self._data.complemented:
