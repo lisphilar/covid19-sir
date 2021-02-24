@@ -165,9 +165,6 @@ class DataHandler(Term):
             # Check the data can be accepted as an extra dataset
             if isinstance(extra_data, tuple(self.EXTRA_DICT.values())):
                 continue
-            if set(type(extra_data).__bases__) & set(self.EXTRA_DICT.values()):
-                # A child class of an acceptable class
-                continue
             raise UnExpectedValueError(
                 name=statement, value=type(extra_data), candidates=list(self.EXTRA_DICT.keys()))
         # Register the datasets
