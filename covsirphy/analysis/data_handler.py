@@ -165,9 +165,6 @@ class DataHandler(Term):
             # Check the data can be accepted as an extra dataset
             if isinstance(extra_data, tuple(self.EXTRA_DICT.values())):
                 continue
-            if set(type(extra_data).__bases__) & set(self.EXTRA_DICT.values()):
-                # A child class of an acceptable class
-                continue
             raise UnExpectedValueError(
                 name=statement, value=type(extra_data), candidates=list(self.EXTRA_DICT.keys()))
         # Register the datasets
@@ -433,3 +430,29 @@ class DataHandler(Term):
             return df.loc[:pd.to_datetime(self._today)].reset_index()
         if future:
             return df.loc[pd.to_datetime(self._today) + timedelta(days=1):].reset_index()
+
+    def records_all(self):
+        """
+        Return registered all records of the datasets as a dataframe.
+
+        Raises:
+            NotRegisteredMainError: either JHUData or PopulationData was not registered
+            SubsetNotFoundError: failed in subsetting because of lack of data
+
+        Returns:
+            pandas.DataFrame:
+                Index
+                    reset index
+                Columns:
+                    - Date(pd.TimeStamp): Observation date
+                    - Confirmed(int): the number of confirmed cases
+                    - Infected(int): the number of currently infected cases
+                    - Fatal(int): the number of fatal cases
+                    - Recovered (int): the number of recovered cases ( > 0)
+                    - Susceptible(int): the number of susceptible cases
+                    - columns defined in the extra datasets
+        """
+        try:
+            return self.records(main=True, extras=True, past=True, future=True)
+        except NotRegisteredExtraError:
+            return self.records(main=True, extras=False, past=True, future=True)
