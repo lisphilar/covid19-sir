@@ -137,3 +137,11 @@ class TestDataHandler(object):
             sta, end = "02Jun2020", "01Sep2020"
         assert df[Term.DATE].min().strftime(Term.DATE_FORMAT) == sta
         assert df[Term.DATE].max().strftime(Term.DATE_FORMAT) == end
+
+    @pytest.mark.parametrize("country", ["Japan"])
+    def test_records_all(self, jhu_data, population_data, country, oxcgrt_data):
+        dhl = DataHandler(country=country, province=None)
+        dhl.register(jhu_data=jhu_data, population_data=population_data)
+        dhl.records_all()
+        dhl.register(extras=[oxcgrt_data])
+        dhl.records_all()

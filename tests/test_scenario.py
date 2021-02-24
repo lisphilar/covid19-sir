@@ -61,16 +61,23 @@ class TestScenario(object):
         warnings.filterwarnings("ignore", category=UserWarning)
         scenario.records(show_figure=True)
 
-    def test_complement_reverse(self, snl):
+    def test_records(self, snl):
+        # Not complemented
         snl.complement_reverse()
-        snl.records()
+        snl.records(variables=None)
+        snl.records(variables="all")
+        df = snl.records(variables=[Term.TESTS, Term.VAC])
+        assert set(df.columns) == set([Term.DATE, Term.TESTS, Term.VAC])
         snl.records_diff()
-
-    def test_complement(self, snl):
+        # Complemented
         snl.complement()
-        snl.show_complement()
         snl.records()
-        snl.records_diff()
+        snl.records_diff(variables=None)
+        snl.records_diff(variables="all")
+        diff_df = snl.records_diff(variables=[Term.TESTS, Term.VAC])
+        assert set(diff_df.columns) == set([Term.TESTS, Term.VAC])
+        # Details of complement
+        snl.show_complement()
 
     def test_register_scenario(self, snl):
         with pytest.raises(ScenarioNotFoundError):
