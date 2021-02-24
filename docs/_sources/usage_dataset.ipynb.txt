@@ -27,22 +27,7 @@
    },
    "outputs": [],
    "source": [
-    "# Standard users\n",
     "# !pip install covsirphy"
-   ]
-  },
-  {
-   "cell_type": "code",
-   "execution_count": null,
-   "id": "danish-sport",
-   "metadata": {
-    "collapsed": false
-   },
-   "outputs": [],
-   "source": [
-    "# Developers (Note: this notebook is in example directory)\n",
-    "import os\n",
-    "os.chdir(\"../\")"
    ]
   },
   {
@@ -79,7 +64,7 @@
     "### Dataset preparation\n",
     "Download the datasets to \"input\" directory and load them.\n",
     "\n",
-    "If \"input\" directory has the datasets, `DataLoader` instance will load the local files. If the datasets were updated in remote servers, `DataLoader` will update the local files automatically and download the datasets to \"input\" directory and load them."
+    "If \"input\" directory has the datasets, `DataLoader` instance will load the local files. If the datasets were updated in remote servers, `DataLoader` will update the local files automatically and download the datasets to \"../input\" directory and load them. We can change the directory when creating the instance."
    ]
   },
   {
@@ -92,7 +77,7 @@
    "outputs": [],
    "source": [
     "# Create DataLoader instance\n",
-    "data_loader = cs.DataLoader(\"input\")"
+    "data_loader = cs.DataLoader(\"../input\")"
    ]
   },
   {
@@ -102,7 +87,7 @@
    "outputs": [],
    "source": [
     "# The number of cases (JHU style)\n",
-    "jhu_data = data_loader.jhu()\n",
+    "jhu_data = data_loader.jhu(verbose=True)\n",
     "# Population in each country\n",
     "population_data = data_loader.population()\n",
     "# Government Response Tracker (OxCGRT)\n",
@@ -362,8 +347,8 @@
    "metadata": {},
    "outputs": [],
    "source": [
-    "# Show the details of complement for all countries\n",
-    "jhu_data.show_complement().tail()"
+    "# For selected country\n",
+    "jhu_data.show_complement(country=\"Japan\")"
    ]
   },
   {
@@ -372,8 +357,8 @@
    "metadata": {},
    "outputs": [],
    "source": [
-    "# For selected country\n",
-    "# jhu_data.show_complement(country=\"Japan\")\n",
+    "# Show the details of complement for all countries\n",
+    "# jhu_data.show_complement().tail()\n",
     "# For selected province\n",
     "# jhu_data.show_complement(country=\"Japan\", province=\"Tokyo\")\n",
     "# For selected countries\n",
@@ -1263,7 +1248,7 @@
  "metadata": {
   "kernelspec": {
    "name": "python3",
-   "display_name": "Python 3.9.1 64-bit ('.venv': venv)",
+   "display_name": "Python 3.9.1 64-bit ('.venv')",
    "metadata": {
     "interpreter": {
      "hash": "aa53c8c6e6798222a2084c11cc25017700a8d3ad495b587e3a634f357767115f"
@@ -1280,7 +1265,7 @@
    "name": "python",
    "nbconvert_exporter": "python",
    "pygments_lexer": "ipython3",
-   "version": "3.9.1"
+   "version": "3.9.1-final"
   }
  },
  "nbformat": 4,
