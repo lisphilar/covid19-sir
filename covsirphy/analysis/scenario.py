@@ -248,9 +248,14 @@ class Scenario(Term):
         Return the records as a dataframe.
 
         Args:
-            show_figure (bool): if True, show the records as a line-plot.
-            variables (list[str] or None): variables to include, Infected/Fatal/Recovered when None
+            variables (list[str] or str or None): list of variables, 'all', None (Infected/Fatal/Recovered)
             kwargs: the other keyword arguments of Scenario.line_plot()
+
+        Raises:
+            NotRegisteredMainError: either JHUData or PopulationData was not registered
+            SubsetNotFoundError: failed in subsetting because of lack of data
+            NotRegisteredExtraError: some variables are not included in the main datasets
+            and no extra datasets were registered
 
         Returns:
             pandas.DataFrame
@@ -267,10 +272,16 @@ class Scenario(Term):
             The kind of complement will be added to the title of the figure.
             - @variables can be selected from Susceptible/Confirmed/Infected/Fatal/Recovered.
         """
-        variables = self._ensure_list(
-            variables or [self.CI, self.F, self.R],
-            candidates=[self.S, *self.VALUE_COLUMNS], name="variables")
-        df = self._data.records(extras=False).loc[:, [self.DATE, *variables]]
+        # Get necessary data for the variables
+        all_df = self._data.records_all()
+        if variables is None:
+            df = all_df.loc[:, [self.DATE, self.CI, self.F, self.R]]
+        elif variables == "all":
+            df = all_df.copy()
+        else:
+            self._ensure_list(variables, candidates=all_df.columns.tolist(), name="variables")
+            df = all_df.loc[:, [self.DATE, *variables]]
+        # Figure
         if self._data.complemented:
             title = f"{self.area}: Cases over time\nwith {self._data.complemented}"
         else:
@@ -284,7 +295,7 @@ class Scenario(Term):
         Return the number of daily new cases (the first discreate difference of records).
 
         Args:
-            variables (str or None): variables to show
+            variables (list[str] or str or None): list of variables, 'all', None (Infected/Fatal/Recovered)
             window (int): window of moving average, >= 1
             kwargs: the other keyword arguments of Scenario.line_plot()
 
@@ -302,10 +313,8 @@ class Scenario(Term):
             @variables will be selected from Confirmed, Infected, Fatal and Recovered.
             If None was set as @variables, ["Confirmed", "Fatal", "Recovered"] will be used.
         """
-        variables = self._ensure_list(
-            variables or [self.C, self.F, self.R], candidates=self.VALUE_COLUMNS, name="variables")
         window = self._ensure_natural_int(window, name="window")
-        df = self._data.records(extras=False).set_index(self.DATE)[variables]
+        df = self.records(variables=variables).set_index(self.DATE)
         df = df.diff().dropna()
         df = df.rolling(window=window).mean().dropna().astype(np.int64)
         if self._data.complemented:
