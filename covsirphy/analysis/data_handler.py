@@ -133,13 +133,11 @@ class DataHandler(Term):
         """
         # Main: JHUData
         if jhu_data is not None:
-            __name = nameof(jhu_data)
-            self._ensure_instance(jhu_data, JHUData, name=__name)
+            self._ensure_instance(jhu_data, JHUData, name="jhu_data")
             self._data_dict[self.__NAME_JHU] = jhu_data
         # Main: PopulationData
         if population_data is not None:
-            __name = nameof(population_data)
-            self._ensure_instance(population_data, PopulationData, name=__name)
+            self._ensure_instance(population_data, PopulationData, name="population_data")
             self._data_dict[self.__NAME_POPULATION] = population_data
         # Update date range
         try:
@@ -165,8 +163,7 @@ class DataHandler(Term):
             TypeError: non-data cleaning instance was included as an extra dataset
             UnExpectedValueError: instance of un-expected data cleaning class was included as an extra dataset
         """
-        __name = nameof(extras)
-        self._ensure_list(extras, name=__name)
+        self._ensure_list(extras, name="extras")
         # Verify the datasets
         for (i, extra_data) in enumerate(extras, start=1):
             statement = f"{self.num2str(i)} extra dataset"
