@@ -65,7 +65,7 @@
             
             
               <div class="version">
-                2.16.2-zeta
+                2.16.2-zeta-fu1
               </div>
             
           
@@ -201,17 +201,24 @@
 <span class="sd">        province (str or None): province name</span>
 <span class="sd">        kwargs: arguments of DataHandler.register()</span>
 <span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># {nameof(JHUData): JHUData} does not work with AST magics, including pytest and ipython</span>
     <span class="c1"># Main datasets {str: class}</span>
+    <span class="n">__NAME_JHU</span> <span class="o">=</span> <span class="n">nameof</span><span class="p">(</span><span class="n">JHUData</span><span class="p">)</span>
+    <span class="n">__NAME_POPULATION</span> <span class="o">=</span> <span class="n">nameof</span><span class="p">(</span><span class="n">PopulationData</span><span class="p">)</span>
     <span class="n">MAIN_DICT</span> <span class="o">=</span> <span class="p">{</span>
-        <span class="n">nameof</span><span class="p">(</span><span class="n">JHUData</span><span class="p">):</span> <span class="n">JHUData</span><span class="p">,</span>
-        <span class="n">nameof</span><span class="p">(</span><span class="n">PopulationData</span><span class="p">):</span> <span class="n">PopulationData</span>
+        <span class="n">__NAME_JHU</span><span class="p">:</span> <span class="n">JHUData</span><span class="p">,</span>
+        <span class="n">__NAME_POPULATION</span><span class="p">:</span> <span class="n">PopulationData</span>
     <span class="p">}</span>
     <span class="c1"># Extra datasets {str: class}</span>
+    <span class="n">__NAME_COUNTRY</span> <span class="o">=</span> <span class="n">nameof</span><span class="p">(</span><span class="n">CountryData</span><span class="p">)</span>
+    <span class="n">__NAME_OXCGRT</span> <span class="o">=</span> <span class="n">nameof</span><span class="p">(</span><span class="n">OxCGRTData</span><span class="p">)</span>
+    <span class="n">__NAME_PCR</span> <span class="o">=</span> <span class="n">nameof</span><span class="p">(</span><span class="n">PCRData</span><span class="p">)</span>
+    <span class="n">__NAME_VACCINE</span> <span class="o">=</span> <span class="n">nameof</span><span class="p">(</span><span class="n">VaccineData</span><span class="p">)</span>
     <span class="n">EXTRA_DICT</span> <span class="o">=</span> <span class="p">{</span>
-        <span class="n">nameof</span><span class="p">(</span><span class="n">CountryData</span><span class="p">):</span> <span class="n">CountryData</span><span class="p">,</span>
-        <span class="n">nameof</span><span class="p">(</span><span class="n">OxCGRTData</span><span class="p">):</span> <span class="n">OxCGRTData</span><span class="p">,</span>
-        <span class="n">nameof</span><span class="p">(</span><span class="n">PCRData</span><span class="p">):</span> <span class="n">PCRData</span><span class="p">,</span>
-        <span class="n">nameof</span><span class="p">(</span><span class="n">VaccineData</span><span class="p">):</span> <span class="n">VaccineData</span><span class="p">,</span>
+        <span class="n">__NAME_COUNTRY</span><span class="p">:</span> <span class="n">CountryData</span><span class="p">,</span>
+        <span class="n">__NAME_OXCGRT</span><span class="p">:</span> <span class="n">OxCGRTData</span><span class="p">,</span>
+        <span class="n">__NAME_PCR</span><span class="p">:</span> <span class="n">PCRData</span><span class="p">,</span>
+        <span class="n">__NAME_VACCINE</span><span class="p">:</span> <span class="n">VaccineData</span><span class="p">,</span>
     <span class="p">}</span>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">country</span><span class="p">,</span> <span class="n">province</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
@@ -300,12 +307,12 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="c1"># Main: JHUData</span>
         <span class="k">if</span> <span class="n">jhu_data</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_ensure_instance</span><span class="p">(</span><span class="n">jhu_data</span><span class="p">,</span> <span class="n">JHUData</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="n">nameof</span><span class="p">(</span><span class="n">jhu_data</span><span class="p">))</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_data_dict</span><span class="p">[</span><span class="n">nameof</span><span class="p">(</span><span class="n">JHUData</span><span class="p">)]</span> <span class="o">=</span> <span class="n">jhu_data</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_ensure_instance</span><span class="p">(</span><span class="n">jhu_data</span><span class="p">,</span> <span class="n">JHUData</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;jhu_data&quot;</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_data_dict</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">__NAME_JHU</span><span class="p">]</span> <span class="o">=</span> <span class="n">jhu_data</span>
         <span class="c1"># Main: PopulationData</span>
         <span class="k">if</span> <span class="n">population_data</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_ensure_instance</span><span class="p">(</span><span class="n">population_data</span><span class="p">,</span> <span class="n">PopulationData</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="n">nameof</span><span class="p">(</span><span class="n">population_data</span><span class="p">))</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_data_dict</span><span class="p">[</span><span class="n">nameof</span><span class="p">(</span><span class="n">PopulationData</span><span class="p">)]</span> <span class="o">=</span> <span class="n">population_data</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_ensure_instance</span><span class="p">(</span><span class="n">population_data</span><span class="p">,</span> <span class="n">PopulationData</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;population_data&quot;</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_data_dict</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">__NAME_POPULATION</span><span class="p">]</span> <span class="o">=</span> <span class="n">population_data</span>
         <span class="c1"># Update date range</span>
         <span class="k">try</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">timepoints</span><span class="p">(</span>
@@ -330,7 +337,7 @@
 <span class="sd">            TypeError: non-data cleaning instance was included as an extra dataset</span>
 <span class="sd">            UnExpectedValueError: instance of un-expected data cleaning class was included as an extra dataset</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_ensure_list</span><span class="p">(</span><span class="n">extras</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="n">nameof</span><span class="p">(</span><span class="n">extras</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_ensure_list</span><span class="p">(</span><span class="n">extras</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;extras&quot;</span><span class="p">)</span>
         <span class="c1"># Verify the datasets</span>
         <span class="k">for</span> <span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="n">extra_data</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">extras</span><span class="p">,</span> <span class="n">start</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
             <span class="n">statement</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">num2str</span><span class="p">(</span><span class="n">i</span><span class="p">)</span><span class="si">}</span><span class="s2"> extra dataset&quot;</span>
@@ -357,7 +364,7 @@
 <span class="sd">        Returns:</span>
 <span class="sd">            int: recovery period [days]</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">jhu_data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_data_dict</span><span class="p">[</span><span class="n">nameof</span><span class="p">(</span><span class="n">JHUData</span><span class="p">)]</span>
+        <span class="n">jhu_data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_data_dict</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">__NAME_JHU</span><span class="p">]</span>
         <span class="k">if</span> <span class="n">jhu_data</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">raise</span> <span class="n">NotRegisteredMainError</span><span class="p">(</span><span class="s2">&quot;.register(jhu_data)&quot;</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">jhu_data</span><span class="o">.</span><span class="n">recovery_period</span></div>
@@ -382,8 +389,8 @@
 <span class="sd">                    - Recovered (int): the number of recovered cases ( &gt; 0)</span>
 <span class="sd">                    - Susceptible(int): the number of susceptible cases</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">jhu_data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_data_dict</span><span class="p">[</span><span class="n">nameof</span><span class="p">(</span><span class="n">JHUData</span><span class="p">)]</span>
-        <span class="n">population_data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_data_dict</span><span class="p">[</span><span class="n">nameof</span><span class="p">(</span><span class="n">PopulationData</span><span class="p">)]</span>
+        <span class="n">jhu_data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_data_dict</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">__NAME_JHU</span><span class="p">]</span>
+        <span class="n">population_data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_data_dict</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">__NAME_POPULATION</span><span class="p">]</span>
         <span class="c1"># Main datasets should be registered</span>
         <span class="k">if</span> <span class="kc">None</span> <span class="ow">in</span> <span class="p">[</span><span class="n">jhu_data</span><span class="p">,</span> <span class="n">population_data</span><span class="p">]:</span>
             <span class="k">raise</span> <span class="n">NotRegisteredMainError</span><span class="p">(</span><span class="s2">&quot;.register(jhu_data, population_data)&quot;</span><span class="p">)</span>
@@ -430,7 +437,7 @@
 <span class="sd">        Note:</span>
 <span class="sd">            Keyword arguments of JHUData,subset_complement() can be specified with DataHandler.switch_complement().</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">jhu_data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_data_dict</span><span class="p">[</span><span class="n">nameof</span><span class="p">(</span><span class="n">JHUData</span><span class="p">)]</span>
+        <span class="n">jhu_data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_data_dict</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">__NAME_JHU</span><span class="p">]</span>
         <span class="k">if</span> <span class="n">jhu_data</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">raise</span> <span class="n">NotRegisteredMainError</span><span class="p">(</span><span class="s2">&quot;.register(jhu_data)&quot;</span><span class="p">)</span>
         <span class="n">comp_dict</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_complement_dict</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
@@ -459,20 +466,20 @@
         <span class="k">if</span> <span class="n">first_date</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_first_date</span> <span class="o">=</span> <span class="n">main_df</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">DATE</span><span class="p">]</span><span class="o">.</span><span class="n">min</span><span class="p">()</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">DATE_FORMAT</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_ensure_date_order</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_first_date</span><span class="p">,</span> <span class="n">first_date</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="n">nameof</span><span class="p">(</span><span class="n">first_date</span><span class="p">))</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_ensure_date_order</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_first_date</span><span class="p">,</span> <span class="n">first_date</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;first_date&quot;</span><span class="p">)</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_first_date</span> <span class="o">=</span> <span class="n">first_date</span>
         <span class="c1"># The last date</span>
         <span class="k">if</span> <span class="n">last_date</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_last_date</span> <span class="o">=</span> <span class="n">main_df</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">DATE</span><span class="p">]</span><span class="o">.</span><span class="n">max</span><span class="p">()</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">DATE_FORMAT</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_ensure_date_order</span><span class="p">(</span><span class="n">last_date</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_last_date</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="n">nameof</span><span class="p">(</span><span class="n">last_date</span><span class="p">))</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_ensure_date_order</span><span class="p">(</span><span class="n">last_date</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_last_date</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;last_date&quot;</span><span class="p">)</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_last_date</span> <span class="o">=</span> <span class="n">last_date</span>
         <span class="c1"># Today</span>
         <span class="k">if</span> <span class="n">today</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_today</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_last_date</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_ensure_date_order</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_first_date</span><span class="p">,</span> <span class="n">today</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="n">nameof</span><span class="p">(</span><span class="n">today</span><span class="p">))</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_ensure_date_order</span><span class="p">(</span><span class="n">today</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_last_date</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="n">nameof</span><span class="p">(</span><span class="n">today</span><span class="p">))</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_ensure_date_order</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_first_date</span><span class="p">,</span> <span class="n">today</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;today&quot;</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_ensure_date_order</span><span class="p">(</span><span class="n">today</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_last_date</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;today&quot;</span><span class="p">)</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_today</span> <span class="o">=</span> <span class="n">today</span></div>
 
 <div class="viewcode-block" id="DataHandler.records_extras"><a class="viewcode-back" href="../../../covsirphy.analysis.html#covsirphy.DataHandler.records_extras">[docs]</a>    <span class="k">def</span> <span class="nf">records_extras</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
