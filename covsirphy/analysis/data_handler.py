@@ -27,17 +27,24 @@ class DataHandler(Term):
         province (str or None): province name
         kwargs: arguments of DataHandler.register()
     """
+    # {nameof(JHUData): JHUData} does not work with AST magics, including pytest and ipython
     # Main datasets {str: class}
+    __NAME_JHU = nameof(JHUData)
+    __NAME_POPULATION = nameof(PopulationData)
     MAIN_DICT = {
-        nameof(JHUData): JHUData,
-        nameof(PopulationData): PopulationData
+        __NAME_JHU: JHUData,
+        __NAME_POPULATION: PopulationData
     }
     # Extra datasets {str: class}
+    __NAME_COUNTRY = nameof(CountryData)
+    __NAME_OXCGRT = nameof(OxCGRTData)
+    __NAME_PCR = nameof(PCRData)
+    __NAME_VACCINE = nameof(VaccineData)
     EXTRA_DICT = {
-        nameof(CountryData): CountryData,
-        nameof(OxCGRTData): OxCGRTData,
-        nameof(PCRData): PCRData,
-        nameof(VaccineData): VaccineData,
+        __NAME_COUNTRY: CountryData,
+        __NAME_OXCGRT: OxCGRTData,
+        __NAME_PCR: PCRData,
+        __NAME_VACCINE: VaccineData,
     }
 
     def __init__(self, country, province=None, **kwargs):
@@ -126,12 +133,14 @@ class DataHandler(Term):
         """
         # Main: JHUData
         if jhu_data is not None:
-            self._ensure_instance(jhu_data, JHUData, name=nameof(jhu_data))
-            self._data_dict[nameof(JHUData)] = jhu_data
+            __name = nameof(jhu_data)
+            self._ensure_instance(jhu_data, JHUData, name=__name)
+            self._data_dict[self.__NAME_JHU] = jhu_data
         # Main: PopulationData
         if population_data is not None:
-            self._ensure_instance(population_data, PopulationData, name=nameof(population_data))
-            self._data_dict[nameof(PopulationData)] = population_data
+            __name = nameof(population_data)
+            self._ensure_instance(population_data, PopulationData, name=__name)
+            self._data_dict[self.__NAME_POPULATION] = population_data
         # Update date range
         try:
             self.timepoints(
@@ -156,7 +165,8 @@ class DataHandler(Term):
             TypeError: non-data cleaning instance was included as an extra dataset
             UnExpectedValueError: instance of un-expected data cleaning class was included as an extra dataset
         """
-        self._ensure_list(extras, name=nameof(extras))
+        __name = nameof(extras)
+        self._ensure_list(extras, name=__name)
         # Verify the datasets
         for (i, extra_data) in enumerate(extras, start=1):
             statement = f"{self.num2str(i)} extra dataset"
@@ -183,7 +193,7 @@ class DataHandler(Term):
         Returns:
             int: recovery period [days]
         """
-        jhu_data = self._data_dict[nameof(JHUData)]
+        jhu_data = self._data_dict[self.__NAME_JHU]
         if jhu_data is None:
             raise NotRegisteredMainError(".register(jhu_data)")
         return jhu_data.recovery_period
@@ -208,8 +218,8 @@ class DataHandler(Term):
                     - Recovered (int): the number of recovered cases ( > 0)
                     - Susceptible(int): the number of susceptible cases
         """
-        jhu_data = self._data_dict[nameof(JHUData)]
-        population_data = self._data_dict[nameof(PopulationData)]
+        jhu_data = self._data_dict[self.__NAME_JHU]
+        population_data = self._data_dict[self.__NAME_POPULATION]
         # Main datasets should be registered
         if None in [jhu_data, population_data]:
             raise NotRegisteredMainError(".register(jhu_data, population_data)")
@@ -256,7 +266,7 @@ class DataHandler(Term):
         Note:
             Keyword arguments of JHUData,subset_complement() can be specified with DataHandler.switch_complement().
         """
-        jhu_data = self._data_dict[nameof(JHUData)]
+        jhu_data = self._data_dict[self.__NAME_JHU]
         if jhu_data is None:
             raise NotRegisteredMainError(".register(jhu_data)")
         comp_dict = self._complement_dict.copy()
@@ -285,20 +295,20 @@ class DataHandler(Term):
         if first_date is None:
             self._first_date = main_df[self.DATE].min().strftime(self.DATE_FORMAT)
         else:
-            self._ensure_date_order(self._first_date, first_date, name=nameof(first_date))
+            self._ensure_date_order(self._first_date, first_date, name="first_date")
             self._first_date = first_date
         # The last date
         if last_date is None:
             self._last_date = main_df[self.DATE].max().strftime(self.DATE_FORMAT)
         else:
-            self._ensure_date_order(last_date, self._last_date, name=nameof(last_date))
+            self._ensure_date_order(last_date, self._last_date, name="last_date")
             self._last_date = last_date
         # Today
         if today is None:
             self._today = self._last_date
         else:
-            self._ensure_date_order(self._first_date, today, name=nameof(today))
-            self._ensure_date_order(today, self._last_date, name=nameof(today))
+            self._ensure_date_order(self._first_date, today, name="today")
+            self._ensure_date_order(today, self._last_date, name="today")
             self._today = today
 
     def records_extras(self):
