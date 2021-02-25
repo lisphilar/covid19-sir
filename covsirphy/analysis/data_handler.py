@@ -5,7 +5,6 @@ from datetime import timedelta
 import itertools
 import numpy as np
 import pandas as pd
-from varname import nameof
 from covsirphy.util.error import SubsetNotFoundError, UnExpectedValueError
 from covsirphy.util.error import NotRegisteredMainError, NotRegisteredExtraError
 from covsirphy.util.term import Term
@@ -29,17 +28,17 @@ class DataHandler(Term):
     """
     # {nameof(JHUData): JHUData} does not work with AST magics, including pytest and ipython
     # Main datasets {str: class}
-    __NAME_JHU = nameof(JHUData)
-    __NAME_POPULATION = nameof(PopulationData)
+    __NAME_JHU = "JHUData"
+    __NAME_POPULATION = "PopulationData"
     MAIN_DICT = {
         __NAME_JHU: JHUData,
         __NAME_POPULATION: PopulationData
     }
     # Extra datasets {str: class}
-    __NAME_COUNTRY = nameof(CountryData)
-    __NAME_OXCGRT = nameof(OxCGRTData)
-    __NAME_PCR = nameof(PCRData)
-    __NAME_VACCINE = nameof(VaccineData)
+    __NAME_COUNTRY = "CountryData"
+    __NAME_OXCGRT = "OxCGRTData"
+    __NAME_PCR = "PCRData"
+    __NAME_VACCINE = "VaccineData"
     EXTRA_DICT = {
         __NAME_COUNTRY: CountryData,
         __NAME_OXCGRT: OxCGRTData,
@@ -66,14 +65,14 @@ class DataHandler(Term):
         # Register datasets: date and main columns will be set internally if main data available
         self.register(**kwargs)
 
-    @property
+    @ property
     def main_satisfied(self):
         """
         bool: all main datasets were registered or not
         """
         return all(self._data_dict[name] for name in self.MAIN_DICT.keys())
 
-    @property
+    @ property
     def complemented(self):
         """
         bool or str: whether complemented or not and the details, None when not confirmed
@@ -85,7 +84,7 @@ class DataHandler(Term):
             raise NotRegisteredMainError(".register(jhu_data, population_data)")
         return self._complemented
 
-    @property
+    @ property
     def population(self):
         """
         int: population value
@@ -97,21 +96,21 @@ class DataHandler(Term):
             raise NotRegisteredMainError(".register(jhu_data, population_data)")
         return self._population
 
-    @property
+    @ property
     def first_date(self):
         """
         str: the first date of the records
         """
         return self._first_date
 
-    @property
+    @ property
     def last_date(self):
         """
         str: the last date of the records
         """
         return self._last_date
 
-    @property
+    @ property
     def today(self):
         """
         str: reference date to determine whether a phase is a past phase or a future phase
