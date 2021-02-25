@@ -47,11 +47,7 @@
    "metadata": {},
    "outputs": [],
    "source": [
-    "# Standard users\n",
-    "# !pip install covsirphy\n",
-    "# Developers (Note: this notebook is in example directory)\n",
-    "import os\n",
-    "os.chdir(\"../\")"
+    "# !pip install covsirphy"
    ]
   },
   {
@@ -82,7 +78,7 @@
    "outputs": [],
    "source": [
     "# Standard users and developers\n",
-    "data_loader = cs.DataLoader(\"input\")\n",
+    "data_loader = cs.DataLoader(\"../input\")\n",
     "# The number of cases (JHU style)\n",
     "jhu_data = data_loader.jhu(verbose=False)\n",
     "# Population in each country\n",
@@ -235,7 +231,7 @@
    "cell_type": "markdown",
    "metadata": {},
    "source": [
-    "### $Rt$: Reprodcution number $\\mathrm{[-]}$"
+    "### $Rt$: Reprodcution number"
    ]
   },
   {
@@ -251,7 +247,7 @@
    "cell_type": "markdown",
    "metadata": {},
    "source": [
-    "### $\\rho$: Effective contact rate $\\mathrm{[-]}$"
+    "### $\\rho$: Effective contact rate"
    ]
   },
   {
@@ -267,7 +263,7 @@
    "cell_type": "markdown",
    "metadata": {},
    "source": [
-    "### $\\sigma$: Recovery rate $\\mathrm{[-]}$"
+    "### $\\sigma$: Recovery rate"
    ]
   },
   {
@@ -283,7 +279,7 @@
    "cell_type": "markdown",
    "metadata": {},
    "source": [
-    "### $\\kappa$: Mortality rate of infected cases $\\mathrm{[-]}$"
+    "### $\\kappa$: Mortality rate of infected cases"
    ]
   },
   {
@@ -299,7 +295,7 @@
    "cell_type": "markdown",
    "metadata": {},
    "source": [
-    "### $\\theta$: Mortality rate of S$^\\ast$ cases $\\mathrm{[-]}$"
+    "### $\\theta$: Mortality rate of S$^\\ast$ cases"
    ]
   },
   {
@@ -309,83 +305,6 @@
    "outputs": [],
    "source": [
     "# analyser.history(\"theta\", roll_window=None).tail()"
-   ]
-  },
-  {
-   "cell_type": "markdown",
-   "metadata": {},
-   "source": [
-    "## (Experimental): Relationship of OxCGRT index and parameter values\n",
-    "Government responses will impact on parameter values of ODE models about 14 days later. Here, we will investigate on the relationship of [stringency index (from OxCGRT)](https://github.com/OxCGRT/covid-policy-tracker/blob/master/documentation/index_methodology.md) and reproduction number/model parameters.\n"
-   ]
-  },
-  {
-   "cell_type": "code",
-   "execution_count": null,
-   "metadata": {},
-   "outputs": [],
-   "source": [
-    "%matplotlib inline\n",
-    "from matplotlib import pyplot as plt\n",
-    "import seaborn as sns\n",
-    "import pandas as pd"
-   ]
-  },
-  {
-   "cell_type": "code",
-   "execution_count": null,
-   "metadata": {},
-   "outputs": [],
-   "source": [
-    "\"\"\"\n",
-    "df = analyser.track()\n",
-    "param_cols = [\"Rt\", *cs.SIRF.PARAMETERS]\n",
-    "oxcgrt_cols = oxcgrt_data.OXCGRT_VARS[:]\n",
-    "cols = param_cols + oxcgrt_cols\n",
-    "delay = 14\n",
-    "\n",
-    "for col in param_cols:\n",
-    "    df[col] = pd.to_numeric(df[col], errors=\"coerce\")\n",
-    "    df[col] = df.groupby(\"Country\")[col].shift(0 - delay)\n",
-    "\n",
-    "df = df.dropna(how=\"any\")\n",
-    "df = df.loc[:, [\"Date\", \"Country\", *cols]]\n",
-    "track_df = df.copy()\n",
-    "track_df.info()\n",
-    "\"\"\"\n",
-    "None"
-   ]
-  },
-  {
-   "cell_type": "code",
-   "execution_count": null,
-   "metadata": {},
-   "outputs": [],
-   "source": [
-    "# Correlation\n",
-    "# df = track_df.copy()\n",
-    "# df.corr().style.background_gradient(axis=None)"
-   ]
-  },
-  {
-   "cell_type": "code",
-   "execution_count": null,
-   "metadata": {},
-   "outputs": [],
-   "source": [
-    "\"\"\"\n",
-    "# Scatter plot of Stringency index and Rt\n",
-    "df = track_df.copy()\n",
-    "sns.scatterplot(data=df, x=\"Stringency_index\", y=\"Rt\", hue=\"Country\", legend=\"brief\", marker=\"+\")\n",
-    "bbox_to_anchor=(1.02, 0)\n",
-    "bbox_loc=\"lower left\"\n",
-    "plt.legend(bbox_to_anchor=bbox_to_anchor, loc=bbox_loc, borderaxespad=0)\n",
-    "plt.title(\"Relationship of Stringency index and reproduction number\")\n",
-    "plt.ylabel(\"Reproduction number\")\n",
-    "plt.xlabel(\"Stringency index\")\n",
-    "plt.show()\n",
-    "\"\"\"\n",
-    "None"
    ]
   }
  ]
