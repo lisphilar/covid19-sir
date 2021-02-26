@@ -82,14 +82,15 @@ Xu, B., Gutierrez, B., Mekaru, S. et al. Epidemiological data from the COVID-19 
 
 ### [Our World In Data](https://github.com/owid/covid-19-data/tree/master/public/data)
 
-Citation: Hasell, J., Mathieu, E., Beltekian, D. et al. A cross-country database of COVID-19 testing. Sci Data 7, 345 (2020). [https://doi.org/10.1038/s41597-020-00688-8](https://doi.org/10.1038/s41597-020-00688-8)
+Hasell, J., Mathieu, E., Beltekian, D. et al. A cross-country database of COVID-19 testing. Sci Data 7, 345 (2020). [https://doi.org/10.1038/s41597-020-00688-8](https://doi.org/10.1038/s41597-020-00688-8)
 
 - The number of tests
 - The number of vaccinations
+- The number of people who received vaccinations
 
 ### [World Bank Open Data](https://data.worldbank.org/)
 
-Citation: World Bank Group (2020), World Bank Open Data, [https://data.worldbank.org/](https://data.worldbank.org/)
+World Bank Group (2020), World Bank Open Data, [https://data.worldbank.org/](https://data.worldbank.org/)
 
 - Population pyramid
 
