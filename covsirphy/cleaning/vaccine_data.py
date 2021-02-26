@@ -107,10 +107,10 @@ class VaccineData(CleaningBase):
         df[self.DATE] = pd.to_datetime(df[self.DATE])
         for col in [self.COUNTRY, self.ISO3, self.PRODUCT]:
             df[col] = df[col].astype("category")
-        # Vaccinations
+        # Fill in NA values
         for col in [self.VAC, self.V_ONCE, self.V_FULL]:
             df[col] = pd.to_numeric(df[col], errors="coerce")
-            df[col] = df[col].fillna(method="ffill").fillna(0).astype(np.int64)
+            df[col] = df.groupby(self.ISO3)[col].fillna(method="ffill").fillna(0).astype(np.int64)
         return df.loc[:, self.VAC_COLS]
 
     def subset(self, country, product=None, start_date=None, end_date=None):
@@ -146,17 +146,12 @@ class VaccineData(CleaningBase):
         # Subset with end date
         if end_date is not None:
             df = df.loc[df[self.DATE] <= self.date_obj(end_date)]
-        # Resampling
-        df = df.set_index(self.DATE).resample("D").sum().reset_index()
-        # Fill in the blanks
-        for col in [self.VAC, self.V_ONCE, self.V_FULL]:
-            df[col] = df[col].replace(0, None).fillna(method="ffill").fillna(0)
         # Check records were found
         if df.empty:
             raise SubsetNotFoundError(
                 country=country, country_alias=country_alias, province=product,
                 start_date=start_date, end_date=end_date)
-        return df
+        return df.reset_index(drop=True)
 
     def records(self, country, product=None, start_date=None, end_date=None):
         """
