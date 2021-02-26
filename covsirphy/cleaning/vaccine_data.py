@@ -18,12 +18,15 @@ class VaccineData(CleaningBase):
         filename (str or pathlib.path): CSV filename to save the raw dataset
         force (bool): if True, always download the dataset from the server
         verbose (int): level of verbosity
+
     Note:
         Columns of VaccineData.cleaned():
             - Date (pandas.TimeStamp): observation dates
             - Country (pandas.Category): country (or province) names
             - Product (pandas.Category): product names
-            - Vaccinations (int): the number of vaccinations
+            - Vaccinations (int): cumulative number of vaccinations
+            - Vaccinated_once (int): cumulative number of people who received at least one vaccine dose
+            - Vaccinated_full (int): cumulative number of people who received all doses prescrived by the protocol
     """
     # URL
     URL = "https://raw.githubusercontent.com/owid/covid-19-data/master/public/data/vaccinations/"
@@ -31,7 +34,8 @@ class VaccineData(CleaningBase):
     URL_LOC = f"{URL}locations.csv"
     # Columns
     VAC_COLS = [
-        CleaningBase.DATE, CleaningBase.COUNTRY, CleaningBase.PRODUCT, CleaningBase.VAC]
+        CleaningBase.DATE, CleaningBase.COUNTRY, CleaningBase.PRODUCT,
+        CleaningBase.VAC, CleaningBase.V_ONCE, CleaningBase.V_FULL]
 
     def __init__(self, filename, force=False, verbose=1):
         Path(filename).parent.mkdir(exist_ok=True, parents=True)
@@ -44,10 +48,7 @@ class VaccineData(CleaningBase):
             " A cross-country database of COVID-19 testing. Sci Data 7, 345 (2020)." \
             " https://doi.org/10.1038/s41597-020-00688-8"
         # Directory that save the file
-        if filename is None:
-            self._dirpath = Path("input")
-        else:
-            self._dirpath = Path(filename).resolve().parent
+        self._dirpath = Path(filename or "input").resolve().parent
 
     def _retrieve(self, filename, verbose=1):
         """
@@ -64,16 +65,16 @@ class VaccineData(CleaningBase):
         if verbose:
             print("Retrieving COVID-19 vaccination dataset from https://github.com/owid/covid-19-data/")
         # Download datasets and merge them
-        rec_df = self.load(
-            self.URL_REC, columns=["location", "date", "total_vaccinations"])
+        rename_dict = {
+            "date": self.DATE, "location": self.COUNTRY,
+            "vaccines": self.PRODUCT, "total_vaccinations": self.VAC,
+            "people_vaccinated": self.V_ONCE,
+            "people_fully_vaccinated": self.V_FULL,
+        }
+        rec_df = self.load(self.URL_REC, columns=list(set(rename_dict) - set(["vaccines"])))
         loc_df = self.load(self.URL_LOC, columns=["location", "vaccines"])
         df = rec_df.merge(loc_df, how="left", on="location")
-        df = df.rename(
-            {
-                "vaccines": self.PRODUCT, "total_vaccinations": self.VAC,
-                "date": self.DATE, "location": self.COUNTRY}, axis=1)
-        # Remove "World" records (total values)
-        df = df.loc[df[self.COUNTRY] != "World"]
+        df = df.rename(rename_dict, axis=1)
         # Save the dataframe as CSV file
         df.to_csv(filename, index=False)
         return df
@@ -95,9 +96,9 @@ class VaccineData(CleaningBase):
         # Company
         df[self.PRODUCT] = df[self.PRODUCT].astype("category")
         # Vaccinations
-        df[self.VAC] = pd.to_numeric(df[self.VAC], errors="coerce")
-        df[self.VAC] = df[self.VAC].fillna(method="ffill").fillna(0)
-        df[self.VAC] = df[self.VAC].astype(np.int64)
+        for col in [self.VAC, self.V_ONCE, self.V_FULL]:
+            df[col] = pd.to_numeric(df[col], errors="coerce")
+            df[col] = df[col].fillna(method="ffill").fillna(0).astype(np.int64)
         return df.loc[:, self.VAC_COLS]
 
     def subset(self, country, product=None, start_date=None, end_date=None):
@@ -117,6 +118,8 @@ class VaccineData(CleaningBase):
                 Columns
                     - Date (pandas.TimeStamp): observation date
                     - Vaccinations (int): the number of vaccinations
+                    - Vaccinated_once (int): cumulative number of people who received at least one vaccine dose
+                    - Vaccinated_full (int): cumulative number of people who received all doses prescrived by the protocol
         """
         df = self._cleaned_df.copy()
         # Subset by country
@@ -134,8 +137,8 @@ class VaccineData(CleaningBase):
         # Resampling
         df = df.set_index(self.DATE).resample("D").sum().reset_index()
         # Fill in the blanks
-        df[self.VAC] = df[self.VAC].replace(0, None)
-        df[self.VAC] = df[self.VAC].fillna(method="ffill").fillna(0)
+        for col in [self.VAC, self.V_ONCE, self.V_FULL]:
+            df[col] = df[col].replace(0, None).fillna(method="ffill").fillna(0)
         # Check records were found
         if df.empty:
             raise SubsetNotFoundError(
@@ -160,6 +163,8 @@ class VaccineData(CleaningBase):
                 Columns
                     - Date (pandas.TimeStamp): observation date
                     - Vaccinations (int): the number of vaccinations
+                    - Vaccinated_once (int): cumulative number of people who received at least one vaccine dose
+                    - Vaccinated_full (int): cumulative number of people who received all doses prescrived by the protocol
         """
         return self.subset(
             country=country, product=product, start_date=start_date, end_date=end_date)
@@ -175,10 +180,12 @@ class VaccineData(CleaningBase):
                 Columns
                     - Date (pandas.TimeStamp): observation date
                     - Vaccinations (int): the number of vaccinations
+                    - Vaccinated_once (int): cumulative number of people who received at least one vaccine dose
+                    - Vaccinated_full (int): cumulative number of people who received all doses prescrived by the protocol
         """
         df = self._cleaned_df.copy()
-        # Remove duplication
-        df = df.loc[df[self.COUNTRY] == "United Kingdom"]
+        # Select 'World' data
+        df = df.loc[df[self.COUNTRY] == "World"]
         # Resampling
         df = df.set_index(self.DATE).resample("D").sum()
         return df.reset_index()
@@ -189,17 +196,15 @@ class VaccineData(CleaningBase):
 
         Args:
             country (None): always None
-            variable (str): always 'Vaccinations'
+            variable (str): variable to show
             date (str or None): date of the records or None (the last value)
             kwargs: arguments of ColoredMap() and ColoredMap.plot()
 
         Raises:
-            NotImplementedError: either @country or @variable was specified
+            NotImplementedError: @country was specified
         """
         if country is not None:
             raise NotImplementedError("@country cannot be specified, always None.")
-        if variable != self.VAC:
-            raise NotImplementedError(f"@variable cannot be changed, always {self.VAC}.")
         # Date
         date_str = date or self.cleaned()[self.DATE].max().strftime(self.DATE_FORMAT)
         country_str = "Global"

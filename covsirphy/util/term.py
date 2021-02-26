@@ -21,11 +21,14 @@ class Term(object):
     F = "Fatal"
     R = "Recovered"
     FR = "Fatal or Recovered"
-    V = "Vaccinated"
     E = "Exposed"
     W = "Waiting"
     TESTS = "Tests"
+    # Vaccination
     VAC = "Vaccinations"
+    V = "Vaccinated"
+    V_ONCE = f"{V}_once"
+    V_FULL = f"{V}_full"
     PRODUCT = "Product"
     # Column names
     DATE = "Date"
