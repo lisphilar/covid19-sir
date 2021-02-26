@@ -67,7 +67,7 @@
             
             
               <div class="version">
-                2.16.2-zeta-fu2
+                2.16.2-eta
               </div>
             
           
@@ -2764,8 +2764,11 @@ When &#64;country is a country name, province level data in the selected country
 <dt>Columns of VaccineData.cleaned():</dt><dd><ul class="simple">
 <li><p>Date (pandas.TimeStamp): observation dates</p></li>
 <li><p>Country (pandas.Category): country (or province) names</p></li>
+<li><p>ISO3 (pandas.Category): ISO3 codes</p></li>
 <li><p>Product (pandas.Category): product names</p></li>
-<li><p>Vaccinations (int): the number of vaccinations</p></li>
+<li><p>Vaccinations (int): cumulative number of vaccinations</p></li>
+<li><p>Vaccinated_once (int): cumulative number of people who received at least one vaccine dose</p></li>
+<li><p>Vaccinated_full (int): cumulative number of people who received all doses prescrived by the protocol</p></li>
 </ul>
 </dd>
 </dl>
@@ -2787,7 +2790,12 @@ When &#64;country is a country name, province level data in the selected country
 
 <dl class="py attribute">
 <dt id="covsirphy.cleaning.vaccine_data.VaccineData.VAC_COLS">
-<code class="sig-name descname"><span class="pre">VAC_COLS</span></code><em class="property"> <span class="pre">=</span> <span class="pre">['Date',</span> <span class="pre">'Country',</span> <span class="pre">'Product',</span> <span class="pre">'Vaccinations']</span></em><a class="headerlink" href="#covsirphy.cleaning.vaccine_data.VaccineData.VAC_COLS" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname"><span class="pre">VAC_COLS</span></code><em class="property"> <span class="pre">=</span> <span class="pre">['Date',</span> <span class="pre">'Country',</span> <span class="pre">'ISO3',</span> <span class="pre">'Product',</span> <span class="pre">'Vaccinations',</span> <span class="pre">'Vaccinated_once',</span> <span class="pre">'Vaccinated_full']</span></em><a class="headerlink" href="#covsirphy.cleaning.vaccine_data.VaccineData.VAC_COLS" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="covsirphy.cleaning.vaccine_data.VaccineData.VAC_SUBSET_COLS">
+<code class="sig-name descname"><span class="pre">VAC_SUBSET_COLS</span></code><em class="property"> <span class="pre">=</span> <span class="pre">['Date',</span> <span class="pre">'Vaccinations',</span> <span class="pre">'Vaccinated_once',</span> <span class="pre">'Vaccinated_full']</span></em><a class="headerlink" href="#covsirphy.cleaning.vaccine_data.VaccineData.VAC_SUBSET_COLS" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="py method">
@@ -2798,13 +2806,13 @@ When &#64;country is a country name, province level data in the selected country
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>country</strong> (<em>None</em>) – always None</p></li>
-<li><p><strong>variable</strong> (<em>str</em>) – always ‘Vaccinations’</p></li>
+<li><p><strong>variable</strong> (<em>str</em>) – variable to show</p></li>
 <li><p><strong>date</strong> (<em>str</em><em> or </em><em>None</em>) – date of the records or None (the last value)</p></li>
 <li><p><strong>kwargs</strong> – arguments of ColoredMap() and ColoredMap.plot()</p></li>
 </ul>
 </dd>
 <dt class="field-even">Raises</dt>
-<dd class="field-even"><p><strong>NotImplementedError</strong> – either &#64;country or &#64;variable was specified</p>
+<dd class="field-even"><p><strong>NotImplementedError</strong> – &#64;country was specified</p>
 </dd>
 </dl>
 </dd></dl>
@@ -2830,6 +2838,8 @@ When &#64;country is a country name, province level data in the selected country
 <dt>Columns</dt><dd><ul class="simple">
 <li><p>Date (pandas.TimeStamp): observation date</p></li>
 <li><p>Vaccinations (int): the number of vaccinations</p></li>
+<li><p>Vaccinated_once (int): cumulative number of people who received at least one vaccine dose</p></li>
+<li><p>Vaccinated_full (int): cumulative number of people who received all doses prescrived by the protocol</p></li>
 </ul>
 </dd>
 </dl>
@@ -2861,6 +2871,8 @@ When &#64;country is a country name, province level data in the selected country
 <dt>Columns</dt><dd><ul class="simple">
 <li><p>Date (pandas.TimeStamp): observation date</p></li>
 <li><p>Vaccinations (int): the number of vaccinations</p></li>
+<li><p>Vaccinated_once (int): cumulative number of people who received at least one vaccine dose</p></li>
+<li><p>Vaccinated_full (int): cumulative number of people who received all doses prescrived by the protocol</p></li>
 </ul>
 </dd>
 </dl>
@@ -2883,6 +2895,8 @@ When &#64;country is a country name, province level data in the selected country
 <dt>Columns</dt><dd><ul class="simple">
 <li><p>Date (pandas.TimeStamp): observation date</p></li>
 <li><p>Vaccinations (int): the number of vaccinations</p></li>
+<li><p>Vaccinated_once (int): cumulative number of people who received at least one vaccine dose</p></li>
+<li><p>Vaccinated_full (int): cumulative number of people who received all doses prescrived by the protocol</p></li>
 </ul>
 </dd>
 </dl>
