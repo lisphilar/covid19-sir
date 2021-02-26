@@ -37,6 +37,7 @@ class VaccineData(CleaningBase):
     VAC_COLS = [
         CleaningBase.DATE, CleaningBase.COUNTRY, CleaningBase.ISO3, CleaningBase.PRODUCT,
         CleaningBase.VAC, CleaningBase.V_ONCE, CleaningBase.V_FULL]
+    VAC_SUBSET_COLS = [CleaningBase.DATE, CleaningBase.VAC, CleaningBase.V_ONCE, CleaningBase.V_FULL]
 
     def __init__(self, filename, force=False, verbose=1):
         Path(filename).parent.mkdir(exist_ok=True, parents=True)
@@ -151,7 +152,7 @@ class VaccineData(CleaningBase):
             raise SubsetNotFoundError(
                 country=country, country_alias=country_alias, province=product,
                 start_date=start_date, end_date=end_date)
-        return df.reset_index(drop=True)
+        return df.loc[:, self.VAC_SUBSET_COLS].reset_index(drop=True)
 
     def records(self, country, product=None, start_date=None, end_date=None):
         """
