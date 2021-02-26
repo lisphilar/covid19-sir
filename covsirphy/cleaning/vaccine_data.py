@@ -23,6 +23,7 @@ class VaccineData(CleaningBase):
         Columns of VaccineData.cleaned():
             - Date (pandas.TimeStamp): observation dates
             - Country (pandas.Category): country (or province) names
+            - ISO3 (pandas.Category): ISO3 codes
             - Product (pandas.Category): product names
             - Vaccinations (int): cumulative number of vaccinations
             - Vaccinated_once (int): cumulative number of people who received at least one vaccine dose
@@ -34,7 +35,7 @@ class VaccineData(CleaningBase):
     URL_LOC = f"{URL}locations.csv"
     # Columns
     VAC_COLS = [
-        CleaningBase.DATE, CleaningBase.COUNTRY, CleaningBase.PRODUCT,
+        CleaningBase.DATE, CleaningBase.COUNTRY, CleaningBase.ISO3, CleaningBase.PRODUCT,
         CleaningBase.VAC, CleaningBase.V_ONCE, CleaningBase.V_FULL]
 
     def __init__(self, filename, force=False, verbose=1):
@@ -66,7 +67,7 @@ class VaccineData(CleaningBase):
             print("Retrieving COVID-19 vaccination dataset from https://github.com/owid/covid-19-data/")
         # Download datasets and merge them
         rename_dict = {
-            "date": self.DATE, "location": self.COUNTRY,
+            "date": self.DATE, "location": self.COUNTRY, "iso_code": self.ISO3,
             "vaccines": self.PRODUCT, "total_vaccinations": self.VAC,
             "people_vaccinated": self.V_ONCE,
             "people_fully_vaccinated": self.V_FULL,
@@ -85,16 +86,22 @@ class VaccineData(CleaningBase):
 
         Returns:
             pandas.DataFrame:
-                Index reset index
-                Columns Date, Country, Product, Vaccinations
+                Index
+                    reset index
+                Columns
+                - Date (pandas.TimeStamp): observation dates
+                - Country (pandas.Category): country (or province) names
+                - ISO3 (pandas.Category): ISO3 codes
+                - Product (pandas.Category): product names
+                - Vaccinations (int): cumulative number of vaccinations
+                - Vaccinated_once (int): cumulative number of people who received at least one vaccine dose
+                - Vaccinated_full (int): cumulative number of people who received all doses prescrived by the protocol
         """
         df = self._raw.copy()
         # Date
         df[self.DATE] = pd.to_datetime(df[self.DATE])
-        # Location (Country)
-        df[self.COUNTRY] = df[self.COUNTRY].astype("category")
-        # Company
-        df[self.PRODUCT] = df[self.PRODUCT].astype("category")
+        for col in [self.COUNTRY, self.ISO3, self.PRODUCT]:
+            df[col] = df[col].astype("category")
         # Vaccinations
         for col in [self.VAC, self.V_ONCE, self.V_FULL]:
             df[col] = pd.to_numeric(df[col], errors="coerce")
