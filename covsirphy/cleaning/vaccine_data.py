@@ -41,7 +41,12 @@ class VaccineData(CleaningBase):
     def __init__(self, filename, force=False, verbose=1):
         Path(filename).parent.mkdir(exist_ok=True, parents=True)
         if Path(filename).exists() and not force:
-            self._raw = self.load(filename)
+            try:
+                self._raw = self.load(filename)
+            except KeyError:
+                # Error when the local dataset does not have necessary columns
+                # Raised when new CovsirPhy version requires additional columns
+                self._raw = self._retrieve(filename=filename, verbose=verbose)
         else:
             self._raw = self._retrieve(filename=filename, verbose=verbose)
         self._cleaned_df = self._cleaning()
