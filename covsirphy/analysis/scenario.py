@@ -1409,7 +1409,7 @@ class Scenario(Term):
         df.index = [date.strftime(self.DATE_FORMAT) for date in df.index]
         df.index.name = "end_date"
         phase_df = df.drop_duplicates(keep="last").reset_index()
-        # Select end dates for Rt value groups
+        # Select the last values
         phase_df = phase_df.iloc[[-1], :]
         # Set new future phases
         for phase_dict in phase_df.to_dict(orient="records"):
