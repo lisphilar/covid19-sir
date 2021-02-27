@@ -89,6 +89,10 @@ Further information:
 Please support this project as a developer (or a backer).
 [![Become a backer](https://opencollective.com/covsirphy/tiers/backer.svg?avatarHeight=36&width=600)](https://opencollective.com/covsirphy)
 
+## Developers
+
+CovsirPhy library is developed by a community of volunteers. Please see the full list [here](https://github.com/lisphilar/covid19-sir/graphs/contributors).
+
 ## License: Apache License 2.0
 
 Please refer to [LICENSE](https://github.com/lisphilar/covid19-sir/blob/master/LICENSE) file.
