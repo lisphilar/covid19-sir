@@ -1296,8 +1296,8 @@ class Scenario(Term):
 
         Returns:
             dict(str, object):
-                - transformer (str): name of the transformer
-                - estimator (str): name of estimator
+                - scaler (object): scaler class
+                - regressor (object): regressor class
                 - alpha (float): alpha value used in Elastic Net regression
                 - l1_ratio (float): l1_ratio value used in Elastic Net regression
                 - score_train (float): determination coefficient of train dataset
@@ -1348,30 +1348,35 @@ class Scenario(Term):
             alphas=[0, 0.001, 0.01, 0.1, 1, 10, 100, 1000],
             l1_ratio=[0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0],
             cv=5, n_jobs=-1)
-        pipeline = Pipeline(
-            steps=[
-                ("scaler", MinMaxScaler()),
-                ("regression", cv),
-            ]
-        )
+        steps = [
+            ("scaler", MinMaxScaler()),
+            ("regressor", cv),
+        ]
+        pipeline = Pipeline(steps=steps)
         pipeline.fit(X_train, y_train)
         # Register the pipeline and X-target for prediction
         self._lm_dict[name] = (pipeline, X_target)
+        # Get train score
+        score_train = r2_score(pipeline.predict(X_train), y_train)
+        # Get test score
+        score_test = r2_score(pipeline.predict(X_test), y_test)
         # Return information regarding regression model
-        reg_output = pipeline.named_steps.regression
+        reg_output = pipeline.named_steps.regressor
+        # Intercept
+        intercept_df = pd.DataFrame(reg_output.coef_, index=y_train.columns, columns=X_train.columns)
+        # Return information
         return {
-            "transformer": "MinMaxScaler",
-            "estimator": "Elastic Net regression",
+            **{k: type(v) for (k, v) in steps},
             "alpha": reg_output.alpha_,
             "l1_ratio": reg_output.l1_ratio_,
-            "score_train": r2_score(pipeline.predict(X_train), y_train),
-            "score_test": r2_score(pipeline.predict(X_test), y_test),
+            "score_train": score_train,
+            "score_test": score_test,
             "X_train": X_train,
             "y_train": y_train,
             "X_test": X_test,
             "y_test": y_test,
             "X_target": X_target,
-            "intercept": pd.DataFrame(reg_output.coef_, index=y_train.columns, columns=X_train.columns),
+            "intercept": intercept_df,
             "delay": delay
         }
 
