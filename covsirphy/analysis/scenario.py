@@ -1261,7 +1261,6 @@ class Scenario(Term):
         param_df = self._track_param(name=name)[model.PARAMETERS]
         # Extra datasets (explanatory variables)
         extras_df = self._data.records(main=False, extras=True).set_index(self.DATE)
-        self._ensure_list(removed_cols, candidates=extras_df.columns.tolist(), name="removed_cols")
         extras_df = extras_df.loc[:, ~extras_df.columns.isin(removed_cols)]
         # Apply delay on OxCGRT data
         extras_df.index += timedelta(days=delay)
@@ -1297,11 +1296,18 @@ class Scenario(Term):
 
         Returns:
             dict(str, object):
+                - transformer (str): name of the transformer
+                - estimator (str): name of estimator
                 - alpha (float): alpha value used in Elastic Net regression
                 - l1_ratio (float): l1_ratio value used in Elastic Net regression
                 - score_train (float): determination coefficient of train dataset
                 - score_test (float): determination coefficient of test dataset
-                - intercept (pandas.DataFrame): intercept values (Index ODE parameters, Columns OxCGRT indicators)
+                - X_train (numpy.array): X_train
+                - y_train (numpy.array): y_train
+                - X_test (numpy.array): X_test
+                - y_test (numpy.array): y_test
+                - X_target (numpy.array): X_target
+                - intercept (pandas.DataFrame): intercept values (Index ODE parameters, Columns indicators)
                 - delay (int): number of days of delay between policy measure and effect
                   on number of confirmed cases.
 
@@ -1354,10 +1360,17 @@ class Scenario(Term):
         # Return information regarding regression model
         reg_output = pipeline.named_steps.regression
         return {
+            "transformer": "MinMaxScaler",
+            "estimator": "Elastic Net regression",
             "alpha": reg_output.alpha_,
             "l1_ratio": reg_output.l1_ratio_,
             "score_train": r2_score(pipeline.predict(X_train), y_train),
             "score_test": r2_score(pipeline.predict(X_test), y_test),
+            "X_train": X_train,
+            "y_train": y_train,
+            "X_test": X_test,
+            "y_test": y_test,
+            "X_target": X_target,
             "intercept": pd.DataFrame(reg_output.coef_, index=y_train.columns, columns=X_train.columns),
             "delay": delay
         }
