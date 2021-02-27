@@ -1238,7 +1238,7 @@ class Scenario(Term):
         delay_days = self._data.recovery_period() if df_filtered.empty else int(df_filtered["Period Length"].mean())
         return (delay_days, df)
 
-    def _fit_create_data(self, model, name, delay):
+    def _fit_create_data(self, model, name, delay, removed_cols):
         """
         Create train/test dataset for Elastic Net regression,
         assuming that extra variables will impact on ODE parameter values with delay.
@@ -1247,6 +1247,7 @@ class Scenario(Term):
             model (covsirphy.ModelBase): ODE model
             name (str): scenario name
             delay (int): delay period
+            removed_cols (list): list of variables to remove from X dataset
 
         Returns:
             tuple(pandas.DataFrame):
@@ -1260,6 +1261,8 @@ class Scenario(Term):
         param_df = self._track_param(name=name)[model.PARAMETERS]
         # Extra datasets (explanatory variables)
         extras_df = self._data.records(main=False, extras=True).set_index(self.DATE)
+        self._ensure_list(removed_cols, candidates=extras_df.columns.tolist(), name="removed_cols")
+        extras_df = extras_df.loc[:, ~extras_df.columns.isin(removed_cols)]
         # Apply delay on OxCGRT data
         extras_df.index += timedelta(days=delay)
         # Create training/test dataset
@@ -1319,10 +1322,16 @@ class Scenario(Term):
                 "Scenario.estimate() or Scenario.add()",
                 message=f", specifying @model (covsirphy.SIRF etc.) and @name='{name}'.")
         # Set delay effect
-        delay = self._ensure_natural_int(delay or self.estimate_delay(oxcgrt_data)[0], name="delay")
+        if delay is None:
+            delay, delay_df = self.estimate_delay(oxcgrt_data)
+            removed_cols = delay_df.columns.tolist()
+        else:
+            delay = self._ensure_natural_int(delay, name="delay")
+            removed_cols = []
         # Create training/test dataset
         try:
-            X, y, X_target = self._fit_create_data(model=model, name=name, delay=delay)
+            X, y, X_target = self._fit_create_data(
+                model=model, name=name, delay=delay, removed_cols=removed_cols)
         except NotRegisteredExtraError:
             raise NotRegisteredExtraError(
                 "Scenario.register(jhu_data, population_data, extras=[...])",
