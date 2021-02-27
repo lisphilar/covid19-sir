@@ -3,8 +3,10 @@
 
 from datetime import timedelta
 import itertools
+import warnings
 import numpy as np
 import pandas as pd
+import ruptures as rpt
 from covsirphy.util.error import SubsetNotFoundError, UnExpectedValueError
 from covsirphy.util.error import NotRegisteredMainError, NotRegisteredExtraError
 from covsirphy.util.term import Term
@@ -462,3 +464,70 @@ class DataHandler(Term):
             return self.records(main=True, extras=True, past=True, future=True)
         except NotRegisteredExtraError:
             return self.records(main=True, extras=False, past=True, future=True)
+
+    def estimate_delay(self, indicator, target, delay_name="Period Length"):
+        """
+        Estimate the average day [days] between the indicator and the target.
+        We assume that the indicator impact on the target value with delay.
+        All results will be returned with a dataframe.
+
+        Args:
+            indicator (str): indicator name, a column of any registered datasets
+            target (str): target name, a column of any registered datasets
+            delay_name (str): column name of delay in the output dataframe
+
+        Raises:
+            NotRegisteredMainError: either JHUData or PopulationData was not registered
+            SubsetNotFoundError: failed in subsetting because of lack of data
+            UserWarning: failed in calculating and returned the default value (recovery period)
+
+        Returns:
+            pandas.DataFrame:
+                Index
+                    reset index
+                Columns
+                    - (int or float): column defined by @indicator
+                    - (int or float): column defined by @target
+                    - (int): column defined by @delay_name [days]
+
+        Note:
+            - We use change point analysis of ruptures package. Refer to the documentation.
+              https://centre-borelli.github.io/ruptures-docs/
+            - When failed in calculation, recovery period will be returned after raising UserWarning.
+        """
+        output_cols = [target, indicator, delay_name]
+        # Create dataframe with indicator and target
+        record_df = self.records_all()
+        self._ensure_list(
+            [indicator, target], candidates=record_df.columns.tolist(), name="indicator and target")
+        pivot_df = record_df.pivot_table(values=indicator, index=target)
+        run_df = pivot_df.copy()
+        # Convert index (target) to serial numbers
+        serial_df = pd.DataFrame(np.arange(1, run_df.index.max() + 1, 1))
+        serial_df.index += 1
+        run_df = run_df.join(serial_df, how="outer")
+        series = run_df.reset_index(drop=True).iloc[:, 0].dropna()
+        # Detection with Ruptures using indicator values
+        warnings.simplefilter("ignore", category=RuntimeWarning)
+        algorithm = rpt.Pelt(model="rbf", jump=1, min_size=0)
+        try:
+            results = algorithm.fit_predict(series.values, pen=0.5)
+        except ValueError:
+            default_delay = self.recovery_period()
+            warnings.warn(
+                f"Delay days could not be estimated and delay set to default: {default_delay} [days]",
+                UserWarning, stacklevel=2)
+            return pd.DataFrame(columns=output_cols)
+        # Convert the output of Ruptures to indicator values
+        reset_series = series.reset_index(drop=True)
+        reset_series.index += 1
+        results_df = reset_series[results].reset_index()
+        results_df = results_df.interpolate(method="linear").dropna().astype(np.float64)
+        # Convert the indicator values to dates
+        df = pd.merge_asof(
+            results_df.sort_values(indicator),
+            pivot_df.astype(np.float64).reset_index().sort_values(indicator),
+            on=indicator, direction="nearest")
+        # Calculate number of days between the periods
+        df[delay_name] = df["index"].sort_values(ignore_index=True).diff()
+        return df.loc[:, output_cols]
