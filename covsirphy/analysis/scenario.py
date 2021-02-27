@@ -11,6 +11,9 @@ import pandas as pd
 from sklearn.model_selection import train_test_split
 from sklearn import linear_model
 from sklearn.exceptions import ConvergenceWarning
+from sklearn.metrics import r2_score
+from sklearn.pipeline import Pipeline
+from sklearn.preprocessing import MinMaxScaler
 from covsirphy.util.error import deprecate, ScenarioNotFoundError, UnExecutedError
 from covsirphy.util.error import NotRegisteredMainError, NotRegisteredExtraError
 from covsirphy.util.plotting import line_plot, box_plot
@@ -1276,6 +1279,7 @@ class Scenario(Term):
         """
         Learn the relationship of ODE parameter values and delayed OxCGRT scores using Elastic Net regression,
         assuming that OxCGRT scores will impact on ODE parameter values with delay.
+        Min-max scaling and Elastic net regression with parameter optimization and cross validation.
 
         Args:
             oxcgrt_data (covsirphy.OxCGRTData): OxCGRT dataset
@@ -1324,28 +1328,30 @@ class Scenario(Term):
                 "Scenario.register(jhu_data, population_data, extras=[...])",
                 message="with extra datasets") from None
         X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=test_size, random_state=seed)
-        # Optimize parameters of Elastic Net regression
+        # Create pipeline for learning
         cv = linear_model.MultiTaskElasticNetCV(
             alphas=[0, 0.001, 0.01, 0.1, 1, 10, 100, 1000],
             l1_ratio=[0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0],
             cv=5, n_jobs=-1)
-        cv.fit(X_train, y_train)
-        info_dict = {"alpha": cv.alpha_, "l1_ratio": cv.l1_ratio_}
-        # Perform Elastic Net (Ridge & Lasso) regression
-        lm = linear_model.ElasticNet(**info_dict)
-        lm.fit(X_train, y_train)
-        # Register the regression model to self
-        self._lm_dict[name] = (lm, X_target)
-        # Return information regarding regression model
-        info_dict.update(
-            {
-                "score_train": lm.score(X_train, y_train),
-                "score_test": lm.score(X_test, y_test),
-                "intercept": pd.DataFrame(lm.coef_, index=y_train.columns, columns=X_train.columns),
-                "delay": delay
-            }
+        pipeline = Pipeline(
+            steps=[
+                ("scaler", MinMaxScaler()),
+                ("regression", cv),
+            ]
         )
-        return info_dict
+        pipeline.fit(X_train, y_train)
+        # Register the pipeline and X-target for prediction
+        self._lm_dict[name] = (pipeline, X_target)
+        # Return information regarding regression model
+        reg_output = pipeline.named_steps.regression
+        return {
+            "alpha": reg_output.alpha_,
+            "l1_ratio": reg_output.l1_ratio_,
+            "score_train": r2_score(pipeline.predict(X_train), y_train),
+            "score_test": r2_score(pipeline.predict(X_test), y_test),
+            "intercept": pd.DataFrame(reg_output.coef_, index=y_train.columns, columns=X_train.columns),
+            "delay": delay
+        }
 
     def predict(self, name="Main"):
         """
@@ -1365,12 +1371,13 @@ class Scenario(Term):
         """
         # Arguments
         if name not in self._lm_dict:
-            raise UnExecutedError(f"Scenario.fit(oxcgrt_data, name={name})")
+            raise UnExecutedError(f"Scenario.fit(name={name})")
         model = self._tracker(name).last_model
-        # Create X dataset of the target dates
-        lm, X_target = self._lm_dict[name]
+        # Prediction with regression model
+        pipeline, X_target = self._lm_dict[name]
+        predicted = pipeline.predict(X_target)
         # -> end_date/parameter values
-        df = pd.DataFrame(lm.predict(X_target), index=X_target.index, columns=model.PARAMETERS)
+        df = pd.DataFrame(predicted, index=X_target.index, columns=model.PARAMETERS)
         df = df.applymap(lambda x: np.around(x, 4 - int(floor(log10(abs(x)))) - 1))
         df.index = [date.strftime(self.DATE_FORMAT) for date in df.index]
         df.index.name = "end_date"

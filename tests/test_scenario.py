@@ -252,6 +252,7 @@ class TestScenario(object):
             snl.predict()
         info_dict = snl.fit()
         assert isinstance(info_dict, dict)
+        print(info_dict)
         # Deprecated: fit with oxcgrt_data
         warnings.filterwarnings("ignore", category=DeprecationWarning)
         snl.fit(oxcgrt_data)
@@ -261,3 +262,5 @@ class TestScenario(object):
         # Fitting & predict
         snl.fit_predict()
         assert Term.FUTURE in snl.summary()[Term.TENSE].unique()
+        print(snl.summary())
+        raise NotImplementedError
