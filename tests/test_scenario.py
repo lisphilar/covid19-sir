@@ -242,7 +242,7 @@ class TestScenario(object):
         warnings.simplefilter("ignore", category=UserWarning)
         delay, df = snl.estimate_delay(indicator=indicator, target=target)
         warnings.filterwarnings("ignore", category=DeprecationWarning)
-        delay, df = snl.estimate_delay(oxcgrt_data, indicator=indicator, target=target)
+        delay, df = snl.estimate_delay(oxcgrt_data, indicator=indicator, target=target, value_range=(7, 35))
         assert isinstance(delay, int)
         assert isinstance(df, pd.DataFrame)
 

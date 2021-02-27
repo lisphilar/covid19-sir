@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*-
 
 from covsirphy.util.error import SubsetNotFoundError
+import pandas as pd
 import pytest
 from covsirphy import DataHandler, JHUData, PopulationData, Term
 from covsirphy import CountryData, JapanData, OxCGRTData, PCRData, VaccineData
@@ -145,3 +146,12 @@ class TestDataHandler(object):
         dhl.records_all()
         dhl.register(extras=[oxcgrt_data])
         dhl.records_all()
+
+    @pytest.mark.parametrize("country", ["Japan"])
+    @pytest.mark.parametrize("indicator", ["Stringency_index", "Confirmed"])
+    @pytest.mark.parametrize("target", ["Recovered"])
+    def test_estimate_delay(self, jhu_data, population_data, country, oxcgrt_data, indicator, target):
+        dhl = DataHandler(country=country, province=None)
+        dhl.register(jhu_data=jhu_data, population_data=population_data, extras=[oxcgrt_data])
+        df = dhl.estimate_delay(indicator=indicator, target=target)
+        assert isinstance(df, pd.DataFrame)
