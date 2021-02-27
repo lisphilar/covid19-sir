@@ -8,7 +8,6 @@ import warnings
 import sys
 import numpy as np
 import pandas as pd
-import ruptures as rpt
 from sklearn.model_selection import train_test_split
 from sklearn import linear_model
 from sklearn.exceptions import ConvergenceWarning
@@ -1192,35 +1191,37 @@ class Scenario(Term):
             metrics=metrics, variables=variables, phases=phases, y0_dict=y0_dict)
 
     def estimate_delay(self, oxcgrt_data=None, indicator="Stringency_index",
-                       target="Infected", value_range=(7, 35)):
+                       target="Confirmed", value_range=(7, None)):
         """
-        Estimate the average delay (in days) between a policy measure taken
-        and the moment of change in for the given target value, for example
-        `Infected`.The change over time is calculated with penalized change
-        point analysis. More information about the method of change point
-        detection can be found on:
-        https://ctruong.perso.math.cnrs.fr/ruptures-docs/build/html/detection/pelt.html.
+        Estimate the average day [days] between the indicator and the target.
+        We assume that the indicator impact on the target value with delay.
 
         Args:
             oxcgrt_data (covsirphy.OxCGRTData): OxCGRT dataset
-            indicator (str): column variable from the OxCGRT dataset
-            target (str): one of the target columns to detect changes in,
-                options are ["Infected", "Confirmed", "Fatal", "Recovered"].
-            value_range (int, int): tuple, giving the minimum and maximum
-            range to search for change over time. It is assumed that when a
-            policy measure is taken, change will occur after at least 7 days
-            and before 35 days (=default).
+            indicator (str): indicator name, a column of any registered datasets
+            target (str): target name, a column of any registered datasets
+            value_range (tuple(int, int or None)): tuple, giving the minimum and maximum range to search for change over time
+
+        Raises:
+            NotRegisteredMainError: either JHUData or PopulationData was not registered
+            SubsetNotFoundError: failed in subsetting because of lack of data
+            UserWarning: failed in calculating and returned the default value (recovery period)
 
         Returns:
             tuple(int, pandas.DataFrame):
-                - int: the estimated number of days of delay for a given country.
-                - pandas.DataFrame: dataframe of target, indicator and calculated periods of change (in days).
+                - int: the estimated number of days of delay [day]
+                - pandas.DataFrame:
+                    Index
+                        reset index
+                    Columns
+                        - (int or float): column defined by @indicator
+                        - (int or float): column defined by @target
+                        - (int): column defined by @delay_name [days]
 
         Note:
-            Average recovered period of JHU dataset will be used as returned value
-            when the estimated value was not in value_range.
-            Very long periods (outside of 99% quantile) are taken out.
-            @oxcgrt_data argument was deprecated. Please use Scenario.register(extras=[oxcgrt_data]).
+            - Average recovered period of JHU dataset will be used as returned value when the estimated value was not in value_range.
+            - Very long periods (outside of 99% quantile) are taken out.
+            - @oxcgrt_data argument was deprecated. Please use Scenario.register(extras=[oxcgrt_data]).
         """
         # Register OxCGRT data
         if oxcgrt_data is not None:
@@ -1228,49 +1229,14 @@ class Scenario(Term):
                 "Please use Scenario.register(extras=[oxcgrt_data]) rather than Scenario.fit(oxcgrt_data).",
                 DeprecationWarning, stacklevel=1)
             self.register(extras=[oxcgrt_data])
-        # Datasets
-        warnings.simplefilter("ignore", category=RuntimeWarning)
-        records = self._data.records(extras=False).set_index(self.DATE)
-        default_df = pd.DataFrame()
-        extras_df = self._data.records(main=False, extras=True, past=True, future=True)
-        records[indicator] = extras_df.set_index(self.DATE).loc[:, indicator]
-        records = records.reset_index()
-        df = records.pivot_table(index=target, values=indicator)
-        df_run = df.copy()
-        # Convert index to serial numbers
-        serial_df = pd.DataFrame(np.arange(1, df_run.index.max() + 1, 1))
-        serial_df.index += 1
-        df_run = df_run.join(serial_df, how="outer")
-        series = df_run.reset_index(drop=True).iloc[:, 0].dropna()
-        # Convert index values to Susceptible values
-        reset_series = series.reset_index(drop=True)
-        reset_series.index += 1
-        # Detection with Ruptures
-        algorithm = rpt.Pelt(model="rbf", jump=1, min_size=value_range[0])
-        try:
-            results = algorithm.fit_predict(series.values, pen=0.5)
-        except ValueError:
-            warnings.warn(
-                "Delay days could not be estimated for {self.country} and delay set to default: {self.delay_days} [days]",
-                UserWarning, stacklevel=1)
-            return self._data.recovery_period(), default_df
-        results_df = reset_series[results].reset_index()
-        results_df = results_df.interpolate(
-            method="linear").dropna().astype(np.float64)
-        # Convert new_confirmed values to dates
-        df = pd.merge_asof(
-            results_df.sort_values(indicator),
-            df.astype(np.float64).reset_index().sort_values(indicator),
-            on=indicator, direction="nearest")
-        # Calculate number of days between the periods
-        df["Period Length"] = df["index"].sort_values(ignore_index=True).diff()
+        # Calculate delay values
+        df = self._data.estimate_delay(indicator=indicator, target=target, delay_name="Period Length")
         # Filter out very long periods
-        sel1 = df["Period Length"] < df["Period Length"].quantile(0.99)
-        sel2 = (df["Period Length"] < value_range[1])
-        df_filtered = df.loc[sel1 & sel2]
-        delay_days = self.delay_days if df_filtered.empty else int(
-            df_filtered["Period Length"].mean())
-        return delay_days, df[[target, indicator, "Period Length"]]
+        df_filtered = df.loc[df["Period Length"] < df["Period Length"].quantile(0.99)]
+        if value_range[1] is not None:
+            df_filtered = df_filtered.loc[df["Period Length"] < value_range[1]]
+        delay_days = self._data.recovery_period() if df_filtered.empty else int(df_filtered["Period Length"].mean())
+        return (delay_days, df)
 
     def _fit_create_data(self, model, name, delay):
         """
