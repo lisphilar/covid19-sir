@@ -60,8 +60,7 @@ class Scenario(Term):
             pass
         # Interactive (True) / script (False) mode
         self._interactive = hasattr(sys, "ps1")
-        # Prediction of parameter values in the future phases
-        self.delay_days = None
+        # Prediction of parameter values in the future phases: {name: (regression model, X_target)}
         self._lm_dict = {}
 
     def __getitem__(self, key):
@@ -166,8 +165,6 @@ class Scenario(Term):
         self._data.register(jhu_data=jhu_data, population_data=population_data, extras=extras)
         if self._data.main_satisfied and not self._tracker_dict:
             self.timepoints()
-        if jhu_data is not None:
-            self.delay_days = self._data.recovery_period()
 
     def timepoints(self, first_date=None, last_date=None, today=None):
         """
@@ -1246,7 +1243,7 @@ class Scenario(Term):
         Args:
             model (covsirphy.ModelBase): ODE model
             name (str): scenario name
-            delay (int): number of days of delay between policy measure and effect on number of confirmed cases
+            delay (int): delay period
 
         Returns:
             tuple(pandas.DataFrame):
@@ -1254,17 +1251,17 @@ class Scenario(Term):
                 - y dataset for linear regression
                 - X dataset of the target dates
         """
+        # Clear the future phases
+        self.clear(name=name, include_past=False)
         # Parameter values
         param_df = self._track_param(name=name)[model.PARAMETERS]
         # Extra datasets (explanatory variables)
-        extras_df = self._data.records(main=False, extras=True, past=True, future=True)
-        extras_df = extras_df.set_index(self.DATE)
+        extras_df = self._data.records(main=False, extras=True).set_index(self.DATE)
         # Apply delay on OxCGRT data
         extras_df.index += timedelta(days=delay)
         # Create training/test dataset
         df = param_df.join(extras_df, how="inner")
-        df = df.rolling(window=delay).mean()
-        df = df.dropna().drop_duplicates()
+        df = df.rolling(window=delay).mean().dropna().drop_duplicates()
         X = df.drop(model.PARAMETERS, axis=1)
         y = df.loc[:, model.PARAMETERS]
         # X dataset of the target dates
@@ -1318,18 +1315,15 @@ class Scenario(Term):
                 "Scenario.estimate() or Scenario.add()",
                 message=f", specifying @model (covsirphy.SIRF etc.) and @name='{name}'.")
         # Set delay effect
-        if delay is None:
-            delay, _ = self.estimate_delay(oxcgrt_data)
-        self.delay_days = delay
+        delay = self._ensure_natural_int(delay or self.estimate_delay(oxcgrt_data)[0], name="delay")
         # Create training/test dataset
         try:
-            X, y, *_ = self._fit_create_data(model=model, name=name, delay=delay)
+            X, y, X_target = self._fit_create_data(model=model, name=name, delay=delay)
         except NotRegisteredExtraError:
             raise NotRegisteredExtraError(
                 "Scenario.register(jhu_data, population_data, extras=[...])",
                 message="with extra datasets") from None
-        X_train, X_test, y_train, y_test = train_test_split(
-            X, y, test_size=test_size, random_state=seed)
+        X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=test_size, random_state=seed)
         # Optimize parameters of Elastic Net regression
         cv = linear_model.MultiTaskElasticNetCV(
             alphas=[0, 0.001, 0.01, 0.1, 1, 10, 100, 1000],
@@ -1341,14 +1335,13 @@ class Scenario(Term):
         lm = linear_model.ElasticNet(**info_dict)
         lm.fit(X_train, y_train)
         # Register the regression model to self
-        self._lm_dict[name] = lm
+        self._lm_dict[name] = (lm, X_target)
         # Return information regarding regression model
         info_dict.update(
             {
                 "score_train": lm.score(X_train, y_train),
                 "score_test": lm.score(X_test, y_test),
-                "intercept": pd.DataFrame(
-                    lm.coef_, index=y_train.columns, columns=X_train.columns),
+                "intercept": pd.DataFrame(lm.coef_, index=y_train.columns, columns=X_train.columns),
                 "delay": delay
             }
         )
@@ -1374,11 +1367,8 @@ class Scenario(Term):
         if name not in self._lm_dict:
             raise UnExecutedError(f"Scenario.fit(oxcgrt_data, name={name})")
         model = self._tracker(name).last_model
-        lm = self._lm_dict[name]
-        # Clear future phases
-        self.clear(name=name)
         # Create X dataset of the target dates
-        *_, X_target = self._fit_create_data(model=model, name=name, delay=self.delay_days)
+        lm, X_target = self._lm_dict[name]
         # -> end_date/parameter values
         df = pd.DataFrame(lm.predict(X_target), index=X_target.index, columns=model.PARAMETERS)
         df = df.applymap(lambda x: np.around(x, 4 - int(floor(log10(abs(x)))) - 1))
