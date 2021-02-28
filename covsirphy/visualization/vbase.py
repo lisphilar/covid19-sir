@@ -32,7 +32,7 @@ class VisualizeBase(Term):
         self._savefig_dict = {"bbox_inches": bbox_inches, **kwargs}
         # Properties
         self._title = ""
-        self._fig, self._ax = plt.subplots(1, 1)
+        _, self._ax = plt.subplots(1, 1)
 
     def __enter__(self):
         return self
@@ -49,7 +49,7 @@ class VisualizeBase(Term):
                 # Save the image as a file
                 plt.savefig(self._filename, **self._savefig_dict)
                 plt.clf()
-                plt.close(self._fig)
+                plt.close("all")
         except AttributeError:
             pass
 
