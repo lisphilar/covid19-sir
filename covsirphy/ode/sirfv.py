@@ -55,7 +55,7 @@ class SIRFV(ModelBase):
     def __init__(self, population, theta, kappa, rho, sigma,
                  omega=None, v_per_day=None):
         raise NotImplementedError(
-            "SIR-FV model will be removed in the future because vaccinated persons may move "
+            "SIR-FV model was removed because vaccinated persons may move "
             "to the other compartments. Please use SIR-F model and adjust parameter values "
             "of SIR-F model, considering the impact of vaccinations on infectivity, effectivity and safety."
         )
