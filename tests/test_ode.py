@@ -109,3 +109,11 @@ class TestODE(object):
     def test_deprecated(self, model):
         with pytest.raises(NotImplementedError):
             model(1, 1, 1, 1, 1)
+
+    @pytest.mark.parametrize("model", [SEWIRF])
+    def test_validation_deprecated(self, model):
+        # Setting
+        validator = ModelValidator(n_trials=1, seed=1)
+        # Execute validation
+        with pytest.raises(NotImplementedError):
+            validator.run(model, timeout=10)
