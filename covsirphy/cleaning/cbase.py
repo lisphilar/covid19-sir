@@ -28,9 +28,9 @@ class CleaningBase(Term):
         - The directory of geometry information could be changed with .directory property.
         - If @citation is None, citation will be empty string.
     """
+    warnings.simplefilter("ignore", DeprecationWarning)
 
     def __init__(self, filename, citation=None):
-        warnings.simplefilter("ignore", DeprecationWarning)
         if filename is None:
             self._raw = pd.DataFrame()
             self._cleaned_df = pd.DataFrame()
