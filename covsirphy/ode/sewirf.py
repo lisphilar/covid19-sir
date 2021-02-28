@@ -117,18 +117,10 @@ class SEWIRF(ModelBase):
                 - key (str): parameter name
                 - value (tuple(float, float)): min value and max value
         """
-        df = cls._ensure_dataframe(
-            taufree_df, name="taufree_df", columns=[cls.TS, *cls.VARIABLES]
+        raise NotImplementedError(
+            "SEWIR-F cannot be used for parameter estimation because we do not have records "
+            "of Exposed and Waiting. Please use SIR-F model with `covsirphy.SIRF` class."
         )
-        df = df.loc[(df[cls.S] > 0) & (df[cls.CI] > 0)]
-        _, t, i, r = population, df[cls.TS], df[cls.CI], df[cls.R]
-        # sigma = (dR/dt) / I
-        sigma_series = r.diff() / t.diff() / i
-        # Calculate range
-        _dict = {param: (0, 1) for param in cls.PARAMETERS}
-        _dict["sigma"] = tuple(sigma_series.quantile(
-            cls.QUANTILE_RANGE).clip(0, 1))
-        return _dict
 
     @classmethod
     def specialize(cls, data_df, population):
