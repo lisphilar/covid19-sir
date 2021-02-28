@@ -148,6 +148,7 @@ class CleaningBase(Term):
         if country in selectable_set:
             return country
         # Convert country name
+        warnings.simplefilter("ignore", FutureWarning)
         converted = coco.convert(country, to="name_short", not_found=None)
         # Additional abbr
         abbr_dict = {
