@@ -1065,9 +1065,7 @@ class Scenario(Term):
         Returns:
             pandas.DataFrame
         """
-        df = self._history(
-            target=target, phases=phases, with_actual=with_actual, y0_dict=y0_dict)
-        df = df.dropna()
+        df = self._history(target=target, phases=phases, with_actual=with_actual, y0_dict=y0_dict)
         if target == self.RT:
             ylabel = self.RT_FULL
         elif target in self.VALUE_COLUMNS:
