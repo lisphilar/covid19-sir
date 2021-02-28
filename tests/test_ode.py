@@ -10,7 +10,7 @@ from covsirphy import ModelBase, SIR, SIRD, SIRF, SIRFV, SEWIRF
 class TestODE(object):
     @pytest.mark.parametrize(
         "model",
-        [SIR, SIRD, SIRF, SIRFV, SEWIRF])
+        [SIR, SIRD, SIRF, SEWIRF])
     def test_ode(self, model):
         # Setting
         eg_tau = 1440
@@ -104,3 +104,16 @@ class TestODE(object):
         # Execute validation
         validator.run(model, timeout=10)
         validator.summary()
+
+    @pytest.mark.parametrize("model", [SIRFV])
+    def test_deprecated(self, model):
+        with pytest.raises(NotImplementedError):
+            model(1, 1, 1, 1, 1)
+
+    @pytest.mark.parametrize("model", [SEWIRF])
+    def test_validation_deprecated(self, model):
+        # Setting
+        validator = ModelValidator(n_trials=1, seed=1)
+        # Execute validation
+        with pytest.raises(NotImplementedError):
+            validator.run(model, timeout=10)

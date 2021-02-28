@@ -1066,6 +1066,7 @@ class Scenario(Term):
             pandas.DataFrame
         """
         df = self._history(target=target, phases=phases, with_actual=with_actual, y0_dict=y0_dict)
+        df.dropna(subset=[col for col in df.columns if col != self.ACTUAL], inplace=True)
         if target == self.RT:
             ylabel = self.RT_FULL
         elif target in self.VALUE_COLUMNS:
