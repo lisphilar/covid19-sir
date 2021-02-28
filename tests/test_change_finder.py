@@ -15,7 +15,7 @@ class TestChangeFinder(object):
         ]
     )
     def test_find(self, jhu_data, population_data, country, max_rmsle=20.0):
-        warnings.filterwarnings("error")
+        warnings.filterwarnings("error", category=DeprecationWarning)
         # Setup
         population = population_data.value(country)
         sr_df = jhu_data.to_sr(country=country, population=population)
