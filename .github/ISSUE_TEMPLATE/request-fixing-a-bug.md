@@ -19,7 +19,8 @@ data_loader = cs.DataLoader("input")
 jhu_data = data_loader.jhu()
 population_data = data_loader.population()
 # Scenario analysis
-snl = cs.Scenario(jhu_data, population_data, "Country name used")
+snl = cs.Scenario(country="Country name used")
+snl.register(jhu_data, population_data)
 ```
 
 ## Outputs
