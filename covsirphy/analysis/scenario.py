@@ -11,6 +11,9 @@ import pandas as pd
 from sklearn.model_selection import train_test_split
 from sklearn import linear_model
 from sklearn.exceptions import ConvergenceWarning
+from sklearn.metrics import r2_score
+from sklearn.pipeline import Pipeline
+from sklearn.preprocessing import MinMaxScaler
 from covsirphy.util.error import deprecate, ScenarioNotFoundError, UnExecutedError
 from covsirphy.util.error import NotRegisteredMainError, NotRegisteredExtraError
 from covsirphy.util.plotting import line_plot, box_plot
@@ -60,8 +63,7 @@ class Scenario(Term):
             pass
         # Interactive (True) / script (False) mode
         self._interactive = hasattr(sys, "ps1")
-        # Prediction of parameter values in the future phases
-        self.delay_days = None
+        # Prediction of parameter values in the future phases: {name: (regression model, X_target)}
         self._lm_dict = {}
 
     def __getitem__(self, key):
@@ -166,8 +168,6 @@ class Scenario(Term):
         self._data.register(jhu_data=jhu_data, population_data=population_data, extras=extras)
         if self._data.main_satisfied and not self._tracker_dict:
             self.timepoints()
-        if jhu_data is not None:
-            self.delay_days = self._data.recovery_period()
 
     def timepoints(self, first_date=None, last_date=None, today=None):
         """
@@ -1238,7 +1238,7 @@ class Scenario(Term):
         delay_days = self._data.recovery_period() if df_filtered.empty else int(df_filtered["Period Length"].mean())
         return (delay_days, df)
 
-    def _fit_create_data(self, model, name, delay):
+    def _fit_create_data(self, model, name, delay, removed_cols):
         """
         Create train/test dataset for Elastic Net regression,
         assuming that extra variables will impact on ODE parameter values with delay.
@@ -1246,7 +1246,8 @@ class Scenario(Term):
         Args:
             model (covsirphy.ModelBase): ODE model
             name (str): scenario name
-            delay (int): number of days of delay between policy measure and effect on number of confirmed cases
+            delay (int): delay period
+            removed_cols (list): list of variables to remove from X dataset
 
         Returns:
             tuple(pandas.DataFrame):
@@ -1254,17 +1255,18 @@ class Scenario(Term):
                 - y dataset for linear regression
                 - X dataset of the target dates
         """
+        # Clear the future phases
+        self.clear(name=name, include_past=False)
         # Parameter values
         param_df = self._track_param(name=name)[model.PARAMETERS]
         # Extra datasets (explanatory variables)
-        extras_df = self._data.records(main=False, extras=True, past=True, future=True)
-        extras_df = extras_df.set_index(self.DATE)
+        extras_df = self._data.records(main=False, extras=True).set_index(self.DATE)
+        extras_df = extras_df.loc[:, ~extras_df.columns.isin(removed_cols)]
         # Apply delay on OxCGRT data
         extras_df.index += timedelta(days=delay)
         # Create training/test dataset
         df = param_df.join(extras_df, how="inner")
-        df = df.rolling(window=delay).mean()
-        df = df.dropna().drop_duplicates()
+        df = df.rolling(window=delay).mean().dropna().drop_duplicates()
         X = df.drop(model.PARAMETERS, axis=1)
         y = df.loc[:, model.PARAMETERS]
         # X dataset of the target dates
@@ -1279,6 +1281,7 @@ class Scenario(Term):
         """
         Learn the relationship of ODE parameter values and delayed OxCGRT scores using Elastic Net regression,
         assuming that OxCGRT scores will impact on ODE parameter values with delay.
+        Min-max scaling and Elastic net regression with parameter optimization and cross validation.
 
         Args:
             oxcgrt_data (covsirphy.OxCGRTData): OxCGRT dataset
@@ -1293,11 +1296,18 @@ class Scenario(Term):
 
         Returns:
             dict(str, object):
+                - scaler (object): scaler class
+                - regressor (object): regressor class
                 - alpha (float): alpha value used in Elastic Net regression
                 - l1_ratio (float): l1_ratio value used in Elastic Net regression
                 - score_train (float): determination coefficient of train dataset
                 - score_test (float): determination coefficient of test dataset
-                - intercept (pandas.DataFrame): intercept values (Index ODE parameters, Columns OxCGRT indicators)
+                - X_train (numpy.array): X_train
+                - y_train (numpy.array): y_train
+                - X_test (numpy.array): X_test
+                - y_test (numpy.array): y_test
+                - X_target (numpy.array): X_target
+                - intercept (pandas.DataFrame): intercept values (Index ODE parameters, Columns indicators)
                 - delay (int): number of days of delay between policy measure and effect
                   on number of confirmed cases.
 
@@ -1319,40 +1329,56 @@ class Scenario(Term):
                 message=f", specifying @model (covsirphy.SIRF etc.) and @name='{name}'.")
         # Set delay effect
         if delay is None:
-            delay, _ = self.estimate_delay(oxcgrt_data)
-        self.delay_days = delay
+            delay, delay_df = self.estimate_delay(oxcgrt_data)
+            removed_cols = delay_df.columns.tolist()
+        else:
+            delay = self._ensure_natural_int(delay, name="delay")
+            removed_cols = []
         # Create training/test dataset
         try:
-            X, y, *_ = self._fit_create_data(model=model, name=name, delay=delay)
+            X, y, X_target = self._fit_create_data(
+                model=model, name=name, delay=delay, removed_cols=removed_cols)
         except NotRegisteredExtraError:
             raise NotRegisteredExtraError(
                 "Scenario.register(jhu_data, population_data, extras=[...])",
                 message="with extra datasets") from None
-        X_train, X_test, y_train, y_test = train_test_split(
-            X, y, test_size=test_size, random_state=seed)
-        # Optimize parameters of Elastic Net regression
+        X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=test_size, random_state=seed)
+        # Create pipeline for learning
         cv = linear_model.MultiTaskElasticNetCV(
             alphas=[0, 0.001, 0.01, 0.1, 1, 10, 100, 1000],
             l1_ratio=[0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0],
             cv=5, n_jobs=-1)
-        cv.fit(X_train, y_train)
-        info_dict = {"alpha": cv.alpha_, "l1_ratio": cv.l1_ratio_}
-        # Perform Elastic Net (Ridge & Lasso) regression
-        lm = linear_model.ElasticNet(**info_dict)
-        lm.fit(X_train, y_train)
-        # Register the regression model to self
-        self._lm_dict[name] = lm
+        steps = [
+            ("scaler", MinMaxScaler()),
+            ("regressor", cv),
+        ]
+        pipeline = Pipeline(steps=steps)
+        pipeline.fit(X_train, y_train)
+        # Register the pipeline and X-target for prediction
+        self._lm_dict[name] = (pipeline, X_target)
+        # Get train score
+        score_train = r2_score(pipeline.predict(X_train), y_train)
+        # Get test score
+        score_test = r2_score(pipeline.predict(X_test), y_test)
         # Return information regarding regression model
-        info_dict.update(
-            {
-                "score_train": lm.score(X_train, y_train),
-                "score_test": lm.score(X_test, y_test),
-                "intercept": pd.DataFrame(
-                    lm.coef_, index=y_train.columns, columns=X_train.columns),
-                "delay": delay
-            }
-        )
-        return info_dict
+        reg_output = pipeline.named_steps.regressor
+        # Intercept
+        intercept_df = pd.DataFrame(reg_output.coef_, index=y_train.columns, columns=X_train.columns)
+        # Return information
+        return {
+            **{k: type(v) for (k, v) in steps},
+            "alpha": reg_output.alpha_,
+            "l1_ratio": reg_output.l1_ratio_,
+            "score_train": score_train,
+            "score_test": score_test,
+            "X_train": X_train,
+            "y_train": y_train,
+            "X_test": X_test,
+            "y_test": y_test,
+            "X_target": X_target,
+            "intercept": intercept_df,
+            "delay": delay
+        }
 
     def predict(self, name="Main"):
         """
@@ -1372,19 +1398,19 @@ class Scenario(Term):
         """
         # Arguments
         if name not in self._lm_dict:
-            raise UnExecutedError(f"Scenario.fit(oxcgrt_data, name={name})")
+            raise UnExecutedError(f"Scenario.fit(name={name})")
         model = self._tracker(name).last_model
-        lm = self._lm_dict[name]
-        # Clear future phases
-        self.clear(name=name)
-        # Create X dataset of the target dates
-        *_, X_target = self._fit_create_data(model=model, name=name, delay=self.delay_days)
+        # Prediction with regression model
+        pipeline, X_target = self._lm_dict[name]
+        predicted = pipeline.predict(X_target)
         # -> end_date/parameter values
-        df = pd.DataFrame(lm.predict(X_target), index=X_target.index, columns=model.PARAMETERS)
+        df = pd.DataFrame(predicted, index=X_target.index, columns=model.PARAMETERS)
         df = df.applymap(lambda x: np.around(x, 4 - int(floor(log10(abs(x)))) - 1))
         df.index = [date.strftime(self.DATE_FORMAT) for date in df.index]
         df.index.name = "end_date"
         phase_df = df.drop_duplicates(keep="last").reset_index()
+        # Select the last values
+        phase_df = phase_df.iloc[[-1], :]
         # Set new future phases
         for phase_dict in phase_df.to_dict(orient="records"):
             self.add(name=name, **phase_dict)
