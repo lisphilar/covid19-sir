@@ -28,11 +28,10 @@
 - [Data preparation and data visualization](https://lisphilar.github.io/covid19-sir/usage_dataset.html)
 - [Phase setting with S-R Trend analysis](https://lisphilar.github.io/covid19-sir/usage_phases.html)
 - [Numerical simulation of ODE models](https://lisphilar.github.io/covid19-sir/usage_theoretical.html)
-  - Stable: SIR, SIR-D and SIR-F model
-  - Development: SIR-FV and SEWIR-F model
+  - SIR, SIR-D and SIR-F model
 - [Phase-dependent parameter estimation of ODE models](https://lisphilar.github.io/covid19-sir/usage_quickest.html)
 - [Scenario analysis](https://lisphilar.github.io/covid19-sir/usage_quick.html): Simulate the number of cases with user-defined parameter values
-- [(In development): Find the relationship of government response and parameter values](https://lisphilar.github.io/covid19-sir/usage_policy.html)
+- [Find the relationship of government response and parameter values](https://lisphilar.github.io/covid19-sir/usage_policy.html)
 
 ## Inspiration
 
@@ -62,7 +61,8 @@ data_loader = cs.DataLoader("input")
 jhu_data = data_loader.jhu()
 population_data = data_loader.population()
 # Check records
-snl = cs.Scenario(jhu_data, population_data, country="Japan")
+snl = cs.Scenario(country="Japan")
+snl.register(jhu_data, population_data)
 snl.records()
 # S-R trend analysis
 snl.trend().summary()
