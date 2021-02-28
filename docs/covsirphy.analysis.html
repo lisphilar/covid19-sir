@@ -67,7 +67,7 @@
             
             
               <div class="version">
-                2.16.2-eta
+                2.17.0
               </div>
             
           
@@ -102,7 +102,6 @@
 <li class="toctree-l1"><a class="reference internal" href="usage_dataset.html">Usage: datasets</a></li>
 <li class="toctree-l1"><a class="reference internal" href="usage_phases.html">Usage: phases</a></li>
 <li class="toctree-l1"><a class="reference internal" href="usage_theoretical.html">Usage: SIR-derived models</a></li>
-<li class="toctree-l1"><a class="reference internal" href="usage_policy.html">Usage: policy measures</a></li>
 <li class="toctree-l1 current"><a class="reference internal" href="covsirphy.html">covsirphy package</a><ul class="current">
 <li class="toctree-l2 current"><a class="reference internal" href="covsirphy.html#subpackages">Subpackages</a><ul class="current">
 <li class="toctree-l3 current"><a class="current reference internal" href="#">covsirphy.analysis package</a><ul>
@@ -265,6 +264,54 @@
 <dd class="field-even"><p>bool or str</p>
 </dd>
 </dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="covsirphy.analysis.data_handler.DataHandler.estimate_delay">
+<code class="sig-name descname"><span class="pre">estimate_delay</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">indicator</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">target</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">delay_name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'Period</span> <span class="pre">Length'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/analysis/data_handler.html#DataHandler.estimate_delay"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#covsirphy.analysis.data_handler.DataHandler.estimate_delay" title="Permalink to this definition">¶</a></dt>
+<dd><p>Estimate the average day [days] between the indicator and the target.
+We assume that the indicator impact on the target value with delay.
+All results will be returned with a dataframe.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>indicator</strong> (<em>str</em>) – indicator name, a column of any registered datasets</p></li>
+<li><p><strong>target</strong> (<em>str</em>) – target name, a column of any registered datasets</p></li>
+<li><p><strong>delay_name</strong> (<em>str</em>) – column name of delay in the output dataframe</p></li>
+</ul>
+</dd>
+<dt class="field-even">Raises</dt>
+<dd class="field-even"><ul class="simple">
+<li><p><a class="reference internal" href="covsirphy.html#covsirphy.NotRegisteredMainError" title="covsirphy.NotRegisteredMainError"><strong>NotRegisteredMainError</strong></a> – either JHUData or PopulationData was not registered</p></li>
+<li><p><a class="reference internal" href="covsirphy.html#covsirphy.SubsetNotFoundError" title="covsirphy.SubsetNotFoundError"><strong>SubsetNotFoundError</strong></a> – failed in subsetting because of lack of data</p></li>
+<li><p><strong>UserWarning</strong> – failed in calculating and returned the default value (recovery period)</p></li>
+</ul>
+</dd>
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p><dl class="simple">
+<dt>Index</dt><dd><p>reset index</p>
+</dd>
+<dt>Columns</dt><dd><ul class="simple">
+<li><p>(int or float): column defined by &#64;indicator</p></li>
+<li><p>(int or float): column defined by &#64;target</p></li>
+<li><p>(int): column defined by &#64;delay_name [days]</p></li>
+</ul>
+</dd>
+</dl>
+</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>pandas.DataFrame</p>
+</dd>
+</dl>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<ul class="simple">
+<li><p>We use change point analysis of ruptures package. Refer to the documentation.
+<a class="reference external" href="https://centre-borelli.github.io/ruptures-docs/">https://centre-borelli.github.io/ruptures-docs/</a></p></li>
+<li><p>When failed in calculation, recovery period will be returned after raising UserWarning.</p></li>
+</ul>
+</div>
 </dd></dl>
 
 <dl class="py method">
@@ -1531,44 +1578,56 @@ If the last phase is not included, the dates will be assigned to the previous ph
 
 <dl class="py method">
 <dt id="covsirphy.analysis.scenario.Scenario.estimate_delay">
-<code class="sig-name descname"><span class="pre">estimate_delay</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">oxcgrt_data</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">indicator</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'Stringency_index'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">target</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'Infected'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">value_range</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">(7,</span> <span class="pre">35)</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/analysis/scenario.html#Scenario.estimate_delay"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#covsirphy.analysis.scenario.Scenario.estimate_delay" title="Permalink to this definition">¶</a></dt>
-<dd><p>Estimate the average delay (in days) between a policy measure taken
-and the moment of change in for the given target value, for example
-<cite>Infected</cite>.The change over time is calculated with penalized change
-point analysis. More information about the method of change point
-detection can be found on:
-<a class="reference external" href="https://ctruong.perso.math.cnrs.fr/ruptures-docs/build/html/detection/pelt.html">https://ctruong.perso.math.cnrs.fr/ruptures-docs/build/html/detection/pelt.html</a>.</p>
+<code class="sig-name descname"><span class="pre">estimate_delay</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">oxcgrt_data</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">indicator</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'Stringency_index'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">target</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'Confirmed'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">value_range</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">(7,</span> <span class="pre">None)</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/analysis/scenario.html#Scenario.estimate_delay"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#covsirphy.analysis.scenario.Scenario.estimate_delay" title="Permalink to this definition">¶</a></dt>
+<dd><p>Estimate the average day [days] between the indicator and the target.
+We assume that the indicator impact on the target value with delay.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>oxcgrt_data</strong> (<a class="reference internal" href="covsirphy.html#covsirphy.OxCGRTData" title="covsirphy.OxCGRTData"><em>covsirphy.OxCGRTData</em></a>) – OxCGRT dataset</p></li>
-<li><p><strong>indicator</strong> (<em>str</em>) – column variable from the OxCGRT dataset</p></li>
-<li><p><strong>target</strong> (<em>str</em>) – one of the target columns to detect changes in,
-options are [“Infected”, “Confirmed”, “Fatal”, “Recovered”].</p></li>
-<li><p><strong>value_range</strong> (<em>int</em><em>, </em><em>int</em>) – tuple, giving the minimum and maximum</p></li>
-<li><p><strong>to search for change over time. It is assumed that when a</strong> (<em>range</em>) – </p></li>
-<li><p><strong>measure is taken</strong> (<em>policy</em>) – </p></li>
-<li><p><strong>will occur after at least 7 days</strong> (<em>change</em>) – </p></li>
-<li><p><strong>before 35 days</strong> (<em>and</em>) – </p></li>
+<li><p><strong>indicator</strong> (<em>str</em>) – indicator name, a column of any registered datasets</p></li>
+<li><p><strong>target</strong> (<em>str</em>) – target name, a column of any registered datasets</p></li>
+<li><p><strong>value_range</strong> (<em>tuple</em><em>(</em><em>int</em><em>, </em><em>int</em><em> or </em><em>None</em><em>)</em>) – tuple, giving the minimum and maximum range to search for change over time</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p><ul class="simple">
-<li><p>int: the estimated number of days of delay for a given country.</p></li>
-<li><p>pandas.DataFrame: dataframe of target, indicator and calculated periods of change (in days).</p></li>
+<dt class="field-even">Raises</dt>
+<dd class="field-even"><ul class="simple">
+<li><p><a class="reference internal" href="covsirphy.html#covsirphy.NotRegisteredMainError" title="covsirphy.NotRegisteredMainError"><strong>NotRegisteredMainError</strong></a> – either JHUData or PopulationData was not registered</p></li>
+<li><p><a class="reference internal" href="covsirphy.html#covsirphy.SubsetNotFoundError" title="covsirphy.SubsetNotFoundError"><strong>SubsetNotFoundError</strong></a> – failed in subsetting because of lack of data</p></li>
+<li><p><strong>UserWarning</strong> – failed in calculating and returned the default value (recovery period)</p></li>
+</ul>
+</dd>
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p><ul class="simple">
+<li><p>int: the estimated number of days of delay [day]</p></li>
+<li><dl class="simple">
+<dt>pandas.DataFrame:</dt><dd><dl class="simple">
+<dt>Index</dt><dd><p>reset index</p>
+</dd>
+<dt>Columns</dt><dd><ul>
+<li><p>(int or float): column defined by &#64;indicator</p></li>
+<li><p>(int or float): column defined by &#64;target</p></li>
+<li><p>(int): column defined by &#64;delay_name [days]</p></li>
+</ul>
+</dd>
+</dl>
+</dd>
+</dl>
+</li>
 </ul>
 </p>
 </dd>
-<dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>tuple(int, pandas.DataFrame)</p>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>tuple(int, pandas.DataFrame)</p>
 </dd>
 </dl>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
-<p>Average recovered period of JHU dataset will be used as returned value
-when the estimated value was not in value_range.
-Very long periods (outside of 99% quantile) are taken out.
-&#64;oxcgrt_data argument was deprecated. Please use Scenario.register(extras=[oxcgrt_data]).</p>
+<ul class="simple">
+<li><p>Average recovered period of JHU dataset will be used as returned value when the estimated value was not in value_range.</p></li>
+<li><p>Very long periods (outside of 99% quantile) are taken out.</p></li>
+<li><p>&#64;oxcgrt_data argument was deprecated. Please use Scenario.register(extras=[oxcgrt_data]).</p></li>
+</ul>
 </div>
 </dd></dl>
 
@@ -1606,7 +1665,8 @@ Very long periods (outside of 99% quantile) are taken out.
 <dt id="covsirphy.analysis.scenario.Scenario.fit">
 <code class="sig-name descname"><span class="pre">fit</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">oxcgrt_data</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'Main'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">test_size</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">seed</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">delay</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/analysis/scenario.html#Scenario.fit"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#covsirphy.analysis.scenario.Scenario.fit" title="Permalink to this definition">¶</a></dt>
 <dd><p>Learn the relationship of ODE parameter values and delayed OxCGRT scores using Elastic Net regression,
-assuming that OxCGRT scores will impact on ODE parameter values with delay.</p>
+assuming that OxCGRT scores will impact on ODE parameter values with delay.
+Min-max scaling and Elastic net regression with parameter optimization and cross validation.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
@@ -1623,11 +1683,18 @@ assuming that OxCGRT scores will impact on ODE parameter values with delay.</p>
 </dd>
 <dt class="field-odd">Returns</dt>
 <dd class="field-odd"><p><ul class="simple">
+<li><p>scaler (object): scaler class</p></li>
+<li><p>regressor (object): regressor class</p></li>
 <li><p>alpha (float): alpha value used in Elastic Net regression</p></li>
 <li><p>l1_ratio (float): l1_ratio value used in Elastic Net regression</p></li>
 <li><p>score_train (float): determination coefficient of train dataset</p></li>
 <li><p>score_test (float): determination coefficient of test dataset</p></li>
-<li><p>intercept (pandas.DataFrame): intercept values (Index ODE parameters, Columns OxCGRT indicators)</p></li>
+<li><p>X_train (numpy.array): X_train</p></li>
+<li><p>y_train (numpy.array): y_train</p></li>
+<li><p>X_test (numpy.array): X_test</p></li>
+<li><p>y_test (numpy.array): y_test</p></li>
+<li><p>X_target (numpy.array): X_target</p></li>
+<li><p>intercept (pandas.DataFrame): intercept values (Index ODE parameters, Columns indicators)</p></li>
 <li><p>delay (int): number of days of delay between policy measure and effect
 on number of confirmed cases.</p></li>
 </ul>

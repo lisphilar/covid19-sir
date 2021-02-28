@@ -67,7 +67,7 @@
             
             
               <div class="version">
-                2.16.2-eta
+                2.17.0
               </div>
             
           
@@ -100,6 +100,7 @@
 <li class="toctree-l2"><a class="reference internal" href="#installation">Installation</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#usage">Usage</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#support">Support</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#developers">Developers</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#license-apache-license-2-0">License: Apache License 2.0</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#citation">Citation</a></li>
 </ul>
@@ -111,7 +112,6 @@
 <li class="toctree-l1"><a class="reference internal" href="usage_dataset.html">Usage: datasets</a></li>
 <li class="toctree-l1"><a class="reference internal" href="usage_phases.html">Usage: phases</a></li>
 <li class="toctree-l1"><a class="reference internal" href="usage_theoretical.html">Usage: SIR-derived models</a></li>
-<li class="toctree-l1"><a class="reference internal" href="usage_policy.html">Usage: policy measures</a></li>
 <li class="toctree-l1"><a class="reference internal" href="covsirphy.html">covsirphy package</a></li>
 <li class="toctree-l1"><a class="reference internal" href="markdown/TERM.html">Term definition</a></li>
 <li class="toctree-l1"><a class="reference internal" href="CODE_OF_CONDUCT.html">Contributor Covenant Code of Conduct</a></li>
@@ -226,10 +226,7 @@ reference</a> |
 <p>CovsirPhy is a Python library for COVID-19 (Coronavirus disease 2019)
 data analysis with phase-dependent SIR-derived ODE models. We can
 download datasets and analyse them easily. Scenario analysis with
-CovsirPhy enables us to make data-informed decisions. Please refer to
-“Method” part of <a class="reference external" href="https://www.kaggle.com/lisphilar/covid-19-data-with-sir-model">Kaggle Notebook: COVID-19 data with SIR
-model</a>
-to understand the methods.</p>
+CovsirPhy enables us to make data-informed decisions.</p>
 <div class="section" id="functionalities">
 <h2>Functionalities<a class="headerlink" href="#functionalities" title="Permalink to this headline">¶</a></h2>
 <ul class="simple">
@@ -239,15 +236,13 @@ visualization</a></p></li>
 analysis</a></p></li>
 <li><p><a class="reference external" href="https://lisphilar.github.io/covid19-sir/usage_theoretical.html">Numerical simulation of ODE
 models</a></p></li>
-<li><p>Stable: SIR, SIR-D and SIR-F model</p></li>
-<li><p>Development: SIR-FV and SEWIR-F model</p></li>
+<li><p>SIR, SIR-D and SIR-F model</p></li>
 <li><p><a class="reference external" href="https://lisphilar.github.io/covid19-sir/usage_quickest.html">Phase-dependent parameter estimation of ODE
 models</a></p></li>
 <li><p><a class="reference external" href="https://lisphilar.github.io/covid19-sir/usage_quick.html">Scenario
 analysis</a>:
 Simulate the number of cases with user-defined parameter values</p></li>
-<li><p><a class="reference external" href="https://lisphilar.github.io/covid19-sir/usage_policy.html">(In development): Find the relationship of government response and
-parameter
+<li><p><a class="reference external" href="https://lisphilar.github.io/covid19-sir/usage_policy.html">Find the relationship of government response and parameter
 values</a></p></li>
 </ul>
 </div>
@@ -289,7 +284,8 @@ records in Japan, but we can change the country name when creating
 <span class="n">jhu_data</span> <span class="o">=</span> <span class="n">data_loader</span><span class="o">.</span><span class="n">jhu</span><span class="p">()</span>
 <span class="n">population_data</span> <span class="o">=</span> <span class="n">data_loader</span><span class="o">.</span><span class="n">population</span><span class="p">()</span>
 <span class="c1"># Check records</span>
-<span class="n">snl</span> <span class="o">=</span> <span class="n">cs</span><span class="o">.</span><span class="n">Scenario</span><span class="p">(</span><span class="n">jhu_data</span><span class="p">,</span> <span class="n">population_data</span><span class="p">,</span> <span class="n">country</span><span class="o">=</span><span class="s2">&quot;Japan&quot;</span><span class="p">)</span>
+<span class="n">snl</span> <span class="o">=</span> <span class="n">cs</span><span class="o">.</span><span class="n">Scenario</span><span class="p">(</span><span class="n">country</span><span class="o">=</span><span class="s2">&quot;Japan&quot;</span><span class="p">)</span>
+<span class="n">snl</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="n">jhu_data</span><span class="p">,</span> <span class="n">population_data</span><span class="p">)</span>
 <span class="n">snl</span><span class="o">.</span><span class="n">records</span><span class="p">()</span>
 <span class="c1"># S-R trend analysis</span>
 <span class="n">snl</span><span class="o">.</span><span class="n">trend</span><span class="p">()</span><span class="o">.</span><span class="n">summary</span><span class="p">()</span>
@@ -309,8 +305,6 @@ records in Japan, but we can change the country name when creating
 <ul class="simple">
 <li><p><a class="reference external" href="https://lisphilar.github.io/covid19-sir/index.html">CovsirPhy
 documentation</a></p></li>
-<li><p>Example scripts in <a class="reference external" href="https://github.com/lisphilar/covid19-sir/tree/master/example">“example” directory of this
-repository</a></p></li>
 <li><p><a class="reference external" href="https://www.kaggle.com/lisphilar/covid-19-data-with-sir-model">Kaggle: COVID-19 data with SIR
 model</a></p></li>
 </ul>
@@ -318,6 +312,19 @@ model</a></p></li>
 <div class="section" id="support">
 <h2>Support<a class="headerlink" href="#support" title="Permalink to this headline">¶</a></h2>
 <p>Please support this project as a developer (or a backer). <a class="reference external" href="https://opencollective.com/covsirphy"><img alt="Become a backer" src="https://opencollective.com/covsirphy/tiers/backer.svg?avatarHeight=36&amp;width=600" /></a></p>
+</div>
+<div class="section" id="developers">
+<h2>Developers<a class="headerlink" href="#developers" title="Permalink to this headline">¶</a></h2>
+<p>CovsirPhy library is developed by a community of volunteers. Please see
+the full list
+<a class="reference external" href="https://github.com/lisphilar/covid19-sir/graphs/contributors">here</a>.</p>
+<p>This project started in Kaggle platform. Lisphilar published <a class="reference external" href="https://www.kaggle.com/lisphilar/covid-19-data-with-sir-model">Kaggle
+Notebook: COVID-19 data with SIR
+model</a>
+on 12Feb2020, discussing with Kaggle community. On 07May2020,
+“covid19-sir” repository was created. On 10May2020, <code class="docutils literal notranslate"><span class="pre">covsirphy</span></code>
+version 1.0.0 was published in GitHub. Version 2.3.0 was released in
+PyPI on 28Jun2020.</p>
 </div>
 <div class="section" id="license-apache-license-2-0">
 <h2>License: Apache License 2.0<a class="headerlink" href="#license-apache-license-2-0" title="Permalink to this headline">¶</a></h2>
@@ -332,9 +339,9 @@ cite this package as follows.</p>
 <p>CovsirPhy Development Team (2020), CovsirPhy, Python package for
 COVID-19 analysis with SIR-derived ODE models,
 <a class="reference external" href="https://github.com/lisphilar/covid19-sir">https://github.com/lisphilar/covid19-sir</a></p>
-<p>If you want to use SIR-F/SIR-FV/SEWIR-F model, S-R trend analysis,
-phase-dependent approach to SIR-derived models, and other scientific
-method performed with CovsirPhy, please cite the next Kaggle notebook.</p>
+<p>If you want to use SIR-F model, S-R trend analysis, phase-dependent
+approach to SIR-derived models, and other scientific method performed
+with CovsirPhy, please cite the next Kaggle notebook.</p>
 <p>Lisphilar (2020), Kaggle notebook, COVID-19 data with SIR model,
 <a class="reference external" href="https://www.kaggle.com/lisphilar/covid-19-data-with-sir-model">https://www.kaggle.com/lisphilar/covid-19-data-with-sir-model</a></p>
 </div>

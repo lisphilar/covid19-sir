@@ -67,7 +67,7 @@
             
             
               <div class="version">
-                2.16.2-eta
+                2.17.0
               </div>
             
           
@@ -102,7 +102,6 @@
 <li class="toctree-l1"><a class="reference internal" href="usage_dataset.html">Usage: datasets</a></li>
 <li class="toctree-l1"><a class="reference internal" href="usage_phases.html">Usage: phases</a></li>
 <li class="toctree-l1"><a class="reference internal" href="usage_theoretical.html">Usage: SIR-derived models</a></li>
-<li class="toctree-l1"><a class="reference internal" href="usage_policy.html">Usage: policy measures</a></li>
 <li class="toctree-l1 current"><a class="reference internal" href="covsirphy.html">covsirphy package</a><ul class="current">
 <li class="toctree-l2 current"><a class="reference internal" href="covsirphy.html#subpackages">Subpackages</a><ul class="current">
 <li class="toctree-l3"><a class="reference internal" href="covsirphy.analysis.html">covsirphy.analysis package</a></li>
@@ -1334,152 +1333,6 @@ omega (float) or v_per_day (int)</p>
 <dt id="covsirphy.ode.sirfv.SIRFV.WEIGHTS">
 <code class="sig-name descname"><span class="pre">WEIGHTS</span></code><em class="property"> <span class="pre">=</span> <span class="pre">array([</span> <span class="pre">0,</span> <span class="pre">10,</span> <span class="pre">10,</span>&#160; <span class="pre">2,</span>&#160; <span class="pre">0])</span></em><a class="headerlink" href="#covsirphy.ode.sirfv.SIRFV.WEIGHTS" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
-
-<dl class="py method">
-<dt id="covsirphy.ode.sirfv.SIRFV.calc_days_dict">
-<code class="sig-name descname"><span class="pre">calc_days_dict</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">tau</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/ode/sirfv.html#SIRFV.calc_days_dict"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#covsirphy.ode.sirfv.SIRFV.calc_days_dict" title="Permalink to this definition">¶</a></dt>
-<dd><p>Calculate 1/beta [day] etc.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>tau</strong> (<em>param</em>) – tau value [min]</p>
-</dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p>dict[str, int]</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt id="covsirphy.ode.sirfv.SIRFV.calc_r0">
-<code class="sig-name descname"><span class="pre">calc_r0</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/ode/sirfv.html#SIRFV.calc_r0"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#covsirphy.ode.sirfv.SIRFV.calc_r0" title="Permalink to this definition">¶</a></dt>
-<dd><p>Calculate (basic) reproduction number.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Returns</dt>
-<dd class="field-odd"><p>float</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt id="covsirphy.ode.sirfv.SIRFV.param_range">
-<em class="property"><span class="pre">classmethod</span> </em><code class="sig-name descname"><span class="pre">param_range</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">taufree_df</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">population</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/ode/sirfv.html#SIRFV.param_range"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#covsirphy.ode.sirfv.SIRFV.param_range" title="Permalink to this definition">¶</a></dt>
-<dd><p>Define the range of parameters (not including tau value).</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>taufree_df</strong> (<em>pandas.DataFrame</em>) – <dl class="simple">
-<dt>Index</dt><dd><p>reset index</p>
-</dd>
-<dt>Columns</dt><dd><ul>
-<li><p>t (int): time steps (tau-free)</p></li>
-<li><p>columns with dimensional variables</p></li>
-</ul>
-</dd>
-</dl>
-</p></li>
-<li><p><strong>population</strong> (<em>int</em>) – total population</p></li>
-</ul>
-</dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p><dl class="simple">
-<dt>(dict)</dt><dd><ul class="simple">
-<li><p>key (str): parameter name</p></li>
-<li><p>value (tuple(float, float)): min value and max value</p></li>
-</ul>
-</dd>
-</dl>
-</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt id="covsirphy.ode.sirfv.SIRFV.restore">
-<em class="property"><span class="pre">classmethod</span> </em><code class="sig-name descname"><span class="pre">restore</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">specialized_df</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/ode/sirfv.html#SIRFV.restore"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#covsirphy.ode.sirfv.SIRFV.restore" title="Permalink to this definition">¶</a></dt>
-<dd><dl class="simple">
-<dt>Restore Confirmed/Infected/Recovered/Fatal.</dt><dd><p>using a dataframe with the variables of the model.</p>
-</dd>
-</dl>
-<p>Args:
-specialized_df (pandas.DataFrame): dataframe with the variables</p>
-<blockquote>
-<div><dl class="simple">
-<dt>Index</dt><dd><p>(object)</p>
-</dd>
-<dt>Columns</dt><dd><ul class="simple">
-<li><p>Susceptible (int): the number of susceptible cases</p></li>
-<li><p>Infected (int): the number of currently infected cases</p></li>
-<li><p>Recovered (int): the number of recovered cases</p></li>
-<li><p>Fatal (int): the number of fatal cases</p></li>
-<li><p>Vaccinated (int): the number of vactinated persons</p></li>
-<li><p>any columns</p></li>
-</ul>
-</dd>
-</dl>
-</div></blockquote>
-<dl class="field-list simple">
-<dt class="field-odd">Returns</dt>
-<dd class="field-odd"><p><dl class="simple">
-<dt>(pandas.DataFrame)</dt><dd><dl class="simple">
-<dt>Index</dt><dd><p>(object): as-is</p>
-</dd>
-<dt>Columns</dt><dd><ul class="simple">
-<li><p>Confirmed (int): the number of confirmed cases</p></li>
-<li><p>Infected (int): the number of currently infected cases</p></li>
-<li><p>Fatal (int): the number of fatal cases</p></li>
-<li><p>Recovered (int): the number of recovered cases</p></li>
-<li><p>the other columns &#64;specialzed_df has</p></li>
-</ul>
-</dd>
-</dl>
-</dd>
-</dl>
-</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt id="covsirphy.ode.sirfv.SIRFV.specialize">
-<em class="property"><span class="pre">classmethod</span> </em><code class="sig-name descname"><span class="pre">specialize</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data_df</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">population</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/ode/sirfv.html#SIRFV.specialize"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#covsirphy.ode.sirfv.SIRFV.specialize" title="Permalink to this definition">¶</a></dt>
-<dd><p>Specialize the dataset for this model.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>data_df</strong> (<em>pandas.DataFrame</em>) – <dl class="simple">
-<dt>Index</dt><dd><p>reset index</p>
-</dd>
-<dt>Columns</dt><dd><ul>
-<li><p>Confirmed (int): the number of confirmed cases</p></li>
-<li><p>Infected (int): the number of currently infected cases</p></li>
-<li><p>Fatal (int): the number of fatal cases</p></li>
-<li><p>Recovered (int): the number of recovered cases</p></li>
-<li><p>any columns</p></li>
-</ul>
-</dd>
-</dl>
-</p></li>
-<li><p><strong>population</strong> (<em>int</em>) – total population in the place</p></li>
-</ul>
-</dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p><dl class="simple">
-<dt>(pandas.DataFrame)</dt><dd><dl class="simple">
-<dt>Index</dt><dd><p>reset index</p>
-</dd>
-<dt>Columns</dt><dd><ul class="simple">
-<li><p>any columns &#64;data_df has</p></li>
-<li><p>Susceptible (int): 0</p></li>
-<li><p>Vactinated (int): 0</p></li>
-</ul>
-</dd>
-</dl>
-</dd>
-</dl>
-</p>
-</dd>
-</dl>
-</dd></dl>
 
 </dd></dl>
 

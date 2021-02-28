@@ -67,7 +67,7 @@
             
             
               <div class="version">
-                2.16.2-eta
+                2.17.0
               </div>
             
           
@@ -113,7 +113,6 @@
 <li class="toctree-l1"><a class="reference internal" href="usage_dataset.html">Usage: datasets</a></li>
 <li class="toctree-l1"><a class="reference internal" href="usage_phases.html">Usage: phases</a></li>
 <li class="toctree-l1"><a class="reference internal" href="usage_theoretical.html">Usage: SIR-derived models</a></li>
-<li class="toctree-l1"><a class="reference internal" href="usage_policy.html">Usage: policy measures</a></li>
 <li class="toctree-l1"><a class="reference internal" href="covsirphy.html">covsirphy package</a></li>
 <li class="toctree-l1"><a class="reference internal" href="markdown/TERM.html">Term definition</a></li>
 <li class="toctree-l1"><a class="reference internal" href="CODE_OF_CONDUCT.html">Contributor Covenant Code of Conduct</a></li>
@@ -475,21 +474,12 @@ div.rendered_html tbody tr:hover {
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="c1"># !pip install covsirphy</span>
-</pre></div>
-</div>
-</div>
-<div class="nbinput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[2]:
-</pre></div>
-</div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
 <span></span><span class="kn">from</span> <span class="nn">pprint</span> <span class="kn">import</span> <span class="n">pprint</span>
 </pre></div>
 </div>
 </div>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[3]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[2]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
@@ -499,12 +489,12 @@ div.rendered_html tbody tr:hover {
 </div>
 </div>
 <div class="nboutput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[3]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[2]:
 </pre></div>
 </div>
 <div class="output_area docutils container">
 <div class="highlight"><pre>
-&#39;2.16.2-eta&#39;
+&#39;2.17.0&#39;
 </pre></div></div>
 </div>
 </div>
@@ -512,7 +502,7 @@ div.rendered_html tbody tr:hover {
 <h2>Dataset preparation<a class="headerlink" href="#Dataset-preparation" title="Permalink to this headline">¶</a></h2>
 <p>Download the datasets to “../input” directory and load them. If “../input” directory has the datasets, <code class="docutils literal notranslate"><span class="pre">DataLoader</span></code> will load the local files. If the datasets were updated in remote servers, <code class="docutils literal notranslate"><span class="pre">DataLoader</span></code> will update the local files automatically. Please refer to <a class="reference external" href="https://lisphilar.github.io/covid19-sir/usage_dataset.html">Usage: datasets</a> for the details.</p>
 <div class="nbinput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[4]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[3]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
@@ -527,7 +517,7 @@ div.rendered_html tbody tr:hover {
 </div>
 <p>We can select the following countries.</p>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[5]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[4]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
@@ -582,14 +572,12 @@ div.rendered_html tbody tr:hover {
 <h2>Start scenario analysis<a class="headerlink" href="#Start-scenario-analysis" title="Permalink to this headline">¶</a></h2>
 <p>As an example, we will analysis the number of cases in Italy using <code class="docutils literal notranslate"><span class="pre">Scenario</span></code> class. To initialize this class, we need to specify the country name.</p>
 <div class="nbinput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[6]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[5]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="n">snl</span> <span class="o">=</span> <span class="n">cs</span><span class="o">.</span><span class="n">Scenario</span><span class="p">(</span><span class="n">jhu_data</span><span class="p">,</span> <span class="n">population_data</span><span class="p">,</span> <span class="n">country</span><span class="o">=</span><span class="s2">&quot;Italy&quot;</span><span class="p">)</span>
-<span class="c1"># From version 2.17.0, we will prefer to uses</span>
-<span class="c1"># snl = cs.Scenario(country=&quot;Italy&quot;, province=None)</span>
-<span class="c1"># snl.register(jhu_data, population_data)</span>
+<span></span><span class="n">snl</span> <span class="o">=</span> <span class="n">cs</span><span class="o">.</span><span class="n">Scenario</span><span class="p">(</span><span class="n">country</span><span class="o">=</span><span class="s2">&quot;Italy&quot;</span><span class="p">,</span> <span class="n">province</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+<span class="n">snl</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="n">jhu_data</span><span class="p">,</span> <span class="n">population_data</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -598,7 +586,7 @@ div.rendered_html tbody tr:hover {
 <h2>Check records<a class="headerlink" href="#Check-records" title="Permalink to this headline">¶</a></h2>
 <p>Let’s see the records at first. <code class="docutils literal notranslate"><span class="pre">Scenario.records()</span></code> method return the records as a pandas dataframe and show a line plot. Some kind of complement will be done for analysis, if necessary.</p>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[7]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[6]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
@@ -611,11 +599,11 @@ div.rendered_html tbody tr:hover {
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area docutils container">
-<img alt="_images/usage_quickest_12_0.png" src="_images/usage_quickest_12_0.png" />
+<img alt="_images/usage_quickest_11_0.png" src="_images/usage_quickest_11_0.png" />
 </div>
 </div>
 <div class="nboutput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[7]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[6]:
 </pre></div>
 </div>
 <div class="output_area rendered_html docutils container">
@@ -645,27 +633,6 @@ div.rendered_html tbody tr:hover {
   </thead>
   <tbody>
     <tr>
-      <th>362</th>
-      <td>2021-02-20</td>
-      <td>384623</td>
-      <td>95486</td>
-      <td>2315687</td>
-    </tr>
-    <tr>
-      <th>363</th>
-      <td>2021-02-21</td>
-      <td>388895</td>
-      <td>95718</td>
-      <td>2324633</td>
-    </tr>
-    <tr>
-      <th>364</th>
-      <td>2021-02-22</td>
-      <td>387903</td>
-      <td>95992</td>
-      <td>2334968</td>
-    </tr>
-    <tr>
       <th>365</th>
       <td>2021-02-23</td>
       <td>387948</td>
@@ -675,9 +642,30 @@ div.rendered_html tbody tr:hover {
     <tr>
       <th>366</th>
       <td>2021-02-24</td>
-      <td>387948</td>
-      <td>96348</td>
-      <td>2347866</td>
+      <td>389433</td>
+      <td>96666</td>
+      <td>2362465</td>
+    </tr>
+    <tr>
+      <th>367</th>
+      <td>2021-02-25</td>
+      <td>396143</td>
+      <td>96974</td>
+      <td>2375318</td>
+    </tr>
+    <tr>
+      <th>368</th>
+      <td>2021-02-26</td>
+      <td>404664</td>
+      <td>97227</td>
+      <td>2387032</td>
+    </tr>
+    <tr>
+      <th>369</th>
+      <td>2021-02-27</td>
+      <td>404664</td>
+      <td>97227</td>
+      <td>2387032</td>
     </tr>
   </tbody>
 </table>
@@ -691,7 +679,7 @@ div.rendered_html tbody tr:hover {
 <div class="line">Details will be explained in <a class="reference external" href="https://lisphilar.github.io/covid19-sir/usage_phases.html">Usage: phases</a>.</div>
 </div>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[8]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[7]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
@@ -703,7 +691,7 @@ div.rendered_html tbody tr:hover {
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area docutils container">
-<img alt="_images/usage_quickest_14_0.png" src="_images/usage_quickest_14_0.png" />
+<img alt="_images/usage_quickest_13_0.png" src="_images/usage_quickest_13_0.png" />
 </div>
 </div>
 <p>Summarize the phases.</p>
@@ -714,7 +702,7 @@ div.rendered_html tbody tr:hover {
 <li><p>Population: total population in the phases</p></li>
 </ul>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[9]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[8]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
@@ -723,7 +711,7 @@ div.rendered_html tbody tr:hover {
 </div>
 </div>
 <div class="nboutput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[9]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[8]:
 </pre></div>
 </div>
 <div class="output_area rendered_html docutils container">
@@ -770,13 +758,13 @@ div.rendered_html tbody tr:hover {
       <th>2nd</th>
       <td>Past</td>
       <td>22Apr2020</td>
-      <td>10Sep2020</td>
+      <td>11Sep2020</td>
       <td>60421760</td>
     </tr>
     <tr>
       <th>3rd</th>
       <td>Past</td>
-      <td>11Sep2020</td>
+      <td>12Sep2020</td>
       <td>16Oct2020</td>
       <td>60421760</td>
     </tr>
@@ -805,70 +793,70 @@ div.rendered_html tbody tr:hover {
       <th>7th</th>
       <td>Past</td>
       <td>12Nov2020</td>
-      <td>17Nov2020</td>
+      <td>18Nov2020</td>
       <td>60421760</td>
     </tr>
     <tr>
       <th>8th</th>
       <td>Past</td>
-      <td>18Nov2020</td>
-      <td>24Nov2020</td>
+      <td>19Nov2020</td>
+      <td>25Nov2020</td>
       <td>60421760</td>
     </tr>
     <tr>
       <th>9th</th>
       <td>Past</td>
-      <td>25Nov2020</td>
-      <td>02Dec2020</td>
+      <td>26Nov2020</td>
+      <td>04Dec2020</td>
       <td>60421760</td>
     </tr>
     <tr>
       <th>10th</th>
       <td>Past</td>
-      <td>03Dec2020</td>
-      <td>12Dec2020</td>
+      <td>05Dec2020</td>
+      <td>16Dec2020</td>
       <td>60421760</td>
     </tr>
     <tr>
       <th>11th</th>
       <td>Past</td>
-      <td>13Dec2020</td>
-      <td>23Dec2020</td>
+      <td>17Dec2020</td>
+      <td>29Dec2020</td>
       <td>60421760</td>
     </tr>
     <tr>
       <th>12th</th>
       <td>Past</td>
-      <td>24Dec2020</td>
-      <td>04Jan2021</td>
+      <td>30Dec2020</td>
+      <td>08Jan2021</td>
       <td>60421760</td>
     </tr>
     <tr>
       <th>13th</th>
       <td>Past</td>
-      <td>05Jan2021</td>
-      <td>14Jan2021</td>
+      <td>09Jan2021</td>
+      <td>20Jan2021</td>
       <td>60421760</td>
     </tr>
     <tr>
       <th>14th</th>
       <td>Past</td>
-      <td>15Jan2021</td>
-      <td>27Jan2021</td>
+      <td>21Jan2021</td>
+      <td>02Feb2021</td>
       <td>60421760</td>
     </tr>
     <tr>
       <th>15th</th>
       <td>Past</td>
-      <td>28Jan2021</td>
-      <td>09Feb2021</td>
+      <td>03Feb2021</td>
+      <td>15Feb2021</td>
       <td>60421760</td>
     </tr>
     <tr>
       <th>16th</th>
       <td>Past</td>
-      <td>10Feb2021</td>
-      <td>24Feb2021</td>
+      <td>16Feb2021</td>
+      <td>27Feb2021</td>
       <td>60421760</td>
     </tr>
   </tbody>
@@ -880,12 +868,12 @@ div.rendered_html tbody tr:hover {
 <h2>Hyperparameter estimation of ODE models<a class="headerlink" href="#Hyperparameter-estimation-of-ODE-models" title="Permalink to this headline">¶</a></h2>
 <p>Here, we will estimate the parameter values of SIR-derived models. As an example, we use SIR-F model. Details of models will be explained in <a class="reference external" href="https://lisphilar.github.io/covid19-sir/usage_theoretical.html">Usage: SIR-derived models</a>.</p>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[10]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[9]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
 <span></span><span class="c1"># Default value of timeout is 180 sec</span>
-<span class="n">snl</span><span class="o">.</span><span class="n">estimate</span><span class="p">(</span><span class="n">cs</span><span class="o">.</span><span class="n">SIRF</span><span class="p">,</span> <span class="n">timeout</span><span class="o">=</span><span class="mi">60</span><span class="p">)</span>
+<span class="n">snl</span><span class="o">.</span><span class="n">estimate</span><span class="p">(</span><span class="n">cs</span><span class="o">.</span><span class="n">SIRF</span><span class="p">,</span> <span class="n">timeout</span><span class="o">=</span><span class="mi">30</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -897,24 +885,24 @@ div.rendered_html tbody tr:hover {
 
 &lt;SIR-F model: parameter estimation&gt;
 Running optimization with 8 CPUs...
-        16th phase (10Feb2021 - 24Feb2021): finished  489 trials in 0 min 20 sec
-         4th phase (17Oct2020 - 27Oct2020): finished  233 trials in 0 min 20 sec
-         7th phase (12Nov2020 - 17Nov2020): finished  242 trials in 0 min 20 sec
-         8th phase (18Nov2020 - 24Nov2020): finished  217 trials in 0 min 20 sec
-         9th phase (25Nov2020 - 02Dec2020): finished  218 trials in 0 min 20 sec
-         5th phase (28Oct2020 - 04Nov2020): finished  533 trials in 0 min 50 sec
-         1st phase (26Mar2020 - 21Apr2020): finished  621 trials in 1 min  0 sec
-         6th phase (05Nov2020 - 11Nov2020): finished  641 trials in 1 min  0 sec         2nd phase (22Apr2020 - 10Sep2020): finished  583 trials in 1 min  0 sec
-        10th phase (03Dec2020 - 12Dec2020): finished  235 trials in 0 min 20 sec
-         3rd phase (11Sep2020 - 16Oct2020): finished  623 trials in 1 min  0 sec         0th phase (24Feb2020 - 25Mar2020): finished  606 trials in 1 min  0 sec
+        16th phase (16Feb2021 - 27Feb2021): finished  402 trials in 0 min 30 sec
+         1st phase (26Mar2020 - 21Apr2020): finished  336 trials in 0 min 30 sec         2nd phase (22Apr2020 - 11Sep2020): finished  290 trials in 0 min 30 sec
+
+         5th phase (28Oct2020 - 04Nov2020): finished  343 trials in 0 min 30 sec         3rd phase (12Sep2020 - 16Oct2020): finished  334 trials in 0 min 30 sec         0th phase (24Feb2020 - 25Mar2020): finished  252 trials in 0 min 30 sec
 
 
-        11th phase (13Dec2020 - 23Dec2020): finished  218 trials in 0 min 20 sec
-        12th phase (24Dec2020 - 04Jan2021): finished  240 trials in 0 min 20 sec
-        15th phase (28Jan2021 - 09Feb2021): finished  139 trials in 0 min 10 sec
-        13th phase (05Jan2021 - 14Jan2021): finished  350 trials in 0 min 20 sec
-        14th phase (15Jan2021 - 27Jan2021): finished  354 trials in 0 min 20 sec
-Completed optimization. Total: 1 min 42 sec
+         6th phase (05Nov2020 - 11Nov2020): finished  260 trials in 0 min 30 sec         7th phase (12Nov2020 - 18Nov2020): finished  261 trials in 0 min 30 sec         4th phase (17Oct2020 - 27Oct2020): finished  262 trials in 0 min 30 sec
+
+
+         9th phase (26Nov2020 - 04Dec2020): finished  231 trials in 0 min 20 sec
+         8th phase (19Nov2020 - 25Nov2020): finished  318 trials in 0 min 30 sec
+        10th phase (05Dec2020 - 16Dec2020): finished  288 trials in 0 min 30 sec
+        11th phase (17Dec2020 - 29Dec2020): finished  264 trials in 0 min 30 sec        12th phase (30Dec2020 - 08Jan2021): finished  338 trials in 0 min 30 sec
+
+        13th phase (09Jan2021 - 20Jan2021): finished  276 trials in 0 min 30 sec
+        14th phase (21Jan2021 - 02Feb2021): finished  333 trials in 0 min 30 sec
+        15th phase (03Feb2021 - 15Feb2021): finished  267 trials in 0 min 30 sec
+Completed optimization. Total: 1 min 34 sec
 </pre></div></div>
 </div>
 </div>
@@ -922,7 +910,7 @@ Completed optimization. Total: 1 min 42 sec
 <h2>History of reproduction number<a class="headerlink" href="#History-of-reproduction-number" title="Permalink to this headline">¶</a></h2>
 <p>Let’s see the history of parameter values. Reproduction number is here.</p>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[11]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[10]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
@@ -934,7 +922,7 @@ Completed optimization. Total: 1 min 42 sec
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area docutils container">
-<img alt="_images/usage_quickest_20_0.png" src="_images/usage_quickest_20_0.png" />
+<img alt="_images/usage_quickest_19_0.png" src="_images/usage_quickest_19_0.png" />
 </div>
 </div>
 </div>
@@ -942,7 +930,7 @@ Completed optimization. Total: 1 min 42 sec
 <h2>History of parameters<a class="headerlink" href="#History-of-parameters" title="Permalink to this headline">¶</a></h2>
 <p>History of each parameter. Values will be divided by the values in 0th phase.</p>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[12]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[11]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
@@ -954,7 +942,7 @@ Completed optimization. Total: 1 min 42 sec
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area docutils container">
-<img alt="_images/usage_quickest_22_0.png" src="_images/usage_quickest_22_0.png" />
+<img alt="_images/usage_quickest_21_0.png" src="_images/usage_quickest_21_0.png" />
 </div>
 </div>
 </div>
@@ -962,7 +950,7 @@ Completed optimization. Total: 1 min 42 sec
 <h2>Simulate the number of cases<a class="headerlink" href="#Simulate-the-number-of-cases" title="Permalink to this headline">¶</a></h2>
 <p>How many cases will be in 30 days if the parameter values will not be changed from today?</p>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[13]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[12]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
@@ -976,7 +964,7 @@ Completed optimization. Total: 1 min 42 sec
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area docutils container">
-<img alt="_images/usage_quickest_24_0.png" src="_images/usage_quickest_24_0.png" />
+<img alt="_images/usage_quickest_23_0.png" src="_images/usage_quickest_23_0.png" />
 </div>
 </div>
 <div class="line-block">

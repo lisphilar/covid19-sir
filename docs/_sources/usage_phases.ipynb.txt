@@ -44,15 +44,6 @@
   {
    "cell_type": "code",
    "execution_count": null,
-   "metadata": {},
-   "outputs": [],
-   "source": [
-    "# !pip install covsirphy"
-   ]
-  },
-  {
-   "cell_type": "code",
-   "execution_count": null,
    "metadata": {
     "tags": []
    },
@@ -83,10 +74,8 @@
    "outputs": [],
    "source": [
     "# Create instance of `Scenario` class\n",
-    "snl = cs.Scenario(jhu_data, population_data, country=\"India\", province=None)\n",
-    "# From version 2.17.0, we will prefer to use\n",
-    "# snl = cs.Scenario(country=\"India\", province=None)\n",
-    "# snl.register(jhu_data, population_data)"
+    "snl = cs.Scenario(country=\"India\", province=None)\n",
+    "snl.register(jhu_data, population_data)"
    ]
   },
   {
@@ -113,7 +102,8 @@
    "cell_type": "markdown",
    "metadata": {},
    "source": [
-    "Just for demonstration, we will fix the first/end date of the records here. This is un-necessary for your analysis."
+    "Just for demonstration, we will fix the first/end date of the records here. This is un-necessary for your analysis when you want to use all records.\n",
+    "Today means the reference date to determine whether a phase is a past phase or a future phase."
    ]
   },
   {
@@ -124,17 +114,16 @@
    },
    "outputs": [],
    "source": [
-    "# Fix the first date of records\n",
-    "snl.first_date = \"01Mar2020\"\n",
-    "# Fix the last date of records\n",
-    "snl.last_date = \"16Jul2020\"\n",
+    "# Fix the first/last date of the records and today\n",
+    "# today must be in the range of (first_date, last_date).\n",
+    "# Default: None means automatically specified (min/max will be used)\n",
+    "snl.timepoints(first_date=\"01Mar2020\", last_date=\"16Jul2020\", today=\"16Jul2020\")\n",
+    "# Check dates\n",
+    "print(snl.first_date)\n",
+    "print(snl.last_date)\n",
+    "print(snl.today)\n",
     "# Summarize (Empty because no phases are registered)\n",
-    "snl.summary()\n",
-    "# From version 2.17.0, we will prefer to use\n",
-    "# snl.timepoints(first_date=\"01Mar2020\", last_date=\"16Jul2020\", today=\"16Jul2020\")\n",
-    "# Dates are automatically set when None (default) was applied or .timepoint() was not applied.\n",
-    "# .today means the reference date to determine whether a phase is a past phase or a future phase.\n",
-    "# .today must be in the range of (first_date, last_date)."
+    "snl.summary()"
    ]
   },
   {
