@@ -2,8 +2,11 @@
 # -*- coding: utf-8 -*-
 
 from pathlib import Path
+import warnings
 import pytest
 from covsirphy import DataLoader
+
+warnings.filterwarnings("error")
 
 
 @pytest.fixture(scope="session")
