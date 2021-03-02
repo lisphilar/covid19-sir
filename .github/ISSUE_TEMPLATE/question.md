@@ -1,6 +1,6 @@
 ---
 name: Question
-about: Question about CovsirPhy and this project.
+about: Question regarding CovsirPhy and this project
 title: '[Question/Docs] '
 labels: question
 assignees: ''
@@ -18,6 +18,7 @@ import covsirphy as cs
 ```
 
 ## (Optional) Environment
+
 - CovsirPhy version: 
 - Python version: 3.8.5
 - Installation: poetry/pipenv/conda/pip

@@ -1,6 +1,6 @@
 ---
 name: Need documentation
-about: If you need documentation or example codes, plese use this template.
+about: If you need documentation or example codes, please use this template.
 title: '[Docs] '
 labels: documentation
 assignees: ''

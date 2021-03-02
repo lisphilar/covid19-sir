@@ -24,8 +24,7 @@ snl.register(jhu_data, population_data)
 ```
 
 ## Outputs
-
-(dataframe, figures, stdout.)
+<!--dataframe, figures, stdout.-->
 
 ## Environment
 

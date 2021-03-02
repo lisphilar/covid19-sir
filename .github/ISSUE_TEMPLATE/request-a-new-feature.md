@@ -11,6 +11,7 @@ assignees: ''
 
 
 ## (Optional) Solution with the current version
+
 ```Python
 
 ```
