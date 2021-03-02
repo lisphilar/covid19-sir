@@ -20,7 +20,6 @@
    usage_dataset
    usage_phases
    usage_theoretical
-   usage_policy
    covsirphy
    markdown/TERM
    CODE_OF_CONDUCT

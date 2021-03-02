@@ -105,6 +105,19 @@ Further information:
 -  `Kaggle: COVID-19 data with SIR
    model <https://www.kaggle.com/lisphilar/covid-19-data-with-sir-model>`__
 
+Release notes
+-------------
+
+Release notes are
+`here <https://github.com/lisphilar/covid19-sir/releases>`__. Titles &
+links of issues are listed with acknowledgement.
+
+We can see the release plan for the next stable version in `milestone
+page of the GitHub
+repository <https://github.com/lisphilar/covid19-sir/milestones>`__. If
+you find a highly urgent matter, please let us know via `issue
+page <https://github.com/lisphilar/covid19-sir/issues>`__.
+
 Support
 -------
 
@@ -121,10 +134,10 @@ the full list
 This project started in Kaggle platform. Lisphilar published `Kaggle
 Notebook: COVID-19 data with SIR
 model <https://www.kaggle.com/lisphilar/covid-19-data-with-sir-model>`__
-on 12Feb2020, discussing with Kaggle community. On 07May2020,
-"covid19-sir" repository was created. On 10May2020, ``covsirphy``
-version 1.0.0 was published in GitHub. Version 2.3.0 was released in
-PyPI on 28Jun2020.
+on 12Feb2020 and developed it, discussing with Kaggle community. On
+07May2020, "covid19-sir" repository was created. On 10May2020,
+``covsirphy`` version 1.0.0 was published in GitHub. First release in
+PyPI (version 2.3.0) was on 28Jun2020.
 
 License: Apache License 2.0
 ---------------------------
