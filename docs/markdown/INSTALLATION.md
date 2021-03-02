@@ -6,18 +6,10 @@ The latest stable version of CovsirPhy is available at [PyPI (The Python Package
 pip install --upgrade covsirphy
 ```
 
-The latest development version can be install from [GitHub repository: CovsirPhy](https://github.com/lisphilar/covid19-sir). Please refer to [Guideline of contribution](https://lisphilar.github.io/covid19-sir/CONTRIBUTING.html).
+You can find the latest development in [GitHub repository: CovsirPhy](https://github.com/lisphilar/covid19-sir) and install it with `pip` command. Please refer to [Guideline of contribution](https://lisphilar.github.io/covid19-sir/CONTRIBUTING.html).
 
 ```bash
 pip install --upgrade "git+https://github.com/lisphilar/covid19-sir.git#egg=covsirphy"
-```
-
-Note:  
-When using **development versions** of CovsirPhy in Kaggle Notebook, please run the following codes to remove third-party `typing` package.
-
-```bash
-!pip uninstall typing -y
-!pip install --upgrade "git+https://github.com/lisphilar/covid19-sir.git#egg=covsirphy"
 ```
 
 # Dataset preparation
