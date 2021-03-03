@@ -50,7 +50,7 @@ Inspiration
 If you have ideas or need new functionalities, please join this project.
 Any suggestions with `Github
 Issues <https://github.com/lisphilar/covid19-sir/issues/new/choose>`__
-are always welcomed. Please read `Guideline of
+are always welcomed. Questions are also great. Please read `Guideline of
 contribution <https://lisphilar.github.io/covid19-sir/CONTRIBUTING.html>`__
 in advance.
 
