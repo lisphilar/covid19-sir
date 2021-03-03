@@ -26,7 +26,7 @@ class TestPCRData(object):
             pcr_data.subset(country, end_date="01Jan2000")
         df = pcr_data.subset(country)
         df = pcr_data.subset(country, end_date="01Jan2021")
-        assert set(df.columns) == set(PCRData.PCR_NLOC_COLUMNS)
+        assert set(df.columns) == set([*PCRData.PCR_NLOC_COLUMNS, PCRData.T_DIFF])
 
     @pytest.mark.parametrize("country", ["Greece"])
     def test_subset_complement(self, pcr_data, country):
@@ -38,15 +38,14 @@ class TestPCRData(object):
         with pytest.raises(SubsetNotFoundError):
             pcr_data.records(country, end_date="01Jan2000")
         df, _ = pcr_data.records(country)
-        assert set(df.columns) == set(PCRData.PCR_NLOC_COLUMNS)
+        assert set(df.columns) == set([*PCRData.PCR_NLOC_COLUMNS, PCRData.T_DIFF])
 
     @pytest.mark.parametrize("country", ["Greece", "Italy", "Sweden"])
     def test_positive_rate(self, pcr_data, country):
         warnings.simplefilter("ignore", category=UserWarning)
         pcr_data.positive_rate(country, show_figure=True)
         df = pcr_data.positive_rate(country, show_figure=False)
-        assert set(
-            [PCRData.T_DIFF, PCRData.C_DIFF, PCRData.PCR_RATE]).issubset(df.columns)
+        assert set([PCRData.T_DIFF, PCRData.C_DIFF, PCRData.PCR_RATE]).issubset(df.columns)
 
     @pytest.mark.parametrize("country", ["China"])
     def test_positive_rate_error(self, pcr_data, country):
