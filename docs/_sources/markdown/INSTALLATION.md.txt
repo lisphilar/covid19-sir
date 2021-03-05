@@ -95,7 +95,7 @@ Lisphilar (2020), GitHub repository, COVID-19 dataset in Japan, [https://github.
 
 ## 2. How to request new data loader
 
-If you want to use a new dataset for your analysis, please kindly inform us via [GitHub Issues: Request new method of DataLoader class](https://github.com/lisphilar/covid19-sir/issues/new/?template=request-new-method-of-dataloader-class.md). Please read [Guideline of contribution](https://lisphilar.github.io/covid19-sir/CONTRIBUTING.html) in advance.
+If you want to use a new dataset for your analysis, please kindly inform us using [GitHub Issues: Request new method of DataLoader class](https://github.com/lisphilar/covid19-sir/issues/new/?template=request-new-method-of-dataloader-class.md). Please read [Guideline of contribution](https://lisphilar.github.io/covid19-sir/CONTRIBUTING.html) in advance.
 
 ## 3. Use a local CSV file which has the number of cases
 
