@@ -1306,7 +1306,8 @@ class Scenario(Term):
                 - X_test (numpy.array): X_test
                 - y_test (numpy.array): y_test
                 - X_target (numpy.array): X_target
-                - intercept (pandas.DataFrame): intercept values (Index ODE parameters, Columns indicators)
+                - intercept (pandas.DataFrame): intercept and coefficients (Index ODE parameters, Columns indicators)
+                - coef (pandas.DataFrame): intercept and coefficients (Index ODE parameters, Columns indicators)
                 - delay (int): number of days of delay between policy measure and effect
                   on number of confirmed cases.
 
@@ -1361,8 +1362,10 @@ class Scenario(Term):
         score_test = r2_score(pipeline.predict(X_test), y_test)
         # Return information regarding regression model
         reg_output = pipeline.named_steps.regressor
-        # Intercept
+        # Intercept and coefficients
         intercept_df = pd.DataFrame(reg_output.coef_, index=y_train.columns, columns=X_train.columns)
+        intercept_df.insert(0, "Intercept", None)
+        intercept_df["Intercept"] = reg_output.intercept_
         # Return information
         return {
             **{k: type(v) for (k, v) in steps},
@@ -1376,6 +1379,7 @@ class Scenario(Term):
             "y_test": y_test,
             "X_target": X_target,
             "intercept": intercept_df,
+            "coef": intercept_df,
             "delay": delay
         }
 
