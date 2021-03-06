@@ -65,7 +65,7 @@
             
             
               <div class="version">
-                2.17.0
+                2.17.0-alpha-fu1
               </div>
             
           
@@ -1479,7 +1479,8 @@
 <span class="sd">                - X_test (numpy.array): X_test</span>
 <span class="sd">                - y_test (numpy.array): y_test</span>
 <span class="sd">                - X_target (numpy.array): X_target</span>
-<span class="sd">                - intercept (pandas.DataFrame): intercept values (Index ODE parameters, Columns indicators)</span>
+<span class="sd">                - intercept (pandas.DataFrame): intercept and coefficients (Index ODE parameters, Columns indicators)</span>
+<span class="sd">                - coef (pandas.DataFrame): intercept and coefficients (Index ODE parameters, Columns indicators)</span>
 <span class="sd">                - delay (int): number of days of delay between policy measure and effect</span>
 <span class="sd">                  on number of confirmed cases.</span>
 
@@ -1534,8 +1535,10 @@
         <span class="n">score_test</span> <span class="o">=</span> <span class="n">r2_score</span><span class="p">(</span><span class="n">pipeline</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">X_test</span><span class="p">),</span> <span class="n">y_test</span><span class="p">)</span>
         <span class="c1"># Return information regarding regression model</span>
         <span class="n">reg_output</span> <span class="o">=</span> <span class="n">pipeline</span><span class="o">.</span><span class="n">named_steps</span><span class="o">.</span><span class="n">regressor</span>
-        <span class="c1"># Intercept</span>
+        <span class="c1"># Intercept and coefficients</span>
         <span class="n">intercept_df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">reg_output</span><span class="o">.</span><span class="n">coef_</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="n">y_train</span><span class="o">.</span><span class="n">columns</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="n">X_train</span><span class="o">.</span><span class="n">columns</span><span class="p">)</span>
+        <span class="n">intercept_df</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="s2">&quot;Intercept&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+        <span class="n">intercept_df</span><span class="p">[</span><span class="s2">&quot;Intercept&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">reg_output</span><span class="o">.</span><span class="n">intercept_</span>
         <span class="c1"># Return information</span>
         <span class="k">return</span> <span class="p">{</span>
             <span class="o">**</span><span class="p">{</span><span class="n">k</span><span class="p">:</span> <span class="nb">type</span><span class="p">(</span><span class="n">v</span><span class="p">)</span> <span class="k">for</span> <span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="n">v</span><span class="p">)</span> <span class="ow">in</span> <span class="n">steps</span><span class="p">},</span>
@@ -1549,6 +1552,7 @@
             <span class="s2">&quot;y_test&quot;</span><span class="p">:</span> <span class="n">y_test</span><span class="p">,</span>
             <span class="s2">&quot;X_target&quot;</span><span class="p">:</span> <span class="n">X_target</span><span class="p">,</span>
             <span class="s2">&quot;intercept&quot;</span><span class="p">:</span> <span class="n">intercept_df</span><span class="p">,</span>
+            <span class="s2">&quot;coef&quot;</span><span class="p">:</span> <span class="n">intercept_df</span><span class="p">,</span>
             <span class="s2">&quot;delay&quot;</span><span class="p">:</span> <span class="n">delay</span>
         <span class="p">}</span></div>
 

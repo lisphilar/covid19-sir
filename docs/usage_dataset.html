@@ -67,7 +67,7 @@
             
             
               <div class="version">
-                2.17.0-alpha
+                2.17.0-alpha-fu1
               </div>
             
           
@@ -502,6 +502,7 @@ div.rendered_html tbody tr:hover {
 <li><p><code class="docutils literal notranslate"><span class="pre">PyramidData</span></code>: population pyramid</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">JapanData</span></code>: Japan-specific dataset</p></li>
 </ol>
+<p>If you want to use a new dataset for your analysis, please kindly inform us with <a class="reference external" href="https://github.com/lisphilar/covid19-sir/issues/new/?template=request-new-method-of-dataloader-class.md">GitHub Issues: Request new method of DataLoader class</a>.</p>
 <p>In this notebook, review the cleaned datasets one by one and visualize them.</p>
 <div class="section" id="Preparation">
 <h2>Preparation<a class="headerlink" href="#Preparation" title="Permalink to this headline">¶</a></h2>
@@ -523,7 +524,7 @@ div.rendered_html tbody tr:hover {
 </div>
 <div class="output_area docutils container">
 <div class="highlight"><pre>
-&#39;2.17.0-alpha&#39;
+&#39;2.17.0-alpha-fu1&#39;
 </pre></div></div>
 </div>
 <p>Data cleaning classes will be produced with methods of <code class="docutils literal notranslate"><span class="pre">DataLoader</span></code> class. Please specify the directory to save CSV files when creating <code class="docutils literal notranslate"><span class="pre">DataLoader</span></code> instance. The default value of <code class="docutils literal notranslate"><span class="pre">directory</span></code> is “input” and we will set “../input” here.</p>
@@ -547,7 +548,7 @@ div.rendered_html tbody tr:hover {
 <h2>The number of cases (JHU style)<a class="headerlink" href="#The-number-of-cases-(JHU-style)" title="Permalink to this headline">¶</a></h2>
 <p>The main data for analysis is that of the number of cases. <code class="docutils literal notranslate"><span class="pre">JHUData</span></code> class created with <code class="docutils literal notranslate"><span class="pre">DataLoader.jhu()</span></code> method is for the number of confirmed/fatal/recovered cases. The number of infected cases will be calculated as “Confirmed - Recovered - Fatal” when data cleaning.</p>
 <p>If you want to create this instance with your local CSV file, please refer to <a class="reference external" href="https://lisphilar.github.io/covid19-sir/markdown/INSTALLATION.html#use-a-local-csv-file-which-has-the-number-of-cases">Dataset preparation: 3. Use a local CSV file which has the number of cases</a>.</p>
-<div class="nbinput nblast docutils container">
+<div class="nbinput docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[3]:
 </pre></div>
 </div>
@@ -556,6 +557,16 @@ div.rendered_html tbody tr:hover {
 <span class="n">jhu_data</span> <span class="o">=</span> <span class="n">data_loader</span><span class="o">.</span><span class="n">jhu</span><span class="p">()</span>
 </pre></div>
 </div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+Retrieving datasets from COVID-19 Data Hub https://covid19datahub.io/
+        Please set verbose=2 to see the detailed citation list.
+Retrieving COVID-19 dataset in Japan from https://github.com/lisphilar/covid19-sir/data/japan
+</pre></div></div>
 </div>
 <div class="nbinput docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[4]:
@@ -664,31 +675,7 @@ Lisphilar (2020), COVID-19 dataset in Japan, GitHub repository, https://github.c
   </thead>
   <tbody>
     <tr>
-      <th>445905</th>
-      <td>2021-03-01</td>
-      <td>5817.0</td>
-      <td>1369.0</td>
-      <td>1332</td>
-      <td>22</td>
-      <td>107808.0</td>
-      <td>COL</td>
-      <td>Vichada</td>
-      <td>Colombia</td>
-      <td>3</td>
-      <td>...</td>
-      <td>1</td>
-      <td>3</td>
-      <td>1</td>
-      <td>1</td>
-      <td>1</td>
-      <td>4</td>
-      <td>2</td>
-      <td>2</td>
-      <td>2</td>
-      <td>81.02</td>
-    </tr>
-    <tr>
-      <th>445906</th>
+      <th>59929</th>
       <td>2021-03-02</td>
       <td>5817.0</td>
       <td>1377.0</td>
@@ -712,7 +699,7 @@ Lisphilar (2020), COVID-19 dataset in Japan, GitHub repository, https://github.c
       <td>81.02</td>
     </tr>
     <tr>
-      <th>445907</th>
+      <th>59930</th>
       <td>2021-03-03</td>
       <td>5817.0</td>
       <td>1377.0</td>
@@ -736,7 +723,7 @@ Lisphilar (2020), COVID-19 dataset in Japan, GitHub repository, https://github.c
       <td>81.02</td>
     </tr>
     <tr>
-      <th>445908</th>
+      <th>59931</th>
       <td>2021-03-04</td>
       <td>5817.0</td>
       <td>1377.0</td>
@@ -760,11 +747,35 @@ Lisphilar (2020), COVID-19 dataset in Japan, GitHub repository, https://github.c
       <td>81.02</td>
     </tr>
     <tr>
-      <th>445909</th>
+      <th>59932</th>
       <td>2021-03-05</td>
       <td>5817.0</td>
       <td>1377.0</td>
-      <td>1344</td>
+      <td>1346</td>
+      <td>22</td>
+      <td>107808.0</td>
+      <td>COL</td>
+      <td>Vichada</td>
+      <td>Colombia</td>
+      <td>3</td>
+      <td>...</td>
+      <td>1</td>
+      <td>3</td>
+      <td>1</td>
+      <td>1</td>
+      <td>1</td>
+      <td>4</td>
+      <td>2</td>
+      <td>2</td>
+      <td>2</td>
+      <td>81.02</td>
+    </tr>
+    <tr>
+      <th>59933</th>
+      <td>2021-03-06</td>
+      <td>5817.0</td>
+      <td>1377.0</td>
+      <td>1346</td>
       <td>22</td>
       <td>107808.0</td>
       <td>COL</td>
@@ -902,17 +913,17 @@ Lisphilar (2020), COVID-19 dataset in Japan, GitHub repository, https://github.c
 <div class="output_area docutils container">
 <div class="highlight"><pre>
 &lt;class &#39;pandas.core.frame.DataFrame&#39;&gt;
-Int64Index: 442602 entries, 0 to 17331
+Int64Index: 443591 entries, 0 to 17331
 Data columns (total 7 columns):
  #   Column     Non-Null Count   Dtype
 ---  ------     --------------   -----
- 0   Date       442602 non-null  datetime64[ns]
- 1   Country    442602 non-null  category
- 2   Province   442602 non-null  category
- 3   Confirmed  442602 non-null  int64
- 4   Infected   442602 non-null  int64
- 5   Fatal      442602 non-null  int64
- 6   Recovered  442602 non-null  int64
+ 0   Date       443591 non-null  datetime64[ns]
+ 1   Country    443591 non-null  category
+ 2   Province   443591 non-null  category
+ 3   Confirmed  443591 non-null  int64
+ 4   Infected   443591 non-null  int64
+ 5   Fatal      443591 non-null  int64
+ 6   Recovered  443591 non-null  int64
 dtypes: category(2), datetime64[ns](1), int64(4)
 memory usage: 22.0 MB
 </pre></div></div>
@@ -1073,54 +1084,54 @@ memory usage: 22.0 MB
   </thead>
   <tbody>
     <tr>
-      <th>2021-03-01</th>
-      <td>114307965</td>
-      <td>40814634</td>
-      <td>2537681</td>
-      <td>70955650</td>
-      <td>0.022200</td>
-      <td>0.620741</td>
-      <td>0.034529</td>
-    </tr>
-    <tr>
       <th>2021-03-02</th>
-      <td>114596973</td>
-      <td>40839766</td>
-      <td>2547023</td>
-      <td>71210184</td>
-      <td>0.022226</td>
-      <td>0.621397</td>
-      <td>0.034533</td>
+      <td>114597261</td>
+      <td>40832455</td>
+      <td>2547363</td>
+      <td>71217443</td>
+      <td>0.022229</td>
+      <td>0.621459</td>
+      <td>0.034534</td>
     </tr>
     <tr>
       <th>2021-03-03</th>
-      <td>115011601</td>
-      <td>41026897</td>
-      <td>2557351</td>
-      <td>71427353</td>
-      <td>0.022236</td>
-      <td>0.621045</td>
-      <td>0.034566</td>
+      <td>115014160</td>
+      <td>41021722</td>
+      <td>2557714</td>
+      <td>71434724</td>
+      <td>0.022238</td>
+      <td>0.621095</td>
+      <td>0.034567</td>
     </tr>
     <tr>
       <th>2021-03-04</th>
-      <td>115418778</td>
-      <td>41192004</td>
-      <td>2566470</td>
-      <td>71660304</td>
-      <td>0.022236</td>
-      <td>0.620872</td>
-      <td>0.034576</td>
+      <td>115436204</td>
+      <td>41199803</td>
+      <td>2567006</td>
+      <td>71669395</td>
+      <td>0.022237</td>
+      <td>0.620857</td>
+      <td>0.034579</td>
     </tr>
     <tr>
       <th>2021-03-05</th>
-      <td>115420789</td>
-      <td>41192604</td>
-      <td>2566551</td>
-      <td>71661634</td>
-      <td>0.022236</td>
-      <td>0.620873</td>
-      <td>0.034577</td>
+      <td>115839761</td>
+      <td>41376226</td>
+      <td>2576524</td>
+      <td>71887011</td>
+      <td>0.022242</td>
+      <td>0.620573</td>
+      <td>0.034601</td>
+    </tr>
+    <tr>
+      <th>2021-03-06</th>
+      <td>115409080</td>
+      <td>41369593</td>
+      <td>2568454</td>
+      <td>71471033</td>
+      <td>0.022255</td>
+      <td>0.619284</td>
+      <td>0.034690</td>
     </tr>
   </tbody>
 </table>
@@ -1190,35 +1201,35 @@ memory usage: 22.0 MB
   <tbody>
     <tr>
       <th>Fatal per Confirmed</th>
-      <td>424.0</td>
-      <td>0.035761</td>
-      <td>0.017451</td>
+      <td>425.0</td>
+      <td>0.035729</td>
+      <td>0.017443</td>
       <td>0.000000</td>
-      <td>0.022463</td>
-      <td>0.030872</td>
-      <td>0.045076</td>
-      <td>0.074248</td>
+      <td>0.022439</td>
+      <td>0.030803</td>
+      <td>0.045067</td>
+      <td>0.074249</td>
     </tr>
     <tr>
       <th>Recovered per Confirmed</th>
-      <td>424.0</td>
-      <td>0.524625</td>
-      <td>0.186516</td>
+      <td>425.0</td>
+      <td>0.524849</td>
+      <td>0.186353</td>
       <td>0.018233</td>
-      <td>0.417514</td>
-      <td>0.617008</td>
-      <td>0.648946</td>
+      <td>0.418129</td>
+      <td>0.617059</td>
+      <td>0.648898</td>
       <td>1.000000</td>
     </tr>
     <tr>
       <th>Fatal per (Fatal or Recovered)</th>
-      <td>424.0</td>
-      <td>0.088516</td>
-      <td>0.088975</td>
+      <td>425.0</td>
+      <td>0.088390</td>
+      <td>0.088908</td>
       <td>0.000000</td>
-      <td>0.034614</td>
-      <td>0.051703</td>
-      <td>0.112494</td>
+      <td>0.034626</td>
+      <td>0.051540</td>
+      <td>0.112233</td>
       <td>0.546667</td>
     </tr>
   </tbody>
@@ -1808,7 +1819,7 @@ the records. We have to assume temporarily invariable compartments for this anal
   </thead>
   <tbody>
     <tr>
-      <th>83809</th>
+      <th>84003</th>
       <td>JPN</td>
       <td>2021-03-01</td>
       <td>Japan</td>
@@ -1818,7 +1829,7 @@ the records. We have to assume temporarily invariable compartments for this anal
       <td>410604</td>
     </tr>
     <tr>
-      <th>83810</th>
+      <th>84004</th>
       <td>JPN</td>
       <td>2021-03-02</td>
       <td>Japan</td>
@@ -1828,7 +1839,7 @@ the records. We have to assume temporarily invariable compartments for this anal
       <td>412115</td>
     </tr>
     <tr>
-      <th>83811</th>
+      <th>84005</th>
       <td>JPN</td>
       <td>2021-03-03</td>
       <td>Japan</td>
@@ -1838,7 +1849,7 @@ the records. We have to assume temporarily invariable compartments for this anal
       <td>413334</td>
     </tr>
     <tr>
-      <th>83812</th>
+      <th>84006</th>
       <td>JPN</td>
       <td>2021-03-04</td>
       <td>Japan</td>
@@ -1848,7 +1859,7 @@ the records. We have to assume temporarily invariable compartments for this anal
       <td>414774</td>
     </tr>
     <tr>
-      <th>83813</th>
+      <th>84007</th>
       <td>JPN</td>
       <td>2021-03-05</td>
       <td>Japan</td>
@@ -2086,15 +2097,7 @@ covsirphy.cleaning.population.PopulationData
   </thead>
   <tbody>
     <tr>
-      <th>386135</th>
-      <td>COL</td>
-      <td>Colombia</td>
-      <td>Vichada</td>
-      <td>2021-03-01</td>
-      <td>107808</td>
-    </tr>
-    <tr>
-      <th>386136</th>
+      <th>387033</th>
       <td>COL</td>
       <td>Colombia</td>
       <td>Vichada</td>
@@ -2102,7 +2105,7 @@ covsirphy.cleaning.population.PopulationData
       <td>107808</td>
     </tr>
     <tr>
-      <th>386137</th>
+      <th>387034</th>
       <td>COL</td>
       <td>Colombia</td>
       <td>Vichada</td>
@@ -2110,7 +2113,7 @@ covsirphy.cleaning.population.PopulationData
       <td>107808</td>
     </tr>
     <tr>
-      <th>386138</th>
+      <th>387035</th>
       <td>COL</td>
       <td>Colombia</td>
       <td>Vichada</td>
@@ -2118,11 +2121,19 @@ covsirphy.cleaning.population.PopulationData
       <td>107808</td>
     </tr>
     <tr>
-      <th>386139</th>
+      <th>387036</th>
       <td>COL</td>
       <td>Colombia</td>
       <td>Vichada</td>
       <td>2021-03-05</td>
+      <td>107808</td>
+    </tr>
+    <tr>
+      <th>387037</th>
+      <td>COL</td>
+      <td>Colombia</td>
+      <td>Vichada</td>
+      <td>2021-03-06</td>
       <td>107808</td>
     </tr>
   </tbody>
@@ -2246,38 +2257,38 @@ Before: 13942856
   </thead>
   <tbody>
     <tr>
-      <th>83845</th>
-      <td>ZWE</td>
-      <td>Zimbabwe</td>
-      <td>2021-03-01</td>
-      <td>14439018</td>
-    </tr>
-    <tr>
-      <th>83846</th>
+      <th>84040</th>
       <td>ZWE</td>
       <td>Zimbabwe</td>
       <td>2021-03-02</td>
       <td>14439018</td>
     </tr>
     <tr>
-      <th>83847</th>
+      <th>84041</th>
       <td>ZWE</td>
       <td>Zimbabwe</td>
       <td>2021-03-03</td>
       <td>14439018</td>
     </tr>
     <tr>
-      <th>83848</th>
+      <th>84042</th>
       <td>ZWE</td>
       <td>Zimbabwe</td>
       <td>2021-03-04</td>
       <td>14439018</td>
     </tr>
     <tr>
-      <th>83849</th>
+      <th>84043</th>
       <td>ZWE</td>
       <td>Zimbabwe</td>
       <td>2021-03-05</td>
+      <td>14439018</td>
+    </tr>
+    <tr>
+      <th>84044</th>
+      <td>ZWE</td>
+      <td>Zimbabwe</td>
+      <td>2021-03-06</td>
       <td>14439018</td>
     </tr>
   </tbody>
@@ -2343,7 +2354,7 @@ Before: 13942856
   </thead>
   <tbody>
     <tr>
-      <th>20206</th>
+      <th>20252</th>
       <td>JPN</td>
       <td>Japan</td>
       <td>Kagawa</td>
@@ -2351,7 +2362,7 @@ Before: 13942856
       <td>956069</td>
     </tr>
     <tr>
-      <th>20207</th>
+      <th>20253</th>
       <td>JPN</td>
       <td>Japan</td>
       <td>Kagawa</td>
@@ -2359,7 +2370,7 @@ Before: 13942856
       <td>956069</td>
     </tr>
     <tr>
-      <th>20208</th>
+      <th>20254</th>
       <td>JPN</td>
       <td>Japan</td>
       <td>Kagawa</td>
@@ -2367,7 +2378,7 @@ Before: 13942856
       <td>956069</td>
     </tr>
     <tr>
-      <th>20209</th>
+      <th>20255</th>
       <td>JPN</td>
       <td>Japan</td>
       <td>Kagawa</td>
@@ -2375,12 +2386,12 @@ Before: 13942856
       <td>956069</td>
     </tr>
     <tr>
-      <th>20210</th>
-      <td>-</td>
+      <th>20256</th>
+      <td>JPN</td>
       <td>Japan</td>
-      <td>Tokyo</td>
+      <td>Kagawa</td>
       <td>2021-03-06</td>
-      <td>14002973</td>
+      <td>956069</td>
     </tr>
   </tbody>
 </table>
@@ -2491,25 +2502,7 @@ covsirphy.cleaning.oxcgrt.OxCGRTData
   </thead>
   <tbody>
     <tr>
-      <th>445905</th>
-      <td>2021-03-01</td>
-      <td>Colombia</td>
-      <td>COL</td>
-      <td>3</td>
-      <td>1</td>
-      <td>1</td>
-      <td>3</td>
-      <td>1</td>
-      <td>1</td>
-      <td>1</td>
-      <td>4</td>
-      <td>2</td>
-      <td>2</td>
-      <td>2</td>
-      <td>81.02</td>
-    </tr>
-    <tr>
-      <th>445906</th>
+      <th>59929</th>
       <td>2021-03-02</td>
       <td>Colombia</td>
       <td>COL</td>
@@ -2527,7 +2520,7 @@ covsirphy.cleaning.oxcgrt.OxCGRTData
       <td>81.02</td>
     </tr>
     <tr>
-      <th>445907</th>
+      <th>59930</th>
       <td>2021-03-03</td>
       <td>Colombia</td>
       <td>COL</td>
@@ -2545,7 +2538,7 @@ covsirphy.cleaning.oxcgrt.OxCGRTData
       <td>81.02</td>
     </tr>
     <tr>
-      <th>445908</th>
+      <th>59931</th>
       <td>2021-03-04</td>
       <td>Colombia</td>
       <td>COL</td>
@@ -2563,8 +2556,26 @@ covsirphy.cleaning.oxcgrt.OxCGRTData
       <td>81.02</td>
     </tr>
     <tr>
-      <th>445909</th>
+      <th>59932</th>
       <td>2021-03-05</td>
+      <td>Colombia</td>
+      <td>COL</td>
+      <td>3</td>
+      <td>1</td>
+      <td>1</td>
+      <td>3</td>
+      <td>1</td>
+      <td>1</td>
+      <td>1</td>
+      <td>4</td>
+      <td>2</td>
+      <td>2</td>
+      <td>2</td>
+      <td>81.02</td>
+    </tr>
+    <tr>
+      <th>59933</th>
+      <td>2021-03-06</td>
       <td>Colombia</td>
       <td>COL</td>
       <td>3</td>
@@ -2642,28 +2653,12 @@ covsirphy.cleaning.oxcgrt.OxCGRTData
   </thead>
   <tbody>
     <tr>
-      <th>425</th>
-      <td>2021-03-01</td>
-      <td>1</td>
-      <td>1</td>
-      <td>1</td>
-      <td>0</td>
-      <td>1</td>
-      <td>1</td>
-      <td>1</td>
-      <td>4</td>
-      <td>2</td>
-      <td>2</td>
-      <td>1</td>
-      <td>51.39</td>
-    </tr>
-    <tr>
       <th>426</th>
       <td>2021-03-02</td>
       <td>1</td>
       <td>1</td>
       <td>1</td>
-      <td>0</td>
+      <td>1</td>
       <td>1</td>
       <td>1</td>
       <td>1</td>
@@ -2671,7 +2666,7 @@ covsirphy.cleaning.oxcgrt.OxCGRTData
       <td>2</td>
       <td>2</td>
       <td>1</td>
-      <td>51.39</td>
+      <td>48.15</td>
     </tr>
     <tr>
       <th>427</th>
@@ -2679,7 +2674,7 @@ covsirphy.cleaning.oxcgrt.OxCGRTData
       <td>1</td>
       <td>1</td>
       <td>1</td>
-      <td>0</td>
+      <td>1</td>
       <td>1</td>
       <td>1</td>
       <td>1</td>
@@ -2687,7 +2682,7 @@ covsirphy.cleaning.oxcgrt.OxCGRTData
       <td>2</td>
       <td>2</td>
       <td>1</td>
-      <td>51.39</td>
+      <td>48.15</td>
     </tr>
     <tr>
       <th>428</th>
@@ -2695,7 +2690,7 @@ covsirphy.cleaning.oxcgrt.OxCGRTData
       <td>1</td>
       <td>1</td>
       <td>1</td>
-      <td>0</td>
+      <td>1</td>
       <td>1</td>
       <td>1</td>
       <td>1</td>
@@ -2703,7 +2698,7 @@ covsirphy.cleaning.oxcgrt.OxCGRTData
       <td>2</td>
       <td>2</td>
       <td>1</td>
-      <td>51.39</td>
+      <td>48.15</td>
     </tr>
     <tr>
       <th>429</th>
@@ -2711,7 +2706,7 @@ covsirphy.cleaning.oxcgrt.OxCGRTData
       <td>1</td>
       <td>1</td>
       <td>1</td>
-      <td>0</td>
+      <td>1</td>
       <td>1</td>
       <td>1</td>
       <td>1</td>
@@ -2719,7 +2714,23 @@ covsirphy.cleaning.oxcgrt.OxCGRTData
       <td>2</td>
       <td>2</td>
       <td>1</td>
-      <td>51.39</td>
+      <td>48.15</td>
+    </tr>
+    <tr>
+      <th>430</th>
+      <td>2021-03-06</td>
+      <td>1</td>
+      <td>1</td>
+      <td>1</td>
+      <td>1</td>
+      <td>1</td>
+      <td>1</td>
+      <td>1</td>
+      <td>4</td>
+      <td>2</td>
+      <td>2</td>
+      <td>1</td>
+      <td>48.15</td>
     </tr>
   </tbody>
 </table>
@@ -2797,25 +2808,7 @@ covsirphy.cleaning.oxcgrt.OxCGRTData
   </thead>
   <tbody>
     <tr>
-      <th>445905</th>
-      <td>2021-03-01</td>
-      <td>Colombia</td>
-      <td>COL</td>
-      <td>3</td>
-      <td>1</td>
-      <td>1</td>
-      <td>3</td>
-      <td>1</td>
-      <td>1</td>
-      <td>1</td>
-      <td>4</td>
-      <td>2</td>
-      <td>2</td>
-      <td>2</td>
-      <td>81.02</td>
-    </tr>
-    <tr>
-      <th>445906</th>
+      <th>446942</th>
       <td>2021-03-02</td>
       <td>Colombia</td>
       <td>COL</td>
@@ -2833,7 +2826,7 @@ covsirphy.cleaning.oxcgrt.OxCGRTData
       <td>81.02</td>
     </tr>
     <tr>
-      <th>445907</th>
+      <th>446943</th>
       <td>2021-03-03</td>
       <td>Colombia</td>
       <td>COL</td>
@@ -2851,7 +2844,7 @@ covsirphy.cleaning.oxcgrt.OxCGRTData
       <td>81.02</td>
     </tr>
     <tr>
-      <th>445908</th>
+      <th>446944</th>
       <td>2021-03-04</td>
       <td>Colombia</td>
       <td>COL</td>
@@ -2869,8 +2862,26 @@ covsirphy.cleaning.oxcgrt.OxCGRTData
       <td>81.02</td>
     </tr>
     <tr>
-      <th>445909</th>
+      <th>446945</th>
       <td>2021-03-05</td>
+      <td>Colombia</td>
+      <td>COL</td>
+      <td>3</td>
+      <td>1</td>
+      <td>1</td>
+      <td>3</td>
+      <td>1</td>
+      <td>1</td>
+      <td>1</td>
+      <td>4</td>
+      <td>2</td>
+      <td>2</td>
+      <td>2</td>
+      <td>81.02</td>
+    </tr>
+    <tr>
+      <th>446946</th>
+      <td>2021-03-06</td>
       <td>Colombia</td>
       <td>COL</td>
       <td>3</td>
@@ -3300,7 +3311,7 @@ Lisphilar (2020), COVID-19 dataset in Japan, GitHub repository, https://github.c
   </thead>
   <tbody>
     <tr>
-      <th>85099</th>
+      <th>85296</th>
       <td>JPN</td>
       <td>2021-03-01</td>
       <td>Japan</td>
@@ -3308,7 +3319,7 @@ Lisphilar (2020), COVID-19 dataset in Japan, GitHub repository, https://github.c
       <td>432773</td>
     </tr>
     <tr>
-      <th>85100</th>
+      <th>85297</th>
       <td>JPN</td>
       <td>2021-03-02</td>
       <td>Japan</td>
@@ -3316,7 +3327,7 @@ Lisphilar (2020), COVID-19 dataset in Japan, GitHub repository, https://github.c
       <td>433504</td>
     </tr>
     <tr>
-      <th>85101</th>
+      <th>85298</th>
       <td>JPN</td>
       <td>2021-03-03</td>
       <td>Japan</td>
@@ -3324,7 +3335,7 @@ Lisphilar (2020), COVID-19 dataset in Japan, GitHub repository, https://github.c
       <td>434356</td>
     </tr>
     <tr>
-      <th>85102</th>
+      <th>85299</th>
       <td>JPN</td>
       <td>2021-03-04</td>
       <td>Japan</td>
@@ -3332,7 +3343,7 @@ Lisphilar (2020), COVID-19 dataset in Japan, GitHub repository, https://github.c
       <td>435548</td>
     </tr>
     <tr>
-      <th>85103</th>
+      <th>85300</th>
       <td>JPN</td>
       <td>2021-03-05</td>
       <td>Japan</td>
@@ -3456,7 +3467,7 @@ Lisphilar (2020), COVID-19 dataset in Japan, GitHub repository, https://github.c
 <div class="section" id="Vaccinations">
 <h2>Vaccinations<a class="headerlink" href="#Vaccinations" title="Permalink to this headline">¶</a></h2>
 <p>Vaccinations is a key factor to end the outbreak as soon as possible. <code class="docutils literal notranslate"><span class="pre">VaccineData</span></code> class will be created with <code class="docutils literal notranslate"><span class="pre">DataLoader.vaccine()</span></code> method.</p>
-<div class="nbinput nblast docutils container">
+<div class="nbinput docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[51]:
 </pre></div>
 </div>
@@ -3464,6 +3475,14 @@ Lisphilar (2020), COVID-19 dataset in Japan, GitHub repository, https://github.c
 <span></span><span class="n">vaccine_data</span> <span class="o">=</span> <span class="n">data_loader</span><span class="o">.</span><span class="n">vaccine</span><span class="p">()</span>
 </pre></div>
 </div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+Retrieving COVID-19 vaccination dataset from https://github.com/owid/covid-19-data/
+</pre></div></div>
 </div>
 <div class="nbinput docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[52]:
@@ -3545,17 +3564,7 @@ Hasell, J., Mathieu, E., Beltekian, D. et al. A cross-country database of COVID-
   </thead>
   <tbody>
     <tr>
-      <th>5309</th>
-      <td>Zimbabwe</td>
-      <td>ZWE</td>
-      <td>2021-02-28</td>
-      <td>18843</td>
-      <td>18843</td>
-      <td>NaN</td>
-      <td>Sinopharm/Beijing</td>
-    </tr>
-    <tr>
-      <th>5310</th>
+      <th>5407</th>
       <td>Zimbabwe</td>
       <td>ZWE</td>
       <td>2021-03-01</td>
@@ -3565,7 +3574,7 @@ Hasell, J., Mathieu, E., Beltekian, D. et al. A cross-country database of COVID-
       <td>Sinopharm/Beijing</td>
     </tr>
     <tr>
-      <th>5311</th>
+      <th>5408</th>
       <td>Zimbabwe</td>
       <td>ZWE</td>
       <td>2021-03-02</td>
@@ -3575,7 +3584,7 @@ Hasell, J., Mathieu, E., Beltekian, D. et al. A cross-country database of COVID-
       <td>Sinopharm/Beijing</td>
     </tr>
     <tr>
-      <th>5312</th>
+      <th>5409</th>
       <td>Zimbabwe</td>
       <td>ZWE</td>
       <td>2021-03-03</td>
@@ -3585,12 +3594,22 @@ Hasell, J., Mathieu, E., Beltekian, D. et al. A cross-country database of COVID-
       <td>Sinopharm/Beijing</td>
     </tr>
     <tr>
-      <th>5313</th>
+      <th>5410</th>
       <td>Zimbabwe</td>
       <td>ZWE</td>
       <td>2021-03-04</td>
       <td>30658</td>
       <td>30658</td>
+      <td>NaN</td>
+      <td>Sinopharm/Beijing</td>
+    </tr>
+    <tr>
+      <th>5411</th>
+      <td>Zimbabwe</td>
+      <td>ZWE</td>
+      <td>2021-03-05</td>
+      <td>31325</td>
+      <td>31325</td>
       <td>NaN</td>
       <td>Sinopharm/Beijing</td>
     </tr>
@@ -3642,54 +3661,54 @@ Hasell, J., Mathieu, E., Beltekian, D. et al. A cross-country database of COVID-
   </thead>
   <tbody>
     <tr>
-      <th>5309</th>
-      <td>2021-02-28</td>
-      <td>Zimbabwe</td>
-      <td>ZWE</td>
-      <td>Sinopharm/Beijing</td>
-      <td>18843</td>
-      <td>18843</td>
-      <td>0</td>
-    </tr>
-    <tr>
-      <th>5310</th>
+      <th>5407</th>
       <td>2021-03-01</td>
       <td>Zimbabwe</td>
       <td>ZWE</td>
       <td>Sinopharm/Beijing</td>
-      <td>21456</td>
-      <td>21456</td>
-      <td>0</td>
+      <td>21456.0</td>
+      <td>21456.0</td>
+      <td>0.0</td>
     </tr>
     <tr>
-      <th>5311</th>
+      <th>5408</th>
       <td>2021-03-02</td>
       <td>Zimbabwe</td>
       <td>ZWE</td>
       <td>Sinopharm/Beijing</td>
-      <td>25077</td>
-      <td>25077</td>
-      <td>0</td>
+      <td>25077.0</td>
+      <td>25077.0</td>
+      <td>0.0</td>
     </tr>
     <tr>
-      <th>5312</th>
+      <th>5409</th>
       <td>2021-03-03</td>
       <td>Zimbabwe</td>
       <td>ZWE</td>
       <td>Sinopharm/Beijing</td>
-      <td>27970</td>
-      <td>27970</td>
-      <td>0</td>
+      <td>27970.0</td>
+      <td>27970.0</td>
+      <td>0.0</td>
     </tr>
     <tr>
-      <th>5313</th>
+      <th>5410</th>
       <td>2021-03-04</td>
       <td>Zimbabwe</td>
       <td>ZWE</td>
       <td>Sinopharm/Beijing</td>
-      <td>30658</td>
-      <td>30658</td>
-      <td>0</td>
+      <td>30658.0</td>
+      <td>30658.0</td>
+      <td>0.0</td>
+    </tr>
+    <tr>
+      <th>5411</th>
+      <td>2021-03-05</td>
+      <td>Zimbabwe</td>
+      <td>ZWE</td>
+      <td>Sinopharm/Beijing</td>
+      <td>31325.0</td>
+      <td>31325.0</td>
+      <td>0.0</td>
     </tr>
   </tbody>
 </table>
@@ -3720,24 +3739,24 @@ Hasell, J., Mathieu, E., Beltekian, D. et al. A cross-country database of COVID-
 <div class="highlight"><pre>
 [&#39;Albania&#39;, &#39;Algeria&#39;, &#39;Andorra&#39;, &#39;Anguilla&#39;, &#39;Argentina&#39;, &#39;Australia&#39;,
  &#39;Austria&#39;, &#39;Azerbaijan&#39;, &#39;Bahrain&#39;, &#39;Bangladesh&#39;, &#39;Barbados&#39;, &#39;Belarus&#39;,
- &#39;Belgium&#39;, &#39;Bermuda&#39;, &#39;Bolivia&#39;, &#39;Brazil&#39;, &#39;Bulgaria&#39;, &#39;Cambodia&#39;, &#39;Canada&#39;,
- &#39;Cayman Islands&#39;, &#39;Chile&#39;, &#39;China&#39;, &#39;Colombia&#39;, &#39;Costa Rica&#39;, &#39;Croatia&#39;,
- &#39;Cyprus&#39;, &#39;Czechia&#39;, &#39;Denmark&#39;, &#39;Dominican Republic&#39;, &#39;Ecuador&#39;, &#39;Egypt&#39;,
- &#39;El Salvador&#39;, &#39;England&#39;, &#39;Estonia&#39;, &#39;European Union&#39;, &#39;Faeroe Islands&#39;,
- &#39;Falkland Islands&#39;, &#39;Finland&#39;, &#39;France&#39;, &#39;Germany&#39;, &#39;Gibraltar&#39;, &#39;Greece&#39;,
- &#39;Greenland&#39;, &#39;Guatemala&#39;, &#39;Guernsey&#39;, &#39;Guyana&#39;, &#39;Honduras&#39;, &#39;Hong Kong&#39;,
- &#39;Hungary&#39;, &#39;Iceland&#39;, &#39;India&#39;, &#39;Indonesia&#39;, &#39;Iran&#39;, &#39;Ireland&#39;, &#39;Isle of Man&#39;,
- &#39;Israel&#39;, &#39;Italy&#39;, &#39;Japan&#39;, &#39;Jersey&#39;, &#39;Jordan&#39;, &#39;Kazakhstan&#39;, &#39;Kuwait&#39;,
- &#39;Latvia&#39;, &#39;Lebanon&#39;, &#39;Liechtenstein&#39;, &#39;Lithuania&#39;, &#39;Luxembourg&#39;, &#39;Macao&#39;,
- &#39;Malaysia&#39;, &#39;Maldives&#39;, &#39;Malta&#39;, &#39;Mauritius&#39;, &#39;Mexico&#39;, &#39;Monaco&#39;, &#39;Mongolia&#39;,
- &#39;Montenegro&#39;, &#39;Montserrat&#39;, &#39;Morocco&#39;, &#39;Myanmar&#39;, &#39;Nepal&#39;, &#39;Netherlands&#39;,
- &#39;New Zealand&#39;, &#39;Northern Cyprus&#39;, &#39;Northern Ireland&#39;, &#39;Norway&#39;, &#39;Oman&#39;,
- &#39;Pakistan&#39;, &#39;Panama&#39;, &#39;Paraguay&#39;, &#39;Peru&#39;, &#39;Philippines&#39;, &#39;Poland&#39;, &#39;Portugal&#39;,
- &#39;Qatar&#39;, &#39;Romania&#39;, &#39;Russia&#39;, &#39;Saint Helena&#39;, &#39;San Marino&#39;, &#39;Saudi Arabia&#39;,
- &#39;Scotland&#39;, &#39;Senegal&#39;, &#39;Serbia&#39;, &#39;Seychelles&#39;, &#39;Singapore&#39;, &#39;Slovakia&#39;,
- &#39;Slovenia&#39;, &#39;South Africa&#39;, &#39;South Korea&#39;, &#39;Spain&#39;, &#39;Sri Lanka&#39;, &#39;Sweden&#39;,
- &#39;Switzerland&#39;, &#39;Thailand&#39;, &#39;Trinidad and Tobago&#39;, &#39;Turkey&#39;,
- &#39;Turks and Caicos Islands&#39;, &#39;Ukraine&#39;, &#39;United Arab Emirates&#39;,
+ &#39;Belgium&#39;, &#39;Belize&#39;, &#39;Bermuda&#39;, &#39;Bolivia&#39;, &#39;Brazil&#39;, &#39;Bulgaria&#39;, &#39;Cambodia&#39;,
+ &#39;Canada&#39;, &#39;Cayman Islands&#39;, &#39;Chile&#39;, &#39;China&#39;, &#39;Colombia&#39;, &#39;Costa Rica&#39;,
+ &#39;Croatia&#39;, &#39;Cyprus&#39;, &#39;Czechia&#39;, &#39;Denmark&#39;, &#39;Dominican Republic&#39;, &#39;Ecuador&#39;,
+ &#39;Egypt&#39;, &#39;El Salvador&#39;, &#39;England&#39;, &#39;Estonia&#39;, &#39;European Union&#39;,
+ &#39;Faeroe Islands&#39;, &#39;Falkland Islands&#39;, &#39;Finland&#39;, &#39;France&#39;, &#39;Germany&#39;,
+ &#39;Gibraltar&#39;, &#39;Greece&#39;, &#39;Greenland&#39;, &#39;Guatemala&#39;, &#39;Guernsey&#39;, &#39;Guyana&#39;,
+ &#39;Honduras&#39;, &#39;Hong Kong&#39;, &#39;Hungary&#39;, &#39;Iceland&#39;, &#39;India&#39;, &#39;Indonesia&#39;, &#39;Iran&#39;,
+ &#39;Ireland&#39;, &#39;Isle of Man&#39;, &#39;Israel&#39;, &#39;Italy&#39;, &#39;Japan&#39;, &#39;Jersey&#39;, &#39;Jordan&#39;,
+ &#39;Kazakhstan&#39;, &#39;Kuwait&#39;, &#39;Latvia&#39;, &#39;Lebanon&#39;, &#39;Liechtenstein&#39;, &#39;Lithuania&#39;,
+ &#39;Luxembourg&#39;, &#39;Macao&#39;, &#39;Malaysia&#39;, &#39;Maldives&#39;, &#39;Malta&#39;, &#39;Mauritius&#39;, &#39;Mexico&#39;,
+ &#39;Monaco&#39;, &#39;Mongolia&#39;, &#39;Montenegro&#39;, &#39;Montserrat&#39;, &#39;Morocco&#39;, &#39;Myanmar&#39;,
+ &#39;Nepal&#39;, &#39;Netherlands&#39;, &#39;New Zealand&#39;, &#39;Northern Cyprus&#39;, &#39;Northern Ireland&#39;,
+ &#39;Norway&#39;, &#39;Oman&#39;, &#39;Pakistan&#39;, &#39;Panama&#39;, &#39;Paraguay&#39;, &#39;Peru&#39;, &#39;Philippines&#39;,
+ &#39;Poland&#39;, &#39;Portugal&#39;, &#39;Qatar&#39;, &#39;Romania&#39;, &#39;Russia&#39;, &#39;Saint Helena&#39;,
+ &#39;San Marino&#39;, &#39;Saudi Arabia&#39;, &#39;Scotland&#39;, &#39;Senegal&#39;, &#39;Serbia&#39;, &#39;Seychelles&#39;,
+ &#39;Singapore&#39;, &#39;Slovakia&#39;, &#39;Slovenia&#39;, &#39;South Africa&#39;, &#39;South Korea&#39;, &#39;Spain&#39;,
+ &#39;Sri Lanka&#39;, &#39;Sweden&#39;, &#39;Switzerland&#39;, &#39;Thailand&#39;, &#39;Trinidad and Tobago&#39;,
+ &#39;Turkey&#39;, &#39;Turks and Caicos Islands&#39;, &#39;Ukraine&#39;, &#39;United Arab Emirates&#39;,
  &#39;United Kingdom&#39;, &#39;United States&#39;, &#39;Uruguay&#39;, &#39;Venezuela&#39;, &#39;Wales&#39;, &#39;World&#39;,
  &#39;Zimbabwe&#39;]
 </pre></div></div>
@@ -3792,39 +3811,39 @@ Hasell, J., Mathieu, E., Beltekian, D. et al. A cross-country database of COVID-
   </thead>
   <tbody>
     <tr>
-      <th>11</th>
-      <td>2021-02-28</td>
-      <td>28530</td>
-      <td>28530</td>
-      <td>0</td>
-    </tr>
-    <tr>
       <th>12</th>
       <td>2021-03-01</td>
-      <td>31785</td>
-      <td>31785</td>
-      <td>0</td>
+      <td>31785.0</td>
+      <td>31785.0</td>
+      <td>0.0</td>
     </tr>
     <tr>
       <th>13</th>
       <td>2021-03-02</td>
-      <td>34772</td>
-      <td>34772</td>
-      <td>0</td>
+      <td>34772.0</td>
+      <td>34772.0</td>
+      <td>0.0</td>
     </tr>
     <tr>
       <th>14</th>
       <td>2021-03-03</td>
-      <td>37303</td>
-      <td>37303</td>
-      <td>0</td>
+      <td>37303.0</td>
+      <td>37303.0</td>
+      <td>0.0</td>
     </tr>
     <tr>
       <th>15</th>
       <td>2021-03-04</td>
-      <td>39174</td>
-      <td>39174</td>
-      <td>0</td>
+      <td>39174.0</td>
+      <td>39174.0</td>
+      <td>0.0</td>
+    </tr>
+    <tr>
+      <th>16</th>
+      <td>2021-03-05</td>
+      <td>46469.0</td>
+      <td>46469.0</td>
+      <td>0.0</td>
     </tr>
   </tbody>
 </table>
@@ -3894,54 +3913,54 @@ Hasell, J., Mathieu, E., Beltekian, D. et al. A cross-country database of COVID-
   </thead>
   <tbody>
     <tr>
-      <th>5309</th>
-      <td>2021-02-28</td>
-      <td>Zimbabwe</td>
-      <td>ZWE</td>
-      <td>Sinopharm/Beijing</td>
-      <td>18843</td>
-      <td>18843</td>
-      <td>0</td>
-    </tr>
-    <tr>
-      <th>5310</th>
+      <th>5407</th>
       <td>2021-03-01</td>
       <td>Zimbabwe</td>
       <td>ZWE</td>
       <td>Sinopharm/Beijing</td>
-      <td>21456</td>
-      <td>21456</td>
-      <td>0</td>
+      <td>21456.0</td>
+      <td>21456.0</td>
+      <td>0.0</td>
     </tr>
     <tr>
-      <th>5311</th>
+      <th>5408</th>
       <td>2021-03-02</td>
       <td>Zimbabwe</td>
       <td>ZWE</td>
       <td>Sinopharm/Beijing</td>
-      <td>25077</td>
-      <td>25077</td>
-      <td>0</td>
+      <td>25077.0</td>
+      <td>25077.0</td>
+      <td>0.0</td>
     </tr>
     <tr>
-      <th>5312</th>
+      <th>5409</th>
       <td>2021-03-03</td>
       <td>Zimbabwe</td>
       <td>ZWE</td>
       <td>Sinopharm/Beijing</td>
-      <td>27970</td>
-      <td>27970</td>
-      <td>0</td>
+      <td>27970.0</td>
+      <td>27970.0</td>
+      <td>0.0</td>
     </tr>
     <tr>
-      <th>5313</th>
+      <th>5410</th>
       <td>2021-03-04</td>
       <td>Zimbabwe</td>
       <td>ZWE</td>
       <td>Sinopharm/Beijing</td>
-      <td>30658</td>
-      <td>30658</td>
-      <td>0</td>
+      <td>30658.0</td>
+      <td>30658.0</td>
+      <td>0.0</td>
+    </tr>
+    <tr>
+      <th>5411</th>
+      <td>2021-03-05</td>
+      <td>Zimbabwe</td>
+      <td>ZWE</td>
+      <td>Sinopharm/Beijing</td>
+      <td>31325.0</td>
+      <td>31325.0</td>
+      <td>0.0</td>
     </tr>
   </tbody>
 </table>
@@ -3952,7 +3971,7 @@ Hasell, J., Mathieu, E., Beltekian, D. et al. A cross-country database of COVID-
 <div class="section" id="Linelist-of-case-reports">
 <h2>Linelist of case reports<a class="headerlink" href="#Linelist-of-case-reports" title="Permalink to this headline">¶</a></h2>
 <p>The number of cases is important, but linelist of case reports will helpful to understand the situation deeply. <code class="docutils literal notranslate"><span class="pre">LinelistData</span></code> class will be created with <code class="docutils literal notranslate"><span class="pre">DataLoader.linelist()</span></code> method.</p>
-<div class="nbinput nblast docutils container">
+<div class="nbinput docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[60]:
 </pre></div>
 </div>
@@ -3960,6 +3979,14 @@ Hasell, J., Mathieu, E., Beltekian, D. et al. A cross-country database of COVID-
 <span></span><span class="n">linelist</span> <span class="o">=</span> <span class="n">data_loader</span><span class="o">.</span><span class="n">linelist</span><span class="p">()</span>
 </pre></div>
 </div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+Retrieving linelist from Open COVID-19 Data Working Group repository: https://github.com/beoutbreakprepared/nCoV2019
+</pre></div></div>
 </div>
 <div class="nbinput docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[61]:
@@ -4583,6 +4610,14 @@ World Bank Group (2020), World Bank Open Data, https://data.worldbank.org/
 </pre></div>
 </div>
 </div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+Retrieving population pyramid dataset (Japan) from https://data.worldbank.org/
+</pre></div></div>
+</div>
 <div class="nboutput nblast docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[72]:
 </pre></div>
@@ -5121,6 +5156,14 @@ Lisphilar (2020), COVID-19 dataset in Japan, GitHub repository, https://github.c
 </pre></div>
 </div>
 </div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+Retrieving Metadata of Japan dataset from https://github.com/lisphilar/covid19-sir/data/japan
+</pre></div></div>
+</div>
 <div class="nboutput nblast docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[80]:
 </pre></div>
@@ -5280,7 +5323,6 @@ Lisphilar (2020), COVID-19 dataset in Japan, GitHub repository, https://github.c
 </table>
 </div></div>
 </div>
-<p><strong>If you want to use a new dataset for your analysis, please kindly inform us using `GitHub Issues: Request new method of DataLoader class &lt;https://github.com/lisphilar/covid19-sir/issues/new/?template=request-new-method-of-dataloader-class.md&gt;`__.</strong></p>
 </div>
 </div>
 </div>
