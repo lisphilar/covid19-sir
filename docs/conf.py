@@ -86,4 +86,4 @@ add_module_names = False
 
 # nbsphinx
 nbsphinx_execute = "always"
-nbsphinx_kernel_name = "python3"
+nbsphinx_kernel_name = "python"
