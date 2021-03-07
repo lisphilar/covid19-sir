@@ -842,9 +842,9 @@ class Scenario(Term):
         _df.index = _df.index + 1
         h = 1.0 if divide_by_first else None
         line_plot(
-            _df, title=title,
+            _df.set_index(self.DATE), title=title,
             xlabel="Phase", ylabel=str(), math_scale=False, h=h,
-            filename=filename
+            filename=filename, **kwargs
         )
         return df
 
