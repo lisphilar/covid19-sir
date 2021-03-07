@@ -5,8 +5,8 @@ from pathlib import Path
 import numpy as np
 import pandas as pd
 from dask import dataframe as dd
-from covsirphy.util.plotting import line_plot
 from covsirphy.util.error import PCRIncorrectPreconditionError, SubsetNotFoundError
+from covsirphy.visualization.line_plot import line_plot
 from covsirphy.cleaning.cbase import CleaningBase
 from covsirphy.cleaning.country_data import CountryData
 

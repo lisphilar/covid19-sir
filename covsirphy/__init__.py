@@ -10,7 +10,7 @@ except ImportError:
 # version
 from covsirphy.__version__ import __version__
 # util
-from covsirphy.util.plotting import line_plot, line_plot_multiple
+from covsirphy.util.plotting import line_plot_multiple
 from covsirphy.util.optimize import Optimizer
 from covsirphy.util.stopwatch import StopWatch
 from covsirphy.util.error import deprecate
@@ -24,6 +24,7 @@ from covsirphy.util.term import Term, Word
 from covsirphy.visualization.vbase import VisualizeBase
 from covsirphy.visualization.colored_map import ColoredMap
 from covsirphy.visualization.japan_map import jpn_map
+from covsirphy.visualization.line_plot import LinePlot, line_plot
 # cleaning
 from covsirphy.cleaning.cbase import CleaningBase
 from covsirphy.cleaning.jhu_data import JHUData
@@ -79,18 +80,18 @@ __all__ = [
     "JHUData", "CountryData", "PopulationData", "OxCGRTData", "VaccineData",
     "PopulationPyramidData",
     "LinelistData", "PCRData", "JapanData", "JHUDataComplementHandler",
-    "ModelBase", "SIR", "SIRD", "SIRF", "SIRFV", "SEWIRF",
+    "ModelBase", "SIR", "SIRD", "SIRF", "SEWIRF",
     "Estimator", "Trend", "Optimizer",
-    "line_plot", "StopWatch", "deprecate", "find_args",
+    "StopWatch", "deprecate", "find_args",
     "line_plot_multiple",
     "save_dataframe",
     "PolicyMeasures",
     "SubsetNotFoundError", "ScenarioNotFoundError", "UnExecutedError",
     "PCRIncorrectPreconditionError", "NotInteractiveError",
     "UnExpectedValueError", "NotRegisteredMainError", "NotRegisteredExtraError",
-    "VisualizeBase", "ColoredMap",
+    "VisualizeBase", "ColoredMap", "LinePlot", "line_plot",
     # Deprecated
-    "Population", "Word", "jpn_map",
+    "Population", "Word", "jpn_map", "SIRFV",
 ]
 
 # Show exceptions in better format if used from command line
