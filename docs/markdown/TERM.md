@@ -1,4 +1,5 @@
-# Term definition
+# Glossary
+
 This is a list of term in CovsirPhy project. These terms are used as method names and figure titles.
 
 <dl>
@@ -54,4 +55,3 @@ If for some reason tau would be set to more than 1 day, then many records would 
 <dd>Breaking down the series of records to phases.</dd>
 
 </dl>
-
