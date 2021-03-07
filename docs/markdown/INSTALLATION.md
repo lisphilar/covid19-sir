@@ -1,6 +1,6 @@
 # Installation
 
-The latest stable version of CovsirPhy is available at [PyPI (The Python Package Index): covsirphy](https://pypi.org/project/covsirphy/) and supports Python 3.6.9 or newer versions. It is recommended to use virtual environment.
+The latest stable version of CovsirPhy is available at [PyPI (The Python Package Index): covsirphy](https://pypi.org/project/covsirphy/) and supports Python 3.7 or newer versions. It is recommended to use virtual environment.
 
 ```bash
 pip install --upgrade covsirphy
