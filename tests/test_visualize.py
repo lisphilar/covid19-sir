@@ -5,7 +5,7 @@ from pathlib import Path
 import warnings
 import matplotlib
 import pytest
-from covsirphy import VisualizeBase, ColoredMap
+from covsirphy import VisualizeBase, ColoredMap, LinePlot
 from covsirphy import jpn_map
 from covsirphy import Term
 
@@ -118,3 +118,17 @@ class TestJapanMap(object):
             title="Japan: the number of {variable.lower()} cases",
             filename=imgfile
         )
+
+
+class TestLinePlot(object):
+    def test_plot(self, jhu_data, imgfile):
+        df = jhu_data.subset(country="Japan").set_index(Term.DATE)
+        with LinePlot(filename=imgfile) as lp:
+            lp.plot(data=df)
+        with LinePlot(filename=imgfile) as lp:
+            lp.plot(data=df, colormap="rainbow")
+        with LinePlot(filename=imgfile) as lp:
+            lp.plot(data=df, color_dict={Term.C: "blue"})
+        with pytest.raises(ValueError):
+            with LinePlot(filename=imgfile) as lp:
+                lp.plot(data=df, colormap="unknown")
