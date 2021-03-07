@@ -131,7 +131,7 @@ class LinePlot(VisualizeBase):
             for value in v:
                 self._ax.axvline(x=value, color=color, linestyle=linestyle)
 
-    def legend(self, bbox_to_anchor=(1.02, 0), bbox_loc="lower left", ncol=None, **kwargs):
+    def legend(self, bbox_to_anchor=(0.5, -0.2), bbox_loc="lower center", ncol=None, **kwargs):
         """
         Set legend.
 
