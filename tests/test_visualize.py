@@ -4,6 +4,7 @@
 from pathlib import Path
 import warnings
 import matplotlib
+import pandas as pd
 import pytest
 from covsirphy import VisualizeBase, ColoredMap, LinePlot
 from covsirphy import jpn_map
@@ -139,6 +140,8 @@ class TestLinePlot(object):
             lp.plot(data=df)
             lp.x_axis(x_logscale=True)
             lp.y_axis(y_logscale=True)
+            lp.line(v=pd.Timestamp("01Jan2021"))
         with LinePlot(filename=imgfile) as lp:
             lp.plot(data=df)
             lp.y_axis(y_integer=True)
+            lp.line(h=100_000)
