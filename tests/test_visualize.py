@@ -127,6 +127,8 @@ class TestLinePlot(object):
         with LinePlot(filename=imgfile) as lp:
             lp.plot(data=df)
         with LinePlot(filename=imgfile) as lp:
+            lp.plot(data=df[Term.C])
+        with LinePlot(filename=imgfile) as lp:
             lp.plot(data=df, colormap="rainbow")
         with LinePlot(filename=imgfile) as lp:
             lp.plot(data=df, color_dict={Term.C: "blue"})
