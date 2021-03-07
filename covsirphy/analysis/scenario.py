@@ -838,15 +838,7 @@ class Scenario(Term):
             h_values = [1.0] if divide_by_first or self.RT in targets else None
             box_plot(df, title, h=h_values, filename=filename)
             return df
-        _df = df.reset_index()
-        _df.index = _df.index + 1
-        h = 1.0 if divide_by_first else None
-        line_plot(
-            _df.set_index(self.DATE), title=title,
-            xlabel="Phase", ylabel=str(), math_scale=False, h=h,
-            filename=filename, **kwargs
-        )
-        return df
+        return self.history_rate(params=targets, name=name, **kwargs)
 
     def _describe(self, y0_dict=None):
         """
