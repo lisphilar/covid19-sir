@@ -6,7 +6,7 @@ import warnings
 import matplotlib
 import pandas as pd
 import pytest
-from covsirphy import VisualizeBase, ColoredMap, LinePlot
+from covsirphy import VisualizeBase, ColoredMap, LinePlot, line_plot
 from covsirphy import Term, UnExecutedError
 from covsirphy import jpn_map
 
@@ -154,3 +154,8 @@ class TestLinePlot(object):
             lp.plot(data=df)
             lp.legend_hide()
             lp.legend()
+
+    def test_function(self, jhu_data, imgfile):
+        df = jhu_data.subset(country="Japan").set_index(Term.DATE)
+        line_plot(df=df, filename=imgfile, show_legend=True)
+        line_plot(df=df, filename=imgfile, show_legend=False)
