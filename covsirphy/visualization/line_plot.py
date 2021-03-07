@@ -26,6 +26,8 @@ class LinePlot(VisualizeBase):
         return super().__enter__()
 
     def __exit__(self, *exc_info):
+        # Tight layout
+        plt.tight_layout()
         return super().__exit__(*exc_info)
 
     def plot(self, data, colormap=None, color_dict=None, **kwargs):
