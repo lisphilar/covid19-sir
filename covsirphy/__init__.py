@@ -24,6 +24,7 @@ from covsirphy.util.term import Term, Word
 from covsirphy.visualization.vbase import VisualizeBase
 from covsirphy.visualization.colored_map import ColoredMap
 from covsirphy.visualization.japan_map import jpn_map
+from covsirphy.visualization.line_plot import LinePlot
 # cleaning
 from covsirphy.cleaning.cbase import CleaningBase
 from covsirphy.cleaning.jhu_data import JHUData
@@ -88,7 +89,7 @@ __all__ = [
     "SubsetNotFoundError", "ScenarioNotFoundError", "UnExecutedError",
     "PCRIncorrectPreconditionError", "NotInteractiveError",
     "UnExpectedValueError", "NotRegisteredMainError", "NotRegisteredExtraError",
-    "VisualizeBase", "ColoredMap",
+    "VisualizeBase", "ColoredMap", "LinePlot",
     # Deprecated
     "Population", "Word", "jpn_map",
 ]
