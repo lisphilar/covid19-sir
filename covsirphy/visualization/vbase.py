@@ -41,6 +41,8 @@ class VisualizeBase(Term):
         # Settings
         if self._title:
             self._ax.title.set_text(self._title)
+        # Tight layout
+        plt.tight_layout()
         # Display the figure if filename is None after plotting
         try:
             if self._filename is None:
