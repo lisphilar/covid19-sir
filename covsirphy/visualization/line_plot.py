@@ -125,7 +125,7 @@ class LinePlot(VisualizeBase):
             linestyle (str): linestyle
         """
         if h is not None:
-            self._ax.axhline(y=h, color="black", linestyle=":")
+            self._ax.axhline(y=h, color=color, linestyle=linestyle)
         if v is not None:
             v = v if isinstance(v, list) else [v]
             for value in v:
