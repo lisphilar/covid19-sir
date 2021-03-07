@@ -53,7 +53,7 @@ class LinePlot(VisualizeBase):
         if color_dict is None:
             color_args = {"colormap": colormap}
         else:
-            colors = [color_dict.get(col) for col in data.columns]
+            colors = [color_dict.get(col) for col in data.columns if col in color_dict]
             color_args = {"colormap": colormap, "color": colors}
         # Set plotting
         try:
