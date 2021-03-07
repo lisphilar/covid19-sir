@@ -30,7 +30,7 @@ class LinePlot(VisualizeBase):
         Args:
             data (pandas.DataFrame): data to show
                 Index
-                    Date (pandas.TimeStamp)
+                    Date (pandas.Timestamp)
                 Columns
                     variables to show
             colormap (str, matplotlib colormap object or None): colormap, please refer to https://matplotlib.org/examples/color/colormaps_reference.html
@@ -102,3 +102,20 @@ class LinePlot(VisualizeBase):
             ylim = (None, None) if ylim[0] == 0 else ylim
         # limit
         self._ax.set_ylim(*ylim)
+
+    def line(self, v=None, h=None, color="black", linestyle=":"):
+        """
+        Show vertical/horizontal lines.
+
+        Args:
+            v (list[int/float] or None): list of x values of vertical lines or None
+            h (list[int/float] or None): list of y values of horizontal lines or None
+            color (str): color of the line
+            linestyle (str): linestyle
+        """
+        if h is not None:
+            self._ax.axhline(y=h, color="black", linestyle=":")
+        if v is not None:
+            v = v if isinstance(v, list) else [v]
+            for value in v:
+                self._ax.axvline(x=value, color=color, linestyle=linestyle)
