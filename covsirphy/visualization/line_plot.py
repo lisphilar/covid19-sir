@@ -15,12 +15,17 @@ class LinePlot(VisualizeBase):
 
     Args:
         filename (str or None): filename to save the figure or None (display)
+        bbox_inches (str): bounding box in inches when creating the figure
         kwargs: the other arguments of matplotlib.pyplot.savefig()
     """
 
-    def __init__(self, filename=None, **kwargs):
-        super().__init__(filename=filename, **kwargs)
+    def __init__(self, filename=None, bbox_inches="tight", **kwargs):
+        self._filename = filename
+        self._savefig_dict = {"bbox_inches": bbox_inches, **kwargs}
+        # Properties
+        self._title = ""
         self._variables = []
+        self._ax = None
 
     def __enter__(self):
         return super().__enter__()
