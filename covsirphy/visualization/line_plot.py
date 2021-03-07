@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*-
 
 from matplotlib.ticker import ScalarFormatter
+from covsirphy.util.error import UnExecutedError
 from covsirphy.visualization.vbase import VisualizeBase
 
 
@@ -16,6 +17,7 @@ class LinePlot(VisualizeBase):
 
     def __init__(self, filename=None, **kwargs):
         super().__init__(filename=filename, **kwargs)
+        self._variables = []
 
     def __enter__(self):
         return super().__enter__()
@@ -38,6 +40,7 @@ class LinePlot(VisualizeBase):
             kwargs: keyword arguments of pandas.DataFrame.plot()
         """
         self._ensure_dataframe(data, name="data", time_index=True)
+        self._variables = data.columns.tolist()
         # Color
         if color_dict is None:
             color_args = {"colormap": colormap}
@@ -119,3 +122,24 @@ class LinePlot(VisualizeBase):
             v = v if isinstance(v, list) else [v]
             for value in v:
                 self._ax.axvline(x=value, color=color, linestyle=linestyle)
+
+    def legend(self, bbox_to_anchor=(1.02, 0), bbox_loc="lower left", ncol=None, **kwargs):
+        """
+        Set legend.
+
+        Args:
+            bbox_to_anchor (tuple(int or float, int or float)): distance of legend and plot
+            bbox_loc (str): location of legend
+            ncol (int): the number of columns that the legend has
+            kwargs: keyword arguments of matplotlib.pyplot.legend()
+        """
+        if not self._variables:
+            raise UnExecutedError("LinePlot.plot()")
+        ncol = self._ensure_natural_int(ncol or len(self._variables), name="ncol")
+        self._ax.legend(bbox_to_anchor=bbox_to_anchor, loc=bbox_loc, borderaxespad=0, ncol=ncol, **kwargs)
+
+    def legend_hide(self):
+        """
+        Hide legend.
+        """
+        self._ax.legend().set_visible(False)
