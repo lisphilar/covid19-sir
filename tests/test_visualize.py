@@ -132,3 +132,13 @@ class TestLinePlot(object):
         with pytest.raises(ValueError):
             with LinePlot(filename=imgfile) as lp:
                 lp.plot(data=df, colormap="unknown")
+
+    def test_axis(self, jhu_data, imgfile):
+        df = jhu_data.subset(country="Japan").set_index(Term.DATE)
+        with LinePlot(filename=imgfile) as lp:
+            lp.plot(data=df)
+            lp.x_axis(x_logscale=True)
+            lp.y_axis(y_logscale=True)
+        with LinePlot(filename=imgfile) as lp:
+            lp.plot(data=df)
+            lp.y_axis(y_integer=True)
