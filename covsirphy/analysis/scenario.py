@@ -16,9 +16,10 @@ from sklearn.pipeline import Pipeline
 from sklearn.preprocessing import MinMaxScaler
 from covsirphy.util.error import deprecate, ScenarioNotFoundError, UnExecutedError
 from covsirphy.util.error import NotRegisteredMainError, NotRegisteredExtraError
-from covsirphy.util.plotting import line_plot, box_plot
+from covsirphy.util.plotting import box_plot
 from covsirphy.util.error import NotInteractiveError
 from covsirphy.util.term import Term
+from covsirphy.visualization.line_plot import line_plot
 from covsirphy.cleaning.jhu_data import JHUData
 from covsirphy.analysis.param_tracker import ParamTracker
 from covsirphy.analysis.data_handler import DataHandler

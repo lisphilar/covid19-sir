@@ -1,8 +1,11 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
+from matplotlib import pyplot as plt
 from matplotlib.ticker import ScalarFormatter
+import pandas as pd
 from covsirphy.util.error import UnExecutedError
+from covsirphy.util.argument import find_args
 from covsirphy.visualization.vbase import VisualizeBase
 
 
@@ -143,3 +146,36 @@ class LinePlot(VisualizeBase):
         Hide legend.
         """
         self._ax.legend().set_visible(False)
+
+
+def line_plot(df, title=None, filename=None, show_legend=True, **kwargs):
+    """
+    Wrapper function: show chronological change of the data.
+
+    Args:
+        data (pandas.DataFrame): data to show
+            Index
+                Date (pandas.Timestamp)
+            Columns
+                variables to show
+        title (str): title of the figure
+        filename (str or None): filename to save the figure or None (display)
+        show_legend (bool): whether show legend or not
+        kwargs: keyword arguments of the following classes and methods.
+            - covsirphy.LinePlot() and its methods,
+            - matplotlib.pyplot.savefig(), matplotlib.pyplot.legend(),
+            - pandas.DataFrame.plot()
+    """
+    with LinePlot(filename=filename, **find_args(plt.savefig, **kwargs)) as lp:
+        lp.title = title
+        lp.plot(data=df, **find_args([LinePlot.plot, pd.DataFrame.plot], **kwargs))
+        # Axis
+        lp.x_axis(**find_args([LinePlot.x_axis], **kwargs))
+        lp.y_axis(**find_args([LinePlot.y_axis], **kwargs))
+        # Vertical/horizontal lines
+        lp.line(**find_args([LinePlot.line], **kwargs))
+        # Legend
+        if show_legend:
+            lp.legend(**find_args([LinePlot.legend, plt.legend], **kwargs))
+        else:
+            lp.legend_hide()
