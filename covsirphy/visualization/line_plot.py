@@ -38,7 +38,7 @@ class LinePlot(VisualizeBase):
         Plot chronological change of the data.
 
         Args:
-            data (pandas.DataFrame): data to show
+            data (pandas.DataFrame or pandas.Series): data to show
                 Index
                     Date (pandas.Timestamp)
                 Columns
@@ -47,6 +47,8 @@ class LinePlot(VisualizeBase):
             color_dict (dict[str, str] or None): dictionary of column names (keys) and colors (values)
             kwargs: keyword arguments of pandas.DataFrame.plot()
         """
+        if isinstance(data, pd.Series):
+            data = pd.DataFrame(data)
         self._ensure_dataframe(data, name="data", time_index=True)
         self._variables = data.columns.tolist()
         # Color
@@ -159,7 +161,7 @@ def line_plot(df, title=None, filename=None, show_legend=True, **kwargs):
     Wrapper function: show chronological change of the data.
 
     Args:
-        data (pandas.DataFrame): data to show
+        data (pandas.DataFrame or pandas.Series): data to show
             Index
                 Date (pandas.Timestamp)
             Columns
