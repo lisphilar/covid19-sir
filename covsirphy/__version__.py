@@ -1,4 +1,4 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-__version__ = "2.17.0-alpha-fu1"
+__version__ = "2.17.0-beta"
