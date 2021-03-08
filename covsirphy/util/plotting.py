@@ -109,6 +109,7 @@ def line_plot_multiple(df, x_col, actual_col, predicted_cols,
     try:
         plt.yscale("log", base=10)
     except Exception:
+        # Matplotlib version < 3.3
         plt.yscale("log", basey=10)
     # Delete y-labels of log-scale (minor) axis
     plt.setp(plt.gca().get_yticklabels(minor=True), visible=False)
