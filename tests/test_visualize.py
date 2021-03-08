@@ -7,6 +7,7 @@ import matplotlib
 import pandas as pd
 import pytest
 from covsirphy import VisualizeBase, ColoredMap, LinePlot, line_plot
+from covsirphy import BarPlot, bar_plot
 from covsirphy import Term, UnExecutedError
 from covsirphy import jpn_map
 
@@ -161,3 +162,29 @@ class TestLinePlot(object):
         df = jhu_data.subset(country="Japan").set_index(Term.DATE)
         line_plot(df=df, filename=imgfile, show_legend=True)
         line_plot(df=df, filename=imgfile, show_legend=False)
+
+
+class TestBarPlot(object):
+    def test_plot(self, jhu_data, imgfile):
+        df = jhu_data.subset(country="Japan").tail().set_index(Term.DATE)
+        with BarPlot(filename=imgfile) as bp:
+            bp.plot(data=df[Term.C])
+        with BarPlot(filename=imgfile) as bp:
+            bp.plot(data=df, vertical=True)
+        with BarPlot(filename=imgfile) as bp:
+            bp.plot(data=df, vertical=False)
+
+    def test_axis(self, jhu_data, imgfile):
+        df = jhu_data.subset(country="Japan").tail().set_index(Term.DATE)
+        with BarPlot(filename=imgfile) as bp:
+            bp.plot(data=df)
+            bp.x_axis(xlabel=Term.DATE)
+            bp.y_axis(y_logscale=True)
+        with BarPlot(filename=imgfile) as bp:
+            bp.plot(data=df)
+            bp.y_axis(y_integer=True)
+            bp.line(h=100_000)
+
+    def test_function(self, jhu_data, imgfile):
+        df = jhu_data.subset(country="Japan").tail().set_index(Term.DATE)
+        bar_plot(df=df, filename=imgfile)
