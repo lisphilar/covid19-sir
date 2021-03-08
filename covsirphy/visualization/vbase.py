@@ -54,6 +54,7 @@ class VisualizeBase(Term):
                 plt.clf()
                 plt.close("all")
         except AttributeError:
+            # .plot() was not called
             pass
 
     @property
