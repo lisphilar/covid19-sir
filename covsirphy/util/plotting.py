@@ -18,50 +18,6 @@ plt.rcParams["figure.figsize"] = (9, 6)
 plt.rcParams["legend.frameon"] = False
 
 
-def box_plot(df, title, xlabel=None, ylabel=None,
-             v=None, h=None,
-             show_legend=True, bbox_to_anchor=(1.02, 0), bbox_loc="lower left",
-             filename=None):
-    """
-    Show box plot of the data.
-
-    Args:
-        df (pandas.DataFrame): target data
-
-            Index
-                reset index
-            Columns
-                field names
-            Values:
-                data values
-        title (str): title of the figure
-        xlabel (str): x-label
-        ylabel (str): y-label
-        v (list[int/float]): list of x values of vertical lines or None
-        h (list[int/float]): list of y values of horizontal lines or None
-        show_legend (bool): whether show legend or not
-        bbox_to_anchor (tuple(int or float, int or float)): distance of legend and plot
-        bbox_loc (str): location of legend
-        filename (str): filename of the figure, or None (show figure)
-    """
-    df.plot.bar(title=title)
-    plt.xticks(rotation=0)
-    if h is not None:
-        plt.axhline(y=h, color="black", linestyle=":")
-    plt.legend(
-        bbox_to_anchor=bbox_to_anchor, loc=bbox_loc, borderaxespad=0
-    )
-    plt.tight_layout()
-    if filename is None:
-        plt.show()
-        return None
-    plt.savefig(
-        filename, bbox_inches="tight", transparent=False, dpi=300
-    )
-    plt.clf()
-    return None
-
-
 def line_plot_multiple(df, x_col, actual_col, predicted_cols,
                        title, ylabel, xlim=(None, None), v=None, y_logscale=False, filename=None):
     """
