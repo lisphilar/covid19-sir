@@ -6,6 +6,7 @@ import matplotlib
 if not hasattr(sys, "ps1"):
     matplotlib.use("Agg")
 from matplotlib import pyplot as plt
+from covsirphy.util.error import UnExecutedError
 from covsirphy.util.term import Term
 
 # Style of Matplotlib
@@ -44,16 +45,13 @@ class VisualizeBase(Term):
         # Tight layout
         plt.tight_layout()
         # Display the figure if filename is None after plotting
-        try:
-            if self._filename is None:
-                plt.show()
-            else:
-                # Save the image as a file
-                plt.savefig(self._filename, **self._savefig_dict)
-                plt.clf()
-                plt.close("all")
-        except AttributeError:
-            pass
+        if self._filename is None:
+            plt.show()
+        else:
+            # Save the image as a file
+            plt.savefig(self._filename, **self._savefig_dict)
+            plt.clf()
+            plt.close("all")
 
     @property
     def title(self):
@@ -95,3 +93,41 @@ class VisualizeBase(Term):
             kwargs: arguments of matplotlib.pyplot.tick_params
         """
         self._ax.tick_params(**kwargs)
+
+    def legend(self, bbox_to_anchor=(0.5, -0.2), bbox_loc="lower center", ncol=None, **kwargs):
+        """
+        Set legend.
+
+        Args:
+            bbox_to_anchor (tuple(int or float, int or float)): distance of legend and plot
+            bbox_loc (str): location of legend
+            ncol (int): the number of columns that the legend has
+            kwargs: keyword arguments of matplotlib.pyplot.legend()
+        """
+        if not self._variables:
+            raise UnExecutedError("LinePlot.plot()")
+        ncol = self._ensure_natural_int(
+            ncol or 1 if "left" in bbox_loc else len(self._variables), name="ncol")
+        self._ax.legend(bbox_to_anchor=bbox_to_anchor, loc=bbox_loc, borderaxespad=0, ncol=ncol, **kwargs)
+
+    def legend_hide(self):
+        """
+        Hide legend.
+        """
+        self._ax.legend().set_visible(False)
+
+    @staticmethod
+    def _plot_colors(variables, colormap=None, color_dict=None):
+        """
+        Create an argument dictionary of colors for Matplotlib.
+
+        Args:
+            variables (list[str] or pandas.Index): list of variables to show
+            colormap (str, matplotlib colormap object or None): colormap, please refer to https://matplotlib.org/examples/color/colormaps_reference.html
+            color_dict (dict[str, str] or None): dictionary of column names (keys) and colors (values)
+        """
+        # Color
+        if color_dict is None:
+            return {"colormap": colormap}
+        colors = [color_dict.get(col) for col in variables if col in color_dict]
+        return {"colormap": colormap, "color": colors}
