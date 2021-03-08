@@ -65,7 +65,7 @@
             
             
               <div class="version">
-                2.17.0-gamma-fu2
+                2.17.0-delta
               </div>
             
           
@@ -189,10 +189,10 @@
 <span class="kn">from</span> <span class="nn">sklearn.preprocessing</span> <span class="kn">import</span> <span class="n">MinMaxScaler</span>
 <span class="kn">from</span> <span class="nn">covsirphy.util.error</span> <span class="kn">import</span> <span class="n">deprecate</span><span class="p">,</span> <span class="n">ScenarioNotFoundError</span><span class="p">,</span> <span class="n">UnExecutedError</span>
 <span class="kn">from</span> <span class="nn">covsirphy.util.error</span> <span class="kn">import</span> <span class="n">NotRegisteredMainError</span><span class="p">,</span> <span class="n">NotRegisteredExtraError</span>
-<span class="kn">from</span> <span class="nn">covsirphy.util.plotting</span> <span class="kn">import</span> <span class="n">box_plot</span>
 <span class="kn">from</span> <span class="nn">covsirphy.util.error</span> <span class="kn">import</span> <span class="n">NotInteractiveError</span>
 <span class="kn">from</span> <span class="nn">covsirphy.util.term</span> <span class="kn">import</span> <span class="n">Term</span>
 <span class="kn">from</span> <span class="nn">covsirphy.visualization.line_plot</span> <span class="kn">import</span> <span class="n">line_plot</span>
+<span class="kn">from</span> <span class="nn">covsirphy.visualization.bar_plot</span> <span class="kn">import</span> <span class="n">bar_plot</span>
 <span class="kn">from</span> <span class="nn">covsirphy.cleaning.jhu_data</span> <span class="kn">import</span> <span class="n">JHUData</span>
 <span class="kn">from</span> <span class="nn">covsirphy.analysis.param_tracker</span> <span class="kn">import</span> <span class="n">ParamTracker</span>
 <span class="kn">from</span> <span class="nn">covsirphy.analysis.data_handler</span> <span class="kn">import</span> <span class="n">DataHandler</span>
@@ -1009,7 +1009,7 @@
             <span class="k">return</span> <span class="n">df</span>
         <span class="k">if</span> <span class="n">show_box_plot</span><span class="p">:</span>
             <span class="n">h_values</span> <span class="o">=</span> <span class="p">[</span><span class="mf">1.0</span><span class="p">]</span> <span class="k">if</span> <span class="n">divide_by_first</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">RT</span> <span class="ow">in</span> <span class="n">targets</span> <span class="k">else</span> <span class="kc">None</span>
-            <span class="n">box_plot</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">title</span><span class="p">,</span> <span class="n">h</span><span class="o">=</span><span class="n">h_values</span><span class="p">,</span> <span class="n">filename</span><span class="o">=</span><span class="n">filename</span><span class="p">)</span>
+            <span class="n">bar_plot</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">title</span><span class="o">=</span><span class="n">title</span><span class="p">,</span> <span class="n">h</span><span class="o">=</span><span class="n">h_values</span><span class="p">,</span> <span class="n">filename</span><span class="o">=</span><span class="n">filename</span><span class="p">,</span> <span class="n">ylabel</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
             <span class="k">return</span> <span class="n">df</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">history_rate</span><span class="p">(</span><span class="n">params</span><span class="o">=</span><span class="n">targets</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
 

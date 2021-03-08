@@ -65,7 +65,7 @@
             
             
               <div class="version">
-                2.17.0-gamma-fu2
+                2.17.0-delta
               </div>
             
           
@@ -189,50 +189,6 @@
 <span class="n">plt</span><span class="o">.</span><span class="n">rcParams</span><span class="p">[</span><span class="s2">&quot;font.size&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="mf">11.0</span>
 <span class="n">plt</span><span class="o">.</span><span class="n">rcParams</span><span class="p">[</span><span class="s2">&quot;figure.figsize&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="mi">9</span><span class="p">,</span> <span class="mi">6</span><span class="p">)</span>
 <span class="n">plt</span><span class="o">.</span><span class="n">rcParams</span><span class="p">[</span><span class="s2">&quot;legend.frameon&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">False</span>
-
-
-<div class="viewcode-block" id="box_plot"><a class="viewcode-back" href="../../../covsirphy.util.html#covsirphy.box_plot">[docs]</a><span class="k">def</span> <span class="nf">box_plot</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">title</span><span class="p">,</span> <span class="n">xlabel</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">ylabel</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-             <span class="n">v</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">h</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-             <span class="n">show_legend</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">bbox_to_anchor</span><span class="o">=</span><span class="p">(</span><span class="mf">1.02</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span> <span class="n">bbox_loc</span><span class="o">=</span><span class="s2">&quot;lower left&quot;</span><span class="p">,</span>
-             <span class="n">filename</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Show box plot of the data.</span>
-
-<span class="sd">    Args:</span>
-<span class="sd">        df (pandas.DataFrame): target data</span>
-
-<span class="sd">            Index</span>
-<span class="sd">                reset index</span>
-<span class="sd">            Columns</span>
-<span class="sd">                field names</span>
-<span class="sd">            Values:</span>
-<span class="sd">                data values</span>
-<span class="sd">        title (str): title of the figure</span>
-<span class="sd">        xlabel (str): x-label</span>
-<span class="sd">        ylabel (str): y-label</span>
-<span class="sd">        v (list[int/float]): list of x values of vertical lines or None</span>
-<span class="sd">        h (list[int/float]): list of y values of horizontal lines or None</span>
-<span class="sd">        show_legend (bool): whether show legend or not</span>
-<span class="sd">        bbox_to_anchor (tuple(int or float, int or float)): distance of legend and plot</span>
-<span class="sd">        bbox_loc (str): location of legend</span>
-<span class="sd">        filename (str): filename of the figure, or None (show figure)</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">df</span><span class="o">.</span><span class="n">plot</span><span class="o">.</span><span class="n">bar</span><span class="p">(</span><span class="n">title</span><span class="o">=</span><span class="n">title</span><span class="p">)</span>
-    <span class="n">plt</span><span class="o">.</span><span class="n">xticks</span><span class="p">(</span><span class="n">rotation</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
-    <span class="k">if</span> <span class="n">h</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="n">plt</span><span class="o">.</span><span class="n">axhline</span><span class="p">(</span><span class="n">y</span><span class="o">=</span><span class="n">h</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;black&quot;</span><span class="p">,</span> <span class="n">linestyle</span><span class="o">=</span><span class="s2">&quot;:&quot;</span><span class="p">)</span>
-    <span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span>
-        <span class="n">bbox_to_anchor</span><span class="o">=</span><span class="n">bbox_to_anchor</span><span class="p">,</span> <span class="n">loc</span><span class="o">=</span><span class="n">bbox_loc</span><span class="p">,</span> <span class="n">borderaxespad</span><span class="o">=</span><span class="mi">0</span>
-    <span class="p">)</span>
-    <span class="n">plt</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
-    <span class="k">if</span> <span class="n">filename</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
-        <span class="k">return</span> <span class="kc">None</span>
-    <span class="n">plt</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span>
-        <span class="n">filename</span><span class="p">,</span> <span class="n">bbox_inches</span><span class="o">=</span><span class="s2">&quot;tight&quot;</span><span class="p">,</span> <span class="n">transparent</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">dpi</span><span class="o">=</span><span class="mi">300</span>
-    <span class="p">)</span>
-    <span class="n">plt</span><span class="o">.</span><span class="n">clf</span><span class="p">()</span>
-    <span class="k">return</span> <span class="kc">None</span></div>
 
 
 <div class="viewcode-block" id="line_plot_multiple"><a class="viewcode-back" href="../../../covsirphy.util.html#covsirphy.line_plot_multiple">[docs]</a><span class="k">def</span> <span class="nf">line_plot_multiple</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">x_col</span><span class="p">,</span> <span class="n">actual_col</span><span class="p">,</span> <span class="n">predicted_cols</span><span class="p">,</span>

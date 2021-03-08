@@ -65,7 +65,7 @@
             
             
               <div class="version">
-                2.17.0-gamma-fu2
+                2.17.0-delta
               </div>
             
           
@@ -179,6 +179,7 @@
 <span class="k">if</span> <span class="ow">not</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">sys</span><span class="p">,</span> <span class="s2">&quot;ps1&quot;</span><span class="p">):</span>
     <span class="n">matplotlib</span><span class="o">.</span><span class="n">use</span><span class="p">(</span><span class="s2">&quot;Agg&quot;</span><span class="p">)</span>
 <span class="kn">from</span> <span class="nn">matplotlib</span> <span class="kn">import</span> <span class="n">pyplot</span> <span class="k">as</span> <span class="n">plt</span>
+<span class="kn">from</span> <span class="nn">covsirphy.util.error</span> <span class="kn">import</span> <span class="n">UnExecutedError</span>
 <span class="kn">from</span> <span class="nn">covsirphy.util.term</span> <span class="kn">import</span> <span class="n">Term</span>
 
 <span class="c1"># Style of Matplotlib</span>
@@ -217,16 +218,13 @@
         <span class="c1"># Tight layout</span>
         <span class="n">plt</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
         <span class="c1"># Display the figure if filename is None after plotting</span>
-        <span class="k">try</span><span class="p">:</span>
-            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_filename</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-                <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
-            <span class="k">else</span><span class="p">:</span>
-                <span class="c1"># Save the image as a file</span>
-                <span class="n">plt</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_filename</span><span class="p">,</span> <span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">_savefig_dict</span><span class="p">)</span>
-                <span class="n">plt</span><span class="o">.</span><span class="n">clf</span><span class="p">()</span>
-                <span class="n">plt</span><span class="o">.</span><span class="n">close</span><span class="p">(</span><span class="s2">&quot;all&quot;</span><span class="p">)</span>
-        <span class="k">except</span> <span class="ne">AttributeError</span><span class="p">:</span>
-            <span class="k">pass</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_filename</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="c1"># Save the image as a file</span>
+            <span class="n">plt</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_filename</span><span class="p">,</span> <span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">_savefig_dict</span><span class="p">)</span>
+            <span class="n">plt</span><span class="o">.</span><span class="n">clf</span><span class="p">()</span>
+            <span class="n">plt</span><span class="o">.</span><span class="n">close</span><span class="p">(</span><span class="s2">&quot;all&quot;</span><span class="p">)</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">title</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
@@ -267,7 +265,45 @@
 <span class="sd">        Args:</span>
 <span class="sd">            kwargs: arguments of matplotlib.pyplot.tick_params</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_ax</span><span class="o">.</span><span class="n">tick_params</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div></div>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_ax</span><span class="o">.</span><span class="n">tick_params</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="VisualizeBase.legend"><a class="viewcode-back" href="../../../covsirphy.visualization.html#covsirphy.VisualizeBase.legend">[docs]</a>    <span class="k">def</span> <span class="nf">legend</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">bbox_to_anchor</span><span class="o">=</span><span class="p">(</span><span class="mf">0.5</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.2</span><span class="p">),</span> <span class="n">bbox_loc</span><span class="o">=</span><span class="s2">&quot;lower center&quot;</span><span class="p">,</span> <span class="n">ncol</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Set legend.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            bbox_to_anchor (tuple(int or float, int or float)): distance of legend and plot</span>
+<span class="sd">            bbox_loc (str): location of legend</span>
+<span class="sd">            ncol (int): the number of columns that the legend has</span>
+<span class="sd">            kwargs: keyword arguments of matplotlib.pyplot.legend()</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_variables</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">UnExecutedError</span><span class="p">(</span><span class="s2">&quot;LinePlot.plot()&quot;</span><span class="p">)</span>
+        <span class="n">ncol</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ensure_natural_int</span><span class="p">(</span>
+            <span class="n">ncol</span> <span class="ow">or</span> <span class="mi">1</span> <span class="k">if</span> <span class="s2">&quot;left&quot;</span> <span class="ow">in</span> <span class="n">bbox_loc</span> <span class="k">else</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_variables</span><span class="p">),</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;ncol&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_ax</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">bbox_to_anchor</span><span class="o">=</span><span class="n">bbox_to_anchor</span><span class="p">,</span> <span class="n">loc</span><span class="o">=</span><span class="n">bbox_loc</span><span class="p">,</span> <span class="n">borderaxespad</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">ncol</span><span class="o">=</span><span class="n">ncol</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="VisualizeBase.legend_hide"><a class="viewcode-back" href="../../../covsirphy.visualization.html#covsirphy.VisualizeBase.legend_hide">[docs]</a>    <span class="k">def</span> <span class="nf">legend_hide</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Hide legend.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_ax</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span><span class="o">.</span><span class="n">set_visible</span><span class="p">(</span><span class="kc">False</span><span class="p">)</span></div>
+
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">_plot_colors</span><span class="p">(</span><span class="n">variables</span><span class="p">,</span> <span class="n">colormap</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">color_dict</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Create an argument dictionary of colors for Matplotlib.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            variables (list[str] or pandas.Index): list of variables to show</span>
+<span class="sd">            colormap (str, matplotlib colormap object or None): colormap, please refer to https://matplotlib.org/examples/color/colormaps_reference.html</span>
+<span class="sd">            color_dict (dict[str, str] or None): dictionary of column names (keys) and colors (values)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Color</span>
+        <span class="k">if</span> <span class="n">color_dict</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="p">{</span><span class="s2">&quot;colormap&quot;</span><span class="p">:</span> <span class="n">colormap</span><span class="p">}</span>
+        <span class="n">colors</span> <span class="o">=</span> <span class="p">[</span><span class="n">color_dict</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">col</span><span class="p">)</span> <span class="k">for</span> <span class="n">col</span> <span class="ow">in</span> <span class="n">variables</span> <span class="k">if</span> <span class="n">col</span> <span class="ow">in</span> <span class="n">color_dict</span><span class="p">]</span>
+        <span class="k">return</span> <span class="p">{</span><span class="s2">&quot;colormap&quot;</span><span class="p">:</span> <span class="n">colormap</span><span class="p">,</span> <span class="s2">&quot;color&quot;</span><span class="p">:</span> <span class="n">colors</span><span class="p">}</span></div>
 </pre></div>
 
            </div>

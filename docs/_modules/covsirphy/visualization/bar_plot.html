@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
-  <title>covsirphy.visualization.line_plot &mdash; CovsirPhy  documentation</title>
+  <title>covsirphy.visualization.bar_plot &mdash; CovsirPhy  documentation</title>
   
 
   
@@ -155,7 +155,7 @@
         
           <li><a href="../../index.html">Module code</a> &raquo;</li>
         
-      <li>covsirphy.visualization.line_plot</li>
+      <li>covsirphy.visualization.bar_plot</li>
     
     
       <li class="wy-breadcrumbs-aside">
@@ -170,7 +170,7 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
             
-  <h1>Source code for covsirphy.visualization.line_plot</h1><div class="highlight"><pre>
+  <h1>Source code for covsirphy.visualization.bar_plot</h1><div class="highlight"><pre>
 <span></span><span class="ch">#!/usr/bin/env python</span>
 <span class="c1"># -*- coding: utf-8 -*-</span>
 
@@ -181,9 +181,9 @@
 <span class="kn">from</span> <span class="nn">covsirphy.visualization.vbase</span> <span class="kn">import</span> <span class="n">VisualizeBase</span>
 
 
-<div class="viewcode-block" id="LinePlot"><a class="viewcode-back" href="../../../covsirphy.visualization.html#covsirphy.LinePlot">[docs]</a><span class="k">class</span> <span class="nc">LinePlot</span><span class="p">(</span><span class="n">VisualizeBase</span><span class="p">):</span>
+<div class="viewcode-block" id="BarPlot"><a class="viewcode-back" href="../../../covsirphy.visualization.html#covsirphy.BarPlot">[docs]</a><span class="k">class</span> <span class="nc">BarPlot</span><span class="p">(</span><span class="n">VisualizeBase</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Create line plot.</span>
+<span class="sd">    Create a bar plot.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        filename (str or None): filename to save the figure or None (display)</span>
@@ -205,54 +205,47 @@
     <span class="k">def</span> <span class="fm">__exit__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">exc_info</span><span class="p">):</span>
         <span class="k">return</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__exit__</span><span class="p">(</span><span class="o">*</span><span class="n">exc_info</span><span class="p">)</span>
 
-<div class="viewcode-block" id="LinePlot.plot"><a class="viewcode-back" href="../../../covsirphy.visualization.html#covsirphy.LinePlot.plot">[docs]</a>    <span class="k">def</span> <span class="nf">plot</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">colormap</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">color_dict</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<div class="viewcode-block" id="BarPlot.plot"><a class="viewcode-back" href="../../../covsirphy.visualization.html#covsirphy.BarPlot.plot">[docs]</a>    <span class="k">def</span> <span class="nf">plot</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">vertical</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">colormap</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">color_dict</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Plot chronological change of the data.</span>
+<span class="sd">        Create bar plot.</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            data (pandas.DataFrame or pandas.Series): data to show</span>
 <span class="sd">                Index</span>
-<span class="sd">                    Date (pandas.Timestamp)</span>
+<span class="sd">                    labels of the bars</span>
 <span class="sd">                Columns</span>
 <span class="sd">                    variables to show</span>
+<span class="sd">            vartical (bool): whether vertical bar plot (True) or horizontal bar plot (False)</span>
 <span class="sd">            colormap (str, matplotlib colormap object or None): colormap, please refer to https://matplotlib.org/examples/color/colormaps_reference.html</span>
 <span class="sd">            color_dict (dict[str, str] or None): dictionary of column names (keys) and colors (values)</span>
 <span class="sd">            kwargs: keyword arguments of pandas.DataFrame.plot()</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">):</span>
             <span class="n">data</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_ensure_dataframe</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;data&quot;</span><span class="p">,</span> <span class="n">time_index</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_ensure_dataframe</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;data&quot;</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_variables</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">columns</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span>
         <span class="c1"># Color</span>
         <span class="n">color_args</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_plot_colors</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">columns</span><span class="p">,</span> <span class="n">colormap</span><span class="o">=</span><span class="n">colormap</span><span class="p">,</span> <span class="n">color_dict</span><span class="o">=</span><span class="n">color_dict</span><span class="p">)</span>
         <span class="c1"># Set plotting</span>
+        <span class="n">method_dict</span> <span class="o">=</span> <span class="p">{</span><span class="kc">True</span><span class="p">:</span> <span class="n">data</span><span class="o">.</span><span class="n">plot</span><span class="o">.</span><span class="n">bar</span><span class="p">,</span> <span class="kc">False</span><span class="p">:</span> <span class="n">data</span><span class="o">.</span><span class="n">plot</span><span class="o">.</span><span class="n">barh</span><span class="p">}</span>
         <span class="k">try</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_ax</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="o">**</span><span class="n">color_args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_ax</span> <span class="o">=</span> <span class="n">method_dict</span><span class="p">[</span><span class="n">vertical</span><span class="p">](</span><span class="o">**</span><span class="n">color_args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
         <span class="k">except</span> <span class="ne">ValueError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="n">e</span><span class="o">.</span><span class="n">args</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="kn">from</span> <span class="bp">None</span></div>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="n">e</span><span class="o">.</span><span class="n">args</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="kn">from</span> <span class="bp">None</span>
+        <span class="c1"># No rotation of xticks</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_ax</span><span class="o">.</span><span class="n">tick_params</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="s2">&quot;x&quot;</span><span class="p">,</span> <span class="n">rotation</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="LinePlot.x_axis"><a class="viewcode-back" href="../../../covsirphy.visualization.html#covsirphy.LinePlot.x_axis">[docs]</a>    <span class="k">def</span> <span class="nf">x_axis</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">xlabel</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">x_logscale</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">xlim</span><span class="o">=</span><span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">)):</span>
+<div class="viewcode-block" id="BarPlot.x_axis"><a class="viewcode-back" href="../../../covsirphy.visualization.html#covsirphy.BarPlot.x_axis">[docs]</a>    <span class="k">def</span> <span class="nf">x_axis</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">xlabel</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Set x axis.</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            xlabel (str or None): x-label</span>
-<span class="sd">            x_logscale (bool): whether use log-scale in x-axis or not</span>
-<span class="sd">            xlim (tuple(int or float, int or float)): limit of x dimain</span>
-
-<span class="sd">        Note:</span>
-<span class="sd">            If None is included in xlim, the values will be automatically determined by Matplotlib</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="c1"># Label</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_ax</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="n">xlabel</span><span class="p">)</span>
-        <span class="c1"># Log scale</span>
-        <span class="k">if</span> <span class="n">x_logscale</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_ax</span><span class="o">.</span><span class="n">set_xscale</span><span class="p">(</span><span class="s2">&quot;log&quot;</span><span class="p">)</span>
-            <span class="n">xlim</span> <span class="o">=</span> <span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span> <span class="k">if</span> <span class="n">xlim</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="mi">0</span> <span class="k">else</span> <span class="n">xlim</span>
-        <span class="c1"># limit</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_ax</span><span class="o">.</span><span class="n">set_xlim</span><span class="p">(</span><span class="o">*</span><span class="n">xlim</span><span class="p">)</span></div>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_ax</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="n">xlabel</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="LinePlot.y_axis"><a class="viewcode-back" href="../../../covsirphy.visualization.html#covsirphy.LinePlot.y_axis">[docs]</a>    <span class="k">def</span> <span class="nf">y_axis</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ylabel</span><span class="o">=</span><span class="s2">&quot;Cases&quot;</span><span class="p">,</span> <span class="n">y_logscale</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">ylim</span><span class="o">=</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="kc">None</span><span class="p">),</span> <span class="n">math_scale</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">y_integer</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+<div class="viewcode-block" id="BarPlot.y_axis"><a class="viewcode-back" href="../../../covsirphy.visualization.html#covsirphy.BarPlot.y_axis">[docs]</a>    <span class="k">def</span> <span class="nf">y_axis</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ylabel</span><span class="o">=</span><span class="s2">&quot;Cases&quot;</span><span class="p">,</span> <span class="n">y_logscale</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">ylim</span><span class="o">=</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="kc">None</span><span class="p">),</span> <span class="n">math_scale</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">y_integer</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Set x axis.</span>
 
@@ -284,7 +277,7 @@
         <span class="c1"># limit</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_ax</span><span class="o">.</span><span class="n">set_ylim</span><span class="p">(</span><span class="o">*</span><span class="n">ylim</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="LinePlot.line"><a class="viewcode-back" href="../../../covsirphy.visualization.html#covsirphy.LinePlot.line">[docs]</a>    <span class="k">def</span> <span class="nf">line</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">v</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">h</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;black&quot;</span><span class="p">,</span> <span class="n">linestyle</span><span class="o">=</span><span class="s2">&quot;:&quot;</span><span class="p">):</span>
+<div class="viewcode-block" id="BarPlot.line"><a class="viewcode-back" href="../../../covsirphy.visualization.html#covsirphy.BarPlot.line">[docs]</a>    <span class="k">def</span> <span class="nf">line</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">v</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">h</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;black&quot;</span><span class="p">,</span> <span class="n">linestyle</span><span class="o">=</span><span class="s2">&quot;:&quot;</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Show vertical/horizontal lines.</span>
 
@@ -302,7 +295,7 @@
                 <span class="bp">self</span><span class="o">.</span><span class="n">_ax</span><span class="o">.</span><span class="n">axvline</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="n">value</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="n">color</span><span class="p">,</span> <span class="n">linestyle</span><span class="o">=</span><span class="n">linestyle</span><span class="p">)</span></div></div>
 
 
-<div class="viewcode-block" id="line_plot"><a class="viewcode-back" href="../../../covsirphy.visualization.html#covsirphy.line_plot">[docs]</a><span class="k">def</span> <span class="nf">line_plot</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">title</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">filename</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">show_legend</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<div class="viewcode-block" id="bar_plot"><a class="viewcode-back" href="../../../covsirphy.visualization.html#covsirphy.bar_plot">[docs]</a><span class="k">def</span> <span class="nf">bar_plot</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">title</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">filename</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">show_legend</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Wrapper function: show chronological change of the data.</span>
 
@@ -316,23 +309,23 @@
 <span class="sd">        filename (str or None): filename to save the figure or None (display)</span>
 <span class="sd">        show_legend (bool): whether show legend or not</span>
 <span class="sd">        kwargs: keyword arguments of the following classes and methods.</span>
-<span class="sd">            - covsirphy.LinePlot() and its methods,</span>
+<span class="sd">            - covsirphy.BarPlot() and its methods,</span>
 <span class="sd">            - matplotlib.pyplot.savefig(), matplotlib.pyplot.legend(),</span>
 <span class="sd">            - pandas.DataFrame.plot()</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">with</span> <span class="n">LinePlot</span><span class="p">(</span><span class="n">filename</span><span class="o">=</span><span class="n">filename</span><span class="p">,</span> <span class="o">**</span><span class="n">find_args</span><span class="p">(</span><span class="n">plt</span><span class="o">.</span><span class="n">savefig</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">))</span> <span class="k">as</span> <span class="n">lp</span><span class="p">:</span>
-        <span class="n">lp</span><span class="o">.</span><span class="n">title</span> <span class="o">=</span> <span class="n">title</span>
-        <span class="n">lp</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">df</span><span class="p">,</span> <span class="o">**</span><span class="n">find_args</span><span class="p">([</span><span class="n">LinePlot</span><span class="o">.</span><span class="n">plot</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="o">.</span><span class="n">plot</span><span class="p">],</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">))</span>
+    <span class="k">with</span> <span class="n">BarPlot</span><span class="p">(</span><span class="n">filename</span><span class="o">=</span><span class="n">filename</span><span class="p">,</span> <span class="o">**</span><span class="n">find_args</span><span class="p">(</span><span class="n">plt</span><span class="o">.</span><span class="n">savefig</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">))</span> <span class="k">as</span> <span class="n">bp</span><span class="p">:</span>
+        <span class="n">bp</span><span class="o">.</span><span class="n">title</span> <span class="o">=</span> <span class="n">title</span>
+        <span class="n">bp</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">df</span><span class="p">,</span> <span class="o">**</span><span class="n">find_args</span><span class="p">([</span><span class="n">BarPlot</span><span class="o">.</span><span class="n">plot</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="o">.</span><span class="n">plot</span><span class="p">],</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">))</span>
         <span class="c1"># Axis</span>
-        <span class="n">lp</span><span class="o">.</span><span class="n">x_axis</span><span class="p">(</span><span class="o">**</span><span class="n">find_args</span><span class="p">([</span><span class="n">LinePlot</span><span class="o">.</span><span class="n">x_axis</span><span class="p">],</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">))</span>
-        <span class="n">lp</span><span class="o">.</span><span class="n">y_axis</span><span class="p">(</span><span class="o">**</span><span class="n">find_args</span><span class="p">([</span><span class="n">LinePlot</span><span class="o">.</span><span class="n">y_axis</span><span class="p">],</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">))</span>
+        <span class="n">bp</span><span class="o">.</span><span class="n">x_axis</span><span class="p">(</span><span class="o">**</span><span class="n">find_args</span><span class="p">([</span><span class="n">BarPlot</span><span class="o">.</span><span class="n">x_axis</span><span class="p">],</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">))</span>
+        <span class="n">bp</span><span class="o">.</span><span class="n">y_axis</span><span class="p">(</span><span class="o">**</span><span class="n">find_args</span><span class="p">([</span><span class="n">BarPlot</span><span class="o">.</span><span class="n">y_axis</span><span class="p">],</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">))</span>
         <span class="c1"># Vertical/horizontal lines</span>
-        <span class="n">lp</span><span class="o">.</span><span class="n">line</span><span class="p">(</span><span class="o">**</span><span class="n">find_args</span><span class="p">([</span><span class="n">LinePlot</span><span class="o">.</span><span class="n">line</span><span class="p">],</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">))</span>
+        <span class="n">bp</span><span class="o">.</span><span class="n">line</span><span class="p">(</span><span class="o">**</span><span class="n">find_args</span><span class="p">([</span><span class="n">BarPlot</span><span class="o">.</span><span class="n">line</span><span class="p">],</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">))</span>
         <span class="c1"># Legend</span>
         <span class="k">if</span> <span class="n">show_legend</span><span class="p">:</span>
-            <span class="n">lp</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="o">**</span><span class="n">find_args</span><span class="p">([</span><span class="n">LinePlot</span><span class="o">.</span><span class="n">legend</span><span class="p">,</span> <span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">],</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">))</span>
+            <span class="n">bp</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="o">**</span><span class="n">find_args</span><span class="p">([</span><span class="n">BarPlot</span><span class="o">.</span><span class="n">legend</span><span class="p">,</span> <span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">],</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">))</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="n">lp</span><span class="o">.</span><span class="n">legend_hide</span><span class="p">()</span></div>
+            <span class="n">bp</span><span class="o">.</span><span class="n">legend_hide</span><span class="p">()</span></div>
 </pre></div>
 
            </div>
