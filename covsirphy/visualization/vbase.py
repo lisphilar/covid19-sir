@@ -45,17 +45,13 @@ class VisualizeBase(Term):
         # Tight layout
         plt.tight_layout()
         # Display the figure if filename is None after plotting
-        try:
-            if self._filename is None:
-                plt.show()
-            else:
-                # Save the image as a file
-                plt.savefig(self._filename, **self._savefig_dict)
-                plt.clf()
-                plt.close("all")
-        except AttributeError:
-            # .plot() was not called
-            pass
+        if self._filename is None:
+            plt.show()
+        else:
+            # Save the image as a file
+            plt.savefig(self._filename, **self._savefig_dict)
+            plt.clf()
+            plt.close("all")
 
     @property
     def title(self):
