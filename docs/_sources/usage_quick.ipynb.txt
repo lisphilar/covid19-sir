@@ -67,7 +67,7 @@
   {
    "source": [
     "### Start scenario analysis\n",
-    "As an example, we will analysis the number of cases in Japan. `covsirphy.Scenario` is the interface for analysis. Please specify the area (country: required, province: optional) and register the datasets. From version 2.17.0, we use `Scenario.register()` method to register datasets."
+    "As an example, we will analysis the number of cases in Japan. `covsirphy.Scenario` is the interface for analysis. Please specify the area (country: required, province: optional) when creating the instance and register the datasets with `Scenario.register()`. As the extra datasets, we can select `OxCGRTData`, `PCRData`, `VaccineData` and `CountryData`."
    ],
    "cell_type": "markdown",
    "metadata": {}
@@ -81,7 +81,7 @@
     "# Specify country and province (optinal) names\n",
     "snl = cs.Scenario(country=\"Japan\", province=None)\n",
     "# Register datasets\n",
-    "snl.register(jhu_data, population_data, extras=[oxcgrt_data, pcr_data, vaccine_data])"
+    "snl.register(jhu_data, population_data, extras=[oxcgrt_data, vaccine_data])"
    ]
   },
   {
@@ -196,9 +196,7 @@
    "outputs": [],
    "source": [
     "# Show main variables\n",
-    "snl.records().tail()\n",
-    "# We can select variables to show\n",
-    "# snl.records(variables=[\"Confirmed\", \"Recovered\"])"
+    "snl.records().tail()"
    ]
   },
   {
@@ -222,8 +220,15 @@
   },
   {
    "source": [
+    "We can specify the variables to show."
+   ],
+   "cell_type": "markdown",
+   "metadata": {}
+  },
+  {
+   "source": [
     "# We can select the varialbles of both of the main and extra datasets if registered\n",
-    "snl.records(variables=[\"Tests\", \"Vaccinations\"]).tail()"
+    "snl.records(variables=[\"Confirmed\", \"Recovered\", \"Vaccinated_once\"]).tail()"
    ],
    "cell_type": "code",
    "metadata": {},
