@@ -16,10 +16,10 @@ from sklearn.pipeline import Pipeline
 from sklearn.preprocessing import MinMaxScaler
 from covsirphy.util.error import deprecate, ScenarioNotFoundError, UnExecutedError
 from covsirphy.util.error import NotRegisteredMainError, NotRegisteredExtraError
-from covsirphy.util.plotting import box_plot
 from covsirphy.util.error import NotInteractiveError
 from covsirphy.util.term import Term
 from covsirphy.visualization.line_plot import line_plot
+from covsirphy.visualization.bar_plot import bar_plot
 from covsirphy.cleaning.jhu_data import JHUData
 from covsirphy.analysis.param_tracker import ParamTracker
 from covsirphy.analysis.data_handler import DataHandler
@@ -836,7 +836,7 @@ class Scenario(Term):
             return df
         if show_box_plot:
             h_values = [1.0] if divide_by_first or self.RT in targets else None
-            box_plot(df, title, h=h_values, filename=filename)
+            bar_plot(df, title=title, h=h_values, filename=filename, ylabel=None)
             return df
         return self.history_rate(params=targets, name=name, **kwargs)
 
