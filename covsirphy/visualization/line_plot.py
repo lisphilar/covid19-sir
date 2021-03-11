@@ -39,16 +39,16 @@ class LinePlot(VisualizeBase):
         Args:
             data (pandas.DataFrame or pandas.Series): data to show
                 Index
-                    Date (pandas.Timestamp)
+                    x values
                 Columns
-                    variables to show
+                    y variables to show
             colormap (str, matplotlib colormap object or None): colormap, please refer to https://matplotlib.org/examples/color/colormaps_reference.html
             color_dict (dict[str, str] or None): dictionary of column names (keys) and colors (values)
             kwargs: keyword arguments of pandas.DataFrame.plot()
         """
         if isinstance(data, pd.Series):
             data = pd.DataFrame(data)
-        self._ensure_dataframe(data, name="data", time_index=True)
+        self._ensure_dataframe(data, name="data")
         self._variables = data.columns.tolist()
         # Color
         color_args = self._plot_colors(data.columns, colormap=colormap, color_dict=color_dict)
