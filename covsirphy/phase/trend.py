@@ -222,5 +222,5 @@ class Trend(Term):
         # Line plotting
         trend_plot(
             df=result_df.replace(np.inf, np.nan),
-            actual_col=cls.ACTUAL, predicted_cols=predicted_cols, title=title, ylabel=cls.S,
-            show_legend=True, **kwargs)
+            actual_col=cls.ACTUAL, predicted_cols=predicted_cols,
+            title=title, xlabel=cls.R, ylabel=cls.S, show_legend=True, **kwargs)
