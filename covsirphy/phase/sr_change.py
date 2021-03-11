@@ -168,7 +168,7 @@ class ChangeFinder(Term):
         Args:
             area (str): area name
             change_dates (list[str] or None): list of change points
-            kwargs: keyword arguments of covsirphy.line_plot_multiple()
+            kwargs: keyword arguments of covsirphy.trend_plot()
 
         Note:
             @change_dates must be specified if ChangeFinder.run() was not done.
@@ -184,20 +184,14 @@ class ChangeFinder(Term):
         comp_df = pd.concat([self.sr_df, *df_list], axis=1)
         comp_df = comp_df.rename({self.S: f"{self.S}{self.A}"}, axis=1)
         comp_df = comp_df.apply(
-            lambda x: pd.to_numeric(x, errors="coerce", downcast="integer"),
-            axis=0
-        )
+            lambda x: pd.to_numeric(x, errors="coerce", downcast="integer"), axis=0)
         # Show figure
-        pred_cols = [
-            col for col in comp_df.columns if col.endswith(self.P)
-        ]
+        pred_cols = [col for col in comp_df.columns if col.endswith(self.P)]
         if len(pred_cols) == 1:
             title = f"{area}: S-R trend without change points"
         else:
             _list = self._change_dates[:]
-            strings = [
-                ", ".join(_list[i: i + 6]) for i in range(0, len(_list), 6)
-            ]
+            strings = [", ".join(_list[i: i + 6]) for i in range(0, len(_list), 6)]
             change_str = ",\n".join(strings)
             title = f"{area}: S-R trend changed on\n{change_str}"
         Trend.show_with_many(
