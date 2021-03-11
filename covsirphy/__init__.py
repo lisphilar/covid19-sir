@@ -25,7 +25,7 @@ from covsirphy.visualization.colored_map import ColoredMap
 from covsirphy.visualization.japan_map import jpn_map
 from covsirphy.visualization.line_plot import LinePlot, line_plot
 from covsirphy.visualization.bar_plot import BarPlot, bar_plot
-from covsirphy.visualization.trend_plot import TrendPlot, trend_plot
+from covsirphy.visualization.trend_plot import TrendPlot, trend_plot, line_plot_multiple
 # cleaning
 from covsirphy.cleaning.cbase import CleaningBase
 from covsirphy.cleaning.jhu_data import JHUData
