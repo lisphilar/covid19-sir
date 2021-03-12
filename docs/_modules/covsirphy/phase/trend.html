@@ -65,7 +65,7 @@
             
             
               <div class="version">
-                2.17.0-delta
+                2.17.0-epsilon
               </div>
             
           
@@ -179,7 +179,7 @@
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
 <span class="kn">from</span> <span class="nn">scipy.optimize</span> <span class="kn">import</span> <span class="n">curve_fit</span><span class="p">,</span> <span class="n">OptimizeWarning</span>
-<span class="kn">from</span> <span class="nn">covsirphy.util.plotting</span> <span class="kn">import</span> <span class="n">line_plot_multiple</span>
+<span class="kn">from</span> <span class="nn">covsirphy.visualization.trend_plot</span> <span class="kn">import</span> <span class="n">trend_plot</span>
 <span class="kn">from</span> <span class="nn">covsirphy.util.term</span> <span class="kn">import</span> <span class="n">Term</span>
 
 
@@ -354,7 +354,7 @@
 
 <span class="sd">        Args:</span>
 <span class="sd">            area (str): area name</span>
-<span class="sd">            kwargs: keyword arguments of covsirphy.line_plot_multiple()</span>
+<span class="sd">            kwargs: keyword arguments of covsirphy.trend_plot()</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">df</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_result_df</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
         <span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">rename</span><span class="p">({</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">S</span><span class="si">}{</span><span class="bp">self</span><span class="o">.</span><span class="n">P</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">:</span> <span class="s2">&quot;Predicted&quot;</span><span class="p">},</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
@@ -382,7 +382,7 @@
 <span class="sd">                    - columns defined by @predicted_cols</span>
 <span class="sd">            predicted_cols (list[str]): list of columns which have predicted values</span>
 <span class="sd">            title (str): title of the figure</span>
-<span class="sd">            kwargs: keyword arguments of covsirphy.line_plot_multiple()</span>
+<span class="sd">            kwargs: keyword arguments of covsirphy.trend_plot()</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">result_df</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_ensure_dataframe</span><span class="p">(</span>
             <span class="n">result_df</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;result_df&quot;</span><span class="p">,</span> <span class="n">time_index</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
@@ -390,13 +390,13 @@
         <span class="p">)</span>
         <span class="n">result_df</span><span class="o">.</span><span class="n">rename</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="p">{</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">cls</span><span class="o">.</span><span class="n">S</span><span class="si">}{</span><span class="bp">cls</span><span class="o">.</span><span class="n">A</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">:</span> <span class="bp">cls</span><span class="o">.</span><span class="n">ACTUAL</span><span class="p">},</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
         <span class="n">result_df</span><span class="o">.</span><span class="n">rename</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="bp">cls</span><span class="o">.</span><span class="n">P</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">),</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-        <span class="n">predicted_cols</span> <span class="o">=</span> <span class="p">[</span>
-            <span class="n">col</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="bp">cls</span><span class="o">.</span><span class="n">P</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span> <span class="k">for</span> <span class="n">col</span> <span class="ow">in</span> <span class="n">predicted_cols</span><span class="p">]</span>
+        <span class="n">predicted_cols</span> <span class="o">=</span> <span class="p">[</span><span class="n">col</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="bp">cls</span><span class="o">.</span><span class="n">P</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span> <span class="k">for</span> <span class="n">col</span> <span class="ow">in</span> <span class="n">predicted_cols</span><span class="p">]</span>
+        <span class="n">result_df</span> <span class="o">=</span> <span class="n">result_df</span><span class="o">.</span><span class="n">set_index</span><span class="p">(</span><span class="bp">cls</span><span class="o">.</span><span class="n">R</span><span class="p">)</span>
         <span class="c1"># Line plotting</span>
-        <span class="n">line_plot_multiple</span><span class="p">(</span>
+        <span class="n">trend_plot</span><span class="p">(</span>
             <span class="n">df</span><span class="o">=</span><span class="n">result_df</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">inf</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">),</span>
-            <span class="n">x_col</span><span class="o">=</span><span class="bp">cls</span><span class="o">.</span><span class="n">R</span><span class="p">,</span> <span class="n">actual_col</span><span class="o">=</span><span class="bp">cls</span><span class="o">.</span><span class="n">ACTUAL</span><span class="p">,</span> <span class="n">predicted_cols</span><span class="o">=</span><span class="n">predicted_cols</span><span class="p">,</span>
-            <span class="n">title</span><span class="o">=</span><span class="n">title</span><span class="p">,</span> <span class="n">ylabel</span><span class="o">=</span><span class="bp">cls</span><span class="o">.</span><span class="n">S</span><span class="p">,</span> <span class="n">y_logscale</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div></div>
+            <span class="n">actual_col</span><span class="o">=</span><span class="bp">cls</span><span class="o">.</span><span class="n">ACTUAL</span><span class="p">,</span> <span class="n">predicted_cols</span><span class="o">=</span><span class="n">predicted_cols</span><span class="p">,</span>
+            <span class="n">title</span><span class="o">=</span><span class="n">title</span><span class="p">,</span> <span class="n">xlabel</span><span class="o">=</span><span class="bp">cls</span><span class="o">.</span><span class="n">R</span><span class="p">,</span> <span class="n">ylabel</span><span class="o">=</span><span class="bp">cls</span><span class="o">.</span><span class="n">S</span><span class="p">,</span> <span class="n">show_legend</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div></div>
 </pre></div>
 
            </div>

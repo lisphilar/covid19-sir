@@ -65,7 +65,7 @@
             
             
               <div class="version">
-                2.17.0-delta
+                2.17.0-epsilon
               </div>
             
           
@@ -274,14 +274,15 @@
 <span class="sd">        Args:</span>
 <span class="sd">            bbox_to_anchor (tuple(int or float, int or float)): distance of legend and plot</span>
 <span class="sd">            bbox_loc (str): location of legend</span>
-<span class="sd">            ncol (int): the number of columns that the legend has</span>
+<span class="sd">            ncol (int or None): the number of columns that the legend has</span>
 <span class="sd">            kwargs: keyword arguments of matplotlib.pyplot.legend()</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_variables</span><span class="p">:</span>
             <span class="k">raise</span> <span class="n">UnExecutedError</span><span class="p">(</span><span class="s2">&quot;LinePlot.plot()&quot;</span><span class="p">)</span>
         <span class="n">ncol</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ensure_natural_int</span><span class="p">(</span>
-            <span class="n">ncol</span> <span class="ow">or</span> <span class="mi">1</span> <span class="k">if</span> <span class="s2">&quot;left&quot;</span> <span class="ow">in</span> <span class="n">bbox_loc</span> <span class="k">else</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_variables</span><span class="p">),</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;ncol&quot;</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_ax</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">bbox_to_anchor</span><span class="o">=</span><span class="n">bbox_to_anchor</span><span class="p">,</span> <span class="n">loc</span><span class="o">=</span><span class="n">bbox_loc</span><span class="p">,</span> <span class="n">borderaxespad</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">ncol</span><span class="o">=</span><span class="n">ncol</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
+            <span class="n">ncol</span> <span class="ow">or</span> <span class="p">(</span><span class="mi">1</span> <span class="k">if</span> <span class="s2">&quot;left&quot;</span> <span class="ow">in</span> <span class="n">bbox_loc</span> <span class="k">else</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_variables</span><span class="p">)),</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;ncol&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_ax</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">bbox_to_anchor</span><span class="o">=</span><span class="n">bbox_to_anchor</span><span class="p">,</span> <span class="n">loc</span><span class="o">=</span><span class="n">bbox_loc</span><span class="p">,</span> <span class="n">borderaxespad</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">ncol</span><span class="o">=</span><span class="n">ncol</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span></div>
 
 <div class="viewcode-block" id="VisualizeBase.legend_hide"><a class="viewcode-back" href="../../../covsirphy.visualization.html#covsirphy.VisualizeBase.legend_hide">[docs]</a>    <span class="k">def</span> <span class="nf">legend_hide</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>

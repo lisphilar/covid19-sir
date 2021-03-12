@@ -67,7 +67,7 @@
             
             
               <div class="version">
-                2.17.0-delta
+                2.17.0-epsilon
               </div>
             
           
@@ -436,7 +436,7 @@ Citation of COVID-19 Data Hub will be set as JHUData.citation etc.</p>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>area</strong> (<em>str</em>) – area name</p></li>
 <li><p><strong>change_dates</strong> (<em>list</em><em>[</em><em>str</em><em>] or </em><em>None</em>) – list of change points</p></li>
-<li><p><strong>kwargs</strong> – keyword arguments of covsirphy.line_plot_multiple()</p></li>
+<li><p><strong>kwargs</strong> – keyword arguments of covsirphy.trend_plot()</p></li>
 </ul>
 </dd>
 </dl>
@@ -2687,8 +2687,8 @@ dict: status for each complement type</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>v</strong> (<em>list</em><em>[</em><em>int/float</em><em>] or </em><em>None</em>) – list of x values of vertical lines or None</p></li>
-<li><p><strong>h</strong> (<em>list</em><em>[</em><em>int/float</em><em>] or </em><em>None</em>) – list of y values of horizontal lines or None</p></li>
+<li><p><strong>v</strong> (<em>list/tuple</em><em>[</em><em>int/float</em><em>] or </em><em>None</em>) – list of x values of vertical lines or None</p></li>
+<li><p><strong>h</strong> (<em>list/tuple</em><em>[</em><em>int/float</em><em>] or </em><em>None</em>) – list of y values of horizontal lines or None</p></li>
 <li><p><strong>color</strong> (<em>str</em>) – color of the line</p></li>
 <li><p><strong>linestyle</strong> (<em>str</em>) – linestyle</p></li>
 </ul>
@@ -2706,10 +2706,10 @@ dict: status for each complement type</p>
 <li><p><strong>data</strong> (<em>pandas.DataFrame</em><em> or </em><em>pandas.Series</em>) – <p>data to show
 Index</p>
 <blockquote>
-<div><p>Date (pandas.Timestamp)</p>
+<div><p>x values</p>
 </div></blockquote>
 <dl class="simple">
-<dt>Columns</dt><dd><p>variables to show</p>
+<dt>Columns</dt><dd><p>y variables to show</p>
 </dd>
 </dl>
 </p></li>
@@ -4636,7 +4636,7 @@ New phase name will be automatically determined.</p>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>force</strong> (<em>bool</em>) – if True, change points will be over-written</p></li>
 <li><p><strong>show_figure</strong> (<em>bool</em>) – if True, show the result as a figure</p></li>
-<li><p><strong>kwargs</strong> – keyword arguments of covsirphy.ChangeFinder() and covsirphy.line_plot_multiple()</p></li>
+<li><p><strong>kwargs</strong> – keyword arguments of covsirphy.ChangeFinder() and covsirphy.trend_plot()</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
@@ -4962,7 +4962,7 @@ If &#64;phase is not None, the phase will be deleted.
 </dl>
 </p></li>
 <li><p><strong>area</strong> (<em>str</em><em> or </em><em>None</em>) – area name</p></li>
-<li><p><strong>kwargs</strong> – keyword arguments of covsirphy.line_plot_multiple()</p></li>
+<li><p><strong>kwargs</strong> – keyword arguments of covsirphy.trend_plot()</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
@@ -7792,7 +7792,7 @@ If &#64;columns is None, all columns will be shown.</p>
 <li><p><strong>name</strong> (<em>str</em>) – phase series name</p></li>
 <li><p><strong>show_figure</strong> (<em>bool</em>) – if True, show the result as a figure</p></li>
 <li><p><strong>filename</strong> (<em>str</em>) – filename of the figure, or None (display)</p></li>
-<li><p><strong>kwargs</strong> – keyword arguments of covsirphy.ChangeFinder() and covsirphy.line_plot_multiple()</p></li>
+<li><p><strong>kwargs</strong> – keyword arguments of covsirphy.ChangeFinder() and covsirphy.trend_plot()</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
@@ -8478,7 +8478,7 @@ Then, the result and RMSLE score of the best solution will be saved.</p>
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>area</strong> (<em>str</em>) – area name</p></li>
-<li><p><strong>kwargs</strong> – keyword arguments of covsirphy.line_plot_multiple()</p></li>
+<li><p><strong>kwargs</strong> – keyword arguments of covsirphy.trend_plot()</p></li>
 </ul>
 </dd>
 </dl>
@@ -8505,8 +8505,97 @@ Then, the result and RMSLE score of the best solution will be saved.</p>
 </p></li>
 <li><p><strong>predicted_cols</strong> (<em>list</em><em>[</em><em>str</em><em>]</em>) – list of columns which have predicted values</p></li>
 <li><p><strong>title</strong> (<em>str</em>) – title of the figure</p></li>
-<li><p><strong>kwargs</strong> – keyword arguments of covsirphy.line_plot_multiple()</p></li>
+<li><p><strong>kwargs</strong> – keyword arguments of covsirphy.trend_plot()</p></li>
 </ul>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt id="covsirphy.TrendPlot">
+<em class="property"><span class="pre">class</span> </em><code class="sig-name descname"><span class="pre">TrendPlot</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filename</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bbox_inches</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'tight'</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/visualization/trend_plot.html#TrendPlot"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#covsirphy.TrendPlot" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="covsirphy.visualization.html#covsirphy.visualization.line_plot.LinePlot" title="covsirphy.visualization.line_plot.LinePlot"><code class="xref py py-class docutils literal notranslate"><span class="pre">covsirphy.visualization.line_plot.LinePlot</span></code></a></p>
+<p>Create line plot with actual values for S-R trend analysis.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>filename</strong> (<em>str</em><em> or </em><em>None</em>) – filename to save the figure or None (display)</p></li>
+<li><p><strong>bbox_inches</strong> (<em>str</em>) – bounding box in inches when creating the figure</p></li>
+<li><p><strong>kwargs</strong> – the other arguments of matplotlib.pyplot.savefig()</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py method">
+<dt id="covsirphy.TrendPlot.legend">
+<code class="sig-name descname"><span class="pre">legend</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">bbox_to_anchor</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">(0.5,</span> <span class="pre">-</span> <span class="pre">0.4)</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bbox_loc</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'lower</span> <span class="pre">center'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ncol</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">7</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/visualization/trend_plot.html#TrendPlot.legend"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#covsirphy.TrendPlot.legend" title="Permalink to this definition">¶</a></dt>
+<dd><p>Set legend.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>bbox_to_anchor</strong> (<em>tuple</em><em>(</em><em>int</em><em> or </em><em>float</em><em>, </em><em>int</em><em> or </em><em>float</em><em>)</em>) – distance of legend and plot</p></li>
+<li><p><strong>bbox_loc</strong> (<em>str</em>) – location of legend</p></li>
+<li><p><strong>ncol</strong> (<em>int</em><em> or </em><em>None</em>) – the number of columns that the legend has</p></li>
+<li><p><strong>kwargs</strong> – keyword arguments of matplotlib.pyplot.legend()</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="covsirphy.TrendPlot.plot">
+<code class="sig-name descname"><span class="pre">plot</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">actual_col</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'Actual'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">predicted_cols</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/visualization/trend_plot.html#TrendPlot.plot"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#covsirphy.TrendPlot.plot" title="Permalink to this definition">¶</a></dt>
+<dd><p>Plot chronological change of the data with multiple lines.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>data</strong> (<em>pandas.DataFrame</em>) – <p>data to show
+Index</p>
+<blockquote>
+<div><p>x values</p>
+</div></blockquote>
+<dl class="simple">
+<dt>Columns</dt><dd><ul>
+<li><p>column defined by &#64;actual_col, actual values for y-axis</p></li>
+<li><p>columns defined by &#64;predicted_cols, predicted values for y-axis</p></li>
+</ul>
+</dd>
+</dl>
+</p></li>
+<li><p><strong>actual_col</strong> (<em>str</em>) – column name for y-axis</p></li>
+<li><p><strong>predicted_cols</strong> (<em>list</em><em>[</em><em>str</em><em>] or </em><em>None</em>) – list of columns which have predicted values or None (all except for &#64;actual_col)</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="covsirphy.TrendPlot.x_axis">
+<code class="sig-name descname"><span class="pre">x_axis</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">xlabel</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">xlim</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">(None,</span> <span class="pre">None)</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/visualization/trend_plot.html#TrendPlot.x_axis"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#covsirphy.TrendPlot.x_axis" title="Permalink to this definition">¶</a></dt>
+<dd><p>Set x axis.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>xlabel</strong> (<em>str</em><em> or </em><em>None</em>) – x-label</p></li>
+<li><p><strong>xlim</strong> (<em>tuple</em><em>(</em><em>int</em><em> or </em><em>float</em><em>, </em><em>int</em><em> or </em><em>float</em><em>)</em>) – limit of x dimain</p></li>
+</ul>
+</dd>
+</dl>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>When xlim[0] is None and lower x-axis limit determined by matplotlib automatically is lower than 0,
+lower x-axis limit will be set to 0.</p>
+</div>
+</dd></dl>
+
+<dl class="py method">
+<dt id="covsirphy.TrendPlot.y_axis">
+<code class="sig-name descname"><span class="pre">y_axis</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ylabel</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/visualization/trend_plot.html#TrendPlot.y_axis"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#covsirphy.TrendPlot.y_axis" title="Permalink to this definition">¶</a></dt>
+<dd><p>Set x axis.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>ylabel</strong> (<em>str</em><em> or </em><em>None</em>) – y-label</p>
 </dd>
 </dl>
 </dd></dl>
@@ -8747,7 +8836,7 @@ Then, the result and RMSLE score of the best solution will be saved.</p>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>bbox_to_anchor</strong> (<em>tuple</em><em>(</em><em>int</em><em> or </em><em>float</em><em>, </em><em>int</em><em> or </em><em>float</em><em>)</em>) – distance of legend and plot</p></li>
 <li><p><strong>bbox_loc</strong> (<em>str</em>) – location of legend</p></li>
-<li><p><strong>ncol</strong> (<em>int</em>) – the number of columns that the legend has</p></li>
+<li><p><strong>ncol</strong> (<em>int</em><em> or </em><em>None</em>) – the number of columns that the legend has</p></li>
 <li><p><strong>kwargs</strong> – keyword arguments of matplotlib.pyplot.legend()</p></li>
 </ul>
 </dd>
@@ -8902,41 +8991,8 @@ Index</p>
 
 <dl class="py function">
 <dt id="covsirphy.line_plot_multiple">
-<code class="sig-name descname"><span class="pre">line_plot_multiple</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">df</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">x_col</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">actual_col</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">predicted_cols</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">title</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ylabel</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">xlim</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">(None,</span> <span class="pre">None)</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">v</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y_logscale</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">filename</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/util/plotting.html#line_plot_multiple"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#covsirphy.line_plot_multiple" title="Permalink to this definition">¶</a></dt>
-<dd><p>show multiple line graph of chronological change with actual plots.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>df</strong> (<em>pandas.DataFrame</em>) – <p>data</p>
-<dl class="simple">
-<dt>Index</dt><dd><p>Date (pandas.TimeStamp): Observation date</p>
-</dd>
-<dt>Columns</dt><dd><ul>
-<li><p>column defined by &#64;x_col, values for x-axis</p></li>
-<li><p>column defined by &#64;actual_col, actual values for y-axis</p></li>
-<li><p>columns defined by &#64;predicted_cols, predicted values for y-axis</p></li>
-</ul>
-</dd>
-</dl>
-</p></li>
-<li><p><strong>x_col</strong> (<em>str</em>) – column name for x-axis</p></li>
-<li><p><strong>actual_col</strong> (<em>str</em>) – column name for y-axis</p></li>
-<li><p><strong>predicted_cols</strong> (<em>list</em><em>[</em><em>str</em><em>]</em>) – list of columns which have predicted values</p></li>
-<li><p><strong>title</strong> (<em>str</em>) – title of the figure</p></li>
-<li><p><strong>y_label</strong> (<em>str</em>) – label for y-axis</p></li>
-<li><p><strong>xlim</strong> (<em>tuple</em><em>(</em><em>int</em><em> or </em><em>float</em><em>, </em><em>int</em><em> or </em><em>float</em><em>)</em>) – limit of x dimain</p></li>
-<li><p><strong>y_logscale</strong> (<em>bool</em>) – whether use log-scale in y-axis or not</p></li>
-<li><p><strong>v</strong> (<em>list</em><em>[</em><em>int</em><em>]</em>) – list of Recovered values to show vertical lines</p></li>
-<li><p><strong>filename</strong> (<em>str</em>) – filename of the figure, or None (show figure)</p></li>
-</ul>
-</dd>
-</dl>
-<div class="admonition note">
-<p class="admonition-title">Note</p>
-<p>When xlim[0] is None and lower x-axis limit determined by matplotlib automatically is lower than 0,
-lower x-axis limit will be set to 0.</p>
-</div>
-</dd></dl>
+<code class="sig-name descname"><span class="pre">line_plot_multiple</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#covsirphy.line_plot_multiple" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
 
 <dl class="py function">
 <dt id="covsirphy.save_dataframe">
@@ -8955,6 +9011,39 @@ lower x-axis limit will be set to 0.</p>
 <p class="admonition-title">Note</p>
 <p>If &#64;filename is None or OSError was raised, the dataframe will not be saved.</p>
 </div>
+</dd></dl>
+
+<dl class="py function">
+<dt id="covsirphy.trend_plot">
+<code class="sig-name descname"><span class="pre">trend_plot</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">df</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">title</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">filename</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">show_legend</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/visualization/trend_plot.html#trend_plot"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#covsirphy.trend_plot" title="Permalink to this definition">¶</a></dt>
+<dd><p>Wrapper function: show chronological change of the data.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>df</strong> (<em>pandas.DataFrame</em>) – <p>data to show
+Index</p>
+<blockquote>
+<div><p>x values</p>
+</div></blockquote>
+<dl class="simple">
+<dt>Columns</dt><dd><ul>
+<li><p>column defined by &#64;actual_col, actual values for y-axis</p></li>
+<li><p>columns defined by &#64;predicted_cols, predicted values for y-axis</p></li>
+</ul>
+</dd>
+</dl>
+</p></li>
+<li><p><strong>actual_col</strong> (<em>str</em>) – column name for y-axis</p></li>
+<li><p><strong>predicted_cols</strong> (<em>list</em><em>[</em><em>str</em><em>]</em>) – list of columns which have predicted values</p></li>
+<li><p><strong>title</strong> (<em>str</em>) – title of the figure</p></li>
+<li><p><strong>filename</strong> (<em>str</em><em> or </em><em>None</em>) – filename to save the figure or None (display)</p></li>
+<li><p><strong>show_legend</strong> (<em>bool</em>) – whether show legend or not</p></li>
+<li><p><strong>kwargs</strong> – keyword arguments of the following classes and methods.
+- covsirphy.TrendPlot() and its methods,
+- matplotlib.pyplot.savefig() and matplotlib.pyplot.legend()</p></li>
+</ul>
+</dd>
+</dl>
 </dd></dl>
 
 <div class="section" id="subpackages">
@@ -9018,7 +9107,6 @@ lower x-axis limit will be set to 0.</p>
 <li class="toctree-l2"><a class="reference internal" href="covsirphy.util.html#module-covsirphy.util.error">covsirphy.util.error module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="covsirphy.util.html#module-covsirphy.util.file">covsirphy.util.file module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="covsirphy.util.html#module-covsirphy.util.optimize">covsirphy.util.optimize module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="covsirphy.util.html#module-covsirphy.util.plotting">covsirphy.util.plotting module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="covsirphy.util.html#module-covsirphy.util.stopwatch">covsirphy.util.stopwatch module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="covsirphy.util.html#module-covsirphy.util.term">covsirphy.util.term module</a></li>
 </ul>
@@ -9029,6 +9117,7 @@ lower x-axis limit will be set to 0.</p>
 <li class="toctree-l2"><a class="reference internal" href="covsirphy.visualization.html#module-covsirphy.visualization.colored_map">covsirphy.visualization.colored_map module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="covsirphy.visualization.html#module-covsirphy.visualization.japan_map">covsirphy.visualization.japan_map module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="covsirphy.visualization.html#module-covsirphy.visualization.line_plot">covsirphy.visualization.line_plot module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="covsirphy.visualization.html#module-covsirphy.visualization.trend_plot">covsirphy.visualization.trend_plot module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="covsirphy.visualization.html#module-covsirphy.visualization.vbase">covsirphy.visualization.vbase module</a></li>
 </ul>
 </li>

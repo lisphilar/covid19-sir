@@ -65,7 +65,7 @@
             
             
               <div class="version">
-                2.17.0-delta
+                2.17.0-epsilon
               </div>
             
           
@@ -341,7 +341,7 @@
 <span class="sd">        Args:</span>
 <span class="sd">            area (str): area name</span>
 <span class="sd">            change_dates (list[str] or None): list of change points</span>
-<span class="sd">            kwargs: keyword arguments of covsirphy.line_plot_multiple()</span>
+<span class="sd">            kwargs: keyword arguments of covsirphy.trend_plot()</span>
 
 <span class="sd">        Note:</span>
 <span class="sd">            @change_dates must be specified if ChangeFinder.run() was not done.</span>
@@ -357,20 +357,14 @@
         <span class="n">comp_df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">([</span><span class="bp">self</span><span class="o">.</span><span class="n">sr_df</span><span class="p">,</span> <span class="o">*</span><span class="n">df_list</span><span class="p">],</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
         <span class="n">comp_df</span> <span class="o">=</span> <span class="n">comp_df</span><span class="o">.</span><span class="n">rename</span><span class="p">({</span><span class="bp">self</span><span class="o">.</span><span class="n">S</span><span class="p">:</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">S</span><span class="si">}{</span><span class="bp">self</span><span class="o">.</span><span class="n">A</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">},</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
         <span class="n">comp_df</span> <span class="o">=</span> <span class="n">comp_df</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span>
-            <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">to_numeric</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">errors</span><span class="o">=</span><span class="s2">&quot;coerce&quot;</span><span class="p">,</span> <span class="n">downcast</span><span class="o">=</span><span class="s2">&quot;integer&quot;</span><span class="p">),</span>
-            <span class="n">axis</span><span class="o">=</span><span class="mi">0</span>
-        <span class="p">)</span>
+            <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">to_numeric</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">errors</span><span class="o">=</span><span class="s2">&quot;coerce&quot;</span><span class="p">,</span> <span class="n">downcast</span><span class="o">=</span><span class="s2">&quot;integer&quot;</span><span class="p">),</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
         <span class="c1"># Show figure</span>
-        <span class="n">pred_cols</span> <span class="o">=</span> <span class="p">[</span>
-            <span class="n">col</span> <span class="k">for</span> <span class="n">col</span> <span class="ow">in</span> <span class="n">comp_df</span><span class="o">.</span><span class="n">columns</span> <span class="k">if</span> <span class="n">col</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">P</span><span class="p">)</span>
-        <span class="p">]</span>
+        <span class="n">pred_cols</span> <span class="o">=</span> <span class="p">[</span><span class="n">col</span> <span class="k">for</span> <span class="n">col</span> <span class="ow">in</span> <span class="n">comp_df</span><span class="o">.</span><span class="n">columns</span> <span class="k">if</span> <span class="n">col</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">P</span><span class="p">)]</span>
         <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">pred_cols</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
             <span class="n">title</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">area</span><span class="si">}</span><span class="s2">: S-R trend without change points&quot;</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="n">_list</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_change_dates</span><span class="p">[:]</span>
-            <span class="n">strings</span> <span class="o">=</span> <span class="p">[</span>
-                <span class="s2">&quot;, &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">_list</span><span class="p">[</span><span class="n">i</span><span class="p">:</span> <span class="n">i</span> <span class="o">+</span> <span class="mi">6</span><span class="p">])</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">_list</span><span class="p">),</span> <span class="mi">6</span><span class="p">)</span>
-            <span class="p">]</span>
+            <span class="n">strings</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;, &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">_list</span><span class="p">[</span><span class="n">i</span><span class="p">:</span> <span class="n">i</span> <span class="o">+</span> <span class="mi">6</span><span class="p">])</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">_list</span><span class="p">),</span> <span class="mi">6</span><span class="p">)]</span>
             <span class="n">change_str</span> <span class="o">=</span> <span class="s2">&quot;,</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">strings</span><span class="p">)</span>
             <span class="n">title</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">area</span><span class="si">}</span><span class="s2">: S-R trend changed on</span><span class="se">\n</span><span class="si">{</span><span class="n">change_str</span><span class="si">}</span><span class="s2">&quot;</span>
         <span class="n">Trend</span><span class="o">.</span><span class="n">show_with_many</span><span class="p">(</span>
