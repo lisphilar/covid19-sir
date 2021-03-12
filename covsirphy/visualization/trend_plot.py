@@ -78,6 +78,10 @@ class TrendPlot(LinePlot):
         self._ax.set_xlabel(xlabel)
         # limit
         self._ax.set_xlim(max(self._ax.get_xlim()[0], xlim[0] or 0), xlim[1])
+        # Integer scale
+        fmt = ScalarFormatter(useOffset=False)
+        fmt.set_scientific(False)
+        self._ax.xaxis.set_major_formatter(fmt)
 
     def y_axis(self, ylabel=None):
         """
