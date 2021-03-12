@@ -109,6 +109,7 @@ class VisualizeBase(Term):
         ncol = self._ensure_natural_int(
             ncol or (1 if "left" in bbox_loc else len(self._variables)), name="ncol")
         self._ax.legend(bbox_to_anchor=bbox_to_anchor, loc=bbox_loc, borderaxespad=0, ncol=ncol, **kwargs)
+        plt.tight_layout()
 
     def legend_hide(self):
         """
