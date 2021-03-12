@@ -39,16 +39,16 @@ class LinePlot(VisualizeBase):
         Args:
             data (pandas.DataFrame or pandas.Series): data to show
                 Index
-                    Date (pandas.Timestamp)
+                    x values
                 Columns
-                    variables to show
+                    y variables to show
             colormap (str, matplotlib colormap object or None): colormap, please refer to https://matplotlib.org/examples/color/colormaps_reference.html
             color_dict (dict[str, str] or None): dictionary of column names (keys) and colors (values)
             kwargs: keyword arguments of pandas.DataFrame.plot()
         """
         if isinstance(data, pd.Series):
             data = pd.DataFrame(data)
-        self._ensure_dataframe(data, name="data", time_index=True)
+        self._ensure_dataframe(data, name="data")
         self._variables = data.columns.tolist()
         # Color
         color_args = self._plot_colors(data.columns, colormap=colormap, color_dict=color_dict)
@@ -111,22 +111,37 @@ class LinePlot(VisualizeBase):
         # limit
         self._ax.set_ylim(*ylim)
 
+    @staticmethod
+    def _convert_to_list(x):
+        """
+        Convert None to empty list, str/float/int etc. to a list.
+
+        Args:
+            x (list/tuple[str/int/float] or None): value(s)
+
+        Returns:
+            list or tuple
+        """
+        return x if isinstance(x, (list, tuple)) else [] if x is None else [x]
+
     def line(self, v=None, h=None, color="black", linestyle=":"):
         """
         Show vertical/horizontal lines.
 
         Args:
-            v (list[int/float] or None): list of x values of vertical lines or None
-            h (list[int/float] or None): list of y values of horizontal lines or None
+            v (list/tuple[int/float] or None): list of x values of vertical lines or None
+            h (list/tuple[int/float] or None): list of y values of horizontal lines or None
             color (str): color of the line
             linestyle (str): linestyle
         """
-        if h is not None:
-            self._ax.axhline(y=h, color=color, linestyle=linestyle)
-        if v is not None:
-            v = v if isinstance(v, list) else [v]
-            for value in v:
-                self._ax.axvline(x=value, color=color, linestyle=linestyle)
+        # Horizontal
+        h = self._convert_to_list(h)
+        for value in h:
+            self._ax.axhline(y=value, color=color, linestyle=linestyle)
+        # Vertical
+        v = self._convert_to_list(v)
+        for value in v:
+            self._ax.axvline(x=value, color=color, linestyle=linestyle)
 
 
 def line_plot(df, title=None, filename=None, show_legend=True, **kwargs):

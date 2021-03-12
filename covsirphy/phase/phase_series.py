@@ -379,7 +379,7 @@ class PhaseSeries(Term):
                     - Susceptible (int): the number of susceptible cases
                     - any other columns will be ignored
             area (str or None): area name
-            kwargs: keyword arguments of covsirphy.line_plot_multiple()
+            kwargs: keyword arguments of covsirphy.trend_plot()
 
         Returns:
             covsirphy.PhaseSeries: self

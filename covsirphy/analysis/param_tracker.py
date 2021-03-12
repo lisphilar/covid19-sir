@@ -5,8 +5,8 @@ import numpy as np
 import sklearn
 from covsirphy.util.error import UnExecutedError
 from covsirphy.util.argument import find_args
-from covsirphy.util.plotting import line_plot_multiple
 from covsirphy.util.term import Term
+from covsirphy.visualization.trend_plot import trend_plot
 from covsirphy.ode.mbase import ModelBase
 from covsirphy.phase.sr_change import ChangeFinder
 from covsirphy.phase.phase_unit import PhaseUnit
@@ -90,7 +90,7 @@ class ParamTracker(Term):
         Args:
             force (bool): if True, change points will be over-written
             show_figure (bool): if True, show the result as a figure
-            kwargs: keyword arguments of covsirphy.ChangeFinder() and covsirphy.line_plot_multiple()
+            kwargs: keyword arguments of covsirphy.ChangeFinder() and covsirphy.trend_plot()
 
         Returns:
             covsirphy.PhaseSeries
@@ -100,7 +100,7 @@ class ParamTracker(Term):
             trend_kwargs = find_args(ChangeFinder, **kwargs)
             self._series.trend(sr_df=sr_df, **trend_kwargs)
         if show_figure:
-            show_kwargs = find_args(line_plot_multiple, **kwargs)
+            show_kwargs = find_args(trend_plot, **kwargs)
             self._series.trend_show(sr_df=sr_df, area=self.area, **show_kwargs)
         return self._series
 

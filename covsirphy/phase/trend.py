@@ -6,7 +6,7 @@ import warnings
 import numpy as np
 import pandas as pd
 from scipy.optimize import curve_fit, OptimizeWarning
-from covsirphy.util.plotting import line_plot_multiple
+from covsirphy.visualization.trend_plot import trend_plot
 from covsirphy.util.term import Term
 
 
@@ -181,7 +181,7 @@ class Trend(Term):
 
         Args:
             area (str): area name
-            kwargs: keyword arguments of covsirphy.line_plot_multiple()
+            kwargs: keyword arguments of covsirphy.trend_plot()
         """
         df = self._result_df.copy()
         df = df.rename({f"{self.S}{self.P}": "Predicted"}, axis=1)
@@ -209,7 +209,7 @@ class Trend(Term):
                     - columns defined by @predicted_cols
             predicted_cols (list[str]): list of columns which have predicted values
             title (str): title of the figure
-            kwargs: keyword arguments of covsirphy.line_plot_multiple()
+            kwargs: keyword arguments of covsirphy.trend_plot()
         """
         result_df = cls._ensure_dataframe(
             result_df, name="result_df", time_index=True,
@@ -217,10 +217,10 @@ class Trend(Term):
         )
         result_df.rename(columns={f"{cls.S}{cls.A}": cls.ACTUAL}, inplace=True)
         result_df.rename(columns=lambda x: x.replace(cls.P, ""), inplace=True)
-        predicted_cols = [
-            col.replace(cls.P, "") for col in predicted_cols]
+        predicted_cols = [col.replace(cls.P, "") for col in predicted_cols]
+        result_df = result_df.set_index(cls.R)
         # Line plotting
-        line_plot_multiple(
+        trend_plot(
             df=result_df.replace(np.inf, np.nan),
-            x_col=cls.R, actual_col=cls.ACTUAL, predicted_cols=predicted_cols,
-            title=title, ylabel=cls.S, y_logscale=True, **kwargs)
+            actual_col=cls.ACTUAL, predicted_cols=predicted_cols,
+            title=title, xlabel=cls.R, ylabel=cls.S, show_legend=True, **kwargs)
