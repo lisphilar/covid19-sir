@@ -40,6 +40,8 @@ from covsirphy.cleaning.covid19datahub import COVID19DataHub
 from covsirphy.cleaning.linelist import LinelistData
 from covsirphy.cleaning.vaccine_data import VaccineData
 from covsirphy.cleaning.dataloader import DataLoader
+# trend
+from covsirphy.trend.trend_detector import TrendDetector
 # ode
 from covsirphy.ode.mbase import ModelBase
 from covsirphy.ode.sir import SIR
@@ -81,6 +83,7 @@ __all__ = [
     "JHUData", "CountryData", "PopulationData", "OxCGRTData", "VaccineData",
     "PopulationPyramidData",
     "LinelistData", "PCRData", "JapanData", "JHUDataComplementHandler",
+    "TrendDetector",
     "ModelBase", "SIR", "SIRD", "SIRF", "SEWIRF",
     "Estimator", "Trend", "Optimizer",
     "StopWatch", "deprecate", "find_args",
