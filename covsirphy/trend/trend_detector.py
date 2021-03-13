@@ -3,6 +3,7 @@
 
 import pandas as pd
 from covsirphy.util.term import Term
+from covsirphy.trend.sr_change import _SRChange
 
 
 class TrendDetector(Term):
@@ -20,6 +21,7 @@ class TrendDetector(Term):
                 - Fatal(int): the number of fatal cases
                 - Recovered (int): the number of recovered cases
                 - Susceptible(int): the number of susceptible cases
+        min_size (int): minimum value of phase length [days], over 2
 
     Note:
         "Phase" means a sequential dates in which the parameters of SIR-derived models are fixed.
@@ -27,10 +29,14 @@ class TrendDetector(Term):
         "Change points" is the same as the start dates of phases except for the 0th phase.
     """
 
-    def __init__(self, data):
+    def __init__(self, data, min_size=5):
         self._ensure_dataframe(data, name="data", columns=self.SUB_COLUMNS)
         # Index: Date, Columns: the number cases
         self._record_df = data.groupby(self.DATE).last()
+        # Minimum size of phases
+        self._min_size = self._ensure_int_range(min_size, name="min_size", value_range=(3, None))
+        if len(self._record_df) < self._min_size * 2:
+            raise ValueError(f"More than {min_size * 2} records must be included because @min_size is {min_size}.")
         # The first/last date
         self._first_date = self._record_df.index.min()
         self._last_date = self._record_df.index.max()
@@ -91,6 +97,9 @@ class TrendDetector(Term):
         Returns:
             covsirphy.TrendDetector: self
         """
+        finder = _SRChange(sr_df=self._record_df)
+        points = finder.run(min_size=self._min_size)
+        self._points = sorted(set(self._points) | set(points))
         return self
 
     def sr_show(self):

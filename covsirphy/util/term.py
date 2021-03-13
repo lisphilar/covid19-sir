@@ -230,6 +230,27 @@ class Term(object):
             raise ValueError(f"{s}. This value is under {min_value}")
         return number
 
+    def _ensure_int_range(self, target, name="number", value_range=(0, None)):
+        """
+        Ensure the number is an integer and in the specified range.
+
+        Args:
+            target (int or float or str): value to ensure
+            name (str): argument name of the value
+            value_range(tuple(int or None, int or None)): value range, None means un-specified
+
+        Returns:
+            int: as-is the target
+        """
+        number = self._ensure_natural_int(target=target, name=name, include_zero=True, none_ok=False)
+        # Minimum
+        if value_range[0] is not None and number < value_range[0]:
+            raise ValueError(f"{name} must be over or equal to {value_range[0]}, but {number} was applied.")
+        # Maximum
+        if value_range[1] is not None and number > value_range[1]:
+            raise ValueError(f"{name} must be under or equal to {value_range[1]}, but {number} was applied.")
+        return number
+
     @classmethod
     def _ensure_tau(cls, tau):
         """
