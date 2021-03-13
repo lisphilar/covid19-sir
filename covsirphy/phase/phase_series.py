@@ -343,7 +343,7 @@ class PhaseSeries(Term):
             sr_df (pandas.DataFrame): susceptible and recovered records
 
                 Index
-                    Date (pd.TimeStamp): Observation date
+                    Date (pd.Timestamp): Observation date
                 Columns
                     - Recovered (int): the number of recovered cases (> 0)
                     - Susceptible (int): the number of susceptible cases
@@ -402,7 +402,7 @@ class PhaseSeries(Term):
                 Index
                     reset index
                 Columns
-                    - Date (pd.TimeStamp): Observation date
+                    - Date (pd.Timestamp): Observation date
                     - Confirmed (int): the number of confirmed cases
                     - Infected (int): the number of currently infected cases
                     - Fatal (int): the number of fatal cases
@@ -417,7 +417,7 @@ class PhaseSeries(Term):
                 Index
                     reset index
                 Columns
-                    - Date (pd.TimeStamp): Observation date
+                    - Date (pd.Timestamp): Observation date
                     - Country (str): country/region name
                     - Province (str): province/prefecture/state name
                     - Variables of the model and dataset (int): Confirmed etc.

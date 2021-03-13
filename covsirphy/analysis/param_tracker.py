@@ -439,7 +439,7 @@ class ParamTracker(Term):
                 Index
                     reset index
                 Columns
-                    - Date (pd.TimeStamp): Observation date
+                    - Date (pd.Timestamp): Observation date
                     - Country (str): country/region name
                     - Province (str): province/prefecture/state name
                     - Variables of the model and dataset (int): Confirmed etc.
@@ -461,10 +461,10 @@ class ParamTracker(Term):
         Returns:
             tuple(pandas.DataFrame, pandas.DataFrame):
                 - actual (pandas.DataFrame):
-                    Index Date (pd.TimeStamp)
+                    Index Date (pd.Timestamp)
                     Columns variables defined by @variables
                 - simulated (pandas.DataFrame):
-                    Index Date (pd.TimeStamp)
+                    Index Date (pd.Timestamp)
                     Columns variables defined by @variables
         """
         record_df = self.record_df.copy().set_index(self.DATE)

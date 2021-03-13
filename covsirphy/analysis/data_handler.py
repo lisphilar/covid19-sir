@@ -209,7 +209,7 @@ class DataHandler(Term):
                 Index
                     reset index
                 Columns:
-                    - Date(pd.TimeStamp): Observation date
+                    - Date(pd.Timestamp): Observation date
                     - Confirmed(int): the number of confirmed cases
                     - Infected(int): the number of currently infected cases
                     - Fatal(int): the number of fatal cases
@@ -322,7 +322,7 @@ class DataHandler(Term):
                 Index
                     reset index
                 Columns:
-                    - Date(pd.TimeStamp): Observation date
+                    - Date(pd.Timestamp): Observation date
                     - columns defined in the extra datasets
         """
         if None in self._data_dict.values():
@@ -378,7 +378,7 @@ class DataHandler(Term):
                 Index
                     reset index
                 Columns:
-                    - Date(pd.TimeStamp): Observation date
+                    - Date(pd.Timestamp): Observation date
                     - if @main is True,
                         - Confirmed(int): the number of confirmed cases
                         - Infected(int): the number of currently infected cases
@@ -419,7 +419,7 @@ class DataHandler(Term):
                 Index
                     reset index
                 Columns:
-                    - Date(pd.TimeStamp): Observation date
+                    - Date(pd.Timestamp): Observation date
                     - if @main is True,
                         - Confirmed(int): the number of confirmed cases
                         - Infected(int): the number of currently infected cases
@@ -452,7 +452,7 @@ class DataHandler(Term):
                 Index
                     reset index
                 Columns:
-                    - Date(pd.TimeStamp): Observation date
+                    - Date(pd.Timestamp): Observation date
                     - Confirmed(int): the number of confirmed cases
                     - Infected(int): the number of currently infected cases
                     - Fatal(int): the number of fatal cases

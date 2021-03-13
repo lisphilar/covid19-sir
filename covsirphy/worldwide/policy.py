@@ -228,7 +228,7 @@ class PolicyMeasures(Term):
         Returns:
             pandas.DataFrame:
                 Index
-                    Date (pd.TimeStamp) date
+                    Date (pd.Timestamp) date
                 Columns
                     (str) country names
                 Values:
@@ -277,7 +277,7 @@ class PolicyMeasures(Term):
                     reset index
                 Columns
                     - Country (str): country name
-                    - Date (pd.TimeStamp): date
+                    - Date (pd.Timestamp): date
                     - (float): model parameters
                     - (float): model day parameters
                     - Rt (float): reproduction number

@@ -263,7 +263,7 @@ class Scenario(Term):
                 Index
                     reset index
                 Columns
-                    - Date (pd.TimeStamp): Observation date
+                    - Date (pd.Timestamp): Observation date
                     - Columns set by @variables (int)
 
         Note:
@@ -302,7 +302,7 @@ class Scenario(Term):
         Returns:
             pandas.DataFrame
                 Index
-                    - Date (pd.TimeStamp): Observation date
+                    - Date (pd.Timestamp): Observation date
                 Columns
                     - Confirmed (int): daily new cases of Confirmed, if calculated
                     - Infected (int):  daily new cases of Infected, if calculated
@@ -718,7 +718,7 @@ class Scenario(Term):
                 Index
                     reset index
                 Columns
-                    - Date (pd.TimeStamp): Observation date
+                    - Date (pd.Timestamp): Observation date
                     - Country (str): country/region name
                     - Province (str): province/prefecture/state name
                     - Variables of the model and dataset (int): Confirmed etc.

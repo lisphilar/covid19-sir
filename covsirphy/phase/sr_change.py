@@ -17,7 +17,7 @@ class ChangeFinder(Term):
     Args:
         sr_df (pandas.DataFrame)
             Index
-                Date (pd.TimeStamp): Observation date
+                Date (pd.Timestamp): Observation date
             Columns
                 - Recovered (int): the number of recovered cases (> 0)
                 - Susceptible (int): the number of susceptible cases

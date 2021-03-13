@@ -19,7 +19,7 @@ class ExampleData(JHUData):
             Index
                 - reset index
             Columns
-                - Date (pd.TimeStamp): Observation date
+                - Date (pd.Timestamp): Observation date
                 - Country (pandas.Category): country/region name
                 - Province (pandas.Category): province/prefecture/sstate name
                 - Confirmed (int): the number of confirmed cases
@@ -186,7 +186,7 @@ class ExampleData(JHUData):
                 Index
                     reset index
                 Columns
-                    - Date (pd.TimeStamp): Observation date
+                    - Date (pd.Timestamp): Observation date
                     - Confirmed (int): the number of confirmed cases
                     - Infected (int): the number of currently infected cases
                     - Fatal (int): the number of fatal cases

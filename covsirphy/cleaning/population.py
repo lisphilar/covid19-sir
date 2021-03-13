@@ -55,7 +55,7 @@ class PopulationData(CleaningBase):
                     - ISO3 (str): ISO3 code or "-"
                     - Country (pandas.Category): country/region name
                     - Province (pandas.Category): province/prefecture/state name
-                    - Date (pd.TimeStamp): date of the records (if available) or today
+                    - Date (pd.Timestamp): date of the records (if available) or today
                     - Population (int): total population
         """
         df = self._raw.copy()

@@ -46,7 +46,7 @@ class JHUData(CleaningBase):
                 Index
                     reset index
                 Columns
-                    - Date (pd.TimeStamp): Observation date
+                    - Date (pd.Timestamp): Observation date
                     - Country (pandas.Category): country/region name
                     - Province (pandas.Category): province/prefecture/state name
                     - Confirmed (int): the number of confirmed cases
@@ -72,7 +72,7 @@ class JHUData(CleaningBase):
                 Index
                     reset index
                 Columns
-                    - Date (pd.TimeStamp): Observation date
+                    - Date (pd.Timestamp): Observation date
                     - ISO3 (str): ISO3 code
                     - Country (pandas.Category): country/region name
                     - Province (pandas.Category): province/prefecture/state name
@@ -181,7 +181,7 @@ class JHUData(CleaningBase):
                 Index
                     reset index
                 Columns
-                    - Date (pd.TimeStamp): Observation date
+                    - Date (pd.Timestamp): Observation date
                     - Confirmed (int): the number of confirmed cases
                     - Infected (int): the number of currently infected cases
                     - Fatal (int): the number of fatal cases
@@ -202,7 +202,7 @@ class JHUData(CleaningBase):
                 Index
                     reset index
                 Columns
-                    - Date (pd.TimeStamp): Observation date
+                    - Date (pd.Timestamp): Observation date
                     - Confirmed (int): the number of confirmed cases
                     - Infected (int): the number of currently infected cases
                     - Fatal (int): the number of fatal cases
@@ -214,7 +214,7 @@ class JHUData(CleaningBase):
                 Index
                     reset index
                 Columns
-                    - Date (pd.TimeStamp): Observation date
+                    - Date (pd.Timestamp): Observation date
                     - Confirmed (int): the number of confirmed cases
                     - Infected (int): the number of currently infected cases
                     - Fatal (int): the number of fatal cases
@@ -245,7 +245,7 @@ class JHUData(CleaningBase):
                 Index
                     reset index
                 Columns
-                    - Date (pd.TimeStamp): Observation date
+                    - Date (pd.Timestamp): Observation date
                     - Confirmed (int): the number of confirmed cases
                     - Infected (int): the number of currently infected cases
                     - Fatal (int): the number of fatal cases
@@ -288,7 +288,7 @@ class JHUData(CleaningBase):
         Returns:
             pandas.DataFrame
                 Index
-                    Date (pd.TimeStamp): Observation date
+                    Date (pd.Timestamp): Observation date
                 Columns
                     - Recovered (int): the number of recovered cases (> 0)
                     - Susceptible (int): the number of susceptible cases
@@ -507,7 +507,7 @@ class JHUData(CleaningBase):
                     Index
                         reset index
                     Columns
-                        - Date(pd.TimeStamp): Observation date
+                        - Date(pd.Timestamp): Observation date
                         - Confirmed(int): the number of confirmed cases
                         - Infected(int): the number of currently infected cases
                         - Fatal(int): the number of fatal cases
@@ -564,7 +564,7 @@ class JHUData(CleaningBase):
                     Index
                         reset index
                     Columns
-                        - Date(pd.TimeStamp): Observation date
+                        - Date(pd.Timestamp): Observation date
                         - Confirmed(int): the number of confirmed cases
                         - Infected(int): the number of currently infected cases
                         - Fatal(int): the number of fatal cases

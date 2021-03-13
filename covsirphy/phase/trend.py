@@ -17,7 +17,7 @@ class Trend(Term):
     Args:
         sr_df (pandas.DataFrame)
             Index
-                Date (pd.TimeStamp): Observation date
+                Date (pd.Timestamp): Observation date
             Columns
                 - Recovered (int): the number of recovered cases (> 0)
                 - Susceptible (int): the number of susceptible cases
@@ -83,7 +83,7 @@ class Trend(Term):
         Returns:
             pandas.DataFrame: results of fitting
                 Index
-                    - index (Date) (pd.TimeStamp): Observation date
+                    - index (Date) (pd.Timestamp): Observation date
                 Columns
                     - Recovered: The number of recovered cases
                     - Susceptible_actual: Actual values of Susceptible
@@ -99,7 +99,7 @@ class Trend(Term):
         Args:
             sr_df (pandas.DataFrame): training dataset
                 Index
-                    - index (Date) (pd.TimeStamp): Observation date
+                    - index (Date) (pd.Timestamp): Observation date
                 Columns
                     - Recovered: The number of recovered cases
                     - Susceptible: Actual data of Susceptible
@@ -107,7 +107,7 @@ class Trend(Term):
         Returns:
             pandas.DataFrame
                 Index
-                    - index (Date) (pd.TimeStamp): Observation date
+                    - index (Date) (pd.Timestamp): Observation date
                 Columns
                     - Recovered (int): The number of recovered cases
                     - Susceptible_actual (int): Actual values of Susceptible
@@ -155,7 +155,7 @@ class Trend(Term):
         Args:
             fit_df (pandas.DataFrame):
                 Index
-                    - index (Date) (pd.TimeStamp): Observation date
+                    - index (Date) (pd.Timestamp): Observation date
                 Columns
                     - Recovered (int): The number of recovered cases
                     - Susceptible_actual (int): Actual values of Susceptible
