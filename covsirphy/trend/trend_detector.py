@@ -38,8 +38,8 @@ class TrendDetector(Term):
         if len(self._record_df) < self._min_size * 2:
             raise ValueError(f"More than {min_size * 2} records must be included because @min_size is {min_size}.")
         # The first/last date
-        self._first_date = self._record_df.index.min()
-        self._last_date = self._record_df.index.max()
+        self._first_point = self._record_df.index.min()
+        self._last_point = self._record_df.index.max()
         # Change points: list[pandas.Timestamp]
         self._points = []
         self.reset()
@@ -51,7 +51,7 @@ class TrendDetector(Term):
         Returns:
             covsirphy.TrendDetector: self
         """
-        self._points = [self._last_date]
+        self._points = [self._last_point]
         return self
 
     def dates(self):
@@ -63,9 +63,10 @@ class TrendDetector(Term):
         """
         points = self._points[:]
         # Start dates
-        start_dates = [self._first_date, *points]
+        start_dates = [date.strftime(self.DATE_FORMAT) for date in [self._first_point, *points]]
         # End dates
-        end_dates = [self.yesterday(date) for date in points] + [self._last_date]
+        end_dates = [self.yesterday(date.strftime(self.DATE_FORMAT)) for date in points]
+        end_dates.append(self._last_point.strftime(self.DATE_FORMAT))
         return (start_dates, end_dates)
 
     def summary(self):
@@ -75,19 +76,20 @@ class TrendDetector(Term):
         Returns:
             pandas.Dataframe:
                 Index
-                    reset index
+                    (str): phase names
                 Columns
                     - Start (pandas.Timestamp): star dates
                     - End (pandas.Timestamp): end dates
-                    - RMSLE_S-R: RMSLE score in S-R plane
+                    - RMSLE_S-R: RMSLE score on S-R plane
         """
         start_dates, end_dates = self.dates()
         return pd.DataFrame(
             {
                 self.START: start_dates,
                 self.END: end_dates,
-                "RMSLE_S-R": None,
-            }
+                "RMSLE_S-R": _SRChange(sr_df=self._record_df).score(change_points=self._points),
+            },
+            index=[self.num2str(num) for num in range(len(self._points) + 1)]
         )
 
     def sr(self):
@@ -98,12 +100,11 @@ class TrendDetector(Term):
             covsirphy.TrendDetector: self
         """
         finder = _SRChange(sr_df=self._record_df)
-        points = finder.run(min_size=self._min_size)
-        self._points = sorted(set(self._points) | set(points))
+        self._points = finder.run(min_size=self._min_size)
         return self
 
-    def sr_show(self):
+    def sr_show(self, **kwargs):
         """
-        Show the trend in S-R plane.
+        Show the trend on S-R plane.
         """
         pass

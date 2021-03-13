@@ -6,6 +6,7 @@ from datetime import datetime, timedelta
 import math
 import numpy as np
 import pandas as pd
+import sklearn
 from covsirphy.util.error import deprecate
 
 
@@ -67,6 +68,7 @@ class Term(object):
     A = "_actual"
     P = "_predicted"
     ACTUAL = "Actual"
+    FITTED = "Fitted"
     # Phase name
     SUFFIX_DICT = defaultdict(lambda: "th")
     SUFFIX_DICT.update({1: "st", 2: "nd", 3: "rd"})
@@ -89,6 +91,14 @@ class Term(object):
     # Flag
     UNKNOWN = "-"
     OTHERS = "Others"
+    # Metrics
+    METRICS_DICT = {
+        "MAE": sklearn.metrics.mean_absolute_error,
+        "MSE": sklearn.metrics.mean_squared_error,
+        "MSLE": sklearn.metrics.mean_squared_log_error,
+        "RMSE": lambda x1, x2: sklearn.metrics.mean_squared_error(x1, x2, squared=False),
+        "RMSLE": lambda x1, x2: np.sqrt(sklearn.metrics.mean_squared_log_error(x1, x2)),
+    }
 
     @classmethod
     def num2str(cls, num):
@@ -127,7 +137,7 @@ class Term(object):
     @staticmethod
     def negative_exp(x, a, b):
         """
-        Negative exponential function f(x)=A exp(-Bx).
+        Negative exponential function f(x) = A exp(-Bx).
 
         Args:
             x (float): x values
@@ -142,7 +152,7 @@ class Term(object):
     @staticmethod
     def linear(x, a, b):
         """
-        Linear function f(x)=A x + b.
+        Linear function f(x) = A x + b.
 
         Args:
             x (float): x values

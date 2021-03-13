@@ -1,8 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-import numpy as np
-import sklearn
 from covsirphy.util.error import UnExecutedError
 from covsirphy.util.argument import find_args
 from covsirphy.util.term import Term
@@ -34,13 +32,6 @@ class ParamTracker(Term):
         area (str or None): area name, like Japan/Tokyo, or empty string
         tau (int or None): tau value [min]
     """
-    METRICS_DICT = {
-        "MAE": sklearn.metrics.mean_absolute_error,
-        "MSE": sklearn.metrics.mean_squared_error,
-        "MSLE": sklearn.metrics.mean_squared_log_error,
-        "RMSE": lambda x1, x2: sklearn.metrics.mean_squared_error(x1, x2, squared=False),
-        "RMSLE": lambda x1, x2: np.sqrt(sklearn.metrics.mean_squared_log_error(x1, x2)),
-    }
 
     def __init__(self, record_df, phase_series, area=None, tau=None):
         self.record_df = self._ensure_dataframe(

@@ -1,9 +1,13 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
+from datetime import timedelta
+import functools
+import warnings
 import numpy as np
 import pandas as pd
 import ruptures as rpt
+from scipy.optimize import curve_fit, OptimizeWarning
 from covsirphy.util.term import Term
 
 
@@ -23,10 +27,11 @@ class _SRChange(Term):
 
     def __init__(self, sr_df):
         self._ensure_dataframe(sr_df, name="sr_df", time_index=True, columns=[self.S, self.R])
-        # Index: Date, Columns: R, logS
+        # Index: Date, Columns: Recovered, Susceptible, logS
         self._sr_df = pd.DataFrame(
             {
-                "R": sr_df[self.R],
+                self.R: sr_df[self.R],
+                self.S: sr_df[self.S],
                 "logS": np.log10(sr_df[self.S].astype(np.float64)),
             }
         )
@@ -36,14 +41,14 @@ class _SRChange(Term):
         Run optimization and return the change points.
 
         Args:
-            min_size (int): minimum value of phase length [days]
+            min_size (int): minimum value of phase length [days], over 2
 
         Returns:
             list[pandas.Timestamp]: list of change points
         """
-        self._ensure_natural_int(min_size, name="min_size")
-        # Index: "R", Columns: logS
-        df = self._sr_df.pivot_table(index="R", values="logS", aggfunc="last")
+        self._ensure_int_range(min_size, name="min_size", value_range=(2, None))
+        # Index: Recovered, Columns: logS
+        df = self._sr_df.pivot_table(index=self.R, values="logS", aggfunc="last")
         df.index.name = None
         # Detect change points with Ruptures package: reset index + 1 values will be returned
         algorithm = rpt.KernelCPD(kernel="rbf", min_size=min_size)
@@ -55,3 +60,78 @@ class _SRChange(Term):
             logs_df.sort_values("logS"), self._sr_df.reset_index().sort_values("logS"),
             on="logS", direction="nearest")
         return merge_df[self.DATE].sort_values().tolist()
+
+    def _fitting_in_phase(self, start, end):
+        """
+        Perform curve fitting with the actual values in a phase on S-R plane.
+
+        Args:
+            start (pandas.Timestamp): start date of the phase
+            end (pandas.Timestamp): end date of the phase
+            func (function): function for fitting
+
+        Returns:
+            pandas.DataFrame:
+                Index
+                    Date (pandas.Timestamp): observation date
+                Columns
+                    Fitted (float): fitted values of Susceptible
+        """
+        # Actual values for the phase
+        df = self._sr_df.loc[start: end]
+        # Curve fitting
+        warnings.filterwarnings("ignore", category=OptimizeWarning)
+        warnings.filterwarnings("ignore", category=RuntimeWarning)
+        param, _ = curve_fit(self.linear, df[self.R], df["logS"], maxfev=10000)
+        # Get fitted values
+        f_partial = functools.partial(self.linear, a=param[0], b=param[1])
+        return pd.DataFrame({self.FITTED: 10 ** f_partial(df[self.R])}, index=df.index)
+
+    def _fitting(self, change_points):
+        """
+        Perform curve fitting with the actual values on S-R plane.
+
+        Args:
+            change_points (list[pandas.Timestamp]): list of change points
+
+        Returns:
+            pandas.DataFrame:
+                Index
+                    Date (pandas.Timestamp): observation date
+                Columns
+                    - Recovered (int): The number of recovered cases
+                    - Actual (int): actual values of Susceptible
+                    - 0th, 1st, 2nd,... (float or None): fitted values of Susceptible for phases
+        """
+        df = self._sr_df.copy()
+        # Start dates
+        start_points = [df.index.min(), *change_points]
+        # End dates
+        end_points = [point - timedelta(days=1) for point in change_points] + [df.index.max()]
+        # Phase names
+        phases = [self.num2str(num) for num in range(len(change_points) + 1)]
+        # Fitting
+        df = df.rename(columns={self.S: self.ACTUAL}).drop("logS", axis=1)
+        for (phase, start, end) in zip(phases, start_points, end_points):
+            phase_df = self._fitting_in_phase(start=start, end=end)
+            df = df.join(phase_df.rename(columns={self.FITTED: phase}), how="left")
+        return df.round(0)
+
+    def score(self, change_points):
+        """
+        Calculate RMSLE scores of the phases.
+
+        Args:
+            change_points (list[pandas.Timestamp]): list of change points
+
+        Returns:
+            list[float]: RMSLE scores
+        """
+        fit_df = self._fitting(change_points)
+        phases = [self.num2str(num) for num in range(len(change_points) + 1)]
+        score_f = self.METRICS_DICT["RMSLE"]
+        scores = []
+        for phase in phases:
+            df = fit_df[[self.ACTUAL, phase]].dropna()
+            scores.append(score_f(df[self.ACTUAL], df[phase]))
+        return scores
