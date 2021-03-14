@@ -116,8 +116,7 @@ class PolicyMeasures(Term):
         min_len = self._ensure_natural_int(min_len, name="min_len")
         for country in self._countries:
             try:
-                self.scenario_dict[country].trend(
-                    set_phases=True, show_figure=False)
+                self.scenario_dict[country].trend(set_phases=True, show_figure=False)
             except ValueError:
                 pass
         countries = [

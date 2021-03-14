@@ -40,7 +40,7 @@ from covsirphy.cleaning.linelist import LinelistData
 from covsirphy.cleaning.vaccine_data import VaccineData
 from covsirphy.cleaning.dataloader import DataLoader
 # trend
-from covsirphy.trend.trend_detector import TrendDetector
+from covsirphy.trend.trend_detector import TrendDetector, Trend, ChangeFinder
 from covsirphy.trend.trend_plot import TrendPlot, trend_plot, line_plot_multiple
 # ode
 from covsirphy.ode.mbase import ModelBase
@@ -53,8 +53,6 @@ from covsirphy.ode.sewirf import SEWIRF
 from covsirphy.simulation.estimator import Estimator
 from covsirphy.simulation.simulator import ODESimulator
 # phase
-from covsirphy.phase.trend import Trend
-from covsirphy.phase.sr_change import ChangeFinder
 from covsirphy.phase.phase_unit import PhaseUnit
 from covsirphy.phase.phase_series import PhaseSeries
 from covsirphy.phase.phase_estimator import MPEstimator
@@ -76,26 +74,31 @@ def get_version():
 
 
 __all__ = [
-    "ExampleData", "Scenario", "ModelValidator", "ParamTracker",
-    "ODESimulator", "ChangeFinder", "DataHandler",
-    "PhaseSeries", "PhaseUnit", "MPEstimator",
-    "Term", "CleaningBase", "DataLoader", "COVID19DataHub",
-    "JHUData", "CountryData", "PopulationData", "OxCGRTData", "VaccineData",
-    "PopulationPyramidData",
-    "LinelistData", "PCRData", "JapanData", "JHUDataComplementHandler",
-    "TrendDetector", "TrendPlot", "trend_plot",
-    "ModelBase", "SIR", "SIRD", "SIRF", "SEWIRF",
-    "Estimator", "Trend", "Optimizer",
-    "StopWatch", "deprecate", "find_args",
-    "save_dataframe",
-    "PolicyMeasures",
+    # util
+    "StopWatch", "deprecate", "find_args", "Term", "save_dataframe", "Optimizer",
     "SubsetNotFoundError", "ScenarioNotFoundError", "UnExecutedError",
     "PCRIncorrectPreconditionError", "NotInteractiveError",
     "UnExpectedValueError", "NotRegisteredMainError", "NotRegisteredExtraError",
-    "VisualizeBase", "ColoredMap",
-    "LinePlot", "line_plot", "BarPlot", "bar_plot",
+    # visualization
+    "VisualizeBase", "ColoredMap", "LinePlot", "line_plot", "BarPlot", "bar_plot",
+    # cleaning
+    "CleaningBase", "DataLoader", "COVID19DataHub",
+    "JHUData", "CountryData", "PopulationData", "OxCGRTData", "VaccineData",
+    "PopulationPyramidData", "LinelistData", "PCRData", "JapanData", "JHUDataComplementHandler",
+    # trend
+    "TrendDetector", "TrendPlot", "trend_plot",
+    # ode
+    "ModelBase", "SIR", "SIRD", "SIRF", "SEWIRF",
+    # simulation
+    "ODESimulator", "Estimator",
+    # phase
+    "PhaseSeries", "PhaseUnit", "MPEstimator",
+    # analysis
+    "ExampleData", "Scenario", "ModelValidator", "ParamTracker", "DataHandler",
+    # worldwide
+    "PolicyMeasures",
     # Deprecated
-    "Population", "Word", "jpn_map", "SIRFV", "line_plot_multiple",
+    "Population", "Word", "jpn_map", "SIRFV", "line_plot_multiple", "ChangeFinder", "Trend",
 ]
 
 # Show exceptions in better format if used from command line

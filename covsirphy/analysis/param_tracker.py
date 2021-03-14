@@ -4,9 +4,9 @@
 from covsirphy.util.error import UnExecutedError
 from covsirphy.util.argument import find_args
 from covsirphy.util.term import Term
+from covsirphy.trend.trend_detector import TrendDetector
 from covsirphy.trend.trend_plot import trend_plot
 from covsirphy.ode.mbase import ModelBase
-from covsirphy.phase.sr_change import ChangeFinder
 from covsirphy.phase.phase_unit import PhaseUnit
 from covsirphy.phase.phase_estimator import MPEstimator
 from covsirphy.phase.phase_series import PhaseSeries
@@ -81,18 +81,22 @@ class ParamTracker(Term):
         Args:
             force (bool): if True, change points will be over-written
             show_figure (bool): if True, show the result as a figure
-            kwargs: keyword arguments of covsirphy.ChangeFinder() and covsirphy.trend_plot()
+            kwargs: keyword arguments of covsirphy.TrendDetector() and covsirphy.trend_plot()
 
         Returns:
             covsirphy.PhaseSeries
         """
-        sr_df = self.record_df.set_index(self.DATE).loc[:, [self.R, self.S]]
+        detector = TrendDetector(
+            data=self.record_df, area=self.area, **find_args(TrendDetector, **kwargs))
+        # Perform S-R trend analysis
+        detector.sr()
+        # Register phases
         if force or not self._series:
-            trend_kwargs = find_args(ChangeFinder, **kwargs)
-            self._series.trend(sr_df=sr_df, **trend_kwargs)
+            _, end_dates = detector.dates()
+            [self._series.add(end_date=end_date) for end_date in end_dates]
+        # Show S-R plane
         if show_figure:
-            show_kwargs = find_args(trend_plot, **kwargs)
-            self._series.trend_show(sr_df=sr_df, area=self.area, **show_kwargs)
+            detector.show(**find_args(trend_plot, **kwargs))
         return self._series
 
     def _ensure_phase_setting(self):

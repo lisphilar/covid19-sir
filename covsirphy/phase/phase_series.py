@@ -3,9 +3,9 @@
 
 import numpy as np
 import pandas as pd
+from covsirphy.util.error import deprecate
 from covsirphy.util.term import Term
 from covsirphy.phase.phase_unit import PhaseUnit
-from covsirphy.phase.sr_change import ChangeFinder
 
 
 class PhaseSeries(Term):
@@ -335,63 +335,25 @@ class PhaseSeries(Term):
                     f"The list of units does not a series of phases. Applied: {s}")
         return sorted_units
 
-    def trend(self, sr_df, **kwargs):
+    @deprecate("PhaseSeries.trend()", new="covsirphy.TrendDetector()")
+    def trend(self, **kwargs):
         """
-        Perform S-R trend analysis.
+        This was deprecated. Please use covsirphy.TrendDetector class and .add() method of PhaseSeries.
 
-        Args:
-            sr_df (pandas.DataFrame): susceptible and recovered records
-
-                Index
-                    Date (pd.Timestamp): Observation date
-                Columns
-                    - Recovered (int): the number of recovered cases (> 0)
-                    - Susceptible (int): the number of susceptible cases
-                    - any other columns will be ignored
-            kwargs: keyword arguments of covsirphy.ChangeFinder()
-
-        Returns:
-            covsirphy.PhaseSeries: self
+        Raise:
+            NotImplementedError
         """
-        sta = self.date_obj(self.first_date)
-        end = self.date_obj(self.last_date)
-        sr_df = sr_df.loc[(sr_df.index >= sta) & (sr_df.index <= end), :]
-        # Find change points
-        finder = ChangeFinder(sr_df, **kwargs)
-        finder.run()
-        # Register phases
-        self.clear(include_past=True)
-        _, end_dates = finder.date_range()
-        [self.add(end_date=end_date) for end_date in end_dates]
-        return self
+        raise NotImplementedError
 
-    def trend_show(self, sr_df, area=None, **kwargs):
+    @deprecate("PhaseSeries.trend()", new="covsirphy.TrendDetector()")
+    def trend_show(self, **kwargs):
         """
-        Show S-R plane, indicating change points found with S-R trend analysis.
+        This was deprecated. Please use covsirphy.TrendDetector class.
 
-        Args:
-            sr_df (pandas.DataFrame): susceptible and recovered records
-
-                Index
-                    Date (pandas.TimeStamp): Observation date
-                Columns
-                    - Recovered (int): the number of recovered cases (> 0)
-                    - Susceptible (int): the number of susceptible cases
-                    - any other columns will be ignored
-            area (str or None): area name
-            kwargs: keyword arguments of covsirphy.trend_plot()
-
-        Returns:
-            covsirphy.PhaseSeries: self
+        Raise:
+            NotImplementedError
         """
-        area = area or self.UNKNOWN
-        sta = self.date_obj(self.first_date)
-        end = self.date_obj(self.last_date)
-        sr_df = sr_df.loc[(sr_df.index >= sta) & (sr_df.index <= end), :]
-        finder = ChangeFinder(sr_df)
-        change_dates = [
-            unit.start_date for unit in self._units[1:] if unit <= self.last_date]
-        finder.show(area=area, change_dates=change_dates, **kwargs)
+        raise NotImplementedError
 
     def simulate(self, record_df, y0_dict=None):
         """

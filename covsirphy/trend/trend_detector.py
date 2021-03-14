@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*-
 
 import pandas as pd
+from covsirphy.util.error import deprecate
 from covsirphy.util.term import Term
 from covsirphy.trend.sr_change import _SRChange
 
@@ -106,7 +107,7 @@ class TrendDetector(Term):
         self._points = sorted(set(self._points) | set(points))
         return self
 
-    def sr_show(self, **kwargs):
+    def show(self, **kwargs):
         """
         Show the trend on S-R plane.
 
@@ -115,3 +116,21 @@ class TrendDetector(Term):
         """
         finder = _SRChange(sr_df=self._record_df)
         finder.show(self._points, self._area, **kwargs)
+
+
+class Trend(TrendDetector):
+    """
+    Deprecated. Please use TrendDetector class.
+    """
+    @deprecate("covsirphy.Trend", new="covsirphy.TrendDetector")
+    def __init__(self, data, area, min_size):
+        super().__init__(data, area=area, min_size=min_size)
+
+
+class ChangeFinder(TrendDetector):
+    """
+    Deprecated. Please use TrendDetector class.
+    """
+    @deprecate("covsirphy.ChangeFinder", new="covsirphy.TrendDetector")
+    def __init__(self, data, area, min_size):
+        super().__init__(data, area=area, min_size=min_size)

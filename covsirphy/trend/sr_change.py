@@ -168,10 +168,3 @@ class _SRChange(Term):
         }
         plot_kwargs.update(kwargs)
         trend_plot(df=fit_df.set_index(self.R), actual_col=self.ACTUAL, **plot_kwargs)
-
-
-class Trend(object):
-    """
-    Deprecated. Please use TrendDetector class.
-    """
-    pass
