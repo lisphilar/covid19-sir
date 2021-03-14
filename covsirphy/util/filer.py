@@ -3,8 +3,10 @@
 
 from pathlib import Path
 import pandas as pd
+from covsirphy.util.error import deprecate
 
 
+@deprecate("covsirphy.save_dataframe", version="2.17.0-eta")
 def save_dataframe(df, filename, index=True):
     """
     Save dataframe as a CSV file.
