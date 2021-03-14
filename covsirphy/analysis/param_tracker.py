@@ -92,6 +92,7 @@ class ParamTracker(Term):
         detector.sr()
         # Register phases
         if force or not self._series:
+            self._series.clear(include_past=True)
             _, end_dates = detector.dates()
             [self._series.add(end_date=end_date) for end_date in end_dates]
         # Show S-R plane
