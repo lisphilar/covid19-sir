@@ -74,26 +74,21 @@ class TestPhaseSeries(object):
 
     @pytest.mark.parametrize("country", ["Japan"])
     def test_trend(self, jhu_data, population_data, country):
-        warnings.simplefilter("ignore", category=UserWarning)
-        warnings.simplefilter("ignore", category=DeprecationWarning)
-        # Setting
         population = population_data.value(country)
-        sr_df = jhu_data.to_sr(country=country, population=population)
         series = PhaseSeries("01Apr2020", "01Aug2020", population)
         # S-R trend analysis
-        series.trend(sr_df)
-        series.trend_show(sr_df=sr_df, area=None, filename=None)
-        # Un-registered phase
-        with pytest.raises(KeyError):
-            series.unit("100th")
+        warnings.filterwarnings("ignore", category=DeprecationWarning)
+        with pytest.raises(NotImplementedError):
+            series.trend()
+        with pytest.raises(NotImplementedError):
+            series.trend_show()
 
     @pytest.mark.parametrize("country", ["Japan"])
     def test_add_phase_with_model(self, jhu_data, population_data, country):
         # Setting
         population = population_data.value(country)
-        sr_df = jhu_data.to_sr(country=country, population=population)
         series = PhaseSeries("01Apr2020", "01Aug2020", population)
-        series.trend(sr_df)
+        series.add()
         # Add future phase with model and tau
         series.add(end_date="01Sep2020", model=SIR, tau=360)
         series.add(end_date="01Oct2020")
@@ -109,9 +104,13 @@ class TestPhaseSeries(object):
     def test_delete_phase(self, jhu_data, population_data, country):
         # Setting
         population = population_data.value(country)
-        sr_df = jhu_data.to_sr(country=country, population=population)
         series = PhaseSeries("01Apr2020", "01Aug2020", population)
-        series.trend(sr_df)
+        series.add(end_date="01May2020")
+        series.add(end_date="15May2020")
+        series.add(end_date="01Jun2020")
+        series.add(end_date="15Jun2020")
+        series.add(end_date="01Jul2020")
+        series.add(end_date="15Jul2020")
         first_len = len(series)
         # Deletion of 0th phase is the same as disabling 0th phase
         series.delete("0th")
