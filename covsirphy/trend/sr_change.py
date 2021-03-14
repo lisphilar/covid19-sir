@@ -147,7 +147,7 @@ class _SRChange(Term):
             kwargs: keyword arguments of covsirphy.trend_plot()
         """
         # Title
-        if len(change_points):
+        if change_points:
             _list = [date.strftime(self.DATE_FORMAT) for date in change_points]
             strings = [", ".join(_list[i: i + 6]) for i in range(0, len(_list), 6)]
             change_str = ",\n".join(strings)
