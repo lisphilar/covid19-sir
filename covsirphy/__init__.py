@@ -17,6 +17,7 @@ from covsirphy.util.error import PCRIncorrectPreconditionError, NotInteractiveEr
 from covsirphy.util.error import NotRegisteredMainError, NotRegisteredExtraError
 from covsirphy.util.filer import save_dataframe
 from covsirphy.util.argument import find_args
+from covsirphy.util.filer import Filer
 from covsirphy.util.term import Term, Word
 # visualization
 from covsirphy.visualization.vbase import VisualizeBase
@@ -74,7 +75,7 @@ def get_version():
 
 __all__ = [
     # util
-    "StopWatch", "deprecate", "find_args", "Term",
+    "StopWatch", "deprecate", "find_args", "Term", "Filer",
     "SubsetNotFoundError", "ScenarioNotFoundError", "UnExecutedError",
     "PCRIncorrectPreconditionError", "NotInteractiveError",
     "UnExpectedValueError", "NotRegisteredMainError", "NotRegisteredExtraError",
