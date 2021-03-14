@@ -18,6 +18,9 @@ class TestTrendDetector(object):
         # Too large min_size
         with pytest.raises(ValueError):
             TrendDetector(data=subset_df, min_size=100000)
+        # Reset
+        detector = TrendDetector(data=subset_df)
+        detector.reset()
 
     @pytest.mark.parametrize(
         "country",

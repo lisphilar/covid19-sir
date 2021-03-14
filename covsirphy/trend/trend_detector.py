@@ -42,7 +42,6 @@ class TrendDetector(Term):
         self._last_point = self._record_df.index.max()
         # Change points: list[pandas.Timestamp]
         self._points = []
-        self.reset()
 
     def reset(self):
         """
@@ -51,7 +50,7 @@ class TrendDetector(Term):
         Returns:
             covsirphy.TrendDetector: self
         """
-        self._points = [self._last_point]
+        self._points = []
         return self
 
     def dates(self):
@@ -100,7 +99,8 @@ class TrendDetector(Term):
             covsirphy.TrendDetector: self
         """
         finder = _SRChange(sr_df=self._record_df)
-        self._points = finder.run(min_size=self._min_size)
+        points = finder.run(min_size=self._min_size)
+        self._points = sorted(set(self._points) | set(points))
         return self
 
     def sr_show(self, **kwargs):
