@@ -1,109 +1,70 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-import functools
+"""
+When you use this file from the top directory of the repository with poetry, please run
+cd example; poetry run ./scenario_analysis.py; cd ../
+"""
+
 from pathlib import Path
-import warnings
 import covsirphy as cs
 
 
-def main():
-    warnings.simplefilter("error")
+def main(country="Italy", province=None, file_prefix="ita"):
+    """
+    Run scenario analysis template.
+
+    Args:
+        country (str): country name
+        pronvince (str or None): province name or None (country level)
+        file_prefix (str): prefix of the filenames
+    """
+    # This script works with version >= 2.17.0-eta
+    print(cs.get_version())
     # Create output directory in example directory
     code_path = Path(__file__)
     input_dir = code_path.parent.with_name("input")
     output_dir = code_path.with_name("output").joinpath(code_path.stem)
     output_dir.mkdir(exist_ok=True, parents=True)
+    filer = cs.Filer(output_dir, prefix=file_prefix, numbering="01")
     # Load datasets
     data_loader = cs.DataLoader(input_dir)
     jhu_data = data_loader.jhu()
     population_data = data_loader.population()
-    # Set country name
-    country = "Italy"
-    abbr = "ita"
-    figpath = functools.partial(
-        filepath, output_dir=output_dir, country=abbr, ext="jpg")
+    # Extra datasets
+    oxcgrt_data = data_loader.oxcgrt()
     # Start scenario analysis
-    snl = cs.Scenario(jhu_data, population_data, country, tau=120)
+    snl = cs.Scenario(country=country, province=province)
+    snl.register(jhu_data, population_data, extras=[oxcgrt_data])
     # Show records
-    record_df = snl.records(filename=figpath("records"))
-    save_df(record_df, "records", output_dir, abbr, use_index=False)
-    # Daily new cases
-    snl.records_diff(filename=figpath("records_diff"))
+    record_df = snl.records(**filer.png("records"))
+    record_df.to_csv(**filer.csv("records", index=False))
     # Show S-R trend
-    snl.trend(filename=figpath("trend"))
+    snl.trend(**filer.png("trend"))
     print(snl.summary())
     # Parameter estimation
     snl.estimate(cs.SIRF)
-    # Show the history of optimization
-    snl.estimate_history(phase="1st", filename=figpath("estimate_history_1st"))
-    # Show the accuracy as a figure
-    df = snl.summary()
-    for phase in df.index:
-        snl.estimate_accuracy(
-            phase=phase, filename=figpath(f"estimate_accuracy_{phase}")
-        )
-    # Add future phase to main scenario
-    snl.add(name="Main", end_date="31Mar2021")
-    snl.add(name="Main", days=100)
-    # Add future phase to alternative scenario
-    sigma_4th = snl.get("sigma", phase="last")
-    sigma_6th = sigma_4th * 2
-    snl.clear(name="Medicine", template="Main")
-    snl.add(name="Medicine", end_date="31Mar2021")
-    snl.add(name="Medicine", days=100, sigma=sigma_6th)
-    # Simulation of the number of cases
-    sim_df = snl.simulate(name="Main", filename=figpath("simulate"))
-    save_df(sim_df, "simulate", output_dir, abbr, use_index=False)
-    # Summary
-    summary_df = snl.summary()
-    save_df(summary_df, "summary", output_dir, abbr, use_index=True)
-    # Description of scenarios
-    desc_df = snl.describe()
-    save_df(desc_df, "describe", output_dir, abbr, use_index=True)
-    # Tracking for main scenario
-    track_df = snl.track()
-    save_df(track_df, "track", output_dir, abbr, use_index=True)
-    # Compare scenarios
-    for item in ["Rt", "rho", "sigma", "Infected"]:
-        snl.history(item, filename=figpath(f"history_{item.lower()}"))
-    # Change rate of parameters in main scenario
-    snl.history_rate(name="Main", filename=figpath("history_rate"))
-    # Score of main scenario
+    # Score of parameter estimation
     metrics_list = ["MAE", "MSE", "MSLE", "RMSE", "RMSLE"]
     for metrics in metrics_list:
         metrics_name = metrics.rjust(len(max(metrics_list, key=len)))
         print(f"{metrics_name}: {snl.score(metrics=metrics)}")
-
-
-def filepath(name, output_dir, country, ext="jpg"):
-    """
-    Return filepath of a figure.
-
-    Args:
-        name (str): name of the figure
-        output_dir (pathlib.Path): path of the directory to save the figure
-        country (str): country name or abbr
-        ext (str, optional): Extension of the output file. Defaults to "jpg".
-
-    Returns:
-        pathlib.Path: filepath of the output file
-    """
-    return output_dir.joinpath(f"{country}_{name}.{ext}")
-
-
-def save_df(df, name, output_dir, country, use_index=True):
-    """
-    Save the dataframe as a CSV file.
-
-    Args:
-        df (pandas.DataFrame): dataframe
-        name (str): name of the dataframe
-        output_dir (pathlib.Path): path of the directory to save the figure
-        country (str): country name or abbr
-        use_index (bool): if True, include index
-    """
-    df.to_csv(output_dir.joinpath(f"{name}.csv"), index=use_index)
+    # Reproduction number in past phases
+    snl.history("Rt", **filer.png("history_rt_past"))
+    # Main scenario: parameters not changed
+    snl.add(name="Main", end_date="31May2021")
+    snl.simulate(name="Main", **filer.png("simulate_main"))
+    snl.history_rate(name="Main", **filer.png("history-rate_main"))
+    # Forecast scenario: Short-term prediction with regression and OxCGRT data
+    snl.fit_predict(name="Forecast")
+    snl.add(name="Forecast", end_date="31May2021")
+    snl.simulate(name="Forecast", **filer.png("simulate_forecast"))
+    snl.history_rate(name="Main", **filer.png("history-rate_forecast"))
+    # Parameter history
+    for item in ["Rt", "rho", "sigma", "Confirmed", "Infected", "Recovered", "Fatal"]:
+        snl.history(item, **filer.png(f"history_{item}"))
+    # Summary
+    snl.summary().to_csv(**filer.csv("summary", index=True))
 
 
 if __name__ == "__main__":
