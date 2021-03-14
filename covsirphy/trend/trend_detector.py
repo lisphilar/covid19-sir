@@ -122,8 +122,8 @@ class Trend(TrendDetector):
     """
     Deprecated. Please use TrendDetector class.
     """
-    @deprecate("covsirphy.Trend", new="covsirphy.TrendDetector")
-    def __init__(self, data, area, min_size):
+    @deprecate("covsirphy.Trend", new="covsirphy.TrendDetector", version="2.17.0-zeta")
+    def __init__(self, data, area="Selected area", min_size=5):
         super().__init__(data, area=area, min_size=min_size)
 
 
@@ -131,6 +131,6 @@ class ChangeFinder(TrendDetector):
     """
     Deprecated. Please use TrendDetector class.
     """
-    @deprecate("covsirphy.ChangeFinder", new="covsirphy.TrendDetector")
-    def __init__(self, data, area, min_size):
+    @deprecate("covsirphy.ChangeFinder", new="covsirphy.TrendDetector", version="2.17.0-zeta")
+    def __init__(self, data, area="Selected area", min_size=5):
         super().__init__(data, area=area, min_size=min_size)

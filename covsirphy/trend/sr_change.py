@@ -160,7 +160,6 @@ class _SRChange(Term):
         fit_df = fit_df.rename(columns={"0th": self.INITIAL})
         plot_kwargs = {
             "title": title,
-            "predicted_col": None,
             "xlabel": self.R,
             "ylabel": self.S,
             "show_legend": True,
