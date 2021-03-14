@@ -273,6 +273,7 @@ class JHUData(CleaningBase):
                 start_date=start_date, end_date=end_date, message="with 'Recovered > 0'") from None
         return df
 
+    @deprecate("JHUData.to_sr()")
     def to_sr(self, country, province=None,
               start_date=None, end_date=None, population=None):
         """
