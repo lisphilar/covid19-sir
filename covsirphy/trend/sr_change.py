@@ -51,7 +51,7 @@ class _SRChange(Term):
         df = self._sr_df.pivot_table(index=self.R, values="logS", aggfunc="last")
         df.index.name = None
         # Detect change points with Ruptures package: reset index + 1 values will be returned
-        algorithm = rpt.KernelCPD(kernel="rbf", min_size=min_size)
+        algorithm = rpt.Pelt(model="rbf", jump=1, min_size=min_size)
         results = algorithm.fit_predict(df.iloc[:, 0].to_numpy(), pen=0.5)[:-1]
         # Convert reset index + 1 values to logS
         logs_df = df.iloc[[result - 1 for result in results]]
