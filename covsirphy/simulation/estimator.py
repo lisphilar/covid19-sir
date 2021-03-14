@@ -10,6 +10,7 @@ import optuna
 import pandas as pd
 import seaborn as sns
 from sklearn.metrics import mean_squared_log_error
+from covsirphy.util.error import deprecate
 from covsirphy.util.stopwatch import StopWatch
 from covsirphy.util.term import Term
 from covsirphy.ode.mbase import ModelBase
@@ -461,3 +462,12 @@ class Estimator(Term):
         plt.savefig(filename, bbox_inches="tight", transparent=False, dpi=300)
         plt.clf()
         return df
+
+
+class Optimizer(Estimator):
+    """
+    This is deprecated. Please use Estimator class.
+    """
+    @deprecate("covsirphy.Estimator()", new="covsirphy.Estimator", version="2.17.0-eta")
+    def __init__(self, record_df, model, population, tau=None, **kwargs):
+        super().__init__(record_df, model, population, tau=tau, **kwargs)

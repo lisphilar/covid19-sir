@@ -5,7 +5,6 @@ from pathlib import Path
 import warnings
 import covid19dh
 import pandas as pd
-from covsirphy.util.file import save_dataframe
 from covsirphy.util.term import Term
 from covsirphy.cleaning.jhu_data import JHUData
 from covsirphy.cleaning.oxcgrt import OxCGRTData
@@ -63,7 +62,7 @@ class COVID19DataHub(Term):
             self.filepath.unlink()
         if not self.filepath.exists():
             raw_df = self._retrieve(verbose=verbose)
-            save_dataframe(raw_df, self.filepath, index=False)
+            raw_df.to_csv(self.filepath, index=False)
         if name not in self.OBJ_DICT:
             raise KeyError(
                 f"@name must be {', '.join(list(self.OBJ_DICT.keys()))}, but {name} was applied.")

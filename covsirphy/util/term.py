@@ -6,7 +6,7 @@ from datetime import datetime, timedelta
 import math
 import numpy as np
 import pandas as pd
-import sklearn
+import sklearn.metrics
 from covsirphy.util.error import deprecate
 
 
