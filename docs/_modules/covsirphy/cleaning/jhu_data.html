@@ -65,7 +65,7 @@
             
             
               <div class="version">
-                2.17.0-epsilon
+                2.17.0-eta
               </div>
             
           
@@ -219,7 +219,7 @@
 <span class="sd">                Index</span>
 <span class="sd">                    reset index</span>
 <span class="sd">                Columns</span>
-<span class="sd">                    - Date (pd.TimeStamp): Observation date</span>
+<span class="sd">                    - Date (pd.Timestamp): Observation date</span>
 <span class="sd">                    - Country (pandas.Category): country/region name</span>
 <span class="sd">                    - Province (pandas.Category): province/prefecture/state name</span>
 <span class="sd">                    - Confirmed (int): the number of confirmed cases</span>
@@ -245,7 +245,7 @@
 <span class="sd">                Index</span>
 <span class="sd">                    reset index</span>
 <span class="sd">                Columns</span>
-<span class="sd">                    - Date (pd.TimeStamp): Observation date</span>
+<span class="sd">                    - Date (pd.Timestamp): Observation date</span>
 <span class="sd">                    - ISO3 (str): ISO3 code</span>
 <span class="sd">                    - Country (pandas.Category): country/region name</span>
 <span class="sd">                    - Province (pandas.Category): province/prefecture/state name</span>
@@ -354,7 +354,7 @@
 <span class="sd">                Index</span>
 <span class="sd">                    reset index</span>
 <span class="sd">                Columns</span>
-<span class="sd">                    - Date (pd.TimeStamp): Observation date</span>
+<span class="sd">                    - Date (pd.Timestamp): Observation date</span>
 <span class="sd">                    - Confirmed (int): the number of confirmed cases</span>
 <span class="sd">                    - Infected (int): the number of currently infected cases</span>
 <span class="sd">                    - Fatal (int): the number of fatal cases</span>
@@ -375,7 +375,7 @@
 <span class="sd">                Index</span>
 <span class="sd">                    reset index</span>
 <span class="sd">                Columns</span>
-<span class="sd">                    - Date (pd.TimeStamp): Observation date</span>
+<span class="sd">                    - Date (pd.Timestamp): Observation date</span>
 <span class="sd">                    - Confirmed (int): the number of confirmed cases</span>
 <span class="sd">                    - Infected (int): the number of currently infected cases</span>
 <span class="sd">                    - Fatal (int): the number of fatal cases</span>
@@ -387,7 +387,7 @@
 <span class="sd">                Index</span>
 <span class="sd">                    reset index</span>
 <span class="sd">                Columns</span>
-<span class="sd">                    - Date (pd.TimeStamp): Observation date</span>
+<span class="sd">                    - Date (pd.Timestamp): Observation date</span>
 <span class="sd">                    - Confirmed (int): the number of confirmed cases</span>
 <span class="sd">                    - Infected (int): the number of currently infected cases</span>
 <span class="sd">                    - Fatal (int): the number of fatal cases</span>
@@ -418,7 +418,7 @@
 <span class="sd">                Index</span>
 <span class="sd">                    reset index</span>
 <span class="sd">                Columns</span>
-<span class="sd">                    - Date (pd.TimeStamp): Observation date</span>
+<span class="sd">                    - Date (pd.Timestamp): Observation date</span>
 <span class="sd">                    - Confirmed (int): the number of confirmed cases</span>
 <span class="sd">                    - Infected (int): the number of currently infected cases</span>
 <span class="sd">                    - Fatal (int): the number of fatal cases</span>
@@ -446,7 +446,8 @@
                 <span class="n">start_date</span><span class="o">=</span><span class="n">start_date</span><span class="p">,</span> <span class="n">end_date</span><span class="o">=</span><span class="n">end_date</span><span class="p">,</span> <span class="n">message</span><span class="o">=</span><span class="s2">&quot;with &#39;Recovered &gt; 0&#39;&quot;</span><span class="p">)</span> <span class="kn">from</span> <span class="bp">None</span>
         <span class="k">return</span> <span class="n">df</span></div>
 
-<div class="viewcode-block" id="JHUData.to_sr"><a class="viewcode-back" href="../../../covsirphy.cleaning.html#covsirphy.JHUData.to_sr">[docs]</a>    <span class="k">def</span> <span class="nf">to_sr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">country</span><span class="p">,</span> <span class="n">province</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="nd">@deprecate</span><span class="p">(</span><span class="s2">&quot;JHUData.to_sr()&quot;</span><span class="p">,</span> <span class="n">version</span><span class="o">=</span><span class="s2">&quot;2.17.0-zeta&quot;</span><span class="p">)</span>
+    <span class="k">def</span> <span class="nf">to_sr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">country</span><span class="p">,</span> <span class="n">province</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
               <span class="n">start_date</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">end_date</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">population</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Create Susceptible/Recovered dataset without complement.</span>
@@ -461,7 +462,7 @@
 <span class="sd">        Returns:</span>
 <span class="sd">            pandas.DataFrame</span>
 <span class="sd">                Index</span>
-<span class="sd">                    Date (pd.TimeStamp): Observation date</span>
+<span class="sd">                    Date (pd.Timestamp): Observation date</span>
 <span class="sd">                Columns</span>
 <span class="sd">                    - Recovered (int): the number of recovered cases (&gt; 0)</span>
 <span class="sd">                    - Susceptible (int): the number of susceptible cases</span>
@@ -474,7 +475,7 @@
         <span class="n">subset_df</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">subset</span><span class="p">(</span>
             <span class="n">country</span><span class="o">=</span><span class="n">country</span><span class="p">,</span> <span class="n">province</span><span class="o">=</span><span class="n">province</span><span class="p">,</span>
             <span class="n">start_date</span><span class="o">=</span><span class="n">start_date</span><span class="p">,</span> <span class="n">end_date</span><span class="o">=</span><span class="n">end_date</span><span class="p">,</span> <span class="n">population</span><span class="o">=</span><span class="n">population</span><span class="p">)</span>
-        <span class="k">return</span> <span class="n">subset_df</span><span class="o">.</span><span class="n">set_index</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">DATE</span><span class="p">)</span><span class="o">.</span><span class="n">loc</span><span class="p">[:,</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">R</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">S</span><span class="p">]]</span></div>
+        <span class="k">return</span> <span class="n">subset_df</span><span class="o">.</span><span class="n">set_index</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">DATE</span><span class="p">)</span><span class="o">.</span><span class="n">loc</span><span class="p">[:,</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">R</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">S</span><span class="p">]]</span>
 
 <div class="viewcode-block" id="JHUData.from_dataframe"><a class="viewcode-back" href="../../../covsirphy.cleaning.html#covsirphy.JHUData.from_dataframe">[docs]</a>    <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">from_dataframe</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">dataframe</span><span class="p">,</span> <span class="n">directory</span><span class="o">=</span><span class="s2">&quot;input&quot;</span><span class="p">):</span>
@@ -680,7 +681,7 @@
 <span class="sd">                    Index</span>
 <span class="sd">                        reset index</span>
 <span class="sd">                    Columns</span>
-<span class="sd">                        - Date(pd.TimeStamp): Observation date</span>
+<span class="sd">                        - Date(pd.Timestamp): Observation date</span>
 <span class="sd">                        - Confirmed(int): the number of confirmed cases</span>
 <span class="sd">                        - Infected(int): the number of currently infected cases</span>
 <span class="sd">                        - Fatal(int): the number of fatal cases</span>
@@ -737,7 +738,7 @@
 <span class="sd">                    Index</span>
 <span class="sd">                        reset index</span>
 <span class="sd">                    Columns</span>
-<span class="sd">                        - Date(pd.TimeStamp): Observation date</span>
+<span class="sd">                        - Date(pd.Timestamp): Observation date</span>
 <span class="sd">                        - Confirmed(int): the number of confirmed cases</span>
 <span class="sd">                        - Infected(int): the number of currently infected cases</span>
 <span class="sd">                        - Fatal(int): the number of fatal cases</span>

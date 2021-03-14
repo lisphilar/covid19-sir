@@ -65,7 +65,7 @@
             
             
               <div class="version">
-                2.17.0-epsilon
+                2.17.0-eta
               </div>
             
           
@@ -174,14 +174,12 @@
 <span></span><span class="ch">#!/usr/bin/env python</span>
 <span class="c1"># -*- coding: utf-8 -*-</span>
 
-<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
-<span class="kn">import</span> <span class="nn">sklearn</span>
 <span class="kn">from</span> <span class="nn">covsirphy.util.error</span> <span class="kn">import</span> <span class="n">UnExecutedError</span>
 <span class="kn">from</span> <span class="nn">covsirphy.util.argument</span> <span class="kn">import</span> <span class="n">find_args</span>
 <span class="kn">from</span> <span class="nn">covsirphy.util.term</span> <span class="kn">import</span> <span class="n">Term</span>
-<span class="kn">from</span> <span class="nn">covsirphy.visualization.trend_plot</span> <span class="kn">import</span> <span class="n">trend_plot</span>
+<span class="kn">from</span> <span class="nn">covsirphy.trend.trend_detector</span> <span class="kn">import</span> <span class="n">TrendDetector</span>
+<span class="kn">from</span> <span class="nn">covsirphy.trend.trend_plot</span> <span class="kn">import</span> <span class="n">trend_plot</span>
 <span class="kn">from</span> <span class="nn">covsirphy.ode.mbase</span> <span class="kn">import</span> <span class="n">ModelBase</span>
-<span class="kn">from</span> <span class="nn">covsirphy.phase.sr_change</span> <span class="kn">import</span> <span class="n">ChangeFinder</span>
 <span class="kn">from</span> <span class="nn">covsirphy.phase.phase_unit</span> <span class="kn">import</span> <span class="n">PhaseUnit</span>
 <span class="kn">from</span> <span class="nn">covsirphy.phase.phase_estimator</span> <span class="kn">import</span> <span class="n">MPEstimator</span>
 <span class="kn">from</span> <span class="nn">covsirphy.phase.phase_series</span> <span class="kn">import</span> <span class="n">PhaseSeries</span>
@@ -207,13 +205,6 @@
 <span class="sd">        area (str or None): area name, like Japan/Tokyo, or empty string</span>
 <span class="sd">        tau (int or None): tau value [min]</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">METRICS_DICT</span> <span class="o">=</span> <span class="p">{</span>
-        <span class="s2">&quot;MAE&quot;</span><span class="p">:</span> <span class="n">sklearn</span><span class="o">.</span><span class="n">metrics</span><span class="o">.</span><span class="n">mean_absolute_error</span><span class="p">,</span>
-        <span class="s2">&quot;MSE&quot;</span><span class="p">:</span> <span class="n">sklearn</span><span class="o">.</span><span class="n">metrics</span><span class="o">.</span><span class="n">mean_squared_error</span><span class="p">,</span>
-        <span class="s2">&quot;MSLE&quot;</span><span class="p">:</span> <span class="n">sklearn</span><span class="o">.</span><span class="n">metrics</span><span class="o">.</span><span class="n">mean_squared_log_error</span><span class="p">,</span>
-        <span class="s2">&quot;RMSE&quot;</span><span class="p">:</span> <span class="k">lambda</span> <span class="n">x1</span><span class="p">,</span> <span class="n">x2</span><span class="p">:</span> <span class="n">sklearn</span><span class="o">.</span><span class="n">metrics</span><span class="o">.</span><span class="n">mean_squared_error</span><span class="p">(</span><span class="n">x1</span><span class="p">,</span> <span class="n">x2</span><span class="p">,</span> <span class="n">squared</span><span class="o">=</span><span class="kc">False</span><span class="p">),</span>
-        <span class="s2">&quot;RMSLE&quot;</span><span class="p">:</span> <span class="k">lambda</span> <span class="n">x1</span><span class="p">,</span> <span class="n">x2</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">sklearn</span><span class="o">.</span><span class="n">metrics</span><span class="o">.</span><span class="n">mean_squared_log_error</span><span class="p">(</span><span class="n">x1</span><span class="p">,</span> <span class="n">x2</span><span class="p">)),</span>
-    <span class="p">}</span>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">record_df</span><span class="p">,</span> <span class="n">phase_series</span><span class="p">,</span> <span class="n">area</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">tau</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">record_df</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ensure_dataframe</span><span class="p">(</span>
@@ -263,18 +254,23 @@
 <span class="sd">        Args:</span>
 <span class="sd">            force (bool): if True, change points will be over-written</span>
 <span class="sd">            show_figure (bool): if True, show the result as a figure</span>
-<span class="sd">            kwargs: keyword arguments of covsirphy.ChangeFinder() and covsirphy.trend_plot()</span>
+<span class="sd">            kwargs: keyword arguments of covsirphy.TrendDetector() and covsirphy.trend_plot()</span>
 
 <span class="sd">        Returns:</span>
 <span class="sd">            covsirphy.PhaseSeries</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">sr_df</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">record_df</span><span class="o">.</span><span class="n">set_index</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">DATE</span><span class="p">)</span><span class="o">.</span><span class="n">loc</span><span class="p">[:,</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">R</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">S</span><span class="p">]]</span>
+        <span class="n">detector</span> <span class="o">=</span> <span class="n">TrendDetector</span><span class="p">(</span>
+            <span class="n">data</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">record_df</span><span class="p">,</span> <span class="n">area</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">area</span><span class="p">,</span> <span class="o">**</span><span class="n">find_args</span><span class="p">(</span><span class="n">TrendDetector</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">))</span>
+        <span class="c1"># Perform S-R trend analysis</span>
+        <span class="n">detector</span><span class="o">.</span><span class="n">sr</span><span class="p">()</span>
+        <span class="c1"># Register phases</span>
         <span class="k">if</span> <span class="n">force</span> <span class="ow">or</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_series</span><span class="p">:</span>
-            <span class="n">trend_kwargs</span> <span class="o">=</span> <span class="n">find_args</span><span class="p">(</span><span class="n">ChangeFinder</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_series</span><span class="o">.</span><span class="n">trend</span><span class="p">(</span><span class="n">sr_df</span><span class="o">=</span><span class="n">sr_df</span><span class="p">,</span> <span class="o">**</span><span class="n">trend_kwargs</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_series</span><span class="o">.</span><span class="n">clear</span><span class="p">(</span><span class="n">include_past</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+            <span class="n">_</span><span class="p">,</span> <span class="n">end_dates</span> <span class="o">=</span> <span class="n">detector</span><span class="o">.</span><span class="n">dates</span><span class="p">()</span>
+            <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_series</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">end_date</span><span class="o">=</span><span class="n">end_date</span><span class="p">)</span> <span class="k">for</span> <span class="n">end_date</span> <span class="ow">in</span> <span class="n">end_dates</span><span class="p">]</span>
+        <span class="c1"># Show S-R plane</span>
         <span class="k">if</span> <span class="n">show_figure</span><span class="p">:</span>
-            <span class="n">show_kwargs</span> <span class="o">=</span> <span class="n">find_args</span><span class="p">(</span><span class="n">trend_plot</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_series</span><span class="o">.</span><span class="n">trend_show</span><span class="p">(</span><span class="n">sr_df</span><span class="o">=</span><span class="n">sr_df</span><span class="p">,</span> <span class="n">area</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">area</span><span class="p">,</span> <span class="o">**</span><span class="n">show_kwargs</span><span class="p">)</span>
+            <span class="n">detector</span><span class="o">.</span><span class="n">show</span><span class="p">(</span><span class="o">**</span><span class="n">find_args</span><span class="p">(</span><span class="n">trend_plot</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">))</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_series</span></div>
 
     <span class="k">def</span> <span class="nf">_ensure_phase_setting</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
@@ -612,7 +608,7 @@
 <span class="sd">                Index</span>
 <span class="sd">                    reset index</span>
 <span class="sd">                Columns</span>
-<span class="sd">                    - Date (pd.TimeStamp): Observation date</span>
+<span class="sd">                    - Date (pd.Timestamp): Observation date</span>
 <span class="sd">                    - Country (str): country/region name</span>
 <span class="sd">                    - Province (str): province/prefecture/state name</span>
 <span class="sd">                    - Variables of the model and dataset (int): Confirmed etc.</span>
@@ -634,10 +630,10 @@
 <span class="sd">        Returns:</span>
 <span class="sd">            tuple(pandas.DataFrame, pandas.DataFrame):</span>
 <span class="sd">                - actual (pandas.DataFrame):</span>
-<span class="sd">                    Index Date (pd.TimeStamp)</span>
+<span class="sd">                    Index Date (pd.Timestamp)</span>
 <span class="sd">                    Columns variables defined by @variables</span>
 <span class="sd">                - simulated (pandas.DataFrame):</span>
-<span class="sd">                    Index Date (pd.TimeStamp)</span>
+<span class="sd">                    Index Date (pd.Timestamp)</span>
 <span class="sd">                    Columns variables defined by @variables</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">record_df</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">record_df</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span><span class="o">.</span><span class="n">set_index</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">DATE</span><span class="p">)</span>

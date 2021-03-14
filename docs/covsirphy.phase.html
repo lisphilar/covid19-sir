@@ -67,7 +67,7 @@
             
             
               <div class="version">
-                2.17.0-epsilon
+                2.17.0-eta
               </div>
             
           
@@ -112,11 +112,10 @@
 <li class="toctree-l4"><a class="reference internal" href="#module-covsirphy.phase.phase_estimator">covsirphy.phase.phase_estimator module</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#module-covsirphy.phase.phase_series">covsirphy.phase.phase_series module</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#module-covsirphy.phase.phase_unit">covsirphy.phase.phase_unit module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#module-covsirphy.phase.sr_change">covsirphy.phase.sr_change module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#module-covsirphy.phase.trend">covsirphy.phase.trend module</a></li>
 </ul>
 </li>
 <li class="toctree-l3"><a class="reference internal" href="covsirphy.simulation.html">covsirphy.simulation package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="covsirphy.trend.html">covsirphy.trend package</a></li>
 <li class="toctree-l3"><a class="reference internal" href="covsirphy.util.html">covsirphy.util package</a></li>
 <li class="toctree-l3"><a class="reference internal" href="covsirphy.visualization.html">covsirphy.visualization package</a></li>
 <li class="toctree-l3"><a class="reference internal" href="covsirphy.worldwide.html">covsirphy.worldwide package</a></li>
@@ -243,7 +242,7 @@
 <dt>Index</dt><dd><p>reset index</p>
 </dd>
 <dt>Columns</dt><dd><ul>
-<li><p>Date (pd.TimeStamp): Observation date</p></li>
+<li><p>Date (pd.Timestamp): Observation date</p></li>
 <li><p>Confirmed (int): the number of confirmed cases</p></li>
 <li><p>Infected (int): the number of currently infected cases</p></li>
 <li><p>Fatal (int): the number of fatal cases</p></li>
@@ -485,7 +484,7 @@ If &#64;phase is not None, the phase will be deleted.
 <dt>Index</dt><dd><p>reset index</p>
 </dd>
 <dt>Columns</dt><dd><ul>
-<li><p>Date (pd.TimeStamp): Observation date</p></li>
+<li><p>Date (pd.Timestamp): Observation date</p></li>
 <li><p>Confirmed (int): the number of confirmed cases</p></li>
 <li><p>Infected (int): the number of currently infected cases</p></li>
 <li><p>Fatal (int): the number of fatal cases</p></li>
@@ -506,7 +505,7 @@ If &#64;phase is not None, the phase will be deleted.
 <dt>Index</dt><dd><p>reset index</p>
 </dd>
 <dt>Columns</dt><dd><ul class="simple">
-<li><p>Date (pd.TimeStamp): Observation date</p></li>
+<li><p>Date (pd.Timestamp): Observation date</p></li>
 <li><p>Country (str): country/region name</p></li>
 <li><p>Province (str): province/prefecture/state name</p></li>
 <li><p>Variables of the model and dataset (int): Confirmed etc.</p></li>
@@ -578,66 +577,13 @@ If &#64;phase is not None, the phase will be deleted.
 
 <dl class="py method">
 <dt id="covsirphy.phase.phase_series.PhaseSeries.trend">
-<code class="sig-name descname"><span class="pre">trend</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sr_df</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/phase/phase_series.html#PhaseSeries.trend"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#covsirphy.phase.phase_series.PhaseSeries.trend" title="Permalink to this definition">¶</a></dt>
-<dd><p>Perform S-R trend analysis.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>sr_df</strong> (<em>pandas.DataFrame</em>) – <p>susceptible and recovered records</p>
-<dl class="simple">
-<dt>Index</dt><dd><p>Date (pd.TimeStamp): Observation date</p>
-</dd>
-<dt>Columns</dt><dd><ul>
-<li><p>Recovered (int): the number of recovered cases (&gt; 0)</p></li>
-<li><p>Susceptible (int): the number of susceptible cases</p></li>
-<li><p>any other columns will be ignored</p></li>
-</ul>
-</dd>
-</dl>
-</p></li>
-<li><p><strong>kwargs</strong> – keyword arguments of covsirphy.ChangeFinder()</p></li>
-</ul>
-</dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p>self</p>
-</dd>
-<dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p><a class="reference internal" href="covsirphy.html#covsirphy.PhaseSeries" title="covsirphy.PhaseSeries">covsirphy.PhaseSeries</a></p>
-</dd>
-</dl>
-</dd></dl>
+<code class="sig-name descname"><span class="pre">trend</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#covsirphy.phase.phase_series.PhaseSeries.trend" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
 
 <dl class="py method">
 <dt id="covsirphy.phase.phase_series.PhaseSeries.trend_show">
-<code class="sig-name descname"><span class="pre">trend_show</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sr_df</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">area</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/phase/phase_series.html#PhaseSeries.trend_show"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#covsirphy.phase.phase_series.PhaseSeries.trend_show" title="Permalink to this definition">¶</a></dt>
-<dd><p>Show S-R plane, indicating change points found with S-R trend analysis.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>sr_df</strong> (<em>pandas.DataFrame</em>) – <p>susceptible and recovered records</p>
-<dl class="simple">
-<dt>Index</dt><dd><p>Date (pandas.TimeStamp): Observation date</p>
-</dd>
-<dt>Columns</dt><dd><ul>
-<li><p>Recovered (int): the number of recovered cases (&gt; 0)</p></li>
-<li><p>Susceptible (int): the number of susceptible cases</p></li>
-<li><p>any other columns will be ignored</p></li>
-</ul>
-</dd>
-</dl>
-</p></li>
-<li><p><strong>area</strong> (<em>str</em><em> or </em><em>None</em>) – area name</p></li>
-<li><p><strong>kwargs</strong> – keyword arguments of covsirphy.trend_plot()</p></li>
-</ul>
-</dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p>self</p>
-</dd>
-<dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p><a class="reference internal" href="covsirphy.html#covsirphy.PhaseSeries" title="covsirphy.PhaseSeries">covsirphy.PhaseSeries</a></p>
-</dd>
-</dl>
-</dd></dl>
+<code class="sig-name descname"><span class="pre">trend_show</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#covsirphy.phase.phase_series.PhaseSeries.trend_show" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
 
 <dl class="py method">
 <dt id="covsirphy.phase.phase_series.PhaseSeries.unit">
@@ -780,7 +726,7 @@ with the start/end dates are the previous date of the first date and initial pop
 <dt>Index</dt><dd><p>reset index</p>
 </dd>
 <dt>Columns</dt><dd><ul>
-<li><p>Date (pd.TimeStamp): Observation date</p></li>
+<li><p>Date (pd.Timestamp): Observation date</p></li>
 <li><p>Confirmed (int): the number of confirmed cases</p></li>
 <li><p>Infected (int): the number of currently infected cases</p></li>
 <li><p>Fatal (int): the number of fatal cases</p></li>
@@ -852,7 +798,7 @@ with the start/end dates are the previous date of the first date and initial pop
 <dt>Index</dt><dd><p>reset index</p>
 </dd>
 <dt>Columns</dt><dd><ul class="simple">
-<li><p>Date (pd.TimeStamp): Observation date</p></li>
+<li><p>Date (pd.Timestamp): Observation date</p></li>
 <li><p>Confirmed (int): the number of confirmed cases</p></li>
 <li><p>Infected (int): the number of currently infected cases</p></li>
 <li><p>Fatal (int): the number of fatal cases</p></li>
@@ -916,7 +862,7 @@ with the start/end dates are the previous date of the first date and initial pop
 <dt>Index</dt><dd><p>reset index</p>
 </dd>
 <dt>Columns</dt><dd><ul class="simple">
-<li><p>Date (pd.TimeStamp): Observation date</p></li>
+<li><p>Date (pd.Timestamp): Observation date</p></li>
 <li><p>Confirmed (int): the number of confirmed cases</p></li>
 <li><p>Infected (int): the number of currently infected cases</p></li>
 <li><p>Fatal (int): the number of fatal cases</p></li>
@@ -946,7 +892,7 @@ with the start/end dates are the previous date of the first date and initial pop
 <dt>Index</dt><dd><p>reset index</p>
 </dd>
 <dt>Columns</dt><dd><ul class="simple">
-<li><p>Date (pd.TimeStamp): Observation date</p></li>
+<li><p>Date (pd.Timestamp): Observation date</p></li>
 <li><p>Confirmed (int): the number of confirmed cases</p></li>
 <li><p>Infected (int): the number of currently infected cases</p></li>
 <li><p>Fatal (int): the number of fatal cases</p></li>
@@ -1056,221 +1002,6 @@ Simulation end at the next date of the end date of the phase.</p>
 </dd>
 <dt class="field-even">Return type</dt>
 <dd class="field-even"><p>dict</p>
-</dd>
-</dl>
-</dd></dl>
-
-</dd></dl>
-
-</div>
-<div class="section" id="module-covsirphy.phase.sr_change">
-<span id="covsirphy-phase-sr-change-module"></span><h2>covsirphy.phase.sr_change module<a class="headerlink" href="#module-covsirphy.phase.sr_change" title="Permalink to this headline">¶</a></h2>
-<dl class="py class">
-<dt id="covsirphy.phase.sr_change.ChangeFinder">
-<em class="property"><span class="pre">class</span> </em><code class="sig-name descname"><span class="pre">ChangeFinder</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sr_df</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">min_size</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">5</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_rmsle</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">20.0</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/phase/sr_change.html#ChangeFinder"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#covsirphy.phase.sr_change.ChangeFinder" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference internal" href="covsirphy.util.html#covsirphy.util.term.Term" title="covsirphy.util.term.Term"><code class="xref py py-class docutils literal notranslate"><span class="pre">covsirphy.util.term.Term</span></code></a></p>
-<p>Find change points of S-R trend.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>sr_df</strong> (<em>pandas.DataFrame</em>) – <dl class="simple">
-<dt>Index</dt><dd><p>Date (pd.TimeStamp): Observation date</p>
-</dd>
-<dt>Columns</dt><dd><ul>
-<li><p>Recovered (int): the number of recovered cases (&gt; 0)</p></li>
-<li><p>Susceptible (int): the number of susceptible cases</p></li>
-<li><p>any other columns will be ignored</p></li>
-</ul>
-</dd>
-</dl>
-</p></li>
-<li><p><strong>min_size</strong> (<em>int</em>) – minimum value of phase length [days], over 2</p></li>
-<li><p><strong>max_rmsle</strong> (<em>float</em>) – minmum value of RMSLE score</p></li>
-</ul>
-</dd>
-</dl>
-<div class="admonition note">
-<p class="admonition-title">Note</p>
-<p>When RMSLE score &gt; max_rmsle, predicted values will be None</p>
-</div>
-<dl class="py method">
-<dt id="covsirphy.phase.sr_change.ChangeFinder.date_range">
-<code class="sig-name descname"><span class="pre">date_range</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">change_dates</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/phase/sr_change.html#ChangeFinder.date_range"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#covsirphy.phase.sr_change.ChangeFinder.date_range" title="Permalink to this definition">¶</a></dt>
-<dd><p>Calculate the list of start/end dates with the list of change dates.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>change_dates</strong> (<em>list</em><em>[</em><em>str</em><em>] or </em><em>None</em>) – list of change points</p>
-</dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p>list of start/end dates</p>
-</dd>
-<dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>tuple(list[str], list[str])</p>
-</dd>
-</dl>
-<div class="admonition note">
-<p class="admonition-title">Note</p>
-<p>&#64;change_dates must be specified if ChangeFinder.run() was not done.</p>
-</div>
-</dd></dl>
-
-<dl class="py method">
-<dt id="covsirphy.phase.sr_change.ChangeFinder.run">
-<code class="sig-name descname"><span class="pre">run</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/phase/sr_change.html#ChangeFinder.run"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#covsirphy.phase.sr_change.ChangeFinder.run" title="Permalink to this definition">¶</a></dt>
-<dd><p>Run optimization and find change points.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Returns</dt>
-<dd class="field-odd"><p>self</p>
-</dd>
-<dt class="field-even">Return type</dt>
-<dd class="field-even"><p><a class="reference internal" href="covsirphy.html#covsirphy.ChangeFinder" title="covsirphy.ChangeFinder">covsirphy.ChangeFinder</a></p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt id="covsirphy.phase.sr_change.ChangeFinder.show">
-<code class="sig-name descname"><span class="pre">show</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">area</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">change_dates</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/phase/sr_change.html#ChangeFinder.show"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#covsirphy.phase.sr_change.ChangeFinder.show" title="Permalink to this definition">¶</a></dt>
-<dd><p>show the S-R trend in a figure.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>area</strong> (<em>str</em>) – area name</p></li>
-<li><p><strong>change_dates</strong> (<em>list</em><em>[</em><em>str</em><em>] or </em><em>None</em>) – list of change points</p></li>
-<li><p><strong>kwargs</strong> – keyword arguments of covsirphy.trend_plot()</p></li>
-</ul>
-</dd>
-</dl>
-<div class="admonition note">
-<p class="admonition-title">Note</p>
-<p>&#64;change_dates must be specified if ChangeFinder.run() was not done.</p>
-</div>
-</dd></dl>
-
-</dd></dl>
-
-</div>
-<div class="section" id="module-covsirphy.phase.trend">
-<span id="covsirphy-phase-trend-module"></span><h2>covsirphy.phase.trend module<a class="headerlink" href="#module-covsirphy.phase.trend" title="Permalink to this headline">¶</a></h2>
-<dl class="py class">
-<dt id="covsirphy.phase.trend.Trend">
-<em class="property"><span class="pre">class</span> </em><code class="sig-name descname"><span class="pre">Trend</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sr_df</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/phase/trend.html#Trend"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#covsirphy.phase.trend.Trend" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference internal" href="covsirphy.util.html#covsirphy.util.term.Term" title="covsirphy.util.term.Term"><code class="xref py py-class docutils literal notranslate"><span class="pre">covsirphy.util.term.Term</span></code></a></p>
-<p>S-R trend analysis in a phase.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>sr_df</strong> (<em>pandas.DataFrame</em>) – <dl class="simple">
-<dt>Index</dt><dd><p>Date (pd.TimeStamp): Observation date</p>
-</dd>
-<dt>Columns</dt><dd><ul class="simple">
-<li><p>Recovered (int): the number of recovered cases (&gt; 0)</p></li>
-<li><p>Susceptible (int): the number of susceptible cases</p></li>
-<li><p>any other columns will be ignored</p></li>
-</ul>
-</dd>
-</dl>
-</p>
-</dd>
-</dl>
-<dl class="py attribute">
-<dt id="covsirphy.phase.trend.Trend.L">
-<code class="sig-name descname"><span class="pre">L</span></code><em class="property"> <span class="pre">=</span> <span class="pre">'linear'</span></em><a class="headerlink" href="#covsirphy.phase.trend.Trend.L" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt id="covsirphy.phase.trend.Trend.N">
-<code class="sig-name descname"><span class="pre">N</span></code><em class="property"> <span class="pre">=</span> <span class="pre">'negative_exponential'</span></em><a class="headerlink" href="#covsirphy.phase.trend.Trend.N" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py method">
-<dt id="covsirphy.phase.trend.Trend.result_df">
-<em class="property"><span class="pre">property</span> </em><code class="sig-name descname"><span class="pre">result_df</span></code><a class="headerlink" href="#covsirphy.phase.trend.Trend.result_df" title="Permalink to this definition">¶</a></dt>
-<dd><p>results of fitting</p>
-<dl class="simple">
-<dt>Index</dt><dd><ul class="simple">
-<li><p>Date (pandas.TimeStamp): Observation date</p></li>
-</ul>
-</dd>
-<dt>Columns</dt><dd><ul class="simple">
-<li><p>Recovered: The number of recovered cases</p></li>
-<li><p>Susceptible_actual: Actual values of Susceptible</p></li>
-<li><p>columns defined by &#64;columns</p></li>
-</ul>
-</dd>
-</dl>
-<dl class="field-list simple">
-<dt class="field-odd">Type</dt>
-<dd class="field-odd"><p>pandas.DataFrame</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt id="covsirphy.phase.trend.Trend.rmsle">
-<code class="sig-name descname"><span class="pre">rmsle</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/phase/trend.html#Trend.rmsle"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#covsirphy.phase.trend.Trend.rmsle" title="Permalink to this definition">¶</a></dt>
-<dd><p>Return the best RMSLE score.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Returns</dt>
-<dd class="field-odd"><p>RMSLE score</p>
-</dd>
-<dt class="field-even">Return type</dt>
-<dd class="field-even"><p>float</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt id="covsirphy.phase.trend.Trend.run">
-<code class="sig-name descname"><span class="pre">run</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/phase/trend.html#Trend.run"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#covsirphy.phase.trend.Trend.run" title="Permalink to this definition">¶</a></dt>
-<dd><p>Perform curve fitting with some functions and select the best solution.
-Then, the result and RMSLE score of the best solution will be saved.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Returns</dt>
-<dd class="field-odd"><p>self</p>
-</dd>
-<dt class="field-even">Return type</dt>
-<dd class="field-even"><p><a class="reference internal" href="covsirphy.html#covsirphy.Trend" title="covsirphy.Trend">covsirphy.Trend</a></p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt id="covsirphy.phase.trend.Trend.show">
-<code class="sig-name descname"><span class="pre">show</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">area</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/phase/trend.html#Trend.show"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#covsirphy.phase.trend.Trend.show" title="Permalink to this definition">¶</a></dt>
-<dd><p>show the result as a figure.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>area</strong> (<em>str</em>) – area name</p></li>
-<li><p><strong>kwargs</strong> – keyword arguments of covsirphy.trend_plot()</p></li>
-</ul>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt id="covsirphy.phase.trend.Trend.show_with_many">
-<em class="property"><span class="pre">classmethod</span> </em><code class="sig-name descname"><span class="pre">show_with_many</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">result_df</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">predicted_cols</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">title</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/phase/trend.html#Trend.show_with_many"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#covsirphy.phase.trend.Trend.show_with_many" title="Permalink to this definition">¶</a></dt>
-<dd><p>show the result as a figure.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>result_df</strong> (<em>pandas.DataFrame</em>) – <p>results of fitting</p>
-<dl class="simple">
-<dt>Index</dt><dd><p>Date (pandas.TimeStamp): Observation date</p>
-</dd>
-<dt>Columns</dt><dd><ul>
-<li><p>Recovered: The number of recovered cases</p></li>
-<li><p>Susceptible_actual: Actual values of Susceptible</p></li>
-<li><p>columns defined by &#64;predicted_cols</p></li>
-</ul>
-</dd>
-</dl>
-</p></li>
-<li><p><strong>predicted_cols</strong> (<em>list</em><em>[</em><em>str</em><em>]</em>) – list of columns which have predicted values</p></li>
-<li><p><strong>title</strong> (<em>str</em>) – title of the figure</p></li>
-<li><p><strong>kwargs</strong> – keyword arguments of covsirphy.trend_plot()</p></li>
-</ul>
 </dd>
 </dl>
 </dd></dl>

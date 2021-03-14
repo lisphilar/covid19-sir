@@ -65,7 +65,7 @@
             
             
               <div class="version">
-                2.17.0-epsilon
+                2.17.0-eta
               </div>
             
           
@@ -176,9 +176,9 @@
 
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<span class="kn">from</span> <span class="nn">covsirphy.util.error</span> <span class="kn">import</span> <span class="n">deprecate</span>
 <span class="kn">from</span> <span class="nn">covsirphy.util.term</span> <span class="kn">import</span> <span class="n">Term</span>
 <span class="kn">from</span> <span class="nn">covsirphy.phase.phase_unit</span> <span class="kn">import</span> <span class="n">PhaseUnit</span>
-<span class="kn">from</span> <span class="nn">covsirphy.phase.sr_change</span> <span class="kn">import</span> <span class="n">ChangeFinder</span>
 
 
 <div class="viewcode-block" id="PhaseSeries"><a class="viewcode-back" href="../../../covsirphy.phase.html#covsirphy.PhaseSeries">[docs]</a><span class="k">class</span> <span class="nc">PhaseSeries</span><span class="p">(</span><span class="n">Term</span><span class="p">):</span>
@@ -508,63 +508,25 @@
                     <span class="sa">f</span><span class="s2">&quot;The list of units does not a series of phases. Applied: </span><span class="si">{</span><span class="n">s</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">sorted_units</span>
 
-<div class="viewcode-block" id="PhaseSeries.trend"><a class="viewcode-back" href="../../../covsirphy.phase.html#covsirphy.PhaseSeries.trend">[docs]</a>    <span class="k">def</span> <span class="nf">trend</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sr_df</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="nd">@deprecate</span><span class="p">(</span><span class="s2">&quot;PhaseSeries.trend()&quot;</span><span class="p">,</span> <span class="n">new</span><span class="o">=</span><span class="s2">&quot;covsirphy.TrendDetector()&quot;</span><span class="p">)</span>
+    <span class="k">def</span> <span class="nf">trend</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Perform S-R trend analysis.</span>
+<span class="sd">        This was deprecated. Please use covsirphy.TrendDetector class and .add() method of PhaseSeries.</span>
 
-<span class="sd">        Args:</span>
-<span class="sd">            sr_df (pandas.DataFrame): susceptible and recovered records</span>
-
-<span class="sd">                Index</span>
-<span class="sd">                    Date (pd.TimeStamp): Observation date</span>
-<span class="sd">                Columns</span>
-<span class="sd">                    - Recovered (int): the number of recovered cases (&gt; 0)</span>
-<span class="sd">                    - Susceptible (int): the number of susceptible cases</span>
-<span class="sd">                    - any other columns will be ignored</span>
-<span class="sd">            kwargs: keyword arguments of covsirphy.ChangeFinder()</span>
-
-<span class="sd">        Returns:</span>
-<span class="sd">            covsirphy.PhaseSeries: self</span>
+<span class="sd">        Raise:</span>
+<span class="sd">            NotImplementedError</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">sta</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">date_obj</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">first_date</span><span class="p">)</span>
-        <span class="n">end</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">date_obj</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">last_date</span><span class="p">)</span>
-        <span class="n">sr_df</span> <span class="o">=</span> <span class="n">sr_df</span><span class="o">.</span><span class="n">loc</span><span class="p">[(</span><span class="n">sr_df</span><span class="o">.</span><span class="n">index</span> <span class="o">&gt;=</span> <span class="n">sta</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">sr_df</span><span class="o">.</span><span class="n">index</span> <span class="o">&lt;=</span> <span class="n">end</span><span class="p">),</span> <span class="p">:]</span>
-        <span class="c1"># Find change points</span>
-        <span class="n">finder</span> <span class="o">=</span> <span class="n">ChangeFinder</span><span class="p">(</span><span class="n">sr_df</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
-        <span class="n">finder</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
-        <span class="c1"># Register phases</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">clear</span><span class="p">(</span><span class="n">include_past</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-        <span class="n">_</span><span class="p">,</span> <span class="n">end_dates</span> <span class="o">=</span> <span class="n">finder</span><span class="o">.</span><span class="n">date_range</span><span class="p">()</span>
-        <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">end_date</span><span class="o">=</span><span class="n">end_date</span><span class="p">)</span> <span class="k">for</span> <span class="n">end_date</span> <span class="ow">in</span> <span class="n">end_dates</span><span class="p">]</span>
-        <span class="k">return</span> <span class="bp">self</span></div>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span>
 
-<div class="viewcode-block" id="PhaseSeries.trend_show"><a class="viewcode-back" href="../../../covsirphy.phase.html#covsirphy.PhaseSeries.trend_show">[docs]</a>    <span class="k">def</span> <span class="nf">trend_show</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sr_df</span><span class="p">,</span> <span class="n">area</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="nd">@deprecate</span><span class="p">(</span><span class="s2">&quot;PhaseSeries.trend()&quot;</span><span class="p">,</span> <span class="n">new</span><span class="o">=</span><span class="s2">&quot;covsirphy.TrendDetector()&quot;</span><span class="p">)</span>
+    <span class="k">def</span> <span class="nf">trend_show</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Show S-R plane, indicating change points found with S-R trend analysis.</span>
+<span class="sd">        This was deprecated. Please use covsirphy.TrendDetector class.</span>
 
-<span class="sd">        Args:</span>
-<span class="sd">            sr_df (pandas.DataFrame): susceptible and recovered records</span>
-
-<span class="sd">                Index</span>
-<span class="sd">                    Date (pandas.TimeStamp): Observation date</span>
-<span class="sd">                Columns</span>
-<span class="sd">                    - Recovered (int): the number of recovered cases (&gt; 0)</span>
-<span class="sd">                    - Susceptible (int): the number of susceptible cases</span>
-<span class="sd">                    - any other columns will be ignored</span>
-<span class="sd">            area (str or None): area name</span>
-<span class="sd">            kwargs: keyword arguments of covsirphy.trend_plot()</span>
-
-<span class="sd">        Returns:</span>
-<span class="sd">            covsirphy.PhaseSeries: self</span>
+<span class="sd">        Raise:</span>
+<span class="sd">            NotImplementedError</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">area</span> <span class="o">=</span> <span class="n">area</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">UNKNOWN</span>
-        <span class="n">sta</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">date_obj</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">first_date</span><span class="p">)</span>
-        <span class="n">end</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">date_obj</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">last_date</span><span class="p">)</span>
-        <span class="n">sr_df</span> <span class="o">=</span> <span class="n">sr_df</span><span class="o">.</span><span class="n">loc</span><span class="p">[(</span><span class="n">sr_df</span><span class="o">.</span><span class="n">index</span> <span class="o">&gt;=</span> <span class="n">sta</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">sr_df</span><span class="o">.</span><span class="n">index</span> <span class="o">&lt;=</span> <span class="n">end</span><span class="p">),</span> <span class="p">:]</span>
-        <span class="n">finder</span> <span class="o">=</span> <span class="n">ChangeFinder</span><span class="p">(</span><span class="n">sr_df</span><span class="p">)</span>
-        <span class="n">change_dates</span> <span class="o">=</span> <span class="p">[</span>
-            <span class="n">unit</span><span class="o">.</span><span class="n">start_date</span> <span class="k">for</span> <span class="n">unit</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_units</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span> <span class="k">if</span> <span class="n">unit</span> <span class="o">&lt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">last_date</span><span class="p">]</span>
-        <span class="n">finder</span><span class="o">.</span><span class="n">show</span><span class="p">(</span><span class="n">area</span><span class="o">=</span><span class="n">area</span><span class="p">,</span> <span class="n">change_dates</span><span class="o">=</span><span class="n">change_dates</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span>
 
 <div class="viewcode-block" id="PhaseSeries.simulate"><a class="viewcode-back" href="../../../covsirphy.phase.html#covsirphy.PhaseSeries.simulate">[docs]</a>    <span class="k">def</span> <span class="nf">simulate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">record_df</span><span class="p">,</span> <span class="n">y0_dict</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
@@ -575,7 +537,7 @@
 <span class="sd">                Index</span>
 <span class="sd">                    reset index</span>
 <span class="sd">                Columns</span>
-<span class="sd">                    - Date (pd.TimeStamp): Observation date</span>
+<span class="sd">                    - Date (pd.Timestamp): Observation date</span>
 <span class="sd">                    - Confirmed (int): the number of confirmed cases</span>
 <span class="sd">                    - Infected (int): the number of currently infected cases</span>
 <span class="sd">                    - Fatal (int): the number of fatal cases</span>
@@ -590,7 +552,7 @@
 <span class="sd">                Index</span>
 <span class="sd">                    reset index</span>
 <span class="sd">                Columns</span>
-<span class="sd">                    - Date (pd.TimeStamp): Observation date</span>
+<span class="sd">                    - Date (pd.Timestamp): Observation date</span>
 <span class="sd">                    - Country (str): country/region name</span>
 <span class="sd">                    - Province (str): province/prefecture/state name</span>
 <span class="sd">                    - Variables of the model and dataset (int): Confirmed etc.</span>

@@ -65,7 +65,7 @@
             
             
               <div class="version">
-                2.17.0-epsilon
+                2.17.0-eta
               </div>
             
           
@@ -179,6 +179,7 @@
 <span class="kn">import</span> <span class="nn">math</span>
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<span class="kn">import</span> <span class="nn">sklearn.metrics</span>
 <span class="kn">from</span> <span class="nn">covsirphy.util.error</span> <span class="kn">import</span> <span class="n">deprecate</span>
 
 
@@ -240,6 +241,7 @@
     <span class="n">A</span> <span class="o">=</span> <span class="s2">&quot;_actual&quot;</span>
     <span class="n">P</span> <span class="o">=</span> <span class="s2">&quot;_predicted&quot;</span>
     <span class="n">ACTUAL</span> <span class="o">=</span> <span class="s2">&quot;Actual&quot;</span>
+    <span class="n">FITTED</span> <span class="o">=</span> <span class="s2">&quot;Fitted&quot;</span>
     <span class="c1"># Phase name</span>
     <span class="n">SUFFIX_DICT</span> <span class="o">=</span> <span class="n">defaultdict</span><span class="p">(</span><span class="k">lambda</span><span class="p">:</span> <span class="s2">&quot;th&quot;</span><span class="p">)</span>
     <span class="n">SUFFIX_DICT</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="mi">1</span><span class="p">:</span> <span class="s2">&quot;st&quot;</span><span class="p">,</span> <span class="mi">2</span><span class="p">:</span> <span class="s2">&quot;nd&quot;</span><span class="p">,</span> <span class="mi">3</span><span class="p">:</span> <span class="s2">&quot;rd&quot;</span><span class="p">})</span>
@@ -262,6 +264,14 @@
     <span class="c1"># Flag</span>
     <span class="n">UNKNOWN</span> <span class="o">=</span> <span class="s2">&quot;-&quot;</span>
     <span class="n">OTHERS</span> <span class="o">=</span> <span class="s2">&quot;Others&quot;</span>
+    <span class="c1"># Metrics</span>
+    <span class="n">METRICS_DICT</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s2">&quot;MAE&quot;</span><span class="p">:</span> <span class="n">sklearn</span><span class="o">.</span><span class="n">metrics</span><span class="o">.</span><span class="n">mean_absolute_error</span><span class="p">,</span>
+        <span class="s2">&quot;MSE&quot;</span><span class="p">:</span> <span class="n">sklearn</span><span class="o">.</span><span class="n">metrics</span><span class="o">.</span><span class="n">mean_squared_error</span><span class="p">,</span>
+        <span class="s2">&quot;MSLE&quot;</span><span class="p">:</span> <span class="n">sklearn</span><span class="o">.</span><span class="n">metrics</span><span class="o">.</span><span class="n">mean_squared_log_error</span><span class="p">,</span>
+        <span class="s2">&quot;RMSE&quot;</span><span class="p">:</span> <span class="k">lambda</span> <span class="n">x1</span><span class="p">,</span> <span class="n">x2</span><span class="p">:</span> <span class="n">sklearn</span><span class="o">.</span><span class="n">metrics</span><span class="o">.</span><span class="n">mean_squared_error</span><span class="p">(</span><span class="n">x1</span><span class="p">,</span> <span class="n">x2</span><span class="p">,</span> <span class="n">squared</span><span class="o">=</span><span class="kc">False</span><span class="p">),</span>
+        <span class="s2">&quot;RMSLE&quot;</span><span class="p">:</span> <span class="k">lambda</span> <span class="n">x1</span><span class="p">,</span> <span class="n">x2</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">sklearn</span><span class="o">.</span><span class="n">metrics</span><span class="o">.</span><span class="n">mean_squared_log_error</span><span class="p">(</span><span class="n">x1</span><span class="p">,</span> <span class="n">x2</span><span class="p">)),</span>
+    <span class="p">}</span>
 
 <div class="viewcode-block" id="Term.num2str"><a class="viewcode-back" href="../../../covsirphy.util.html#covsirphy.Term.num2str">[docs]</a>    <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">num2str</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">num</span><span class="p">):</span>
@@ -300,7 +310,7 @@
 <div class="viewcode-block" id="Term.negative_exp"><a class="viewcode-back" href="../../../covsirphy.util.html#covsirphy.Term.negative_exp">[docs]</a>    <span class="nd">@staticmethod</span>
     <span class="k">def</span> <span class="nf">negative_exp</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Negative exponential function f(x)=A exp(-Bx).</span>
+<span class="sd">        Negative exponential function f(x) = A exp(-Bx).</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            x (float): x values</span>
@@ -315,7 +325,7 @@
 <div class="viewcode-block" id="Term.linear"><a class="viewcode-back" href="../../../covsirphy.util.html#covsirphy.Term.linear">[docs]</a>    <span class="nd">@staticmethod</span>
     <span class="k">def</span> <span class="nf">linear</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Linear function f(x)=A x + b.</span>
+<span class="sd">        Linear function f(x) = A x + b.</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            x (float): x values</span>
@@ -401,6 +411,27 @@
         <span class="n">min_value</span> <span class="o">=</span> <span class="mi">0</span> <span class="k">if</span> <span class="n">include_zero</span> <span class="k">else</span> <span class="mi">1</span>
         <span class="k">if</span> <span class="n">number</span> <span class="o">&lt;</span> <span class="n">min_value</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">s</span><span class="si">}</span><span class="s2">. This value is under </span><span class="si">{</span><span class="n">min_value</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">number</span>
+
+    <span class="k">def</span> <span class="nf">_ensure_int_range</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">target</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;number&quot;</span><span class="p">,</span> <span class="n">value_range</span><span class="o">=</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="kc">None</span><span class="p">)):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Ensure the number is an integer and in the specified range.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            target (int or float or str): value to ensure</span>
+<span class="sd">            name (str): argument name of the value</span>
+<span class="sd">            value_range(tuple(int or None, int or None)): value range, None means un-specified</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            int: as-is the target</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">number</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ensure_natural_int</span><span class="p">(</span><span class="n">target</span><span class="o">=</span><span class="n">target</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">,</span> <span class="n">include_zero</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">none_ok</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+        <span class="c1"># Minimum</span>
+        <span class="k">if</span> <span class="n">value_range</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">number</span> <span class="o">&lt;</span> <span class="n">value_range</span><span class="p">[</span><span class="mi">0</span><span class="p">]:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2"> must be over or equal to </span><span class="si">{</span><span class="n">value_range</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="si">}</span><span class="s2">, but </span><span class="si">{</span><span class="n">number</span><span class="si">}</span><span class="s2"> was applied.&quot;</span><span class="p">)</span>
+        <span class="c1"># Maximum</span>
+        <span class="k">if</span> <span class="n">value_range</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">number</span> <span class="o">&gt;</span> <span class="n">value_range</span><span class="p">[</span><span class="mi">1</span><span class="p">]:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2"> must be under or equal to </span><span class="si">{</span><span class="n">value_range</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="si">}</span><span class="s2">, but </span><span class="si">{</span><span class="n">number</span><span class="si">}</span><span class="s2"> was applied.&quot;</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">number</span>
 
     <span class="nd">@classmethod</span>

@@ -43,7 +43,7 @@
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
     <link rel="next" title="covsirphy.visualization package" href="covsirphy.visualization.html" />
-    <link rel="prev" title="covsirphy.simulation package" href="covsirphy.simulation.html" /> 
+    <link rel="prev" title="covsirphy.trend package" href="covsirphy.trend.html" /> 
 </head>
 
 <body class="wy-body-for-nav">
@@ -67,7 +67,7 @@
             
             
               <div class="version">
-                2.17.0-epsilon
+                2.17.0-eta
               </div>
             
           
@@ -109,12 +109,12 @@
 <li class="toctree-l3"><a class="reference internal" href="covsirphy.ode.html">covsirphy.ode package</a></li>
 <li class="toctree-l3"><a class="reference internal" href="covsirphy.phase.html">covsirphy.phase package</a></li>
 <li class="toctree-l3"><a class="reference internal" href="covsirphy.simulation.html">covsirphy.simulation package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="covsirphy.trend.html">covsirphy.trend package</a></li>
 <li class="toctree-l3 current"><a class="current reference internal" href="#">covsirphy.util package</a><ul>
 <li class="toctree-l4"><a class="reference internal" href="#submodules">Submodules</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#module-covsirphy.util.argument">covsirphy.util.argument module</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#module-covsirphy.util.error">covsirphy.util.error module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#module-covsirphy.util.file">covsirphy.util.file module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#module-covsirphy.util.optimize">covsirphy.util.optimize module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#module-covsirphy.util.filer">covsirphy.util.filer module</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#module-covsirphy.util.stopwatch">covsirphy.util.stopwatch module</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#module-covsirphy.util.term">covsirphy.util.term module</a></li>
 </ul>
@@ -374,345 +374,107 @@
 </dd></dl>
 
 </div>
-<div class="section" id="module-covsirphy.util.file">
-<span id="covsirphy-util-file-module"></span><h2>covsirphy.util.file module<a class="headerlink" href="#module-covsirphy.util.file" title="Permalink to this headline">¶</a></h2>
-<dl class="py function">
-<dt id="covsirphy.util.file.save_dataframe">
-<code class="sig-name descname"><span class="pre">save_dataframe</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">df</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">filename</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">index</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/util/file.html#save_dataframe"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#covsirphy.util.file.save_dataframe" title="Permalink to this definition">¶</a></dt>
-<dd><p>Save dataframe as a CSV file.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>df</strong> (<em>pd.DataFrame</em>) – the dataframe</p></li>
-<li><p><strong>filename</strong> (<em>str</em><em> or </em><em>None</em>) – CSV filename</p></li>
-<li><p><strong>index</strong> (<em>bool</em>) – if True, include index column.</p></li>
-</ul>
-</dd>
-</dl>
-<div class="admonition note">
-<p class="admonition-title">Note</p>
-<p>If &#64;filename is None or OSError was raised, the dataframe will not be saved.</p>
-</div>
-</dd></dl>
-
-</div>
-<div class="section" id="module-covsirphy.util.optimize">
-<span id="covsirphy-util-optimize-module"></span><h2>covsirphy.util.optimize module<a class="headerlink" href="#module-covsirphy.util.optimize" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="module-covsirphy.util.filer">
+<span id="covsirphy-util-filer-module"></span><h2>covsirphy.util.filer module<a class="headerlink" href="#module-covsirphy.util.filer" title="Permalink to this headline">¶</a></h2>
 <dl class="py class">
-<dt id="covsirphy.util.optimize.Optimizer">
-<em class="property"><span class="pre">class</span> </em><code class="sig-name descname"><span class="pre">Optimizer</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">train_df</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">x</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'t'</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/util/optimize.html#Optimizer"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#covsirphy.util.optimize.Optimizer" title="Permalink to this definition">¶</a></dt>
+<dt id="covsirphy.util.filer.Filer">
+<em class="property"><span class="pre">class</span> </em><code class="sig-name descname"><span class="pre">Filer</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">directory</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">prefix</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">suffix</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">numbering</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/util/filer.html#Filer"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#covsirphy.util.filer.Filer" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
-<p>Hyperparameter optimization with Optuna package.</p>
+<p>Produce filenames and manage files.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>train_df</strong> (<em>pandas.DataFrame</em>) – <p>training dataset</p>
-<dl class="simple">
-<dt>Index</dt><dd><p>reset index</p>
-</dd>
-<dt>Columns</dt><dd><ul>
-<li><p>Explanatory variable defined by &#64;x</p></li>
-<li><p>Response variables which is not &#64;x</p></li>
+<li><p><strong>directory</strong> (<em>str</em>) – top directory name</p></li>
+<li><p><strong>prefix</strong> (<em>str</em><em> or </em><em>None</em>) – prefix of the filenames or None (no prefix)</p></li>
+<li><p><strong>suffix</strong> (<em>str</em><em> or </em><em>None</em>) – suffix of the filenames or None (no suffix)</p></li>
+<li><p><strong>numbering</strong> (<em>str</em><em> or </em><em>None</em>) – “001”, “01”, “1” or None (no numbering)</p></li>
 </ul>
 </dd>
 </dl>
-</p></li>
-<li><p><strong>kwargs</strong> – keyword arguments of fixed parameter values</p></li>
-</ul>
-</dd>
-</dl>
-<dl class="py attribute">
-<dt id="covsirphy.util.optimize.Optimizer.A">
-<code class="sig-name descname"><span class="pre">A</span></code><em class="property"> <span class="pre">=</span> <span class="pre">'_actual'</span></em><a class="headerlink" href="#covsirphy.util.optimize.Optimizer.A" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt id="covsirphy.util.optimize.Optimizer.P">
-<code class="sig-name descname"><span class="pre">P</span></code><em class="property"> <span class="pre">=</span> <span class="pre">'_predicted'</span></em><a class="headerlink" href="#covsirphy.util.optimize.Optimizer.P" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py method">
-<dt id="covsirphy.util.optimize.Optimizer.accuracy">
-<code class="sig-name descname"><span class="pre">accuracy</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">train_df</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">variables</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">show_figure</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">filename</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/util/optimize.html#Optimizer.accuracy"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#covsirphy.util.optimize.Optimizer.accuracy" title="Permalink to this definition">¶</a></dt>
-<dd><p>Show the accuracy as a figure.
-This method can be overwritten in child class.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>train_df</strong> (<em>pandas.DataFrame</em>) – <p>actual data</p>
-<dl class="simple">
-<dt>Index</dt><dd><p>reset index</p>
-</dd>
-<dt>Columns</dt><dd><ul>
-<li><p>t: time step, 0, 1, 2,…</p></li>
-<li><p>includes columns defined by self.y_list</p></li>
-</ul>
-</dd>
-</dl>
-</p></li>
-<li><p><strong>variables</strong> (<em>list</em><em>[</em><em>str</em><em>]</em>) – variables to compare or None (all variables)</p></li>
-<li><p><strong>show_figure</strong> (<em>bool</em>) – if True, show the result as a figure</p></li>
-<li><p><strong>filename</strong> (<em>str</em>) – filename of the figure, or None (show figure)</p></li>
-</ul>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt id="covsirphy.util.optimize.Optimizer.compare">
-<code class="sig-name descname"><span class="pre">compare</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">actual_df</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">predicted_df</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/util/optimize.html#Optimizer.compare"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#covsirphy.util.optimize.Optimizer.compare" title="Permalink to this definition">¶</a></dt>
-<dd><p>Return comparison table.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>actual_df</strong> (<em>pandas.DataFrame</em>) – <p>actual data</p>
-<dl class="simple">
-<dt>Index</dt><dd><p>reset index</p>
-</dd>
-<dt>Columns</dt><dd><ul>
-<li><p>t: time step, 0, 1, 2,…</p></li>
-<li><p>includes columns defined by self.y_list</p></li>
-</ul>
-</dd>
-</dl>
-</p></li>
-<li><p><strong>predicted_df</strong> (<em>pandas.DataFrame</em>) – <p>predicted data</p>
-<dl class="simple">
-<dt>Index</dt><dd><p>reset index</p>
-</dd>
-<dt>Columns</dt><dd><ul>
-<li><p>t: time step, 0, 1, 2,…</p></li>
-<li><p>includes columns defined by self.y_list</p></li>
-</ul>
-</dd>
-</dl>
-</p></li>
-</ul>
-</dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p><dl class="simple">
-<dt>Index</dt><dd><p>(str): time step</p>
-</dd>
-<dt>Columns</dt><dd><ul class="simple">
-<li><p>columns with “_actual”</p></li>
-<li><p>columns with “_predicted:</p></li>
-<li><p>columns are defined by self.y_list</p></li>
-</ul>
-</dd>
-</dl>
-</p>
-</dd>
-<dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>pandas.DataFrame</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt id="covsirphy.util.optimize.Optimizer.error_f">
-<code class="sig-name descname"><span class="pre">error_f</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">param_dict</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">train_df</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/util/optimize.html#Optimizer.error_f"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#covsirphy.util.optimize.Optimizer.error_f" title="Permalink to this definition">¶</a></dt>
-<dd><p>Definition of error score to minimize in the study.
-This method should be overwritten in subclass.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>param_dict</strong> (<em>dict</em>) – estimated parameter values
-- key (str): parameter name
-- value (int or float): parameter value</p></li>
-<li><p><strong>train_df</strong> (<em>pandas.DataFrame</em>) – <p>actual data</p>
-<dl class="simple">
-<dt>Index</dt><dd><p>reset index</p>
-</dd>
-<dt>Columns</dt><dd><ul>
-<li><p>t: time step, 0, 1, 2,…</p></li>
-<li><p>includes columns defined by &#64;variables</p></li>
-</ul>
-</dd>
-</dl>
-</p></li>
-</ul>
-</dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p>score of the error function to minimize</p>
-</dd>
-<dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>float</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt id="covsirphy.util.optimize.Optimizer.history">
-<code class="sig-name descname"><span class="pre">history</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">show_figure</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">filename</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/util/optimize.html#Optimizer.history"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#covsirphy.util.optimize.Optimizer.history" title="Permalink to this definition">¶</a></dt>
-<dd><dl class="simple">
-<dt>Show the history of optimization as a figure</dt><dd><p>and return it as dataframe.</p>
-</dd>
-</dl>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>show_figure</strong> (<em>bool</em>) – if True, show the history as a pair-plot of parameters.</p></li>
-<li><p><strong>filename</strong> (<em>str</em>) – filename of the figure, or None (show figure)</p></li>
-</ul>
-</dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p>the history</p>
-</dd>
-<dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>pandas.DataFrame</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt id="covsirphy.util.optimize.Optimizer.objective">
-<code class="sig-name descname"><span class="pre">objective</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">trial</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/util/optimize.html#Optimizer.objective"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#covsirphy.util.optimize.Optimizer.objective" title="Permalink to this definition">¶</a></dt>
-<dd><p>Objective function of Optuna study.
-This defines the parameter values using Optuna.
-This method should be overwritten in subclass.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>trial</strong> (<em>optuna.trial</em>) – a trial of the study</p>
-</dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p>score of the error function to minimize</p>
-</dd>
-<dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>float</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt id="covsirphy.util.optimize.Optimizer.param">
-<code class="sig-name descname"><span class="pre">param</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/util/optimize.html#Optimizer.param"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#covsirphy.util.optimize.Optimizer.param" title="Permalink to this definition">¶</a></dt>
-<dd><p>Return the estimated parameters as a dictionary.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Returns</dt>
-<dd class="field-odd"><p><dl class="simple">
-<dt>dict</dt><dd><ul class="simple">
-<li><p>key (str): parameter name</p></li>
-<li><p>value (int or float): parameter value</p></li>
-</ul>
-</dd>
-</dl>
-</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt id="covsirphy.util.optimize.Optimizer.predict">
-<code class="sig-name descname"><span class="pre">predict</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/util/optimize.html#Optimizer.predict"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#covsirphy.util.optimize.Optimizer.predict" title="Permalink to this definition">¶</a></dt>
-<dd><p>Predict the values with the calculated values.
-This method can be overwritten in subclass.</p>
-</dd></dl>
-
-<dl class="py method">
-<dt id="covsirphy.util.optimize.Optimizer.result">
-<code class="sig-name descname"><span class="pre">result</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/util/optimize.html#Optimizer.result"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#covsirphy.util.optimize.Optimizer.result" title="Permalink to this definition">¶</a></dt>
-<dd><p>Return the estimated parameters as a dataframe.
-This method should be overwritten in subclass.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>name</strong> (<em>str</em>) – index of the dataframe</p>
-</dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p><dl class="simple">
-<dt>Index</dt><dd><p>reset index</p>
-</dd>
-<dt>Columns</dt><dd><ul class="simple">
-<li><p>(estimated parameters)</p></li>
-<li><p>Trials: the number of trials</p></li>
-<li><p>Runtime: run time of estimation</p></li>
-</ul>
-</dd>
-</dl>
-</p>
-</dd>
-<dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>pandas.DataFrame</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt id="covsirphy.util.optimize.Optimizer.rmsle">
-<code class="sig-name descname"><span class="pre">rmsle</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">train_df</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dim</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/util/optimize.html#Optimizer.rmsle"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#covsirphy.util.optimize.Optimizer.rmsle" title="Permalink to this definition">¶</a></dt>
-<dd><p>Calculate RMSLE score.
-This method can be overwritten in child class.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>train_df</strong> (<em>pandas.DataFrame</em>) – <p>actual data</p>
-<dl class="simple">
-<dt>Index</dt><dd><p>reset index</p>
-</dd>
-<dt>Columns</dt><dd><ul>
-<li><p>t: time step, 0, 1, 2,…</p></li>
-<li><p>includes columns defined by self.y_list</p></li>
-</ul>
-</dd>
-</dl>
-</p></li>
-<li><p><strong>dim</strong> (<em>int</em><em> or </em><em>float</em>) – dimension where comparison will be performed</p></li>
-</ul>
-</dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p>RMSLE score</p>
-</dd>
-<dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>float</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt id="covsirphy.util.optimize.Optimizer.run">
-<code class="sig-name descname"><span class="pre">run</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">n_trials</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">timeout</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_jobs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">-</span> <span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">seed</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/util/optimize.html#Optimizer.run"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#covsirphy.util.optimize.Optimizer.run" title="Permalink to this definition">¶</a></dt>
-<dd><p>Run optimization.
-This method can be overwritten in subclass.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>timeout</strong> (<em>int</em>) – time-out of run</p></li>
-<li><p><strong>n_trials</strong> (<em>int</em>) – the number of trials</p></li>
-<li><p><strong>n_jobs</strong> (<em>int</em>) – the number of parallel jobs or -1 (CPU count)</p></li>
-<li><p><strong>seed</strong> (<em>int</em><em> or </em><em>None</em>) – random seed of hyperparameter optimization</p></li>
-</ul>
-</dd>
-</dl>
-<div class="admonition note">
-<p class="admonition-title">Note</p>
-<p>&#64;seed will effective when &#64;n_jobs is 1</p>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">covsirphy</span> <span class="k">as</span> <span class="nn">cs</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">filer</span> <span class="o">=</span> <span class="n">cs</span><span class="o">.</span><span class="n">Filer</span><span class="p">(</span><span class="n">directory</span><span class="o">=</span><span class="s2">&quot;output&quot;</span><span class="p">,</span> <span class="n">prefix</span><span class="o">=</span><span class="s2">&quot;jpn&quot;</span><span class="p">,</span> <span class="n">suffix</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">numbering</span><span class="o">=</span><span class="s2">&quot;01&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">filer</span><span class="o">.</span><span class="n">png</span><span class="p">(</span><span class="s2">&quot;records&quot;</span><span class="p">)</span>
+<span class="go">{&quot;filename&quot;: &quot;&lt;absolute path&gt;/output/jpn_01_records.png&quot;}</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">filer</span><span class="o">.</span><span class="n">jpg</span><span class="p">(</span><span class="s2">&quot;records&quot;</span><span class="p">)</span>
+<span class="go">{&quot;filename&quot;: &quot;&lt;absolute path&gt;/output/jpn_01_records.jpg&quot;}</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">filer</span><span class="o">.</span><span class="n">csv</span><span class="p">(</span><span class="s2">&quot;records&quot;</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="go">{&quot;path_or_buf&quot;: &quot;&lt;absolute path&gt;/output/jpn_01_records.csv&quot;, index: True}</span>
+</pre></div>
 </div>
+<dl class="py method">
+<dt id="covsirphy.util.filer.Filer.csv">
+<code class="sig-name descname"><span class="pre">csv</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">title</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/util/filer.html#Filer.csv"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#covsirphy.util.filer.Filer.csv" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create CSV filename and register it.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>title</strong> (<em>str</em>) – title of the filename, like ‘records’</p></li>
+<li><p><strong>kwargs</strong> – keyword arguments to be included in the output</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>absolute filename (key: ‘path_or_buf’) and kwargs</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>dict[str, str]</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py method">
-<dt id="covsirphy.util.optimize.Optimizer.simulate">
-<code class="sig-name descname"><span class="pre">simulate</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">param_dict</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/util/optimize.html#Optimizer.simulate"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#covsirphy.util.optimize.Optimizer.simulate" title="Permalink to this definition">¶</a></dt>
-<dd><p>Simulate the values with the parameters.
-This method should be overwritten in subclass.</p>
+<dt id="covsirphy.util.filer.Filer.files">
+<code class="sig-name descname"><span class="pre">files</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ext</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/util/filer.html#Filer.files"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#covsirphy.util.filer.Filer.files" title="Permalink to this definition">¶</a></dt>
+<dd><p>List-up filenames.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>param_dict</strong> (<em>dict</em>) – estimated parameter values
-- key (str): parameter name
-- value (int or float): parameter value</p>
+<dd class="field-odd"><p><strong>ext</strong> (<em>str</em><em> or </em><em>None</em>) – file extension or None (all)</p>
 </dd>
 <dt class="field-even">Returns</dt>
-<dd class="field-even"><p><dl class="simple">
-<dt>Index</dt><dd><p>reset index</p>
-</dd>
-<dt>Columns</dt><dd><ul class="simple">
-<li><p>Explanatory variable defined by self.x</p></li>
-<li><p>Response variables which defined by self.y_list</p></li>
-</ul>
-</dd>
-</dl>
-</p>
+<dd class="field-even"><p>list of files</p>
 </dd>
 <dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>pandas.DataFrame</p>
+<dd class="field-odd"><p>list[str]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="covsirphy.util.filer.Filer.jpg">
+<code class="sig-name descname"><span class="pre">jpg</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">title</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/util/filer.html#Filer.jpg"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#covsirphy.util.filer.Filer.jpg" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create JPG filename and register it.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>title</strong> (<em>str</em>) – title of the filename, like ‘records’</p></li>
+<li><p><strong>kwargs</strong> – keyword arguments to be included in the output</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>absolute filename (key: ‘filename’) and kwargs</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>dict[str, str]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="covsirphy.util.filer.Filer.png">
+<code class="sig-name descname"><span class="pre">png</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">title</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/util/filer.html#Filer.png"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#covsirphy.util.filer.Filer.png" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create PNG filename and register it.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>title</strong> (<em>str</em>) – title of the filename, like ‘records’</p></li>
+<li><p><strong>kwargs</strong> – keyword arguments to be included in the output</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>absolute filename (key: ‘filename’) and kwargs</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>dict[str, str]</p>
 </dd>
 </dl>
 </dd></dl>
@@ -863,6 +625,11 @@ This method should be overwritten in subclass.</p>
 <dd></dd></dl>
 
 <dl class="py attribute">
+<dt id="covsirphy.util.term.Term.FITTED">
+<code class="sig-name descname"><span class="pre">FITTED</span></code><em class="property"> <span class="pre">=</span> <span class="pre">'Fitted'</span></em><a class="headerlink" href="#covsirphy.util.term.Term.FITTED" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
 <dt id="covsirphy.util.term.Term.FR">
 <code class="sig-name descname"><span class="pre">FR</span></code><em class="property"> <span class="pre">=</span> <span class="pre">'Fatal</span> <span class="pre">or</span> <span class="pre">Recovered'</span></em><a class="headerlink" href="#covsirphy.util.term.Term.FR" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
@@ -885,6 +652,11 @@ This method should be overwritten in subclass.</p>
 <dl class="py attribute">
 <dt id="covsirphy.util.term.Term.MAIN">
 <code class="sig-name descname"><span class="pre">MAIN</span></code><em class="property"> <span class="pre">=</span> <span class="pre">'Main'</span></em><a class="headerlink" href="#covsirphy.util.term.Term.MAIN" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="covsirphy.util.term.Term.METRICS_DICT">
+<code class="sig-name descname"><span class="pre">METRICS_DICT</span></code><em class="property"> <span class="pre">=</span> <span class="pre">{'MAE':</span> <span class="pre">&lt;function</span> <span class="pre">mean_absolute_error&gt;,</span> <span class="pre">'MSE':</span> <span class="pre">&lt;function</span> <span class="pre">mean_squared_error&gt;,</span> <span class="pre">'MSLE':</span> <span class="pre">&lt;function</span> <span class="pre">mean_squared_log_error&gt;,</span> <span class="pre">'RMSE':</span> <span class="pre">&lt;function</span> <span class="pre">Term.&lt;lambda&gt;&gt;,</span> <span class="pre">'RMSLE':</span> <span class="pre">&lt;function</span> <span class="pre">Term.&lt;lambda&gt;&gt;}</span></em><a class="headerlink" href="#covsirphy.util.term.Term.METRICS_DICT" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="py attribute">
@@ -1160,7 +932,7 @@ This method should be overwritten in subclass.</p>
 <dl class="py method">
 <dt id="covsirphy.util.term.Term.linear">
 <em class="property"><span class="pre">static</span> </em><code class="sig-name descname"><span class="pre">linear</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">a</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">b</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/util/term.html#Term.linear"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#covsirphy.util.term.Term.linear" title="Permalink to this definition">¶</a></dt>
-<dd><p>Linear function f(x)=A x + b.</p>
+<dd><p>Linear function f(x) = A x + b.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
@@ -1178,7 +950,7 @@ This method should be overwritten in subclass.</p>
 <dl class="py method">
 <dt id="covsirphy.util.term.Term.negative_exp">
 <em class="property"><span class="pre">static</span> </em><code class="sig-name descname"><span class="pre">negative_exp</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">a</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">b</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/util/term.html#Term.negative_exp"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#covsirphy.util.term.Term.negative_exp" title="Permalink to this definition">¶</a></dt>
-<dd><p>Negative exponential function f(x)=A exp(-Bx).</p>
+<dd><p>Negative exponential function f(x) = A exp(-Bx).</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
@@ -1291,7 +1063,7 @@ This method should be overwritten in subclass.</p>
           <footer>
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
         <a href="covsirphy.visualization.html" class="btn btn-neutral float-right" title="covsirphy.visualization package" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
-        <a href="covsirphy.simulation.html" class="btn btn-neutral float-left" title="covsirphy.simulation package" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="covsirphy.trend.html" class="btn btn-neutral float-left" title="covsirphy.trend package" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
     </div>
 
   <hr/>

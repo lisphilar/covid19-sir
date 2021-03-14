@@ -67,7 +67,7 @@
             
             
               <div class="version">
-                2.17.0-epsilon
+                2.17.0-eta
               </div>
             
           
@@ -117,6 +117,7 @@
 <li class="toctree-l3"><a class="reference internal" href="covsirphy.ode.html">covsirphy.ode package</a></li>
 <li class="toctree-l3"><a class="reference internal" href="covsirphy.phase.html">covsirphy.phase package</a></li>
 <li class="toctree-l3"><a class="reference internal" href="covsirphy.simulation.html">covsirphy.simulation package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="covsirphy.trend.html">covsirphy.trend package</a></li>
 <li class="toctree-l3"><a class="reference internal" href="covsirphy.util.html">covsirphy.util package</a></li>
 <li class="toctree-l3"><a class="reference internal" href="covsirphy.visualization.html">covsirphy.visualization package</a></li>
 <li class="toctree-l3"><a class="reference internal" href="covsirphy.worldwide.html">covsirphy.worldwide package</a></li>
@@ -387,7 +388,7 @@ All results will be returned with a dataframe.</p>
 <dt>Index</dt><dd><p>reset index</p>
 </dd>
 <dt>Columns:</dt><dd><ul class="simple">
-<li><p>Date(pd.TimeStamp): Observation date</p></li>
+<li><p>Date(pd.Timestamp): Observation date</p></li>
 <li><dl class="simple">
 <dt>if &#64;main is True,</dt><dd><ul>
 <li><p>Confirmed(int): the number of confirmed cases</p></li>
@@ -433,7 +434,7 @@ All results will be returned with a dataframe.</p>
 <dt>Index</dt><dd><p>reset index</p>
 </dd>
 <dt>Columns:</dt><dd><ul class="simple">
-<li><p>Date(pd.TimeStamp): Observation date</p></li>
+<li><p>Date(pd.Timestamp): Observation date</p></li>
 <li><p>Confirmed(int): the number of confirmed cases</p></li>
 <li><p>Infected(int): the number of currently infected cases</p></li>
 <li><p>Fatal(int): the number of fatal cases</p></li>
@@ -467,7 +468,7 @@ All results will be returned with a dataframe.</p>
 <dt>Index</dt><dd><p>reset index</p>
 </dd>
 <dt>Columns:</dt><dd><ul class="simple">
-<li><p>Date(pd.TimeStamp): Observation date</p></li>
+<li><p>Date(pd.Timestamp): Observation date</p></li>
 <li><p>columns defined in the extra datasets</p></li>
 </ul>
 </dd>
@@ -496,7 +497,7 @@ All results will be returned with a dataframe.</p>
 <dt>Index</dt><dd><p>reset index</p>
 </dd>
 <dt>Columns:</dt><dd><ul class="simple">
-<li><p>Date(pd.TimeStamp): Observation date</p></li>
+<li><p>Date(pd.Timestamp): Observation date</p></li>
 <li><p>Confirmed(int): the number of confirmed cases</p></li>
 <li><p>Infected(int): the number of currently infected cases</p></li>
 <li><p>Fatal(int): the number of fatal cases</p></li>
@@ -646,7 +647,7 @@ All results will be returned with a dataframe.</p>
 </ul>
 </dd>
 <dt>Columns</dt><dd><ul>
-<li><p>Date (pd.TimeStamp): Observation date</p></li>
+<li><p>Date (pd.Timestamp): Observation date</p></li>
 <li><p>Country (pandas.Category): country/region name</p></li>
 <li><p>Province (pandas.Category): province/prefecture/sstate name</p></li>
 <li><p>Confirmed (int): the number of confirmed cases</p></li>
@@ -751,7 +752,7 @@ If province is None, ‘-‘ will be used.</p>
 <dt>Index</dt><dd><p>reset index</p>
 </dd>
 <dt>Columns</dt><dd><ul class="simple">
-<li><p>Date (pd.TimeStamp): Observation date</p></li>
+<li><p>Date (pd.Timestamp): Observation date</p></li>
 <li><p>Confirmed (int): the number of confirmed cases</p></li>
 <li><p>Infected (int): the number of currently infected cases</p></li>
 <li><p>Fatal (int): the number of fatal cases</p></li>
@@ -898,11 +899,6 @@ Estimators know tau values before parameter estimation.</p>
 </ul>
 </dd>
 </dl>
-<dl class="py attribute">
-<dt id="covsirphy.analysis.param_tracker.ParamTracker.METRICS_DICT">
-<code class="sig-name descname"><span class="pre">METRICS_DICT</span></code><em class="property"> <span class="pre">=</span> <span class="pre">{'MAE':</span> <span class="pre">&lt;function</span> <span class="pre">mean_absolute_error&gt;,</span> <span class="pre">'MSE':</span> <span class="pre">&lt;function</span> <span class="pre">mean_squared_error&gt;,</span> <span class="pre">'MSLE':</span> <span class="pre">&lt;function</span> <span class="pre">mean_squared_log_error&gt;,</span> <span class="pre">'RMSE':</span> <span class="pre">&lt;function</span> <span class="pre">ParamTracker.&lt;lambda&gt;&gt;,</span> <span class="pre">'RMSLE':</span> <span class="pre">&lt;function</span> <span class="pre">ParamTracker.&lt;lambda&gt;&gt;}</span></em><a class="headerlink" href="#covsirphy.analysis.param_tracker.ParamTracker.METRICS_DICT" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
 <dl class="py method">
 <dt id="covsirphy.analysis.param_tracker.ParamTracker.add">
 <code class="sig-name descname"><span class="pre">add</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">end_date</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">days</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">population</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">model</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/analysis/param_tracker.html#ParamTracker.add"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#covsirphy.analysis.param_tracker.ParamTracker.add" title="Permalink to this definition">¶</a></dt>
@@ -1244,7 +1240,7 @@ New phase name will be automatically determined.</p>
 <dt>Index</dt><dd><p>reset index</p>
 </dd>
 <dt>Columns</dt><dd><ul class="simple">
-<li><p>Date (pd.TimeStamp): Observation date</p></li>
+<li><p>Date (pd.Timestamp): Observation date</p></li>
 <li><p>Country (str): country/region name</p></li>
 <li><p>Province (str): province/prefecture/state name</p></li>
 <li><p>Variables of the model and dataset (int): Confirmed etc.</p></li>
@@ -1267,7 +1263,7 @@ New phase name will be automatically determined.</p>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>force</strong> (<em>bool</em>) – if True, change points will be over-written</p></li>
 <li><p><strong>show_figure</strong> (<em>bool</em>) – if True, show the result as a figure</p></li>
-<li><p><strong>kwargs</strong> – keyword arguments of covsirphy.ChangeFinder() and covsirphy.trend_plot()</p></li>
+<li><p><strong>kwargs</strong> – keyword arguments of covsirphy.TrendDetector() and covsirphy.trend_plot()</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
@@ -1930,7 +1926,7 @@ New future phases will be added (over-written).</p>
 <dt>Index</dt><dd><p>reset index</p>
 </dd>
 <dt>Columns</dt><dd><ul class="simple">
-<li><p>Date (pd.TimeStamp): Observation date</p></li>
+<li><p>Date (pd.Timestamp): Observation date</p></li>
 <li><p>Columns set by &#64;variables (int)</p></li>
 </ul>
 </dd>
@@ -1966,7 +1962,7 @@ New future phases will be added (over-written).</p>
 <dd class="field-even"><p><dl class="simple">
 <dt>pandas.DataFrame</dt><dd><dl class="simple">
 <dt>Index</dt><dd><ul class="simple">
-<li><p>Date (pd.TimeStamp): Observation date</p></li>
+<li><p>Date (pd.Timestamp): Observation date</p></li>
 </ul>
 </dd>
 <dt>Columns</dt><dd><ul class="simple">
@@ -2125,7 +2121,7 @@ New phase name will be automatically determined.</p>
 <dt>Index</dt><dd><p>reset index</p>
 </dd>
 <dt>Columns</dt><dd><ul class="simple">
-<li><p>Date (pd.TimeStamp): Observation date</p></li>
+<li><p>Date (pd.Timestamp): Observation date</p></li>
 <li><p>Country (str): country/region name</p></li>
 <li><p>Province (str): province/prefecture/state name</p></li>
 <li><p>Variables of the model and dataset (int): Confirmed etc.</p></li>
@@ -2257,7 +2253,7 @@ If &#64;columns is None, all columns will be shown.</p>
 <li><p><strong>name</strong> (<em>str</em>) – phase series name</p></li>
 <li><p><strong>show_figure</strong> (<em>bool</em>) – if True, show the result as a figure</p></li>
 <li><p><strong>filename</strong> (<em>str</em>) – filename of the figure, or None (display)</p></li>
-<li><p><strong>kwargs</strong> – keyword arguments of covsirphy.ChangeFinder() and covsirphy.trend_plot()</p></li>
+<li><p><strong>kwargs</strong> – keyword arguments of covsirphy.TrendDetector() and covsirphy.trend_plot()</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>

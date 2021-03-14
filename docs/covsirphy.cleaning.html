@@ -67,7 +67,7 @@
             
             
               <div class="version">
-                2.17.0-epsilon
+                2.17.0-eta
               </div>
             
           
@@ -125,6 +125,7 @@
 <li class="toctree-l3"><a class="reference internal" href="covsirphy.ode.html">covsirphy.ode package</a></li>
 <li class="toctree-l3"><a class="reference internal" href="covsirphy.phase.html">covsirphy.phase package</a></li>
 <li class="toctree-l3"><a class="reference internal" href="covsirphy.simulation.html">covsirphy.simulation package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="covsirphy.trend.html">covsirphy.trend package</a></li>
 <li class="toctree-l3"><a class="reference internal" href="covsirphy.util.html">covsirphy.util package</a></li>
 <li class="toctree-l3"><a class="reference internal" href="covsirphy.visualization.html">covsirphy.visualization package</a></li>
 <li class="toctree-l3"><a class="reference internal" href="covsirphy.worldwide.html">covsirphy.worldwide package</a></li>
@@ -573,7 +574,7 @@ Cleaning method is defined by CountryData._cleaning() method.</p>
 <dt>Index</dt><dd><p>reset index</p>
 </dd>
 <dt>Columns</dt><dd><ul class="simple">
-<li><p>Date (pd.TimeStamp): Observation date</p></li>
+<li><p>Date (pd.Timestamp): Observation date</p></li>
 <li><p>Country (pandas.Category): country/region name</p></li>
 <li><p>Province (pandas.Category): province/prefecture/sstate name</p></li>
 <li><p>Confirmed (int): the number of confirmed cases</p></li>
@@ -693,7 +694,7 @@ Cleaning method is defined by CountryData._cleaning() method.</p>
 <dd class="field-odd"><p><p>group-by Date, sum of the values</p>
 <blockquote>
 <div><dl class="simple">
-<dt>Index</dt><dd><p>Date (pd.TimeStamp): Observation date</p>
+<dt>Index</dt><dd><p>Date (pd.Timestamp): Observation date</p>
 </dd>
 <dt>Columns</dt><dd><ul class="simple">
 <li><p>Confirmed (int): the number of confirmed cases</p></li>
@@ -1309,7 +1310,7 @@ Status code: ‘fully complemented recovered data’ and so on as noted in self.
 <dt>Index</dt><dd><p>reset index</p>
 </dd>
 <dt>Columns</dt><dd><ul class="simple">
-<li><p>Date (pd.TimeStamp): Observation date</p></li>
+<li><p>Date (pd.Timestamp): Observation date</p></li>
 <li><p>Confirmed (int): the number of confirmed cases</p></li>
 <li><p>Fatal (int): the number of fatal cases</p></li>
 <li><p>Recovered (int): the number of recovered cases</p></li>
@@ -1326,7 +1327,7 @@ Status code: ‘fully complemented recovered data’ and so on as noted in self.
 <dt>Index</dt><dd><p>reset index</p>
 </dd>
 <dt>Columns</dt><dd><ul class="simple">
-<li><p>Date(pd.TimeStamp): Observation date</p></li>
+<li><p>Date(pd.Timestamp): Observation date</p></li>
 <li><p>Confirmed(int): the number of confirmed cases</p></li>
 <li><p>Infected(int): the number of currently infected cases</p></li>
 <li><p>Fatal(int): the number of fatal cases</p></li>
@@ -1411,7 +1412,7 @@ where recovered values are reported.</p>
 <dt>Index</dt><dd><p>reset index</p>
 </dd>
 <dt>Columns</dt><dd><ul class="simple">
-<li><p>Date (pd.TimeStamp): Observation date</p></li>
+<li><p>Date (pd.Timestamp): Observation date</p></li>
 <li><p>Country (pandas.Category): country/region name</p></li>
 <li><p>Province (pandas.Category): province/prefecture/state name</p></li>
 <li><p>Confirmed (int): the number of confirmed cases</p></li>
@@ -1521,7 +1522,7 @@ Records with Recovered &gt; 0 will be selected.</p>
 <dt>Index</dt><dd><p>reset index</p>
 </dd>
 <dt>Columns</dt><dd><ul class="simple">
-<li><p>Date(pd.TimeStamp): Observation date</p></li>
+<li><p>Date(pd.Timestamp): Observation date</p></li>
 <li><p>Confirmed(int): the number of confirmed cases</p></li>
 <li><p>Infected(int): the number of currently infected cases</p></li>
 <li><p>Fatal(int): the number of fatal cases</p></li>
@@ -1644,7 +1645,7 @@ for each country (if country/countries specified) or for all countries.</p>
 <dt>Index</dt><dd><p>reset index</p>
 </dd>
 <dt>Columns</dt><dd><ul class="simple">
-<li><p>Date (pd.TimeStamp): Observation date</p></li>
+<li><p>Date (pd.Timestamp): Observation date</p></li>
 <li><p>Confirmed (int): the number of confirmed cases</p></li>
 <li><p>Infected (int): the number of currently infected cases</p></li>
 <li><p>Fatal (int): the number of fatal cases</p></li>
@@ -1686,7 +1687,7 @@ Records with Recovered &gt; 0 will be selected.</p>
 <dt>Index</dt><dd><p>reset index</p>
 </dd>
 <dt>Columns</dt><dd><ul class="simple">
-<li><p>Date(pd.TimeStamp): Observation date</p></li>
+<li><p>Date(pd.Timestamp): Observation date</p></li>
 <li><p>Confirmed(int): the number of confirmed cases</p></li>
 <li><p>Infected(int): the number of currently infected cases</p></li>
 <li><p>Fatal(int): the number of fatal cases</p></li>
@@ -1712,40 +1713,8 @@ Records with Recovered &gt; 0 will be selected.</p>
 
 <dl class="py method">
 <dt id="covsirphy.cleaning.jhu_data.JHUData.to_sr">
-<code class="sig-name descname"><span class="pre">to_sr</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">country</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">province</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">start_date</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">end_date</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">population</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/cleaning/jhu_data.html#JHUData.to_sr"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#covsirphy.cleaning.jhu_data.JHUData.to_sr" title="Permalink to this definition">¶</a></dt>
-<dd><p>Create Susceptible/Recovered dataset without complement.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>country</strong> (<em>str</em>) – country name</p></li>
-<li><p><strong>province</strong> (<em>str</em>) – province name</p></li>
-<li><p><strong>start_date</strong> (<em>str</em><em> or </em><em>None</em>) – start date, like 22Jan2020</p></li>
-<li><p><strong>end_date</strong> (<em>str</em><em> or </em><em>None</em>) – end date, like 01Feb2020</p></li>
-<li><p><strong>population</strong> (<em>int</em>) – population value</p></li>
-</ul>
-</dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p><dl class="simple">
-<dt>pandas.DataFrame</dt><dd><dl class="simple">
-<dt>Index</dt><dd><p>Date (pd.TimeStamp): Observation date</p>
-</dd>
-<dt>Columns</dt><dd><ul class="simple">
-<li><p>Recovered (int): the number of recovered cases (&gt; 0)</p></li>
-<li><p>Susceptible (int): the number of susceptible cases</p></li>
-</ul>
-</dd>
-</dl>
-</dd>
-</dl>
-</p>
-</dd>
-</dl>
-<div class="admonition note">
-<p class="admonition-title">Note</p>
-<p>&#64;population must be specified.
-Records with Recovered &gt; 0 will be used.</p>
-</div>
-</dd></dl>
+<code class="sig-name descname"><span class="pre">to_sr</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#covsirphy.cleaning.jhu_data.JHUData.to_sr" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
 
 <dl class="py method">
 <dt id="covsirphy.cleaning.jhu_data.JHUData.total">
@@ -2093,7 +2062,7 @@ When &#64;country is a country name, province level data in the selected country
 <dt>Index</dt><dd><p>reset index</p>
 </dd>
 <dt>Columns</dt><dd><ul class="simple">
-<li><p>Date (pd.TimeStamp): Observation date</p></li>
+<li><p>Date (pd.Timestamp): Observation date</p></li>
 <li><p>other column names are defined by OxCGRTData.COL_DICT</p></li>
 </ul>
 </dd>
@@ -2172,7 +2141,7 @@ When &#64;country is a country name, province level data in the selected country
 <dt>Index</dt><dd><p>reset index</p>
 </dd>
 <dt>Columns</dt><dd><ul class="simple">
-<li><p>Date (pd.TimeStamp): Observation date</p></li>
+<li><p>Date (pd.Timestamp): Observation date</p></li>
 <li><p>Country (pandas.Category): country/region name</p></li>
 <li><p>Province (pandas.Category): province/prefecture/state name</p></li>
 <li><p>Tests (int): the number of total tests performed</p></li>
@@ -2328,7 +2297,7 @@ When &#64;country is a country name, province level data will be shown on countr
 <dt>Index</dt><dd><p>reset index</p>
 </dd>
 <dt>Columns</dt><dd><ul class="simple">
-<li><p>Date (pd.TimeStamp): Observation date</p></li>
+<li><p>Date (pd.Timestamp): Observation date</p></li>
 <li><p>Tests (int): the number of total tests performed</p></li>
 <li><p>Tests_diff (int): daily number of tests on date</p></li>
 <li><p>Confirmed (int): the number of confirmed cases</p></li>
