@@ -80,7 +80,7 @@ class CountryData(CleaningBase):
                 Index
                     reset index
                 Columns
-                    - Date (pd.TimeStamp): Observation date
+                    - Date (pd.Timestamp): Observation date
                     - Country (pandas.Category): country/region name
                     - Province (pandas.Category): province/prefecture/state name
                     - Confirmed (int): the number of confirmed cases
@@ -131,7 +131,7 @@ class CountryData(CleaningBase):
                 Index
                     reset index
                 Columns
-                    - Date (pd.TimeStamp): Observation date
+                    - Date (pd.Timestamp): Observation date
                     - Country (pandas.Category): country/region name
                     - Province (pandas.Category): province/prefecture/sstate name
                     - Confirmed (int): the number of confirmed cases
@@ -151,7 +151,7 @@ class CountryData(CleaningBase):
             pandas.DataFrame: group-by Date, sum of the values
 
                 Index
-                    Date (pd.TimeStamp): Observation date
+                    Date (pd.Timestamp): Observation date
                 Columns
                     - Confirmed (int): the number of confirmed cases
                     - Infected (int): the number of currently infected cases

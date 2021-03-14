@@ -60,7 +60,7 @@ class PCRData(CleaningBase):
                 Index
                     reset index
                 Columns
-                    - Date (pd.TimeStamp): Observation date
+                    - Date (pd.Timestamp): Observation date
                     - Country (pandas.Category): country/region name
                     - Province (pandas.Category): province/prefecture/state name
                     - Tests (int): the number of total tests performed
@@ -81,7 +81,7 @@ class PCRData(CleaningBase):
                 Index
                     reset index
                 Columns
-                    - Date (pd.TimeStamp): Observation date
+                    - Date (pd.Timestamp): Observation date
                     - ISO3 (str): ISO3 code
                     - Country (pandas.Category): country/region name
                     - Province (pandas.Category): province/prefecture/state name
@@ -418,7 +418,7 @@ class PCRData(CleaningBase):
                     Index
                         reset index
                     Columns
-                        - Date (pd.TimeStamp): Observation date
+                        - Date (pd.Timestamp): Observation date
                         - Tests (int): the number of total tests performed
                         - Confirmed (int): the number of confirmed cases
                         - Tests_diff (int): daily tests performed
@@ -606,7 +606,7 @@ class PCRData(CleaningBase):
                 Index
                     reset index
                 Columns
-                    - Date (pd.TimeStamp): Observation date
+                    - Date (pd.Timestamp): Observation date
                     - Tests (int): the number of total tests performed
                     - Tests_diff (int): daily number of tests on date
                     - Confirmed (int): the number of confirmed cases

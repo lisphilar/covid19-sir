@@ -263,7 +263,7 @@ class Scenario(Term):
                 Index
                     reset index
                 Columns
-                    - Date (pd.TimeStamp): Observation date
+                    - Date (pd.Timestamp): Observation date
                     - Columns set by @variables (int)
 
         Note:
@@ -302,7 +302,7 @@ class Scenario(Term):
         Returns:
             pandas.DataFrame
                 Index
-                    - Date (pd.TimeStamp): Observation date
+                    - Date (pd.Timestamp): Observation date
                 Columns
                     - Confirmed (int): daily new cases of Confirmed, if calculated
                     - Infected (int):  daily new cases of Infected, if calculated
@@ -599,7 +599,7 @@ class Scenario(Term):
             name (str): phase series name
             show_figure (bool): if True, show the result as a figure
             filename (str): filename of the figure, or None (display)
-            kwargs: keyword arguments of covsirphy.ChangeFinder() and covsirphy.trend_plot()
+            kwargs: keyword arguments of covsirphy.TrendDetector() and covsirphy.trend_plot()
 
         Returns:
             covsirphy.Scenario: self
@@ -625,8 +625,7 @@ class Scenario(Term):
         if not self._interactive and filename is None:
             show_figure = False
         filename = None if self._interactive else filename
-        self[name] = tracker.trend(
-            force=force, show_figure=show_figure, filename=filename, **kwargs)
+        self[name] = tracker.trend(force=force, show_figure=show_figure, filename=filename, **kwargs)
         # Disable 0th phase, if necessary
         if not include_init_phase:
             self[name] = tracker.disable(phases=["0th"])
@@ -718,7 +717,7 @@ class Scenario(Term):
                 Index
                     reset index
                 Columns
-                    - Date (pd.TimeStamp): Observation date
+                    - Date (pd.Timestamp): Observation date
                     - Country (str): country/region name
                     - Province (str): province/prefecture/state name
                     - Variables of the model and dataset (int): Confirmed etc.

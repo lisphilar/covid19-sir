@@ -45,6 +45,7 @@ class TestJHUData(object):
         assert df.loc[df.index[-1], Term.DATE] == last_date
 
     def test_to_sr(self, jhu_data):
+        warnings.filterwarnings("ignore", category=DeprecationWarning)
         df = jhu_data.to_sr("Japan", population=126_500_000)
         assert set(df.columns) == set([Term.R, Term.S])
 

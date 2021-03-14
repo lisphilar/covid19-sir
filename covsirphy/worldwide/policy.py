@@ -116,8 +116,7 @@ class PolicyMeasures(Term):
         min_len = self._ensure_natural_int(min_len, name="min_len")
         for country in self._countries:
             try:
-                self.scenario_dict[country].trend(
-                    set_phases=True, show_figure=False)
+                self.scenario_dict[country].trend(set_phases=True, show_figure=False)
             except ValueError:
                 pass
         countries = [
@@ -228,7 +227,7 @@ class PolicyMeasures(Term):
         Returns:
             pandas.DataFrame:
                 Index
-                    Date (pd.TimeStamp) date
+                    Date (pd.Timestamp) date
                 Columns
                     (str) country names
                 Values:
@@ -277,7 +276,7 @@ class PolicyMeasures(Term):
                     reset index
                 Columns
                     - Country (str): country name
-                    - Date (pd.TimeStamp): date
+                    - Date (pd.Timestamp): date
                     - (float): model parameters
                     - (float): model day parameters
                     - Rt (float): reproduction number

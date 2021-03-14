@@ -33,7 +33,7 @@ class TrendPlot(LinePlot):
     def __exit__(self, *exc_info):
         return super().__exit__(*exc_info)
 
-    def plot(self, data, actual_col="Actual", predicted_cols=None):
+    def plot(self, data, actual_col="Actual"):
         """
         Plot chronological change of the data with multiple lines.
 
@@ -43,15 +43,11 @@ class TrendPlot(LinePlot):
                     x values
                 Columns
                     - column defined by @actual_col, actual values for y-axis
-                    - columns defined by @predicted_cols, predicted values for y-axis
+                    - the other arguments will be assumed as predicted values for y-axis
             actual_col (str): column name for y-axis
-            predicted_cols (list[str] or None): list of columns which have predicted values or None (all except for @actual_col)
         """
-        if predicted_cols is None:
-            self._ensure_dataframe(data, name="data", columns=[actual_col])
-            predicted_cols = [col for col in data.columns if col != actual_col]
-        else:
-            self._ensure_dataframe(data, name="data", columns=[actual_col, *predicted_cols])
+        self._ensure_dataframe(data, name="data", columns=[actual_col])
+        predicted_cols = [col for col in data.columns if col != actual_col]
         self._variables = data.columns.tolist()
         # Scatter plot (actual values)
         self._ax.plot(
@@ -177,7 +173,6 @@ def line_plot_multiple(df, x_col, actual_col, predicted_cols, **kwargs):
                 - columns defined by @predicted_cols, predicted values for y-axis
         x_col (str): column name for x-axis
         actual_col (str): column name for y-axis
-        predicted_cols (list[str]): list of columns which have predicted values
         kwargs: any other arguments of covsirphy.trend_plot()
     """
-    return trend_plot(df.set_index(x_col), actual_col=actual_col, predicted_cols=predicted_cols, **kwargs)
+    return trend_plot(df.set_index(x_col), actual_col=actual_col, **kwargs)

@@ -15,10 +15,11 @@ def deprecate(old, new=None, version=None):
     """
     def _deprecate(func):
         def wrapper(*args, **kwargs):
+            version_str = "." if version is None else f", version >= {version}."
             if new is None:
-                comment = f"{old} is deprecated, version > {version}"
+                comment = f"{old} was deprecated{version_str}"
             else:
-                comment = f"Please use {new} rather than {old}, version > {version}"
+                comment = f"Please use {new} rather than {old}{version_str}"
             warnings.warn(
                 comment,
                 DeprecationWarning,

@@ -100,7 +100,7 @@ class JHUDataComplementHandler(Term):
                 Index
                     reset index
                 Columns
-                    - Date (pd.TimeStamp): Observation date
+                    - Date (pd.Timestamp): Observation date
                     - Confirmed (int): the number of confirmed cases
                     - Fatal (int): the number of fatal cases
                     - Recovered (int): the number of recovered cases
@@ -113,7 +113,7 @@ class JHUDataComplementHandler(Term):
                     Index
                         reset index
                     Columns
-                        - Date(pd.TimeStamp): Observation date
+                        - Date(pd.Timestamp): Observation date
                         - Confirmed(int): the number of confirmed cases
                         - Infected(int): the number of currently infected cases
                         - Fatal(int): the number of fatal cases

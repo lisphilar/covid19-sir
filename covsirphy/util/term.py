@@ -6,6 +6,7 @@ from datetime import datetime, timedelta
 import math
 import numpy as np
 import pandas as pd
+import sklearn
 from covsirphy.util.error import deprecate
 
 
@@ -67,6 +68,7 @@ class Term(object):
     A = "_actual"
     P = "_predicted"
     ACTUAL = "Actual"
+    FITTED = "Fitted"
     # Phase name
     SUFFIX_DICT = defaultdict(lambda: "th")
     SUFFIX_DICT.update({1: "st", 2: "nd", 3: "rd"})
@@ -89,6 +91,14 @@ class Term(object):
     # Flag
     UNKNOWN = "-"
     OTHERS = "Others"
+    # Metrics
+    METRICS_DICT = {
+        "MAE": sklearn.metrics.mean_absolute_error,
+        "MSE": sklearn.metrics.mean_squared_error,
+        "MSLE": sklearn.metrics.mean_squared_log_error,
+        "RMSE": lambda x1, x2: sklearn.metrics.mean_squared_error(x1, x2, squared=False),
+        "RMSLE": lambda x1, x2: np.sqrt(sklearn.metrics.mean_squared_log_error(x1, x2)),
+    }
 
     @classmethod
     def num2str(cls, num):
@@ -127,7 +137,7 @@ class Term(object):
     @staticmethod
     def negative_exp(x, a, b):
         """
-        Negative exponential function f(x)=A exp(-Bx).
+        Negative exponential function f(x) = A exp(-Bx).
 
         Args:
             x (float): x values
@@ -142,7 +152,7 @@ class Term(object):
     @staticmethod
     def linear(x, a, b):
         """
-        Linear function f(x)=A x + b.
+        Linear function f(x) = A x + b.
 
         Args:
             x (float): x values
@@ -228,6 +238,27 @@ class Term(object):
         min_value = 0 if include_zero else 1
         if number < min_value:
             raise ValueError(f"{s}. This value is under {min_value}")
+        return number
+
+    def _ensure_int_range(self, target, name="number", value_range=(0, None)):
+        """
+        Ensure the number is an integer and in the specified range.
+
+        Args:
+            target (int or float or str): value to ensure
+            name (str): argument name of the value
+            value_range(tuple(int or None, int or None)): value range, None means un-specified
+
+        Returns:
+            int: as-is the target
+        """
+        number = self._ensure_natural_int(target=target, name=name, include_zero=True, none_ok=False)
+        # Minimum
+        if value_range[0] is not None and number < value_range[0]:
+            raise ValueError(f"{name} must be over or equal to {value_range[0]}, but {number} was applied.")
+        # Maximum
+        if value_range[1] is not None and number > value_range[1]:
+            raise ValueError(f"{name} must be under or equal to {value_range[1]}, but {number} was applied.")
         return number
 
     @classmethod
