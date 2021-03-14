@@ -10,7 +10,6 @@ except ImportError:
 # version
 from covsirphy.__version__ import __version__
 # util
-from covsirphy.util.optimize import Optimizer
 from covsirphy.util.stopwatch import StopWatch
 from covsirphy.util.error import deprecate
 from covsirphy.util.error import SubsetNotFoundError, ScenarioNotFoundError, UnExecutedError
@@ -50,7 +49,7 @@ from covsirphy.ode.sirf import SIRF
 from covsirphy.ode.sirfv import SIRFV
 from covsirphy.ode.sewirf import SEWIRF
 # simulation
-from covsirphy.simulation.estimator import Estimator
+from covsirphy.simulation.estimator import Estimator, Optimizer
 from covsirphy.simulation.simulator import ODESimulator
 # phase
 from covsirphy.phase.phase_unit import PhaseUnit
@@ -75,7 +74,7 @@ def get_version():
 
 __all__ = [
     # util
-    "StopWatch", "deprecate", "find_args", "Term", "save_dataframe", "Optimizer",
+    "StopWatch", "deprecate", "find_args", "Term", "save_dataframe",
     "SubsetNotFoundError", "ScenarioNotFoundError", "UnExecutedError",
     "PCRIncorrectPreconditionError", "NotInteractiveError",
     "UnExpectedValueError", "NotRegisteredMainError", "NotRegisteredExtraError",
@@ -99,6 +98,7 @@ __all__ = [
     "PolicyMeasures",
     # Deprecated
     "Population", "Word", "jpn_map", "SIRFV", "line_plot_multiple", "ChangeFinder", "Trend",
+    "Optimizer",
 ]
 
 # Show exceptions in better format if used from command line
