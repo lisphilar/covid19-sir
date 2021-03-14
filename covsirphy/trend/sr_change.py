@@ -9,6 +9,7 @@ import pandas as pd
 import ruptures as rpt
 from scipy.optimize import curve_fit, OptimizeWarning
 from covsirphy.util.term import Term
+from covsirphy.trend.trend_plot import trend_plot
 
 
 class _SRChange(Term):
@@ -135,3 +136,34 @@ class _SRChange(Term):
             df = fit_df[[self.ACTUAL, phase]].dropna()
             scores.append(score_f(df[self.ACTUAL], df[phase]))
         return scores
+
+    def show(self, change_points, area, **kwargs):
+        """
+        Show the trend on S-R plane.
+
+        Args:
+            change_points (list[pandas.Timestamp]): list of change points
+            area (str): area name (used in the figure title)
+            kwargs: keyword arguments of covsirphy.trend_plot()
+        """
+        # Title
+        if len(change_points) == 1:
+            title = f"{area}: S-R trend without change points"
+        else:
+            _list = [date.strftime(self.DATE_FORMAT) for date in change_points]
+            strings = [", ".join(_list[i: i + 6]) for i in range(0, len(_list), 6)]
+            change_str = ",\n".join(strings)
+            title = f"{area}: S-R trend changed on\n{change_str}"
+        # Curve fitting
+        fit_df = self._fitting(change_points)
+        # Show S-R plane
+        fit_df = fit_df.rename(columns={"0th": self.INITIAL})
+        plot_kwargs = {
+            "title": title,
+            "predicted_col": None,
+            "xlabel": self.R,
+            "ylabel": self.S,
+            "show_legend": True,
+        }
+        plot_kwargs.update(kwargs)
+        trend_plot(df=fit_df.set_index(self.R), title=title, actual_col=self.ACTUAL, **kwargs)

@@ -6,8 +6,8 @@ import warnings
 import numpy as np
 import pandas as pd
 from scipy.optimize import curve_fit, OptimizeWarning
-from covsirphy.visualization.trend_plot import trend_plot
 from covsirphy.util.term import Term
+from covsirphy.trend.trend_plot import trend_plot
 
 
 class Trend(Term):

@@ -25,7 +25,6 @@ from covsirphy.visualization.colored_map import ColoredMap
 from covsirphy.visualization.japan_map import jpn_map
 from covsirphy.visualization.line_plot import LinePlot, line_plot
 from covsirphy.visualization.bar_plot import BarPlot, bar_plot
-from covsirphy.visualization.trend_plot import TrendPlot, trend_plot, line_plot_multiple
 # cleaning
 from covsirphy.cleaning.cbase import CleaningBase
 from covsirphy.cleaning.jhu_data import JHUData
@@ -42,6 +41,7 @@ from covsirphy.cleaning.vaccine_data import VaccineData
 from covsirphy.cleaning.dataloader import DataLoader
 # trend
 from covsirphy.trend.trend_detector import TrendDetector
+from covsirphy.trend.trend_plot import TrendPlot, trend_plot, line_plot_multiple
 # ode
 from covsirphy.ode.mbase import ModelBase
 from covsirphy.ode.sir import SIR
@@ -83,7 +83,7 @@ __all__ = [
     "JHUData", "CountryData", "PopulationData", "OxCGRTData", "VaccineData",
     "PopulationPyramidData",
     "LinelistData", "PCRData", "JapanData", "JHUDataComplementHandler",
-    "TrendDetector",
+    "TrendDetector", "TrendPlot", "trend_plot",
     "ModelBase", "SIR", "SIRD", "SIRF", "SEWIRF",
     "Estimator", "Trend", "Optimizer",
     "StopWatch", "deprecate", "find_args",
@@ -93,7 +93,7 @@ __all__ = [
     "PCRIncorrectPreconditionError", "NotInteractiveError",
     "UnExpectedValueError", "NotRegisteredMainError", "NotRegisteredExtraError",
     "VisualizeBase", "ColoredMap",
-    "LinePlot", "line_plot", "BarPlot", "bar_plot", "TrendPlot", "trend_plot",
+    "LinePlot", "line_plot", "BarPlot", "bar_plot",
     # Deprecated
     "Population", "Word", "jpn_map", "SIRFV", "line_plot_multiple",
 ]

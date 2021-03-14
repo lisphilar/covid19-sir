@@ -21,6 +21,7 @@ class TrendDetector(Term):
                 - Fatal(int): the number of fatal cases
                 - Recovered (int): the number of recovered cases
                 - Susceptible(int): the number of susceptible cases
+        area (str): area name (used in the figure title)
         min_size (int): minimum value of phase length [days], over 2
 
     Note:
@@ -29,7 +30,7 @@ class TrendDetector(Term):
         "Change points" is the same as the start dates of phases except for the 0th phase.
     """
 
-    def __init__(self, data, min_size=5):
+    def __init__(self, data, area="Selected area", min_size=5):
         self._ensure_dataframe(data, name="data", columns=self.SUB_COLUMNS)
         # Index: Date, Columns: the number cases
         self._record_df = data.groupby(self.DATE).last()
@@ -40,6 +41,8 @@ class TrendDetector(Term):
         # The first/last date
         self._first_point = self._record_df.index.min()
         self._last_point = self._record_df.index.max()
+        # Area name
+        self._area = area
         # Change points: list[pandas.Timestamp]
         self._points = []
 
@@ -106,5 +109,9 @@ class TrendDetector(Term):
     def sr_show(self, **kwargs):
         """
         Show the trend on S-R plane.
+
+        Args:
+            kwargs: keyword arguments of covsirphy.trend_plot()
         """
-        pass
+        finder = _SRChange(sr_df=self._record_df)
+        finder.show(self._points, self._area, **kwargs)

@@ -29,12 +29,14 @@ class TestTrendDetector(object):
             "Brazil", "France", "Spain", "UK", "New Zealand", "Germany",
         ]
     )
-    def test_sr(self, jhu_data, population_data, country):
+    def test_sr(self, jhu_data, population_data, country, imgfile):
         # Dataset
         population = population_data.value(country)
         subset_df = jhu_data.subset(country=country, population=population)
         # S-R trend analysis
-        detector = TrendDetector(data=subset_df)
+        detector = TrendDetector(data=subset_df, area=country)
         detector.sr()
         # Summary
         detector.summary()
+        # Show plane
+        detector.sr_show(filename=imgfile)
