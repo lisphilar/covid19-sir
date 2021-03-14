@@ -173,7 +173,6 @@ def line_plot_multiple(df, x_col, actual_col, predicted_cols, **kwargs):
                 - columns defined by @predicted_cols, predicted values for y-axis
         x_col (str): column name for x-axis
         actual_col (str): column name for y-axis
-        predicted_cols (list[str]): list of columns which have predicted values
         kwargs: any other arguments of covsirphy.trend_plot()
     """
-    return trend_plot(df.set_index(x_col), actual_col=actual_col, predicted_cols=predicted_cols, **kwargs)
+    return trend_plot(df.set_index(x_col), actual_col=actual_col, **kwargs)
