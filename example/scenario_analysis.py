@@ -24,7 +24,7 @@ def main(country="Italy", province=None, file_prefix="ita"):
     # Create output directory in example directory
     code_path = Path(__file__)
     input_dir = code_path.parent.with_name("input")
-    output_dir = code_path.with_name("output").joinpath(code_path.stem)
+    output_dir = code_path.with_name("output").joinpath(f"{code_path.stem}_{file_prefix}")
     output_dir.mkdir(exist_ok=True, parents=True)
     filer = cs.Filer(output_dir, prefix=file_prefix, numbering="01")
     # Load datasets
