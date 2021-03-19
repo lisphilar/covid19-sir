@@ -65,7 +65,7 @@
             
             
               <div class="version">
-                2.17.0-eta
+                2.17.0-theta
               </div>
             
           
@@ -180,6 +180,7 @@
 <span class="kn">import</span> <span class="nn">country_converter</span> <span class="k">as</span> <span class="nn">coco</span>
 <span class="kn">import</span> <span class="nn">geopandas</span> <span class="k">as</span> <span class="nn">gpd</span>
 <span class="kn">from</span> <span class="nn">mpl_toolkits.axes_grid1</span> <span class="kn">import</span> <span class="n">make_axes_locatable</span>
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="kn">import</span> <span class="nn">requests</span>
 <span class="kn">from</span> <span class="nn">unidecode</span> <span class="kn">import</span> <span class="n">unidecode</span>
@@ -345,19 +346,27 @@
 <span class="sd">                Index</span>
 <span class="sd">                    reset index</span>
 <span class="sd">                Columns</span>
-<span class="sd">                    - Value (int or float or None)</span>
+<span class="sd">                    - Value (int or float or None): values to plot</span>
+<span class="sd">                    - Province (str): province names</span>
 <span class="sd">                    - geometry (geopandas.GeoDataFrame.geometry): geometry information</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="c1"># Get geometry information of the country</span>
         <span class="n">iso3</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_to_iso3</span><span class="p">(</span><span class="n">country</span><span class="p">)</span>
         <span class="n">scale</span> <span class="o">=</span> <span class="s2">&quot;50m&quot;</span> <span class="k">if</span> <span class="n">iso3</span> <span class="o">==</span> <span class="s2">&quot;USA&quot;</span> <span class="k">else</span> <span class="s2">&quot;10m&quot;</span>
         <span class="n">gdf</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_load_geo_country_specific</span><span class="p">(</span><span class="n">scale</span><span class="o">=</span><span class="n">scale</span><span class="p">)</span>
+        <span class="n">gdf</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">ISO3</span><span class="p">]</span> <span class="o">=</span> <span class="n">gdf</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">ISO3</span><span class="p">]</span><span class="o">.</span><span class="n">replace</span><span class="p">({</span><span class="s2">&quot;MAC&quot;</span><span class="p">:</span> <span class="s2">&quot;CHN&quot;</span><span class="p">})</span>
+        <span class="n">hkg_gdf</span> <span class="o">=</span> <span class="n">gdf</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">gdf</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">ISO3</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;HKG&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">dissolve</span><span class="p">()</span>
+        <span class="n">hkg_gdf</span><span class="o">.</span><span class="n">loc</span><span class="p">[:,</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">ISO3</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">PROVINCE</span><span class="p">]]</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;CHN&quot;</span><span class="p">,</span> <span class="s2">&quot;Hong Kong&quot;</span><span class="p">]</span>
+        <span class="n">gdf</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">([</span><span class="n">gdf</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">gdf</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">ISO3</span><span class="p">]</span> <span class="o">!=</span> <span class="s2">&quot;HKG&quot;</span><span class="p">],</span> <span class="n">hkg_gdf</span><span class="p">],</span> <span class="n">sort</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">ignore_index</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
         <span class="n">gdf</span> <span class="o">=</span> <span class="n">gdf</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">gdf</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">ISO3</span><span class="p">]</span> <span class="o">==</span> <span class="n">iso3</span><span class="p">]</span>
+        <span class="c1"># Update province names</span>
+        <span class="n">gdf</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">PROVINCE</span><span class="p">]</span> <span class="o">=</span> <span class="n">gdf</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">PROVINCE</span><span class="p">]</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span>
+            <span class="p">{</span><span class="s2">&quot;Xizang&quot;</span><span class="p">:</span> <span class="s2">&quot;Tibet&quot;</span><span class="p">,</span> <span class="s2">&quot;Inner Mongol&quot;</span><span class="p">:</span> <span class="s2">&quot;Inner Mongolia&quot;</span><span class="p">})</span>
         <span class="c1"># Merge the data with geometry information</span>
         <span class="n">gdf</span> <span class="o">=</span> <span class="n">gdf</span><span class="o">.</span><span class="n">merge</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">how</span><span class="o">=</span><span class="s2">&quot;left&quot;</span><span class="p">,</span> <span class="n">on</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">PROVINCE</span><span class="p">)</span>
         <span class="c1"># Select countries</span>
         <span class="n">sel</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">included</span> <span class="ow">or</span> <span class="n">gdf</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">PROVINCE</span><span class="p">]</span><span class="o">.</span><span class="n">unique</span><span class="p">())</span> <span class="o">-</span> <span class="nb">set</span><span class="p">(</span><span class="n">excluded</span> <span class="ow">or</span> <span class="p">[])</span>
-        <span class="k">return</span> <span class="n">gdf</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">gdf</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">PROVINCE</span><span class="p">]</span><span class="o">.</span><span class="n">isin</span><span class="p">(</span><span class="n">sel</span><span class="p">),</span> <span class="p">[</span><span class="s2">&quot;Value&quot;</span><span class="p">,</span> <span class="s2">&quot;geometry&quot;</span><span class="p">]]</span>
+        <span class="k">return</span> <span class="n">gdf</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">gdf</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">PROVINCE</span><span class="p">]</span><span class="o">.</span><span class="n">isin</span><span class="p">(</span><span class="n">sel</span><span class="p">),</span> <span class="p">[</span><span class="s2">&quot;Value&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">PROVINCE</span><span class="p">,</span> <span class="s2">&quot;geometry&quot;</span><span class="p">]]</span>
 
     <span class="k">def</span> <span class="nf">_load_geo_global</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>

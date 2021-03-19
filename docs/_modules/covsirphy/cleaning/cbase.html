@@ -65,7 +65,7 @@
             
             
               <div class="version">
-                2.17.0-eta
+                2.17.0-theta
               </div>
             
           
@@ -596,6 +596,11 @@
             <span class="k">raise</span> <span class="n">UnExpectedValueError</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;variable&quot;</span><span class="p">,</span> <span class="n">value</span><span class="o">=</span><span class="n">variable</span><span class="p">,</span> <span class="n">candidates</span><span class="o">=</span><span class="n">candidates</span><span class="p">)</span>
         <span class="c1"># Remove cruise ships</span>
         <span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">df</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">COUNTRY</span><span class="p">]</span> <span class="o">!=</span> <span class="bp">self</span><span class="o">.</span><span class="n">OTHERS</span><span class="p">]</span>
+        <span class="c1"># Recognize province as a region/country</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">PROVINCE</span> <span class="ow">in</span> <span class="n">df</span><span class="p">:</span>
+            <span class="n">df</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">ISO3</span><span class="p">]</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">ISO3</span><span class="p">]</span><span class="o">.</span><span class="n">cat</span><span class="o">.</span><span class="n">add_categories</span><span class="p">([</span><span class="s2">&quot;GRL&quot;</span><span class="p">])</span>
+            <span class="n">df</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">COUNTRY</span><span class="p">]</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">COUNTRY</span><span class="p">]</span><span class="o">.</span><span class="n">cat</span><span class="o">.</span><span class="n">add_categories</span><span class="p">([</span><span class="s2">&quot;Greenland&quot;</span><span class="p">])</span>
+            <span class="n">df</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">df</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">PROVINCE</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;Greenland&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">AREA_ABBR_COLS</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;GRL&quot;</span><span class="p">,</span> <span class="s2">&quot;Greenland&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">UNKNOWN</span><span class="p">]</span>
         <span class="c1"># Select country level data</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">PROVINCE</span> <span class="ow">in</span> <span class="n">df</span><span class="o">.</span><span class="n">columns</span><span class="p">:</span>
             <span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">df</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">PROVINCE</span><span class="p">]</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">UNKNOWN</span><span class="p">]</span>
