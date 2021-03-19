@@ -423,6 +423,11 @@ class CleaningBase(Term):
             raise UnExpectedValueError(name="variable", value=variable, candidates=candidates)
         # Remove cruise ships
         df = df.loc[df[self.COUNTRY] != self.OTHERS]
+        # Recognize province as a region/country
+        if self.PROVINCE in df:
+            df[self.ISO3] = df[self.ISO3].cat.add_categories(["GRL"])
+            df[self.COUNTRY] = df[self.COUNTRY].cat.add_categories(["Greenland"])
+            df.loc[df[self.PROVINCE] == "Greenland", self.AREA_ABBR_COLS] = ["GRL", "Greenland", self.UNKNOWN]
         # Select country level data
         if self.PROVINCE in df.columns:
             df = df.loc[df[self.PROVINCE] == self.UNKNOWN]
