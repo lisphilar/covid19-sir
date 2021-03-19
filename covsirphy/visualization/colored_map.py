@@ -7,6 +7,7 @@ import warnings
 import country_converter as coco
 import geopandas as gpd
 from mpl_toolkits.axes_grid1 import make_axes_locatable
+import pandas as pd
 import numpy as np
 import requests
 from unidecode import unidecode
@@ -172,19 +173,27 @@ class ColoredMap(VisualizeBase):
                 Index
                     reset index
                 Columns
-                    - Value (int or float or None)
+                    - Value (int or float or None): values to plot
+                    - Province (str): province names
                     - geometry (geopandas.GeoDataFrame.geometry): geometry information
         """
         # Get geometry information of the country
         iso3 = self._to_iso3(country)
         scale = "50m" if iso3 == "USA" else "10m"
         gdf = self._load_geo_country_specific(scale=scale)
+        gdf[self.ISO3] = gdf[self.ISO3].replace({"MAC": "CHN"})
+        hkg_gdf = gdf.loc[gdf[self.ISO3] == "HKG"].dissolve()
+        hkg_gdf.loc[:, [self.ISO3, self.PROVINCE]] = ["CHN", "Hong Kong"]
+        gdf = pd.concat([gdf.loc[gdf[self.ISO3] != "HKG"], hkg_gdf], sort=True, ignore_index=True)
         gdf = gdf.loc[gdf[self.ISO3] == iso3]
+        # Update province names
+        gdf[self.PROVINCE] = gdf[self.PROVINCE].replace(
+            {"Xizang": "Tibet", "Inner Mongol": "Inner Mongolia"})
         # Merge the data with geometry information
         gdf = gdf.merge(data, how="left", on=self.PROVINCE)
         # Select countries
         sel = set(included or gdf[self.PROVINCE].unique()) - set(excluded or [])
-        return gdf.loc[gdf[self.PROVINCE].isin(sel), ["Value", "geometry"]]
+        return gdf.loc[gdf[self.PROVINCE].isin(sel), ["Value", self.PROVINCE, "geometry"]]
 
     def _load_geo_global(self):
         """
