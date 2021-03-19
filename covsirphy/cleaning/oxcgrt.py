@@ -81,6 +81,9 @@ class OxCGRTData(CleaningBase):
                 "Korea, South": "South Korea",
             }
         )
+        grl_df = df.loc[df[self.COUNTRY] == "Denmark"]
+        grl_df[[self.ISO3, self.COUNTRY]] = ["GRL", "Greenland"]
+        df = pd.concat([df, grl_df], sort=True, ignore_index=True)
         # Set 'Others' as the country name of cruise ships
         ships = ["Diamond Princess", "Costa Atlantica", "Grand Princess", "MS Zaandam"]
         for ship in ships:
