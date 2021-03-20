@@ -330,7 +330,7 @@ class Scenario(Term):
         """
         data = copy.deepcopy(self._data)
         series = ParamTracker.create_series(
-            first_date=data.first_date, last_date=data.last_date, population=data.population)
+            first_date=data.first_date, last_date=data.today, population=data.population)
         tracker = ParamTracker(
             record_df=self._data.records(extras=False), phase_series=series, area=self.area, tau=self.tau)
         self._tracker_dict = {self.MAIN: tracker}
@@ -394,7 +394,7 @@ class Scenario(Term):
             tracker.add(
                 end_date=end_date, days=days, population=population, model=model, **kwargs)
         except ValueError:
-            last_date = tracker.series.unit("last").end_date
+            last_date = tracker.last_end_date()
             raise ValueError(
                 f'@end_date must be over {last_date}. However, {end_date} was applied.') from None
         self._tracker_dict[name] = tracker
@@ -1187,7 +1187,7 @@ class Scenario(Term):
                     "@phases and @past_days cannot be specified at the same time.")
             past_days = self._ensure_natural_int(past_days, name="past_days")
             # Separate a phase, if possible
-            beginning_date = self.date_change(self._data.last_date, days=0 - past_days)
+            beginning_date = self.date_change(self._data.today, days=0 - past_days)
             try:
                 tracker.separate(date=beginning_date)
             except ValueError:
