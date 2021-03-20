@@ -839,6 +839,26 @@ class Scenario(Term):
             return df
         return self.history_rate(params=targets, name=name, **kwargs)
 
+    def adjust_end(self):
+        """
+        Adjust the last end dates of the registered scenarios, if necessary.
+
+        Returns:
+            covsirphy.Scenario: self
+        """
+        # The current last end dates
+        current_dict = {
+            name: self.date_obj(tracker.last_end_date())
+            for (name, tracker) in self._tracker_dict.items()}
+        # Adjusted end date
+        adjusted_str = max(current_dict.values()).strftime(self.DATE_FORMAT)
+        for (name, _) in self._tracker_dict.items():
+            try:
+                self.add(end_date=adjusted_str, name=name)
+            except ValueError:
+                pass
+        return self
+
     def _describe(self, y0_dict=None):
         """
         Describe representative values.

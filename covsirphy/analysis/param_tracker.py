@@ -512,3 +512,12 @@ class ParamTracker(Term):
         if ignored_phases:
             self.enable(ignored_phases)
         return score
+
+    def last_end_date(self):
+        """
+        Return the last end date of the series.
+
+        Returns:
+            str: the last end date
+        """
+        return self._series.unit(phase="last").end_date
