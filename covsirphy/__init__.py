@@ -70,6 +70,9 @@ from covsirphy.worldwide.policy import PolicyMeasures
 def get_version():
     """
     Return the version number, like CovsirPhy v0.0.0
+
+    Returns:
+        str
     """
     return f"CovsirPhy v{__version__}"
 
@@ -77,6 +80,9 @@ def get_version():
 def get_citation():
     """
     Return the citation of CovsirPhy
+
+    Returns:
+        str
     """
     return __citation__
 
