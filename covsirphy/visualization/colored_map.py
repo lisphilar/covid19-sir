@@ -182,6 +182,7 @@ class ColoredMap(VisualizeBase):
         scale = "50m" if iso3 == "USA" else "10m"
         gdf = self._load_geo_country_specific(scale=scale)
         gdf[self.ISO3] = gdf[self.ISO3].replace({"MAC": "CHN"})
+        warnings.filterwarnings("ignore", category=DeprecationWarning)
         hkg_gdf = gdf.loc[gdf[self.ISO3] == "HKG"].dissolve()
         hkg_gdf.loc[:, [self.ISO3, self.PROVINCE]] = ["CHN", "Hong Kong"]
         gdf = pd.concat([gdf.loc[gdf[self.ISO3] != "HKG"], hkg_gdf], sort=True, ignore_index=True)
