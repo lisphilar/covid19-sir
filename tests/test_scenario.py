@@ -246,12 +246,11 @@ class TestScenario(object):
         assert isinstance(snl.score(metrics=metrics, name="Score"), float)
         # Selected phases
         df = snl.summary(name="Score")
-        df = df.loc[df[Term.TENSE] == Term.PAST]
         all_phases = df.index.tolist()
         sel_score = snl.score(phases=all_phases[-2:], name="Score")
-        # Selected past days (when the begging date is a start date)
+        # Selected past days (when the beginning date is a start date)
         beginning_date = df.loc[df.index[-2], Term.START]
-        past_days = Term.steps(beginning_date, snl.today, tau=1440)
+        past_days = Term.steps(beginning_date, snl.last_date, tau=1440)
         assert snl.score(past_days=past_days, name="Score") == sel_score
         # Selected past days
         snl.score(past_days=60, name="Score")
