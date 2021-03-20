@@ -34,6 +34,10 @@ class TestScenario(object):
             snl.first_date = "01Jan2019"
         with pytest.raises(ValueError):
             snl.last_date = Term.tomorrow(datetime.now().strftime(Term.DATE_FORMAT))
+        # Add a phase to today (01Apr2020)
+        snl.add(name="Main")
+        assert snl.get(Term.END, phase="last", name="Main") == today
+        snl.clear(name="Main", include_past=True)
 
     def test_line_plot(self, snl, imgfile):
         warnings.simplefilter("ignore", category=UserWarning)
