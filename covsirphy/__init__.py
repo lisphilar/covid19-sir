@@ -9,6 +9,7 @@ except ImportError:
     better_exceptions_installed = False
 # version
 from covsirphy.__version__ import __version__
+from covsirphy.__citation__ import __citation__
 # util
 from covsirphy.util.stopwatch import StopWatch
 from covsirphy.util.error import deprecate
@@ -69,8 +70,21 @@ from covsirphy.worldwide.policy import PolicyMeasures
 def get_version():
     """
     Return the version number, like CovsirPhy v0.0.0
+
+    Returns:
+        str
     """
     return f"CovsirPhy v{__version__}"
+
+
+def get_citation():
+    """
+    Return the citation of CovsirPhy
+
+    Returns:
+        str
+    """
+    return __citation__
 
 
 __all__ = [
