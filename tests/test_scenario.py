@@ -34,6 +34,10 @@ class TestScenario(object):
             snl.first_date = "01Jan2019"
         with pytest.raises(ValueError):
             snl.last_date = Term.tomorrow(datetime.now().strftime(Term.DATE_FORMAT))
+        # Add a phase to today (01Apr2020)
+        snl.add(name="Main")
+        assert snl.get(Term.END, phase="last", name="Main") == today
+        snl.clear(name="Main", include_past=True)
 
     def test_line_plot(self, snl, imgfile):
         warnings.simplefilter("ignore", category=UserWarning)
@@ -60,6 +64,23 @@ class TestScenario(object):
         scenario._interactive = True
         warnings.filterwarnings("ignore", category=UserWarning)
         scenario.records(show_figure=True)
+
+    @pytest.mark.parametrize("country", ["Japan"])
+    def test_adjust_end(self, jhu_data, population_data, country):
+        # Setting
+        scenario = Scenario(country=country)
+        scenario.register(jhu_data, population_data)
+        scenario.timepoints(first_date="01Dec2020", today="01Feb2021")
+        # Main scenario
+        scenario.add(end_date="01Apr2021", name="Main")
+        # New scenario
+        scenario.clear(name="New", include_past=True)
+        scenario.add(end_date="01Jan2021", name="New")
+        # Adjust end date
+        scenario.adjust_end()
+        # Check output
+        assert scenario.get(Term.END, phase="last", name="Main") == "01Apr2021"
+        assert scenario.get(Term.END, phase="last", name="New") == "01Apr2021"
 
     def test_records(self, snl):
         # Not complemented
@@ -227,7 +248,7 @@ class TestScenario(object):
         df = snl.summary(name="Score")
         all_phases = df.index.tolist()
         sel_score = snl.score(phases=all_phases[-2:], name="Score")
-        # Selected past days (when the begging date is a start date)
+        # Selected past days (when the beginning date is a start date)
         beginning_date = df.loc[df.index[-2], Term.START]
         past_days = Term.steps(beginning_date, snl.last_date, tau=1440)
         assert snl.score(past_days=past_days, name="Score") == sel_score
