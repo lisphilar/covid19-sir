@@ -72,6 +72,9 @@ class TestParamTracker(object):
         tracker.combine(phases=["2nd", "last"])
         tracker.combine(phases=["0th", "1st"])
 
+    def test_last_end_date(self, tracker):
+        assert tracker.last_end_date() == "01Aug2020"
+
     def test_before_trend(self, tracker):
         tracker.delete_all()
         with pytest.raises(ValueError):

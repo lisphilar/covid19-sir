@@ -61,6 +61,23 @@ class TestScenario(object):
         warnings.filterwarnings("ignore", category=UserWarning)
         scenario.records(show_figure=True)
 
+    @pytest.mark.parametrize("country", ["Japan"])
+    def test_adjust_end(self, jhu_data, population_data, country):
+        # Setting
+        scenario = Scenario(country=country)
+        scenario.register(jhu_data, population_data)
+        scenario.timepoints(first_date="01Dec2020", today="01Feb2021")
+        # Main scenario
+        scenario.add(end_date="01Apr2021", name="Main")
+        # New scenario
+        scenario.clear(name="New", include_past=True)
+        scenario.add(end_date="01Jan2021", name="New")
+        # Adjust end date
+        scenario.adjust_end()
+        # Check output
+        assert scenario.get(Term.END, phase="last", name="Main") == "01Apr2021"
+        assert scenario.get(Term.END, phase="last", name="New") == "01Apr2021"
+
     def test_records(self, snl):
         # Not complemented
         snl.complement_reverse()
