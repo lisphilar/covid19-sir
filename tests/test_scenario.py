@@ -246,6 +246,7 @@ class TestScenario(object):
         assert isinstance(snl.score(metrics=metrics, name="Score"), float)
         # Selected phases
         df = snl.summary(name="Score")
+        df = df.loc[df[Term.TENSE] == Term.PAST]
         all_phases = df.index.tolist()
         sel_score = snl.score(phases=all_phases[-2:], name="Score")
         # Selected past days (when the begging date is a start date)
