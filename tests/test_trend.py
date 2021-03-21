@@ -3,7 +3,7 @@
 
 import warnings
 import pytest
-from covsirphy import TrendDetector, Trend, ChangeFinder
+from covsirphy import TrendDetector, Trend, ChangeFinder, UnExpectedValueError
 
 
 class TestTrendDetector(object):
@@ -28,21 +28,34 @@ class TestTrendDetector(object):
         Trend(subset_df)
 
     @pytest.mark.parametrize(
+        "algo", ["Pelt-rbf", "Binseg-rbf", "Binseg-normal", "BottomUp-rbf", "BottomUp-normal"])
+    @pytest.mark.parametrize(
         "country",
         [
             "Italy", "India", "USA", "Greece", "Russia",
             "Brazil", "France", "Spain", "UK", "New Zealand", "Germany",
         ]
     )
-    def test_sr(self, jhu_data, population_data, country):
+    def test_sr(self, jhu_data, population_data, algo, country):
         # Dataset
         population = population_data.value(country)
         subset_df = jhu_data.subset(country=country, population=population)
         # S-R trend analysis
         detector = TrendDetector(data=subset_df, area=country)
-        detector.sr()
+        detector.sr(algo=algo)
         # Summary
         detector.summary()
+
+    @pytest.mark.parametrize("algo", ["Unknown"])
+    @pytest.mark.parametrize("country", ["Japan"])
+    def test_sr_algo_error(self, jhu_data, population_data, algo, country):
+        # Dataset
+        population = population_data.value(country)
+        subset_df = jhu_data.subset(country=country, population=population)
+        # S-R trend analysis
+        detector = TrendDetector(data=subset_df, area=country)
+        with pytest.raises(UnExpectedValueError):
+            detector.sr(algo=algo)
 
     @pytest.mark.parametrize("country", ["Japan"])
     def test_show(self, jhu_data, population_data, country, imgfile):
