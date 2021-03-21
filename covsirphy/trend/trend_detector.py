@@ -126,8 +126,7 @@ class TrendDetector(Term):
             "BottomUp-normal": (rpt.BottomUp, {"model": "normal"}),
         }
         if algo not in algo_dict:
-            algo_str = ", ".join(list(algo_dict.keys()))
-            raise UnExpectedValueError(f"@algo should be selected from {algo_str}, but {algo} was applied.")
+            raise UnExpectedValueError(name="algo", value=algo, candidates=list(algo_dict.keys()))
         algo_kwargs.update(algo_dict[algo][1])
         algorithm = algo_dict[algo][0](**algo_kwargs)
         # Run trend analysis
