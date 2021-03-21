@@ -119,11 +119,11 @@ class TrendDetector(Term):
         algo_kwargs = {"jump": 1, "min_size": self._min_size}
         algo_kwargs.update(kwargs)
         algo_dict = {
-            "Pelt-rbf": (rpt.Pelt, {"model":"rbf"}),
-            "Binseg-rbf": (rpt.Binseg, {"model":"rbf"}),
-            "Binseg-normal": (rpt.Binseg, {"model":"normal"}),
-            "BottomUp-rbf": (rpt.BottomUp, {"model":"rbf"}),
-            "BottomUp-normal": (rpt.BottomUp, {"model":"normal"}),
+            "Pelt-rbf": (rpt.Pelt, {"model": "rbf"}),
+            "Binseg-rbf": (rpt.Binseg, {"model": "rbf"}),
+            "Binseg-normal": (rpt.Binseg, {"model": "normal"}),
+            "BottomUp-rbf": (rpt.BottomUp, {"model": "rbf"}),
+            "BottomUp-normal": (rpt.BottomUp, {"model": "normal"}),
         }
         if algo not in algo_dict:
             algo_str = ", ".join(list(algo_dict.keys()))
