@@ -81,7 +81,7 @@ class ParamTracker(Term):
         Args:
             force (bool): if True, change points will be over-written
             show_figure (bool): if True, show the result as a figure
-            kwargs: keyword arguments of covsirphy.TrendDetector() and covsirphy.trend_plot()
+            kwargs: keyword arguments of covsirphy.TrendDetector(), .TrendDetector.sr() and .trend_plot()
 
         Returns:
             covsirphy.PhaseSeries
@@ -89,7 +89,7 @@ class ParamTracker(Term):
         detector = TrendDetector(
             data=self.record_df, area=self.area, **find_args(TrendDetector, **kwargs))
         # Perform S-R trend analysis
-        detector.sr()
+        detector.sr(**find_args(TrendDetector.sr, **kwargs))
         # Register phases
         if force or not self._series:
             self._series.clear(include_past=True)
