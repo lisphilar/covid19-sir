@@ -2,7 +2,8 @@
 # -*- coding: utf-8 -*-
 
 import pandas as pd
-from covsirphy.util.error import deprecate
+import ruptures as rpt
+from covsirphy.util.error import deprecate, UnExpectedValueError
 from covsirphy.util.term import Term
 from covsirphy.trend.sr_change import _SRChange
 
@@ -95,15 +96,42 @@ class TrendDetector(Term):
             index=[self.num2str(num) for num in range(len(self._points) + 1)]
         )
 
-    def sr(self):
+    def sr(self, algo="Pelt-rbf", **kwargs):
         """
         Perform S-R trend analysis.
 
+        Args:
+            algo (str): detection algorithms and models
+            kwargs: the other arguments of algorithm classes (ruptures.Pelt, .Binseg, BottomUp)
+
+        Raises:
+            UnExpectedValueError: un-expected value was applied as algorithm name
+
         Returns:
             covsirphy.TrendDetector: self
+
+        Note:
+            Candidates of @algo are "Pelt-rbf", "Binseg-rbf", "Binseg-normal", "BottomUp-rbf", "BottomUp-normal".
+            Please refer to documentation of ruptures package.
+            https://centre-borelli.github.io/ruptures-docs/
         """
+        # Set algorithm class
+        algo_kwargs = {"jump": 1, "min_size": self._min_size}
+        algo_kwargs.update(kwargs)
+        algo_dict = {
+            "Pelt-rbf": (rpt.Pelt, {"model": "rbf"}),
+            "Binseg-rbf": (rpt.Binseg, {"model": "rbf"}),
+            "Binseg-normal": (rpt.Binseg, {"model": "normal"}),
+            "BottomUp-rbf": (rpt.BottomUp, {"model": "rbf"}),
+            "BottomUp-normal": (rpt.BottomUp, {"model": "normal"}),
+        }
+        if algo not in algo_dict:
+            raise UnExpectedValueError(name="algo", value=algo, candidates=list(algo_dict.keys()))
+        algo_kwargs.update(algo_dict[algo][1])
+        algorithm = algo_dict[algo][0](**algo_kwargs)
+        # Run trend analysis
         finder = _SRChange(sr_df=self._record_df)
-        points = finder.run(min_size=self._min_size)
+        points = finder.run(algorithm=algorithm, **algo_kwargs)
         self._points = sorted(set(self._points) | set(points))
         return self
 

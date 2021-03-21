@@ -599,7 +599,7 @@ class Scenario(Term):
             name (str): phase series name
             show_figure (bool): if True, show the result as a figure
             filename (str): filename of the figure, or None (display)
-            kwargs: keyword arguments of covsirphy.TrendDetector() and covsirphy.trend_plot()
+            kwargs: keyword arguments of covsirphy.TrendDetector(), .TrendDetector.sr() and .trend_plot()
 
         Returns:
             covsirphy.Scenario: self

@@ -6,7 +6,6 @@ import functools
 import warnings
 import numpy as np
 import pandas as pd
-import ruptures as rpt
 from scipy.optimize import curve_fit, OptimizeWarning
 from covsirphy.util.term import Term
 from covsirphy.trend.trend_plot import trend_plot
@@ -37,22 +36,21 @@ class _SRChange(Term):
             }
         )
 
-    def run(self, min_size):
+    def run(self, algorithm, **kwargs):
         """
         Run optimization and return the change points.
 
         Args:
-            min_size (int): minimum value of phase length [days], over 2
+            algorithm (classes of ruptures): detection algorithms
+            kwargs: the other arguments of the algorithm class
 
         Returns:
             list[pandas.Timestamp]: list of change points
         """
-        self._ensure_int_range(min_size, name="min_size", value_range=(2, None))
         # Index: Recovered, Columns: logS
         df = self._sr_df.pivot_table(index=self.R, values="logS", aggfunc="last")
         df.index.name = None
         # Detect change points with Ruptures package: reset index + 1 values will be returned
-        algorithm = rpt.Pelt(model="rbf", jump=1, min_size=min_size)
         results = algorithm.fit_predict(df.iloc[:, 0].to_numpy(), pen=0.5)[:-1]
         # Convert reset index + 1 values to logS
         logs_df = df.iloc[[result - 1 for result in results]]
