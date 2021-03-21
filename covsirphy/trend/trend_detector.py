@@ -3,7 +3,7 @@
 
 import pandas as pd
 import ruptures as rpt
-from covsirphy.util.error import deprecate
+from covsirphy.util.error import deprecate, UnExpectedValueError
 from covsirphy.util.term import Term
 from covsirphy.trend.sr_change import _SRChange
 
@@ -104,6 +104,9 @@ class TrendDetector(Term):
             algo (str): detection algorithms and models
             kwargs: the other arguments of algorithm classes (ruptures.Pelt, .Binseg, BottomUp)
 
+        Raises:
+            UnExpectedValueError: un-expected value was applied as algorithm name
+
         Returns:
             covsirphy.TrendDetector: self
 
@@ -124,7 +127,7 @@ class TrendDetector(Term):
         }
         if algo not in algo_dict:
             algo_str = ", ".join(list(algo_dict.keys()))
-            raise KeyError(f"@algo should be selected from {algo_str}, but {algo} was applied.")
+            raise UnExpectedValueError(f"@algo should be selected from {algo_str}, but {algo} was applied.")
         algo_kwargs.update(algo_dict[algo][1])
         algorithm = algo_dict[algo][0](**algo_kwargs)
         # Run trend analysis
