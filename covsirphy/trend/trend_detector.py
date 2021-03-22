@@ -85,17 +85,22 @@ class TrendDetector(Term):
                 Index
                     (str): phase names
                 Columns
-                    - Start (pandas.Timestamp): star dates
-                    - End (pandas.Timestamp): end dates
-                    - {metrics}_S-R: scores on S-R plane with the metrics
+                    - Start (str): star dates
+                    - End (str): end dates
+                    - Length (int): phase length
+                    - {metrics}_S-R (float): scores on S-R plane with the metrics
         """
-        self._ensure_selectable(metrics, candidates=list(self.METRICS_DICT.keys()), name="metrics")
+        # Length of phases
         start_dates, end_dates = self.dates()
+        length_list = [self.steps(start, end, tau=1440) for (start, end) in zip(start_dates, end_dates)]
+        # Scores in S-R plane
+        self._ensure_selectable(metrics, candidates=list(self.METRICS_DICT.keys()), name="metrics")
         scores = _SRChange(sr_df=self._record_df).score(change_points=self._points, metrics=metrics)
         return pd.DataFrame(
             {
                 self.START: start_dates,
                 self.END: end_dates,
+                "Length": length_list,
                 f"{metrics}_S-R": scores,
             },
             index=[self.num2str(num) for num in range(len(self._points) + 1)]
