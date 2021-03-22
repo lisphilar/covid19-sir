@@ -3,7 +3,7 @@
 
 import pandas as pd
 import ruptures as rpt
-from covsirphy.util.error import deprecate, UnExpectedValueError
+from covsirphy.util.error import deprecate
 from covsirphy.util.term import Term
 from covsirphy.trend.sr_change import _SRChange
 
@@ -73,9 +73,12 @@ class TrendDetector(Term):
         end_dates.append(self._last_point.strftime(self.DATE_FORMAT))
         return (start_dates, end_dates)
 
-    def summary(self):
+    def summary(self, metrics="MSE"):
         """
         Summarize the phases with a dataframe.
+
+        Args:
+            metrics (str): "MAE", "MSE", "MSLE", "RMSE" or "RMSLE"
 
         Returns:
             pandas.Dataframe:
@@ -84,14 +87,16 @@ class TrendDetector(Term):
                 Columns
                     - Start (pandas.Timestamp): star dates
                     - End (pandas.Timestamp): end dates
-                    - RMSLE_S-R: RMSLE score on S-R plane
+                    - {metrics}_S-R: scores on S-R plane with the metrics
         """
+        self._ensure_selectable(metrics, candidates=list(self.METRICS_DICT.keys()), name="metrics")
         start_dates, end_dates = self.dates()
+        scores = _SRChange(sr_df=self._record_df).score(change_points=self._points, metrics=metrics)
         return pd.DataFrame(
             {
                 self.START: start_dates,
                 self.END: end_dates,
-                "RMSLE_S-R": _SRChange(sr_df=self._record_df).score(change_points=self._points),
+                f"{metrics}_S-R": scores,
             },
             index=[self.num2str(num) for num in range(len(self._points) + 1)]
         )
@@ -125,8 +130,7 @@ class TrendDetector(Term):
             "BottomUp-rbf": (rpt.BottomUp, {"model": "rbf"}),
             "BottomUp-normal": (rpt.BottomUp, {"model": "normal"}),
         }
-        if algo not in algo_dict:
-            raise UnExpectedValueError(name="algo", value=algo, candidates=list(algo_dict.keys()))
+        self._ensure_selectable(target=algo, candidates=list(algo_dict.keys()), name="algo")
         algo_kwargs.update(algo_dict[algo][1])
         algorithm = algo_dict[algo][0](**algo_kwargs)
         # Run trend analysis
