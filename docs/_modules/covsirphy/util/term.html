@@ -65,7 +65,7 @@
             
             
               <div class="version">
-                2.17.0-kappa
+                2.17.0-kappa-fu2
               </div>
             
           
@@ -180,7 +180,7 @@
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
 <span class="kn">import</span> <span class="nn">sklearn.metrics</span>
-<span class="kn">from</span> <span class="nn">covsirphy.util.error</span> <span class="kn">import</span> <span class="n">deprecate</span>
+<span class="kn">from</span> <span class="nn">covsirphy.util.error</span> <span class="kn">import</span> <span class="n">deprecate</span><span class="p">,</span> <span class="n">UnExpectedValueError</span>
 
 
 <div class="viewcode-block" id="Term"><a class="viewcode-back" href="../../../covsirphy.util.html#covsirphy.Term">[docs]</a><span class="k">class</span> <span class="nc">Term</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
@@ -688,7 +688,21 @@
             <span class="k">return</span> <span class="kc">None</span>
         <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
             <span class="sa">f</span><span class="s2">&quot;@</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2"> must be the same as/over </span><span class="si">{</span><span class="n">previous_date</span><span class="si">}</span><span class="s2">, but </span><span class="si">{</span><span class="n">following_date</span><span class="si">}</span><span class="s2"> was applied.&quot;</span>
-        <span class="p">)</span></div>
+        <span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_ensure_selectable</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">target</span><span class="p">,</span> <span class="n">candidates</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;target&quot;</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Ensure that the target can be selectable.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            target (object): target to check</span>
+<span class="sd">            candidates (list[object]): list of candidates</span>
+<span class="sd">            name (str): name of the target</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_ensure_list</span><span class="p">(</span><span class="n">candidates</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;candidates&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">target</span> <span class="ow">in</span> <span class="n">candidates</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">target</span>
+        <span class="k">raise</span> <span class="n">UnExpectedValueError</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">,</span> <span class="n">value</span><span class="o">=</span><span class="n">target</span><span class="p">,</span> <span class="n">candidates</span><span class="o">=</span><span class="n">candidates</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="Word"><a class="viewcode-back" href="../../../covsirphy.util.html#covsirphy.Word">[docs]</a><span class="k">class</span> <span class="nc">Word</span><span class="p">(</span><span class="n">Term</span><span class="p">):</span>

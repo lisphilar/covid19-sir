@@ -65,7 +65,7 @@
             
             
               <div class="version">
-                2.17.0-kappa
+                2.17.0-kappa-fu2
               </div>
             
           
@@ -254,7 +254,7 @@
 <span class="sd">        Args:</span>
 <span class="sd">            force (bool): if True, change points will be over-written</span>
 <span class="sd">            show_figure (bool): if True, show the result as a figure</span>
-<span class="sd">            kwargs: keyword arguments of covsirphy.TrendDetector() and covsirphy.trend_plot()</span>
+<span class="sd">            kwargs: keyword arguments of covsirphy.TrendDetector(), .TrendDetector.sr() and .trend_plot()</span>
 
 <span class="sd">        Returns:</span>
 <span class="sd">            covsirphy.PhaseSeries</span>
@@ -262,7 +262,7 @@
         <span class="n">detector</span> <span class="o">=</span> <span class="n">TrendDetector</span><span class="p">(</span>
             <span class="n">data</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">record_df</span><span class="p">,</span> <span class="n">area</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">area</span><span class="p">,</span> <span class="o">**</span><span class="n">find_args</span><span class="p">(</span><span class="n">TrendDetector</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">))</span>
         <span class="c1"># Perform S-R trend analysis</span>
-        <span class="n">detector</span><span class="o">.</span><span class="n">sr</span><span class="p">()</span>
+        <span class="n">detector</span><span class="o">.</span><span class="n">sr</span><span class="p">(</span><span class="o">**</span><span class="n">find_args</span><span class="p">(</span><span class="n">TrendDetector</span><span class="o">.</span><span class="n">sr</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">))</span>
         <span class="c1"># Register phases</span>
         <span class="k">if</span> <span class="n">force</span> <span class="ow">or</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_series</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_series</span><span class="o">.</span><span class="n">clear</span><span class="p">(</span><span class="n">include_past</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
