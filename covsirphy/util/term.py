@@ -7,7 +7,7 @@ import math
 import numpy as np
 import pandas as pd
 import sklearn.metrics
-from covsirphy.util.error import deprecate
+from covsirphy.util.error import deprecate, UnExpectedValueError
 
 
 class Term(object):
@@ -516,6 +516,20 @@ class Term(object):
         raise ValueError(
             f"@{name} must be the same as/over {previous_date}, but {following_date} was applied."
         )
+
+    def _ensure_selectable(self, target, candidates, name="target"):
+        """
+        Ensure that the target can be selectable.
+
+        Args:
+            target (object): target to check
+            candidates (list[object]): list of candidates
+            name (str): name of the target
+        """
+        self._ensure_list(candidates, name="candidates")
+        if target in candidates:
+            return target
+        raise UnExpectedValueError(name=name, value=target, candidates=candidates)
 
 
 class Word(Term):

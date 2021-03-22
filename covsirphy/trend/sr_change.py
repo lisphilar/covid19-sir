@@ -116,19 +116,20 @@ class _SRChange(Term):
             df = df.join(phase_df.rename(columns={self.FITTED: phase}), how="left")
         return df.round(0)
 
-    def score(self, change_points):
+    def score(self, change_points, metrics):
         """
         Calculate RMSLE scores of the phases.
 
         Args:
             change_points (list[pandas.Timestamp]): list of change points
+            metrics (str): "MAE", "MSE", "MSLE", "RMSE" or "RMSLE"
 
         Returns:
             list[float]: RMSLE scores
         """
         fit_df = self._fitting(change_points)
         phases = [self.num2str(num) for num in range(len(change_points) + 1)]
-        score_f = self.METRICS_DICT["RMSLE"]
+        score_f = self.METRICS_DICT[metrics]
         scores = []
         for phase in phases:
             df = fit_df[[self.ACTUAL, phase]].dropna()
