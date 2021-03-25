@@ -94,12 +94,12 @@ class TestDataHandler(object):
         with pytest.raises(NotRegisteredMainError):
             dhl.records_extras()
         dhl.register(jhu_data=jhu_data, population_data=population_data)
-        dhl.timepoints(first_date="01Apr2020", last_date="01Sep2020")
+        dhl.timepoints(first_date="01May2020", last_date="01Sep2020")
         with pytest.raises(NotRegisteredExtraError):
             dhl.records_extras()
         dhl.register(extras=[japan_data, oxcgrt_data, pcr_data, vaccine_data])
         series = dhl.records_extras()[Term.DATE]
-        assert series.min().strftime(Term.DATE_FORMAT) == dhl.first_date == "01Apr2020"
+        assert series.min().strftime(Term.DATE_FORMAT) == dhl.first_date == "01May2020"
         assert series.max().strftime(Term.DATE_FORMAT) == dhl.last_date == "01Sep2020"
 
     @pytest.mark.parametrize("country", ["Japan"])
