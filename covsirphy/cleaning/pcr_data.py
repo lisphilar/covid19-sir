@@ -294,7 +294,7 @@ class PCRData(CleaningBase):
             # Extrapolated value on the date
             series = df.loc[:date, variable]
             series.iloc[-1] = None
-            series.interpolate(method="spline", order=1, inplace=True)
+            series.interpolate(method="linear", inplace=True, limit_direction="both")
             series.fillna(method="ffill", inplace=True)
             # Reduce values to the previous date
             df.loc[:date, variable] = series * raw_last / series.iloc[-1]
