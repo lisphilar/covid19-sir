@@ -32,7 +32,7 @@ class TrendDetector(Term):
         "Change points" is the same as the start dates of phases except for the 0th phase.
     """
 
-    def __init__(self, data, area="Selected area", min_size=5):
+    def __init__(self, data, area="Selected area", min_size=7):
         self._ensure_dataframe(data, name="data", columns=self.SUB_COLUMNS)
         # Index: Date, Columns: the number cases
         self._record_df = data.groupby(self.DATE).last()
