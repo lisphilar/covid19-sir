@@ -14,6 +14,7 @@ from sklearn.exceptions import ConvergenceWarning
 from sklearn.metrics import r2_score
 from sklearn.pipeline import Pipeline
 from sklearn.preprocessing import MinMaxScaler
+from covsirphy.util.argument import find_args
 from covsirphy.util.error import deprecate, ScenarioNotFoundError, UnExecutedError
 from covsirphy.util.error import NotRegisteredMainError, NotRegisteredExtraError
 from covsirphy.util.error import NotInteractiveError
@@ -590,19 +591,26 @@ class Scenario(Term):
         df = df.loc[:, columns]
         return df.dropna(how="all", axis=1).fillna(self.UNKNOWN)
 
-    def trend(self, force=True, name="Main", show_figure=True, filename=None, **kwargs):
+    def trend(self, min_size=None, force=True, name="Main", show_figure=True, filename=None, **kwargs):
         """
         Perform S-R trend analysis and set phases.
 
         Args:
+            min_size (int or None): minimum value of phase length [days] (over 2) or None (equal to max of 7 and delay period)
             force (bool): if True, change points will be over-written
             name (str): phase series name
             show_figure (bool): if True, show the result as a figure
             filename (str): filename of the figure, or None (display)
-            kwargs: keyword arguments of covsirphy.TrendDetector(), .TrendDetector.sr() and .trend_plot()
+            kwargs: keyword arguments of
+                - covsirphy.TrendDetector() and covsirphy.TrendDetector.sr()
+                - covsirphy.trend_plot()
+                - Scenario.estimate_delay()
 
         Returns:
             covsirphy.Scenario: self
+
+        Note:
+            If @min_size is None, this will be thw max value of 7 days and delay period calculated with .estimate_delay() method.
         """
         # Arguments
         if "n_points" in kwargs.keys():
@@ -620,6 +628,12 @@ class Scenario(Term):
             force = kwargs.pop("set_phases")
         except KeyError:
             pass
+        # Minimum size of phases
+        if min_size is None:
+            delay, _ = self.estimate_delay(**find_args(self.estimate_delay, **kwargs))
+            min_size = max(7, delay)
+        self._ensure_int_range(min_size, name="min_size", value_range=(2, None))
+        kwargs["min_size"] = min_size
         # S-R trend analysis
         tracker = self._tracker(name)
         if not self._interactive and filename is None:
