@@ -30,6 +30,8 @@ class Filer(object):
         self._dir_path = Path(directory).resolve()
         self._pre = "" if prefix is None else f"{prefix}_"
         self._suf = "" if suffix is None else f"_{suffix}"
+        # Create the directory
+        self._dir_path.mkdir(parents=True, exist_ok=True)
         # Numbering
         num_dict = {"001": "{num:0>3}_", "01": "{num:0>2}_", "1": "{num:0>1}_", None: ""}
         if numbering not in num_dict:
