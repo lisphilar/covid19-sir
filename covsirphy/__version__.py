@@ -1,4 +1,4 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-__version__ = "2.17.0-lambda"
+__version__ = "2.17.0-lambda-fu1"
