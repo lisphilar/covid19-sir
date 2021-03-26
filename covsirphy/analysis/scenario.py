@@ -630,7 +630,11 @@ class Scenario(Term):
             pass
         # Minimum size of phases
         if min_size is None:
-            delay, _ = self.estimate_delay(**find_args(self.estimate_delay, **kwargs))
+            try:
+                delay, _ = self.estimate_delay(**find_args(self.estimate_delay, **kwargs))
+            except KeyError:
+                # Extra datasets are not registered
+                delay = 7
             min_size = max(7, delay)
         self._ensure_int_range(min_size, name="min_size", value_range=(2, None))
         kwargs["min_size"] = min_size
