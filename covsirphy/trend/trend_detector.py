@@ -106,7 +106,7 @@ class TrendDetector(Term):
             index=[self.num2str(num) for num in range(len(self._points) + 1)]
         )
 
-    def sr(self, algo="Pelt-rbf", **kwargs):
+    def sr(self, algo="Binseg-normal", **kwargs):
         """
         Perform S-R trend analysis.
 
