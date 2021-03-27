@@ -147,10 +147,7 @@ class _SRChange(Term):
         """
         # Title
         if change_points:
-            _list = [date.strftime(self.DATE_FORMAT) for date in change_points]
-            strings = [", ".join(_list[i: i + 6]) for i in range(0, len(_list), 6)]
-            change_str = ",\n".join(strings)
-            title = f"{area}: S-R trend changed on\n{change_str}"
+            title = f"{area}: phases detected with S-R trend analysis"
         else:
             title = f"{area}: S-R trend without change points"
         # Curve fitting
