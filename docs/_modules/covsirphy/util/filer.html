@@ -65,7 +65,7 @@
             
             
               <div class="version">
-                2.17.0-lambda
+                2.17.0-nu
               </div>
             
           
@@ -203,6 +203,8 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_dir_path</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">directory</span><span class="p">)</span><span class="o">.</span><span class="n">resolve</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_pre</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span> <span class="k">if</span> <span class="n">prefix</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">prefix</span><span class="si">}</span><span class="s2">_&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_suf</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span> <span class="k">if</span> <span class="n">suffix</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="sa">f</span><span class="s2">&quot;_</span><span class="si">{</span><span class="n">suffix</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="c1"># Create the directory</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_dir_path</span><span class="o">.</span><span class="n">mkdir</span><span class="p">(</span><span class="n">parents</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
         <span class="c1"># Numbering</span>
         <span class="n">num_dict</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;001&quot;</span><span class="p">:</span> <span class="s2">&quot;</span><span class="si">{num:0&gt;3}</span><span class="s2">_&quot;</span><span class="p">,</span> <span class="s2">&quot;01&quot;</span><span class="p">:</span> <span class="s2">&quot;</span><span class="si">{num:0&gt;2}</span><span class="s2">_&quot;</span><span class="p">,</span> <span class="s2">&quot;1&quot;</span><span class="p">:</span> <span class="s2">&quot;</span><span class="si">{num:0&gt;1}</span><span class="s2">_&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">:</span> <span class="s2">&quot;&quot;</span><span class="p">}</span>
         <span class="k">if</span> <span class="n">numbering</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">num_dict</span><span class="p">:</span>

@@ -69,7 +69,7 @@
             
             
               <div class="version">
-                2.17.0-lambda
+                2.17.0-nu
               </div>
             
           
@@ -477,7 +477,7 @@ div.rendered_html tbody tr:hover {
 </div>
 <div class="output_area docutils container">
 <div class="highlight"><pre>
-&#39;2.17.0-lambda&#39;
+&#39;2.17.0-nu&#39;
 </pre></div></div>
 </div>
 <div class="nbinput nblast docutils container">
@@ -556,7 +556,7 @@ div.rendered_html tbody tr:hover {
 <span></span><span class="c1"># Fix the first/last date of the records and today</span>
 <span class="c1"># today must be in the range of (first_date, last_date).</span>
 <span class="c1"># Default: None means automatically specified (min/max will be used)</span>
-<span class="n">snl</span><span class="o">.</span><span class="n">timepoints</span><span class="p">(</span><span class="n">first_date</span><span class="o">=</span><span class="s2">&quot;01Mar2020&quot;</span><span class="p">,</span> <span class="n">last_date</span><span class="o">=</span><span class="s2">&quot;16Jul2020&quot;</span><span class="p">,</span> <span class="n">today</span><span class="o">=</span><span class="s2">&quot;16Jul2020&quot;</span><span class="p">)</span>
+<span class="n">snl</span><span class="o">.</span><span class="n">timepoints</span><span class="p">(</span><span class="n">first_date</span><span class="o">=</span><span class="s2">&quot;01Mar2020&quot;</span><span class="p">,</span> <span class="n">last_date</span><span class="o">=</span><span class="s2">&quot;31Dec2020&quot;</span><span class="p">,</span> <span class="n">today</span><span class="o">=</span><span class="s2">&quot;16Jul2020&quot;</span><span class="p">)</span>
 <span class="c1"># Check dates</span>
 <span class="nb">print</span><span class="p">(</span><span class="n">snl</span><span class="o">.</span><span class="n">first_date</span><span class="p">)</span>
 <span class="nb">print</span><span class="p">(</span><span class="n">snl</span><span class="o">.</span><span class="n">last_date</span><span class="p">)</span>
@@ -572,7 +572,7 @@ div.rendered_html tbody tr:hover {
 <div class="output_area docutils container">
 <div class="highlight"><pre>
 01Mar2020
-16Jul2020
+31Dec2020
 16Jul2020
 </pre></div></div>
 </div>
@@ -622,14 +622,16 @@ div.rendered_html tbody tr:hover {
 \[\log S_{(R)} = - a R + \log N\]</div>
 </div></blockquote>
 <p><span class="math notranslate nohighlight">\(\log S\)</span> decreases constantly with increase of <span class="math notranslate nohighlight">\(R\)</span>, when the records follow a SIR-derived model and the parameter values of the model are constant. With logarithmic y-axis scale, plot of <span class="math notranslate nohighlight">\((x, y) = (R, S)\)</span> shows a line.</p>
-<p>The slope of the line may change when the parameter values (<span class="math notranslate nohighlight">\(\beta\)</span> and <span class="math notranslate nohighlight">\(\gamma\)</span>) are changed. To detect the dates when the parameter values were changed, we will find the change points of <span class="math notranslate nohighlight">\(\log S\)</span> as a function of <span class="math notranslate nohighlight">\(R\)</span>, using <a class="reference external" href="https://github.com/deepcharles/ruptures">ruptures: change point detection in Python</a>. We call the period from a change point to the next change point as a “phase” in this analysis.</p>
+<p>The slope of the line may change when the parameter values (<span class="math notranslate nohighlight">\(\beta\)</span> and <span class="math notranslate nohighlight">\(\gamma\)</span>) are changed. To detect the dates when the parameter values were changed, we will find the change points of <span class="math notranslate nohighlight">\(\log S\)</span> as a function of <span class="math notranslate nohighlight">\(R\)</span>, using <a class="reference external" href="https://github.com/deepcharles/ruptures">ruptures: change point detection in Python</a> via <code class="docutils literal notranslate"><span class="pre">Scenario.trend()</span></code>. We call the period from a change point to the next change point as a “phase” in this analysis.</p>
+<p>We can select the algorithm and models to detect the change points from “Binseg-normal” (default), “Pelt-rbf”, “Binseg-rbf”, “BottomUp-rbf”, “BottomUp-normal”. Please refer to <a class="reference external" href="https://centre-borelli.github.io/ruptures-docs/">the documentation of ruptures package</a>. Please use <code class="docutils literal notranslate"><span class="pre">algo</span></code> argument of <code class="docutils literal notranslate"><span class="pre">Scenario.trend()</span></code>.</p>
+<p>Additionally, we can specify the minimum size of phases with <code class="docutils literal notranslate"><span class="pre">min_size</span></code> argument of <code class="docutils literal notranslate"><span class="pre">Scenario.trend()</span></code>.</p>
 <div class="nbinput docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[6]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
 <span></span><span class="c1"># Set phase with S-R trend analysis</span>
-<span class="n">snl</span><span class="o">.</span><span class="n">trend</span><span class="p">()</span>
+<span class="n">snl</span><span class="o">.</span><span class="n">trend</span><span class="p">(</span><span class="n">algo</span><span class="o">=</span><span class="s2">&quot;Pelt-rbf&quot;</span><span class="p">,</span> <span class="n">min_size</span><span class="o">=</span><span class="mi">5</span><span class="p">)</span>
 <span class="n">snl</span><span class="o">.</span><span class="n">summary</span><span class="p">()</span>
 <span class="c1"># If necessary, initial (0th) phase can be disabled</span>
 <span class="c1"># scenario.disable(phases=[&quot;0th&quot;])</span>
@@ -640,7 +642,7 @@ div.rendered_html tbody tr:hover {
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area docutils container">
-<img alt="_images/usage_phases_12_0.png" src="_images/usage_phases_12_0.png" />
+<img alt="_images/usage_phases_14_0.png" src="_images/usage_phases_14_0.png" />
 </div>
 </div>
 <div class="nboutput nblast docutils container">
@@ -874,7 +876,7 @@ div.rendered_html tbody tr:hover {
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area docutils container">
-<img alt="_images/usage_phases_16_0.png" src="_images/usage_phases_16_0.png" />
+<img alt="_images/usage_phases_18_0.png" src="_images/usage_phases_18_0.png" />
 </div>
 </div>
 <div class="nboutput nblast docutils container">
@@ -883,7 +885,7 @@ div.rendered_html tbody tr:hover {
 </div>
 <div class="output_area docutils container">
 <div class="highlight"><pre>
-&lt;covsirphy.analysis.scenario.Scenario at 0x7f8f586ee0a0&gt;
+&lt;covsirphy.analysis.scenario.Scenario at 0x7fb089012460&gt;
 </pre></div></div>
 </div>
 </div>
@@ -1019,7 +1021,7 @@ div.rendered_html tbody tr:hover {
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area docutils container">
-<img alt="_images/usage_phases_19_0.png" src="_images/usage_phases_19_0.png" />
+<img alt="_images/usage_phases_21_0.png" src="_images/usage_phases_21_0.png" />
 </div>
 </div>
 <div class="nboutput nblast docutils container">
@@ -1028,7 +1030,7 @@ div.rendered_html tbody tr:hover {
 </div>
 <div class="output_area docutils container">
 <div class="highlight"><pre>
-&lt;covsirphy.analysis.scenario.Scenario at 0x7f8f586ee0a0&gt;
+&lt;covsirphy.analysis.scenario.Scenario at 0x7fb089012460&gt;
 </pre></div></div>
 </div>
 </div>
@@ -1156,7 +1158,7 @@ div.rendered_html tbody tr:hover {
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area docutils container">
-<img alt="_images/usage_phases_22_0.png" src="_images/usage_phases_22_0.png" />
+<img alt="_images/usage_phases_24_0.png" src="_images/usage_phases_24_0.png" />
 </div>
 </div>
 <div class="nboutput nblast docutils container">
@@ -1165,7 +1167,7 @@ div.rendered_html tbody tr:hover {
 </div>
 <div class="output_area docutils container">
 <div class="highlight"><pre>
-&lt;covsirphy.analysis.scenario.Scenario at 0x7f8f586ee0a0&gt;
+&lt;covsirphy.analysis.scenario.Scenario at 0x7fb089012460&gt;
 </pre></div></div>
 </div>
 <div class="nbinput docutils container">

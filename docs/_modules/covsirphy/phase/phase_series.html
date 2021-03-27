@@ -65,7 +65,7 @@
             
             
               <div class="version">
-                2.17.0-lambda
+                2.17.0-nu
               </div>
             
           
@@ -192,8 +192,8 @@
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">first_date</span><span class="p">,</span> <span class="n">last_date</span><span class="p">,</span> <span class="n">population</span><span class="p">):</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">first_date</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ensure_date</span><span class="p">(</span><span class="n">first_date</span><span class="p">,</span> <span class="s2">&quot;first_date&quot;</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">last_date</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ensure_date</span><span class="p">(</span><span class="n">last_date</span><span class="p">,</span> <span class="s2">&quot;last_date&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_first_date</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ensure_date</span><span class="p">(</span><span class="n">first_date</span><span class="p">,</span> <span class="s2">&quot;first_date&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_last_date</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ensure_date</span><span class="p">(</span><span class="n">last_date</span><span class="p">,</span> <span class="s2">&quot;last_date&quot;</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">init_population</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ensure_population</span><span class="p">(</span><span class="n">population</span><span class="p">)</span>
         <span class="c1"># List of PhaseUnit</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_units</span> <span class="o">=</span> <span class="p">[]</span>
@@ -204,6 +204,20 @@
 
     <span class="k">def</span> <span class="fm">__len__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">return</span> <span class="nb">len</span><span class="p">([</span><span class="n">unit</span> <span class="k">for</span> <span class="n">unit</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_units</span> <span class="k">if</span> <span class="n">unit</span><span class="p">])</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">first_date</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        str: the first date of the series, like 22Jan2020</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_first_date</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">last_date</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        str: the last date of the series, like 25May2020</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_last_date</span>
 
 <div class="viewcode-block" id="PhaseSeries.unit"><a class="viewcode-back" href="../../../covsirphy.phase.html#covsirphy.PhaseSeries.unit">[docs]</a>    <span class="k">def</span> <span class="nf">unit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">phase</span><span class="o">=</span><span class="s2">&quot;last&quot;</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
@@ -222,7 +236,7 @@
         <span class="k">if</span> <span class="n">phase</span> <span class="o">==</span> <span class="s2">&quot;last&quot;</span><span class="p">:</span>
             <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_units</span><span class="p">:</span>
                 <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_units</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
-            <span class="n">pre_date</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">yesterday</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">first_date</span><span class="p">)</span>
+            <span class="n">pre_date</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">yesterday</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_first_date</span><span class="p">)</span>
             <span class="k">return</span> <span class="n">PhaseUnit</span><span class="p">(</span><span class="n">pre_date</span><span class="p">,</span> <span class="n">pre_date</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">init_population</span><span class="p">)</span>
         <span class="n">num</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">str2num</span><span class="p">(</span><span class="n">phase</span><span class="p">)</span>
         <span class="k">try</span><span class="p">:</span>
@@ -242,7 +256,7 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="n">include_past</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_units</span> <span class="o">=</span> <span class="p">[]</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_units</span> <span class="o">=</span> <span class="p">[</span><span class="n">unit</span> <span class="k">for</span> <span class="n">unit</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_units</span> <span class="k">if</span> <span class="n">unit</span> <span class="o">&lt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">last_date</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_units</span> <span class="o">=</span> <span class="p">[</span><span class="n">unit</span> <span class="k">for</span> <span class="n">unit</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_units</span> <span class="k">if</span> <span class="n">unit</span> <span class="o">&lt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_last_date</span><span class="p">]</span>
         <span class="k">return</span> <span class="bp">self</span></div>
 
     <span class="k">def</span> <span class="nf">_calc_end_date</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">start_date</span><span class="p">,</span> <span class="n">end_date</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">days</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
@@ -261,7 +275,7 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">_ensure_date_order</span><span class="p">(</span><span class="n">start_date</span><span class="p">,</span> <span class="n">end_date</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;end_date&quot;</span><span class="p">)</span>
             <span class="k">return</span> <span class="n">end_date</span>
         <span class="k">if</span> <span class="n">days</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">last_date</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_last_date</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">date_change</span><span class="p">(</span><span class="n">start_date</span><span class="p">,</span> <span class="n">days</span><span class="o">=</span><span class="n">days</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span>
 
 <div class="viewcode-block" id="PhaseSeries.add"><a class="viewcode-back" href="../../../covsirphy.phase.html#covsirphy.PhaseSeries.add">[docs]</a>    <span class="k">def</span> <span class="nf">add</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">end_date</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">days</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">population</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">model</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">tau</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
@@ -301,15 +315,15 @@
         <span class="c1"># Create PhaseUnit</span>
         <span class="n">unit</span> <span class="o">=</span> <span class="n">PhaseUnit</span><span class="p">(</span><span class="n">start_date</span><span class="p">,</span> <span class="n">end_date</span><span class="p">,</span> <span class="n">population</span><span class="p">)</span>
         <span class="c1"># Add phase if the last date is not included</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">last_date</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">unit</span> <span class="ow">or</span> <span class="n">unit</span> <span class="o">&lt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">last_date</span><span class="p">:</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_last_date</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">unit</span> <span class="ow">or</span> <span class="n">unit</span> <span class="o">&lt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_last_date</span><span class="p">:</span>
             <span class="n">unit</span><span class="o">.</span><span class="n">set_ode</span><span class="p">(</span><span class="n">model</span><span class="o">=</span><span class="n">model</span><span class="p">,</span> <span class="n">tau</span><span class="o">=</span><span class="n">tau</span><span class="p">,</span> <span class="o">**</span><span class="n">param_dict</span><span class="p">)</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_units</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">unit</span><span class="p">)</span>
             <span class="k">return</span> <span class="bp">self</span>
         <span class="c1"># Fill in the blank of past dates</span>
-        <span class="n">filling</span> <span class="o">=</span> <span class="n">PhaseUnit</span><span class="p">(</span><span class="n">start_date</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">last_date</span><span class="p">,</span> <span class="n">population</span><span class="p">)</span>
+        <span class="n">filling</span> <span class="o">=</span> <span class="n">PhaseUnit</span><span class="p">(</span><span class="n">start_date</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_last_date</span><span class="p">,</span> <span class="n">population</span><span class="p">)</span>
         <span class="n">filling</span><span class="o">.</span><span class="n">set_ode</span><span class="p">(</span><span class="n">model</span><span class="o">=</span><span class="n">model</span><span class="p">,</span> <span class="n">tau</span><span class="o">=</span><span class="n">tau</span><span class="p">,</span> <span class="o">**</span><span class="n">param_dict</span><span class="p">)</span>
         <span class="n">target</span> <span class="o">=</span> <span class="n">PhaseUnit</span><span class="p">(</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">tomorrow</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">last_date</span><span class="p">),</span> <span class="n">end_date</span><span class="p">,</span> <span class="n">population</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">tomorrow</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_last_date</span><span class="p">),</span> <span class="n">end_date</span><span class="p">,</span> <span class="n">population</span><span class="p">)</span>
         <span class="n">target</span><span class="o">.</span><span class="n">set_ode</span><span class="p">(</span><span class="n">model</span><span class="o">=</span><span class="n">model</span><span class="p">,</span> <span class="n">tau</span><span class="o">=</span><span class="n">tau</span><span class="p">,</span> <span class="o">**</span><span class="n">param_dict</span><span class="p">)</span>
         <span class="c1"># Add new phase</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_units</span><span class="o">.</span><span class="n">extend</span><span class="p">([</span><span class="n">filling</span><span class="p">,</span> <span class="n">target</span><span class="p">])</span>
@@ -337,7 +351,7 @@
             <span class="k">return</span> <span class="bp">self</span>
         <span class="n">phase_pre</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">num2str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">str2num</span><span class="p">(</span><span class="n">phase</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span>
         <span class="n">unit_pre</span><span class="p">,</span> <span class="n">unit_fol</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">unit</span><span class="p">(</span><span class="n">phase_pre</span><span class="p">),</span> <span class="bp">self</span><span class="o">.</span><span class="n">unit</span><span class="p">(</span><span class="n">phase</span><span class="p">)</span>
-        <span class="k">if</span> <span class="n">unit_pre</span> <span class="o">&lt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">last_date</span> <span class="ow">and</span> <span class="n">unit_fol</span> <span class="o">&gt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">last_date</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">unit_pre</span> <span class="o">&lt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_last_date</span> <span class="ow">and</span> <span class="n">unit_fol</span> <span class="o">&gt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_last_date</span><span class="p">:</span>
             <span class="n">phase_next</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">num2str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">str2num</span><span class="p">(</span><span class="n">phase</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
             <span class="n">unit_next</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">unit</span><span class="p">(</span><span class="n">phase_next</span><span class="p">)</span>
             <span class="n">model</span> <span class="o">=</span> <span class="n">unit_next</span><span class="o">.</span><span class="n">model</span>
@@ -424,7 +438,7 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="p">{</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">num2str</span><span class="p">(</span><span class="n">phase_id</span><span class="p">):</span> <span class="p">{</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">TENSE</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">PAST</span> <span class="k">if</span> <span class="n">unit</span> <span class="o">&lt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">last_date</span> <span class="k">else</span> <span class="bp">self</span><span class="o">.</span><span class="n">FUTURE</span><span class="p">,</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">TENSE</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">PAST</span> <span class="k">if</span> <span class="n">unit</span> <span class="o">&lt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_last_date</span> <span class="k">else</span> <span class="bp">self</span><span class="o">.</span><span class="n">FUTURE</span><span class="p">,</span>
                 <span class="o">**</span><span class="n">unit</span><span class="o">.</span><span class="n">to_dict</span><span class="p">()</span>
             <span class="p">}</span>
             <span class="k">for</span> <span class="p">(</span><span class="n">phase_id</span><span class="p">,</span> <span class="n">unit</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_units</span><span class="p">)</span> <span class="k">if</span> <span class="n">unit</span>

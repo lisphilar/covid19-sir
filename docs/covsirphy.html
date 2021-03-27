@@ -67,7 +67,7 @@
             
             
               <div class="version">
-                2.17.0-lambda
+                2.17.0-nu
               </div>
             
           
@@ -4456,6 +4456,28 @@ When &#64;phase is ‘last’, the last phase will be deleted.</p>
 </dd></dl>
 
 <dl class="py method">
+<dt id="covsirphy.PhaseSeries.first_date">
+<em class="property"><span class="pre">property</span> </em><code class="sig-name descname"><span class="pre">first_date</span></code><a class="headerlink" href="#covsirphy.PhaseSeries.first_date" title="Permalink to this definition">¶</a></dt>
+<dd><p>the first date of the series, like 22Jan2020</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="covsirphy.PhaseSeries.last_date">
+<em class="property"><span class="pre">property</span> </em><code class="sig-name descname"><span class="pre">last_date</span></code><a class="headerlink" href="#covsirphy.PhaseSeries.last_date" title="Permalink to this definition">¶</a></dt>
+<dd><p>the last date of the series, like 25May2020</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
 <dt id="covsirphy.PhaseSeries.replace">
 <code class="sig-name descname"><span class="pre">replace</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">phase</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">new</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/phase/phase_series.html#PhaseSeries.replace"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#covsirphy.PhaseSeries.replace" title="Permalink to this definition">¶</a></dt>
 <dd><p>Replace phase object.</p>
@@ -6767,7 +6789,7 @@ If the last phase is not included, the dates will be assigned to the previous ph
 <dl class="py method">
 <dt id="covsirphy.Scenario.estimate_delay">
 <code class="sig-name descname"><span class="pre">estimate_delay</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">oxcgrt_data</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">indicator</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'Stringency_index'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">target</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'Confirmed'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">value_range</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">(7,</span> <span class="pre">None)</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/analysis/scenario.html#Scenario.estimate_delay"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#covsirphy.Scenario.estimate_delay" title="Permalink to this definition">¶</a></dt>
-<dd><p>Estimate the average day [days] between the indicator and the target.
+<dd><p>Estimate the mode value of delay period [days] between the indicator and the target.
 We assume that the indicator impact on the target value with delay.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -6787,7 +6809,7 @@ We assume that the indicator impact on the target value with delay.</p>
 </dd>
 <dt class="field-odd">Returns</dt>
 <dd class="field-odd"><p><ul class="simple">
-<li><p>int: the estimated number of days of delay [day]</p></li>
+<li><p>int: the estimated number of days of delay [day] (mode value)</p></li>
 <li><dl class="simple">
 <dt>pandas.DataFrame:</dt><dd><dl class="simple">
 <dt>Index</dt><dd><p>reset index</p>
@@ -7436,16 +7458,20 @@ If &#64;columns is None, all columns will be shown.</p>
 
 <dl class="py method">
 <dt id="covsirphy.Scenario.trend">
-<code class="sig-name descname"><span class="pre">trend</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">force</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'Main'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">show_figure</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">filename</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/analysis/scenario.html#Scenario.trend"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#covsirphy.Scenario.trend" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname"><span class="pre">trend</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">min_size</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">force</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'Main'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">show_figure</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">filename</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/analysis/scenario.html#Scenario.trend"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#covsirphy.Scenario.trend" title="Permalink to this definition">¶</a></dt>
 <dd><p>Perform S-R trend analysis and set phases.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
+<li><p><strong>min_size</strong> (<em>int</em><em> or </em><em>None</em>) – minimum value of phase length [days] (over 2) or None (equal to max of 7 and delay period)</p></li>
 <li><p><strong>force</strong> (<em>bool</em>) – if True, change points will be over-written</p></li>
 <li><p><strong>name</strong> (<em>str</em>) – phase series name</p></li>
 <li><p><strong>show_figure</strong> (<em>bool</em>) – if True, show the result as a figure</p></li>
 <li><p><strong>filename</strong> (<em>str</em>) – filename of the figure, or None (display)</p></li>
-<li><p><strong>kwargs</strong> – keyword arguments of covsirphy.TrendDetector(), .TrendDetector.sr() and .trend_plot()</p></li>
+<li><p><strong>kwargs</strong> – keyword arguments of
+- covsirphy.TrendDetector() and covsirphy.TrendDetector.sr()
+- covsirphy.trend_plot()
+- Scenario.estimate_delay()</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
@@ -7455,6 +7481,10 @@ If &#64;columns is None, all columns will be shown.</p>
 <dd class="field-odd"><p><a class="reference internal" href="#covsirphy.Scenario" title="covsirphy.Scenario">covsirphy.Scenario</a></p>
 </dd>
 </dl>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>If &#64;min_size is None, this will be thw max value of 7 days and delay period calculated with .estimate_delay() method.</p>
+</div>
 </dd></dl>
 
 </dd></dl>
@@ -8060,7 +8090,7 @@ If &#64;columns is None, all columns will be shown.</p>
 
 <dl class="py class">
 <dt id="covsirphy.TrendDetector">
-<em class="property"><span class="pre">class</span> </em><code class="sig-name descname"><span class="pre">TrendDetector</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">area</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'Selected</span> <span class="pre">area'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">min_size</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">5</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/trend/trend_detector.html#TrendDetector"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#covsirphy.TrendDetector" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">class</span> </em><code class="sig-name descname"><span class="pre">TrendDetector</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">area</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'Selected</span> <span class="pre">area'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">min_size</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">7</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/trend/trend_detector.html#TrendDetector"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#covsirphy.TrendDetector" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="covsirphy.util.html#covsirphy.util.term.Term" title="covsirphy.util.term.Term"><code class="xref py py-class docutils literal notranslate"><span class="pre">covsirphy.util.term.Term</span></code></a></p>
 <p>Interface for trend analysis (change point analysis).</p>
 <dl class="field-list simple">
@@ -8135,7 +8165,7 @@ Index:</p>
 
 <dl class="py method">
 <dt id="covsirphy.TrendDetector.sr">
-<code class="sig-name descname"><span class="pre">sr</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">algo</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'Pelt-rbf'</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/trend/trend_detector.html#TrendDetector.sr"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#covsirphy.TrendDetector.sr" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname"><span class="pre">sr</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">algo</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'Binseg-normal'</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/trend/trend_detector.html#TrendDetector.sr"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#covsirphy.TrendDetector.sr" title="Permalink to this definition">¶</a></dt>
 <dd><p>Perform S-R trend analysis.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -8208,7 +8238,7 @@ Please refer to documentation of ruptures package.
 </dl>
 <dl class="py method">
 <dt id="covsirphy.TrendPlot.legend">
-<code class="sig-name descname"><span class="pre">legend</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">bbox_to_anchor</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">(0.5,</span> <span class="pre">-</span> <span class="pre">0.4)</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bbox_loc</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'lower</span> <span class="pre">center'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ncol</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">7</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/trend/trend_plot.html#TrendPlot.legend"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#covsirphy.TrendPlot.legend" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname"><span class="pre">legend</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">bbox_to_anchor</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">(0.5,</span> <span class="pre">-</span> <span class="pre">0.5)</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bbox_loc</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'lower</span> <span class="pre">center'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ncol</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">7</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/trend/trend_plot.html#TrendPlot.legend"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#covsirphy.TrendPlot.legend" title="Permalink to this definition">¶</a></dt>
 <dd><p>Set legend.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
