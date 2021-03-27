@@ -109,7 +109,7 @@ class TrendPlot(LinePlot):
         fmt.set_scientific(False)
         self._ax.yaxis.set_major_formatter(fmt)
 
-    def legend(self, bbox_to_anchor=(0.5, -0.4), bbox_loc="lower center", ncol=7, **kwargs):
+    def legend(self, bbox_to_anchor=(0.5, -0.5), bbox_loc="lower center", ncol=7, **kwargs):
         """
         Set legend.
 
