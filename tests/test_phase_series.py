@@ -14,6 +14,9 @@ class TestPhaseSeries(object):
         # Setting
         population = population_data.value(country)
         series = PhaseSeries("01Apr2020", "22Apr2020", population)
+        # First/last date
+        assert series.first_date == "01Apr2020"
+        assert series.last_date == "22Apr2020"
         # Whether units are registered or not
         assert not series
         assert series.summary().empty
