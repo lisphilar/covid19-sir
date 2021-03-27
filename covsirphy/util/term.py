@@ -395,7 +395,7 @@ class Term(object):
             candidate_str = ", ".join(candidates)
         except TypeError:
             raise TypeError(
-                f"@candidates must be a list, but {candidates} was applied.") from None
+                f"@candidates must be a list strings, but {candidates} was applied.") from None
         ok_list = [element in candidates for element in target]
         if all(ok_list):
             return target

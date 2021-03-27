@@ -1448,7 +1448,7 @@ class Scenario(Term):
         phase_df = df.drop_duplicates(keep="last").reset_index()
         # Days to predict
         days = days or [len(X_target) - 1]
-        self._ensure_list(days, candidates=list(range(len(X_target))), name="days")
+        self._ensure_list(days, candidates=[str(num) for num in range(len(X_target))], name="days")
         # Select the last values
         phase_df = phase_df.iloc[days, :]
         # Set new future phases
