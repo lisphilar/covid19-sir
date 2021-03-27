@@ -386,20 +386,18 @@ class Term(object):
             object: as-is target
         """
         if not isinstance(target, (list, tuple)):
-            raise TypeError(
-                f"@{name} must be a list or tuple, but {type(target)} was applied.")
+            raise TypeError(f"@{name} must be a list or tuple, but {type(target)} was applied.")
         if candidates is None:
             return target
         # Check the target is a sub-list of candidates
         try:
-            strings = [candidate for candidate in candidates]
-            candidate_str = ", ".join(strings)
+            strings = [str(candidate) for candidate in candidates]
         except TypeError:
-            raise TypeError(
-                f"@candidates must be a list, but {candidates} was applied.") from None
+            raise TypeError(f"@candidates must be a list, but {candidates} was applied.") from None
         ok_list = [element in candidates for element in target]
         if all(ok_list):
             return target
+        candidate_str = ", ".join(strings)
         raise KeyError(f"@{name} must be a sub-list of [{candidate_str}], but {target} was applied.") from None
 
     @classmethod
