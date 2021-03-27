@@ -19,8 +19,8 @@ class PhaseSeries(Term):
     """
 
     def __init__(self, first_date, last_date, population):
-        self.first_date = self._ensure_date(first_date, "first_date")
-        self.last_date = self._ensure_date(last_date, "last_date")
+        self._first_date = self._ensure_date(first_date, "first_date")
+        self._last_date = self._ensure_date(last_date, "last_date")
         self.init_population = self._ensure_population(population)
         # List of PhaseUnit
         self._units = []
@@ -31,6 +31,20 @@ class PhaseSeries(Term):
 
     def __len__(self):
         return len([unit for unit in self._units if unit])
+
+    @property
+    def first_date(self):
+        """
+        str: the first date of the series, like 22Jan2020
+        """
+        return self._first_date
+
+    @property
+    def last_date(self):
+        """
+        str: the last date of the series, like 25May2020
+        """
+        return self._last_date
 
     def unit(self, phase="last"):
         """
@@ -49,7 +63,7 @@ class PhaseSeries(Term):
         if phase == "last":
             if self._units:
                 return self._units[-1]
-            pre_date = self.yesterday(self.first_date)
+            pre_date = self.yesterday(self._first_date)
             return PhaseUnit(pre_date, pre_date, self.init_population)
         num = self.str2num(phase)
         try:
@@ -69,7 +83,7 @@ class PhaseSeries(Term):
         """
         if include_past:
             self._units = []
-        self._units = [unit for unit in self._units if unit <= self.last_date]
+        self._units = [unit for unit in self._units if unit <= self._last_date]
         return self
 
     def _calc_end_date(self, start_date, end_date=None, days=None):
@@ -88,7 +102,7 @@ class PhaseSeries(Term):
             self._ensure_date_order(start_date, end_date, name="end_date")
             return end_date
         if days is None:
-            return self.last_date
+            return self._last_date
         return self.date_change(start_date, days=days - 1)
 
     def add(self, end_date=None, days=None, population=None, model=None, tau=None, **kwargs):
@@ -128,15 +142,15 @@ class PhaseSeries(Term):
         # Create PhaseUnit
         unit = PhaseUnit(start_date, end_date, population)
         # Add phase if the last date is not included
-        if self.last_date not in unit or unit <= self.last_date:
+        if self._last_date not in unit or unit <= self._last_date:
             unit.set_ode(model=model, tau=tau, **param_dict)
             self._units.append(unit)
             return self
         # Fill in the blank of past dates
-        filling = PhaseUnit(start_date, self.last_date, population)
+        filling = PhaseUnit(start_date, self._last_date, population)
         filling.set_ode(model=model, tau=tau, **param_dict)
         target = PhaseUnit(
-            self.tomorrow(self.last_date), end_date, population)
+            self.tomorrow(self._last_date), end_date, population)
         target.set_ode(model=model, tau=tau, **param_dict)
         # Add new phase
         self._units.extend([filling, target])
@@ -164,7 +178,7 @@ class PhaseSeries(Term):
             return self
         phase_pre = self.num2str(self.str2num(phase) - 1)
         unit_pre, unit_fol = self.unit(phase_pre), self.unit(phase)
-        if unit_pre <= self.last_date and unit_fol >= self.last_date:
+        if unit_pre <= self._last_date and unit_fol >= self._last_date:
             phase_next = self.num2str(self.str2num(phase) + 1)
             unit_next = self.unit(phase_next)
             model = unit_next.model
@@ -251,7 +265,7 @@ class PhaseSeries(Term):
         """
         return {
             self.num2str(phase_id): {
-                self.TENSE: self.PAST if unit <= self.last_date else self.FUTURE,
+                self.TENSE: self.PAST if unit <= self._last_date else self.FUTURE,
                 **unit.to_dict()
             }
             for (phase_id, unit) in enumerate(self._units) if unit

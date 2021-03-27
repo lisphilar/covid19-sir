@@ -34,11 +34,15 @@ class ParamTracker(Term):
     """
 
     def __init__(self, record_df, phase_series, area=None, tau=None):
-        self.record_df = self._ensure_dataframe(
-            record_df, name="record_df", columns=self.SUB_COLUMNS)
-        self._series = self._ensure_instance(
-            phase_series, PhaseSeries, name="phase_seres")
+        # Phase series
+        self._series = self._ensure_instance(phase_series, PhaseSeries, name="phase_series")
+        # Records
+        self._ensure_dataframe(record_df, name="record_df", columns=self.SUB_COLUMNS)
+        df = record_df.loc[record_df[self.DATE] >= self.date_obj(phase_series.first_date)]
+        self.record_df = df.loc[df[self.DATE] <= self.date_obj(phase_series.last_date)]
+        # Area name
         self.area = area or ""
+        # Tau value
         self.tau = self._ensure_tau(tau)
 
     def __len__(self):
