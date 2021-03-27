@@ -1416,13 +1416,14 @@ class Scenario(Term):
             "delay": delay
         }
 
-    def predict(self, name="Main"):
+    def predict(self, days=None, name="Main"):
         """
         Predict parameter values of the future phases using Elastic Net regression with OxCGRT scores,
         assuming that OxCGRT scores will impact on ODE parameter values with delay.
         New future phases will be added (over-written).
 
         Args:
+            days (list[int]): list of days to predict or None (only the max value)
             name (str): scenario name
 
         Raises:
@@ -1444,9 +1445,10 @@ class Scenario(Term):
         df = df.applymap(lambda x: np.around(x, 4 - int(floor(log10(abs(x)))) - 1))
         df.index = [date.strftime(self.DATE_FORMAT) for date in df.index]
         df.index.name = "end_date"
-        phase_df = df.drop_duplicates(keep="last").reset_index()
-        # Select the last values
-        phase_df = phase_df.iloc[[-1], :]
+        # Days to predict
+        days = days or [len(X_target) - 1]
+        self._ensure_list(days, candidates=list(range(len(X_target))), name="days")
+        phase_df = df.reset_index().loc[days, :]
         # Set new future phases
         for phase_dict in phase_df.to_dict(orient="records"):
             self.add(name=name, **phase_dict)
@@ -1461,7 +1463,7 @@ class Scenario(Term):
         Args:
             oxcgrt_data (covsirphy.OxCGRTData or None): OxCGRT dataset
             name (str): scenario name
-            kwargs: the other arguments of Scenario.fit()
+            kwargs: the other arguments of Scenario.fit() and Scenario.predict()
 
         Raises:
             covsirphy.UnExecutedError: Scenario.estimate() or Scenario.add() were not performed
@@ -1473,6 +1475,6 @@ class Scenario(Term):
         Note:
             @oxcgrt_data argument was deprecated. Please use Scenario.register(extras=[oxcgrt_data]).
         """
-        self.fit(oxcgrt_data=oxcgrt_data, name=name, **kwargs)
-        self.predict(name=name)
+        self.fit(oxcgrt_data=oxcgrt_data, name=name, **find_args(Scenario.fit, **kwargs))
+        self.predict(name=name, **find_args(Scenario.predict, **kwargs))
         return self
