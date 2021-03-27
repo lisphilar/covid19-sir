@@ -1279,7 +1279,7 @@ class Scenario(Term):
             model (covsirphy.ModelBase): ODE model
             name (str): scenario name
             delay (int): delay period
-            removed_cols (list): list of variables to remove from X dataset
+            removed_cols (list[str]): list of variables to remove from X dataset
 
         Returns:
             tuple(pandas.DataFrame):
@@ -1309,19 +1309,19 @@ class Scenario(Term):
         X_target = extras_df.loc[dates]
         return (X, y, X_target)
 
-    def fit(self, oxcgrt_data=None, name="Main", test_size=0.2, seed=0, delay=None):
+    def fit(self, oxcgrt_data=None, name="Main", test_size=0.2, seed=0, delay=None, removed_cols=None):
         """
         Learn the relationship of ODE parameter values and delayed OxCGRT scores using Elastic Net regression,
         assuming that OxCGRT scores will impact on ODE parameter values with delay.
         Min-max scaling and Elastic net regression with parameter optimization and cross validation.
 
         Args:
-            oxcgrt_data (covsirphy.OxCGRTData): OxCGRT dataset
+            oxcgrt_data (covsirphy.OxCGRTData): OxCGRT dataset, deprecated
             name (str): scenario name
             test_size (float): proportion of the test dataset of Elastic Net regression
             seed (int): random seed when spliting the dataset to train/test data
-            delay (int): number of days of delay between policy measure and effect
-            on number of confirmed cases.
+            delay (int): delay period [days], please refer to Scenario.estimate_delay()
+            removed_cols (list[str] or None): list of variables to remove from X dataset or None (indicators used to estimate delay period)
 
         Raises:
             covsirphy.UnExecutedError: Scenario.estimate() or Scenario.add() were not performed
@@ -1363,10 +1363,10 @@ class Scenario(Term):
         # Set delay effect
         if delay is None:
             delay, delay_df = self.estimate_delay(oxcgrt_data)
-            removed_cols = delay_df.columns.tolist()
+            removed_cols = list(set(delay_df.columns.tolist()) | set(removed_cols or []))
         else:
             delay = self._ensure_natural_int(delay, name="delay")
-            removed_cols = []
+            removed_cols = removed_cols or None
         # Create training/test dataset
         try:
             X, y, X_target = self._fit_create_data(
