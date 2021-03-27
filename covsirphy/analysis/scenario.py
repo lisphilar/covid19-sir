@@ -1222,7 +1222,7 @@ class Scenario(Term):
     def estimate_delay(self, oxcgrt_data=None, indicator="Stringency_index",
                        target="Confirmed", value_range=(7, None)):
         """
-        Estimate the average day [days] between the indicator and the target.
+        Estimate the mode value of delay period [days] between the indicator and the target.
         We assume that the indicator impact on the target value with delay.
 
         Args:
@@ -1238,7 +1238,7 @@ class Scenario(Term):
 
         Returns:
             tuple(int, pandas.DataFrame):
-                - int: the estimated number of days of delay [day]
+                - int: the estimated number of days of delay [day] (mode value)
                 - pandas.DataFrame:
                     Index
                         reset index
@@ -1264,8 +1264,11 @@ class Scenario(Term):
         df_filtered = df.loc[df["Period Length"] < df["Period Length"].quantile(0.99)]
         if value_range[1] is not None:
             df_filtered = df_filtered.loc[df["Period Length"] < value_range[1]]
-        delay_days = self._data.recovery_period() if df_filtered.empty else int(df_filtered["Period Length"].mean())
-        return (delay_days, df)
+        # Calculate representative value (mode)
+        if df_filtered.empty:
+            return (self._data.recovery_period(), df)
+        delay_period = df_filtered["Period Length"].mode()[0]
+        return (int(delay_period), df)
 
     def _fit_create_data(self, model, name, delay, removed_cols):
         """
