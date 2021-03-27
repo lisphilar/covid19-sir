@@ -1445,12 +1445,10 @@ class Scenario(Term):
         df = df.applymap(lambda x: np.around(x, 4 - int(floor(log10(abs(x)))) - 1))
         df.index = [date.strftime(self.DATE_FORMAT) for date in df.index]
         df.index.name = "end_date"
-        phase_df = df.drop_duplicates(keep="last").reset_index()
         # Days to predict
         days = days or [len(X_target) - 1]
         self._ensure_list(days, candidates=list(range(len(X_target))), name="days")
-        # Select the last values
-        phase_df = phase_df.iloc[days, :]
+        phase_df = df.reset_index().loc[days, :]
         # Set new future phases
         for phase_dict in phase_df.to_dict(orient="records"):
             self.add(name=name, **phase_dict)
