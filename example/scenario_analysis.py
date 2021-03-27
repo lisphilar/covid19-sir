@@ -56,7 +56,7 @@ def main(country="Italy", province=None, file_prefix="ita"):
     snl.simulate(name="Main", **filer.png("simulate_main"))
     snl.history_rate(name="Main", **filer.png("history-rate_main"))
     # Forecast scenario: Short-term prediction with regression and OxCGRT data
-    snl.fit_predict(days=[2, 5], name="Forecast")
+    snl.fit_predict(name="Forecast")
     snl.add(name="Forecast", end_date="31May2021")
     snl.simulate(name="Forecast", **filer.png("simulate_forecast"))
     snl.history_rate(name="Main", **filer.png("history-rate_forecast"))
