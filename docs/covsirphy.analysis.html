@@ -67,7 +67,7 @@
             
             
               <div class="version">
-                2.17.0-nu
+                2.17.0-omicron
               </div>
             
           
@@ -1687,19 +1687,19 @@ We assume that the indicator impact on the target value with delay.</p>
 
 <dl class="py method">
 <dt id="covsirphy.analysis.scenario.Scenario.fit">
-<code class="sig-name descname"><span class="pre">fit</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">oxcgrt_data</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'Main'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">test_size</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">seed</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">delay</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/analysis/scenario.html#Scenario.fit"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#covsirphy.analysis.scenario.Scenario.fit" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname"><span class="pre">fit</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">oxcgrt_data</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'Main'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">test_size</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">seed</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">delay</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">removed_cols</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/analysis/scenario.html#Scenario.fit"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#covsirphy.analysis.scenario.Scenario.fit" title="Permalink to this definition">¶</a></dt>
 <dd><p>Learn the relationship of ODE parameter values and delayed OxCGRT scores using Elastic Net regression,
 assuming that OxCGRT scores will impact on ODE parameter values with delay.
 Min-max scaling and Elastic net regression with parameter optimization and cross validation.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>oxcgrt_data</strong> (<a class="reference internal" href="covsirphy.html#covsirphy.OxCGRTData" title="covsirphy.OxCGRTData"><em>covsirphy.OxCGRTData</em></a>) – OxCGRT dataset</p></li>
+<li><p><strong>oxcgrt_data</strong> (<a class="reference internal" href="covsirphy.html#covsirphy.OxCGRTData" title="covsirphy.OxCGRTData"><em>covsirphy.OxCGRTData</em></a>) – OxCGRT dataset, deprecated</p></li>
 <li><p><strong>name</strong> (<em>str</em>) – scenario name</p></li>
 <li><p><strong>test_size</strong> (<em>float</em>) – proportion of the test dataset of Elastic Net regression</p></li>
 <li><p><strong>seed</strong> (<em>int</em>) – random seed when spliting the dataset to train/test data</p></li>
-<li><p><strong>delay</strong> (<em>int</em>) – number of days of delay between policy measure and effect</p></li>
-<li><p><strong>number of confirmed cases.</strong> (<em>on</em>) – </p></li>
+<li><p><strong>delay</strong> (<em>int</em>) – delay period [days], please refer to Scenario.estimate_delay()</p></li>
+<li><p><strong>removed_cols</strong> (<em>list</em><em>[</em><em>str</em><em>] or </em><em>None</em>) – list of variables to remove from X dataset or None (indicators used to estimate delay period)</p></li>
 </ul>
 </dd>
 <dt class="field-even">Raises</dt>
@@ -1746,7 +1746,7 @@ New future phases will be added (over-written).</p>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>oxcgrt_data</strong> (<a class="reference internal" href="covsirphy.html#covsirphy.OxCGRTData" title="covsirphy.OxCGRTData"><em>covsirphy.OxCGRTData</em></a><em> or </em><em>None</em>) – OxCGRT dataset</p></li>
 <li><p><strong>name</strong> (<em>str</em>) – scenario name</p></li>
-<li><p><strong>kwargs</strong> – the other arguments of Scenario.fit()</p></li>
+<li><p><strong>kwargs</strong> – the other arguments of Scenario.fit() and Scenario.predict()</p></li>
 </ul>
 </dd>
 <dt class="field-even">Raises</dt>
@@ -1905,13 +1905,16 @@ When using interactive shell, we can change the modes by Scenario.interactive = 
 
 <dl class="py method">
 <dt id="covsirphy.analysis.scenario.Scenario.predict">
-<code class="sig-name descname"><span class="pre">predict</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'Main'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/analysis/scenario.html#Scenario.predict"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#covsirphy.analysis.scenario.Scenario.predict" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname"><span class="pre">predict</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">days</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'Main'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/analysis/scenario.html#Scenario.predict"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#covsirphy.analysis.scenario.Scenario.predict" title="Permalink to this definition">¶</a></dt>
 <dd><p>Predict parameter values of the future phases using Elastic Net regression with OxCGRT scores,
 assuming that OxCGRT scores will impact on ODE parameter values with delay.
 New future phases will be added (over-written).</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>name</strong> (<em>str</em>) – scenario name</p>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>days</strong> (<em>list</em><em>[</em><em>int</em><em>]</em>) – list of days to predict or None (only the max value)</p></li>
+<li><p><strong>name</strong> (<em>str</em>) – scenario name</p></li>
+</ul>
 </dd>
 <dt class="field-even">Raises</dt>
 <dd class="field-even"><ul class="simple">

@@ -65,7 +65,7 @@
             
             
               <div class="version">
-                2.17.0-nu
+                2.17.0-omicron
               </div>
             
           
@@ -559,21 +559,19 @@
 <span class="sd">            object: as-is target</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">target</span><span class="p">,</span> <span class="p">(</span><span class="nb">list</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">)):</span>
-            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span>
-                <span class="sa">f</span><span class="s2">&quot;@</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2"> must be a list or tuple, but </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">target</span><span class="p">)</span><span class="si">}</span><span class="s2"> was applied.&quot;</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;@</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2"> must be a list or tuple, but </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">target</span><span class="p">)</span><span class="si">}</span><span class="s2"> was applied.&quot;</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">candidates</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">return</span> <span class="n">target</span>
         <span class="c1"># Check the target is a sub-list of candidates</span>
         <span class="k">try</span><span class="p">:</span>
-            <span class="n">candidate_str</span> <span class="o">=</span> <span class="s2">&quot;, &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">candidates</span><span class="p">)</span>
+            <span class="n">strings</span> <span class="o">=</span> <span class="p">[</span><span class="nb">str</span><span class="p">(</span><span class="n">candidate</span><span class="p">)</span> <span class="k">for</span> <span class="n">candidate</span> <span class="ow">in</span> <span class="n">candidates</span><span class="p">]</span>
         <span class="k">except</span> <span class="ne">TypeError</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span>
-                <span class="sa">f</span><span class="s2">&quot;@candidates must be a list, but </span><span class="si">{</span><span class="n">candidates</span><span class="si">}</span><span class="s2"> was applied.&quot;</span><span class="p">)</span> <span class="kn">from</span> <span class="bp">None</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;@candidates must be a list, but </span><span class="si">{</span><span class="n">candidates</span><span class="si">}</span><span class="s2"> was applied.&quot;</span><span class="p">)</span> <span class="kn">from</span> <span class="bp">None</span>
         <span class="n">ok_list</span> <span class="o">=</span> <span class="p">[</span><span class="n">element</span> <span class="ow">in</span> <span class="n">candidates</span> <span class="k">for</span> <span class="n">element</span> <span class="ow">in</span> <span class="n">target</span><span class="p">]</span>
         <span class="k">if</span> <span class="nb">all</span><span class="p">(</span><span class="n">ok_list</span><span class="p">):</span>
             <span class="k">return</span> <span class="n">target</span>
-        <span class="k">raise</span> <span class="ne">KeyError</span><span class="p">(</span>
-            <span class="sa">f</span><span class="s2">&quot;@</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2"> must be a sub-list of </span><span class="si">{</span><span class="n">candidate_str</span><span class="si">}</span><span class="s2">, but </span><span class="si">{</span><span class="n">target</span><span class="si">}</span><span class="s2"> was applied.&quot;</span><span class="p">)</span> <span class="kn">from</span> <span class="bp">None</span>
+        <span class="n">candidate_str</span> <span class="o">=</span> <span class="s2">&quot;, &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">strings</span><span class="p">)</span>
+        <span class="k">raise</span> <span class="ne">KeyError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;@</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2"> must be a sub-list of [</span><span class="si">{</span><span class="n">candidate_str</span><span class="si">}</span><span class="s2">], but </span><span class="si">{</span><span class="n">target</span><span class="si">}</span><span class="s2"> was applied.&quot;</span><span class="p">)</span> <span class="kn">from</span> <span class="bp">None</span>
 
 <div class="viewcode-block" id="Term.divisors"><a class="viewcode-back" href="../../../covsirphy.util.html#covsirphy.Term.divisors">[docs]</a>    <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">divisors</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>

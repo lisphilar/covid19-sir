@@ -65,7 +65,7 @@
             
             
               <div class="version">
-                2.17.0-nu
+                2.17.0-omicron
               </div>
             
           
@@ -1452,7 +1452,7 @@
 <span class="sd">            model (covsirphy.ModelBase): ODE model</span>
 <span class="sd">            name (str): scenario name</span>
 <span class="sd">            delay (int): delay period</span>
-<span class="sd">            removed_cols (list): list of variables to remove from X dataset</span>
+<span class="sd">            removed_cols (list[str]): list of variables to remove from X dataset</span>
 
 <span class="sd">        Returns:</span>
 <span class="sd">            tuple(pandas.DataFrame):</span>
@@ -1482,19 +1482,19 @@
         <span class="n">X_target</span> <span class="o">=</span> <span class="n">extras_df</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">dates</span><span class="p">]</span>
         <span class="k">return</span> <span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">X_target</span><span class="p">)</span>
 
-<div class="viewcode-block" id="Scenario.fit"><a class="viewcode-back" href="../../../covsirphy.analysis.html#covsirphy.Scenario.fit">[docs]</a>    <span class="k">def</span> <span class="nf">fit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">oxcgrt_data</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;Main&quot;</span><span class="p">,</span> <span class="n">test_size</span><span class="o">=</span><span class="mf">0.2</span><span class="p">,</span> <span class="n">seed</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">delay</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<div class="viewcode-block" id="Scenario.fit"><a class="viewcode-back" href="../../../covsirphy.analysis.html#covsirphy.Scenario.fit">[docs]</a>    <span class="k">def</span> <span class="nf">fit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">oxcgrt_data</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;Main&quot;</span><span class="p">,</span> <span class="n">test_size</span><span class="o">=</span><span class="mf">0.2</span><span class="p">,</span> <span class="n">seed</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">delay</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">removed_cols</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Learn the relationship of ODE parameter values and delayed OxCGRT scores using Elastic Net regression,</span>
 <span class="sd">        assuming that OxCGRT scores will impact on ODE parameter values with delay.</span>
 <span class="sd">        Min-max scaling and Elastic net regression with parameter optimization and cross validation.</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">            oxcgrt_data (covsirphy.OxCGRTData): OxCGRT dataset</span>
+<span class="sd">            oxcgrt_data (covsirphy.OxCGRTData): OxCGRT dataset, deprecated</span>
 <span class="sd">            name (str): scenario name</span>
 <span class="sd">            test_size (float): proportion of the test dataset of Elastic Net regression</span>
 <span class="sd">            seed (int): random seed when spliting the dataset to train/test data</span>
-<span class="sd">            delay (int): number of days of delay between policy measure and effect</span>
-<span class="sd">            on number of confirmed cases.</span>
+<span class="sd">            delay (int): delay period [days], please refer to Scenario.estimate_delay()</span>
+<span class="sd">            removed_cols (list[str] or None): list of variables to remove from X dataset or None (indicators used to estimate delay period)</span>
 
 <span class="sd">        Raises:</span>
 <span class="sd">            covsirphy.UnExecutedError: Scenario.estimate() or Scenario.add() were not performed</span>
@@ -1536,10 +1536,10 @@
         <span class="c1"># Set delay effect</span>
         <span class="k">if</span> <span class="n">delay</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">delay</span><span class="p">,</span> <span class="n">delay_df</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">estimate_delay</span><span class="p">(</span><span class="n">oxcgrt_data</span><span class="p">)</span>
-            <span class="n">removed_cols</span> <span class="o">=</span> <span class="n">delay_df</span><span class="o">.</span><span class="n">columns</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span>
+            <span class="n">removed_cols</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">delay_df</span><span class="o">.</span><span class="n">columns</span><span class="o">.</span><span class="n">tolist</span><span class="p">())</span> <span class="o">|</span> <span class="nb">set</span><span class="p">(</span><span class="n">removed_cols</span> <span class="ow">or</span> <span class="p">[]))</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="n">delay</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ensure_natural_int</span><span class="p">(</span><span class="n">delay</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;delay&quot;</span><span class="p">)</span>
-            <span class="n">removed_cols</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="n">removed_cols</span> <span class="o">=</span> <span class="n">removed_cols</span> <span class="ow">or</span> <span class="kc">None</span>
         <span class="c1"># Create training/test dataset</span>
         <span class="k">try</span><span class="p">:</span>
             <span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">X_target</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_fit_create_data</span><span class="p">(</span>
@@ -1589,13 +1589,14 @@
             <span class="s2">&quot;delay&quot;</span><span class="p">:</span> <span class="n">delay</span>
         <span class="p">}</span></div>
 
-<div class="viewcode-block" id="Scenario.predict"><a class="viewcode-back" href="../../../covsirphy.analysis.html#covsirphy.Scenario.predict">[docs]</a>    <span class="k">def</span> <span class="nf">predict</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;Main&quot;</span><span class="p">):</span>
+<div class="viewcode-block" id="Scenario.predict"><a class="viewcode-back" href="../../../covsirphy.analysis.html#covsirphy.Scenario.predict">[docs]</a>    <span class="k">def</span> <span class="nf">predict</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">days</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;Main&quot;</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Predict parameter values of the future phases using Elastic Net regression with OxCGRT scores,</span>
 <span class="sd">        assuming that OxCGRT scores will impact on ODE parameter values with delay.</span>
 <span class="sd">        New future phases will be added (over-written).</span>
 
 <span class="sd">        Args:</span>
+<span class="sd">            days (list[int]): list of days to predict or None (only the max value)</span>
 <span class="sd">            name (str): scenario name</span>
 
 <span class="sd">        Raises:</span>
@@ -1617,9 +1618,10 @@
         <span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">applymap</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">around</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="mi">4</span> <span class="o">-</span> <span class="nb">int</span><span class="p">(</span><span class="n">floor</span><span class="p">(</span><span class="n">log10</span><span class="p">(</span><span class="nb">abs</span><span class="p">(</span><span class="n">x</span><span class="p">))))</span> <span class="o">-</span> <span class="mi">1</span><span class="p">))</span>
         <span class="n">df</span><span class="o">.</span><span class="n">index</span> <span class="o">=</span> <span class="p">[</span><span class="n">date</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">DATE_FORMAT</span><span class="p">)</span> <span class="k">for</span> <span class="n">date</span> <span class="ow">in</span> <span class="n">df</span><span class="o">.</span><span class="n">index</span><span class="p">]</span>
         <span class="n">df</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;end_date&quot;</span>
-        <span class="n">phase_df</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">drop_duplicates</span><span class="p">(</span><span class="n">keep</span><span class="o">=</span><span class="s2">&quot;last&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">reset_index</span><span class="p">()</span>
-        <span class="c1"># Select the last values</span>
-        <span class="n">phase_df</span> <span class="o">=</span> <span class="n">phase_df</span><span class="o">.</span><span class="n">iloc</span><span class="p">[[</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="p">:]</span>
+        <span class="c1"># Days to predict</span>
+        <span class="n">days</span> <span class="o">=</span> <span class="n">days</span> <span class="ow">or</span> <span class="p">[</span><span class="nb">len</span><span class="p">(</span><span class="n">X_target</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_ensure_list</span><span class="p">(</span><span class="n">days</span><span class="p">,</span> <span class="n">candidates</span><span class="o">=</span><span class="nb">list</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">X_target</span><span class="p">))),</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;days&quot;</span><span class="p">)</span>
+        <span class="n">phase_df</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">reset_index</span><span class="p">()</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">days</span><span class="p">,</span> <span class="p">:]</span>
         <span class="c1"># Set new future phases</span>
         <span class="k">for</span> <span class="n">phase_dict</span> <span class="ow">in</span> <span class="n">phase_df</span><span class="o">.</span><span class="n">to_dict</span><span class="p">(</span><span class="n">orient</span><span class="o">=</span><span class="s2">&quot;records&quot;</span><span class="p">):</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">,</span> <span class="o">**</span><span class="n">phase_dict</span><span class="p">)</span>
@@ -1634,7 +1636,7 @@
 <span class="sd">        Args:</span>
 <span class="sd">            oxcgrt_data (covsirphy.OxCGRTData or None): OxCGRT dataset</span>
 <span class="sd">            name (str): scenario name</span>
-<span class="sd">            kwargs: the other arguments of Scenario.fit()</span>
+<span class="sd">            kwargs: the other arguments of Scenario.fit() and Scenario.predict()</span>
 
 <span class="sd">        Raises:</span>
 <span class="sd">            covsirphy.UnExecutedError: Scenario.estimate() or Scenario.add() were not performed</span>
@@ -1646,8 +1648,8 @@
 <span class="sd">        Note:</span>
 <span class="sd">            @oxcgrt_data argument was deprecated. Please use Scenario.register(extras=[oxcgrt_data]).</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">oxcgrt_data</span><span class="o">=</span><span class="n">oxcgrt_data</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">oxcgrt_data</span><span class="o">=</span><span class="n">oxcgrt_data</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">,</span> <span class="o">**</span><span class="n">find_args</span><span class="p">(</span><span class="n">Scenario</span><span class="o">.</span><span class="n">fit</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">,</span> <span class="o">**</span><span class="n">find_args</span><span class="p">(</span><span class="n">Scenario</span><span class="o">.</span><span class="n">predict</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">))</span>
         <span class="k">return</span> <span class="bp">self</span></div></div>
 </pre></div>
 
