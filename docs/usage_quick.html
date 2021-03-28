@@ -69,7 +69,7 @@
             
             
               <div class="version">
-                2.17.0-pi
+                2.17.0-pi-fu1
               </div>
             
           
@@ -493,7 +493,7 @@ div.rendered_html tbody tr:hover {
 </div>
 <div class="output_area docutils container">
 <div class="highlight"><pre>
-&#39;2.17.0-pi&#39;
+&#39;2.17.0-pi-fu1&#39;
 </pre></div></div>
 </div>
 </div>
@@ -594,14 +594,13 @@ div.rendered_html tbody tr:hover {
 </div>
 <p>When we run codes as a script (eg. <code class="docutils literal notranslate"><span class="pre">python</span> <span class="pre">scenario_analysis.py</span></code>), only “script mode” is selectable and <code class="docutils literal notranslate"><span class="pre">Scenario.interactive</span></code> is always <code class="docutils literal notranslate"><span class="pre">False</span></code>. Figures will be saved when filenames are specified with <code class="docutils literal notranslate"><span class="pre">filename</span></code> argument.</p>
 <p>Because some methods, including <code class="docutils literal notranslate"><span class="pre">Scenario.summary()</span></code>, return dataframes (<code class="docutils literal notranslate"><span class="pre">pandas.DataFrame</span></code>), we can save them as CSV files etc. using <code class="docutils literal notranslate"><span class="pre">.to_csv(filename,</span> <span class="pre">index=True)</span></code>.</p>
-<p>From version 2.17.0-eta (stable: 2.18.0, coming soon), we can produce filenames more easily. <code class="docutils literal notranslate"><span class="pre">Filer</span></code> class will be prepared. Please refer to the scripts in <a class="reference external" href="https://github.com/lisphilar/covid19-sir/tree/master/example">example directory of the repository</a>.</p>
+<p>We can produce filenames more easily with <code class="docutils literal notranslate"><span class="pre">Filer</span></code> class. Please refer to the scripts in <a class="reference external" href="https://github.com/lisphilar/covid19-sir/tree/master/example">example directory of the repository</a>.</p>
 <div class="nbinput nblast docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[7]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="c1"># From version 2.17.0-eta (stable: 2.18.0)</span>
-<span class="c1"># filer = cs.Filer(directory=&quot;output&quot;, prefix=&quot;jpn&quot;, suffix=None, numbering=&quot;01&quot;)</span>
+<span></span><span class="n">filer</span> <span class="o">=</span> <span class="n">cs</span><span class="o">.</span><span class="n">Filer</span><span class="p">(</span><span class="n">directory</span><span class="o">=</span><span class="s2">&quot;output&quot;</span><span class="p">,</span> <span class="n">prefix</span><span class="o">=</span><span class="s2">&quot;jpn&quot;</span><span class="p">,</span> <span class="n">suffix</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">numbering</span><span class="o">=</span><span class="s2">&quot;01&quot;</span><span class="p">)</span>
 <span class="c1"># filer.png(&quot;records&quot;)</span>
 <span class="c1"># -&gt; {&quot;filename&quot;: &quot;&lt;absolute path&gt;/output/jpn_01_records.png&quot;}</span>
 <span class="c1"># filer.jpg(&quot;records&quot;)</span>
@@ -611,7 +610,7 @@ div.rendered_html tbody tr:hover {
 </pre></div>
 </div>
 </div>
-<p>With this new enhancement, we can save files more easily when script mode</p>
+<p>We can save files more easily with <code class="docutils literal notranslate"><span class="pre">Filer</span></code> as follows.</p>
 <div class="nbinput nblast docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[8]:
 </pre></div>
@@ -677,13 +676,6 @@ div.rendered_html tbody tr:hover {
   </thead>
   <tbody>
     <tr>
-      <th>411</th>
-      <td>2021-03-23</td>
-      <td>457754</td>
-      <td>8861</td>
-      <td>435361</td>
-    </tr>
-    <tr>
       <th>412</th>
       <td>2021-03-24</td>
       <td>459043</td>
@@ -710,6 +702,13 @@ div.rendered_html tbody tr:hover {
       <td>464866</td>
       <td>8998</td>
       <td>440200</td>
+    </tr>
+    <tr>
+      <th>416</th>
+      <td>2021-03-28</td>
+      <td>466849</td>
+      <td>9031</td>
+      <td>441237</td>
     </tr>
   </tbody>
 </table>
@@ -765,7 +764,7 @@ div.rendered_html tbody tr:hover {
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="n">snl</span><span class="o">.</span><span class="n">records</span><span class="p">(</span><span class="n">variables</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;Confirmed&quot;</span><span class="p">,</span> <span class="s2">&quot;Tests&quot;</span><span class="p">])</span><span class="o">.</span><span class="n">tail</span><span class="p">()</span>
+<span></span><span class="n">snl</span><span class="o">.</span><span class="n">records</span><span class="p">(</span><span class="n">variables</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;Vaccinated_once&quot;</span><span class="p">])</span><span class="o">.</span><span class="n">tail</span><span class="p">()</span>
 </pre></div>
 </div>
 </div>
@@ -800,40 +799,34 @@ div.rendered_html tbody tr:hover {
     <tr style="text-align: right;">
       <th></th>
       <th>Date</th>
-      <th>Confirmed</th>
-      <th>Tests</th>
+      <th>Vaccinated_once</th>
     </tr>
   </thead>
   <tbody>
     <tr>
-      <th>411</th>
-      <td>2021-03-23</td>
-      <td>457754</td>
-      <td>9374845</td>
-    </tr>
-    <tr>
       <th>412</th>
       <td>2021-03-24</td>
-      <td>459043</td>
-      <td>9429113</td>
+      <td>706101</td>
     </tr>
     <tr>
       <th>413</th>
       <td>2021-03-25</td>
-      <td>460897</td>
-      <td>9490701</td>
+      <td>737672</td>
     </tr>
     <tr>
       <th>414</th>
       <td>2021-03-26</td>
-      <td>462840</td>
-      <td>9555049</td>
+      <td>781665</td>
     </tr>
     <tr>
       <th>415</th>
       <td>2021-03-27</td>
-      <td>464866</td>
-      <td>9624077</td>
+      <td>781665</td>
+    </tr>
+    <tr>
+      <th>416</th>
+      <td>2021-03-28</td>
+      <td>781665</td>
     </tr>
   </tbody>
 </table>
@@ -924,12 +917,7 @@ div.rendered_html tbody tr:hover {
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="c1"># Perform S-R trend analysis and set phases</span>
-<span class="n">_</span> <span class="o">=</span> <span class="n">snl</span><span class="o">.</span><span class="n">trend</span><span class="p">()</span>
-<span class="c1"># Show the summary of phases</span>
-<span class="n">snl</span><span class="o">.</span><span class="n">summary</span><span class="p">()</span>
-<span class="c1"># Or,</span>
-<span class="c1"># snl.trend().summary()</span>
+<span></span><span class="n">snl</span><span class="o">.</span><span class="n">trend</span><span class="p">()</span><span class="o">.</span><span class="n">summary</span><span class="p">()</span>
 </pre></div>
 </div>
 </div>
@@ -1233,7 +1221,7 @@ div.rendered_html tbody tr:hover {
       <th>37th</th>
       <td>Past</td>
       <td>18Mar2021</td>
-      <td>27Mar2021</td>
+      <td>28Mar2021</td>
       <td>126529100</td>
     </tr>
   </tbody>
@@ -1264,45 +1252,45 @@ div.rendered_html tbody tr:hover {
 
 &lt;SIR-F model: parameter estimation&gt;
 Running optimization with 4 CPUs...
-        37th phase (18Mar2021 - 27Mar2021): finished  550 trials in 0 min 20 sec
-         9th phase (21May2020 - 28May2020): finished  347 trials in 0 min 10 sec
-        10th phase (29May2020 - 05Jun2020): finished  351 trials in 0 min 10 sec
-        11th phase (06Jun2020 - 13Jun2020): finished  336 trials in 0 min 10 sec
-         3rd phase (14Mar2020 - 24Mar2020): finished 1765 trials in 1 min 10 sec         0th phase (06Feb2020 - 18Feb2020): finished 1750 trials in 1 min 10 sec
-
-        12th phase (14Jun2020 - 28Jun2020): finished 1574 trials in 1 min  0 sec
-         6th phase (17Apr2020 - 01May2020): finished 2621 trials in 2 min  0 sec
-         4th phase (25Mar2020 - 02Apr2020): finished 1578 trials in 1 min  0 sec
-        13th phase (29Jun2020 - 09Jul2020): finished 1576 trials in 1 min  0 sec
-        14th phase (10Jul2020 - 20Jul2020): finished  647 trials in 0 min 20 sec
-         1st phase (19Feb2020 - 05Mar2020): finished 2440 trials in 1 min 50 sec
-         7th phase (02May2020 - 11May2020): finished 1946 trials in 1 min 20 sec
-        15th phase (21Jul2020 - 31Jul2020): finished  907 trials in 0 min 30 sec
-         8th phase (12May2020 - 20May2020): finished  351 trials in 0 min 10 sec
-         5th phase (03Apr2020 - 16Apr2020): finished 2119 trials in 1 min 30 sec
-        18th phase (29Aug2020 - 07Sep2020): finished  347 trials in 0 min 10 sec
-        19th phase (08Sep2020 - 15Sep2020): finished  349 trials in 0 min 10 sec
-        20th phase (16Sep2020 - 24Sep2020): finished  350 trials in 0 min 10 sec
-        24th phase (21Oct2020 - 28Oct2020): finished  348 trials in 0 min 10 sec
-        21st phase (25Sep2020 - 02Oct2020): finished 1144 trials in 0 min 40 sec
-        25th phase (29Oct2020 - 05Nov2020): finished  349 trials in 0 min 10 sec
-         2nd phase (06Mar2020 - 13Mar2020): finished 2129 trials in 1 min 30 sec
-        16th phase (01Aug2020 - 14Aug2020): finished 2288 trials in 1 min 40 sec
-        17th phase (15Aug2020 - 28Aug2020): finished  634 trials in 0 min 20 sec
-        27th phase (19Nov2020 - 28Nov2020): finished 1552 trials in 1 min  0 sec
-        26th phase (06Nov2020 - 18Nov2020): finished 2266 trials in 1 min 40 sec
-        30th phase (26Dec2020 - 07Jan2021): finished 1106 trials in 0 min 40 sec
-        22nd phase (03Oct2020 - 10Oct2020): finished 2417 trials in 1 min 50 sec
-        28th phase (29Nov2020 - 11Dec2020): finished 1104 trials in 0 min 40 sec
-        33rd phase (04Feb2021 - 17Feb2021): finished  328 trials in 0 min 10 sec
-        34th phase (18Feb2021 - 26Feb2021): finished  333 trials in 0 min 10 sec
-        35th phase (27Feb2021 - 09Mar2021): finished  310 trials in 0 min 10 sec
-        29th phase (12Dec2020 - 25Dec2020): finished  850 trials in 0 min 30 sec
-        36th phase (10Mar2021 - 17Mar2021): finished  324 trials in 0 min 10 sec
-        23rd phase (11Oct2020 - 20Oct2020): finished 1964 trials in 1 min 20 sec
-        31st phase (08Jan2021 - 21Jan2021): finished 2126 trials in 1 min 30 sec
-        32nd phase (22Jan2021 - 03Feb2021): finished  373 trials in 0 min 10 sec
-Completed optimization. Total: 8 min  3 sec
+        37th phase (18Mar2021 - 28Mar2021): finished 2359 trials in 1 min 50 sec
+         9th phase (21May2020 - 28May2020): finished  339 trials in 0 min 10 sec
+        10th phase (29May2020 - 05Jun2020): finished  335 trials in 0 min 10 sec
+        11th phase (06Jun2020 - 13Jun2020): finished  305 trials in 0 min 10 sec
+         3rd phase (14Mar2020 - 24Mar2020): finished 1734 trials in 1 min 20 sec
+         0th phase (06Feb2020 - 18Feb2020): finished 2048 trials in 1 min 40 sec
+        12th phase (14Jun2020 - 28Jun2020): finished 1547 trials in 1 min 10 sec
+        13th phase (29Jun2020 - 09Jul2020): finished  333 trials in 0 min 10 sec
+         4th phase (25Mar2020 - 02Apr2020): finished 1432 trials in 1 min  0 sec
+         6th phase (17Apr2020 - 01May2020): finished 2654 trials in 2 min 20 sec
+        14th phase (10Jul2020 - 20Jul2020): finished 1043 trials in 0 min 40 sec
+        15th phase (21Jul2020 - 31Jul2020): finished  330 trials in 0 min 10 sec
+         1st phase (19Feb2020 - 05Mar2020): finished 1981 trials in 1 min 30 sec
+         2nd phase (06Mar2020 - 13Mar2020): finished 1041 trials in 0 min 40 sec
+         7th phase (02May2020 - 11May2020): finished 2123 trials in 1 min 40 sec
+        18th phase (29Aug2020 - 07Sep2020): finished  573 trials in 0 min 20 sec
+         8th phase (12May2020 - 20May2020): finished  580 trials in 0 min 20 sec
+        19th phase (08Sep2020 - 15Sep2020): finished  300 trials in 0 min 10 sec
+         5th phase (03Apr2020 - 16Apr2020): finished 2545 trials in 2 min 10 sec
+        20th phase (16Sep2020 - 24Sep2020): finished  319 trials in 0 min 10 sec
+        16th phase (01Aug2020 - 14Aug2020): finished 2377 trials in 2 min  0 sec
+        24th phase (21Oct2020 - 28Oct2020): finished  617 trials in 0 min 20 sec
+        17th phase (15Aug2020 - 28Aug2020): finished  331 trials in 0 min 10 sec
+        21st phase (25Sep2020 - 02Oct2020): finished 1281 trials in 0 min 50 sec
+        25th phase (29Oct2020 - 05Nov2020): finished  610 trials in 0 min 20 sec
+        26th phase (06Nov2020 - 18Nov2020): finished  335 trials in 0 min 10 sec
+        33rd phase (04Feb2021 - 17Feb2021): finished  591 trials in 0 min 20 sec
+        34th phase (18Feb2021 - 26Feb2021): finished  315 trials in 0 min 10 sec
+        30th phase (26Dec2020 - 07Jan2021): finished 1465 trials in 1 min  0 sec
+        35th phase (27Feb2021 - 09Mar2021): finished  326 trials in 0 min 10 sec
+        27th phase (19Nov2020 - 28Nov2020): finished 2149 trials in 1 min 40 sec
+        36th phase (10Mar2021 - 17Mar2021): finished  319 trials in 0 min 10 sec
+        22nd phase (03Oct2020 - 10Oct2020): finished 1653 trials in 1 min 10 sec
+        28th phase (29Nov2020 - 11Dec2020): finished  291 trials in 0 min 10 sec
+        31st phase (08Jan2021 - 21Jan2021): finished 1068 trials in 0 min 40 sec
+        29th phase (12Dec2020 - 25Dec2020): finished  571 trials in 0 min 20 sec
+        32nd phase (22Jan2021 - 03Feb2021): finished 1144 trials in 0 min 50 sec
+        23rd phase (11Oct2020 - 20Oct2020): finished 1574 trials in 1 min 10 sec
+Completed optimization. Total: 9 min 24 sec
 </pre></div></div>
 </div>
 <div class="nbinput docutils container">
@@ -1349,10 +1337,10 @@ Completed optimization. Total: 8 min  3 sec
       <th>rho</th>
       <th>sigma</th>
       <th>tau</th>
-      <th>alpha1 [-]</th>
       <th>1/alpha2 [day]</th>
       <th>1/beta [day]</th>
       <th>1/gamma [day]</th>
+      <th>alpha1 [-]</th>
       <th>RMSLE</th>
       <th>Trials</th>
       <th>Runtime</th>
@@ -1366,19 +1354,19 @@ Completed optimization. Total: 8 min  3 sec
       <td>18Feb2020</td>
       <td>126529100</td>
       <td>SIR-F</td>
-      <td>2.65</td>
-      <td>0.017612</td>
-      <td>0.000174</td>
-      <td>0.036494</td>
-      <td>0.013377</td>
-      <td>720</td>
-      <td>0.018</td>
-      <td>2873</td>
-      <td>13</td>
-      <td>37</td>
-      <td>0.143343</td>
-      <td>1750</td>
-      <td>1 min 10 sec</td>
+      <td>2.34</td>
+      <td>0.000546</td>
+      <td>0.000423</td>
+      <td>0.017136</td>
+      <td>0.006910</td>
+      <td>360</td>
+      <td>591</td>
+      <td>14</td>
+      <td>36</td>
+      <td>0.001</td>
+      <td>0.147076</td>
+      <td>2048</td>
+      <td>1 min 40 sec</td>
     </tr>
     <tr>
       <th>1st</th>
@@ -1387,19 +1375,19 @@ Completed optimization. Total: 8 min  3 sec
       <td>05Mar2020</td>
       <td>126529100</td>
       <td>SIR-F</td>
-      <td>5.34</td>
-      <td>0.000798</td>
-      <td>0.001128</td>
-      <td>0.067657</td>
-      <td>0.011524</td>
-      <td>720</td>
-      <td>0.001</td>
-      <td>443</td>
+      <td>5.19</td>
+      <td>0.000071</td>
+      <td>0.000569</td>
+      <td>0.034127</td>
+      <td>0.006000</td>
+      <td>360</td>
+      <td>439</td>
       <td>7</td>
-      <td>43</td>
-      <td>0.170727</td>
-      <td>2440</td>
-      <td>1 min 50 sec</td>
+      <td>41</td>
+      <td>0.000</td>
+      <td>0.177385</td>
+      <td>1981</td>
+      <td>1 min 30 sec</td>
     </tr>
     <tr>
       <th>2nd</th>
@@ -1408,19 +1396,19 @@ Completed optimization. Total: 8 min  3 sec
       <td>13Mar2020</td>
       <td>126529100</td>
       <td>SIR-F</td>
-      <td>4.60</td>
-      <td>0.020372</td>
-      <td>0.000615</td>
-      <td>0.059382</td>
-      <td>0.012020</td>
-      <td>720</td>
-      <td>0.020</td>
-      <td>813</td>
+      <td>5.69</td>
+      <td>0.000292</td>
+      <td>0.000777</td>
+      <td>0.030008</td>
+      <td>0.004494</td>
+      <td>360</td>
+      <td>321</td>
       <td>8</td>
-      <td>41</td>
-      <td>0.098577</td>
-      <td>2129</td>
-      <td>1 min 30 sec</td>
+      <td>55</td>
+      <td>0.000</td>
+      <td>0.112128</td>
+      <td>1041</td>
+      <td>0 min 40 sec</td>
     </tr>
     <tr>
       <th>3rd</th>
@@ -1429,19 +1417,19 @@ Completed optimization. Total: 8 min  3 sec
       <td>24Mar2020</td>
       <td>126529100</td>
       <td>SIR-F</td>
-      <td>2.44</td>
-      <td>0.031209</td>
-      <td>0.000686</td>
-      <td>0.029413</td>
-      <td>0.010970</td>
-      <td>720</td>
-      <td>0.031</td>
-      <td>728</td>
+      <td>2.64</td>
+      <td>0.039034</td>
+      <td>0.000197</td>
+      <td>0.015199</td>
+      <td>0.005346</td>
+      <td>360</td>
+      <td>1272</td>
       <td>16</td>
-      <td>45</td>
-      <td>0.032471</td>
-      <td>1765</td>
-      <td>1 min 10 sec</td>
+      <td>46</td>
+      <td>0.039</td>
+      <td>0.030358</td>
+      <td>1734</td>
+      <td>1 min 20 sec</td>
     </tr>
     <tr>
       <th>4th</th>
@@ -1450,18 +1438,18 @@ Completed optimization. Total: 8 min  3 sec
       <td>02Apr2020</td>
       <td>126529100</td>
       <td>SIR-F</td>
-      <td>6.00</td>
-      <td>0.000636</td>
-      <td>0.000922</td>
-      <td>0.059545</td>
-      <td>0.008999</td>
-      <td>720</td>
-      <td>0.001</td>
-      <td>542</td>
+      <td>5.96</td>
+      <td>0.001142</td>
+      <td>0.000432</td>
+      <td>0.028344</td>
+      <td>0.004318</td>
+      <td>360</td>
+      <td>578</td>
       <td>8</td>
-      <td>55</td>
-      <td>0.049497</td>
-      <td>1578</td>
+      <td>57</td>
+      <td>0.001</td>
+      <td>0.050569</td>
+      <td>1432</td>
       <td>1 min  0 sec</td>
     </tr>
     <tr>
@@ -1471,19 +1459,19 @@ Completed optimization. Total: 8 min  3 sec
       <td>16Apr2020</td>
       <td>126529100</td>
       <td>SIR-F</td>
-      <td>13.11</td>
-      <td>0.000070</td>
-      <td>0.000570</td>
-      <td>0.060702</td>
-      <td>0.004058</td>
-      <td>720</td>
-      <td>0.000</td>
-      <td>877</td>
+      <td>13.30</td>
+      <td>0.000440</td>
+      <td>0.000284</td>
+      <td>0.028899</td>
+      <td>0.001887</td>
+      <td>360</td>
+      <td>879</td>
       <td>8</td>
-      <td>123</td>
-      <td>0.044328</td>
-      <td>2119</td>
-      <td>1 min 30 sec</td>
+      <td>132</td>
+      <td>0.000</td>
+      <td>0.044334</td>
+      <td>2545</td>
+      <td>2 min 10 sec</td>
     </tr>
     <tr>
       <th>6th</th>
@@ -1492,19 +1480,19 @@ Completed optimization. Total: 8 min  3 sec
       <td>01May2020</td>
       <td>126529100</td>
       <td>SIR-F</td>
-      <td>2.11</td>
-      <td>0.018707</td>
-      <td>0.000685</td>
-      <td>0.022465</td>
-      <td>0.009747</td>
-      <td>720</td>
-      <td>0.019</td>
-      <td>730</td>
-      <td>22</td>
+      <td>1.95</td>
+      <td>0.000400</td>
+      <td>0.000581</td>
+      <td>0.010623</td>
+      <td>0.004870</td>
+      <td>360</td>
+      <td>430</td>
+      <td>23</td>
       <td>51</td>
-      <td>0.093194</td>
-      <td>2621</td>
-      <td>2 min  0 sec</td>
+      <td>0.000</td>
+      <td>0.094215</td>
+      <td>2654</td>
+      <td>2 min 20 sec</td>
     </tr>
     <tr>
       <th>7th</th>
@@ -1513,19 +1501,19 @@ Completed optimization. Total: 8 min  3 sec
       <td>11May2020</td>
       <td>126529100</td>
       <td>SIR-F</td>
-      <td>0.33</td>
-      <td>0.097028</td>
-      <td>0.000410</td>
-      <td>0.006482</td>
-      <td>0.017432</td>
-      <td>720</td>
-      <td>0.097</td>
-      <td>1220</td>
-      <td>77</td>
+      <td>0.31</td>
+      <td>0.034962</td>
+      <td>0.000449</td>
+      <td>0.002958</td>
+      <td>0.008715</td>
+      <td>360</td>
+      <td>556</td>
+      <td>84</td>
       <td>28</td>
-      <td>0.105565</td>
-      <td>1946</td>
-      <td>1 min 20 sec</td>
+      <td>0.035</td>
+      <td>0.104975</td>
+      <td>2123</td>
+      <td>1 min 40 sec</td>
     </tr>
     <tr>
       <th>8th</th>
@@ -1535,18 +1523,18 @@ Completed optimization. Total: 8 min  3 sec
       <td>126529100</td>
       <td>SIR-F</td>
       <td>0.13</td>
-      <td>0.204862</td>
-      <td>0.000427</td>
-      <td>0.007261</td>
-      <td>0.045331</td>
-      <td>720</td>
-      <td>0.205</td>
-      <td>1172</td>
-      <td>68</td>
-      <td>11</td>
-      <td>0.028099</td>
-      <td>351</td>
-      <td>0 min 10 sec</td>
+      <td>0.177193</td>
+      <td>0.000263</td>
+      <td>0.003871</td>
+      <td>0.024089</td>
+      <td>360</td>
+      <td>949</td>
+      <td>64</td>
+      <td>10</td>
+      <td>0.177</td>
+      <td>0.028198</td>
+      <td>580</td>
+      <td>0 min 20 sec</td>
     </tr>
     <tr>
       <th>9th</th>
@@ -1555,18 +1543,18 @@ Completed optimization. Total: 8 min  3 sec
       <td>28May2020</td>
       <td>126529100</td>
       <td>SIR-F</td>
-      <td>0.12</td>
-      <td>0.287910</td>
-      <td>0.000257</td>
-      <td>0.008298</td>
-      <td>0.048885</td>
-      <td>720</td>
-      <td>0.288</td>
-      <td>1946</td>
-      <td>60</td>
+      <td>0.14</td>
+      <td>0.266931</td>
+      <td>0.000168</td>
+      <td>0.004652</td>
+      <td>0.024313</td>
+      <td>360</td>
+      <td>1483</td>
+      <td>53</td>
       <td>10</td>
-      <td>0.015521</td>
-      <td>347</td>
+      <td>0.267</td>
+      <td>0.014285</td>
+      <td>339</td>
       <td>0 min 10 sec</td>
     </tr>
     <tr>
@@ -1576,18 +1564,18 @@ Completed optimization. Total: 8 min  3 sec
       <td>05Jun2020</td>
       <td>126529100</td>
       <td>SIR-F</td>
-      <td>0.47</td>
-      <td>0.086416</td>
-      <td>0.000098</td>
-      <td>0.019009</td>
-      <td>0.036553</td>
-      <td>720</td>
-      <td>0.086</td>
-      <td>5088</td>
-      <td>26</td>
+      <td>0.49</td>
+      <td>0.014941</td>
+      <td>0.000609</td>
+      <td>0.009232</td>
+      <td>0.017983</td>
+      <td>360</td>
+      <td>410</td>
+      <td>27</td>
       <td>13</td>
-      <td>0.013236</td>
-      <td>351</td>
+      <td>0.015</td>
+      <td>0.013353</td>
+      <td>335</td>
       <td>0 min 10 sec</td>
     </tr>
     <tr>
@@ -1597,18 +1585,18 @@ Completed optimization. Total: 8 min  3 sec
       <td>13Jun2020</td>
       <td>126529100</td>
       <td>SIR-F</td>
-      <td>0.60</td>
-      <td>0.001984</td>
-      <td>0.000717</td>
-      <td>0.020179</td>
-      <td>0.032630</td>
-      <td>720</td>
-      <td>0.002</td>
-      <td>697</td>
-      <td>24</td>
-      <td>15</td>
-      <td>0.021102</td>
-      <td>336</td>
+      <td>0.59</td>
+      <td>0.074454</td>
+      <td>0.000041</td>
+      <td>0.009890</td>
+      <td>0.015352</td>
+      <td>360</td>
+      <td>6162</td>
+      <td>25</td>
+      <td>16</td>
+      <td>0.074</td>
+      <td>0.022048</td>
+      <td>305</td>
       <td>0 min 10 sec</td>
     </tr>
     <tr>
@@ -1618,19 +1606,19 @@ Completed optimization. Total: 8 min  3 sec
       <td>28Jun2020</td>
       <td>126529100</td>
       <td>SIR-F</td>
-      <td>0.95</td>
-      <td>0.036972</td>
-      <td>0.000693</td>
-      <td>0.039420</td>
-      <td>0.039082</td>
-      <td>720</td>
-      <td>0.037</td>
-      <td>721</td>
-      <td>12</td>
-      <td>12</td>
-      <td>0.035544</td>
-      <td>1574</td>
-      <td>1 min  0 sec</td>
+      <td>0.96</td>
+      <td>0.049842</td>
+      <td>0.000046</td>
+      <td>0.022136</td>
+      <td>0.021777</td>
+      <td>360</td>
+      <td>5441</td>
+      <td>11</td>
+      <td>11</td>
+      <td>0.050</td>
+      <td>0.035661</td>
+      <td>1547</td>
+      <td>1 min 10 sec</td>
     </tr>
     <tr>
       <th>13th</th>
@@ -1639,19 +1627,19 @@ Completed optimization. Total: 8 min  3 sec
       <td>09Jul2020</td>
       <td>126529100</td>
       <td>SIR-F</td>
-      <td>2.20</td>
-      <td>0.000865</td>
-      <td>0.000368</td>
-      <td>0.068157</td>
-      <td>0.030637</td>
-      <td>720</td>
-      <td>0.001</td>
-      <td>1358</td>
+      <td>2.19</td>
+      <td>0.002283</td>
+      <td>0.000059</td>
+      <td>0.033561</td>
+      <td>0.015254</td>
+      <td>360</td>
+      <td>4208</td>
       <td>7</td>
       <td>16</td>
-      <td>0.022963</td>
-      <td>1576</td>
-      <td>1 min  0 sec</td>
+      <td>0.002</td>
+      <td>0.023577</td>
+      <td>333</td>
+      <td>0 min 10 sec</td>
     </tr>
     <tr>
       <th>14th</th>
@@ -1660,19 +1648,19 @@ Completed optimization. Total: 8 min  3 sec
       <td>20Jul2020</td>
       <td>126529100</td>
       <td>SIR-F</td>
-      <td>2.25</td>
-      <td>0.000229</td>
-      <td>0.000113</td>
-      <td>0.067784</td>
-      <td>0.030008</td>
-      <td>720</td>
-      <td>0.000</td>
-      <td>4407</td>
-      <td>7</td>
-      <td>16</td>
-      <td>0.021390</td>
-      <td>647</td>
-      <td>0 min 20 sec</td>
+      <td>2.06</td>
+      <td>0.000543</td>
+      <td>0.000094</td>
+      <td>0.036765</td>
+      <td>0.017779</td>
+      <td>360</td>
+      <td>2646</td>
+      <td>6</td>
+      <td>14</td>
+      <td>0.001</td>
+      <td>0.020968</td>
+      <td>1043</td>
+      <td>0 min 40 sec</td>
     </tr>
     <tr>
       <th>15th</th>
@@ -1681,19 +1669,19 @@ Completed optimization. Total: 8 min  3 sec
       <td>31Jul2020</td>
       <td>126529100</td>
       <td>SIR-F</td>
-      <td>1.88</td>
-      <td>0.000735</td>
-      <td>0.000225</td>
-      <td>0.066814</td>
-      <td>0.035237</td>
-      <td>720</td>
-      <td>0.001</td>
-      <td>2219</td>
+      <td>1.81</td>
+      <td>0.001813</td>
+      <td>0.000059</td>
+      <td>0.033038</td>
+      <td>0.018211</td>
+      <td>360</td>
+      <td>4226</td>
       <td>7</td>
-      <td>14</td>
-      <td>0.020542</td>
-      <td>907</td>
-      <td>0 min 30 sec</td>
+      <td>13</td>
+      <td>0.002</td>
+      <td>0.023986</td>
+      <td>330</td>
+      <td>0 min 10 sec</td>
     </tr>
     <tr>
       <th>16th</th>
@@ -1702,19 +1690,19 @@ Completed optimization. Total: 8 min  3 sec
       <td>14Aug2020</td>
       <td>126529100</td>
       <td>SIR-F</td>
-      <td>1.60</td>
-      <td>0.000171</td>
-      <td>0.000176</td>
-      <td>0.051141</td>
-      <td>0.031807</td>
-      <td>720</td>
-      <td>0.000</td>
-      <td>2842</td>
+      <td>1.46</td>
+      <td>0.000054</td>
+      <td>0.000060</td>
+      <td>0.025489</td>
+      <td>0.017371</td>
+      <td>360</td>
+      <td>4157</td>
       <td>9</td>
-      <td>15</td>
-      <td>0.046061</td>
-      <td>2288</td>
-      <td>1 min 40 sec</td>
+      <td>14</td>
+      <td>0.000</td>
+      <td>0.056051</td>
+      <td>2377</td>
+      <td>2 min  0 sec</td>
     </tr>
     <tr>
       <th>17th</th>
@@ -1723,19 +1711,19 @@ Completed optimization. Total: 8 min  3 sec
       <td>28Aug2020</td>
       <td>126529100</td>
       <td>SIR-F</td>
-      <td>0.81</td>
-      <td>0.000232</td>
-      <td>0.000454</td>
-      <td>0.039382</td>
-      <td>0.048326</td>
-      <td>720</td>
-      <td>0.000</td>
-      <td>1101</td>
+      <td>0.80</td>
+      <td>0.000256</td>
+      <td>0.000257</td>
+      <td>0.019676</td>
+      <td>0.024187</td>
+      <td>360</td>
+      <td>974</td>
       <td>12</td>
       <td>10</td>
-      <td>0.014071</td>
-      <td>634</td>
-      <td>0 min 20 sec</td>
+      <td>0.000</td>
+      <td>0.015375</td>
+      <td>331</td>
+      <td>0 min 10 sec</td>
     </tr>
     <tr>
       <th>18th</th>
@@ -1744,19 +1732,19 @@ Completed optimization. Total: 8 min  3 sec
       <td>07Sep2020</td>
       <td>126529100</td>
       <td>SIR-F</td>
-      <td>0.70</td>
-      <td>0.019019</td>
-      <td>0.000041</td>
-      <td>0.034120</td>
-      <td>0.047549</td>
-      <td>720</td>
-      <td>0.019</td>
-      <td>12318</td>
-      <td>14</td>
+      <td>0.71</td>
+      <td>0.018863</td>
+      <td>0.000040</td>
+      <td>0.018038</td>
+      <td>0.024881</td>
+      <td>360</td>
+      <td>6322</td>
+      <td>13</td>
       <td>10</td>
-      <td>0.019224</td>
-      <td>347</td>
-      <td>0 min 10 sec</td>
+      <td>0.019</td>
+      <td>0.020981</td>
+      <td>573</td>
+      <td>0 min 20 sec</td>
     </tr>
     <tr>
       <th>19th</th>
@@ -1765,18 +1753,18 @@ Completed optimization. Total: 8 min  3 sec
       <td>15Sep2020</td>
       <td>126529100</td>
       <td>SIR-F</td>
-      <td>0.79</td>
-      <td>0.016797</td>
-      <td>0.000200</td>
-      <td>0.040369</td>
-      <td>0.049839</td>
-      <td>720</td>
-      <td>0.017</td>
-      <td>2504</td>
-      <td>12</td>
+      <td>0.73</td>
+      <td>0.003883</td>
+      <td>0.000301</td>
+      <td>0.017737</td>
+      <td>0.023867</td>
+      <td>360</td>
+      <td>829</td>
+      <td>14</td>
       <td>10</td>
-      <td>0.015767</td>
-      <td>349</td>
+      <td>0.004</td>
+      <td>0.021747</td>
+      <td>300</td>
       <td>0 min 10 sec</td>
     </tr>
     <tr>
@@ -1786,18 +1774,18 @@ Completed optimization. Total: 8 min  3 sec
       <td>24Sep2020</td>
       <td>126529100</td>
       <td>SIR-F</td>
-      <td>0.91</td>
-      <td>0.000038</td>
-      <td>0.000835</td>
-      <td>0.036335</td>
-      <td>0.039121</td>
-      <td>720</td>
-      <td>0.000</td>
-      <td>598</td>
-      <td>13</td>
-      <td>12</td>
-      <td>0.014753</td>
-      <td>350</td>
+      <td>0.92</td>
+      <td>0.003232</td>
+      <td>0.000309</td>
+      <td>0.021652</td>
+      <td>0.023205</td>
+      <td>360</td>
+      <td>808</td>
+      <td>11</td>
+      <td>10</td>
+      <td>0.003</td>
+      <td>0.014160</td>
+      <td>319</td>
       <td>0 min 10 sec</td>
     </tr>
     <tr>
@@ -1808,18 +1796,18 @@ Completed optimization. Total: 8 min  3 sec
       <td>126529100</td>
       <td>SIR-F</td>
       <td>0.99</td>
-      <td>0.000808</td>
-      <td>0.000556</td>
-      <td>0.048126</td>
-      <td>0.047787</td>
-      <td>720</td>
-      <td>0.001</td>
-      <td>899</td>
-      <td>10</td>
-      <td>10</td>
-      <td>0.007352</td>
-      <td>1144</td>
-      <td>0 min 40 sec</td>
+      <td>0.000203</td>
+      <td>0.000257</td>
+      <td>0.025754</td>
+      <td>0.025691</td>
+      <td>360</td>
+      <td>974</td>
+      <td>9</td>
+      <td>9</td>
+      <td>0.000</td>
+      <td>0.007488</td>
+      <td>1281</td>
+      <td>0 min 50 sec</td>
     </tr>
     <tr>
       <th>22nd</th>
@@ -1829,18 +1817,18 @@ Completed optimization. Total: 8 min  3 sec
       <td>126529100</td>
       <td>SIR-F</td>
       <td>0.97</td>
-      <td>0.000921</td>
-      <td>0.000384</td>
-      <td>0.046458</td>
-      <td>0.047514</td>
-      <td>720</td>
+      <td>0.000736</td>
+      <td>0.000224</td>
+      <td>0.025233</td>
+      <td>0.025705</td>
+      <td>360</td>
+      <td>1113</td>
+      <td>9</td>
+      <td>9</td>
       <td>0.001</td>
-      <td>1302</td>
-      <td>10</td>
-      <td>10</td>
-      <td>0.009301</td>
-      <td>2417</td>
-      <td>1 min 50 sec</td>
+      <td>0.009551</td>
+      <td>1653</td>
+      <td>1 min 10 sec</td>
     </tr>
     <tr>
       <th>23rd</th>
@@ -1850,18 +1838,18 @@ Completed optimization. Total: 8 min  3 sec
       <td>126529100</td>
       <td>SIR-F</td>
       <td>0.98</td>
-      <td>0.001354</td>
-      <td>0.000406</td>
-      <td>0.046691</td>
-      <td>0.047293</td>
-      <td>720</td>
+      <td>0.000735</td>
+      <td>0.000224</td>
+      <td>0.025454</td>
+      <td>0.025826</td>
+      <td>360</td>
+      <td>1113</td>
+      <td>9</td>
+      <td>9</td>
       <td>0.001</td>
-      <td>1230</td>
-      <td>10</td>
-      <td>10</td>
-      <td>0.011413</td>
-      <td>1964</td>
-      <td>1 min 20 sec</td>
+      <td>0.011582</td>
+      <td>1574</td>
+      <td>1 min 10 sec</td>
     </tr>
     <tr>
       <th>24th</th>
@@ -1870,19 +1858,19 @@ Completed optimization. Total: 8 min  3 sec
       <td>28Oct2020</td>
       <td>126529100</td>
       <td>SIR-F</td>
-      <td>1.14</td>
-      <td>0.001355</td>
-      <td>0.000735</td>
-      <td>0.054695</td>
-      <td>0.047228</td>
-      <td>720</td>
-      <td>0.001</td>
-      <td>680</td>
+      <td>1.15</td>
+      <td>0.000139</td>
+      <td>0.000246</td>
+      <td>0.027301</td>
+      <td>0.023525</td>
+      <td>360</td>
+      <td>1015</td>
       <td>9</td>
       <td>10</td>
-      <td>0.008633</td>
-      <td>348</td>
-      <td>0 min 10 sec</td>
+      <td>0.000</td>
+      <td>0.008800</td>
+      <td>617</td>
+      <td>0 min 20 sec</td>
     </tr>
     <tr>
       <th>25th</th>
@@ -1891,19 +1879,19 @@ Completed optimization. Total: 8 min  3 sec
       <td>05Nov2020</td>
       <td>126529100</td>
       <td>SIR-F</td>
-      <td>1.36</td>
-      <td>0.002514</td>
-      <td>0.000482</td>
-      <td>0.052972</td>
-      <td>0.038236</td>
-      <td>720</td>
-      <td>0.003</td>
-      <td>1038</td>
+      <td>1.34</td>
+      <td>0.000435</td>
+      <td>0.000361</td>
+      <td>0.027525</td>
+      <td>0.020162</td>
+      <td>360</td>
+      <td>692</td>
       <td>9</td>
-      <td>13</td>
-      <td>0.008131</td>
-      <td>349</td>
-      <td>0 min 10 sec</td>
+      <td>12</td>
+      <td>0.000</td>
+      <td>0.007772</td>
+      <td>610</td>
+      <td>0 min 20 sec</td>
     </tr>
     <tr>
       <th>26th</th>
@@ -1912,19 +1900,19 @@ Completed optimization. Total: 8 min  3 sec
       <td>18Nov2020</td>
       <td>126529100</td>
       <td>SIR-F</td>
-      <td>1.64</td>
-      <td>0.000269</td>
-      <td>0.000403</td>
-      <td>0.068347</td>
-      <td>0.041357</td>
-      <td>720</td>
-      <td>0.000</td>
-      <td>1241</td>
+      <td>1.62</td>
+      <td>0.000299</td>
+      <td>0.000230</td>
+      <td>0.033754</td>
+      <td>0.020559</td>
+      <td>360</td>
+      <td>1086</td>
       <td>7</td>
       <td>12</td>
-      <td>0.009748</td>
-      <td>2266</td>
-      <td>1 min 40 sec</td>
+      <td>0.000</td>
+      <td>0.010858</td>
+      <td>335</td>
+      <td>0 min 10 sec</td>
     </tr>
     <tr>
       <th>27th</th>
@@ -1933,19 +1921,19 @@ Completed optimization. Total: 8 min  3 sec
       <td>28Nov2020</td>
       <td>126529100</td>
       <td>SIR-F</td>
-      <td>1.52</td>
-      <td>0.000937</td>
-      <td>0.000403</td>
-      <td>0.063781</td>
-      <td>0.041452</td>
-      <td>720</td>
-      <td>0.001</td>
-      <td>1240</td>
-      <td>7</td>
-      <td>12</td>
-      <td>0.025500</td>
-      <td>1552</td>
-      <td>1 min  0 sec</td>
+      <td>1.55</td>
+      <td>0.000174</td>
+      <td>0.000233</td>
+      <td>0.030097</td>
+      <td>0.019133</td>
+      <td>360</td>
+      <td>1071</td>
+      <td>8</td>
+      <td>13</td>
+      <td>0.000</td>
+      <td>0.025903</td>
+      <td>2149</td>
+      <td>1 min 40 sec</td>
     </tr>
     <tr>
       <th>28th</th>
@@ -1954,19 +1942,19 @@ Completed optimization. Total: 8 min  3 sec
       <td>11Dec2020</td>
       <td>126529100</td>
       <td>SIR-F</td>
-      <td>1.13</td>
-      <td>0.000349</td>
-      <td>0.000709</td>
-      <td>0.049614</td>
-      <td>0.043376</td>
-      <td>720</td>
-      <td>0.000</td>
-      <td>705</td>
-      <td>10</td>
+      <td>1.15</td>
+      <td>0.002617</td>
+      <td>0.000301</td>
+      <td>0.026302</td>
+      <td>0.022554</td>
+      <td>360</td>
+      <td>829</td>
+      <td>9</td>
       <td>11</td>
-      <td>0.007817</td>
-      <td>1104</td>
-      <td>0 min 40 sec</td>
+      <td>0.003</td>
+      <td>0.013221</td>
+      <td>291</td>
+      <td>0 min 10 sec</td>
     </tr>
     <tr>
       <th>29th</th>
@@ -1975,19 +1963,19 @@ Completed optimization. Total: 8 min  3 sec
       <td>25Dec2020</td>
       <td>126529100</td>
       <td>SIR-F</td>
-      <td>1.16</td>
-      <td>0.000546</td>
-      <td>0.000743</td>
-      <td>0.050052</td>
-      <td>0.042462</td>
-      <td>720</td>
-      <td>0.001</td>
-      <td>673</td>
+      <td>1.17</td>
+      <td>0.000958</td>
+      <td>0.000366</td>
+      <td>0.027282</td>
+      <td>0.022999</td>
+      <td>360</td>
+      <td>683</td>
       <td>9</td>
-      <td>11</td>
-      <td>0.012756</td>
-      <td>850</td>
-      <td>0 min 30 sec</td>
+      <td>10</td>
+      <td>0.001</td>
+      <td>0.012581</td>
+      <td>571</td>
+      <td>0 min 20 sec</td>
     </tr>
     <tr>
       <th>30th</th>
@@ -1996,19 +1984,19 @@ Completed optimization. Total: 8 min  3 sec
       <td>07Jan2021</td>
       <td>126529100</td>
       <td>SIR-F</td>
-      <td>1.46</td>
-      <td>0.000241</td>
-      <td>0.000738</td>
-      <td>0.048283</td>
-      <td>0.032435</td>
-      <td>720</td>
-      <td>0.000</td>
-      <td>677</td>
+      <td>1.45</td>
+      <td>0.000758</td>
+      <td>0.000346</td>
+      <td>0.024937</td>
+      <td>0.016837</td>
+      <td>360</td>
+      <td>722</td>
       <td>10</td>
-      <td>15</td>
-      <td>0.008564</td>
-      <td>1106</td>
-      <td>0 min 40 sec</td>
+      <td>14</td>
+      <td>0.001</td>
+      <td>0.007284</td>
+      <td>1465</td>
+      <td>1 min  0 sec</td>
     </tr>
     <tr>
       <th>31st</th>
@@ -2017,19 +2005,19 @@ Completed optimization. Total: 8 min  3 sec
       <td>21Jan2021</td>
       <td>126529100</td>
       <td>SIR-F</td>
-      <td>1.63</td>
-      <td>0.000070</td>
-      <td>0.000570</td>
-      <td>0.049236</td>
-      <td>0.029644</td>
-      <td>720</td>
-      <td>0.000</td>
-      <td>877</td>
+      <td>1.49</td>
+      <td>0.001082</td>
+      <td>0.000192</td>
+      <td>0.024841</td>
+      <td>0.016482</td>
+      <td>360</td>
+      <td>1304</td>
       <td>10</td>
-      <td>16</td>
-      <td>0.047347</td>
-      <td>2126</td>
-      <td>1 min 30 sec</td>
+      <td>15</td>
+      <td>0.001</td>
+      <td>0.056221</td>
+      <td>1068</td>
+      <td>0 min 40 sec</td>
     </tr>
     <tr>
       <th>32nd</th>
@@ -2038,19 +2026,19 @@ Completed optimization. Total: 8 min  3 sec
       <td>03Feb2021</td>
       <td>126529100</td>
       <td>SIR-F</td>
-      <td>0.63</td>
-      <td>0.001220</td>
-      <td>0.000797</td>
-      <td>0.031056</td>
-      <td>0.048422</td>
-      <td>720</td>
-      <td>0.001</td>
-      <td>627</td>
-      <td>16</td>
+      <td>0.69</td>
+      <td>0.000187</td>
+      <td>0.000427</td>
+      <td>0.017543</td>
+      <td>0.024964</td>
+      <td>360</td>
+      <td>585</td>
+      <td>14</td>
       <td>10</td>
-      <td>0.026227</td>
-      <td>373</td>
-      <td>0 min 10 sec</td>
+      <td>0.000</td>
+      <td>0.017890</td>
+      <td>1144</td>
+      <td>0 min 50 sec</td>
     </tr>
     <tr>
       <th>33rd</th>
@@ -2059,19 +2047,19 @@ Completed optimization. Total: 8 min  3 sec
       <td>17Feb2021</td>
       <td>126529100</td>
       <td>SIR-F</td>
-      <td>0.53</td>
-      <td>0.018817</td>
-      <td>0.000798</td>
-      <td>0.029130</td>
-      <td>0.053501</td>
-      <td>720</td>
-      <td>0.019</td>
-      <td>626</td>
-      <td>17</td>
-      <td>9</td>
-      <td>0.011189</td>
-      <td>328</td>
-      <td>0 min 10 sec</td>
+      <td>0.54</td>
+      <td>0.030339</td>
+      <td>0.000210</td>
+      <td>0.015887</td>
+      <td>0.028424</td>
+      <td>360</td>
+      <td>1191</td>
+      <td>15</td>
+      <td>8</td>
+      <td>0.030</td>
+      <td>0.013080</td>
+      <td>591</td>
+      <td>0 min 20 sec</td>
     </tr>
     <tr>
       <th>34th</th>
@@ -2081,17 +2069,17 @@ Completed optimization. Total: 8 min  3 sec
       <td>126529100</td>
       <td>SIR-F</td>
       <td>0.67</td>
-      <td>0.044837</td>
-      <td>0.000302</td>
-      <td>0.032345</td>
-      <td>0.045961</td>
-      <td>720</td>
-      <td>0.045</td>
-      <td>1653</td>
+      <td>0.037630</td>
+      <td>0.000071</td>
+      <td>0.016599</td>
+      <td>0.023738</td>
+      <td>360</td>
+      <td>3514</td>
       <td>15</td>
       <td>10</td>
-      <td>0.007657</td>
-      <td>333</td>
+      <td>0.038</td>
+      <td>0.009890</td>
+      <td>315</td>
       <td>0 min 10 sec</td>
     </tr>
     <tr>
@@ -2102,17 +2090,17 @@ Completed optimization. Total: 8 min  3 sec
       <td>126529100</td>
       <td>SIR-F</td>
       <td>0.78</td>
-      <td>0.040459</td>
-      <td>0.000184</td>
-      <td>0.038440</td>
-      <td>0.047218</td>
-      <td>720</td>
-      <td>0.040</td>
-      <td>2718</td>
-      <td>13</td>
+      <td>0.036325</td>
+      <td>0.000093</td>
+      <td>0.020329</td>
+      <td>0.024920</td>
+      <td>360</td>
+      <td>2675</td>
+      <td>12</td>
       <td>10</td>
-      <td>0.013785</td>
-      <td>310</td>
+      <td>0.036</td>
+      <td>0.013809</td>
+      <td>326</td>
       <td>0 min 10 sec</td>
     </tr>
     <tr>
@@ -2122,40 +2110,40 @@ Completed optimization. Total: 8 min  3 sec
       <td>17Mar2021</td>
       <td>126529100</td>
       <td>SIR-F</td>
-      <td>1.10</td>
-      <td>0.026840</td>
-      <td>0.000617</td>
-      <td>0.048535</td>
-      <td>0.042376</td>
-      <td>720</td>
-      <td>0.027</td>
-      <td>809</td>
+      <td>1.09</td>
+      <td>0.035945</td>
+      <td>0.000097</td>
+      <td>0.024966</td>
+      <td>0.021932</td>
+      <td>360</td>
+      <td>2585</td>
       <td>10</td>
       <td>11</td>
-      <td>0.009200</td>
-      <td>324</td>
+      <td>0.036</td>
+      <td>0.009170</td>
+      <td>319</td>
       <td>0 min 10 sec</td>
     </tr>
     <tr>
       <th>37th</th>
       <td>Past</td>
       <td>18Mar2021</td>
-      <td>27Mar2021</td>
+      <td>28Mar2021</td>
       <td>126529100</td>
       <td>SIR-F</td>
-      <td>1.29</td>
-      <td>0.030478</td>
-      <td>0.000048</td>
-      <td>0.054967</td>
-      <td>0.041281</td>
-      <td>720</td>
-      <td>0.030</td>
-      <td>10431</td>
+      <td>1.27</td>
+      <td>0.000145</td>
+      <td>0.000608</td>
+      <td>0.026966</td>
+      <td>0.020590</td>
+      <td>360</td>
+      <td>411</td>
       <td>9</td>
       <td>12</td>
-      <td>0.016617</td>
-      <td>550</td>
-      <td>0 min 20 sec</td>
+      <td>0.000</td>
+      <td>0.016242</td>
+      <td>2359</td>
+      <td>1 min 50 sec</td>
     </tr>
   </tbody>
 </table>
@@ -2214,305 +2202,305 @@ Completed optimization. Total: 8 min  3 sec
       <th>0th</th>
       <td>06Feb2020</td>
       <td>18Feb2020</td>
-      <td>0.143343</td>
-      <td>1750</td>
-      <td>1 min 10 sec</td>
+      <td>0.147076</td>
+      <td>2048</td>
+      <td>1 min 40 sec</td>
     </tr>
     <tr>
       <th>1st</th>
       <td>19Feb2020</td>
       <td>05Mar2020</td>
-      <td>0.170727</td>
-      <td>2440</td>
-      <td>1 min 50 sec</td>
+      <td>0.177385</td>
+      <td>1981</td>
+      <td>1 min 30 sec</td>
     </tr>
     <tr>
       <th>2nd</th>
       <td>06Mar2020</td>
       <td>13Mar2020</td>
-      <td>0.098577</td>
-      <td>2129</td>
-      <td>1 min 30 sec</td>
+      <td>0.112128</td>
+      <td>1041</td>
+      <td>0 min 40 sec</td>
     </tr>
     <tr>
       <th>3rd</th>
       <td>14Mar2020</td>
       <td>24Mar2020</td>
-      <td>0.032471</td>
-      <td>1765</td>
-      <td>1 min 10 sec</td>
+      <td>0.030358</td>
+      <td>1734</td>
+      <td>1 min 20 sec</td>
     </tr>
     <tr>
       <th>4th</th>
       <td>25Mar2020</td>
       <td>02Apr2020</td>
-      <td>0.049497</td>
-      <td>1578</td>
+      <td>0.050569</td>
+      <td>1432</td>
       <td>1 min  0 sec</td>
     </tr>
     <tr>
       <th>5th</th>
       <td>03Apr2020</td>
       <td>16Apr2020</td>
-      <td>0.044328</td>
-      <td>2119</td>
-      <td>1 min 30 sec</td>
+      <td>0.044334</td>
+      <td>2545</td>
+      <td>2 min 10 sec</td>
     </tr>
     <tr>
       <th>6th</th>
       <td>17Apr2020</td>
       <td>01May2020</td>
-      <td>0.093194</td>
-      <td>2621</td>
-      <td>2 min  0 sec</td>
+      <td>0.094215</td>
+      <td>2654</td>
+      <td>2 min 20 sec</td>
     </tr>
     <tr>
       <th>7th</th>
       <td>02May2020</td>
       <td>11May2020</td>
-      <td>0.105565</td>
-      <td>1946</td>
-      <td>1 min 20 sec</td>
+      <td>0.104975</td>
+      <td>2123</td>
+      <td>1 min 40 sec</td>
     </tr>
     <tr>
       <th>8th</th>
       <td>12May2020</td>
       <td>20May2020</td>
-      <td>0.028099</td>
-      <td>351</td>
-      <td>0 min 10 sec</td>
+      <td>0.028198</td>
+      <td>580</td>
+      <td>0 min 20 sec</td>
     </tr>
     <tr>
       <th>9th</th>
       <td>21May2020</td>
       <td>28May2020</td>
-      <td>0.015521</td>
-      <td>347</td>
+      <td>0.014285</td>
+      <td>339</td>
       <td>0 min 10 sec</td>
     </tr>
     <tr>
       <th>10th</th>
       <td>29May2020</td>
       <td>05Jun2020</td>
-      <td>0.013236</td>
-      <td>351</td>
+      <td>0.013353</td>
+      <td>335</td>
       <td>0 min 10 sec</td>
     </tr>
     <tr>
       <th>11th</th>
       <td>06Jun2020</td>
       <td>13Jun2020</td>
-      <td>0.021102</td>
-      <td>336</td>
+      <td>0.022048</td>
+      <td>305</td>
       <td>0 min 10 sec</td>
     </tr>
     <tr>
       <th>12th</th>
       <td>14Jun2020</td>
       <td>28Jun2020</td>
-      <td>0.035544</td>
-      <td>1574</td>
-      <td>1 min  0 sec</td>
+      <td>0.035661</td>
+      <td>1547</td>
+      <td>1 min 10 sec</td>
     </tr>
     <tr>
       <th>13th</th>
       <td>29Jun2020</td>
       <td>09Jul2020</td>
-      <td>0.022963</td>
-      <td>1576</td>
-      <td>1 min  0 sec</td>
+      <td>0.023577</td>
+      <td>333</td>
+      <td>0 min 10 sec</td>
     </tr>
     <tr>
       <th>14th</th>
       <td>10Jul2020</td>
       <td>20Jul2020</td>
-      <td>0.021390</td>
-      <td>647</td>
-      <td>0 min 20 sec</td>
+      <td>0.020968</td>
+      <td>1043</td>
+      <td>0 min 40 sec</td>
     </tr>
     <tr>
       <th>15th</th>
       <td>21Jul2020</td>
       <td>31Jul2020</td>
-      <td>0.020542</td>
-      <td>907</td>
-      <td>0 min 30 sec</td>
+      <td>0.023986</td>
+      <td>330</td>
+      <td>0 min 10 sec</td>
     </tr>
     <tr>
       <th>16th</th>
       <td>01Aug2020</td>
       <td>14Aug2020</td>
-      <td>0.046061</td>
-      <td>2288</td>
-      <td>1 min 40 sec</td>
+      <td>0.056051</td>
+      <td>2377</td>
+      <td>2 min  0 sec</td>
     </tr>
     <tr>
       <th>17th</th>
       <td>15Aug2020</td>
       <td>28Aug2020</td>
-      <td>0.014071</td>
-      <td>634</td>
-      <td>0 min 20 sec</td>
+      <td>0.015375</td>
+      <td>331</td>
+      <td>0 min 10 sec</td>
     </tr>
     <tr>
       <th>18th</th>
       <td>29Aug2020</td>
       <td>07Sep2020</td>
-      <td>0.019224</td>
-      <td>347</td>
-      <td>0 min 10 sec</td>
+      <td>0.020981</td>
+      <td>573</td>
+      <td>0 min 20 sec</td>
     </tr>
     <tr>
       <th>19th</th>
       <td>08Sep2020</td>
       <td>15Sep2020</td>
-      <td>0.015767</td>
-      <td>349</td>
+      <td>0.021747</td>
+      <td>300</td>
       <td>0 min 10 sec</td>
     </tr>
     <tr>
       <th>20th</th>
       <td>16Sep2020</td>
       <td>24Sep2020</td>
-      <td>0.014753</td>
-      <td>350</td>
+      <td>0.014160</td>
+      <td>319</td>
       <td>0 min 10 sec</td>
     </tr>
     <tr>
       <th>21st</th>
       <td>25Sep2020</td>
       <td>02Oct2020</td>
-      <td>0.007352</td>
-      <td>1144</td>
-      <td>0 min 40 sec</td>
+      <td>0.007488</td>
+      <td>1281</td>
+      <td>0 min 50 sec</td>
     </tr>
     <tr>
       <th>22nd</th>
       <td>03Oct2020</td>
       <td>10Oct2020</td>
-      <td>0.009301</td>
-      <td>2417</td>
-      <td>1 min 50 sec</td>
+      <td>0.009551</td>
+      <td>1653</td>
+      <td>1 min 10 sec</td>
     </tr>
     <tr>
       <th>23rd</th>
       <td>11Oct2020</td>
       <td>20Oct2020</td>
-      <td>0.011413</td>
-      <td>1964</td>
-      <td>1 min 20 sec</td>
+      <td>0.011582</td>
+      <td>1574</td>
+      <td>1 min 10 sec</td>
     </tr>
     <tr>
       <th>24th</th>
       <td>21Oct2020</td>
       <td>28Oct2020</td>
-      <td>0.008633</td>
-      <td>348</td>
-      <td>0 min 10 sec</td>
+      <td>0.008800</td>
+      <td>617</td>
+      <td>0 min 20 sec</td>
     </tr>
     <tr>
       <th>25th</th>
       <td>29Oct2020</td>
       <td>05Nov2020</td>
-      <td>0.008131</td>
-      <td>349</td>
-      <td>0 min 10 sec</td>
+      <td>0.007772</td>
+      <td>610</td>
+      <td>0 min 20 sec</td>
     </tr>
     <tr>
       <th>26th</th>
       <td>06Nov2020</td>
       <td>18Nov2020</td>
-      <td>0.009748</td>
-      <td>2266</td>
-      <td>1 min 40 sec</td>
+      <td>0.010858</td>
+      <td>335</td>
+      <td>0 min 10 sec</td>
     </tr>
     <tr>
       <th>27th</th>
       <td>19Nov2020</td>
       <td>28Nov2020</td>
-      <td>0.025500</td>
-      <td>1552</td>
-      <td>1 min  0 sec</td>
+      <td>0.025903</td>
+      <td>2149</td>
+      <td>1 min 40 sec</td>
     </tr>
     <tr>
       <th>28th</th>
       <td>29Nov2020</td>
       <td>11Dec2020</td>
-      <td>0.007817</td>
-      <td>1104</td>
-      <td>0 min 40 sec</td>
+      <td>0.013221</td>
+      <td>291</td>
+      <td>0 min 10 sec</td>
     </tr>
     <tr>
       <th>29th</th>
       <td>12Dec2020</td>
       <td>25Dec2020</td>
-      <td>0.012756</td>
-      <td>850</td>
-      <td>0 min 30 sec</td>
+      <td>0.012581</td>
+      <td>571</td>
+      <td>0 min 20 sec</td>
     </tr>
     <tr>
       <th>30th</th>
       <td>26Dec2020</td>
       <td>07Jan2021</td>
-      <td>0.008564</td>
-      <td>1106</td>
-      <td>0 min 40 sec</td>
+      <td>0.007284</td>
+      <td>1465</td>
+      <td>1 min  0 sec</td>
     </tr>
     <tr>
       <th>31st</th>
       <td>08Jan2021</td>
       <td>21Jan2021</td>
-      <td>0.047347</td>
-      <td>2126</td>
-      <td>1 min 30 sec</td>
+      <td>0.056221</td>
+      <td>1068</td>
+      <td>0 min 40 sec</td>
     </tr>
     <tr>
       <th>32nd</th>
       <td>22Jan2021</td>
       <td>03Feb2021</td>
-      <td>0.026227</td>
-      <td>373</td>
-      <td>0 min 10 sec</td>
+      <td>0.017890</td>
+      <td>1144</td>
+      <td>0 min 50 sec</td>
     </tr>
     <tr>
       <th>33rd</th>
       <td>04Feb2021</td>
       <td>17Feb2021</td>
-      <td>0.011189</td>
-      <td>328</td>
-      <td>0 min 10 sec</td>
+      <td>0.013080</td>
+      <td>591</td>
+      <td>0 min 20 sec</td>
     </tr>
     <tr>
       <th>34th</th>
       <td>18Feb2021</td>
       <td>26Feb2021</td>
-      <td>0.007657</td>
-      <td>333</td>
+      <td>0.009890</td>
+      <td>315</td>
       <td>0 min 10 sec</td>
     </tr>
     <tr>
       <th>35th</th>
       <td>27Feb2021</td>
       <td>09Mar2021</td>
-      <td>0.013785</td>
-      <td>310</td>
+      <td>0.013809</td>
+      <td>326</td>
       <td>0 min 10 sec</td>
     </tr>
     <tr>
       <th>36th</th>
       <td>10Mar2021</td>
       <td>17Mar2021</td>
-      <td>0.009200</td>
-      <td>324</td>
+      <td>0.009170</td>
+      <td>319</td>
       <td>0 min 10 sec</td>
     </tr>
     <tr>
       <th>37th</th>
       <td>18Mar2021</td>
-      <td>27Mar2021</td>
-      <td>0.016617</td>
-      <td>550</td>
-      <td>0 min 20 sec</td>
+      <td>28Mar2021</td>
+      <td>0.016242</td>
+      <td>2359</td>
+      <td>1 min 50 sec</td>
     </tr>
   </tbody>
 </table>
@@ -2558,11 +2546,11 @@ Completed optimization. Total: 8 min  3 sec
 </div>
 <div class="output_area docutils container">
 <div class="highlight"><pre>
-  MAE: 246.180
-  MSE: 694312.150
+  MAE: 267.333
+  MSE: 648413.445
  MSLE: 0.003
- RMSE: 685.438
-RMSLE: 0.055
+ RMSE: 658.899
+RMSLE: 0.057
 </pre></div></div>
 </div>
 </div>
@@ -2585,7 +2573,7 @@ RMSLE: 0.055
 </div>
 <div class="output_area docutils container">
 <div class="highlight"><pre>
-6.0
+5.96
 </pre></div></div>
 </div>
 <div class="nbinput docutils container">
@@ -2604,7 +2592,7 @@ RMSLE: 0.055
 </div>
 <div class="output_area docutils container">
 <div class="highlight"><pre>
-1.29
+1.27
 </pre></div></div>
 </div>
 </div>
@@ -2654,307 +2642,307 @@ RMSLE: 0.055
   <tbody>
     <tr>
       <th>0th</th>
-      <td>0.017612</td>
-      <td>0.000174</td>
-      <td>0.036494</td>
-      <td>0.013377</td>
-      <td>2.65</td>
+      <td>0.000546</td>
+      <td>0.000423</td>
+      <td>0.017136</td>
+      <td>0.006910</td>
+      <td>2.34</td>
     </tr>
     <tr>
       <th>1st</th>
-      <td>0.000798</td>
-      <td>0.001128</td>
-      <td>0.067657</td>
-      <td>0.011524</td>
-      <td>5.34</td>
+      <td>0.000071</td>
+      <td>0.000569</td>
+      <td>0.034127</td>
+      <td>0.006000</td>
+      <td>5.19</td>
     </tr>
     <tr>
       <th>2nd</th>
-      <td>0.020372</td>
-      <td>0.000615</td>
-      <td>0.059382</td>
-      <td>0.012020</td>
-      <td>4.60</td>
+      <td>0.000292</td>
+      <td>0.000777</td>
+      <td>0.030008</td>
+      <td>0.004494</td>
+      <td>5.69</td>
     </tr>
     <tr>
       <th>3rd</th>
-      <td>0.031209</td>
-      <td>0.000686</td>
-      <td>0.029413</td>
-      <td>0.010970</td>
-      <td>2.44</td>
+      <td>0.039034</td>
+      <td>0.000197</td>
+      <td>0.015199</td>
+      <td>0.005346</td>
+      <td>2.64</td>
     </tr>
     <tr>
       <th>4th</th>
-      <td>0.000636</td>
-      <td>0.000922</td>
-      <td>0.059545</td>
-      <td>0.008999</td>
-      <td>6.00</td>
+      <td>0.001142</td>
+      <td>0.000432</td>
+      <td>0.028344</td>
+      <td>0.004318</td>
+      <td>5.96</td>
     </tr>
     <tr>
       <th>5th</th>
-      <td>0.000070</td>
-      <td>0.000570</td>
-      <td>0.060702</td>
-      <td>0.004058</td>
-      <td>13.11</td>
+      <td>0.000440</td>
+      <td>0.000284</td>
+      <td>0.028899</td>
+      <td>0.001887</td>
+      <td>13.30</td>
     </tr>
     <tr>
       <th>6th</th>
-      <td>0.018707</td>
-      <td>0.000685</td>
-      <td>0.022465</td>
-      <td>0.009747</td>
-      <td>2.11</td>
+      <td>0.000400</td>
+      <td>0.000581</td>
+      <td>0.010623</td>
+      <td>0.004870</td>
+      <td>1.95</td>
     </tr>
     <tr>
       <th>7th</th>
-      <td>0.097028</td>
-      <td>0.000410</td>
-      <td>0.006482</td>
-      <td>0.017432</td>
-      <td>0.33</td>
+      <td>0.034962</td>
+      <td>0.000449</td>
+      <td>0.002958</td>
+      <td>0.008715</td>
+      <td>0.31</td>
     </tr>
     <tr>
       <th>8th</th>
-      <td>0.204862</td>
-      <td>0.000427</td>
-      <td>0.007261</td>
-      <td>0.045331</td>
+      <td>0.177193</td>
+      <td>0.000263</td>
+      <td>0.003871</td>
+      <td>0.024089</td>
       <td>0.13</td>
     </tr>
     <tr>
       <th>9th</th>
-      <td>0.287910</td>
-      <td>0.000257</td>
-      <td>0.008298</td>
-      <td>0.048885</td>
-      <td>0.12</td>
+      <td>0.266931</td>
+      <td>0.000168</td>
+      <td>0.004652</td>
+      <td>0.024313</td>
+      <td>0.14</td>
     </tr>
     <tr>
       <th>10th</th>
-      <td>0.086416</td>
-      <td>0.000098</td>
-      <td>0.019009</td>
-      <td>0.036553</td>
-      <td>0.47</td>
+      <td>0.014941</td>
+      <td>0.000609</td>
+      <td>0.009232</td>
+      <td>0.017983</td>
+      <td>0.49</td>
     </tr>
     <tr>
       <th>11th</th>
-      <td>0.001984</td>
-      <td>0.000717</td>
-      <td>0.020179</td>
-      <td>0.032630</td>
-      <td>0.60</td>
+      <td>0.074454</td>
+      <td>0.000041</td>
+      <td>0.009890</td>
+      <td>0.015352</td>
+      <td>0.59</td>
     </tr>
     <tr>
       <th>12th</th>
-      <td>0.036972</td>
-      <td>0.000693</td>
-      <td>0.039420</td>
-      <td>0.039082</td>
-      <td>0.95</td>
+      <td>0.049842</td>
+      <td>0.000046</td>
+      <td>0.022136</td>
+      <td>0.021777</td>
+      <td>0.96</td>
     </tr>
     <tr>
       <th>13th</th>
-      <td>0.000865</td>
-      <td>0.000368</td>
-      <td>0.068157</td>
-      <td>0.030637</td>
-      <td>2.20</td>
+      <td>0.002283</td>
+      <td>0.000059</td>
+      <td>0.033561</td>
+      <td>0.015254</td>
+      <td>2.19</td>
     </tr>
     <tr>
       <th>14th</th>
-      <td>0.000229</td>
-      <td>0.000113</td>
-      <td>0.067784</td>
-      <td>0.030008</td>
-      <td>2.25</td>
+      <td>0.000543</td>
+      <td>0.000094</td>
+      <td>0.036765</td>
+      <td>0.017779</td>
+      <td>2.06</td>
     </tr>
     <tr>
       <th>15th</th>
-      <td>0.000735</td>
-      <td>0.000225</td>
-      <td>0.066814</td>
-      <td>0.035237</td>
-      <td>1.88</td>
+      <td>0.001813</td>
+      <td>0.000059</td>
+      <td>0.033038</td>
+      <td>0.018211</td>
+      <td>1.81</td>
     </tr>
     <tr>
       <th>16th</th>
-      <td>0.000171</td>
-      <td>0.000176</td>
-      <td>0.051141</td>
-      <td>0.031807</td>
-      <td>1.60</td>
+      <td>0.000054</td>
+      <td>0.000060</td>
+      <td>0.025489</td>
+      <td>0.017371</td>
+      <td>1.46</td>
     </tr>
     <tr>
       <th>17th</th>
-      <td>0.000232</td>
-      <td>0.000454</td>
-      <td>0.039382</td>
-      <td>0.048326</td>
-      <td>0.81</td>
+      <td>0.000256</td>
+      <td>0.000257</td>
+      <td>0.019676</td>
+      <td>0.024187</td>
+      <td>0.80</td>
     </tr>
     <tr>
       <th>18th</th>
-      <td>0.019019</td>
-      <td>0.000041</td>
-      <td>0.034120</td>
-      <td>0.047549</td>
-      <td>0.70</td>
+      <td>0.018863</td>
+      <td>0.000040</td>
+      <td>0.018038</td>
+      <td>0.024881</td>
+      <td>0.71</td>
     </tr>
     <tr>
       <th>19th</th>
-      <td>0.016797</td>
-      <td>0.000200</td>
-      <td>0.040369</td>
-      <td>0.049839</td>
-      <td>0.79</td>
+      <td>0.003883</td>
+      <td>0.000301</td>
+      <td>0.017737</td>
+      <td>0.023867</td>
+      <td>0.73</td>
     </tr>
     <tr>
       <th>20th</th>
-      <td>0.000038</td>
-      <td>0.000835</td>
-      <td>0.036335</td>
-      <td>0.039121</td>
-      <td>0.91</td>
+      <td>0.003232</td>
+      <td>0.000309</td>
+      <td>0.021652</td>
+      <td>0.023205</td>
+      <td>0.92</td>
     </tr>
     <tr>
       <th>21st</th>
-      <td>0.000808</td>
-      <td>0.000556</td>
-      <td>0.048126</td>
-      <td>0.047787</td>
+      <td>0.000203</td>
+      <td>0.000257</td>
+      <td>0.025754</td>
+      <td>0.025691</td>
       <td>0.99</td>
     </tr>
     <tr>
       <th>22nd</th>
-      <td>0.000921</td>
-      <td>0.000384</td>
-      <td>0.046458</td>
-      <td>0.047514</td>
+      <td>0.000736</td>
+      <td>0.000224</td>
+      <td>0.025233</td>
+      <td>0.025705</td>
       <td>0.97</td>
     </tr>
     <tr>
       <th>23rd</th>
-      <td>0.001354</td>
-      <td>0.000406</td>
-      <td>0.046691</td>
-      <td>0.047293</td>
+      <td>0.000735</td>
+      <td>0.000224</td>
+      <td>0.025454</td>
+      <td>0.025826</td>
       <td>0.98</td>
     </tr>
     <tr>
       <th>24th</th>
-      <td>0.001355</td>
-      <td>0.000735</td>
-      <td>0.054695</td>
-      <td>0.047228</td>
-      <td>1.14</td>
+      <td>0.000139</td>
+      <td>0.000246</td>
+      <td>0.027301</td>
+      <td>0.023525</td>
+      <td>1.15</td>
     </tr>
     <tr>
       <th>25th</th>
-      <td>0.002514</td>
-      <td>0.000482</td>
-      <td>0.052972</td>
-      <td>0.038236</td>
-      <td>1.36</td>
+      <td>0.000435</td>
+      <td>0.000361</td>
+      <td>0.027525</td>
+      <td>0.020162</td>
+      <td>1.34</td>
     </tr>
     <tr>
       <th>26th</th>
-      <td>0.000269</td>
-      <td>0.000403</td>
-      <td>0.068347</td>
-      <td>0.041357</td>
-      <td>1.64</td>
+      <td>0.000299</td>
+      <td>0.000230</td>
+      <td>0.033754</td>
+      <td>0.020559</td>
+      <td>1.62</td>
     </tr>
     <tr>
       <th>27th</th>
-      <td>0.000937</td>
-      <td>0.000403</td>
-      <td>0.063781</td>
-      <td>0.041452</td>
-      <td>1.52</td>
+      <td>0.000174</td>
+      <td>0.000233</td>
+      <td>0.030097</td>
+      <td>0.019133</td>
+      <td>1.55</td>
     </tr>
     <tr>
       <th>28th</th>
-      <td>0.000349</td>
-      <td>0.000709</td>
-      <td>0.049614</td>
-      <td>0.043376</td>
-      <td>1.13</td>
+      <td>0.002617</td>
+      <td>0.000301</td>
+      <td>0.026302</td>
+      <td>0.022554</td>
+      <td>1.15</td>
     </tr>
     <tr>
       <th>29th</th>
-      <td>0.000546</td>
-      <td>0.000743</td>
-      <td>0.050052</td>
-      <td>0.042462</td>
-      <td>1.16</td>
+      <td>0.000958</td>
+      <td>0.000366</td>
+      <td>0.027282</td>
+      <td>0.022999</td>
+      <td>1.17</td>
     </tr>
     <tr>
       <th>30th</th>
-      <td>0.000241</td>
-      <td>0.000738</td>
-      <td>0.048283</td>
-      <td>0.032435</td>
-      <td>1.46</td>
+      <td>0.000758</td>
+      <td>0.000346</td>
+      <td>0.024937</td>
+      <td>0.016837</td>
+      <td>1.45</td>
     </tr>
     <tr>
       <th>31st</th>
-      <td>0.000070</td>
-      <td>0.000570</td>
-      <td>0.049236</td>
-      <td>0.029644</td>
-      <td>1.63</td>
+      <td>0.001082</td>
+      <td>0.000192</td>
+      <td>0.024841</td>
+      <td>0.016482</td>
+      <td>1.49</td>
     </tr>
     <tr>
       <th>32nd</th>
-      <td>0.001220</td>
-      <td>0.000797</td>
-      <td>0.031056</td>
-      <td>0.048422</td>
-      <td>0.63</td>
+      <td>0.000187</td>
+      <td>0.000427</td>
+      <td>0.017543</td>
+      <td>0.024964</td>
+      <td>0.69</td>
     </tr>
     <tr>
       <th>33rd</th>
-      <td>0.018817</td>
-      <td>0.000798</td>
-      <td>0.029130</td>
-      <td>0.053501</td>
-      <td>0.53</td>
+      <td>0.030339</td>
+      <td>0.000210</td>
+      <td>0.015887</td>
+      <td>0.028424</td>
+      <td>0.54</td>
     </tr>
     <tr>
       <th>34th</th>
-      <td>0.044837</td>
-      <td>0.000302</td>
-      <td>0.032345</td>
-      <td>0.045961</td>
+      <td>0.037630</td>
+      <td>0.000071</td>
+      <td>0.016599</td>
+      <td>0.023738</td>
       <td>0.67</td>
     </tr>
     <tr>
       <th>35th</th>
-      <td>0.040459</td>
-      <td>0.000184</td>
-      <td>0.038440</td>
-      <td>0.047218</td>
+      <td>0.036325</td>
+      <td>0.000093</td>
+      <td>0.020329</td>
+      <td>0.024920</td>
       <td>0.78</td>
     </tr>
     <tr>
       <th>36th</th>
-      <td>0.026840</td>
-      <td>0.000617</td>
-      <td>0.048535</td>
-      <td>0.042376</td>
-      <td>1.10</td>
+      <td>0.035945</td>
+      <td>0.000097</td>
+      <td>0.024966</td>
+      <td>0.021932</td>
+      <td>1.09</td>
     </tr>
     <tr>
       <th>37th</th>
-      <td>0.030478</td>
-      <td>0.000048</td>
-      <td>0.054967</td>
-      <td>0.041281</td>
-      <td>1.29</td>
+      <td>0.000145</td>
+      <td>0.000608</td>
+      <td>0.026966</td>
+      <td>0.020590</td>
+      <td>1.27</td>
     </tr>
   </tbody>
 </table>
@@ -3169,42 +3157,42 @@ RMSLE: 0.055
     <tr>
       <th>478</th>
       <td>2021-05-29</td>
-      <td>710444</td>
-      <td>16846</td>
-      <td>68096</td>
-      <td>625502</td>
+      <td>695650</td>
+      <td>14287</td>
+      <td>63948</td>
+      <td>617415</td>
     </tr>
     <tr>
       <th>479</th>
       <td>2021-05-30</td>
-      <td>717976</td>
-      <td>17082</td>
-      <td>69703</td>
-      <td>631191</td>
+      <td>702586</td>
+      <td>14445</td>
+      <td>65400</td>
+      <td>622741</td>
     </tr>
     <tr>
       <th>480</th>
       <td>2021-05-31</td>
-      <td>725685</td>
-      <td>17324</td>
-      <td>71348</td>
-      <td>637013</td>
+      <td>709681</td>
+      <td>14607</td>
+      <td>66885</td>
+      <td>628189</td>
     </tr>
     <tr>
       <th>481</th>
       <td>2021-06-01</td>
-      <td>733575</td>
-      <td>17572</td>
-      <td>73030</td>
-      <td>642973</td>
+      <td>716936</td>
+      <td>14772</td>
+      <td>68404</td>
+      <td>633760</td>
     </tr>
     <tr>
       <th>482</th>
       <td>2021-06-02</td>
-      <td>741651</td>
-      <td>17825</td>
-      <td>74752</td>
-      <td>649074</td>
+      <td>724356</td>
+      <td>14942</td>
+      <td>69956</td>
+      <td>639458</td>
     </tr>
   </tbody>
 </table>
@@ -3232,7 +3220,7 @@ RMSLE: 0.055
 </div>
 <div class="output_area docutils container">
 <div class="highlight"><pre>
-0.041281125789869984
+0.020590285457090497
 </pre></div></div>
 </div>
 <div class="nbinput docutils container">
@@ -3252,7 +3240,7 @@ RMSLE: 0.055
 </div>
 <div class="output_area docutils container">
 <div class="highlight"><pre>
-0.04953735094784398
+0.024708342548508597
 </pre></div></div>
 </div>
 <div class="nbinput docutils container">
@@ -3304,10 +3292,10 @@ RMSLE: 0.055
       <th>rho</th>
       <th>sigma</th>
       <th>tau</th>
-      <th>alpha1 [-]</th>
       <th>1/alpha2 [day]</th>
       <th>1/beta [day]</th>
       <th>1/gamma [day]</th>
+      <th>alpha1 [-]</th>
       <th>RMSLE</th>
       <th>Trials</th>
       <th>Runtime</th>
@@ -3321,19 +3309,19 @@ RMSLE: 0.055
       <td>18Feb2020</td>
       <td>126529100</td>
       <td>SIR-F</td>
-      <td>2.65</td>
-      <td>0.017612</td>
-      <td>0.000174</td>
-      <td>0.036494</td>
-      <td>0.013377</td>
-      <td>720</td>
-      <td>0.018</td>
-      <td>2873</td>
-      <td>13</td>
-      <td>37</td>
-      <td>0.143343</td>
-      <td>1750.0</td>
-      <td>1 min 10 sec</td>
+      <td>2.34</td>
+      <td>0.000546</td>
+      <td>0.000423</td>
+      <td>0.017136</td>
+      <td>0.006910</td>
+      <td>360</td>
+      <td>591</td>
+      <td>14</td>
+      <td>36</td>
+      <td>0.001</td>
+      <td>0.147076</td>
+      <td>2048.0</td>
+      <td>1 min 40 sec</td>
     </tr>
     <tr>
       <th>1st</th>
@@ -3342,19 +3330,19 @@ RMSLE: 0.055
       <td>05Mar2020</td>
       <td>126529100</td>
       <td>SIR-F</td>
-      <td>5.34</td>
-      <td>0.000798</td>
-      <td>0.001128</td>
-      <td>0.067657</td>
-      <td>0.011524</td>
-      <td>720</td>
-      <td>0.001</td>
-      <td>443</td>
+      <td>5.19</td>
+      <td>0.000071</td>
+      <td>0.000569</td>
+      <td>0.034127</td>
+      <td>0.006000</td>
+      <td>360</td>
+      <td>439</td>
       <td>7</td>
-      <td>43</td>
-      <td>0.170727</td>
-      <td>2440.0</td>
-      <td>1 min 50 sec</td>
+      <td>41</td>
+      <td>0.000</td>
+      <td>0.177385</td>
+      <td>1981.0</td>
+      <td>1 min 30 sec</td>
     </tr>
     <tr>
       <th>2nd</th>
@@ -3363,19 +3351,19 @@ RMSLE: 0.055
       <td>13Mar2020</td>
       <td>126529100</td>
       <td>SIR-F</td>
-      <td>4.60</td>
-      <td>0.020372</td>
-      <td>0.000615</td>
-      <td>0.059382</td>
-      <td>0.012020</td>
-      <td>720</td>
-      <td>0.020</td>
-      <td>813</td>
+      <td>5.69</td>
+      <td>0.000292</td>
+      <td>0.000777</td>
+      <td>0.030008</td>
+      <td>0.004494</td>
+      <td>360</td>
+      <td>321</td>
       <td>8</td>
-      <td>41</td>
-      <td>0.098577</td>
-      <td>2129.0</td>
-      <td>1 min 30 sec</td>
+      <td>55</td>
+      <td>0.000</td>
+      <td>0.112128</td>
+      <td>1041.0</td>
+      <td>0 min 40 sec</td>
     </tr>
     <tr>
       <th>3rd</th>
@@ -3384,19 +3372,19 @@ RMSLE: 0.055
       <td>24Mar2020</td>
       <td>126529100</td>
       <td>SIR-F</td>
-      <td>2.44</td>
-      <td>0.031209</td>
-      <td>0.000686</td>
-      <td>0.029413</td>
-      <td>0.010970</td>
-      <td>720</td>
-      <td>0.031</td>
-      <td>728</td>
+      <td>2.64</td>
+      <td>0.039034</td>
+      <td>0.000197</td>
+      <td>0.015199</td>
+      <td>0.005346</td>
+      <td>360</td>
+      <td>1272</td>
       <td>16</td>
-      <td>45</td>
-      <td>0.032471</td>
-      <td>1765.0</td>
-      <td>1 min 10 sec</td>
+      <td>46</td>
+      <td>0.039</td>
+      <td>0.030358</td>
+      <td>1734.0</td>
+      <td>1 min 20 sec</td>
     </tr>
     <tr>
       <th>4th</th>
@@ -3405,18 +3393,18 @@ RMSLE: 0.055
       <td>02Apr2020</td>
       <td>126529100</td>
       <td>SIR-F</td>
-      <td>6.00</td>
-      <td>0.000636</td>
-      <td>0.000922</td>
-      <td>0.059545</td>
-      <td>0.008999</td>
-      <td>720</td>
-      <td>0.001</td>
-      <td>542</td>
+      <td>5.96</td>
+      <td>0.001142</td>
+      <td>0.000432</td>
+      <td>0.028344</td>
+      <td>0.004318</td>
+      <td>360</td>
+      <td>578</td>
       <td>8</td>
-      <td>55</td>
-      <td>0.049497</td>
-      <td>1578.0</td>
+      <td>57</td>
+      <td>0.001</td>
+      <td>0.050569</td>
+      <td>1432.0</td>
       <td>1 min  0 sec</td>
     </tr>
     <tr>
@@ -3426,19 +3414,19 @@ RMSLE: 0.055
       <td>16Apr2020</td>
       <td>126529100</td>
       <td>SIR-F</td>
-      <td>13.11</td>
-      <td>0.000070</td>
-      <td>0.000570</td>
-      <td>0.060702</td>
-      <td>0.004058</td>
-      <td>720</td>
-      <td>0.000</td>
-      <td>877</td>
+      <td>13.30</td>
+      <td>0.000440</td>
+      <td>0.000284</td>
+      <td>0.028899</td>
+      <td>0.001887</td>
+      <td>360</td>
+      <td>879</td>
       <td>8</td>
-      <td>123</td>
-      <td>0.044328</td>
-      <td>2119.0</td>
-      <td>1 min 30 sec</td>
+      <td>132</td>
+      <td>0.000</td>
+      <td>0.044334</td>
+      <td>2545.0</td>
+      <td>2 min 10 sec</td>
     </tr>
     <tr>
       <th>6th</th>
@@ -3447,19 +3435,19 @@ RMSLE: 0.055
       <td>01May2020</td>
       <td>126529100</td>
       <td>SIR-F</td>
-      <td>2.11</td>
-      <td>0.018707</td>
-      <td>0.000685</td>
-      <td>0.022465</td>
-      <td>0.009747</td>
-      <td>720</td>
-      <td>0.019</td>
-      <td>730</td>
-      <td>22</td>
+      <td>1.95</td>
+      <td>0.000400</td>
+      <td>0.000581</td>
+      <td>0.010623</td>
+      <td>0.004870</td>
+      <td>360</td>
+      <td>430</td>
+      <td>23</td>
       <td>51</td>
-      <td>0.093194</td>
-      <td>2621.0</td>
-      <td>2 min  0 sec</td>
+      <td>0.000</td>
+      <td>0.094215</td>
+      <td>2654.0</td>
+      <td>2 min 20 sec</td>
     </tr>
     <tr>
       <th>7th</th>
@@ -3468,19 +3456,19 @@ RMSLE: 0.055
       <td>11May2020</td>
       <td>126529100</td>
       <td>SIR-F</td>
-      <td>0.33</td>
-      <td>0.097028</td>
-      <td>0.000410</td>
-      <td>0.006482</td>
-      <td>0.017432</td>
-      <td>720</td>
-      <td>0.097</td>
-      <td>1220</td>
-      <td>77</td>
+      <td>0.31</td>
+      <td>0.034962</td>
+      <td>0.000449</td>
+      <td>0.002958</td>
+      <td>0.008715</td>
+      <td>360</td>
+      <td>556</td>
+      <td>84</td>
       <td>28</td>
-      <td>0.105565</td>
-      <td>1946.0</td>
-      <td>1 min 20 sec</td>
+      <td>0.035</td>
+      <td>0.104975</td>
+      <td>2123.0</td>
+      <td>1 min 40 sec</td>
     </tr>
     <tr>
       <th>8th</th>
@@ -3490,18 +3478,18 @@ RMSLE: 0.055
       <td>126529100</td>
       <td>SIR-F</td>
       <td>0.13</td>
-      <td>0.204862</td>
-      <td>0.000427</td>
-      <td>0.007261</td>
-      <td>0.045331</td>
-      <td>720</td>
-      <td>0.205</td>
-      <td>1172</td>
-      <td>68</td>
-      <td>11</td>
-      <td>0.028099</td>
-      <td>351.0</td>
-      <td>0 min 10 sec</td>
+      <td>0.177193</td>
+      <td>0.000263</td>
+      <td>0.003871</td>
+      <td>0.024089</td>
+      <td>360</td>
+      <td>949</td>
+      <td>64</td>
+      <td>10</td>
+      <td>0.177</td>
+      <td>0.028198</td>
+      <td>580.0</td>
+      <td>0 min 20 sec</td>
     </tr>
     <tr>
       <th>9th</th>
@@ -3510,18 +3498,18 @@ RMSLE: 0.055
       <td>28May2020</td>
       <td>126529100</td>
       <td>SIR-F</td>
-      <td>0.12</td>
-      <td>0.287910</td>
-      <td>0.000257</td>
-      <td>0.008298</td>
-      <td>0.048885</td>
-      <td>720</td>
-      <td>0.288</td>
-      <td>1946</td>
-      <td>60</td>
+      <td>0.14</td>
+      <td>0.266931</td>
+      <td>0.000168</td>
+      <td>0.004652</td>
+      <td>0.024313</td>
+      <td>360</td>
+      <td>1483</td>
+      <td>53</td>
       <td>10</td>
-      <td>0.015521</td>
-      <td>347.0</td>
+      <td>0.267</td>
+      <td>0.014285</td>
+      <td>339.0</td>
       <td>0 min 10 sec</td>
     </tr>
     <tr>
@@ -3531,18 +3519,18 @@ RMSLE: 0.055
       <td>05Jun2020</td>
       <td>126529100</td>
       <td>SIR-F</td>
-      <td>0.47</td>
-      <td>0.086416</td>
-      <td>0.000098</td>
-      <td>0.019009</td>
-      <td>0.036553</td>
-      <td>720</td>
-      <td>0.086</td>
-      <td>5088</td>
-      <td>26</td>
+      <td>0.49</td>
+      <td>0.014941</td>
+      <td>0.000609</td>
+      <td>0.009232</td>
+      <td>0.017983</td>
+      <td>360</td>
+      <td>410</td>
+      <td>27</td>
       <td>13</td>
-      <td>0.013236</td>
-      <td>351.0</td>
+      <td>0.015</td>
+      <td>0.013353</td>
+      <td>335.0</td>
       <td>0 min 10 sec</td>
     </tr>
     <tr>
@@ -3552,18 +3540,18 @@ RMSLE: 0.055
       <td>13Jun2020</td>
       <td>126529100</td>
       <td>SIR-F</td>
-      <td>0.60</td>
-      <td>0.001984</td>
-      <td>0.000717</td>
-      <td>0.020179</td>
-      <td>0.032630</td>
-      <td>720</td>
-      <td>0.002</td>
-      <td>697</td>
-      <td>24</td>
-      <td>15</td>
-      <td>0.021102</td>
-      <td>336.0</td>
+      <td>0.59</td>
+      <td>0.074454</td>
+      <td>0.000041</td>
+      <td>0.009890</td>
+      <td>0.015352</td>
+      <td>360</td>
+      <td>6162</td>
+      <td>25</td>
+      <td>16</td>
+      <td>0.074</td>
+      <td>0.022048</td>
+      <td>305.0</td>
       <td>0 min 10 sec</td>
     </tr>
     <tr>
@@ -3573,19 +3561,19 @@ RMSLE: 0.055
       <td>28Jun2020</td>
       <td>126529100</td>
       <td>SIR-F</td>
-      <td>0.95</td>
-      <td>0.036972</td>
-      <td>0.000693</td>
-      <td>0.039420</td>
-      <td>0.039082</td>
-      <td>720</td>
-      <td>0.037</td>
-      <td>721</td>
-      <td>12</td>
-      <td>12</td>
-      <td>0.035544</td>
-      <td>1574.0</td>
-      <td>1 min  0 sec</td>
+      <td>0.96</td>
+      <td>0.049842</td>
+      <td>0.000046</td>
+      <td>0.022136</td>
+      <td>0.021777</td>
+      <td>360</td>
+      <td>5441</td>
+      <td>11</td>
+      <td>11</td>
+      <td>0.050</td>
+      <td>0.035661</td>
+      <td>1547.0</td>
+      <td>1 min 10 sec</td>
     </tr>
     <tr>
       <th>13th</th>
@@ -3594,19 +3582,19 @@ RMSLE: 0.055
       <td>09Jul2020</td>
       <td>126529100</td>
       <td>SIR-F</td>
-      <td>2.20</td>
-      <td>0.000865</td>
-      <td>0.000368</td>
-      <td>0.068157</td>
-      <td>0.030637</td>
-      <td>720</td>
-      <td>0.001</td>
-      <td>1358</td>
+      <td>2.19</td>
+      <td>0.002283</td>
+      <td>0.000059</td>
+      <td>0.033561</td>
+      <td>0.015254</td>
+      <td>360</td>
+      <td>4208</td>
       <td>7</td>
       <td>16</td>
-      <td>0.022963</td>
-      <td>1576.0</td>
-      <td>1 min  0 sec</td>
+      <td>0.002</td>
+      <td>0.023577</td>
+      <td>333.0</td>
+      <td>0 min 10 sec</td>
     </tr>
     <tr>
       <th>14th</th>
@@ -3615,19 +3603,19 @@ RMSLE: 0.055
       <td>20Jul2020</td>
       <td>126529100</td>
       <td>SIR-F</td>
-      <td>2.25</td>
-      <td>0.000229</td>
-      <td>0.000113</td>
-      <td>0.067784</td>
-      <td>0.030008</td>
-      <td>720</td>
-      <td>0.000</td>
-      <td>4407</td>
-      <td>7</td>
-      <td>16</td>
-      <td>0.02139</td>
-      <td>647.0</td>
-      <td>0 min 20 sec</td>
+      <td>2.06</td>
+      <td>0.000543</td>
+      <td>0.000094</td>
+      <td>0.036765</td>
+      <td>0.017779</td>
+      <td>360</td>
+      <td>2646</td>
+      <td>6</td>
+      <td>14</td>
+      <td>0.001</td>
+      <td>0.020968</td>
+      <td>1043.0</td>
+      <td>0 min 40 sec</td>
     </tr>
     <tr>
       <th>15th</th>
@@ -3636,19 +3624,19 @@ RMSLE: 0.055
       <td>31Jul2020</td>
       <td>126529100</td>
       <td>SIR-F</td>
-      <td>1.88</td>
-      <td>0.000735</td>
-      <td>0.000225</td>
-      <td>0.066814</td>
-      <td>0.035237</td>
-      <td>720</td>
-      <td>0.001</td>
-      <td>2219</td>
+      <td>1.81</td>
+      <td>0.001813</td>
+      <td>0.000059</td>
+      <td>0.033038</td>
+      <td>0.018211</td>
+      <td>360</td>
+      <td>4226</td>
       <td>7</td>
-      <td>14</td>
-      <td>0.020542</td>
-      <td>907.0</td>
-      <td>0 min 30 sec</td>
+      <td>13</td>
+      <td>0.002</td>
+      <td>0.023986</td>
+      <td>330.0</td>
+      <td>0 min 10 sec</td>
     </tr>
     <tr>
       <th>16th</th>
@@ -3657,19 +3645,19 @@ RMSLE: 0.055
       <td>14Aug2020</td>
       <td>126529100</td>
       <td>SIR-F</td>
-      <td>1.60</td>
-      <td>0.000171</td>
-      <td>0.000176</td>
-      <td>0.051141</td>
-      <td>0.031807</td>
-      <td>720</td>
-      <td>0.000</td>
-      <td>2842</td>
+      <td>1.46</td>
+      <td>0.000054</td>
+      <td>0.000060</td>
+      <td>0.025489</td>
+      <td>0.017371</td>
+      <td>360</td>
+      <td>4157</td>
       <td>9</td>
-      <td>15</td>
-      <td>0.046061</td>
-      <td>2288.0</td>
-      <td>1 min 40 sec</td>
+      <td>14</td>
+      <td>0.000</td>
+      <td>0.056051</td>
+      <td>2377.0</td>
+      <td>2 min  0 sec</td>
     </tr>
     <tr>
       <th>17th</th>
@@ -3678,19 +3666,19 @@ RMSLE: 0.055
       <td>28Aug2020</td>
       <td>126529100</td>
       <td>SIR-F</td>
-      <td>0.81</td>
-      <td>0.000232</td>
-      <td>0.000454</td>
-      <td>0.039382</td>
-      <td>0.048326</td>
-      <td>720</td>
-      <td>0.000</td>
-      <td>1101</td>
+      <td>0.80</td>
+      <td>0.000256</td>
+      <td>0.000257</td>
+      <td>0.019676</td>
+      <td>0.024187</td>
+      <td>360</td>
+      <td>974</td>
       <td>12</td>
       <td>10</td>
-      <td>0.014071</td>
-      <td>634.0</td>
-      <td>0 min 20 sec</td>
+      <td>0.000</td>
+      <td>0.015375</td>
+      <td>331.0</td>
+      <td>0 min 10 sec</td>
     </tr>
     <tr>
       <th>18th</th>
@@ -3699,19 +3687,19 @@ RMSLE: 0.055
       <td>07Sep2020</td>
       <td>126529100</td>
       <td>SIR-F</td>
-      <td>0.70</td>
-      <td>0.019019</td>
-      <td>0.000041</td>
-      <td>0.034120</td>
-      <td>0.047549</td>
-      <td>720</td>
-      <td>0.019</td>
-      <td>12318</td>
-      <td>14</td>
+      <td>0.71</td>
+      <td>0.018863</td>
+      <td>0.000040</td>
+      <td>0.018038</td>
+      <td>0.024881</td>
+      <td>360</td>
+      <td>6322</td>
+      <td>13</td>
       <td>10</td>
-      <td>0.019224</td>
-      <td>347.0</td>
-      <td>0 min 10 sec</td>
+      <td>0.019</td>
+      <td>0.020981</td>
+      <td>573.0</td>
+      <td>0 min 20 sec</td>
     </tr>
     <tr>
       <th>19th</th>
@@ -3720,18 +3708,18 @@ RMSLE: 0.055
       <td>15Sep2020</td>
       <td>126529100</td>
       <td>SIR-F</td>
-      <td>0.79</td>
-      <td>0.016797</td>
-      <td>0.000200</td>
-      <td>0.040369</td>
-      <td>0.049839</td>
-      <td>720</td>
-      <td>0.017</td>
-      <td>2504</td>
-      <td>12</td>
+      <td>0.73</td>
+      <td>0.003883</td>
+      <td>0.000301</td>
+      <td>0.017737</td>
+      <td>0.023867</td>
+      <td>360</td>
+      <td>829</td>
+      <td>14</td>
       <td>10</td>
-      <td>0.015767</td>
-      <td>349.0</td>
+      <td>0.004</td>
+      <td>0.021747</td>
+      <td>300.0</td>
       <td>0 min 10 sec</td>
     </tr>
     <tr>
@@ -3741,18 +3729,18 @@ RMSLE: 0.055
       <td>24Sep2020</td>
       <td>126529100</td>
       <td>SIR-F</td>
-      <td>0.91</td>
-      <td>0.000038</td>
-      <td>0.000835</td>
-      <td>0.036335</td>
-      <td>0.039121</td>
-      <td>720</td>
-      <td>0.000</td>
-      <td>598</td>
-      <td>13</td>
-      <td>12</td>
-      <td>0.014753</td>
-      <td>350.0</td>
+      <td>0.92</td>
+      <td>0.003232</td>
+      <td>0.000309</td>
+      <td>0.021652</td>
+      <td>0.023205</td>
+      <td>360</td>
+      <td>808</td>
+      <td>11</td>
+      <td>10</td>
+      <td>0.003</td>
+      <td>0.01416</td>
+      <td>319.0</td>
       <td>0 min 10 sec</td>
     </tr>
     <tr>
@@ -3763,18 +3751,18 @@ RMSLE: 0.055
       <td>126529100</td>
       <td>SIR-F</td>
       <td>0.99</td>
-      <td>0.000808</td>
-      <td>0.000556</td>
-      <td>0.048126</td>
-      <td>0.047787</td>
-      <td>720</td>
-      <td>0.001</td>
-      <td>899</td>
-      <td>10</td>
-      <td>10</td>
-      <td>0.007352</td>
-      <td>1144.0</td>
-      <td>0 min 40 sec</td>
+      <td>0.000203</td>
+      <td>0.000257</td>
+      <td>0.025754</td>
+      <td>0.025691</td>
+      <td>360</td>
+      <td>974</td>
+      <td>9</td>
+      <td>9</td>
+      <td>0.000</td>
+      <td>0.007488</td>
+      <td>1281.0</td>
+      <td>0 min 50 sec</td>
     </tr>
     <tr>
       <th>22nd</th>
@@ -3784,18 +3772,18 @@ RMSLE: 0.055
       <td>126529100</td>
       <td>SIR-F</td>
       <td>0.97</td>
-      <td>0.000921</td>
-      <td>0.000384</td>
-      <td>0.046458</td>
-      <td>0.047514</td>
-      <td>720</td>
+      <td>0.000736</td>
+      <td>0.000224</td>
+      <td>0.025233</td>
+      <td>0.025705</td>
+      <td>360</td>
+      <td>1113</td>
+      <td>9</td>
+      <td>9</td>
       <td>0.001</td>
-      <td>1302</td>
-      <td>10</td>
-      <td>10</td>
-      <td>0.009301</td>
-      <td>2417.0</td>
-      <td>1 min 50 sec</td>
+      <td>0.009551</td>
+      <td>1653.0</td>
+      <td>1 min 10 sec</td>
     </tr>
     <tr>
       <th>23rd</th>
@@ -3805,18 +3793,18 @@ RMSLE: 0.055
       <td>126529100</td>
       <td>SIR-F</td>
       <td>0.98</td>
-      <td>0.001354</td>
-      <td>0.000406</td>
-      <td>0.046691</td>
-      <td>0.047293</td>
-      <td>720</td>
+      <td>0.000735</td>
+      <td>0.000224</td>
+      <td>0.025454</td>
+      <td>0.025826</td>
+      <td>360</td>
+      <td>1113</td>
+      <td>9</td>
+      <td>9</td>
       <td>0.001</td>
-      <td>1230</td>
-      <td>10</td>
-      <td>10</td>
-      <td>0.011413</td>
-      <td>1964.0</td>
-      <td>1 min 20 sec</td>
+      <td>0.011582</td>
+      <td>1574.0</td>
+      <td>1 min 10 sec</td>
     </tr>
     <tr>
       <th>24th</th>
@@ -3825,19 +3813,19 @@ RMSLE: 0.055
       <td>28Oct2020</td>
       <td>126529100</td>
       <td>SIR-F</td>
-      <td>1.14</td>
-      <td>0.001355</td>
-      <td>0.000735</td>
-      <td>0.054695</td>
-      <td>0.047228</td>
-      <td>720</td>
-      <td>0.001</td>
-      <td>680</td>
+      <td>1.15</td>
+      <td>0.000139</td>
+      <td>0.000246</td>
+      <td>0.027301</td>
+      <td>0.023525</td>
+      <td>360</td>
+      <td>1015</td>
       <td>9</td>
       <td>10</td>
-      <td>0.008633</td>
-      <td>348.0</td>
-      <td>0 min 10 sec</td>
+      <td>0.000</td>
+      <td>0.0088</td>
+      <td>617.0</td>
+      <td>0 min 20 sec</td>
     </tr>
     <tr>
       <th>25th</th>
@@ -3846,19 +3834,19 @@ RMSLE: 0.055
       <td>05Nov2020</td>
       <td>126529100</td>
       <td>SIR-F</td>
-      <td>1.36</td>
-      <td>0.002514</td>
-      <td>0.000482</td>
-      <td>0.052972</td>
-      <td>0.038236</td>
-      <td>720</td>
-      <td>0.003</td>
-      <td>1038</td>
+      <td>1.34</td>
+      <td>0.000435</td>
+      <td>0.000361</td>
+      <td>0.027525</td>
+      <td>0.020162</td>
+      <td>360</td>
+      <td>692</td>
       <td>9</td>
-      <td>13</td>
-      <td>0.008131</td>
-      <td>349.0</td>
-      <td>0 min 10 sec</td>
+      <td>12</td>
+      <td>0.000</td>
+      <td>0.007772</td>
+      <td>610.0</td>
+      <td>0 min 20 sec</td>
     </tr>
     <tr>
       <th>26th</th>
@@ -3867,19 +3855,19 @@ RMSLE: 0.055
       <td>18Nov2020</td>
       <td>126529100</td>
       <td>SIR-F</td>
-      <td>1.64</td>
-      <td>0.000269</td>
-      <td>0.000403</td>
-      <td>0.068347</td>
-      <td>0.041357</td>
-      <td>720</td>
-      <td>0.000</td>
-      <td>1241</td>
+      <td>1.62</td>
+      <td>0.000299</td>
+      <td>0.000230</td>
+      <td>0.033754</td>
+      <td>0.020559</td>
+      <td>360</td>
+      <td>1086</td>
       <td>7</td>
       <td>12</td>
-      <td>0.009748</td>
-      <td>2266.0</td>
-      <td>1 min 40 sec</td>
+      <td>0.000</td>
+      <td>0.010858</td>
+      <td>335.0</td>
+      <td>0 min 10 sec</td>
     </tr>
     <tr>
       <th>27th</th>
@@ -3888,19 +3876,19 @@ RMSLE: 0.055
       <td>28Nov2020</td>
       <td>126529100</td>
       <td>SIR-F</td>
-      <td>1.52</td>
-      <td>0.000937</td>
-      <td>0.000403</td>
-      <td>0.063781</td>
-      <td>0.041452</td>
-      <td>720</td>
-      <td>0.001</td>
-      <td>1240</td>
-      <td>7</td>
-      <td>12</td>
-      <td>0.0255</td>
-      <td>1552.0</td>
-      <td>1 min  0 sec</td>
+      <td>1.55</td>
+      <td>0.000174</td>
+      <td>0.000233</td>
+      <td>0.030097</td>
+      <td>0.019133</td>
+      <td>360</td>
+      <td>1071</td>
+      <td>8</td>
+      <td>13</td>
+      <td>0.000</td>
+      <td>0.025903</td>
+      <td>2149.0</td>
+      <td>1 min 40 sec</td>
     </tr>
     <tr>
       <th>28th</th>
@@ -3909,19 +3897,19 @@ RMSLE: 0.055
       <td>11Dec2020</td>
       <td>126529100</td>
       <td>SIR-F</td>
-      <td>1.13</td>
-      <td>0.000349</td>
-      <td>0.000709</td>
-      <td>0.049614</td>
-      <td>0.043376</td>
-      <td>720</td>
-      <td>0.000</td>
-      <td>705</td>
-      <td>10</td>
+      <td>1.15</td>
+      <td>0.002617</td>
+      <td>0.000301</td>
+      <td>0.026302</td>
+      <td>0.022554</td>
+      <td>360</td>
+      <td>829</td>
+      <td>9</td>
       <td>11</td>
-      <td>0.007817</td>
-      <td>1104.0</td>
-      <td>0 min 40 sec</td>
+      <td>0.003</td>
+      <td>0.013221</td>
+      <td>291.0</td>
+      <td>0 min 10 sec</td>
     </tr>
     <tr>
       <th>29th</th>
@@ -3930,19 +3918,19 @@ RMSLE: 0.055
       <td>25Dec2020</td>
       <td>126529100</td>
       <td>SIR-F</td>
-      <td>1.16</td>
-      <td>0.000546</td>
-      <td>0.000743</td>
-      <td>0.050052</td>
-      <td>0.042462</td>
-      <td>720</td>
-      <td>0.001</td>
-      <td>673</td>
+      <td>1.17</td>
+      <td>0.000958</td>
+      <td>0.000366</td>
+      <td>0.027282</td>
+      <td>0.022999</td>
+      <td>360</td>
+      <td>683</td>
       <td>9</td>
-      <td>11</td>
-      <td>0.012756</td>
-      <td>850.0</td>
-      <td>0 min 30 sec</td>
+      <td>10</td>
+      <td>0.001</td>
+      <td>0.012581</td>
+      <td>571.0</td>
+      <td>0 min 20 sec</td>
     </tr>
     <tr>
       <th>30th</th>
@@ -3951,19 +3939,19 @@ RMSLE: 0.055
       <td>07Jan2021</td>
       <td>126529100</td>
       <td>SIR-F</td>
-      <td>1.46</td>
-      <td>0.000241</td>
-      <td>0.000738</td>
-      <td>0.048283</td>
-      <td>0.032435</td>
-      <td>720</td>
-      <td>0.000</td>
-      <td>677</td>
+      <td>1.45</td>
+      <td>0.000758</td>
+      <td>0.000346</td>
+      <td>0.024937</td>
+      <td>0.016837</td>
+      <td>360</td>
+      <td>722</td>
       <td>10</td>
-      <td>15</td>
-      <td>0.008564</td>
-      <td>1106.0</td>
-      <td>0 min 40 sec</td>
+      <td>14</td>
+      <td>0.001</td>
+      <td>0.007284</td>
+      <td>1465.0</td>
+      <td>1 min  0 sec</td>
     </tr>
     <tr>
       <th>31st</th>
@@ -3972,19 +3960,19 @@ RMSLE: 0.055
       <td>21Jan2021</td>
       <td>126529100</td>
       <td>SIR-F</td>
-      <td>1.63</td>
-      <td>0.000070</td>
-      <td>0.000570</td>
-      <td>0.049236</td>
-      <td>0.029644</td>
-      <td>720</td>
-      <td>0.000</td>
-      <td>877</td>
+      <td>1.49</td>
+      <td>0.001082</td>
+      <td>0.000192</td>
+      <td>0.024841</td>
+      <td>0.016482</td>
+      <td>360</td>
+      <td>1304</td>
       <td>10</td>
-      <td>16</td>
-      <td>0.047347</td>
-      <td>2126.0</td>
-      <td>1 min 30 sec</td>
+      <td>15</td>
+      <td>0.001</td>
+      <td>0.056221</td>
+      <td>1068.0</td>
+      <td>0 min 40 sec</td>
     </tr>
     <tr>
       <th>32nd</th>
@@ -3993,19 +3981,19 @@ RMSLE: 0.055
       <td>03Feb2021</td>
       <td>126529100</td>
       <td>SIR-F</td>
-      <td>0.63</td>
-      <td>0.001220</td>
-      <td>0.000797</td>
-      <td>0.031056</td>
-      <td>0.048422</td>
-      <td>720</td>
-      <td>0.001</td>
-      <td>627</td>
-      <td>16</td>
+      <td>0.69</td>
+      <td>0.000187</td>
+      <td>0.000427</td>
+      <td>0.017543</td>
+      <td>0.024964</td>
+      <td>360</td>
+      <td>585</td>
+      <td>14</td>
       <td>10</td>
-      <td>0.026227</td>
-      <td>373.0</td>
-      <td>0 min 10 sec</td>
+      <td>0.000</td>
+      <td>0.01789</td>
+      <td>1144.0</td>
+      <td>0 min 50 sec</td>
     </tr>
     <tr>
       <th>33rd</th>
@@ -4014,19 +4002,19 @@ RMSLE: 0.055
       <td>17Feb2021</td>
       <td>126529100</td>
       <td>SIR-F</td>
-      <td>0.53</td>
-      <td>0.018817</td>
-      <td>0.000798</td>
-      <td>0.029130</td>
-      <td>0.053501</td>
-      <td>720</td>
-      <td>0.019</td>
-      <td>626</td>
-      <td>17</td>
-      <td>9</td>
-      <td>0.011189</td>
-      <td>328.0</td>
-      <td>0 min 10 sec</td>
+      <td>0.54</td>
+      <td>0.030339</td>
+      <td>0.000210</td>
+      <td>0.015887</td>
+      <td>0.028424</td>
+      <td>360</td>
+      <td>1191</td>
+      <td>15</td>
+      <td>8</td>
+      <td>0.030</td>
+      <td>0.01308</td>
+      <td>591.0</td>
+      <td>0 min 20 sec</td>
     </tr>
     <tr>
       <th>34th</th>
@@ -4036,17 +4024,17 @@ RMSLE: 0.055
       <td>126529100</td>
       <td>SIR-F</td>
       <td>0.67</td>
-      <td>0.044837</td>
-      <td>0.000302</td>
-      <td>0.032345</td>
-      <td>0.045961</td>
-      <td>720</td>
-      <td>0.045</td>
-      <td>1653</td>
+      <td>0.037630</td>
+      <td>0.000071</td>
+      <td>0.016599</td>
+      <td>0.023738</td>
+      <td>360</td>
+      <td>3514</td>
       <td>15</td>
       <td>10</td>
-      <td>0.007657</td>
-      <td>333.0</td>
+      <td>0.038</td>
+      <td>0.00989</td>
+      <td>315.0</td>
       <td>0 min 10 sec</td>
     </tr>
     <tr>
@@ -4057,17 +4045,17 @@ RMSLE: 0.055
       <td>126529100</td>
       <td>SIR-F</td>
       <td>0.78</td>
-      <td>0.040459</td>
-      <td>0.000184</td>
-      <td>0.038440</td>
-      <td>0.047218</td>
-      <td>720</td>
-      <td>0.040</td>
-      <td>2718</td>
-      <td>13</td>
+      <td>0.036325</td>
+      <td>0.000093</td>
+      <td>0.020329</td>
+      <td>0.024920</td>
+      <td>360</td>
+      <td>2675</td>
+      <td>12</td>
       <td>10</td>
-      <td>0.013785</td>
-      <td>310.0</td>
+      <td>0.036</td>
+      <td>0.013809</td>
+      <td>326.0</td>
       <td>0 min 10 sec</td>
     </tr>
     <tr>
@@ -4077,58 +4065,58 @@ RMSLE: 0.055
       <td>17Mar2021</td>
       <td>126529100</td>
       <td>SIR-F</td>
-      <td>1.10</td>
-      <td>0.026840</td>
-      <td>0.000617</td>
-      <td>0.048535</td>
-      <td>0.042376</td>
-      <td>720</td>
-      <td>0.027</td>
-      <td>809</td>
+      <td>1.09</td>
+      <td>0.035945</td>
+      <td>0.000097</td>
+      <td>0.024966</td>
+      <td>0.021932</td>
+      <td>360</td>
+      <td>2585</td>
       <td>10</td>
       <td>11</td>
-      <td>0.0092</td>
-      <td>324.0</td>
+      <td>0.036</td>
+      <td>0.00917</td>
+      <td>319.0</td>
       <td>0 min 10 sec</td>
     </tr>
     <tr>
       <th>37th</th>
       <td>Past</td>
       <td>18Mar2021</td>
-      <td>27Mar2021</td>
+      <td>28Mar2021</td>
       <td>126529100</td>
       <td>SIR-F</td>
-      <td>1.29</td>
-      <td>0.030478</td>
-      <td>0.000048</td>
-      <td>0.054967</td>
-      <td>0.041281</td>
-      <td>720</td>
-      <td>0.030</td>
-      <td>10431</td>
+      <td>1.27</td>
+      <td>0.000145</td>
+      <td>0.000608</td>
+      <td>0.026966</td>
+      <td>0.020590</td>
+      <td>360</td>
+      <td>411</td>
       <td>9</td>
       <td>12</td>
-      <td>0.016617</td>
-      <td>550.0</td>
-      <td>0 min 20 sec</td>
+      <td>0.000</td>
+      <td>0.016242</td>
+      <td>2359.0</td>
+      <td>1 min 50 sec</td>
     </tr>
     <tr>
       <th>38th</th>
       <td>Future</td>
-      <td>28Mar2021</td>
-      <td>26Apr2021</td>
+      <td>29Mar2021</td>
+      <td>27Apr2021</td>
       <td>126529100</td>
       <td>SIR-F</td>
-      <td>1.29</td>
-      <td>0.030478</td>
-      <td>0.000048</td>
-      <td>0.054967</td>
-      <td>0.041281</td>
-      <td>720</td>
-      <td>0.030</td>
-      <td>10431</td>
+      <td>1.27</td>
+      <td>0.000145</td>
+      <td>0.000608</td>
+      <td>0.026966</td>
+      <td>0.020590</td>
+      <td>360</td>
+      <td>411</td>
       <td>9</td>
       <td>12</td>
+      <td>0.000</td>
       <td>-</td>
       <td>-</td>
       <td>-</td>
@@ -4136,20 +4124,20 @@ RMSLE: 0.055
     <tr>
       <th>39th</th>
       <td>Future</td>
-      <td>27Apr2021</td>
+      <td>28Apr2021</td>
       <td>01Jun2021</td>
       <td>126529100</td>
       <td>SIR-F</td>
       <td>1.07</td>
-      <td>0.030478</td>
-      <td>0.000048</td>
-      <td>0.054967</td>
-      <td>0.049537</td>
-      <td>720</td>
-      <td>0.030</td>
-      <td>10431</td>
+      <td>0.000145</td>
+      <td>0.000608</td>
+      <td>0.026966</td>
+      <td>0.024708</td>
+      <td>360</td>
+      <td>411</td>
       <td>9</td>
       <td>10</td>
+      <td>0.000</td>
       <td>-</td>
       <td>-</td>
       <td>-</td>
@@ -4245,8 +4233,8 @@ RMSLE: 0.055
 </div>
 <div class="output_area docutils container">
 <div class="highlight"><pre>
-Determination coefficient: 0.415 (train)
-Determination coefficient: 0.260 (test)
+Determination coefficient: 0.327 (train)
+Determination coefficient: 0.449 (test)
 </pre></div></div>
 </div>
 <p>Show the intercept and coefficient values of the regression model.</p>
@@ -4274,150 +4262,159 @@ Intercept and coefficient:
 </div>
 <div class="output_area rendered_html docutils container">
 <style  type="text/css" >
-#T_60d30_row0_col0,#T_60d30_row3_col12,#T_60d30_row3_col13{
-            background-color:  #73a9cf;
+#T_31644_row0_col0{
+            background-color:  #bbc7e0;
             color:  #000000;
-        }#T_60d30_row0_col1{
-            background-color:  #fff7fb;
+        }#T_31644_row0_col1{
+            background-color:  #fbf4f9;
             color:  #000000;
-        }#T_60d30_row0_col2,#T_60d30_row0_col7{
-            background-color:  #60a1ca;
+        }#T_31644_row0_col2,#T_31644_row0_col7{
+            background-color:  #9ab8d8;
             color:  #000000;
-        }#T_60d30_row0_col3{
-            background-color:  #83afd3;
+        }#T_31644_row0_col3{
+            background-color:  #b4c4df;
             color:  #000000;
-        }#T_60d30_row0_col4,#T_60d30_row2_col1{
-            background-color:  #509ac6;
-            color:  #000000;
-        }#T_60d30_row0_col5,#T_60d30_row3_col10{
-            background-color:  #67a4cc;
-            color:  #000000;
-        }#T_60d30_row0_col6{
-            background-color:  #023858;
-            color:  #f1f1f1;
-        }#T_60d30_row0_col8{
-            background-color:  #569dc8;
-            color:  #000000;
-        }#T_60d30_row0_col9,#T_60d30_row0_col11,#T_60d30_row0_col12,#T_60d30_row0_col13,#T_60d30_row1_col2,#T_60d30_row1_col4,#T_60d30_row1_col6,#T_60d30_row1_col7,#T_60d30_row1_col8,#T_60d30_row1_col9,#T_60d30_row1_col10,#T_60d30_row1_col11,#T_60d30_row1_col12,#T_60d30_row1_col13,#T_60d30_row1_col14,#T_60d30_row2_col8,#T_60d30_row2_col9,#T_60d30_row2_col11,#T_60d30_row2_col14,#T_60d30_row3_col9,#T_60d30_row3_col11,#T_60d30_row3_col14{
-            background-color:  #71a8ce;
-            color:  #000000;
-        }#T_60d30_row0_col10{
-            background-color:  #79abd0;
-            color:  #000000;
-        }#T_60d30_row0_col14,#T_60d30_row3_col2,#T_60d30_row3_col7{
-            background-color:  #75a9cf;
-            color:  #000000;
-        }#T_60d30_row1_col0,#T_60d30_row1_col1,#T_60d30_row1_col3,#T_60d30_row1_col5,#T_60d30_row3_col3{
-            background-color:  #6fa7ce;
-            color:  #000000;
-        }#T_60d30_row2_col0{
-            background-color:  #157ab5;
-            color:  #000000;
-        }#T_60d30_row2_col2,#T_60d30_row2_col7{
-            background-color:  #84b0d3;
-            color:  #000000;
-        }#T_60d30_row2_col3{
-            background-color:  #4a98c5;
-            color:  #000000;
-        }#T_60d30_row2_col4,#T_60d30_row3_col4,#T_60d30_row3_col5{
-            background-color:  #6ba5cd;
-            color:  #000000;
-        }#T_60d30_row2_col5{
-            background-color:  #81aed2;
-            color:  #000000;
-        }#T_60d30_row2_col6{
-            background-color:  #a8bedc;
-            color:  #000000;
-        }#T_60d30_row2_col10{
-            background-color:  #4897c4;
-            color:  #000000;
-        }#T_60d30_row2_col12,#T_60d30_row2_col13{
-            background-color:  #63a2cb;
-            color:  #000000;
-        }#T_60d30_row3_col0{
-            background-color:  #529bc7;
-            color:  #000000;
-        }#T_60d30_row3_col1{
+        }#T_31644_row0_col4{
             background-color:  #6da6cd;
             color:  #000000;
-        }#T_60d30_row3_col6{
-            background-color:  #3f93c2;
+        }#T_31644_row0_col5{
+            background-color:  #9fbad9;
             color:  #000000;
-        }#T_60d30_row3_col8{
-            background-color:  #7bacd1;
+        }#T_31644_row0_col6{
+            background-color:  #023858;
+            color:  #f1f1f1;
+        }#T_31644_row0_col8,#T_31644_row3_col0{
+            background-color:  #94b6d7;
             color:  #000000;
-        }</style><table id="T_60d30_" ><thead>    <tr>        <th class="blank level0" ></th>        <th class="col_heading level0 col0" >Intercept</th>        <th class="col_heading level0 col1" >School_closing</th>        <th class="col_heading level0 col2" >Workplace_closing</th>        <th class="col_heading level0 col3" >Cancel_events</th>        <th class="col_heading level0 col4" >Gatherings_restrictions</th>        <th class="col_heading level0 col5" >Transport_closing</th>        <th class="col_heading level0 col6" >Stay_home_restrictions</th>        <th class="col_heading level0 col7" >Internal_movement_restrictions</th>        <th class="col_heading level0 col8" >International_movement_restrictions</th>        <th class="col_heading level0 col9" >Information_campaigns</th>        <th class="col_heading level0 col10" >Testing_policy</th>        <th class="col_heading level0 col11" >Contact_tracing</th>        <th class="col_heading level0 col12" >Vaccinations</th>        <th class="col_heading level0 col13" >Vaccinated_once</th>        <th class="col_heading level0 col14" >Vaccinated_full</th>    </tr></thead><tbody>
+        }#T_31644_row0_col9,#T_31644_row0_col11,#T_31644_row1_col1,#T_31644_row1_col2,#T_31644_row1_col4,#T_31644_row1_col6,#T_31644_row1_col7,#T_31644_row1_col8,#T_31644_row1_col9,#T_31644_row1_col11,#T_31644_row2_col9,#T_31644_row2_col11,#T_31644_row2_col14,#T_31644_row3_col9,#T_31644_row3_col11,#T_31644_row3_col14{
+            background-color:  #adc1dd;
+            color:  #000000;
+        }#T_31644_row0_col10{
+            background-color:  #fff7fb;
+            color:  #000000;
+        }#T_31644_row0_col12,#T_31644_row0_col13{
+            background-color:  #d3d4e7;
+            color:  #000000;
+        }#T_31644_row0_col14{
+            background-color:  #c2cbe2;
+            color:  #000000;
+        }#T_31644_row1_col0,#T_31644_row1_col3,#T_31644_row1_col5,#T_31644_row1_col10,#T_31644_row1_col12,#T_31644_row1_col13,#T_31644_row1_col14,#T_31644_row3_col3{
+            background-color:  #acc0dd;
+            color:  #000000;
+        }#T_31644_row2_col0{
+            background-color:  #5c9fc9;
+            color:  #000000;
+        }#T_31644_row2_col1,#T_31644_row2_col3{
+            background-color:  #8fb4d6;
+            color:  #000000;
+        }#T_31644_row2_col2,#T_31644_row2_col7{
+            background-color:  #bdc8e1;
+            color:  #000000;
+        }#T_31644_row2_col4,#T_31644_row3_col5,#T_31644_row3_col10{
+            background-color:  #a8bedc;
+            color:  #000000;
+        }#T_31644_row2_col5{
+            background-color:  #b7c5df;
+            color:  #000000;
+        }#T_31644_row2_col6{
+            background-color:  #d5d5e8;
+            color:  #000000;
+        }#T_31644_row2_col8{
+            background-color:  #b3c3de;
+            color:  #000000;
+        }#T_31644_row2_col10{
+            background-color:  #96b6d7;
+            color:  #000000;
+        }#T_31644_row2_col12,#T_31644_row2_col13{
+            background-color:  #a7bddb;
+            color:  #000000;
+        }#T_31644_row3_col1{
+            background-color:  #a5bddb;
+            color:  #000000;
+        }#T_31644_row3_col2,#T_31644_row3_col7,#T_31644_row3_col12,#T_31644_row3_col13{
+            background-color:  #b0c2de;
+            color:  #000000;
+        }#T_31644_row3_col4{
+            background-color:  #abbfdc;
+            color:  #000000;
+        }#T_31644_row3_col6{
+            background-color:  #8cb3d5;
+            color:  #000000;
+        }#T_31644_row3_col8{
+            background-color:  #b8c6e0;
+            color:  #000000;
+        }</style><table id="T_31644_" ><thead>    <tr>        <th class="blank level0" ></th>        <th class="col_heading level0 col0" >Intercept</th>        <th class="col_heading level0 col1" >School_closing</th>        <th class="col_heading level0 col2" >Workplace_closing</th>        <th class="col_heading level0 col3" >Cancel_events</th>        <th class="col_heading level0 col4" >Gatherings_restrictions</th>        <th class="col_heading level0 col5" >Transport_closing</th>        <th class="col_heading level0 col6" >Stay_home_restrictions</th>        <th class="col_heading level0 col7" >Internal_movement_restrictions</th>        <th class="col_heading level0 col8" >International_movement_restrictions</th>        <th class="col_heading level0 col9" >Information_campaigns</th>        <th class="col_heading level0 col10" >Testing_policy</th>        <th class="col_heading level0 col11" >Contact_tracing</th>        <th class="col_heading level0 col12" >Vaccinations</th>        <th class="col_heading level0 col13" >Vaccinated_once</th>        <th class="col_heading level0 col14" >Vaccinated_full</th>    </tr></thead><tbody>
                 <tr>
-                        <th id="T_60d30_level0_row0" class="row_heading level0 row0" >theta</th>
-                        <td id="T_60d30_row0_col0" class="data row0 col0" >-0.001900</td>
-                        <td id="T_60d30_row0_col1" class="data row0 col1" >-0.137781</td>
-                        <td id="T_60d30_row0_col2" class="data row0 col2" >0.009151</td>
-                        <td id="T_60d30_row0_col3" class="data row0 col3" >-0.011531</td>
-                        <td id="T_60d30_row0_col4" class="data row0 col4" >0.017688</td>
-                        <td id="T_60d30_row0_col5" class="data row0 col5" >0.004520</td>
-                        <td id="T_60d30_row0_col6" class="data row0 col6" >0.133973</td>
-                        <td id="T_60d30_row0_col7" class="data row0 col7" >0.009151</td>
-                        <td id="T_60d30_row0_col8" class="data row0 col8" >0.014858</td>
-                        <td id="T_60d30_row0_col9" class="data row0 col9" >0.000000</td>
-                        <td id="T_60d30_row0_col10" class="data row0 col10" >-0.005516</td>
-                        <td id="T_60d30_row0_col11" class="data row0 col11" >0.000000</td>
-                        <td id="T_60d30_row0_col12" class="data row0 col12" >-0.000047</td>
-                        <td id="T_60d30_row0_col13" class="data row0 col13" >0.000058</td>
-                        <td id="T_60d30_row0_col14" class="data row0 col14" >-0.002953</td>
+                        <th id="T_31644_level0_row0" class="row_heading level0 row0" >theta</th>
+                        <td id="T_31644_row0_col0" class="data row0 col0" >-0.005927</td>
+                        <td id="T_31644_row0_col1" class="data row0 col1" >-0.048526</td>
+                        <td id="T_31644_row0_col2" class="data row0 col2" >0.007218</td>
+                        <td id="T_31644_row0_col3" class="data row0 col3" >-0.003393</td>
+                        <td id="T_31644_row0_col4" class="data row0 col4" >0.023466</td>
+                        <td id="T_31644_row0_col5" class="data row0 col5" >0.005521</td>
+                        <td id="T_31644_row0_col6" class="data row0 col6" >0.094869</td>
+                        <td id="T_31644_row0_col7" class="data row0 col7" >0.007218</td>
+                        <td id="T_31644_row0_col8" class="data row0 col8" >0.009667</td>
+                        <td id="T_31644_row0_col9" class="data row0 col9" >0.000000</td>
+                        <td id="T_31644_row0_col10" class="data row0 col10" >-0.052261</td>
+                        <td id="T_31644_row0_col11" class="data row0 col11" >0.000000</td>
+                        <td id="T_31644_row0_col12" class="data row0 col12" >-0.017340</td>
+                        <td id="T_31644_row0_col13" class="data row0 col13" >-0.017622</td>
+                        <td id="T_31644_row0_col14" class="data row0 col14" >-0.009541</td>
             </tr>
             <tr>
-                        <th id="T_60d30_level0_row1" class="row_heading level0 row1" >kappa</th>
-                        <td id="T_60d30_row1_col0" class="data row1 col0" >0.000811</td>
-                        <td id="T_60d30_row1_col1" class="data row1 col1" >0.000348</td>
-                        <td id="T_60d30_row1_col2" class="data row1 col2" >-0.000307</td>
-                        <td id="T_60d30_row1_col3" class="data row1 col3" >0.000586</td>
-                        <td id="T_60d30_row1_col4" class="data row1 col4" >-0.000137</td>
-                        <td id="T_60d30_row1_col5" class="data row1 col5" >0.000237</td>
-                        <td id="T_60d30_row1_col6" class="data row1 col6" >-0.000317</td>
-                        <td id="T_60d30_row1_col7" class="data row1 col7" >-0.000307</td>
-                        <td id="T_60d30_row1_col8" class="data row1 col8" >-0.000130</td>
-                        <td id="T_60d30_row1_col9" class="data row1 col9" >0.000000</td>
-                        <td id="T_60d30_row1_col10" class="data row1 col10" >-0.000318</td>
-                        <td id="T_60d30_row1_col11" class="data row1 col11" >0.000000</td>
-                        <td id="T_60d30_row1_col12" class="data row1 col12" >-0.000210</td>
-                        <td id="T_60d30_row1_col13" class="data row1 col13" >-0.000215</td>
-                        <td id="T_60d30_row1_col14" class="data row1 col14" >-0.000055</td>
+                        <th id="T_31644_level0_row1" class="row_heading level0 row1" >kappa</th>
+                        <td id="T_31644_row1_col0" class="data row1 col0" >0.000509</td>
+                        <td id="T_31644_row1_col1" class="data row1 col1" >-0.000351</td>
+                        <td id="T_31644_row1_col2" class="data row1 col2" >-0.000110</td>
+                        <td id="T_31644_row1_col3" class="data row1 col3" >0.000129</td>
+                        <td id="T_31644_row1_col4" class="data row1 col4" >-0.000183</td>
+                        <td id="T_31644_row1_col5" class="data row1 col5" >0.000063</td>
+                        <td id="T_31644_row1_col6" class="data row1 col6" >-0.000036</td>
+                        <td id="T_31644_row1_col7" class="data row1 col7" >-0.000110</td>
+                        <td id="T_31644_row1_col8" class="data row1 col8" >-0.000008</td>
+                        <td id="T_31644_row1_col9" class="data row1 col9" >0.000000</td>
+                        <td id="T_31644_row1_col10" class="data row1 col10" >0.000165</td>
+                        <td id="T_31644_row1_col11" class="data row1 col11" >0.000000</td>
+                        <td id="T_31644_row1_col12" class="data row1 col12" >0.000266</td>
+                        <td id="T_31644_row1_col13" class="data row1 col13" >0.000272</td>
+                        <td id="T_31644_row1_col14" class="data row1 col14" >0.000094</td>
             </tr>
             <tr>
-                        <th id="T_60d30_level0_row2" class="row_heading level0 row2" >rho</th>
-                        <td id="T_60d30_row2_col0" class="data row2 col0" >0.054369</td>
-                        <td id="T_60d30_row2_col1" class="data row2 col1" >0.017599</td>
-                        <td id="T_60d30_row2_col2" class="data row2 col2" >-0.012703</td>
-                        <td id="T_60d30_row2_col3" class="data row2 col3" >0.020700</td>
-                        <td id="T_60d30_row2_col4" class="data row2 col4" >0.002992</td>
-                        <td id="T_60d30_row2_col5" class="data row2 col5" >-0.010462</td>
-                        <td id="T_60d30_row2_col6" class="data row2 col6" >-0.037677</td>
-                        <td id="T_60d30_row2_col7" class="data row2 col7" >-0.012703</td>
-                        <td id="T_60d30_row2_col8" class="data row2 col8" >-0.000045</td>
-                        <td id="T_60d30_row2_col9" class="data row2 col9" >0.000000</td>
-                        <td id="T_60d30_row2_col10" class="data row2 col10" >0.022042</td>
-                        <td id="T_60d30_row2_col11" class="data row2 col11" >0.000000</td>
-                        <td id="T_60d30_row2_col12" class="data row2 col12" >0.006691</td>
-                        <td id="T_60d30_row2_col13" class="data row2 col13" >0.006962</td>
-                        <td id="T_60d30_row2_col14" class="data row2 col14" >-0.000806</td>
+                        <th id="T_31644_level0_row2" class="row_heading level0 row2" >rho</th>
+                        <td id="T_31644_row2_col0" class="data row2 col0" >0.028449</td>
+                        <td id="T_31644_row2_col1" class="data row2 col1" >0.011373</td>
+                        <td id="T_31644_row2_col2" class="data row2 col2" >-0.007107</td>
+                        <td id="T_31644_row2_col3" class="data row2 col3" >0.011324</td>
+                        <td id="T_31644_row2_col4" class="data row2 col4" >0.002167</td>
+                        <td id="T_31644_row2_col5" class="data row2 col5" >-0.004026</td>
+                        <td id="T_31644_row2_col6" class="data row2 col6" >-0.018385</td>
+                        <td id="T_31644_row2_col7" class="data row2 col7" >-0.007107</td>
+                        <td id="T_31644_row2_col8" class="data row2 col8" >-0.002362</td>
+                        <td id="T_31644_row2_col9" class="data row2 col9" >0.000000</td>
+                        <td id="T_31644_row2_col10" class="data row2 col10" >0.008912</td>
+                        <td id="T_31644_row2_col11" class="data row2 col11" >0.000000</td>
+                        <td id="T_31644_row2_col12" class="data row2 col12" >0.002419</td>
+                        <td id="T_31644_row2_col13" class="data row2 col13" >0.002525</td>
+                        <td id="T_31644_row2_col14" class="data row2 col14" >-0.000516</td>
             </tr>
             <tr>
-                        <th id="T_60d30_level0_row3" class="row_heading level0 row3" >sigma</th>
-                        <td id="T_60d30_row3_col0" class="data row3 col0" >0.016694</td>
-                        <td id="T_60d30_row3_col1" class="data row3 col1" >0.001291</td>
-                        <td id="T_60d30_row3_col2" class="data row3 col2" >-0.002568</td>
-                        <td id="T_60d30_row3_col3" class="data row3 col3" >0.000241</td>
-                        <td id="T_60d30_row3_col4" class="data row3 col4" >0.002569</td>
-                        <td id="T_60d30_row3_col5" class="data row3 col5" >0.003189</td>
-                        <td id="T_60d30_row3_col6" class="data row3 col6" >0.027075</td>
-                        <td id="T_60d30_row3_col7" class="data row3 col7" >-0.002568</td>
-                        <td id="T_60d30_row3_col8" class="data row3 col8" >-0.006745</td>
-                        <td id="T_60d30_row3_col9" class="data row3 col9" >0.000000</td>
-                        <td id="T_60d30_row3_col10" class="data row3 col10" >0.005337</td>
-                        <td id="T_60d30_row3_col11" class="data row3 col11" >0.000000</td>
-                        <td id="T_60d30_row3_col12" class="data row3 col12" >-0.001817</td>
-                        <td id="T_60d30_row3_col13" class="data row3 col13" >-0.001875</td>
-                        <td id="T_60d30_row3_col14" class="data row3 col14" >-0.000204</td>
+                        <th id="T_31644_level0_row3" class="row_heading level0 row3" >sigma</th>
+                        <td id="T_31644_row3_col0" class="data row3 col0" >0.009411</td>
+                        <td id="T_31644_row3_col1" class="data row3 col1" >0.003270</td>
+                        <td id="T_31644_row3_col2" class="data row3 col2" >-0.001676</td>
+                        <td id="T_31644_row3_col3" class="data row3 col3" >0.000222</td>
+                        <td id="T_31644_row3_col4" class="data row3 col4" >0.000952</td>
+                        <td id="T_31644_row3_col5" class="data row3 col5" >0.002290</td>
+                        <td id="T_31644_row3_col6" class="data row3 col6" >0.012619</td>
+                        <td id="T_31644_row3_col7" class="data row3 col7" >-0.001676</td>
+                        <td id="T_31644_row3_col8" class="data row3 col8" >-0.004632</td>
+                        <td id="T_31644_row3_col9" class="data row3 col9" >0.000000</td>
+                        <td id="T_31644_row3_col10" class="data row3 col10" >0.002309</td>
+                        <td id="T_31644_row3_col11" class="data row3 col11" >0.000000</td>
+                        <td id="T_31644_row3_col12" class="data row3 col12" >-0.001407</td>
+                        <td id="T_31644_row3_col13" class="data row3 col13" >-0.001453</td>
+                        <td id="T_31644_row3_col14" class="data row3 col14" >-0.000131</td>
             </tr>
     </tbody></table></div>
 </div>
@@ -4468,10 +4465,10 @@ Intercept and coefficient:
       <th>rho</th>
       <th>sigma</th>
       <th>tau</th>
-      <th>alpha1 [-]</th>
       <th>1/alpha2 [day]</th>
       <th>1/beta [day]</th>
       <th>1/gamma [day]</th>
+      <th>alpha1 [-]</th>
       <th>RMSLE</th>
       <th>Trials</th>
       <th>Runtime</th>
@@ -4485,19 +4482,19 @@ Intercept and coefficient:
       <td>18Feb2020</td>
       <td>126529100</td>
       <td>SIR-F</td>
-      <td>2.65</td>
-      <td>0.017612</td>
-      <td>0.000174</td>
-      <td>0.036494</td>
-      <td>0.013377</td>
-      <td>720</td>
-      <td>0.018</td>
-      <td>2873</td>
-      <td>13</td>
-      <td>37</td>
-      <td>0.143343</td>
-      <td>1750.0</td>
-      <td>1 min 10 sec</td>
+      <td>2.34</td>
+      <td>0.000546</td>
+      <td>0.000423</td>
+      <td>0.017136</td>
+      <td>0.006910</td>
+      <td>360</td>
+      <td>591</td>
+      <td>14</td>
+      <td>36</td>
+      <td>0.001</td>
+      <td>0.147076</td>
+      <td>2048.0</td>
+      <td>1 min 40 sec</td>
     </tr>
     <tr>
       <th>1st</th>
@@ -4506,19 +4503,19 @@ Intercept and coefficient:
       <td>05Mar2020</td>
       <td>126529100</td>
       <td>SIR-F</td>
-      <td>5.34</td>
-      <td>0.000798</td>
-      <td>0.001128</td>
-      <td>0.067657</td>
-      <td>0.011524</td>
-      <td>720</td>
-      <td>0.001</td>
-      <td>443</td>
+      <td>5.19</td>
+      <td>0.000071</td>
+      <td>0.000569</td>
+      <td>0.034127</td>
+      <td>0.006000</td>
+      <td>360</td>
+      <td>439</td>
       <td>7</td>
-      <td>43</td>
-      <td>0.170727</td>
-      <td>2440.0</td>
-      <td>1 min 50 sec</td>
+      <td>41</td>
+      <td>0.000</td>
+      <td>0.177385</td>
+      <td>1981.0</td>
+      <td>1 min 30 sec</td>
     </tr>
     <tr>
       <th>2nd</th>
@@ -4527,19 +4524,19 @@ Intercept and coefficient:
       <td>13Mar2020</td>
       <td>126529100</td>
       <td>SIR-F</td>
-      <td>4.60</td>
-      <td>0.020372</td>
-      <td>0.000615</td>
-      <td>0.059382</td>
-      <td>0.012020</td>
-      <td>720</td>
-      <td>0.020</td>
-      <td>813</td>
+      <td>5.69</td>
+      <td>0.000292</td>
+      <td>0.000777</td>
+      <td>0.030008</td>
+      <td>0.004494</td>
+      <td>360</td>
+      <td>321</td>
       <td>8</td>
-      <td>41</td>
-      <td>0.098577</td>
-      <td>2129.0</td>
-      <td>1 min 30 sec</td>
+      <td>55</td>
+      <td>0.000</td>
+      <td>0.112128</td>
+      <td>1041.0</td>
+      <td>0 min 40 sec</td>
     </tr>
     <tr>
       <th>3rd</th>
@@ -4548,19 +4545,19 @@ Intercept and coefficient:
       <td>24Mar2020</td>
       <td>126529100</td>
       <td>SIR-F</td>
-      <td>2.44</td>
-      <td>0.031209</td>
-      <td>0.000686</td>
-      <td>0.029413</td>
-      <td>0.010970</td>
-      <td>720</td>
-      <td>0.031</td>
-      <td>728</td>
+      <td>2.64</td>
+      <td>0.039034</td>
+      <td>0.000197</td>
+      <td>0.015199</td>
+      <td>0.005346</td>
+      <td>360</td>
+      <td>1272</td>
       <td>16</td>
-      <td>45</td>
-      <td>0.032471</td>
-      <td>1765.0</td>
-      <td>1 min 10 sec</td>
+      <td>46</td>
+      <td>0.039</td>
+      <td>0.030358</td>
+      <td>1734.0</td>
+      <td>1 min 20 sec</td>
     </tr>
     <tr>
       <th>4th</th>
@@ -4569,18 +4566,18 @@ Intercept and coefficient:
       <td>02Apr2020</td>
       <td>126529100</td>
       <td>SIR-F</td>
-      <td>6.00</td>
-      <td>0.000636</td>
-      <td>0.000922</td>
-      <td>0.059545</td>
-      <td>0.008999</td>
-      <td>720</td>
-      <td>0.001</td>
-      <td>542</td>
+      <td>5.96</td>
+      <td>0.001142</td>
+      <td>0.000432</td>
+      <td>0.028344</td>
+      <td>0.004318</td>
+      <td>360</td>
+      <td>578</td>
       <td>8</td>
-      <td>55</td>
-      <td>0.049497</td>
-      <td>1578.0</td>
+      <td>57</td>
+      <td>0.001</td>
+      <td>0.050569</td>
+      <td>1432.0</td>
       <td>1 min  0 sec</td>
     </tr>
     <tr>
@@ -4590,19 +4587,19 @@ Intercept and coefficient:
       <td>16Apr2020</td>
       <td>126529100</td>
       <td>SIR-F</td>
-      <td>13.11</td>
-      <td>0.000070</td>
-      <td>0.000570</td>
-      <td>0.060702</td>
-      <td>0.004058</td>
-      <td>720</td>
-      <td>0.000</td>
-      <td>877</td>
+      <td>13.30</td>
+      <td>0.000440</td>
+      <td>0.000284</td>
+      <td>0.028899</td>
+      <td>0.001887</td>
+      <td>360</td>
+      <td>879</td>
       <td>8</td>
-      <td>123</td>
-      <td>0.044328</td>
-      <td>2119.0</td>
-      <td>1 min 30 sec</td>
+      <td>132</td>
+      <td>0.000</td>
+      <td>0.044334</td>
+      <td>2545.0</td>
+      <td>2 min 10 sec</td>
     </tr>
     <tr>
       <th>6th</th>
@@ -4611,19 +4608,19 @@ Intercept and coefficient:
       <td>01May2020</td>
       <td>126529100</td>
       <td>SIR-F</td>
-      <td>2.11</td>
-      <td>0.018707</td>
-      <td>0.000685</td>
-      <td>0.022465</td>
-      <td>0.009747</td>
-      <td>720</td>
-      <td>0.019</td>
-      <td>730</td>
-      <td>22</td>
+      <td>1.95</td>
+      <td>0.000400</td>
+      <td>0.000581</td>
+      <td>0.010623</td>
+      <td>0.004870</td>
+      <td>360</td>
+      <td>430</td>
+      <td>23</td>
       <td>51</td>
-      <td>0.093194</td>
-      <td>2621.0</td>
-      <td>2 min  0 sec</td>
+      <td>0.000</td>
+      <td>0.094215</td>
+      <td>2654.0</td>
+      <td>2 min 20 sec</td>
     </tr>
     <tr>
       <th>7th</th>
@@ -4632,19 +4629,19 @@ Intercept and coefficient:
       <td>11May2020</td>
       <td>126529100</td>
       <td>SIR-F</td>
-      <td>0.33</td>
-      <td>0.097028</td>
-      <td>0.000410</td>
-      <td>0.006482</td>
-      <td>0.017432</td>
-      <td>720</td>
-      <td>0.097</td>
-      <td>1220</td>
-      <td>77</td>
+      <td>0.31</td>
+      <td>0.034962</td>
+      <td>0.000449</td>
+      <td>0.002958</td>
+      <td>0.008715</td>
+      <td>360</td>
+      <td>556</td>
+      <td>84</td>
       <td>28</td>
-      <td>0.105565</td>
-      <td>1946.0</td>
-      <td>1 min 20 sec</td>
+      <td>0.035</td>
+      <td>0.104975</td>
+      <td>2123.0</td>
+      <td>1 min 40 sec</td>
     </tr>
     <tr>
       <th>8th</th>
@@ -4654,18 +4651,18 @@ Intercept and coefficient:
       <td>126529100</td>
       <td>SIR-F</td>
       <td>0.13</td>
-      <td>0.204862</td>
-      <td>0.000427</td>
-      <td>0.007261</td>
-      <td>0.045331</td>
-      <td>720</td>
-      <td>0.205</td>
-      <td>1172</td>
-      <td>68</td>
-      <td>11</td>
-      <td>0.028099</td>
-      <td>351.0</td>
-      <td>0 min 10 sec</td>
+      <td>0.177193</td>
+      <td>0.000263</td>
+      <td>0.003871</td>
+      <td>0.024089</td>
+      <td>360</td>
+      <td>949</td>
+      <td>64</td>
+      <td>10</td>
+      <td>0.177</td>
+      <td>0.028198</td>
+      <td>580.0</td>
+      <td>0 min 20 sec</td>
     </tr>
     <tr>
       <th>9th</th>
@@ -4674,18 +4671,18 @@ Intercept and coefficient:
       <td>28May2020</td>
       <td>126529100</td>
       <td>SIR-F</td>
-      <td>0.12</td>
-      <td>0.287910</td>
-      <td>0.000257</td>
-      <td>0.008298</td>
-      <td>0.048885</td>
-      <td>720</td>
-      <td>0.288</td>
-      <td>1946</td>
-      <td>60</td>
+      <td>0.14</td>
+      <td>0.266931</td>
+      <td>0.000168</td>
+      <td>0.004652</td>
+      <td>0.024313</td>
+      <td>360</td>
+      <td>1483</td>
+      <td>53</td>
       <td>10</td>
-      <td>0.015521</td>
-      <td>347.0</td>
+      <td>0.267</td>
+      <td>0.014285</td>
+      <td>339.0</td>
       <td>0 min 10 sec</td>
     </tr>
     <tr>
@@ -4695,18 +4692,18 @@ Intercept and coefficient:
       <td>05Jun2020</td>
       <td>126529100</td>
       <td>SIR-F</td>
-      <td>0.47</td>
-      <td>0.086416</td>
-      <td>0.000098</td>
-      <td>0.019009</td>
-      <td>0.036553</td>
-      <td>720</td>
-      <td>0.086</td>
-      <td>5088</td>
-      <td>26</td>
+      <td>0.49</td>
+      <td>0.014941</td>
+      <td>0.000609</td>
+      <td>0.009232</td>
+      <td>0.017983</td>
+      <td>360</td>
+      <td>410</td>
+      <td>27</td>
       <td>13</td>
-      <td>0.013236</td>
-      <td>351.0</td>
+      <td>0.015</td>
+      <td>0.013353</td>
+      <td>335.0</td>
       <td>0 min 10 sec</td>
     </tr>
     <tr>
@@ -4716,18 +4713,18 @@ Intercept and coefficient:
       <td>13Jun2020</td>
       <td>126529100</td>
       <td>SIR-F</td>
-      <td>0.60</td>
-      <td>0.001984</td>
-      <td>0.000717</td>
-      <td>0.020179</td>
-      <td>0.032630</td>
-      <td>720</td>
-      <td>0.002</td>
-      <td>697</td>
-      <td>24</td>
-      <td>15</td>
-      <td>0.021102</td>
-      <td>336.0</td>
+      <td>0.59</td>
+      <td>0.074454</td>
+      <td>0.000041</td>
+      <td>0.009890</td>
+      <td>0.015352</td>
+      <td>360</td>
+      <td>6162</td>
+      <td>25</td>
+      <td>16</td>
+      <td>0.074</td>
+      <td>0.022048</td>
+      <td>305.0</td>
       <td>0 min 10 sec</td>
     </tr>
     <tr>
@@ -4737,19 +4734,19 @@ Intercept and coefficient:
       <td>28Jun2020</td>
       <td>126529100</td>
       <td>SIR-F</td>
-      <td>0.95</td>
-      <td>0.036972</td>
-      <td>0.000693</td>
-      <td>0.039420</td>
-      <td>0.039082</td>
-      <td>720</td>
-      <td>0.037</td>
-      <td>721</td>
-      <td>12</td>
-      <td>12</td>
-      <td>0.035544</td>
-      <td>1574.0</td>
-      <td>1 min  0 sec</td>
+      <td>0.96</td>
+      <td>0.049842</td>
+      <td>0.000046</td>
+      <td>0.022136</td>
+      <td>0.021777</td>
+      <td>360</td>
+      <td>5441</td>
+      <td>11</td>
+      <td>11</td>
+      <td>0.050</td>
+      <td>0.035661</td>
+      <td>1547.0</td>
+      <td>1 min 10 sec</td>
     </tr>
     <tr>
       <th>13th</th>
@@ -4758,19 +4755,19 @@ Intercept and coefficient:
       <td>09Jul2020</td>
       <td>126529100</td>
       <td>SIR-F</td>
-      <td>2.20</td>
-      <td>0.000865</td>
-      <td>0.000368</td>
-      <td>0.068157</td>
-      <td>0.030637</td>
-      <td>720</td>
-      <td>0.001</td>
-      <td>1358</td>
+      <td>2.19</td>
+      <td>0.002283</td>
+      <td>0.000059</td>
+      <td>0.033561</td>
+      <td>0.015254</td>
+      <td>360</td>
+      <td>4208</td>
       <td>7</td>
       <td>16</td>
-      <td>0.022963</td>
-      <td>1576.0</td>
-      <td>1 min  0 sec</td>
+      <td>0.002</td>
+      <td>0.023577</td>
+      <td>333.0</td>
+      <td>0 min 10 sec</td>
     </tr>
     <tr>
       <th>14th</th>
@@ -4779,19 +4776,19 @@ Intercept and coefficient:
       <td>20Jul2020</td>
       <td>126529100</td>
       <td>SIR-F</td>
-      <td>2.25</td>
-      <td>0.000229</td>
-      <td>0.000113</td>
-      <td>0.067784</td>
-      <td>0.030008</td>
-      <td>720</td>
-      <td>0.000</td>
-      <td>4407</td>
-      <td>7</td>
-      <td>16</td>
-      <td>0.02139</td>
-      <td>647.0</td>
-      <td>0 min 20 sec</td>
+      <td>2.06</td>
+      <td>0.000543</td>
+      <td>0.000094</td>
+      <td>0.036765</td>
+      <td>0.017779</td>
+      <td>360</td>
+      <td>2646</td>
+      <td>6</td>
+      <td>14</td>
+      <td>0.001</td>
+      <td>0.020968</td>
+      <td>1043.0</td>
+      <td>0 min 40 sec</td>
     </tr>
     <tr>
       <th>15th</th>
@@ -4800,19 +4797,19 @@ Intercept and coefficient:
       <td>31Jul2020</td>
       <td>126529100</td>
       <td>SIR-F</td>
-      <td>1.88</td>
-      <td>0.000735</td>
-      <td>0.000225</td>
-      <td>0.066814</td>
-      <td>0.035237</td>
-      <td>720</td>
-      <td>0.001</td>
-      <td>2219</td>
+      <td>1.81</td>
+      <td>0.001813</td>
+      <td>0.000059</td>
+      <td>0.033038</td>
+      <td>0.018211</td>
+      <td>360</td>
+      <td>4226</td>
       <td>7</td>
-      <td>14</td>
-      <td>0.020542</td>
-      <td>907.0</td>
-      <td>0 min 30 sec</td>
+      <td>13</td>
+      <td>0.002</td>
+      <td>0.023986</td>
+      <td>330.0</td>
+      <td>0 min 10 sec</td>
     </tr>
     <tr>
       <th>16th</th>
@@ -4821,19 +4818,19 @@ Intercept and coefficient:
       <td>14Aug2020</td>
       <td>126529100</td>
       <td>SIR-F</td>
-      <td>1.60</td>
-      <td>0.000171</td>
-      <td>0.000176</td>
-      <td>0.051141</td>
-      <td>0.031807</td>
-      <td>720</td>
-      <td>0.000</td>
-      <td>2842</td>
+      <td>1.46</td>
+      <td>0.000054</td>
+      <td>0.000060</td>
+      <td>0.025489</td>
+      <td>0.017371</td>
+      <td>360</td>
+      <td>4157</td>
       <td>9</td>
-      <td>15</td>
-      <td>0.046061</td>
-      <td>2288.0</td>
-      <td>1 min 40 sec</td>
+      <td>14</td>
+      <td>0.000</td>
+      <td>0.056051</td>
+      <td>2377.0</td>
+      <td>2 min  0 sec</td>
     </tr>
     <tr>
       <th>17th</th>
@@ -4842,19 +4839,19 @@ Intercept and coefficient:
       <td>28Aug2020</td>
       <td>126529100</td>
       <td>SIR-F</td>
-      <td>0.81</td>
-      <td>0.000232</td>
-      <td>0.000454</td>
-      <td>0.039382</td>
-      <td>0.048326</td>
-      <td>720</td>
-      <td>0.000</td>
-      <td>1101</td>
+      <td>0.80</td>
+      <td>0.000256</td>
+      <td>0.000257</td>
+      <td>0.019676</td>
+      <td>0.024187</td>
+      <td>360</td>
+      <td>974</td>
       <td>12</td>
       <td>10</td>
-      <td>0.014071</td>
-      <td>634.0</td>
-      <td>0 min 20 sec</td>
+      <td>0.000</td>
+      <td>0.015375</td>
+      <td>331.0</td>
+      <td>0 min 10 sec</td>
     </tr>
     <tr>
       <th>18th</th>
@@ -4863,19 +4860,19 @@ Intercept and coefficient:
       <td>07Sep2020</td>
       <td>126529100</td>
       <td>SIR-F</td>
-      <td>0.70</td>
-      <td>0.019019</td>
-      <td>0.000041</td>
-      <td>0.034120</td>
-      <td>0.047549</td>
-      <td>720</td>
-      <td>0.019</td>
-      <td>12318</td>
-      <td>14</td>
+      <td>0.71</td>
+      <td>0.018863</td>
+      <td>0.000040</td>
+      <td>0.018038</td>
+      <td>0.024881</td>
+      <td>360</td>
+      <td>6322</td>
+      <td>13</td>
       <td>10</td>
-      <td>0.019224</td>
-      <td>347.0</td>
-      <td>0 min 10 sec</td>
+      <td>0.019</td>
+      <td>0.020981</td>
+      <td>573.0</td>
+      <td>0 min 20 sec</td>
     </tr>
     <tr>
       <th>19th</th>
@@ -4884,18 +4881,18 @@ Intercept and coefficient:
       <td>15Sep2020</td>
       <td>126529100</td>
       <td>SIR-F</td>
-      <td>0.79</td>
-      <td>0.016797</td>
-      <td>0.000200</td>
-      <td>0.040369</td>
-      <td>0.049839</td>
-      <td>720</td>
-      <td>0.017</td>
-      <td>2504</td>
-      <td>12</td>
+      <td>0.73</td>
+      <td>0.003883</td>
+      <td>0.000301</td>
+      <td>0.017737</td>
+      <td>0.023867</td>
+      <td>360</td>
+      <td>829</td>
+      <td>14</td>
       <td>10</td>
-      <td>0.015767</td>
-      <td>349.0</td>
+      <td>0.004</td>
+      <td>0.021747</td>
+      <td>300.0</td>
       <td>0 min 10 sec</td>
     </tr>
     <tr>
@@ -4905,18 +4902,18 @@ Intercept and coefficient:
       <td>24Sep2020</td>
       <td>126529100</td>
       <td>SIR-F</td>
-      <td>0.91</td>
-      <td>0.000038</td>
-      <td>0.000835</td>
-      <td>0.036335</td>
-      <td>0.039121</td>
-      <td>720</td>
-      <td>0.000</td>
-      <td>598</td>
-      <td>13</td>
-      <td>12</td>
-      <td>0.014753</td>
-      <td>350.0</td>
+      <td>0.92</td>
+      <td>0.003232</td>
+      <td>0.000309</td>
+      <td>0.021652</td>
+      <td>0.023205</td>
+      <td>360</td>
+      <td>808</td>
+      <td>11</td>
+      <td>10</td>
+      <td>0.003</td>
+      <td>0.01416</td>
+      <td>319.0</td>
       <td>0 min 10 sec</td>
     </tr>
     <tr>
@@ -4927,18 +4924,18 @@ Intercept and coefficient:
       <td>126529100</td>
       <td>SIR-F</td>
       <td>0.99</td>
-      <td>0.000808</td>
-      <td>0.000556</td>
-      <td>0.048126</td>
-      <td>0.047787</td>
-      <td>720</td>
-      <td>0.001</td>
-      <td>899</td>
-      <td>10</td>
-      <td>10</td>
-      <td>0.007352</td>
-      <td>1144.0</td>
-      <td>0 min 40 sec</td>
+      <td>0.000203</td>
+      <td>0.000257</td>
+      <td>0.025754</td>
+      <td>0.025691</td>
+      <td>360</td>
+      <td>974</td>
+      <td>9</td>
+      <td>9</td>
+      <td>0.000</td>
+      <td>0.007488</td>
+      <td>1281.0</td>
+      <td>0 min 50 sec</td>
     </tr>
     <tr>
       <th>22nd</th>
@@ -4948,18 +4945,18 @@ Intercept and coefficient:
       <td>126529100</td>
       <td>SIR-F</td>
       <td>0.97</td>
-      <td>0.000921</td>
-      <td>0.000384</td>
-      <td>0.046458</td>
-      <td>0.047514</td>
-      <td>720</td>
+      <td>0.000736</td>
+      <td>0.000224</td>
+      <td>0.025233</td>
+      <td>0.025705</td>
+      <td>360</td>
+      <td>1113</td>
+      <td>9</td>
+      <td>9</td>
       <td>0.001</td>
-      <td>1302</td>
-      <td>10</td>
-      <td>10</td>
-      <td>0.009301</td>
-      <td>2417.0</td>
-      <td>1 min 50 sec</td>
+      <td>0.009551</td>
+      <td>1653.0</td>
+      <td>1 min 10 sec</td>
     </tr>
     <tr>
       <th>23rd</th>
@@ -4969,18 +4966,18 @@ Intercept and coefficient:
       <td>126529100</td>
       <td>SIR-F</td>
       <td>0.98</td>
-      <td>0.001354</td>
-      <td>0.000406</td>
-      <td>0.046691</td>
-      <td>0.047293</td>
-      <td>720</td>
+      <td>0.000735</td>
+      <td>0.000224</td>
+      <td>0.025454</td>
+      <td>0.025826</td>
+      <td>360</td>
+      <td>1113</td>
+      <td>9</td>
+      <td>9</td>
       <td>0.001</td>
-      <td>1230</td>
-      <td>10</td>
-      <td>10</td>
-      <td>0.011413</td>
-      <td>1964.0</td>
-      <td>1 min 20 sec</td>
+      <td>0.011582</td>
+      <td>1574.0</td>
+      <td>1 min 10 sec</td>
     </tr>
     <tr>
       <th>24th</th>
@@ -4989,19 +4986,19 @@ Intercept and coefficient:
       <td>28Oct2020</td>
       <td>126529100</td>
       <td>SIR-F</td>
-      <td>1.14</td>
-      <td>0.001355</td>
-      <td>0.000735</td>
-      <td>0.054695</td>
-      <td>0.047228</td>
-      <td>720</td>
-      <td>0.001</td>
-      <td>680</td>
+      <td>1.15</td>
+      <td>0.000139</td>
+      <td>0.000246</td>
+      <td>0.027301</td>
+      <td>0.023525</td>
+      <td>360</td>
+      <td>1015</td>
       <td>9</td>
       <td>10</td>
-      <td>0.008633</td>
-      <td>348.0</td>
-      <td>0 min 10 sec</td>
+      <td>0.000</td>
+      <td>0.0088</td>
+      <td>617.0</td>
+      <td>0 min 20 sec</td>
     </tr>
     <tr>
       <th>25th</th>
@@ -5010,19 +5007,19 @@ Intercept and coefficient:
       <td>05Nov2020</td>
       <td>126529100</td>
       <td>SIR-F</td>
-      <td>1.36</td>
-      <td>0.002514</td>
-      <td>0.000482</td>
-      <td>0.052972</td>
-      <td>0.038236</td>
-      <td>720</td>
-      <td>0.003</td>
-      <td>1038</td>
+      <td>1.34</td>
+      <td>0.000435</td>
+      <td>0.000361</td>
+      <td>0.027525</td>
+      <td>0.020162</td>
+      <td>360</td>
+      <td>692</td>
       <td>9</td>
-      <td>13</td>
-      <td>0.008131</td>
-      <td>349.0</td>
-      <td>0 min 10 sec</td>
+      <td>12</td>
+      <td>0.000</td>
+      <td>0.007772</td>
+      <td>610.0</td>
+      <td>0 min 20 sec</td>
     </tr>
     <tr>
       <th>26th</th>
@@ -5031,19 +5028,19 @@ Intercept and coefficient:
       <td>18Nov2020</td>
       <td>126529100</td>
       <td>SIR-F</td>
-      <td>1.64</td>
-      <td>0.000269</td>
-      <td>0.000403</td>
-      <td>0.068347</td>
-      <td>0.041357</td>
-      <td>720</td>
-      <td>0.000</td>
-      <td>1241</td>
+      <td>1.62</td>
+      <td>0.000299</td>
+      <td>0.000230</td>
+      <td>0.033754</td>
+      <td>0.020559</td>
+      <td>360</td>
+      <td>1086</td>
       <td>7</td>
       <td>12</td>
-      <td>0.009748</td>
-      <td>2266.0</td>
-      <td>1 min 40 sec</td>
+      <td>0.000</td>
+      <td>0.010858</td>
+      <td>335.0</td>
+      <td>0 min 10 sec</td>
     </tr>
     <tr>
       <th>27th</th>
@@ -5052,19 +5049,19 @@ Intercept and coefficient:
       <td>28Nov2020</td>
       <td>126529100</td>
       <td>SIR-F</td>
-      <td>1.52</td>
-      <td>0.000937</td>
-      <td>0.000403</td>
-      <td>0.063781</td>
-      <td>0.041452</td>
-      <td>720</td>
-      <td>0.001</td>
-      <td>1240</td>
-      <td>7</td>
-      <td>12</td>
-      <td>0.0255</td>
-      <td>1552.0</td>
-      <td>1 min  0 sec</td>
+      <td>1.55</td>
+      <td>0.000174</td>
+      <td>0.000233</td>
+      <td>0.030097</td>
+      <td>0.019133</td>
+      <td>360</td>
+      <td>1071</td>
+      <td>8</td>
+      <td>13</td>
+      <td>0.000</td>
+      <td>0.025903</td>
+      <td>2149.0</td>
+      <td>1 min 40 sec</td>
     </tr>
     <tr>
       <th>28th</th>
@@ -5073,19 +5070,19 @@ Intercept and coefficient:
       <td>11Dec2020</td>
       <td>126529100</td>
       <td>SIR-F</td>
-      <td>1.13</td>
-      <td>0.000349</td>
-      <td>0.000709</td>
-      <td>0.049614</td>
-      <td>0.043376</td>
-      <td>720</td>
-      <td>0.000</td>
-      <td>705</td>
-      <td>10</td>
+      <td>1.15</td>
+      <td>0.002617</td>
+      <td>0.000301</td>
+      <td>0.026302</td>
+      <td>0.022554</td>
+      <td>360</td>
+      <td>829</td>
+      <td>9</td>
       <td>11</td>
-      <td>0.007817</td>
-      <td>1104.0</td>
-      <td>0 min 40 sec</td>
+      <td>0.003</td>
+      <td>0.013221</td>
+      <td>291.0</td>
+      <td>0 min 10 sec</td>
     </tr>
     <tr>
       <th>29th</th>
@@ -5094,19 +5091,19 @@ Intercept and coefficient:
       <td>25Dec2020</td>
       <td>126529100</td>
       <td>SIR-F</td>
-      <td>1.16</td>
-      <td>0.000546</td>
-      <td>0.000743</td>
-      <td>0.050052</td>
-      <td>0.042462</td>
-      <td>720</td>
-      <td>0.001</td>
-      <td>673</td>
+      <td>1.17</td>
+      <td>0.000958</td>
+      <td>0.000366</td>
+      <td>0.027282</td>
+      <td>0.022999</td>
+      <td>360</td>
+      <td>683</td>
       <td>9</td>
-      <td>11</td>
-      <td>0.012756</td>
-      <td>850.0</td>
-      <td>0 min 30 sec</td>
+      <td>10</td>
+      <td>0.001</td>
+      <td>0.012581</td>
+      <td>571.0</td>
+      <td>0 min 20 sec</td>
     </tr>
     <tr>
       <th>30th</th>
@@ -5115,19 +5112,19 @@ Intercept and coefficient:
       <td>07Jan2021</td>
       <td>126529100</td>
       <td>SIR-F</td>
-      <td>1.46</td>
-      <td>0.000241</td>
-      <td>0.000738</td>
-      <td>0.048283</td>
-      <td>0.032435</td>
-      <td>720</td>
-      <td>0.000</td>
-      <td>677</td>
+      <td>1.45</td>
+      <td>0.000758</td>
+      <td>0.000346</td>
+      <td>0.024937</td>
+      <td>0.016837</td>
+      <td>360</td>
+      <td>722</td>
       <td>10</td>
-      <td>15</td>
-      <td>0.008564</td>
-      <td>1106.0</td>
-      <td>0 min 40 sec</td>
+      <td>14</td>
+      <td>0.001</td>
+      <td>0.007284</td>
+      <td>1465.0</td>
+      <td>1 min  0 sec</td>
     </tr>
     <tr>
       <th>31st</th>
@@ -5136,19 +5133,19 @@ Intercept and coefficient:
       <td>21Jan2021</td>
       <td>126529100</td>
       <td>SIR-F</td>
-      <td>1.63</td>
-      <td>0.000070</td>
-      <td>0.000570</td>
-      <td>0.049236</td>
-      <td>0.029644</td>
-      <td>720</td>
-      <td>0.000</td>
-      <td>877</td>
+      <td>1.49</td>
+      <td>0.001082</td>
+      <td>0.000192</td>
+      <td>0.024841</td>
+      <td>0.016482</td>
+      <td>360</td>
+      <td>1304</td>
       <td>10</td>
-      <td>16</td>
-      <td>0.047347</td>
-      <td>2126.0</td>
-      <td>1 min 30 sec</td>
+      <td>15</td>
+      <td>0.001</td>
+      <td>0.056221</td>
+      <td>1068.0</td>
+      <td>0 min 40 sec</td>
     </tr>
     <tr>
       <th>32nd</th>
@@ -5157,19 +5154,19 @@ Intercept and coefficient:
       <td>03Feb2021</td>
       <td>126529100</td>
       <td>SIR-F</td>
-      <td>0.63</td>
-      <td>0.001220</td>
-      <td>0.000797</td>
-      <td>0.031056</td>
-      <td>0.048422</td>
-      <td>720</td>
-      <td>0.001</td>
-      <td>627</td>
-      <td>16</td>
+      <td>0.69</td>
+      <td>0.000187</td>
+      <td>0.000427</td>
+      <td>0.017543</td>
+      <td>0.024964</td>
+      <td>360</td>
+      <td>585</td>
+      <td>14</td>
       <td>10</td>
-      <td>0.026227</td>
-      <td>373.0</td>
-      <td>0 min 10 sec</td>
+      <td>0.000</td>
+      <td>0.01789</td>
+      <td>1144.0</td>
+      <td>0 min 50 sec</td>
     </tr>
     <tr>
       <th>33rd</th>
@@ -5178,19 +5175,19 @@ Intercept and coefficient:
       <td>17Feb2021</td>
       <td>126529100</td>
       <td>SIR-F</td>
-      <td>0.53</td>
-      <td>0.018817</td>
-      <td>0.000798</td>
-      <td>0.029130</td>
-      <td>0.053501</td>
-      <td>720</td>
-      <td>0.019</td>
-      <td>626</td>
-      <td>17</td>
-      <td>9</td>
-      <td>0.011189</td>
-      <td>328.0</td>
-      <td>0 min 10 sec</td>
+      <td>0.54</td>
+      <td>0.030339</td>
+      <td>0.000210</td>
+      <td>0.015887</td>
+      <td>0.028424</td>
+      <td>360</td>
+      <td>1191</td>
+      <td>15</td>
+      <td>8</td>
+      <td>0.030</td>
+      <td>0.01308</td>
+      <td>591.0</td>
+      <td>0 min 20 sec</td>
     </tr>
     <tr>
       <th>34th</th>
@@ -5200,17 +5197,17 @@ Intercept and coefficient:
       <td>126529100</td>
       <td>SIR-F</td>
       <td>0.67</td>
-      <td>0.044837</td>
-      <td>0.000302</td>
-      <td>0.032345</td>
-      <td>0.045961</td>
-      <td>720</td>
-      <td>0.045</td>
-      <td>1653</td>
+      <td>0.037630</td>
+      <td>0.000071</td>
+      <td>0.016599</td>
+      <td>0.023738</td>
+      <td>360</td>
+      <td>3514</td>
       <td>15</td>
       <td>10</td>
-      <td>0.007657</td>
-      <td>333.0</td>
+      <td>0.038</td>
+      <td>0.00989</td>
+      <td>315.0</td>
       <td>0 min 10 sec</td>
     </tr>
     <tr>
@@ -5221,17 +5218,17 @@ Intercept and coefficient:
       <td>126529100</td>
       <td>SIR-F</td>
       <td>0.78</td>
-      <td>0.040459</td>
-      <td>0.000184</td>
-      <td>0.038440</td>
-      <td>0.047218</td>
-      <td>720</td>
-      <td>0.040</td>
-      <td>2718</td>
-      <td>13</td>
+      <td>0.036325</td>
+      <td>0.000093</td>
+      <td>0.020329</td>
+      <td>0.024920</td>
+      <td>360</td>
+      <td>2675</td>
+      <td>12</td>
       <td>10</td>
-      <td>0.013785</td>
-      <td>310.0</td>
+      <td>0.036</td>
+      <td>0.013809</td>
+      <td>326.0</td>
       <td>0 min 10 sec</td>
     </tr>
     <tr>
@@ -5241,58 +5238,58 @@ Intercept and coefficient:
       <td>17Mar2021</td>
       <td>126529100</td>
       <td>SIR-F</td>
-      <td>1.10</td>
-      <td>0.026840</td>
-      <td>0.000617</td>
-      <td>0.048535</td>
-      <td>0.042376</td>
-      <td>720</td>
-      <td>0.027</td>
-      <td>809</td>
+      <td>1.09</td>
+      <td>0.035945</td>
+      <td>0.000097</td>
+      <td>0.024966</td>
+      <td>0.021932</td>
+      <td>360</td>
+      <td>2585</td>
       <td>10</td>
       <td>11</td>
-      <td>0.0092</td>
-      <td>324.0</td>
+      <td>0.036</td>
+      <td>0.00917</td>
+      <td>319.0</td>
       <td>0 min 10 sec</td>
     </tr>
     <tr>
       <th>37th</th>
       <td>Past</td>
       <td>18Mar2021</td>
-      <td>27Mar2021</td>
+      <td>28Mar2021</td>
       <td>126529100</td>
       <td>SIR-F</td>
-      <td>1.29</td>
-      <td>0.030478</td>
-      <td>0.000048</td>
-      <td>0.054967</td>
-      <td>0.041281</td>
-      <td>720</td>
-      <td>0.030</td>
-      <td>10431</td>
+      <td>1.27</td>
+      <td>0.000145</td>
+      <td>0.000608</td>
+      <td>0.026966</td>
+      <td>0.020590</td>
+      <td>360</td>
+      <td>411</td>
       <td>9</td>
       <td>12</td>
-      <td>0.016617</td>
-      <td>550.0</td>
-      <td>0 min 20 sec</td>
+      <td>0.000</td>
+      <td>0.016242</td>
+      <td>2359.0</td>
+      <td>1 min 50 sec</td>
     </tr>
     <tr>
       <th>38th</th>
       <td>Future</td>
-      <td>28Mar2021</td>
-      <td>03Apr2021</td>
+      <td>29Mar2021</td>
+      <td>04Apr2021</td>
       <td>126529100</td>
       <td>SIR-F</td>
-      <td>1.82</td>
-      <td>0.024440</td>
-      <td>-0.000503</td>
-      <td>0.068020</td>
-      <td>0.036880</td>
-      <td>720</td>
-      <td>0.024</td>
-      <td>-994</td>
+      <td>1.77</td>
+      <td>-0.055580</td>
+      <td>0.001362</td>
+      <td>0.031270</td>
+      <td>0.017250</td>
+      <td>360</td>
+      <td>183</td>
       <td>7</td>
-      <td>13</td>
+      <td>14</td>
+      <td>-0.056</td>
       <td>-</td>
       <td>-</td>
       <td>-</td>
@@ -5312,26 +5309,31 @@ Intercept and coefficient:
 </pre></div>
 </div>
 </div>
-<p>To compare this scenario with the other scenarios, we should adjust the last end date. From version 2.17.0-kappa (stable: 2.18.0), we will use <code class="docutils literal notranslate"><span class="pre">Scenario.adjust_end()</span></code>.</p>
+<p>To compare this scenario with the other scenarios, we should adjust the last end date with <code class="docutils literal notranslate"><span class="pre">Scenario.adjust_end()</span></code> because the last end date is differenct from the other scenarios at this time.</p>
 <div class="nbinput docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[43]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="c1"># Set 01Jun2021 as the last date of the future</span>
-<span class="n">snl</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;Forecast&quot;</span><span class="p">,</span> <span class="n">end_date</span><span class="o">=</span><span class="s2">&quot;01Jun2021&quot;</span><span class="p">)</span>
-<span class="c1"># From version 2.17.0-kappa (stable: 2.18.0)</span>
-<span class="c1"># snl.adjust_end()</span>
+<span></span><span class="c1"># Adjust the last end dates</span>
+<span class="n">snl</span><span class="o">.</span><span class="n">adjust_end</span><span class="p">()</span>
+<span class="c1"># Show the last phases of all scenarios</span>
+<span class="n">all_df</span> <span class="o">=</span> <span class="n">snl</span><span class="o">.</span><span class="n">summary</span><span class="p">()</span><span class="o">.</span><span class="n">reset_index</span><span class="p">()</span>
+<span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">all_df</span><span class="p">[</span><span class="s2">&quot;Scenario&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">unique</span><span class="p">():</span>
+    <span class="n">df</span> <span class="o">=</span> <span class="n">snl</span><span class="o">.</span><span class="n">summary</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">)</span>
+    <span class="n">last_end_date</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">df</span><span class="o">.</span><span class="n">index</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="s2">&quot;End&quot;</span><span class="p">]</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2"> scenario: to </span><span class="si">{</span><span class="n">last_end_date</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
 <div class="nboutput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[43]:
-</pre></div>
+<div class="prompt empty docutils container">
 </div>
 <div class="output_area docutils container">
 <div class="highlight"><pre>
-&lt;covsirphy.analysis.scenario.Scenario at 0x7fa20f3ea820&gt;
+Main scenario: to 01Jun2021
+Medicine scenario: to 01Jun2021
+Forecast scenario: to 01Jun2021
 </pre></div></div>
 </div>
 <p>Simulate the number of cases of forecast scenario.</p>
@@ -5424,33 +5426,33 @@ Intercept and coefficient:
   <tbody>
     <tr>
       <th>Main</th>
-      <td>77984</td>
+      <td>72625</td>
       <td>21Jan2021</td>
-      <td>741651</td>
-      <td>74752</td>
-      <td>17825</td>
-      <td>1.29</td>
-      <td>1.29</td>
+      <td>724356</td>
+      <td>69956</td>
+      <td>14942</td>
+      <td>1.27</td>
+      <td>1.27</td>
     </tr>
     <tr>
       <th>Medicine</th>
-      <td>77984</td>
+      <td>72625</td>
       <td>21Jan2021</td>
-      <td>686609</td>
-      <td>41274</td>
-      <td>16099</td>
-      <td>1.29</td>
+      <td>675628</td>
+      <td>39322</td>
+      <td>13830</td>
+      <td>1.27</td>
       <td>1.07</td>
     </tr>
     <tr>
       <th>Forecast</th>
-      <td>782792</td>
+      <td>644613</td>
       <td>02Jun2021</td>
-      <td>2229633</td>
-      <td>782792</td>
-      <td>39113</td>
-      <td>1.82</td>
-      <td>1.82</td>
+      <td>1849712</td>
+      <td>644613</td>
+      <td>-6956</td>
+      <td>1.77</td>
+      <td>1.77</td>
     </tr>
   </tbody>
 </table>
@@ -5596,50 +5598,50 @@ Intercept and coefficient:
 
 &lt;SIR-F model: parameter estimation&gt;
 Running optimization with 4 CPUs...
-        38th phase (18Mar2021 - 27Mar2021): finished  299 trials in 0 min 10 sec
-         0th phase (06Feb2020 - 18Feb2020): finished  309 trials in 0 min 10 sec
-         3rd phase (14Mar2020 - 24Mar2020): finished  307 trials in 0 min 10 sec
-         6th phase (17Apr2020 - 01May2020): finished  320 trials in 0 min 10 sec
-         9th phase (21May2020 - 28May2020): finished  328 trials in 0 min 10 sec
-         1st phase (19Feb2020 - 05Mar2020): finished  313 trials in 0 min 10 sec
-         4th phase (25Mar2020 - 02Apr2020): finished  324 trials in 0 min 10 sec
-         7th phase (02May2020 - 11May2020): finished  324 trials in 0 min 10 sec
-        10th phase (29May2020 - 05Jun2020): finished  327 trials in 0 min 10 sec
-         2nd phase (06Mar2020 - 13Mar2020): finished  322 trials in 0 min 10 sec
-         8th phase (12May2020 - 20May2020): finished  322 trials in 0 min 10 sec
-         5th phase (03Apr2020 - 16Apr2020): finished  312 trials in 0 min 10 sec
-        11th phase (06Jun2020 - 13Jun2020): finished  324 trials in 0 min 10 sec
-        12th phase (14Jun2020 - 28Jun2020): finished  305 trials in 0 min 10 sec
-        18th phase (29Aug2020 - 07Sep2020): finished  313 trials in 0 min 10 sec        15th phase (21Jul2020 - 31Jul2020): finished  314 trials in 0 min 10 sec
-
-        21st phase (25Sep2020 - 02Oct2020): finished  318 trials in 0 min 10 sec
-        13th phase (29Jun2020 - 09Jul2020): finished  310 trials in 0 min 10 sec
-        16th phase (01Aug2020 - 14Aug2020): finished  307 trials in 0 min 10 sec        19th phase (08Sep2020 - 15Sep2020): finished  315 trials in 0 min 10 sec
-
-        22nd phase (03Oct2020 - 10Oct2020): finished  317 trials in 0 min 10 sec
-        14th phase (10Jul2020 - 20Jul2020): finished  308 trials in 0 min 10 sec
-        20th phase (16Sep2020 - 24Sep2020): finished  312 trials in 0 min 10 sec
-        17th phase (15Aug2020 - 28Aug2020): finished  304 trials in 0 min 10 sec
-        23rd phase (11Oct2020 - 20Oct2020): finished  312 trials in 0 min 10 sec
-        24th phase (21Oct2020 - 28Oct2020): finished  311 trials in 0 min 10 sec
-        27th phase (19Nov2020 - 28Nov2020): finished  306 trials in 0 min 10 sec
-        30th phase (26Dec2020 - 31Dec2020): finished  313 trials in 0 min 10 sec
-        33rd phase (22Jan2021 - 03Feb2021): finished  302 trials in 0 min 10 sec
-        25th phase (29Oct2020 - 05Nov2020): finished  309 trials in 0 min 10 sec
-        28th phase (29Nov2020 - 11Dec2020): finished  299 trials in 0 min 10 sec
-        31st phase (01Jan2021 - 07Jan2021): finished  311 trials in 0 min 10 sec
-        34th phase (04Feb2021 - 17Feb2021): finished  299 trials in 0 min 10 sec
-        26th phase (06Nov2020 - 18Nov2020): finished  300 trials in 0 min 10 sec
-        29th phase (12Dec2020 - 25Dec2020): finished  298 trials in 0 min 10 sec
-        32nd phase (08Jan2021 - 21Jan2021): finished  297 trials in 0 min 10 sec
-        35th phase (18Feb2021 - 26Feb2021): finished  306 trials in 0 min 10 sec
-        36th phase (27Feb2021 - 09Mar2021): finished  346 trials in 0 min 10 sec
-        37th phase (10Mar2021 - 17Mar2021): finished  346 trials in 0 min 10 sec
+        38th phase (18Mar2021 - 28Mar2021): finished  265 trials in 0 min 10 sec
+         6th phase (17Apr2020 - 01May2020): finished  236 trials in 0 min 10 sec
+         3rd phase (14Mar2020 - 24Mar2020): finished  252 trials in 0 min 10 sec
+         0th phase (06Feb2020 - 18Feb2020): finished  274 trials in 0 min 10 sec
+         9th phase (21May2020 - 28May2020): finished  236 trials in 0 min 10 sec
+         7th phase (02May2020 - 11May2020): finished  267 trials in 0 min 10 sec
+         1st phase (19Feb2020 - 05Mar2020): finished  253 trials in 0 min 10 sec
+         4th phase (25Mar2020 - 02Apr2020): finished  262 trials in 0 min 10 sec
+        10th phase (29May2020 - 05Jun2020): finished  241 trials in 0 min 10 sec
+         8th phase (12May2020 - 20May2020): finished  266 trials in 0 min 10 sec
+         2nd phase (06Mar2020 - 13Mar2020): finished  235 trials in 0 min 10 sec
+         5th phase (03Apr2020 - 16Apr2020): finished  304 trials in 0 min 10 sec
+        11th phase (06Jun2020 - 13Jun2020): finished  230 trials in 0 min 10 sec
+        12th phase (14Jun2020 - 28Jun2020): finished  240 trials in 0 min 10 sec
+        15th phase (21Jul2020 - 31Jul2020): finished  242 trials in 0 min 10 sec
+        18th phase (29Aug2020 - 07Sep2020): finished  239 trials in 0 min 10 sec
+        21st phase (25Sep2020 - 02Oct2020): finished  245 trials in 0 min 10 sec
+        13th phase (29Jun2020 - 09Jul2020): finished  248 trials in 0 min 10 sec
+        19th phase (08Sep2020 - 15Sep2020): finished  244 trials in 0 min 10 sec
+        16th phase (01Aug2020 - 14Aug2020): finished  264 trials in 0 min 10 sec
+        22nd phase (03Oct2020 - 10Oct2020): finished  244 trials in 0 min 10 sec
+        14th phase (10Jul2020 - 20Jul2020): finished  241 trials in 0 min 10 sec
+        20th phase (16Sep2020 - 24Sep2020): finished  252 trials in 0 min 10 sec
+        17th phase (15Aug2020 - 28Aug2020): finished  241 trials in 0 min 10 sec
+        23rd phase (11Oct2020 - 20Oct2020): finished  252 trials in 0 min 10 sec
+        24th phase (21Oct2020 - 28Oct2020): finished  279 trials in 0 min 10 sec
+        27th phase (19Nov2020 - 28Nov2020): finished  308 trials in 0 min 10 sec
+        30th phase (26Dec2020 - 31Dec2020): finished  314 trials in 0 min 10 sec
+        33rd phase (22Jan2021 - 03Feb2021): finished  307 trials in 0 min 10 sec
+        25th phase (29Oct2020 - 05Nov2020): finished  282 trials in 0 min 10 sec
+        28th phase (29Nov2020 - 11Dec2020): finished  304 trials in 0 min 10 sec
+        31st phase (01Jan2021 - 07Jan2021): finished  303 trials in 0 min 10 sec
+        34th phase (04Feb2021 - 17Feb2021): finished  300 trials in 0 min 10 sec
+        26th phase (06Nov2020 - 18Nov2020): finished  277 trials in 0 min 10 sec
+        29th phase (12Dec2020 - 25Dec2020): finished  274 trials in 0 min 10 sec
+        32nd phase (08Jan2021 - 21Jan2021): finished  268 trials in 0 min 10 sec
+        35th phase (18Feb2021 - 26Feb2021): finished  275 trials in 0 min 10 sec
+        36th phase (27Feb2021 - 09Mar2021): finished  323 trials in 0 min 10 sec
+        37th phase (10Mar2021 - 17Mar2021): finished  363 trials in 0 min 10 sec
 Completed optimization. Total: 2 min  1 sec
 
 &lt;SIR-F model: parameter estimation&gt;
 Running optimization with 4 CPUs...
-        31st phase (01Jan2021 - 27Mar2021): finished  600 trials in 0 min 10 sec
+        31st phase (01Jan2021 - 28Mar2021): finished  597 trials in 0 min 10 sec
 Completed optimization. Total: 0 min 10 sec
 </pre></div></div>
 </div>
@@ -5713,13 +5715,13 @@ Completed optimization. Total: 0 min 10 sec
       <td>06Feb2020</td>
       <td>18Feb2020</td>
       <td>SIR-F</td>
-      <td>1.54</td>
-      <td>0.066525</td>
-      <td>0.000005</td>
-      <td>0.002228</td>
-      <td>0.001345</td>
-      <td>0.333982</td>
-      <td>309</td>
+      <td>1.36</td>
+      <td>0.033714</td>
+      <td>0.000059</td>
+      <td>0.058588</td>
+      <td>0.041664</td>
+      <td>0.201079</td>
+      <td>274</td>
       <td>0 min 10 sec</td>
     </tr>
     <tr>
@@ -5727,13 +5729,13 @@ Completed optimization. Total: 0 min 10 sec
       <td>19Feb2020</td>
       <td>05Mar2020</td>
       <td>SIR-F</td>
-      <td>6.59</td>
-      <td>0.287533</td>
-      <td>0.000005</td>
-      <td>0.002481</td>
-      <td>0.000263</td>
-      <td>0.874949</td>
-      <td>313</td>
+      <td>4.69</td>
+      <td>0.017785</td>
+      <td>0.000329</td>
+      <td>0.113667</td>
+      <td>0.023451</td>
+      <td>0.209250</td>
+      <td>253</td>
       <td>0 min 10 sec</td>
     </tr>
     <tr>
@@ -5741,13 +5743,13 @@ Completed optimization. Total: 0 min 10 sec
       <td>06Mar2020</td>
       <td>13Mar2020</td>
       <td>SIR-F</td>
-      <td>3.39</td>
-      <td>0.305480</td>
-      <td>0.000098</td>
-      <td>0.003769</td>
-      <td>0.000674</td>
-      <td>0.849945</td>
-      <td>322</td>
+      <td>5.29</td>
+      <td>0.022468</td>
+      <td>0.000462</td>
+      <td>0.117133</td>
+      <td>0.021200</td>
+      <td>0.112132</td>
+      <td>235</td>
       <td>0 min 10 sec</td>
     </tr>
     <tr>
@@ -5755,13 +5757,13 @@ Completed optimization. Total: 0 min 10 sec
       <td>14Mar2020</td>
       <td>24Mar2020</td>
       <td>SIR-F</td>
-      <td>0.81</td>
-      <td>0.532636</td>
-      <td>0.000040</td>
-      <td>0.001716</td>
-      <td>0.000944</td>
-      <td>0.666091</td>
-      <td>307</td>
+      <td>2.36</td>
+      <td>0.039374</td>
+      <td>0.000714</td>
+      <td>0.055709</td>
+      <td>0.021981</td>
+      <td>0.043349</td>
+      <td>252</td>
       <td>0 min 10 sec</td>
     </tr>
     <tr>
@@ -5769,13 +5771,13 @@ Completed optimization. Total: 0 min 10 sec
       <td>25Mar2020</td>
       <td>02Apr2020</td>
       <td>SIR-F</td>
-      <td>4.93</td>
-      <td>0.242945</td>
-      <td>0.000048</td>
-      <td>0.003361</td>
-      <td>0.000467</td>
-      <td>0.624257</td>
-      <td>324</td>
+      <td>5.82</td>
+      <td>0.000087</td>
+      <td>0.001720</td>
+      <td>0.113523</td>
+      <td>0.017782</td>
+      <td>0.048373</td>
+      <td>262</td>
       <td>0 min 10 sec</td>
     </tr>
     <tr>
@@ -5799,13 +5801,13 @@ Completed optimization. Total: 0 min 10 sec
       <td>19Nov2020</td>
       <td>28Nov2020</td>
       <td>SIR-F</td>
-      <td>1.43</td>
-      <td>0.002044</td>
-      <td>0.000071</td>
-      <td>0.003985</td>
-      <td>0.002711</td>
-      <td>0.048417</td>
-      <td>306</td>
+      <td>1.53</td>
+      <td>0.000537</td>
+      <td>0.000558</td>
+      <td>0.125224</td>
+      <td>0.081131</td>
+      <td>0.026743</td>
+      <td>308</td>
       <td>0 min 10 sec</td>
     </tr>
     <tr>
@@ -5813,13 +5815,13 @@ Completed optimization. Total: 0 min 10 sec
       <td>29Nov2020</td>
       <td>11Dec2020</td>
       <td>SIR-F</td>
-      <td>1.07</td>
-      <td>0.003015</td>
-      <td>0.000071</td>
-      <td>0.003157</td>
-      <td>0.002860</td>
-      <td>0.043834</td>
-      <td>299</td>
+      <td>1.11</td>
+      <td>0.001666</td>
+      <td>0.001217</td>
+      <td>0.095415</td>
+      <td>0.084859</td>
+      <td>0.011183</td>
+      <td>304</td>
       <td>0 min 10 sec</td>
     </tr>
     <tr>
@@ -5827,13 +5829,13 @@ Completed optimization. Total: 0 min 10 sec
       <td>12Dec2020</td>
       <td>25Dec2020</td>
       <td>SIR-F</td>
-      <td>1.02</td>
-      <td>0.003015</td>
-      <td>0.000071</td>
-      <td>0.003166</td>
-      <td>0.003035</td>
-      <td>0.066903</td>
-      <td>298</td>
+      <td>1.10</td>
+      <td>0.017850</td>
+      <td>0.000041</td>
+      <td>0.103468</td>
+      <td>0.092391</td>
+      <td>0.028742</td>
+      <td>274</td>
       <td>0 min 10 sec</td>
     </tr>
     <tr>
@@ -5841,27 +5843,27 @@ Completed optimization. Total: 0 min 10 sec
       <td>26Dec2020</td>
       <td>31Dec2020</td>
       <td>SIR-F</td>
-      <td>1.45</td>
-      <td>0.003015</td>
-      <td>0.000071</td>
-      <td>0.003236</td>
-      <td>0.002161</td>
-      <td>0.017547</td>
-      <td>313</td>
+      <td>1.44</td>
+      <td>0.000783</td>
+      <td>0.001422</td>
+      <td>0.097180</td>
+      <td>0.066077</td>
+      <td>0.005436</td>
+      <td>314</td>
       <td>0 min 10 sec</td>
     </tr>
     <tr>
       <th>31st</th>
       <td>01Jan2021</td>
-      <td>27Mar2021</td>
+      <td>28Mar2021</td>
       <td>SIR-F</td>
-      <td>1.45</td>
-      <td>0.003015</td>
-      <td>0.000071</td>
-      <td>0.003236</td>
-      <td>0.002161</td>
-      <td>1.357141</td>
-      <td>600</td>
+      <td>1.44</td>
+      <td>0.000783</td>
+      <td>0.001422</td>
+      <td>0.097180</td>
+      <td>0.066077</td>
+      <td>1.244629</td>
+      <td>597</td>
       <td>0 min 10 sec</td>
     </tr>
   </tbody>
@@ -5938,9 +5940,9 @@ Completed optimization. Total: 0 min 10 sec
       <th></th>
       <th>max(Infected)</th>
       <th>argmax(Infected)</th>
-      <th>Confirmed on 28Mar2021</th>
-      <th>Infected on 28Mar2021</th>
-      <th>Fatal on 28Mar2021</th>
+      <th>Confirmed on 29Mar2021</th>
+      <th>Infected on 29Mar2021</th>
+      <th>Fatal on 29Mar2021</th>
       <th>31st_Rt</th>
       <th>32nd_Rt</th>
       <th>33rd_Rt</th>
@@ -5954,28 +5956,28 @@ Completed optimization. Total: 0 min 10 sec
   <tbody>
     <tr>
       <th>Main</th>
-      <td>69195</td>
-      <td>21Jan2021</td>
-      <td>466700</td>
-      <td>14216</td>
-      <td>11499</td>
-      <td>1.25</td>
-      <td>1.45</td>
-      <td>0.38</td>
-      <td>0.16</td>
-      <td>0.48</td>
-      <td>0.4</td>
-      <td>1.13</td>
-      <td>1.15</td>
+      <td>66976</td>
+      <td>22Jan2021</td>
+      <td>467252</td>
+      <td>14437</td>
+      <td>11206</td>
+      <td>1.31</td>
+      <td>1.36</td>
+      <td>0.61</td>
+      <td>0.53</td>
+      <td>0.66</td>
+      <td>0.78</td>
+      <td>1.09</td>
+      <td>1.14</td>
     </tr>
     <tr>
       <th>Retrospective</th>
-      <td>545944</td>
-      <td>28Mar2021</td>
-      <td>1921903</td>
-      <td>545944</td>
-      <td>45948</td>
-      <td>1.45</td>
+      <td>467362</td>
+      <td>29Mar2021</td>
+      <td>1671263</td>
+      <td>467362</td>
+      <td>25775</td>
+      <td>1.44</td>
       <td>-</td>
       <td>-</td>
       <td>-</td>

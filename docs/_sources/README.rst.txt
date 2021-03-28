@@ -28,8 +28,8 @@ Functionalities
 -  `Phase setting with S-R Trend
    analysis <https://lisphilar.github.io/covid19-sir/usage_phases.html>`__
 -  `Numerical simulation of ODE
-   models <https://lisphilar.github.io/covid19-sir/usage_theoretical.html>`__
--  SIR, SIR-D and SIR-F model
+   models <https://lisphilar.github.io/covid19-sir/usage_theoretical.html>`__:
+   SIR, SIR-D and SIR-F model
 -  `Phase-dependent parameter estimation of ODE
    models <https://lisphilar.github.io/covid19-sir/usage_quickest.html>`__
 -  `Scenario
@@ -164,7 +164,7 @@ with CovsirPhy, please cite the next Kaggle notebook.
 Hirokazu Takaya (2020-2021), Kaggle Notebook, COVID-19 data with SIR
 model, https://www.kaggle.com/lisphilar/covid-19-data-with-sir-model
 
-From version 2.18.0, we check the citation with the following script.
+We can check the citation with the following script (version >= 2.18.0).
 
 .. code:: python
 
