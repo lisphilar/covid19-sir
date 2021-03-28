@@ -266,9 +266,9 @@ class Scenario(Term):
             return [self.CI, self.F, self.R]
         if abbr == "all":
             return self._ensure_list(candidates, name="candidates")
-        if isinstance(abbr, str):
-            abbr_dict = {"C": self.C, "I": self.CI, "F": self.F, "R": self.R, }
-            variables = [abbr_dict.get(v, v) for v in list(abbr)]
+        abbr_dict = {"C": self.C, "I": self.CI, "F": self.F, "R": self.R, }
+        variables = list(abbr) if isinstance(abbr, str) else abbr
+        variables = [abbr_dict.get(v, v) for v in variables]
         return self._ensure_list(variables, candidates=candidates, name="variables")
 
     def records(self, variables=None, **kwargs):
