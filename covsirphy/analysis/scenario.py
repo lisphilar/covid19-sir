@@ -244,12 +244,39 @@ class Scenario(Term):
         self._data.switch_complement(whether=None, **kwargs)
         return self._data.show_complement()
 
+    def _convert_variables(self, abbr, candidates):
+        """
+        Convert abbreviated variable names to complete names.
+
+        Args:
+            abbr (list[str] or str or None): variable names or abbreviated names
+            candidates (list[str]): all candidates
+
+        Returns:
+            list[str]: complete names of variables
+
+        Note:
+            Selectable values of @abbr are as follows.
+            - None: return default list, ["Infected", "Recovered", "Fatal"] (changed in the future)
+            - list[str]: return the selected variables
+            - "all": the all available variables
+            - str: abbr, like "CIFR" (Confirmed/Infected/Fatal/Recovered), "CFR", "RC"
+        """
+        if abbr is None:
+            return [self.CI, self.F, self.R]
+        if abbr == "all":
+            return self._ensure_list(candidates, name="candidates")
+        abbr_dict = {"C": self.C, "I": self.CI, "F": self.F, "R": self.R, }
+        variables = list(abbr) if isinstance(abbr, str) else abbr
+        variables = [abbr_dict.get(v, v) for v in variables]
+        return self._ensure_list(variables, candidates=candidates, name="variables")
+
     def records(self, variables=None, **kwargs):
         """
         Return the records as a dataframe.
 
         Args:
-            variables (list[str] or str or None): list of variables, 'all', None (Infected/Fatal/Recovered)
+            variables (list[str] or str or None): variable names or abbreviated names
             kwargs: the other keyword arguments of Scenario.line_plot()
 
         Raises:
@@ -271,32 +298,32 @@ class Scenario(Term):
             - Records with Recovered > 0 will be selected.
             - If complement was performed by Scenario.complement() or Scenario(auto_complement=True),
             The kind of complement will be added to the title of the figure.
-            - @variables can be selected from Susceptible/Confirmed/Infected/Fatal/Recovered.
+
+        Note:
+            Selectable values of @variables are as follows.
+            - None: return default list, ["Infected", "Recovered", "Fatal"] (changed in the future)
+            - list[str]: return the selected variables
+            - "all": the all available variables
+            - str: abbr, like "CIFR" (Confirmed/Infected/Fatal/Recovered), "CFR", "RC"
         """
         # Get necessary data for the variables
-        all_df = self._data.records_all()
-        if variables is None:
-            df = all_df.loc[:, [self.DATE, self.CI, self.F, self.R]]
-        elif variables == "all":
-            df = all_df.copy()
-        else:
-            self._ensure_list(variables, candidates=all_df.columns.tolist(), name="variables")
-            df = all_df.loc[:, [self.DATE, *variables]]
+        all_df = self._data.records_all().set_index(self.DATE)
+        variables = self._convert_variables(variables, all_df.columns.tolist())
+        df = all_df.loc[:, variables]
         # Figure
         if self._data.complemented:
             title = f"{self.area}: Cases over time\nwith {self._data.complemented}"
         else:
             title = f"{self.area}: Cases over time"
-        self.line_plot(
-            df=df.set_index(self.DATE), title=title, y_integer=True, **kwargs)
-        return df
+        self.line_plot(df=df, title=title, y_integer=True, **kwargs)
+        return df.reset_index()
 
     def records_diff(self, variables=None, window=7, **kwargs):
         """
         Return the number of daily new cases (the first discreate difference of records).
 
         Args:
-            variables (list[str] or str or None): list of variables, 'all', None (Infected/Fatal/Recovered)
+            variables (list[str] or str or None): variable names or abbreviated names (as the same as Scenario.records())
             window (int): window of moving average, >= 1
             kwargs: the other keyword arguments of Scenario.line_plot()
 
@@ -309,10 +336,6 @@ class Scenario(Term):
                     - Infected (int):  daily new cases of Infected, if calculated
                     - Fatal (int):  daily new cases of Fatal, if calculated
                     - Recovered (int):  daily new cases of Recovered, if calculated
-
-        Note:
-            @variables will be selected from Confirmed, Infected, Fatal and Recovered.
-            If None was set as @variables, ["Confirmed", "Fatal", "Recovered"] will be used.
         """
         window = self._ensure_natural_int(window, name="window")
         df = self.records(variables=variables, show_figure=False).set_index(self.DATE)
@@ -724,7 +747,7 @@ class Scenario(Term):
         Simulate ODE models with set/estimated parameter values and show it as a figure.
 
         Args:
-            variables (list[str] or None): variables to include, Infected/Fatal/Recovered when None
+            variables (list[str] or str or None): variable names or abbreviated names (as the same as Scenario.records())
             phases (list[str] or None): phases to shoe or None (all phases)
             name (str): phase series name. If 'Main', main PhaseSeries will be used
             y0_dict(dict[str, float] or None): dictionary of initial values of variables
@@ -738,7 +761,7 @@ class Scenario(Term):
                     - Date (pd.Timestamp): Observation date
                     - Country (str): country/region name
                     - Province (str): province/prefecture/state name
-                    - Variables of the model and dataset (int): Confirmed etc.
+                    - Variables of the main dataset (int): Confirmed etc.
         """
         tracker = copy.deepcopy(self._tracker(name))
         # Select phases
@@ -749,14 +772,13 @@ class Scenario(Term):
         try:
             sim_df = tracker.simulate(y0_dict=y0_dict)
         except UnExecutedError:
-            raise UnExecutedError(
-                "Scenario.trend() or Scenario.add(), and Scenario.estimate(model)") from None
-        # Show figure
+            raise UnExecutedError("Scenario.trend() or Scenario.add(), and Scenario.estimate(model)") from None
+        # Variables to show
         df = sim_df.set_index(self.DATE)
-        fig_cols = self._ensure_list(
-            variables or [self.CI, self.F, self.R], candidates=df.columns.tolist(), name="variables")
+        variables = self._convert_variables(variables, candidates=self.VALUE_COLUMNS)
+        # Show figure
         title = f"{self.area}: Simulated number of cases ({name} scenario)"
-        self.line_plot(df=df[fig_cols], title=title, y_integer=True, v=tracker.change_dates(), **kwargs)
+        self.line_plot(df=df, title=title, y_integer=True, v=tracker.change_dates(), **kwargs)
         return sim_df
 
     def get(self, param, phase="last", name="Main"):
