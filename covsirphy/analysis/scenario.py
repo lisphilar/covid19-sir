@@ -244,6 +244,33 @@ class Scenario(Term):
         self._data.switch_complement(whether=None, **kwargs)
         return self._data.show_complement()
 
+    def _convert_variables(self, abbr, candidates):
+        """
+        Convert abbreviated variable names to complete names.
+
+        Args:
+            abbr (list[str] or str or None): variable names or abbreviated names
+            candidates (list[str]): all candidates
+
+        Returns:
+            list[str]: complete names of variables
+
+        Note:
+            Selectable values of @abbr are as follows.
+            - None: return default list, ["Infected", "Recovered", "Fatal"] (may be changed in the future)
+            - list[str]: return the selected variables
+            - "all": the all available variables
+            - str: abbr, like "CIFR" (Confirmed/Infected/Fatal/Recovered), "CFR" (Confirmed/Fatal/Recovered), "RC" (Recovered/Confirmed)
+        """
+        if abbr is None:
+            return [self.CI, self.F, self.R]
+        if abbr == "all":
+            return self._ensure_list(candidates, name="candidates")
+        if isinstance(abbr, str):
+            abbr_dict = {"C": self.C, "I": self.CI, "F": self.F, "R": self.R, }
+            variables = [abbr_dict.get(v, v) for v in list(abbr)]
+        return self._ensure_list(variables, candidates=candidates, name="variables")
+
     def records(self, variables=None, **kwargs):
         """
         Return the records as a dataframe.
