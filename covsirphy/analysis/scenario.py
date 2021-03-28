@@ -323,7 +323,7 @@ class Scenario(Term):
         Return the number of daily new cases (the first discreate difference of records).
 
         Args:
-            variables (list[str] or str or None): list of variables, 'all', None (Infected/Fatal/Recovered)
+            variables (list[str] or str or None): variable names or abbreviated names (as the same as Scenario.records())
             window (int): window of moving average, >= 1
             kwargs: the other keyword arguments of Scenario.line_plot()
 
@@ -336,10 +336,6 @@ class Scenario(Term):
                     - Infected (int):  daily new cases of Infected, if calculated
                     - Fatal (int):  daily new cases of Fatal, if calculated
                     - Recovered (int):  daily new cases of Recovered, if calculated
-
-        Note:
-            @variables will be selected from Confirmed, Infected, Fatal and Recovered.
-            If None was set as @variables, ["Confirmed", "Fatal", "Recovered"] will be used.
         """
         window = self._ensure_natural_int(window, name="window")
         df = self.records(variables=variables, show_figure=False).set_index(self.DATE)
@@ -751,7 +747,7 @@ class Scenario(Term):
         Simulate ODE models with set/estimated parameter values and show it as a figure.
 
         Args:
-            variables (list[str] or None): variables to include, Infected/Fatal/Recovered when None
+            variables (list[str] or str or None): variable names or abbreviated names (as the same as Scenario.records())
             phases (list[str] or None): phases to shoe or None (all phases)
             name (str): phase series name. If 'Main', main PhaseSeries will be used
             y0_dict(dict[str, float] or None): dictionary of initial values of variables
@@ -776,14 +772,13 @@ class Scenario(Term):
         try:
             sim_df = tracker.simulate(y0_dict=y0_dict)
         except UnExecutedError:
-            raise UnExecutedError(
-                "Scenario.trend() or Scenario.add(), and Scenario.estimate(model)") from None
-        # Show figure
+            raise UnExecutedError("Scenario.trend() or Scenario.add(), and Scenario.estimate(model)") from None
+        # Variables to show
         df = sim_df.set_index(self.DATE)
-        fig_cols = self._ensure_list(
-            variables or [self.CI, self.F, self.R], candidates=df.columns.tolist(), name="variables")
+        variables = self._convert_variables(variables, candidates=df.columns.tolist())
+        # Show figure
         title = f"{self.area}: Simulated number of cases ({name} scenario)"
-        self.line_plot(df=df[fig_cols], title=title, y_integer=True, v=tracker.change_dates(), **kwargs)
+        self.line_plot(df=df, title=title, y_integer=True, v=tracker.change_dates(), **kwargs)
         return sim_df
 
     def get(self, param, phase="last", name="Main"):
