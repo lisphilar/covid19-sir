@@ -257,10 +257,10 @@ class Scenario(Term):
 
         Note:
             Selectable values of @abbr are as follows.
-            - None: return default list, ["Infected", "Recovered", "Fatal"] (may be changed in the future)
+            - None: return default list, ["Infected", "Recovered", "Fatal"] (changed in the future)
             - list[str]: return the selected variables
             - "all": the all available variables
-            - str: abbr, like "CIFR" (Confirmed/Infected/Fatal/Recovered), "CFR" (Confirmed/Fatal/Recovered), "RC" (Recovered/Confirmed)
+            - str: abbr, like "CIFR" (Confirmed/Infected/Fatal/Recovered), "CFR", "RC"
         """
         if abbr is None:
             return [self.CI, self.F, self.R]
@@ -276,7 +276,7 @@ class Scenario(Term):
         Return the records as a dataframe.
 
         Args:
-            variables (list[str] or str or None): list of variables, 'all', None (Infected/Fatal/Recovered)
+            variables (list[str] or str or None): variable names or abbreviated names
             kwargs: the other keyword arguments of Scenario.line_plot()
 
         Raises:
@@ -298,25 +298,25 @@ class Scenario(Term):
             - Records with Recovered > 0 will be selected.
             - If complement was performed by Scenario.complement() or Scenario(auto_complement=True),
             The kind of complement will be added to the title of the figure.
-            - @variables can be selected from Susceptible/Confirmed/Infected/Fatal/Recovered.
+
+        Note:
+            Selectable values of @variables are as follows.
+            - None: return default list, ["Infected", "Recovered", "Fatal"] (changed in the future)
+            - list[str]: return the selected variables
+            - "all": the all available variables
+            - str: abbr, like "CIFR" (Confirmed/Infected/Fatal/Recovered), "CFR", "RC"
         """
         # Get necessary data for the variables
-        all_df = self._data.records_all()
-        if variables is None:
-            df = all_df.loc[:, [self.DATE, self.CI, self.F, self.R]]
-        elif variables == "all":
-            df = all_df.copy()
-        else:
-            self._ensure_list(variables, candidates=all_df.columns.tolist(), name="variables")
-            df = all_df.loc[:, [self.DATE, *variables]]
+        all_df = self._data.records_all().set_index(self.DATE)
+        variables = self._convert_variables(variables, all_df.columns.tolist())
+        df = all_df.loc[:, variables]
         # Figure
         if self._data.complemented:
             title = f"{self.area}: Cases over time\nwith {self._data.complemented}"
         else:
             title = f"{self.area}: Cases over time"
-        self.line_plot(
-            df=df.set_index(self.DATE), title=title, y_integer=True, **kwargs)
-        return df
+        self.line_plot(df=df.set_index(self.DATE), title=title, y_integer=True, **kwargs)
+        return df.reset_index()
 
     def records_diff(self, variables=None, window=7, **kwargs):
         """
