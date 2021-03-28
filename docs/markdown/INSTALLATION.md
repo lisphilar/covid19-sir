@@ -111,7 +111,7 @@ Please create `CountryData` instance at first. Let's say we have a CSV file ("os
 - "fatal": the number of fatal cases
 - "province": (optional) province names
 
-Country level data will be set as total values of provinces with `CountryData.register_total()` method optionally (>=2.15.0-gamma).
+Country level data will be set as total values of provinces with `CountryData.register_total()` method optionally.
 
 ```Python
 # Create CountryData instance specifying filename and country name
