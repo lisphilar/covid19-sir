@@ -315,7 +315,7 @@ class Scenario(Term):
             title = f"{self.area}: Cases over time\nwith {self._data.complemented}"
         else:
             title = f"{self.area}: Cases over time"
-        self.line_plot(df=df.set_index(self.DATE), title=title, y_integer=True, **kwargs)
+        self.line_plot(df=df, title=title, y_integer=True, **kwargs)
         return df.reset_index()
 
     def records_diff(self, variables=None, window=7, **kwargs):
