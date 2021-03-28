@@ -761,7 +761,7 @@ class Scenario(Term):
                     - Date (pd.Timestamp): Observation date
                     - Country (str): country/region name
                     - Province (str): province/prefecture/state name
-                    - Variables of the model and dataset (int): Confirmed etc.
+                    - Variables of the main dataset (int): Confirmed etc.
         """
         tracker = copy.deepcopy(self._tracker(name))
         # Select phases
@@ -775,7 +775,7 @@ class Scenario(Term):
             raise UnExecutedError("Scenario.trend() or Scenario.add(), and Scenario.estimate(model)") from None
         # Variables to show
         df = sim_df.set_index(self.DATE)
-        variables = self._convert_variables(variables, candidates=df.columns.tolist())
+        variables = self._convert_variables(variables, candidates=self.VALUE_COLUMNS)
         # Show figure
         title = f"{self.area}: Simulated number of cases ({name} scenario)"
         self.line_plot(df=df, title=title, y_integer=True, v=tracker.change_dates(), **kwargs)
