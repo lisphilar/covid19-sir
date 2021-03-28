@@ -87,6 +87,7 @@ class TestScenario(object):
         snl.complement_reverse()
         snl.records(variables=None)
         snl.records(variables="all")
+        snl.records(variables="CIFR")
         df = snl.records(variables=[Term.TESTS, Term.VAC])
         assert set(df.columns) == set([Term.DATE, Term.TESTS, Term.VAC])
         snl.records_diff()
@@ -95,6 +96,7 @@ class TestScenario(object):
         snl.records()
         snl.records_diff(variables=None)
         snl.records_diff(variables="all")
+        snl.records_diff(variables="CFR")
         diff_df = snl.records_diff(variables=[Term.TESTS, Term.VAC])
         assert set(diff_df.columns) == set([Term.TESTS, Term.VAC])
         # Details of complement
@@ -187,6 +189,9 @@ class TestScenario(object):
 
     def test_simulate(self, snl):
         snl.simulate()
+        snl.simulate(variables=None)
+        snl.simulate(variables="all")
+        snl.simulate(variables="CR")
         snl.simulate(phases=["1st", "2nd"])
 
     def test_get(self, snl):
