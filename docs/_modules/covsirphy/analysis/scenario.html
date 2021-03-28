@@ -65,7 +65,7 @@
             
             
               <div class="version">
-                2.17.0-omicron
+                2.17.0-pi
               </div>
             
           
@@ -417,12 +417,39 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_data</span><span class="o">.</span><span class="n">switch_complement</span><span class="p">(</span><span class="n">whether</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_data</span><span class="o">.</span><span class="n">show_complement</span><span class="p">()</span></div>
 
+    <span class="k">def</span> <span class="nf">_convert_variables</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">abbr</span><span class="p">,</span> <span class="n">candidates</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Convert abbreviated variable names to complete names.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            abbr (list[str] or str or None): variable names or abbreviated names</span>
+<span class="sd">            candidates (list[str]): all candidates</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            list[str]: complete names of variables</span>
+
+<span class="sd">        Note:</span>
+<span class="sd">            Selectable values of @abbr are as follows.</span>
+<span class="sd">            - None: return default list, [&quot;Infected&quot;, &quot;Recovered&quot;, &quot;Fatal&quot;] (changed in the future)</span>
+<span class="sd">            - list[str]: return the selected variables</span>
+<span class="sd">            - &quot;all&quot;: the all available variables</span>
+<span class="sd">            - str: abbr, like &quot;CIFR&quot; (Confirmed/Infected/Fatal/Recovered), &quot;CFR&quot;, &quot;RC&quot;</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">abbr</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">CI</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">F</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">R</span><span class="p">]</span>
+        <span class="k">if</span> <span class="n">abbr</span> <span class="o">==</span> <span class="s2">&quot;all&quot;</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ensure_list</span><span class="p">(</span><span class="n">candidates</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;candidates&quot;</span><span class="p">)</span>
+        <span class="n">abbr_dict</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;C&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">C</span><span class="p">,</span> <span class="s2">&quot;I&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">CI</span><span class="p">,</span> <span class="s2">&quot;F&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">F</span><span class="p">,</span> <span class="s2">&quot;R&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">R</span><span class="p">,</span> <span class="p">}</span>
+        <span class="n">variables</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">abbr</span><span class="p">)</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">abbr</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span> <span class="k">else</span> <span class="n">abbr</span>
+        <span class="n">variables</span> <span class="o">=</span> <span class="p">[</span><span class="n">abbr_dict</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">v</span><span class="p">,</span> <span class="n">v</span><span class="p">)</span> <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">variables</span><span class="p">]</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ensure_list</span><span class="p">(</span><span class="n">variables</span><span class="p">,</span> <span class="n">candidates</span><span class="o">=</span><span class="n">candidates</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;variables&quot;</span><span class="p">)</span>
+
 <div class="viewcode-block" id="Scenario.records"><a class="viewcode-back" href="../../../covsirphy.analysis.html#covsirphy.Scenario.records">[docs]</a>    <span class="k">def</span> <span class="nf">records</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">variables</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Return the records as a dataframe.</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">            variables (list[str] or str or None): list of variables, &#39;all&#39;, None (Infected/Fatal/Recovered)</span>
+<span class="sd">            variables (list[str] or str or None): variable names or abbreviated names</span>
 <span class="sd">            kwargs: the other keyword arguments of Scenario.line_plot()</span>
 
 <span class="sd">        Raises:</span>
@@ -444,32 +471,32 @@
 <span class="sd">            - Records with Recovered &gt; 0 will be selected.</span>
 <span class="sd">            - If complement was performed by Scenario.complement() or Scenario(auto_complement=True),</span>
 <span class="sd">            The kind of complement will be added to the title of the figure.</span>
-<span class="sd">            - @variables can be selected from Susceptible/Confirmed/Infected/Fatal/Recovered.</span>
+
+<span class="sd">        Note:</span>
+<span class="sd">            Selectable values of @variables are as follows.</span>
+<span class="sd">            - None: return default list, [&quot;Infected&quot;, &quot;Recovered&quot;, &quot;Fatal&quot;] (changed in the future)</span>
+<span class="sd">            - list[str]: return the selected variables</span>
+<span class="sd">            - &quot;all&quot;: the all available variables</span>
+<span class="sd">            - str: abbr, like &quot;CIFR&quot; (Confirmed/Infected/Fatal/Recovered), &quot;CFR&quot;, &quot;RC&quot;</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="c1"># Get necessary data for the variables</span>
-        <span class="n">all_df</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_data</span><span class="o">.</span><span class="n">records_all</span><span class="p">()</span>
-        <span class="k">if</span> <span class="n">variables</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">df</span> <span class="o">=</span> <span class="n">all_df</span><span class="o">.</span><span class="n">loc</span><span class="p">[:,</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">DATE</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">CI</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">F</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">R</span><span class="p">]]</span>
-        <span class="k">elif</span> <span class="n">variables</span> <span class="o">==</span> <span class="s2">&quot;all&quot;</span><span class="p">:</span>
-            <span class="n">df</span> <span class="o">=</span> <span class="n">all_df</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_ensure_list</span><span class="p">(</span><span class="n">variables</span><span class="p">,</span> <span class="n">candidates</span><span class="o">=</span><span class="n">all_df</span><span class="o">.</span><span class="n">columns</span><span class="o">.</span><span class="n">tolist</span><span class="p">(),</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;variables&quot;</span><span class="p">)</span>
-            <span class="n">df</span> <span class="o">=</span> <span class="n">all_df</span><span class="o">.</span><span class="n">loc</span><span class="p">[:,</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">DATE</span><span class="p">,</span> <span class="o">*</span><span class="n">variables</span><span class="p">]]</span>
+        <span class="n">all_df</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_data</span><span class="o">.</span><span class="n">records_all</span><span class="p">()</span><span class="o">.</span><span class="n">set_index</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">DATE</span><span class="p">)</span>
+        <span class="n">variables</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_convert_variables</span><span class="p">(</span><span class="n">variables</span><span class="p">,</span> <span class="n">all_df</span><span class="o">.</span><span class="n">columns</span><span class="o">.</span><span class="n">tolist</span><span class="p">())</span>
+        <span class="n">df</span> <span class="o">=</span> <span class="n">all_df</span><span class="o">.</span><span class="n">loc</span><span class="p">[:,</span> <span class="n">variables</span><span class="p">]</span>
         <span class="c1"># Figure</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_data</span><span class="o">.</span><span class="n">complemented</span><span class="p">:</span>
             <span class="n">title</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">area</span><span class="si">}</span><span class="s2">: Cases over time</span><span class="se">\n</span><span class="s2">with </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_data</span><span class="o">.</span><span class="n">complemented</span><span class="si">}</span><span class="s2">&quot;</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="n">title</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">area</span><span class="si">}</span><span class="s2">: Cases over time&quot;</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">line_plot</span><span class="p">(</span>
-            <span class="n">df</span><span class="o">=</span><span class="n">df</span><span class="o">.</span><span class="n">set_index</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">DATE</span><span class="p">),</span> <span class="n">title</span><span class="o">=</span><span class="n">title</span><span class="p">,</span> <span class="n">y_integer</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
-        <span class="k">return</span> <span class="n">df</span></div>
+        <span class="bp">self</span><span class="o">.</span><span class="n">line_plot</span><span class="p">(</span><span class="n">df</span><span class="o">=</span><span class="n">df</span><span class="p">,</span> <span class="n">title</span><span class="o">=</span><span class="n">title</span><span class="p">,</span> <span class="n">y_integer</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">df</span><span class="o">.</span><span class="n">reset_index</span><span class="p">()</span></div>
 
 <div class="viewcode-block" id="Scenario.records_diff"><a class="viewcode-back" href="../../../covsirphy.analysis.html#covsirphy.Scenario.records_diff">[docs]</a>    <span class="k">def</span> <span class="nf">records_diff</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">variables</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">window</span><span class="o">=</span><span class="mi">7</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Return the number of daily new cases (the first discreate difference of records).</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">            variables (list[str] or str or None): list of variables, &#39;all&#39;, None (Infected/Fatal/Recovered)</span>
+<span class="sd">            variables (list[str] or str or None): variable names or abbreviated names (as the same as Scenario.records())</span>
 <span class="sd">            window (int): window of moving average, &gt;= 1</span>
 <span class="sd">            kwargs: the other keyword arguments of Scenario.line_plot()</span>
 
@@ -482,10 +509,6 @@
 <span class="sd">                    - Infected (int):  daily new cases of Infected, if calculated</span>
 <span class="sd">                    - Fatal (int):  daily new cases of Fatal, if calculated</span>
 <span class="sd">                    - Recovered (int):  daily new cases of Recovered, if calculated</span>
-
-<span class="sd">        Note:</span>
-<span class="sd">            @variables will be selected from Confirmed, Infected, Fatal and Recovered.</span>
-<span class="sd">            If None was set as @variables, [&quot;Confirmed&quot;, &quot;Fatal&quot;, &quot;Recovered&quot;] will be used.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">window</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ensure_natural_int</span><span class="p">(</span><span class="n">window</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;window&quot;</span><span class="p">)</span>
         <span class="n">df</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">records</span><span class="p">(</span><span class="n">variables</span><span class="o">=</span><span class="n">variables</span><span class="p">,</span> <span class="n">show_figure</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span><span class="o">.</span><span class="n">set_index</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">DATE</span><span class="p">)</span>
@@ -897,7 +920,7 @@
 <span class="sd">        Simulate ODE models with set/estimated parameter values and show it as a figure.</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">            variables (list[str] or None): variables to include, Infected/Fatal/Recovered when None</span>
+<span class="sd">            variables (list[str] or str or None): variable names or abbreviated names (as the same as Scenario.records())</span>
 <span class="sd">            phases (list[str] or None): phases to shoe or None (all phases)</span>
 <span class="sd">            name (str): phase series name. If &#39;Main&#39;, main PhaseSeries will be used</span>
 <span class="sd">            y0_dict(dict[str, float] or None): dictionary of initial values of variables</span>
@@ -911,7 +934,7 @@
 <span class="sd">                    - Date (pd.Timestamp): Observation date</span>
 <span class="sd">                    - Country (str): country/region name</span>
 <span class="sd">                    - Province (str): province/prefecture/state name</span>
-<span class="sd">                    - Variables of the model and dataset (int): Confirmed etc.</span>
+<span class="sd">                    - Variables of the main dataset (int): Confirmed etc.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">tracker</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_tracker</span><span class="p">(</span><span class="n">name</span><span class="p">))</span>
         <span class="c1"># Select phases</span>
@@ -922,14 +945,13 @@
         <span class="k">try</span><span class="p">:</span>
             <span class="n">sim_df</span> <span class="o">=</span> <span class="n">tracker</span><span class="o">.</span><span class="n">simulate</span><span class="p">(</span><span class="n">y0_dict</span><span class="o">=</span><span class="n">y0_dict</span><span class="p">)</span>
         <span class="k">except</span> <span class="n">UnExecutedError</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="n">UnExecutedError</span><span class="p">(</span>
-                <span class="s2">&quot;Scenario.trend() or Scenario.add(), and Scenario.estimate(model)&quot;</span><span class="p">)</span> <span class="kn">from</span> <span class="bp">None</span>
-        <span class="c1"># Show figure</span>
+            <span class="k">raise</span> <span class="n">UnExecutedError</span><span class="p">(</span><span class="s2">&quot;Scenario.trend() or Scenario.add(), and Scenario.estimate(model)&quot;</span><span class="p">)</span> <span class="kn">from</span> <span class="bp">None</span>
+        <span class="c1"># Variables to show</span>
         <span class="n">df</span> <span class="o">=</span> <span class="n">sim_df</span><span class="o">.</span><span class="n">set_index</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">DATE</span><span class="p">)</span>
-        <span class="n">fig_cols</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ensure_list</span><span class="p">(</span>
-            <span class="n">variables</span> <span class="ow">or</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">CI</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">F</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">R</span><span class="p">],</span> <span class="n">candidates</span><span class="o">=</span><span class="n">df</span><span class="o">.</span><span class="n">columns</span><span class="o">.</span><span class="n">tolist</span><span class="p">(),</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;variables&quot;</span><span class="p">)</span>
+        <span class="n">variables</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_convert_variables</span><span class="p">(</span><span class="n">variables</span><span class="p">,</span> <span class="n">candidates</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">VALUE_COLUMNS</span><span class="p">)</span>
+        <span class="c1"># Show figure</span>
         <span class="n">title</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">area</span><span class="si">}</span><span class="s2">: Simulated number of cases (</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2"> scenario)&quot;</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">line_plot</span><span class="p">(</span><span class="n">df</span><span class="o">=</span><span class="n">df</span><span class="p">[</span><span class="n">fig_cols</span><span class="p">],</span> <span class="n">title</span><span class="o">=</span><span class="n">title</span><span class="p">,</span> <span class="n">y_integer</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">v</span><span class="o">=</span><span class="n">tracker</span><span class="o">.</span><span class="n">change_dates</span><span class="p">(),</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">line_plot</span><span class="p">(</span><span class="n">df</span><span class="o">=</span><span class="n">df</span><span class="p">,</span> <span class="n">title</span><span class="o">=</span><span class="n">title</span><span class="p">,</span> <span class="n">y_integer</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">v</span><span class="o">=</span><span class="n">tracker</span><span class="o">.</span><span class="n">change_dates</span><span class="p">(),</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">sim_df</span></div>
 
 <div class="viewcode-block" id="Scenario.get"><a class="viewcode-back" href="../../../covsirphy.analysis.html#covsirphy.Scenario.get">[docs]</a>    <span class="k">def</span> <span class="nf">get</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">param</span><span class="p">,</span> <span class="n">phase</span><span class="o">=</span><span class="s2">&quot;last&quot;</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;Main&quot;</span><span class="p">):</span>
