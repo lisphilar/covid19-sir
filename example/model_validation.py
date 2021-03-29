@@ -24,7 +24,7 @@ def main():
     step_numbers = list(range(3, 10))
     # Execute validation
     for step_n in step_numbers:
-        validator = cs.ModelValidator(tau=1440, n_trials=8, step_n=step_n, seed=0)
+        validator = cs.ModelValidator(tau=1440, n_trials=8, step_n=step_n, seed=2)
         for model in models:
             validator.run(model)
         validator.summary().to_csv(**filer.csv(f"summary_{step_n}-points", index=False))
