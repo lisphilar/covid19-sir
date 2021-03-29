@@ -15,7 +15,7 @@ from covsirphy.analysis.example_data import ExampleData
 class ModelValidator(Term):
     """
     Evaluate ODE models performance as follows.
-    1. Select model parameter sets and initial values randomly
+    1. Select model parameter sets randomly
     2. Set user-defined/random phase duration
     3. Perform simulation with a specified ODE model
     4. Perform parameter estimation
