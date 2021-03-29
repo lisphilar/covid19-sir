@@ -67,7 +67,7 @@
             
             
               <div class="version">
-                2.18.0
+                2.18.0-alpha
               </div>
             
           
@@ -789,20 +789,22 @@ Complement will not be done.</p>
 <span id="covsirphy-analysis-model-validator-module"></span><h2>covsirphy.analysis.model_validator module<a class="headerlink" href="#module-covsirphy.analysis.model_validator" title="Permalink to this headline">¶</a></h2>
 <dl class="py class">
 <dt id="covsirphy.analysis.model_validator.ModelValidator">
-<em class="property"><span class="pre">class</span> </em><code class="sig-name descname"><span class="pre">ModelValidator</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">tau</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1440</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_trials</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">8</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">seed</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/analysis/model_validator.html#ModelValidator"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#covsirphy.analysis.model_validator.ModelValidator" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">class</span> </em><code class="sig-name descname"><span class="pre">ModelValidator</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">tau</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1440</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_trials</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">8</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">step_n</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">seed</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/analysis/model_validator.html#ModelValidator"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#covsirphy.analysis.model_validator.ModelValidator" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="covsirphy.util.html#covsirphy.util.term.Term" title="covsirphy.util.term.Term"><code class="xref py py-class docutils literal notranslate"><span class="pre">covsirphy.util.term.Term</span></code></a></p>
-<p>Validate a ODE model as follows.
-- Create a model parameter set, phase length and initial values randomly.
-- Simulate the number of cases with an user-defined parameter set.
-- Perform parameter estimation with the theoretical data (the dataset created with step 1).
-- Compare the user-defined parameter set and estimated parameter set.
-- Repeat with anather set of parameters.
-- Small difference of the two parameter sets means that the model can be used for parameter estimation.</p>
+<p>Evaluate ODE models performance as follows.
+1. Select model parameter sets randomly
+2. Set user-defined/random phase duration
+3. Perform simulation with a specified ODE model
+4. Perform parameter estimation
+5. Compare the estimated parameters and the parameters produced with th 1st step
+6. Repeat trials (1 trial = from the 1st step to the 5th step)
+Small difference is expected in the 6th step.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>tau</strong> (<em>int</em>) – tau value [min]</p></li>
 <li><p><strong>n_trials</strong> (<em>int</em>) – the number of trials</p></li>
+<li><p><strong>step_n</strong> (<em>int</em><em> or </em><em>None</em>) – the number of steps in simulation (over 2) or None (randomly selected)</p></li>
 <li><p><strong>seed</strong> (<em>int</em>) – random seed</p></li>
 </ul>
 </dd>
