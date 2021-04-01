@@ -509,7 +509,7 @@ class DataHandler(Term):
         series = run_df.reset_index(drop=True).iloc[:, 0].dropna()
         # Detection with Ruptures using indicator values
         warnings.simplefilter("ignore", category=RuntimeWarning)
-        algorithm = rpt.Pelt(model="rbf", jump=1, min_size=0)
+        algorithm = rpt.Pelt(model="rbf", jump=1, min_size=7)
         try:
             results = algorithm.fit_predict(series.values, pen=0.5)
         except ValueError:

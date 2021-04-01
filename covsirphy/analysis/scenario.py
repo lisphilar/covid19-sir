@@ -1243,7 +1243,7 @@ class Scenario(Term):
             metrics=metrics, variables=variables, phases=phases, y0_dict=y0_dict)
 
     def estimate_delay(self, oxcgrt_data=None, indicator="Stringency_index",
-                       target="Confirmed", value_range=(7, None)):
+                       target="Confirmed", value_range=(7, None), min_size=7):
         """
         Estimate the mode value of delay period [days] between the indicator and the target.
         We assume that the indicator impact on the target value with delay.
@@ -1284,13 +1284,17 @@ class Scenario(Term):
         # Calculate delay values
         df = self._data.estimate_delay(indicator=indicator, target=target, delay_name="Period Length")
         # Filter out very long periods
-        df_filtered = df.loc[df["Period Length"] < df["Period Length"].quantile(0.99)]
+        df.dropna(subset=["Period Length"], inplace=True)
+        df.sort_values("Period Length", inplace=True)
+        df.reset_index(inplace=True)
+        Q1 = np.percentile(df["Period Length"], 25, interpolation = 'midpoint')
+        low_lim = min_size
         if value_range[1] is not None:
-            df_filtered = df_filtered.loc[df["Period Length"] < value_range[1]]
-        # Calculate representative value (mode)
-        if df_filtered.empty:
+            df = df.loc[df["Period Length"] < value_range[1]]
+        # Calculate representative value
+        if df.empty:
             return (self._data.recovery_period(), df)
-        delay_period = df_filtered["Period Length"].mode()[0]
+        delay_period = int((low_lim + Q1)/2)
         return (int(delay_period), df)
 
     def _fit_create_data(self, model, name, delay, removed_cols):
