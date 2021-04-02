@@ -465,7 +465,7 @@ class DataHandler(Term):
         except NotRegisteredExtraError:
             return self.records(main=True, extras=False, past=True, future=True)
 
-    def estimate_delay(self, indicator, target, delay_name="Period Length"):
+    def estimate_delay(self, indicator, target, use_difference=False, delay_name="Period Length"):
         """
         Estimate the average day [days] between the indicator and the target.
         We assume that the indicator impact on the target value with delay.
@@ -474,6 +474,7 @@ class DataHandler(Term):
         Args:
             indicator (str): indicator name, a column of any registered datasets
             target (str): target name, a column of any registered datasets
+            use_difference (bool): if True, use first discrete difference of target
             delay_name (str): column name of delay in the output dataframe
 
         Raises:
@@ -500,6 +501,8 @@ class DataHandler(Term):
         record_df = self.records_all()
         self._ensure_list(
             [indicator, target], candidates=record_df.columns.tolist(), name="indicator and target")
+        if use_difference:
+            record_df[target] = record_df[target].diff()
         pivot_df = record_df.pivot_table(values=indicator, index=target)
         run_df = pivot_df.copy()
         # Convert index (target) to serial numbers

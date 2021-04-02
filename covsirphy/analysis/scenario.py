@@ -1243,7 +1243,7 @@ class Scenario(Term):
             metrics=metrics, variables=variables, phases=phases, y0_dict=y0_dict)
 
     def estimate_delay(self, oxcgrt_data=None, indicator="Stringency_index",
-                       target="Confirmed", value_range=(7, None), min_size=7):
+                       target="Confirmed", value_range=(7, None), min_size=7, use_difference=False):
         """
         Estimate the mode value of delay period [days] between the indicator and the target.
         We assume that the indicator impact on the target value with delay.
@@ -1254,6 +1254,7 @@ class Scenario(Term):
             target (str): target name, a column of any registered datasets
             value_range (tuple(int, int or None)): tuple, giving the minimum and maximum range to search for change over time
             min_size (int): minmum size of delay period
+            use_difference (bool): if True, use first discrete difference of target
 
         Raises:
             NotRegisteredMainError: either JHUData or PopulationData was not registered
@@ -1283,7 +1284,8 @@ class Scenario(Term):
                 DeprecationWarning, stacklevel=1)
             self.register(extras=[oxcgrt_data])
         # Calculate delay values
-        df = self._data.estimate_delay(indicator=indicator, target=target, delay_name="Period Length")
+        df = self._data.estimate_delay(
+            indicator=indicator, target=target, use_difference=use_difference, delay_name="Period Length")
         # Remove NAs and sort
         df.dropna(subset=["Period Length"], inplace=True)
         df.sort_values("Period Length", inplace=True)
