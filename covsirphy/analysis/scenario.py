@@ -1286,15 +1286,15 @@ class Scenario(Term):
         # Filter out very long periods
         df.dropna(subset=["Period Length"], inplace=True)
         df.sort_values("Period Length", inplace=True)
-        df.reset_index(inplace=True)
-        Q1 = np.percentile(df["Period Length"], 25, interpolation = 'midpoint')
+        df.reset_index(inplace=True, drop=True)
+        Q1 = np.percentile(df["Period Length"], 25, interpolation='midpoint')
         low_lim = min_size
         if value_range[1] is not None:
             df = df.loc[df["Period Length"] < value_range[1]]
         # Calculate representative value
         if df.empty:
             return (self._data.recovery_period(), df)
-        delay_period = int((low_lim + Q1)/2)
+        delay_period = int((low_lim + Q1) / 2)
         return (int(delay_period), df)
 
     def _fit_create_data(self, model, name, delay, removed_cols):
