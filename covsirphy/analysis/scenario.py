@@ -1243,16 +1243,16 @@ class Scenario(Term):
             metrics=metrics, variables=variables, phases=phases, y0_dict=y0_dict)
 
     def estimate_delay(self, oxcgrt_data=None, indicator="Stringency_index",
-                       target="Confirmed", value_range=(7, None), min_size=7, **kwargs):
+                       target="Confirmed", percentile=25, min_size=7, **kwargs):
         """
-        Estimate the mode value of delay period [days] between the indicator and the target.
-        We assume that the indicator impact on the target value with delay.
+        Estimate delay period [days], assuming the indicator impact on the target value with delay.
+        The average of representative value (percentile) and @min_size will be returned.
 
         Args:
             oxcgrt_data (covsirphy.OxCGRTData): OxCGRT dataset
             indicator (str): indicator name, a column of any registered datasets
             target (str): target name, a column of any registered datasets
-            value_range (tuple(int, int or None)): tuple, giving the minimum and maximum range to search for change over time
+            percentile (int): percentile to calculate the representative value, in (0, 100)
             min_size (int): minmum size of delay period
             kwargs: keyword arguments of DataHandler.estimate_delay()
 
@@ -1274,7 +1274,6 @@ class Scenario(Term):
 
         Note:
             - Average recovered period of JHU dataset will be used as returned value when the estimated value was not in value_range.
-            - Very long periods (outside of 99% quantile) are taken out.
             - @oxcgrt_data argument was deprecated. Please use Scenario.register(extras=[oxcgrt_data]).
         """
         # Register OxCGRT data
@@ -1283,6 +1282,9 @@ class Scenario(Term):
                 "Please use Scenario.register(extras=[oxcgrt_data]) rather than Scenario.fit(oxcgrt_data).",
                 DeprecationWarning, stacklevel=1)
             self.register(extras=[oxcgrt_data])
+        # Un-used arguments
+        if "value_range" in kwargs:
+            warnings.warn("@value_range argument was deprecated.", DeprecationWarning, stacklevel=1)
         # Calculate delay values
         df = self._data.estimate_delay(
             indicator=indicator, target=target, min_size=min_size, delay_name="Period Length",
@@ -1291,14 +1293,12 @@ class Scenario(Term):
         df.dropna(subset=["Period Length"], inplace=True)
         df.sort_values("Period Length", inplace=True)
         df.reset_index(inplace=True, drop=True)
-        # Calculate percentile
-        Q1 = np.percentile(df["Period Length"], 25, interpolation='midpoint')
-        low_lim = min_size
-        if value_range[1] is not None:
-            df = df.loc[df["Period Length"] < value_range[1]]
         # Calculate representative value
         if df.empty:
             return (self._data.recovery_period(), df)
+        # Calculate percentile
+        Q1 = np.percentile(df["Period Length"], percentile, interpolation="midpoint")
+        low_lim = min_size
         delay_period = int((low_lim + Q1) / 2)
         return (int(delay_period), df)
 
