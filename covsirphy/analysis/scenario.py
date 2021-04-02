@@ -1253,6 +1253,7 @@ class Scenario(Term):
             indicator (str): indicator name, a column of any registered datasets
             target (str): target name, a column of any registered datasets
             value_range (tuple(int, int or None)): tuple, giving the minimum and maximum range to search for change over time
+            min_size (int): minmum size of delay period
 
         Raises:
             NotRegisteredMainError: either JHUData or PopulationData was not registered
@@ -1283,10 +1284,11 @@ class Scenario(Term):
             self.register(extras=[oxcgrt_data])
         # Calculate delay values
         df = self._data.estimate_delay(indicator=indicator, target=target, delay_name="Period Length")
-        # Filter out very long periods
+        # Remove NAs and sort
         df.dropna(subset=["Period Length"], inplace=True)
         df.sort_values("Period Length", inplace=True)
         df.reset_index(inplace=True, drop=True)
+        # Calculate percentile
         Q1 = np.percentile(df["Period Length"], 25, interpolation='midpoint')
         low_lim = min_size
         if value_range[1] is not None:
