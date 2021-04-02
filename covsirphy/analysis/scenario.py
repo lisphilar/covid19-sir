@@ -1285,7 +1285,8 @@ class Scenario(Term):
             self.register(extras=[oxcgrt_data])
         # Calculate delay values
         df = self._data.estimate_delay(
-            indicator=indicator, target=target, use_difference=use_difference, delay_name="Period Length")
+            indicator=indicator, target=target,
+            min_size=min_size, use_difference=use_difference, delay_name="Period Length")
         # Remove NAs and sort
         df.dropna(subset=["Period Length"], inplace=True)
         df.sort_values("Period Length", inplace=True)
