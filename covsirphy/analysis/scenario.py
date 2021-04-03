@@ -1259,7 +1259,7 @@ class Scenario(Term):
             indicator (str): indicator name, a column of any registered datasets
             target (str): target name, a column of any registered datasets
             percentile (int): percentile to calculate the representative value, in (0, 100)
-            min_size (int): minmum size of delay period
+            min_size (int): minimum size of the delay period
             max_days (int): maximum days of the delay period
             kwargs: keyword arguments of DataHandler.estimate_delay()
 
@@ -1300,7 +1300,7 @@ class Scenario(Term):
         df.dropna(subset=["Period Length"], inplace=True)
         df.sort_values("Period Length", inplace=True)
         df.reset_index(inplace=True, drop=True)
-        # Limit upper limit for delay period if max_days is set
+        # Apply upper limit for delay period if max_days is set
         if max_days is not None:
             df = df[df["Period Length"] <= max_days]
         # Calculate representative value

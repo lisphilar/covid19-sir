@@ -474,7 +474,7 @@ class DataHandler(Term):
         Args:
             indicator (str): indicator name, a column of any registered datasets
             target (str): target name, a column of any registered datasets
-            min_size (int): minmum size of delay period
+            min_size (int): minimum size of the delay period
             use_difference (bool): if True, use first discrete difference of target
             delay_name (str): column name of delay in the output dataframe
 
