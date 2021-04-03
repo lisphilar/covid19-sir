@@ -11,13 +11,13 @@ import pandas as pd
 from sklearn.model_selection import train_test_split
 from sklearn import linear_model
 from sklearn.exceptions import ConvergenceWarning
-from sklearn.metrics import r2_score
 from sklearn.pipeline import Pipeline
 from sklearn.preprocessing import MinMaxScaler
 from covsirphy.util.argument import find_args
 from covsirphy.util.error import deprecate, ScenarioNotFoundError, UnExecutedError
 from covsirphy.util.error import NotRegisteredMainError, NotRegisteredExtraError
 from covsirphy.util.error import NotInteractiveError
+from covsirphy.util.evaluator import Evaluator
 from covsirphy.util.term import Term
 from covsirphy.visualization.line_plot import line_plot
 from covsirphy.visualization.bar_plot import bar_plot
@@ -1333,7 +1333,7 @@ class Scenario(Term):
         X_target = extras_df.loc[dates]
         return (X, y, X_target)
 
-    def fit(self, oxcgrt_data=None, name="Main", test_size=0.2, seed=0, delay=None, removed_cols=None):
+    def fit(self, oxcgrt_data=None, name="Main", test_size=0.2, seed=0, delay=None, removed_cols=None, metric=None, metrics="R2"):
         """
         Learn the relationship of ODE parameter values and delayed OxCGRT scores using Elastic Net regression,
         assuming that OxCGRT scores will impact on ODE parameter values with delay.
@@ -1346,6 +1346,8 @@ class Scenario(Term):
             seed (int): random seed when spliting the dataset to train/test data
             delay (int): delay period [days], please refer to Scenario.estimate_delay()
             removed_cols (list[str] or None): list of variables to remove from X dataset or None (indicators used to estimate delay period)
+            metric (str or None): ME, MAE, MSE, MSLE, MAPE, RMSE, RMSLE, R2 or None (use @metrics)
+            metrics (str): alias of @metric
 
         Raises:
             covsirphy.UnExecutedError: Scenario.estimate() or Scenario.add() were not performed
@@ -1356,8 +1358,9 @@ class Scenario(Term):
                 - regressor (object): regressor class
                 - alpha (float): alpha value used in Elastic Net regression
                 - l1_ratio (float): l1_ratio value used in Elastic Net regression
-                - score_train (float): determination coefficient of train dataset
-                - score_test (float): determination coefficient of test dataset
+                - score_name (str): scoring method (specified with @metric or @metrics)
+                - score_train (float): score with train dataset
+                - score_test (float): score with test dataset
                 - X_train (numpy.array): X_train
                 - y_train (numpy.array): y_train
                 - X_test (numpy.array): X_test
@@ -1413,10 +1416,12 @@ class Scenario(Term):
         pipeline.fit(X_train, y_train)
         # Register the pipeline and X-target for prediction
         self._lm_dict[name] = (pipeline, X_target)
-        # Get train score
-        score_train = r2_score(pipeline.predict(X_train), y_train)
-        # Get test score
-        score_test = r2_score(pipeline.predict(X_test), y_test)
+        # Get scores
+        metric = metric or metrics
+        pred_train = pd.DataFrame(pipeline.predict(X_train), columns=y_train.columns)
+        pred_test = pd.DataFrame(pipeline.predict(X_test), columns=y_test.columns)
+        score_train = Evaluator(pred_train, y_train, how="all").score(metric=metric)
+        score_test = Evaluator(pred_test, y_test, how="all").score(metric=metric)
         # Return information regarding regression model
         reg_output = pipeline.named_steps.regressor
         # Intercept and coefficients
@@ -1428,6 +1433,7 @@ class Scenario(Term):
             **{k: type(v) for (k, v) in steps},
             "alpha": reg_output.alpha_,
             "l1_ratio": reg_output.l1_ratio_,
+            "score_name": metric,
             "score_train": score_train,
             "score_test": score_test,
             "X_train": X_train,

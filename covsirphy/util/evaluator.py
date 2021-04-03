@@ -14,6 +14,7 @@ class Evaluator(object):
     Args:
         y_true (pandas.DataFrame or pandas.Series): correct target values
         y_pred (pandas.DataFrame or pandas.Series): estimated target values
+        how (str): "all" (use all records) or "inner" (intersection will be used)
         on (str or list[str] or None): column names to join on or None (join on index)
 
     Raises:
@@ -38,13 +39,17 @@ class Evaluator(object):
         "R2": sklearn.metrics.r2_score,
     }
 
-    def __init__(self, y_true, y_pred, on=None):
+    def __init__(self, y_true, y_pred, how="inner", on=None):
         # Check types
-        for (y, name) in zip([y_true, y_pred], ["correct", "estimated"]):
+        for (y, name) in zip([y_true, y_pred], ["y_true", "y_pred"]):
             if not isinstance(y, (pd.DataFrame, pd.Series)):
-                raise TypeError(f"@{name} must be an instance of pandas.DataFrame or pandas.Series.")
+                raise TypeError(
+                    f"@{name} must be pandas.DataFrame, pandas.Series, but {type(y)} was applied.")
         # Join dataframes
         true_df, pred_df = pd.DataFrame(y_true), pd.DataFrame(y_pred)
+        if how == "all":
+            self._true, self._pred = true_df, pred_df
+            return
         if on is not None:
             true_df = true_df.set_index(on)
             pred_df = pred_df.set_index(on)
@@ -89,6 +94,6 @@ class Evaluator(object):
         try:
             return float(self._METRICS_DICT[metric](self._true, self._pred))
         except ValueError:
-            # Multioutput not supported in max_error
+            # Multioutput not supported
             raise ValueError(
-                "When the targets have multiple columns, we cannot select ME (max residual error).") from None
+                f"When the targets have multiple columns, we cannot select {metric}.") from None
