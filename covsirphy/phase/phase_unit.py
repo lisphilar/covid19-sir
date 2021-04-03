@@ -3,6 +3,7 @@
 
 import pandas as pd
 from covsirphy.util.error import UnExecutedError
+from covsirphy.util.evaluator import Evaluator
 from covsirphy.util.term import Term
 from covsirphy.ode.mbase import ModelBase
 from covsirphy.simulation.estimator import Estimator
@@ -74,7 +75,7 @@ class PhaseUnit(Term):
         self._ode_dict = {self.TAU: None}
         self.day_param_dict = {}
         self.est_dict = {
-            "Score": None,
+            **{metric: None for metric in Evaluator.metrics()},
             self.TRIALS: None,
             self.RUNTIME: None
         }
