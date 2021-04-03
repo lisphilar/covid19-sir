@@ -1200,17 +1200,17 @@ class Scenario(Term):
         self.add(name=target, **param_dict)
         self.estimate(model, name=target, **est_kwargs)
 
-    def score(self, metrics="RMSLE", variables=None, phases=None, past_days=None, name="Main", y0_dict=None):
+    def score(self, variables=None, phases=None, past_days=None, name="Main", y0_dict=None, **kwargs):
         """
         Evaluate accuracy of phase setting and parameter estimation of all enabled phases all some past days.
 
         Args:
-            metrics (str): "MAE", "MSE", "MSLE", "RMSE" or "RMSLE"
             variables (list[str] or None): variables to use in calculation
             phases (list[str] or None): phases to use in calculation
             past_days (int or None): how many past days to use in calculation, natural integer
             name(str): phase series name. If 'Main', main PhaseSeries will be used
             y0_dict(dict[str, float] or None): dictionary of initial values of variables
+            kwargs: keyword arguments of covsirphy.Evaluator.score()
 
         Returns:
             float: score with the specified metrics
@@ -1224,8 +1224,7 @@ class Scenario(Term):
         tracker = self._tracker(name)
         if past_days is not None:
             if phases is not None:
-                raise ValueError(
-                    "@phases and @past_days cannot be specified at the same time.")
+                raise ValueError("@phases and @past_days cannot be specified at the same time.")
             past_days = self._ensure_natural_int(past_days, name="past_days")
             # Separate a phase, if possible
             beginning_date = self.date_change(self._data.last_date, days=0 - past_days)
@@ -1239,8 +1238,7 @@ class Scenario(Term):
                 in enumerate(tracker.series)
                 if unit >= beginning_date
             ]
-        return tracker.score(
-            metrics=metrics, variables=variables, phases=phases, y0_dict=y0_dict)
+        return tracker.score(variables=variables, phases=phases, y0_dict=y0_dict, **kwargs)
 
     def estimate_delay(self, oxcgrt_data=None, indicator="Stringency_index",
                        target="Confirmed", value_range=(7, None)):

@@ -81,7 +81,7 @@ class Evaluator(object):
         Note:
             When @metric is None, @metrics will be used as @metric. Default value is "RMSLE".
         """
-        metric = metric or metrics
+        metric = (metric or metrics).upper()
         # Check metric name
         if metric not in self._METRICS_DICT:
             raise UnExpectedValueError("metric", metric, candidates=list(self._METRICS_DICT.keys()))
