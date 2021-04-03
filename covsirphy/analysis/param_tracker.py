@@ -3,6 +3,7 @@
 
 from covsirphy.util.error import UnExecutedError
 from covsirphy.util.argument import find_args
+from covsirphy.util.evaluator import Evaluator
 from covsirphy.util.term import Term
 from covsirphy.trend.trend_detector import TrendDetector
 from covsirphy.trend.trend_plot import trend_plot
@@ -475,15 +476,15 @@ class ParamTracker(Term):
         sim_df.columns = variables
         return (rec_df, sim_df)
 
-    def score(self, metrics="RMSLE", variables=None, phases=None, y0_dict=None):
+    def score(self, variables=None, phases=None, y0_dict=None, **kwargs):
         """
         Evaluate accuracy of phase setting and parameter estimation of selected enabled phases.
 
         Args:
-            metrics (str): "MAE", "MSE", "MSLE", "RMSE" or "RMSLE"
             variables (list[str] or None): variables to use in calculation
             phases (list[str] or None): phases to use in calculation
             y0_dict(dict[str, float] or None): dictionary of initial values of variables
+            kwargs: keyword arguments of covsirphy.Evaluator.score()
 
         Returns:
             float: score with the specified metrics
@@ -494,10 +495,6 @@ class ParamTracker(Term):
             If @phases is None, all phases will be used.
         """
         # Arguments
-        if metrics not in self.METRICS_DICT:
-            metrics_str = ", ".join(list(self.METRICS_DICT.keys()))
-            raise ValueError(
-                f"@metrics must be selected from {metrics_str}, but {metrics} was applied.")
         variables = variables or [self.CI, self.F, self.R]
         variables = self._ensure_list(
             variables, self.VALUE_COLUMNS, name="variables")
@@ -511,7 +508,8 @@ class ParamTracker(Term):
         rec_df, sim_df = self._compare_with_actual(
             variables=variables, y0_dict=y0_dict)
         # Calculate score
-        score = self.METRICS_DICT[metrics.upper()](rec_df, sim_df)
+        evaluator = Evaluator(rec_df, sim_df)
+        score = evaluator.score(**find_args(Evaluator.score, **kwargs))
         # Enable the disabled non-target phases
         if ignored_phases:
             self.enable(ignored_phases)

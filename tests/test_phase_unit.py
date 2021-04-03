@@ -115,8 +115,6 @@ class TestPhaseUnit(object):
         assert isinstance(unit.estimator, Estimator)
         assert set(SIR.PARAMETERS).issubset(unit.to_dict())
         assert set(SIR.DAY_PARAMETERS).issubset(unit.to_dict())
-        cols = [Term.ODE, Term.RMSLE, Term.TRIALS, Term.RUNTIME]
-        assert set(cols).issubset(unit.to_dict())
         assert None not in unit.to_dict().values()
 
     @pytest.mark.parametrize("country", ["Japan"])

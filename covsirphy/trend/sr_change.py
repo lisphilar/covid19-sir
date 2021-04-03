@@ -7,6 +7,7 @@ import warnings
 import numpy as np
 import pandas as pd
 from scipy.optimize import curve_fit, OptimizeWarning
+from covsirphy.util.evaluator import Evaluator
 from covsirphy.util.term import Term
 from covsirphy.trend.trend_plot import trend_plot
 
@@ -116,24 +117,27 @@ class _SRChange(Term):
             df = df.join(phase_df.rename(columns={self.FITTED: phase}), how="left")
         return df.round(0)
 
-    def score(self, change_points, metrics):
+    def score(self, change_points, metric):
         """
-        Calculate RMSLE scores of the phases.
+        Calculate scores of the phases.
 
         Args:
             change_points (list[pandas.Timestamp]): list of change points
-            metrics (str): "MAE", "MSE", "MSLE", "RMSE" or "RMSLE"
+            metric (str): metric name
 
         Returns:
-            list[float]: RMSLE scores
+            list[float]: scores for phases
+
+        Note:
+            Please refer to covsirphy.Evaluator.score() for metric names
         """
         fit_df = self._fitting(change_points)
         phases = [self.num2str(num) for num in range(len(change_points) + 1)]
-        score_f = self.METRICS_DICT[metrics]
         scores = []
         for phase in phases:
             df = fit_df[[self.ACTUAL, phase]].dropna()
-            scores.append(score_f(df[self.ACTUAL], df[phase]))
+            evaluator = Evaluator(df[self.ACTUAL], df[phase], how="all")
+            scores.append(evaluator.score(metric=metric))
         return scores
 
     def show(self, change_points, area, **kwargs):

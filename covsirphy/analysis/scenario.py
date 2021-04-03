@@ -11,13 +11,13 @@ import pandas as pd
 from sklearn.model_selection import train_test_split
 from sklearn import linear_model
 from sklearn.exceptions import ConvergenceWarning
-from sklearn.metrics import r2_score
 from sklearn.pipeline import Pipeline
 from sklearn.preprocessing import MinMaxScaler
 from covsirphy.util.argument import find_args
 from covsirphy.util.error import deprecate, ScenarioNotFoundError, UnExecutedError
 from covsirphy.util.error import NotRegisteredMainError, NotRegisteredExtraError
 from covsirphy.util.error import NotInteractiveError
+from covsirphy.util.evaluator import Evaluator
 from covsirphy.util.term import Term
 from covsirphy.visualization.line_plot import line_plot
 from covsirphy.visualization.bar_plot import bar_plot
@@ -604,15 +604,17 @@ class Scenario(Term):
             If 'Main' was used as @name, main PhaseSeries will be used.
             If @columns is None, all columns will be shown.
         """
-        df = self._summary(name=name)
+        df = self._summary(name=name).dropna(how="all", axis=1).fillna(self.UNKNOWN)
         all_cols = df.columns.tolist()
-        if set(self.EST_COLS).issubset(all_cols):
-            all_cols = [col for col in all_cols if col not in self.EST_COLS]
-            all_cols += self.EST_COLS
-        columns = columns or all_cols
-        self._ensure_list(columns, candidates=all_cols, name="columns")
-        df = df.loc[:, columns]
-        return df.dropna(how="all", axis=1).fillna(self.UNKNOWN)
+        # Columns were specified
+        if columns is not None:
+            self._ensure_list(columns, all_cols, name="columns")
+            return df.loc[:, columns]
+        # Metrics, Trials, Runtime will be moved to right
+        right_set = set([*Evaluator.metrics(), self.TRIALS, self.RUNTIME])
+        left_cols = [col for col in all_cols if col not in right_set]
+        right_cols = [col for col in all_cols if col in right_set]
+        return df.loc[:, left_cols + right_cols]
 
     def trend(self, min_size=None, force=True, name="Main", show_figure=True, filename=None, **kwargs):
         """
@@ -1005,7 +1007,10 @@ class Scenario(Term):
         df = df.reset_index(drop=True).explode(self.DATE)
         # Columns
         df = df.drop(
-            [self.TENSE, self.START, self.END, self.ODE, self.TAU, *self.EST_COLS],
+            [
+                self.TENSE, self.START, self.END, self.ODE, self.TAU,
+                *Evaluator.metrics(), self.TRIALS, self.RUNTIME
+            ],
             axis=1, errors="ignore")
         df = df.set_index(self.DATE)
         for col in df.columns:
@@ -1200,32 +1205,34 @@ class Scenario(Term):
         self.add(name=target, **param_dict)
         self.estimate(model, name=target, **est_kwargs)
 
-    def score(self, metrics="RMSLE", variables=None, phases=None, past_days=None, name="Main", y0_dict=None):
+    def score(self, variables=None, phases=None, past_days=None, name="Main", y0_dict=None, **kwargs):
         """
         Evaluate accuracy of phase setting and parameter estimation of all enabled phases all some past days.
 
         Args:
-            metrics (str): "MAE", "MSE", "MSLE", "RMSE" or "RMSLE"
             variables (list[str] or None): variables to use in calculation
             phases (list[str] or None): phases to use in calculation
             past_days (int or None): how many past days to use in calculation, natural integer
             name(str): phase series name. If 'Main', main PhaseSeries will be used
             y0_dict(dict[str, float] or None): dictionary of initial values of variables
+            kwargs: keyword arguments of covsirphy.Evaluator.score()
 
         Returns:
-            float: score with the specified metrics
+            float: score with the specified metrics (covsirphy.Evaluator.score())
 
         Note:
             If @variables is None, ["Infected", "Fatal", "Recovered"] will be used.
             "Confirmed", "Infected", "Fatal" and "Recovered" can be used in @variables.
             If @phases is None, all phases will be used.
             @phases and @past_days can not be specified at the same time.
+
+        Note:
+            Please refer to covsirphy.Evaluator.score() for metrics.
         """
         tracker = self._tracker(name)
         if past_days is not None:
             if phases is not None:
-                raise ValueError(
-                    "@phases and @past_days cannot be specified at the same time.")
+                raise ValueError("@phases and @past_days cannot be specified at the same time.")
             past_days = self._ensure_natural_int(past_days, name="past_days")
             # Separate a phase, if possible
             beginning_date = self.date_change(self._data.last_date, days=0 - past_days)
@@ -1239,8 +1246,7 @@ class Scenario(Term):
                 in enumerate(tracker.series)
                 if unit >= beginning_date
             ]
-        return tracker.score(
-            metrics=metrics, variables=variables, phases=phases, y0_dict=y0_dict)
+        return tracker.score(variables=variables, phases=phases, y0_dict=y0_dict, **kwargs)
 
     def estimate_delay(self, oxcgrt_data=None, indicator="Stringency_index",
                        target="Confirmed", percentile=25, min_size=7, **kwargs):
@@ -1341,7 +1347,7 @@ class Scenario(Term):
         X_target = extras_df.loc[dates]
         return (X, y, X_target)
 
-    def fit(self, oxcgrt_data=None, name="Main", test_size=0.2, seed=0, delay=None, removed_cols=None):
+    def fit(self, oxcgrt_data=None, name="Main", test_size=0.2, seed=0, delay=None, removed_cols=None, metric=None, metrics="R2"):
         """
         Learn the relationship of ODE parameter values and delayed OxCGRT scores using Elastic Net regression,
         assuming that OxCGRT scores will impact on ODE parameter values with delay.
@@ -1354,6 +1360,8 @@ class Scenario(Term):
             seed (int): random seed when spliting the dataset to train/test data
             delay (int): delay period [days], please refer to Scenario.estimate_delay()
             removed_cols (list[str] or None): list of variables to remove from X dataset or None (indicators used to estimate delay period)
+            metric (str or None): metric name or None (use @metrics)
+            metrics (str): alias of @metric
 
         Raises:
             covsirphy.UnExecutedError: Scenario.estimate() or Scenario.add() were not performed
@@ -1364,8 +1372,9 @@ class Scenario(Term):
                 - regressor (object): regressor class
                 - alpha (float): alpha value used in Elastic Net regression
                 - l1_ratio (float): l1_ratio value used in Elastic Net regression
-                - score_train (float): determination coefficient of train dataset
-                - score_test (float): determination coefficient of test dataset
+                - score_name (str): scoring method (specified with @metric or @metrics)
+                - score_train (float): score with train dataset
+                - score_test (float): score with test dataset
                 - X_train (numpy.array): X_train
                 - y_train (numpy.array): y_train
                 - X_test (numpy.array): X_test
@@ -1378,6 +1387,9 @@ class Scenario(Term):
 
         Note:
             @oxcgrt_data argument was deprecated. Please use Scenario.register(extras=[oxcgrt_data]).
+
+        Note:
+            Please refer to covsirphy.Evaluator.score() for metric names
         """
         warnings.simplefilter("ignore", category=ConvergenceWarning)
         # Register OxCGRT data
@@ -1421,10 +1433,12 @@ class Scenario(Term):
         pipeline.fit(X_train, y_train)
         # Register the pipeline and X-target for prediction
         self._lm_dict[name] = (pipeline, X_target)
-        # Get train score
-        score_train = r2_score(pipeline.predict(X_train), y_train)
-        # Get test score
-        score_test = r2_score(pipeline.predict(X_test), y_test)
+        # Get scores
+        metric = metric or metrics
+        pred_train = pd.DataFrame(pipeline.predict(X_train), columns=y_train.columns)
+        pred_test = pd.DataFrame(pipeline.predict(X_test), columns=y_test.columns)
+        score_train = Evaluator(pred_train, y_train, how="all").score(metric=metric)
+        score_test = Evaluator(pred_test, y_test, how="all").score(metric=metric)
         # Return information regarding regression model
         reg_output = pipeline.named_steps.regressor
         # Intercept and coefficients
@@ -1436,6 +1450,7 @@ class Scenario(Term):
             **{k: type(v) for (k, v) in steps},
             "alpha": reg_output.alpha_,
             "l1_ratio": reg_output.l1_ratio_,
+            "score_name": metric,
             "score_train": score_train,
             "score_test": score_test,
             "X_train": X_train,
