@@ -136,7 +136,7 @@ class _SRChange(Term):
         scores = []
         for phase in phases:
             df = fit_df[[self.ACTUAL, phase]].dropna()
-            evaluator = Evaluator(df[self.ACTUAL], df[phase])
+            evaluator = Evaluator(df[self.ACTUAL], df[phase], how="all")
             scores.append(evaluator.score(metric=metric))
         return scores
 
