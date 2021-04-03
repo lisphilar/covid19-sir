@@ -1213,13 +1213,16 @@ class Scenario(Term):
             kwargs: keyword arguments of covsirphy.Evaluator.score()
 
         Returns:
-            float: score with the specified metrics
+            float: score with the specified metrics (covsirphy.Evaluator.score())
 
         Note:
             If @variables is None, ["Infected", "Fatal", "Recovered"] will be used.
             "Confirmed", "Infected", "Fatal" and "Recovered" can be used in @variables.
             If @phases is None, all phases will be used.
             @phases and @past_days can not be specified at the same time.
+
+        Note:
+            Please refer to covsirphy.Evaluator.score() for metrics.
         """
         tracker = self._tracker(name)
         if past_days is not None:
