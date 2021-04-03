@@ -79,10 +79,8 @@ class Term(object):
     ODE = "ODE"
     RT = "Rt"
     RT_FULL = "Reproduction number"
-    RMSLE = "RMSLE"
     TRIALS = "Trials"
     RUNTIME = "Runtime"
-    EST_COLS = [RMSLE, TRIALS, RUNTIME]
     # Scenario analysis
     PHASE = "Phase"
     SERIES = "Scenario"

@@ -604,15 +604,17 @@ class Scenario(Term):
             If 'Main' was used as @name, main PhaseSeries will be used.
             If @columns is None, all columns will be shown.
         """
-        df = self._summary(name=name)
+        df = self._summary(name=name).dropna(how="all", axis=1).fillna(self.UNKNOWN)
         all_cols = df.columns.tolist()
-        if set(self.EST_COLS).issubset(all_cols):
-            all_cols = [col for col in all_cols if col not in self.EST_COLS]
-            all_cols += self.EST_COLS
-        columns = columns or all_cols
-        self._ensure_list(columns, candidates=all_cols, name="columns")
-        df = df.loc[:, columns]
-        return df.dropna(how="all", axis=1).fillna(self.UNKNOWN)
+        # Columns were specified
+        if columns is not None:
+            self._ensure_list(columns, all_cols, name="columns")
+            return df.loc[:, columns]
+        # Metrics, Trials, Runtime will be moved to right
+        right_set = set([*Evaluator.metrics(), self.TRIALS, self.RUNTIME])
+        left_cols = [col for col in all_cols if col not in right_set]
+        right_cols = [col for col in all_cols if col in right_set]
+        return df.loc[:, left_cols + right_cols]
 
     def trend(self, min_size=None, force=True, name="Main", show_figure=True, filename=None, **kwargs):
         """
@@ -1005,7 +1007,10 @@ class Scenario(Term):
         df = df.reset_index(drop=True).explode(self.DATE)
         # Columns
         df = df.drop(
-            [self.TENSE, self.START, self.END, self.ODE, self.TAU, *self.EST_COLS],
+            [
+                self.TENSE, self.START, self.END, self.ODE, self.TAU,
+                *Evaluator.metrics(), self.TRIALS, self.RUNTIME
+            ],
             axis=1, errors="ignore")
         df = df.set_index(self.DATE)
         for col in df.columns:
@@ -1346,7 +1351,7 @@ class Scenario(Term):
             seed (int): random seed when spliting the dataset to train/test data
             delay (int): delay period [days], please refer to Scenario.estimate_delay()
             removed_cols (list[str] or None): list of variables to remove from X dataset or None (indicators used to estimate delay period)
-            metric (str or None): ME, MAE, MSE, MSLE, MAPE, RMSE, RMSLE, R2 or None (use @metrics)
+            metric (str or None): metric name or None (use @metrics)
             metrics (str): alias of @metric
 
         Raises:
@@ -1373,6 +1378,9 @@ class Scenario(Term):
 
         Note:
             @oxcgrt_data argument was deprecated. Please use Scenario.register(extras=[oxcgrt_data]).
+
+        Note:
+            Please refer to covsirphy.Evaluator.score() for metric names
         """
         warnings.simplefilter("ignore", category=ConvergenceWarning)
         # Register OxCGRT data

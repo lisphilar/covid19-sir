@@ -97,3 +97,13 @@ class Evaluator(object):
             # Multioutput not supported
             raise ValueError(
                 f"When the targets have multiple columns, we cannot select {metric}.") from None
+
+    @classmethod
+    def metrics(cls):
+        """
+        Return the list of metric names.
+
+        Returns:
+            list[str]: list of metric names
+        """
+        return list(cls._METRICS_DICT.keys())

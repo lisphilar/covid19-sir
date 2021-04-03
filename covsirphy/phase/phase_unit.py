@@ -74,7 +74,7 @@ class PhaseUnit(Term):
         self._ode_dict = {self.TAU: None}
         self.day_param_dict = {}
         self.est_dict = {
-            self.RMSLE: None,
+            "Score": None,
             self.TRIALS: None,
             self.RUNTIME: None
         }
@@ -294,7 +294,7 @@ class PhaseUnit(Term):
                     - parameter values if available
                     - day parameter values if available
                     - tau: tau value [min]
-                    - RMSLE: RMSLE value of estimation
+                    - {metric name}: score of parameter estimation
                     - Trials: the number of trials in estimation
                     - Runtime: runtime of estimation
         """
@@ -323,7 +323,7 @@ class PhaseUnit(Term):
                         - rho etc. (float): parameter values if available
                         - tau (int): tau value [min]
                         - (int): day parameter values if available
-                        - RMSLE (float): RMSLE score of parameter estimation
+                        - {metric name} (float): score of parameter estimation
                         - Trials (int): the number of trials in parameter estimation
                         - Runtime (str): runtime of parameter estimation
         """
@@ -473,6 +473,7 @@ class PhaseUnit(Term):
         # Other information of estimation
         other_dict = dict(est_dict.items() - ode_dict.items())
         self.est_dict.update(other_dict)
+        self.est_dict = {k: v for (k, v) in self.est_dict.items() if v is not None}
         # Initial values
         self.set_y0(record_df=record_df)
 
