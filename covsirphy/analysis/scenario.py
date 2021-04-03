@@ -1243,7 +1243,7 @@ class Scenario(Term):
             metrics=metrics, variables=variables, phases=phases, y0_dict=y0_dict)
 
     def estimate_delay(self, oxcgrt_data=None, indicator="Stringency_index",
-                       target="Confirmed", percentile=25, min_size=7, **kwargs):
+                       target="Confirmed", percentile=25, min_size=7, max_days=30, **kwargs):
         """
         Estimate delay period [days], assuming the indicator impact on the target value with delay.
         The average of representative value (percentile) and @min_size will be returned.
@@ -1254,6 +1254,7 @@ class Scenario(Term):
             target (str): target name, a column of any registered datasets
             percentile (int): percentile to calculate the representative value, in (0, 100)
             min_size (int): minmum size of delay period
+            max_days (int): maximum days of the delay period
             kwargs: keyword arguments of DataHandler.estimate_delay()
 
         Raises:
@@ -1293,6 +1294,9 @@ class Scenario(Term):
         df.dropna(subset=["Period Length"], inplace=True)
         df.sort_values("Period Length", inplace=True)
         df.reset_index(inplace=True, drop=True)
+        # Limit upper limit for delay period if max_days is set
+        if max_days is not None:
+            df = df[df["Period Length"] <= max_days]
         # Calculate representative value
         if df.empty:
             return (self._data.recovery_period(), df)
