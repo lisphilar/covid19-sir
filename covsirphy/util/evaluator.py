@@ -58,7 +58,7 @@ class Evaluator(object):
         Calculate score with specified metric.
 
         Args:
-            metric (str): ME, MAE, MSE, MSLE, MAPE, RMSE, RMSLE, R2
+            metric (str or None): ME, MAE, MSE, MSLE, MAPE, RMSE, RMSLE, R2 or None (use @metrics)
             metrics (str): alias od @metric
 
         Raises:
