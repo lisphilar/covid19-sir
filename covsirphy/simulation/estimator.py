@@ -9,9 +9,9 @@ import numpy as np
 import optuna
 import pandas as pd
 import seaborn as sns
-from sklearn.metrics import mean_squared_log_error
 from covsirphy.util.error import deprecate
 from covsirphy.util.stopwatch import StopWatch
+from covsirphy.util.evaluator import Evaluator
 from covsirphy.util.term import Term
 from covsirphy.ode.mbase import ModelBase
 from covsirphy.simulation.simulator import ODESimulator
@@ -76,6 +76,8 @@ class Estimator(Term):
             self.taufree_df = pd.DataFrame()
         else:
             self._set_taufree()
+        # Metrics
+        self._metric = None
 
     def _init_study(self, seed, pruner, upper, percentile):
         """
@@ -85,7 +87,7 @@ class Estimator(Term):
             seed (int or None): random seed of hyperparameter optimization
             pruner (str): Hyperband, Median, Threshold or Percentile
             upper (float): works for "threshold" pruner,
-                intermediate RMSLE score is larger than this value, it prunes
+                intermediate score is larger than this value, it prunes
             percentile (float): works for "threshold" pruner,
                 the best intermediate value is in the bottom percentile among trials, it prunes
         """
@@ -106,11 +108,11 @@ class Estimator(Term):
                 f"@pruner should be selected from {', '.join(pruner_dict.keys())}.")
 
     def run(self, timeout=180, reset_n_max=3, timeout_iteration=10, tail_n=4, allowance=(0.98, 1.02),
-            seed=0, pruner="threshold", upper=0.5, percentile=50, **kwargs):
+            seed=0, pruner="threshold", upper=0.5, percentile=50, metric=None, metrics="RMSLE", **kwargs):
         """
         Run optimization.
         If the result satisfied the following conditions, optimization ends.
-        - RMSLE score did not change in the last @tail_n iterations.
+        - Score did not change in the last @tail_n iterations.
         - Monotonic increasing variables increases monotonically.
         - Predicted values are in the allowance when each actual value shows max value.
 
@@ -118,43 +120,45 @@ class Estimator(Term):
             timeout (int): timeout of optimization
             reset_n_max (int): if study was reset @reset_n_max times, will not be reset anymore
             timeout_iteration (int): time-out of one iteration
-            tail_n (int): the number of iterations to decide whether RMSLE score did not change for the last iterations
+            tail_n (int): the number of iterations to decide whether score did not change for the last iterations
             allowance (tuple(float, float)): the allowance of the predicted value
             seed (int or None): random seed of hyperparameter optimization
             pruner (str): hyperband, median, threshold or percentile
             upper (float): works for "threshold" pruner,
-                intermediate RMSLE score is larger than this value, it prunes
+                intermediate score is larger than this value, it prunes
             percentile (float): works for "Percentile" pruner,
                 the best intermediate value is in the bottom percentile among trials, it prunes
+            metric (str or None): metric name or None (use @metrics)
+            metrics (str): alias of @metric
             kwargs: other keyword arguments will be ignored
 
         Note:
-            @n_jobs was obsoleted because this is not effective for Optuna.
+            @n_jobs was obsoleted because this does not work effectively in Optuna.
+
+        Note:
+            Please refer to covsirphy.Evaluator.score() for metric names
         """
+        self._metric = metric or metrics
         # Create a study of optuna
         if self.study is None:
-            self._init_study(
-                seed=seed, pruner=pruner, upper=upper, percentile=percentile)
+            self._init_study(seed=seed, pruner=pruner, upper=upper, percentile=percentile)
         reset_n = 0
         iteration_n = math.ceil(timeout / timeout_iteration)
         increasing_cols = [f"{v}{self.P}" for v in self.model.VARS_INCLEASE]
         stopwatch = StopWatch()
-        rmsle_scores = []
+        scores = []
         for _ in range(iteration_n):
             # Perform optimization
-            self.study.optimize(
-                self._objective, n_jobs=1, timeout=timeout_iteration)
-            # If RMSLE did not change in the last iterations, stop running
+            self.study.optimize(self._objective, n_jobs=1, timeout=timeout_iteration)
+            # If score did not change in the last iterations, stop running
             tau, param_dict = self._param()
-            rmsle_scores.append(self._rmsle(tau=tau, param_dict=param_dict))
-            if len(rmsle_scores) >= tail_n and len(set(rmsle_scores[-tail_n:])) == 1:
+            scores.append(self._score(tau=tau, param_dict=param_dict))
+            if len(scores) >= tail_n and len(set(scores[-tail_n:])) == 1:
                 break
             # Create a table to compare observed/estimated values
             comp_df = self._compare(tau=tau, param_dict=param_dict)
             # Check monotonic variables
-            mono_ok_list = [
-                comp_df[col].is_monotonic_increasing for col in increasing_cols
-            ]
+            mono_ok_list = [comp_df[col].is_monotonic_increasing for col in increasing_cols]
             if not all(mono_ok_list):
                 if reset_n == reset_n_max - 1:
                     break
@@ -200,19 +204,17 @@ class Estimator(Term):
         Returns:
             float: score of the error function to minimize
         """
-        self.tau = self.tau_final or trial.suggest_categorical(
-            self.TAU, self.tau_candidates)
+        self.tau = self.tau_final or trial.suggest_categorical(self.TAU, self.tau_candidates)
         self._set_taufree()
         # Set parameters of the models
-        model_param_dict = self.model.param_range(
-            self.taufree_df, self.population)
+        model_param_dict = self.model.param_range(self.taufree_df, self.population)
         param_dict = {
             k: self._suggest(trial, k, *v)
             for (k, v) in model_param_dict.items()
             if k not in self.fixed_dict.keys()
         }
         param_dict.update(self.fixed_dict)
-        return self._rmsle(self.tau, param_dict)
+        return self._score(self.tau, param_dict)
 
     def _suggest(self, trial, name, min_value, max_value):
         """
@@ -236,28 +238,27 @@ class Estimator(Term):
         """
         Divide T by tau in the training dataset and calculate the number of steps.
         """
-        self.taufree_df = self.model.tau_free(
-            self.record_df, self.population, tau=self.tau)
+        self.taufree_df = self.model.tau_free(self.record_df, self.population, tau=self.tau)
         self.step_n = int(self.taufree_df[self.TS].max())
 
-    def _rmsle(self, tau, param_dict):
+    def _score(self, tau, param_dict):
         """
-        Calculate RMSLE score.
+        Calculate score.
 
         Args:
             tau (int): tau value [min]
             param_dict (dict[str, int or float]): dictionary of parameter values
 
         Returns:
-            float: RMSLE score
+            float: score
         """
-        comp_df = self._compare(tau, param_dict)
-        rec_df = comp_df.loc[:, [
-            f"{v}{self.A}" for v in self.variables_evaluate]]
-        sim_df = comp_df.loc[:, [
-            f"{v}{self.P}" for v in self.variables_evaluate]]
-        msle = mean_squared_log_error(sim_df, rec_df)
-        return np.sqrt(msle)
+        self.tau = tau
+        self._set_taufree()
+        cols = [self.TS, *self.variables_evaluate]
+        rec_df = self.taufree_df.loc[:, cols]
+        sim_df = self._simulate(self.step_n, param_dict).loc[:, cols]
+        evaluator = Evaluator(rec_df, sim_df, on=self.TS)
+        return evaluator.score(metric=self._metric)
 
     def _simulate(self, step_n, param_dict):
         """
@@ -305,8 +306,7 @@ class Estimator(Term):
         self.tau = tau
         self._set_taufree()
         sim_df = self._simulate(self.step_n, param_dict)
-        df = self.taufree_df.merge(
-            sim_df, on=self.TS, suffixes=(self.A, self.P))
+        df = self.taufree_df.merge(sim_df, on=self.TS, suffixes=(self.A, self.P))
         return df.set_index(self.TS)
 
     def _param(self):
@@ -336,7 +336,7 @@ class Estimator(Term):
                 - tau
                 - Rt: basic or phase-dependent reproduction number
                 - (dimensional parameters [day])
-                - RMSLE: Root Mean Squared Log Error
+                - {metric name}: score with the metric
                 - Trials: the number of trials
                 - Runtime: run time of estimation
         """
@@ -347,7 +347,7 @@ class Estimator(Term):
             self.TAU: tau,
             self.RT: model_instance.calc_r0(),
             **model_instance.calc_days_dict(tau),
-            self.RMSLE: self._rmsle(tau, param_dict),
+            self._metric: self._score(tau, param_dict),
             self.TRIALS: self.total_trials,
             self.RUNTIME: StopWatch.show(self.runtime)
         }

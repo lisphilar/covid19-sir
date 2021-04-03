@@ -137,12 +137,10 @@ class TestParamTracker(object):
 
     def test_score(self, tracker):
         # Scores of all phases
-        metrics_list = ["MAE", "MSE", "MSLE", "RMSE", "RMSLE"]
-        for metrics in metrics_list:
-            score = tracker.score(metrics=metrics)
-            assert isinstance(score, float)
+        score = tracker.score(metrics="RMSLE")
+        assert isinstance(score, float)
         # Scores of target phases
-        tracker.score(metrics="RMSLE", phases=["0th", "2nd"])
+        tracker.score(metric="RMSLE", phases=["0th", "2nd"])
         # Errors with arguments
         with pytest.raises(TypeError):
             tracker.score(variables="Infected")

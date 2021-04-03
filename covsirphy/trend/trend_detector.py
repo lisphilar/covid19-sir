@@ -73,12 +73,13 @@ class TrendDetector(Term):
         end_dates.append(self._last_point.strftime(self.DATE_FORMAT))
         return (start_dates, end_dates)
 
-    def summary(self, metrics="MSE"):
+    def summary(self, metric=None, metrics="MSE"):
         """
         Summarize the phases with a dataframe.
 
         Args:
-            metrics (str): "MAE", "MSE", "MSLE", "RMSE" or "RMSLE"
+            metric (str or None): metric name or None (use @metrics)
+            metrics (str): alias of @metric
 
         Returns:
             pandas.Dataframe:
@@ -88,20 +89,23 @@ class TrendDetector(Term):
                     - Start (str): star dates
                     - End (str): end dates
                     - Duration (int): phase duration
-                    - {metrics}_S-R (float): scores on S-R plane with the metrics
+                    - {metric}_S-R (float): scores on S-R plane with the selected metric
+
+        Note:
+            Please refer to covsirphy.Evaluator.score() for metric names
         """
+        metric = metric or metrics
         # Phase duration
         start_dates, end_dates = self.dates()
         duration_list = [self.steps(start, end, tau=1440) for (start, end) in zip(start_dates, end_dates)]
         # Scores in S-R plane
-        self._ensure_selectable(metrics, candidates=list(self.METRICS_DICT.keys()), name="metrics")
-        scores = _SRChange(sr_df=self._record_df).score(change_points=self._points, metrics=metrics)
+        scores = _SRChange(sr_df=self._record_df).score(change_points=self._points, metric=metric)
         return pd.DataFrame(
             {
                 self.START: start_dates,
                 self.END: end_dates,
                 "Duration": duration_list,
-                f"{metrics}_S-R": scores,
+                f"{metric}_S-R": scores,
             },
             index=[self.num2str(num) for num in range(len(self._points) + 1)]
         )
