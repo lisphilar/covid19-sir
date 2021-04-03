@@ -51,8 +51,9 @@ class TestEvaluator(object):
         assert score_metric == score_metrics
 
     @pytest.mark.parametrize("metric", ["ME", "MAE", "MSE", "MSLE", "MAPE", "RMSE", "RMSLE", "R2"])
+    @pytest.mark.parametrize("how", ["all", "inner"])
     @pytest.mark.parametrize("on", [None, "join_on"])
-    def test_score_dataframe(self, metric, on):
+    def test_score_dataframe(self, metric, how, on):
         true = pd.DataFrame(
             {
                 "join_on": [0, 1, 2, 3, 4, 5],
@@ -65,8 +66,8 @@ class TestEvaluator(object):
                 "value": [20, 40, 30, 50, 110, 55]
             }
         )
-        evaluator = Evaluator(true, pred, on=on)
-        if metric == "ME" and on is None:
+        evaluator = Evaluator(true, pred, how=how, on=on)
+        if metric == "ME" and (how == "all" or on is None):
             with pytest.raises(ValueError):
                 evaluator.score(metric=metric)
             return

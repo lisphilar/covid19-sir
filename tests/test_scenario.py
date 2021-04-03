@@ -241,7 +241,7 @@ class TestScenario(object):
             beginning_date=date, model=SIRF,
             control="Control", target="Retro", timeout=1, timeout_iteration=1)
 
-    @pytest.mark.parametrize("metrics", ["MAE", "MSE", "MSLE", "RMSE", "RMSLE"])
+    @pytest.mark.parametrize("metrics", ["RMSLE"])
     def test_score(self, snl, metrics):
         try:
             snl.delete(name="Score")
