@@ -53,12 +53,13 @@ class Evaluator(object):
         self._true = all_df.loc[:, [f"{col}{self._A}" for col in true_df.columns]]
         self._pred = all_df.loc[:, [f"{col}{self._P}" for col in pred_df.columns]]
 
-    def score(self, metric):
+    def score(self, metric=None, metrics="RMSLE"):
         """
         Calculate score with specified metric.
 
         Args:
             metric (str): ME, MAE, MSE, MSLE, MAPE, RMSE, RMSLE, R2
+            metrics (str): alias od @metric
 
         Raises:
             UnExpectedValueError: un-expected metric was applied
@@ -76,7 +77,11 @@ class Evaluator(object):
             RMSE: root mean squared error
             RMSLE: root mean squared logarithmic error
             R2: the coefficient of determination
+
+        Note:
+            When @metric is None, @metrics will be used as @metric. Default value is "RMSLE".
         """
+        metric = metric or metrics
         # Check metric name
         if metric not in self._METRICS_DICT:
             raise UnExpectedValueError("metric", metric, candidates=list(self._METRICS_DICT.keys()))
