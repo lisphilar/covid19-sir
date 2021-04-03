@@ -6,7 +6,6 @@ from datetime import datetime, timedelta
 import math
 import numpy as np
 import pandas as pd
-import sklearn.metrics
 from covsirphy.util.error import deprecate, UnExpectedValueError
 
 
@@ -91,14 +90,6 @@ class Term(object):
     # Flag
     UNKNOWN = "-"
     OTHERS = "Others"
-    # Metrics
-    METRICS_DICT = {
-        "MAE": sklearn.metrics.mean_absolute_error,
-        "MSE": sklearn.metrics.mean_squared_error,
-        "MSLE": sklearn.metrics.mean_squared_log_error,
-        "RMSE": lambda x1, x2: sklearn.metrics.mean_squared_error(x1, x2, squared=False),
-        "RMSLE": lambda x1, x2: np.sqrt(sklearn.metrics.mean_squared_log_error(x1, x2)),
-    }
 
     @classmethod
     def num2str(cls, num):

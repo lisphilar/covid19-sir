@@ -59,7 +59,7 @@ class Evaluator(object):
 
         Args:
             metric (str or None): ME, MAE, MSE, MSLE, MAPE, RMSE, RMSLE, R2 or None (use @metrics)
-            metrics (str): alias od @metric
+            metrics (str): alias of @metric
 
         Raises:
             UnExpectedValueError: un-expected metric was applied
