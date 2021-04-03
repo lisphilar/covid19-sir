@@ -4,7 +4,8 @@
 import warnings
 import pandas as pd
 import pytest
-from covsirphy import find_args, save_dataframe, Filer, StopWatch
+from covsirphy import find_args, save_dataframe, Filer, StopWatch, Evaluator
+from covsirphy import UnExpectedValueError
 
 
 class TestArgument(object):
@@ -36,3 +37,44 @@ class TestStopWatch(object):
     def test_stopwatch(self):
         stop_watch = StopWatch()
         assert isinstance(stop_watch.stop_show(), str)
+
+
+class TestEvaluator(object):
+
+    @pytest.mark.parametrize("metric", ["ME", "MAE", "MSE", "MSLE", "MAPE", "RMSE", "RMSLE", "R2"])
+    def test_score_series(self, metric):
+        true = pd.Series([5, 10, 8, 6])
+        pred = pd.Series([8, 12, 6, 5])
+        evaluator = Evaluator(true, pred, on=None)
+        assert isinstance(evaluator.score(metric=metric), float)
+
+    @pytest.mark.parametrize("metric", ["ME", "MAE", "MSE", "MSLE", "MAPE", "RMSE", "RMSLE", "R2"])
+    @pytest.mark.parametrize("on", [None, "join_on"])
+    def test_score_dataframe(self, metric, on):
+        true = pd.DataFrame(
+            {
+                "join_on": [0, 1, 2, 3, 4, 5],
+                "value": [20, 40, 30, 50, 90, 10]
+            }
+        )
+        pred = pd.DataFrame(
+            {
+                "join_on": [0, 2, 3, 4, 6, 7],
+                "value": [20, 40, 30, 50, 110, 55]
+            }
+        )
+        evaluator = Evaluator(true, pred, on=on)
+        if metric == "ME" and on is None:
+            with pytest.raises(ValueError):
+                evaluator.score(metric=metric)
+            return
+        assert isinstance(evaluator.score(metric=metric), float)
+
+    def test_error(self):
+        with pytest.raises(TypeError):
+            Evaluator([1, 2, 3], [2, 5, 7])
+        true = pd.Series([5, 10, 8, 6])
+        pred = pd.Series([8, 12, 6, 5])
+        evaluator = Evaluator(true, pred, on=None)
+        with pytest.raises(UnExpectedValueError):
+            evaluator.score(metric="Unknown")
