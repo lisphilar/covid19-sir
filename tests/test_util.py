@@ -43,6 +43,7 @@ class TestEvaluator(object):
 
     @pytest.mark.parametrize("metric", ["ME", "MAE", "MSE", "MSLE", "MAPE", "RMSE", "RMSLE", "R2"])
     def test_score_series(self, metric):
+        assert metric in Evaluator.metrics()
         true = pd.Series([5, 10, 8, 6])
         pred = pd.Series([8, 12, 6, 5])
         evaluator = Evaluator(true, pred, on=None)

@@ -142,7 +142,7 @@ class TestParamTracker(object):
             score = tracker.score(metrics=metrics)
             assert isinstance(score, float)
         # Scores of target phases
-        tracker.score(metrics="RMSLE", phases=["0th", "2nd"])
+        tracker.score(metrics="", phases=["0th", "2nd"])
         # Errors with arguments
         with pytest.raises(TypeError):
             tracker.score(variables="Infected")
