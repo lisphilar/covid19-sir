@@ -19,6 +19,7 @@ from covsirphy.util.error import NotRegisteredMainError, NotRegisteredExtraError
 from covsirphy.util.filer import save_dataframe
 from covsirphy.util.argument import find_args
 from covsirphy.util.filer import Filer
+from covsirphy.util.evaluator import Evaluator
 from covsirphy.util.term import Term, Word
 # visualization
 from covsirphy.visualization.vbase import VisualizeBase
@@ -89,7 +90,7 @@ def get_citation():
 
 __all__ = [
     # util
-    "StopWatch", "deprecate", "find_args", "Term", "Filer",
+    "StopWatch", "deprecate", "find_args", "Term", "Filer", "Evaluator",
     "SubsetNotFoundError", "ScenarioNotFoundError", "UnExecutedError",
     "PCRIncorrectPreconditionError", "NotInteractiveError",
     "UnExpectedValueError", "NotRegisteredMainError", "NotRegisteredExtraError",
