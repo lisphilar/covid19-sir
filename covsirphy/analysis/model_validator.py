@@ -181,7 +181,7 @@ class ModelValidator(Term):
         df = setting_df.copy()
         df["results"] = [unit.to_dict() for unit in units_estimated]
         df = df.join(df["results"].apply(pd.Series), how="left", rsuffix="_est")
-        df = df.drop(["results", *model.DAY_PARAMETERS], axis=1)
+        df = df.drop(["results", *model.DAY_PARAMETERS], axis=1, errors="ignore")
         cols_to_alternate = [self.RT, *model.PARAMETERS]
         cols_alternated = chain.from_iterable(
             zip(cols_to_alternate, [f"{col}_est" for col in cols_to_alternate]))
