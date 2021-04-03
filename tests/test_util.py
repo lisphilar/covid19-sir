@@ -46,7 +46,9 @@ class TestEvaluator(object):
         true = pd.Series([5, 10, 8, 6])
         pred = pd.Series([8, 12, 6, 5])
         evaluator = Evaluator(true, pred, on=None)
-        assert isinstance(evaluator.score(metric=metric), float)
+        score_metric = evaluator.score(metric=metric)
+        score_metrics = evaluator.score(metrics=metric)
+        assert score_metric == score_metrics
 
     @pytest.mark.parametrize("metric", ["ME", "MAE", "MSE", "MSLE", "MAPE", "RMSE", "RMSLE", "R2"])
     @pytest.mark.parametrize("on", [None, "join_on"])
