@@ -15,7 +15,7 @@ from covsirphy.util.term import Term
 from covsirphy.visualization.line_plot import line_plot
 from covsirphy.visualization.bar_plot import bar_plot
 from covsirphy.cleaning.jhu_data import JHUData
-from covsirphy.regression.param_elastic_net import _ParamElasticNetRegressor
+from covsirphy.regression.reg_handler import RegressionHandler
 from covsirphy.analysis.param_tracker import ParamTracker
 from covsirphy.analysis.data_handler import DataHandler
 
@@ -60,7 +60,7 @@ class Scenario(Term):
         # Interactive (True) / script (False) mode
         self._interactive = hasattr(sys, "ps1")
         # Prediction of parameter values in the future phases: {name: RegressorBase)}
-        self._regressor_dict = {}
+        self._reghandler_dict = {}
 
     def __getitem__(self, key):
         """
@@ -1295,9 +1295,9 @@ class Scenario(Term):
 
     def fit(self, oxcgrt_data=None, name="Main", delay=None, removed_cols=None, metric=None, metrics="R2", **kwargs):
         """
-        Learn the relationship of ODE parameter values and delayed OxCGRT scores using Elastic Net regression,
-        assuming that OxCGRT scores will impact on ODE parameter values with delay.
-        Min-max scaling and Elastic net regression with parameter optimization and cross validation.
+        Fit regressors to predict the parameter values in the future phases,
+        assuming that indicators will impact on ODE parameter values/the number of cases with delay.
+        Please refer to covsirphy.RegressionHander class.
 
         Args:
             oxcgrt_data (covsirphy.OxCGRTData): OxCGRT dataset, deprecated
@@ -1314,24 +1314,13 @@ class Scenario(Term):
             covsirphy.UnExecutedError: Scenario.estimate() or Scenario.add() were not performed
 
         Returns:
-            dict(str, object): regressor information, including
-                - scaler (object): scaler class
-                - regressor (object): regressor class
-                - alpha (float): alpha value used in Elastic Net regression
-                - l1_ratio (float): l1_ratio value used in Elastic Net regression
-                - score_name (str): scoring method (specified with @metric or @metrics)
-                - score_train (float): score with train dataset
-                - score_test (float): score with test dataset
-                - dataset (dict[numpy.ndarray]): X_train, X_test, y_train, y_test, X_target
-                - intercept (pandas.DataFrame): intercept and coefficients (Index ODE parameters, Columns indicators)
-                - coef (pandas.DataFrame): intercept and coefficients (Index ODE parameters, Columns indicators)
-                - delay (int): delay period
+            dict: this is the same as covsirphy.Regressionhander.to_dict()
 
         Note:
             @oxcgrt_data argument was deprecated. Please use Scenario.register(extras=[oxcgrt_data]).
 
         Note:
-            Please refer to covsirphy.Evaluator.score() for metric names
+            Please refer to covsirphy.Evaluator.score() for metric names.
 
         Note:
             If @seed is included in kwargs, this will be converted to @random_state.
@@ -1359,21 +1348,21 @@ class Scenario(Term):
             delay = self._ensure_natural_int(delay, name="delay")
             removed_cols = removed_cols or None
         # Create training/test dataset
-        # Parameter values
         param_df = self._track_param(name=name)[model.PARAMETERS]
-        # Extra datasets (explanatory variables)
         try:
-            extras_df = self._data.records(main=False, extras=True).set_index(self.DATE)
+            records_df = self._data.records(main=True, extras=True).set_index(self.DATE)
         except NotRegisteredExtraError:
             raise NotRegisteredExtraError(
                 "Scenario.register(jhu_data, population_data, extras=[...])",
                 message="with extra datasets") from None
-        extras_df = extras_df.loc[:, ~extras_df.columns.isin(removed_cols)]
-        # Fit regression model
-        regressor = _ParamElasticNetRegressor(X=extras_df, y=param_df, delay=delay, **kwargs)
-        self._regressor_dict[name] = regressor
+        records_df = records_df.loc[:, ~records_df.columns.isin(removed_cols)]
+        # Fit regression models
+        data = param_df.join(records_df)
+        handler = RegressionHandler(data=data, model=model, delay=delay, **kwargs)
+        handler.fit(metric=metric)
+        self._reghandler_dict[name] = handler
         # Return information
-        return regressor.to_dict(metric=metric)
+        return handler.to_dict(metric=metric)
 
     def predict(self, days=None, name="Main"):
         """
@@ -1393,11 +1382,11 @@ class Scenario(Term):
             covsirphy.Scenario: self
         """
         # Arguments
-        if name not in self._regressor_dict:
+        if name not in self._reghandler_dict:
             raise UnExecutedError(f"Scenario.fit(name={name})")
         # Prediction with regression model
-        regressor = self._regressor_dict[name]
-        df = regressor.predict()
+        handler = self._reghandler_dict[name]
+        df = handler.predict()
         # -> end_date/parameter values
         df.index = [date.strftime(self.DATE_FORMAT) for date in df.index]
         df.index.name = "end_date"

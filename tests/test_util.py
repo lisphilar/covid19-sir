@@ -50,6 +50,7 @@ class TestEvaluator(object):
         score_metric = evaluator.score(metric=metric)
         score_metrics = evaluator.score(metrics=metric)
         assert score_metric == score_metrics
+        assert isinstance(Evaluator.smaller_is_better(metric=metric), bool)
 
     @pytest.mark.parametrize("metric", ["ME", "MAE", "MSE", "MSLE", "MAPE", "RMSE", "RMSLE", "R2"])
     @pytest.mark.parametrize("how", ["all", "inner"])
@@ -82,3 +83,5 @@ class TestEvaluator(object):
         evaluator = Evaluator(true, pred, on=None)
         with pytest.raises(UnExpectedValueError):
             evaluator.score(metric="Unknown")
+        with pytest.raises(UnExpectedValueError):
+            evaluator.smaller_is_better(metric="Unknown")

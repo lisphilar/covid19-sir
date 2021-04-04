@@ -11,7 +11,7 @@ from covsirphy.util.term import Term
 
 class _RegressorBase(Term):
     """
-    Basic class for parameter prediction (forecasting).
+    Basic class to predict parameter values of ODE models.
 
     Args:
         X (pandas.DataFrame):
@@ -30,6 +30,8 @@ class _RegressorBase(Term):
     Note:
         If @seed is included in kwargs, this will be converted to @random_state.
     """
+    # Description of regressor
+    DESC = ""
 
     def __init__(self, X, y, delay, **kwargs):
         # Validate values

@@ -27,16 +27,16 @@ class Evaluator(object):
     # Names
     _A = "_actual"
     _P = "_predicted"
-    # Metrics
+    # Metrics: {name: (function(x1, x2), whether smaller is better or not)}
     _METRICS_DICT = {
-        "ME": sklearn.metrics.max_error,
-        "MAE": sklearn.metrics.mean_absolute_error,
-        "MSE": sklearn.metrics.mean_squared_error,
-        "MSLE": sklearn.metrics.mean_squared_log_error,
-        "MAPE": sklearn.metrics.mean_absolute_percentage_error,
-        "RMSE": lambda x1, x2: sklearn.metrics.mean_squared_error(x1, x2, squared=False),
-        "RMSLE": lambda x1, x2: np.sqrt(sklearn.metrics.mean_squared_log_error(x1, x2)),
-        "R2": sklearn.metrics.r2_score,
+        "ME": (sklearn.metrics.max_error, True),
+        "MAE": (sklearn.metrics.mean_absolute_error, True),
+        "MSE": (sklearn.metrics.mean_squared_error, True),
+        "MSLE": (sklearn.metrics.mean_squared_log_error, True),
+        "MAPE": (sklearn.metrics.mean_absolute_percentage_error, True),
+        "RMSE": (lambda x1, x2: sklearn.metrics.mean_squared_error(x1, x2, squared=False), True),
+        "RMSLE": (lambda x1, x2: np.sqrt(sklearn.metrics.mean_squared_log_error(x1, x2)), True),
+        "R2": (sklearn.metrics.r2_score, False),
     }
 
     def __init__(self, y_true, y_pred, how="inner", on=None):
@@ -92,7 +92,7 @@ class Evaluator(object):
             raise UnExpectedValueError("metric", metric, candidates=list(self._METRICS_DICT.keys()))
         # Calculate score
         try:
-            return float(self._METRICS_DICT[metric](self._true, self._pred))
+            return float(self._METRICS_DICT[metric][0](self._true, self._pred))
         except ValueError:
             # Multioutput not supported
             raise ValueError(
@@ -107,3 +107,21 @@ class Evaluator(object):
             list[str]: list of metric names
         """
         return list(cls._METRICS_DICT.keys())
+
+    @classmethod
+    def smaller_is_better(cls, metric=None, metrics="RMSLE"):
+        """
+        Whether smaller value of the metric is better or not.
+
+        Args:
+            metric (str or None): ME, MAE, MSE, MSLE, MAPE, RMSE, RMSLE, R2 or None (use @metrics)
+            metrics (str): alias of @metric
+
+        Returns:
+            bool: whether smaller value is better or not
+        """
+        metric = (metric or metrics).upper()
+        # Check metric name
+        if metric not in cls._METRICS_DICT:
+            raise UnExpectedValueError("metric", metric, candidates=list(cls._METRICS_DICT.keys()))
+        return cls._METRICS_DICT[metric][1]

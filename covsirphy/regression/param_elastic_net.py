@@ -14,7 +14,7 @@ from covsirphy.regression.regbase import _RegressorBase
 
 class _ParamElasticNetRegressor(_RegressorBase):
     """
-    Predict parameter values with Elastic Net regression.
+    Predict parameter values of ODE models with Elastic Net regression.
 
     Args:
         X (pandas.DataFrame):
@@ -33,6 +33,8 @@ class _ParamElasticNetRegressor(_RegressorBase):
     Note:
         If @seed is included in kwargs, this will be converted to @random_state.
     """
+    # Description of regressor
+    DESC = "Indicators -> Parameters  with Elastic Net"
 
     def __init__(self, X, y, delay, **kwargs):
         super().__init__(X, y, delay, **kwargs)

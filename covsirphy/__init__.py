@@ -58,6 +58,8 @@ from covsirphy.simulation.simulator import ODESimulator
 from covsirphy.phase.phase_unit import PhaseUnit
 from covsirphy.phase.phase_series import PhaseSeries
 from covsirphy.phase.phase_estimator import MPEstimator
+# regression
+from covsirphy.regression.reg_handler import RegressionHandler
 # analysis
 from covsirphy.analysis.example_data import ExampleData
 from covsirphy.analysis.data_handler import DataHandler
@@ -108,6 +110,8 @@ __all__ = [
     "ODESimulator", "Estimator",
     # phase
     "PhaseSeries", "PhaseUnit", "MPEstimator",
+    # regression
+    "RegressionHandler",
     # analysis
     "ExampleData", "Scenario", "ModelValidator", "ParamTracker", "DataHandler",
     # worldwide
