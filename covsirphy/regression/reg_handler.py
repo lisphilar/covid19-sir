@@ -71,9 +71,10 @@ class RegressionHandler(Term):
         Returns:
             covsirphy.regression.regbase.RegressorBase: fitted regressor
         """
-        self._ensure_dataframe(self._data, name="data", columns=self._parameters)
-        X = self._data.drop(self._parameters, axis=1)
-        y = self._data.loc[:, self._parameters]
+        df = self._data.drop([self.C, self.CI, self.F, self.R, self.S], axis=1, errors="ignore")
+        self._ensure_dataframe(df, name="data", columns=self._parameters)
+        X = df.drop(self._parameters, axis=1)
+        y = df.loc[:, self._parameters]
         return regressor_class(X=X, y=y, delay=self._delay, **self._kwargs)
 
     def to_dict(self, metric):
