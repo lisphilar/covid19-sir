@@ -65,7 +65,7 @@
             
             
               <div class="version">
-                2.18.0-alpha
+                2.18.0-beta
               </div>
             
           
@@ -90,7 +90,7 @@
               
             
             
-              <p class="caption"><span class="caption-text">Contents:</span></p>
+              <p><span class="caption-text">Contents:</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../../README.html">CovsirPhy introduction</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../markdown/INSTALLATION.html">Installation</a></li>
@@ -176,6 +176,7 @@
 
 <span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
 <span class="kn">from</span> <span class="nn">covsirphy.util.error</span> <span class="kn">import</span> <span class="n">UnExecutedError</span>
+<span class="kn">from</span> <span class="nn">covsirphy.util.evaluator</span> <span class="kn">import</span> <span class="n">Evaluator</span>
 <span class="kn">from</span> <span class="nn">covsirphy.util.term</span> <span class="kn">import</span> <span class="n">Term</span>
 <span class="kn">from</span> <span class="nn">covsirphy.ode.mbase</span> <span class="kn">import</span> <span class="n">ModelBase</span>
 <span class="kn">from</span> <span class="nn">covsirphy.simulation.estimator</span> <span class="kn">import</span> <span class="n">Estimator</span>
@@ -247,7 +248,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_ode_dict</span> <span class="o">=</span> <span class="p">{</span><span class="bp">self</span><span class="o">.</span><span class="n">TAU</span><span class="p">:</span> <span class="kc">None</span><span class="p">}</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">day_param_dict</span> <span class="o">=</span> <span class="p">{}</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">est_dict</span> <span class="o">=</span> <span class="p">{</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">RMSLE</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
+            <span class="o">**</span><span class="p">{</span><span class="n">metric</span><span class="p">:</span> <span class="kc">None</span> <span class="k">for</span> <span class="n">metric</span> <span class="ow">in</span> <span class="n">Evaluator</span><span class="o">.</span><span class="n">metrics</span><span class="p">()},</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">TRIALS</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">RUNTIME</span><span class="p">:</span> <span class="kc">None</span>
         <span class="p">}</span>
@@ -467,7 +468,7 @@
 <span class="sd">                    - parameter values if available</span>
 <span class="sd">                    - day parameter values if available</span>
 <span class="sd">                    - tau: tau value [min]</span>
-<span class="sd">                    - RMSLE: RMSLE value of estimation</span>
+<span class="sd">                    - {metric name}: score of parameter estimation</span>
 <span class="sd">                    - Trials: the number of trials in estimation</span>
 <span class="sd">                    - Runtime: runtime of estimation</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -496,7 +497,7 @@
 <span class="sd">                        - rho etc. (float): parameter values if available</span>
 <span class="sd">                        - tau (int): tau value [min]</span>
 <span class="sd">                        - (int): day parameter values if available</span>
-<span class="sd">                        - RMSLE (float): RMSLE score of parameter estimation</span>
+<span class="sd">                        - {metric name} (float): score of parameter estimation</span>
 <span class="sd">                        - Trials (int): the number of trials in parameter estimation</span>
 <span class="sd">                        - Runtime (str): runtime of parameter estimation</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -646,6 +647,7 @@
         <span class="c1"># Other information of estimation</span>
         <span class="n">other_dict</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">est_dict</span><span class="o">.</span><span class="n">items</span><span class="p">()</span> <span class="o">-</span> <span class="n">ode_dict</span><span class="o">.</span><span class="n">items</span><span class="p">())</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">est_dict</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">other_dict</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">est_dict</span> <span class="o">=</span> <span class="p">{</span><span class="n">k</span><span class="p">:</span> <span class="n">v</span> <span class="k">for</span> <span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="n">v</span><span class="p">)</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">est_dict</span><span class="o">.</span><span class="n">items</span><span class="p">()</span> <span class="k">if</span> <span class="n">v</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">}</span>
         <span class="c1"># Initial values</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">set_y0</span><span class="p">(</span><span class="n">record_df</span><span class="o">=</span><span class="n">record_df</span><span class="p">)</span>
 

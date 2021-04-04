@@ -65,7 +65,7 @@
             
             
               <div class="version">
-                2.18.0-alpha
+                2.18.0-beta
               </div>
             
           
@@ -90,7 +90,7 @@
               
             
             
-              <p class="caption"><span class="caption-text">Contents:</span></p>
+              <p><span class="caption-text">Contents:</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../../README.html">CovsirPhy introduction</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../markdown/INSTALLATION.html">Installation</a></li>
@@ -176,6 +176,7 @@
 
 <span class="kn">from</span> <span class="nn">covsirphy.util.error</span> <span class="kn">import</span> <span class="n">UnExecutedError</span>
 <span class="kn">from</span> <span class="nn">covsirphy.util.argument</span> <span class="kn">import</span> <span class="n">find_args</span>
+<span class="kn">from</span> <span class="nn">covsirphy.util.evaluator</span> <span class="kn">import</span> <span class="n">Evaluator</span>
 <span class="kn">from</span> <span class="nn">covsirphy.util.term</span> <span class="kn">import</span> <span class="n">Term</span>
 <span class="kn">from</span> <span class="nn">covsirphy.trend.trend_detector</span> <span class="kn">import</span> <span class="n">TrendDetector</span>
 <span class="kn">from</span> <span class="nn">covsirphy.trend.trend_plot</span> <span class="kn">import</span> <span class="n">trend_plot</span>
@@ -648,15 +649,15 @@
         <span class="n">sim_df</span><span class="o">.</span><span class="n">columns</span> <span class="o">=</span> <span class="n">variables</span>
         <span class="k">return</span> <span class="p">(</span><span class="n">rec_df</span><span class="p">,</span> <span class="n">sim_df</span><span class="p">)</span>
 
-<div class="viewcode-block" id="ParamTracker.score"><a class="viewcode-back" href="../../../covsirphy.analysis.html#covsirphy.ParamTracker.score">[docs]</a>    <span class="k">def</span> <span class="nf">score</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">metrics</span><span class="o">=</span><span class="s2">&quot;RMSLE&quot;</span><span class="p">,</span> <span class="n">variables</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">phases</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">y0_dict</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<div class="viewcode-block" id="ParamTracker.score"><a class="viewcode-back" href="../../../covsirphy.analysis.html#covsirphy.ParamTracker.score">[docs]</a>    <span class="k">def</span> <span class="nf">score</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">variables</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">phases</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">y0_dict</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Evaluate accuracy of phase setting and parameter estimation of selected enabled phases.</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">            metrics (str): &quot;MAE&quot;, &quot;MSE&quot;, &quot;MSLE&quot;, &quot;RMSE&quot; or &quot;RMSLE&quot;</span>
 <span class="sd">            variables (list[str] or None): variables to use in calculation</span>
 <span class="sd">            phases (list[str] or None): phases to use in calculation</span>
 <span class="sd">            y0_dict(dict[str, float] or None): dictionary of initial values of variables</span>
+<span class="sd">            kwargs: keyword arguments of covsirphy.Evaluator.score()</span>
 
 <span class="sd">        Returns:</span>
 <span class="sd">            float: score with the specified metrics</span>
@@ -667,10 +668,6 @@
 <span class="sd">            If @phases is None, all phases will be used.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="c1"># Arguments</span>
-        <span class="k">if</span> <span class="n">metrics</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">METRICS_DICT</span><span class="p">:</span>
-            <span class="n">metrics_str</span> <span class="o">=</span> <span class="s2">&quot;, &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">METRICS_DICT</span><span class="o">.</span><span class="n">keys</span><span class="p">()))</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
-                <span class="sa">f</span><span class="s2">&quot;@metrics must be selected from </span><span class="si">{</span><span class="n">metrics_str</span><span class="si">}</span><span class="s2">, but </span><span class="si">{</span><span class="n">metrics</span><span class="si">}</span><span class="s2"> was applied.&quot;</span><span class="p">)</span>
         <span class="n">variables</span> <span class="o">=</span> <span class="n">variables</span> <span class="ow">or</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">CI</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">F</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">R</span><span class="p">]</span>
         <span class="n">variables</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ensure_list</span><span class="p">(</span>
             <span class="n">variables</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">VALUE_COLUMNS</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;variables&quot;</span><span class="p">)</span>
@@ -684,7 +681,8 @@
         <span class="n">rec_df</span><span class="p">,</span> <span class="n">sim_df</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_compare_with_actual</span><span class="p">(</span>
             <span class="n">variables</span><span class="o">=</span><span class="n">variables</span><span class="p">,</span> <span class="n">y0_dict</span><span class="o">=</span><span class="n">y0_dict</span><span class="p">)</span>
         <span class="c1"># Calculate score</span>
-        <span class="n">score</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">METRICS_DICT</span><span class="p">[</span><span class="n">metrics</span><span class="o">.</span><span class="n">upper</span><span class="p">()](</span><span class="n">rec_df</span><span class="p">,</span> <span class="n">sim_df</span><span class="p">)</span>
+        <span class="n">evaluator</span> <span class="o">=</span> <span class="n">Evaluator</span><span class="p">(</span><span class="n">rec_df</span><span class="p">,</span> <span class="n">sim_df</span><span class="p">)</span>
+        <span class="n">score</span> <span class="o">=</span> <span class="n">evaluator</span><span class="o">.</span><span class="n">score</span><span class="p">(</span><span class="o">**</span><span class="n">find_args</span><span class="p">(</span><span class="n">Evaluator</span><span class="o">.</span><span class="n">score</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">))</span>
         <span class="c1"># Enable the disabled non-target phases</span>
         <span class="k">if</span> <span class="n">ignored_phases</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">enable</span><span class="p">(</span><span class="n">ignored_phases</span><span class="p">)</span>

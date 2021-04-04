@@ -1,0 +1,328 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  
+  <title>covsirphy.util.evaluator &mdash; CovsirPhy  documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../../../_static/copybutton.css" type="text/css" />
+
+  
+  
+
+  
+  
+
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
+        <script src="../../../_static/jquery.js"></script>
+        <script src="../../../_static/underscore.js"></script>
+        <script src="../../../_static/doctools.js"></script>
+        <script src="../../../_static/clipboard.min.js"></script>
+        <script src="../../../_static/copybutton.js"></script>
+        <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    
+    <script type="text/javascript" src="../../../_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../../../index.html" class="icon icon-home"> CovsirPhy
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                2.18.0-beta
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../README.html">CovsirPhy introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../markdown/INSTALLATION.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../markdown/INSTALLATION.html#dataset-preparation">Dataset preparation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../usage_quickest.html">Usage: quickest tour</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../usage_quick.html">Usage: scenario analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../usage_dataset.html">Usage: datasets</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../usage_phases.html">Usage: phases</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../usage_theoretical.html">Usage: SIR-derived models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../covsirphy.html">covsirphy package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../markdown/TERM.html">Glossary</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../CODE_OF_CONDUCT.html">Contributor Covenant Code of Conduct</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../SECURITY.html">Security policy of CovsirPhy</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../CONTRIBUTING.html">Guideline of contribution</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">CovsirPhy</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../../index.html" class="icon icon-home"></a> &raquo;</li>
+        
+          <li><a href="../../index.html">Module code</a> &raquo;</li>
+        
+      <li>covsirphy.util.evaluator</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for covsirphy.util.evaluator</h1><div class="highlight"><pre>
+<span></span><span class="ch">#!/usr/bin/env python</span>
+<span class="c1"># -*- coding: utf-8 -*-</span>
+
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<span class="kn">import</span> <span class="nn">sklearn.metrics</span>
+<span class="kn">from</span> <span class="nn">covsirphy.util.error</span> <span class="kn">import</span> <span class="n">UnExpectedValueError</span>
+
+
+<div class="viewcode-block" id="Evaluator"><a class="viewcode-back" href="../../../covsirphy.util.html#covsirphy.Evaluator">[docs]</a><span class="k">class</span> <span class="nc">Evaluator</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Evaluate residual errors.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        y_true (pandas.DataFrame or pandas.Series): correct target values</span>
+<span class="sd">        y_pred (pandas.DataFrame or pandas.Series): estimated target values</span>
+<span class="sd">        how (str): &quot;all&quot; (use all records) or &quot;inner&quot; (intersection will be used)</span>
+<span class="sd">        on (str or list[str] or None): column names to join on or None (join on index)</span>
+
+<span class="sd">    Raises:</span>
+<span class="sd">        TypeError: un-expected types were used for the arguments</span>
+
+<span class="sd">    Note:</span>
+<span class="sd">        Evaluation with metrics will be done with sklearn.metrics package.</span>
+<span class="sd">        https://scikit-learn.org/stable/modules/model_evaluation.html</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># Names</span>
+    <span class="n">_A</span> <span class="o">=</span> <span class="s2">&quot;_actual&quot;</span>
+    <span class="n">_P</span> <span class="o">=</span> <span class="s2">&quot;_predicted&quot;</span>
+    <span class="c1"># Metrics</span>
+    <span class="n">_METRICS_DICT</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s2">&quot;ME&quot;</span><span class="p">:</span> <span class="n">sklearn</span><span class="o">.</span><span class="n">metrics</span><span class="o">.</span><span class="n">max_error</span><span class="p">,</span>
+        <span class="s2">&quot;MAE&quot;</span><span class="p">:</span> <span class="n">sklearn</span><span class="o">.</span><span class="n">metrics</span><span class="o">.</span><span class="n">mean_absolute_error</span><span class="p">,</span>
+        <span class="s2">&quot;MSE&quot;</span><span class="p">:</span> <span class="n">sklearn</span><span class="o">.</span><span class="n">metrics</span><span class="o">.</span><span class="n">mean_squared_error</span><span class="p">,</span>
+        <span class="s2">&quot;MSLE&quot;</span><span class="p">:</span> <span class="n">sklearn</span><span class="o">.</span><span class="n">metrics</span><span class="o">.</span><span class="n">mean_squared_log_error</span><span class="p">,</span>
+        <span class="s2">&quot;MAPE&quot;</span><span class="p">:</span> <span class="n">sklearn</span><span class="o">.</span><span class="n">metrics</span><span class="o">.</span><span class="n">mean_absolute_percentage_error</span><span class="p">,</span>
+        <span class="s2">&quot;RMSE&quot;</span><span class="p">:</span> <span class="k">lambda</span> <span class="n">x1</span><span class="p">,</span> <span class="n">x2</span><span class="p">:</span> <span class="n">sklearn</span><span class="o">.</span><span class="n">metrics</span><span class="o">.</span><span class="n">mean_squared_error</span><span class="p">(</span><span class="n">x1</span><span class="p">,</span> <span class="n">x2</span><span class="p">,</span> <span class="n">squared</span><span class="o">=</span><span class="kc">False</span><span class="p">),</span>
+        <span class="s2">&quot;RMSLE&quot;</span><span class="p">:</span> <span class="k">lambda</span> <span class="n">x1</span><span class="p">,</span> <span class="n">x2</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">sklearn</span><span class="o">.</span><span class="n">metrics</span><span class="o">.</span><span class="n">mean_squared_log_error</span><span class="p">(</span><span class="n">x1</span><span class="p">,</span> <span class="n">x2</span><span class="p">)),</span>
+        <span class="s2">&quot;R2&quot;</span><span class="p">:</span> <span class="n">sklearn</span><span class="o">.</span><span class="n">metrics</span><span class="o">.</span><span class="n">r2_score</span><span class="p">,</span>
+    <span class="p">}</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">y_true</span><span class="p">,</span> <span class="n">y_pred</span><span class="p">,</span> <span class="n">how</span><span class="o">=</span><span class="s2">&quot;inner&quot;</span><span class="p">,</span> <span class="n">on</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="c1"># Check types</span>
+        <span class="k">for</span> <span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="n">name</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">([</span><span class="n">y_true</span><span class="p">,</span> <span class="n">y_pred</span><span class="p">],</span> <span class="p">[</span><span class="s2">&quot;y_true&quot;</span><span class="p">,</span> <span class="s2">&quot;y_pred&quot;</span><span class="p">]):</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="p">(</span><span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">)):</span>
+                <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span>
+                    <span class="sa">f</span><span class="s2">&quot;@</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2"> must be pandas.DataFrame, pandas.Series, but </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">y</span><span class="p">)</span><span class="si">}</span><span class="s2"> was applied.&quot;</span><span class="p">)</span>
+        <span class="c1"># Join dataframes</span>
+        <span class="n">true_df</span><span class="p">,</span> <span class="n">pred_df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">y_true</span><span class="p">),</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">y_pred</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">how</span> <span class="o">==</span> <span class="s2">&quot;all&quot;</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_true</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_pred</span> <span class="o">=</span> <span class="n">true_df</span><span class="p">,</span> <span class="n">pred_df</span>
+            <span class="k">return</span>
+        <span class="k">if</span> <span class="n">on</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">true_df</span> <span class="o">=</span> <span class="n">true_df</span><span class="o">.</span><span class="n">set_index</span><span class="p">(</span><span class="n">on</span><span class="p">)</span>
+            <span class="n">pred_df</span> <span class="o">=</span> <span class="n">pred_df</span><span class="o">.</span><span class="n">set_index</span><span class="p">(</span><span class="n">on</span><span class="p">)</span>
+        <span class="n">all_df</span> <span class="o">=</span> <span class="n">true_df</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">pred_df</span><span class="p">,</span> <span class="n">how</span><span class="o">=</span><span class="s2">&quot;inner&quot;</span><span class="p">,</span> <span class="n">lsuffix</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_A</span><span class="p">,</span> <span class="n">rsuffix</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_P</span><span class="p">)</span>
+        <span class="c1"># Register values</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_true</span> <span class="o">=</span> <span class="n">all_df</span><span class="o">.</span><span class="n">loc</span><span class="p">[:,</span> <span class="p">[</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">col</span><span class="si">}{</span><span class="bp">self</span><span class="o">.</span><span class="n">_A</span><span class="si">}</span><span class="s2">&quot;</span> <span class="k">for</span> <span class="n">col</span> <span class="ow">in</span> <span class="n">true_df</span><span class="o">.</span><span class="n">columns</span><span class="p">]]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_pred</span> <span class="o">=</span> <span class="n">all_df</span><span class="o">.</span><span class="n">loc</span><span class="p">[:,</span> <span class="p">[</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">col</span><span class="si">}{</span><span class="bp">self</span><span class="o">.</span><span class="n">_P</span><span class="si">}</span><span class="s2">&quot;</span> <span class="k">for</span> <span class="n">col</span> <span class="ow">in</span> <span class="n">pred_df</span><span class="o">.</span><span class="n">columns</span><span class="p">]]</span>
+
+<div class="viewcode-block" id="Evaluator.score"><a class="viewcode-back" href="../../../covsirphy.util.html#covsirphy.Evaluator.score">[docs]</a>    <span class="k">def</span> <span class="nf">score</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">metric</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">metrics</span><span class="o">=</span><span class="s2">&quot;RMSLE&quot;</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Calculate score with specified metric.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            metric (str or None): ME, MAE, MSE, MSLE, MAPE, RMSE, RMSLE, R2 or None (use @metrics)</span>
+<span class="sd">            metrics (str): alias of @metric</span>
+
+<span class="sd">        Raises:</span>
+<span class="sd">            UnExpectedValueError: un-expected metric was applied</span>
+<span class="sd">            ValueError: ME was selected as metric when the targets have multiple columns</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            float: score with the metric</span>
+
+<span class="sd">        Note:</span>
+<span class="sd">            ME: maximum residual error</span>
+<span class="sd">            MAE: mean absolute error</span>
+<span class="sd">            MSE: mean square error</span>
+<span class="sd">            MSLE: mean squared logarithmic error</span>
+<span class="sd">            MAPE: mean absolute percentage error</span>
+<span class="sd">            RMSE: root mean squared error</span>
+<span class="sd">            RMSLE: root mean squared logarithmic error</span>
+<span class="sd">            R2: the coefficient of determination</span>
+
+<span class="sd">        Note:</span>
+<span class="sd">            When @metric is None, @metrics will be used as @metric. Default value is &quot;RMSLE&quot;.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">metric</span> <span class="o">=</span> <span class="p">(</span><span class="n">metric</span> <span class="ow">or</span> <span class="n">metrics</span><span class="p">)</span><span class="o">.</span><span class="n">upper</span><span class="p">()</span>
+        <span class="c1"># Check metric name</span>
+        <span class="k">if</span> <span class="n">metric</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_METRICS_DICT</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">UnExpectedValueError</span><span class="p">(</span><span class="s2">&quot;metric&quot;</span><span class="p">,</span> <span class="n">metric</span><span class="p">,</span> <span class="n">candidates</span><span class="o">=</span><span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_METRICS_DICT</span><span class="o">.</span><span class="n">keys</span><span class="p">()))</span>
+        <span class="c1"># Calculate score</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="k">return</span> <span class="nb">float</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_METRICS_DICT</span><span class="p">[</span><span class="n">metric</span><span class="p">](</span><span class="bp">self</span><span class="o">.</span><span class="n">_true</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_pred</span><span class="p">))</span>
+        <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
+            <span class="c1"># Multioutput not supported</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;When the targets have multiple columns, we cannot select </span><span class="si">{</span><span class="n">metric</span><span class="si">}</span><span class="s2">.&quot;</span><span class="p">)</span> <span class="kn">from</span> <span class="bp">None</span></div>
+
+<div class="viewcode-block" id="Evaluator.metrics"><a class="viewcode-back" href="../../../covsirphy.util.html#covsirphy.Evaluator.metrics">[docs]</a>    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">metrics</span><span class="p">(</span><span class="bp">cls</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Return the list of metric names.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            list[str]: list of metric names</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="nb">list</span><span class="p">(</span><span class="bp">cls</span><span class="o">.</span><span class="n">_METRICS_DICT</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span></div></div>
+</pre></div>
+
+           </div>
+           
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &#169; Copyright 2020, CovsirPhy Development Team.
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>
