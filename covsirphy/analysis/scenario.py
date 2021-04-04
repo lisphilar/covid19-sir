@@ -1249,16 +1249,18 @@ class Scenario(Term):
         return tracker.score(variables=variables, phases=phases, y0_dict=y0_dict, **kwargs)
 
     def estimate_delay(self, oxcgrt_data=None, indicator="Stringency_index",
-                       target="Confirmed", value_range=(7, None)):
+                       target="Confirmed", percentile=25, limits=(7, 30), **kwargs):
         """
-        Estimate the mode value of delay period [days] between the indicator and the target.
-        We assume that the indicator impact on the target value with delay.
+        Estimate delay period [days], assuming the indicator impact on the target value with delay.
+        The average of representative value (percentile) and @min_size will be returned.
 
         Args:
             oxcgrt_data (covsirphy.OxCGRTData): OxCGRT dataset
             indicator (str): indicator name, a column of any registered datasets
             target (str): target name, a column of any registered datasets
-            value_range (tuple(int, int or None)): tuple, giving the minimum and maximum range to search for change over time
+            percentile (int): percentile to calculate the representative value, in (0, 100)
+            limits (tuple(int, int)): minimum/maximum size of the delay period [days]
+            kwargs: keyword arguments of DataHandler.estimate_delay()
 
         Raises:
             NotRegisteredMainError: either JHUData or PopulationData was not registered
@@ -1278,25 +1280,36 @@ class Scenario(Term):
 
         Note:
             - Average recovered period of JHU dataset will be used as returned value when the estimated value was not in value_range.
-            - Very long periods (outside of 99% quantile) are taken out.
             - @oxcgrt_data argument was deprecated. Please use Scenario.register(extras=[oxcgrt_data]).
         """
+        min_size, max_days = limits
         # Register OxCGRT data
         if oxcgrt_data is not None:
             warnings.warn(
                 "Please use Scenario.register(extras=[oxcgrt_data]) rather than Scenario.fit(oxcgrt_data).",
                 DeprecationWarning, stacklevel=1)
             self.register(extras=[oxcgrt_data])
+        # Un-used arguments
+        if "value_range" in kwargs:
+            warnings.warn("@value_range argument was deprecated.", DeprecationWarning, stacklevel=1)
         # Calculate delay values
-        df = self._data.estimate_delay(indicator=indicator, target=target, delay_name="Period Length")
-        # Filter out very long periods
-        df_filtered = df.loc[df["Period Length"] < df["Period Length"].quantile(0.99)]
-        if value_range[1] is not None:
-            df_filtered = df_filtered.loc[df["Period Length"] < value_range[1]]
-        # Calculate representative value (mode)
-        if df_filtered.empty:
+        df = self._data.estimate_delay(
+            indicator=indicator, target=target, min_size=min_size, delay_name="Period Length",
+            **find_args(DataHandler.estimate_delay, **kwargs))
+        # Remove NAs and sort
+        df.dropna(subset=["Period Length"], inplace=True)
+        df.sort_values("Period Length", inplace=True)
+        df.reset_index(inplace=True, drop=True)
+        # Apply upper limit for delay period if max_days is set
+        if max_days is not None:
+            df = df[df["Period Length"] <= max_days]
+        # Calculate representative value
+        if df.empty:
             return (self._data.recovery_period(), df)
-        delay_period = df_filtered["Period Length"].mode()[0]
+        # Calculate percentile
+        Q1 = np.percentile(df["Period Length"], percentile, interpolation="midpoint")
+        low_lim = min_size
+        delay_period = int((low_lim + Q1) / 2)
         return (int(delay_period), df)
 
     def _fit_create_data(self, model, name, delay, removed_cols):
