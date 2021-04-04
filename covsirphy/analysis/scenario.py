@@ -1249,7 +1249,7 @@ class Scenario(Term):
         return tracker.score(variables=variables, phases=phases, y0_dict=y0_dict, **kwargs)
 
     def estimate_delay(self, oxcgrt_data=None, indicator="Stringency_index",
-                       target="Confirmed", percentile=25, min_size=7, max_days=30, **kwargs):
+                       target="Confirmed", percentile=25, limits=(7, 30), **kwargs):
         """
         Estimate delay period [days], assuming the indicator impact on the target value with delay.
         The average of representative value (percentile) and @min_size will be returned.
@@ -1259,8 +1259,7 @@ class Scenario(Term):
             indicator (str): indicator name, a column of any registered datasets
             target (str): target name, a column of any registered datasets
             percentile (int): percentile to calculate the representative value, in (0, 100)
-            min_size (int): minimum size of the delay period
-            max_days (int): maximum days of the delay period
+            limits (tuple(int, int)): minimum/maximum size of the delay period [days]
             kwargs: keyword arguments of DataHandler.estimate_delay()
 
         Raises:
@@ -1283,6 +1282,7 @@ class Scenario(Term):
             - Average recovered period of JHU dataset will be used as returned value when the estimated value was not in value_range.
             - @oxcgrt_data argument was deprecated. Please use Scenario.register(extras=[oxcgrt_data]).
         """
+        min_size, max_days = limits
         # Register OxCGRT data
         if oxcgrt_data is not None:
             warnings.warn(
