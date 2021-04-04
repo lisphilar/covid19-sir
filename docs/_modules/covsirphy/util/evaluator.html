@@ -65,7 +65,7 @@
             
             
               <div class="version">
-                2.18.0-beta
+                2.18.0-delta
               </div>
             
           
@@ -200,16 +200,16 @@
     <span class="c1"># Names</span>
     <span class="n">_A</span> <span class="o">=</span> <span class="s2">&quot;_actual&quot;</span>
     <span class="n">_P</span> <span class="o">=</span> <span class="s2">&quot;_predicted&quot;</span>
-    <span class="c1"># Metrics</span>
+    <span class="c1"># Metrics: {name: (function(x1, x2), whether smaller is better or not)}</span>
     <span class="n">_METRICS_DICT</span> <span class="o">=</span> <span class="p">{</span>
-        <span class="s2">&quot;ME&quot;</span><span class="p">:</span> <span class="n">sklearn</span><span class="o">.</span><span class="n">metrics</span><span class="o">.</span><span class="n">max_error</span><span class="p">,</span>
-        <span class="s2">&quot;MAE&quot;</span><span class="p">:</span> <span class="n">sklearn</span><span class="o">.</span><span class="n">metrics</span><span class="o">.</span><span class="n">mean_absolute_error</span><span class="p">,</span>
-        <span class="s2">&quot;MSE&quot;</span><span class="p">:</span> <span class="n">sklearn</span><span class="o">.</span><span class="n">metrics</span><span class="o">.</span><span class="n">mean_squared_error</span><span class="p">,</span>
-        <span class="s2">&quot;MSLE&quot;</span><span class="p">:</span> <span class="n">sklearn</span><span class="o">.</span><span class="n">metrics</span><span class="o">.</span><span class="n">mean_squared_log_error</span><span class="p">,</span>
-        <span class="s2">&quot;MAPE&quot;</span><span class="p">:</span> <span class="n">sklearn</span><span class="o">.</span><span class="n">metrics</span><span class="o">.</span><span class="n">mean_absolute_percentage_error</span><span class="p">,</span>
-        <span class="s2">&quot;RMSE&quot;</span><span class="p">:</span> <span class="k">lambda</span> <span class="n">x1</span><span class="p">,</span> <span class="n">x2</span><span class="p">:</span> <span class="n">sklearn</span><span class="o">.</span><span class="n">metrics</span><span class="o">.</span><span class="n">mean_squared_error</span><span class="p">(</span><span class="n">x1</span><span class="p">,</span> <span class="n">x2</span><span class="p">,</span> <span class="n">squared</span><span class="o">=</span><span class="kc">False</span><span class="p">),</span>
-        <span class="s2">&quot;RMSLE&quot;</span><span class="p">:</span> <span class="k">lambda</span> <span class="n">x1</span><span class="p">,</span> <span class="n">x2</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">sklearn</span><span class="o">.</span><span class="n">metrics</span><span class="o">.</span><span class="n">mean_squared_log_error</span><span class="p">(</span><span class="n">x1</span><span class="p">,</span> <span class="n">x2</span><span class="p">)),</span>
-        <span class="s2">&quot;R2&quot;</span><span class="p">:</span> <span class="n">sklearn</span><span class="o">.</span><span class="n">metrics</span><span class="o">.</span><span class="n">r2_score</span><span class="p">,</span>
+        <span class="s2">&quot;ME&quot;</span><span class="p">:</span> <span class="p">(</span><span class="n">sklearn</span><span class="o">.</span><span class="n">metrics</span><span class="o">.</span><span class="n">max_error</span><span class="p">,</span> <span class="kc">True</span><span class="p">),</span>
+        <span class="s2">&quot;MAE&quot;</span><span class="p">:</span> <span class="p">(</span><span class="n">sklearn</span><span class="o">.</span><span class="n">metrics</span><span class="o">.</span><span class="n">mean_absolute_error</span><span class="p">,</span> <span class="kc">True</span><span class="p">),</span>
+        <span class="s2">&quot;MSE&quot;</span><span class="p">:</span> <span class="p">(</span><span class="n">sklearn</span><span class="o">.</span><span class="n">metrics</span><span class="o">.</span><span class="n">mean_squared_error</span><span class="p">,</span> <span class="kc">True</span><span class="p">),</span>
+        <span class="s2">&quot;MSLE&quot;</span><span class="p">:</span> <span class="p">(</span><span class="n">sklearn</span><span class="o">.</span><span class="n">metrics</span><span class="o">.</span><span class="n">mean_squared_log_error</span><span class="p">,</span> <span class="kc">True</span><span class="p">),</span>
+        <span class="s2">&quot;MAPE&quot;</span><span class="p">:</span> <span class="p">(</span><span class="n">sklearn</span><span class="o">.</span><span class="n">metrics</span><span class="o">.</span><span class="n">mean_absolute_percentage_error</span><span class="p">,</span> <span class="kc">True</span><span class="p">),</span>
+        <span class="s2">&quot;RMSE&quot;</span><span class="p">:</span> <span class="p">(</span><span class="k">lambda</span> <span class="n">x1</span><span class="p">,</span> <span class="n">x2</span><span class="p">:</span> <span class="n">sklearn</span><span class="o">.</span><span class="n">metrics</span><span class="o">.</span><span class="n">mean_squared_error</span><span class="p">(</span><span class="n">x1</span><span class="p">,</span> <span class="n">x2</span><span class="p">,</span> <span class="n">squared</span><span class="o">=</span><span class="kc">False</span><span class="p">),</span> <span class="kc">True</span><span class="p">),</span>
+        <span class="s2">&quot;RMSLE&quot;</span><span class="p">:</span> <span class="p">(</span><span class="k">lambda</span> <span class="n">x1</span><span class="p">,</span> <span class="n">x2</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">sklearn</span><span class="o">.</span><span class="n">metrics</span><span class="o">.</span><span class="n">mean_squared_log_error</span><span class="p">(</span><span class="n">x1</span><span class="p">,</span> <span class="n">x2</span><span class="p">)),</span> <span class="kc">True</span><span class="p">),</span>
+        <span class="s2">&quot;R2&quot;</span><span class="p">:</span> <span class="p">(</span><span class="n">sklearn</span><span class="o">.</span><span class="n">metrics</span><span class="o">.</span><span class="n">r2_score</span><span class="p">,</span> <span class="kc">False</span><span class="p">),</span>
     <span class="p">}</span>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">y_true</span><span class="p">,</span> <span class="n">y_pred</span><span class="p">,</span> <span class="n">how</span><span class="o">=</span><span class="s2">&quot;inner&quot;</span><span class="p">,</span> <span class="n">on</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
@@ -265,7 +265,7 @@
             <span class="k">raise</span> <span class="n">UnExpectedValueError</span><span class="p">(</span><span class="s2">&quot;metric&quot;</span><span class="p">,</span> <span class="n">metric</span><span class="p">,</span> <span class="n">candidates</span><span class="o">=</span><span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_METRICS_DICT</span><span class="o">.</span><span class="n">keys</span><span class="p">()))</span>
         <span class="c1"># Calculate score</span>
         <span class="k">try</span><span class="p">:</span>
-            <span class="k">return</span> <span class="nb">float</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_METRICS_DICT</span><span class="p">[</span><span class="n">metric</span><span class="p">](</span><span class="bp">self</span><span class="o">.</span><span class="n">_true</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_pred</span><span class="p">))</span>
+            <span class="k">return</span> <span class="nb">float</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_METRICS_DICT</span><span class="p">[</span><span class="n">metric</span><span class="p">][</span><span class="mi">0</span><span class="p">](</span><span class="bp">self</span><span class="o">.</span><span class="n">_true</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_pred</span><span class="p">))</span>
         <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
             <span class="c1"># Multioutput not supported</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
@@ -279,7 +279,25 @@
 <span class="sd">        Returns:</span>
 <span class="sd">            list[str]: list of metric names</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="nb">list</span><span class="p">(</span><span class="bp">cls</span><span class="o">.</span><span class="n">_METRICS_DICT</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span></div></div>
+        <span class="k">return</span> <span class="nb">list</span><span class="p">(</span><span class="bp">cls</span><span class="o">.</span><span class="n">_METRICS_DICT</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span></div>
+
+<div class="viewcode-block" id="Evaluator.smaller_is_better"><a class="viewcode-back" href="../../../covsirphy.util.html#covsirphy.Evaluator.smaller_is_better">[docs]</a>    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">smaller_is_better</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">metric</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">metrics</span><span class="o">=</span><span class="s2">&quot;RMSLE&quot;</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Whether smaller value of the metric is better or not.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            metric (str or None): ME, MAE, MSE, MSLE, MAPE, RMSE, RMSLE, R2 or None (use @metrics)</span>
+<span class="sd">            metrics (str): alias of @metric</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            bool: whether smaller value is better or not</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">metric</span> <span class="o">=</span> <span class="p">(</span><span class="n">metric</span> <span class="ow">or</span> <span class="n">metrics</span><span class="p">)</span><span class="o">.</span><span class="n">upper</span><span class="p">()</span>
+        <span class="c1"># Check metric name</span>
+        <span class="k">if</span> <span class="n">metric</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_METRICS_DICT</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">UnExpectedValueError</span><span class="p">(</span><span class="s2">&quot;metric&quot;</span><span class="p">,</span> <span class="n">metric</span><span class="p">,</span> <span class="n">candidates</span><span class="o">=</span><span class="nb">list</span><span class="p">(</span><span class="bp">cls</span><span class="o">.</span><span class="n">_METRICS_DICT</span><span class="o">.</span><span class="n">keys</span><span class="p">()))</span>
+        <span class="k">return</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_METRICS_DICT</span><span class="p">[</span><span class="n">metric</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span></div></div>
 </pre></div>
 
            </div>

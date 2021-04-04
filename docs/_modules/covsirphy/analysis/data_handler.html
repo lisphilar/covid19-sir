@@ -65,7 +65,7 @@
             
             
               <div class="version">
-                2.18.0-beta
+                2.18.0-delta
               </div>
             
           
@@ -638,7 +638,7 @@
         <span class="k">except</span> <span class="n">NotRegisteredExtraError</span><span class="p">:</span>
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">records</span><span class="p">(</span><span class="n">main</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">extras</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">past</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">future</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="DataHandler.estimate_delay"><a class="viewcode-back" href="../../../covsirphy.analysis.html#covsirphy.DataHandler.estimate_delay">[docs]</a>    <span class="k">def</span> <span class="nf">estimate_delay</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">indicator</span><span class="p">,</span> <span class="n">target</span><span class="p">,</span> <span class="n">delay_name</span><span class="o">=</span><span class="s2">&quot;Period Length&quot;</span><span class="p">):</span>
+<div class="viewcode-block" id="DataHandler.estimate_delay"><a class="viewcode-back" href="../../../covsirphy.analysis.html#covsirphy.DataHandler.estimate_delay">[docs]</a>    <span class="k">def</span> <span class="nf">estimate_delay</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">indicator</span><span class="p">,</span> <span class="n">target</span><span class="p">,</span> <span class="n">min_size</span><span class="o">=</span><span class="mi">7</span><span class="p">,</span> <span class="n">use_difference</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">delay_name</span><span class="o">=</span><span class="s2">&quot;Period Length&quot;</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Estimate the average day [days] between the indicator and the target.</span>
 <span class="sd">        We assume that the indicator impact on the target value with delay.</span>
@@ -647,6 +647,8 @@
 <span class="sd">        Args:</span>
 <span class="sd">            indicator (str): indicator name, a column of any registered datasets</span>
 <span class="sd">            target (str): target name, a column of any registered datasets</span>
+<span class="sd">            min_size (int): minimum size of the delay period</span>
+<span class="sd">            use_difference (bool): if True, use first discrete difference of target</span>
 <span class="sd">            delay_name (str): column name of delay in the output dataframe</span>
 
 <span class="sd">        Raises:</span>
@@ -673,6 +675,8 @@
         <span class="n">record_df</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">records_all</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_ensure_list</span><span class="p">(</span>
             <span class="p">[</span><span class="n">indicator</span><span class="p">,</span> <span class="n">target</span><span class="p">],</span> <span class="n">candidates</span><span class="o">=</span><span class="n">record_df</span><span class="o">.</span><span class="n">columns</span><span class="o">.</span><span class="n">tolist</span><span class="p">(),</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;indicator and target&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">use_difference</span><span class="p">:</span>
+            <span class="n">record_df</span><span class="p">[</span><span class="n">target</span><span class="p">]</span> <span class="o">=</span> <span class="n">record_df</span><span class="p">[</span><span class="n">target</span><span class="p">]</span><span class="o">.</span><span class="n">diff</span><span class="p">()</span>
         <span class="n">pivot_df</span> <span class="o">=</span> <span class="n">record_df</span><span class="o">.</span><span class="n">pivot_table</span><span class="p">(</span><span class="n">values</span><span class="o">=</span><span class="n">indicator</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="n">target</span><span class="p">)</span>
         <span class="n">run_df</span> <span class="o">=</span> <span class="n">pivot_df</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
         <span class="c1"># Convert index (target) to serial numbers</span>
@@ -682,7 +686,7 @@
         <span class="n">series</span> <span class="o">=</span> <span class="n">run_df</span><span class="o">.</span><span class="n">reset_index</span><span class="p">(</span><span class="n">drop</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span><span class="o">.</span><span class="n">iloc</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">dropna</span><span class="p">()</span>
         <span class="c1"># Detection with Ruptures using indicator values</span>
         <span class="n">warnings</span><span class="o">.</span><span class="n">simplefilter</span><span class="p">(</span><span class="s2">&quot;ignore&quot;</span><span class="p">,</span> <span class="n">category</span><span class="o">=</span><span class="ne">RuntimeWarning</span><span class="p">)</span>
-        <span class="n">algorithm</span> <span class="o">=</span> <span class="n">rpt</span><span class="o">.</span><span class="n">Pelt</span><span class="p">(</span><span class="n">model</span><span class="o">=</span><span class="s2">&quot;rbf&quot;</span><span class="p">,</span> <span class="n">jump</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">min_size</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+        <span class="n">algorithm</span> <span class="o">=</span> <span class="n">rpt</span><span class="o">.</span><span class="n">Pelt</span><span class="p">(</span><span class="n">model</span><span class="o">=</span><span class="s2">&quot;rbf&quot;</span><span class="p">,</span> <span class="n">jump</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">min_size</span><span class="o">=</span><span class="n">min_size</span><span class="p">)</span>
         <span class="k">try</span><span class="p">:</span>
             <span class="n">results</span> <span class="o">=</span> <span class="n">algorithm</span><span class="o">.</span><span class="n">fit_predict</span><span class="p">(</span><span class="n">series</span><span class="o">.</span><span class="n">values</span><span class="p">,</span> <span class="n">pen</span><span class="o">=</span><span class="mf">0.5</span><span class="p">)</span>
         <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
