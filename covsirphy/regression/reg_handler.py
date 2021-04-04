@@ -1,0 +1,113 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+
+from covsirphy.util.evaluator import Evaluator
+from covsirphy.util.term import Term
+from covsirphy.ode.mbase import ModelBase
+from covsirphy.regression.param_elastic_net import _ParamElasticNetRegressor
+
+
+class RegressionHandler(Term):
+    """
+    Handle regressors to predict parameter values of ODE models.
+    With .fit() method, the best regressor will be selected based on the scores with test dataset.
+
+    Args:
+        data (pandas.DataFrame):
+            Index
+                Date (pandas.Timestamp): observation date
+            Columns
+                - parameter values
+                - the number of cases
+                - indicators
+        model (covsirphy.ModelBase): ODE model
+        delay (int): delay period [days]
+        kwargs: keyword arguments of sklearn.model_selection.train_test_split(test_size=0.2, random_state=0)
+
+    Note:
+        If @seed is included in kwargs, this will be converted to @random_state.
+    """
+
+    def __init__(self, data, model, delay, **kwargs):
+        # Dataset
+        self._data = self._ensure_dataframe(data, name="data", time_index=True)
+        # ODE parameter values
+        self._ensure_subclass(model, ModelBase, name="model")
+        self._parameters = model.PARAMETERS[:]
+        # Delay period
+        self._delay = self._ensure_natural_int(delay, name="delay")
+        # Keyword arguments
+        self._kwargs = kwargs.copy()
+        # All regressors {name: RegressorBase}
+        self._reg_dict = {}
+        # The best regressor name
+        self._best = None
+
+    def fit(self, metric):
+        """
+        Fit regressors and select the best regressor based on the scores with test dataset.
+
+        Args:
+            metric (str): metric name to select the best regressor
+
+        Note:
+            All regressors are here.
+            - Indicators -> Parameters with Elastic Net
+        """
+        self._reg_dict = {
+            _ParamElasticNetRegressor.DESC: self._fit_param_reg(_ParamElasticNetRegressor),
+        }
+        # Select the best regressor with the metric
+        comp_f = {True: min, False: max}[Evaluator.smaller_is_better(metric=metric)]
+        self._best, _ = comp_f(self._reg_dict.items(), key=lambda x: x[1].score_test(metric=metric))
+
+    def _fit_param_reg(self, regressor_class):
+        """
+        Fit a regressor which uses ODE parameter values as y.
+
+        Args:
+            regressor_class (covsirphy.regression.regbase.RegressorBase): regression class
+
+        Returns:
+            covsirphy.regression.regbase.RegressorBase: fitted regressor
+        """
+        self._ensure_dataframe(self._data, name="data", columns=self._parameters)
+        X = self._data.drop(self._parameters, axis=1)
+        y = self._data.loc[:, self._parameters]
+        return regressor_class(X=X, y=y, delay=self._delay, **self._kwargs)
+
+    def to_dict(self, metric):
+        """
+        Return information regarding the best regressor.
+
+        Args:
+            metric (str): metric name to select the best regressor
+
+        Returns:
+            dict(str, object): regressor information of the best model, including
+                - scaler (object): scaler class
+                - regressor (object): regressor class
+                - alpha (float): alpha value used in Elastic Net regression
+                - l1_ratio (float): l1_ratio value used in Elastic Net regression
+                - score_name (str): scoring method (specified with @metric or @metrics)
+                - score_train (float): score with train dataset
+                - score_test (float): score with test dataset
+                - dataset (dict[numpy.ndarray]): X_train, X_test, y_train, y_test, X_target
+                - intercept (pandas.DataFrame): intercept and coefficients (Index ODE parameters, Columns indicators)
+                - coef (pandas.DataFrame): intercept and coefficients (Index ODE parameters, Columns indicators)
+                - delay (int): delay period
+        """
+        return self._reg_dict[self._best].to_dict(metric=metric)
+
+    def predict(self):
+        """
+        Predict parameter values of the ODE model using the best regressor.
+
+        Returns:
+            pandas.DataFrame:
+                Index
+                    Date (pandas.Timestamp): future dates
+                Columns
+                    (float): parameter values (4 digits)
+        """
+        return self._reg_dict[self._best].predict()
