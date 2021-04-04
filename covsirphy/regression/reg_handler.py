@@ -10,7 +10,7 @@ from covsirphy.regression.param_elastic_net import _ParamElasticNetRegressor
 class RegressionHandler(Term):
     """
     Handle regressors to predict parameter values of ODE models.
-    With .fit() method, the best regressor will be selected using score with test dataset.
+    With .fit() method, the best regressor will be selected based on the scores with test dataset.
 
     Args:
         data (pandas.DataFrame):
@@ -45,14 +45,14 @@ class RegressionHandler(Term):
 
     def fit(self, metric):
         """
-        Fit regressors and select the best regressor using score with test dataset.
+        Fit regressors and select the best regressor based on the scores with test dataset.
 
         Args:
             metric (str): metric name to select the best regressor
 
         Note:
             All regressors are here.
-            - Indicators -> Parameters  with Elastic Net
+            - Indicators -> Parameters with Elastic Net
         """
         self._reg_dict = {
             _ParamElasticNetRegressor.DESC: self._fit_param_reg(_ParamElasticNetRegressor),

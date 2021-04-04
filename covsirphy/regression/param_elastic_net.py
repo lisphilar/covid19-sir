@@ -34,7 +34,7 @@ class _ParamElasticNetRegressor(_RegressorBase):
         If @seed is included in kwargs, this will be converted to @random_state.
     """
     # Description of regressor
-    DESC = "Indicators -> Parameters  with Elastic Net"
+    DESC = "Indicators -> Parameters with Elastic Net"
 
     def __init__(self, X, y, delay, **kwargs):
         super().__init__(X, y, delay, **kwargs)
