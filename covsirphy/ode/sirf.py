@@ -103,18 +103,19 @@ class SIRF(ModelBase):
         )
         df = df.loc[(df[cls.S] > 0) & (df[cls.CI] > 0)]
         n, t = population, df[cls.TS]
-        s, i, r = df[cls.S], df[cls.CI], df[cls.R]
+        s, i, r, f = df[cls.S], df[cls.CI], df[cls.R], df[cls.F]
+        # kappa = (dF/dt) / I when theta -> 0
+        kappa_series = f.diff() / t.diff() / i
         # rho = - n * (dS/dt) / S / I
         rho_series = 0 - n * s.diff() / t.diff() / s / i
         # sigma = (dR/dt) / I
         sigma_series = r.diff() / t.diff() / i
         # Calculate quantile
         _dict = {
-            k: tuple(v.quantile(cls.QUANTILE_RANGE).clip(0, 1))
-            for (k, v) in zip(["rho", "sigma"], [rho_series, sigma_series])
+            k: tuple(v.quantile(cls.QUANTILE_RANGE).clip(0, 1)) for (k, v)
+            in zip(["kappa", "rho", "sigma"], [kappa_series, rho_series, sigma_series])
         }
         _dict["theta"] = (0, 1)
-        _dict["kappa"] = (0, 1)
         return _dict
 
     @classmethod
