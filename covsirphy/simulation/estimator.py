@@ -9,6 +9,7 @@ import numpy as np
 import optuna
 import pandas as pd
 import seaborn as sns
+from covsirphy.util.argument import find_args
 from covsirphy.util.error import deprecate
 from covsirphy.util.stopwatch import StopWatch
 from covsirphy.util.evaluator import Evaluator
@@ -78,6 +79,8 @@ class Estimator(Term):
             self._set_taufree()
         # Metrics
         self._metric = None
+        # Keyword arguments of ModelBase.param_range()
+        self._param_range_dict = {}
 
     def _init_study(self, seed, pruner, upper, percentile):
         """
@@ -130,7 +133,7 @@ class Estimator(Term):
                 the best intermediate value is in the bottom percentile among trials, it prunes
             metric (str or None): metric name or None (use @metrics)
             metrics (str): alias of @metric
-            kwargs: other keyword arguments will be ignored
+            kwargs: keyword arguments of ModelBase.param_range()
 
         Note:
             @n_jobs was obsoleted because this does not work effectively in Optuna.
@@ -139,6 +142,7 @@ class Estimator(Term):
             Please refer to covsirphy.Evaluator.score() for metric names
         """
         self._metric = metric or metrics
+        self._param_range_dict = find_args(self.model.param_range, **kwargs)
         # Create a study of optuna
         if self.study is None:
             self._init_study(seed=seed, pruner=pruner, upper=upper, percentile=percentile)
@@ -207,7 +211,8 @@ class Estimator(Term):
         self.tau = self.tau_final or trial.suggest_categorical(self.TAU, self.tau_candidates)
         self._set_taufree()
         # Set parameters of the models
-        model_param_dict = self.model.param_range(self.taufree_df, self.population)
+        model_param_dict = self.model.param_range(
+            self.taufree_df, self.population, **self._param_range_dict)
         param_dict = {
             k: self._suggest(trial, k, *v)
             for (k, v) in model_param_dict.items()

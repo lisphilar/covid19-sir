@@ -9,8 +9,6 @@ class ModelBase(Term):
     """
     Base class of ODE models.
     """
-    # Quartile range of the parametes when setting initial values
-    QUANTILE_RANGE = [0.3, 0.7]
     # Model name
     NAME = "ModelBase"
     # names of parameters
@@ -70,9 +68,9 @@ class ModelBase(Term):
         raise NotImplementedError
 
     @classmethod
-    def param_range(cls, taufree_df, population):
+    def param_range(cls, taufree_df, population, quantiles=(0.3, 0.7)):
         """
-        Define the range of parameters (not including tau value).
+        Define the value range of ODE parameters using (X, dX/dt) points.
         This method should be overwritten in subclass.
 
         Args:
@@ -83,11 +81,10 @@ class ModelBase(Term):
                     - t (int): time steps (tau-free)
                     - columns with dimensional variables
             population (int): total population
+            quantiles (tuple(int, int)): quantiles to cut, like confidence interval
 
         Returns:
-            (dict)
-                - key (str): parameter name
-                - value (tuple(float, float)): min value and max value
+            dict(str, tuple(float, float)): minimum/maximum values
         """
         raise NotImplementedError
 
