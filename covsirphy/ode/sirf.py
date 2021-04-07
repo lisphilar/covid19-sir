@@ -80,7 +80,7 @@ class SIRF(ModelBase):
         return np.array([dsdt, didt, drdt, dfdt])
 
     @classmethod
-    def param_range(cls, taufree_df, population, quantiles=(0.3, 0.7)):
+    def param_range(cls, taufree_df, population, quantiles=(0.1, 0.9)):
         """
         Define the value range of ODE parameters using (X, dX/dt) points.
         In SIR model, X is S, I, R, F here.
