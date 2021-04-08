@@ -80,9 +80,10 @@ class SIRF(ModelBase):
         return np.array([dsdt, didt, drdt, dfdt])
 
     @classmethod
-    def param_range(cls, taufree_df, population):
+    def param_range(cls, taufree_df, population, quantiles=(0.1, 0.9)):
         """
-        Define the range of parameters (not including tau value).
+        Define the value range of ODE parameters using (X, dX/dt) points.
+        In SIR model, X is S, I, R, F here.
 
         Args:
             taufree_df (pandas.DataFrame):
@@ -92,29 +93,27 @@ class SIRF(ModelBase):
                     - t (int): time steps (tau-free)
                     - columns with dimensional variables
             population (int): total population
+            quantiles (tuple(int, int)): quantiles to cut, like confidence interval
 
         Returns:
-            (dict)
-                - key (str): parameter name
-                - value (tuple(float, float)): min value and max value
+            dict(str, tuple(float, float)): minimum/maximum values
         """
-        df = cls._ensure_dataframe(
-            taufree_df, name="taufree_df", columns=[cls.TS, *cls.VARIABLES]
-        )
+        df = cls._ensure_dataframe(taufree_df, name="taufree_df", columns=[cls.TS, *cls.VARIABLES])
         df = df.loc[(df[cls.S] > 0) & (df[cls.CI] > 0)]
         n, t = population, df[cls.TS]
-        s, i, r = df[cls.S], df[cls.CI], df[cls.R]
+        s, i, r, f = df[cls.S], df[cls.CI], df[cls.R], df[cls.F]
+        # kappa = (dF/dt) / I when theta -> 0
+        kappa_series = f.diff() / t.diff() / i
         # rho = - n * (dS/dt) / S / I
         rho_series = 0 - n * s.diff() / t.diff() / s / i
         # sigma = (dR/dt) / I
         sigma_series = r.diff() / t.diff() / i
         # Calculate quantile
         _dict = {
-            k: tuple(v.quantile(cls.QUANTILE_RANGE).clip(0, 1))
-            for (k, v) in zip(["rho", "sigma"], [rho_series, sigma_series])
+            k: tuple(v.quantile(quantiles).clip(0, 1)) for (k, v)
+            in zip(["kappa", "rho", "sigma"], [kappa_series, rho_series, sigma_series])
         }
         _dict["theta"] = (0, 1)
-        _dict["kappa"] = (0, 1)
         return _dict
 
     @classmethod

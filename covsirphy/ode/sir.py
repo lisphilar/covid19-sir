@@ -71,9 +71,10 @@ class SIR(ModelBase):
         return np.array([dsdt, didt, drdt])
 
     @classmethod
-    def param_range(cls, taufree_df, population):
+    def param_range(cls, taufree_df, population, quantiles=(0.1, 0.9)):
         """
-        Define the range of parameters (not including tau value).
+        Define the value range of ODE parameters using (X, dX/dt) points.
+        In SIR model, X is S, I and R here.
 
         Args:
             taufree_df (pandas.DataFrame):
@@ -83,15 +84,12 @@ class SIR(ModelBase):
                     - t (int): time steps (tau-free)
                     - columns with dimensional variables
             population (int): total population
+            quantiles (tuple(int, int)): quantiles to cut, like confidence interval
 
         Returns:
-            (dict)
-                - key (str): parameter name
-                - value (tuple(float, float)): min value and max value
+            dict(str, tuple(float, float)): minimum/maximum values
         """
-        df = cls._ensure_dataframe(
-            taufree_df, name="taufree_df", columns=[cls.TS, *cls.VARIABLES]
-        )
+        df = cls._ensure_dataframe(taufree_df, name="taufree_df", columns=[cls.TS, *cls.VARIABLES])
         df = df.loc[(df[cls.S] > 0) & (df[cls.CI] > 0)]
         n, t, s, i, r = population, df[cls.TS], df[cls.S], df[cls.CI], df[cls.FR]
         # rho = - n * (dS/dt) / S / I
@@ -100,7 +98,7 @@ class SIR(ModelBase):
         sigma_series = r.diff() / t.diff() / i
         # Calculate quantile
         _dict = {
-            k: tuple(v.quantile(cls.QUANTILE_RANGE).clip(0, 1))
+            k: tuple(v.quantile(quantiles).clip(0, 1))
             for (k, v) in zip(["rho", "sigma"], [rho_series, sigma_series])
         }
         return _dict
