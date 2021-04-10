@@ -62,7 +62,8 @@ class RegressionHandler(Term):
         }
         # Predicted all parameter values must be >= 0
         self._reg_dict = {
-            k: v for (k, v) in approach_dict.items() if v.predict().ge(0).all().all()}
+            k: v for (k, v) in approach_dict.items()
+            if v.predict().ge(0).all().all() and v.predict().le(1).all().all()}
         # Select the best regressor with the metric
         comp_f = {True: min, False: max}[Evaluator.smaller_is_better(metric=metric)]
         self._best, _ = comp_f(self._reg_dict.items(), key=lambda x: x[1].score_test(metric=metric))
