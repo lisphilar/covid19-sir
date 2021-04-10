@@ -88,6 +88,7 @@ class RegressionHandler(Term):
 
         Returns:
             dict(str, object): regressor information of the best model, including
+                - best (str): description of the selected approach
                 - scaler (object): scaler class
                 - regressor (object): regressor class
                 - alpha (float): alpha value used in Elastic Net regression
@@ -100,7 +101,9 @@ class RegressionHandler(Term):
                 - coef (pandas.DataFrame): intercept and coefficients (Index ODE parameters, Columns indicators)
                 - delay (int): delay period
         """
-        return self._reg_dict[self._best].to_dict(metric=metric)
+        fit_dict = {"best": self._best}
+        fit_dict.update(self._reg_dict[self._best].to_dict(metric=metric))
+        return fit_dict
 
     def predict(self):
         """
