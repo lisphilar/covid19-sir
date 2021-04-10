@@ -11,7 +11,7 @@ from covsirphy import Scenario, Term, PhaseSeries, Estimator, SIRF
 
 @pytest.fixture(scope="module")
 def snl(jhu_data, population_data, japan_data, oxcgrt_data, vaccine_data, pcr_data):
-    snl = Scenario(country="Japan", province=None, tau=None, auto_complement=True)
+    snl = Scenario(country="Italy", province=None, tau=None, auto_complement=True)
     snl.register(
         jhu_data, population_data,
         extras=[japan_data, oxcgrt_data, pcr_data, vaccine_data])
@@ -179,7 +179,7 @@ class TestScenario(object):
         with pytest.raises(UnExecutedError):
             snl.param_history()
         # Parameter estimation
-        snl.estimate(SIRF, timeout=20, timeout_interation=5)
+        snl.estimate(SIRF)
         snl.summary()
 
     def test_estimator(self, snl):
