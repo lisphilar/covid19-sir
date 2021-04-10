@@ -57,7 +57,7 @@ def main(country="Italy", province=None, file_prefix="ita"):
     snl.history_rate(name="Main", **filer.png("history-rate_main"))
     # Forecast scenario: Short-term prediction with regression and OxCGRT data
     fit_dict = snl.fit(name="Forecast")
-    fit_dict.pop("coef").to_csv(**filer.csv("fitting_coef", index=True))
+    fit_dict.pop("coef").to_csv(**filer.csv("forecast_coef", index=True))
     del fit_dict["dataset"], fit_dict["intercept"]
     print(fit_dict)
     snl.predict(name="Forecast")
