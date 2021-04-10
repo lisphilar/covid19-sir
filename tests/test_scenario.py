@@ -179,7 +179,7 @@ class TestScenario(object):
         with pytest.raises(UnExecutedError):
             snl.param_history()
         # Parameter estimation
-        snl.estimate(SIRF, timeout=1, timeout_interation=1)
+        snl.estimate(SIRF, timeout=5, timeout_interation=1)
         snl.summary()
 
     def test_estimator(self, snl):
