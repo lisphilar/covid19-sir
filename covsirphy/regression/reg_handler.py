@@ -55,10 +55,14 @@ class RegressionHandler(Term):
             All regressors are here.
             - Indicators -> Parameters with Elastic Net
         """
-        self._reg_dict = {
+        # All approaches
+        approach_dict = {
             _ParamElasticNetRegressor.DESC: self._fit_param_reg(_ParamElasticNetRegressor),
             _RateElasticNetRegressor.DESC: self._fit_param_reg(_RateElasticNetRegressor),
         }
+        # Predicted all parameter values must be >= 0
+        self._reg_dict = {
+            k: v for (k, v) in approach_dict.items() if v.predict().ge(0).all().all()}
         # Select the best regressor with the metric
         comp_f = {True: min, False: max}[Evaluator.smaller_is_better(metric=metric)]
         self._best, _ = comp_f(self._reg_dict.items(), key=lambda x: x[1].score_test(metric=metric))
