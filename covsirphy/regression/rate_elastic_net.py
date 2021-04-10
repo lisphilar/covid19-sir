@@ -53,7 +53,7 @@ class _RateElasticNetRegressor(_ParamElasticNetRegressor):
         predicted = self._regressor.predict(self._X_target)
         df = pd.DataFrame(predicted, index=self._X_target.index, columns=self._y_train.columns)
         # Calculate y(n) values with y(0) and y(n) / y(n-1)
-        df = pd.concat([self._last_param_df, df], axis=0, ignore_index=True, sort=True)
+        df = pd.concat([self._last_param_df, df], axis=0, sort=True)
         df = df.cumprod().iloc[1:]
         # parameter values: 4 digits
         return df.applymap(lambda x: np.around(x, 4 - int(floor(log10(abs(x)))) - 1))
