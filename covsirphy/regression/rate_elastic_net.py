@@ -9,7 +9,8 @@ from covsirphy.regression.param_elastic_net import _ParamElasticNetRegressor
 
 class _RateElasticNetRegressor(_ParamElasticNetRegressor):
     """
-    Predict parameter values of ODE models with Elastic Net regression with Param(n) / Param(n-1) approach.
+    Predict parameter values of ODE models with Elastic Net regression
+    and Indicators(n)/Indicators(n-1) -> Parameters(n)/Parameters(n-1) approach.
 
     Args:
         X (pandas.DataFrame):
@@ -29,14 +30,16 @@ class _RateElasticNetRegressor(_ParamElasticNetRegressor):
         If @seed is included in kwargs, this will be converted to @random_state.
     """
     # Description of regressor
-    DESC = "Indicators -> Parameters with Elastic Net with Param(n) / Param(n-1) approach"
+    DESC = "Indicators(n)/Indicators(n-1) -> Parameters(n)/Parameters(n-1) with Elastic Net"
 
     def __init__(self, X, y, delay, **kwargs):
         # Remember the last value of y (= the previous value of target y)
         self._last_param_df = y.tail(1)
+        # Calculate X(n) / X(n-1) and replace inf with NAs (NAs will be removed in ._split())
+        X_div = X.div(X.shift(1)).replace(np.inf, np.nan)
         # Calculate y(n) / y(n-1) and replace inf with NAs (NAs will be removed in ._split())
         y_div = y.div(y.shift(1)).replace(np.inf, np.nan)
-        super().__init__(X, y_div, delay, **kwargs)
+        super().__init__(X_div, y_div, delay, **kwargs)
 
     def predict(self):
         """
