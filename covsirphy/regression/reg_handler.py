@@ -5,6 +5,7 @@ from covsirphy.util.evaluator import Evaluator
 from covsirphy.util.term import Term
 from covsirphy.ode.mbase import ModelBase
 from covsirphy.regression.param_elastic_net import _ParamElasticNetRegressor
+from covsirphy.regression.rate_elastic_net import _RateElasticNetRegressor
 
 
 class RegressionHandler(Term):
@@ -56,6 +57,7 @@ class RegressionHandler(Term):
         """
         self._reg_dict = {
             _ParamElasticNetRegressor.DESC: self._fit_param_reg(_ParamElasticNetRegressor),
+            _RateElasticNetRegressor.DESC: self._fit_param_reg(_RateElasticNetRegressor),
         }
         # Select the best regressor with the metric
         comp_f = {True: min, False: max}[Evaluator.smaller_is_better(metric=metric)]
