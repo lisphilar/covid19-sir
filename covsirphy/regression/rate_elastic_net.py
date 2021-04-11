@@ -35,8 +35,8 @@ class _RateElasticNetRegressor(_ParamElasticNetRegressor):
     def __init__(self, X, y, delay, **kwargs):
         # Remember the last value of y (= the previous value of target y)
         self._last_param_df = y.tail(1)
-        # Calculate X(n) / X(n-1) and replace inf with NAs (NAs will be removed in ._split())
-        X_div = X.div(X.shift(1)).replace(np.inf, np.nan)
+        # Calculate X(n) / X(n-1) and replace inf with 0
+        X_div = X.div(X.shift(1)).replace(np.inf, 0)
         # Calculate y(n) / y(n-1) and replace inf with NAs (NAs will be removed in ._split())
         y_div = y.div(y.shift(1)).replace(np.inf, np.nan)
         super().__init__(X_div, y_div, delay, **kwargs)
