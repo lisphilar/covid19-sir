@@ -5,6 +5,7 @@ from covsirphy.util.evaluator import Evaluator
 from covsirphy.util.term import Term
 from covsirphy.ode.mbase import ModelBase
 from covsirphy.regression.param_elastic_net import _ParamElasticNetRegressor
+from covsirphy.regression.rate_elastic_net import _RateElasticNetRegressor
 
 
 class RegressionHandler(Term):
@@ -54,9 +55,15 @@ class RegressionHandler(Term):
             All regressors are here.
             - Indicators -> Parameters with Elastic Net
         """
-        self._reg_dict = {
+        # All approaches
+        approach_dict = {
             _ParamElasticNetRegressor.DESC: self._fit_param_reg(_ParamElasticNetRegressor),
+            _RateElasticNetRegressor.DESC: self._fit_param_reg(_RateElasticNetRegressor),
         }
+        # Predicted all parameter values must be >= 0
+        self._reg_dict = {
+            k: v for (k, v) in approach_dict.items()
+            if v.predict().ge(0).all().all() and v.predict().le(1).all().all()}
         # Select the best regressor with the metric
         comp_f = {True: min, False: max}[Evaluator.smaller_is_better(metric=metric)]
         self._best, _ = comp_f(self._reg_dict.items(), key=lambda x: x[1].score_test(metric=metric))
@@ -86,6 +93,7 @@ class RegressionHandler(Term):
 
         Returns:
             dict(str, object): regressor information of the best model, including
+                - best (str): description of the selected approach
                 - scaler (object): scaler class
                 - regressor (object): regressor class
                 - alpha (float): alpha value used in Elastic Net regression
@@ -98,7 +106,9 @@ class RegressionHandler(Term):
                 - coef (pandas.DataFrame): intercept and coefficients (Index ODE parameters, Columns indicators)
                 - delay (int): delay period
         """
-        return self._reg_dict[self._best].to_dict(metric=metric)
+        fit_dict = {"best": self._best}
+        fit_dict.update(self._reg_dict[self._best].to_dict(metric=metric))
+        return fit_dict
 
     def predict(self):
         """
