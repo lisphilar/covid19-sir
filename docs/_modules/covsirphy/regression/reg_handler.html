@@ -65,7 +65,7 @@
             
             
               <div class="version">
-                2.18.0-epsilon
+                2.18.0-zeta
               </div>
             
           
@@ -178,6 +178,7 @@
 <span class="kn">from</span> <span class="nn">covsirphy.util.term</span> <span class="kn">import</span> <span class="n">Term</span>
 <span class="kn">from</span> <span class="nn">covsirphy.ode.mbase</span> <span class="kn">import</span> <span class="n">ModelBase</span>
 <span class="kn">from</span> <span class="nn">covsirphy.regression.param_elastic_net</span> <span class="kn">import</span> <span class="n">_ParamElasticNetRegressor</span>
+<span class="kn">from</span> <span class="nn">covsirphy.regression.rate_elastic_net</span> <span class="kn">import</span> <span class="n">_RateElasticNetRegressor</span>
 
 
 <div class="viewcode-block" id="RegressionHandler"><a class="viewcode-back" href="../../../covsirphy.regression.html#covsirphy.RegressionHandler">[docs]</a><span class="k">class</span> <span class="nc">RegressionHandler</span><span class="p">(</span><span class="n">Term</span><span class="p">):</span>
@@ -227,9 +228,15 @@
 <span class="sd">            All regressors are here.</span>
 <span class="sd">            - Indicators -&gt; Parameters with Elastic Net</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_reg_dict</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="c1"># All approaches</span>
+        <span class="n">approach_dict</span> <span class="o">=</span> <span class="p">{</span>
             <span class="n">_ParamElasticNetRegressor</span><span class="o">.</span><span class="n">DESC</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_fit_param_reg</span><span class="p">(</span><span class="n">_ParamElasticNetRegressor</span><span class="p">),</span>
+            <span class="n">_RateElasticNetRegressor</span><span class="o">.</span><span class="n">DESC</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_fit_param_reg</span><span class="p">(</span><span class="n">_RateElasticNetRegressor</span><span class="p">),</span>
         <span class="p">}</span>
+        <span class="c1"># Predicted all parameter values must be &gt;= 0</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_reg_dict</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="n">k</span><span class="p">:</span> <span class="n">v</span> <span class="k">for</span> <span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="n">v</span><span class="p">)</span> <span class="ow">in</span> <span class="n">approach_dict</span><span class="o">.</span><span class="n">items</span><span class="p">()</span>
+            <span class="k">if</span> <span class="n">v</span><span class="o">.</span><span class="n">predict</span><span class="p">()</span><span class="o">.</span><span class="n">ge</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">all</span><span class="p">()</span><span class="o">.</span><span class="n">all</span><span class="p">()</span> <span class="ow">and</span> <span class="n">v</span><span class="o">.</span><span class="n">predict</span><span class="p">()</span><span class="o">.</span><span class="n">le</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">all</span><span class="p">()</span><span class="o">.</span><span class="n">all</span><span class="p">()}</span>
         <span class="c1"># Select the best regressor with the metric</span>
         <span class="n">comp_f</span> <span class="o">=</span> <span class="p">{</span><span class="kc">True</span><span class="p">:</span> <span class="nb">min</span><span class="p">,</span> <span class="kc">False</span><span class="p">:</span> <span class="nb">max</span><span class="p">}[</span><span class="n">Evaluator</span><span class="o">.</span><span class="n">smaller_is_better</span><span class="p">(</span><span class="n">metric</span><span class="o">=</span><span class="n">metric</span><span class="p">)]</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_best</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">comp_f</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_reg_dict</span><span class="o">.</span><span class="n">items</span><span class="p">(),</span> <span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">score_test</span><span class="p">(</span><span class="n">metric</span><span class="o">=</span><span class="n">metric</span><span class="p">))</span></div>
@@ -259,6 +266,7 @@
 
 <span class="sd">        Returns:</span>
 <span class="sd">            dict(str, object): regressor information of the best model, including</span>
+<span class="sd">                - best (str): description of the selected approach</span>
 <span class="sd">                - scaler (object): scaler class</span>
 <span class="sd">                - regressor (object): regressor class</span>
 <span class="sd">                - alpha (float): alpha value used in Elastic Net regression</span>
@@ -271,7 +279,9 @@
 <span class="sd">                - coef (pandas.DataFrame): intercept and coefficients (Index ODE parameters, Columns indicators)</span>
 <span class="sd">                - delay (int): delay period</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_reg_dict</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_best</span><span class="p">]</span><span class="o">.</span><span class="n">to_dict</span><span class="p">(</span><span class="n">metric</span><span class="o">=</span><span class="n">metric</span><span class="p">)</span></div>
+        <span class="n">fit_dict</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;best&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_best</span><span class="p">}</span>
+        <span class="n">fit_dict</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_reg_dict</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_best</span><span class="p">]</span><span class="o">.</span><span class="n">to_dict</span><span class="p">(</span><span class="n">metric</span><span class="o">=</span><span class="n">metric</span><span class="p">))</span>
+        <span class="k">return</span> <span class="n">fit_dict</span></div>
 
 <div class="viewcode-block" id="RegressionHandler.predict"><a class="viewcode-back" href="../../../covsirphy.regression.html#covsirphy.RegressionHandler.predict">[docs]</a>    <span class="k">def</span> <span class="nf">predict</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
