@@ -62,7 +62,10 @@ The number of vaccinated people:
 - `Vaccinated_1st`: the number of vaccinated persons for the first time on the date
 - `Vaccinated_2nd`: the number of vaccinated persons with the second dose on the date
 
-Data source: [厚生労働省 HP 新型コロナワクチンの接種実績(in Japanese)](https://www.mhlw.go.jp/stf/seisakunitsuite/bunya/vaccine_sesshujisseki.html)
+Data sources for vaccination:
+
+- [厚生労働省 HP 新型コロナワクチンの接種実績(in Japanese)](https://www.mhlw.go.jp/stf/seisakunitsuite/bunya/vaccine_sesshujisseki.html)
+- [Twitter: 首相官邸（新型コロナワクチン情報）](https://twitter.com/kantei_vaccine)
 
 ### 1.2 The number of cases at prefecture level
 
