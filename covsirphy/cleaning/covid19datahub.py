@@ -114,7 +114,6 @@ class COVID19DataHub(Term):
     def _download(self):
         """
         Retrieve dataset and citation list from COVID-19 Data Hub.
-        Citation list will be saved to self.
 
         Returns:
             tuple:
@@ -125,10 +124,18 @@ class COVID19DataHub(Term):
         Note:
             For some countries, province-level data is included.
         """
-        # Download raw data
         warnings.simplefilter("ignore", ResourceWarning)
-        c_df, c_cite = covid19dh.covid19(country=None, level=1, verbose=False, raw=True)
-        p_df, p_cite = covid19dh.covid19(country=None, level=2, verbose=False, raw=True)
+        levels = [f"administrative_area_level_{i}" for i in range(1, 4)]
+        # Level 1 (country/region)
+        c_raw, c_cite = covid19dh.covid19(country=None, level=1, verbose=False, raw=True)
+        c_df = c_raw.groupby(levels[0]).ffill().fillna(0)
+        for num in range(3):
+            c_df.loc[:, levels[num]] = c_raw[levels[num]]
+        # Level 2 (province/state)
+        p_raw, p_cite = covid19dh.covid19(country=None, level=2, verbose=False, raw=True)
+        p_df = p_raw.groupby(levels[:2]).ffill().fillna(0)
+        for num in range(3):
+            p_df.loc[:, levels[num]] = p_raw[levels[num]]
         # Citation
         cite = pd.concat([c_cite, p_cite], axis=0, ignore_index=True)
         cite = cite.loc[:, ["title", "year", "url"]]
