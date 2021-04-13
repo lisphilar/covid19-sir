@@ -127,17 +127,8 @@ class COVID19DataHub(Term):
         """
         # Download raw data
         warnings.simplefilter("ignore", ResourceWarning)
-        c_res = covid19dh.covid19(country=None, level=1, verbose=False, raw=True)
-        p_res = covid19dh.covid19(country=None, level=2, verbose=False, raw=True)
-        try:
-            c_df, c_cite = c_res
-            p_df, p_cite = p_res
-        except ValueError:
-            # covid19dh <= 1.14
-            c_df, c_cite = c_res.copy(), covid19dh.cite(c_res)
-            p_df, p_cite = p_res.copy(), covid19dh.cite(p_res)
-            citations = list(dict.fromkeys(c_cite + p_cite))
-            return (c_df, p_df, "\n".join(citations))
+        c_df, c_cite = covid19dh.covid19(country=None, level=1, verbose=False, raw=True)
+        p_df, p_cite = covid19dh.covid19(country=None, level=2, verbose=False, raw=True)
         # Citation
         cite = pd.concat([c_cite, p_cite], axis=0, ignore_index=True)
         cite = cite.loc[:, ["title", "year", "url"]]
