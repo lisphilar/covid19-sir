@@ -125,11 +125,10 @@ class COVID19DataHub(Term):
         Note:
             For some countries, province-level data is included.
         """
+        # Download raw data
         warnings.simplefilter("ignore", ResourceWarning)
-        c_res = covid19dh.covid19(
-            country=None, level=1, verbose=False, raw=False)
-        p_res = covid19dh.covid19(
-            country=None, level=2, verbose=False, raw=False)
+        c_res = covid19dh.covid19(country=None, level=1, verbose=False, raw=True)
+        p_res = covid19dh.covid19(country=None, level=2, verbose=False, raw=True)
         try:
             c_df, c_cite = c_res
             p_df, p_cite = p_res
