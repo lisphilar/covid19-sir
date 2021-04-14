@@ -518,6 +518,24 @@ class Term(object):
             return target
         raise UnExpectedValueError(name=name, value=target, candidates=candidates)
 
+    def _ensure_kwargs(self, arg_list, value_type, **kwargs):
+        """
+        Ensure the all expected arguments are specified.
+
+        Args:
+            arg_list (list[str]): list of argument names
+            value_type (object): type of the values
+            kwargs: keyword arguments of values
+
+        Returns:
+            dict[str, int]: dictionary of values
+        """
+        for param in arg_list:
+            if param not in kwargs:
+                raise KeyError(f"Value of {param} was not specified with keyword arguments.")
+            self._ensure_instance(kwargs[param], value_type, name=f"{param} value")
+        return {param: kwargs[param] for param in arg_list}
+
 
 class Word(Term):
     @ deprecate(old="Word()", new="Term()")
