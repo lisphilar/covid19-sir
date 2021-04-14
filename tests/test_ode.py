@@ -4,7 +4,22 @@
 import pandas as pd
 import pytest
 from covsirphy import ExampleData, PopulationData, Term, ModelValidator
-from covsirphy import ModelBase, SIR, SIRD, SIRF, SIRFV, SEWIRF
+from covsirphy import ModelBase, SIR, SIRD, SIRF, SIRFV, SEWIRF, ODEHandler
+
+
+class TestODEHandler(object):
+    @pytest.mark.parametrize("model", [SIR, SIRD, SIRF, SEWIRF])
+    @pytest.mark.parametrize("start_date", ["01Jan2021"])
+    @pytest.mark.parametrize("tau", [720])
+    def test_simulate(self, model, start_date, tau):
+        y0_dict = model.EXAMPLE["y0_dict"]
+        param_dict = model.EXAMPLE["param_dict"]
+        handler = ODEHandler(model, start_date, tau)
+        handler.add(end_date="31Jan2021", y0_dict=y0_dict, param_dict=param_dict)
+        handler.add(end_date="28Feb2021", y0_dict=None, param_dict=param_dict)
+        sim_df = handler.simulate().set_index(Term.DATE)
+        assert sim_df.index.min() == pd.to_datetime(start_date)
+        assert sim_df.index.max() == pd.to_datetime("28Feb2021")
 
 
 class TestODE(object):
