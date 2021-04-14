@@ -356,7 +356,7 @@ class Term(object):
         Returns:
             object: as-is target
         """
-        s = f"@{name} must be an instance of {type(class_obj)}, but {type(target)} was applied."
+        s = f"@{name} must be an instance of {class_obj}, but {type(target)} was applied."
         if not isinstance(target, class_obj):
             raise TypeError(s)
         return target
