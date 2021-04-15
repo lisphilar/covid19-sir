@@ -64,7 +64,7 @@ class ODEHandler(Term):
                     - Recovered (int): the number of recovered cases
         """
         dataframes = []
-        for (phase, info_dict) in self._info_dict.items():
+        for (_, info_dict) in self._info_dict.items():
             # Step numbers
             step_n = info_dict["step_n"]
             # Initial values: registered information (with priority) or the last values
