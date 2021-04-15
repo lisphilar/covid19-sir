@@ -1,0 +1,83 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+
+import numpy as np
+import pandas as pd
+from scipy.integrate import solve_ivp
+from covsirphy.util.term import Term
+from covsirphy.ode.mbase import ModelBase
+
+
+class _ODESolver(Term):
+    """
+    Solve initial value problems for a SIR-derived ODE model.
+
+    Args:
+        model (covsirphy.ModelBase): SIR-derived ODE model
+        kwargs: values of non-dimensional model parameters, including rho and sigma
+
+    Note:
+        We can check non-dimensional model parameters with model.PARAMETERS class variable.
+        All non-dimensional parameters must be specified with keyword arguments.
+    """
+
+    def __init__(self, model, **kwargs):
+        self._model = self._ensure_subclass(model, ModelBase, name="model")
+        self._param_dict = self._ensure_kwargs(model.PARAMETERS, float, **kwargs)
+
+    def run(self, step_n, **kwargs):
+        """
+        Solve an initial value problem.
+
+        Args:
+            step_n (int): the number of steps
+            kwargs: initial values of dimensional variables, including Susceptible
+
+        Returns:
+            pandas.DataFrame: numerical solution
+                Index
+                    reset index
+                Columns
+                    (int): dimensional variables
+
+        Note:
+            We can check dimensional variables with model.VARIABLES class variable.
+            All dimensional variables must be specified with keyword arguments.
+            Total value of initial values will be regarded as total population.
+        """
+        # Check arguments
+        step_n = self._ensure_natural_int(step_n, name="number")
+        y0_dict = self._ensure_kwargs(self._model.VARIABLES, int, **kwargs)
+        # Calculate population
+        population = sum(y0_dict.values())
+        # Solve problem
+        return self._run(step_n=step_n, y0_dict=y0_dict, population=population)
+
+    def _run(self, step_n, y0_dict, population):
+        """
+        Solve an initial value problem for a SIR-derived ODE model.
+
+        Args:
+            step_n (int): the number of steps
+            y0_dict (dict[str, int]): initial values of dimensional variables, including Susceptible
+            population (int): total population
+
+        Returns:
+            pandas.DataFrame: numerical solution
+                Index
+                    reset index
+                Columns
+                    (int): dimensional variables
+        """
+        tstart, dt, tend = 0, 1, step_n
+        variables = self._model.VARIABLES[:]
+        initials = [y0_dict[var] for var in variables]
+        sol = solve_ivp(
+            fun=self._model(population=population, **self._param_dict),
+            t_span=[tstart, tend],
+            y0=np.array(initials, dtype=np.int64),
+            t_eval=np.arange(tstart, tend + dt, dt),
+            dense_output=False
+        )
+        y_df = pd.DataFrame(data=sol["y"].T.copy(), columns=variables)
+        return y_df.round().astype(np.int64)

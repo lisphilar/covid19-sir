@@ -51,6 +51,7 @@ from covsirphy.ode.sird import SIRD
 from covsirphy.ode.sirf import SIRF
 from covsirphy.ode.sirfv import SIRFV
 from covsirphy.ode.sewirf import SEWIRF
+from covsirphy.ode.ode_handler import ODEHandler
 # simulation
 from covsirphy.simulation.estimator import Estimator, Optimizer
 from covsirphy.simulation.simulator import ODESimulator
@@ -105,7 +106,7 @@ __all__ = [
     # trend
     "TrendDetector", "TrendPlot", "trend_plot",
     # ode
-    "ModelBase", "SIR", "SIRD", "SIRF", "SEWIRF",
+    "ModelBase", "SIR", "SIRD", "SIRF", "SEWIRF", "ODEHandler",
     # simulation
     "ODESimulator", "Estimator",
     # phase

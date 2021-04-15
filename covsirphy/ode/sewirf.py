@@ -41,7 +41,7 @@ class SEWIRF(ModelBase):
             "rho2": 0.167, "rho3": 0.167,
         },
         ModelBase.Y0_DICT: {
-            ModelBase.S: 994_000, ModelBase.E: 3000, ModelBase.W: 0.002,
+            ModelBase.S: 994_000, ModelBase.E: 3000, ModelBase.W: 2000,
             ModelBase.CI: 1000, ModelBase.R: 0, ModelBase.F: 0,
         },
     }
