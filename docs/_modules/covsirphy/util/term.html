@@ -65,7 +65,7 @@
             
             
               <div class="version">
-                2.19.0
+                2.19.1-alpha
               </div>
             
           
@@ -529,7 +529,7 @@
 <span class="sd">        Returns:</span>
 <span class="sd">            object: as-is target</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">s</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;@</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2"> must be an instance of </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">class_obj</span><span class="p">)</span><span class="si">}</span><span class="s2">, but </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">target</span><span class="p">)</span><span class="si">}</span><span class="s2"> was applied.&quot;</span>
+        <span class="n">s</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;@</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2"> must be an instance of </span><span class="si">{</span><span class="n">class_obj</span><span class="si">}</span><span class="s2">, but </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">target</span><span class="p">)</span><span class="si">}</span><span class="s2"> was applied.&quot;</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">target</span><span class="p">,</span> <span class="n">class_obj</span><span class="p">):</span>
             <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="n">s</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">target</span>
@@ -689,7 +689,25 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_ensure_list</span><span class="p">(</span><span class="n">candidates</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;candidates&quot;</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">target</span> <span class="ow">in</span> <span class="n">candidates</span><span class="p">:</span>
             <span class="k">return</span> <span class="n">target</span>
-        <span class="k">raise</span> <span class="n">UnExpectedValueError</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">,</span> <span class="n">value</span><span class="o">=</span><span class="n">target</span><span class="p">,</span> <span class="n">candidates</span><span class="o">=</span><span class="n">candidates</span><span class="p">)</span></div>
+        <span class="k">raise</span> <span class="n">UnExpectedValueError</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">,</span> <span class="n">value</span><span class="o">=</span><span class="n">target</span><span class="p">,</span> <span class="n">candidates</span><span class="o">=</span><span class="n">candidates</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_ensure_kwargs</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">arg_list</span><span class="p">,</span> <span class="n">value_type</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Ensure the all expected arguments are specified.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            arg_list (list[str]): list of argument names</span>
+<span class="sd">            value_type (object): type of the values</span>
+<span class="sd">            kwargs: keyword arguments of values</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            dict[str, int]: dictionary of values</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">for</span> <span class="n">param</span> <span class="ow">in</span> <span class="n">arg_list</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">param</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">KeyError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Value of </span><span class="si">{</span><span class="n">param</span><span class="si">}</span><span class="s2"> was not specified with keyword arguments.&quot;</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_ensure_instance</span><span class="p">(</span><span class="n">kwargs</span><span class="p">[</span><span class="n">param</span><span class="p">],</span> <span class="n">value_type</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">param</span><span class="si">}</span><span class="s2"> value&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="p">{</span><span class="n">param</span><span class="p">:</span> <span class="n">kwargs</span><span class="p">[</span><span class="n">param</span><span class="p">]</span> <span class="k">for</span> <span class="n">param</span> <span class="ow">in</span> <span class="n">arg_list</span><span class="p">}</span></div>
 
 
 <div class="viewcode-block" id="Word"><a class="viewcode-back" href="../../../covsirphy.util.html#covsirphy.Word">[docs]</a><span class="k">class</span> <span class="nc">Word</span><span class="p">(</span><span class="n">Term</span><span class="p">):</span>

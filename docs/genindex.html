@@ -65,7 +65,7 @@
             
             
               <div class="version">
-                2.19.0
+                2.19.1-alpha
               </div>
             
           
@@ -212,6 +212,8 @@
 
       <ul>
         <li><a href="covsirphy.html#covsirphy.MPEstimator.add">(MPEstimator method)</a>, <a href="covsirphy.phase.html#covsirphy.phase.phase_estimator.MPEstimator.add">[1]</a>
+</li>
+        <li><a href="covsirphy.html#covsirphy.ODEHandler.add">(ODEHandler method)</a>, <a href="covsirphy.ode.html#covsirphy.ode.ode_handler.ODEHandler.add">[1]</a>
 </li>
         <li><a href="covsirphy.html#covsirphy.ODESimulator.add">(ODESimulator method)</a>, <a href="covsirphy.simulation.html#covsirphy.simulation.simulator.ODESimulator.add">[1]</a>
 </li>
@@ -519,8 +521,6 @@
         <li><a href="covsirphy.cleaning.html#module-covsirphy.cleaning.oxcgrt">module</a>
 </li>
       </ul></li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li>
     covsirphy.cleaning.pcr_data
 
@@ -528,6 +528,8 @@
         <li><a href="covsirphy.cleaning.html#module-covsirphy.cleaning.pcr_data">module</a>
 </li>
       </ul></li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li>
     covsirphy.cleaning.population
 
@@ -561,6 +563,20 @@
 
       <ul>
         <li><a href="covsirphy.ode.html#module-covsirphy.ode.mbase">module</a>
+</li>
+      </ul></li>
+      <li>
+    covsirphy.ode.ode_handler
+
+      <ul>
+        <li><a href="covsirphy.ode.html#module-covsirphy.ode.ode_handler">module</a>
+</li>
+      </ul></li>
+      <li>
+    covsirphy.ode.ode_solver
+
+      <ul>
+        <li><a href="covsirphy.ode.html#module-covsirphy.ode.ode_solver">module</a>
 </li>
       </ul></li>
       <li>
@@ -1327,6 +1343,10 @@
 </li>
         <li><a href="covsirphy.ode.html#module-covsirphy.ode.mbase">covsirphy.ode.mbase</a>
 </li>
+        <li><a href="covsirphy.ode.html#module-covsirphy.ode.ode_handler">covsirphy.ode.ode_handler</a>
+</li>
+        <li><a href="covsirphy.ode.html#module-covsirphy.ode.ode_solver">covsirphy.ode.ode_solver</a>
+</li>
         <li><a href="covsirphy.ode.html#module-covsirphy.ode.sewirf">covsirphy.ode.sewirf</a>
 </li>
         <li><a href="covsirphy.ode.html#module-covsirphy.ode.sir">covsirphy.ode.sir</a>
@@ -1470,6 +1490,12 @@
 </li>
       <li><a href="covsirphy.html#covsirphy.Term.ODE">ODE (Term attribute)</a>, <a href="covsirphy.util.html#covsirphy.util.term.Term.ODE">[1]</a>
 </li>
+      <li><a href="covsirphy.html#covsirphy.ODEHandler">ODEHandler (class in covsirphy)</a>
+
+      <ul>
+        <li><a href="covsirphy.ode.html#covsirphy.ode.ode_handler.ODEHandler">(class in covsirphy.ode.ode_handler)</a>
+</li>
+      </ul></li>
       <li><a href="covsirphy.html#covsirphy.ODESimulator">ODESimulator (class in covsirphy)</a>
 
       <ul>
@@ -1486,10 +1512,10 @@
 </li>
       <li><a href="covsirphy.cleaning.html#covsirphy.cleaning.linelist.LinelistData.OUTCOME">OUTCOME (LinelistData attribute)</a>, <a href="covsirphy.html#covsirphy.LinelistData.OUTCOME">[1]</a>
 </li>
-      <li><a href="covsirphy.cleaning.html#covsirphy.cleaning.linelist.LinelistData.OUTCOME_DATE">OUTCOME_DATE (LinelistData attribute)</a>, <a href="covsirphy.html#covsirphy.LinelistData.OUTCOME_DATE">[1]</a>
-</li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="covsirphy.cleaning.html#covsirphy.cleaning.linelist.LinelistData.OUTCOME_DATE">OUTCOME_DATE (LinelistData attribute)</a>, <a href="covsirphy.html#covsirphy.LinelistData.OUTCOME_DATE">[1]</a>
+</li>
       <li><a href="covsirphy.cleaning.html#covsirphy.cleaning.dataloader.DataLoader.oxcgrt">oxcgrt() (DataLoader method)</a>, <a href="covsirphy.html#covsirphy.DataLoader.oxcgrt">[1]</a>
 </li>
       <li><a href="covsirphy.cleaning.html#covsirphy.cleaning.oxcgrt.OxCGRTData.OXCGRT_COL_DICT">OXCGRT_COL_DICT (OxCGRTData attribute)</a>, <a href="covsirphy.html#covsirphy.OxCGRTData.OXCGRT_COL_DICT">[1]</a>
@@ -1874,9 +1900,11 @@
       </ul></li>
       <li><a href="covsirphy.cleaning.html#covsirphy.cleaning.jhu_complement.JHUDataComplementHandler.SHOW_COMPLEMENT_FULL_COLS">SHOW_COMPLEMENT_FULL_COLS (JHUDataComplementHandler attribute)</a>, <a href="covsirphy.html#covsirphy.JHUDataComplementHandler.SHOW_COMPLEMENT_FULL_COLS">[1]</a>
 </li>
-      <li><a href="covsirphy.analysis.html#covsirphy.analysis.param_tracker.ParamTracker.simulate">simulate() (ParamTracker method)</a>, <a href="covsirphy.html#covsirphy.ParamTracker.simulate">[1]</a>
+      <li><a href="covsirphy.html#covsirphy.ODEHandler.simulate">simulate() (ODEHandler method)</a>, <a href="covsirphy.ode.html#covsirphy.ode.ode_handler.ODEHandler.simulate">[1]</a>
 
       <ul>
+        <li><a href="covsirphy.analysis.html#covsirphy.analysis.param_tracker.ParamTracker.simulate">(ParamTracker method)</a>, <a href="covsirphy.html#covsirphy.ParamTracker.simulate">[1]</a>
+</li>
         <li><a href="covsirphy.html#covsirphy.PhaseSeries.simulate">(PhaseSeries method)</a>, <a href="covsirphy.phase.html#covsirphy.phase.phase_series.PhaseSeries.simulate">[1]</a>
 </li>
         <li><a href="covsirphy.html#covsirphy.PhaseUnit.simulate">(PhaseUnit method)</a>, <a href="covsirphy.phase.html#covsirphy.phase.phase_unit.PhaseUnit.simulate">[1]</a>

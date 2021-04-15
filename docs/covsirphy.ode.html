@@ -67,7 +67,7 @@
             
             
               <div class="version">
-                2.19.0
+                2.19.1-alpha
               </div>
             
           
@@ -109,6 +109,8 @@
 <li class="toctree-l3 current"><a class="current reference internal" href="#">covsirphy.ode package</a><ul>
 <li class="toctree-l4"><a class="reference internal" href="#submodules">Submodules</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#module-covsirphy.ode.mbase">covsirphy.ode.mbase module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#module-covsirphy.ode.ode_handler">covsirphy.ode.ode_handler module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#module-covsirphy.ode.ode_solver">covsirphy.ode.ode_solver module</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#module-covsirphy.ode.sewirf">covsirphy.ode.sewirf module</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#module-covsirphy.ode.sir">covsirphy.ode.sir module</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#module-covsirphy.ode.sird">covsirphy.ode.sird module</a></li>
@@ -464,6 +466,79 @@ and saved in t column.</p>
 </dd></dl>
 
 </div>
+<div class="section" id="module-covsirphy.ode.ode_handler">
+<span id="covsirphy-ode-ode-handler-module"></span><h2>covsirphy.ode.ode_handler module<a class="headerlink" href="#module-covsirphy.ode.ode_handler" title="Permalink to this headline">¶</a></h2>
+<dl class="py class">
+<dt id="covsirphy.ode.ode_handler.ODEHandler">
+<em class="property"><span class="pre">class</span> </em><code class="sig-name descname"><span class="pre">ODEHandler</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">start_date</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tau</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/ode/ode_handler.html#ODEHandler"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#covsirphy.ode.ode_handler.ODEHandler" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="covsirphy.util.html#covsirphy.util.term.Term" title="covsirphy.util.term.Term"><code class="xref py py-class docutils literal notranslate"><span class="pre">covsirphy.util.term.Term</span></code></a></p>
+<p>Perform simulation and parameter estimation with multi-phased ODE models.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>model</strong> (<a class="reference internal" href="covsirphy.html#covsirphy.ModelBase" title="covsirphy.ModelBase"><em>covsirphy.ModelBase</em></a>) – ODE model</p></li>
+<li><p><strong>start_date</strong> (<em>str</em>) – start date of simulation, like 14Apr2021</p></li>
+<li><p><strong>tau</strong> (<em>int</em>) – tau value [min]</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py method">
+<dt id="covsirphy.ode.ode_handler.ODEHandler.add">
+<code class="sig-name descname"><span class="pre">add</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">end_date</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y0_dict</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">param_dict</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/ode/ode_handler.html#ODEHandler.add"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#covsirphy.ode.ode_handler.ODEHandler.add" title="Permalink to this definition">¶</a></dt>
+<dd><p>Add a new phase.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>end_date</strong> (<em>str</em>) – end date of the phase</p></li>
+<li><p><strong>y0_dict</strong> (<em>dict</em><em>[</em><em>str</em><em>, </em><em>int</em><em>] or </em><em>None</em>) – initial values or None (not set)</p></li>
+<li><p><strong>param_dict</strong> (<em>dict</em><em>[</em><em>str</em><em>, </em><em>int</em><em>] or </em><em>None</em>) – parameter values or None (not set)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>self</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference internal" href="#covsirphy.ode.ode_handler.ODEHandler" title="covsirphy.ode.ode_handler.ODEHandler">ODEHandler</a></p>
+</dd>
+</dl>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Internal variable “step_n” means from the start date to the next date of the end date.</p>
+</div>
+</dd></dl>
+
+<dl class="py method">
+<dt id="covsirphy.ode.ode_handler.ODEHandler.simulate">
+<code class="sig-name descname"><span class="pre">simulate</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/ode/ode_handler.html#ODEHandler.simulate"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#covsirphy.ode.ode_handler.ODEHandler.simulate" title="Permalink to this definition">¶</a></dt>
+<dd><p>Perform simulation with the multi-phased ODE model.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p><dl class="simple">
+<dt>Index</dt><dd><p>reset index</p>
+</dd>
+<dt>Columns</dt><dd><ul class="simple">
+<li><p>Date (pd.Timestamp): Observation date</p></li>
+<li><p>Susceptible(int): the number of susceptible cases</p></li>
+<li><p>Infected (int): the number of currently infected cases</p></li>
+<li><p>Fatal(int): the number of fatal cases</p></li>
+<li><p>Recovered (int): the number of recovered cases</p></li>
+</ul>
+</dd>
+</dl>
+</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>pandas.DataFrame</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-covsirphy.ode.ode_solver">
+<span id="covsirphy-ode-ode-solver-module"></span><h2>covsirphy.ode.ode_solver module<a class="headerlink" href="#module-covsirphy.ode.ode_solver" title="Permalink to this headline">¶</a></h2>
+</div>
 <div class="section" id="module-covsirphy.ode.sewirf">
 <span id="covsirphy-ode-sewirf-module"></span><h2>covsirphy.ode.sewirf module<a class="headerlink" href="#module-covsirphy.ode.sewirf" title="Permalink to this headline">¶</a></h2>
 <dl class="py class">
@@ -478,7 +553,7 @@ and saved in t column.</p>
 
 <dl class="py attribute">
 <dt id="covsirphy.ode.sewirf.SEWIRF.EXAMPLE">
-<code class="sig-name descname"><span class="pre">EXAMPLE</span></code><em class="property"> <span class="pre">=</span> <span class="pre">{'param_dict':</span> <span class="pre">{'kappa':</span> <span class="pre">0.005,</span> <span class="pre">'rho1':</span> <span class="pre">0.2,</span> <span class="pre">'rho2':</span> <span class="pre">0.167,</span> <span class="pre">'rho3':</span> <span class="pre">0.167,</span> <span class="pre">'sigma':</span> <span class="pre">0.075,</span> <span class="pre">'theta':</span> <span class="pre">0.002},</span> <span class="pre">'population':</span> <span class="pre">1000000,</span> <span class="pre">'step_n':</span> <span class="pre">180,</span> <span class="pre">'y0_dict':</span> <span class="pre">{'Exposed':</span> <span class="pre">3000,</span> <span class="pre">'Fatal':</span> <span class="pre">0,</span> <span class="pre">'Infected':</span> <span class="pre">1000,</span> <span class="pre">'Recovered':</span> <span class="pre">0,</span> <span class="pre">'Susceptible':</span> <span class="pre">994000,</span> <span class="pre">'Waiting':</span> <span class="pre">0.002}}</span></em><a class="headerlink" href="#covsirphy.ode.sewirf.SEWIRF.EXAMPLE" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname"><span class="pre">EXAMPLE</span></code><em class="property"> <span class="pre">=</span> <span class="pre">{'param_dict':</span> <span class="pre">{'kappa':</span> <span class="pre">0.005,</span> <span class="pre">'rho1':</span> <span class="pre">0.2,</span> <span class="pre">'rho2':</span> <span class="pre">0.167,</span> <span class="pre">'rho3':</span> <span class="pre">0.167,</span> <span class="pre">'sigma':</span> <span class="pre">0.075,</span> <span class="pre">'theta':</span> <span class="pre">0.002},</span> <span class="pre">'population':</span> <span class="pre">1000000,</span> <span class="pre">'step_n':</span> <span class="pre">180,</span> <span class="pre">'y0_dict':</span> <span class="pre">{'Exposed':</span> <span class="pre">3000,</span> <span class="pre">'Fatal':</span> <span class="pre">0,</span> <span class="pre">'Infected':</span> <span class="pre">1000,</span> <span class="pre">'Recovered':</span> <span class="pre">0,</span> <span class="pre">'Susceptible':</span> <span class="pre">994000,</span> <span class="pre">'Waiting':</span> <span class="pre">2000}}</span></em><a class="headerlink" href="#covsirphy.ode.sewirf.SEWIRF.EXAMPLE" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="py attribute">
