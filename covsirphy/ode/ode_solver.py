@@ -36,9 +36,9 @@ class _ODESolver(Term):
         Returns:
             pandas.DataFrame: numerical solution
                 Index
-                    reset index
+                    reset index: time steps
                 Columns
-                    (int): dimensional variables
+                    (int): dimensional variables of the model
 
         Note:
             We can check dimensional variables with model.VARIABLES class variable.
@@ -65,9 +65,9 @@ class _ODESolver(Term):
         Returns:
             pandas.DataFrame: numerical solution
                 Index
-                    reset index
+                    reset index: time steps
                 Columns
-                    (int): dimensional variables
+                    (int): dimensional variables of the model
         """
         tstart, dt, tend = 0, 1, step_n
         variables = self._model.VARIABLES[:]
