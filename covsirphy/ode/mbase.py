@@ -1,7 +1,9 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
+from datetime import timedelta
 import numpy as np
+import pandas as pd
 from covsirphy.util.term import Term
 
 
@@ -216,3 +218,152 @@ class ModelBase(Term):
         df[cls.TS] = (df[cls.T] / tau).astype(np.int64)
         df = df.drop([cls.T, cls.DATE], axis=1)
         return cls.specialize(df, population).reset_index(drop=True)
+
+    @classmethod
+    def _convert(cls, data, tau):
+        """
+        Divide dates by tau value [min].
+
+        Args:
+            data (pandas.DataFrame):
+                Index
+                    reset index
+                Columns
+                    - Date (pd.Timestamp): Observation date
+                    - Susceptible(int): the number of susceptible cases
+                    - Infected (int): the number of currently infected cases
+                    - Fatal(int): the number of fatal cases
+                    - Recovered (int): the number of recovered cases
+            tau (int): tau value [min]
+
+        Returns:
+            pandas.DataFrame:
+                Index
+                    t: Dates divided by tau value (time steps)
+                Columns
+                    - Susceptible(int): the number of susceptible cases
+                    - Infected (int): the number of currently infected cases
+                    - Fatal(int): the number of fatal cases
+                    - Recovered (int): the number of recovered cases
+        """
+        # Convert to tau-free
+        tau = cls._ensure_tau(tau, accept_none=False)
+        df = cls._ensure_dataframe(data, name="data", columns=cls.DSIFR_COLUMNS)
+        time_series = (df[cls.DATE] - df[cls.DATE].min()).dt.total_seconds() // 60
+        df.index = (time_series / tau).astype(np.int64)
+        df.index.name = cls.TS
+        return df.drop(cls.DATE, axis=1)
+
+    @classmethod
+    def _convert_reverse(cls, converted_df, start, tau):
+        """
+        Calculate date with tau and start date.
+
+        Args:
+            converted_df (pandas.DataFrame):
+                Index
+                    t: Dates divided by tau value (time steps)
+                Columns
+                    - Susceptible (int): the number of susceptible cases
+                    - Infected (int): the number of currently infected cases
+                    - Fatal or Recovered (int): the number of fatal/recovered cases
+            start (pd.Timestamp): start date of simulation, like 14Apr2021
+            tau (int): tau value [min]
+
+        Returns:
+            pandas.DataFrame:
+                Index
+                    reset index
+                Columns
+                    - Date (pd.Timestamp): Observation date
+                    - Susceptible(int): the number of susceptible cases
+                    - Infected (int): the number of currently infected cases
+                    - Fatal(int): the number of fatal cases
+                    - Recovered (int): the number of recovered cases
+        """
+        df = converted_df.copy()
+        # Calculate date with tau and start date
+        tau = cls._ensure_tau(tau, accept_none=False)
+        elapsed = pd.Series(df.index * tau)
+        df[cls.DATE] = start + elapsed.apply(lambda x: timedelta(minutes=x))
+        # Select the last records for dates
+        df = df.set_index(cls.DATE).resample("D").last().reset_index()
+        return df
+
+    @classmethod
+    def convert(cls, data, tau):
+        """
+        Divide dates by tau value [min] and convert variables to model-specialized variables.
+        This will be overwitten by child classes.
+
+        Args:
+            data (pandas.DataFrame):
+                Index
+                    reset index
+                Columns
+                    - Date (pd.Timestamp): Observation date
+                    - Susceptible(int): the number of susceptible cases
+                    - Infected (int): the number of currently infected cases
+                    - Fatal(int): the number of fatal cases
+                    - Recovered (int): the number of recovered cases
+            tau (int): tau value [min]
+
+        Returns:
+            pandas.DataFrame:
+                Index
+                    time steps: Dates divided by tau value
+                Columns
+                    - model-specialized variables
+        """
+        raise NotImplementedError
+
+    @classmethod
+    def convert_reverse(cls, converted_df, start, tau):
+        """
+        Calculate date with tau and start date, and restore Susceptible/Infected/"Fatal or Recovered".
+        This will be overwitten by child classes.
+
+        Args:
+            converted_df (pandas.DataFrame):
+                Index
+                    time steps: Dates divided by tau value
+                Columns
+                    - model-specialized variables
+            start (pd.Timestamp): start date of simulation, like 14Apr2021
+            tau (int): tau value [min]
+
+        Returns:
+            pandas.DataFrame:
+                Index
+                    reset index
+                Columns
+                    - Date (pd.Timestamp): Observation date
+                    - Susceptible(int): the number of susceptible cases
+                    - Infected (int): the number of currently infected cases
+                    - Fatal(int): the number of fatal cases
+                    - Recovered (int): the number of recovered cases
+        """
+        raise NotImplementedError
+
+    @classmethod
+    def guess(cls, data, tau):
+        """
+        With (X, dX/dt) for X=S, I, R and so on, guess parameter values.
+        This will be overwitten by child classes.
+
+        Args:
+            data (pandas.DataFrame):
+                Index
+                    reset index
+                Columns
+                    - Date (pd.Timestamp): Observation date
+                    - Susceptible(int): the number of susceptible cases
+                    - Infected (int): the number of currently infected cases
+                    - Fatal(int): the number of fatal cases
+                    - Recovered (int): the number of recovered cases
+            tau (int): tau value [min]
+
+        Returns:
+            dict(str, float): guessed parameter values
+        """
+        raise NotImplementedError

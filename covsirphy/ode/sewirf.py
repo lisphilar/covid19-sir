@@ -228,3 +228,98 @@ class SEWIRF(ModelBase):
             }
         except ZeroDivisionError:
             return {p: None for p in self.DAY_PARAMETERS}
+
+    @classmethod
+    def convert(cls, data, tau):
+        """
+        Divide dates by tau value [min] and convert variables to model-specialized variables.
+
+        Args:
+            data (pandas.DataFrame):
+                Index
+                    reset index
+                Columns
+                    - Date (pd.Timestamp): Observation date
+                    - Susceptible(int): the number of susceptible cases
+                    - Infected (int): the number of currently infected cases
+                    - Fatal(int): the number of fatal cases
+                    - Recovered (int): the number of recovered cases
+            tau (int): tau value [min]
+
+        Returns:
+            pandas.DataFrame:
+                Index
+                    time steps: Dates divided by tau value
+                Columns
+                    - Susceptible (int): the number of susceptible cases
+                    - Exposed (int): 0
+                    - Waiting (int): 0
+                    - Infected (int): the number of currently infected cases
+                    - Recovered (int): the number of recovered cases
+                    - Fatal (int): the number of fatal cases
+        """
+        # Convert to tau-free
+        df = cls._convert(data, tau)
+        # Conversion of variables
+        df[cls.E] = 0
+        df[cls.W] = 0
+        return df.loc[:, [cls.S, cls.E, cls.W, cls.CI, cls.R, cls.F]]
+
+    @classmethod
+    def convert_reverse(cls, converted_df, start, tau):
+        """
+        Calculate date with tau and start date, and restore Susceptible/Infected/Fatal/Recovered.
+
+        Args:
+            converted_df (pandas.DataFrame):
+                Index
+                    time steps: Dates divided by tau value
+                Columns
+                    - Susceptible (int): the number of susceptible cases
+                    - Exposed (int): exposed and in latent period (without infectivity)
+                    - Waiting (int): waiting for confirmaion diagnosis (with infectivity)
+                    - Infected (int): the number of currently infected cases
+                    - Recovered (int): the number of recovered cases
+                    - Fatal (int): the number of fatal cases
+            start (pd.Timestamp): start date of simulation, like 14Apr2021
+            tau (int): tau value [min]
+
+        Returns:
+            pandas.DataFrame:
+                Index
+                    reset index
+                Columns
+                    - Date (pd.Timestamp): Observation date
+                    - Susceptible(int): the number of susceptible cases
+                    - Infected (int): the number of currently infected cases
+                    - Fatal(int): the number of fatal cases
+                    - Recovered (int): the number of recovered cases
+        """
+        # Calculate date with tau and start date
+        df = cls._convert_reverse(converted_df, start, tau)
+        # Conversion of variables
+        df[cls.S] = df[cls.S] + df[cls.E] + df[cls.W]
+        return df.loc[:, [cls.DATE, cls.S, cls.CI, cls.F, cls.R]]
+
+    @classmethod
+    def guess(cls, data, tau):
+        """
+        With (X, dX/dt) for X=S, I, R and so on, guess parameter values.
+        This is not implemented for SEWIR-F model.
+
+        Args:
+            data (pandas.DataFrame):
+                Index
+                    reset index
+                Columns
+                    - Date (pd.Timestamp): Observation date
+                    - Susceptible(int): the number of susceptible cases
+                    - Infected (int): the number of currently infected cases
+                    - Fatal(int): the number of fatal cases
+                    - Recovered (int): the number of recovered cases
+            tau (int): tau value [min]
+        """
+        raise NotImplementedError(
+            "SEWIR-F cannot be used for parameter estimation because we do not have records "
+            "of Exposed and Waiting. Please use SIR-F model with `covsirphy.SIRF` class."
+        )

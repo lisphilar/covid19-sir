@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*-
 
 import numpy as np
+import pandas as pd
 from covsirphy.ode.mbase import ModelBase
 
 
@@ -213,3 +214,111 @@ class SIRF(ModelBase):
             }
         except ZeroDivisionError:
             return {p: None for p in self.DAY_PARAMETERS}
+
+    @classmethod
+    def convert(cls, data, tau):
+        """
+        Divide dates by tau value [min] and convert variables to model-specialized variables.
+
+        Args:
+            data (pandas.DataFrame):
+                Index
+                    reset index
+                Columns
+                    - Date (pd.Timestamp): Observation date
+                    - Susceptible(int): the number of susceptible cases
+                    - Infected (int): the number of currently infected cases
+                    - Fatal(int): the number of fatal cases
+                    - Recovered (int): the number of recovered cases
+            tau (int): tau value [min]
+
+        Returns:
+            pandas.DataFrame:
+                Index
+                    t: Dates divided by tau value (time steps)
+                Columns
+                    - Susceptible (int): the number of susceptible cases
+                    - Infected (int): the number of currently infected cases
+                    - Recovered (int): the number of recovered cases
+                    - Fatal (int): the number of fatal cases
+        """
+        # Convert to tau-free
+        df = cls._convert(data, tau)
+        # Conversion of variables: un-necessary for SIR-F model
+        return df.loc[:, [cls.S, cls.CI, cls.R, cls.F]]
+
+    @classmethod
+    def convert_reverse(cls, converted_df, start, tau):
+        """
+        Calculate date with tau and start date, and restore Susceptible/Infected/Fatal/Recovered.
+
+        Args:
+            converted_df (pandas.DataFrame):
+                Index
+                    t: Dates divided by tau value (time steps)
+                Columns
+                    - Susceptible (int): the number of susceptible cases
+                    - Infected (int): the number of currently infected cases
+                    - Recovered (int): the number of recovered cases
+                    - Fatal (int): the number of fatal cases
+            start (pd.Timestamp): start date of simulation, like 14Apr2021
+            tau (int): tau value [min]
+
+        Returns:
+            pandas.DataFrame:
+                Index
+                    reset index
+                Columns
+                    - Date (pd.Timestamp): Observation date
+                    - Susceptible(int): the number of susceptible cases
+                    - Infected (int): the number of currently infected cases
+                    - Fatal(int): the number of fatal cases
+                    - Recovered (int): the number of recovered cases
+        """
+        # Calculate date with tau and start date
+        df = cls._convert_reverse(converted_df, start, tau)
+        # Conversion of variables: un-necessary for SIR-F model
+        return df.loc[:, [cls.DATE, cls.S, cls.CI, cls.F, cls.R]]
+
+    @classmethod
+    def guess(cls, data, tau):
+        """
+        With (X, dX/dt) for X=S, I, R, F, guess parameter values.
+
+        Args:
+            data (pandas.DataFrame):
+                Index
+                    reset index
+                Columns
+                    - Date (pd.Timestamp): Observation date
+                    - Susceptible(int): the number of susceptible cases
+                    - Infected (int): the number of currently infected cases
+                    - Fatal(int): the number of fatal cases
+                    - Recovered (int): the number of recovered cases
+            tau (int): tau value [min]
+
+        Returns:
+            dict(str, float): guessed parameter values
+
+        Note:
+            We can guess parameter values as follows. Median will be calculated.
+            - kappa = (dF/dt) / I when theta -> 0
+            - rho = - n * (dS/dt) / S / I
+            - sigma = (dR/dt) / I
+        """
+        # Convert to tau-free and model-specialized dataset
+        df = cls.convert(data=data, tau=tau)
+        # Remove negative values and set variables
+        df = df.loc[(df[cls.S] > 0) & (df[cls.CI] > 0)]
+        n = df.loc[df.index[0], [cls.S, cls.CI, cls.F, cls.R]].sum()
+        # Guess parameter values
+        dt = pd.Series(df.index).diff()
+        kappa_series = df[cls.F].diff() / dt / df[cls.CI]
+        rho_series = 0 - n * df[cls.S].diff() / dt / df[cls.S] / df[cls.CI]
+        sigma_series = df[cls.R].diff() / dt / df[cls.CI]
+        return {
+            "theta": 0,
+            "kappa": kappa_series.median(),
+            "rho": rho_series.median(),
+            "sigma": sigma_series.median(),
+        }
