@@ -1,11 +1,11 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-from datetime import timedelta
 import pandas as pd
 from covsirphy.util.term import Term
 from covsirphy.ode.mbase import ModelBase
 from covsirphy.ode.ode_solver import _ODESolver
+from covsirphy.ode.param_estimator import _ParamEstimator
 
 
 class ODEHandler(Term):
@@ -58,9 +58,9 @@ class ODEHandler(Term):
                     reset index
                 Columns
                     - Date (pd.Timestamp): Observation date
-                    - Susceptible(int): the number of susceptible cases
+                    - Susceptible (int): the number of susceptible cases
                     - Infected (int): the number of currently infected cases
-                    - Fatal(int): the number of fatal cases
+                    - Fatal (int): the number of fatal cases
                     - Recovered (int): the number of recovered cases
         """
         dataframes = []
@@ -74,13 +74,28 @@ class ODEHandler(Term):
             param_dict = info_dict["param"].copy()
             # Solve the initial value problem with the ODE model
             solver = _ODESolver(self._model, **param_dict)
-            solved_df = self._model.restore(solver.run(step_n=step_n, **y0_dict))
+            solved_df = solver.run(step_n=step_n, **y0_dict)
             dataframes += [solved_df.iloc[1:]] if dataframes else [solved_df]
         # Combine the simulation results
         df = pd.concat(dataframes, ignore_index=True, sort=True)
-        # Set dates with the start date and tau value [min]
-        elapsed = pd.Series(df.index * self._tau)
-        df[self.DATE] = self._start + elapsed.apply(lambda x: timedelta(minutes=x))
-        # Resampling and remove the next date of the last end date
-        df = df.set_index(self.DATE).resample("D").last().reset_index()
-        return df.loc[:, [self.DATE, self.S, self.CI, self.F, self.R]]
+        return self._model.convert_reverse(df, start=self._start, tau=self._tau)
+
+    def estimate_parameters(self, data, metric="RMSLE"):
+        """
+        Estimate ODE parameters with data.
+
+        Args:
+            data (pandas.DataFrame):
+                Index
+                    reset index
+                Columns
+                    - Date (pd.Timestamp): Observation date
+                    - Susceptible(int): the number of susceptible cases
+                    - Infected (int): the number of currently infected cases
+                    - Fatal(int): the number of fatal cases
+                    - Recovered (int): the number of recovered cases
+            metric (str): metric name
+        """
+        self._ensure_dataframe(data, name="data", columns=self.DSIFR_COLUMNS)
+        param_estimator = _ParamEstimator(model=self._model, data=data, tau=self._tau)
+        return param_estimator.run(metric=metric)

@@ -52,6 +52,7 @@ class Term(object):
     FIG_COLUMNS = [CI, F, R, FR, V, E, W]
     MONO_COLUMNS = [C, F, R]
     AREA_ABBR_COLS = [ISO3, *AREA_COLUMNS]
+    DSIFR_COLUMNS = [DATE, S, CI, F, R]
     # Date format: 22Jan2020 etc.
     DATE_FORMAT = "%d%b%Y"
     DATE_FORMAT_DESC = "DDMmmYYYY"
@@ -251,24 +252,23 @@ class Term(object):
         return number
 
     @classmethod
-    def _ensure_tau(cls, tau):
+    def _ensure_tau(cls, tau, accept_none=True):
         """
         Ensure that the value can be used as tau value [min].
 
         Args:
-            tau (int or None): value to use
+            tau (int or None): value to use [min] or None (when @accept_none is True)
+            accept_none (bool): whether accept None or not
 
         Returns:
             int or None: as-is
         """
-        if tau is None:
+        if tau is None and accept_none:
             return None
         tau = cls._ensure_natural_int(tau, name="tau")
         if tau in set(cls.divisors(1440)):
             return tau
-        raise ValueError(
-            f"@tau must be a divisor of 1440 [min], but {tau} was applied."
-        )
+        raise ValueError(f"@tau must be a divisor of 1440 [min], but {tau} was applied.")
 
     @classmethod
     def _ensure_population(cls, population):
