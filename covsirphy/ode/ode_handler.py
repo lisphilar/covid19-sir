@@ -123,7 +123,7 @@ class ODEHandler(Term):
 
     def estimate_tau(self, data):
         """
-        Estimate tau value [min] to minimize the score of the metric.
+        Select tau value [min] which minimize the score of the metric.
 
         Args:
             data (pandas.DataFrame):
@@ -162,7 +162,7 @@ class ODEHandler(Term):
 
     def _estimate_params(self, phase, data, quantiles, check_dict, study_dict):
         """
-        Perform estimation for one phase.
+        Perform parameter estimation for one phase.
 
         Args:
             phase (str): phase name
