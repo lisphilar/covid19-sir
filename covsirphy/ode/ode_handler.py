@@ -192,9 +192,7 @@ class ODEHandler(Term):
         estimator = _ParamEstimator(self._model, df, self._tau, self._metric, quantiles)
         return estimator.run(check_dict, study_dict)
 
-    def estimate_params(self, data, quantiles=(0.1, 0.9),
-                        check_dict={"timeout": 180, "timeout_interation": 5, "tail_n": 4, "allowance": (0.99, 1.01)},
-                        study_dict={"pruner": "threshold", "upper": 0.5, "percentile": 50, "seed": 0}, **kwargs):
+    def estimate_params(self, data, quantiles=(0.1, 0.9), check_dict=None, study_dict=None, **kwargs):
         """
         Estimate ODE parameter values of the all phases to minimize the score of the metric.
 
@@ -209,12 +207,14 @@ class ODEHandler(Term):
                     - Fatal(int): the number of fatal cases
                     - Recovered (int): the number of recovered cases
             quantiles (tuple(int, int)): quantiles to cut parameter range, like confidence interval
-            check_dict (dict[str, object]): setting of validation
+            check_dict (dict[str, object] or None): setting of validation
+                - None means {"timeout": 180, "timeout_interation": 5, "tail_n": 4, "allowance": (0.99, 1.01)}
                 - timeout (int): timeout of optimization
                 - timeout_iteration (int): timeout of one iteration
                 - tail_n (int): the number of iterations to decide whether score did not change for the last iterations
                 - allowance (tuple(float, float)): the allowance of the max predicted values
-            study_dict (dict[str, object]): setting of optimization study
+            study_dict (dict[str, object] or None): setting of optimization study
+                - None means {"pruner": "threshold", "upper": 0.5, "percentile": 50, "seed": 0}
                 - pruner (str): kind of pruner (hyperband, median, threshold or percentile)
                 - upper (float): works for "threshold" pruner, intermediate score is larger than this value, it prunes
                 - percentile (float): works for "Percentile" pruner, the best intermediate value is in the bottom percentile among trials, it prunes
