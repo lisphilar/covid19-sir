@@ -152,8 +152,11 @@ class ODEHandler(Term):
         # Calculate scores of tau candidates
         calc_f = functools.partial(self._score_tau, data=data)
         divisors = self.divisors(1440)
-        with Pool(self._n_jobs) as p:
-            scores = p.map(calc_f, divisors)
+        if self._n_jobs == 1:
+            scores = [calc_f(candidate) for candidate in divisors]
+        else:
+            with Pool(self._n_jobs) as p:
+                scores = p.map(calc_f, divisors)
         score_dict = {k: v for (k, v) in zip(divisors, scores)}
         # Return the best tau value
         comp_f = {True: min, False: max}[Evaluator.smaller_is_better(metric=self._metric)]
@@ -252,8 +255,11 @@ class ODEHandler(Term):
             self._estimate_params, data=data, quantiles=quantiles,
             check_dict=check_dict, study_dict=study_dict)
         phases = list(self._info_dict.keys())
-        with Pool(self._n_jobs) as p:
-            est_dict_list = p.map(est_f, phases)
+        if self._n_jobs == 1:
+            est_dict_list = [est_f(ph) for ph in phases]
+        else:
+            with Pool(self._n_jobs) as p:
+                est_dict_list = p.map(est_f, phases)
         for (phase, est_dict) in zip(phases, est_dict_list):
             self._info_dict[phase].update(est_dict)
         return self._info_dict
