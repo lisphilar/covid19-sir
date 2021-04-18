@@ -1,56 +1,68 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
+from datetime import timedelta
+from covsirphy.util.evaluator import Evaluator
+import itertools
 import pandas as pd
+from covsirphy.util.error import UnExecutedError
 from covsirphy.util.term import Term
 from covsirphy.ode.mbase import ModelBase
-from covsirphy.ode.ode_solver import _ODESolver
-from covsirphy.ode.param_estimator import _ParamEstimator
+from covsirphy.ode.ode_solver_multi import _MultiPhaseODESolver
 
 
 class ODEHandler(Term):
     """
-    Perform simulation and parameter estimation with multi-phased ODE models.
+    Perform simulation and parameter estimation with a multi-phased ODE model.
 
     Args:
         model (covsirphy.ModelBase): ODE model
         start_date (str): start date of simulation, like 14Apr2021
-        tau (int): tau value [min]
+        tau (int or None): tau value [min] or None (to be determined)
     """
 
-    def __init__(self, model, start_date, tau):
+    def __init__(self, model, start_date, tau=None):
         self._model = self._ensure_subclass(model, ModelBase, name="model")
         self._start = pd.to_datetime(start_date)
-        self._tau = self._ensure_tau(tau)
-        # {"0th": {"y0": {initial values}, "param": {parameters}, "step_n": int}}
+        # Tau value [min] or None
+        self._tau = self._ensure_tau(tau, accept_none=True)
+        # {"0th": output of self.add()}
         self._info_dict = {}
 
-    def add(self, end_date, y0_dict=None, param_dict=None):
+    def add(self, end_date, param_dict=None, y0_dict=None):
         """
         Add a new phase.
 
         Args:
             end_date (str): end date of the phase
+            param_dict (dict[str, float] or None): parameter values or None (not set)
             y0_dict (dict[str, int] or None): initial values or None (not set)
-            param_dict (dict[str, int] or None): parameter values or None (not set)
 
         Returns:
-            ODEHandler: self
-
-        Note:
-            Internal variable "step_n" means from the start date to the next date of the end date.
+            dict(str, object): setting of the phase
+                - param (dict[str, float]): parameter values or empty dict
+                - y0 (dict[str, int]): initial values of model-specialized variables or empty dict
+                - start (pandas.Timestamp): start date
+                - end (pandas.Timestamp): end date
         """
+        if not self._info_dict and y0_dict is None:
+            raise ValueError("@y0_dict must be specified for the 0th phase, but None was applied.")
         phase = self.num2str(len(self._info_dict))
-        all_step_n = self.steps(
-            self._start.strftime(self.DATE_FORMAT),
-            pd.to_datetime(end_date).strftime(self.DATE_FORMAT), tau=self._tau)
-        step_n = all_step_n - sum(phase_dict["step_n"] for phase_dict in self._info_dict.values())
-        self._info_dict[phase] = {"y0": y0_dict or {}, "param": param_dict or {}, "step_n": step_n, }
-        return self
+        if self._info_dict:
+            start = list(self._info_dict.values())[-1]["end"] + timedelta(days=1)
+        else:
+            start = self._start
+        end = pd.to_datetime(end_date)
+        self._info_dict[phase] = {
+            "param": param_dict or {}, "y0": y0_dict or {}, "start": start, "end": end}
+        return self._info_dict[phase]
 
     def simulate(self):
         """
         Perform simulation with the multi-phased ODE model.
+
+        Raises:
+            covsirphy.UnExecutedError: either tau value or phase information was not set
 
         Returns:
             pandas.DataFrame:
@@ -63,26 +75,22 @@ class ODEHandler(Term):
                     - Fatal (int): the number of fatal cases
                     - Recovered (int): the number of recovered cases
         """
-        dataframes = []
-        for (_, info_dict) in self._info_dict.items():
-            # Step numbers
-            step_n = info_dict["step_n"]
-            # Initial values: registered information (with priority) or the last values
-            y0_dict = dataframes[-1].iloc[-1].to_dict() if dataframes else {}
-            y0_dict.update(info_dict["y0"])
-            # parameter values
-            param_dict = info_dict["param"].copy()
-            # Solve the initial value problem with the ODE model
-            solver = _ODESolver(self._model, **param_dict)
-            solved_df = solver.run(step_n=step_n, **y0_dict)
-            dataframes += [solved_df.iloc[1:]] if dataframes else [solved_df]
-        # Combine the simulation results
-        df = pd.concat(dataframes, ignore_index=True, sort=True)
-        return self._model.convert_reverse(df, start=self._start, tau=self._tau)
+        if self._tau is None:
+            raise UnExecutedError(
+                "ODEHandler.estimate_tau()",
+                message="or specify tau when creating an instance of ODEHandler")
+        if not self._info_dict:
+            raise UnExecutedError("ODEHandler.add()")
+        combs = itertools.product(self._model.PARAMETERS, self._info_dict.items())
+        for (param, (phase, phase_dict)) in combs:
+            if param not in phase_dict["param"]:
+                raise ValueError(f"{param.capitalize()} is not registered for the {phase} phase.")
+        solver = _MultiPhaseODESolver(self._model, self._start, self._tau)
+        return solver.simulate(*self._info_dict.values())
 
-    def estimate_parameters(self, data, metric="RMSLE"):
+    def estimate_tau(self, data, metric="RMSLE"):
         """
-        Estimate ODE parameters with data.
+        Estimate tau value [min] to minimize the score of the metric with ODE parameters.
 
         Args:
             data (pandas.DataFrame):
@@ -95,7 +103,33 @@ class ODEHandler(Term):
                     - Fatal(int): the number of fatal cases
                     - Recovered (int): the number of recovered cases
             metric (str): metric name
+
+        Returns:
+            int: estimated tau value [min]
+
+        Raises:
+            covsirphy.UnExecutedError: phase information was not set
+
+        Note:
+            ODE parameter for each tau value will be guessed by .guess() classmethod of the model.
+            Tau value will be selected from the divisors of 1440 [min] and set to self
         """
         self._ensure_dataframe(data, name="data", columns=self.DSIFR_COLUMNS)
-        param_estimator = _ParamEstimator(model=self._model, data=data, tau=self._tau)
-        return param_estimator.run(metric=metric)
+        if not self._info_dict:
+            raise UnExecutedError("ODEHandler.add()")
+        # Calculate scores of tau candidates
+        score_dict = {}
+        for tau in self.divisors(1440):
+            info_dict = self._info_dict.copy()
+            for (phase, phase_dict) in info_dict.items():
+                start, end = phase_dict["start"], phase_dict["end"]
+                df = data.loc[(start <= data[self.DATE]) & (data[self.DATE] <= end)]
+                info_dict[phase]["param"] = self._model.guess(df, tau)
+            solver = _MultiPhaseODESolver(self._model, self._start, tau)
+            sim_df = solver.simulate(*info_dict.values())
+            evaluator = Evaluator(data.set_index(self.DATE), sim_df.set_index(self.DATE))
+            score_dict[tau] = evaluator.score(metric=metric)
+        # Return the best tau value
+        score_f = {True: min, False: max}[Evaluator.smaller_is_better(metric=metric)]
+        self._tau = score_f(score_dict.items(), key=lambda x: x[1])[0]
+        return self._tau

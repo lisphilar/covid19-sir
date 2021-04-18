@@ -401,9 +401,7 @@ class Term(object):
             list[int]: the list of divisors
         """
         value = cls._ensure_natural_int(value)
-        return [
-            i for i in range(1, value + 1) if value % i == 0
-        ]
+        return [i for i in range(1, value + 1) if value % i == 0]
 
     @classmethod
     def date_obj(cls, date_str=None, default=None):
