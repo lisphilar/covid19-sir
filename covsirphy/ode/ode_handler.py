@@ -242,7 +242,10 @@ class ODEHandler(Term):
                 "ODEHandler.estimate_tau()",
                 message="or specify tau when creating an instance of ODEHandler")
         # Arguments used in the old Estimator
+        check_dict = check_dict or {
+            "timeout": 180, "timeout_interation": 5, "tail_n": 4, "allowance": (0.99, 1.01)}
         check_dict.update(kwargs)
+        study_dict = study_dict or {"pruner": "threshold", "upper": 0.5, "percentile": 50, "seed": 0}
         study_dict.update(kwargs)
         # ODE parameter estimation
         est_f = functools.partial(
