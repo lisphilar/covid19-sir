@@ -65,7 +65,7 @@
             
             
               <div class="version">
-                2.19.1-alpha
+                2.19.1-beta
               </div>
             
           
@@ -225,6 +225,7 @@
     <span class="n">FIG_COLUMNS</span> <span class="o">=</span> <span class="p">[</span><span class="n">CI</span><span class="p">,</span> <span class="n">F</span><span class="p">,</span> <span class="n">R</span><span class="p">,</span> <span class="n">FR</span><span class="p">,</span> <span class="n">V</span><span class="p">,</span> <span class="n">E</span><span class="p">,</span> <span class="n">W</span><span class="p">]</span>
     <span class="n">MONO_COLUMNS</span> <span class="o">=</span> <span class="p">[</span><span class="n">C</span><span class="p">,</span> <span class="n">F</span><span class="p">,</span> <span class="n">R</span><span class="p">]</span>
     <span class="n">AREA_ABBR_COLS</span> <span class="o">=</span> <span class="p">[</span><span class="n">ISO3</span><span class="p">,</span> <span class="o">*</span><span class="n">AREA_COLUMNS</span><span class="p">]</span>
+    <span class="n">DSIFR_COLUMNS</span> <span class="o">=</span> <span class="p">[</span><span class="n">DATE</span><span class="p">,</span> <span class="n">S</span><span class="p">,</span> <span class="n">CI</span><span class="p">,</span> <span class="n">F</span><span class="p">,</span> <span class="n">R</span><span class="p">]</span>
     <span class="c1"># Date format: 22Jan2020 etc.</span>
     <span class="n">DATE_FORMAT</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">%d</span><span class="s2">%b%Y&quot;</span>
     <span class="n">DATE_FORMAT_DESC</span> <span class="o">=</span> <span class="s2">&quot;DDMmmYYYY&quot;</span>
@@ -424,24 +425,23 @@
         <span class="k">return</span> <span class="n">number</span>
 
     <span class="nd">@classmethod</span>
-    <span class="k">def</span> <span class="nf">_ensure_tau</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">tau</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">_ensure_tau</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">tau</span><span class="p">,</span> <span class="n">accept_none</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Ensure that the value can be used as tau value [min].</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">            tau (int or None): value to use</span>
+<span class="sd">            tau (int or None): value to use [min] or None (when @accept_none is True)</span>
+<span class="sd">            accept_none (bool): whether accept None or not</span>
 
 <span class="sd">        Returns:</span>
 <span class="sd">            int or None: as-is</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">if</span> <span class="n">tau</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">tau</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">accept_none</span><span class="p">:</span>
             <span class="k">return</span> <span class="kc">None</span>
         <span class="n">tau</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_ensure_natural_int</span><span class="p">(</span><span class="n">tau</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;tau&quot;</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">tau</span> <span class="ow">in</span> <span class="nb">set</span><span class="p">(</span><span class="bp">cls</span><span class="o">.</span><span class="n">divisors</span><span class="p">(</span><span class="mi">1440</span><span class="p">)):</span>
             <span class="k">return</span> <span class="n">tau</span>
-        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
-            <span class="sa">f</span><span class="s2">&quot;@tau must be a divisor of 1440 [min], but </span><span class="si">{</span><span class="n">tau</span><span class="si">}</span><span class="s2"> was applied.&quot;</span>
-        <span class="p">)</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;@tau must be a divisor of 1440 [min], but </span><span class="si">{</span><span class="n">tau</span><span class="si">}</span><span class="s2"> was applied.&quot;</span><span class="p">)</span>
 
     <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">_ensure_population</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">population</span><span class="p">):</span>
@@ -574,9 +574,7 @@
 <span class="sd">            list[int]: the list of divisors</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">value</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_ensure_natural_int</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
-        <span class="k">return</span> <span class="p">[</span>
-            <span class="n">i</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">value</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="k">if</span> <span class="n">value</span> <span class="o">%</span> <span class="n">i</span> <span class="o">==</span> <span class="mi">0</span>
-        <span class="p">]</span></div>
+        <span class="k">return</span> <span class="p">[</span><span class="n">i</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">value</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="k">if</span> <span class="n">value</span> <span class="o">%</span> <span class="n">i</span> <span class="o">==</span> <span class="mi">0</span><span class="p">]</span></div>
 
 <div class="viewcode-block" id="Term.date_obj"><a class="viewcode-back" href="../../../covsirphy.util.html#covsirphy.Term.date_obj">[docs]</a>    <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">date_obj</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">date_str</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>

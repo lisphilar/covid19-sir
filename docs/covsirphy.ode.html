@@ -67,7 +67,7 @@
             
             
               <div class="version">
-                2.19.1-alpha
+                2.19.1-beta
               </div>
             
           
@@ -111,6 +111,8 @@
 <li class="toctree-l4"><a class="reference internal" href="#module-covsirphy.ode.mbase">covsirphy.ode.mbase module</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#module-covsirphy.ode.ode_handler">covsirphy.ode.ode_handler module</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#module-covsirphy.ode.ode_solver">covsirphy.ode.ode_solver module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#module-covsirphy.ode.ode_solver_multi">covsirphy.ode.ode_solver_multi module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#module-covsirphy.ode.param_estimator">covsirphy.ode.param_estimator module</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#module-covsirphy.ode.sewirf">covsirphy.ode.sewirf module</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#module-covsirphy.ode.sir">covsirphy.ode.sir module</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#module-covsirphy.ode.sird">covsirphy.ode.sird module</a></li>
@@ -306,6 +308,122 @@ This method should be overwritten in subclass.</p>
 </dd></dl>
 
 <dl class="py method">
+<dt id="covsirphy.ode.mbase.ModelBase.convert">
+<em class="property"><span class="pre">classmethod</span> </em><code class="sig-name descname"><span class="pre">convert</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tau</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/ode/mbase.html#ModelBase.convert"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#covsirphy.ode.mbase.ModelBase.convert" title="Permalink to this definition">¶</a></dt>
+<dd><p>Divide dates by tau value [min] and convert variables to model-specialized variables.
+This will be overwitten by child classes.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>data</strong> (<em>pandas.DataFrame</em>) – <dl class="simple">
+<dt>Index</dt><dd><p>reset index</p>
+</dd>
+<dt>Columns</dt><dd><ul>
+<li><p>Date (pd.Timestamp): Observation date</p></li>
+<li><p>Susceptible(int): the number of susceptible cases</p></li>
+<li><p>Infected (int): the number of currently infected cases</p></li>
+<li><p>Fatal(int): the number of fatal cases</p></li>
+<li><p>Recovered (int): the number of recovered cases</p></li>
+</ul>
+</dd>
+</dl>
+</p></li>
+<li><p><strong>tau</strong> (<em>int</em>) – tau value [min]</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><dl class="simple">
+<dt>Index</dt><dd><p>time steps: Dates divided by tau value</p>
+</dd>
+<dt>Columns</dt><dd><ul class="simple">
+<li><p>model-specialized variables</p></li>
+</ul>
+</dd>
+</dl>
+</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>pandas.DataFrame</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="covsirphy.ode.mbase.ModelBase.convert_reverse">
+<em class="property"><span class="pre">classmethod</span> </em><code class="sig-name descname"><span class="pre">convert_reverse</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">converted_df</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">start</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tau</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/ode/mbase.html#ModelBase.convert_reverse"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#covsirphy.ode.mbase.ModelBase.convert_reverse" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculate date with tau and start date, and restore Susceptible/Infected/”Fatal or Recovered”.
+This will be overwitten by child classes.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>converted_df</strong> (<em>pandas.DataFrame</em>) – <dl class="simple">
+<dt>Index</dt><dd><p>time steps: Dates divided by tau value</p>
+</dd>
+<dt>Columns</dt><dd><ul>
+<li><p>model-specialized variables</p></li>
+</ul>
+</dd>
+</dl>
+</p></li>
+<li><p><strong>start</strong> (<em>pd.Timestamp</em>) – start date of simulation, like 14Apr2021</p></li>
+<li><p><strong>tau</strong> (<em>int</em>) – tau value [min]</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><dl class="simple">
+<dt>Index</dt><dd><p>reset index</p>
+</dd>
+<dt>Columns</dt><dd><ul class="simple">
+<li><p>Date (pd.Timestamp): Observation date</p></li>
+<li><p>Susceptible(int): the number of susceptible cases</p></li>
+<li><p>Infected (int): the number of currently infected cases</p></li>
+<li><p>Fatal(int): the number of fatal cases</p></li>
+<li><p>Recovered (int): the number of recovered cases</p></li>
+</ul>
+</dd>
+</dl>
+</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>pandas.DataFrame</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="covsirphy.ode.mbase.ModelBase.guess">
+<em class="property"><span class="pre">classmethod</span> </em><code class="sig-name descname"><span class="pre">guess</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tau</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/ode/mbase.html#ModelBase.guess"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#covsirphy.ode.mbase.ModelBase.guess" title="Permalink to this definition">¶</a></dt>
+<dd><p>With (X, dX/dt) for X=S, I, R and so on, guess parameter values.
+This will be overwitten by child classes.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>data</strong> (<em>pandas.DataFrame</em>) – <dl class="simple">
+<dt>Index</dt><dd><p>reset index</p>
+</dd>
+<dt>Columns</dt><dd><ul>
+<li><p>Date (pd.Timestamp): Observation date</p></li>
+<li><p>Susceptible(int): the number of susceptible cases</p></li>
+<li><p>Infected (int): the number of currently infected cases</p></li>
+<li><p>Fatal(int): the number of fatal cases</p></li>
+<li><p>Recovered (int): the number of recovered cases</p></li>
+</ul>
+</dd>
+</dl>
+</p></li>
+<li><p><strong>tau</strong> (<em>int</em>) – tau value [min]</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>guessed parameter values</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>dict(str, float)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
 <dt id="covsirphy.ode.mbase.ModelBase.param_range">
 <em class="property"><span class="pre">classmethod</span> </em><code class="sig-name descname"><span class="pre">param_range</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">taufree_df</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">population</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">quantiles</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">(0.3,</span> <span class="pre">0.7)</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/ode/mbase.html#ModelBase.param_range"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#covsirphy.ode.mbase.ModelBase.param_range" title="Permalink to this definition">¶</a></dt>
 <dd><p>Define the value range of ODE parameters using (X, dX/dt) points.
@@ -470,50 +588,167 @@ and saved in t column.</p>
 <span id="covsirphy-ode-ode-handler-module"></span><h2>covsirphy.ode.ode_handler module<a class="headerlink" href="#module-covsirphy.ode.ode_handler" title="Permalink to this headline">¶</a></h2>
 <dl class="py class">
 <dt id="covsirphy.ode.ode_handler.ODEHandler">
-<em class="property"><span class="pre">class</span> </em><code class="sig-name descname"><span class="pre">ODEHandler</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">start_date</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tau</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/ode/ode_handler.html#ODEHandler"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#covsirphy.ode.ode_handler.ODEHandler" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">class</span> </em><code class="sig-name descname"><span class="pre">ODEHandler</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">start_date</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tau</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">metric</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'RMSLE'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_jobs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">-</span> <span class="pre">1</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/ode/ode_handler.html#ODEHandler"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#covsirphy.ode.ode_handler.ODEHandler" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="covsirphy.util.html#covsirphy.util.term.Term" title="covsirphy.util.term.Term"><code class="xref py py-class docutils literal notranslate"><span class="pre">covsirphy.util.term.Term</span></code></a></p>
-<p>Perform simulation and parameter estimation with multi-phased ODE models.</p>
+<p>Perform simulation and parameter estimation with a multi-phased ODE model.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>model</strong> (<a class="reference internal" href="covsirphy.html#covsirphy.ModelBase" title="covsirphy.ModelBase"><em>covsirphy.ModelBase</em></a>) – ODE model</p></li>
 <li><p><strong>start_date</strong> (<em>str</em>) – start date of simulation, like 14Apr2021</p></li>
-<li><p><strong>tau</strong> (<em>int</em>) – tau value [min]</p></li>
+<li><p><strong>tau</strong> (<em>int</em><em> or </em><em>None</em>) – tau value [min] or None (to be determined)</p></li>
+<li><p><strong>metric</strong> (<em>str</em>) – metric name for estimation</p></li>
+<li><p><strong>n_jobs</strong> (<em>int</em>) – the number of parallel jobs or -1 (CPU count)</p></li>
 </ul>
 </dd>
 </dl>
 <dl class="py method">
 <dt id="covsirphy.ode.ode_handler.ODEHandler.add">
-<code class="sig-name descname"><span class="pre">add</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">end_date</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y0_dict</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">param_dict</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/ode/ode_handler.html#ODEHandler.add"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#covsirphy.ode.ode_handler.ODEHandler.add" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname"><span class="pre">add</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">end_date</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">param_dict</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y0_dict</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/ode/ode_handler.html#ODEHandler.add"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#covsirphy.ode.ode_handler.ODEHandler.add" title="Permalink to this definition">¶</a></dt>
 <dd><p>Add a new phase.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>end_date</strong> (<em>str</em>) – end date of the phase</p></li>
+<li><p><strong>param_dict</strong> (<em>dict</em><em>[</em><em>str</em><em>, </em><em>float</em><em>] or </em><em>None</em>) – parameter values or None (not set)</p></li>
 <li><p><strong>y0_dict</strong> (<em>dict</em><em>[</em><em>str</em><em>, </em><em>int</em><em>] or </em><em>None</em>) – initial values or None (not set)</p></li>
-<li><p><strong>param_dict</strong> (<em>dict</em><em>[</em><em>str</em><em>, </em><em>int</em><em>] or </em><em>None</em>) – parameter values or None (not set)</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
-<dd class="field-even"><p>self</p>
-</dd>
-<dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p><a class="reference internal" href="#covsirphy.ode.ode_handler.ODEHandler" title="covsirphy.ode.ode_handler.ODEHandler">ODEHandler</a></p>
+<dd class="field-even"><p><dl class="simple">
+<dt>setting of the phase (key: phase name)</dt><dd><ul class="simple">
+<li><p>start (pandas.Timestamp): start date</p></li>
+<li><p>end (pandas.Timestamp): end date</p></li>
+<li><p>y0 (dict[str, int]): initial values of model-specialized variables or empty dict</p></li>
+<li><p>param (dict[str, float]): parameter values or empty dict</p></li>
+</ul>
 </dd>
 </dl>
-<div class="admonition note">
-<p class="admonition-title">Note</p>
-<p>Internal variable “step_n” means from the start date to the next date of the end date.</p>
-</div>
+</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>dict(str, object)</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py method">
-<dt id="covsirphy.ode.ode_handler.ODEHandler.simulate">
-<code class="sig-name descname"><span class="pre">simulate</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/ode/ode_handler.html#ODEHandler.simulate"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#covsirphy.ode.ode_handler.ODEHandler.simulate" title="Permalink to this definition">¶</a></dt>
-<dd><p>Perform simulation with the multi-phased ODE model.</p>
+<dt id="covsirphy.ode.ode_handler.ODEHandler.estimate">
+<code class="sig-name descname"><span class="pre">estimate</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/ode/ode_handler.html#ODEHandler.estimate"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#covsirphy.ode.ode_handler.ODEHandler.estimate" title="Permalink to this definition">¶</a></dt>
+<dd><p>Estimate tau value [min] and ODE parameter values.</p>
 <dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>data</strong> (<em>pandas.DataFrame</em>) – <dl class="simple">
+<dt>Index</dt><dd><p>reset index</p>
+</dd>
+<dt>Columns</dt><dd><ul>
+<li><p>Date (pd.Timestamp): Observation date</p></li>
+<li><p>Susceptible(int): the number of susceptible cases</p></li>
+<li><p>Infected (int): the number of currently infected cases</p></li>
+<li><p>Fatal(int): the number of fatal cases</p></li>
+<li><p>Recovered (int): the number of recovered cases</p></li>
+</ul>
+</dd>
+</dl>
+</p></li>
+<li><p><strong>kwargs</strong> – keyword arguments of ODEHander.estimate_param()</p></li>
+</ul>
+</dd>
+<dt class="field-even">Raises</dt>
+<dd class="field-even"><p><a class="reference internal" href="covsirphy.html#covsirphy.UnExecutedError" title="covsirphy.UnExecutedError"><strong>covsirphy.UnExecutedError</strong></a> – either tau value or phase information was not set</p>
+</dd>
 <dt class="field-odd">Returns</dt>
 <dd class="field-odd"><p><dl class="simple">
+<dt>tuple(int, dict(str, dict[str, object]))</dt><dd><ul class="simple">
+<li><p>int: tau value [min]</p></li>
+<li><dl class="simple">
+<dt>dict(str, object): setting of the phase (key: phase name)</dt><dd><ul>
+<li><p>start (pandas.Timestamp): start date</p></li>
+<li><p>end (pandas.Timestamp): end date</p></li>
+<li><p>param (dict(str, float)): dictionary of estimated parameter values</p></li>
+<li><p>y0 (dict[str, int]): initial values of model-specialized variables or empty dict</p></li>
+<li><p>{metric}: score with the estimated parameter values</p></li>
+<li><p>Runtime (str): runtime of optimization</p></li>
+<li><p>Trials (int): the number of trials</p></li>
+</ul>
+</dd>
+</dl>
+</li>
+</ul>
+</dd>
+</dl>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="covsirphy.ode.ode_handler.ODEHandler.estimate_params">
+<code class="sig-name descname"><span class="pre">estimate_params</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">quantiles</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">(0.1,</span> <span class="pre">0.9)</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">check_dict</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">study_dict</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/ode/ode_handler.html#ODEHandler.estimate_params"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#covsirphy.ode.ode_handler.ODEHandler.estimate_params" title="Permalink to this definition">¶</a></dt>
+<dd><p>Estimate ODE parameter values of the all phases to minimize the score of the metric.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>data</strong> (<em>pandas.DataFrame</em>) – <dl class="simple">
+<dt>Index</dt><dd><p>reset index</p>
+</dd>
+<dt>Columns</dt><dd><ul>
+<li><p>Date (pd.Timestamp): Observation date</p></li>
+<li><p>Susceptible(int): the number of susceptible cases</p></li>
+<li><p>Infected (int): the number of currently infected cases</p></li>
+<li><p>Fatal(int): the number of fatal cases</p></li>
+<li><p>Recovered (int): the number of recovered cases</p></li>
+</ul>
+</dd>
+</dl>
+</p></li>
+<li><p><strong>quantiles</strong> (<em>tuple</em><em>(</em><em>int</em><em>, </em><em>int</em><em>)</em>) – quantiles to cut parameter range, like confidence interval</p></li>
+<li><p><strong>check_dict</strong> (<em>dict</em><em>[</em><em>str</em><em>, </em><em>object</em><em>] or </em><em>None</em>) – setting of validation
+- None means {“timeout”: 180, “timeout_interation”: 5, “tail_n”: 4, “allowance”: (0.99, 1.01)}
+- timeout (int): timeout of optimization
+- timeout_iteration (int): timeout of one iteration
+- tail_n (int): the number of iterations to decide whether score did not change for the last iterations
+- allowance (tuple(float, float)): the allowance of the max predicted values</p></li>
+<li><p><strong>study_dict</strong> (<em>dict</em><em>[</em><em>str</em><em>, </em><em>object</em><em>] or </em><em>None</em>) – setting of optimization study
+- None means {“pruner”: “threshold”, “upper”: 0.5, “percentile”: 50, “seed”: 0}
+- pruner (str): kind of pruner (hyperband, median, threshold or percentile)
+- upper (float): works for “threshold” pruner, intermediate score is larger than this value, it prunes
+- percentile (float): works for “Percentile” pruner, the best intermediate value is in the bottom percentile among trials, it prunes</p></li>
+<li><p><strong>kwargs</strong> – we can set arguments directly. E.g. timeout=180 for check_dict={“timeout”: 180,…}</p></li>
+</ul>
+</dd>
+<dt class="field-even">Raises</dt>
+<dd class="field-even"><p><a class="reference internal" href="covsirphy.html#covsirphy.UnExecutedError" title="covsirphy.UnExecutedError"><strong>covsirphy.UnExecutedError</strong></a> – either tau value or phase information was not set</p>
+</dd>
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p><dl class="simple">
+<dt>setting of the phase (key: phase name)</dt><dd><ul class="simple">
+<li><p>start (pandas.Timestamp): start date</p></li>
+<li><p>end (pandas.Timestamp): end date</p></li>
+<li><p>param (dict(str, float)): dictionary of estimated parameter values</p></li>
+<li><p>y0 (dict[str, int]): initial values of model-specialized variables or empty dict</p></li>
+<li><p>{metric}: score with the estimated parameter values</p></li>
+<li><p>Runtime (str): runtime of optimization</p></li>
+<li><p>Trials (int): the number of trials</p></li>
+</ul>
+</dd>
+</dl>
+</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>dict(str, object)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="covsirphy.ode.ode_handler.ODEHandler.estimate_tau">
+<code class="sig-name descname"><span class="pre">estimate_tau</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/ode/ode_handler.html#ODEHandler.estimate_tau"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#covsirphy.ode.ode_handler.ODEHandler.estimate_tau" title="Permalink to this definition">¶</a></dt>
+<dd><p>Select tau value [min] which minimize the score of the metric.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>data</strong> (<em>pandas.DataFrame</em>) – <dl class="simple">
 <dt>Index</dt><dd><p>reset index</p>
 </dd>
 <dt>Columns</dt><dd><ul class="simple">
@@ -527,8 +762,48 @@ and saved in t column.</p>
 </dl>
 </p>
 </dd>
-<dt class="field-even">Return type</dt>
-<dd class="field-even"><p>pandas.DataFrame</p>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>estimated tau value [min]</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>int</p>
+</dd>
+<dt class="field-even">Raises</dt>
+<dd class="field-even"><p><a class="reference internal" href="covsirphy.html#covsirphy.UnExecutedError" title="covsirphy.UnExecutedError"><strong>covsirphy.UnExecutedError</strong></a> – phase information was not set</p>
+</dd>
+</dl>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>ODE parameter for each tau value will be guessed by .guess() classmethod of the model.
+Tau value will be selected from the divisors of 1440 [min] and set to self.</p>
+</div>
+</dd></dl>
+
+<dl class="py method">
+<dt id="covsirphy.ode.ode_handler.ODEHandler.simulate">
+<code class="sig-name descname"><span class="pre">simulate</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/ode/ode_handler.html#ODEHandler.simulate"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#covsirphy.ode.ode_handler.ODEHandler.simulate" title="Permalink to this definition">¶</a></dt>
+<dd><p>Perform simulation with the multi-phased ODE model.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Raises</dt>
+<dd class="field-odd"><p><a class="reference internal" href="covsirphy.html#covsirphy.UnExecutedError" title="covsirphy.UnExecutedError"><strong>covsirphy.UnExecutedError</strong></a> – either tau value or phase information was not set</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><dl class="simple">
+<dt>Index</dt><dd><p>reset index</p>
+</dd>
+<dt>Columns</dt><dd><ul class="simple">
+<li><p>Date (pd.Timestamp): Observation date</p></li>
+<li><p>Susceptible (int): the number of susceptible cases</p></li>
+<li><p>Infected (int): the number of currently infected cases</p></li>
+<li><p>Fatal (int): the number of fatal cases</p></li>
+<li><p>Recovered (int): the number of recovered cases</p></li>
+</ul>
+</dd>
+</dl>
+</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>pandas.DataFrame</p>
 </dd>
 </dl>
 </dd></dl>
@@ -538,6 +813,12 @@ and saved in t column.</p>
 </div>
 <div class="section" id="module-covsirphy.ode.ode_solver">
 <span id="covsirphy-ode-ode-solver-module"></span><h2>covsirphy.ode.ode_solver module<a class="headerlink" href="#module-covsirphy.ode.ode_solver" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="module-covsirphy.ode.ode_solver_multi">
+<span id="covsirphy-ode-ode-solver-multi-module"></span><h2>covsirphy.ode.ode_solver_multi module<a class="headerlink" href="#module-covsirphy.ode.ode_solver_multi" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="module-covsirphy.ode.param_estimator">
+<span id="covsirphy-ode-param-estimator-module"></span><h2>covsirphy.ode.param_estimator module<a class="headerlink" href="#module-covsirphy.ode.param_estimator" title="Permalink to this headline">¶</a></h2>
 </div>
 <div class="section" id="module-covsirphy.ode.sewirf">
 <span id="covsirphy-ode-sewirf-module"></span><h2>covsirphy.ode.sewirf module<a class="headerlink" href="#module-covsirphy.ode.sewirf" title="Permalink to this headline">¶</a></h2>
@@ -607,6 +888,124 @@ and saved in t column.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns</dt>
 <dd class="field-odd"><p>float</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="covsirphy.ode.sewirf.SEWIRF.convert">
+<em class="property"><span class="pre">classmethod</span> </em><code class="sig-name descname"><span class="pre">convert</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tau</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/ode/sewirf.html#SEWIRF.convert"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#covsirphy.ode.sewirf.SEWIRF.convert" title="Permalink to this definition">¶</a></dt>
+<dd><p>Divide dates by tau value [min] and convert variables to model-specialized variables.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>data</strong> (<em>pandas.DataFrame</em>) – <dl class="simple">
+<dt>Index</dt><dd><p>reset index</p>
+</dd>
+<dt>Columns</dt><dd><ul>
+<li><p>Date (pd.Timestamp): Observation date</p></li>
+<li><p>Susceptible(int): the number of susceptible cases</p></li>
+<li><p>Infected (int): the number of currently infected cases</p></li>
+<li><p>Fatal(int): the number of fatal cases</p></li>
+<li><p>Recovered (int): the number of recovered cases</p></li>
+</ul>
+</dd>
+</dl>
+</p></li>
+<li><p><strong>tau</strong> (<em>int</em>) – tau value [min]</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><dl class="simple">
+<dt>Index</dt><dd><p>time steps: Dates divided by tau value</p>
+</dd>
+<dt>Columns</dt><dd><ul class="simple">
+<li><p>Susceptible (int): the number of susceptible cases</p></li>
+<li><p>Exposed (int): 0</p></li>
+<li><p>Waiting (int): 0</p></li>
+<li><p>Infected (int): the number of currently infected cases</p></li>
+<li><p>Recovered (int): the number of recovered cases</p></li>
+<li><p>Fatal (int): the number of fatal cases</p></li>
+</ul>
+</dd>
+</dl>
+</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>pandas.DataFrame</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="covsirphy.ode.sewirf.SEWIRF.convert_reverse">
+<em class="property"><span class="pre">classmethod</span> </em><code class="sig-name descname"><span class="pre">convert_reverse</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">converted_df</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">start</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tau</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/ode/sewirf.html#SEWIRF.convert_reverse"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#covsirphy.ode.sewirf.SEWIRF.convert_reverse" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculate date with tau and start date, and restore Susceptible/Infected/Fatal/Recovered.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>converted_df</strong> (<em>pandas.DataFrame</em>) – <dl class="simple">
+<dt>Index</dt><dd><p>time steps: Dates divided by tau value</p>
+</dd>
+<dt>Columns</dt><dd><ul>
+<li><p>Susceptible (int): the number of susceptible cases</p></li>
+<li><p>Exposed (int): exposed and in latent period (without infectivity)</p></li>
+<li><p>Waiting (int): waiting for confirmaion diagnosis (with infectivity)</p></li>
+<li><p>Infected (int): the number of currently infected cases</p></li>
+<li><p>Recovered (int): the number of recovered cases</p></li>
+<li><p>Fatal (int): the number of fatal cases</p></li>
+</ul>
+</dd>
+</dl>
+</p></li>
+<li><p><strong>start</strong> (<em>pd.Timestamp</em>) – start date of simulation, like 14Apr2021</p></li>
+<li><p><strong>tau</strong> (<em>int</em>) – tau value [min]</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><dl class="simple">
+<dt>Index</dt><dd><p>reset index</p>
+</dd>
+<dt>Columns</dt><dd><ul class="simple">
+<li><p>Date (pd.Timestamp): Observation date</p></li>
+<li><p>Susceptible(int): the number of susceptible cases</p></li>
+<li><p>Infected (int): the number of currently infected cases</p></li>
+<li><p>Fatal(int): the number of fatal cases</p></li>
+<li><p>Recovered (int): the number of recovered cases</p></li>
+</ul>
+</dd>
+</dl>
+</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>pandas.DataFrame</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="covsirphy.ode.sewirf.SEWIRF.guess">
+<em class="property"><span class="pre">classmethod</span> </em><code class="sig-name descname"><span class="pre">guess</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tau</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/ode/sewirf.html#SEWIRF.guess"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#covsirphy.ode.sewirf.SEWIRF.guess" title="Permalink to this definition">¶</a></dt>
+<dd><p>With (X, dX/dt) for X=S, I, R and so on, guess parameter values.
+This is not implemented for SEWIR-F model.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>data</strong> (<em>pandas.DataFrame</em>) – <dl class="simple">
+<dt>Index</dt><dd><p>reset index</p>
+</dd>
+<dt>Columns</dt><dd><ul>
+<li><p>Date (pd.Timestamp): Observation date</p></li>
+<li><p>Susceptible(int): the number of susceptible cases</p></li>
+<li><p>Infected (int): the number of currently infected cases</p></li>
+<li><p>Fatal(int): the number of fatal cases</p></li>
+<li><p>Recovered (int): the number of recovered cases</p></li>
+</ul>
+</dd>
+</dl>
+</p></li>
+<li><p><strong>tau</strong> (<em>int</em>) – tau value [min]</p></li>
+</ul>
 </dd>
 </dl>
 </dd></dl>
@@ -819,6 +1218,129 @@ and saved in t column.</p>
 </dd></dl>
 
 <dl class="py method">
+<dt id="covsirphy.ode.sir.SIR.convert">
+<em class="property"><span class="pre">classmethod</span> </em><code class="sig-name descname"><span class="pre">convert</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tau</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/ode/sir.html#SIR.convert"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#covsirphy.ode.sir.SIR.convert" title="Permalink to this definition">¶</a></dt>
+<dd><p>Divide dates by tau value [min] and convert variables to model-specialized variables.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>data</strong> (<em>pandas.DataFrame</em>) – <dl class="simple">
+<dt>Index</dt><dd><p>reset index</p>
+</dd>
+<dt>Columns</dt><dd><ul>
+<li><p>Date (pd.Timestamp): Observation date</p></li>
+<li><p>Susceptible(int): the number of susceptible cases</p></li>
+<li><p>Infected (int): the number of currently infected cases</p></li>
+<li><p>Fatal(int): the number of fatal cases</p></li>
+<li><p>Recovered (int): the number of recovered cases</p></li>
+</ul>
+</dd>
+</dl>
+</p></li>
+<li><p><strong>tau</strong> (<em>int</em>) – tau value [min]</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><dl class="simple">
+<dt>Index</dt><dd><p>t: Dates divided by tau value (time steps)</p>
+</dd>
+<dt>Columns</dt><dd><ul class="simple">
+<li><p>Susceptible (int): the number of susceptible cases</p></li>
+<li><p>Infected (int): the number of currently infected cases</p></li>
+<li><p>Fatal or Recovered (int): the number of fatal/recovered cases</p></li>
+</ul>
+</dd>
+</dl>
+</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>pandas.DataFrame</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="covsirphy.ode.sir.SIR.convert_reverse">
+<em class="property"><span class="pre">classmethod</span> </em><code class="sig-name descname"><span class="pre">convert_reverse</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">converted_df</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">start</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tau</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/ode/sir.html#SIR.convert_reverse"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#covsirphy.ode.sir.SIR.convert_reverse" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculate date with tau and start date, and restore Susceptible/Infected/”Fatal or Recovered”.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>converted_df</strong> (<em>pandas.DataFrame</em>) – <dl class="simple">
+<dt>Index</dt><dd><p>t: Dates divided by tau value (time steps)</p>
+</dd>
+<dt>Columns</dt><dd><ul>
+<li><p>Susceptible (int): the number of susceptible cases</p></li>
+<li><p>Infected (int): the number of currently infected cases</p></li>
+<li><p>Fatal or Recovered (int): the number of fatal/recovered cases</p></li>
+</ul>
+</dd>
+</dl>
+</p></li>
+<li><p><strong>start</strong> (<em>pd.Timestamp</em>) – start date of simulation, like 14Apr2021</p></li>
+<li><p><strong>tau</strong> (<em>int</em>) – tau value [min]</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><dl class="simple">
+<dt>Index</dt><dd><p>reset index</p>
+</dd>
+<dt>Columns</dt><dd><ul class="simple">
+<li><p>Date (pd.Timestamp): Observation date</p></li>
+<li><p>Susceptible(int): the number of susceptible cases</p></li>
+<li><p>Infected (int): the number of currently infected cases</p></li>
+<li><p>Fatal(int): the number of fatal cases</p></li>
+<li><p>Recovered (int): the number of recovered cases</p></li>
+</ul>
+</dd>
+</dl>
+</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>pandas.DataFrame</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="covsirphy.ode.sir.SIR.guess">
+<em class="property"><span class="pre">classmethod</span> </em><code class="sig-name descname"><span class="pre">guess</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tau</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/ode/sir.html#SIR.guess"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#covsirphy.ode.sir.SIR.guess" title="Permalink to this definition">¶</a></dt>
+<dd><p>With (X, dX/dt) for X=S, I, R, guess parameter values.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>data</strong> (<em>pandas.DataFrame</em>) – <dl class="simple">
+<dt>Index</dt><dd><p>reset index</p>
+</dd>
+<dt>Columns</dt><dd><ul>
+<li><p>Date (pd.Timestamp): Observation date</p></li>
+<li><p>Susceptible(int): the number of susceptible cases</p></li>
+<li><p>Infected (int): the number of currently infected cases</p></li>
+<li><p>Fatal(int): the number of fatal cases</p></li>
+<li><p>Recovered (int): the number of recovered cases</p></li>
+</ul>
+</dd>
+</dl>
+</p></li>
+<li><p><strong>tau</strong> (<em>int</em>) – tau value [min]</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>guessed parameter values</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>dict(str, float)</p>
+</dd>
+</dl>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>We can guess parameter values as follows. Median will be calculated.
+- rho = - n * (dS/dt) / S / I
+- sigma = (dR/dt) / I</p>
+</div>
+</dd></dl>
+
+<dl class="py method">
 <dt id="covsirphy.ode.sir.SIR.param_range">
 <em class="property"><span class="pre">classmethod</span> </em><code class="sig-name descname"><span class="pre">param_range</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">taufree_df</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">population</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">quantiles</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">(0.1,</span> <span class="pre">0.9)</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/ode/sir.html#SIR.param_range"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#covsirphy.ode.sir.SIR.param_range" title="Permalink to this definition">¶</a></dt>
 <dd><p>Define the value range of ODE parameters using (X, dX/dt) points.
@@ -1021,6 +1543,132 @@ In SIR model, X is S, I and R here.</p>
 </dd></dl>
 
 <dl class="py method">
+<dt id="covsirphy.ode.sird.SIRD.convert">
+<em class="property"><span class="pre">classmethod</span> </em><code class="sig-name descname"><span class="pre">convert</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tau</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/ode/sird.html#SIRD.convert"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#covsirphy.ode.sird.SIRD.convert" title="Permalink to this definition">¶</a></dt>
+<dd><p>Divide dates by tau value [min] and convert variables to model-specialized variables.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>data</strong> (<em>pandas.DataFrame</em>) – <dl class="simple">
+<dt>Index</dt><dd><p>reset index</p>
+</dd>
+<dt>Columns</dt><dd><ul>
+<li><p>Date (pd.Timestamp): Observation date</p></li>
+<li><p>Susceptible(int): the number of susceptible cases</p></li>
+<li><p>Infected (int): the number of currently infected cases</p></li>
+<li><p>Fatal(int): the number of fatal cases</p></li>
+<li><p>Recovered (int): the number of recovered cases</p></li>
+</ul>
+</dd>
+</dl>
+</p></li>
+<li><p><strong>tau</strong> (<em>int</em>) – tau value [min]</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><dl class="simple">
+<dt>Index</dt><dd><p>t: Dates divided by tau value (time steps)</p>
+</dd>
+<dt>Columns</dt><dd><ul class="simple">
+<li><p>Susceptible (int): the number of susceptible cases</p></li>
+<li><p>Infected (int): the number of currently infected cases</p></li>
+<li><p>Recovered (int): the number of recovered cases</p></li>
+<li><p>Fatal (int): the number of fatal cases</p></li>
+</ul>
+</dd>
+</dl>
+</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>pandas.DataFrame</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="covsirphy.ode.sird.SIRD.convert_reverse">
+<em class="property"><span class="pre">classmethod</span> </em><code class="sig-name descname"><span class="pre">convert_reverse</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">converted_df</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">start</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tau</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/ode/sird.html#SIRD.convert_reverse"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#covsirphy.ode.sird.SIRD.convert_reverse" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculate date with tau and start date, and restore Susceptible/Infected/Fatal/Recovered.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>converted_df</strong> (<em>pandas.DataFrame</em>) – <dl class="simple">
+<dt>Index</dt><dd><p>t: Dates divided by tau value (time steps)</p>
+</dd>
+<dt>Columns</dt><dd><ul>
+<li><p>Susceptible (int): the number of susceptible cases</p></li>
+<li><p>Infected (int): the number of currently infected cases</p></li>
+<li><p>Recovered (int): the number of recovered cases</p></li>
+<li><p>Fatal (int): the number of fatal cases</p></li>
+</ul>
+</dd>
+</dl>
+</p></li>
+<li><p><strong>start</strong> (<em>pd.Timestamp</em>) – start date of simulation, like 14Apr2021</p></li>
+<li><p><strong>tau</strong> (<em>int</em>) – tau value [min]</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><dl class="simple">
+<dt>Index</dt><dd><p>reset index</p>
+</dd>
+<dt>Columns</dt><dd><ul class="simple">
+<li><p>Date (pd.Timestamp): Observation date</p></li>
+<li><p>Susceptible(int): the number of susceptible cases</p></li>
+<li><p>Infected (int): the number of currently infected cases</p></li>
+<li><p>Fatal(int): the number of fatal cases</p></li>
+<li><p>Recovered (int): the number of recovered cases</p></li>
+</ul>
+</dd>
+</dl>
+</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>pandas.DataFrame</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="covsirphy.ode.sird.SIRD.guess">
+<em class="property"><span class="pre">classmethod</span> </em><code class="sig-name descname"><span class="pre">guess</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tau</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/ode/sird.html#SIRD.guess"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#covsirphy.ode.sird.SIRD.guess" title="Permalink to this definition">¶</a></dt>
+<dd><p>With (X, dX/dt) for X=S, I, R, D, guess parameter values.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>data</strong> (<em>pandas.DataFrame</em>) – <dl class="simple">
+<dt>Index</dt><dd><p>reset index</p>
+</dd>
+<dt>Columns</dt><dd><ul>
+<li><p>Date (pd.Timestamp): Observation date</p></li>
+<li><p>Susceptible(int): the number of susceptible cases</p></li>
+<li><p>Infected (int): the number of currently infected cases</p></li>
+<li><p>Fatal(int): the number of fatal cases</p></li>
+<li><p>Recovered (int): the number of recovered cases</p></li>
+</ul>
+</dd>
+</dl>
+</p></li>
+<li><p><strong>tau</strong> (<em>int</em>) – tau value [min]</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>guessed parameter values</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>dict(str, float)</p>
+</dd>
+</dl>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>We can guess parameter values as follows. Median will be calculated.
+- kappa = (dD/dt) / I
+- rho = - n * (dS/dt) / S / I
+- sigma = (dR/dt) / I</p>
+</div>
+</dd></dl>
+
+<dl class="py method">
 <dt id="covsirphy.ode.sird.SIRD.param_range">
 <em class="property"><span class="pre">classmethod</span> </em><code class="sig-name descname"><span class="pre">param_range</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">taufree_df</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">population</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">quantiles</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">(0.1,</span> <span class="pre">0.9)</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/ode/sird.html#SIRD.param_range"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#covsirphy.ode.sird.SIRD.param_range" title="Permalink to this definition">¶</a></dt>
 <dd><p>Define the value range of ODE parameters using (X, dX/dt) points.
@@ -1218,6 +1866,132 @@ In SIR model, X is S, I, R, D here.</p>
 <dd class="field-odd"><p>float</p>
 </dd>
 </dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="covsirphy.ode.sirf.SIRF.convert">
+<em class="property"><span class="pre">classmethod</span> </em><code class="sig-name descname"><span class="pre">convert</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tau</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/ode/sirf.html#SIRF.convert"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#covsirphy.ode.sirf.SIRF.convert" title="Permalink to this definition">¶</a></dt>
+<dd><p>Divide dates by tau value [min] and convert variables to model-specialized variables.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>data</strong> (<em>pandas.DataFrame</em>) – <dl class="simple">
+<dt>Index</dt><dd><p>reset index</p>
+</dd>
+<dt>Columns</dt><dd><ul>
+<li><p>Date (pd.Timestamp): Observation date</p></li>
+<li><p>Susceptible(int): the number of susceptible cases</p></li>
+<li><p>Infected (int): the number of currently infected cases</p></li>
+<li><p>Fatal(int): the number of fatal cases</p></li>
+<li><p>Recovered (int): the number of recovered cases</p></li>
+</ul>
+</dd>
+</dl>
+</p></li>
+<li><p><strong>tau</strong> (<em>int</em>) – tau value [min]</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><dl class="simple">
+<dt>Index</dt><dd><p>t: Dates divided by tau value (time steps)</p>
+</dd>
+<dt>Columns</dt><dd><ul class="simple">
+<li><p>Susceptible (int): the number of susceptible cases</p></li>
+<li><p>Infected (int): the number of currently infected cases</p></li>
+<li><p>Recovered (int): the number of recovered cases</p></li>
+<li><p>Fatal (int): the number of fatal cases</p></li>
+</ul>
+</dd>
+</dl>
+</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>pandas.DataFrame</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="covsirphy.ode.sirf.SIRF.convert_reverse">
+<em class="property"><span class="pre">classmethod</span> </em><code class="sig-name descname"><span class="pre">convert_reverse</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">converted_df</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">start</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tau</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/ode/sirf.html#SIRF.convert_reverse"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#covsirphy.ode.sirf.SIRF.convert_reverse" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculate date with tau and start date, and restore Susceptible/Infected/Fatal/Recovered.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>converted_df</strong> (<em>pandas.DataFrame</em>) – <dl class="simple">
+<dt>Index</dt><dd><p>t: Dates divided by tau value (time steps)</p>
+</dd>
+<dt>Columns</dt><dd><ul>
+<li><p>Susceptible (int): the number of susceptible cases</p></li>
+<li><p>Infected (int): the number of currently infected cases</p></li>
+<li><p>Recovered (int): the number of recovered cases</p></li>
+<li><p>Fatal (int): the number of fatal cases</p></li>
+</ul>
+</dd>
+</dl>
+</p></li>
+<li><p><strong>start</strong> (<em>pd.Timestamp</em>) – start date of simulation, like 14Apr2021</p></li>
+<li><p><strong>tau</strong> (<em>int</em>) – tau value [min]</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><dl class="simple">
+<dt>Index</dt><dd><p>reset index</p>
+</dd>
+<dt>Columns</dt><dd><ul class="simple">
+<li><p>Date (pd.Timestamp): Observation date</p></li>
+<li><p>Susceptible(int): the number of susceptible cases</p></li>
+<li><p>Infected (int): the number of currently infected cases</p></li>
+<li><p>Fatal(int): the number of fatal cases</p></li>
+<li><p>Recovered (int): the number of recovered cases</p></li>
+</ul>
+</dd>
+</dl>
+</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>pandas.DataFrame</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="covsirphy.ode.sirf.SIRF.guess">
+<em class="property"><span class="pre">classmethod</span> </em><code class="sig-name descname"><span class="pre">guess</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tau</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/ode/sirf.html#SIRF.guess"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#covsirphy.ode.sirf.SIRF.guess" title="Permalink to this definition">¶</a></dt>
+<dd><p>With (X, dX/dt) for X=S, I, R, F, guess parameter values.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>data</strong> (<em>pandas.DataFrame</em>) – <dl class="simple">
+<dt>Index</dt><dd><p>reset index</p>
+</dd>
+<dt>Columns</dt><dd><ul>
+<li><p>Date (pd.Timestamp): Observation date</p></li>
+<li><p>Susceptible(int): the number of susceptible cases</p></li>
+<li><p>Infected (int): the number of currently infected cases</p></li>
+<li><p>Fatal(int): the number of fatal cases</p></li>
+<li><p>Recovered (int): the number of recovered cases</p></li>
+</ul>
+</dd>
+</dl>
+</p></li>
+<li><p><strong>tau</strong> (<em>int</em>) – tau value [min]</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>guessed parameter values</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>dict(str, float)</p>
+</dd>
+</dl>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>We can guess parameter values as follows. Median will be calculated.
+- kappa = (dF/dt) / I when theta -&gt; 0
+- rho = - n * (dS/dt) / S / I
+- sigma = (dR/dt) / I</p>
+</div>
 </dd></dl>
 
 <dl class="py method">

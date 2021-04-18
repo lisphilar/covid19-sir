@@ -65,7 +65,7 @@
             
             
               <div class="version">
-                2.19.1-alpha
+                2.19.1-beta
               </div>
             
           
@@ -174,7 +174,9 @@
 <span></span><span class="ch">#!/usr/bin/env python</span>
 <span class="c1"># -*- coding: utf-8 -*-</span>
 
+<span class="kn">from</span> <span class="nn">datetime</span> <span class="kn">import</span> <span class="n">timedelta</span>
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
 <span class="kn">from</span> <span class="nn">covsirphy.util.term</span> <span class="kn">import</span> <span class="n">Term</span>
 
 
@@ -388,7 +390,156 @@
         <span class="c1"># Convert to tau-free</span>
         <span class="n">df</span><span class="p">[</span><span class="bp">cls</span><span class="o">.</span><span class="n">TS</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="bp">cls</span><span class="o">.</span><span class="n">T</span><span class="p">]</span> <span class="o">/</span> <span class="n">tau</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">int64</span><span class="p">)</span>
         <span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">drop</span><span class="p">([</span><span class="bp">cls</span><span class="o">.</span><span class="n">T</span><span class="p">,</span> <span class="bp">cls</span><span class="o">.</span><span class="n">DATE</span><span class="p">],</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
-        <span class="k">return</span> <span class="bp">cls</span><span class="o">.</span><span class="n">specialize</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">population</span><span class="p">)</span><span class="o">.</span><span class="n">reset_index</span><span class="p">(</span><span class="n">drop</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span></div></div>
+        <span class="k">return</span> <span class="bp">cls</span><span class="o">.</span><span class="n">specialize</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">population</span><span class="p">)</span><span class="o">.</span><span class="n">reset_index</span><span class="p">(</span><span class="n">drop</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span></div>
+
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">_convert</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">tau</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Divide dates by tau value [min].</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            data (pandas.DataFrame):</span>
+<span class="sd">                Index</span>
+<span class="sd">                    reset index</span>
+<span class="sd">                Columns</span>
+<span class="sd">                    - Date (pd.Timestamp): Observation date</span>
+<span class="sd">                    - Susceptible(int): the number of susceptible cases</span>
+<span class="sd">                    - Infected (int): the number of currently infected cases</span>
+<span class="sd">                    - Fatal(int): the number of fatal cases</span>
+<span class="sd">                    - Recovered (int): the number of recovered cases</span>
+<span class="sd">            tau (int): tau value [min]</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            pandas.DataFrame:</span>
+<span class="sd">                Index</span>
+<span class="sd">                    t: Dates divided by tau value (time steps)</span>
+<span class="sd">                Columns</span>
+<span class="sd">                    - Susceptible(int): the number of susceptible cases</span>
+<span class="sd">                    - Infected (int): the number of currently infected cases</span>
+<span class="sd">                    - Fatal(int): the number of fatal cases</span>
+<span class="sd">                    - Recovered (int): the number of recovered cases</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Convert to tau-free</span>
+        <span class="n">tau</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_ensure_tau</span><span class="p">(</span><span class="n">tau</span><span class="p">,</span> <span class="n">accept_none</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+        <span class="n">df</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_ensure_dataframe</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;data&quot;</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="bp">cls</span><span class="o">.</span><span class="n">DSIFR_COLUMNS</span><span class="p">)</span>
+        <span class="n">time_series</span> <span class="o">=</span> <span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="bp">cls</span><span class="o">.</span><span class="n">DATE</span><span class="p">]</span> <span class="o">-</span> <span class="n">df</span><span class="p">[</span><span class="bp">cls</span><span class="o">.</span><span class="n">DATE</span><span class="p">]</span><span class="o">.</span><span class="n">min</span><span class="p">())</span><span class="o">.</span><span class="n">dt</span><span class="o">.</span><span class="n">total_seconds</span><span class="p">()</span> <span class="o">//</span> <span class="mi">60</span>
+        <span class="n">df</span><span class="o">.</span><span class="n">index</span> <span class="o">=</span> <span class="p">(</span><span class="n">time_series</span> <span class="o">/</span> <span class="n">tau</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">int64</span><span class="p">)</span>
+        <span class="n">df</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">TS</span>
+        <span class="k">return</span> <span class="n">df</span><span class="o">.</span><span class="n">drop</span><span class="p">(</span><span class="bp">cls</span><span class="o">.</span><span class="n">DATE</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">_convert_reverse</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">converted_df</span><span class="p">,</span> <span class="n">start</span><span class="p">,</span> <span class="n">tau</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Calculate date with tau and start date.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            converted_df (pandas.DataFrame):</span>
+<span class="sd">                Index</span>
+<span class="sd">                    t: Dates divided by tau value (time steps)</span>
+<span class="sd">                Columns</span>
+<span class="sd">                    - Susceptible (int): the number of susceptible cases</span>
+<span class="sd">                    - Infected (int): the number of currently infected cases</span>
+<span class="sd">                    - Fatal or Recovered (int): the number of fatal/recovered cases</span>
+<span class="sd">            start (pd.Timestamp): start date of simulation, like 14Apr2021</span>
+<span class="sd">            tau (int): tau value [min]</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            pandas.DataFrame:</span>
+<span class="sd">                Index</span>
+<span class="sd">                    reset index</span>
+<span class="sd">                Columns</span>
+<span class="sd">                    - Date (pd.Timestamp): Observation date</span>
+<span class="sd">                    - Susceptible(int): the number of susceptible cases</span>
+<span class="sd">                    - Infected (int): the number of currently infected cases</span>
+<span class="sd">                    - Fatal(int): the number of fatal cases</span>
+<span class="sd">                    - Recovered (int): the number of recovered cases</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">df</span> <span class="o">=</span> <span class="n">converted_df</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+        <span class="c1"># Calculate date with tau and start date</span>
+        <span class="n">tau</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_ensure_tau</span><span class="p">(</span><span class="n">tau</span><span class="p">,</span> <span class="n">accept_none</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+        <span class="n">elapsed</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">(</span><span class="n">df</span><span class="o">.</span><span class="n">index</span> <span class="o">*</span> <span class="n">tau</span><span class="p">)</span>
+        <span class="n">df</span><span class="p">[</span><span class="bp">cls</span><span class="o">.</span><span class="n">DATE</span><span class="p">]</span> <span class="o">=</span> <span class="n">start</span> <span class="o">+</span> <span class="n">elapsed</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">timedelta</span><span class="p">(</span><span class="n">minutes</span><span class="o">=</span><span class="n">x</span><span class="p">))</span>
+        <span class="c1"># Select the last records for dates</span>
+        <span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">set_index</span><span class="p">(</span><span class="bp">cls</span><span class="o">.</span><span class="n">DATE</span><span class="p">)</span><span class="o">.</span><span class="n">resample</span><span class="p">(</span><span class="s2">&quot;D&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">last</span><span class="p">()</span><span class="o">.</span><span class="n">reset_index</span><span class="p">()</span>
+        <span class="k">return</span> <span class="n">df</span>
+
+<div class="viewcode-block" id="ModelBase.convert"><a class="viewcode-back" href="../../../covsirphy.ode.html#covsirphy.ModelBase.convert">[docs]</a>    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">convert</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">tau</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Divide dates by tau value [min] and convert variables to model-specialized variables.</span>
+<span class="sd">        This will be overwitten by child classes.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            data (pandas.DataFrame):</span>
+<span class="sd">                Index</span>
+<span class="sd">                    reset index</span>
+<span class="sd">                Columns</span>
+<span class="sd">                    - Date (pd.Timestamp): Observation date</span>
+<span class="sd">                    - Susceptible(int): the number of susceptible cases</span>
+<span class="sd">                    - Infected (int): the number of currently infected cases</span>
+<span class="sd">                    - Fatal(int): the number of fatal cases</span>
+<span class="sd">                    - Recovered (int): the number of recovered cases</span>
+<span class="sd">            tau (int): tau value [min]</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            pandas.DataFrame:</span>
+<span class="sd">                Index</span>
+<span class="sd">                    time steps: Dates divided by tau value</span>
+<span class="sd">                Columns</span>
+<span class="sd">                    - model-specialized variables</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span></div>
+
+<div class="viewcode-block" id="ModelBase.convert_reverse"><a class="viewcode-back" href="../../../covsirphy.ode.html#covsirphy.ModelBase.convert_reverse">[docs]</a>    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">convert_reverse</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">converted_df</span><span class="p">,</span> <span class="n">start</span><span class="p">,</span> <span class="n">tau</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Calculate date with tau and start date, and restore Susceptible/Infected/&quot;Fatal or Recovered&quot;.</span>
+<span class="sd">        This will be overwitten by child classes.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            converted_df (pandas.DataFrame):</span>
+<span class="sd">                Index</span>
+<span class="sd">                    time steps: Dates divided by tau value</span>
+<span class="sd">                Columns</span>
+<span class="sd">                    - model-specialized variables</span>
+<span class="sd">            start (pd.Timestamp): start date of simulation, like 14Apr2021</span>
+<span class="sd">            tau (int): tau value [min]</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            pandas.DataFrame:</span>
+<span class="sd">                Index</span>
+<span class="sd">                    reset index</span>
+<span class="sd">                Columns</span>
+<span class="sd">                    - Date (pd.Timestamp): Observation date</span>
+<span class="sd">                    - Susceptible(int): the number of susceptible cases</span>
+<span class="sd">                    - Infected (int): the number of currently infected cases</span>
+<span class="sd">                    - Fatal(int): the number of fatal cases</span>
+<span class="sd">                    - Recovered (int): the number of recovered cases</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span></div>
+
+<div class="viewcode-block" id="ModelBase.guess"><a class="viewcode-back" href="../../../covsirphy.ode.html#covsirphy.ModelBase.guess">[docs]</a>    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">guess</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">tau</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        With (X, dX/dt) for X=S, I, R and so on, guess parameter values.</span>
+<span class="sd">        This will be overwitten by child classes.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            data (pandas.DataFrame):</span>
+<span class="sd">                Index</span>
+<span class="sd">                    reset index</span>
+<span class="sd">                Columns</span>
+<span class="sd">                    - Date (pd.Timestamp): Observation date</span>
+<span class="sd">                    - Susceptible(int): the number of susceptible cases</span>
+<span class="sd">                    - Infected (int): the number of currently infected cases</span>
+<span class="sd">                    - Fatal(int): the number of fatal cases</span>
+<span class="sd">                    - Recovered (int): the number of recovered cases</span>
+<span class="sd">            tau (int): tau value [min]</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            dict(str, float): guessed parameter values</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span></div></div>
 </pre></div>
 
            </div>
