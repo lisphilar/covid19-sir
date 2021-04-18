@@ -3,6 +3,7 @@
 
 import math
 import optuna
+from covsirphy.util.argument import find_args
 from covsirphy.util.evaluator import Evaluator
 from covsirphy.util.stopwatch import StopWatch
 from covsirphy.util.term import Term
@@ -49,14 +50,14 @@ class _ParamEstimator(Term):
         # Max values of the variables
         self._max_dict = {v: df[v].max() for v in model.VARIABLES}
 
-    def run(self, time_limits=(180, 5), check_dict={"tail_n": 4, "allowance": (0.99, 1.01)},
-            study_dict={"pruner": "threshold", "upper": 0.5, "percentile": 50, "seed": 0}):
+    def run(self, check_dict, study_dict):
         """
         Perform parameter estimation of the ODE model, not including tau.
 
         Args:
-            time_limits (tuple(int, int)): timeout of optimization and one iteration
             check_dict (dict[str, object]): setting of validation
+                - timeout (int): timeout of optimization
+                - timeout_iteration (int): timeout of one iteration
                 - tail_n (int): the number of iterations to decide whether score did not change for the last iterations
                 - allowance (tuple(float, float)): the allowance of the max predicted values
             study_dict (dict[str, object]): setting of optimization study
@@ -74,11 +75,14 @@ class _ParamEstimator(Term):
         Note:
             Please refer to covsirphy.Evaluator.score() for metric names.
         """
-        timeout, timeout_iteration = time_limits
+        timeout = check_dict.get("timeout", 180)
+        timeout_iteration = check_dict.get("timeout_iteration", 5)
         tail_n = check_dict.get("tail_n", 4)
         allowance = check_dict.get("allowance", (0.99, 1.01))
-        # Start study
-        study = self._init_study(**study_dict)
+        # Initialize optimization
+        study_kwargs = {"pruner": "threshold", "upper": 0.5, "percentile": 50, "seed": 0}
+        study_kwargs.update(study_dict)
+        study = self._init_study(**find_args(self._init_study, **study_kwargs))
         # The number of iterations
         iteration_n = math.ceil(timeout / timeout_iteration)
         stopmatch = StopWatch()
@@ -141,7 +145,7 @@ class _ParamEstimator(Term):
         Returns:
             float: score
         """
-        param_dict = {k: trial.suggest_uniform(trial, k, *v) for (k, v) in self._range_dict.items()}
+        param_dict = {k: trial.suggest_uniform(k, *v) for (k, v) in self._range_dict.items()}
         return self._score(**param_dict)
 
     def _score(self, **kwargs):
@@ -184,5 +188,5 @@ class _ParamEstimator(Term):
         allowance0, allowance1 = allowance
         ok_list = [
             (a * allowance0 <= p) and (p <= a * allowance1)
-            for (a, p) in zip(self._max_dict.keys(), sim_max_dict.keys())]
+            for (a, p) in zip(self._max_dict.values(), sim_max_dict.values())]
         return all(ok_list)
