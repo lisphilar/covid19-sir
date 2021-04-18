@@ -2,6 +2,8 @@
 # -*- coding: utf-8 -*-
 
 from datetime import timedelta
+import functools
+from multiprocessing import cpu_count, Pool
 from covsirphy.util.evaluator import Evaluator
 import itertools
 import pandas as pd
@@ -21,12 +23,14 @@ class ODEHandler(Term):
         start_date (str): start date of simulation, like 14Apr2021
         tau (int or None): tau value [min] or None (to be determined)
         metric (str): metric name for estimation
+        n_jobs (int): the number of parallel jobs or -1 (CPU count)
     """
 
-    def __init__(self, model, start_date, tau=None, metric="RMSLE"):
+    def __init__(self, model, start_date, tau=None, metric="RMSLE", n_jobs=-1):
         self._model = self._ensure_subclass(model, ModelBase, name="model")
         self._start = pd.to_datetime(start_date)
         self._metric = self._ensure_selectable(metric, Evaluator.metrics(), name="metric")
+        self._n_jobs = cpu_count() if n_jobs == -1 else self._ensure_natural_int(n_jobs, name="n_jobs")
         # Tau value [min] or None
         self._tau = self._ensure_tau(tau, accept_none=True)
         # {"0th": output of self.add()}
@@ -91,6 +95,32 @@ class ODEHandler(Term):
         solver = _MultiPhaseODESolver(self._model, self._start, self._tau)
         return solver.simulate(*self._info_dict.values())
 
+    def _score_tau(self, tau, data):
+        """
+        Calculate score for the tau value.
+
+        Args:
+            tau (int): tau value [min]
+            data (pandas.DataFrame):
+                Index
+                    reset index
+                Columns
+                    - Date (pd.Timestamp): Observation date
+                    - Susceptible(int): the number of susceptible cases
+                    - Infected (int): the number of currently infected cases
+                    - Fatal(int): the number of fatal cases
+                    - Recovered (int): the number of recovered cases
+        """
+        info_dict = self._info_dict.copy()
+        for (phase, phase_dict) in info_dict.items():
+            start, end = phase_dict["start"], phase_dict["end"]
+            df = data.loc[(start <= data[self.DATE]) & (data[self.DATE] <= end)]
+            info_dict[phase]["param"] = self._model.guess(df, tau)
+        solver = _MultiPhaseODESolver(self._model, self._start, tau)
+        sim_df = solver.simulate(*info_dict.values())
+        evaluator = Evaluator(data.set_index(self.DATE), sim_df.set_index(self.DATE))
+        return evaluator.score(metric=self._metric)
+
     def estimate_tau(self, data):
         """
         Estimate tau value [min] to minimize the score of the metric.
@@ -120,21 +150,47 @@ class ODEHandler(Term):
         if not self._info_dict:
             raise UnExecutedError("ODEHandler.add()")
         # Calculate scores of tau candidates
-        score_dict = {}
-        for tau in self.divisors(1440):
-            info_dict = self._info_dict.copy()
-            for (phase, phase_dict) in info_dict.items():
-                start, end = phase_dict["start"], phase_dict["end"]
-                df = data.loc[(start <= data[self.DATE]) & (data[self.DATE] <= end)]
-                info_dict[phase]["param"] = self._model.guess(df, tau)
-            solver = _MultiPhaseODESolver(self._model, self._start, tau)
-            sim_df = solver.simulate(*info_dict.values())
-            evaluator = Evaluator(data.set_index(self.DATE), sim_df.set_index(self.DATE))
-            score_dict[tau] = evaluator.score(metric=self._metric)
+        calc_f = functools.partial(self._score_tau, data=data)
+        divisors = self.divisors(1440)
+        with Pool(self._n_jobs) as p:
+            scores = p.map(calc_f, divisors)
+        score_dict = {k: v for (k, v) in zip(divisors, scores)}
         # Return the best tau value
-        score_f = {True: min, False: max}[Evaluator.smaller_is_better(metric=self._metric)]
-        self._tau = score_f(score_dict.items(), key=lambda x: x[1])[0]
+        comp_f = {True: min, False: max}[Evaluator.smaller_is_better(metric=self._metric)]
+        self._tau = comp_f(score_dict.items(), key=lambda x: x[1])[0]
         return self._tau
+
+    def _estimate_params(self, phase, data, quantiles, check_dict, study_dict):
+        """
+        Perform estimation for one phase.
+
+        Args:
+            phase (str): phase name
+            data (pandas.DataFrame):
+                Index
+                    reset index
+                Columns
+                    - Date (pd.Timestamp): Observation date
+                    - Susceptible(int): the number of susceptible cases
+                    - Infected (int): the number of currently infected cases
+                    - Fatal(int): the number of fatal cases
+                    - Recovered (int): the number of recovered cases
+            quantiles (tuple(int, int)): quantiles to cut parameter range, like confidence interval
+            check_dict (dict[str, object]): setting of validation
+            study_dict (dict[str, object]): setting of optimization study
+
+        Returns:
+            dict(str, object):
+                param (dict(str, float)): dictionary of estimated parameter values
+                {metric}: score with the estimated parameter values
+                Runtime (str): runtime of optimization
+                Trials (int): the number of trials
+        """
+        phase_dict = self._info_dict[phase].copy()
+        start, end = phase_dict["start"], phase_dict["end"]
+        df = data.loc[(start <= data[self.DATE]) & (data[self.DATE] <= end)]
+        estimator = _ParamEstimator(self._model, df, self._tau, self._metric, quantiles)
+        return estimator.run(check_dict, study_dict)
 
     def estimate_params(self, data, quantiles=(0.1, 0.9),
                         check_dict={"timeout": 180, "timeout_interation": 5, "tail_n": 4, "allowance": (0.99, 1.01)},
@@ -189,11 +245,14 @@ class ODEHandler(Term):
         check_dict.update(kwargs)
         study_dict.update(kwargs)
         # ODE parameter estimation
-        for (phase, phase_dict) in self._info_dict.items():
-            start, end = phase_dict["start"], phase_dict["end"]
-            df = data.loc[(start <= data[self.DATE]) & (data[self.DATE] <= end)]
-            estimator = _ParamEstimator(self._model, df, self._tau, self._metric, quantiles)
-            self._info_dict[phase].update(estimator.run(check_dict, study_dict))
+        est_f = functools.partial(
+            self._estimate_params, data=data, quantiles=quantiles,
+            check_dict=check_dict, study_dict=study_dict)
+        phases = list(self._info_dict.keys())
+        with Pool(self._n_jobs) as p:
+            est_dict_list = p.map(est_f, phases)
+        for (phase, est_dict) in zip(phases, est_dict_list):
+            self._info_dict[phase].update(est_dict)
         return self._info_dict
 
     def estimate(self, data, **kwargs):
