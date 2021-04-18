@@ -3,7 +3,7 @@
 
 import pandas as pd
 import pytest
-from covsirphy import ExampleData, PopulationData, Term, ModelValidator
+from covsirphy import ExampleData, PopulationData, Term, ModelValidator, UnExecutedError
 from covsirphy import ModelBase, SIR, SIRD, SIRF, SIRFV, SEWIRF, ODEHandler
 
 
@@ -22,21 +22,43 @@ class TestODEHandler(object):
         assert sim_df.index.max() == pd.to_datetime("28Feb2021")
         assert set(sim_df.reset_index().columns) == set(Term.DSIFR_COLUMNS)
 
-    @pytest.mark.parametrize("model", [SIR, SIRD, SIRF])
+    @pytest.mark.parametrize("model", [SIR])
     @pytest.mark.parametrize("start_date", ["01Jan2021"])
     @pytest.mark.parametrize("tau", [720])
-    def test_estimate_example(self, model, start_date, tau):
-        # Simulation
+    def test_simulate_error(self, model, start_date, tau):
+        y0_dict = model.EXAMPLE["y0_dict"]
+        handler = ODEHandler(model, start_date, tau)
+        with pytest.raises(UnExecutedError):
+            handler.simulate()
+        with pytest.raises(ValueError):
+            handler.add(end_date="31Jan2021", y0_dict=None)
+        handler.add(end_date="31Jan2021", y0_dict=y0_dict, param_dict=None)
+        with pytest.raises(ValueError):
+            handler.simulate()
+
+    @pytest.mark.parametrize("model", [SIR, SIRD, SIRF])
+    @pytest.mark.parametrize("start_date", ["01Jan2021"])
+    @pytest.mark.parametrize("tau", [720, 1440])
+    def test_estimate_tau(self, model, start_date, tau):
+        # Create simulated dataset
         y0_dict = model.EXAMPLE["y0_dict"]
         param_dict = model.EXAMPLE["param_dict"]
         sim_handler = ODEHandler(model, start_date, tau)
         sim_handler.add(end_date="31Jan2021", y0_dict=y0_dict, param_dict=param_dict)
-        # sim_handler.add(end_date="28Feb2021", y0_dict=None, param_dict=param_dict)
+        sim_handler.add(end_date="28Feb2021", y0_dict=None, param_dict=param_dict)
         sim_df = sim_handler.simulate()
-        # Parameter estimation
-        handler = ODEHandler(model, start_date, tau)
-        print(handler.estimate_parameters(sim_df, metric="RMSLE"))
-        raise NotImplementedError
+        # Set-up handler
+        handler = ODEHandler(model=model, start_date=start_date, tau=None)
+        with pytest.raises(UnExecutedError):
+            handler.estimate_tau(sim_df)
+        handler.add(end_date="31Jan2021", y0_dict=y0_dict)
+        handler.add(end_date="28Feb2021")
+        # Simulation needs tau setting
+        with pytest.raises(UnExecutedError):
+            handler.simulate()
+        # Estimate tau value
+        tau_est = handler.estimate_tau(sim_df, metric="RMSLE")
+        assert isinstance(tau_est, int)
 
 
 class TestODE(object):
