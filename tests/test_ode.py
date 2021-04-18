@@ -39,7 +39,8 @@ class TestODEHandler(object):
     @pytest.mark.parametrize("model", [SIR, SIRD, SIRF])
     @pytest.mark.parametrize("start_date", ["01Jan2021"])
     @pytest.mark.parametrize("tau", [720])
-    def test_estimate(self, model, start_date, tau):
+    @pytest.mark.parametrize("n_jobs", [-1, 1])
+    def test_estimate(self, model, start_date, tau, n_jobs):
         # Create simulated dataset
         y0_dict = model.EXAMPLE["y0_dict"]
         param_dict = model.EXAMPLE["param_dict"]
@@ -48,7 +49,7 @@ class TestODEHandler(object):
         sim_handler.add(end_date="28Feb2021", y0_dict=None, param_dict=param_dict)
         sim_df = sim_handler.simulate()
         # Set-up handler
-        handler = ODEHandler(model=model, start_date=start_date, tau=None, metric="RMSLE")
+        handler = ODEHandler(model=model, start_date=start_date, tau=None, metric="RMSLE", n_jobs=n_jobs)
         with pytest.raises(UnExecutedError):
             handler.estimate_tau(sim_df)
         with pytest.raises(UnExecutedError):
@@ -61,7 +62,7 @@ class TestODEHandler(object):
         # Estimate tau and ODE parameters
         with pytest.raises(UnExecutedError):
             handler.estimate_params(sim_df)
-        tau_est, info_dict_est = handler.estimate(sim_df, timeout=10)
+        tau_est, info_dict_est = handler.estimate(sim_df, timeout=5)
         assert isinstance(tau_est, int)
         assert isinstance(info_dict_est, dict)
 
