@@ -149,10 +149,11 @@ class ODEHandler(Term):
             Tau value will be selected from the divisors of 1440 [min] and set to self.
         """
         self._ensure_dataframe(data, name="data", columns=self.DSIFR_COLUMNS)
+        df = data.loc[:, self.DSIFR_COLUMNS]
         if not self._info_dict:
             raise UnExecutedError("ODEHandler.add()")
         # Calculate scores of tau candidates
-        calc_f = functools.partial(self._score_tau, data=data)
+        calc_f = functools.partial(self._score_tau, data=df)
         divisors = self.divisors(1440)
         if self._n_jobs == 1:
             scores = [calc_f(candidate) for candidate in divisors]
@@ -240,6 +241,7 @@ class ODEHandler(Term):
         """
         # Arguments
         self._ensure_dataframe(data, name="data", columns=self.DSIFR_COLUMNS)
+        df = data.loc[:, self.DSIFR_COLUMNS]
         if not self._info_dict:
             raise UnExecutedError("ODEHandler.add()")
         if self._tau is None:
@@ -254,7 +256,7 @@ class ODEHandler(Term):
         study_dict.update(kwargs)
         # ODE parameter estimation
         est_f = functools.partial(
-            self._estimate_params, data=data, quantiles=quantiles,
+            self._estimate_params, data=df, quantiles=quantiles,
             check_dict=check_dict, study_dict=study_dict)
         phases = list(self._info_dict.keys())
         if self._n_jobs == 1:
