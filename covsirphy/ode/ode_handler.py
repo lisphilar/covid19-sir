@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
+from covsirphy.util.stopwatch import StopWatch
 from datetime import timedelta
 import functools
 from multiprocessing import cpu_count, Pool
@@ -196,7 +197,10 @@ class ODEHandler(Term):
         start, end = phase_dict["start"], phase_dict["end"]
         df = data.loc[(start <= data[self.DATE]) & (data[self.DATE] <= end)]
         estimator = _ParamEstimator(self._model, df, self._tau, self._metric, quantiles)
-        return estimator.run(check_dict, study_dict)
+        est_dict = estimator.run(check_dict, study_dict)
+        n_trials, runtime = est_dict[self.TRIALS], est_dict[self.RUNTIME]
+        print(f"\t{phase:>4} phase: finished {n_trials:>4} trials in {runtime}")
+        return est_dict
 
     def estimate_params(self, data, quantiles=(0.1, 0.9), check_dict=None, study_dict=None, **kwargs):
         """
@@ -239,6 +243,9 @@ class ODEHandler(Term):
                 - Runtime (str): runtime of optimization
                 - Trials (int): the number of trials
         """
+        print(f"\n<{self._model.NAME} model: parameter estimation>")
+        print(f"Running optimization with {self._n_jobs} CPUs...")
+        stopwatch = StopWatch()
         # Arguments
         self._ensure_dataframe(data, name="data", columns=self.DSIFR_COLUMNS)
         df = data.loc[:, self.DSIFR_COLUMNS]
@@ -266,6 +273,7 @@ class ODEHandler(Term):
                 est_dict_list = p.map(est_f, phases)
         for (phase, est_dict) in zip(phases, est_dict_list):
             self._info_dict[phase].update(est_dict)
+        print(f"Completed optimization. Total: {stopwatch.stop_show()}")
         return self._info_dict
 
     def estimate(self, data, **kwargs):
