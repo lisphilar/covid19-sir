@@ -103,7 +103,7 @@ class _ParamEstimator(Term):
         return {
             "param": param_dict.copy(),
             self._metric: self._score(**param_dict),
-            self.RUNTIME: stopmatch.stop(),
+            self.RUNTIME: stopmatch.stop_show(),
             self.TRIALS: len(study.trials),
         }
 

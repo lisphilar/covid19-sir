@@ -13,13 +13,13 @@ class _MultiPhaseODESolver(Term):
 
     Args:
         model (covsirphy.ModelBase): ODE model
-        start (pandas.Timestamp): start date of simulation, like 14Apr2021
+        first (pandas.Timestamp): first date of simulation, like 14Apr2021
         tau (int): tau value [min]
     """
 
-    def __init__(self, model, start, tau):
+    def __init__(self, model, first, tau):
         self._model = self._ensure_subclass(model, ModelBase, name="model")
-        self._start = self._ensure_instance(start, pd.Timestamp, name="start")
+        self._first = self._ensure_instance(first, pd.Timestamp, name="first")
         self._tau = self._ensure_tau(tau, accept_none=False)
         # {"0th": output of self.add()}
         self._info_dict = {}
@@ -40,12 +40,12 @@ class _MultiPhaseODESolver(Term):
                 - step_n (int): the number of steps
 
         Note:
-            Internal variable "step_n" means from the start date to the next date of the end date.
+            Internal variable "step_n" means from the first date to the next date of the end date.
         """
         self._ensure_instance(end, pd.Timestamp, name="end")
         phase = self.num2str(len(self._info_dict))
         all_step_n = self.steps(
-            self._start.strftime(self.DATE_FORMAT), end.strftime(self.DATE_FORMAT), tau=self._tau)
+            self._first.strftime(self.DATE_FORMAT), end.strftime(self.DATE_FORMAT), tau=self._tau)
         step_n = all_step_n - sum(phase_dict["step_n"] for phase_dict in self._info_dict.values())
         self._info_dict[phase] = {"param": param_dict, "y0": y0_dict or {}, "step_n": step_n}
         return self._info_dict[phase]
@@ -90,4 +90,4 @@ class _MultiPhaseODESolver(Term):
             dataframes += [solved_df.iloc[1:]] if dataframes else [solved_df]
         # Combine the simulation results
         df = pd.concat(dataframes, ignore_index=True, sort=True)
-        return self._model.convert_reverse(df, start=self._start, tau=self._tau)
+        return self._model.convert_reverse(df, start=self._first, tau=self._tau)

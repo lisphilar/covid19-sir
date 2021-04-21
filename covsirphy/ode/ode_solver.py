@@ -47,7 +47,10 @@ class _ODESolver(Term):
         """
         # Check arguments
         step_n = self._ensure_natural_int(step_n, name="number")
-        y0_dict = self._ensure_kwargs(self._model.VARIABLES, int, **kwargs)
+        try:
+            y0_dict = self._ensure_kwargs(self._model.VARIABLES, int, **kwargs)
+        except TypeError:
+            y0_dict = self._ensure_kwargs(self._model.VARIABLES, np.int64, **kwargs)
         # Calculate population
         population = sum(y0_dict.values())
         # Solve problem

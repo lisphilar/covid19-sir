@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
+from covsirphy.util.stopwatch import StopWatch
 from datetime import timedelta
 import functools
 from multiprocessing import cpu_count, Pool
@@ -20,15 +21,17 @@ class ODEHandler(Term):
 
     Args:
         model (covsirphy.ModelBase): ODE model
-        start_date (str): start date of simulation, like 14Apr2021
+        first_date (str or pandas.Timestamp): the first date of simulation, like 14Apr2021
         tau (int or None): tau value [min] or None (to be determined)
         metric (str): metric name for estimation
         n_jobs (int): the number of parallel jobs or -1 (CPU count)
     """
 
-    def __init__(self, model, start_date, tau=None, metric="RMSLE", n_jobs=-1):
+    def __init__(self, model, first_date, tau=None, metric="RMSLE", n_jobs=-1):
         self._model = self._ensure_subclass(model, ModelBase, name="model")
-        self._start = pd.to_datetime(start_date)
+        self._first = self._ensure_instance(
+            pd.to_datetime(first_date) if isinstance(first_date, str) else first_date,
+            pd.Timestamp, name="first_date")
         self._metric = self._ensure_selectable(metric, Evaluator.metrics(), name="metric")
         self._n_jobs = cpu_count() if n_jobs == -1 else self._ensure_natural_int(n_jobs, name="n_jobs")
         # Tau value [min] or None
@@ -58,7 +61,7 @@ class ODEHandler(Term):
         if self._info_dict:
             start = list(self._info_dict.values())[-1]["end"] + timedelta(days=1)
         else:
-            start = self._start
+            start = self._first
         end = pd.to_datetime(end_date)
         self._info_dict[phase] = {
             "start": start, "end": end, "y0": y0_dict or {}, "param": param_dict or {}}
@@ -92,7 +95,7 @@ class ODEHandler(Term):
         for (param, (phase, phase_dict)) in combs:
             if param not in phase_dict["param"]:
                 raise ValueError(f"{param.capitalize()} is not registered for the {phase} phase.")
-        solver = _MultiPhaseODESolver(self._model, self._start, self._tau)
+        solver = _MultiPhaseODESolver(self._model, self._first, self._tau)
         return solver.simulate(*self._info_dict.values())
 
     def _score_tau(self, tau, data):
@@ -116,7 +119,7 @@ class ODEHandler(Term):
             start, end = phase_dict["start"], phase_dict["end"]
             df = data.loc[(start <= data[self.DATE]) & (data[self.DATE] <= end)]
             info_dict[phase]["param"] = self._model.guess(df, tau)
-        solver = _MultiPhaseODESolver(self._model, self._start, tau)
+        solver = _MultiPhaseODESolver(self._model, self._first, tau)
         sim_df = solver.simulate(*info_dict.values())
         evaluator = Evaluator(data.set_index(self.DATE), sim_df.set_index(self.DATE))
         return evaluator.score(metric=self._metric)
@@ -147,10 +150,11 @@ class ODEHandler(Term):
             Tau value will be selected from the divisors of 1440 [min] and set to self.
         """
         self._ensure_dataframe(data, name="data", columns=self.DSIFR_COLUMNS)
+        df = data.loc[:, self.DSIFR_COLUMNS]
         if not self._info_dict:
             raise UnExecutedError("ODEHandler.add()")
         # Calculate scores of tau candidates
-        calc_f = functools.partial(self._score_tau, data=data)
+        calc_f = functools.partial(self._score_tau, data=df)
         divisors = self.divisors(1440)
         if self._n_jobs == 1:
             scores = [calc_f(candidate) for candidate in divisors]
@@ -193,7 +197,10 @@ class ODEHandler(Term):
         start, end = phase_dict["start"], phase_dict["end"]
         df = data.loc[(start <= data[self.DATE]) & (data[self.DATE] <= end)]
         estimator = _ParamEstimator(self._model, df, self._tau, self._metric, quantiles)
-        return estimator.run(check_dict, study_dict)
+        est_dict = estimator.run(check_dict, study_dict)
+        n_trials, runtime = est_dict[self.TRIALS], est_dict[self.RUNTIME]
+        print(f"\t{phase:>4} phase: finished {n_trials:>4} trials in {runtime}")
+        return est_dict
 
     def estimate_params(self, data, quantiles=(0.1, 0.9), check_dict=None, study_dict=None, **kwargs):
         """
@@ -236,8 +243,12 @@ class ODEHandler(Term):
                 - Runtime (str): runtime of optimization
                 - Trials (int): the number of trials
         """
+        print(f"\n<{self._model.NAME} model: parameter estimation>")
+        print(f"Running optimization with {self._n_jobs} CPUs...")
+        stopwatch = StopWatch()
         # Arguments
         self._ensure_dataframe(data, name="data", columns=self.DSIFR_COLUMNS)
+        df = data.loc[:, self.DSIFR_COLUMNS]
         if not self._info_dict:
             raise UnExecutedError("ODEHandler.add()")
         if self._tau is None:
@@ -252,7 +263,7 @@ class ODEHandler(Term):
         study_dict.update(kwargs)
         # ODE parameter estimation
         est_f = functools.partial(
-            self._estimate_params, data=data, quantiles=quantiles,
+            self._estimate_params, data=df, quantiles=quantiles,
             check_dict=check_dict, study_dict=study_dict)
         phases = list(self._info_dict.keys())
         if self._n_jobs == 1:
@@ -262,6 +273,7 @@ class ODEHandler(Term):
                 est_dict_list = p.map(est_f, phases)
         for (phase, est_dict) in zip(phases, est_dict_list):
             self._info_dict[phase].update(est_dict)
+        print(f"Completed optimization. Total: {stopwatch.stop_show()}")
         return self._info_dict
 
     def estimate(self, data, **kwargs):
