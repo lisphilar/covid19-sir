@@ -20,7 +20,7 @@ class ODEHandler(Term):
 
     Args:
         model (covsirphy.ModelBase): ODE model
-        start_date (str): start date of simulation, like 14Apr2021
+        start_date (str or pandas.Timestamp): start date of simulation, like 14Apr2021
         tau (int or None): tau value [min] or None (to be determined)
         metric (str): metric name for estimation
         n_jobs (int): the number of parallel jobs or -1 (CPU count)
@@ -28,7 +28,9 @@ class ODEHandler(Term):
 
     def __init__(self, model, start_date, tau=None, metric="RMSLE", n_jobs=-1):
         self._model = self._ensure_subclass(model, ModelBase, name="model")
-        self._start = pd.to_datetime(start_date)
+        self._start = self._ensure_instance(
+            pd.to_datetime(start_date) if isinstance(start_date, str) else start_date,
+            pd.Timestamp, name="start_date")
         self._metric = self._ensure_selectable(metric, Evaluator.metrics(), name="metric")
         self._n_jobs = cpu_count() if n_jobs == -1 else self._ensure_natural_int(n_jobs, name="n_jobs")
         # Tau value [min] or None
