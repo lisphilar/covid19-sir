@@ -21,17 +21,17 @@ class ODEHandler(Term):
 
     Args:
         model (covsirphy.ModelBase): ODE model
-        start_date (str or pandas.Timestamp): start date of simulation, like 14Apr2021
+        first_date (str or pandas.Timestamp): the first date of simulation, like 14Apr2021
         tau (int or None): tau value [min] or None (to be determined)
         metric (str): metric name for estimation
         n_jobs (int): the number of parallel jobs or -1 (CPU count)
     """
 
-    def __init__(self, model, start_date, tau=None, metric="RMSLE", n_jobs=-1):
+    def __init__(self, model, first_date, tau=None, metric="RMSLE", n_jobs=-1):
         self._model = self._ensure_subclass(model, ModelBase, name="model")
-        self._start = self._ensure_instance(
-            pd.to_datetime(start_date) if isinstance(start_date, str) else start_date,
-            pd.Timestamp, name="start_date")
+        self._first = self._ensure_instance(
+            pd.to_datetime(first_date) if isinstance(first_date, str) else first_date,
+            pd.Timestamp, name="first_date")
         self._metric = self._ensure_selectable(metric, Evaluator.metrics(), name="metric")
         self._n_jobs = cpu_count() if n_jobs == -1 else self._ensure_natural_int(n_jobs, name="n_jobs")
         # Tau value [min] or None
@@ -61,7 +61,7 @@ class ODEHandler(Term):
         if self._info_dict:
             start = list(self._info_dict.values())[-1]["end"] + timedelta(days=1)
         else:
-            start = self._start
+            start = self._first
         end = pd.to_datetime(end_date)
         self._info_dict[phase] = {
             "start": start, "end": end, "y0": y0_dict or {}, "param": param_dict or {}}
@@ -95,7 +95,7 @@ class ODEHandler(Term):
         for (param, (phase, phase_dict)) in combs:
             if param not in phase_dict["param"]:
                 raise ValueError(f"{param.capitalize()} is not registered for the {phase} phase.")
-        solver = _MultiPhaseODESolver(self._model, self._start, self._tau)
+        solver = _MultiPhaseODESolver(self._model, self._first, self._tau)
         return solver.simulate(*self._info_dict.values())
 
     def _score_tau(self, tau, data):
@@ -119,7 +119,7 @@ class ODEHandler(Term):
             start, end = phase_dict["start"], phase_dict["end"]
             df = data.loc[(start <= data[self.DATE]) & (data[self.DATE] <= end)]
             info_dict[phase]["param"] = self._model.guess(df, tau)
-        solver = _MultiPhaseODESolver(self._model, self._start, tau)
+        solver = _MultiPhaseODESolver(self._model, self._first, tau)
         sim_df = solver.simulate(*info_dict.values())
         evaluator = Evaluator(data.set_index(self.DATE), sim_df.set_index(self.DATE))
         return evaluator.score(metric=self._metric)
