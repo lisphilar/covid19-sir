@@ -373,6 +373,9 @@ class Scenario(Term):
             raise ScenarioNotFoundError(template)
         tracker = copy.deepcopy(self._tracker_dict[template])
         self._tracker_dict[name] = tracker
+        # Remove regressor
+        if name in self._reghandler_dict:
+            self._reghandler_dict.pop(name)
         return tracker
 
     @deprecate(old="Scenario.add_phase()", new="Scenario.add()")
