@@ -272,11 +272,12 @@ class TestScenario(object):
         assert isinstance(delay, int)
         assert isinstance(df, pd.DataFrame)
 
-    def test_fit_predict(self, snl, oxcgrt_data):
+    @pytest.mark.parametrize("delay", [5, (7, 31), None])
+    def test_fit_predict(self, snl, oxcgrt_data, delay):
         # Fitting
         with pytest.raises(UnExecutedError):
             snl.predict()
-        info_dict = snl.fit()
+        info_dict = snl.fit(delay=delay, metric="RMSLE")
         assert isinstance(info_dict, dict)
         # Deprecated: fit with oxcgrt_data
         warnings.filterwarnings("ignore", category=DeprecationWarning)
@@ -285,5 +286,5 @@ class TestScenario(object):
         snl.predict()
         assert Term.FUTURE in snl.summary()[Term.TENSE].unique()
         # Fitting & predict
-        snl.fit_predict()
+        snl.fit_predict(delay=delay, metric="RMSLE")
         assert Term.FUTURE in snl.summary()[Term.TENSE].unique()
