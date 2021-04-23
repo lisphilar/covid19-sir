@@ -263,6 +263,14 @@ click = ">=4.0,<8"
 test = ["pytest-cov"]
 
 [[package]]
+name = "cloudpickle"
+version = "1.6.0"
+description = "Extended pickling support for Python objects"
+category = "main"
+optional = false
+python-versions = ">=3.5"
+
+[[package]]
 name = "cmaes"
 version = "0.8.2"
 description = "Lightweight Covariance Matrix Adaptation Evolution Strategy (CMA-ES) implementation for Python 3."
@@ -371,28 +379,28 @@ six = "*"
 
 [[package]]
 name = "dask"
-version = "2020.12.0"
+version = "2021.4.1"
 description = "Parallel PyData with Task Scheduling"
 category = "main"
 optional = false
-python-versions = ">=3.6"
+python-versions = ">=3.7"
 
 [package.dependencies]
-fsspec = {version = ">=0.6.0", optional = true, markers = "extra == \"dataframe\""}
-numpy = {version = ">=1.15.1", optional = true, markers = "extra == \"dataframe\""}
+cloudpickle = ">=1.1.1"
+fsspec = ">=0.6.0"
+numpy = {version = ">=1.16", optional = true, markers = "extra == \"dataframe\""}
 pandas = {version = ">=0.25.0", optional = true, markers = "extra == \"dataframe\""}
-partd = {version = ">=0.3.10", optional = true, markers = "extra == \"dataframe\""}
+partd = ">=0.3.10"
 pyyaml = "*"
-toolz = {version = ">=0.8.2", optional = true, markers = "extra == \"dataframe\""}
+toolz = ">=0.8.2"
 
 [package.extras]
-array = ["numpy (>=1.15.1)", "toolz (>=0.8.2)"]
-bag = ["cloudpickle (>=0.2.2)", "fsspec (>=0.6.0)", "toolz (>=0.8.2)", "partd (>=0.3.10)"]
-complete = ["bokeh (>=1.0.0,!=2.0.0)", "cloudpickle (>=0.2.2)", "distributed (>=2.0)", "fsspec (>=0.6.0)", "numpy (>=1.15.1)", "pandas (>=0.25.0)", "partd (>=0.3.10)", "toolz (>=0.8.2)"]
-dataframe = ["numpy (>=1.15.1)", "pandas (>=0.25.0)", "toolz (>=0.8.2)", "partd (>=0.3.10)", "fsspec (>=0.6.0)"]
-delayed = ["cloudpickle (>=0.2.2)", "toolz (>=0.8.2)"]
+array = ["numpy (>=1.16)"]
+complete = ["bokeh (>=1.0.0,!=2.0.0)", "distributed (>=2021.04.1)", "numpy (>=1.16)", "pandas (>=0.25.0)"]
+dataframe = ["numpy (>=1.16)", "pandas (>=0.25.0)"]
 diagnostics = ["bokeh (>=1.0.0,!=2.0.0)"]
-distributed = ["distributed (>=2.0)"]
+distributed = ["distributed (>=2021.04.1)"]
+test = ["pytest", "pytest-rerunfailures", "pytest-xdist"]
 
 [[package]]
 name = "decorator"
@@ -2116,7 +2124,7 @@ testing = ["pytest (>=4.6)", "pytest-checkdocs (>=1.2.3)", "pytest-flake8", "pyt
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.7"
-content-hash = "dc5940a3b0a54aa957d5510c86b6c0f58418702e76f5124b0003668429ac77a5"
+content-hash = "58c4f2166cb249983ee1b91b0048d30b0180a2cfd5555c53b941b54516a6102c"
 
 [metadata.files]
 aiohttp = [
@@ -2298,6 +2306,10 @@ cligj = [
     {file = "cligj-0.7.1-py3-none-any.whl", hash = "sha256:07171c1e287f45511f97df4ea071abc5d19924153413d5683a8e4866369bc676"},
     {file = "cligj-0.7.1.tar.gz", hash = "sha256:b2f1f7247d59a5387bd3013a08b9ed6829e96fafa4a6e6292341efdb46fe6220"},
 ]
+cloudpickle = [
+    {file = "cloudpickle-1.6.0-py3-none-any.whl", hash = "sha256:3a32d0eb0bc6f4d0c57fbc4f3e3780f7a81e6fee0fa935072884d58ae8e1cc7c"},
+    {file = "cloudpickle-1.6.0.tar.gz", hash = "sha256:9bc994f9e9447593bd0a45371f0e7ac7333710fcf64a4eb9834bf149f4ef2f32"},
+]
 cmaes = [
     {file = "cmaes-0.8.2-py3-none-any.whl", hash = "sha256:9c4127be8942da3ac6857a7564d18a4a655462d77aa2d551a8e88063b23e0699"},
     {file = "cmaes-0.8.2.tar.gz", hash = "sha256:1c04ba23ded925ef13b96f42cfbd667a905ea5b80754c750e6448b9fcda96a5d"},
@@ -2384,8 +2396,8 @@ cycler = [
     {file = "cycler-0.10.0.tar.gz", hash = "sha256:cd7b2d1018258d7247a71425e9f26463dfb444d411c39569972f4ce586b0c9d8"},
 ]
 dask = [
-    {file = "dask-2020.12.0-py3-none-any.whl", hash = "sha256:5741db6e2426c001cecd374cba3bba8fea16a2da081089376ebcad9f8cf32aca"},
-    {file = "dask-2020.12.0.tar.gz", hash = "sha256:43e745afd4b464e6c0113131e430a16dce6ac42460b06e24d799093d098f7ab0"},
+    {file = "dask-2021.4.1-py3-none-any.whl", hash = "sha256:344c342d699466c3f742019b7a33caf2472b751f38370b200ede7d2f354aa1e4"},
+    {file = "dask-2021.4.1.tar.gz", hash = "sha256:195e4eeb154222ea7a1c368119b5f321ee4ec9d78531471fe0145a527f744aa8"},
 ]
 decorator = [
     {file = "decorator-4.4.2-py2.py3-none-any.whl", hash = "sha256:41fa54c2a0cc4ba648be4fd43cff00aedf5b9465c9bf18d64325bc225f08f760"},
