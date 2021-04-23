@@ -125,3 +125,18 @@ class Evaluator(object):
         if metric not in cls._METRICS_DICT:
             raise UnExpectedValueError("metric", metric, candidates=list(cls._METRICS_DICT.keys()))
         return cls._METRICS_DICT[metric][1]
+
+    @classmethod
+    def best_one(cls, candidate_dict, **kwargs):
+        """
+        Select the best one with scores.
+
+        Args:
+            candidate_dict (dict[object, float]): scores of candidates
+            kwargs: keyword arguments of Evaluator.smaller_is_better()
+
+        Returns:
+            tuple(object, float): the best one and its score
+        """
+        comp_f = {True: min, False: max}[cls.smaller_is_better(**kwargs)]
+        return comp_f(candidate_dict.items(), key=lambda x: x[1])

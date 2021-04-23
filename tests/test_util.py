@@ -51,6 +51,11 @@ class TestEvaluator(object):
         score_metrics = evaluator.score(metrics=metric)
         assert score_metric == score_metrics
         assert isinstance(Evaluator.smaller_is_better(metric=metric), bool)
+        best_tuple = Evaluator.best_one({"A": 1.0, "B": 1.5, "C": 2.0}, metric=metric)
+        if metric == "R2":
+            assert best_tuple == ("C", 2.0)
+        else:
+            assert best_tuple == ("A", 1.0)
 
     @pytest.mark.parametrize("metric", ["ME", "MAE", "MSE", "MSLE", "MAPE", "RMSE", "RMSLE", "R2"])
     @pytest.mark.parametrize("how", ["all", "inner"])

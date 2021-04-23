@@ -364,6 +364,9 @@ class Scenario(Term):
 
         Returns:
             covsirphy.ParamTracker
+
+        Note:
+            If regressors was registered by Scenario.fit(), the regressor will be removed.
         """
         # Registered
         if name in self._tracker_dict:
@@ -373,6 +376,9 @@ class Scenario(Term):
             raise ScenarioNotFoundError(template)
         tracker = copy.deepcopy(self._tracker_dict[template])
         self._tracker_dict[name] = tracker
+        # Remove regressor
+        if name in self._reghandler_dict:
+            self._reghandler_dict.pop(name)
         return tracker
 
     @deprecate(old="Scenario.add_phase()", new="Scenario.add()")
@@ -1317,7 +1323,10 @@ class Scenario(Term):
             name (str): scenario name
             test_size (float): proportion of the test dataset of Elastic Net regression
             seed (int): random seed when spliting the dataset to train/test data
-            delay (int or None): delay period [days] or None (Scenario.estimate_delay() calculate automatically)
+            delay (int or tuple(int, int) or None):
+                - (int): delay period [days],
+                - tuple(int, int): select the best value with grid search in this range, or
+                - None: Scenario.estimate_delay() calculate automatically
             removed_cols (list[str] or None): list of variables to remove from X dataset or None (indicators used to estimate delay period)
             metric (str or None): metric name or None (use @metrics)
             metrics (str): alias of @metric
@@ -1353,13 +1362,6 @@ class Scenario(Term):
             raise UnExecutedError(
                 "Scenario.estimate() or Scenario.add()",
                 message=f", specifying @model (covsirphy.SIRF etc.) and @name='{name}'.")
-        # Set delay effect
-        if delay is None:
-            delay, delay_df = self.estimate_delay(oxcgrt_data)
-            removed_cols = list(set(delay_df.columns.tolist()) | set(removed_cols or []))
-        else:
-            delay = self._ensure_natural_int(delay, name="delay")
-            removed_cols = removed_cols or None
         # Create training/test dataset
         param_df = self._track_param(name=name)[model.PARAMETERS]
         try:
@@ -1368,9 +1370,31 @@ class Scenario(Term):
             raise NotRegisteredExtraError(
                 "Scenario.register(jhu_data, population_data, extras=[...])",
                 message="with extra datasets") from None
-        records_df = records_df.loc[:, ~records_df.columns.isin(removed_cols)]
-        # Fit regression models
+        records_df = records_df.loc[:, ~records_df.columns.isin(removed_cols or [])]
         data = param_df.join(records_df)
+        # Set delay effect
+        if delay is None:
+            # Estimate delay period with Scenario.estimate_delay()
+            delay, delay_df = self.estimate_delay(oxcgrt_data)
+            records_df = records_df.loc[:, ~records_df.columns.isin(delay_df.columns)]
+            data = param_df.join(records_df)
+        elif isinstance(delay, tuple):
+            # Estimate the best delay value with grid search in the range
+            delay_min, delay_max = delay
+            self._ensure_natural_int(delay_min, name="delay[0]")
+            self._ensure_natural_int(delay_max, name="delay[1]")
+            score_dict = {}
+            for candidate in range(delay_min, delay_max + 1):
+                handler_candidate = RegressionHandler(data=data, model=model, delay=candidate, **kwargs)
+                try:
+                    score_dict[candidate] = handler_candidate.fit(metric=metric)
+                except ValueError:
+                    pass
+            delay, _ = Evaluator.best_one(score_dict, metric=metric)
+        else:
+            # Use specified delay value
+            delay = self._ensure_natural_int(delay, name="delay")
+        # Fit regression models
         handler = RegressionHandler(data=data, model=model, delay=delay, **kwargs)
         handler.fit(metric=metric)
         self._reghandler_dict[name] = handler
