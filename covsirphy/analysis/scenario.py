@@ -364,6 +364,9 @@ class Scenario(Term):
 
         Returns:
             covsirphy.ParamTracker
+
+        Note:
+            If regressors was registered by Scenario.fit(), the regressor will be removed.
         """
         # Registered
         if name in self._tracker_dict:
