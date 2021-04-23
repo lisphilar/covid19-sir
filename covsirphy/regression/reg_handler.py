@@ -51,9 +51,16 @@ class RegressionHandler(Term):
         Args:
             metric (str): metric name to select the best regressor
 
+        Raises:
+            ValueError: un-expected parameter values were predcited by all regressors, out of range (0, 1)
+
+        Returns:
+            float: the best score
+
         Note:
             All regressors are here.
             - Indicators -> Parameters with Elastic Net
+            - Indicators(n)/Indicators(n-1) -> Parameters(n)/Parameters(n-1) with Elastic Net
         """
         # All approaches
         approach_dict = {
@@ -64,9 +71,12 @@ class RegressionHandler(Term):
         self._reg_dict = {
             k: v for (k, v) in approach_dict.items()
             if v.predict().ge(0).all().all() and v.predict().le(1).all().all()}
+        if not self._reg_dict:
+            raise ValueError("Un-expected parameter values were predcited by all regressors, out of range (0, 1).")
         # Select the best regressor with the metric
-        comp_f = {True: min, False: max}[Evaluator.smaller_is_better(metric=metric)]
-        self._best, _ = comp_f(self._reg_dict.items(), key=lambda x: x[1].score_test(metric=metric))
+        score_dict = {k: v.score_test(metric=metric) for (k, v) in self._reg_dict.items()}
+        self._best, score = Evaluator.best_one(score_dict, metric=metric)
+        return score
 
     def _fit_param_reg(self, regressor_class):
         """
