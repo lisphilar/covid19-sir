@@ -277,7 +277,7 @@ class TestScenario(object):
         # Fitting
         with pytest.raises(UnExecutedError):
             snl.predict()
-        info_dict = snl.fit(delay=delay, metric="RMSLE")
+        info_dict = snl.fit(delay=delay)
         assert isinstance(info_dict, dict)
         # Deprecated: fit with oxcgrt_data
         warnings.filterwarnings("ignore", category=DeprecationWarning)
@@ -286,5 +286,5 @@ class TestScenario(object):
         snl.predict()
         assert Term.FUTURE in snl.summary()[Term.TENSE].unique()
         # Fitting & predict
-        snl.fit_predict(delay=delay, metric="RMSLE")
+        snl.fit_predict(delay=delay)
         assert Term.FUTURE in snl.summary()[Term.TENSE].unique()
