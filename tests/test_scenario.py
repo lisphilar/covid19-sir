@@ -275,6 +275,7 @@ class TestScenario(object):
     @pytest.mark.parametrize("delay", [5, (7, 31), None])
     def test_fit_predict(self, snl, oxcgrt_data, delay):
         # Fitting
+        snl.clear()
         with pytest.raises(UnExecutedError):
             snl.predict()
         info_dict = snl.fit(delay=delay)
