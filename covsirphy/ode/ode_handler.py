@@ -98,7 +98,7 @@ class ODEHandler(Term):
         solver = _MultiPhaseODESolver(self._model, self._first, self._tau)
         return solver.simulate(*self._info_dict.values())
 
-    def _score_tau(self, tau, data):
+    def _score_tau(self, tau, data, quantile):
         """
         Calculate score for the tau value.
 
@@ -113,18 +113,19 @@ class ODEHandler(Term):
                     - Infected (int): the number of currently infected cases
                     - Fatal(int): the number of fatal cases
                     - Recovered (int): the number of recovered cases
+            quantile (float): quantile to guess ODE parameter values for the candidates of tau
         """
         info_dict = self._info_dict.copy()
         for (phase, phase_dict) in info_dict.items():
             start, end = phase_dict["start"], phase_dict["end"]
             df = data.loc[(start <= data[self.DATE]) & (data[self.DATE] <= end)]
-            info_dict[phase]["param"] = self._model.guess(df, tau)
+            info_dict[phase]["param"] = self._model.guess(df, tau, q=quantile)
         solver = _MultiPhaseODESolver(self._model, self._first, tau)
         sim_df = solver.simulate(*info_dict.values())
         evaluator = Evaluator(data.set_index(self.DATE), sim_df.set_index(self.DATE))
         return evaluator.score(metric=self._metric)
 
-    def estimate_tau(self, data):
+    def estimate_tau(self, data, guess_quantile=0.5):
         """
         Select tau value [min] which minimize the score of the metric.
 
@@ -138,6 +139,7 @@ class ODEHandler(Term):
                     - Infected (int): the number of currently infected cases
                     - Fatal(int): the number of fatal cases
                     - Recovered (int): the number of recovered cases
+            guess_quantile (float): quantile to guess ODE parameter values for the candidates of tau
 
         Returns:
             int: estimated tau value [min]
@@ -154,7 +156,8 @@ class ODEHandler(Term):
         if not self._info_dict:
             raise UnExecutedError("ODEHandler.add()")
         # Calculate scores of tau candidates
-        calc_f = functools.partial(self._score_tau, data=df)
+        self._ensure_float(guess_quantile, name="quantile")
+        calc_f = functools.partial(self._score_tau, data=df, quantile=guess_quantile)
         divisors = self.divisors(1440)
         if self._n_jobs == 1:
             scores = [calc_f(candidate) for candidate in divisors]
