@@ -46,7 +46,7 @@ class _ParamEstimator(Term):
         # Step numbers
         self._step_n = df.index.max()
         # Parameter range
-        self._range_dict = model.param_range(df.reset_index(), self._population, quantiles=quantiles)
+        self._range_dict = model.guess(data, tau, q=quantiles)
         # Max values of the variables
         self._max_dict = {v: df[v].max() for v in model.VARIABLES}
 

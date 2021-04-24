@@ -269,7 +269,7 @@ class SIR(ModelBase):
         return df.loc[:, [cls.DATE, cls.S, cls.CI, cls.F, cls.R]]
 
     @classmethod
-    def guess(cls, data, tau):
+    def guess(cls, data, tau, q=0.5):
         """
         With (X, dX/dt) for X=S, I, R, guess parameter values.
 
@@ -284,12 +284,13 @@ class SIR(ModelBase):
                     - Fatal(int): the number of fatal cases
                     - Recovered (int): the number of recovered cases
             tau (int): tau value [min]
+            q (float or tuple(float,)): the quantile(s) to compute, value(s) between (0, 1)
 
         Returns:
-            dict(str, float): guessed parameter values
+            dict(str, float or pandas.Series): guessed parameter values with the quantile(s)
 
         Note:
-            We can guess parameter values as follows. Median will be calculated.
+            We can guess parameter values with difference equations as follows.
             - rho = - n * (dS/dt) / S / I
             - sigma = (dR/dt) / I
         """
@@ -298,10 +299,11 @@ class SIR(ModelBase):
         # Remove negative values and set variables
         df = df.loc[(df[cls.S] > 0) & (df[cls.CI] > 0)]
         n = df.loc[df.index[0], [cls.S, cls.CI, cls.FR]].sum()
-        # Guess parameter values
-        rho_series = 0 - n * df[cls.S].diff() / tau / df[cls.S] / df[cls.CI]
-        sigma_series = df[cls.FR].diff() / tau / df[cls.CI]
+        # Calculate parameter values with difference equation and tau-free data
+        rho_series = 0 - n * df[cls.S].diff() / df[cls.S] / df[cls.CI]
+        sigma_series = df[cls.FR].diff() / df[cls.CI]
+        # Guess representative values
         return {
-            "rho": rho_series.median(),
-            "sigma": sigma_series.median(),
+            "rho": rho_series.quantile(q=q).clip(0, 1),
+            "sigma": sigma_series.quantile(q=q).clip(0, 1),
         }
