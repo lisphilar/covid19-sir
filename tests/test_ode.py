@@ -39,7 +39,7 @@ class TestODEHandler(object):
     @pytest.mark.parametrize("model", [SIR, SIRD, SIRF])
     @pytest.mark.parametrize("first_date", ["01Jan2021"])
     @pytest.mark.parametrize("tau", [720])
-    @pytest.mark.parametrize("n_jobs", [-1, 1])
+    @pytest.mark.parametrize("n_jobs", [1, -1])
     def test_estimate(self, model, first_date, tau, n_jobs):
         # Create simulated dataset
         y0_dict = model.EXAMPLE["y0_dict"]
