@@ -346,7 +346,7 @@ class ModelBase(Term):
         raise NotImplementedError
 
     @classmethod
-    def guess(cls, data, tau):
+    def guess(cls, data, tau, q=0.5):
         """
         With (X, dX/dt) for X=S, I, R and so on, guess parameter values.
         This will be overwitten by child classes.
@@ -362,8 +362,9 @@ class ModelBase(Term):
                     - Fatal(int): the number of fatal cases
                     - Recovered (int): the number of recovered cases
             tau (int): tau value [min]
+            q (float or tuple(float,)): the quantile(s) to compute, value(s) between (0, 1)
 
         Returns:
-            dict(str, float): guessed parameter values
+            dict(str, float or pandas.Series): guessed parameter values with the quantile(s)
         """
         raise NotImplementedError
