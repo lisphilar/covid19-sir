@@ -307,10 +307,10 @@ class SIRD(ModelBase):
         # Remove negative values and set variables
         df = df.loc[(df[cls.S] > 0) & (df[cls.CI] > 0)]
         n = df.loc[df.index[0], [cls.S, cls.CI, cls.F, cls.R]].sum()
-        # Calculate parameter values with difference equation
-        kappa_series = df[cls.F].diff() / tau / df[cls.CI]
-        rho_series = 0 - n * df[cls.S].diff() / tau / df[cls.S] / df[cls.CI]
-        sigma_series = df[cls.R].diff() / tau / df[cls.CI]
+        # Calculate parameter values with difference equation and tau-free data
+        kappa_series = df[cls.F].diff() / df[cls.CI]
+        rho_series = 0 - n * df[cls.S].diff() / df[cls.S] / df[cls.CI]
+        sigma_series = df[cls.R].diff() / df[cls.CI]
         # Guess representative values
         return {
             "kappa": kappa_series.quantile(q=q).clip(0, 1),

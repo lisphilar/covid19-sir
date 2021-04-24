@@ -299,9 +299,9 @@ class SIR(ModelBase):
         # Remove negative values and set variables
         df = df.loc[(df[cls.S] > 0) & (df[cls.CI] > 0)]
         n = df.loc[df.index[0], [cls.S, cls.CI, cls.FR]].sum()
-        # Calculate parameter values with difference equation
-        rho_series = 0 - n * df[cls.S].diff() / tau / df[cls.S] / df[cls.CI]
-        sigma_series = df[cls.FR].diff() / tau / df[cls.CI]
+        # Calculate parameter values with difference equation and tau-free data
+        rho_series = 0 - n * df[cls.S].diff() / df[cls.S] / df[cls.CI]
+        sigma_series = df[cls.FR].diff() / df[cls.CI]
         # Guess representative values
         return {
             "rho": rho_series.quantile(q=q).clip(0, 1),
