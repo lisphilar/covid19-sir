@@ -113,10 +113,10 @@ class VaccineData(CleaningBase):
         for col in [self.VAC, self.V_ONCE, self.V_FULL]:
             df[col] = pd.to_numeric(df[col], errors="coerce")
             df[col] = df.groupby(self.ISO3)[col].fillna(method="ffill").fillna(0).astype(np.int64)
-        
         for country in df.Country.unique().tolist():
             subset_df = df.loc[df[self.COUNTRY] == country]
-            # add any missing dates up until today, while keeping the last data
+            # add any missing dates up until today
+            # while keeping the data same from the last date
             today_date = datetime.datetime.today().replace(hour=00, minute=00, second=00, microsecond=00)
             last_country_date = subset_df.iloc[-1][self.DATE]
             delta_date = datetime.timedelta(1)
