@@ -56,7 +56,7 @@ class _MultiPhaseODESolver(Term):
 
         Args:
             args (dict(str, object)): list of phase settings.
-                - end (pandas.Timestamp): end date of the phase
+                - End (pandas.Timestamp): end date of the phase
                 - param_dict (dict[str, float]): parameter values
                 - y0_dict (dict[str, int] or None): initial values or None (not set)
 
@@ -73,7 +73,7 @@ class _MultiPhaseODESolver(Term):
         """
         # Settings
         for phase_dict in args:
-            self._add(phase_dict["end"], phase_dict["param"], phase_dict["y0"])
+            self._add(phase_dict[self.END], phase_dict["param"], phase_dict["y0"])
         # Multi-phased simulation
         dataframes = []
         for (_, phase_dict) in self._info_dict.items():
