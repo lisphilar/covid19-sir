@@ -209,4 +209,4 @@ class TestComparePlot(object):
         osaka_df = jhu_data.subset(country="Japan", province="Osaka")
         df = tokyo_df.merge(osaka_df, on=Term.DATE, suffixes=("_tokyo", "_osaka"))
         compare_plot(
-            df, variables=[Term.CI, Term.F, Term.R], groups=["_tokyo", "_osaka"], filename=imgfile)
+            df, variables=[Term.CI, Term.F, Term.R], groups=["tokyo", "osaka"], filename=imgfile)
