@@ -1,4 +1,4 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-__version__ = "2.19.1-gamma-fu2"
+__version__ = "2.19.1-gamma-fu3"
