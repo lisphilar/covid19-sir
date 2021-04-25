@@ -128,7 +128,7 @@ class VaccineData(CleaningBase):
                 new_vacc_row.loc[0, self.DATE] = add_date
                 df = df.append(new_vacc_row, ignore_index=True)
                 add_date += delta_date
-            df.sort_values(by=[self.COUNTRY, self.DATE], ignore_index=True, inplace=True)
+        df.sort_values(by=[self.COUNTRY, self.DATE], ignore_index=True, inplace=True)
         return df.loc[:, self.VAC_COLS]
 
     def subset(self, country, product=None, start_date=None, end_date=None):
