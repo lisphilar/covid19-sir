@@ -4,6 +4,7 @@
 from pathlib import Path
 import numpy as np
 import pandas as pd
+import datetime
 from covsirphy.util.error import SubsetNotFoundError
 from covsirphy.cleaning.cbase import CleaningBase
 
@@ -112,6 +113,22 @@ class VaccineData(CleaningBase):
         for col in [self.VAC, self.V_ONCE, self.V_FULL]:
             df[col] = pd.to_numeric(df[col], errors="coerce")
             df[col] = df.groupby(self.ISO3)[col].fillna(method="ffill").fillna(0).astype(np.int64)
+        
+        for country in df.Country.unique().tolist():
+            subset_df = df.loc[df[self.COUNTRY] == country]
+            # add any missing dates up until today, while keeping the last data
+            today_date = datetime.datetime.today().replace(hour=00, minute=00, second=00, microsecond=00)
+            last_country_date = subset_df.iloc[-1][self.DATE]
+            delta_date = datetime.timedelta(1)
+            add_date = last_country_date + delta_date
+            new_vacc_row = subset_df.copy()
+            new_vacc_row = new_vacc_row.iloc[[-1]]
+            new_vacc_row.reset_index(drop=True, inplace=True)
+            while add_date <= today_date:
+                new_vacc_row.loc[0, self.DATE] = add_date
+                df = df.append(new_vacc_row, ignore_index=True)
+                add_date += delta_date
+            df.sort_values(by=[self.COUNTRY, self.DATE], ignore_index=True, inplace=True)
         return df.loc[:, self.VAC_COLS]
 
     def subset(self, country, product=None, start_date=None, end_date=None):
