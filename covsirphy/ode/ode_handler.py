@@ -50,8 +50,8 @@ class ODEHandler(Term):
 
         Returns:
             dict(str, object): setting of the phase (key: phase name)
-                - start (pandas.Timestamp): start date
-                - end (pandas.Timestamp): end date
+                - Start (pandas.Timestamp): start date
+                - End (pandas.Timestamp): end date
                 - y0 (dict[str, int]): initial values of model-specialized variables or empty dict
                 - param (dict[str, float]): parameter values or empty dict
         """
@@ -59,12 +59,12 @@ class ODEHandler(Term):
             raise ValueError("@y0_dict must be specified for the 0th phase, but None was applied.")
         phase = self.num2str(len(self._info_dict))
         if self._info_dict:
-            start = list(self._info_dict.values())[-1]["end"] + timedelta(days=1)
+            start = list(self._info_dict.values())[-1][self.END] + timedelta(days=1)
         else:
             start = self._first
         end = pd.to_datetime(end_date)
         self._info_dict[phase] = {
-            "start": start, "end": end, "y0": y0_dict or {}, "param": param_dict or {}}
+            self.START: start, self.END: end, "y0": y0_dict or {}, "param": param_dict or {}}
         return self._info_dict[phase]
 
     def simulate(self):
@@ -117,7 +117,7 @@ class ODEHandler(Term):
         """
         info_dict = self._info_dict.copy()
         for (phase, phase_dict) in info_dict.items():
-            start, end = phase_dict["start"], phase_dict["end"]
+            start, end = phase_dict[self.START], phase_dict[self.END]
             df = data.loc[(start <= data[self.DATE]) & (data[self.DATE] <= end)]
             info_dict[phase]["param"] = self._model.guess(df, tau, q=quantile)
         solver = _MultiPhaseODESolver(self._model, self._first, tau)
@@ -191,13 +191,15 @@ class ODEHandler(Term):
 
         Returns:
             dict(str, object):
-                param (dict(str, float)): dictionary of estimated parameter values
-                {metric}: score with the estimated parameter values
-                Runtime (str): runtime of optimization
-                Trials (int): the number of trials
+                - Rt (float): phase-dependent reproduction number
+                - (str, float): estimated parameter values, including rho
+                - (int or float): day parameters, including 1/beta [days]
+                - {metric}: score with the estimated parameter values
+                - Trials (int): the number of trials
+                - Runtime (str): runtime of optimization
         """
         phase_dict = self._info_dict[phase].copy()
-        start, end = phase_dict["start"], phase_dict["end"]
+        start, end = phase_dict[self.START], phase_dict[self.END]
         df = data.loc[(start <= data[self.DATE]) & (data[self.DATE] <= end)]
         estimator = _ParamEstimator(self._model, df, self._tau, self._metric, quantiles)
         est_dict = estimator.run(check_dict, study_dict)
@@ -238,13 +240,14 @@ class ODEHandler(Term):
 
         Returns:
             dict(str, object): setting of the phase (key: phase name)
-                - start (pandas.Timestamp): start date
-                - end (pandas.Timestamp): end date
-                - param (dict(str, float)): dictionary of estimated parameter values
-                - y0 (dict[str, int]): initial values of model-specialized variables or empty dict
+                - Start (pandas.Timestamp): start date
+                - End (pandas.Timestamp): end date
+                - Rt (float): phase-dependent reproduction number
+                - (str, float): estimated parameter values, including rho
+                - (int or float): day parameters, including 1/beta [days]
                 - {metric}: score with the estimated parameter values
-                - Runtime (str): runtime of optimization
                 - Trials (int): the number of trials
+                - Runtime (str): runtime of optimization
         """
         print(f"\n<{self._model.NAME} model: parameter estimation>")
         print(f"Running optimization with {self._n_jobs} CPUs...")
@@ -275,9 +278,12 @@ class ODEHandler(Term):
             with Pool(self._n_jobs) as p:
                 est_dict_list = p.map(est_f, phases)
         for (phase, est_dict) in zip(phases, est_dict_list):
-            self._info_dict[phase].update(est_dict)
+            self._info_dict[phase]["param"] = {
+                param: est_dict[param] for param in self._model.PARAMETERS}
         print(f"Completed optimization. Total: {stopwatch.stop_show()}")
-        return self._info_dict
+        return {
+            k: {self.START: self._info_dict[k][self.START], self.END: self._info_dict[k][self.END], **v}
+            for (k, v) in zip(phases, est_dict_list)}
 
     def estimate(self, data, **kwargs):
         """
@@ -302,13 +308,14 @@ class ODEHandler(Term):
             tuple(int, dict(str, dict[str, object]))
                 - int: tau value [min]
                 - dict(str, object): setting of the phase (key: phase name)
-                    - start (pandas.Timestamp): start date
-                    - end (pandas.Timestamp): end date
-                    - param (dict(str, float)): dictionary of estimated parameter values
-                    - y0 (dict[str, int]): initial values of model-specialized variables or empty dict
+                    - Start (pandas.Timestamp): start date
+                    - End (pandas.Timestamp): end date
+                    - Rt (float): phase-dependent reproduction number
+                    - (str, float): estimated parameter values, including rho
+                    - (int or float): day parameters, including 1/beta [days]
                     - {metric}: score with the estimated parameter values
-                    - Runtime (str): runtime of optimization
                     - Trials (int): the number of trials
+                    - Runtime (str): runtime of optimization
         """
         tau = self.estimate_tau(data)
         info_dict = self.estimate_params(data, **kwargs)

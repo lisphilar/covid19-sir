@@ -34,7 +34,7 @@ class _ParamEstimator(Term):
     def __init__(self, model, data, tau, metric, quantiles):
         self._model = self._ensure_subclass(model, ModelBase, name="model")
         self._ensure_dataframe(data, name="data", columns=self.DSIFR_COLUMNS)
-        tau = self._ensure_tau(tau, accept_none=False)
+        self._tau = self._ensure_tau(tau, accept_none=False)
         self._metric = self._ensure_selectable(metric, Evaluator.metrics(), name="metric")
         # time steps (index), variables of the model
         df = model.convert(data, tau)
@@ -67,10 +67,12 @@ class _ParamEstimator(Term):
 
         Returns:
             dict(str, object):
-                param (dict(str, float)): dictionary of estimated parameter values
-                {metric}: score with the estimated parameter values
-                Runtime (str): runtime of optimization
-                Trials (int): the number of trials
+                - Rt (float): phase-dependent reproduction number
+                - (dict(str, float)): estimated parameter values
+                - (dict(str, int or float)): day parameters, including 1/beta [days]
+                - {metric}: score with the estimated parameter values
+                - Trials (int): the number of trials
+                - Runtime (str): runtime of optimization
 
         Note:
             Please refer to covsirphy.Evaluator.score() for metric names.
@@ -100,11 +102,14 @@ class _ParamEstimator(Term):
             # Check max values are in the allowance
             if self._is_in_allowance(allowance, **param_dict):
                 break
+        model_instance = self._model(self._population, **param_dict)
         return {
-            "param": param_dict.copy(),
+            self.RT: model_instance.calc_r0(),
+            **param_dict.copy(),
+            **model_instance.calc_days_dict(self._tau),
             self._metric: self._score(**param_dict),
-            self.RUNTIME: stopmatch.stop_show(),
             self.TRIALS: len(study.trials),
+            self.RUNTIME: stopmatch.stop_show(),
         }
 
     def _init_study(self, pruner, upper, percentile, seed):
