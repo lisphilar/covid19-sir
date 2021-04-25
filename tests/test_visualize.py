@@ -6,7 +6,7 @@ import warnings
 import matplotlib
 import pandas as pd
 import pytest
-from covsirphy import VisualizeBase, ColoredMap, LinePlot, line_plot
+from covsirphy import VisualizeBase, ColoredMap, LinePlot, line_plot, compare_plot
 from covsirphy import BarPlot, bar_plot
 from covsirphy import Term, UnExecutedError
 from covsirphy import jpn_map
@@ -201,3 +201,12 @@ class TestBarPlot(object):
         df = jhu_data.subset(country="Japan").tail().set_index(Term.DATE)
         bar_plot(df=df, filename=imgfile)
         bar_plot(df=df, filename=imgfile, show_legend=False)
+
+
+class TestComparePlot(object):
+    def test_plot(self, jhu_data, imgfile):
+        tokyo_df = jhu_data.subset(country="Japan", province="Tokyo")
+        osaka_df = jhu_data.subset(country="Japan", province="Osaka")
+        df = tokyo_df.merge(osaka_df, on=Term.DATE, suffixes=("_tokyo", "_osaka"))
+        compare_plot(
+            df, variables=[Term.CI, Term.F, Term.R], groups=["tokyo", "osaka"], filename=imgfile)
