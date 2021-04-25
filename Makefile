@@ -124,14 +124,15 @@ setup-anyenv:
 	@anyenv install --init: echo 'eval "$(anyenv init -)"' >> ~/.bashrc; source ~/.bashrc
 	@/bin/mkdir -p $(anyenv root)/plugins; git clone https://github.com/znz/anyenv-update.git $(anyenv root)/plugins/anyenv-update
 	@ # set-up pyenv
-	@anyenv install pyenv;  exec $SHELL -l
+	@anyenv install pyenv;  exec ${SHELL} -l
 
 .PHONY: setup-latest-python
 setup-latest-python:
 	@# Install the latest stable version of Pythonand set default for CovsirPhy project
 	@anyenv update --force
-	@version=`pyenv install -l | grep -x '  [0-9]\.[0-9]\.[0-9]' | tail -n 1 | tr -d ' '`; echo python $version
-	@pyenv install $version; pyenv local $version; anyenv versions
+	@version=`pyenv install -l | grep -x '  [0-9]\.[0-9]\.[0-9]' | tail -n 1 | tr -d ' '`
+	@echo python ${version}
+	@pyenv install ${version}; pyenv local ${version}; anyenv versions
 	@# Install dependencies
 	@rm -rf .venv
 	@rm -f poetry.lock
