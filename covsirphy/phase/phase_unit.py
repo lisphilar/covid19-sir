@@ -108,24 +108,24 @@ class PhaseUnit(Term):
 
     def __lt__(self, other):
         # self < other
-        end = self.date_obj(self._end_date)
+        end = self._ensure_date(self._end_date)
         if isinstance(other, str):
-            sta_other = self.date_obj(other)
+            sta_other = self._ensure_date(other)
         elif isinstance(other, PhaseUnit):
-            sta_other = self.date_obj(other.start_date)
+            sta_other = self._ensure_date(other.start_date)
         else:
             raise NotImplementedError
         return end < sta_other
 
     def __le__(self, other):
         # self <= other
-        end = self.date_obj(self._end_date)
+        end = self._ensure_date(self._end_date)
         if isinstance(other, str):
-            sta_other = self.date_obj(other)
+            sta_other = self._ensure_date(other)
         elif isinstance(other, PhaseUnit):
             if self.__eq__(other):
                 return True
-            sta_other = self.date_obj(other.start_date)
+            sta_other = self._ensure_date(other.start_date)
         else:
             raise NotImplementedError
         return end <= sta_other
@@ -149,10 +149,10 @@ class PhaseUnit(Term):
         return self.__add__(other)
 
     def __sub__(self, other):
-        sta = self.date_obj(self._start_date)
-        end = self.date_obj(self._end_date)
-        sta_other = self.date_obj(other.start_date)
-        end_other = self.date_obj(other.end_date)
+        sta = self._ensure_date(self._start_date)
+        end = self._ensure_date(self._end_date)
+        sta_other = self._ensure_date(other.start_date)
+        end_other = self._ensure_date(other.end_date)
         if sta < sta_other and end == end_other:
             end_date = self.yesterday(other.start_date)
             return PhaseUnit(self._start_date, end_date, self._population)
@@ -164,9 +164,9 @@ class PhaseUnit(Term):
         return self.__sub__(other)
 
     def __contains__(self, date):
-        sta = self.date_obj(self._start_date)
-        end = self.date_obj(self._end_date)
-        date = self.date_obj(date)
+        sta = self._ensure_date(self._start_date)
+        end = self._ensure_date(self._end_date)
+        date = self._ensure_date(date)
         return sta <= date <= end
 
     @property
@@ -434,8 +434,8 @@ class PhaseUnit(Term):
         self._ensure_dataframe(
             record_df, name="record_df", columns=self.NLOC_COLUMNS)
         # Check dates
-        sta = self.date_obj(self.start_date)
-        end = self.date_obj(self.end_date)
+        sta = self._ensure_date(self.start_date)
+        end = self._ensure_date(self.end_date)
         series = record_df[self.DATE]
         record_df = record_df.loc[(series >= sta) & (series <= end), :]
         # Parameter estimation of ODE model
@@ -496,7 +496,7 @@ class PhaseUnit(Term):
         """
         self._model_is_registered()
         df = record_df.loc[
-            record_df[self.DATE] >= self.date_obj(self.start_date), :]
+            record_df[self.DATE] >= self._ensure_date(self.start_date), :]
         df = self._model.tau_free(df, self._population, tau=None)
         y0_dict = df.iloc[0, :].to_dict()
         self.y0_dict = {
@@ -554,5 +554,5 @@ class PhaseUnit(Term):
         df = self._model.restore(df)
         # Return day-level data
         df = df.set_index(self.DATE).resample("D").first()
-        df = df.loc[df.index <= self.date_obj(last_date), :]
+        df = df.loc[df.index <= self._ensure_date(last_date), :]
         return df.reset_index().loc[:, self.NLOC_COLUMNS]

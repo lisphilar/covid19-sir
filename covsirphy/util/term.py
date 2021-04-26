@@ -307,23 +307,26 @@ class Term(object):
         return value
 
     @classmethod
-    def _ensure_date(cls, target, name="date"):
+    def _ensure_date(cls, target, name="date", default=None):
         """
         Ensure the format of the string.
 
         Args:
-            target (str): string to ensure
+            target (str or pandas.Timestamp): string to ensure
             name (str): argument name of the string
+            default (pandas.Timestamp or None): default value to return
 
         Returns:
-            str: as-is the target
+            pandas.Timestamp or None: as-is the target or default value
         """
+        if target is None:
+            return default
+        if isinstance(target, pd.Timestamp):
+            return target.replace(hour=0, minute=0, second=0, microsecond=0)
         try:
-            cls.date_obj(target)
+            return pd.to_datetime(target).replace(hour=0, minute=0, second=0, microsecond=0)
         except ValueError:
-            raise ValueError(
-                f"@{name} needs to match {cls.DATE_FORMAT_DESC}, but {target} was applied.")
-        return target
+            raise ValueError(f"{name} was not recognized as a date, {target} was applied.")
 
     @staticmethod
     def _ensure_subclass(target, parent, name="target"):
@@ -343,7 +346,7 @@ class Term(object):
             raise TypeError(s)
         return target
 
-    @staticmethod
+    @ staticmethod
     def _ensure_instance(target, class_obj, name="target"):
         """
         Ensure the target is a instance of the class object.
@@ -361,7 +364,7 @@ class Term(object):
             raise TypeError(s)
         return target
 
-    @staticmethod
+    @ staticmethod
     def _ensure_list(target, candidates=None, name="target"):
         """
         Ensure the target is a sub-list of the candidates.
@@ -389,7 +392,7 @@ class Term(object):
         candidate_str = ", ".join(strings)
         raise KeyError(f"@{name} must be a sub-list of [{candidate_str}], but {target} was applied.") from None
 
-    @classmethod
+    @ classmethod
     def divisors(cls, value):
         """
         Return the list of divisors of the value.
@@ -403,6 +406,7 @@ class Term(object):
         value = cls._ensure_natural_int(value)
         return [i for i in range(1, value + 1) if value % i == 0]
 
+    @deprecate(".date_obj()", version="2.19.1-gamma-fu5")
     @classmethod
     def date_obj(cls, date_str=None, default=None):
         """
@@ -437,10 +441,10 @@ class Term(object):
         if not isinstance(days, int):
             raise TypeError(
                 f"@days must be integer, but {type(days)} was applied.")
-        date = cls.date_obj(date_str) + timedelta(days=days)
+        date = cls._ensure_date(date_str) + timedelta(days=days)
         return date.strftime(cls.DATE_FORMAT)
 
-    @classmethod
+    @ classmethod
     def tomorrow(cls, date_str):
         """
         Tomorrow of the date.
@@ -453,7 +457,7 @@ class Term(object):
         """
         return cls.date_change(date_str, days=1)
 
-    @classmethod
+    @ classmethod
     def yesterday(cls, date_str):
         """
         Yesterday of the date.
@@ -466,7 +470,7 @@ class Term(object):
         """
         return cls.date_change(date_str, days=-1)
 
-    @classmethod
+    @ classmethod
     def steps(cls, start_date, end_date, tau):
         """
         Return the number of days (round up).
@@ -476,12 +480,12 @@ class Term(object):
             end_date (str): end date, like 01Jan2020
             tau (int): tau value [min]
         """
-        sta = cls.date_obj(start_date)
-        end = cls.date_obj(end_date)
+        sta = cls._ensure_date(start_date)
+        end = cls._ensure_date(end_date)
         tau = cls._ensure_tau(tau)
         return math.ceil((end - sta) / timedelta(minutes=tau))
 
-    @classmethod
+    @ classmethod
     def _ensure_date_order(cls, previous_date, following_date, name="following_date"):
         """
         Ensure that the order of dates.
@@ -494,8 +498,8 @@ class Term(object):
         Raises:
             ValueError: @previous_date > @following_date
         """
-        previous = cls.date_obj(previous_date)
-        following = cls.date_obj(following_date)
+        previous = cls._ensure_date(previous_date)
+        following = cls._ensure_date(following_date)
         if previous <= following:
             return None
         raise ValueError(

@@ -147,24 +147,6 @@ class TestODE(object):
         assert isinstance(dim_df, pd.DataFrame)
         assert set(dim_df.columns) == set(Term.NLOC_COLUMNS)
 
-    @pytest.mark.parametrize("model", [SIR])
-    def test_validation_sir(self, model):
-        # Setting
-        validator = ModelValidator(n_trials=4, step_n=10, seed=1)
-        # Execute validation
-        validator.run(model, timeout=10)
-        validator.summary()
-        with pytest.raises(ValueError):
-            validator.run(model)
-
-    @pytest.mark.parametrize("model", [SIRD, SIRF])
-    def test_validation(self, model):
-        # Setting
-        validator = ModelValidator(n_trials=1, seed=1)
-        # Execute validation
-        validator.run(model, timeout=10)
-        validator.summary()
-
     @pytest.mark.parametrize("model", [SIRFV])
     def test_deprecated(self, model):
         with pytest.raises(NotImplementedError):

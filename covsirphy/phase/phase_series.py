@@ -19,8 +19,8 @@ class PhaseSeries(Term):
     """
 
     def __init__(self, first_date, last_date, population):
-        self._first_date = self._ensure_date(first_date, "first_date")
-        self._last_date = self._ensure_date(last_date, "last_date")
+        self._first_date = self._ensure_date(first_date, "first_date").strftime(self.DATE_FORMAT)
+        self._last_date = self._ensure_date(last_date, "last_date").strftime(self.DATE_FORMAT)
         self.init_population = self._ensure_population(population)
         # List of PhaseUnit
         self._units = []
