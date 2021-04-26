@@ -307,17 +307,20 @@ class Term(object):
         return value
 
     @classmethod
-    def _ensure_date(cls, target, name="date"):
+    def _ensure_date(cls, target, name="date", default=None):
         """
         Ensure the format of the string.
 
         Args:
             target (str or pandas.Timestamp): string to ensure
             name (str): argument name of the string
+            default (pandas.Timestamp or None): default value to return
 
         Returns:
-            str: as-is the target
+            pandas.Timestamp or None: as-is the target or default value
         """
+        if target is None:
+            return default
         if isinstance(target, pd.Timestamp):
             return target.replace(hour=0, minute=0, second=0, microsecond=0)
         try:
