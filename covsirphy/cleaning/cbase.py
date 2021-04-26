@@ -317,8 +317,8 @@ class CleaningBase(Term):
             return df.reset_index(drop=True)
         df = self._ensure_dataframe(df, name="the cleaned dataset", columns=[self.DATE])
         series = df[self.DATE].copy()
-        start_obj = self.date_obj(date_str=start_date, default=series.min())
-        end_obj = self.date_obj(date_str=end_date, default=series.max())
+        start_obj = self._ensure_date(date_str=start_date, default=series.min())
+        end_obj = self._ensure_date(date_str=end_date, default=series.max())
         df = df.loc[(start_obj <= series) & (series <= end_obj), :]
         if df.empty:
             raise SubsetNotFoundError(

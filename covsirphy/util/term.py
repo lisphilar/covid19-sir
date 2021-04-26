@@ -403,7 +403,8 @@ class Term(object):
         value = cls._ensure_natural_int(value)
         return [i for i in range(1, value + 1) if value % i == 0]
 
-    @ classmethod
+    @deprecate(".date_obj()", version="2.19.1-gamma-fu5")
+    @classmethod
     def date_obj(cls, date_str=None, default=None):
         """
         Convert a string to a datatime object.
@@ -422,7 +423,7 @@ class Term(object):
             return default
         return datetime.strptime(date_str, cls.DATE_FORMAT)
 
-    @ classmethod
+    @classmethod
     def date_change(cls, date_str, days=0):
         """
         Return @days days ago or @days days later.
@@ -437,7 +438,7 @@ class Term(object):
         if not isinstance(days, int):
             raise TypeError(
                 f"@days must be integer, but {type(days)} was applied.")
-        date = cls.date_obj(date_str) + timedelta(days=days)
+        date = cls._ensure_date(date_str) + timedelta(days=days)
         return date.strftime(cls.DATE_FORMAT)
 
     @ classmethod
@@ -476,8 +477,8 @@ class Term(object):
             end_date (str): end date, like 01Jan2020
             tau (int): tau value [min]
         """
-        sta = cls.date_obj(start_date)
-        end = cls.date_obj(end_date)
+        sta = cls._ensure_date(start_date)
+        end = cls._ensure_date(end_date)
         tau = cls._ensure_tau(tau)
         return math.ceil((end - sta) / timedelta(minutes=tau))
 
@@ -494,8 +495,8 @@ class Term(object):
         Raises:
             ValueError: @previous_date > @following_date
         """
-        previous = cls.date_obj(previous_date)
-        following = cls.date_obj(following_date)
+        previous = cls._ensure_date(previous_date)
+        following = cls._ensure_date(following_date)
         if previous <= following:
             return None
         raise ValueError(

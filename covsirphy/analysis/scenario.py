@@ -891,7 +891,7 @@ class Scenario(Term):
         """
         # The current last end dates
         current_dict = {
-            name: self.date_obj(tracker.last_end_date())
+            name: self._ensure_date(tracker.last_end_date())
             for (name, tracker) in self._tracker_dict.items()}
         # Adjusted end date
         adjusted_str = max(current_dict.values()).strftime(self.DATE_FORMAT)

@@ -143,10 +143,10 @@ class VaccineData(CleaningBase):
             df = df.loc[df[self.PRODUCT] == product]
         # Subset with start date
         if start_date is not None:
-            df = df.loc[df[self.DATE] >= self.date_obj(start_date)]
+            df = df.loc[df[self.DATE] >= self._ensure_date(start_date)]
         # Subset with end date
         if end_date is not None:
-            df = df.loc[df[self.DATE] <= self.date_obj(end_date)]
+            df = df.loc[df[self.DATE] <= self._ensure_date(end_date)]
         # Check records were found
         if df.empty:
             raise SubsetNotFoundError(
