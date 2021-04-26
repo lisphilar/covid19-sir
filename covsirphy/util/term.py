@@ -312,18 +312,18 @@ class Term(object):
         Ensure the format of the string.
 
         Args:
-            target (str): string to ensure
+            target (str or pandas.Timestamp): string to ensure
             name (str): argument name of the string
 
         Returns:
             str: as-is the target
         """
+        if isinstance(target, pd.Timestamp):
+            return target.replace(hour=0, minute=0, second=0, microsecond=0)
         try:
-            cls.date_obj(target)
+            return pd.to_datetime(target).replace(hour=0, minute=0, second=0, microsecond=0)
         except ValueError:
-            raise ValueError(
-                f"@{name} needs to match {cls.DATE_FORMAT_DESC}, but {target} was applied.")
-        return target
+            raise ValueError(f"{name} was not recognized as a date, {target} was applied.")
 
     @staticmethod
     def _ensure_subclass(target, parent, name="target"):
@@ -343,7 +343,7 @@ class Term(object):
             raise TypeError(s)
         return target
 
-    @staticmethod
+    @ staticmethod
     def _ensure_instance(target, class_obj, name="target"):
         """
         Ensure the target is a instance of the class object.
@@ -361,7 +361,7 @@ class Term(object):
             raise TypeError(s)
         return target
 
-    @staticmethod
+    @ staticmethod
     def _ensure_list(target, candidates=None, name="target"):
         """
         Ensure the target is a sub-list of the candidates.
@@ -389,7 +389,7 @@ class Term(object):
         candidate_str = ", ".join(strings)
         raise KeyError(f"@{name} must be a sub-list of [{candidate_str}], but {target} was applied.") from None
 
-    @classmethod
+    @ classmethod
     def divisors(cls, value):
         """
         Return the list of divisors of the value.
@@ -403,7 +403,7 @@ class Term(object):
         value = cls._ensure_natural_int(value)
         return [i for i in range(1, value + 1) if value % i == 0]
 
-    @classmethod
+    @ classmethod
     def date_obj(cls, date_str=None, default=None):
         """
         Convert a string to a datatime object.
@@ -422,7 +422,7 @@ class Term(object):
             return default
         return datetime.strptime(date_str, cls.DATE_FORMAT)
 
-    @classmethod
+    @ classmethod
     def date_change(cls, date_str, days=0):
         """
         Return @days days ago or @days days later.
@@ -440,7 +440,7 @@ class Term(object):
         date = cls.date_obj(date_str) + timedelta(days=days)
         return date.strftime(cls.DATE_FORMAT)
 
-    @classmethod
+    @ classmethod
     def tomorrow(cls, date_str):
         """
         Tomorrow of the date.
@@ -453,7 +453,7 @@ class Term(object):
         """
         return cls.date_change(date_str, days=1)
 
-    @classmethod
+    @ classmethod
     def yesterday(cls, date_str):
         """
         Yesterday of the date.
@@ -466,7 +466,7 @@ class Term(object):
         """
         return cls.date_change(date_str, days=-1)
 
-    @classmethod
+    @ classmethod
     def steps(cls, start_date, end_date, tau):
         """
         Return the number of days (round up).
@@ -481,7 +481,7 @@ class Term(object):
         tau = cls._ensure_tau(tau)
         return math.ceil((end - sta) / timedelta(minutes=tau))
 
-    @classmethod
+    @ classmethod
     def _ensure_date_order(cls, previous_date, following_date, name="following_date"):
         """
         Ensure that the order of dates.

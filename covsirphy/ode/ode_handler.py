@@ -7,7 +7,6 @@ import functools
 from multiprocessing import cpu_count, Pool
 from covsirphy.util.evaluator import Evaluator
 import itertools
-import pandas as pd
 from covsirphy.util.error import UnExecutedError
 from covsirphy.util.term import Term
 from covsirphy.ode.mbase import ModelBase
@@ -29,9 +28,7 @@ class ODEHandler(Term):
 
     def __init__(self, model, first_date, tau=None, metric="RMSLE", n_jobs=-1):
         self._model = self._ensure_subclass(model, ModelBase, name="model")
-        self._first = self._ensure_instance(
-            pd.to_datetime(first_date) if isinstance(first_date, str) else first_date,
-            pd.Timestamp, name="first_date")
+        self._first = self._ensure_date(first_date, name="first_date")
         self._metric = self._ensure_selectable(metric, Evaluator.metrics(), name="metric")
         self._n_jobs = cpu_count() if n_jobs == -1 else self._ensure_natural_int(n_jobs, name="n_jobs")
         # Tau value [min] or None
@@ -44,7 +41,7 @@ class ODEHandler(Term):
         Add a new phase.
 
         Args:
-            end_date (str): end date of the phase
+            end_date (str or pandas.Timestamp): end date of the phase
             param_dict (dict[str, float] or None): parameter values or None (not set)
             y0_dict (dict[str, int] or None): initial values or None (not set)
 
@@ -62,7 +59,7 @@ class ODEHandler(Term):
             start = list(self._info_dict.values())[-1][self.END] + timedelta(days=1)
         else:
             start = self._first
-        end = pd.to_datetime(end_date)
+        end = self._ensure_date(end_date, name="end_date")
         self._info_dict[phase] = {
             self.START: start, self.END: end, "y0": y0_dict or {}, "param": param_dict or {}}
         return self._info_dict[phase]
