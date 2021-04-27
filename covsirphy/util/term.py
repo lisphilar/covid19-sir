@@ -43,6 +43,7 @@ class Term(object):
     STEP_N = "step_n"
     Y0_DICT = "y0_dict"
     PARAM_DICT = "param_dict"
+    ID = "ID"
     AREA_COLUMNS = [COUNTRY, PROVINCE]
     STR_COLUMNS = [DATE, *AREA_COLUMNS]
     COLUMNS = [*STR_COLUMNS, C, CI, F, R]
@@ -491,20 +492,20 @@ class Term(object):
         Ensure that the order of dates.
 
         Args:
-            previous_date (str): previous date
-            following_date (str): following date
+            previous_date (str or pandas.Timestamp): previous date
+            following_date (str or pandas.Timestamp): following date
             name (str): name of @following_date
 
         Raises:
             ValueError: @previous_date > @following_date
         """
-        previous = cls._ensure_date(previous_date)
-        following = cls._ensure_date(following_date)
-        if previous <= following:
+        previous_date = cls._ensure_date(previous_date)
+        following_date = cls._ensure_date(following_date)
+        p_str = previous_date.strftime(cls.DATE_FORMAT)
+        f_str = following_date.strftime(cls.DATE_FORMAT)
+        if previous_date <= following_date:
             return None
-        raise ValueError(
-            f"@{name} must be the same as/over {previous_date}, but {following_date} was applied."
-        )
+        raise ValueError(f"@{name} must be the same as/over {p_str}, but {f_str} was applied.")
 
     def _ensure_selectable(self, target, candidates, name="target"):
         """

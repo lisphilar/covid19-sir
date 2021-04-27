@@ -66,6 +66,7 @@ from covsirphy.regression.reg_handler import RegressionHandler
 from covsirphy.analysis.example_data import ExampleData
 from covsirphy.analysis.data_handler import DataHandler
 from covsirphy.analysis.param_tracker import ParamTracker
+from covsirphy.analysis.phase_tracker import PhaseTracker
 from covsirphy.analysis.scenario import Scenario
 from covsirphy.analysis.model_validator import ModelValidator
 # worldwide
@@ -116,7 +117,7 @@ __all__ = [
     # regression
     "RegressionHandler",
     # analysis
-    "ExampleData", "Scenario", "ModelValidator", "ParamTracker", "DataHandler",
+    "ExampleData", "Scenario", "ModelValidator", "ParamTracker", "DataHandler", "PhaseTracker",
     # worldwide
     "PolicyMeasures",
     # Deprecated
