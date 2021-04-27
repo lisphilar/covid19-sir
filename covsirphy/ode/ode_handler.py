@@ -213,10 +213,10 @@ class ODEHandler(Term):
                 Index
                     reset index
                 Columns
-                    - Date (pd.Timestamp): Observation date
-                    - Susceptible(int): the number of susceptible cases
+                    - Date (pandas.Timestamp): Observation date
+                    - Susceptible (int): the number of susceptible cases
                     - Infected (int): the number of currently infected cases
-                    - Fatal(int): the number of fatal cases
+                    - Fatal (int): the number of fatal cases
                     - Recovered (int): the number of recovered cases
             quantiles (tuple(int, int)): quantiles to cut parameter range, like confidence interval
             check_dict (dict[str, object] or None): setting of validation
@@ -291,8 +291,8 @@ class ODEHandler(Term):
                 Index
                     reset index
                 Columns
-                    - Date (pd.Timestamp): Observation date
-                    - Susceptible(int): the number of susceptible cases
+                    - Date (pandas.Timestamp): Observation date
+                    - Susceptible (int): the number of susceptible cases
                     - Infected (int): the number of currently infected cases
                     - Fatal(int): the number of fatal cases
                     - Recovered (int): the number of recovered cases
