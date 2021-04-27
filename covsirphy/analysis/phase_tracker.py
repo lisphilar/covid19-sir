@@ -39,6 +39,9 @@ class PhaseTracker(Term):
             start (str or pandas.Timestamp): start date of the new phase
             end (str or pandas.Timestamp): end date of the new phase
 
+        Returns:
+            covsirphy.PhaseTracker: self
+
         Note:
             When today is in the range of (start, end), a past phase and a future phase will be created.
         """
@@ -51,9 +54,10 @@ class PhaseTracker(Term):
             self._track_df.loc[start:min(self._today, end), self.ID] = self._track_df[self.ID].max() + 1
         # Add a future phase (tomorrow -> end)
         if end <= self._today:
-            return
+            return self
         df = pd.DataFrame(
             index=pd.date_range(self._today + timedelta(days=1), end),
             columns=self._track_df.columns)
         df[self.ID] = self._track_df[self.ID].max() + 1
         self._track_df = pd.concat([self._track_df, df], axis=0).resample("D").last()
+        return self
