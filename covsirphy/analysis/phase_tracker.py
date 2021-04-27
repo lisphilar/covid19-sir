@@ -21,7 +21,7 @@ class PhaseTracker(Term):
                 - Fatal (int): the number of fatal cases
                 - Recovered (int): the number of recovered cases ( > 0)
                 - Susceptible (int): the number of susceptible cases
-        today (pandas.Timestamp): reference date to determine whether a phase is a past phase or not
+        today (str or pandas.Timestamp): reference date to determine whether a phase is a past phase or not
     """
 
     def __init__(self, data, today):
@@ -36,8 +36,8 @@ class PhaseTracker(Term):
         Define a phase with the series of dates.
 
         Args:
-            start (pandas.Timestamp): start date of the new phase
-            end (pandas.Timestamp): end date of the new phase
+            start (str or pandas.Timestamp): start date of the new phase
+            end (str or pandas.Timestamp): end date of the new phase
 
         Note:
             When today is in the range of (start, end), a past phase and a future phase will be created.
