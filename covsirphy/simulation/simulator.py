@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-from datetime import datetime, timedelta
+from datetime import timedelta
 import numpy as np
 import pandas as pd
 from scipy.integrate import solve_ivp
@@ -225,7 +225,7 @@ class ODESimulator(Term):
         var_cols = df.columns.tolist()
         df = df.astype(np.int64)
         # Date
-        start_obj = datetime.strptime(start_date, self.DATE_FORMAT)
+        start_obj = self._ensure_date(start_date, name="start_date")
         elapsed = pd.Series(df.index * tau)
         df[self.DATE] = start_obj + elapsed.apply(
             lambda x: timedelta(minutes=x)

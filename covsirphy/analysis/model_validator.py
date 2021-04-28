@@ -7,7 +7,6 @@ import pandas as pd
 from covsirphy.util.term import Term
 from covsirphy.ode.mbase import ModelBase
 from covsirphy.cleaning.population import PopulationData
-from covsirphy.phase.phase_estimator import MPEstimator
 from covsirphy.analysis.scenario import Scenario
 from covsirphy.analysis.example_data import ExampleData
 
@@ -69,12 +68,10 @@ class ModelValidator(Term):
         self.model_names.append(model.NAME)
         # Setup: create parameter set, phase length and processor
         df = self._setup(model)
-        processor = self._processor(model, df)
         # Parameter estimation
-        units_estimated = processor.run(
-            timeout=timeout, allowance=allowance, n_jobs=n_jobs)
+        scenarios = self._processor(model, df, timeout=timeout, allowance=allowance)
         # Get estimated parameters
-        self._results.append(self._get_result(model, df, units_estimated))
+        self._results.append(self._get_result(model, df, scenarios))
         return self
 
     def _setup(self, model):
@@ -106,7 +103,7 @@ class ModelValidator(Term):
         # Return the setting
         return df
 
-    def _processor(self, model, setting_df):
+    def _processor(self, model, setting_df, timeout, allowance):
         """
         Generate multi-processor for parameter estimation,
         registering theoretical data and phase units.
@@ -119,11 +116,13 @@ class ModelValidator(Term):
                     - (float): parameter values from 0 to 1.0
                     - Rt (float): reproduction number
                     - step_n (int): step number of simulation
+            timeout (int): time-out of run
+            allowance (tuple(float, float)): the allowance of the predicted value
 
         Returns:
-            covsirphy.MPEstimator: multi-processor for parameter estimation
+            list[covsirphy.Scenario]: list of Scenario instances
         """
-        units = []
+        scenarios = []
         # Instance to save theoretical data
         example_data = ExampleData(tau=self._tau, start_date="01Jan2020")
         # Population values
@@ -142,14 +141,11 @@ class ModelValidator(Term):
             snl = Scenario(country=name, auto_complement=False)
             snl.register(example_data, population_data)
             snl.add()
-            unit = snl[self.MAIN].unit("last").del_id().set_id(country=name)
-            units.append(unit)
-        # Multi-processor for parameter estimation
-        processor = MPEstimator(
-            model, jhu_data=example_data, population_data=population_data, tau=self._tau)
-        return processor.add(units)
+            snl.estimate(model, timeout=timeout, allowance=allowance)
+            scenarios.append(snl)
+        return scenarios
 
-    def _get_result(self, model, setting_df, units_estimated):
+    def _get_result(self, model, setting_df, scenarios):
         """
         Show the result as a dataframe.
 
@@ -161,7 +157,7 @@ class ModelValidator(Term):
                     - (float): parameter values from 0 to 1.0
                     - Rt (float): reproduction number
                     - step_n (int): step number of simulation
-            units_estimated (list[covsirphy.PhaseUnit]): phase units with estimated parameters
+            list[covsirphy.Scenario]: list of Scenario instances
 
         Returns:
             pandas.DataFrame:
@@ -179,9 +175,9 @@ class ModelValidator(Term):
                     - Runtime (str): runtime of parameter estimation
         """
         df = setting_df.copy()
-        df["results"] = [unit.to_dict() for unit in units_estimated]
-        df = df.join(df["results"].apply(pd.Series), how="left", rsuffix="_est")
-        df = df.drop(["results", *model.DAY_PARAMETERS], axis=1, errors="ignore")
+        results_df = pd.concat([snl.summary() for snl in scenarios], axis=0)
+        df = df.join(results_df.reset_index(drop=True), how="left", rsuffix="_est")
+        df = df.drop(model.DAY_PARAMETERS, axis=1, errors="ignore")
         cols_to_alternate = [self.RT, *model.PARAMETERS]
         cols_alternated = chain.from_iterable(
             zip(cols_to_alternate, [f"{col}_est" for col in cols_to_alternate]))
