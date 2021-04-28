@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
+import pandas as pd
 import pytest
 from covsirphy import PhaseTracker, Term
 
@@ -24,3 +25,17 @@ class TestPhaseTracker(object):
         tracker.define_phase(start="01Feb2021", end="28Feb2021")
         # Tracking
         assert set(Term.SUB_COLUMNS).issubset(tracker.track().columns)
+        # Check summary
+        summary_df = tracker.summary()
+        expected_df = pd.DataFrame(
+            {
+                Term.TENSE: [Term.PAST, Term.PAST, Term.PAST, Term.FUTURE, Term.FUTURE],
+                Term.START: ["01May2020", "01Jun2020", "01Oct2020", "01Jan2021", "01Feb2021"],
+                Term.END: ["31May2020", "30Sep2020", "31Dec2020", "31Jan2021", "28Feb2021"],
+                Term.N: population,
+            },
+            index=["0th", "1st", "2nd", "3rd", "4th"],
+        )
+        expected_df[Term.START] = pd.to_datetime(expected_df[Term.START])
+        expected_df[Term.END] = pd.to_datetime(expected_df[Term.END])
+        assert summary_df.equals(expected_df)
