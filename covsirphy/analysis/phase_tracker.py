@@ -14,12 +14,12 @@ class PhaseTracker(Term):
         data (pandas.DataFrame):
             Index
                 reset index
-            Columns:
+            Columns
                 - Date (pandas.Timestamp): Observation date
                 - Confirmed (int): the number of confirmed cases
                 - Infected (int): the number of currently infected cases
                 - Fatal (int): the number of fatal cases
-                - Recovered (int): the number of recovered cases ( > 0)
+                - Recovered (int): the number of recovered cases
                 - Susceptible (int): the number of susceptible cases
         today (str or pandas.Timestamp): reference date to determine whether a phase is a past phase or not
     """
@@ -58,6 +58,32 @@ class PhaseTracker(Term):
         df = pd.DataFrame(
             index=pd.date_range(self._today + timedelta(days=1), end),
             columns=self._track_df.columns)
+        df.index.name = self.DATE
         df[self.ID] = self._track_df[self.ID].max() + 1
         self._track_df = pd.concat([self._track_df, df], axis=0).resample("D").last()
         return self
+
+    def track(self):
+        """
+        Track data with all dates.
+
+        Returns:
+            pandas.DataFrame
+                Index
+                    str: phase names
+                Columns
+                    - Date (pandas.Timestamp): Observation date
+                    - Confirmed (int): the number of confirmed cases
+                    - Infected (int): the number of currently infected cases
+                    - Fatal (int): the number of fatal cases
+                    - Recovered (int): the number of recovered cases
+                    - Susceptible (int): the number of susceptible cases
+                    - If available,
+                        - Rt (float): phase-dependent reproduction number
+                        - (str, float): estimated parameter values, including rho
+                        - (int or float): day parameters, including 1/beta [days]
+                        - {metric}: score with the estimated parameter values
+                        - Trials (int): the number of trials
+                        - Runtime (str): runtime of optimization
+        """
+        return self._track_df.drop(self.ID, axis=1).reset_index()
