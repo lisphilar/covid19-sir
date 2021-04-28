@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 import pytest
-from covsirphy import PhaseTracker
+from covsirphy import PhaseTracker, Term
 
 
 class TestPhaseTracker(object):
@@ -22,3 +22,5 @@ class TestPhaseTracker(object):
         # Add a future phase
         # -> (01May, 31May), (01Jun, 30Sep), (01Oct, 31Dec), (01Jan2021, 31Jan), (01Feb, 28Feb)
         tracker.define_phase(start="01Feb2021", end="28Feb2021")
+        # Tracking
+        assert set(Term.SUB_COLUMNS).issubset(tracker.track().columns)
