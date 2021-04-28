@@ -116,15 +116,15 @@ class VaccineData(CleaningBase):
         today_date = datetime.datetime.today().replace(hour=00, minute=00, second=00, microsecond=00)
         for country in df.Country.unique():
             subset_df = df.loc[df[self.COUNTRY] == country]
-            # add any missing dates up until today
-            # while keeping the data same from the last date
-            if subset_df["Date"].max() < today_date:
-                new_dates = pd.date_range(subset_df["Date"].max() + datetime.timedelta(days=1), today_date)
+            # Add any missing dates up until today
+            if subset_df[self.DATE].max() < today_date:
+                new_dates = pd.date_range(
+                    subset_df[self.DATE].max() + datetime.timedelta(days=1), today_date)
                 subset_df = subset_df.reset_index(drop=True)
                 keep_index = subset_df[self.VAC].idxmax() + 1
                 new_df = pd.DataFrame(index=new_dates, columns=subset_df.columns)
-                new_df.index.name = "Date"
-                new_df = new_df.drop("Date", axis=1).reset_index()
+                new_df.index.name = self.DATE
+                new_df = new_df.drop(self.DATE, axis=1).reset_index()
                 subset_df = pd.concat([subset_df, new_df], axis=0, ignore_index=True).ffill()
                 subset_df = subset_df.loc[keep_index:]
                 df = pd.concat([df, subset_df], axis=0, ignore_index=True)
