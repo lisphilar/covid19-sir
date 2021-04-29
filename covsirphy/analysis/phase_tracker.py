@@ -40,10 +40,13 @@ class PhaseTracker(Term):
         # Tracker of phase information: index=Date, records of C/I/F/R/S, phase ID (0: not defined)
         self._track_df = data.set_index(self.DATE)
         self._track_df[self.ID] = 0
+        # For simulation (determined in self.estimate())
+        self._model = None
+        self._tau = None
 
     def define_phase(self, start, end):
         """
-        Define a phase with the series of dates.
+        Define an active phase with the series of dates.
 
         Args:
             start (str or pandas.Timestamp): start date of the new phase
@@ -187,12 +190,12 @@ class PhaseTracker(Term):
 
     def estimate(self, model, tau=None, **kwargs):
         """
-        Perform parameter estimation for each phases.
+        Perform parameter estimation for each phases and update parameter values.
 
         Args:
             model (covsirphy.ModelBase): ODE model
             tau (int or None): tau value [min] or None (to be estimated)
-            kwargs: keyword arguments of  ODEHander(), ODEHandler.estimate_tau() and .estimate_param()
+            kwargs: keyword arguments of ODEHander(), ODEHandler.estimate_tau() and .estimate_param()
 
         Returns:
             int: applied or estimated tau value [min]
@@ -215,8 +218,58 @@ class PhaseTracker(Term):
         # Register phase information to self
         df = pd.DataFrame.from_dict(est_dict, orient="index")
         df[self.DATE] = df[[self.START, self.END]].apply(lambda x: pd.date_range(x[0], x[1]), axis=1)
-        df = df.explode(self.DATE).drop([self.START, self.END], axis=1)
+        df = df.explode(self.DATE).drop([self.START, self.END], axis=1).set_index(self.DATE)
         df.insert(0, self.ODE, model.NAME)
         df.insert(6, self.TAU, tau)
-        self._track_df = self._track_df.join(df.set_index(self.DATE), how="left")
+        self._track_df = self._track_df.reindex(
+            columns=[*self._track_df.columns.tolist(), *df.columns.tolist()])
+        self._track_df.update(df)
+        # Set model and tau to self
+        self._model = model
+        self._tau = tau
         return tau
+
+    def set_ode(self, model, param_df, tau):
+        """
+        Set ODE model, parameter values manually, not using parameter estimation.
+
+        Args:
+            model (covsirphy.ModelBase): ODE model
+            param_df (pandas.DataFrame):
+                Index
+                    Date (pandas.Timestamp): dates to update parameter values
+                Columns
+                    (float): parameter values
+            tau (int): tau value [min] (must not be None)
+
+        Raises:
+            ValueError: some model parameters are not included in @param_df
+
+        Note:
+            Parameters are defined by model.PARAMETERS.
+
+        Returns:
+            int: applied tau value [min]
+        """
+        self._model = self._ensure_subclass(model, ModelBase, name="model")
+        self._ensure_dataframe(param_df, name="param_df", time_index=True, columns=model.PARAMETERS)
+        self._tau = self._ensure_tau(tau, accept_none=False)
+        new_df = param_df.copy()
+        # Add model name
+        new_df.insert(0, self.ODE, model.NAME)
+        # Calculate reproduction number
+        new_df.insert(1, self.RT, None)
+        new_df[self.RT] = new_df[model.PARAMETERS].apply(
+            lambda x: model(1, **x.to_dict()).calc_r0(), axis=1)
+        # Add tau
+        new_df[self.TAU] = self._tau
+        # Calculate days parameters
+        days_df = new_df[model.PARAMETERS].apply(
+            lambda x: pd.Series(model(1, **x.to_dict()).calc_days_dict(self._tau)), axis=1)
+        new_df = pd.concat([new_df, days_df], axis=1)
+        # update tracker
+        track_df = self._track_df.reindex(
+            columns=[*self._track_df.columns.tolist(), *new_df.columns.tolist()])
+        track_df.update(new_df)
+        self._track_df = track_df.copy()
+        return self._tau
