@@ -202,7 +202,9 @@ class ODEHandler(Term):
         estimator = _ParamEstimator(self._model, df, self._tau, self._metric, quantiles)
         est_dict = estimator.run(check_dict, study_dict)
         n_trials, runtime = est_dict[self.TRIALS], est_dict[self.RUNTIME]
-        print(f"\t{phase:>4} phase: finished {n_trials:>4} trials in {runtime}")
+        start_date = start.strftime(self.DATE_FORMAT)
+        end_date = end.strftime(self.DATE_FORMAT)
+        print(f"\t{phase:>4} phase ({start_date} - {end_date}): finished {n_trials:>4} trials in {runtime}")
         return est_dict
 
     def estimate_params(self, data, quantiles=(0.1, 0.9), check_dict=None, study_dict=None, **kwargs):
