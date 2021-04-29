@@ -78,6 +78,22 @@ class PhaseTracker(Term):
         self._track_df.loc[(series.index <= end) & (series == 0), self.ID] = series.max() + 1
         return self
 
+    def deactivate(self, start, end):
+        """
+        Deactivate the phase information from the date range.
+
+        Args:
+            start (str or pandas.Timestamp): start date of the phase to remove
+            end (str or pandas.Timestamp): end date of the phase to remove
+
+        Returns:
+            covsirphy.PhaseTracker: self
+        """
+        start = self._ensure_date(start, name="start")
+        end = self._ensure_date(end, name="end")
+        self._track_df.loc[start:end, self.ID] *= -1
+        return self
+
     def remove_phase(self, start, end):
         """
         Remove phase information from the date range.
@@ -199,6 +215,9 @@ class PhaseTracker(Term):
 
         Returns:
             int: applied or estimated tau value [min]
+
+        Note:
+            ODE parameter estimation will be done for all active phases.
         """
         self._ensure_subclass(model, ModelBase, name="model")
         self._ensure_tau(tau, accept_none=True)
@@ -250,6 +269,9 @@ class PhaseTracker(Term):
 
         Returns:
             int: applied tau value [min]
+
+        Note:
+            ODE model for simulation will be overwritten.
         """
         self._model = self._ensure_subclass(model, ModelBase, name="model")
         self._ensure_dataframe(param_df, name="param_df", time_index=True, columns=model.PARAMETERS)
