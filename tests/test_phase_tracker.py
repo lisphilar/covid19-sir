@@ -13,7 +13,7 @@ class TestPhaseTracker(object):
         records_df, _ = jhu_data.records(
             country=country, start_date="01May2020", population=population)
         # Create tracker -> no phases
-        tracker = PhaseTracker(data=records_df, today="31Dec2020")
+        tracker = PhaseTracker(data=records_df, today="31Dec2020", area=country)
         # Add two past phase
         # -> (01May, 31May), (01Jun, 30Sep)
         tracker.define_phase(start="01Jun2020", end="30Sep2020")
@@ -45,3 +45,19 @@ class TestPhaseTracker(object):
         expected_df[Term.START] = pd.to_datetime(expected_df[Term.START])
         expected_df[Term.END] = pd.to_datetime(expected_df[Term.END])
         assert summary_df.equals(expected_df)
+
+    @pytest.mark.parametrize("country", ["Japan"])
+    def test_trend(self, jhu_data, population_data, country, imgfile):
+        population = population_data.value(country=country)
+        records_df, _ = jhu_data.records(
+            country=country, start_date="01May2020", population=population)
+        # Create tracker -> no phases
+        tracker = PhaseTracker(data=records_df, today="31Dec2020", area=country)
+        # Define phases with S-R trend analysis
+        tracker.trend(force=True, show_figure=False)
+        # Show trend
+        tracker.trend(force=False, show_figure=True, filename=imgfile)
+        # Check summary
+        df = tracker.summary()
+        assert df.loc[df.index[-1], Term.END] == pd.to_datetime("31Dec2020")
+        assert Term.FUTURE not in df[Term.TENSE]
