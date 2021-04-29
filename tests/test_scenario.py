@@ -6,7 +6,7 @@ import warnings
 import pytest
 import pandas as pd
 from covsirphy import ScenarioNotFoundError, UnExecutedError, NotInteractiveError
-from covsirphy import Scenario, Term, PhaseSeries, Estimator, SIRF
+from covsirphy import Scenario, Term, PhaseSeries, SIRF
 
 
 @pytest.fixture(scope="module")
@@ -167,8 +167,6 @@ class TestScenario(object):
     def test_estimate(self, snl):
         # Error test
         with pytest.raises(UnExecutedError):
-            snl.phase_estimator(phase="1st")
-        with pytest.raises(UnExecutedError):
             snl.simulate()
         with pytest.raises(UnExecutedError):
             snl.fit()
@@ -182,9 +180,12 @@ class TestScenario(object):
         snl.estimate(SIRF)
         snl.summary()
 
-    def test_estimator(self, snl):
-        assert isinstance(snl.phase_estimator(phase="1st"), Estimator)
-        snl.estimate_history(phase="1st")
+    def test_estimate_accuracy(self, snl):
+        warnings.filterwarnings("ignore", category=DeprecationWarning)
+        with pytest.raises(NotImplementedError):
+            snl.phase_estimator(phase="1st")
+        with pytest.raises(NotImplementedError):
+            snl.estimate_history(phase="1st")
         snl.estimate_accuracy(phase="1st")
 
     def test_simulate(self, snl):
@@ -200,13 +201,9 @@ class TestScenario(object):
         assert isinstance(snl.get("rho", phase="last"), float)
 
     def test_param_history(self, snl):
-        warnings.filterwarnings("ignore", category=UserWarning)
         warnings.filterwarnings("ignore", category=DeprecationWarning)
-        snl.param_history()
-        with pytest.raises(KeyError):
-            snl.param_history(targets=["feeling"])
-        snl.param_history(divide_by_first=False, show_figure=False)
-        snl.param_history(show_box_plot=False)
+        with pytest.raises(NotImplementedError):
+            snl.param_history()
 
     def test_describe(self, snl):
         snl.add(days=100)
