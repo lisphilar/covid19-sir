@@ -180,6 +180,32 @@ class PhaseTracker(Term):
         others = [col for col in df.columns if col not in set(fixed_cols)]
         return df.loc[:, [*fixed_cols, *others]]
 
+    def phase_to_date(self, phases):
+        """
+        Convert phase names to list of dates.
+
+        Args:
+            phase (list[str]): phase names
+
+        Returns:
+            list[pandas.Timestamp]: list of dates
+        """
+        # Remove un-registered phase
+        track_df = self._track_df.reset_index()
+        track_df = track_df.loc[track_df[self.ID] != 0]
+        # -> index=phase names, columns=Start/variables,.../End
+        track_df[self.ID], _ = track_df[self.ID].factorize()
+        first_df = track_df.groupby(self.ID).first()
+        df = first_df.join(track_df.groupby(self.ID).last(), rsuffix="_last")
+        df = df.rename(columns={self.DATE: self.START, f"{self.DATE}_last": self.END})
+        df.index = [self.num2str(num) for num in df.index]
+        # Get list of dates
+        dates = []
+        for phase in phases:
+            self._ensure_selectable(phase, df.index.tolist(), name="phase")
+            dates.extend(pd.date_range(df.loc[phase, self.START], df.loc[phase, self.END]).tolist())
+        return dates
+
     def trend(self, force, show_figure, **kwargs):
         """
         Define past phases with S-R trend analysis.
