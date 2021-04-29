@@ -65,6 +65,22 @@ class PhaseTracker(Term):
         self._track_df.loc[(series.index <= end) & (series == 0), self.ID] = series.max() + 1
         return self
 
+    def remove_phase(self, start, end):
+        """
+        Remove phase information from the date range.
+
+        Args:
+            start (str or pandas.Timestamp): start date of the phase to remove
+            end (str or pandas.Timestamp): end date of the phase to remove
+
+        Returns:
+            covsirphy.PhaseTracker: self
+        """
+        start = self._ensure_date(start, name="start")
+        end = self._ensure_date(end, name="end")
+        self._track_df.loc[start:end, self.ID] = 0
+        return self
+
     def track(self):
         """
         Track data with all dates.
