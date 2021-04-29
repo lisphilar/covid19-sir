@@ -61,22 +61,24 @@ class PhaseTracker(Term):
         """
         start = self._ensure_date(start, name="start")
         end = self._ensure_date(end, name="end")
+        track_df = self._track_df.copy()
         # Start date must be over the first date of records
-        self._ensure_date_order(self._track_df.index.min(), start, name="start")
+        self._ensure_date_order(track_df.index.min(), start, name="start")
         # Add a past phase (start -> min(end, today))
         if start <= self._today:
-            self._track_df.loc[start:min(self._today, end), self.ID] = self._track_df[self.ID].max() + 1
+            track_df.loc[start:min(self._today, end), self.ID] = track_df[self.ID].max() + 1
         # Add a future phase (tomorrow -> end)
         if self._today < end:
             phase_start = max(self._today + timedelta(days=1), start)
-            df = pd.DataFrame(
-                index=pd.date_range(phase_start, end), columns=self._track_df.columns)
+            df = pd.DataFrame(index=pd.date_range(phase_start, end), columns=track_df.columns)
             df.index.name = self.DATE
-            df[self.ID] = self._track_df[self.ID].max() + 1
-            self._track_df = pd.concat([self._track_df, df], axis=0).resample("D").last()
-        # Fill in blanks
-        series = self._track_df[self.ID].copy()
-        self._track_df.loc[(series.index <= end) & (series == 0), self.ID] = series.max() + 1
+            df[self.ID] = track_df[self.ID].max() + 1
+            track_df = pd.concat([track_df, df], axis=0).resample("D").last()
+        # Fill in skiped dates
+        series = track_df[self.ID].copy()
+        track_df.loc[(series.index <= end) & (series == 0), self.ID] = series.max() + 1
+        # Update self
+        self._track_df = track_df.copy()
         return self
 
     def deactivate(self, start, end):
@@ -174,6 +176,11 @@ class PhaseTracker(Term):
         df[self.TENSE] = (df[self.START] <= self._today).map({True: self.PAST, False: self.FUTURE})
         # Calculate population values
         df[self.N] = df[[self.S, self.C]].sum(axis=1)
+        # Fill in blanks (parameters, ODE, Rt, tau, day parameters)
+        if self.RT in df:
+            filled_cols = [
+                *self._model.PARAMETERS, self.ODE, self.RT, self.TAU, *self._model.DAY_PARAMETERS]
+            df[filled_cols] = df[filled_cols].ffill()
         # Set the order of columns
         df = df.drop([self.C, self.CI, self.F, self.R, self.S], axis=1)
         fixed_cols = self.TENSE, self.START, self.END, self.N
