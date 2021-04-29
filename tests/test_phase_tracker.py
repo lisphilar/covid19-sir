@@ -54,6 +54,11 @@ class TestPhaseTracker(object):
         tracker.define_phase(start="01Mar2021", end="31Mar2021")
         df = tracker.summary()
         assert df.loc[df.index[-1], Term.END] == pd.to_datetime("31Mar2021")
+        # Phases to dates
+        dates = tracker.phase_to_date(phases=["1st", "3rd"])
+        assert min(dates) == pd.to_datetime("01Jun2020")
+        assert max(dates) == pd.to_datetime("31Jan2021")
+        assert pd.to_datetime("10Oct2020") not in set(dates)
 
     @pytest.mark.parametrize("country", ["Japan"])
     def test_trend(self, jhu_data, population_data, country, imgfile):
