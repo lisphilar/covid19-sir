@@ -417,7 +417,11 @@ class Scenario(Term):
         # Get tracker
         tracker = self._tracker(name)
         # Calculate start/end date
-        last_end = tracker.summary()[self.END].max()
+        summary_df = tracker.summary()
+        if summary_df.empty:
+            last_end = self._ensure_date(self._data.first_date) - timedelta(days=1)
+        else:
+            last_end = summary_df[self.END].max()
         if end_date is None and days is not None:
             days = self._ensure_natural_int(days, name="days")
             end = last_end + timedelta(days=days)
