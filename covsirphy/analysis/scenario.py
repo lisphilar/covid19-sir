@@ -41,14 +41,12 @@ class Scenario(Term):
         # Area name
         if country is None:
             raise ValueError("@country must be specified.")
-        self.country = str(country)
-        self.province = str(province or self.UNKNOWN)
-        self.area = JHUData.area_name(country, province)
+        self._area = JHUData.area_name(country, province)
         # Initialize data handler
-        self._data = DataHandler(country=self.country, province=self.province)
+        self._data = DataHandler(country=str(country), province=str(province or self.UNKNOWN))
         self._data.switch_complement(whether=auto_complement)
         # Tau value
-        self.tau = self._ensure_tau(tau)
+        self._tau = self._ensure_tau(tau, accept_none=True)
         # Register datasets
         self._tracker_dict = {}
         self.register(jhu_data=jhu_data, population_data=population_data, extras=None)
@@ -88,7 +86,7 @@ class Scenario(Term):
             value (covsirphy.PhaseSeries): phase series object
         """
         self._tracker_dict[key] = ParamTracker(
-            self._data.records(extras=False), value, area=self.area, tau=self.tau)
+            self._data.records(extras=False), value, area=self._area, tau=self._tau)
 
     @property
     def first_date(self):
@@ -306,9 +304,9 @@ class Scenario(Term):
         df = all_df.loc[:, variables]
         # Figure
         if self._data.complemented:
-            title = f"{self.area}: Cases over time\nwith {self._data.complemented}"
+            title = f"{self._area}: Cases over time\nwith {self._data.complemented}"
         else:
-            title = f"{self.area}: Cases over time"
+            title = f"{self._area}: Cases over time"
         self.line_plot(df=df, title=title, y_integer=True, **kwargs)
         return df.reset_index()
 
@@ -336,9 +334,9 @@ class Scenario(Term):
         df = df.diff().dropna()
         df = df.rolling(window=window).mean().dropna().astype(np.int64)
         if self._data.complemented:
-            title = f"{self.area}: Daily new cases\nwith {self._data.complemented}"
+            title = f"{self._area}: Daily new cases\nwith {self._data.complemented}"
         else:
-            title = f"{self.area}: Daily new cases"
+            title = f"{self._area}: Daily new cases"
         self.line_plot(df=df, title=title, y_integer=True, **kwargs)
         return df
 
@@ -350,7 +348,7 @@ class Scenario(Term):
         series = ParamTracker.create_series(
             first_date=data.first_date, last_date=data.today, population=data.population)
         tracker = ParamTracker(
-            record_df=self._data.records(extras=False), phase_series=series, area=self.area, tau=self.tau)
+            record_df=self._data.records(extras=False), phase_series=series, area=self._area, tau=self._tau)
         self._tracker_dict = {self.MAIN: tracker}
 
     def _tracker(self, name, template="Main"):
@@ -695,7 +693,7 @@ class Scenario(Term):
         if self.TAU in kwargs:
             raise ValueError(
                 "@tau must be specified when scenario = Scenario(), and cannot be specified here.")
-        self.tau, self[name] = self._tracker(name).estimate(
+        self._tau, self[name] = self._tracker(name).estimate(
             model=model, phases=phases, n_jobs=n_jobs, **kwargs)
 
     def phase_estimator(self, phase, name="Main"):
@@ -779,7 +777,7 @@ class Scenario(Term):
         df = sim_df.set_index(self.DATE)
         variables = self._convert_variables(variables, candidates=self.VALUE_COLUMNS)
         # Show figure
-        title = f"{self.area}: Simulated number of cases ({name} scenario)"
+        title = f"{self._area}: Simulated number of cases ({name} scenario)"
         self.line_plot(
             df=df.loc[:, variables], title=title, y_integer=True, v=tracker.change_dates(), **kwargs)
         return sim_df
@@ -871,9 +869,9 @@ class Scenario(Term):
         # Divide by the first phase parameters
         if divide_by_first:
             df = df / df.iloc[0, :]
-            title = f"{self.area}: Ratio to 1st phase parameters ({name} scenario)"
+            title = f"{self._area}: Ratio to 1st phase parameters ({name} scenario)"
         else:
-            title = f"{self.area}: History of parameter values ({name} scenario)"
+            title = f"{self._area}: History of parameter values ({name} scenario)"
         if not show_figure:
             return df
         if show_box_plot:
@@ -1131,7 +1129,7 @@ class Scenario(Term):
             ylabel = f"The number of {target.lower()} cases"
         else:
             ylabel = target
-        title = f"{self.area}: {ylabel} over time"
+        title = f"{self._area}: {ylabel} over time"
         tracker = self._tracker(self.MAIN)
         self.line_plot(
             df=df, title=title, ylabel=ylabel, v=tracker.change_dates(), math_scale=False,
@@ -1161,9 +1159,9 @@ class Scenario(Term):
         df = df.loc[:, cols] / df.loc[df.index[0], cols]
         # Show figure
         f_date = df.index[0].strftime(self.DATE_FORMAT)
-        title = f"{self.area}: {model.NAME} parameter change rates over time (1.0 on {f_date})"
+        title = f"{self._area}: {model.NAME} parameter change rates over time (1.0 on {f_date})"
         ylabel = f"Value per that on {f_date}"
-        title = f"{self.area}: {ylabel} over time"
+        title = f"{self._area}: {ylabel} over time"
         tracker = self._tracker(self.MAIN)
         self.line_plot(
             df=df, title=title, ylabel=ylabel, v=tracker.change_dates(), math_scale=False, **kwargs)
