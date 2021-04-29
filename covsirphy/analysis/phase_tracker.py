@@ -3,6 +3,7 @@
 
 from datetime import timedelta
 import pandas as pd
+from covsirphy.util.error import UnExecutedError
 from covsirphy.util.argument import find_args
 from covsirphy.util.term import Term
 from covsirphy.trend.trend_plot import trend_plot
@@ -295,3 +296,52 @@ class PhaseTracker(Term):
         track_df.update(new_df)
         self._track_df = track_df.copy()
         return self._tau
+
+    def simulate(self):
+        """
+        Perform simulation with the multi-phased ODE model.
+
+        Raises:
+            covsirphy.UnExecutedError: either tau value or phase information was not set
+
+        Returns:
+            pandas.DataFrame:
+                Index
+                    reset index
+                Columns
+                    - Date (pandas.Timestamp): Observation date
+                    - Confirmed (int): the number of confirmed cases
+                    - Infected (int): the number of currently infected cases
+                    - Fatal (int): the number of fatal cases
+                    - Recovered (int): the number of recovered cases
+                    - Susceptible (int): the number of susceptible cases
+
+        Note:
+            Deactivated phases will be included.
+
+        Note:
+            Un-registered phases will not be included.
+
+        Note:
+            If parameter set is not registered for the current phase and
+            the previous phase has parameter set, this set will be used for the current phase.
+        """
+        # Model and tau must be set
+        if self._model is None:
+            raise UnExecutedError("PhaseTracker.estimate() or PhaseTracker.set_ode()")
+        # Get parameter sets and initial values
+        record_df = self._track_df.copy()
+        record_df = record_df.loc[record_df[self.ID] != 0].ffill().dropna()
+        start_dates = record_df.reset_index().groupby(self.ID).first()[self.DATE]
+        end_dates = record_df.reset_index().groupby(self.ID).last()[self.DATE]
+        # Set-up ODEHandler
+        handler = ODEHandler(self._model, record_df.index.min(), tau=self._tau)
+        parameters = self._model.PARAMETERS[:]
+        for (start, end) in zip(start_dates, end_dates):
+            param_dict = record_df.loc[end, parameters].to_dict()
+            y0_dict = record_df.loc[start, [self.S, self.CI, self.F, self.R]].to_dict()
+            _ = handler.add(end, param_dict=param_dict, y0_dict=y0_dict)
+        # Perform simulation
+        sim_df = handler.simulate()
+        sim_df[self.C] = sim_df[[self.CI, self.F, self.R]].sum(axis=1)
+        return sim_df.loc[:, self.SUB_COLUMNS]
