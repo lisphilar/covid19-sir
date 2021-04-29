@@ -475,11 +475,12 @@ class Scenario(Term):
         """
         tracker = self._tracker(name, template=template)
         if include_past:
-            self[name] = tracker.delete_all()
+            self[name] = tracker.remove_phase(self._data.first_date, self._data.last_date)
         else:
             df = tracker.summary()
             future_phases = df.loc[df[self.TENSE] == self.FUTURE].index.tolist()
-            self[name] = tracker.delete(phases=future_phases)
+            dates = tracker.phase_to_dates(phases=future_phases)
+            self[name] = tracker.remove_phase(min(dates), max(dates))
         return self
 
     def _delete_series(self, name):
