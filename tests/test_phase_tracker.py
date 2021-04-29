@@ -8,7 +8,7 @@ from covsirphy import PhaseTracker, Term
 
 class TestPhaseTracker(object):
     @pytest.mark.parametrize("country", ["Japan"])
-    def test_define_phases(self, jhu_data, population_data, country):
+    def test_edit_phases(self, jhu_data, population_data, country):
         population = population_data.value(country=country)
         records_df, _ = jhu_data.records(
             country=country, start_date="01May2020", population=population)
@@ -23,6 +23,12 @@ class TestPhaseTracker(object):
         # Add a future phase
         # -> (01May, 31May), (01Jun, 30Sep), (01Oct, 31Dec), (01Jan2021, 31Jan), (01Feb, 28Feb)
         tracker.define_phase(start="01Feb2021", end="28Feb2021")
+        # Add a future phase
+        # -> (01May, 31May), (01Jun, 30Sep), (01Oct, 31Dec), (01Jan2021, 31Jan), (01Feb, 28Feb), (01Mar, 31Mar)
+        tracker.define_phase(start="01Mar2021", end="31Mar2021")
+        # Remove a future phase
+        # -> (01May, 31May), (01Jun, 30Sep), (01Oct, 31Dec), (01Jan2021, 31Jan), (01Feb, 28Feb)
+        tracker.remove_phase(start="01Mar2021", end="31Mar2021")
         # Tracking
         assert set(Term.SUB_COLUMNS).issubset(tracker.track().columns)
         # Check summary
