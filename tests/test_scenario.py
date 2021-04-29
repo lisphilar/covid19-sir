@@ -6,7 +6,7 @@ import warnings
 import pytest
 import pandas as pd
 from covsirphy import ScenarioNotFoundError, UnExecutedError, NotInteractiveError
-from covsirphy import Scenario, Term, PhaseSeries, SIRF
+from covsirphy import Scenario, Term, PhaseTracker, SIRF
 
 
 @pytest.fixture(scope="module")
@@ -106,7 +106,7 @@ class TestScenario(object):
         with pytest.raises(ScenarioNotFoundError):
             snl.clear(name="New", include_past=True, template="Un-registered")
         snl.clear(name="New", include_past=True, template="Main")
-        assert isinstance(snl["New"], PhaseSeries)
+        assert isinstance(snl["New"], PhaseTracker)
         snl.summary()
         snl.delete(name="New")
         with pytest.raises(ScenarioNotFoundError):
