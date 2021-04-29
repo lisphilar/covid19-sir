@@ -7,6 +7,8 @@ from covsirphy.util.argument import find_args
 from covsirphy.util.term import Term
 from covsirphy.trend.trend_plot import trend_plot
 from covsirphy.trend.trend_detector import TrendDetector
+from covsirphy.ode.mbase import ModelBase
+from covsirphy.ode.ode_handler import ODEHandler
 
 
 class PhaseTracker(Term):
@@ -26,6 +28,9 @@ class PhaseTracker(Term):
                 - Susceptible (int): the number of susceptible cases
         today (str or pandas.Timestamp): reference date to determine whether a phase is a past phase or not
         area (str): area name, like Japan/Tokyo
+
+    Note:
+        (Internally) ID=0 means not registered, ID < 0 means disabled, IDs (>0) are active phase ID.
     """
 
     def __init__(self, data, today, area):
@@ -136,7 +141,7 @@ class PhaseTracker(Term):
         """
         # Remove un-registered phase
         track_df = self._track_df.reset_index()
-        track_df = track_df.loc[track_df[self.ID] != 0]
+        track_df = track_df.loc[track_df[self.ID] > 0]
         # -> index=phase names, columns=Start/variables,.../End
         track_df[self.ID], _ = track_df[self.ID].factorize()
         first_df = track_df.groupby(self.ID).first()
@@ -174,8 +179,44 @@ class PhaseTracker(Term):
         # Register phases
         if force:
             start_dates, end_dates = detector.dates()
-            [self.define_phase(start, end) for (start, end) in zip(start_dates, end_dates)]
+            _ = [self.define_phase(start, end) for (start, end) in zip(start_dates, end_dates)]
         # Show S-R plane
         if show_figure:
             detector.show(**find_args(trend_plot, **kwargs))
         return self
+
+    def estimate(self, model, tau=None, **kwargs):
+        """
+        Perform parameter estimation for each phases.
+
+        Args:
+            model (covsirphy.ModelBase): ODE model
+            tau (int or None): tau value [min] or None (to be estimated)
+            kwargs: keyword arguments of  ODEHander(), ODEHandler.estimate_tau() and .estimate_param()
+
+        Returns:
+            int: applied or estimated tau value [min]
+        """
+        self._ensure_subclass(model, ModelBase, name="model")
+        self._ensure_tau(tau, accept_none=True)
+        # Set-up ODEHandler
+        data_df = self._track_df.reset_index()
+        data_df = data_df.loc[data_df[self.ID] > 0]
+        handler = ODEHandler(model, data_df[self.DATE].min(), tau=tau, **find_args(ODEHandler, **kwargs))
+        start_dates = data_df.groupby(self.ID).first()[self.DATE]
+        end_dates = data_df.groupby(self.ID).last()[self.DATE]
+        for (start, end) in zip(start_dates, end_dates):
+            _ = handler.add(end, y0_dict=data_df.set_index(self.DATE).loc[start].to_dict())
+        # Estimate tau value if necessary
+        if tau is None:
+            tau = handler.estimate_tau(data_df, **find_args(ODEHandler.estimate_tau, **kwargs))
+        # Estimate ODE parameter values
+        est_dict = handler.estimate_params(data_df, **kwargs)
+        # Register phase information to self
+        df = pd.DataFrame.from_dict(est_dict, orient="index")
+        df[self.DATE] = df[[self.START, self.END]].apply(lambda x: pd.date_range(x[0], x[1]), axis=1)
+        df = df.explode(self.DATE).drop([self.START, self.END], axis=1)
+        df.insert(0, self.ODE, model.NAME)
+        df.insert(6, self.TAU, tau)
+        self._track_df = self._track_df.join(df.set_index(self.DATE), how="left")
+        return tau

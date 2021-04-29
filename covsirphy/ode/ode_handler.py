@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
+from covsirphy.util.argument import find_args
 from covsirphy.util.stopwatch import StopWatch
 from datetime import timedelta
 import functools
@@ -21,7 +22,7 @@ class ODEHandler(Term):
     Args:
         model (covsirphy.ModelBase): ODE model
         first_date (str or pandas.Timestamp): the first date of simulation, like 14Apr2021
-        tau (int or None): tau value [min] or None (to be determined)
+        tau (int or None): tau value [min] or None (to be estimated)
         metric (str): metric name for estimation
         n_jobs (int): the number of parallel jobs or -1 (CPU count)
     """
@@ -296,10 +297,10 @@ class ODEHandler(Term):
                     - Infected (int): the number of currently infected cases
                     - Fatal(int): the number of fatal cases
                     - Recovered (int): the number of recovered cases
-            kwargs: keyword arguments of ODEHander.estimate_param()
+            kwargs: keyword arguments of  ODEHander.estimate_tau() and ODEHander.estimate_param()
 
         Raises:
-            covsirphy.UnExecutedError: either tau value or phase information was not set
+            covsirphy.UnExecutedError: phase information was not set
 
         Returns:
             tuple(int, dict(str, dict[str, object]))
@@ -314,6 +315,6 @@ class ODEHandler(Term):
                     - Trials (int): the number of trials
                     - Runtime (str): runtime of optimization
         """
-        tau = self.estimate_tau(data)
-        info_dict = self.estimate_params(data, **kwargs)
+        tau = self.estimate_tau(data, **find_args(self.estimate_tau, **kwargs))
+        info_dict = self.estimate_params(data, **find_args(self.estimate_params, **kwargs))
         return (tau, info_dict)
