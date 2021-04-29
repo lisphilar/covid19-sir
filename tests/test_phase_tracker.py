@@ -23,12 +23,17 @@ class TestPhaseTracker(object):
         # Add a future phase
         # -> (01May, 31May), (01Jun, 30Sep), (01Oct, 31Dec), (01Jan2021, 31Jan), (01Feb, 28Feb)
         tracker.define_phase(start="01Feb2021", end="28Feb2021")
-        # Add a future phase
-        # -> (01May, 31May), (01Jun, 30Sep), (01Oct, 31Dec), (01Jan2021, 31Jan), (01Feb, 28Feb), (01Mar, 31Mar)
-        tracker.define_phase(start="01Mar2021", end="31Mar2021")
-        # Remove a future phase
+        # Add two future phase
+        # -> (01May, 31May), (01Jun, 30Sep), (01Oct, 31Dec), (01Jan2021, 31Jan), (01Feb, 28Feb),
+        # (01Mar, 31Mar), (01Apr, 15Apr)
+        tracker.define_phase(start="01Apr2021", end="15APr2021")
+        # Deactivate a future phase
+        # -> (01May, 31May), (01Jun, 30Sep), (01Oct, 31Dec), (01Jan2021, 31Jan), (01Feb, 28Feb),
+        # (01Apr, 15Apr)
+        tracker.deactivate(start="01Mar2021", end="31Mar2021")
+        # Remove a phase
         # -> (01May, 31May), (01Jun, 30Sep), (01Oct, 31Dec), (01Jan2021, 31Jan), (01Feb, 28Feb)
-        tracker.remove_phase(start="01Mar2021", end="31Mar2021")
+        tracker.remove_phase(start="01Apr2021", end="15Apr2021")
         # Tracking
         assert set(Term.SUB_COLUMNS).issubset(tracker.track().columns)
         # Check summary
@@ -45,6 +50,10 @@ class TestPhaseTracker(object):
         expected_df[Term.START] = pd.to_datetime(expected_df[Term.START])
         expected_df[Term.END] = pd.to_datetime(expected_df[Term.END])
         assert summary_df.equals(expected_df)
+        # Activate a phase
+        tracker.define_phase(start="01Mar2021", end="31Mar2021")
+        df = tracker.summary()
+        assert df.loc[df.index[-1], Term.END] == pd.to_datetime("31Mar2021")
 
     @pytest.mark.parametrize("country", ["Japan"])
     def test_trend(self, jhu_data, population_data, country, imgfile):
