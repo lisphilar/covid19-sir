@@ -3,7 +3,7 @@
 
 import pandas as pd
 import pytest
-from covsirphy import PhaseTracker, Term, SIRF
+from covsirphy import PhaseTracker, Term, SIRF, UnExecutedError
 
 
 class TestPhaseTracker(object):
@@ -84,6 +84,8 @@ class TestPhaseTracker(object):
         # Define phases with S-R trend analysis
         tracker.trend(force=True, show_figure=False)
         # Estimate tau value (if necessary) and parameter values
+        with pytest.raises(UnExecutedError):
+            tracker.simulate()
         est_tau = tracker.estimate(
             model=model, tau=tau, metric=metric, timeout=1, timeout_iteration=1)
         assert isinstance(est_tau, int)
@@ -94,6 +96,9 @@ class TestPhaseTracker(object):
         assert df.columns.tolist() == [
             Term.TENSE, Term.START, Term.END, Term.N, Term.ODE, Term.RT, *model.PARAMETERS,
             Term.TAU, *model.DAY_PARAMETERS, metric, Term.TRIALS, Term.RUNTIME]
+        # Simulation
+        sim_df = tracker.simulate()
+        assert sim_df.columns.tolist() == Term.SUB_COLUMNS
 
     @pytest.mark.parametrize("country", ["Japan"])
     @pytest.mark.parametrize("model", [SIRF])
@@ -111,9 +116,14 @@ class TestPhaseTracker(object):
         param_df = pd.DataFrame(index=records_df[Term.DATE])
         for (param, value) in param_dict.items():
             param_df[param] = value
+        with pytest.raises(UnExecutedError):
+            tracker.simulate()
         tracker.set_ode(model, param_df, tau)
         # Check summary
         df = tracker.summary()
         assert df.columns.tolist() == [
             Term.TENSE, Term.START, Term.END, Term.N, Term.ODE, Term.RT, *model.PARAMETERS,
             Term.TAU, *model.DAY_PARAMETERS]
+        # Simulation
+        sim_df = tracker.simulate()
+        assert sim_df.columns.tolist() == Term.SUB_COLUMNS
