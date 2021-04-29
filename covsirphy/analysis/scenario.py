@@ -435,13 +435,16 @@ class Scenario(Term):
         # Add phase
         start = last_end + timedelta(days=1)
         tracker.define_phase(start, end)
+        if not kwargs:
+            self._tracker_dict[name] = tracker
+            return self
         # Set ODE model and tau value, if necessary
-        self._model = self._model or self._ensure_subclass(model, ModelBase, name="model")
-        self._tau = self._tau or self._ensure_tau(tau)
-        if kwargs and self._model is None:
+        if self._model is None and model is None:
             raise ValueError(
                 "@model must be specified, because no ODE models were registered and we have kwargs.")
-        if kwargs and self._tau is None:
+        self._model = self._ensure_subclass(model or self._model, ModelBase, name="model")
+        self._tau = self._tau or self._ensure_tau(tau)
+        if self._tau is None:
             raise ValueError(
                 "@tau must be specified, because tau value was not registered and we have kwargs.")
         # Set ODE parameter values
