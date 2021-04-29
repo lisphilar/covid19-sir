@@ -666,14 +666,21 @@ class Scenario(Term):
 
         Returns:
             pandas.DataFrame:
-            - if @name not None, as the same as PhaseSeries().summary()
+            - if @name not None, as the same as PhaseTracker().summary()
             - if @name is None, index will be phase series name and phase name
 
         Note:
             If 'Main' was used as @name, main PhaseSeries will be used.
+
+        Note:
             If @columns is None, all columns will be shown.
+
+        Note:
+            "Start" and "End" are string at this time.
         """
         df = self._summary(name=name).dropna(how="all", axis=1).fillna(self.UNKNOWN)
+        df[self.START] = df[self.START].dt.strftime(self.DATE_FORMAT)
+        df[self.END] = df[self.END].dt.strftime(self.DATE_FORMAT)
         if columns is None:
             return df
         self._ensure_list(columns, df.columns.tolist(), name="columns")
