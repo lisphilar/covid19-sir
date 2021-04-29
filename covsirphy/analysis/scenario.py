@@ -422,7 +422,7 @@ class Scenario(Term):
             days = self._ensure_natural_int(days, name="days")
             end = last_end + timedelta(days=days)
         else:
-            record_last = pd.to_datetime(self._last_date)
+            record_last = pd.to_datetime(self._data.last_date)
             end = self._ensure_date(end_date, name="end_date", default=record_last)
         if end <= last_end:
             last_end_date = last_end.strftime(self.DATE_FORMAT)
