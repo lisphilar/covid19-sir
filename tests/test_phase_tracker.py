@@ -3,7 +3,7 @@
 
 import pandas as pd
 import pytest
-from covsirphy import PhaseTracker, Term
+from covsirphy import PhaseTracker, Term, SIRF
 
 
 class TestPhaseTracker(object):
@@ -61,3 +61,27 @@ class TestPhaseTracker(object):
         df = tracker.summary()
         assert df.loc[df.index[-1], Term.END] == pd.to_datetime("31Dec2020")
         assert Term.FUTURE not in df[Term.TENSE]
+
+    @pytest.mark.parametrize("country", ["Japan"])
+    @pytest.mark.parametrize("model", [SIRF])
+    @pytest.mark.parametrize("tau", [720, None])
+    @pytest.mark.parametrize("metric", ["RMSLE"])
+    def test_estimate(self, jhu_data, population_data, country, model, tau, metric):
+        population = population_data.value(country=country)
+        records_df, _ = jhu_data.records(
+            country=country, start_date="01May2020", population=population)
+        # Create tracker -> no phases
+        tracker = PhaseTracker(data=records_df, today="31Dec2020", area=country)
+        # Define phases with S-R trend analysis
+        tracker.trend(force=True, show_figure=False)
+        # Estimate tau value (if necessary) and parameter values
+        est_tau = tracker.estimate(
+            model=model, tau=tau, metric=metric, timeout=1, timeout_iteration=1)
+        assert isinstance(est_tau, int)
+        if tau is not None:
+            assert est_tau == tau
+        # Check summary
+        df = tracker.summary()
+        assert df.columns.tolist() == [
+            Term.TENSE, Term.START, Term.END, Term.N, Term.ODE, Term.RT, *model.PARAMETERS,
+            Term.TAU, *model.DAY_PARAMETERS, metric, Term.TRIALS, Term.RUNTIME, ]
