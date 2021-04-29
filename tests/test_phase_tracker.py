@@ -69,7 +69,7 @@ class TestPhaseTracker(object):
     def test_estimate(self, jhu_data, population_data, country, model, tau, metric):
         population = population_data.value(country=country)
         records_df, _ = jhu_data.records(
-            country=country, start_date="01May2020", population=population)
+            country=country, start_date="01Nov2020", population=population)
         # Create tracker -> no phases
         tracker = PhaseTracker(data=records_df, today="31Dec2020", area=country)
         # Define phases with S-R trend analysis
@@ -84,4 +84,27 @@ class TestPhaseTracker(object):
         df = tracker.summary()
         assert df.columns.tolist() == [
             Term.TENSE, Term.START, Term.END, Term.N, Term.ODE, Term.RT, *model.PARAMETERS,
-            Term.TAU, *model.DAY_PARAMETERS, metric, Term.TRIALS, Term.RUNTIME, ]
+            Term.TAU, *model.DAY_PARAMETERS, metric, Term.TRIALS, Term.RUNTIME]
+
+    @pytest.mark.parametrize("country", ["Japan"])
+    @pytest.mark.parametrize("model", [SIRF])
+    @pytest.mark.parametrize("tau", [720])
+    def test_set_ode(self, jhu_data, population_data, country, model, tau):
+        population = population_data.value(country=country)
+        records_df, _ = jhu_data.records(
+            country=country, start_date="01Nov2020", population=population)
+        # Create tracker -> no phases
+        tracker = PhaseTracker(data=records_df, today="31Dec2020", area=country)
+        # Define phases with S-R trend analysis
+        tracker.trend(force=True, show_figure=False)
+        # Set ODE, tau and parameter values
+        param_dict = model.EXAMPLE[Term.PARAM_DICT].copy()
+        param_df = pd.DataFrame(index=records_df[Term.DATE])
+        for (param, value) in param_dict.items():
+            param_df[param] = value
+        tracker.set_ode(model, param_df, tau)
+        # Check summary
+        df = tracker.summary()
+        assert df.columns.tolist() == [
+            Term.TENSE, Term.START, Term.END, Term.N, Term.ODE, Term.RT, *model.PARAMETERS,
+            Term.TAU, *model.DAY_PARAMETERS]
