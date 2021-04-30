@@ -1084,8 +1084,9 @@ class Scenario(Term):
         ylabel = f"Value per that on {f_date}"
         title = f"{self._area}: {ylabel} over time"
         tracker = self._tracker(self.MAIN)
+        end_dates = tracker.summary()[self.END].tolist()
         self.line_plot(
-            df=df, title=title, ylabel=ylabel, v=tracker.change_dates(), math_scale=False, **kwargs)
+            df=df, title=title, ylabel=ylabel, v=end_dates[:-1], math_scale=False, **kwargs)
         return df
 
     def retrospective(self, beginning_date, model, control="Main", target="Target", **kwargs):
