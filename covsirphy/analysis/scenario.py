@@ -1052,8 +1052,9 @@ class Scenario(Term):
             ylabel = target
         title = f"{self._area}: {ylabel} over time"
         tracker = self._tracker(self.MAIN)
+        end_dates = tracker.summary()[self.END].tolist()
         self.line_plot(
-            df=df, title=title, ylabel=ylabel, v=tracker.change_dates(), math_scale=False,
+            df=df, title=title, ylabel=ylabel, v=end_dates[:-1], math_scale=False,
             h=1.0 if target == self.RT else None, **kwargs)
         return df
 
