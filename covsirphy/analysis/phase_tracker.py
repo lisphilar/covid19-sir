@@ -163,11 +163,11 @@ class PhaseTracker(Term):
         """
         # Remove un-registered phase
         track_df = self._track_df.reset_index()
-        track_df = track_df.loc[track_df[self.ID] > 0]
+        track_df["ID_ordered"], _ = track_df[self.ID].factorize()
+        track_df = track_df.loc[track_df[self.ID] > 0].drop(self.ID, axis=1)
         # -> index=phase names, columns=Start/variables,.../End
-        track_df[self.ID], _ = track_df[self.ID].factorize()
-        first_df = track_df.groupby(self.ID).first()
-        df = first_df.join(track_df.groupby(self.ID).last(), rsuffix="_last")
+        first_df = track_df.groupby("ID_ordered").first()
+        df = first_df.join(track_df.groupby("ID_ordered").last(), rsuffix="_last")
         df = df.rename(columns={self.DATE: self.START, f"{self.DATE}_last": self.END})
         df.index.name = None
         df.index = [self.num2str(num) for num in df.index]
