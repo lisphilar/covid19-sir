@@ -496,7 +496,8 @@ class Scenario(Term):
             covsirphy.Scenario: self
         """
         if name == self.MAIN:
-            self[self.MAIN] = self._tracker(self.MAIN).delete_all()
+            tracker = self._tracker(name)
+            self[self.MAIN] = tracker.remove_phase(self._data.first_date, self._data.last_date)
         else:
             self._tracker_dict.pop(name)
         return self
