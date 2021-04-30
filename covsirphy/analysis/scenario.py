@@ -1177,7 +1177,7 @@ class Scenario(Term):
         if past_days is not None:
             past_days = self._ensure_natural_int(past_days, name="past_days")
             # Separate a phase, if possible
-            today = self._ensure_date(self._today)
+            today = self._ensure_date(self._data.today)
             beginning_date = today - timedelta(days=past_days)
             sim_df = sim_df.loc[beginning_date:today]
             rec_df = rec_df.loc[beginning_date:today]
