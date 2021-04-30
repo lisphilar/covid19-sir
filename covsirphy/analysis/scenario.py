@@ -398,9 +398,6 @@ class Scenario(Term):
 
         Raises:
             ValueError: @end_date if smaller than the last end date of registered phases
-            ValueError: no ODE models were registered, but @model was not specified when we have kwargs
-            ValueError: tau value was not registered, but @tau was not specified when we have kwargs
-            KeyError: some of parameter values were not specified in kwargs (must be all or noting)
 
         Returns:
             covsirphy.Scenario: self
@@ -413,6 +410,10 @@ class Scenario(Term):
 
         Note:
             If both of @end_date and @days were specified, @end_date will be used.
+
+        Note:
+            When ODE model and tau value has been or were registered, parameter values will be also added.
+            Default values are that of the last phase. Er can change them with kwargs.
         """
         # Get tracker
         tracker = self._tracker(name)
@@ -435,23 +436,22 @@ class Scenario(Term):
         # Add phase
         start = last_end + timedelta(days=1)
         tracker.define_phase(start, end)
-        if not kwargs:
+        # Set ODE model and tau value
+        if model is not None:
+            self._model = self._ensure_subclass(model, ModelBase, name="model")
+        self._tau = self._tau or self._ensure_tau(tau, accept_none=True)
+        if self._model is None or self._tau is None or (kwargs or self.RT in summary_df):
             self._tracker_dict[name] = tracker
             return self
-        # Set ODE model and tau value, if necessary
-        if self._model is None and model is None:
-            raise ValueError(
-                "@model must be specified, because no ODE models were registered and we have kwargs.")
-        self._model = self._ensure_subclass(model or self._model, ModelBase, name="model")
-        self._tau = self._tau or self._ensure_tau(tau)
-        if self._tau is None:
-            raise ValueError(
-                "@tau must be specified, because tau value was not registered and we have kwargs.")
         # Set ODE parameter values
-        self._ensure_kwargs(self._model.PARAMETERS, float, **kwargs)
         param_df = pd.DataFrame(index=pd.date_range(start, end))
-        for (param, value) in kwargs.items():
-            param_df[param] = value
+        for param in self._model.PARAMETERS:
+            try:
+                param_df[param] = kwargs.get(param, self.get(param, phase="last", name=name))
+            except KeyError:
+                raise KeyError(
+                    f"{param} value must be specified as a keyword argument because the last phase does not have this value."
+                ) from None
         tracker.set_ode(self._model, param_df, self._tau)
         # Update tracker of self
         self._tracker_dict[name] = tracker
