@@ -107,7 +107,6 @@ class ColoredMap(VisualizeBase):
         # Convert to log10 scale
         if logscale:
             gdf["Value"] = np.log10(gdf["Value"] + 1)
-            # plot_kwargs["legend_kwds"] = {"label": "in log10 scale"}
         # Plotting
         warnings.filterwarnings("ignore", category=UserWarning)
         if not gdf["Value"].isna().sum():
