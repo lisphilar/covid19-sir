@@ -753,6 +753,9 @@ class Scenario(Term):
             If @phases is None, all past phase will be used.
         """
         tracker = self._tracker(name)
+        if self.TAU in kwargs:
+            raise ValueError(
+                "@tau must be specified when scenario = Scenario(), and cannot be specified here.")
         if phases is not None:
             dates = tracker.phase_to_date(phases=phases)
             tracker.deactivate(min(dates), max(dates))
