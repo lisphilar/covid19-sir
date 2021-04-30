@@ -796,7 +796,7 @@ class Scenario(Term):
             If 'Main' was used as @name, main PhaseSeries will be used.
         """
         variables = [self.CI, self.F, self.R]
-        records_df = self._records(variables=variables)
+        records_df = self.records(variables=variables)
         tracker = self._tracker(name=name)
         sim_df = tracker.simulate()
         dates = tracker.phase_to_date(phases=[phase])
