@@ -680,6 +680,8 @@ class Scenario(Term):
             "Start" and "End" are string at this time.
         """
         df = self._summary(name=name).dropna(how="all", axis=1).fillna(self.UNKNOWN)
+        if df.empty:
+            return pd.DataFrame(index=[self.TENSE, self.START, self.END, self.N])
         df[self.START] = df[self.START].dt.strftime(self.DATE_FORMAT)
         df[self.END] = df[self.END].dt.strftime(self.DATE_FORMAT)
         if columns is None:
