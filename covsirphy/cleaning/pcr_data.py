@@ -574,7 +574,7 @@ class PCRData(CleaningBase):
                 country=country, province=province, message="Too many missing Tests records") from None
         # Limit tests records to last date
         if last_date is not None:
-            subset_df = subset_df.loc[subset_df[self.DATE] <= last_date]
+            subset_df = subset_df.loc[subset_df[self.DATE] <= pd.to_datetime(last_date)]
         # Process PCR data
         df, is_complemented = self._pcr_processing(subset_df, window)
         # Calculate PCR values
