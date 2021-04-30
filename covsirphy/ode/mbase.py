@@ -368,3 +368,18 @@ class ModelBase(Term):
             dict(str, float or pandas.Series): guessed parameter values with the quantile(s)
         """
         raise NotImplementedError
+
+    @classmethod
+    def _clip(cls, values, lower, upper):
+        """
+        Trim values at input threshold.
+
+        Args:
+            values (float or pandas.Series): values to trim
+            lower (float): minimum threshold
+            upper (float): maximum threshold
+        """
+        if isinstance(values, float):
+            return min(max(values, lower), upper)
+        cls._ensure_instance(values, pd.Series, name="values")
+        return values.clip()

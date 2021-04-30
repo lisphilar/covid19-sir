@@ -313,7 +313,7 @@ class SIRD(ModelBase):
         sigma_series = df[cls.R].diff() / df[cls.CI]
         # Guess representative values
         return {
-            "kappa": kappa_series.quantile(q=q).clip(0, 1),
-            "rho": rho_series.quantile(q=q).clip(0, 1),
-            "sigma": sigma_series.quantile(q=q).clip(0, 1),
+            "kappa": cls._clip(kappa_series.quantile(q=q), 0, 1),
+            "rho": cls._clip(rho_series.quantile(q=q), 0, 1),
+            "sigma": cls._clip(sigma_series.quantile(q=q), 0, 1),
         }

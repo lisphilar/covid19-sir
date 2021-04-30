@@ -304,6 +304,6 @@ class SIR(ModelBase):
         sigma_series = df[cls.FR].diff() / df[cls.CI]
         # Guess representative values
         return {
-            "rho": rho_series.quantile(q=q).clip(0, 1),
-            "sigma": sigma_series.quantile(q=q).clip(0, 1),
+            "rho": cls._clip(rho_series.quantile(q=q), 0, 1),
+            "sigma": cls._clip(sigma_series.quantile(q=q), 0, 1),
         }

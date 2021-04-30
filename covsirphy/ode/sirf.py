@@ -320,7 +320,7 @@ class SIRF(ModelBase):
         # Guess representative values
         return {
             "theta": 0.0 if isinstance(q, float) else pd.Series([0.0, 0.5]).repeat([1, len(q) - 1]),
-            "kappa": kappa_series.quantile(q=q).clip(0, 1),
-            "rho": rho_series.quantile(q=q).clip(0, 1),
-            "sigma": sigma_series.quantile(q=q).clip(0, 1),
+            "kappa": cls._clip(kappa_series.quantile(q=q), 0, 1),
+            "rho": cls._clip(rho_series.quantile(q=q), 0, 1),
+            "sigma": cls._clip(sigma_series.quantile(q=q), 0, 1),
         }
