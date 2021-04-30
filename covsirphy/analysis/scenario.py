@@ -733,7 +733,7 @@ class Scenario(Term):
             warnings.warn(
                 "@include_init_phase was deprecated. Please use Scenario.disable('0th').",
                 DeprecationWarning, stacklevel=2)
-            self[name] = tracker.disable(phases=["0th"])
+            self.disable(phases=["0th"], name=name)
         return self
 
     def estimate(self, model, phases=None, name="Main", **kwargs):
@@ -753,8 +753,8 @@ class Scenario(Term):
             If @phases is None, all past phase will be used.
         """
         tracker = self._tracker(name)
-        dates = tracker.phase_to_date(phases=phases)
         if phases is not None:
+            dates = tracker.phase_to_date(phases=phases)
             tracker.deactivate(min(dates), max(dates))
         self._model = self._ensure_subclass(model, ModelBase, name="model")
         self._tau = tracker.estimate(self._model, tau=self._tau, **kwargs)
