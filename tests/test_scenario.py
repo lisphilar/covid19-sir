@@ -171,7 +171,7 @@ class TestScenario(object):
         with pytest.raises(ValueError):
             snl.estimate(SIRF, tau=1440)
         # Parameter estimation
-        snl.estimate(SIRF, timeout=1, timeout_iteration=1)
+        snl.estimate(SIRF, timeout=5, timeout_iteration=5)
         snl.summary()
 
     def test_estimate_accuracy(self, snl):
@@ -269,8 +269,9 @@ class TestScenario(object):
         with pytest.raises(UnExecutedError):
             snl.predict()
         # Deprecated: fit with oxcgrt_data
-        warnings.filterwarnings("ignore", category=DeprecationWarning)
-        snl.fit(oxcgrt_data)
+        warnings.filterwarnings("error", category=DeprecationWarning)
+        with pytest.raises(DeprecationWarning):
+            snl.fit(oxcgrt_data)
 
     @pytest.mark.parametrize("delay", [5, (7, 31), None])
     def test_fit_predict(self, snl, oxcgrt_data, delay):
