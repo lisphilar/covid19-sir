@@ -617,14 +617,27 @@ class Scenario(Term):
             name (str): scenario name
             kwargs: will be ignored
 
+        Raises:
+            ValueError: the date is close to one of the registered change dates
+
         Returns:
             covsirphy.Scenario: self
         """
         date = self._ensure_date(date, name="date")
         tracker = self._tracker(name)
+        # Get start date and end date which include the separation date
         df = tracker.summary()
         start_date = df.loc[df[self.START] < date, self.START].max()
         end_date = df.loc[df[self.END] > date, self.START].min()
+        # Check separation date
+        prohibited_dates = [
+            start_date, start_date + timedelta(days=1),
+            end_date - timedelta(days=-1), end_date
+        ]
+        if date in prohibited_dates:
+            raise ValueError(
+                f"Cannot be separated on {date} because this date is too close to registered change dates.")
+        # Define phases
         tracker.define_phase(start_date, date - timedelta(days=1))
         tracker.define_phase(date, end_date)
         self[name] = tracker

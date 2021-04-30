@@ -258,7 +258,7 @@ class PhaseTracker(Term):
         self._ensure_tau(tau, accept_none=True)
         # Set-up ODEHandler
         data_df = self._track_df.reset_index()
-        data_df = data_df.loc[data_df[self.ID] > 0]
+        data_df = data_df.loc[data_df[self.ID] > 0].dropna(how="all", axis=0)
         handler = ODEHandler(model, data_df[self.DATE].min(), tau=tau, **find_args(ODEHandler, **kwargs))
         start_dates = data_df.groupby(self.ID).first()[self.DATE]
         end_dates = data_df.groupby(self.ID).last()[self.DATE]
