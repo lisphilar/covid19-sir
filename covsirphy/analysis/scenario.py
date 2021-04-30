@@ -479,7 +479,7 @@ class Scenario(Term):
         else:
             df = tracker.summary()
             future_phases = df.loc[df[self.TENSE] == self.FUTURE].index.tolist()
-            dates = tracker.phase_to_dates(phases=future_phases)
+            dates = tracker.phase_to_date(phases=future_phases)
             self[name] = tracker.remove_phase(min(dates), max(dates))
         return self
 
