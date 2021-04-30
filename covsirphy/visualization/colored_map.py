@@ -89,7 +89,7 @@ class ColoredMap(VisualizeBase):
         gdf.loc[gdf["Value"] < 0, "Value"] = 0
         # Colorbar
         divider = make_axes_locatable(self._ax)
-        cax = divider.append_axes("right", size="5%", pad=0.1)
+        cax = divider.append_axes("bottom", size="5%", pad=0.1)
         # Arguments of plotting with GeoPandas
         plot_kwargs = {
             "legend": True,
@@ -103,10 +103,10 @@ class ColoredMap(VisualizeBase):
             }
         }
         plot_kwargs.update(kwargs)
+        plot_kwargs["legend_kwds"] = {'orientation': "horizontal"}
         # Convert to log10 scale
         if logscale:
             gdf["Value"] = np.log10(gdf["Value"] + 1)
-            plot_kwargs["legend_kwds"] = {"label": "in log10 scale"}
         # Plotting
         warnings.filterwarnings("ignore", category=UserWarning)
         if not gdf["Value"].isna().sum():
