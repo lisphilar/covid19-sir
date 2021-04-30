@@ -825,9 +825,10 @@ class Scenario(Term):
                     - Variables of the main dataset (int): Confirmed etc.
         """
         tracker = self._tracker(name=name)
-        sim_df = tracker.simulate()
-        dates = tracker.phase_to_date(phases=phases)
-        sim_df = tracker.simulate().set_index(self.DATE).loc[min(dates):max(dates)]
+        sim_df = tracker.simulate().set_index(self.DATE)
+        if phases is not None:
+            dates = tracker.phase_to_date(phases=phases)
+            sim_df = sim_df.loc[min(dates):max(dates)]
         # Variables to show
         variables = self._convert_variables(variables, candidates=self.VALUE_COLUMNS)
         # Show figure
