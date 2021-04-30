@@ -1071,7 +1071,7 @@ class Scenario(Term):
         Returns:
             pandas.DataFrame
         """
-        df = self._tracker(name=name).track()
+        df = self._tracker(name=name).track().set_index(self.DATE)
         cols = list(set(df.columns) & set(self._model.PARAMETERS))
         if params is not None:
             if not isinstance(params, (list, set)):
