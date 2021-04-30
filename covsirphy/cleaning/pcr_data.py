@@ -532,7 +532,7 @@ class PCRData(CleaningBase):
         raise PCRIncorrectPreconditionError(
             country=country, province=province, message="Too many missing Tests records")
 
-    def positive_rate(self, country, province=None, window=7, show_figure=True, filename=None):
+    def positive_rate(self, country, province=None, window=7, last_date=None, show_figure=True, filename=None):
         """
         Return the PCR rate of a country as a dataframe.
 
@@ -540,6 +540,7 @@ class PCRData(CleaningBase):
             country(str): country name or ISO3 code
             province(str or None): province name
             window (int): window of moving average, >= 1
+            last_date (str or None): the last date of the total tests records or None (max date of main dataset)
             show_figure (bool): if True, show the records as a line-plot.
             filename (str): filename of the figure, or None (display figure)
 
@@ -571,6 +572,9 @@ class PCRData(CleaningBase):
         except PCRIncorrectPreconditionError:
             raise PCRIncorrectPreconditionError(
                 country=country, province=province, message="Too many missing Tests records") from None
+        # Limit tests records to last date
+        if last_date is not None:
+            subset_df = subset_df.loc[subset_df[self.DATE] <= pd.to_datetime(last_date)]
         # Process PCR data
         df, is_complemented = self._pcr_processing(subset_df, window)
         # Calculate PCR values
