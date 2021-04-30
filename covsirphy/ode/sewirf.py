@@ -244,7 +244,7 @@ class SEWIRF(ModelBase):
                     - Infected (int): the number of currently infected cases
                     - Fatal(int): the number of fatal cases
                     - Recovered (int): the number of recovered cases
-            tau (int): tau value [min]
+            tau (int): tau value [min] or None (skip division by tau values)
 
         Returns:
             pandas.DataFrame:
@@ -259,7 +259,7 @@ class SEWIRF(ModelBase):
                     - Fatal (int): the number of fatal cases
         """
         # Convert to tau-free
-        df = cls._convert(data, tau)
+        df = data.copy() if tau is None else cls._convert(data, tau)
         # Conversion of variables
         df[cls.E] = 0
         df[cls.W] = 0

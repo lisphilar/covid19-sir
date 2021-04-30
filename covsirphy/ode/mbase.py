@@ -306,7 +306,7 @@ class ModelBase(Term):
                     - Infected (int): the number of currently infected cases
                     - Fatal(int): the number of fatal cases
                     - Recovered (int): the number of recovered cases
-            tau (int): tau value [min]
+            tau (int): tau value [min] or None (skip division by tau values)
 
         Returns:
             pandas.DataFrame:

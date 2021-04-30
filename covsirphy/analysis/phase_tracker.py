@@ -263,7 +263,8 @@ class PhaseTracker(Term):
         start_dates = data_df.groupby(self.ID).first()[self.DATE]
         end_dates = data_df.groupby(self.ID).last()[self.DATE]
         for (start, end) in zip(start_dates, end_dates):
-            _ = handler.add(end, y0_dict=data_df.set_index(self.DATE).loc[start].to_dict())
+            y0_series = model.convert(data_df.loc[data_df[self.DATE] >= start], tau=None).iloc[0]
+            _ = handler.add(end, y0_dict=y0_series.to_dict())
         # Estimate tau value if necessary
         if tau is None:
             tau = handler.estimate_tau(data_df, **find_args(ODEHandler.estimate_tau, **kwargs))
