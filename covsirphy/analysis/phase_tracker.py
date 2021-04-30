@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*-
 
 from datetime import timedelta
+import numpy as np
 import pandas as pd
 from covsirphy.util.error import UnExecutedError
 from covsirphy.util.argument import find_args
@@ -262,7 +263,8 @@ class PhaseTracker(Term):
         start_dates = data_df.groupby(self.ID).first()[self.DATE]
         end_dates = data_df.groupby(self.ID).last()[self.DATE]
         for (start, end) in zip(start_dates, end_dates):
-            _ = handler.add(end, y0_dict=data_df.set_index(self.DATE).loc[start].to_dict())
+            y0_dict = data_df.set_index(self.DATE).loc[start].astype(np.int64).to_dict()
+            _ = handler.add(end, y0_dict=y0_dict)
         # Estimate tau value if necessary
         if tau is None:
             tau = handler.estimate_tau(data_df, **find_args(ODEHandler.estimate_tau, **kwargs))
@@ -372,7 +374,7 @@ class PhaseTracker(Term):
         parameters = self._model.PARAMETERS[:]
         for (start, end) in zip(start_dates, end_dates):
             param_dict = record_df.loc[end, parameters].to_dict()
-            y0_dict = record_df.loc[start, [self.S, self.CI, self.F, self.R]].to_dict()
+            y0_dict = record_df.loc[start, [self.S, self.CI, self.F, self.R]].astype(np.int64).to_dict()
             _ = handler.add(end, param_dict=param_dict, y0_dict=y0_dict)
         # Perform simulation
         sim_df = handler.simulate()
