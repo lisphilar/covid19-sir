@@ -1000,9 +1000,11 @@ class Scenario(Term):
             df = self._data.records(extras=False)
             df.insert(0, self.SERIES, self.ACTUAL)
             append(df)
-        track_df = pd.concat(dataframes, axis=0, sort=False)
+        track_df = pd.concat(dataframes, axis=0, ignore_index=True, sort=False)
+        if phases is None:
+            return track_df
         dates = self._tracker(name=self.MAIN).phase_to_date(phases=phases)
-        return track_df.loc[(min(dates) < track_df[self.DATE]) & (track_df[self.DATE] <= max(dates))]
+        return track_df.set_index(self.DATE).loc[min(dates):max(dates)].reset_index()
 
     def _history(self, target, phases=None, with_actual=True):
         """
