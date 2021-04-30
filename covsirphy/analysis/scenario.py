@@ -832,9 +832,10 @@ class Scenario(Term):
         # Variables to show
         variables = self._convert_variables(variables, candidates=self.VALUE_COLUMNS)
         # Show figure
+        end_dates = tracker.summary()[self.END].tolist()
         title = f"{self._area}: Simulated number of cases ({name} scenario)"
         self.line_plot(
-            df=sim_df.loc[:, variables], title=title, y_integer=True, v=tracker.change_dates(), **kwargs)
+            df=sim_df.loc[:, variables], title=title, y_integer=True, v=end_dates[:-1], **kwargs)
         return sim_df
 
     def get(self, param, phase="last", name="Main"):
