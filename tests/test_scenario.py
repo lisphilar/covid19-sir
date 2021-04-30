@@ -170,12 +170,8 @@ class TestScenario(object):
             snl.fit()
         with pytest.raises(ValueError):
             snl.estimate(SIRF, tau=1440)
-        # Deprecated
-        warnings.filterwarnings("ignore", category=DeprecationWarning)
-        with pytest.raises(UnExecutedError):
-            snl.param_history()
         # Parameter estimation
-        snl.estimate(SIRF)
+        snl.estimate(SIRF, timeout=5, timeout_iteration=5)
         snl.summary()
 
     def test_estimate_accuracy(self, snl):
