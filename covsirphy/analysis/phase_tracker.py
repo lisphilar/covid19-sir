@@ -181,7 +181,7 @@ class PhaseTracker(Term):
         if self.RT in df:
             filled_cols = [
                 *self._model.PARAMETERS, self.ODE, self.RT, self.TAU, *self._model.DAY_PARAMETERS]
-            df[filled_cols].update(df[filled_cols].ffill())
+            df.loc[:, filled_cols].update(df[filled_cols].ffill())
         # Set the order of columns
         df = df.drop([self.C, self.CI, self.F, self.R, self.S], axis=1)
         fixed_cols = self.TENSE, self.START, self.END, self.N
