@@ -171,7 +171,7 @@ class TestScenario(object):
         with pytest.raises(ValueError):
             snl.estimate(SIRF, tau=1440)
         # Parameter estimation
-        snl.estimate(SIRF, timeout=5, timeout_iteration=5)
+        snl.estimate(SIRF, timeout=1, timeout_iteration=1)
         snl.summary()
 
     def test_estimate_accuracy(self, snl):
