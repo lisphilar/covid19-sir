@@ -1130,9 +1130,8 @@ class Scenario(Term):
         self.estimate(model, name=control, **kwargs)
         # Target
         self.clear(name=target, include_past=False, template=control)
-        phases_changed = [
-            self.num2str(i) for (i, ph) in enumerate(self._tracker(target).series)
-            if ph >= beginning_date]
+        df = self._tracker(target).summary()
+        phases_changed = df.loc[df[self.START] >= pd.to_datetime(beginning_date)].index.tolist()
         self.delete(phases=phases_changed, name=target)
         self.add(name=target, **param_dict)
         self.estimate(model, name=target, **kwargs)
