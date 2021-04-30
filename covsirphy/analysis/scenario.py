@@ -1294,7 +1294,8 @@ class Scenario(Term):
                 "Scenario.estimate() or Scenario.add()",
                 message=f", specifying @model (covsirphy.SIRF etc.) and @name='{name}'.")
         # Create training/test dataset
-        param_df = self._tracker(name=name).track().set_index(self.DATE)[self._model.PARAMETERS]
+        tracker = self._tracker(name=name)
+        param_df = tracker.track().set_index(self.DATE)[self._model.PARAMETERS].dropna()
         try:
             records_df = self._data.records(main=True, extras=True).set_index(self.DATE)
         except NotRegisteredExtraError:
