@@ -836,7 +836,7 @@ class Scenario(Term):
         title = f"{self._area}: Simulated number of cases ({name} scenario)"
         self.line_plot(
             df=sim_df.loc[:, variables], title=title, y_integer=True, v=end_dates[:-1], **kwargs)
-        return sim_df
+        return sim_df.reset_index()
 
     def get(self, param, phase="last", name="Main"):
         """
