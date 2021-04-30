@@ -275,8 +275,8 @@ class PhaseTracker(Term):
         df = df.explode(self.DATE).drop([self.START, self.END], axis=1).set_index(self.DATE)
         df.insert(0, self.ODE, model.NAME)
         df.insert(6, self.TAU, tau)
-        self._track_df = self._track_df.reindex(
-            columns=[*self._track_df.columns.tolist(), *df.columns.tolist()])
+        all_columns = [*self._track_df.columns.tolist(), *df.columns.tolist()]
+        self._track_df = self._track_df.reindex(columns=sorted(set(all_columns), key=all_columns.index))
         self._track_df.update(df)
         # Set model and tau to self
         self._model = model
