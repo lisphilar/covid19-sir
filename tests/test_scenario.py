@@ -159,8 +159,6 @@ class TestScenario(object):
 
     def test_trend(self, snl):
         snl.trend()
-        with pytest.raises(ValueError):
-            snl.trend(n_points=2)
         warnings.filterwarnings("ignore", category=DeprecationWarning)
         snl.trend(force=False, include_init_phase=False)
 
