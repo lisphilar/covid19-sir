@@ -1143,7 +1143,7 @@ class Scenario(Term):
         Args:
             variables (list[str] or None): variables to use in calculation
             phases (list[str] or None): phases to use in calculation or None (all phases)
-            past_days (int or None): how many past days to use in calculation, natural integer
+            past_days (int or None): how many past days to use in calculation from the last record date
             name(str): phase series name. If 'Main', main PhaseSeries will be used
             kwargs: keyword arguments of covsirphy.Evaluator.score()
 
@@ -1176,11 +1176,7 @@ class Scenario(Term):
             rec_df = rec_df.loc[min(dates):max(dates)]
         if past_days is not None:
             past_days = self._ensure_natural_int(past_days, name="past_days")
-            # Separate a phase, if possible
-            today = self._ensure_date(self._data.today)
-            beginning_date = today - timedelta(days=past_days)
-            sim_df = sim_df.loc[beginning_date:today]
-            rec_df = rec_df.loc[beginning_date:today]
+            sim_df = sim_df.loc[pd.to_datetime(self._data.last_date) - timedelta(past_days):]
         evaluator = Evaluator(rec_df, sim_df, how="inner")
         return evaluator.score(**find_args(Evaluator.score, **kwargs))
 
