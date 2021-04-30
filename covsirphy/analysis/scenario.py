@@ -973,8 +973,8 @@ class Scenario(Term):
         if not with_rt or len(self._tracker_dict) == 1:
             return df
         # History of reproduction number
-        rt_df = self.summary().reset_index()
-        rt_df = rt_df.pivot_table(index=self.SERIES, columns=self.PHASE, values=self.RT)
+        rt_df = self.summary().reset_index().replace(self.UNKNOWN, np.nan)
+        rt_df = rt_df.pivot_table(index=self.SERIES, columns=self.PHASE, values=self.RT, aggfunc="last")
         rt_df = rt_df.fillna(self.UNKNOWN)
         rt_df = rt_df.loc[:, rt_df.nunique() > 1]
         cols = sorted(rt_df, key=self.str2num)
