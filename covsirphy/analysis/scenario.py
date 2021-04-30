@@ -1166,7 +1166,7 @@ class Scenario(Term):
             variables or [self.CI, self.F, self.R],
             candidates=[self.S, self.C, self.CI, self.F, self.R], name="variables")
         tracker = self._tracker(name)
-        sim_df = tracker.simulate().set_index(self.DATE)
+        sim_df = tracker.simulate().set_index(self.DATE).loc[:, variables]
         rec_df = self.records(variables=variables).set_index(self.DATE)
         if past_days is not None and phases is not None:
             raise ValueError("@phases and @past_days cannot be specified at the same time.")
