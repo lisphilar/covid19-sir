@@ -209,7 +209,10 @@ class TestScenario(object):
         snl.clear(name="Main")
 
     def test_track(self, snl):
-        snl.track()
+        df = snl.track()
+        columns = [
+            Term.SERIES, *Term.SUB_COLUMNS, Term.RT, *SIRF.PARAMETERS, *SIRF.DAY_PARAMETERS]
+        assert df.columns.tolist() == columns
 
     @pytest.mark.parametrize("target", ["rho", "Infected", "Rt"])
     def test_history(self, snl, target):
