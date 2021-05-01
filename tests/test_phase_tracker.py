@@ -105,6 +105,10 @@ class TestPhaseTracker(object):
         # Simulation
         sim_df = tracker.simulate()
         assert sim_df.columns.tolist() == Term.SUB_COLUMNS
+        # Add/track a future phase
+        tracker.define_phase(start="01Jan2021", end="31Jan2021")
+        track_df = tracker.track()
+        assert not track_df[Term.SUB_COLUMNS].isna().sum().sum()
 
     @pytest.mark.parametrize("country", ["Japan"])
     @pytest.mark.parametrize("model", [SIRF])
@@ -133,3 +137,7 @@ class TestPhaseTracker(object):
         # Simulation
         sim_df = tracker.simulate()
         assert sim_df.columns.tolist() == Term.SUB_COLUMNS
+        # Add/track a future phase
+        tracker.define_phase(start="01Jan2021", end="31Jan2021")
+        track_df = tracker.track()
+        assert not track_df[Term.SUB_COLUMNS].isna().sum().sum()

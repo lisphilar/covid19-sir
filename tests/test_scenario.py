@@ -211,7 +211,7 @@ class TestScenario(object):
     def test_track(self, snl):
         df = snl.track()
         columns = [
-            Term.SERIES, *Term.SUB_COLUMNS, Term.RT, *SIRF.PARAMETERS, *SIRF.DAY_PARAMETERS]
+            Term.SERIES, *Term.SUB_COLUMNS, Term.RT, *SIRF.PARAMETERS, *SIRF.DAY_PARAMETERS, Term.N]
         assert df.columns.tolist() == columns
 
     @pytest.mark.parametrize("target", ["rho", "Infected", "Rt"])
