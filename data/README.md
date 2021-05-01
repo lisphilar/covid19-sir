@@ -65,6 +65,7 @@ The number of vaccinated people:
 Data sources for vaccination:
 
 - [厚生労働省 HP 新型コロナワクチンの接種実績(in Japanese)](https://www.mhlw.go.jp/stf/seisakunitsuite/bunya/vaccine_sesshujisseki.html)
+- [首相官邸 新型コロナワクチンについて](https://www.kantei.go.jp/jp/headline/kansensho/vaccine.html)
 - [Twitter: 首相官邸（新型コロナワクチン情報）](https://twitter.com/kantei_vaccine)
 
 ### 1.2 The number of cases at prefecture level
