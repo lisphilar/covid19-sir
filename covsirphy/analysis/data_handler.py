@@ -209,12 +209,12 @@ class DataHandler(Term):
                 Index
                     reset index
                 Columns:
-                    - Date(pd.Timestamp): Observation date
-                    - Confirmed(int): the number of confirmed cases
-                    - Infected(int): the number of currently infected cases
-                    - Fatal(int): the number of fatal cases
+                    - Date (pd.Timestamp): Observation date
+                    - Confirmed (int): the number of confirmed cases
+                    - Infected (int): the number of currently infected cases
+                    - Fatal (int): the number of fatal cases
                     - Recovered (int): the number of recovered cases ( > 0)
-                    - Susceptible(int): the number of susceptible cases
+                    - Susceptible (int): the number of susceptible cases
         """
         jhu_data = self._data_dict[self.__NAME_JHU]
         population_data = self._data_dict[self.__NAME_POPULATION]

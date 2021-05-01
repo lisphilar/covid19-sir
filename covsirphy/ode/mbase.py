@@ -306,7 +306,7 @@ class ModelBase(Term):
                     - Infected (int): the number of currently infected cases
                     - Fatal(int): the number of fatal cases
                     - Recovered (int): the number of recovered cases
-            tau (int): tau value [min]
+            tau (int): tau value [min] or None (skip division by tau values)
 
         Returns:
             pandas.DataFrame:
@@ -368,3 +368,18 @@ class ModelBase(Term):
             dict(str, float or pandas.Series): guessed parameter values with the quantile(s)
         """
         raise NotImplementedError
+
+    @classmethod
+    def _clip(cls, values, lower, upper):
+        """
+        Trim values at input threshold.
+
+        Args:
+            values (float or pandas.Series): values to trim
+            lower (float): minimum threshold
+            upper (float): maximum threshold
+        """
+        if isinstance(values, float):
+            return min(max(values, lower), upper)
+        cls._ensure_instance(values, pd.Series, name="values")
+        return values.clip()

@@ -150,7 +150,12 @@ class _ParamEstimator(Term):
         Returns:
             float: score
         """
-        param_dict = {k: trial.suggest_uniform(k, *v) for (k, v) in self._range_dict.items()}
+        param_dict = {}
+        for (k, v) in self._range_dict.items():
+            try:
+                param_dict[k] = trial.suggest_uniform(k, *v)
+            except OverflowError:
+                param_dict[k] = trial.suggest_uniform(k, 0, 1)
         return self._score(**param_dict)
 
     def _score(self, **kwargs):

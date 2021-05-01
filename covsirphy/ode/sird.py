@@ -225,7 +225,7 @@ class SIRD(ModelBase):
                     - Infected (int): the number of currently infected cases
                     - Fatal(int): the number of fatal cases
                     - Recovered (int): the number of recovered cases
-            tau (int): tau value [min]
+            tau (int): tau value [min] or None (skip division by tau values)
 
         Returns:
             pandas.DataFrame:
@@ -238,7 +238,7 @@ class SIRD(ModelBase):
                     - Fatal (int): the number of fatal cases
         """
         # Convert to tau-free
-        df = cls._convert(data, tau)
+        df = data.copy() if tau is None else cls._convert(data, tau)
         # Conversion of variables: un-necessary for SIR-D model
         return df.loc[:, [cls.S, cls.CI, cls.R, cls.F]]
 
@@ -313,7 +313,7 @@ class SIRD(ModelBase):
         sigma_series = df[cls.R].diff() / df[cls.CI]
         # Guess representative values
         return {
-            "kappa": kappa_series.quantile(q=q).clip(0, 1),
-            "rho": rho_series.quantile(q=q).clip(0, 1),
-            "sigma": sigma_series.quantile(q=q).clip(0, 1),
+            "kappa": cls._clip(kappa_series.quantile(q=q), 0, 1),
+            "rho": cls._clip(rho_series.quantile(q=q), 0, 1),
+            "sigma": cls._clip(sigma_series.quantile(q=q), 0, 1),
         }
