@@ -50,6 +50,7 @@ def main(country="Italy", province=None, file_prefix="ita"):
     print(snl.summary())
     # Parameter estimation
     snl.estimate(cs.SIRF)
+    snl.estimate_accuracy("10th", name="Main", **filer.png("estimate_accuracy"))
     # Score of parameter estimation
     metrics = ["MAE", "MSE", "MSLE", "RMSE", "RMSLE"]
     for metric in metrics:
