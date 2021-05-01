@@ -846,10 +846,10 @@ class Scenario(Term):
         # Variables to show
         variables = self._convert_variables(variables, candidates=self.VALUE_COLUMNS)
         # Show figure
-        end_dates = tracker.summary()[self.END].tolist()
+        start_dates = tracker.summary()[self.START].tolist()
         title = f"{self._area}: Simulated number of cases ({name} scenario)"
         self.line_plot(
-            df=sim_df.loc[:, variables], title=title, y_integer=True, v=end_dates[:-1], **kwargs)
+            df=sim_df.loc[:, variables], title=title, y_integer=True, v=start_dates[1:], **kwargs)
         return sim_df.reset_index()
 
     def get(self, param, phase="last", name="Main"):
@@ -1074,9 +1074,9 @@ class Scenario(Term):
             ylabel = target
         title = f"{self._area}: {ylabel} over time"
         tracker = self._tracker(self.MAIN)
-        end_dates = tracker.summary()[self.END].tolist()
+        start_dates = tracker.summary()[self.START].tolist()
         self.line_plot(
-            df=df, title=title, ylabel=ylabel, v=end_dates[:-1], math_scale=False,
+            df=df, title=title, ylabel=ylabel, v=start_dates[1:], math_scale=False,
             h=1.0 if target == self.RT else None, **kwargs)
         return df
 
@@ -1106,9 +1106,9 @@ class Scenario(Term):
         ylabel = f"Value per that on {f_date}"
         title = f"{self._area}: {ylabel} over time"
         tracker = self._tracker(self.MAIN)
-        end_dates = tracker.summary()[self.END].tolist()
+        start_dates = tracker.summary()[self.START].tolist()
         self.line_plot(
-            df=df, title=title, ylabel=ylabel, v=end_dates[:-1], math_scale=False, **kwargs)
+            df=df, title=title, ylabel=ylabel, v=start_dates[1:], math_scale=False, **kwargs)
         return df
 
     def retrospective(self, beginning_date, model, control="Main", target="Target", **kwargs):
