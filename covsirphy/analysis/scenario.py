@@ -804,7 +804,7 @@ class Scenario(Term):
         Args:
             phase (str): phase name, like 1st, 2nd...
             name (str): phase series name
-            kwargs: keyword arguments of covsirphy.Estimator.accuracy()
+            kwargs: the other arguments will be ignored
 
         Note:
             If 'Main' was used as @name, main PhaseSeries will be used.
