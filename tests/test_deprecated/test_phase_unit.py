@@ -1,9 +1,12 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
+import warnings
 import pytest
 from covsirphy import PhaseUnit
 from covsirphy import Term, SIR, Estimator, UnExecutedError
+
+warnings.filterwarnings("ignore", category=DeprecationWarning)
 
 
 class TestPhaseUnit(object):

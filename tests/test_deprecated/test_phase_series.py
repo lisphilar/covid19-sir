@@ -6,6 +6,8 @@ import pytest
 from covsirphy import PhaseSeries
 from covsirphy import Term, PhaseUnit, SIR
 
+warnings.filterwarnings("ignore", category=DeprecationWarning)
+
 
 class TestPhaseSeries(object):
 

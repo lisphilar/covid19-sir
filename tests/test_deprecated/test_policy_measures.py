@@ -7,6 +7,8 @@ import pytest
 from covsirphy import PolicyMeasures
 from covsirphy import SIRF, Scenario
 
+warnings.filterwarnings("ignore", category=DeprecationWarning)
+
 
 class UnTestPolicyMeasures(object):
     # Skip this test at this time
