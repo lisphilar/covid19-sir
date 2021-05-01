@@ -136,9 +136,17 @@ class PhaseTracker(Term):
                         - {metric}: score with the estimated parameter values
                         - Trials (int): the number of trials
                         - Runtime (str): runtime of optimization
+
+        Note:
+            C/I/F/R/S/I is simulated values if parameter values are available.
         """
         df = self._track_df.copy()
         df = df.loc[df[self.ID] != 0]
+        # Use simulated data for tracking
+        try:
+            df.update(self.simulate().set_index(self.DATE))
+        except UnExecutedError:
+            pass
         return df.drop(self.ID, axis=1).reset_index()
 
     def summary(self):

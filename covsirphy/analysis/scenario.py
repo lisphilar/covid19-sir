@@ -1011,8 +1011,8 @@ class Scenario(Term):
         # Tracking for scenarios
         dataframes = []
         append = dataframes.append
-        for name in self._tracker_dict.keys():
-            df = self._tracker(name=name).track().drop(unused_cols, axis=1, errors="ignore")
+        for (name, tracker) in self._tracker_dict.items():
+            df = tracker.track().drop(unused_cols, axis=1, errors="ignore")
             df.insert(0, self.SERIES, name)
             append(df)
         # Add actual records, if necessary
@@ -1048,8 +1048,7 @@ class Scenario(Term):
             col_str = ", ".join(list(df.columns))
             raise KeyError(f"@target must be selected from {col_str}, but {target} was applied.")
         # Select the records of target variable
-        return df.pivot_table(
-            values=target, index=self.DATE, columns=self.SERIES, aggfunc="last")
+        return df.pivot_table(values=target, index=self.DATE, columns=self.SERIES, aggfunc="last")
 
     def history(self, target, phases=None, with_actual=True, **kwargs):
         """
