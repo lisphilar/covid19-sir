@@ -318,5 +318,5 @@ class ODEHandler(Term):
                     - Runtime (str): runtime of optimization
         """
         tau = self.estimate_tau(data, **find_args(self.estimate_tau, **kwargs))
-        info_dict = self.estimate_params(data, **find_args(self.estimate_params, **kwargs))
+        info_dict = self.estimate_params(data, **kwargs)
         return (tau, info_dict)
