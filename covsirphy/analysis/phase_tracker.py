@@ -137,7 +137,9 @@ class PhaseTracker(Term):
                         - Trials (int): the number of trials
                         - Runtime (str): runtime of optimization
         """
-        return self._track_df.drop(self.ID, axis=1).reset_index()
+        df = self._track_df.copy()
+        df = df.loc[df[self.ID] != 0]
+        return df.drop(self.ID, axis=1).reset_index()
 
     def summary(self):
         """
@@ -176,12 +178,12 @@ class PhaseTracker(Term):
         # Calculate phase types: Past or Future
         df[self.TENSE] = (df[self.START] <= self._today).map({True: self.PAST, False: self.FUTURE})
         # Calculate population values
-        df[self.N] = df[[self.S, self.C]].sum(axis=1)
-        # Fill in blanks (parameters, ODE, Rt, tau, day parameters)
-        if self.RT in df:
-            filled_cols = [
-                *self._model.PARAMETERS, self.ODE, self.RT, self.TAU, *self._model.DAY_PARAMETERS]
-            df.loc[:, filled_cols].update(df[filled_cols].ffill())
+        df[self.N] = df[[self.S, self.C]].sum(axis=1).replace(0.0, np.nan).ffill()
+        # Fill in blanks of ODE model name and tau
+        if self.ODE in df:
+            df[self.ODE] = df[self.ODE].ffill()
+        if self.TAU in df:
+            df[self.TAU] = df[self.TAU].ffill().astype(np.int64)
         # Set the order of columns
         df = df.drop([self.C, self.CI, self.F, self.R, self.S], axis=1)
         fixed_cols = self.TENSE, self.START, self.END, self.N
@@ -326,8 +328,9 @@ class PhaseTracker(Term):
             lambda x: pd.Series(model(1, **x.to_dict()).calc_days_dict(self._tau)), axis=1)
         new_df = pd.concat([new_df, days_df], axis=1)
         # update tracker
+        columns_include_dup = [*self._track_df.columns.tolist(), *new_df.columns.tolist()]
         track_df = self._track_df.reindex(
-            columns=[*self._track_df.columns.tolist(), *new_df.columns.tolist()])
+            columns=sorted(set(columns_include_dup), key=columns_include_dup.index))
         track_df.update(new_df)
         self._track_df = track_df.copy()
         return self._tau

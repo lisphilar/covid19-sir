@@ -368,7 +368,7 @@ class Scenario(Term):
         """
         # Registered
         if name in self._tracker_dict:
-            return self._tracker_dict[name]
+            return copy.deepcopy(self._tracker_dict[name])
         # Create it, if un-registered
         if template not in self._tracker_dict:
             raise ScenarioNotFoundError(template)
@@ -440,18 +440,19 @@ class Scenario(Term):
         if model is not None:
             self._model = self._ensure_subclass(model, ModelBase, name="model")
         self._tau = self._tau or self._ensure_tau(tau, accept_none=True)
-        if self._model is None or self._tau is None or (kwargs or self.RT in summary_df):
+        # Not save parameter values when ODE model or tau not registered
+        if self._model is None or self._tau is None:
             self._tracker_dict[name] = tracker
             return self
         # Set ODE parameter values
         param_df = pd.DataFrame(index=pd.date_range(start, end))
         for param in self._model.PARAMETERS:
             try:
-                param_df[param] = kwargs.get(param, self.get(param, phase="last", name=name))
-            except KeyError:
-                raise KeyError(
-                    f"{param} value must be specified as a keyword argument because the last phase does not have this value."
-                ) from None
+                param_df[param] = self._ensure_float(
+                    kwargs.get(param, self.get(param, phase="last", name=name)))
+            except (KeyError, ValueError):
+                # We do not have parameter values (float) in the previous phases and kwargs
+                return self
         tracker.set_ode(self._model, param_df, self._tau)
         # Update tracker of self
         self._tracker_dict[name] = tracker
@@ -1006,21 +1007,22 @@ class Scenario(Term):
                     - parameter values (float)
                     - day parameter values (int)
         """
+        unused_cols = [self.ODE, self.TRIALS, self.RUNTIME, self.TAU, *Evaluator.metrics()]
+        # Tracking for scenarios
         dataframes = []
         append = dataframes.append
         for name in self._tracker_dict.keys():
-            df = self._tracker(name=name).track()
+            df = self._tracker(name=name).track().drop(unused_cols, axis=1, errors="ignore")
             df.insert(0, self.SERIES, name)
             append(df)
+        # Add actual records, if necessary
         if with_actual:
             df = self._data.records(extras=False)
             df.insert(0, self.SERIES, self.ACTUAL)
             append(df)
+        # Concat dataframes
         track_df = pd.concat(dataframes, axis=0, ignore_index=True, sort=False)
         track_df[self.N] = track_df[[self.S, self.C]].sum(axis=1)
-        columns = [
-            self.SERIES, *self.SUB_COLUMNS, self.RT, *self._model.PARAMETERS, *self._model.DAY_PARAMETERS]
-        track_df = track_df.loc[:, columns]
         if phases is None:
             return track_df
         dates = self._tracker(name=self.MAIN).phase_to_date(phases=phases)

@@ -302,10 +302,9 @@ class Term(object):
         """
         s = f"@{name} must be a float value, but {target} was applied"
         try:
-            value = float(target)
-        except TypeError:
-            raise TypeError(f"{s} and not converted to float.")
-        return value
+            return float(target)
+        except ValueError:
+            raise ValueError(f"{s} and not converted to float.") from None
 
     @classmethod
     def _ensure_date(cls, target, name="date", default=None):
