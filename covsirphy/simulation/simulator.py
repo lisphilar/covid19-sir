@@ -19,6 +19,7 @@ class ODESimulator(Term):
         province (str or None): province name
     """
 
+    @deprecate("ODESimulator", new="ODEHandler", version="2.19.1-zeta-fu1")
     def __init__(self, country=None, province=None):
         self.country = country or self.UNKNOWN
         self.province = province or self.UNKNOWN

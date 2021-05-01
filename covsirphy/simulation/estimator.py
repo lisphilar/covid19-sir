@@ -43,6 +43,7 @@ class Estimator(Term):
     warnings.simplefilter("ignore", FutureWarning)
     warnings.simplefilter("ignore", SyntaxWarning)
 
+    @deprecate("Estimator", new="ODEHandler", version="2.19.1-zeta-fu1")
     def __init__(self, record_df, model, population, tau=None, **kwargs):
         # ODE model
         self.model = self._ensure_subclass(model, ModelBase, name="model")

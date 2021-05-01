@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 import pandas as pd
-from covsirphy.util.error import UnExecutedError
+from covsirphy.util.error import UnExecutedError, deprecate
 from covsirphy.util.evaluator import Evaluator
 from covsirphy.util.term import Term
 from covsirphy.ode.mbase import ModelBase
@@ -59,6 +59,7 @@ class PhaseUnit(Term):
         True
     """
 
+    @deprecate("PhaseUnit", new="ODEHandler", version="2.19.1-zeta-fu1")
     def __init__(self, start_date, end_date, population):
         self._ensure_date_order(start_date, end_date, name="end_date")
         self._start_date = start_date

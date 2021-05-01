@@ -110,17 +110,14 @@ __all__ = [
     "TrendDetector", "TrendPlot", "trend_plot",
     # ode
     "ModelBase", "SIR", "SIRD", "SIRF", "SEWIRF", "ODEHandler",
-    # simulation
-    "ODESimulator", "Estimator",
-    # phase
-    "PhaseSeries", "PhaseUnit", "MPEstimator",
     # regression
     "RegressionHandler",
     # analysis
-    "ExampleData", "Scenario", "ModelValidator", "ParamTracker", "DataHandler", "PhaseTracker",
+    "ExampleData", "Scenario", "ModelValidator", "DataHandler", "PhaseTracker",
     # Deprecated
     "Population", "Word", "jpn_map", "SIRFV", "line_plot_multiple", "ChangeFinder", "Trend",
-    "Optimizer", "save_dataframe", "PolicyMeasures",
+    "Optimizer", "save_dataframe", "PolicyMeasures", "ODESimulator", "Estimator", "ParamTracker",
+    "PhaseSeries", "PhaseUnit", "MPEstimator",
 ]
 
 # Show exceptions in better format if used from command line

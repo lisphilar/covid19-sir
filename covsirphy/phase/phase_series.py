@@ -18,6 +18,7 @@ class PhaseSeries(Term):
         population (int): initial value of total population in the place
     """
 
+    @deprecate("PhaseSeries", new="ODEHandler", version="2.19.1-zeta-fu1")
     def __init__(self, first_date, last_date, population):
         self._first_date = self._ensure_date(first_date, "first_date").strftime(self.DATE_FORMAT)
         self._last_date = self._ensure_date(last_date, "last_date").strftime(self.DATE_FORMAT)
