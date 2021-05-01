@@ -804,19 +804,19 @@ class Scenario(Term):
         Args:
             phase (str): phase name, like 1st, 2nd...
             name (str): phase series name
-            kwargs: the other arguments will be ignored
+            kwargs: keyword arguments of covsirphy.compare_plot()
 
         Note:
             If 'Main' was used as @name, main PhaseSeries will be used.
         """
         variables = [self.CI, self.F, self.R]
-        records_df = self.records(variables=variables)
+        records_df = self.records(variables=variables, show_figure=False)
         tracker = self._tracker(name=name)
         sim_df = tracker.simulate()
         dates = tracker.phase_to_date(phases=[phase])
         df = records_df.merge(sim_df, on=self.DATE, suffixes=("_actual", "_simulated"))
         df = df.set_index(self.DATE).loc[min(dates):max(dates)]
-        compare_plot(df, variables=variables, groups=["actual", "simulated"])
+        compare_plot(df, variables=variables, groups=["actual", "simulated"], **kwargs)
 
     def simulate(self, variables=None, phases=None, name="Main", **kwargs):
         """
