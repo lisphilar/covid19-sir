@@ -3,6 +3,7 @@
 
 import functools
 from multiprocessing import cpu_count, Pool
+from covsirphy.util.error import deprecate
 from covsirphy.util.stopwatch import StopWatch
 from covsirphy.util.term import Term
 from covsirphy.cleaning.jhu_data import JHUData
@@ -36,6 +37,7 @@ class MPEstimator(Term):
         When @record_df is None, @jhu_data and @population_data must be specified.
     """
 
+    @deprecate("MPEstimator", new="ODEHandler", version="2.19.1-zeta-fu1")
     def __init__(self, model, jhu_data=None, population_data=None,
                  record_df=None, tau=None, **kwargs):
         # Records

@@ -4,6 +4,7 @@
 from datetime import timedelta
 import numpy as np
 import pandas as pd
+from covsirphy.util.error import deprecate
 from covsirphy.util.term import Term
 
 
@@ -70,9 +71,10 @@ class ModelBase(Term):
         raise NotImplementedError
 
     @classmethod
+    @deprecate(".param_range()", new=".guess()", version="2.19.1-zeta-fu1")
     def param_range(cls, taufree_df, population, quantiles=(0.3, 0.7)):
         """
-        Define the value range of ODE parameters using (X, dX/dt) points.
+        Deprecated. Define the value range of ODE parameters using (X, dX/dt) points.
         This method should be overwritten in subclass.
 
         Args:
@@ -91,9 +93,10 @@ class ModelBase(Term):
         raise NotImplementedError
 
     @classmethod
+    @deprecate(".specialize()", new=".convert()", version="2.19.1-zeta-fu1")
     def specialize(cls, data_df, population):
         """
-        Specialize the dataset for this model.
+        Deprecated. Specialize the dataset for this model.
         This method should be overwritten in subclass.
 
         Args:
@@ -119,9 +122,10 @@ class ModelBase(Term):
         raise NotImplementedError
 
     @classmethod
+    @deprecate(".restore()", new=".convert_reverse()", version="2.19.1-zeta-fu1")
     def restore(cls, specialized_df):
         """
-        Restore Confirmed/Infected/Recovered/Fatal using a dataframe with the variables of the model.
+        Deprecated. Restore Confirmed/Infected/Recovered/Fatal using a dataframe with the variables of the model.
         This method should be overwritten in subclass.
 
         Args:
@@ -144,13 +148,7 @@ class ModelBase(Term):
                     - Recovered (int): the number of recovered cases
                     - the other columns @specialzed_df has
         """
-        df = specialized_df.copy()
-        other_cols = list(set(df.columns) - set(cls.VALUE_COLUMNS))
-        df[cls.C] = None
-        df[cls.CI] = None
-        df[cls.F] = None
-        df[cls.R] = None
-        return df.loc[:, [*cls.VALUE_COLUMNS, *other_cols]]
+        raise NotImplementedError
 
     def calc_r0(self):
         """
@@ -176,9 +174,10 @@ class ModelBase(Term):
         raise NotImplementedError
 
     @classmethod
+    @deprecate(".taufree()", new=".convert()", version="2.19.1-zeta-fu1")
     def tau_free(cls, subset_df, population, tau=None):
         """
-        Create a dataframe specialized to the model.
+        Deprecated. Create a dataframe specialized to the model.
         If tau is not None, Date column will be converted to '(Date - start date) / tau'
         and saved in t column.
 

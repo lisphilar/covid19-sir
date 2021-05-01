@@ -26,6 +26,7 @@ class PolicyMeasures(Term):
         tau (int or None): tau value [min]
     """
 
+    @deprecate("PolicyMeasures", version="2.19.1-zeta-fu1")
     def __init__(self, jhu_data, population_data, oxcgrt_data, tau=None):
         # Records
         self.jhu_data = self._ensure_instance(

@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-from covsirphy.util.error import UnExecutedError
+from covsirphy.util.error import UnExecutedError, deprecate
 from covsirphy.util.argument import find_args
 from covsirphy.util.evaluator import Evaluator
 from covsirphy.util.term import Term
@@ -34,6 +34,7 @@ class ParamTracker(Term):
         tau (int or None): tau value [min]
     """
 
+    @deprecate("", new="ODEHandler", version="2.19.1-zeta-fu1")
     def __init__(self, record_df, phase_series, area=None, tau=None):
         # Phase series
         self._series = self._ensure_instance(phase_series, PhaseSeries, name="phase_series")

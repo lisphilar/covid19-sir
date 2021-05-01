@@ -2,11 +2,11 @@
 # -*- coding: utf-8 -*-
 
 
-from covsirphy.ode.mbase import ModelBase
-from covsirphy.phase.phase_unit import PhaseUnit
 import warnings
 import pytest
-from covsirphy import SIRF, PhaseSeries, ParamTracker
+from covsirphy import SIRF, PhaseSeries, ParamTracker, ModelBase, PhaseUnit
+
+warnings.filterwarnings("ignore", category=DeprecationWarning)
 
 
 @pytest.fixture(scope="module")
