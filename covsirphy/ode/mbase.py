@@ -144,13 +144,7 @@ class ModelBase(Term):
                     - Recovered (int): the number of recovered cases
                     - the other columns @specialzed_df has
         """
-        df = specialized_df.copy()
-        other_cols = list(set(df.columns) - set(cls.VALUE_COLUMNS))
-        df[cls.C] = None
-        df[cls.CI] = None
-        df[cls.F] = None
-        df[cls.R] = None
-        return df.loc[:, [*cls.VALUE_COLUMNS, *other_cols]]
+        raise NotImplementedError
 
     def calc_r0(self):
         """
