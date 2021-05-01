@@ -377,7 +377,10 @@ class PhaseTracker(Term):
         parameters = self._model.PARAMETERS[:]
         for (start, end) in zip(start_dates, end_dates):
             param_dict = record_df.loc[end, parameters].to_dict()
-            y0_dict = record_df.loc[start, [self.S, self.CI, self.F, self.R]].astype(np.int64).to_dict()
+            if end <= self._today:
+                y0_dict = record_df.loc[start, [self.S, self.CI, self.F, self.R]].to_dict()
+            else:
+                y0_dict = None
             _ = handler.add(end, param_dict=param_dict, y0_dict=y0_dict)
         # Perform simulation
         sim_df = handler.simulate()
