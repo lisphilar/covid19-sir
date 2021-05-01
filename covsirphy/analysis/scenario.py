@@ -996,17 +996,20 @@ class Scenario(Term):
                 Columns
                     - Scenario (str)
                     - Date (pandas.TimeStamp)
-                    - variables (int)
+                    - Confirmed (int): the number of confirmed cases
+                    - Infected (int): the number of currently infected cases
+                    - Fatal (int): the number of fatal cases
+                    - Recovered (int): the number of recovered cases
+                    - Susceptible (int): the number of susceptible cases
                     - Population (int)
                     - Rt (float)
                     - parameter values (float)
-                    - day parameter values (float)
+                    - day parameter values (int)
         """
         dataframes = []
         append = dataframes.append
         for name in self._tracker_dict.keys():
             df = self._tracker(name=name).track()
-            df = df.drop([self.S, self.C, self.CI, self.F, self.R], axis=1)
             df.insert(0, self.SERIES, name)
             append(df)
         if with_actual:
@@ -1014,6 +1017,10 @@ class Scenario(Term):
             df.insert(0, self.SERIES, self.ACTUAL)
             append(df)
         track_df = pd.concat(dataframes, axis=0, ignore_index=True, sort=False)
+        track_df[self.N] = track_df[[self.S, self.C]].sum(axis=1)
+        columns = [
+            self.SERIES, *self.SUB_COLUMNS, self.RT, *self._model.PARAMETERS, *self._model.DAY_PARAMETERS]
+        track_df = track_df.loc[:, columns]
         if phases is None:
             return track_df
         dates = self._tracker(name=self.MAIN).phase_to_date(phases=phases)
