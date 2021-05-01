@@ -1003,9 +1003,10 @@ class Scenario(Term):
                     - Recovered (int): the number of recovered cases
                     - Susceptible (int): the number of susceptible cases
                     - Population (int)
-                    - Rt (float)
-                    - parameter values (float)
-                    - day parameter values (int)
+                    - If available,
+                        - Rt (float)
+                        - parameter values (float)
+                        - day parameter values (int)
         """
         unused_cols = [self.ODE, self.TRIALS, self.RUNTIME, self.TAU, *Evaluator.metrics()]
         # Tracking for scenarios
@@ -1022,6 +1023,7 @@ class Scenario(Term):
             append(df)
         # Concat dataframes
         track_df = pd.concat(dataframes, axis=0, ignore_index=True, sort=False)
+        track_df.insert(7, self.N, None)
         track_df[self.N] = track_df[[self.S, self.C]].sum(axis=1)
         if phases is None:
             return track_df
