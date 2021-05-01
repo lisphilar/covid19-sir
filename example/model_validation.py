@@ -6,7 +6,12 @@ When you use this file from the top directory of the repository with poetry, ple
 cd example; poetry run ./model_validation.py; cd ../
 """
 
-
+import os
+import sys
+try:
+    sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
+except Exception:
+    pass
 from pathlib import Path
 import covsirphy as cs
 
