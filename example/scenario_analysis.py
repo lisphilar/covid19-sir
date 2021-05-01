@@ -58,16 +58,16 @@ def main(country="Italy", province=None, file_prefix="ita"):
     # Reproduction number in past phases
     snl.history("Rt", **filer.png("history_rt_past"))
     # Main scenario: parameters not changed
-    snl.add(name="Main", end_date="31May2021")
+    snl.add(name="Main", days=60)
     snl.simulate(name="Main", **filer.png("simulate_main"))
     snl.history_rate(name="Main", **filer.png("history-rate_main"))
     # Forecast scenario: Short-term prediction with regression and OxCGRT data
-    fit_dict = snl.fit(name="Forecast")
+    fit_dict = snl.fit(delay=(7, 31), name="Forecast")
     fit_dict.pop("coef").to_csv(**filer.csv("forecast_coef", index=True))
     del fit_dict["dataset"], fit_dict["intercept"]
     print(fit_dict)
     snl.predict(name="Forecast")
-    snl.add(name="Forecast", end_date="31May2021")
+    snl.adjust_end()
     snl.simulate(name="Forecast", **filer.png("simulate_forecast"))
     snl.history_rate(name="Main", **filer.png("history-rate_forecast"))
     # Parameter history
