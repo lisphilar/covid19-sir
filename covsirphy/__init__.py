@@ -118,11 +118,9 @@ __all__ = [
     "RegressionHandler",
     # analysis
     "ExampleData", "Scenario", "ModelValidator", "ParamTracker", "DataHandler", "PhaseTracker",
-    # worldwide
-    "PolicyMeasures",
     # Deprecated
     "Population", "Word", "jpn_map", "SIRFV", "line_plot_multiple", "ChangeFinder", "Trend",
-    "Optimizer", "save_dataframe",
+    "Optimizer", "save_dataframe", "PolicyMeasures",
 ]
 
 # Show exceptions in better format if used from command line
