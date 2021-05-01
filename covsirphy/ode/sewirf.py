@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*-
 
 import numpy as np
+from covsirphy.util.error import deprecate
 from covsirphy.ode.mbase import ModelBase
 
 
@@ -60,9 +61,7 @@ class SEWIRF(ModelBase):
             - @sigma (float)
         """
         # Total population
-        self.population = self._ensure_natural_int(
-            population, name="population"
-        )
+        self.population = self._ensure_population(population)
         # Non-dim parameters
         self.theta = theta
         self.kappa = kappa
@@ -99,9 +98,10 @@ class SEWIRF(ModelBase):
         return np.array([dsdt, didt, drdt, dfdt, dedt, dwdt])
 
     @classmethod
+    @deprecate(".param_range()", new=".guess()", version="2.19.1-zeta-fu1")
     def param_range(cls, taufree_df, population):
         """
-        Define the range of parameters (not including tau value).
+        Deprecated. Define the range of parameters (not including tau value).
 
         Args:
             taufree_df (pandas.DataFrame):
@@ -123,9 +123,10 @@ class SEWIRF(ModelBase):
         )
 
     @classmethod
+    @deprecate(".specialize()", new=".convert()", version="2.19.1-zeta-fu1")
     def specialize(cls, data_df, population):
         """
-        Specialize the dataset for this model.
+        Deprecated. Specialize the dataset for this model.
 
         Args:
             data_df (pandas.DataFrame):
@@ -158,9 +159,10 @@ class SEWIRF(ModelBase):
         return df
 
     @classmethod
+    @deprecate(".restore()", new=".convert_reverse()", version="2.19.1-zeta-fu1")
     def restore(cls, specialized_df):
         """
-        Restore Confirmed/Infected/Recovered/Fatal.
+        Deprecated. Restore Confirmed/Infected/Recovered/Fatal.
          using a dataframe with the variables of the model.
 
         Args:

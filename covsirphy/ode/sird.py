@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*-
 
 import numpy as np
+from covsirphy.util.error import deprecate
 from covsirphy.ode.mbase import ModelBase
 
 
@@ -46,9 +47,7 @@ class SIRD(ModelBase):
 
     def __init__(self, population, kappa, rho, sigma):
         # Total population
-        self.population = self._ensure_natural_int(
-            population, name="population"
-        )
+        self.population = self._ensure_population(population)
         # Non-dim parameters
         self.kappa = kappa
         self.rho = rho
@@ -75,9 +74,10 @@ class SIRD(ModelBase):
         return np.array([dsdt, didt, drdt, dfdt])
 
     @classmethod
+    @deprecate(".param_range()", new=".guess()", version="2.19.1-zeta-fu1")
     def param_range(cls, taufree_df, population, quantiles=(0.1, 0.9)):
         """
-        Define the value range of ODE parameters using (X, dX/dt) points.
+        Deprecated. Define the value range of ODE parameters using (X, dX/dt) points.
         In SIR model, X is S, I, R, D here.
 
         Args:
@@ -114,9 +114,10 @@ class SIRD(ModelBase):
         return _dict
 
     @classmethod
+    @deprecate(".specialize()", new=".convert()", version="2.19.1-zeta-fu1")
     def specialize(cls, data_df, population):
         """
-        Specialize the dataset for this model.
+        Deprecated. Specialize the dataset for this model.
 
         Args:
             data_df (pandas.DataFrame):
@@ -146,9 +147,10 @@ class SIRD(ModelBase):
         return df
 
     @classmethod
+    @deprecate(".restore()", new=".convert_reverse()", version="2.19.1-zeta-fu1")
     def restore(cls, specialized_df):
         """
-        Restore Confirmed/Infected/Recovered/Fatal using a dataframe with the variables of the model.
+        Deprecated. Restore Confirmed/Infected/Recovered/Fatal using a dataframe with the variables of the model.
 
         Args:
         @specialized_df (pandas.DataFrame): dataframe with the variables
