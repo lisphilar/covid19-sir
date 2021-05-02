@@ -237,15 +237,16 @@ class SIRF(ModelBase):
         Returns:
             pandas.DataFrame:
                 Index
-                    t: Dates divided by tau value (time steps)
+                    - Date (pd.Timestamp): Observation date (available when @tau is None)
+                    - t (int): time steps (available when @tau is not None)
                 Columns
                     - Susceptible (int): the number of susceptible cases
                     - Infected (int): the number of currently infected cases
                     - Recovered (int): the number of recovered cases
                     - Fatal (int): the number of fatal cases
         """
-        # Convert to tau-free
-        df = data.copy() if tau is None else cls._convert(data, tau)
+        # Convert to tau-free if tau was specified
+        df = cls._convert(data, tau)
         # Conversion of variables: un-necessary for SIR-F model
         return df.loc[:, [cls.S, cls.CI, cls.R, cls.F]]
 

@@ -224,14 +224,15 @@ class SIR(ModelBase):
         Returns:
             pandas.DataFrame:
                 Index
-                    t: Dates divided by tau value (time steps)
+                    - Date (pd.Timestamp): Observation date (available when @tau is None)
+                    - t (int): time steps (available when @tau is not None)
                 Columns
                     - Susceptible (int): the number of susceptible cases
                     - Infected (int): the number of currently infected cases
                     - Fatal or Recovered (int): the number of fatal/recovered cases
         """
-        # Convert to tau-free
-        df = data.copy() if tau is None else cls._convert(data, tau)
+        # Convert to tau-free if tau was specified
+        df = cls._convert(data, tau)
         # Conversion of variables
         df[cls.FR] = df[cls.F] + df[cls.R]
         return df.loc[:, [cls.S, cls.CI, cls.FR]]

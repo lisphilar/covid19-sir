@@ -251,7 +251,8 @@ class SEWIRF(ModelBase):
         Returns:
             pandas.DataFrame:
                 Index
-                    time steps: Dates divided by tau value
+                    - Date (pd.Timestamp): Observation date (available when @tau is None)
+                    - t (int): time steps (available when @tau is not None)
                 Columns
                     - Susceptible (int): the number of susceptible cases
                     - Exposed (int): 0
@@ -260,8 +261,8 @@ class SEWIRF(ModelBase):
                     - Recovered (int): the number of recovered cases
                     - Fatal (int): the number of fatal cases
         """
-        # Convert to tau-free
-        df = data.copy() if tau is None else cls._convert(data, tau)
+        # Convert to tau-free if tau was specified
+        df = cls._convert(data, tau)
         # Conversion of variables
         df[cls.E] = 0
         df[cls.W] = 0

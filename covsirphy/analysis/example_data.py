@@ -96,7 +96,8 @@ class ExampleData(JHUData):
             start = self._start
         else:
             start = df.loc[df.index[-1], self.DATE]
-            df = model.tau_free(df, self._population, tau=None)
+            df[self.S] = self._population - df[self.C]
+            df = model.convert(df, tau=None)
             arg_dict[self.Y0_DICT] = {k: df.loc[df.index[0], k] for k in model.VARIABLES}
         # Simulation
         end = start + timedelta(days=int(arg_dict[self.STEP_N] * self._tau / 1440))
@@ -122,8 +123,9 @@ class ExampleData(JHUData):
         Returns:
             pandas.DataFrame:
                 Index
-                    - Date (pd.Timestamp): Observation date
+                    reset index
                 Columns
+                    - Date (pd.Timestamp): Observation date
                     - (int) variables of the model
 
         Note:
@@ -132,7 +134,7 @@ class ExampleData(JHUData):
         """
         restored_df = self.subset(model=model, country=country, province=province)
         restored_df[self.S] = self._population - restored_df[self.C]
-        return model.convert(restored_df, tau=None)
+        return model.convert(restored_df, tau=None).reset_index()
 
     def non_dim(self, model=None, country=None, province=None):
         """
@@ -156,7 +158,8 @@ class ExampleData(JHUData):
         """
         restored_df = self.subset(model=model, country=country, province=province)
         restored_df[self.S] = self._population - restored_df[self.C]
-        return model.convert(restored_df, tau=self._tau)
+        df = model.convert(restored_df, tau=self._tau)
+        return df.apply(lambda x: x / x.sum(), axis=1)
 
     def subset(self, model=None, country=None, province=None, **kwargs):
         """
@@ -187,6 +190,7 @@ class ExampleData(JHUData):
             Records with Recovered > 0 will be selected.
         """
         country, _ = self._model_to_area(model=model, country=country, province=province)
+        kwargs["population"] = self._population
         kwargs = find_args([super().subset], **kwargs)
         return super().subset(country=country, province=province, **kwargs)
 
