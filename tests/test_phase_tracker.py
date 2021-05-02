@@ -3,7 +3,7 @@
 
 import pandas as pd
 import pytest
-from covsirphy import PhaseTracker, Term, SIRF, UnExecutedError
+from covsirphy import PhaseTracker, Term, SIRF, UnExecutedError, UnExpectedValueError
 
 
 class TestPhaseTracker(object):
@@ -55,11 +55,6 @@ class TestPhaseTracker(object):
         tracker.define_phase(start="01Mar2021", end="31Mar2021")
         df = tracker.summary()
         assert df.loc[df.index[-1], Term.END] == pd.to_datetime("31Mar2021")
-        # Phases to dates
-        dates = tracker.phase_to_date(phases=["1st", "3rd"])
-        assert min(dates) == pd.to_datetime("01Jun2020")
-        assert max(dates) == pd.to_datetime("31Jan2021")
-        assert pd.to_datetime("10Oct2020") not in set(dates)
 
     @pytest.mark.parametrize("country", ["Japan"])
     def test_trend(self, jhu_data, population_data, country, imgfile):
@@ -141,3 +136,36 @@ class TestPhaseTracker(object):
         tracker.define_phase(start="01Jan2021", end="31Jan2021")
         track_df = tracker.track()
         assert not track_df[Term.SUB_COLUMNS].isna().sum().sum()
+
+    @pytest.mark.parametrize("country", ["Japan"])
+    def test_parse_range(self, jhu_data, population_data, country):
+        population = population_data.value(country=country)
+        records_df, _ = jhu_data.records(
+            country=country, start_date="01May2020", population=population)
+        # Create tracker -> no phases
+        today = pd.to_datetime("31Dec2020")
+        tracker = PhaseTracker(data=records_df, today=today, area=country)
+        with pytest.raises(UnExecutedError):
+            tracker.parse_range()
+        # -> (01May, 31May), (01Jun, 30Sep), (01Oct, 31Dec), today, (01Jan2021, 31Jan)
+        tracker.define_phase(start="01Jun2020", end="30Sep2020")
+        tracker.define_phase(start="01Oct2020", end="31Jan2021")
+        first, last = pd.to_datetime("01May2020"), pd.to_datetime("31Jan2021")
+        # With @date argument
+        with pytest.raises(ValueError):
+            tracker.parse_range(dates=(1, 2, 3))
+        start, end = pd.to_datetime("15May2020"), pd.to_datetime("15Nov2020")
+        assert tracker.parse_range(dates=(start, end)) == (start, end)
+        assert tracker.parse_range(dates=(start, None)) == (start, last)
+        assert tracker.parse_range(dates=(None, end)) == (first, end)
+        # With @past_days argument
+        assert tracker.parse_range(past_days=15) == (pd.to_datetime("16Dec2020"), today)
+        # With @phases argument
+        with pytest.raises(UnExpectedValueError):
+            tracker.parse_range(phases=["5th"])
+        assert tracker.parse_range(phases=["1st", "3rd"]) == (
+            pd.to_datetime("01Jun2020"), pd.to_datetime("31Jan2021"))
+        assert tracker.parse_range(phases=["last"]) == (
+            pd.to_datetime("01Jan2021"), pd.to_datetime("31Jan2021"))
+        # No arguments were specified
+        assert tracker.parse_range() == (first, last)
