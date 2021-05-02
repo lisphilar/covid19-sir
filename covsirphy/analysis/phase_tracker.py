@@ -403,6 +403,9 @@ class PhaseTracker(Term):
             When @past_days was specified, (today - @past_days, today) will be returned.
 
         Note:
+            In @phases, 'last' means the last registered phase.
+
+        Note:
             Priority is given in the order of @dates, @past_days, @phases.
         """
         if not len(self):
@@ -434,6 +437,9 @@ class PhaseTracker(Term):
         # Read @phases
         if phases is not None:
             self._ensure_list(phases, name="phases")
+            if "last" in phases:
+                last_phase = df.index[-1]
+                phases = [last_phase if ph == "last" else ph for ph in phases]
             dates = []
             for phase in phases:
                 self._ensure_selectable(phase, df.index.tolist(), name="phase")
