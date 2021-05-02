@@ -482,8 +482,8 @@ class Scenario(Term):
         future_phases = df.loc[df[self.TENSE] == self.FUTURE].index.tolist()
         if not future_phases:
             return self
-        dates = tracker.phase_to_date(phases=future_phases)
-        self[name] = tracker.remove_phase(min(dates), max(dates))
+        start, end = tracker.parse_range(phases=future_phases)
+        self[name] = tracker.remove_phase(start, end)
         return self
 
     def _delete_series(self, name):
@@ -526,13 +526,9 @@ class Scenario(Term):
         # Delete phases
         tracker = self._tracker(name)
         last_phase = tracker.summary().index[-1]
-        if "last" in phases:
-            phases = [last_phase if ph == "last" else ph for ph in phases]
-        dates = tracker.phase_to_date(phases=phases)
-        if last_phase in phases:
-            self[name] = tracker.deactivate(min(dates), max(dates))
-        else:
-            self[name] = tracker.remove_phase(min(dates), max(dates))
+        start, end = tracker.parse_range(phases=phases)
+        f = {True: tracker.deactivate, False: tracker.remove_phase}
+        self[name] = f[last_phase in phases or "last" in phases](start, end)
         return self
 
     def disable(self, phases, name="Main"):
@@ -547,11 +543,8 @@ class Scenario(Term):
             covsirphy.Scenario: self
         """
         tracker = self._tracker(name)
-        last_phase = tracker.summary().index[-1]
-        if "last" in phases:
-            phases = [last_phase if ph == "last" else ph for ph in phases]
-        dates = tracker.phase_to_date(phases=phases)
-        self[name] = tracker.deactivate(min(dates), max(dates))
+        start, end = tracker.parse_range(phases=phases)
+        self[name] = tracker.deactivate(start, end)
         return self
 
     def enable(self, phases, name="Main"):
@@ -566,11 +559,8 @@ class Scenario(Term):
             covsirphy.Scenario: self
         """
         tracker = self._tracker(name)
-        last_phase = tracker.summary().index[-1]
-        if "last" in phases:
-            phases = [last_phase if ph == "last" else ph for ph in phases]
-        dates = tracker.phase_to_date(phases=phases)
-        self[name] = tracker.define_phase(min(dates), max(dates))
+        start, end = tracker.parse_range(phases=phases)
+        self[name] = tracker.define_phase(start, end)
         return self
 
     def combine(self, phases, name="Main", **kwargs):
@@ -594,14 +584,11 @@ class Scenario(Term):
         """
         self._ensure_list(phases, name="phases")
         tracker = self._tracker(name)
-        last_phase = tracker.summary().index[-1]
-        if "last" in phases:
-            phases = [last_phase if ph == "last" else ph for ph in phases]
-        dates = tracker.phase_to_date(phases)
-        tracker.define_phase(min(dates), max(dates))
+        start, end = tracker.parse_range(phases=phases)
+        tracker.define_phase(start, end)
         if kwargs and self._model is not None and self._tau is not None:
             kwargs = self._ensure_kwargs(self._model.PARAMETERS, float, **kwargs)
-            param_df = pd.DataFrame(index=dates)
+            param_df = pd.DataFrame(index=pd.date_range(start, end))
             for (param, value) in kwargs.items():
                 param_df[param] = value
             tracker.set_ode(self._model, param_df, self._tau)
@@ -771,8 +758,8 @@ class Scenario(Term):
             raise ValueError(
                 "@tau must be specified when scenario = Scenario(), and cannot be specified here.")
         if phases is not None:
-            dates = tracker.phase_to_date(phases=phases)
-            tracker.deactivate(min(dates), max(dates))
+            start, end = tracker.parse_range(phases=phases)
+            tracker.deactivate(start, end)
         self._model = self._ensure_subclass(model, ModelBase, name="model")
         self._tau = tracker.estimate(self._model, tau=self._tau, **kwargs)
         self[name] = tracker
@@ -813,20 +800,19 @@ class Scenario(Term):
         records_df = self.records(variables=variables, show_figure=False)
         tracker = self._tracker(name=name)
         sim_df = tracker.simulate()
-        dates = tracker.phase_to_date(phases=[phase])
+        start, end = tracker.parse_range(phases=[phase])
         df = records_df.merge(sim_df, on=self.DATE, suffixes=("_actual", "_simulated"))
-        df = df.set_index(self.DATE).loc[min(dates):max(dates)]
+        df = df.set_index(self.DATE).loc[start:end]
         compare_plot(df, variables=variables, groups=["actual", "simulated"], **kwargs)
 
-    def simulate(self, variables=None, phases=None, name="Main", **kwargs):
+    def simulate(self, variables=None, name="Main", **kwargs):
         """
         Simulate ODE models with set/estimated parameter values and show it as a figure.
 
         Args:
             variables (list[str] or str or None): variable names or abbreviated names (as the same as Scenario.records())
-            phases (list[str] or None): phases to shoe or None (all phases)
             name (str): phase series name. If 'Main', main PhaseSeries will be used
-            kwargs: the other keyword arguments of Scenario.line_plot()
+            kwargs: the other keyword arguments of Scenario.line_plot() and PhaseTracker.parse_range()
 
         Returns:
             pandas.DataFrame
@@ -839,17 +825,15 @@ class Scenario(Term):
                     - Variables of the main dataset (int): Confirmed etc.
         """
         tracker = self._tracker(name=name)
-        sim_df = tracker.simulate().set_index(self.DATE)
-        if phases is not None:
-            dates = tracker.phase_to_date(phases=phases)
-            sim_df = sim_df.loc[min(dates):max(dates)]
         # Variables to show
         variables = self._convert_variables(variables, candidates=self.VALUE_COLUMNS)
+        # Specify range of dates
+        start, end = tracker.parse_range(**find_args(PhaseTracker.parse_range, **kwargs))
+        sim_df = tracker.simulate().set_index(self.DATE).loc[start:end, variables]
         # Show figure
         start_dates = tracker.summary()[self.START].tolist()
         title = f"{self._area}: Simulated number of cases ({name} scenario)"
-        self.line_plot(
-            df=sim_df.loc[:, variables], title=title, y_integer=True, v=start_dates[1:], **kwargs)
+        self.line_plot(df=sim_df, title=title, y_integer=True, v=start_dates[1:], **kwargs)
         return sim_df.reset_index()
 
     def get(self, param, phase="last", name="Main"):
@@ -924,11 +908,9 @@ class Scenario(Term):
                     - Fatal({date}): Fatal on the next date of the last phase
         """
         _dict = {}
-        for (name, _) in self._tracker_dict.items():
+        for (name, tracker) in self._tracker_dict.items():
             # Predict the number of cases
-            df = self.simulate(name=name, show_figure=False)
-            df = df.set_index(self.DATE)
-            cols = df.columns[:]
+            df = tracker.simulate().set_index(self.DATE)
             last_date = df.index[-1]
             # Max value of Infected
             max_ci = df[self.CI].max()
@@ -938,7 +920,7 @@ class Scenario(Term):
             # Infected on the next date of the last phase
             last_ci = df.loc[last_date, self.CI]
             # Fatal on the next date of the last phase
-            last_f = df.loc[last_date, self.F] if self.F in cols else None
+            last_f = df.loc[last_date, self.F] if self.F in df.columns else None
             # Save representative values
             last_date_str = last_date.strftime(self.DATE_FORMAT)
             _dict[name] = {
@@ -981,14 +963,14 @@ class Scenario(Term):
         cols = sorted(rt_df, key=self.str2num)
         return df.join(rt_df[cols].add_suffix(f"_{self.RT}"), how="left")
 
-    def track(self, phases=None, with_actual=True, **kwargs):
+    def track(self, with_actual=True, ref_name="Main", **kwargs):
         """
         Show values of parameters and variables in one dataframe.
 
         Args:
-            phases (list[str] or None): phases to shoe or None (all phases)
             with_actual (bool): if True, show actual number of cases will included as "Actual" scenario
-            kwargs: the other arguments will be ignored
+            ref_name (str): name of reference scenario to specify phases and dates
+            kwargs: keyword arguments of PhaseTracker.parse_range()
 
         Returns:
             pandas.DataFrame: tracking records
@@ -1025,57 +1007,70 @@ class Scenario(Term):
         track_df = pd.concat(dataframes, axis=0, ignore_index=True, sort=False)
         track_df.insert(7, self.N, None)
         track_df[self.N] = track_df[[self.S, self.C]].sum(axis=1)
-        if phases is None:
-            return track_df
-        dates = self._tracker(name=self.MAIN).phase_to_date(phases=phases)
-        return track_df.set_index(self.DATE).loc[min(dates):max(dates)].reset_index()
+        # Specify date range
+        ref_tracker = self._tracker(ref_name)
+        start, end = ref_tracker.parse_range(**find_args(PhaseTracker.parse_range, **kwargs))
+        return track_df.loc[(track_df[self.DATE] >= start) & (track_df[self.DATE] <= end)]
 
-    def _history(self, target, phases=None, with_actual=True):
+    def _history(self, target, with_actual=True):
         """
         Show the history of variables and parameter values to compare scenarios.
 
         Args:
             target (str): parameter or variable name to show (Rt, Infected etc.)
-            phases (list[str] or None): phases to shoe or None (all phases)
             with_actual (bool): if True and @target is a variable name, show actual number of cases
 
         Returns:
-            pandas.DataFrame
+            pandas.DataFrame:
+                Index
+                    Date (pandas.Timestamp)
+                Columns
+                    {scenario name} (int or float): values of the registered scenario
         """
         # Include actual data or not
         with_actual = with_actual and target in self.VALUE_COLUMNS
         # Get tracking data
-        df = self.track(phases=phases, with_actual=with_actual)
+        df = self.track(with_actual=with_actual)
         if target not in df.columns:
             col_str = ", ".join(list(df.columns))
             raise KeyError(f"@target must be selected from {col_str}, but {target} was applied.")
         # Select the records of target variable
         return df.pivot_table(values=target, index=self.DATE, columns=self.SERIES, aggfunc="last")
 
-    def history(self, target, phases=None, with_actual=True, **kwargs):
+    def history(self, target, with_actual=True, ref_name="Main", **kwargs):
         """
         Show the history of variables and parameter values to compare scenarios.
 
         Args:
             target (str): parameter or variable name to show (Rt, Infected etc.)
-            phases (list[str] or None): phases to shoe or None (all phases)
             with_actual (bool): if True and @target is a variable name, show actual number of cases
-            kwargs: the other keyword arguments of Scenario.line_plot()
+            ref_name (str): name of reference scenario to specify phases and dates
+            kwargs: the other keyword arguments of Scenario.line_plot() and PhaseTracker.parse_range()
 
         Returns:
-            pandas.DataFrame
+            pandas.DataFrame:
+                Index
+                    Date (pandas.Timestamp)
+                Columns
+                    {scenario name} (int or float): values of the registered scenario
         """
-        df = self._history(target=target, phases=phases, with_actual=with_actual)
+        df = self._history(target=target, with_actual=with_actual)
         df.dropna(subset=[col for col in df.columns if col != self.ACTUAL], inplace=True)
+        ref_tracker = self._tracker(ref_name)
+        start, end = ref_tracker.parse_range(**find_args(PhaseTracker.parse_range, **kwargs))
+        df = df.loc[start:end]
+        # Y-label
         if target == self.RT:
             ylabel = self.RT_FULL
         elif target in self.VALUE_COLUMNS:
             ylabel = f"The number of {target.lower()} cases"
         else:
             ylabel = target
+        # Title
         title = f"{self._area}: {ylabel} over time"
-        tracker = self._tracker(self.MAIN)
-        start_dates = tracker.summary()[self.START].tolist()
+        # Dot lines
+        start_dates = ref_tracker.summary()[self.START].tolist()
+        # Show line plot
         self.line_plot(
             df=df, title=title, ylabel=ylabel, v=start_dates[1:], math_scale=False,
             h=1.0 if target == self.RT else None, **kwargs)
@@ -1146,16 +1141,14 @@ class Scenario(Term):
         self.add(name=target, **param_dict)
         self.estimate(model, name=target, **kwargs)
 
-    def score(self, variables=None, phases=None, past_days=None, name="Main", **kwargs):
+    def score(self, variables=None, name="Main", **kwargs):
         """
-        Evaluate accuracy of phase setting and parameter estimation of all enabled phases all some past days.
+        Evaluate accuracy of phase setting and parameter estimation.
 
         Args:
             variables (list[str] or None): variables to use in calculation
-            phases (list[str] or None): phases to use in calculation or None (all phases)
-            past_days (int or None): how many past days to use in calculation from the last record date
             name(str): phase series name. If 'Main', main PhaseSeries will be used
-            kwargs: keyword arguments of covsirphy.Evaluator.score()
+            kwargs: keyword arguments of covsirphy.Evaluator.score() and PhaseTracker.parse_range()
 
         Returns:
             float: score with the specified metrics (covsirphy.Evaluator.score())
@@ -1165,29 +1158,18 @@ class Scenario(Term):
 
         Note:
             "Susceptible", "Confirmed", "Infected", "Fatal" and "Recovered" can be used in @variables.
-
-        Note:
-            @phases and @past_days can not be specified at the same time.
-
-        Note:
-            Please refer to covsirphy.Evaluator.score() for metrics.
         """
+        tracker = self._tracker(name)
+        # Variables to evaluate
         variables = self._ensure_list(
             variables or [self.CI, self.F, self.R],
             candidates=[self.S, self.C, self.CI, self.F, self.R], name="variables")
-        tracker = self._tracker(name)
-        sim_df = tracker.simulate().set_index(self.DATE).loc[:, variables]
-        rec_df = self.records(variables=variables).set_index(self.DATE)
-        if past_days is not None and phases is not None:
-            raise ValueError("@phases and @past_days cannot be specified at the same time.")
-        if phases is not None:
-            dates = tracker.phase_to_date(phases=phases)
-            sim_df = sim_df.loc[min(dates):max(dates)]
-            rec_df = rec_df.loc[min(dates):max(dates)]
-        if past_days is not None:
-            past_days = self._ensure_natural_int(past_days, name="past_days")
-            sim_df = sim_df.loc[pd.to_datetime(self._data.last_date) - timedelta(past_days):]
-        evaluator = Evaluator(rec_df, sim_df, how="inner")
+        # Specify date range
+        start, end = tracker.parse_range(**find_args(PhaseTracker.parse_range, **kwargs))
+        sim_df = tracker.simulate().set_index(self.DATE)
+        rec_df = self.records(variables=variables, show_figure=False).set_index(self.DATE)
+        # Evaluate
+        evaluator = Evaluator(rec_df.loc[start:end], sim_df.loc[start:end, variables], how="inner")
         return evaluator.score(**find_args(Evaluator.score, **kwargs))
 
     def estimate_delay(self, oxcgrt_data=None, indicator="Stringency_index",
