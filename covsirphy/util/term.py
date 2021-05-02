@@ -346,7 +346,7 @@ class Term(object):
             raise TypeError(s)
         return target
 
-    @ staticmethod
+    @staticmethod
     def _ensure_instance(target, class_obj, name="target"):
         """
         Ensure the target is a instance of the class object.
@@ -364,7 +364,7 @@ class Term(object):
             raise TypeError(s)
         return target
 
-    @ staticmethod
+    @staticmethod
     def _ensure_list(target, candidates=None, name="target"):
         """
         Ensure the target is a sub-list of the candidates.
@@ -392,7 +392,7 @@ class Term(object):
         candidate_str = ", ".join(strings)
         raise KeyError(f"@{name} must be a sub-list of [{candidate_str}], but {target} was applied.") from None
 
-    @ classmethod
+    @classmethod
     def divisors(cls, value):
         """
         Return the list of divisors of the value.
@@ -444,7 +444,7 @@ class Term(object):
         date = cls._ensure_date(date_str) + timedelta(days=days)
         return date.strftime(cls.DATE_FORMAT)
 
-    @ classmethod
+    @classmethod
     def tomorrow(cls, date_str):
         """
         Tomorrow of the date.
@@ -457,7 +457,7 @@ class Term(object):
         """
         return cls.date_change(date_str, days=1)
 
-    @ classmethod
+    @classmethod
     def yesterday(cls, date_str):
         """
         Yesterday of the date.
@@ -470,7 +470,7 @@ class Term(object):
         """
         return cls.date_change(date_str, days=-1)
 
-    @ classmethod
+    @classmethod
     def steps(cls, start_date, end_date, tau):
         """
         Return the number of days (round up).
@@ -485,7 +485,7 @@ class Term(object):
         tau = cls._ensure_tau(tau)
         return math.ceil((end - sta) / timedelta(minutes=tau))
 
-    @ classmethod
+    @classmethod
     def _ensure_date_order(cls, previous_date, following_date, name="following_date"):
         """
         Ensure that the order of dates.
