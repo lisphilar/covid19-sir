@@ -382,7 +382,7 @@ class PhaseTracker(Term):
         Args:
             dates (tuple(str or pandas.Timestamp or None, ) or None): start date and end date
             past_days (int or None): how many past days to use in calculation from today (property)
-            phases (list[str] or None): phase namess to use in calculation
+            phases (list[str] or None): phase names to use in calculation
 
         Raises:
             covsirphy.UnExecutedError: no phases were registered
