@@ -408,7 +408,7 @@ class PhaseTracker(Term):
         Note:
             Priority is given in the order of @dates, @past_days, @phases.
         """
-        if not len(self):
+        if not self:
             raise UnExecutedError("PhaseTracker.define_phase()")
         # Get list of phases: index=phase names, columns=Start/End
         track_df = self._track_df.reset_index()
