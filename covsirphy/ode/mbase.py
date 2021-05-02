@@ -233,21 +233,24 @@ class ModelBase(Term):
                     - Infected (int): the number of currently infected cases
                     - Fatal(int): the number of fatal cases
                     - Recovered (int): the number of recovered cases
-            tau (int): tau value [min]
+            tau (int): tau value [min] or None (skip division by tau values)
 
         Returns:
             pandas.DataFrame:
                 Index
-                    t: Dates divided by tau value (time steps)
+                    - Date (pd.Timestamp): Observation date (available when @tau is None)
+                    - t (int): time steps (available when @tau is not None)
                 Columns
                     - Susceptible(int): the number of susceptible cases
                     - Infected (int): the number of currently infected cases
                     - Fatal(int): the number of fatal cases
                     - Recovered (int): the number of recovered cases
         """
+        df = cls._ensure_dataframe(data, name="data", columns=cls.DSIFR_COLUMNS)
+        if tau is None:
+            return df.set_index(cls.DATE)
         # Convert to tau-free
         tau = cls._ensure_tau(tau, accept_none=False)
-        df = cls._ensure_dataframe(data, name="data", columns=cls.DSIFR_COLUMNS)
         time_series = (df[cls.DATE] - df[cls.DATE].min()).dt.total_seconds() // 60
         df.index = (time_series / tau).astype(np.int64)
         df.index.name = cls.TS
