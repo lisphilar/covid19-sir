@@ -434,16 +434,16 @@ class PhaseTracker(Term):
         if past_days is not None:
             past_days = self._ensure_natural_int(past_days, name="past_days")
             return (self._today - timedelta(days=past_days), self._today)
-        # Read @phases
-        if phases is not None:
-            self._ensure_list(phases, name="phases")
-            if "last" in phases:
-                last_phase = df.index[-1]
-                phases = [last_phase if ph == "last" else ph for ph in phases]
-            dates = []
-            for phase in phases:
-                self._ensure_selectable(phase, df.index.tolist(), name="phase")
-                dates.extend(pd.date_range(df.loc[phase, self.START], df.loc[phase, self.END]).tolist())
-            return (min(dates), max(dates))
         # No arguments were specified
-        return (start_default, end_default)
+        if phases is None:
+            return (start_default, end_default)
+        # Read @phases
+        self._ensure_list(phases, name="phases")
+        dates = []
+        for phase in phases:
+            phase_replaced = df.index[-1] if phase == "last" else phase
+            self._ensure_selectable(phase_replaced, df.index.tolist(), name="phase")
+            start = df.loc[phase_replaced, self.START]
+            end = df.loc[phase_replaced, self.END]
+            dates.extend(pd.date_range(start, end).tolist())
+        return (min(dates), max(dates))
