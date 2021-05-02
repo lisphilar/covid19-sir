@@ -46,6 +46,12 @@ class PhaseTracker(Term):
         self._model = None
         self._tau = None
 
+    def __len__(self):
+        """
+        int: the number of registered phases, including deactivated phases
+        """
+        return self._track_df[self.ID].nunique() - 1
+
     def define_phase(self, start, end):
         """
         Define an active phase with the series of dates.
@@ -197,32 +203,6 @@ class PhaseTracker(Term):
         fixed_cols = self.TENSE, self.START, self.END, self.N
         others = [col for col in df.columns if col not in set(fixed_cols)]
         return df.loc[:, [*fixed_cols, *others]]
-
-    def phase_to_date(self, phases):
-        """
-        Convert phase names to list of dates.
-
-        Args:
-            phase (list[str]): phase names
-
-        Returns:
-            list[pandas.Timestamp]: list of dates
-        """
-        # Remove un-registered phase
-        track_df = self._track_df.reset_index()
-        track_df = track_df.loc[track_df[self.ID] != 0]
-        # -> index=phase names, columns=Start/variables,.../End
-        track_df[self.ID], _ = track_df[self.ID].factorize()
-        first_df = track_df.groupby(self.ID).first()
-        df = first_df.join(track_df.groupby(self.ID).last(), rsuffix="_last")
-        df = df.rename(columns={self.DATE: self.START, f"{self.DATE}_last": self.END})
-        df.index = [self.num2str(num) for num in df.index]
-        # Get list of dates
-        dates = []
-        for phase in phases:
-            self._ensure_selectable(phase, df.index.tolist(), name="phase")
-            dates.extend(pd.date_range(df.loc[phase, self.START], df.loc[phase, self.END]).tolist())
-        return dates
 
     def trend(self, force, show_figure, **kwargs):
         """
@@ -394,3 +374,70 @@ class PhaseTracker(Term):
         sim_df = handler.simulate()
         sim_df[self.C] = sim_df[[self.CI, self.F, self.R]].sum(axis=1)
         return sim_df.loc[:, self.SUB_COLUMNS]
+
+    def parse_range(self, dates=None, past_days=None, phases=None):
+        """
+        Parse date range and return the minimum date and maximum date.
+
+        Args:
+            dates (tuple(str or pandas.Timestamp or None, ) or None): start date and end date
+            past_days (int or None): how many past days to use in calculation from today (property)
+            phases (list[str] or None): phase namess to use in calculation
+
+        Raises:
+            covsirphy.UnExecutedError: no phases were registered
+            ValueError: @dates argument does not have exact two elements
+
+        Returns:
+            tuple(pandas.Timestamp, pandas.Timestamp): the minimum date and maximum date
+
+        Notes:
+            When not specified (i.e. None was applied),
+            the start date of the 0th phase will be used as the minimum date.
+
+        Notes:
+            When not specified (i.e. None was applied),
+            the end date of the last phase phase will be used as the maximum date.
+
+        Note:
+            When @past_days was specified, (today - @past_days, today) will be returned.
+
+        Note:
+            Priority is given in the order of @dates, @past_days, @phases.
+        """
+        if not len(self):
+            raise UnExecutedError("PhaseTracker.define_phase()")
+        # Get list of phases: index=phase names, columns=Start/End
+        track_df = self._track_df.reset_index()
+        track_df = track_df.loc[track_df[self.ID] != 0]
+        track_df[self.ID], _ = track_df[self.ID].factorize()
+        first_df = track_df.groupby(self.ID).first()
+        df = first_df.join(track_df.groupby(self.ID).last(), rsuffix="_last")
+        df = df.rename(columns={self.DATE: self.START, f"{self.DATE}_last": self.END})
+        df.index = [self.num2str(num) for num in df.index]
+        # Get default values
+        start_default, end_default = df[self.START].min(), df[self.END].max()
+        # Read @dates
+        if dates is not None:
+            if len(dates) != 2:
+                raise ValueError(f"@dates must be a tuple which has two elements, but {dates} was applied.")
+            start = self._ensure_date(
+                dates[0], name="the first element of 'dates' argument", default=start_default)
+            end = self._ensure_date(
+                dates[1], name="the second element of 'dates' argument", default=end_default)
+            self._ensure_date_order(start, end, name="the second element of 'dates' argument")
+            return (start, end)
+        # Read @past_days
+        if past_days is not None:
+            past_days = self._ensure_natural_int(past_days, name="past_days")
+            return (self._today - timedelta(days=past_days), self._today)
+        # Read @phases
+        if phases is not None:
+            self._ensure_list(phases, name="phases")
+            dates = []
+            for phase in phases:
+                self._ensure_selectable(phase, df.index.tolist(), name="phase")
+                dates.extend(pd.date_range(df.loc[phase, self.START], df.loc[phase, self.END]).tolist())
+            return (min(dates), max(dates))
+        # No arguments were specified
+        return (start_default, end_default)
