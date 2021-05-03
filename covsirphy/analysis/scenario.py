@@ -749,10 +749,14 @@ class Scenario(Term):
             raise ValueError(
                 "@tau must be specified when scenario = Scenario(), and cannot be specified here.")
         if phases is not None:
-            start, end = tracker.parse_range(phases=phases)
-            tracker.deactivate(start, end)
+            df = tracker.summary()
+            all_phases = df.loc[df[self.TENSE] == self.PAST].index.tolist()
+            self.disable(phases=all_phases, name=name)
+            self.enable(phases, name=name)
         self._model = self._ensure_subclass(model, ModelBase, name="model")
         self._tau = tracker.estimate(self._model, tau=self._tau, **kwargs)
+        if phases is not None:
+            self.enable(phases=all_phases, name=name)
         self[name] = tracker
 
     @deprecate("Scenario.phase_estimator()", version="2.19.1-delta-fu1")
@@ -1130,7 +1134,7 @@ class Scenario(Term):
         phases_changed = df.loc[df[self.START] >= pd.to_datetime(beginning_date)].index.tolist()
         self.delete(phases=phases_changed, name=target)
         self.add(name=target, **param_dict)
-        self.estimate(model, name=target, **kwargs)
+        self.estimate(model, phases=[phases_changed[0]], name=target, **kwargs)
 
     def score(self, variables=None, name="Main", **kwargs):
         """
