@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*-
 
 from datetime import timedelta
+import numpy as np
 import pandas as pd
 from covsirphy.util.argument import find_args
 from covsirphy.cleaning.jhu_data import JHUData
@@ -109,7 +110,12 @@ class ExampleData(JHUData):
         restored_df[self.PROVINCE] = province
         restored_df[self.C] = restored_df[[self.CI, self.F, self.R]].sum(axis=1)
         selected_df = restored_df.loc[:, self.COLUMNS]
-        self._cleaned_df = pd.concat([self._cleaned_df, selected_df], axis=0, ignore_index=True)
+        cleaned_df = pd.concat([self._cleaned_df, selected_df], axis=0, ignore_index=True)
+        for col in self.AREA_COLUMNS:
+            cleaned_df[col] = cleaned_df[col].astype("category")
+        for col in self.VALUE_COLUMNS:
+            cleaned_df[col] = cleaned_df[col].astype(np.int64)
+        self._cleaned_df = cleaned_df.copy()
 
     def specialized(self, model=None, country=None, province=None):
         """
