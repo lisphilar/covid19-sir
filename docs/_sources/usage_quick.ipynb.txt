@@ -602,22 +602,6 @@
   },
   {
    "source": [
-    "We can select variables and phases with arguments."
-   ],
-   "cell_type": "markdown",
-   "metadata": {}
-  },
-  {
-   "cell_type": "code",
-   "execution_count": null,
-   "metadata": {},
-   "outputs": [],
-   "source": [
-    "_ = snl.simulate(name=\"Main\", variables=[\"Confirmed\", \"Infected\"], phases=[\"9th\", \"10th\"])"
-   ]
-  },
-  {
-   "source": [
     "### Main scenario\n",
     "To investigate the effect of parameter changes, we will perform scenario analysis. In the main scenario, we will assume that the parameter values do not change after the last past phase.\n",
     "\n",
@@ -685,8 +669,24 @@
     "# Add 30 days as a new future phases with the same parameter set\n",
     "snl.add(name=\"Medicine\", days=30, sigma=sigma_current)\n",
     "# Add a phase with doubled sigma value and the same end date with main date\n",
-    "snl.add(name=\"Medicine\", end_date=\"31Jul2021\", sigma=sigma_new)\n",
-    "snl.summary(name=\"Medicine\")"
+    "snl.add(name=\"Medicine\", end_date=\"31Jul2021\", sigma=sigma_new)"
+   ]
+  },
+  {
+   "source": [
+    "Check summary of future phases."
+   ],
+   "cell_type": "markdown",
+   "metadata": {}
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "df = snl.summary()\n",
+    "df.loc[df[\"Type\"] == \"Future\"]"
    ]
   },
   {
@@ -784,8 +784,9 @@
    "metadata": {},
    "outputs": [],
    "source": [
-    "print(\"Intercept and coefficient:\")\n",
-    "fit_dict[\"intercept\"].style.background_gradient(axis=None)"
+    "print(\"Coefficient:\")\n",
+    "df = fit_dict[\"intercept\"].copy()\n",
+    "df.drop(\"Intercept\", axis=1).style.background_gradient(axis=None)"
    ]
   },
   {
@@ -802,9 +803,26 @@
    "outputs": [],
    "source": [
     "# Short-term prediction\n",
-    "snl.predict(name=\"Forecast\").summary(name=\"Forecast\")\n",
+    "snl.predict(name=\"Forecast\")\n",
     "# We can select list of days to predict optionally\n",
-    "# snl.predict(days=[1, 4], name=\"Forecast\").summary(name=\"Forecast\")"
+    "# snl.predict(days=[1, 4], name=\"Forecast\")"
+   ]
+  },
+  {
+   "source": [
+    "Show summary of future phases."
+   ],
+   "cell_type": "markdown",
+   "metadata": {}
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "df = snl.summary()\n",
+    "df.loc[df[\"Type\"] == \"Future\"]"
    ]
   },
   {
