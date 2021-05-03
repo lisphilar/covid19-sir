@@ -398,6 +398,7 @@ class Scenario(Term):
 
         Raises:
             ValueError: @end_date if smaller than the last end date of registered phases
+            KeyError: model was registered, but some parameter values were not specified
 
         Returns:
             covsirphy.Scenario: self
@@ -415,47 +416,37 @@ class Scenario(Term):
             When ODE model and tau value has been or were registered, parameter values will be also added.
             Default values are that of the last phase. Er can change them with kwargs.
         """
-        # Get tracker
+        days = self._ensure_natural_int(days, name="days", none_ok=True)
+        today = self._ensure_date(self._data.today)
         tracker = self._tracker(name)
-        # Calculate start/end date
-        summary_df = tracker.summary()
-        if summary_df.empty:
-            last_end = self._ensure_date(self._data.first_date) - timedelta(days=1)
-        else:
-            last_end = summary_df[self.END].max()
-        if end_date is None and days is not None:
-            days = self._ensure_natural_int(days, name="days")
-            end = last_end + timedelta(days=days)
-        else:
-            today = pd.to_datetime(self._data.today)
-            end = self._ensure_date(end_date, name="end_date", default=today)
-        if end <= last_end:
-            last_end_date = last_end.strftime(self.DATE_FORMAT)
-            raise ValueError(
-                f"@end_date must be over {last_end_date}. However, {end_date} was applied.")
-        # Add phase
-        start = last_end + timedelta(days=1)
-        tracker.define_phase(start, end)
-        # Set ODE model and tau value
+        # Update ODE model
         if model is not None:
             self._model = self._ensure_subclass(model, ModelBase, name="model")
+        # Set tau value if has been un-set
         self._tau = self._tau or self._ensure_tau(tau, accept_none=True)
-        # Not save parameter values when ODE model or tau not registered
-        if self._model is None or self._tau is None:
-            self._tracker_dict[name] = tracker
-            return self
-        # Set ODE parameter values
-        param_df = pd.DataFrame(index=pd.date_range(start, end))
-        for param in self._model.PARAMETERS:
-            try:
-                param_df[param] = self._ensure_float(
-                    kwargs.get(param, self.get(param, phase="last", name=name)))
-            except (KeyError, ValueError):
-                # We do not have parameter values (float) in the previous phases and kwargs
-                return self
-        tracker.set_ode(self._model, param_df, self._tau)
+        # Calcumate start date and get parameter set
+        if tracker:
+            summary_df = tracker.summary()
+            start = summary_df[self.END].max() + timedelta(days=1)
+            pre_param_dict = summary_df.iloc[-1].to_dict()
+            pre_param_dict.update(kwargs)
+        else:
+            start = self._ensure_date(self._data.first_date)
+            pre_param_dict = kwargs.copy()
+        # Add a new phase
+        if end_date is None and days is not None:
+            end = start + timedelta(days=days - 1)
+        else:
+            end = self._ensure_date(end_date, name="end_date", default=today)
+            self._ensure_date_order(start, end, name="end_date")
+        tracker.define_phase(start, end)
+        # Set parameter values
+        if None not in set([self._model, self._tau]):
+            param_dict = self._ensure_kwargs(self._model.PARAMETERS, float, **pre_param_dict)
+            param_df = pd.DataFrame(param_dict, index=pd.date_range(start, end))
+            tracker.set_ode(self._model, param_df, self._tau)
         # Update tracker of self
-        self._tracker_dict[name] = tracker
+        self[name] = tracker
         return self
 
     def clear(self, name="Main", include_past=False, template="Main"):

@@ -50,7 +50,9 @@ class PhaseTracker(Term):
         """
         int: the number of registered phases, including deactivated phases
         """
-        return self._track_df[self.ID].nunique() - 1
+        df = self._track_df.copy()
+        df = df.loc[df[self.ID] != 0]
+        return df[self.ID].nunique()
 
     def define_phase(self, start, end):
         """
