@@ -6,8 +6,6 @@ import warnings
 import pytest
 from covsirphy import SIRF, PhaseSeries, ParamTracker, ModelBase, PhaseUnit
 
-warnings.filterwarnings("ignore", category=DeprecationWarning)
-
 
 @pytest.fixture(scope="module")
 def tracker(jhu_data, population_data):
@@ -20,7 +18,9 @@ def tracker(jhu_data, population_data):
     )
 
 
+@pytest.mark.filterwarnings("ignore", category=DeprecationWarning)
 class TestParamTracker(object):
+
     def test_series(self, tracker):
         assert isinstance(tracker.series, PhaseSeries)
         assert len(tracker) == len(tracker.series)

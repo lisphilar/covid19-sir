@@ -9,6 +9,7 @@ from covsirphy import Term, PhaseUnit, SIR
 warnings.filterwarnings("ignore", category=DeprecationWarning)
 
 
+@pytest.mark.filterwarnings("ignore", category=DeprecationWarning)
 class TestPhaseSeries(object):
 
     @pytest.mark.parametrize("country", ["Japan"])
