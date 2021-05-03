@@ -65,7 +65,7 @@
             
             
               <div class="version">
-                2.19.1-eta-fu3
+                2.19.1-theta
               </div>
             
           
@@ -1517,13 +1517,12 @@
         <span class="c1"># Prediction with regression model</span>
         <span class="n">handler</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_reghandler_dict</span><span class="p">[</span><span class="n">name</span><span class="p">]</span>
         <span class="n">df</span> <span class="o">=</span> <span class="n">handler</span><span class="o">.</span><span class="n">predict</span><span class="p">()</span>
-        <span class="c1"># -&gt; end_date/parameter values</span>
-        <span class="n">df</span><span class="o">.</span><span class="n">index</span> <span class="o">=</span> <span class="p">[</span><span class="n">date</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">DATE_FORMAT</span><span class="p">)</span> <span class="k">for</span> <span class="n">date</span> <span class="ow">in</span> <span class="n">df</span><span class="o">.</span><span class="n">index</span><span class="p">]</span>
+        <span class="c1"># -&gt; index=end_date (pandas.Timestamp), columns=parameter values</span>
         <span class="n">df</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;end_date&quot;</span>
         <span class="c1"># Days to predict</span>
-        <span class="n">days</span> <span class="o">=</span> <span class="n">days</span> <span class="ow">or</span> <span class="p">[</span><span class="nb">len</span><span class="p">(</span><span class="n">df</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span><span class="p">]</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_ensure_list</span><span class="p">(</span><span class="n">days</span><span class="p">,</span> <span class="n">candidates</span><span class="o">=</span><span class="nb">list</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">df</span><span class="p">))),</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;days&quot;</span><span class="p">)</span>
-        <span class="n">phase_df</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">reset_index</span><span class="p">()</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">days</span><span class="p">,</span> <span class="p">:]</span>
+        <span class="n">days</span> <span class="o">=</span> <span class="n">days</span> <span class="ow">or</span> <span class="p">[</span><span class="nb">len</span><span class="p">(</span><span class="n">df</span><span class="p">)]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_ensure_list</span><span class="p">(</span><span class="n">days</span><span class="p">,</span> <span class="n">candidates</span><span class="o">=</span><span class="nb">list</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">df</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)),</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;days&quot;</span><span class="p">)</span>
+        <span class="n">phase_df</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">reset_index</span><span class="p">()</span><span class="o">.</span><span class="n">loc</span><span class="p">[[</span><span class="n">day</span> <span class="o">-</span> <span class="mi">1</span> <span class="k">for</span> <span class="n">day</span> <span class="ow">in</span> <span class="n">days</span><span class="p">],</span> <span class="p">:]</span>
         <span class="c1"># Set new future phases</span>
         <span class="k">for</span> <span class="n">phase_dict</span> <span class="ow">in</span> <span class="n">phase_df</span><span class="o">.</span><span class="n">to_dict</span><span class="p">(</span><span class="n">orient</span><span class="o">=</span><span class="s2">&quot;records&quot;</span><span class="p">):</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">,</span> <span class="o">**</span><span class="n">phase_dict</span><span class="p">)</span>
