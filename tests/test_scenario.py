@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-from datetime import datetime
+from datetime import datetime, timedelta
 import warnings
 import pytest
 import pandas as pd
@@ -275,14 +275,19 @@ class TestScenario(object):
             snl.fit(oxcgrt_data)
 
     @pytest.mark.parametrize("delay", [5, (7, 31), None])
-    def test_fit_predict(self, snl, oxcgrt_data, delay):
+    @pytest.mark.parametrize("days", [[3], None])
+    def test_fit_predict(self, snl, delay, days):
+        snl.clear(name="Forecast")
+        # Fitting & predict
+        snl.fit_predict(name="Forecast", delay=delay, days=days)
         # Fitting
-        snl.clear()
-        info_dict = snl.fit(delay=delay)
+        info_dict = snl.fit(name="Forecast", delay=delay)
+        delay_est = info_dict["delay"]
         assert isinstance(info_dict, dict)
         # Prediction
-        snl.predict()
-        assert Term.FUTURE in snl.summary()[Term.TENSE].unique()
-        # Fitting & predict
-        snl.fit_predict(delay=delay)
-        assert Term.FUTURE in snl.summary()[Term.TENSE].unique()
+        snl.predict(name="Forecast", days=days)
+        df = snl.summary(name="Forecast")
+        assert Term.FUTURE in df[Term.TENSE].unique()
+        max_days = delay_est if days is None else max(days)
+        end = pd.to_datetime(snl.today) + timedelta(days=max_days)
+        assert pd.to_datetime(df.loc[df.index[-1], Term.END]) == end
