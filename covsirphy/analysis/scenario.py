@@ -1344,13 +1344,12 @@ class Scenario(Term):
         # Prediction with regression model
         handler = self._reghandler_dict[name]
         df = handler.predict()
-        # -> end_date/parameter values
-        df.index = [date.strftime(self.DATE_FORMAT) for date in df.index]
+        # -> index=end_date (pandas.Timestamp), columns=parameter values
         df.index.name = "end_date"
         # Days to predict
-        days = days or [len(df) - 1]
-        self._ensure_list(days, candidates=list(range(len(df))), name="days")
-        phase_df = df.reset_index().loc[days, :]
+        days = days or [len(df)]
+        self._ensure_list(days, candidates=list(range(1, len(df) + 1)), name="days")
+        phase_df = df.reset_index().loc[[day - 1 for day in days], :]
         # Set new future phases
         for phase_dict in phase_df.to_dict(orient="records"):
             self.add(name=name, **phase_dict)
