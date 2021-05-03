@@ -22,11 +22,11 @@ class SEWIRF(ModelBase):
     # Variable names in (non-dim, dimensional) ODEs
     VAR_DICT = {
         "x1": ModelBase.S,
+        "x2": ModelBase.E,
+        "x3": ModelBase.W,
         "y": ModelBase.CI,
         "z": ModelBase.R,
         "w": ModelBase.F,
-        "x2": ModelBase.E,
-        "x3": ModelBase.W,
     }
     VARIABLES = list(VAR_DICT.values())
     # Weights of variables in parameter estimation error function

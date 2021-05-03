@@ -10,6 +10,7 @@ from covsirphy import SIRF, Scenario
 warnings.filterwarnings("ignore", category=DeprecationWarning)
 
 
+@pytest.mark.filterwarnings("ignore", category=DeprecationWarning)
 class UnTestPolicyMeasures(object):
     # Skip this test at this time
     def test_start(self, jhu_data, population_data, oxcgrt_data):

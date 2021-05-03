@@ -9,6 +9,7 @@ from covsirphy import Term, PhaseUnit, SIR
 warnings.filterwarnings("ignore", category=DeprecationWarning)
 
 
+@pytest.mark.filterwarnings("ignore", category=DeprecationWarning)
 class TestPhaseSeries(object):
 
     @pytest.mark.parametrize("country", ["Japan"])
@@ -163,7 +164,6 @@ class TestPhaseSeries(object):
         unit_fol = PhaseUnit(change_date, unit_old.end_date, population)
         unit_fol.set_ode(tau=360)
         series.replaces(phase="1st", new_list=[unit_pre, unit_fol])
-        print(series.unit("1st"), unit_pre)
         assert series.unit("1st") == unit_pre
         assert series.unit("2nd") == unit_fol
         # TypeError of new_list

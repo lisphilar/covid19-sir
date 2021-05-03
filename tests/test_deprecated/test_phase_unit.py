@@ -9,6 +9,7 @@ from covsirphy import Term, SIR, Estimator, UnExecutedError
 warnings.filterwarnings("ignore", category=DeprecationWarning)
 
 
+@pytest.mark.filterwarnings("ignore", category=DeprecationWarning)
 class TestPhaseUnit(object):
     def test_start(self):
         unit = PhaseUnit("01Jan2020", "01Feb2020", 1000)
