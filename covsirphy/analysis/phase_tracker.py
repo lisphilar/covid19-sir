@@ -194,7 +194,7 @@ class PhaseTracker(Term):
         # Calculate phase types: Past or Future
         df[self.TENSE] = (df[self.START] <= self._today).map({True: self.PAST, False: self.FUTURE})
         # Calculate population values
-        df[self.N] = df[[self.S, self.C]].sum(axis=1).replace(0.0, np.nan).ffill()
+        df[self.N] = df[[self.S, self.C]].sum(axis=1).replace(0.0, np.nan).ffill().astype(np.int64)
         # Fill in blanks of ODE model name and tau
         if self.ODE in df:
             df[self.ODE] = df[self.ODE].ffill()
