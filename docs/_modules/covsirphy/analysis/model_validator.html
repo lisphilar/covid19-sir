@@ -65,7 +65,7 @@
             
             
               <div class="version">
-                2.19.1-beta-fu1
+                2.19.1-eta-fu2
               </div>
             
           
@@ -180,7 +180,6 @@
 <span class="kn">from</span> <span class="nn">covsirphy.util.term</span> <span class="kn">import</span> <span class="n">Term</span>
 <span class="kn">from</span> <span class="nn">covsirphy.ode.mbase</span> <span class="kn">import</span> <span class="n">ModelBase</span>
 <span class="kn">from</span> <span class="nn">covsirphy.cleaning.population</span> <span class="kn">import</span> <span class="n">PopulationData</span>
-<span class="kn">from</span> <span class="nn">covsirphy.phase.phase_estimator</span> <span class="kn">import</span> <span class="n">MPEstimator</span>
 <span class="kn">from</span> <span class="nn">covsirphy.analysis.scenario</span> <span class="kn">import</span> <span class="n">Scenario</span>
 <span class="kn">from</span> <span class="nn">covsirphy.analysis.example_data</span> <span class="kn">import</span> <span class="n">ExampleData</span>
 
@@ -242,12 +241,10 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">model_names</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">model</span><span class="o">.</span><span class="n">NAME</span><span class="p">)</span>
         <span class="c1"># Setup: create parameter set, phase length and processor</span>
         <span class="n">df</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_setup</span><span class="p">(</span><span class="n">model</span><span class="p">)</span>
-        <span class="n">processor</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_processor</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">df</span><span class="p">)</span>
         <span class="c1"># Parameter estimation</span>
-        <span class="n">units_estimated</span> <span class="o">=</span> <span class="n">processor</span><span class="o">.</span><span class="n">run</span><span class="p">(</span>
-            <span class="n">timeout</span><span class="o">=</span><span class="n">timeout</span><span class="p">,</span> <span class="n">allowance</span><span class="o">=</span><span class="n">allowance</span><span class="p">,</span> <span class="n">n_jobs</span><span class="o">=</span><span class="n">n_jobs</span><span class="p">)</span>
+        <span class="n">scenarios</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_processor</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">df</span><span class="p">,</span> <span class="n">timeout</span><span class="o">=</span><span class="n">timeout</span><span class="p">,</span> <span class="n">allowance</span><span class="o">=</span><span class="n">allowance</span><span class="p">)</span>
         <span class="c1"># Get estimated parameters</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_results</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_get_result</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">df</span><span class="p">,</span> <span class="n">units_estimated</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_results</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_get_result</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">df</span><span class="p">,</span> <span class="n">scenarios</span><span class="p">))</span>
         <span class="k">return</span> <span class="bp">self</span></div>
 
     <span class="k">def</span> <span class="nf">_setup</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model</span><span class="p">):</span>
@@ -279,7 +276,7 @@
         <span class="c1"># Return the setting</span>
         <span class="k">return</span> <span class="n">df</span>
 
-    <span class="k">def</span> <span class="nf">_processor</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model</span><span class="p">,</span> <span class="n">setting_df</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">_processor</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model</span><span class="p">,</span> <span class="n">setting_df</span><span class="p">,</span> <span class="n">timeout</span><span class="p">,</span> <span class="n">allowance</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Generate multi-processor for parameter estimation,</span>
 <span class="sd">        registering theoretical data and phase units.</span>
@@ -292,11 +289,13 @@
 <span class="sd">                    - (float): parameter values from 0 to 1.0</span>
 <span class="sd">                    - Rt (float): reproduction number</span>
 <span class="sd">                    - step_n (int): step number of simulation</span>
+<span class="sd">            timeout (int): time-out of run</span>
+<span class="sd">            allowance (tuple(float, float)): the allowance of the predicted value</span>
 
 <span class="sd">        Returns:</span>
-<span class="sd">            covsirphy.MPEstimator: multi-processor for parameter estimation</span>
+<span class="sd">            list[covsirphy.Scenario]: list of Scenario instances</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">units</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">scenarios</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="c1"># Instance to save theoretical data</span>
         <span class="n">example_data</span> <span class="o">=</span> <span class="n">ExampleData</span><span class="p">(</span><span class="n">tau</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_tau</span><span class="p">,</span> <span class="n">start_date</span><span class="o">=</span><span class="s2">&quot;01Jan2020&quot;</span><span class="p">)</span>
         <span class="c1"># Population values</span>
@@ -315,14 +314,11 @@
             <span class="n">snl</span> <span class="o">=</span> <span class="n">Scenario</span><span class="p">(</span><span class="n">country</span><span class="o">=</span><span class="n">name</span><span class="p">,</span> <span class="n">auto_complement</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
             <span class="n">snl</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="n">example_data</span><span class="p">,</span> <span class="n">population_data</span><span class="p">)</span>
             <span class="n">snl</span><span class="o">.</span><span class="n">add</span><span class="p">()</span>
-            <span class="n">unit</span> <span class="o">=</span> <span class="n">snl</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">MAIN</span><span class="p">]</span><span class="o">.</span><span class="n">unit</span><span class="p">(</span><span class="s2">&quot;last&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">del_id</span><span class="p">()</span><span class="o">.</span><span class="n">set_id</span><span class="p">(</span><span class="n">country</span><span class="o">=</span><span class="n">name</span><span class="p">)</span>
-            <span class="n">units</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">unit</span><span class="p">)</span>
-        <span class="c1"># Multi-processor for parameter estimation</span>
-        <span class="n">processor</span> <span class="o">=</span> <span class="n">MPEstimator</span><span class="p">(</span>
-            <span class="n">model</span><span class="p">,</span> <span class="n">jhu_data</span><span class="o">=</span><span class="n">example_data</span><span class="p">,</span> <span class="n">population_data</span><span class="o">=</span><span class="n">population_data</span><span class="p">,</span> <span class="n">tau</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_tau</span><span class="p">)</span>
-        <span class="k">return</span> <span class="n">processor</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">units</span><span class="p">)</span>
+            <span class="n">snl</span><span class="o">.</span><span class="n">estimate</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">timeout</span><span class="o">=</span><span class="n">timeout</span><span class="p">,</span> <span class="n">allowance</span><span class="o">=</span><span class="n">allowance</span><span class="p">)</span>
+            <span class="n">scenarios</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">snl</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">scenarios</span>
 
-    <span class="k">def</span> <span class="nf">_get_result</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model</span><span class="p">,</span> <span class="n">setting_df</span><span class="p">,</span> <span class="n">units_estimated</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">_get_result</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model</span><span class="p">,</span> <span class="n">setting_df</span><span class="p">,</span> <span class="n">scenarios</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Show the result as a dataframe.</span>
 
@@ -334,7 +330,7 @@
 <span class="sd">                    - (float): parameter values from 0 to 1.0</span>
 <span class="sd">                    - Rt (float): reproduction number</span>
 <span class="sd">                    - step_n (int): step number of simulation</span>
-<span class="sd">            units_estimated (list[covsirphy.PhaseUnit]): phase units with estimated parameters</span>
+<span class="sd">            list[covsirphy.Scenario]: list of Scenario instances</span>
 
 <span class="sd">        Returns:</span>
 <span class="sd">            pandas.DataFrame:</span>
@@ -352,9 +348,9 @@
 <span class="sd">                    - Runtime (str): runtime of parameter estimation</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">df</span> <span class="o">=</span> <span class="n">setting_df</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
-        <span class="n">df</span><span class="p">[</span><span class="s2">&quot;results&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="n">unit</span><span class="o">.</span><span class="n">to_dict</span><span class="p">()</span> <span class="k">for</span> <span class="n">unit</span> <span class="ow">in</span> <span class="n">units_estimated</span><span class="p">]</span>
-        <span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="s2">&quot;results&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">),</span> <span class="n">how</span><span class="o">=</span><span class="s2">&quot;left&quot;</span><span class="p">,</span> <span class="n">rsuffix</span><span class="o">=</span><span class="s2">&quot;_est&quot;</span><span class="p">)</span>
-        <span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">drop</span><span class="p">([</span><span class="s2">&quot;results&quot;</span><span class="p">,</span> <span class="o">*</span><span class="n">model</span><span class="o">.</span><span class="n">DAY_PARAMETERS</span><span class="p">],</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">errors</span><span class="o">=</span><span class="s2">&quot;ignore&quot;</span><span class="p">)</span>
+        <span class="n">results_df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">([</span><span class="n">snl</span><span class="o">.</span><span class="n">summary</span><span class="p">()</span> <span class="k">for</span> <span class="n">snl</span> <span class="ow">in</span> <span class="n">scenarios</span><span class="p">],</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+        <span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">results_df</span><span class="o">.</span><span class="n">reset_index</span><span class="p">(</span><span class="n">drop</span><span class="o">=</span><span class="kc">True</span><span class="p">),</span> <span class="n">how</span><span class="o">=</span><span class="s2">&quot;left&quot;</span><span class="p">,</span> <span class="n">rsuffix</span><span class="o">=</span><span class="s2">&quot;_est&quot;</span><span class="p">)</span>
+        <span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">drop</span><span class="p">(</span><span class="n">model</span><span class="o">.</span><span class="n">DAY_PARAMETERS</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">errors</span><span class="o">=</span><span class="s2">&quot;ignore&quot;</span><span class="p">)</span>
         <span class="n">cols_to_alternate</span> <span class="o">=</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">RT</span><span class="p">,</span> <span class="o">*</span><span class="n">model</span><span class="o">.</span><span class="n">PARAMETERS</span><span class="p">]</span>
         <span class="n">cols_alternated</span> <span class="o">=</span> <span class="n">chain</span><span class="o">.</span><span class="n">from_iterable</span><span class="p">(</span>
             <span class="nb">zip</span><span class="p">(</span><span class="n">cols_to_alternate</span><span class="p">,</span> <span class="p">[</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">col</span><span class="si">}</span><span class="s2">_est&quot;</span> <span class="k">for</span> <span class="n">col</span> <span class="ow">in</span> <span class="n">cols_to_alternate</span><span class="p">]))</span>

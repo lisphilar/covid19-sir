@@ -65,7 +65,7 @@
             
             
               <div class="version">
-                2.19.1-beta-fu1
+                2.19.1-eta-fu2
               </div>
             
           
@@ -176,6 +176,7 @@
 
 <span class="kn">import</span> <span class="nn">functools</span>
 <span class="kn">from</span> <span class="nn">multiprocessing</span> <span class="kn">import</span> <span class="n">cpu_count</span><span class="p">,</span> <span class="n">Pool</span>
+<span class="kn">from</span> <span class="nn">covsirphy.util.error</span> <span class="kn">import</span> <span class="n">deprecate</span>
 <span class="kn">from</span> <span class="nn">covsirphy.util.stopwatch</span> <span class="kn">import</span> <span class="n">StopWatch</span>
 <span class="kn">from</span> <span class="nn">covsirphy.util.term</span> <span class="kn">import</span> <span class="n">Term</span>
 <span class="kn">from</span> <span class="nn">covsirphy.cleaning.jhu_data</span> <span class="kn">import</span> <span class="n">JHUData</span>
@@ -209,6 +210,7 @@
 <span class="sd">        When @record_df is None, @jhu_data and @population_data must be specified.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
+    <span class="nd">@deprecate</span><span class="p">(</span><span class="s2">&quot;MPEstimator&quot;</span><span class="p">,</span> <span class="n">new</span><span class="o">=</span><span class="s2">&quot;ODEHandler&quot;</span><span class="p">,</span> <span class="n">version</span><span class="o">=</span><span class="s2">&quot;2.19.1-zeta-fu1&quot;</span><span class="p">)</span>
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model</span><span class="p">,</span> <span class="n">jhu_data</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">population_data</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
                  <span class="n">record_df</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">tau</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="c1"># Records</span>

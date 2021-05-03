@@ -65,7 +65,7 @@
             
             
               <div class="version">
-                2.19.1-beta-fu1
+                2.19.1-eta-fu2
               </div>
             
           
@@ -175,7 +175,7 @@
 <span class="c1"># -*- coding: utf-8 -*-</span>
 
 <span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
-<span class="kn">from</span> <span class="nn">covsirphy.util.error</span> <span class="kn">import</span> <span class="n">UnExecutedError</span>
+<span class="kn">from</span> <span class="nn">covsirphy.util.error</span> <span class="kn">import</span> <span class="n">UnExecutedError</span><span class="p">,</span> <span class="n">deprecate</span>
 <span class="kn">from</span> <span class="nn">covsirphy.util.evaluator</span> <span class="kn">import</span> <span class="n">Evaluator</span>
 <span class="kn">from</span> <span class="nn">covsirphy.util.term</span> <span class="kn">import</span> <span class="n">Term</span>
 <span class="kn">from</span> <span class="nn">covsirphy.ode.mbase</span> <span class="kn">import</span> <span class="n">ModelBase</span>
@@ -232,6 +232,7 @@
 <span class="sd">        True</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
+    <span class="nd">@deprecate</span><span class="p">(</span><span class="s2">&quot;PhaseUnit&quot;</span><span class="p">,</span> <span class="n">new</span><span class="o">=</span><span class="s2">&quot;ODEHandler&quot;</span><span class="p">,</span> <span class="n">version</span><span class="o">=</span><span class="s2">&quot;2.19.1-zeta-fu1&quot;</span><span class="p">)</span>
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">start_date</span><span class="p">,</span> <span class="n">end_date</span><span class="p">,</span> <span class="n">population</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_ensure_date_order</span><span class="p">(</span><span class="n">start_date</span><span class="p">,</span> <span class="n">end_date</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;end_date&quot;</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_start_date</span> <span class="o">=</span> <span class="n">start_date</span>
@@ -281,24 +282,24 @@
 
     <span class="k">def</span> <span class="fm">__lt__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
         <span class="c1"># self &lt; other</span>
-        <span class="n">end</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">date_obj</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_end_date</span><span class="p">)</span>
+        <span class="n">end</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ensure_date</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_end_date</span><span class="p">)</span>
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">other</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
-            <span class="n">sta_other</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">date_obj</span><span class="p">(</span><span class="n">other</span><span class="p">)</span>
+            <span class="n">sta_other</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ensure_date</span><span class="p">(</span><span class="n">other</span><span class="p">)</span>
         <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">other</span><span class="p">,</span> <span class="n">PhaseUnit</span><span class="p">):</span>
-            <span class="n">sta_other</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">date_obj</span><span class="p">(</span><span class="n">other</span><span class="o">.</span><span class="n">start_date</span><span class="p">)</span>
+            <span class="n">sta_other</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ensure_date</span><span class="p">(</span><span class="n">other</span><span class="o">.</span><span class="n">start_date</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">NotImplementedError</span>
         <span class="k">return</span> <span class="n">end</span> <span class="o">&lt;</span> <span class="n">sta_other</span>
 
     <span class="k">def</span> <span class="fm">__le__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
         <span class="c1"># self &lt;= other</span>
-        <span class="n">end</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">date_obj</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_end_date</span><span class="p">)</span>
+        <span class="n">end</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ensure_date</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_end_date</span><span class="p">)</span>
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">other</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
-            <span class="n">sta_other</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">date_obj</span><span class="p">(</span><span class="n">other</span><span class="p">)</span>
+            <span class="n">sta_other</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ensure_date</span><span class="p">(</span><span class="n">other</span><span class="p">)</span>
         <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">other</span><span class="p">,</span> <span class="n">PhaseUnit</span><span class="p">):</span>
             <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="fm">__eq__</span><span class="p">(</span><span class="n">other</span><span class="p">):</span>
                 <span class="k">return</span> <span class="kc">True</span>
-            <span class="n">sta_other</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">date_obj</span><span class="p">(</span><span class="n">other</span><span class="o">.</span><span class="n">start_date</span><span class="p">)</span>
+            <span class="n">sta_other</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ensure_date</span><span class="p">(</span><span class="n">other</span><span class="o">.</span><span class="n">start_date</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">NotImplementedError</span>
         <span class="k">return</span> <span class="n">end</span> <span class="o">&lt;=</span> <span class="n">sta_other</span>
@@ -322,10 +323,10 @@
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="fm">__add__</span><span class="p">(</span><span class="n">other</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="fm">__sub__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
-        <span class="n">sta</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">date_obj</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_start_date</span><span class="p">)</span>
-        <span class="n">end</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">date_obj</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_end_date</span><span class="p">)</span>
-        <span class="n">sta_other</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">date_obj</span><span class="p">(</span><span class="n">other</span><span class="o">.</span><span class="n">start_date</span><span class="p">)</span>
-        <span class="n">end_other</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">date_obj</span><span class="p">(</span><span class="n">other</span><span class="o">.</span><span class="n">end_date</span><span class="p">)</span>
+        <span class="n">sta</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ensure_date</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_start_date</span><span class="p">)</span>
+        <span class="n">end</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ensure_date</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_end_date</span><span class="p">)</span>
+        <span class="n">sta_other</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ensure_date</span><span class="p">(</span><span class="n">other</span><span class="o">.</span><span class="n">start_date</span><span class="p">)</span>
+        <span class="n">end_other</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ensure_date</span><span class="p">(</span><span class="n">other</span><span class="o">.</span><span class="n">end_date</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">sta</span> <span class="o">&lt;</span> <span class="n">sta_other</span> <span class="ow">and</span> <span class="n">end</span> <span class="o">==</span> <span class="n">end_other</span><span class="p">:</span>
             <span class="n">end_date</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">yesterday</span><span class="p">(</span><span class="n">other</span><span class="o">.</span><span class="n">start_date</span><span class="p">)</span>
             <span class="k">return</span> <span class="n">PhaseUnit</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_start_date</span><span class="p">,</span> <span class="n">end_date</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_population</span><span class="p">)</span>
@@ -337,9 +338,9 @@
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="fm">__sub__</span><span class="p">(</span><span class="n">other</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="fm">__contains__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">date</span><span class="p">):</span>
-        <span class="n">sta</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">date_obj</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_start_date</span><span class="p">)</span>
-        <span class="n">end</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">date_obj</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_end_date</span><span class="p">)</span>
-        <span class="n">date</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">date_obj</span><span class="p">(</span><span class="n">date</span><span class="p">)</span>
+        <span class="n">sta</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ensure_date</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_start_date</span><span class="p">)</span>
+        <span class="n">end</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ensure_date</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_end_date</span><span class="p">)</span>
+        <span class="n">date</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ensure_date</span><span class="p">(</span><span class="n">date</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">sta</span> <span class="o">&lt;=</span> <span class="n">date</span> <span class="o">&lt;=</span> <span class="n">end</span>
 
     <span class="nd">@property</span>
@@ -607,8 +608,8 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_ensure_dataframe</span><span class="p">(</span>
             <span class="n">record_df</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;record_df&quot;</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">NLOC_COLUMNS</span><span class="p">)</span>
         <span class="c1"># Check dates</span>
-        <span class="n">sta</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">date_obj</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">start_date</span><span class="p">)</span>
-        <span class="n">end</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">date_obj</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">end_date</span><span class="p">)</span>
+        <span class="n">sta</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ensure_date</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">start_date</span><span class="p">)</span>
+        <span class="n">end</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ensure_date</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">end_date</span><span class="p">)</span>
         <span class="n">series</span> <span class="o">=</span> <span class="n">record_df</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">DATE</span><span class="p">]</span>
         <span class="n">record_df</span> <span class="o">=</span> <span class="n">record_df</span><span class="o">.</span><span class="n">loc</span><span class="p">[(</span><span class="n">series</span> <span class="o">&gt;=</span> <span class="n">sta</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">series</span> <span class="o">&lt;=</span> <span class="n">end</span><span class="p">),</span> <span class="p">:]</span>
         <span class="c1"># Parameter estimation of ODE model</span>
@@ -669,7 +670,7 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_model_is_registered</span><span class="p">()</span>
         <span class="n">df</span> <span class="o">=</span> <span class="n">record_df</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span>
-            <span class="n">record_df</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">DATE</span><span class="p">]</span> <span class="o">&gt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">date_obj</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">start_date</span><span class="p">),</span> <span class="p">:]</span>
+            <span class="n">record_df</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">DATE</span><span class="p">]</span> <span class="o">&gt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ensure_date</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">start_date</span><span class="p">),</span> <span class="p">:]</span>
         <span class="n">df</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_model</span><span class="o">.</span><span class="n">tau_free</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_population</span><span class="p">,</span> <span class="n">tau</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
         <span class="n">y0_dict</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="p">:]</span><span class="o">.</span><span class="n">to_dict</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">y0_dict</span> <span class="o">=</span> <span class="p">{</span>
@@ -727,7 +728,7 @@
         <span class="n">df</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_model</span><span class="o">.</span><span class="n">restore</span><span class="p">(</span><span class="n">df</span><span class="p">)</span>
         <span class="c1"># Return day-level data</span>
         <span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">set_index</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">DATE</span><span class="p">)</span><span class="o">.</span><span class="n">resample</span><span class="p">(</span><span class="s2">&quot;D&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">first</span><span class="p">()</span>
-        <span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">df</span><span class="o">.</span><span class="n">index</span> <span class="o">&lt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">date_obj</span><span class="p">(</span><span class="n">last_date</span><span class="p">),</span> <span class="p">:]</span>
+        <span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">df</span><span class="o">.</span><span class="n">index</span> <span class="o">&lt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ensure_date</span><span class="p">(</span><span class="n">last_date</span><span class="p">),</span> <span class="p">:]</span>
         <span class="k">return</span> <span class="n">df</span><span class="o">.</span><span class="n">reset_index</span><span class="p">()</span><span class="o">.</span><span class="n">loc</span><span class="p">[:,</span> <span class="bp">self</span><span class="o">.</span><span class="n">NLOC_COLUMNS</span><span class="p">]</span></div></div>
 </pre></div>
 

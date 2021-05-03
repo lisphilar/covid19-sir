@@ -65,7 +65,7 @@
             
             
               <div class="version">
-                2.19.1-beta-fu1
+                2.19.1-eta-fu2
               </div>
             
           
@@ -297,7 +297,22 @@
         <span class="c1"># Check metric name</span>
         <span class="k">if</span> <span class="n">metric</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_METRICS_DICT</span><span class="p">:</span>
             <span class="k">raise</span> <span class="n">UnExpectedValueError</span><span class="p">(</span><span class="s2">&quot;metric&quot;</span><span class="p">,</span> <span class="n">metric</span><span class="p">,</span> <span class="n">candidates</span><span class="o">=</span><span class="nb">list</span><span class="p">(</span><span class="bp">cls</span><span class="o">.</span><span class="n">_METRICS_DICT</span><span class="o">.</span><span class="n">keys</span><span class="p">()))</span>
-        <span class="k">return</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_METRICS_DICT</span><span class="p">[</span><span class="n">metric</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span></div></div>
+        <span class="k">return</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_METRICS_DICT</span><span class="p">[</span><span class="n">metric</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span></div>
+
+<div class="viewcode-block" id="Evaluator.best_one"><a class="viewcode-back" href="../../../covsirphy.util.html#covsirphy.Evaluator.best_one">[docs]</a>    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">best_one</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">candidate_dict</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Select the best one with scores.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            candidate_dict (dict[object, float]): scores of candidates</span>
+<span class="sd">            kwargs: keyword arguments of Evaluator.smaller_is_better()</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            tuple(object, float): the best one and its score</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">comp_f</span> <span class="o">=</span> <span class="p">{</span><span class="kc">True</span><span class="p">:</span> <span class="nb">min</span><span class="p">,</span> <span class="kc">False</span><span class="p">:</span> <span class="nb">max</span><span class="p">}[</span><span class="bp">cls</span><span class="o">.</span><span class="n">smaller_is_better</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)]</span>
+        <span class="k">return</span> <span class="n">comp_f</span><span class="p">(</span><span class="n">candidate_dict</span><span class="o">.</span><span class="n">items</span><span class="p">(),</span> <span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span></div></div>
 </pre></div>
 
            </div>

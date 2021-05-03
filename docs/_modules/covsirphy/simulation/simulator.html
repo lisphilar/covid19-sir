@@ -65,7 +65,7 @@
             
             
               <div class="version">
-                2.19.1-beta-fu1
+                2.19.1-eta-fu2
               </div>
             
           
@@ -174,7 +174,7 @@
 <span></span><span class="ch">#!/usr/bin/env python</span>
 <span class="c1"># -*- coding: utf-8 -*-</span>
 
-<span class="kn">from</span> <span class="nn">datetime</span> <span class="kn">import</span> <span class="n">datetime</span><span class="p">,</span> <span class="n">timedelta</span>
+<span class="kn">from</span> <span class="nn">datetime</span> <span class="kn">import</span> <span class="n">timedelta</span>
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
 <span class="kn">from</span> <span class="nn">scipy.integrate</span> <span class="kn">import</span> <span class="n">solve_ivp</span>
@@ -192,6 +192,7 @@
 <span class="sd">        province (str or None): province name</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
+    <span class="nd">@deprecate</span><span class="p">(</span><span class="s2">&quot;ODESimulator&quot;</span><span class="p">,</span> <span class="n">new</span><span class="o">=</span><span class="s2">&quot;ODEHandler&quot;</span><span class="p">,</span> <span class="n">version</span><span class="o">=</span><span class="s2">&quot;2.19.1-zeta-fu1&quot;</span><span class="p">)</span>
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">country</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">province</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">country</span> <span class="o">=</span> <span class="n">country</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">UNKNOWN</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">province</span> <span class="o">=</span> <span class="n">province</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">UNKNOWN</span>
@@ -398,7 +399,7 @@
         <span class="n">var_cols</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">columns</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span>
         <span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">int64</span><span class="p">)</span>
         <span class="c1"># Date</span>
-        <span class="n">start_obj</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">strptime</span><span class="p">(</span><span class="n">start_date</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">DATE_FORMAT</span><span class="p">)</span>
+        <span class="n">start_obj</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ensure_date</span><span class="p">(</span><span class="n">start_date</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;start_date&quot;</span><span class="p">)</span>
         <span class="n">elapsed</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">(</span><span class="n">df</span><span class="o">.</span><span class="n">index</span> <span class="o">*</span> <span class="n">tau</span><span class="p">)</span>
         <span class="n">df</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">DATE</span><span class="p">]</span> <span class="o">=</span> <span class="n">start_obj</span> <span class="o">+</span> <span class="n">elapsed</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span>
             <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">timedelta</span><span class="p">(</span><span class="n">minutes</span><span class="o">=</span><span class="n">x</span><span class="p">)</span>

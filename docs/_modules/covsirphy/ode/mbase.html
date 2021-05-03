@@ -65,7 +65,7 @@
             
             
               <div class="version">
-                2.19.1-beta-fu1
+                2.19.1-eta-fu2
               </div>
             
           
@@ -177,6 +177,7 @@
 <span class="kn">from</span> <span class="nn">datetime</span> <span class="kn">import</span> <span class="n">timedelta</span>
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<span class="kn">from</span> <span class="nn">covsirphy.util.error</span> <span class="kn">import</span> <span class="n">deprecate</span>
 <span class="kn">from</span> <span class="nn">covsirphy.util.term</span> <span class="kn">import</span> <span class="n">Term</span>
 
 
@@ -242,10 +243,11 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">raise</span> <span class="ne">NotImplementedError</span>
 
-<div class="viewcode-block" id="ModelBase.param_range"><a class="viewcode-back" href="../../../covsirphy.ode.html#covsirphy.ModelBase.param_range">[docs]</a>    <span class="nd">@classmethod</span>
+    <span class="nd">@classmethod</span>
+    <span class="nd">@deprecate</span><span class="p">(</span><span class="s2">&quot;.param_range()&quot;</span><span class="p">,</span> <span class="n">new</span><span class="o">=</span><span class="s2">&quot;.guess()&quot;</span><span class="p">,</span> <span class="n">version</span><span class="o">=</span><span class="s2">&quot;2.19.1-zeta-fu1&quot;</span><span class="p">)</span>
     <span class="k">def</span> <span class="nf">param_range</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">taufree_df</span><span class="p">,</span> <span class="n">population</span><span class="p">,</span> <span class="n">quantiles</span><span class="o">=</span><span class="p">(</span><span class="mf">0.3</span><span class="p">,</span> <span class="mf">0.7</span><span class="p">)):</span>
         <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Define the value range of ODE parameters using (X, dX/dt) points.</span>
+<span class="sd">        Deprecated. Define the value range of ODE parameters using (X, dX/dt) points.</span>
 <span class="sd">        This method should be overwritten in subclass.</span>
 
 <span class="sd">        Args:</span>
@@ -261,12 +263,13 @@
 <span class="sd">        Returns:</span>
 <span class="sd">            dict(str, tuple(float, float)): minimum/maximum values</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">raise</span> <span class="ne">NotImplementedError</span></div>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span>
 
-<div class="viewcode-block" id="ModelBase.specialize"><a class="viewcode-back" href="../../../covsirphy.ode.html#covsirphy.ModelBase.specialize">[docs]</a>    <span class="nd">@classmethod</span>
+    <span class="nd">@classmethod</span>
+    <span class="nd">@deprecate</span><span class="p">(</span><span class="s2">&quot;.specialize()&quot;</span><span class="p">,</span> <span class="n">new</span><span class="o">=</span><span class="s2">&quot;.convert()&quot;</span><span class="p">,</span> <span class="n">version</span><span class="o">=</span><span class="s2">&quot;2.19.1-zeta-fu1&quot;</span><span class="p">)</span>
     <span class="k">def</span> <span class="nf">specialize</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">data_df</span><span class="p">,</span> <span class="n">population</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Specialize the dataset for this model.</span>
+<span class="sd">        Deprecated. Specialize the dataset for this model.</span>
 <span class="sd">        This method should be overwritten in subclass.</span>
 
 <span class="sd">        Args:</span>
@@ -289,12 +292,13 @@
 <span class="sd">                    - any columns @data_df has</span>
 <span class="sd">                    - columns with dimensional variables</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">raise</span> <span class="ne">NotImplementedError</span></div>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span>
 
-<div class="viewcode-block" id="ModelBase.restore"><a class="viewcode-back" href="../../../covsirphy.ode.html#covsirphy.ModelBase.restore">[docs]</a>    <span class="nd">@classmethod</span>
+    <span class="nd">@classmethod</span>
+    <span class="nd">@deprecate</span><span class="p">(</span><span class="s2">&quot;.restore()&quot;</span><span class="p">,</span> <span class="n">new</span><span class="o">=</span><span class="s2">&quot;.convert_reverse()&quot;</span><span class="p">,</span> <span class="n">version</span><span class="o">=</span><span class="s2">&quot;2.19.1-zeta-fu1&quot;</span><span class="p">)</span>
     <span class="k">def</span> <span class="nf">restore</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">specialized_df</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Restore Confirmed/Infected/Recovered/Fatal using a dataframe with the variables of the model.</span>
+<span class="sd">        Deprecated. Restore Confirmed/Infected/Recovered/Fatal using a dataframe with the variables of the model.</span>
 <span class="sd">        This method should be overwritten in subclass.</span>
 
 <span class="sd">        Args:</span>
@@ -317,13 +321,7 @@
 <span class="sd">                    - Recovered (int): the number of recovered cases</span>
 <span class="sd">                    - the other columns @specialzed_df has</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">df</span> <span class="o">=</span> <span class="n">specialized_df</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
-        <span class="n">other_cols</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">df</span><span class="o">.</span><span class="n">columns</span><span class="p">)</span> <span class="o">-</span> <span class="nb">set</span><span class="p">(</span><span class="bp">cls</span><span class="o">.</span><span class="n">VALUE_COLUMNS</span><span class="p">))</span>
-        <span class="n">df</span><span class="p">[</span><span class="bp">cls</span><span class="o">.</span><span class="n">C</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
-        <span class="n">df</span><span class="p">[</span><span class="bp">cls</span><span class="o">.</span><span class="n">CI</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
-        <span class="n">df</span><span class="p">[</span><span class="bp">cls</span><span class="o">.</span><span class="n">F</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
-        <span class="n">df</span><span class="p">[</span><span class="bp">cls</span><span class="o">.</span><span class="n">R</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
-        <span class="k">return</span> <span class="n">df</span><span class="o">.</span><span class="n">loc</span><span class="p">[:,</span> <span class="p">[</span><span class="o">*</span><span class="bp">cls</span><span class="o">.</span><span class="n">VALUE_COLUMNS</span><span class="p">,</span> <span class="o">*</span><span class="n">other_cols</span><span class="p">]]</span></div>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span>
 
 <div class="viewcode-block" id="ModelBase.calc_r0"><a class="viewcode-back" href="../../../covsirphy.ode.html#covsirphy.ModelBase.calc_r0">[docs]</a>    <span class="k">def</span> <span class="nf">calc_r0</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
@@ -348,10 +346,11 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">raise</span> <span class="ne">NotImplementedError</span></div>
 
-<div class="viewcode-block" id="ModelBase.tau_free"><a class="viewcode-back" href="../../../covsirphy.ode.html#covsirphy.ModelBase.tau_free">[docs]</a>    <span class="nd">@classmethod</span>
+    <span class="nd">@classmethod</span>
+    <span class="nd">@deprecate</span><span class="p">(</span><span class="s2">&quot;.taufree()&quot;</span><span class="p">,</span> <span class="n">new</span><span class="o">=</span><span class="s2">&quot;.convert()&quot;</span><span class="p">,</span> <span class="n">version</span><span class="o">=</span><span class="s2">&quot;2.19.1-zeta-fu1&quot;</span><span class="p">)</span>
     <span class="k">def</span> <span class="nf">tau_free</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">subset_df</span><span class="p">,</span> <span class="n">population</span><span class="p">,</span> <span class="n">tau</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Create a dataframe specialized to the model.</span>
+<span class="sd">        Deprecated. Create a dataframe specialized to the model.</span>
 <span class="sd">        If tau is not None, Date column will be converted to &#39;(Date - start date) / tau&#39;</span>
 <span class="sd">        and saved in t column.</span>
 
@@ -390,7 +389,7 @@
         <span class="c1"># Convert to tau-free</span>
         <span class="n">df</span><span class="p">[</span><span class="bp">cls</span><span class="o">.</span><span class="n">TS</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="bp">cls</span><span class="o">.</span><span class="n">T</span><span class="p">]</span> <span class="o">/</span> <span class="n">tau</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">int64</span><span class="p">)</span>
         <span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">drop</span><span class="p">([</span><span class="bp">cls</span><span class="o">.</span><span class="n">T</span><span class="p">,</span> <span class="bp">cls</span><span class="o">.</span><span class="n">DATE</span><span class="p">],</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
-        <span class="k">return</span> <span class="bp">cls</span><span class="o">.</span><span class="n">specialize</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">population</span><span class="p">)</span><span class="o">.</span><span class="n">reset_index</span><span class="p">(</span><span class="n">drop</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span></div>
+        <span class="k">return</span> <span class="bp">cls</span><span class="o">.</span><span class="n">specialize</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">population</span><span class="p">)</span><span class="o">.</span><span class="n">reset_index</span><span class="p">(</span><span class="n">drop</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 
     <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">_convert</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">tau</span><span class="p">):</span>
@@ -407,21 +406,24 @@
 <span class="sd">                    - Infected (int): the number of currently infected cases</span>
 <span class="sd">                    - Fatal(int): the number of fatal cases</span>
 <span class="sd">                    - Recovered (int): the number of recovered cases</span>
-<span class="sd">            tau (int): tau value [min]</span>
+<span class="sd">            tau (int): tau value [min] or None (skip division by tau values)</span>
 
 <span class="sd">        Returns:</span>
 <span class="sd">            pandas.DataFrame:</span>
 <span class="sd">                Index</span>
-<span class="sd">                    t: Dates divided by tau value (time steps)</span>
+<span class="sd">                    - Date (pd.Timestamp): Observation date (available when @tau is None)</span>
+<span class="sd">                    - t (int): time steps (available when @tau is not None)</span>
 <span class="sd">                Columns</span>
 <span class="sd">                    - Susceptible(int): the number of susceptible cases</span>
 <span class="sd">                    - Infected (int): the number of currently infected cases</span>
 <span class="sd">                    - Fatal(int): the number of fatal cases</span>
 <span class="sd">                    - Recovered (int): the number of recovered cases</span>
 <span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">df</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_ensure_dataframe</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;data&quot;</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="bp">cls</span><span class="o">.</span><span class="n">DSIFR_COLUMNS</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">tau</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">df</span><span class="o">.</span><span class="n">set_index</span><span class="p">(</span><span class="bp">cls</span><span class="o">.</span><span class="n">DATE</span><span class="p">)</span>
         <span class="c1"># Convert to tau-free</span>
         <span class="n">tau</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_ensure_tau</span><span class="p">(</span><span class="n">tau</span><span class="p">,</span> <span class="n">accept_none</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
-        <span class="n">df</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_ensure_dataframe</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;data&quot;</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="bp">cls</span><span class="o">.</span><span class="n">DSIFR_COLUMNS</span><span class="p">)</span>
         <span class="n">time_series</span> <span class="o">=</span> <span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="bp">cls</span><span class="o">.</span><span class="n">DATE</span><span class="p">]</span> <span class="o">-</span> <span class="n">df</span><span class="p">[</span><span class="bp">cls</span><span class="o">.</span><span class="n">DATE</span><span class="p">]</span><span class="o">.</span><span class="n">min</span><span class="p">())</span><span class="o">.</span><span class="n">dt</span><span class="o">.</span><span class="n">total_seconds</span><span class="p">()</span> <span class="o">//</span> <span class="mi">60</span>
         <span class="n">df</span><span class="o">.</span><span class="n">index</span> <span class="o">=</span> <span class="p">(</span><span class="n">time_series</span> <span class="o">/</span> <span class="n">tau</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">int64</span><span class="p">)</span>
         <span class="n">df</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">TS</span>
@@ -479,7 +481,7 @@
 <span class="sd">                    - Infected (int): the number of currently infected cases</span>
 <span class="sd">                    - Fatal(int): the number of fatal cases</span>
 <span class="sd">                    - Recovered (int): the number of recovered cases</span>
-<span class="sd">            tau (int): tau value [min]</span>
+<span class="sd">            tau (int): tau value [min] or None (skip division by tau values)</span>
 
 <span class="sd">        Returns:</span>
 <span class="sd">            pandas.DataFrame:</span>
@@ -519,7 +521,7 @@
         <span class="k">raise</span> <span class="ne">NotImplementedError</span></div>
 
 <div class="viewcode-block" id="ModelBase.guess"><a class="viewcode-back" href="../../../covsirphy.ode.html#covsirphy.ModelBase.guess">[docs]</a>    <span class="nd">@classmethod</span>
-    <span class="k">def</span> <span class="nf">guess</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">tau</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">guess</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">tau</span><span class="p">,</span> <span class="n">q</span><span class="o">=</span><span class="mf">0.5</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        With (X, dX/dt) for X=S, I, R and so on, guess parameter values.</span>
 <span class="sd">        This will be overwitten by child classes.</span>
@@ -535,11 +537,27 @@
 <span class="sd">                    - Fatal(int): the number of fatal cases</span>
 <span class="sd">                    - Recovered (int): the number of recovered cases</span>
 <span class="sd">            tau (int): tau value [min]</span>
+<span class="sd">            q (float or tuple(float,)): the quantile(s) to compute, value(s) between (0, 1)</span>
 
 <span class="sd">        Returns:</span>
-<span class="sd">            dict(str, float): guessed parameter values</span>
+<span class="sd">            dict(str, float or pandas.Series): guessed parameter values with the quantile(s)</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">raise</span> <span class="ne">NotImplementedError</span></div></div>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span></div>
+
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">_clip</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">values</span><span class="p">,</span> <span class="n">lower</span><span class="p">,</span> <span class="n">upper</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Trim values at input threshold.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            values (float or pandas.Series): values to trim</span>
+<span class="sd">            lower (float): minimum threshold</span>
+<span class="sd">            upper (float): maximum threshold</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">values</span><span class="p">,</span> <span class="nb">float</span><span class="p">):</span>
+            <span class="k">return</span> <span class="nb">min</span><span class="p">(</span><span class="nb">max</span><span class="p">(</span><span class="n">values</span><span class="p">,</span> <span class="n">lower</span><span class="p">),</span> <span class="n">upper</span><span class="p">)</span>
+        <span class="bp">cls</span><span class="o">.</span><span class="n">_ensure_instance</span><span class="p">(</span><span class="n">values</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;values&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">values</span><span class="o">.</span><span class="n">clip</span><span class="p">()</span></div>
 </pre></div>
 
            </div>

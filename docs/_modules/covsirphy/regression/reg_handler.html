@@ -65,7 +65,7 @@
             
             
               <div class="version">
-                2.19.1-beta-fu1
+                2.19.1-eta-fu2
               </div>
             
           
@@ -224,9 +224,16 @@
 <span class="sd">        Args:</span>
 <span class="sd">            metric (str): metric name to select the best regressor</span>
 
+<span class="sd">        Raises:</span>
+<span class="sd">            ValueError: un-expected parameter values were predcited by all regressors, out of range (0, 1)</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            float: the best score</span>
+
 <span class="sd">        Note:</span>
 <span class="sd">            All regressors are here.</span>
 <span class="sd">            - Indicators -&gt; Parameters with Elastic Net</span>
+<span class="sd">            - Indicators(n)/Indicators(n-1) -&gt; Parameters(n)/Parameters(n-1) with Elastic Net</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="c1"># All approaches</span>
         <span class="n">approach_dict</span> <span class="o">=</span> <span class="p">{</span>
@@ -237,9 +244,12 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_reg_dict</span> <span class="o">=</span> <span class="p">{</span>
             <span class="n">k</span><span class="p">:</span> <span class="n">v</span> <span class="k">for</span> <span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="n">v</span><span class="p">)</span> <span class="ow">in</span> <span class="n">approach_dict</span><span class="o">.</span><span class="n">items</span><span class="p">()</span>
             <span class="k">if</span> <span class="n">v</span><span class="o">.</span><span class="n">predict</span><span class="p">()</span><span class="o">.</span><span class="n">ge</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">all</span><span class="p">()</span><span class="o">.</span><span class="n">all</span><span class="p">()</span> <span class="ow">and</span> <span class="n">v</span><span class="o">.</span><span class="n">predict</span><span class="p">()</span><span class="o">.</span><span class="n">le</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">all</span><span class="p">()</span><span class="o">.</span><span class="n">all</span><span class="p">()}</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_reg_dict</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Un-expected parameter values were predcited by all regressors, out of range (0, 1).&quot;</span><span class="p">)</span>
         <span class="c1"># Select the best regressor with the metric</span>
-        <span class="n">comp_f</span> <span class="o">=</span> <span class="p">{</span><span class="kc">True</span><span class="p">:</span> <span class="nb">min</span><span class="p">,</span> <span class="kc">False</span><span class="p">:</span> <span class="nb">max</span><span class="p">}[</span><span class="n">Evaluator</span><span class="o">.</span><span class="n">smaller_is_better</span><span class="p">(</span><span class="n">metric</span><span class="o">=</span><span class="n">metric</span><span class="p">)]</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_best</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">comp_f</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_reg_dict</span><span class="o">.</span><span class="n">items</span><span class="p">(),</span> <span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">score_test</span><span class="p">(</span><span class="n">metric</span><span class="o">=</span><span class="n">metric</span><span class="p">))</span></div>
+        <span class="n">score_dict</span> <span class="o">=</span> <span class="p">{</span><span class="n">k</span><span class="p">:</span> <span class="n">v</span><span class="o">.</span><span class="n">score_test</span><span class="p">(</span><span class="n">metric</span><span class="o">=</span><span class="n">metric</span><span class="p">)</span> <span class="k">for</span> <span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="n">v</span><span class="p">)</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_reg_dict</span><span class="o">.</span><span class="n">items</span><span class="p">()}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_best</span><span class="p">,</span> <span class="n">score</span> <span class="o">=</span> <span class="n">Evaluator</span><span class="o">.</span><span class="n">best_one</span><span class="p">(</span><span class="n">score_dict</span><span class="p">,</span> <span class="n">metric</span><span class="o">=</span><span class="n">metric</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">score</span></div>
 
     <span class="k">def</span> <span class="nf">_fit_param_reg</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">regressor_class</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>

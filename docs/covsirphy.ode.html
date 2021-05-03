@@ -67,7 +67,7 @@
             
             
               <div class="version">
-                2.19.1-beta-fu1
+                2.19.1-eta-fu2
               </div>
             
           
@@ -328,7 +328,7 @@ This will be overwitten by child classes.</p>
 </dd>
 </dl>
 </p></li>
-<li><p><strong>tau</strong> (<em>int</em>) – tau value [min]</p></li>
+<li><p><strong>tau</strong> (<em>int</em>) – tau value [min] or None (skip division by tau values)</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
@@ -392,7 +392,7 @@ This will be overwitten by child classes.</p>
 
 <dl class="py method">
 <dt id="covsirphy.ode.mbase.ModelBase.guess">
-<em class="property"><span class="pre">classmethod</span> </em><code class="sig-name descname"><span class="pre">guess</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tau</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/ode/mbase.html#ModelBase.guess"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#covsirphy.ode.mbase.ModelBase.guess" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">classmethod</span> </em><code class="sig-name descname"><span class="pre">guess</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tau</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">q</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.5</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/ode/mbase.html#ModelBase.guess"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#covsirphy.ode.mbase.ModelBase.guess" title="Permalink to this definition">¶</a></dt>
 <dd><p>With (X, dX/dt) for X=S, I, R and so on, guess parameter values.
 This will be overwitten by child classes.</p>
 <dl class="field-list simple">
@@ -412,174 +412,37 @@ This will be overwitten by child classes.</p>
 </dl>
 </p></li>
 <li><p><strong>tau</strong> (<em>int</em>) – tau value [min]</p></li>
+<li><p><strong>q</strong> (<em>float</em><em> or </em><em>tuple</em><em>(</em><em>float</em><em>,</em><em>)</em>) – the quantile(s) to compute, value(s) between (0, 1)</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
-<dd class="field-even"><p>guessed parameter values</p>
+<dd class="field-even"><p>guessed parameter values with the quantile(s)</p>
 </dd>
 <dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>dict(str, float)</p>
+<dd class="field-odd"><p>dict(str, float or pandas.Series)</p>
 </dd>
 </dl>
 </dd></dl>
 
 <dl class="py method">
 <dt id="covsirphy.ode.mbase.ModelBase.param_range">
-<em class="property"><span class="pre">classmethod</span> </em><code class="sig-name descname"><span class="pre">param_range</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">taufree_df</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">population</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">quantiles</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">(0.3,</span> <span class="pre">0.7)</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/ode/mbase.html#ModelBase.param_range"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#covsirphy.ode.mbase.ModelBase.param_range" title="Permalink to this definition">¶</a></dt>
-<dd><p>Define the value range of ODE parameters using (X, dX/dt) points.
-This method should be overwritten in subclass.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>taufree_df</strong> (<em>pandas.DataFrame</em>) – <dl class="simple">
-<dt>Index</dt><dd><p>reset index</p>
-</dd>
-<dt>Columns</dt><dd><ul>
-<li><p>t (int): time steps (tau-free)</p></li>
-<li><p>columns with dimensional variables</p></li>
-</ul>
-</dd>
-</dl>
-</p></li>
-<li><p><strong>population</strong> (<em>int</em>) – total population</p></li>
-<li><p><strong>quantiles</strong> (<em>tuple</em><em>(</em><em>int</em><em>, </em><em>int</em><em>)</em>) – quantiles to cut, like confidence interval</p></li>
-</ul>
-</dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p>minimum/maximum values</p>
-</dd>
-<dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>dict(str, tuple(float, float))</p>
-</dd>
-</dl>
-</dd></dl>
+<em class="property"><span class="pre">classmethod</span> </em><code class="sig-name descname"><span class="pre">param_range</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#covsirphy.ode.mbase.ModelBase.param_range" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
 
 <dl class="py method">
 <dt id="covsirphy.ode.mbase.ModelBase.restore">
-<em class="property"><span class="pre">classmethod</span> </em><code class="sig-name descname"><span class="pre">restore</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">specialized_df</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/ode/mbase.html#ModelBase.restore"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#covsirphy.ode.mbase.ModelBase.restore" title="Permalink to this definition">¶</a></dt>
-<dd><p>Restore Confirmed/Infected/Recovered/Fatal using a dataframe with the variables of the model.
-This method should be overwritten in subclass.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>specialized_df</strong> (<em>pandas.DataFrame</em>) – <p>dataframe with the variables</p>
-<dl class="simple">
-<dt>Index</dt><dd><p>(object):</p>
-</dd>
-<dt>Columns</dt><dd><ul class="simple">
-<li><p>variables of the models (int)</p></li>
-<li><p>any columns</p></li>
-</ul>
-</dd>
-</dl>
-</p>
-</dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p><dl class="simple">
-<dt>Index</dt><dd><p>(object): as-is</p>
-</dd>
-<dt>Columns</dt><dd><ul class="simple">
-<li><p>Confirmed (int): the number of confirmed cases</p></li>
-<li><p>Infected (int): the number of currently infected cases</p></li>
-<li><p>Fatal (int): the number of fatal cases</p></li>
-<li><p>Recovered (int): the number of recovered cases</p></li>
-<li><p>the other columns &#64;specialzed_df has</p></li>
-</ul>
-</dd>
-</dl>
-</p>
-</dd>
-<dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>(pandas.DataFrame)</p>
-</dd>
-</dl>
-</dd></dl>
+<em class="property"><span class="pre">classmethod</span> </em><code class="sig-name descname"><span class="pre">restore</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#covsirphy.ode.mbase.ModelBase.restore" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
 
 <dl class="py method">
 <dt id="covsirphy.ode.mbase.ModelBase.specialize">
-<em class="property"><span class="pre">classmethod</span> </em><code class="sig-name descname"><span class="pre">specialize</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data_df</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">population</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/ode/mbase.html#ModelBase.specialize"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#covsirphy.ode.mbase.ModelBase.specialize" title="Permalink to this definition">¶</a></dt>
-<dd><p>Specialize the dataset for this model.
-This method should be overwritten in subclass.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>data_df</strong> (<em>pandas.DataFrame</em>) – <dl class="simple">
-<dt>Index</dt><dd><p>reset index</p>
-</dd>
-<dt>Columns</dt><dd><ul>
-<li><p>Confirmed (int): the number of confirmed cases</p></li>
-<li><p>Infected (int): the number of currently infected cases</p></li>
-<li><p>Fatal (int): the number of fatal cases</p></li>
-<li><p>Recovered (int): the number of recovered cases</p></li>
-<li><p>any columns</p></li>
-</ul>
-</dd>
-</dl>
-</p></li>
-<li><p><strong>population</strong> (<em>int</em>) – total population in the place</p></li>
-</ul>
-</dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p><dl class="simple">
-<dt>Index</dt><dd><p>reset index</p>
-</dd>
-<dt>Columns</dt><dd><ul class="simple">
-<li><p>any columns &#64;data_df has</p></li>
-<li><p>columns with dimensional variables</p></li>
-</ul>
-</dd>
-</dl>
-</p>
-</dd>
-<dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>(pandas.DataFrame)</p>
-</dd>
-</dl>
-</dd></dl>
+<em class="property"><span class="pre">classmethod</span> </em><code class="sig-name descname"><span class="pre">specialize</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#covsirphy.ode.mbase.ModelBase.specialize" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
 
 <dl class="py method">
 <dt id="covsirphy.ode.mbase.ModelBase.tau_free">
-<em class="property"><span class="pre">classmethod</span> </em><code class="sig-name descname"><span class="pre">tau_free</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">subset_df</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">population</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tau</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/ode/mbase.html#ModelBase.tau_free"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#covsirphy.ode.mbase.ModelBase.tau_free" title="Permalink to this definition">¶</a></dt>
-<dd><p>Create a dataframe specialized to the model.
-If tau is not None, Date column will be converted to ‘(Date - start date) / tau’
-and saved in t column.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>subset_df</strong> (<em>pandas.DataFrame</em>) – <dl class="simple">
-<dt>Index</dt><dd><p>reset index</p>
-</dd>
-<dt>Columns</dt><dd><ul>
-<li><p>Date (pd.Timestamp): Observation date</p></li>
-<li><p>Confirmed (int): the number of confirmed cases</p></li>
-<li><p>Infected (int): the number of currently infected cases</p></li>
-<li><p>Fatal (int): the number of fatal cases</p></li>
-<li><p>Recovered (int): the number of recovered cases</p></li>
-<li><p>any columns</p></li>
-</ul>
-</dd>
-</dl>
-</p></li>
-<li><p><strong>population</strong> (<em>int</em>) – population value</p></li>
-<li><p><strong>tau</strong> (<em>int</em><em> or </em><em>None</em>) – tau value [min], 0 &lt;= tau &lt;= 1440</p></li>
-</ul>
-</dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p><dl class="simple">
-<dt>Index</dt><dd><p>reset index</p>
-</dd>
-<dt>Columns</dt><dd><ul class="simple">
-<li><p>t (int): if tau is not None</p></li>
-<li><p>columns with dimensional variables</p></li>
-</ul>
-</dd>
-</dl>
-</p>
-</dd>
-<dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>(pandas.DataFrame)</p>
-</dd>
-</dl>
-</dd></dl>
+<em class="property"><span class="pre">classmethod</span> </em><code class="sig-name descname"><span class="pre">tau_free</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#covsirphy.ode.mbase.ModelBase.tau_free" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
 
 </dd></dl>
 
@@ -596,7 +459,7 @@ and saved in t column.</p>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>model</strong> (<a class="reference internal" href="covsirphy.html#covsirphy.ModelBase" title="covsirphy.ModelBase"><em>covsirphy.ModelBase</em></a>) – ODE model</p></li>
 <li><p><strong>first_date</strong> (<em>str</em><em> or </em><em>pandas.Timestamp</em>) – the first date of simulation, like 14Apr2021</p></li>
-<li><p><strong>tau</strong> (<em>int</em><em> or </em><em>None</em>) – tau value [min] or None (to be determined)</p></li>
+<li><p><strong>tau</strong> (<em>int</em><em> or </em><em>None</em>) – tau value [min] or None (to be estimated)</p></li>
 <li><p><strong>metric</strong> (<em>str</em>) – metric name for estimation</p></li>
 <li><p><strong>n_jobs</strong> (<em>int</em>) – the number of parallel jobs or -1 (CPU count)</p></li>
 </ul>
@@ -609,7 +472,7 @@ and saved in t column.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>end_date</strong> (<em>str</em>) – end date of the phase</p></li>
+<li><p><strong>end_date</strong> (<em>str</em><em> or </em><em>pandas.Timestamp</em>) – end date of the phase</p></li>
 <li><p><strong>param_dict</strong> (<em>dict</em><em>[</em><em>str</em><em>, </em><em>float</em><em>] or </em><em>None</em>) – parameter values or None (not set)</p></li>
 <li><p><strong>y0_dict</strong> (<em>dict</em><em>[</em><em>str</em><em>, </em><em>int</em><em>] or </em><em>None</em>) – initial values or None (not set)</p></li>
 </ul>
@@ -617,8 +480,8 @@ and saved in t column.</p>
 <dt class="field-even">Returns</dt>
 <dd class="field-even"><p><dl class="simple">
 <dt>setting of the phase (key: phase name)</dt><dd><ul class="simple">
-<li><p>start (pandas.Timestamp): start date</p></li>
-<li><p>end (pandas.Timestamp): end date</p></li>
+<li><p>Start (pandas.Timestamp): start date</p></li>
+<li><p>End (pandas.Timestamp): end date</p></li>
 <li><p>y0 (dict[str, int]): initial values of model-specialized variables or empty dict</p></li>
 <li><p>param (dict[str, float]): parameter values or empty dict</p></li>
 </ul>
@@ -643,8 +506,8 @@ and saved in t column.</p>
 <dt>Index</dt><dd><p>reset index</p>
 </dd>
 <dt>Columns</dt><dd><ul>
-<li><p>Date (pd.Timestamp): Observation date</p></li>
-<li><p>Susceptible(int): the number of susceptible cases</p></li>
+<li><p>Date (pandas.Timestamp): Observation date</p></li>
+<li><p>Susceptible (int): the number of susceptible cases</p></li>
 <li><p>Infected (int): the number of currently infected cases</p></li>
 <li><p>Fatal(int): the number of fatal cases</p></li>
 <li><p>Recovered (int): the number of recovered cases</p></li>
@@ -652,11 +515,11 @@ and saved in t column.</p>
 </dd>
 </dl>
 </p></li>
-<li><p><strong>kwargs</strong> – keyword arguments of ODEHander.estimate_param()</p></li>
+<li><p><strong>kwargs</strong> – keyword arguments of  ODEHander.estimate_tau() and ODEHander.estimate_param()</p></li>
 </ul>
 </dd>
 <dt class="field-even">Raises</dt>
-<dd class="field-even"><p><a class="reference internal" href="covsirphy.html#covsirphy.UnExecutedError" title="covsirphy.UnExecutedError"><strong>covsirphy.UnExecutedError</strong></a> – either tau value or phase information was not set</p>
+<dd class="field-even"><p><a class="reference internal" href="covsirphy.html#covsirphy.UnExecutedError" title="covsirphy.UnExecutedError"><strong>covsirphy.UnExecutedError</strong></a> – phase information was not set</p>
 </dd>
 <dt class="field-odd">Returns</dt>
 <dd class="field-odd"><p><dl class="simple">
@@ -664,13 +527,14 @@ and saved in t column.</p>
 <li><p>int: tau value [min]</p></li>
 <li><dl class="simple">
 <dt>dict(str, object): setting of the phase (key: phase name)</dt><dd><ul>
-<li><p>start (pandas.Timestamp): start date</p></li>
-<li><p>end (pandas.Timestamp): end date</p></li>
-<li><p>param (dict(str, float)): dictionary of estimated parameter values</p></li>
-<li><p>y0 (dict[str, int]): initial values of model-specialized variables or empty dict</p></li>
+<li><p>Start (pandas.Timestamp): start date</p></li>
+<li><p>End (pandas.Timestamp): end date</p></li>
+<li><p>Rt (float): phase-dependent reproduction number</p></li>
+<li><p>(str, float): estimated parameter values, including rho</p></li>
+<li><p>(int or float): day parameters, including 1/beta [days]</p></li>
 <li><p>{metric}: score with the estimated parameter values</p></li>
-<li><p>Runtime (str): runtime of optimization</p></li>
 <li><p>Trials (int): the number of trials</p></li>
+<li><p>Runtime (str): runtime of optimization</p></li>
 </ul>
 </dd>
 </dl>
@@ -694,10 +558,10 @@ and saved in t column.</p>
 <dt>Index</dt><dd><p>reset index</p>
 </dd>
 <dt>Columns</dt><dd><ul>
-<li><p>Date (pd.Timestamp): Observation date</p></li>
-<li><p>Susceptible(int): the number of susceptible cases</p></li>
+<li><p>Date (pandas.Timestamp): Observation date</p></li>
+<li><p>Susceptible (int): the number of susceptible cases</p></li>
 <li><p>Infected (int): the number of currently infected cases</p></li>
-<li><p>Fatal(int): the number of fatal cases</p></li>
+<li><p>Fatal (int): the number of fatal cases</p></li>
 <li><p>Recovered (int): the number of recovered cases</p></li>
 </ul>
 </dd>
@@ -724,13 +588,14 @@ and saved in t column.</p>
 <dt class="field-odd">Returns</dt>
 <dd class="field-odd"><p><dl class="simple">
 <dt>setting of the phase (key: phase name)</dt><dd><ul class="simple">
-<li><p>start (pandas.Timestamp): start date</p></li>
-<li><p>end (pandas.Timestamp): end date</p></li>
-<li><p>param (dict(str, float)): dictionary of estimated parameter values</p></li>
-<li><p>y0 (dict[str, int]): initial values of model-specialized variables or empty dict</p></li>
+<li><p>Start (pandas.Timestamp): start date</p></li>
+<li><p>End (pandas.Timestamp): end date</p></li>
+<li><p>Rt (float): phase-dependent reproduction number</p></li>
+<li><p>(str, float): estimated parameter values, including rho</p></li>
+<li><p>(int or float): day parameters, including 1/beta [days]</p></li>
 <li><p>{metric}: score with the estimated parameter values</p></li>
-<li><p>Runtime (str): runtime of optimization</p></li>
 <li><p>Trials (int): the number of trials</p></li>
+<li><p>Runtime (str): runtime of optimization</p></li>
 </ul>
 </dd>
 </dl>
@@ -744,14 +609,15 @@ and saved in t column.</p>
 
 <dl class="py method">
 <dt id="covsirphy.ode.ode_handler.ODEHandler.estimate_tau">
-<code class="sig-name descname"><span class="pre">estimate_tau</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/ode/ode_handler.html#ODEHandler.estimate_tau"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#covsirphy.ode.ode_handler.ODEHandler.estimate_tau" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname"><span class="pre">estimate_tau</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">guess_quantile</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.5</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/ode/ode_handler.html#ODEHandler.estimate_tau"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#covsirphy.ode.ode_handler.ODEHandler.estimate_tau" title="Permalink to this definition">¶</a></dt>
 <dd><p>Select tau value [min] which minimize the score of the metric.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>data</strong> (<em>pandas.DataFrame</em>) – <dl class="simple">
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>data</strong> (<em>pandas.DataFrame</em>) – <dl class="simple">
 <dt>Index</dt><dd><p>reset index</p>
 </dd>
-<dt>Columns</dt><dd><ul class="simple">
+<dt>Columns</dt><dd><ul>
 <li><p>Date (pd.Timestamp): Observation date</p></li>
 <li><p>Susceptible(int): the number of susceptible cases</p></li>
 <li><p>Infected (int): the number of currently infected cases</p></li>
@@ -760,7 +626,9 @@ and saved in t column.</p>
 </ul>
 </dd>
 </dl>
-</p>
+</p></li>
+<li><p><strong>guess_quantile</strong> (<em>float</em>) – quantile to guess ODE parameter values for the candidates of tau</p></li>
+</ul>
 </dd>
 <dt class="field-even">Returns</dt>
 <dd class="field-even"><p>estimated tau value [min]</p>
@@ -849,7 +717,7 @@ Tau value will be selected from the divisors of 1440 [min] and set to self.</p>
 
 <dl class="py attribute">
 <dt id="covsirphy.ode.sewirf.SEWIRF.VARIABLES">
-<code class="sig-name descname"><span class="pre">VARIABLES</span></code><em class="property"> <span class="pre">=</span> <span class="pre">['Susceptible',</span> <span class="pre">'Infected',</span> <span class="pre">'Recovered',</span> <span class="pre">'Fatal',</span> <span class="pre">'Exposed',</span> <span class="pre">'Waiting']</span></em><a class="headerlink" href="#covsirphy.ode.sewirf.SEWIRF.VARIABLES" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname"><span class="pre">VARIABLES</span></code><em class="property"> <span class="pre">=</span> <span class="pre">['Susceptible',</span> <span class="pre">'Exposed',</span> <span class="pre">'Waiting',</span> <span class="pre">'Infected',</span> <span class="pre">'Recovered',</span> <span class="pre">'Fatal']</span></em><a class="headerlink" href="#covsirphy.ode.sewirf.SEWIRF.VARIABLES" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="py attribute">
@@ -912,12 +780,15 @@ Tau value will be selected from the divisors of 1440 [min] and set to self.</p>
 </dd>
 </dl>
 </p></li>
-<li><p><strong>tau</strong> (<em>int</em>) – tau value [min]</p></li>
+<li><p><strong>tau</strong> (<em>int</em>) – tau value [min] or None (skip division by tau values)</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
 <dd class="field-even"><p><dl class="simple">
-<dt>Index</dt><dd><p>time steps: Dates divided by tau value</p>
+<dt>Index</dt><dd><ul class="simple">
+<li><p>Date (pd.Timestamp): Observation date (available when &#64;tau is None)</p></li>
+<li><p>t (int): time steps (available when &#64;tau is not None)</p></li>
+</ul>
 </dd>
 <dt>Columns</dt><dd><ul class="simple">
 <li><p>Susceptible (int): the number of susceptible cases</p></li>
@@ -985,7 +856,7 @@ Tau value will be selected from the divisors of 1440 [min] and set to self.</p>
 
 <dl class="py method">
 <dt id="covsirphy.ode.sewirf.SEWIRF.guess">
-<em class="property"><span class="pre">classmethod</span> </em><code class="sig-name descname"><span class="pre">guess</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tau</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/ode/sewirf.html#SEWIRF.guess"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#covsirphy.ode.sewirf.SEWIRF.guess" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">classmethod</span> </em><code class="sig-name descname"><span class="pre">guess</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tau</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">q</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.5</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/ode/sewirf.html#SEWIRF.guess"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#covsirphy.ode.sewirf.SEWIRF.guess" title="Permalink to this definition">¶</a></dt>
 <dd><p>With (X, dX/dt) for X=S, I, R and so on, guess parameter values.
 This is not implemented for SEWIR-F model.</p>
 <dl class="field-list simple">
@@ -1005,6 +876,7 @@ This is not implemented for SEWIR-F model.</p>
 </dl>
 </p></li>
 <li><p><strong>tau</strong> (<em>int</em>) – tau value [min]</p></li>
+<li><p><strong>q</strong> (<em>float</em><em> or </em><em>tuple</em><em>(</em><em>float</em><em>,</em><em>)</em>) – the quantile(s) to compute, value(s) between (0, 1)</p></li>
 </ul>
 </dd>
 </dl>
@@ -1012,126 +884,18 @@ This is not implemented for SEWIR-F model.</p>
 
 <dl class="py method">
 <dt id="covsirphy.ode.sewirf.SEWIRF.param_range">
-<em class="property"><span class="pre">classmethod</span> </em><code class="sig-name descname"><span class="pre">param_range</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">taufree_df</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">population</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/ode/sewirf.html#SEWIRF.param_range"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#covsirphy.ode.sewirf.SEWIRF.param_range" title="Permalink to this definition">¶</a></dt>
-<dd><p>Define the range of parameters (not including tau value).</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>taufree_df</strong> (<em>pandas.DataFrame</em>) – <dl class="simple">
-<dt>Index</dt><dd><p>reset index</p>
-</dd>
-<dt>Columns</dt><dd><ul>
-<li><p>t (int): time steps (tau-free)</p></li>
-<li><p>columns with dimensional variables</p></li>
-</ul>
-</dd>
-</dl>
-</p></li>
-<li><p><strong>population</strong> (<em>int</em>) – total population</p></li>
-</ul>
-</dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p><dl class="simple">
-<dt>(dict)</dt><dd><ul class="simple">
-<li><p>key (str): parameter name</p></li>
-<li><p>value (tuple(float, float)): min value and max value</p></li>
-</ul>
-</dd>
-</dl>
-</p>
-</dd>
-</dl>
-</dd></dl>
+<em class="property"><span class="pre">classmethod</span> </em><code class="sig-name descname"><span class="pre">param_range</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#covsirphy.ode.sewirf.SEWIRF.param_range" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
 
 <dl class="py method">
 <dt id="covsirphy.ode.sewirf.SEWIRF.restore">
-<em class="property"><span class="pre">classmethod</span> </em><code class="sig-name descname"><span class="pre">restore</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">specialized_df</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/ode/sewirf.html#SEWIRF.restore"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#covsirphy.ode.sewirf.SEWIRF.restore" title="Permalink to this definition">¶</a></dt>
-<dd><dl class="simple">
-<dt>Restore Confirmed/Infected/Recovered/Fatal.</dt><dd><p>using a dataframe with the variables of the model.</p>
-</dd>
-</dl>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>specialized_df</strong> (<em>pandas.DataFrame</em>) – <p>dataframe with the variables</p>
-<dl class="simple">
-<dt>Index</dt><dd><p>(object)</p>
-</dd>
-<dt>Columns</dt><dd><ul class="simple">
-<li><p>Susceptible (int): the number of susceptible cases</p></li>
-<li><p>Infected (int): the number of currently infected cases</p></li>
-<li><p>Recovered (int): the number of recovered cases</p></li>
-<li><p>Fatal (int): the number of fatal cases</p></li>
-<li><p>Exposed (int): Exposed and in latent period (without infectivity)</p></li>
-<li><p>Waiting (int): Waiting cases for confirmation (with infectivity)</p></li>
-<li><p>any columns</p></li>
-</ul>
-</dd>
-</dl>
-</p>
-</dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p><dl class="simple">
-<dt>Index</dt><dd><p>(object): as-is</p>
-</dd>
-<dt>Columns</dt><dd><ul class="simple">
-<li><p>Confirmed (int): the number of confirmed cases</p></li>
-<li><p>Infected (int): the number of currently infected cases</p></li>
-<li><p>Fatal (int): the number of fatal cases</p></li>
-<li><p>Recovered (int): the number of recovered cases</p></li>
-<li><p>the other columns &#64;specialzed_df has</p></li>
-</ul>
-</dd>
-</dl>
-</p>
-</dd>
-<dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>(pandas.DataFrame)</p>
-</dd>
-</dl>
-</dd></dl>
+<em class="property"><span class="pre">classmethod</span> </em><code class="sig-name descname"><span class="pre">restore</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#covsirphy.ode.sewirf.SEWIRF.restore" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
 
 <dl class="py method">
 <dt id="covsirphy.ode.sewirf.SEWIRF.specialize">
-<em class="property"><span class="pre">classmethod</span> </em><code class="sig-name descname"><span class="pre">specialize</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data_df</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">population</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/ode/sewirf.html#SEWIRF.specialize"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#covsirphy.ode.sewirf.SEWIRF.specialize" title="Permalink to this definition">¶</a></dt>
-<dd><p>Specialize the dataset for this model.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>data_df</strong> (<em>pandas.DataFrame</em>) – <dl class="simple">
-<dt>Index</dt><dd><p>reset index</p>
-</dd>
-<dt>Columns</dt><dd><ul>
-<li><p>Confirmed (int): the number of confirmed cases</p></li>
-<li><p>Infected (int): the number of currently infected cases</p></li>
-<li><p>Fatal (int): the number of fatal cases</p></li>
-<li><p>Recovered (int): the number of recovered cases</p></li>
-<li><p>any columns</p></li>
-</ul>
-</dd>
-</dl>
-</p></li>
-<li><p><strong>population</strong> (<em>int</em>) – total population in the place</p></li>
-</ul>
-</dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p><dl class="simple">
-<dt>(pandas.DataFrame)</dt><dd><dl class="simple">
-<dt>Index</dt><dd><p>reset index</p>
-</dd>
-<dt>Columns</dt><dd><ul class="simple">
-<li><p>any columns &#64;data_df has</p></li>
-<li><p>Susceptible (int): the number of susceptible cases</p></li>
-<li><p>Exposed (int): 0</p></li>
-<li><p>Waiting (int): 0</p></li>
-</ul>
-</dd>
-</dl>
-</dd>
-</dl>
-</p>
-</dd>
-</dl>
-</dd></dl>
+<em class="property"><span class="pre">classmethod</span> </em><code class="sig-name descname"><span class="pre">specialize</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#covsirphy.ode.sewirf.SEWIRF.specialize" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
 
 </dd></dl>
 
@@ -1237,12 +1001,15 @@ This is not implemented for SEWIR-F model.</p>
 </dd>
 </dl>
 </p></li>
-<li><p><strong>tau</strong> (<em>int</em>) – tau value [min]</p></li>
+<li><p><strong>tau</strong> (<em>int</em>) – tau value [min] or None (skip division by tau values)</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
 <dd class="field-even"><p><dl class="simple">
-<dt>Index</dt><dd><p>t: Dates divided by tau value (time steps)</p>
+<dt>Index</dt><dd><ul class="simple">
+<li><p>Date (pd.Timestamp): Observation date (available when &#64;tau is None)</p></li>
+<li><p>t (int): time steps (available when &#64;tau is not None)</p></li>
+</ul>
 </dd>
 <dt>Columns</dt><dd><ul class="simple">
 <li><p>Susceptible (int): the number of susceptible cases</p></li>
@@ -1304,7 +1071,7 @@ This is not implemented for SEWIR-F model.</p>
 
 <dl class="py method">
 <dt id="covsirphy.ode.sir.SIR.guess">
-<em class="property"><span class="pre">classmethod</span> </em><code class="sig-name descname"><span class="pre">guess</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tau</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/ode/sir.html#SIR.guess"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#covsirphy.ode.sir.SIR.guess" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">classmethod</span> </em><code class="sig-name descname"><span class="pre">guess</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tau</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">q</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.5</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/ode/sir.html#SIR.guess"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#covsirphy.ode.sir.SIR.guess" title="Permalink to this definition">¶</a></dt>
 <dd><p>With (X, dX/dt) for X=S, I, R, guess parameter values.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -1323,18 +1090,19 @@ This is not implemented for SEWIR-F model.</p>
 </dl>
 </p></li>
 <li><p><strong>tau</strong> (<em>int</em>) – tau value [min]</p></li>
+<li><p><strong>q</strong> (<em>float</em><em> or </em><em>tuple</em><em>(</em><em>float</em><em>,</em><em>)</em>) – the quantile(s) to compute, value(s) between (0, 1)</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
-<dd class="field-even"><p>guessed parameter values</p>
+<dd class="field-even"><p>guessed parameter values with the quantile(s)</p>
 </dd>
 <dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>dict(str, float)</p>
+<dd class="field-odd"><p>dict(str, float or pandas.Series)</p>
 </dd>
 </dl>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
-<p>We can guess parameter values as follows. Median will be calculated.
+<p>We can guess parameter values with difference equations as follows.
 - rho = - n * (dS/dt) / S / I
 - sigma = (dR/dt) / I</p>
 </div>
@@ -1342,120 +1110,18 @@ This is not implemented for SEWIR-F model.</p>
 
 <dl class="py method">
 <dt id="covsirphy.ode.sir.SIR.param_range">
-<em class="property"><span class="pre">classmethod</span> </em><code class="sig-name descname"><span class="pre">param_range</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">taufree_df</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">population</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">quantiles</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">(0.1,</span> <span class="pre">0.9)</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/ode/sir.html#SIR.param_range"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#covsirphy.ode.sir.SIR.param_range" title="Permalink to this definition">¶</a></dt>
-<dd><p>Define the value range of ODE parameters using (X, dX/dt) points.
-In SIR model, X is S, I and R here.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>taufree_df</strong> (<em>pandas.DataFrame</em>) – <dl class="simple">
-<dt>Index</dt><dd><p>reset index</p>
-</dd>
-<dt>Columns</dt><dd><ul>
-<li><p>t (int): time steps (tau-free)</p></li>
-<li><p>columns with dimensional variables</p></li>
-</ul>
-</dd>
-</dl>
-</p></li>
-<li><p><strong>population</strong> (<em>int</em>) – total population</p></li>
-<li><p><strong>quantiles</strong> (<em>tuple</em><em>(</em><em>int</em><em>, </em><em>int</em><em>)</em>) – quantiles to cut, like confidence interval</p></li>
-</ul>
-</dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p>minimum/maximum values</p>
-</dd>
-<dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>dict(str, tuple(float, float))</p>
-</dd>
-</dl>
-</dd></dl>
+<em class="property"><span class="pre">classmethod</span> </em><code class="sig-name descname"><span class="pre">param_range</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#covsirphy.ode.sir.SIR.param_range" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
 
 <dl class="py method">
 <dt id="covsirphy.ode.sir.SIR.restore">
-<em class="property"><span class="pre">classmethod</span> </em><code class="sig-name descname"><span class="pre">restore</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">specialized_df</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/ode/sir.html#SIR.restore"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#covsirphy.ode.sir.SIR.restore" title="Permalink to this definition">¶</a></dt>
-<dd><dl class="simple">
-<dt>Restore Confirmed/Infected/Recovered/Fatal.</dt><dd><p>using a dataframe with the variables of the model.</p>
-</dd>
-</dl>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>specialized_df</strong> (<em>pandas.DataFrame</em>) – <p>dataframe with the variables</p>
-<dl class="simple">
-<dt>Index</dt><dd><p>reset index</p>
-</dd>
-<dt>Columns</dt><dd><ul class="simple">
-<li><p>Susceptible (int): the number of susceptible cases</p></li>
-<li><p>Infected (int): the number of currently infected cases</p></li>
-<li><p>Fatal or Recovered (int): the number of fatal/recovered cases</p></li>
-<li><p>any columns</p></li>
-</ul>
-</dd>
-</dl>
-</p>
-</dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p><dl class="simple">
-<dt>Index</dt><dd><p>reset index</p>
-</dd>
-<dt>Columns</dt><dd><ul class="simple">
-<li><p>Confirmed (int): the number of confirmed cases</p></li>
-<li><p>Infected (int): the number of currently infected cases</p></li>
-<li><p>Fatal (int): the number of fatal cases</p></li>
-<li><p>Recovered (int): the number of recovered cases</p></li>
-<li><p>the other columns &#64;specialzed_df has</p></li>
-</ul>
-</dd>
-</dl>
-</p>
-</dd>
-<dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>(pandas.DataFrame)</p>
-</dd>
-</dl>
-</dd></dl>
+<em class="property"><span class="pre">classmethod</span> </em><code class="sig-name descname"><span class="pre">restore</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#covsirphy.ode.sir.SIR.restore" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
 
 <dl class="py method">
 <dt id="covsirphy.ode.sir.SIR.specialize">
-<em class="property"><span class="pre">classmethod</span> </em><code class="sig-name descname"><span class="pre">specialize</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data_df</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">population</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/ode/sir.html#SIR.specialize"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#covsirphy.ode.sir.SIR.specialize" title="Permalink to this definition">¶</a></dt>
-<dd><p>Specialize the dataset for this model.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>data_df</strong> (<em>pandas.DataFrame</em>) – <dl class="simple">
-<dt>Index</dt><dd><p>reset index</p>
-</dd>
-<dt>Columns</dt><dd><ul>
-<li><p>Confirmed (int): the number of confirmed cases</p></li>
-<li><p>Infected (int): the number of currently infected cases</p></li>
-<li><p>Fatal (int): the number of fatal cases</p></li>
-<li><p>Recovered (int): the number of recovered cases</p></li>
-<li><p>any columns</p></li>
-</ul>
-</dd>
-</dl>
-</p></li>
-<li><p><strong>population</strong> (<em>int</em>) – total population in the place</p></li>
-</ul>
-</dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p><dl class="simple">
-<dt>Index</dt><dd><p>reset index</p>
-</dd>
-<dt>Columns</dt><dd><ul class="simple">
-<li><p>any columns &#64;data_df has</p></li>
-<li><p>Susceptible (int): the number of susceptible cases</p></li>
-<li><p>Fatal or Recovered (int): total number of fatal/recovered cases</p></li>
-</ul>
-</dd>
-</dl>
-</p>
-</dd>
-<dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>(pandas.DataFrame)</p>
-</dd>
-</dl>
-</dd></dl>
+<em class="property"><span class="pre">classmethod</span> </em><code class="sig-name descname"><span class="pre">specialize</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#covsirphy.ode.sir.SIR.specialize" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
 
 </dd></dl>
 
@@ -1562,12 +1228,15 @@ In SIR model, X is S, I and R here.</p>
 </dd>
 </dl>
 </p></li>
-<li><p><strong>tau</strong> (<em>int</em>) – tau value [min]</p></li>
+<li><p><strong>tau</strong> (<em>int</em>) – tau value [min] or None (skip division by tau values)</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
 <dd class="field-even"><p><dl class="simple">
-<dt>Index</dt><dd><p>t: Dates divided by tau value (time steps)</p>
+<dt>Index</dt><dd><ul class="simple">
+<li><p>Date (pd.Timestamp): Observation date (available when &#64;tau is None)</p></li>
+<li><p>t (int): time steps (available when &#64;tau is not None)</p></li>
+</ul>
 </dd>
 <dt>Columns</dt><dd><ul class="simple">
 <li><p>Susceptible (int): the number of susceptible cases</p></li>
@@ -1631,7 +1300,7 @@ In SIR model, X is S, I and R here.</p>
 
 <dl class="py method">
 <dt id="covsirphy.ode.sird.SIRD.guess">
-<em class="property"><span class="pre">classmethod</span> </em><code class="sig-name descname"><span class="pre">guess</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tau</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/ode/sird.html#SIRD.guess"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#covsirphy.ode.sird.SIRD.guess" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">classmethod</span> </em><code class="sig-name descname"><span class="pre">guess</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tau</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">q</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.5</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/ode/sird.html#SIRD.guess"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#covsirphy.ode.sird.SIRD.guess" title="Permalink to this definition">¶</a></dt>
 <dd><p>With (X, dX/dt) for X=S, I, R, D, guess parameter values.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -1650,19 +1319,20 @@ In SIR model, X is S, I and R here.</p>
 </dl>
 </p></li>
 <li><p><strong>tau</strong> (<em>int</em>) – tau value [min]</p></li>
+<li><p><strong>q</strong> (<em>float</em><em> or </em><em>tuple</em><em>(</em><em>float</em><em>,</em><em>)</em>) – the quantile(s) to compute, value(s) between (0, 1)</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
-<dd class="field-even"><p>guessed parameter values</p>
+<dd class="field-even"><p>guessed parameter values with the quantile(s)</p>
 </dd>
 <dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>dict(str, float)</p>
+<dd class="field-odd"><p>dict(str, float or pandas.Series)</p>
 </dd>
 </dl>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
-<p>We can guess parameter values as follows. Median will be calculated.
-- kappa = (dD/dt) / I
+<p>We can guess parameter values with difference equations as follows.
+- kappa = (dF/dt) / I
 - rho = - n * (dS/dt) / S / I
 - sigma = (dR/dt) / I</p>
 </div>
@@ -1670,117 +1340,18 @@ In SIR model, X is S, I and R here.</p>
 
 <dl class="py method">
 <dt id="covsirphy.ode.sird.SIRD.param_range">
-<em class="property"><span class="pre">classmethod</span> </em><code class="sig-name descname"><span class="pre">param_range</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">taufree_df</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">population</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">quantiles</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">(0.1,</span> <span class="pre">0.9)</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/ode/sird.html#SIRD.param_range"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#covsirphy.ode.sird.SIRD.param_range" title="Permalink to this definition">¶</a></dt>
-<dd><p>Define the value range of ODE parameters using (X, dX/dt) points.
-In SIR model, X is S, I, R, D here.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>taufree_df</strong> (<em>pandas.DataFrame</em>) – <dl class="simple">
-<dt>Index</dt><dd><p>reset index</p>
-</dd>
-<dt>Columns</dt><dd><ul>
-<li><p>t (int): time steps (tau-free)</p></li>
-<li><p>columns with dimensional variables</p></li>
-</ul>
-</dd>
-</dl>
-</p></li>
-<li><p><strong>population</strong> (<em>int</em>) – total population</p></li>
-<li><p><strong>quantiles</strong> (<em>tuple</em><em>(</em><em>int</em><em>, </em><em>int</em><em>)</em>) – quantiles to cut, like confidence interval</p></li>
-</ul>
-</dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p>minimum/maximum values</p>
-</dd>
-<dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>dict(str, tuple(float, float))</p>
-</dd>
-</dl>
-</dd></dl>
+<em class="property"><span class="pre">classmethod</span> </em><code class="sig-name descname"><span class="pre">param_range</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#covsirphy.ode.sird.SIRD.param_range" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
 
 <dl class="py method">
 <dt id="covsirphy.ode.sird.SIRD.restore">
-<em class="property"><span class="pre">classmethod</span> </em><code class="sig-name descname"><span class="pre">restore</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">specialized_df</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/ode/sird.html#SIRD.restore"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#covsirphy.ode.sird.SIRD.restore" title="Permalink to this definition">¶</a></dt>
-<dd><p>Restore Confirmed/Infected/Recovered/Fatal using a dataframe with the variables of the model.</p>
-<p>Args:
-&#64;specialized_df (pandas.DataFrame): dataframe with the variables</p>
-<blockquote>
-<div><dl class="simple">
-<dt>Index</dt><dd><p>reset index</p>
-</dd>
-<dt>Columns</dt><dd><ul class="simple">
-<li><p>Susceptible (int): the number of susceptible cases</p></li>
-<li><p>Infected (int): the number of currently infected cases</p></li>
-<li><p>Recovered (int): the number of recovered cases</p></li>
-<li><p>Fatal (int): the number of fatal cases</p></li>
-<li><p>any columns</p></li>
-</ul>
-</dd>
-</dl>
-</div></blockquote>
-<dl class="field-list simple">
-<dt class="field-odd">Returns</dt>
-<dd class="field-odd"><p><dl class="simple">
-<dt>(pandas.DataFrame)</dt><dd><dl class="simple">
-<dt>Index</dt><dd><p>reset index</p>
-</dd>
-<dt>Columns</dt><dd><ul class="simple">
-<li><p>Confirmed (int): the number of confirmed cases</p></li>
-<li><p>Infected (int): the number of currently infected cases</p></li>
-<li><p>Fatal (int): the number of fatal cases</p></li>
-<li><p>Recovered (int): the number of recovered cases</p></li>
-<li><p>the other columns &#64;specialzed_df has</p></li>
-</ul>
-</dd>
-</dl>
-</dd>
-</dl>
-</p>
-</dd>
-</dl>
-</dd></dl>
+<em class="property"><span class="pre">classmethod</span> </em><code class="sig-name descname"><span class="pre">restore</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#covsirphy.ode.sird.SIRD.restore" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
 
 <dl class="py method">
 <dt id="covsirphy.ode.sird.SIRD.specialize">
-<em class="property"><span class="pre">classmethod</span> </em><code class="sig-name descname"><span class="pre">specialize</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data_df</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">population</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/ode/sird.html#SIRD.specialize"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#covsirphy.ode.sird.SIRD.specialize" title="Permalink to this definition">¶</a></dt>
-<dd><p>Specialize the dataset for this model.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>data_df</strong> (<em>pandas.DataFrame</em>) – <dl class="simple">
-<dt>Index</dt><dd><p>reset index</p>
-</dd>
-<dt>Columns</dt><dd><ul>
-<li><p>Confirmed (int): the number of confirmed cases</p></li>
-<li><p>Infected (int): the number of currently infected cases</p></li>
-<li><p>Fatal (int): the number of fatal cases</p></li>
-<li><p>Recovered (int): the number of recovered cases</p></li>
-<li><p>any columns</p></li>
-</ul>
-</dd>
-</dl>
-</p></li>
-<li><p><strong>population</strong> (<em>int</em>) – total population in the place</p></li>
-</ul>
-</dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p><dl class="simple">
-<dt>Index</dt><dd><p>reset index</p>
-</dd>
-<dt>Columns</dt><dd><ul class="simple">
-<li><p>any columns &#64;data_df has</p></li>
-<li><p>Susceptible (int): the number of susceptible cases</p></li>
-</ul>
-</dd>
-</dl>
-</p>
-</dd>
-<dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>(pandas.DataFrame)</p>
-</dd>
-</dl>
-</dd></dl>
+<em class="property"><span class="pre">classmethod</span> </em><code class="sig-name descname"><span class="pre">specialize</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#covsirphy.ode.sird.SIRD.specialize" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
 
 </dd></dl>
 
@@ -1888,12 +1459,15 @@ In SIR model, X is S, I, R, D here.</p>
 </dd>
 </dl>
 </p></li>
-<li><p><strong>tau</strong> (<em>int</em>) – tau value [min]</p></li>
+<li><p><strong>tau</strong> (<em>int</em>) – tau value [min] or None (skip division by tau values)</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
 <dd class="field-even"><p><dl class="simple">
-<dt>Index</dt><dd><p>t: Dates divided by tau value (time steps)</p>
+<dt>Index</dt><dd><ul class="simple">
+<li><p>Date (pd.Timestamp): Observation date (available when &#64;tau is None)</p></li>
+<li><p>t (int): time steps (available when &#64;tau is not None)</p></li>
+</ul>
 </dd>
 <dt>Columns</dt><dd><ul class="simple">
 <li><p>Susceptible (int): the number of susceptible cases</p></li>
@@ -1957,7 +1531,7 @@ In SIR model, X is S, I, R, D here.</p>
 
 <dl class="py method">
 <dt id="covsirphy.ode.sirf.SIRF.guess">
-<em class="property"><span class="pre">classmethod</span> </em><code class="sig-name descname"><span class="pre">guess</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tau</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/ode/sirf.html#SIRF.guess"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#covsirphy.ode.sirf.SIRF.guess" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">classmethod</span> </em><code class="sig-name descname"><span class="pre">guess</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tau</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">q</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.5</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/ode/sirf.html#SIRF.guess"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#covsirphy.ode.sirf.SIRF.guess" title="Permalink to this definition">¶</a></dt>
 <dd><p>With (X, dX/dt) for X=S, I, R, F, guess parameter values.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -1976,19 +1550,21 @@ In SIR model, X is S, I, R, D here.</p>
 </dl>
 </p></li>
 <li><p><strong>tau</strong> (<em>int</em>) – tau value [min]</p></li>
+<li><p><strong>q</strong> (<em>float</em><em> or </em><em>tuple</em><em>(</em><em>float</em><em>,</em><em>)</em>) – the quantile(s) to compute, value(s) between (0, 1)</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
-<dd class="field-even"><p>guessed parameter values</p>
+<dd class="field-even"><p>guessed parameter values with the quantile(s)</p>
 </dd>
 <dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>dict(str, float)</p>
+<dd class="field-odd"><p>dict(str, float or pandas.Series)</p>
 </dd>
 </dl>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
-<p>We can guess parameter values as follows. Median will be calculated.
-- kappa = (dF/dt) / I when theta -&gt; 0
+<p>We can guess parameter values with difference equations as follows.
+- theta -&gt; +0 (i.e. around 0 and not negative)
+- kappa -&gt; (dF/dt) / I when theta -&gt; +0
 - rho = - n * (dS/dt) / S / I
 - sigma = (dR/dt) / I</p>
 </div>
@@ -1996,120 +1572,18 @@ In SIR model, X is S, I, R, D here.</p>
 
 <dl class="py method">
 <dt id="covsirphy.ode.sirf.SIRF.param_range">
-<em class="property"><span class="pre">classmethod</span> </em><code class="sig-name descname"><span class="pre">param_range</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">taufree_df</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">population</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">quantiles</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">(0.1,</span> <span class="pre">0.9)</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/ode/sirf.html#SIRF.param_range"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#covsirphy.ode.sirf.SIRF.param_range" title="Permalink to this definition">¶</a></dt>
-<dd><p>Define the value range of ODE parameters using (X, dX/dt) points.
-In SIR model, X is S, I, R, F here.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>taufree_df</strong> (<em>pandas.DataFrame</em>) – <dl class="simple">
-<dt>Index</dt><dd><p>reset index</p>
-</dd>
-<dt>Columns</dt><dd><ul>
-<li><p>t (int): time steps (tau-free)</p></li>
-<li><p>columns with dimensional variables</p></li>
-</ul>
-</dd>
-</dl>
-</p></li>
-<li><p><strong>population</strong> (<em>int</em>) – total population</p></li>
-<li><p><strong>quantiles</strong> (<em>tuple</em><em>(</em><em>int</em><em>, </em><em>int</em><em>)</em>) – quantiles to cut, like confidence interval</p></li>
-</ul>
-</dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p>minimum/maximum values</p>
-</dd>
-<dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>dict(str, tuple(float, float))</p>
-</dd>
-</dl>
-</dd></dl>
+<em class="property"><span class="pre">classmethod</span> </em><code class="sig-name descname"><span class="pre">param_range</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#covsirphy.ode.sirf.SIRF.param_range" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
 
 <dl class="py method">
 <dt id="covsirphy.ode.sirf.SIRF.restore">
-<em class="property"><span class="pre">classmethod</span> </em><code class="sig-name descname"><span class="pre">restore</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">specialized_df</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/ode/sirf.html#SIRF.restore"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#covsirphy.ode.sirf.SIRF.restore" title="Permalink to this definition">¶</a></dt>
-<dd><dl class="simple">
-<dt>Restore Confirmed/Infected/Recovered/Fatal.</dt><dd><p>using a dataframe with the variables of the model.</p>
-</dd>
-</dl>
-<p>Args:
-specialized_df (pandas.DataFrame): dataframe with the variables</p>
-<blockquote>
-<div><dl class="simple">
-<dt>Index</dt><dd><p>(object)</p>
-</dd>
-<dt>Columns</dt><dd><ul class="simple">
-<li><p>Susceptible (int): the number of susceptible cases</p></li>
-<li><p>Infected (int): the number of currently infected cases</p></li>
-<li><p>Recovered (int): the number of recovered cases</p></li>
-<li><p>Fatal (int): the number of fatal cases</p></li>
-<li><p>any columns</p></li>
-</ul>
-</dd>
-</dl>
-</div></blockquote>
-<dl class="field-list simple">
-<dt class="field-odd">Returns</dt>
-<dd class="field-odd"><p><dl class="simple">
-<dt>(pandas.DataFrame)</dt><dd><dl class="simple">
-<dt>Index</dt><dd><p>(object): as-is</p>
-</dd>
-<dt>Columns</dt><dd><ul class="simple">
-<li><p>Confirmed (int): the number of confirmed cases</p></li>
-<li><p>Infected (int): the number of currently infected cases</p></li>
-<li><p>Fatal (int): the number of fatal cases</p></li>
-<li><p>Recovered (int): the number of recovered cases</p></li>
-<li><p>the other columns &#64;specialzed_df has</p></li>
-</ul>
-</dd>
-</dl>
-</dd>
-</dl>
-</p>
-</dd>
-</dl>
-</dd></dl>
+<em class="property"><span class="pre">classmethod</span> </em><code class="sig-name descname"><span class="pre">restore</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#covsirphy.ode.sirf.SIRF.restore" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
 
 <dl class="py method">
 <dt id="covsirphy.ode.sirf.SIRF.specialize">
-<em class="property"><span class="pre">classmethod</span> </em><code class="sig-name descname"><span class="pre">specialize</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data_df</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">population</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/ode/sirf.html#SIRF.specialize"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#covsirphy.ode.sirf.SIRF.specialize" title="Permalink to this definition">¶</a></dt>
-<dd><p>Specialize the dataset for this model.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>data_df</strong> (<em>pandas.DataFrame</em>) – <dl class="simple">
-<dt>Index</dt><dd><p>reset index</p>
-</dd>
-<dt>Columns</dt><dd><ul>
-<li><p>Confirmed (int): the number of confirmed cases</p></li>
-<li><p>Infected (int): the number of currently infected cases</p></li>
-<li><p>Fatal (int): the number of fatal cases</p></li>
-<li><p>Recovered (int): the number of recovered cases</p></li>
-<li><p>any columns</p></li>
-</ul>
-</dd>
-</dl>
-</p></li>
-<li><p><strong>population</strong> (<em>int</em>) – total population in the place</p></li>
-</ul>
-</dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p><dl class="simple">
-<dt>(pandas.DataFrame)</dt><dd><dl class="simple">
-<dt>Index</dt><dd><p>reset index</p>
-</dd>
-<dt>Columns</dt><dd><ul class="simple">
-<li><p>any columns &#64;data_df has</p></li>
-<li><p>Susceptible (int): the number of susceptible cases</p></li>
-</ul>
-</dd>
-</dl>
-</dd>
-</dl>
-</p>
-</dd>
-</dl>
-</dd></dl>
+<em class="property"><span class="pre">classmethod</span> </em><code class="sig-name descname"><span class="pre">specialize</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#covsirphy.ode.sirf.SIRF.specialize" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
 
 </dd></dl>
 

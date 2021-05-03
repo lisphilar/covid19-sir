@@ -67,7 +67,7 @@
             
             
               <div class="version">
-                2.19.1-beta-fu1
+                2.19.1-eta-fu2
               </div>
             
           
@@ -116,6 +116,7 @@
 <li class="toctree-l4"><a class="reference internal" href="#submodules">Submodules</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#module-covsirphy.visualization.bar_plot">covsirphy.visualization.bar_plot module</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#module-covsirphy.visualization.colored_map">covsirphy.visualization.colored_map module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#module-covsirphy.visualization.compare_plot">covsirphy.visualization.compare_plot module</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#module-covsirphy.visualization.japan_map">covsirphy.visualization.japan_map module</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#module-covsirphy.visualization.line_plot">covsirphy.visualization.line_plot module</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#module-covsirphy.visualization.vbase">covsirphy.visualization.vbase module</a></li>
@@ -415,6 +416,77 @@ Index</p>
 </dl>
 </dd></dl>
 
+</dd></dl>
+
+</div>
+<div class="section" id="module-covsirphy.visualization.compare_plot">
+<span id="covsirphy-visualization-compare-plot-module"></span><h2>covsirphy.visualization.compare_plot module<a class="headerlink" href="#module-covsirphy.visualization.compare_plot" title="Permalink to this headline">¶</a></h2>
+<dl class="py class">
+<dt id="covsirphy.visualization.compare_plot.ComparePlot">
+<em class="property"><span class="pre">class</span> </em><code class="sig-name descname"><span class="pre">ComparePlot</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filename</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bbox_inches</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'tight'</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/visualization/compare_plot.html#ComparePlot"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#covsirphy.visualization.compare_plot.ComparePlot" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#covsirphy.visualization.vbase.VisualizeBase" title="covsirphy.visualization.vbase.VisualizeBase"><code class="xref py py-class docutils literal notranslate"><span class="pre">covsirphy.visualization.vbase.VisualizeBase</span></code></a></p>
+<p>Compare two groups with specified variables.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>filename</strong> (<em>str</em><em> or </em><em>None</em>) – filename to save the figure or None (display)</p></li>
+<li><p><strong>bbox_inches</strong> (<em>str</em>) – bounding box in inches when creating the figure</p></li>
+<li><p><strong>kwargs</strong> – the other arguments of matplotlib.pyplot.savefig()</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py method">
+<dt id="covsirphy.visualization.compare_plot.ComparePlot.plot">
+<code class="sig-name descname"><span class="pre">plot</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">variables</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">groups</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/visualization/compare_plot.html#ComparePlot.plot"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#covsirphy.visualization.compare_plot.ComparePlot.plot" title="Permalink to this definition">¶</a></dt>
+<dd><p>Compare two groups with specified variables.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>data</strong> (<em>pandas.DataFrame</em>) – <p>data to show
+Index</p>
+<blockquote>
+<div><p>x values</p>
+</div></blockquote>
+<dl class="simple">
+<dt>Columns</dt><dd><p>y variables to show, “{variable}_{group}” for all combinations of variables and groups</p>
+</dd>
+</dl>
+</p></li>
+<li><p><strong>variables</strong> (<em>list</em><em>[</em><em>str</em><em>]</em>) – variables to compare</p></li>
+<li><p><strong>groups</strong> (<em>list</em><em>[</em><em>str</em><em>]</em>) – the first group name and the second group name</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py function">
+<dt id="covsirphy.visualization.compare_plot.compare_plot">
+<code class="sig-name descname"><span class="pre">compare_plot</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">df</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">variables</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">groups</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">filename</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/visualization/compare_plot.html#compare_plot"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#covsirphy.visualization.compare_plot.compare_plot" title="Permalink to this definition">¶</a></dt>
+<dd><p>Wrapper function: show chronological change of the data.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>df</strong> (<em>pandas.DataFrame</em>) – <p>data to show
+Index</p>
+<blockquote>
+<div><p>x values</p>
+</div></blockquote>
+<dl class="simple">
+<dt>Columns</dt><dd><p>y variables to show, “{variable}_{group}” for all combinations of variables and groups</p>
+</dd>
+</dl>
+</p></li>
+<li><p><strong>variables</strong> (<em>list</em><em>[</em><em>str</em><em>]</em>) – variables to compare</p></li>
+<li><p><strong>groups</strong> (<em>list</em><em>[</em><em>str</em><em>]</em>) – the first group name and the second group name</p></li>
+<li><p><strong>filename</strong> (<em>str</em><em> or </em><em>None</em>) – filename to save the figure or None (display)</p></li>
+<li><p><strong>kwargs</strong> – keyword arguments of the following classes and methods.
+- matplotlib.pyplot.savefig()
+- matplotlib.pyplot.legend()</p></li>
+</ul>
+</dd>
+</dl>
 </dd></dl>
 
 </div>

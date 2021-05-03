@@ -65,7 +65,7 @@
             
             
               <div class="version">
-                2.19.1-beta-fu1
+                2.19.1-eta-fu2
               </div>
             
           
@@ -175,6 +175,7 @@
 <span class="c1"># -*- coding: utf-8 -*-</span>
 
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">from</span> <span class="nn">covsirphy.util.error</span> <span class="kn">import</span> <span class="n">deprecate</span>
 <span class="kn">from</span> <span class="nn">covsirphy.ode.mbase</span> <span class="kn">import</span> <span class="n">ModelBase</span>
 
 
@@ -217,9 +218,7 @@
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">population</span><span class="p">,</span> <span class="n">rho</span><span class="p">,</span> <span class="n">sigma</span><span class="p">):</span>
         <span class="c1"># Total population</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">population</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ensure_natural_int</span><span class="p">(</span>
-            <span class="n">population</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;population&quot;</span>
-        <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">population</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ensure_population</span><span class="p">(</span><span class="n">population</span><span class="p">)</span>
         <span class="c1"># Non-dim parameters</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">rho</span> <span class="o">=</span> <span class="n">rho</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">sigma</span> <span class="o">=</span> <span class="n">sigma</span>
@@ -243,10 +242,11 @@
         <span class="n">didt</span> <span class="o">=</span> <span class="mi">0</span> <span class="o">-</span> <span class="n">dsdt</span> <span class="o">-</span> <span class="n">drdt</span>
         <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">dsdt</span><span class="p">,</span> <span class="n">didt</span><span class="p">,</span> <span class="n">drdt</span><span class="p">])</span>
 
-<div class="viewcode-block" id="SIR.param_range"><a class="viewcode-back" href="../../../covsirphy.ode.html#covsirphy.SIR.param_range">[docs]</a>    <span class="nd">@classmethod</span>
+    <span class="nd">@classmethod</span>
+    <span class="nd">@deprecate</span><span class="p">(</span><span class="s2">&quot;.param_range()&quot;</span><span class="p">,</span> <span class="n">new</span><span class="o">=</span><span class="s2">&quot;.guess()&quot;</span><span class="p">,</span> <span class="n">version</span><span class="o">=</span><span class="s2">&quot;2.19.1-zeta-fu1&quot;</span><span class="p">)</span>
     <span class="k">def</span> <span class="nf">param_range</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">taufree_df</span><span class="p">,</span> <span class="n">population</span><span class="p">,</span> <span class="n">quantiles</span><span class="o">=</span><span class="p">(</span><span class="mf">0.1</span><span class="p">,</span> <span class="mf">0.9</span><span class="p">)):</span>
         <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Define the value range of ODE parameters using (X, dX/dt) points.</span>
+<span class="sd">        Deprecated. Define the value range of ODE parameters using (X, dX/dt) points.</span>
 <span class="sd">        In SIR model, X is S, I and R here.</span>
 
 <span class="sd">        Args:</span>
@@ -274,12 +274,13 @@
             <span class="n">k</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">v</span><span class="o">.</span><span class="n">quantile</span><span class="p">(</span><span class="n">quantiles</span><span class="p">)</span><span class="o">.</span><span class="n">clip</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">))</span>
             <span class="k">for</span> <span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="n">v</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">([</span><span class="s2">&quot;rho&quot;</span><span class="p">,</span> <span class="s2">&quot;sigma&quot;</span><span class="p">],</span> <span class="p">[</span><span class="n">rho_series</span><span class="p">,</span> <span class="n">sigma_series</span><span class="p">])</span>
         <span class="p">}</span>
-        <span class="k">return</span> <span class="n">_dict</span></div>
+        <span class="k">return</span> <span class="n">_dict</span>
 
-<div class="viewcode-block" id="SIR.specialize"><a class="viewcode-back" href="../../../covsirphy.ode.html#covsirphy.SIR.specialize">[docs]</a>    <span class="nd">@classmethod</span>
+    <span class="nd">@classmethod</span>
+    <span class="nd">@deprecate</span><span class="p">(</span><span class="s2">&quot;.specialize()&quot;</span><span class="p">,</span> <span class="n">new</span><span class="o">=</span><span class="s2">&quot;.convert()&quot;</span><span class="p">,</span> <span class="n">version</span><span class="o">=</span><span class="s2">&quot;2.19.1-zeta-fu1&quot;</span><span class="p">)</span>
     <span class="k">def</span> <span class="nf">specialize</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">data_df</span><span class="p">,</span> <span class="n">population</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Specialize the dataset for this model.</span>
+<span class="sd">        Deprecated. Specialize the dataset for this model.</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            data_df (pandas.DataFrame):</span>
@@ -307,12 +308,13 @@
         <span class="c1"># Calculate dimensional variables</span>
         <span class="n">df</span><span class="p">[</span><span class="bp">cls</span><span class="o">.</span><span class="n">S</span><span class="p">]</span> <span class="o">=</span> <span class="n">population</span> <span class="o">-</span> <span class="n">df</span><span class="p">[</span><span class="bp">cls</span><span class="o">.</span><span class="n">C</span><span class="p">]</span>
         <span class="n">df</span><span class="p">[</span><span class="bp">cls</span><span class="o">.</span><span class="n">FR</span><span class="p">]</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="bp">cls</span><span class="o">.</span><span class="n">F</span><span class="p">]</span> <span class="o">+</span> <span class="n">df</span><span class="p">[</span><span class="bp">cls</span><span class="o">.</span><span class="n">R</span><span class="p">]</span>
-        <span class="k">return</span> <span class="n">df</span></div>
+        <span class="k">return</span> <span class="n">df</span>
 
-<div class="viewcode-block" id="SIR.restore"><a class="viewcode-back" href="../../../covsirphy.ode.html#covsirphy.SIR.restore">[docs]</a>    <span class="nd">@classmethod</span>
+    <span class="nd">@classmethod</span>
+    <span class="nd">@deprecate</span><span class="p">(</span><span class="s2">&quot;.restore()&quot;</span><span class="p">,</span> <span class="n">new</span><span class="o">=</span><span class="s2">&quot;.convert_reverse()&quot;</span><span class="p">,</span> <span class="n">version</span><span class="o">=</span><span class="s2">&quot;2.19.1-zeta-fu1&quot;</span><span class="p">)</span>
     <span class="k">def</span> <span class="nf">restore</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">specialized_df</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Restore Confirmed/Infected/Recovered/Fatal.</span>
+<span class="sd">        Deprecated. Restore Confirmed/Infected/Recovered/Fatal.</span>
 <span class="sd">         using a dataframe with the variables of the model.</span>
 
 <span class="sd">        Args:</span>
@@ -342,7 +344,7 @@
         <span class="n">df</span><span class="p">[</span><span class="bp">cls</span><span class="o">.</span><span class="n">C</span><span class="p">]</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="bp">cls</span><span class="o">.</span><span class="n">CI</span><span class="p">]</span> <span class="o">+</span> <span class="n">df</span><span class="p">[</span><span class="bp">cls</span><span class="o">.</span><span class="n">FR</span><span class="p">]</span>
         <span class="n">df</span><span class="p">[</span><span class="bp">cls</span><span class="o">.</span><span class="n">F</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
         <span class="n">df</span><span class="p">[</span><span class="bp">cls</span><span class="o">.</span><span class="n">R</span><span class="p">]</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="bp">cls</span><span class="o">.</span><span class="n">FR</span><span class="p">]</span>
-        <span class="k">return</span> <span class="n">df</span><span class="o">.</span><span class="n">loc</span><span class="p">[:,</span> <span class="p">[</span><span class="o">*</span><span class="bp">cls</span><span class="o">.</span><span class="n">VALUE_COLUMNS</span><span class="p">,</span> <span class="o">*</span><span class="n">other_cols</span><span class="p">]]</span></div>
+        <span class="k">return</span> <span class="n">df</span><span class="o">.</span><span class="n">loc</span><span class="p">[:,</span> <span class="p">[</span><span class="o">*</span><span class="bp">cls</span><span class="o">.</span><span class="n">VALUE_COLUMNS</span><span class="p">,</span> <span class="o">*</span><span class="n">other_cols</span><span class="p">]]</span>
 
 <div class="viewcode-block" id="SIR.calc_r0"><a class="viewcode-back" href="../../../covsirphy.ode.html#covsirphy.SIR.calc_r0">[docs]</a>    <span class="k">def</span> <span class="nf">calc_r0</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
@@ -390,18 +392,19 @@
 <span class="sd">                    - Infected (int): the number of currently infected cases</span>
 <span class="sd">                    - Fatal(int): the number of fatal cases</span>
 <span class="sd">                    - Recovered (int): the number of recovered cases</span>
-<span class="sd">            tau (int): tau value [min]</span>
+<span class="sd">            tau (int): tau value [min] or None (skip division by tau values)</span>
 
 <span class="sd">        Returns:</span>
 <span class="sd">            pandas.DataFrame:</span>
 <span class="sd">                Index</span>
-<span class="sd">                    t: Dates divided by tau value (time steps)</span>
+<span class="sd">                    - Date (pd.Timestamp): Observation date (available when @tau is None)</span>
+<span class="sd">                    - t (int): time steps (available when @tau is not None)</span>
 <span class="sd">                Columns</span>
 <span class="sd">                    - Susceptible (int): the number of susceptible cases</span>
 <span class="sd">                    - Infected (int): the number of currently infected cases</span>
 <span class="sd">                    - Fatal or Recovered (int): the number of fatal/recovered cases</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="c1"># Convert to tau-free</span>
+        <span class="c1"># Convert to tau-free if tau was specified</span>
         <span class="n">df</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_convert</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">tau</span><span class="p">)</span>
         <span class="c1"># Conversion of variables</span>
         <span class="n">df</span><span class="p">[</span><span class="bp">cls</span><span class="o">.</span><span class="n">FR</span><span class="p">]</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="bp">cls</span><span class="o">.</span><span class="n">F</span><span class="p">]</span> <span class="o">+</span> <span class="n">df</span><span class="p">[</span><span class="bp">cls</span><span class="o">.</span><span class="n">R</span><span class="p">]</span>
@@ -442,7 +445,7 @@
         <span class="k">return</span> <span class="n">df</span><span class="o">.</span><span class="n">loc</span><span class="p">[:,</span> <span class="p">[</span><span class="bp">cls</span><span class="o">.</span><span class="n">DATE</span><span class="p">,</span> <span class="bp">cls</span><span class="o">.</span><span class="n">S</span><span class="p">,</span> <span class="bp">cls</span><span class="o">.</span><span class="n">CI</span><span class="p">,</span> <span class="bp">cls</span><span class="o">.</span><span class="n">F</span><span class="p">,</span> <span class="bp">cls</span><span class="o">.</span><span class="n">R</span><span class="p">]]</span></div>
 
 <div class="viewcode-block" id="SIR.guess"><a class="viewcode-back" href="../../../covsirphy.ode.html#covsirphy.SIR.guess">[docs]</a>    <span class="nd">@classmethod</span>
-    <span class="k">def</span> <span class="nf">guess</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">tau</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">guess</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">tau</span><span class="p">,</span> <span class="n">q</span><span class="o">=</span><span class="mf">0.5</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        With (X, dX/dt) for X=S, I, R, guess parameter values.</span>
 
@@ -457,12 +460,13 @@
 <span class="sd">                    - Fatal(int): the number of fatal cases</span>
 <span class="sd">                    - Recovered (int): the number of recovered cases</span>
 <span class="sd">            tau (int): tau value [min]</span>
+<span class="sd">            q (float or tuple(float,)): the quantile(s) to compute, value(s) between (0, 1)</span>
 
 <span class="sd">        Returns:</span>
-<span class="sd">            dict(str, float): guessed parameter values</span>
+<span class="sd">            dict(str, float or pandas.Series): guessed parameter values with the quantile(s)</span>
 
 <span class="sd">        Note:</span>
-<span class="sd">            We can guess parameter values as follows. Median will be calculated.</span>
+<span class="sd">            We can guess parameter values with difference equations as follows.</span>
 <span class="sd">            - rho = - n * (dS/dt) / S / I</span>
 <span class="sd">            - sigma = (dR/dt) / I</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -471,12 +475,13 @@
         <span class="c1"># Remove negative values and set variables</span>
         <span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">loc</span><span class="p">[(</span><span class="n">df</span><span class="p">[</span><span class="bp">cls</span><span class="o">.</span><span class="n">S</span><span class="p">]</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="bp">cls</span><span class="o">.</span><span class="n">CI</span><span class="p">]</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">)]</span>
         <span class="n">n</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">df</span><span class="o">.</span><span class="n">index</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="p">[</span><span class="bp">cls</span><span class="o">.</span><span class="n">S</span><span class="p">,</span> <span class="bp">cls</span><span class="o">.</span><span class="n">CI</span><span class="p">,</span> <span class="bp">cls</span><span class="o">.</span><span class="n">FR</span><span class="p">]]</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
-        <span class="c1"># Guess parameter values</span>
-        <span class="n">rho_series</span> <span class="o">=</span> <span class="mi">0</span> <span class="o">-</span> <span class="n">n</span> <span class="o">*</span> <span class="n">df</span><span class="p">[</span><span class="bp">cls</span><span class="o">.</span><span class="n">S</span><span class="p">]</span><span class="o">.</span><span class="n">diff</span><span class="p">()</span> <span class="o">/</span> <span class="n">tau</span> <span class="o">/</span> <span class="n">df</span><span class="p">[</span><span class="bp">cls</span><span class="o">.</span><span class="n">S</span><span class="p">]</span> <span class="o">/</span> <span class="n">df</span><span class="p">[</span><span class="bp">cls</span><span class="o">.</span><span class="n">CI</span><span class="p">]</span>
-        <span class="n">sigma_series</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="bp">cls</span><span class="o">.</span><span class="n">FR</span><span class="p">]</span><span class="o">.</span><span class="n">diff</span><span class="p">()</span> <span class="o">/</span> <span class="n">tau</span> <span class="o">/</span> <span class="n">df</span><span class="p">[</span><span class="bp">cls</span><span class="o">.</span><span class="n">CI</span><span class="p">]</span>
+        <span class="c1"># Calculate parameter values with difference equation and tau-free data</span>
+        <span class="n">rho_series</span> <span class="o">=</span> <span class="mi">0</span> <span class="o">-</span> <span class="n">n</span> <span class="o">*</span> <span class="n">df</span><span class="p">[</span><span class="bp">cls</span><span class="o">.</span><span class="n">S</span><span class="p">]</span><span class="o">.</span><span class="n">diff</span><span class="p">()</span> <span class="o">/</span> <span class="n">df</span><span class="p">[</span><span class="bp">cls</span><span class="o">.</span><span class="n">S</span><span class="p">]</span> <span class="o">/</span> <span class="n">df</span><span class="p">[</span><span class="bp">cls</span><span class="o">.</span><span class="n">CI</span><span class="p">]</span>
+        <span class="n">sigma_series</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="bp">cls</span><span class="o">.</span><span class="n">FR</span><span class="p">]</span><span class="o">.</span><span class="n">diff</span><span class="p">()</span> <span class="o">/</span> <span class="n">df</span><span class="p">[</span><span class="bp">cls</span><span class="o">.</span><span class="n">CI</span><span class="p">]</span>
+        <span class="c1"># Guess representative values</span>
         <span class="k">return</span> <span class="p">{</span>
-            <span class="s2">&quot;rho&quot;</span><span class="p">:</span> <span class="n">rho_series</span><span class="o">.</span><span class="n">median</span><span class="p">(),</span>
-            <span class="s2">&quot;sigma&quot;</span><span class="p">:</span> <span class="n">sigma_series</span><span class="o">.</span><span class="n">median</span><span class="p">(),</span>
+            <span class="s2">&quot;rho&quot;</span><span class="p">:</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_clip</span><span class="p">(</span><span class="n">rho_series</span><span class="o">.</span><span class="n">quantile</span><span class="p">(</span><span class="n">q</span><span class="o">=</span><span class="n">q</span><span class="p">),</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span>
+            <span class="s2">&quot;sigma&quot;</span><span class="p">:</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_clip</span><span class="p">(</span><span class="n">sigma_series</span><span class="o">.</span><span class="n">quantile</span><span class="p">(</span><span class="n">q</span><span class="o">=</span><span class="n">q</span><span class="p">),</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span>
         <span class="p">}</span></div></div>
 </pre></div>
 

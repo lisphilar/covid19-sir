@@ -65,7 +65,7 @@
             
             
               <div class="version">
-                2.19.1-beta-fu1
+                2.19.1-eta-fu2
               </div>
             
           
@@ -191,9 +191,10 @@
 <span class="sd">        population (int): initial value of total population in the place</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
+    <span class="nd">@deprecate</span><span class="p">(</span><span class="s2">&quot;PhaseSeries&quot;</span><span class="p">,</span> <span class="n">new</span><span class="o">=</span><span class="s2">&quot;ODEHandler&quot;</span><span class="p">,</span> <span class="n">version</span><span class="o">=</span><span class="s2">&quot;2.19.1-zeta-fu1&quot;</span><span class="p">)</span>
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">first_date</span><span class="p">,</span> <span class="n">last_date</span><span class="p">,</span> <span class="n">population</span><span class="p">):</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_first_date</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ensure_date</span><span class="p">(</span><span class="n">first_date</span><span class="p">,</span> <span class="s2">&quot;first_date&quot;</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_last_date</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ensure_date</span><span class="p">(</span><span class="n">last_date</span><span class="p">,</span> <span class="s2">&quot;last_date&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_first_date</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ensure_date</span><span class="p">(</span><span class="n">first_date</span><span class="p">,</span> <span class="s2">&quot;first_date&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">DATE_FORMAT</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_last_date</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ensure_date</span><span class="p">(</span><span class="n">last_date</span><span class="p">,</span> <span class="s2">&quot;last_date&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">DATE_FORMAT</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">init_population</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ensure_population</span><span class="p">(</span><span class="n">population</span><span class="p">)</span>
         <span class="c1"># List of PhaseUnit</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_units</span> <span class="o">=</span> <span class="p">[]</span>

@@ -65,7 +65,7 @@
             
             
               <div class="version">
-                2.19.1-beta-fu1
+                2.19.1-eta-fu2
               </div>
             
           
@@ -216,6 +216,7 @@
     <span class="n">STEP_N</span> <span class="o">=</span> <span class="s2">&quot;step_n&quot;</span>
     <span class="n">Y0_DICT</span> <span class="o">=</span> <span class="s2">&quot;y0_dict&quot;</span>
     <span class="n">PARAM_DICT</span> <span class="o">=</span> <span class="s2">&quot;param_dict&quot;</span>
+    <span class="n">ID</span> <span class="o">=</span> <span class="s2">&quot;ID&quot;</span>
     <span class="n">AREA_COLUMNS</span> <span class="o">=</span> <span class="p">[</span><span class="n">COUNTRY</span><span class="p">,</span> <span class="n">PROVINCE</span><span class="p">]</span>
     <span class="n">STR_COLUMNS</span> <span class="o">=</span> <span class="p">[</span><span class="n">DATE</span><span class="p">,</span> <span class="o">*</span><span class="n">AREA_COLUMNS</span><span class="p">]</span>
     <span class="n">COLUMNS</span> <span class="o">=</span> <span class="p">[</span><span class="o">*</span><span class="n">STR_COLUMNS</span><span class="p">,</span> <span class="n">C</span><span class="p">,</span> <span class="n">CI</span><span class="p">,</span> <span class="n">F</span><span class="p">,</span> <span class="n">R</span><span class="p">]</span>
@@ -474,29 +475,31 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">s</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;@</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2"> must be a float value, but </span><span class="si">{</span><span class="n">target</span><span class="si">}</span><span class="s2"> was applied&quot;</span>
         <span class="k">try</span><span class="p">:</span>
-            <span class="n">value</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">target</span><span class="p">)</span>
-        <span class="k">except</span> <span class="ne">TypeError</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">s</span><span class="si">}</span><span class="s2"> and not converted to float.&quot;</span><span class="p">)</span>
-        <span class="k">return</span> <span class="n">value</span>
+            <span class="k">return</span> <span class="nb">float</span><span class="p">(</span><span class="n">target</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">s</span><span class="si">}</span><span class="s2"> and not converted to float.&quot;</span><span class="p">)</span> <span class="kn">from</span> <span class="bp">None</span>
 
     <span class="nd">@classmethod</span>
-    <span class="k">def</span> <span class="nf">_ensure_date</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">target</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;date&quot;</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">_ensure_date</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">target</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;date&quot;</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Ensure the format of the string.</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">            target (str): string to ensure</span>
+<span class="sd">            target (str or pandas.Timestamp): string to ensure</span>
 <span class="sd">            name (str): argument name of the string</span>
+<span class="sd">            default (pandas.Timestamp or None): default value to return</span>
 
 <span class="sd">        Returns:</span>
-<span class="sd">            str: as-is the target</span>
+<span class="sd">            pandas.Timestamp or None: as-is the target or default value</span>
 <span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">target</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">default</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">target</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">Timestamp</span><span class="p">):</span>
+            <span class="k">return</span> <span class="n">target</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="n">hour</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">minute</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">second</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">microsecond</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
         <span class="k">try</span><span class="p">:</span>
-            <span class="bp">cls</span><span class="o">.</span><span class="n">date_obj</span><span class="p">(</span><span class="n">target</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">pd</span><span class="o">.</span><span class="n">to_datetime</span><span class="p">(</span><span class="n">target</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="n">hour</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">minute</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">second</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">microsecond</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
         <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
-                <span class="sa">f</span><span class="s2">&quot;@</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2"> needs to match </span><span class="si">{</span><span class="bp">cls</span><span class="o">.</span><span class="n">DATE_FORMAT_DESC</span><span class="si">}</span><span class="s2">, but </span><span class="si">{</span><span class="n">target</span><span class="si">}</span><span class="s2"> was applied.&quot;</span><span class="p">)</span>
-        <span class="k">return</span> <span class="n">target</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2"> was not recognized as a date, </span><span class="si">{</span><span class="n">target</span><span class="si">}</span><span class="s2"> was applied.&quot;</span><span class="p">)</span>
 
     <span class="nd">@staticmethod</span>
     <span class="k">def</span> <span class="nf">_ensure_subclass</span><span class="p">(</span><span class="n">target</span><span class="p">,</span> <span class="n">parent</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;target&quot;</span><span class="p">):</span>
@@ -576,7 +579,8 @@
         <span class="n">value</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_ensure_natural_int</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
         <span class="k">return</span> <span class="p">[</span><span class="n">i</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">value</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="k">if</span> <span class="n">value</span> <span class="o">%</span> <span class="n">i</span> <span class="o">==</span> <span class="mi">0</span><span class="p">]</span></div>
 
-<div class="viewcode-block" id="Term.date_obj"><a class="viewcode-back" href="../../../covsirphy.util.html#covsirphy.Term.date_obj">[docs]</a>    <span class="nd">@classmethod</span>
+    <span class="nd">@deprecate</span><span class="p">(</span><span class="s2">&quot;.date_obj()&quot;</span><span class="p">,</span> <span class="n">version</span><span class="o">=</span><span class="s2">&quot;2.19.1-gamma-fu5&quot;</span><span class="p">)</span>
+    <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">date_obj</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">date_str</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Convert a string to a datatime object.</span>
@@ -593,7 +597,7 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="n">date_str</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">return</span> <span class="n">default</span>
-        <span class="k">return</span> <span class="n">datetime</span><span class="o">.</span><span class="n">strptime</span><span class="p">(</span><span class="n">date_str</span><span class="p">,</span> <span class="bp">cls</span><span class="o">.</span><span class="n">DATE_FORMAT</span><span class="p">)</span></div>
+        <span class="k">return</span> <span class="n">datetime</span><span class="o">.</span><span class="n">strptime</span><span class="p">(</span><span class="n">date_str</span><span class="p">,</span> <span class="bp">cls</span><span class="o">.</span><span class="n">DATE_FORMAT</span><span class="p">)</span>
 
 <div class="viewcode-block" id="Term.date_change"><a class="viewcode-back" href="../../../covsirphy.util.html#covsirphy.Term.date_change">[docs]</a>    <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">date_change</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">date_str</span><span class="p">,</span> <span class="n">days</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
@@ -610,7 +614,7 @@
         <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">days</span><span class="p">,</span> <span class="nb">int</span><span class="p">):</span>
             <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span>
                 <span class="sa">f</span><span class="s2">&quot;@days must be integer, but </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">days</span><span class="p">)</span><span class="si">}</span><span class="s2"> was applied.&quot;</span><span class="p">)</span>
-        <span class="n">date</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">date_obj</span><span class="p">(</span><span class="n">date_str</span><span class="p">)</span> <span class="o">+</span> <span class="n">timedelta</span><span class="p">(</span><span class="n">days</span><span class="o">=</span><span class="n">days</span><span class="p">)</span>
+        <span class="n">date</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_ensure_date</span><span class="p">(</span><span class="n">date_str</span><span class="p">)</span> <span class="o">+</span> <span class="n">timedelta</span><span class="p">(</span><span class="n">days</span><span class="o">=</span><span class="n">days</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">date</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="bp">cls</span><span class="o">.</span><span class="n">DATE_FORMAT</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="Term.tomorrow"><a class="viewcode-back" href="../../../covsirphy.util.html#covsirphy.Term.tomorrow">[docs]</a>    <span class="nd">@classmethod</span>
@@ -649,8 +653,8 @@
 <span class="sd">            end_date (str): end date, like 01Jan2020</span>
 <span class="sd">            tau (int): tau value [min]</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">sta</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">date_obj</span><span class="p">(</span><span class="n">start_date</span><span class="p">)</span>
-        <span class="n">end</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">date_obj</span><span class="p">(</span><span class="n">end_date</span><span class="p">)</span>
+        <span class="n">sta</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_ensure_date</span><span class="p">(</span><span class="n">start_date</span><span class="p">)</span>
+        <span class="n">end</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_ensure_date</span><span class="p">(</span><span class="n">end_date</span><span class="p">)</span>
         <span class="n">tau</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_ensure_tau</span><span class="p">(</span><span class="n">tau</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">math</span><span class="o">.</span><span class="n">ceil</span><span class="p">((</span><span class="n">end</span> <span class="o">-</span> <span class="n">sta</span><span class="p">)</span> <span class="o">/</span> <span class="n">timedelta</span><span class="p">(</span><span class="n">minutes</span><span class="o">=</span><span class="n">tau</span><span class="p">))</span></div>
 
@@ -660,20 +664,20 @@
 <span class="sd">        Ensure that the order of dates.</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">            previous_date (str): previous date</span>
-<span class="sd">            following_date (str): following date</span>
+<span class="sd">            previous_date (str or pandas.Timestamp): previous date</span>
+<span class="sd">            following_date (str or pandas.Timestamp): following date</span>
 <span class="sd">            name (str): name of @following_date</span>
 
 <span class="sd">        Raises:</span>
 <span class="sd">            ValueError: @previous_date &gt; @following_date</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">previous</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">date_obj</span><span class="p">(</span><span class="n">previous_date</span><span class="p">)</span>
-        <span class="n">following</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">date_obj</span><span class="p">(</span><span class="n">following_date</span><span class="p">)</span>
-        <span class="k">if</span> <span class="n">previous</span> <span class="o">&lt;=</span> <span class="n">following</span><span class="p">:</span>
+        <span class="n">previous_date</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_ensure_date</span><span class="p">(</span><span class="n">previous_date</span><span class="p">)</span>
+        <span class="n">following_date</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_ensure_date</span><span class="p">(</span><span class="n">following_date</span><span class="p">)</span>
+        <span class="n">p_str</span> <span class="o">=</span> <span class="n">previous_date</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="bp">cls</span><span class="o">.</span><span class="n">DATE_FORMAT</span><span class="p">)</span>
+        <span class="n">f_str</span> <span class="o">=</span> <span class="n">following_date</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="bp">cls</span><span class="o">.</span><span class="n">DATE_FORMAT</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">previous_date</span> <span class="o">&lt;=</span> <span class="n">following_date</span><span class="p">:</span>
             <span class="k">return</span> <span class="kc">None</span>
-        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
-            <span class="sa">f</span><span class="s2">&quot;@</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2"> must be the same as/over </span><span class="si">{</span><span class="n">previous_date</span><span class="si">}</span><span class="s2">, but </span><span class="si">{</span><span class="n">following_date</span><span class="si">}</span><span class="s2"> was applied.&quot;</span>
-        <span class="p">)</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;@</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2"> must be the same as/over </span><span class="si">{</span><span class="n">p_str</span><span class="si">}</span><span class="s2">, but </span><span class="si">{</span><span class="n">f_str</span><span class="si">}</span><span class="s2"> was applied.&quot;</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">_ensure_selectable</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">target</span><span class="p">,</span> <span class="n">candidates</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;target&quot;</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>

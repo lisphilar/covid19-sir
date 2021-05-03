@@ -65,7 +65,7 @@
             
             
               <div class="version">
-                2.19.1-beta-fu1
+                2.19.1-eta-fu2
               </div>
             
           
@@ -490,8 +490,8 @@
             <span class="k">return</span> <span class="n">df</span><span class="o">.</span><span class="n">reset_index</span><span class="p">(</span><span class="n">drop</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
         <span class="n">df</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ensure_dataframe</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;the cleaned dataset&quot;</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">DATE</span><span class="p">])</span>
         <span class="n">series</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">DATE</span><span class="p">]</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
-        <span class="n">start_obj</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">date_obj</span><span class="p">(</span><span class="n">date_str</span><span class="o">=</span><span class="n">start_date</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="n">series</span><span class="o">.</span><span class="n">min</span><span class="p">())</span>
-        <span class="n">end_obj</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">date_obj</span><span class="p">(</span><span class="n">date_str</span><span class="o">=</span><span class="n">end_date</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="n">series</span><span class="o">.</span><span class="n">max</span><span class="p">())</span>
+        <span class="n">start_obj</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ensure_date</span><span class="p">(</span><span class="n">start_date</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="n">series</span><span class="o">.</span><span class="n">min</span><span class="p">())</span>
+        <span class="n">end_obj</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ensure_date</span><span class="p">(</span><span class="n">end_date</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="n">series</span><span class="o">.</span><span class="n">max</span><span class="p">())</span>
         <span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">loc</span><span class="p">[(</span><span class="n">start_obj</span> <span class="o">&lt;=</span> <span class="n">series</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">series</span> <span class="o">&lt;=</span> <span class="n">end_obj</span><span class="p">),</span> <span class="p">:]</span>
         <span class="k">if</span> <span class="n">df</span><span class="o">.</span><span class="n">empty</span><span class="p">:</span>
             <span class="k">raise</span> <span class="n">SubsetNotFoundError</span><span class="p">(</span>
