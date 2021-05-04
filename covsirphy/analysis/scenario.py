@@ -1231,7 +1231,7 @@ class Scenario(Term):
         delay_period = int((low_lim + Q1) / 2)
         return (int(delay_period), df)
 
-    def fit(self, oxcgrt_data=None, name="Main", delay=None, removed_cols=None, metric=None, metrics="R2", **kwargs):
+    def fit(self, oxcgrt_data=None, name="Main", delay=(7, 31), removed_cols=None, metric=None, metrics="R2", **kwargs):
         """
         Fit regressors to predict the parameter values in the future phases,
         assuming that indicators will impact on ODE parameter values/the number of cases with delay.
