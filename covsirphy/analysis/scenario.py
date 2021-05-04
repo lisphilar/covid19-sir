@@ -1231,7 +1231,7 @@ class Scenario(Term):
         delay_period = int((low_lim + Q1) / 2)
         return (int(delay_period), df)
 
-    def fit(self, oxcgrt_data=None, name="Main", delay=None, removed_cols=None, metric=None, metrics="R2", **kwargs):
+    def fit(self, oxcgrt_data=None, name="Main", delay=(7, 31), removed_cols=None, metric="R2", **kwargs):
         """
         Fit regressors to predict the parameter values in the future phases,
         assuming that indicators will impact on ODE parameter values/the number of cases with delay.
@@ -1247,8 +1247,7 @@ class Scenario(Term):
                 - tuple(int, int): select the best value with grid search in this range, or
                 - None: Scenario.estimate_delay() calculate automatically
             removed_cols (list[str] or None): list of variables to remove from X dataset or None (indicators used to estimate delay period)
-            metric (str or None): metric name or None (use @metrics)
-            metrics (str): alias of @metric
+            metric (str): metric name
             kwargs: keyword arguments of sklearn.model_selection.train_test_split(test_size=0.2, random_state=0)
 
         Raises:
@@ -1266,7 +1265,7 @@ class Scenario(Term):
         Note:
             If @seed is included in kwargs, this will be converted to @random_state.
         """
-        metric = metric or metrics
+        metric = kwargs.pop("metrics") if "metrics" in kwargs else metric
         # Clear the future phases
         self.clear(name=name, include_past=False)
         # Register OxCGRT data

@@ -13,6 +13,9 @@ This is a list of term in CovsirPhy project. These terms are used as method name
 <dt><strong>accuracy of trend analysis</strong></dt>
 <dd>Whether the change date of phases are effective or not.</dd>
 
+<dt><strong>delay period</strong></dt>
+<dd>The number of days that indicators take for the ODE parameter values to be changed.</dd>
+
 <dt><strong>forecasting</strong></dt>
 <dd>Forecasting of the number of cases in the future phases. This needs trend analysis, parameter estimation, simulation and prediction.</dd>
 
