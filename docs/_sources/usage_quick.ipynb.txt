@@ -708,7 +708,7 @@
   {
    "source": [
     "### Short-term prediction of parameter values\n",
-    "With extra datasets, we can predict the parameter values of the future phases because [OxCGRT indicators](https://github.com/OxCGRT/covid-policy-tracker) (policy measures), vaccinations and so on impact on parameter values with the delay period. Delay period will be calculated with `cenario.estimate_delay()` automatically.\n",
+    "With extra datasets, we can predict the ODE parameter values in the future phases because [OxCGRT indicators](https://github.com/OxCGRT/covid-policy-tracker) (policy measures), vaccinations and so on impact on parameter values with delay period (the number of days that indicators take for the ODE parameter values to be changed).\n",
     "\n",
     "OxCGRT indicators are\n",
     "\n",
@@ -736,7 +736,19 @@
   },
   {
    "source": [
-    "The indicator used to estimate delay period (\"Stringency_index\" as default) will be automatically from X dataset. If you have some indicators to be removed additionally, please use `removed_cols` argument (list of indicator names) of `Scenario.fit()`.  \n",
+    "`Scenario.fit()` has `delay` argument and we can apply the following values.\n",
+    "\n",
+    "- `delay=20`: Exact value of delay period [days].\n",
+    "- `delay=(7, 31)`(effective from version 2.19.1-gamm-fu1): Delay period will be found by grid search in the value range of (7, 31) to minimize test score of learing. This is the default value from version 2.19.1-theta-fu1.\n",
+    "- `delay=None`: Delay period will be calculated with `Scenario.estimate_delay()` method. In this method, change point analysis will be done with one selected indicator (\"Stringency_index\" as default) and variable (\"Confirmed\" as default) to estimate delay period. This is the default value to version 2.19.1-theta.\n",
+    "\n",
+    "When we use `delay=None`, the indicator used to estimate delay period (\"Stringency_index\" as default) will be automatically removed from X dataset. If you have some indicators to be removed additionally, please use `removed_cols` argument (list of indicator names) of `Scenario.fit()`."
+   ],
+   "cell_type": "markdown",
+   "metadata": {}
+  },
+  {
+   "source": [
     "Here, we will remove \"Tests\" and \"Tests_diff\" as an example. (This is because we have \"Testing_policy\" indicator and they may be overlaped.)"
    ],
    "cell_type": "markdown",
@@ -751,7 +763,7 @@
     "# Create Forecast scenario (copy Main scenario and delete future phases)\n",
     "snl.clear(name=\"Forecast\", template=\"Main\")\n",
     "# Fitting with linear regression model (Elastic Net regression)\n",
-    "fit_dict = snl.fit(name=\"Forecast\", removed_cols=[\"Tests\", \"Tests_diff\"])"
+    "fit_dict = snl.fit(name=\"Forecast\", removed_cols=[\"Tests\", \"Tests_diff\"], metric=\"RMSLE\")"
    ]
   },
   {
@@ -767,8 +779,8 @@
    "metadata": {},
    "outputs": [],
    "source": [
-    "print(f\"Determination coefficient: {fit_dict['score_train']:.3f} (train)\")\n",
-    "print(f\"Determination coefficient: {fit_dict['score_test']:.3f} (test)\")"
+    "print(f\"RMSLE: {fit_dict['score_train']:.3f} (train)\")\n",
+    "print(f\"RMSLE: {fit_dict['score_test']:.3f} (test)\")"
    ]
   },
   {
@@ -827,7 +839,7 @@
   },
   {
    "source": [
-    "Or, short-cut `.fit()` and `.predict()` with `Scenario.fit_predict()`."
+    "Or, short-cut `.fit()` and `.predict()` with `Scenario.fit_predict()`. We can apply all arguments (of `.fit()` and `.predict()`) to `Scenario.fit_predict()`."
    ],
    "cell_type": "markdown",
    "metadata": {}

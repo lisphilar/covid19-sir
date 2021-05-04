@@ -65,7 +65,7 @@
             
             
               <div class="version">
-                2.19.1-theta
+                2.19.1-theta-fu1
               </div>
             
           
@@ -1404,7 +1404,7 @@
         <span class="n">delay_period</span> <span class="o">=</span> <span class="nb">int</span><span class="p">((</span><span class="n">low_lim</span> <span class="o">+</span> <span class="n">Q1</span><span class="p">)</span> <span class="o">/</span> <span class="mi">2</span><span class="p">)</span>
         <span class="k">return</span> <span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">delay_period</span><span class="p">),</span> <span class="n">df</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="Scenario.fit"><a class="viewcode-back" href="../../../covsirphy.analysis.html#covsirphy.Scenario.fit">[docs]</a>    <span class="k">def</span> <span class="nf">fit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">oxcgrt_data</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;Main&quot;</span><span class="p">,</span> <span class="n">delay</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">removed_cols</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">metric</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">metrics</span><span class="o">=</span><span class="s2">&quot;R2&quot;</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<div class="viewcode-block" id="Scenario.fit"><a class="viewcode-back" href="../../../covsirphy.analysis.html#covsirphy.Scenario.fit">[docs]</a>    <span class="k">def</span> <span class="nf">fit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">oxcgrt_data</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;Main&quot;</span><span class="p">,</span> <span class="n">delay</span><span class="o">=</span><span class="p">(</span><span class="mi">7</span><span class="p">,</span> <span class="mi">31</span><span class="p">),</span> <span class="n">removed_cols</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">metric</span><span class="o">=</span><span class="s2">&quot;R2&quot;</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Fit regressors to predict the parameter values in the future phases,</span>
 <span class="sd">        assuming that indicators will impact on ODE parameter values/the number of cases with delay.</span>
@@ -1420,8 +1420,7 @@
 <span class="sd">                - tuple(int, int): select the best value with grid search in this range, or</span>
 <span class="sd">                - None: Scenario.estimate_delay() calculate automatically</span>
 <span class="sd">            removed_cols (list[str] or None): list of variables to remove from X dataset or None (indicators used to estimate delay period)</span>
-<span class="sd">            metric (str or None): metric name or None (use @metrics)</span>
-<span class="sd">            metrics (str): alias of @metric</span>
+<span class="sd">            metric (str): metric name</span>
 <span class="sd">            kwargs: keyword arguments of sklearn.model_selection.train_test_split(test_size=0.2, random_state=0)</span>
 
 <span class="sd">        Raises:</span>
@@ -1439,7 +1438,7 @@
 <span class="sd">        Note:</span>
 <span class="sd">            If @seed is included in kwargs, this will be converted to @random_state.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">metric</span> <span class="o">=</span> <span class="n">metric</span> <span class="ow">or</span> <span class="n">metrics</span>
+        <span class="n">metric</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;metrics&quot;</span><span class="p">)</span> <span class="k">if</span> <span class="s2">&quot;metrics&quot;</span> <span class="ow">in</span> <span class="n">kwargs</span> <span class="k">else</span> <span class="n">metric</span>
         <span class="c1"># Clear the future phases</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">clear</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">,</span> <span class="n">include_past</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
         <span class="c1"># Register OxCGRT data</span>
