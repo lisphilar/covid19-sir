@@ -9,13 +9,13 @@ from covsirphy import OxCGRTData
 class TestOxCGRTData(object):
     def test_cleaning(self, oxcgrt_data):
         df = oxcgrt_data.cleaned()
-        assert set(df.columns) == set(OxCGRTData.OXCGRT_COLS)
+        assert set(df.columns) == set(OxCGRTData.CLEANED_COLS)
 
     def test_subset(self, oxcgrt_data):
         with pytest.raises(KeyError):
             oxcgrt_data.subset("Moon")
         df = oxcgrt_data.subset("JPN")
-        assert set(df.columns) == set(OxCGRTData.OXCGRT_COLS_WITHOUT_COUNTRY)
+        assert set(df.columns) == set(OxCGRTData.SUBSET_COLS)
 
     def test_total(self, oxcgrt_data):
         with pytest.raises(NotImplementedError):
