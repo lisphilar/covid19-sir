@@ -161,6 +161,7 @@ class JHUData(CleaningBase):
         new = country_data.cleaned()
         new[self.ISO3] = self.country_to_iso3(country)
         new = new.loc[:, self.RAW_COLS]
+        new[self.CI] = (new[self.C] - new[self.F] - new[self.R]).astype(np.int64)
         # Remove the data in the country from JHU dataset
         df = self._cleaned_df.copy()
         df = df.loc[df[self.COUNTRY] != country]
