@@ -1,9 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-from datetime import datetime
 from pathlib import Path
-from dask import dataframe as dd
 import numpy as np
 import pandas as pd
 from covsirphy.util.error import deprecate, SubsetNotFoundError
@@ -15,32 +13,43 @@ class PopulationData(CleaningBase):
     Data cleaning of total population dataset.
 
     Args:
-        filename (str): CSV filename of the dataset
-        citation (str): citation
-    """
-    POPULATION_COLS = [
-        CleaningBase.ISO3,
-        CleaningBase.COUNTRY,
-        CleaningBase.PROVINCE,
-        CleaningBase.DATE,
-        CleaningBase.N
-    ]
+        filename (str or None): CSV filename of the dataset
+        data (pandas.DataFrame or None):
+            Index
+                reset index
+            Columns
+                - Date: Observation date
+                - ISO3: ISO3 code
+                - Country: country/region name
+                - Province: province/prefecture/state name
+                - Population: total population
+        citation (str or None): citation or None (empty)
 
-    def __init__(self, filename=None, citation=None):
-        self.created_time = datetime.now()
-        if filename is None:
-            self._raw = pd.DataFrame()
-            self._cleaned_df = pd.DataFrame(columns=self.POPULATION_COLS)
-        else:
-            self._raw = dd.read_csv(
-                filename, dtype={"Province/State": "object"}
-            ).compute()
-            self._cleaned_df = self._cleaning()
+    Note:
+        Either @filename (high priority) or @data must be specified.
+    """
+    # Columns of self._raw and self._clean_df
+    RAW_COLS = [
+        CleaningBase.DATE, CleaningBase.ISO3, CleaningBase.COUNTRY, CleaningBase.PROVINCE, CleaningBase.N]
+    # Columns of self.cleaned()
+    CLEANED_COLS = RAW_COLS[:]
+    # Columns of self.subset()
+    SUBSET_COLS = [CleaningBase.DATE, CleaningBase.N]
+    # Deprecated
+    POPULATION_COLS = RAW_COLS[:]
+
+    def __init__(self, filename=None, data=None, citation=None):
+        # Raw data
+        self._raw = self._parse_raw(filename, data, self.RAW_COLS)
+        # Data cleaning
+        self._cleaned_df = pd.DataFrame(columns=self.RAW_COLS) if self._raw.empty else self._cleaning()
+        # Citation
         self._citation = citation or ""
         # Directory that save the file
         if filename is None:
             self._dirpath = Path("input")
         else:
+            Path(filename).parent.mkdir(exist_ok=True, parents=True)
             self._dirpath = Path(filename).resolve().parent
 
     def _cleaning(self):
@@ -59,63 +68,18 @@ class PopulationData(CleaningBase):
                     - Population (int): total population
         """
         df = self._raw.copy()
-        # Rename the columns
-        df = df.rename(
-            {
-                "Country.Region": self.COUNTRY,
-                "Country/Region": self.COUNTRY,
-                "Province.State": self.PROVINCE,
-                "Province/State": self.PROVINCE,
-                "ObservationDate": self.DATE
-            },
-            axis=1
-        )
-        # Confirm the expected columns are in raw data
-        expected_cols = [
-            self.COUNTRY, self.PROVINCE, self.N
-        ]
-        self._ensure_dataframe(df, name="the raw data", columns=expected_cols)
-        # ISO3
-        df[self.ISO3] = df[self.ISO3] if self.ISO3 in df.columns else self.UNKNOWN
         # Date
         df[self.DATE] = pd.to_datetime(df[self.DATE])
-        # Country
-        df[self.COUNTRY] = df[self.COUNTRY].replace(
-            {
-                # COD
-                "Congo, the Democratic Republic of the": "Democratic Republic of the Congo",
-                # COG
-                "Congo": "Republic of the Congo",
-                # South Korea
-                "Korea, South": "South Korea",
-            }
-        )
         # Province
         df[self.PROVINCE] = df[self.PROVINCE].fillna(self.UNKNOWN)
-        # Set 'Others' as the country name of cruise ships
-        ships = ["Diamond Princess", "Costa Atlantica", "Grand Princess", "MS Zaandam"]
-        for ship in ships:
-            df.loc[df[self.COUNTRY] == ship, [self.COUNTRY, self.PROVINCE]] = [self.OTHERS, ship]
-        # Values
-        df = df.dropna(subset=[self.N]).reset_index(drop=True)
         df[self.N] = df[self.N].astype(np.int64)
         # Columns to use
-        df = df.loc[
-            :, [self.ISO3, self.COUNTRY, self.PROVINCE, self.DATE, self.N]]
+        df = df.loc[:, self.CLEANED_COLS]
         # Remove duplicates
-        df = df.drop_duplicates().reset_index(drop=True)
+        df = df.dropna(subset=[self.N]).drop_duplicates().reset_index(drop=True)
         # Update data types to reduce memory
         df[self.AREA_ABBR_COLS] = df[self.AREA_ABBR_COLS].astype("category")
         return df
-
-    def _created_date(self):
-        """
-        Return 0:00 AM of the created date.
-
-        Returns:
-            datetime.datetime
-        """
-        return self.created_time.replace(hour=0, minute=0, second=0, microsecond=0)
 
     def total(self):
         """
@@ -145,9 +109,7 @@ class PopulationData(CleaningBase):
             df["key"] = df[self.COUNTRY]
         else:
             df = df.loc[df[self.PROVINCE] != self.UNKNOWN, :]
-            df["key"] = df[self.COUNTRY].str.cat(
-                df[self.PROVINCE], sep=self.SEP
-            )
+            df["key"] = df[self.COUNTRY].str.cat(df[self.PROVINCE], sep=self.SEP)
         return df.set_index("key").to_dict()[self.N]
 
     def value(self, country, province=None, date=None):
@@ -167,8 +129,7 @@ class PopulationData(CleaningBase):
         """
         country_alias = self.ensure_country_name(country)
         try:
-            df = self.subset(
-                country=country, province=province, start_date=date, end_date=date)
+            df = self.subset(country=country, province=province, start_date=date, end_date=date)
         except KeyError:
             raise SubsetNotFoundError(
                 country=country, country_alias=country_alias, province=province, date=date)
@@ -194,21 +155,18 @@ class PopulationData(CleaningBase):
         """
         population = self._ensure_natural_int(value, "value")
         province = province or self.UNKNOWN
-        date_stamp = pd.to_datetime(date or self._created_date())
+        date_stamp = self._ensure_date(date, name="date", default=self._cleaned_df[self.DATE].max())
         df = self._cleaned_df.copy()
         c_series = df[self.COUNTRY]
         p_series = df[self.PROVINCE]
         d_series = df[self.DATE]
-        sel = (c_series == country) & (
-            p_series == province) & (d_series == date_stamp)
+        sel = (c_series == country) & (p_series == province) & (d_series == date_stamp)
         if not df.loc[sel, :].empty:
             df.loc[sel, self.N] = value
             self._cleaned_df = df.copy()
             return self
         series = pd.Series(
-            [self.UNKNOWN, country, province, date_stamp, population],
-            index=[self.ISO3, self.COUNTRY, self.PROVINCE, self.DATE, self.N]
-        )
+            [date_stamp, self.UNKNOWN, country, province, population], index=self.CLEANED_COLS)
         self._cleaned_df = df.append(series, ignore_index=True)
         return self
 
@@ -255,8 +213,7 @@ class PopulationData(CleaningBase):
         title = f"{country_str}: {variable.lower()} on {date_str}"
         # Global map
         if country is None:
-            return self._colored_map_global(
-                variable=variable, title=title, date=date, **kwargs)
+            return self._colored_map_global(variable=variable, title=title, date=date, **kwargs)
         # Country-specific map
         return self._colored_map_country(
             country=country, variable=variable, title=title, date=date, **kwargs)

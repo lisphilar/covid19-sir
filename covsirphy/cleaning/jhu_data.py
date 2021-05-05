@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
+from pathlib import Path
 import numpy as np
 import pandas as pd
 from covsirphy.util.error import SubsetNotFoundError, deprecate
@@ -14,12 +15,53 @@ class JHUData(CleaningBase):
     Data cleaning of JHU-style dataset.
 
     Args:
-        filename (str): CSV filename of the dataset
-        citation (str): citation
-    """
+        filename (str or None): CSV filename of the dataset
+        data (pandas.DataFrame or None):
+            Index
+                reset index
+            Columns
+                - Date: Observation date
+                - ISO3: ISO3 code
+                - Country: country/region name
+                - Province: province/prefecture/state name
+                - Confirmed: the number of confirmed cases
+                - Fatal: the number of fatal cases
+                - Recovered: the number of recovered cases
+        citation (str or None): citation or None (empty)
 
-    def __init__(self, filename, citation=None):
-        super().__init__(filename, citation)
+    Note:
+        Either @filename (high priority) or @data must be specified.
+    """
+    # Columns of self._raw and self._clean_df
+    RAW_COLS = [
+        CleaningBase.DATE, CleaningBase.ISO3, CleaningBase.COUNTRY, CleaningBase.PROVINCE,
+        CleaningBase.C, CleaningBase.F, CleaningBase.R,
+    ]
+    # Columns of self.cleaned()
+    CLEANED_COLS = [
+        CleaningBase.DATE, CleaningBase.ISO3, CleaningBase.COUNTRY, CleaningBase.PROVINCE,
+        CleaningBase.C, CleaningBase.CI, CleaningBase.F, CleaningBase.R,
+    ]
+    # Columns of self.subset()
+    SUBSET_COLS = [
+        CleaningBase.DATE, CleaningBase.C, CleaningBase.CI,
+        CleaningBase.F, CleaningBase.R, CleaningBase.S,
+    ]
+
+    def __init__(self, filename=None, data=None, citation=None):
+        # Raw data
+        self._raw = self._parse_raw(filename, data, self.RAW_COLS)
+        # Data cleaning
+        self._cleaned_df = pd.DataFrame(columns=self.RAW_COLS) if self._raw.empty else self._cleaning()
+        # Citation
+        self._citation = citation or ""
+        # Directory that save the file
+        if filename is None:
+            self._dirpath = Path("input")
+        else:
+            Path(filename).parent.mkdir(exist_ok=True, parents=True)
+            self._dirpath = Path(filename).resolve().parent
+        # Recovery period
         self._recovery_period = None
 
     @property
@@ -46,26 +88,23 @@ class JHUData(CleaningBase):
                 Index
                     reset index
                 Columns
-                    - Date (pd.Timestamp): Observation date
+                    - Date (pandas.Timestamp): Observation date
                     - Country (pandas.Category): country/region name
                     - Province (pandas.Category): province/prefecture/state name
                     - Confirmed (int): the number of confirmed cases
                     - Infected (int): the number of currently infected cases
                     - Fatal (int): the number of fatal cases
                     - Recovered (int): the number of recovered cases
-
-        Note:
-            Cleaning method is defined by self._cleaning() method.
         """
         if "population" in kwargs.keys():
             raise ValueError(
                 "@population was removed in JHUData.cleaned(). Please use JHUData.subset()")
-        return self._cleaned_df.loc[:, self.COLUMNS]
+        df = self._cleaned_df.loc[:, self.CLEANED_COLS]
+        return df.drop(self.ISO3, axis=1)
 
     def _cleaning(self):
         """
         Perform data cleaning of the raw data.
-        This method overwrite super()._cleaning() method.
 
         Returns:
             pandas.DataFrame
@@ -81,60 +120,27 @@ class JHUData(CleaningBase):
                     - Fatal (int): the number of fatal cases
                     - Recovered (int): the number of recovered cases
         """
-        df = super()._cleaning()
-        # Rename the columns
-        df = df.rename(
-            {
-                "ObservationDate": self.DATE,
-                "Country/Region": self.COUNTRY,
-                "Province/State": self.PROVINCE,
-                "Deaths": self.F,
-            },
-            axis=1
-        )
-        # Confirm the expected columns are in raw data
-        expected_cols = [
-            self.DATE, self.ISO3, self.COUNTRY, self.PROVINCE, self.C, self.F, self.R
-        ]
-        self._ensure_dataframe(df, name="the raw data", columns=expected_cols)
+        df = self._raw.loc[:, self.RAW_COLS]
         # Datetime columns
         df[self.DATE] = pd.to_datetime(df[self.DATE])
-        # Country
-        df[self.COUNTRY] = df[self.COUNTRY].replace(
-            {
-                # COD
-                "Congo, the Democratic Republic of the": "Democratic Republic of the Congo",
-                # COG
-                "Congo": "Republic of the Congo",
-                # South Korea
-                "Korea, South": "South Korea",
-            }
-        )
         # Province
         df[self.PROVINCE] = df[self.PROVINCE].fillna(self.UNKNOWN)
-        # Set 'Others' as the country name of cruise ships
-        ships = ["Diamond Princess", "Costa Atlantica", "Grand Princess", "MS Zaandam"]
-        for ship in ships:
-            df.loc[df[self.COUNTRY] == ship, [self.COUNTRY, self.PROVINCE]] = [self.OTHERS, ship]
         # Values
-        df = df.fillna(method="ffill").fillna(0)
-        df[self.CI] = df[self.C] - df[self.F] - df[self.R]
-        df[self.VALUE_COLUMNS] = df[self.VALUE_COLUMNS].astype(np.int64)
-        df = df.loc[:, [self.ISO3, *self.COLUMNS]].reset_index(drop=True)
+        for col in [self.C, self.F, self.R]:
+            df[col] = df[col].ffill().fillna(0).astype(np.int64)
+        # Calculate Infected
+        df[self.CI] = (df[self.C] - df[self.F] - df[self.R]).astype(np.int64)
         # As country level data in China, use the total values of provinces
-        p_chn_df = df.loc[
-            (df[self.COUNTRY] == "China") & (df[self.PROVINCE] != self.UNKNOWN)]
+        p_chn_df = df.loc[(df[self.COUNTRY] == "China") & (df[self.PROVINCE] != self.UNKNOWN)]
         p_chn_df = p_chn_df.groupby(self.DATE).sum().reset_index()
         p_chn_df.insert(0, self.COUNTRY, "China")
         p_chn_df.insert(0, self.PROVINCE, self.UNKNOWN)
-        p_chn_df[self.ISO3] = self.country_to_iso3(
-            country="China", check_data=False)
-        without_c_chn_df = df.loc[
-            (df[self.COUNTRY] != "China") | (df[self.PROVINCE] != self.UNKNOWN)]
+        p_chn_df[self.ISO3] = self.country_to_iso3(country="China", check_data=False)
+        without_c_chn_df = df.loc[(df[self.COUNTRY] != "China") | (df[self.PROVINCE] != self.UNKNOWN)]
         df = pd.concat([without_c_chn_df, p_chn_df], ignore_index=True)
         # Update data types to reduce memory
         df[self.AREA_ABBR_COLS] = df[self.AREA_ABBR_COLS].astype("category")
-        return df
+        return df.loc[:, self.CLEANED_COLS]
 
     def replace(self, country_data):
         """
@@ -152,8 +158,10 @@ class JHUData(CleaningBase):
         self._ensure_instance(country_data, CountryData, name="country_data")
         # Read new dataset
         country = country_data.country
-        new = country_data.cleaned().loc[:, self.COLUMNS]
+        new = country_data.cleaned()
         new[self.ISO3] = self.country_to_iso3(country)
+        new = new.loc[:, self.RAW_COLS]
+        new[self.CI] = (new[self.C] - new[self.F] - new[self.R]).astype(np.int64)
         # Remove the data in the country from JHU dataset
         df = self._cleaned_df.copy()
         df = df.loc[df[self.COUNTRY] != country]
@@ -186,12 +194,14 @@ class JHUData(CleaningBase):
                     - Infected (int): the number of currently infected cases
                     - Fatal (int): the number of fatal cases
                     - Recovered (int): the number of recovered cases
+                    - Infected (int): the number of currently infected cases
         """
         try:
-            return super().subset(
+            df = super().subset(
                 country=country, province=province, start_date=start_date, end_date=end_date)
         except SubsetNotFoundError:
-            return pd.DataFrame(columns=self.NLOC_COLUMNS)
+            return pd.DataFrame(columns=self.RAW_COLS)
+        return df
 
     def _calculate_susceptible(self, subset_df, population):
         """
@@ -226,8 +236,8 @@ class JHUData(CleaningBase):
         """
         if population is None:
             return subset_df
-        subset_df.loc[:, self.S] = population - subset_df.loc[:, self.C]
-        return subset_df[self.SUB_COLUMNS]
+        subset_df.loc[:, self.S] = (population - subset_df.loc[:, self.C]).astype(np.int64)
+        return subset_df[self.SUBSET_COLS]
 
     def subset(self, country, province=None, start_date=None, end_date=None, population=None):
         """
@@ -311,15 +321,27 @@ class JHUData(CleaningBase):
 
         Args:
             dataframe (pd.DataFrame): cleaned dataset
+                Index
+                    reset index
+                Columns
+                    - Date: Observation date
+                    - ISO3: ISO3 code (optional)
+                    - Country: country/region name
+                    - Province: province/prefecture/state name
+                    - Confirmed: the number of confirmed cases
+                    - Infected: the number of currently infected cases
+                    - Fatal: the number of fatal cases
+                    - Recovered: the number of recovered cases
             directory (str): directory to save geometry information (for .map() method)
 
         Returns:
             covsirphy.JHUData: JHU-style dataset
         """
+        df = cls._ensure_dataframe(dataframe, name="dataframe")
+        df[cls.ISO3] = df[cls.ISO3] if cls.ISO3 in df.columns else cls.UNKNOWN
         instance = cls(filename=None)
         instance.directory = str(directory)
-        instance._cleaned_df = cls._ensure_dataframe(
-            dataframe, name="dataframe", columns=cls.COLUMNS)
+        instance._cleaned_df = cls._ensure_dataframe(df, name="dataframe", columns=cls.RAW_COLS)
         return instance
 
     def total(self):
@@ -330,7 +352,7 @@ class JHUData(CleaningBase):
             pandas.DataFrame: group-by Date, sum of the values
 
                 Index
-                    Date (pandas.TimeStamp): Observation date
+                    Date (pandas.Timestamp): Observation date
                 Columns
                     - Confirmed (int): the number of confirmed cases
                     - Infected (int): the number of currently infected cases
@@ -349,7 +371,7 @@ class JHUData(CleaningBase):
         df[r_cols[1]] = df[self.R] / total_series
         df[r_cols[2]] = df[self.F] / (df[self.F] + df[self.R])
         # Set the final date of the records
-        raw_df = self._raw.rename({"ObservationDate": self.DATE}, axis=1)
+        raw_df = self._raw.copy()
         final_date = pd.to_datetime(raw_df[self.DATE]).dt.date.max()
         df = df.loc[df.index.date <= final_date]
         return df.loc[:, [*self.VALUE_COLUMNS, *r_cols]]
@@ -529,8 +551,7 @@ class JHUData(CleaningBase):
                 start_date=start_date, end_date=end_date) from None
         # Complement, if necessary
         self._recovery_period = self._recovery_period or self.calculate_recovery_period()
-        handler = JHUDataComplementHandler(
-            recovery_period=self._recovery_period, **kwargs)
+        handler = JHUDataComplementHandler(recovery_period=self._recovery_period, **kwargs)
         df, status, _ = handler.run(subset_df)
         # Calculate Susceptible
         df = self._calculate_susceptible(df, population)
@@ -583,8 +604,7 @@ class JHUData(CleaningBase):
             "start_date": start_date, "end_date": end_date, "population": population,
         }
         if auto_complement:
-            df, is_complemented = self.subset_complement(
-                **subset_arg_dict, **kwargs)
+            df, is_complemented = self.subset_complement(**subset_arg_dict, **kwargs)
             if not df.empty:
                 return (df, is_complemented)
         try:
@@ -629,21 +649,17 @@ class JHUData(CleaningBase):
         self._recovery_period = self._recovery_period or self.calculate_recovery_period()
         # Area name
         if country is None:
-            country = [
-                c for c in self._cleaned_df[self.COUNTRY].unique() if c != "Others"]
+            country = [c for c in self._cleaned_df[self.COUNTRY].unique() if c != "Others"]
         province = province or self.UNKNOWN
         if not isinstance(country, str) and province != self.UNKNOWN:
-            raise ValueError(
-                "@province cannot be specified when @country is not a string.")
+            raise ValueError("@province cannot be specified when @country is not a string.")
         if not isinstance(country, list):
             country = [country]
         # Create complement handler
-        handler = JHUDataComplementHandler(
-            recovery_period=self._recovery_period, **kwargs)
+        handler = JHUDataComplementHandler(recovery_period=self._recovery_period, **kwargs)
         # Check each country
         complement_df = pd.DataFrame(
-            columns=[
-                self.COUNTRY, self.PROVINCE, *JHUDataComplementHandler.SHOW_COMPLEMENT_FULL_COLS])
+            columns=[self.COUNTRY, self.PROVINCE, *JHUDataComplementHandler.SHOW_COMPLEMENT_FULL_COLS])
         complement_df.set_index(self.COUNTRY, inplace=True)
         for cur_country in country:
             subset_df = self._subset(
@@ -652,10 +668,8 @@ class JHUData(CleaningBase):
                 raise SubsetNotFoundError(
                     country=cur_country, province=province, start_date=start_date, end_date=end_date)
             *_, complement_dict = handler.run(subset_df)
-            complement_dict_values = pd.Series(
-                complement_dict.values(), dtype=bool).values
-            complement_df.loc[cur_country] = [
-                province, *complement_dict_values]
+            complement_dict_values = pd.Series(complement_dict.values(), dtype=bool).values
+            complement_df.loc[cur_country] = [province, *complement_dict_values]
         return complement_df.reset_index()
 
     def map(self, country=None, variable="Confirmed", date=None, **kwargs):

@@ -47,6 +47,37 @@ class CleaningBase(Term):
         else:
             self._dirpath = Path(filename).resolve().parent
 
+    def _parse_raw(self, filename, data, raw_columns):
+        """
+        Parse raw data with a CSV file or a dataframe.
+
+        Args:
+            filename (str or None): CSV filename of the dataset
+            data (pandas.DataFrame or None):
+                Index
+                    reset index
+                Columns
+                    columns defined by @raw_columns
+            raw_columns (list[str]): columns to parse
+
+        Returns:
+            pandas.DataFrame:
+                Index
+                    reset index
+                Columns
+                    columns defined by @raw_columns
+
+        Note:
+            Either @filename (high priority) or @data must be specified.
+        """
+        if filename is not None:
+            return self.load(
+                filename, columns=raw_columns,
+                dtype={self.PROVINCE: "object", "Province/State": "object"})
+        if data is not None:
+            return self._ensure_dataframe(data, name="data", columns=raw_columns)
+        return pd.DataFrame(columns=raw_columns)
+
     @property
     def raw(self):
         """

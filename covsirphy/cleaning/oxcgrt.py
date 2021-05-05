@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
+from pathlib import Path
 import pandas as pd
 from covsirphy.util.error import SubsetNotFoundError
 from covsirphy.cleaning.cbase import CleaningBase
@@ -11,103 +12,117 @@ class OxCGRTData(CleaningBase):
     Data cleaning of OxCGRT dataset.
 
     Args:
-        filename (str): CSV filename of the dataset
-        citation (str): citation
-    """
-    OXCGRT_VARIABLES_RAW = [
-        "school_closing",
-        "workplace_closing",
-        "cancel_events",
-        "gatherings_restrictions",
-        "transport_closing",
-        "stay_home_restrictions",
-        "internal_movement_restrictions",
-        "international_movement_restrictions",
-        "information_campaigns",
-        "testing_policy",
-        "contact_tracing",
-        "stringency_index"
-    ]
-    OXCGRT_COL_DICT = {v: v.capitalize() for v in OXCGRT_VARIABLES_RAW}
-    OXCGRT_VARS = list(OXCGRT_COL_DICT.values())
-    OXCGRT_COLS = [
-        CleaningBase.DATE, CleaningBase.COUNTRY, CleaningBase.ISO3,
-        *list(OXCGRT_COL_DICT.values())
-    ]
-    OXCGRT_COLS_WITHOUT_COUNTRY = [
-        CleaningBase.DATE, *list(OXCGRT_COL_DICT.values())
-    ]
-    OXCGRT_VARS_INDICATORS = [
-        v for v in OXCGRT_VARS if v != "Stringency_index"]
+        filename (str or None): CSV filename of the dataset
+        data (pandas.DataFrame or None):
+            Index
+                reset index
+            Columns
+                - Date: Observation date
+                - ISO3: ISO 3166-1 alpha-3, like JPN
+                - Country: country/region name
+                - School_closing
+                - Workplace_closing
+                - Cancel_events
+                - Gatherings_restrictions
+                - Transport_closing
+                - Stay_home_restrictions
+                - Internal_movement_restrictions
+                - International_movement_restrictions
+                - Information_campaigns
+                - Testing_policy
+                - Contact_tracing
+                - Stringency_index
+        citation (str or None): citation or None (empty)
 
-    def __init__(self, filename, citation=None):
-        super().__init__(filename, citation)
+    Note:
+        Either @filename (high priority) or @data must be specified.
+
+    Note:
+        Policy indices (Overall etc.) are from README.md and documentation/index_methodology.md in
+        https://github.com/OxCGRT/covid-policy-tracker/
+    """
+    OXCGRT_VARS = [
+        "School_closing",
+        "Workplace_closing",
+        "Cancel_events",
+        "Gatherings_restrictions",
+        "Transport_closing",
+        "Stay_home_restrictions",
+        "Internal_movement_restrictions",
+        "International_movement_restrictions",
+        "Information_campaigns",
+        "Testing_policy",
+        "Contact_tracing",
+        "Stringency_index"
+    ]
+    # Columns of self._raw and self._clean_df
+    RAW_COLS = [CleaningBase.DATE, CleaningBase.ISO3, CleaningBase.COUNTRY, *OXCGRT_VARS]
+    # Columns of self.cleaned()
+    CLEANED_COLS = RAW_COLS[:]
+    # Columns of self.subset()
+    SUBSET_COLS = [CleaningBase.DATE, *OXCGRT_VARS]
+    # Indicators except for Stringency index
+    OXCGRT_VARS_INDICATORS = [v for v in OXCGRT_VARS if v != "Stringency_index"]
+    # Deprecated
+    OXCGRT_VARIABLES_RAW = [v.lower() for v in OXCGRT_VARS]
+    OXCGRT_COLS = RAW_COLS[:]
+    OXCGRT_COLS_WITHOUT_COUNTRY = SUBSET_COLS[:]
+
+    def __init__(self, filename=None, data=None, citation=None):
+        # Raw data
+        self._raw = self._parse_raw(filename, data, self.RAW_COLS)
+        # Data cleaning
+        self._cleaned_df = pd.DataFrame(columns=self.RAW_COLS) if self._raw.empty else self._cleaning()
+        # Citation
+        self._citation = citation or ""
+        # Directory that save the file
+        if filename is None:
+            self._dirpath = Path("input")
+        else:
+            Path(filename).parent.mkdir(exist_ok=True, parents=True)
+            self._dirpath = Path(filename).resolve().parent
 
     def _cleaning(self):
         """
         Perform data cleaning of the raw data.
-        This method overwrite super()._cleaning() method.
-        Policy indices (Overall etc.) are from
-        README.md and documentation/index_methodology.md in
-        https://github.com/OxCGRT/covid-policy-tracker/
 
         Returns:
             pandas.DataFrame
                 Index
                     reset index
                 Columns
-                    - Date (pd.Timestamp): Observation date
-                    - Country (pandas.Category): country/region name
+                    - Date (pandas.Timestamp): Observation date
                     - ISO3 (str): ISO 3166-1 alpha-3, like JPN
-                    - other column names are defined by OxCGRTData.COL_DICT
+                    - Country (pandas.Category): country/region name
+                    - School_closing
+                    - Workplace_closing
+                    - Cancel_events
+                    - Gatherings_restrictions
+                    - Transport_closing
+                    - Stay_home_restrictions
+                    - Internal_movement_restrictions
+                    - International_movement_restrictions
+                    - Information_campaigns
+                    - Testing_policy
+                    - Contact_tracing
+                    - Stringency_index
         """
         df = self._raw.copy()
-        # Rename the columns
-        df = df.rename(self.OXCGRT_COL_DICT, axis=1)
-        df = df.rename(
-            {
-                "CountryName": self.COUNTRY, "CountryCode": self.ISO3,
-                "Country/Region": self.COUNTRY, "ObservationDate": self.DATE,
-            },
-            axis=1
-        )
-        df[self.COUNTRY] = df[self.COUNTRY].replace(
-            {
-                # COD
-                "Congo, the Democratic Republic of the": "Democratic Republic of the Congo",
-                # COG
-                "Congo": "Republic of the Congo",
-                # South Korea
-                "Korea, South": "South Korea",
-            }
-        )
+        # Prepare data for Greenland
         grl_df = df.loc[df[self.COUNTRY] == "Denmark"].copy()
         grl_df.loc[:, [self.ISO3, self.COUNTRY]] = ["GRL", "Greenland"]
         df = pd.concat([df, grl_df], sort=True, ignore_index=True)
-        # Set 'Others' as the country name of cruise ships
-        ships = ["Diamond Princess", "Costa Atlantica", "Grand Princess", "MS Zaandam"]
-        for ship in ships:
-            df.loc[df[self.COUNTRY] == ship, self.COUNTRY] = self.OTHERS
         # Confirm the expected columns are in raw data
-        self._ensure_dataframe(
-            df, name="the raw data", columns=self.OXCGRT_COLS
-        )
+        self._ensure_dataframe(df, name="the raw data", columns=self.CLEANED_COLS)
         # Read date records
-        try:
-            df[self.DATE] = pd.to_datetime(df[self.DATE], format="%Y%m%d")
-        except ValueError:
-            df[self.DATE] = pd.to_datetime(df[self.DATE], format="%Y-%m-%d")
+        df[self.DATE] = pd.to_datetime(df[self.DATE])
         # Confirm float type
-        float_cols = list(self.OXCGRT_COL_DICT.values())
-        for col in float_cols:
-            df[col] = pd.to_numeric(df[col], errors="coerce")
-            df[col] = df[col].fillna(method="ffill")
-        # Select the columns to use
-        df = df.loc[:, [self.DATE, self.COUNTRY, self.ISO3, *float_cols]]
+        for col in self.OXCGRT_VARS:
+            df[col] = pd.to_numeric(df[col], errors="coerce").ffill()
         # Update data types to reduce memory
         cat_cols = [self.ISO3, self.COUNTRY]
         df[cat_cols] = df[cat_cols].astype("category")
-        return df
+        return df.loc[:, self.CLEANED_COLS]
 
     def subset(self, country, **kwargs):
         """
@@ -125,18 +140,28 @@ class OxCGRTData(CleaningBase):
                 Index
                     reset index
                 Columns
-                    - Date (pd.Timestamp): Observation date
-                    - other column names are defined by OxCGRTData.COL_DICT
+                    - Date (pandas.Timestamp): Observation date
+                    - School_closing
+                    - Workplace_closing
+                    - Cancel_events
+                    - Gatherings_restrictions
+                    - Transport_closing
+                    - Stay_home_restrictions
+                    - Internal_movement_restrictions
+                    - International_movement_restrictions
+                    - Information_campaigns
+                    - Testing_policy
+                    - Contact_tracing
+                    - Stringency_index
         """
         country_arg = country
         country = self.ensure_country_name(country)
         try:
             df = super().subset(country=country)
         except SubsetNotFoundError:
-            raise SubsetNotFoundError(
-                country=country_arg, country_alias=country) from None
+            raise SubsetNotFoundError(country=country_arg, country_alias=country) from None
         df = df.groupby(self.DATE).last().reset_index()
-        return df.loc[:, self.OXCGRT_COLS_WITHOUT_COUNTRY]
+        return df.loc[:, self.SUBSET_COLS]
 
     def total(self):
         """
