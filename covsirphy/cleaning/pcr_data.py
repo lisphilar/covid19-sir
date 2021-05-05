@@ -48,14 +48,7 @@ class PCRData(CleaningBase):
 
     def __init__(self, filename=None, data=None, interval=2, min_pcr_tests=100, citation=None):
         # Raw data
-        if filename is not None:
-            self._raw = self.load(
-                filename, columns=self.RAW_COLS,
-                dtype={self.PROVINCE: "object", "Province/State": "object"})
-        elif data is not None:
-            self._raw = self._ensure_dataframe(data, name="data", columns=self.RAW_COLS)
-        else:
-            self._raw = pd.DataFrame(columns=self.RAW_COLS)
+        self._raw = self._parse_raw(filename, data, self.RAW_COLS)
         # Data cleaning
         self._cleaned_df = pd.DataFrame(columns=self.RAW_COLS) if self._raw.empty else self._cleaning()
         # Settings
