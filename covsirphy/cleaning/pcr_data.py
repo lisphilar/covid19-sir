@@ -4,7 +4,6 @@
 from pathlib import Path
 import numpy as np
 import pandas as pd
-from dask import dataframe as dd
 from covsirphy.util.error import PCRIncorrectPreconditionError, SubsetNotFoundError
 from covsirphy.visualization.line_plot import line_plot
 from covsirphy.cleaning.cbase import CleaningBase
@@ -17,31 +16,51 @@ class PCRData(CleaningBase):
 
     Args:
         filename (str or None): CSV filename of the dataset
+        data (pandas.DataFrame or None):
+            Index
+                reset index
+            Columns
+                - Date: Observation date
+                - ISO3: ISO3 code
+                - Country: country/region name
+                - Province: province/prefecture/state name
+                - Tests: the number of tests
         interval (int): expected update interval of the number of confirmed cases and tests [days]
         min_pcr_tests (int): minimum number of valid daily tests performed in order to calculate positive rate
         citation (str): citation
     """
-    # Column names
-    PCR_VALUE_COLUMNS = [CleaningBase.TESTS, CleaningBase.C]
-    PCR_NLOC_COLUMNS = [CleaningBase.DATE, *PCR_VALUE_COLUMNS]
-    PCR_COLUMNS = [*CleaningBase.STR_COLUMNS, *PCR_VALUE_COLUMNS]
+    # Columns of self._raw and self._clean_df
+    RAW_COLS = [
+        CleaningBase.DATE, CleaningBase.ISO3, CleaningBase.COUNTRY, CleaningBase.PROVINCE,
+        CleaningBase.TESTS, CleaningBase.C]
+    # Columns of self.cleaned()
+    CLEANED_COLS = RAW_COLS[:]
+    # Columns of self.subset()
+    SUBSET_COLS = [CleaningBase.DATE, CleaningBase.TESTS, CleaningBase.C]
     # Daily values
     T_DIFF = "Tests_diff"
     C_DIFF = "Confirmed_diff"
     PCR_RATE = "Test_positive_rate"
+    # Deprecated
+    PCR_VALUE_COLUMNS = [CleaningBase.TESTS, CleaningBase.C]
+    PCR_NLOC_COLUMNS = [CleaningBase.DATE, *PCR_VALUE_COLUMNS]
+    PCR_COLUMNS = [*CleaningBase.STR_COLUMNS, *PCR_VALUE_COLUMNS]
 
-    def __init__(self, filename, interval=2, min_pcr_tests=100, citation=None):
-        if filename is None:
-            self._raw = pd.DataFrame()
-            self._cleaned_df = pd.DataFrame(columns=self.PCR_COLUMNS)
+    def __init__(self, filename=None, data=None, interval=2, min_pcr_tests=100, citation=None):
+        # Raw data
+        if filename is not None:
+            self._raw = self.load(
+                filename, columns=self.RAW_COLS,
+                dtype={self.PROVINCE: "object", "Province/State": "object"})
+        elif data is not None:
+            self._raw = self._ensure_dataframe(data, name="data", columns=self.RAW_COLS)
         else:
-            self._raw = dd.read_csv(
-                filename, dtype={"Province/State": "object"}
-            ).compute()
-            self._cleaned_df = self._cleaning()
+            self._raw = pd.DataFrame(columns=self.RAW_COLS)
+        # Data cleaning
+        self._cleaned_df = pd.DataFrame(columns=self.RAW_COLS) if self._raw.empty else self._cleaning()
+        # Settings
         self.interval = self._ensure_natural_int(interval, name="interval")
-        self.min_pcr_tests = self._ensure_natural_int(
-            min_pcr_tests, name="min_pcr_tests")
+        self.min_pcr_tests = self._ensure_natural_int(min_pcr_tests, name="min_pcr_tests")
         self._citation = citation or ""
         # Cleaned dataset of "Our World In Data"
         self._cleaned_df_owid = pd.DataFrame()
@@ -65,11 +84,9 @@ class PCRData(CleaningBase):
                     - Province (pandas.Category): province/prefecture/state name
                     - Tests (int): the number of total tests performed
                     - Confirmed (int): the number of confirmed cases
-
-        Note:
-            Cleaning method is defined by self._cleaning() method.
         """
-        return self._cleaned_df.loc[:, self.PCR_COLUMNS]
+        df = self._cleaned_df.loc[:, self.CLEANED_COLS]
+        return df.drop(self.ISO3, axis=1)
 
     def _cleaning(self):
         """
@@ -88,41 +105,16 @@ class PCRData(CleaningBase):
                     - Tests (int): the number of total tests performed
                     - Confirmed (int): the number of confirmed cases
         """
-        df = super()._cleaning()
-        # Rename the columns
-        df = df.rename(
-            {
-                "ObservationDate": self.DATE,
-                "Country/Region": self.COUNTRY,
-                "Province/State": self.PROVINCE,
-            },
-            axis=1
-        )
-        # Confirm the expected columns are in raw data
-        self._ensure_dataframe(
-            df, name="the raw data", columns=self.PCR_COLUMNS)
+        df = self._raw.copy()
         # Datetime columns
         df[self.DATE] = pd.to_datetime(df[self.DATE])
-        # Country
-        df[self.COUNTRY] = df[self.COUNTRY].replace(
-            {
-                # COD
-                "Congo, the Democratic Republic of the": "Democratic Republic of the Congo",
-                # COG
-                "Congo": "Republic of the Congo",
-                # South Korea
-                "Korea, South": "South Korea",
-            }
-        )
         # Province
         df[self.PROVINCE] = df[self.PROVINCE].fillna(self.UNKNOWN)
-        df.loc[df[self.COUNTRY] == "Diamond Princess", [
-            self.COUNTRY, self.PROVINCE]] = ["Others", "Diamond Princess"]
         # Values
-        df = df.fillna(method="ffill").fillna(0)
+        df = df.ffill().fillna(0)
         df[self.TESTS] = df[self.TESTS].astype(np.int64)
         df[self.C] = df[self.C].astype(np.int64)
-        df = df.loc[:, [self.ISO3, *self.PCR_COLUMNS]].reset_index(drop=True)
+        df = df.loc[:, self.CLEANED_COLS].reset_index(drop=True)
         # Update data types to reduce memory
         df[self.AREA_ABBR_COLS] = df[self.AREA_ABBR_COLS].astype("category")
         return df
@@ -134,15 +126,24 @@ class PCRData(CleaningBase):
 
         Args:
             dataframe (pd.DataFrame): cleaned dataset
+                Index
+                    reset index
+                Columns
+                    - Date: Observation date
+                    - ISO3: ISO3 code (optional)
+                    - Country: country/region name
+                    - Province: province/prefecture/state name
+                    - Tests: the number of tests
             directory (str): directory to save geometry information (for .map() method)
 
         Returns:
             covsirphy.PCRData: PCR dataset
         """
+        df = cls._ensure_dataframe(dataframe, name="dataframe")
+        df[cls.ISO3] = df[cls.ISO3] if cls.ISO3 in df.columns else cls.UNKNOWN
         instance = cls(filename=None)
         instance.directory = str(directory)
-        instance._cleaned_df = cls._ensure_dataframe(
-            dataframe, name="dataframe", columns=cls.PCR_COLUMNS)
+        instance._cleaned_df = cls._ensure_dataframe(df, name="dataframe", columns=cls.RAW_COLS)
         return instance
 
     def _download_ourworldindata(self, filename):
@@ -169,8 +170,7 @@ class PCRData(CleaningBase):
         df[self.TESTS] = df[self.TESTS].fillna(method="ffill").astype(np.int64)
         # Calculate cumulative values if necessary
         df[self.T_DIFF] = df[self.T_DIFF].fillna(0).astype(np.int64)
-        na_last_df = df.loc[
-            (df[self.TESTS].isna()) & (df[self.DATE] == df[self.DATE].max())]
+        na_last_df = df.loc[(df[self.TESTS].isna()) & (df[self.DATE] == df[self.DATE].max())]
         re_countries_set = set(na_last_df[self.ISO3].unique())
         df["cumsum"] = df.groupby(self.ISO3)[self.T_DIFF].cumsum()
         df[self.TESTS] = df[[self.ISO3, self.TESTS, "cumsum"]].apply(
@@ -247,10 +247,10 @@ class PCRData(CleaningBase):
         self._ensure_instance(country_data, CountryData, name="country_data")
         # Read new dataset
         country = country_data.country
-        new = self._ensure_dataframe(
-            country_data.cleaned(), name="the raw data", columns=self.PCR_COLUMNS)
-        new = new.loc[:, self.PCR_COLUMNS]
+        new = country_data.cleaned()
         new[self.ISO3] = self.country_to_iso3(country)
+        self._ensure_dataframe(new, name="the raw data", columns=self.CLEANED_COLS)
+        new = new.loc[:, self.CLEANED_COLS]
         # Remove the data in the country from the current datset
         df = self._cleaned_df.copy()
         df = df.loc[df[self.COUNTRY] != country]
@@ -350,21 +350,17 @@ class PCRData(CleaningBase):
         if not (check_tests_ending and check_C):
             return df
         # Complement any ending unupdated test values
-        # that are not updated daily, by keeping and
-        # propagating forward previous valid diff()
+        # that are not updated daily, by keeping and propagating forward previous valid diff()
         # min_index: index for first ending max test reoccurrence
         min_index = df[self.TESTS].idxmax() + 1
         first_value = df.loc[min_index, self.TESTS]
         df_ending = df.copy()
-        df_ending.loc[df_ending.duplicated(
-            [self.TESTS], keep="first"), self.TESTS] = None
-        diff_series = df_ending[self.TESTS].diff(
-        ).ffill().fillna(0).astype(np.int64)
+        df_ending.loc[df_ending.duplicated([self.TESTS], keep="first"), self.TESTS] = None
+        diff_series = df_ending[self.TESTS].diff().ffill().fillna(0).astype(np.int64)
         diff_series.loc[diff_series.duplicated(keep="last")] = None
         diff_series.interpolate(
             method="linear", inplace=True, limit_direction="both")
-        df.loc[min_index:, self.TESTS] = first_value + \
-            diff_series.loc[min_index:].cumsum()
+        df.loc[min_index:, self.TESTS] = first_value + diff_series.loc[min_index:].cumsum()
         return df
 
     def _pcr_partial_complement(self, before_df, variable):
@@ -442,8 +438,7 @@ class PCRData(CleaningBase):
         df[self.T_DIFF] = df[self.TESTS].diff()
         df[self.C_DIFF] = df[self.C].diff()
         # Ensure that tests > confirmed in daily basis
-        df.loc[
-            df[self.T_DIFF].abs() < df[self.C_DIFF].abs(), self.T_DIFF] = None
+        df.loc[df[self.T_DIFF].abs() < df[self.C_DIFF].abs(), self.T_DIFF] = None
         # Keep valid non-zero values by ignoring zeros at the beginning
         df = df.replace(0, np.nan)
         non_zero_index_start = df[self.T_DIFF].first_valid_index()
