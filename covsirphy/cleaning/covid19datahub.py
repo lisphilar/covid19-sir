@@ -67,10 +67,11 @@ class COVID19DataHub(Term):
             raise TypeError(f"@filename should be a path-like object, but {filename} was applied.")
         self.filepath.parent.mkdir(exist_ok=True, parents=True)
         self.primary_list = None
+        self._loaded_df = None
 
     def load(self, name="jhu", force=True, verbose=1):
         """
-        Load the datasets of COVID-19 Data Hub.
+        Load the datasets of COVID-19 Data Hub and create dataset object.
 
         Args:
             name (str): name of dataset, "jhu", "population", "oxcgrt" or "pcr"
@@ -88,6 +89,26 @@ class COVID19DataHub(Term):
         if name not in self.OBJ_DICT:
             raise KeyError(
                 f"@name must be {', '.join(list(self.OBJ_DICT.keys()))}, but {name} was applied.")
+        # Get all data
+        if self._loaded_df is None:
+            self._loaded_df = self._load(force=force, verbose=verbose)
+        return self.OBJ_DICT[name](data=self._loaded_df, citation=self.CITATION)
+
+    def _load(self, force, verbose):
+        """
+        Load the datasets of COVID-19 Data Hub.
+
+        Args:
+            force (bool): if True, always download the dataset from the server
+            verbose (int): level of verbosity
+
+        Returns:
+            pandas.DataFrame: as the same as COVID19DataHub._preprocessing()
+
+        Note:
+            If @verbose is 2, detailed citation list will be shown when downloading.
+            If @verbose is 1, how to show the list will be explained.
+        """
         # Use local CSV file
         if not force and self.filepath.exists():
             df = CleaningBase.load(
@@ -97,11 +118,11 @@ class COVID19DataHub(Term):
                     "key": "object", "key_alpha_2": "object",
                 })
             if set(self._COL_DICT.values()).issubset(df.columns):
-                return self.OBJ_DICT[name](data=df, citation=self.CITATION)
+                return df
         # Download dataset from server
         raw_df = self._retrieve(verbose=verbose)
         raw_df.to_csv(self.filepath, index=False)
-        return self.OBJ_DICT[name](data=raw_df, citation=self.CITATION)
+        return raw_df
 
     def _retrieve(self, verbose=1):
         """

@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
+from covsirphy.cleaning.jhu_data import JHUData
 from covsirphy.util.term import Term
 import pytest
 from covsirphy import ExampleData, PopulationData, Scenario
@@ -21,6 +22,9 @@ class TestExampleData(object):
         example_data.add(model)
         with pytest.raises(ValueError):
             example_data.subset()
+        # Cleaned dataset
+        clean_df = example_data.cleaned()
+        assert set(clean_df.columns) == set(JHUData.CLEANED_COLS) - set([Term.ISO3])
         # Subset
         subset_df = example_data.subset(model=model)
         assert subset_df.columns.tolist() == Term.SUB_COLUMNS
