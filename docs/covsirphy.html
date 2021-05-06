@@ -67,7 +67,7 @@
             
             
               <div class="version">
-                2.19.1-theta-fu1
+                2.19.1-iota-fu1
               </div>
             
           
@@ -329,7 +329,7 @@ Index</p>
 <dl class="py method">
 <dt id="covsirphy.COVID19DataHub.load">
 <code class="sig-name descname"><span class="pre">load</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'jhu'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">force</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/cleaning/covid19datahub.html#COVID19DataHub.load"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#covsirphy.COVID19DataHub.load" title="Permalink to this definition">¶</a></dt>
-<dd><p>Load the datasets of COVID-19 Data Hub.</p>
+<dd><p>Load the datasets of COVID-19 Data Hub and create dataset object.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
@@ -2178,17 +2178,51 @@ Complement will not be done.</p>
 
 <dl class="py class">
 <dt id="covsirphy.JHUData">
-<em class="property"><span class="pre">class</span> </em><code class="sig-name descname"><span class="pre">JHUData</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filename</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">citation</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/cleaning/jhu_data.html#JHUData"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#covsirphy.JHUData" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">class</span> </em><code class="sig-name descname"><span class="pre">JHUData</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filename</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">data</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">citation</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/cleaning/jhu_data.html#JHUData"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#covsirphy.JHUData" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="covsirphy.cleaning.html#covsirphy.cleaning.cbase.CleaningBase" title="covsirphy.cleaning.cbase.CleaningBase"><code class="xref py py-class docutils literal notranslate"><span class="pre">covsirphy.cleaning.cbase.CleaningBase</span></code></a></p>
 <p>Data cleaning of JHU-style dataset.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>filename</strong> (<em>str</em>) – CSV filename of the dataset</p></li>
-<li><p><strong>citation</strong> (<em>str</em>) – citation</p></li>
+<li><p><strong>filename</strong> (<em>str</em><em> or </em><em>None</em>) – CSV filename of the dataset</p></li>
+<li><p><strong>data</strong> (<em>pandas.DataFrame</em><em> or </em><em>None</em>) – <dl class="simple">
+<dt>Index</dt><dd><p>reset index</p>
+</dd>
+<dt>Columns</dt><dd><ul>
+<li><p>Date: Observation date</p></li>
+<li><p>ISO3: ISO3 code</p></li>
+<li><p>Country: country/region name</p></li>
+<li><p>Province: province/prefecture/state name</p></li>
+<li><p>Confirmed: the number of confirmed cases</p></li>
+<li><p>Fatal: the number of fatal cases</p></li>
+<li><p>Recovered: the number of recovered cases</p></li>
 </ul>
 </dd>
 </dl>
+</p></li>
+<li><p><strong>citation</strong> (<em>str</em><em> or </em><em>None</em>) – citation or None (empty)</p></li>
+</ul>
+</dd>
+</dl>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Either &#64;filename (high priority) or &#64;data must be specified.</p>
+</div>
+<dl class="py attribute">
+<dt id="covsirphy.JHUData.CLEANED_COLS">
+<code class="sig-name descname"><span class="pre">CLEANED_COLS</span></code><em class="property"> <span class="pre">=</span> <span class="pre">['Date',</span> <span class="pre">'ISO3',</span> <span class="pre">'Country',</span> <span class="pre">'Province',</span> <span class="pre">'Confirmed',</span> <span class="pre">'Infected',</span> <span class="pre">'Fatal',</span> <span class="pre">'Recovered']</span></em><a class="headerlink" href="#covsirphy.JHUData.CLEANED_COLS" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="covsirphy.JHUData.RAW_COLS">
+<code class="sig-name descname"><span class="pre">RAW_COLS</span></code><em class="property"> <span class="pre">=</span> <span class="pre">['Date',</span> <span class="pre">'ISO3',</span> <span class="pre">'Country',</span> <span class="pre">'Province',</span> <span class="pre">'Confirmed',</span> <span class="pre">'Fatal',</span> <span class="pre">'Recovered']</span></em><a class="headerlink" href="#covsirphy.JHUData.RAW_COLS" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="covsirphy.JHUData.SUBSET_COLS">
+<code class="sig-name descname"><span class="pre">SUBSET_COLS</span></code><em class="property"> <span class="pre">=</span> <span class="pre">['Date',</span> <span class="pre">'Confirmed',</span> <span class="pre">'Infected',</span> <span class="pre">'Fatal',</span> <span class="pre">'Recovered',</span> <span class="pre">'Susceptible']</span></em><a class="headerlink" href="#covsirphy.JHUData.SUBSET_COLS" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
 <dl class="py method">
 <dt id="covsirphy.JHUData.calculate_closing_period">
 <code class="sig-name descname"><span class="pre">calculate_closing_period</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#covsirphy.JHUData.calculate_closing_period" title="Permalink to this definition">¶</a></dt>
@@ -2227,7 +2261,7 @@ where recovered values are reported.</p>
 <dt>Index</dt><dd><p>reset index</p>
 </dd>
 <dt>Columns</dt><dd><ul class="simple">
-<li><p>Date (pd.Timestamp): Observation date</p></li>
+<li><p>Date (pandas.Timestamp): Observation date</p></li>
 <li><p>Country (pandas.Category): country/region name</p></li>
 <li><p>Province (pandas.Category): province/prefecture/state name</p></li>
 <li><p>Confirmed (int): the number of confirmed cases</p></li>
@@ -2242,10 +2276,6 @@ where recovered values are reported.</p>
 </p>
 </dd>
 </dl>
-<div class="admonition note">
-<p class="admonition-title">Note</p>
-<p>Cleaning method is defined by self._cleaning() method.</p>
-</div>
 </dd></dl>
 
 <dl class="py method">
@@ -2276,7 +2306,25 @@ where recovered values are reported.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>dataframe</strong> (<em>pd.DataFrame</em>) – cleaned dataset</p></li>
+<li><p><strong>dataframe</strong> (<em>pd.DataFrame</em>) – <p>cleaned dataset
+Index</p>
+<blockquote>
+<div><p>reset index</p>
+</div></blockquote>
+<dl class="simple">
+<dt>Columns</dt><dd><ul>
+<li><p>Date: Observation date</p></li>
+<li><p>ISO3: ISO3 code (optional)</p></li>
+<li><p>Country: country/region name</p></li>
+<li><p>Province: province/prefecture/state name</p></li>
+<li><p>Confirmed: the number of confirmed cases</p></li>
+<li><p>Infected: the number of currently infected cases</p></li>
+<li><p>Fatal: the number of fatal cases</p></li>
+<li><p>Recovered: the number of recovered cases</p></li>
+</ul>
+</dd>
+</dl>
+</p></li>
 <li><p><strong>directory</strong> (<em>str</em>) – directory to save geometry information (for .map() method)</p></li>
 </ul>
 </dd>
@@ -2540,7 +2588,7 @@ Records with Recovered &gt; 0 will be selected.</p>
 <dd class="field-odd"><p><p>group-by Date, sum of the values</p>
 <blockquote>
 <div><dl class="simple">
-<dt>Index</dt><dd><p>Date (pandas.TimeStamp): Observation date</p>
+<dt>Index</dt><dd><p>Date (pandas.Timestamp): Observation date</p>
 </dd>
 <dt>Columns</dt><dd><ul class="simple">
 <li><p>Confirmed (int): the number of confirmed cases</p></li>
@@ -3961,30 +4009,62 @@ Tau value will be selected from the divisors of 1440 [min] and set to self.</p>
 
 <dl class="py class">
 <dt id="covsirphy.OxCGRTData">
-<em class="property"><span class="pre">class</span> </em><code class="sig-name descname"><span class="pre">OxCGRTData</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filename</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">citation</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/cleaning/oxcgrt.html#OxCGRTData"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#covsirphy.OxCGRTData" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">class</span> </em><code class="sig-name descname"><span class="pre">OxCGRTData</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filename</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">data</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">citation</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/cleaning/oxcgrt.html#OxCGRTData"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#covsirphy.OxCGRTData" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="covsirphy.cleaning.html#covsirphy.cleaning.cbase.CleaningBase" title="covsirphy.cleaning.cbase.CleaningBase"><code class="xref py py-class docutils literal notranslate"><span class="pre">covsirphy.cleaning.cbase.CleaningBase</span></code></a></p>
 <p>Data cleaning of OxCGRT dataset.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>filename</strong> (<em>str</em>) – CSV filename of the dataset</p></li>
-<li><p><strong>citation</strong> (<em>str</em>) – citation</p></li>
+<li><p><strong>filename</strong> (<em>str</em><em> or </em><em>None</em>) – CSV filename of the dataset</p></li>
+<li><p><strong>data</strong> (<em>pandas.DataFrame</em><em> or </em><em>None</em>) – <dl class="simple">
+<dt>Index</dt><dd><p>reset index</p>
+</dd>
+<dt>Columns</dt><dd><ul>
+<li><p>Date: Observation date</p></li>
+<li><p>ISO3: ISO 3166-1 alpha-3, like JPN</p></li>
+<li><p>Country: country/region name</p></li>
+<li><p>School_closing</p></li>
+<li><p>Workplace_closing</p></li>
+<li><p>Cancel_events</p></li>
+<li><p>Gatherings_restrictions</p></li>
+<li><p>Transport_closing</p></li>
+<li><p>Stay_home_restrictions</p></li>
+<li><p>Internal_movement_restrictions</p></li>
+<li><p>International_movement_restrictions</p></li>
+<li><p>Information_campaigns</p></li>
+<li><p>Testing_policy</p></li>
+<li><p>Contact_tracing</p></li>
+<li><p>Stringency_index</p></li>
 </ul>
 </dd>
 </dl>
+</p></li>
+<li><p><strong>citation</strong> (<em>str</em><em> or </em><em>None</em>) – citation or None (empty)</p></li>
+</ul>
+</dd>
+</dl>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Either &#64;filename (high priority) or &#64;data must be specified.</p>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Policy indices (Overall etc.) are from README.md and documentation/index_methodology.md in
+<a class="reference external" href="https://github.com/OxCGRT/covid-policy-tracker/">https://github.com/OxCGRT/covid-policy-tracker/</a></p>
+</div>
+<dl class="py attribute">
+<dt id="covsirphy.OxCGRTData.CLEANED_COLS">
+<code class="sig-name descname"><span class="pre">CLEANED_COLS</span></code><em class="property"> <span class="pre">=</span> <span class="pre">['Date',</span> <span class="pre">'ISO3',</span> <span class="pre">'Country',</span> <span class="pre">'School_closing',</span> <span class="pre">'Workplace_closing',</span> <span class="pre">'Cancel_events',</span> <span class="pre">'Gatherings_restrictions',</span> <span class="pre">'Transport_closing',</span> <span class="pre">'Stay_home_restrictions',</span> <span class="pre">'Internal_movement_restrictions',</span> <span class="pre">'International_movement_restrictions',</span> <span class="pre">'Information_campaigns',</span> <span class="pre">'Testing_policy',</span> <span class="pre">'Contact_tracing',</span> <span class="pre">'Stringency_index']</span></em><a class="headerlink" href="#covsirphy.OxCGRTData.CLEANED_COLS" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
 <dl class="py attribute">
 <dt id="covsirphy.OxCGRTData.OXCGRT_COLS">
-<code class="sig-name descname"><span class="pre">OXCGRT_COLS</span></code><em class="property"> <span class="pre">=</span> <span class="pre">['Date',</span> <span class="pre">'Country',</span> <span class="pre">'ISO3',</span> <span class="pre">'School_closing',</span> <span class="pre">'Workplace_closing',</span> <span class="pre">'Cancel_events',</span> <span class="pre">'Gatherings_restrictions',</span> <span class="pre">'Transport_closing',</span> <span class="pre">'Stay_home_restrictions',</span> <span class="pre">'Internal_movement_restrictions',</span> <span class="pre">'International_movement_restrictions',</span> <span class="pre">'Information_campaigns',</span> <span class="pre">'Testing_policy',</span> <span class="pre">'Contact_tracing',</span> <span class="pre">'Stringency_index']</span></em><a class="headerlink" href="#covsirphy.OxCGRTData.OXCGRT_COLS" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname"><span class="pre">OXCGRT_COLS</span></code><em class="property"> <span class="pre">=</span> <span class="pre">['Date',</span> <span class="pre">'ISO3',</span> <span class="pre">'Country',</span> <span class="pre">'School_closing',</span> <span class="pre">'Workplace_closing',</span> <span class="pre">'Cancel_events',</span> <span class="pre">'Gatherings_restrictions',</span> <span class="pre">'Transport_closing',</span> <span class="pre">'Stay_home_restrictions',</span> <span class="pre">'Internal_movement_restrictions',</span> <span class="pre">'International_movement_restrictions',</span> <span class="pre">'Information_campaigns',</span> <span class="pre">'Testing_policy',</span> <span class="pre">'Contact_tracing',</span> <span class="pre">'Stringency_index']</span></em><a class="headerlink" href="#covsirphy.OxCGRTData.OXCGRT_COLS" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="py attribute">
 <dt id="covsirphy.OxCGRTData.OXCGRT_COLS_WITHOUT_COUNTRY">
 <code class="sig-name descname"><span class="pre">OXCGRT_COLS_WITHOUT_COUNTRY</span></code><em class="property"> <span class="pre">=</span> <span class="pre">['Date',</span> <span class="pre">'School_closing',</span> <span class="pre">'Workplace_closing',</span> <span class="pre">'Cancel_events',</span> <span class="pre">'Gatherings_restrictions',</span> <span class="pre">'Transport_closing',</span> <span class="pre">'Stay_home_restrictions',</span> <span class="pre">'Internal_movement_restrictions',</span> <span class="pre">'International_movement_restrictions',</span> <span class="pre">'Information_campaigns',</span> <span class="pre">'Testing_policy',</span> <span class="pre">'Contact_tracing',</span> <span class="pre">'Stringency_index']</span></em><a class="headerlink" href="#covsirphy.OxCGRTData.OXCGRT_COLS_WITHOUT_COUNTRY" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt id="covsirphy.OxCGRTData.OXCGRT_COL_DICT">
-<code class="sig-name descname"><span class="pre">OXCGRT_COL_DICT</span></code><em class="property"> <span class="pre">=</span> <span class="pre">{'cancel_events':</span> <span class="pre">'Cancel_events',</span> <span class="pre">'contact_tracing':</span> <span class="pre">'Contact_tracing',</span> <span class="pre">'gatherings_restrictions':</span> <span class="pre">'Gatherings_restrictions',</span> <span class="pre">'information_campaigns':</span> <span class="pre">'Information_campaigns',</span> <span class="pre">'internal_movement_restrictions':</span> <span class="pre">'Internal_movement_restrictions',</span> <span class="pre">'international_movement_restrictions':</span> <span class="pre">'International_movement_restrictions',</span> <span class="pre">'school_closing':</span> <span class="pre">'School_closing',</span> <span class="pre">'stay_home_restrictions':</span> <span class="pre">'Stay_home_restrictions',</span> <span class="pre">'stringency_index':</span> <span class="pre">'Stringency_index',</span> <span class="pre">'testing_policy':</span> <span class="pre">'Testing_policy',</span> <span class="pre">'transport_closing':</span> <span class="pre">'Transport_closing',</span> <span class="pre">'workplace_closing':</span> <span class="pre">'Workplace_closing'}</span></em><a class="headerlink" href="#covsirphy.OxCGRTData.OXCGRT_COL_DICT" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="py attribute">
@@ -4000,6 +4080,16 @@ Tau value will be selected from the divisors of 1440 [min] and set to self.</p>
 <dl class="py attribute">
 <dt id="covsirphy.OxCGRTData.OXCGRT_VARS_INDICATORS">
 <code class="sig-name descname"><span class="pre">OXCGRT_VARS_INDICATORS</span></code><em class="property"> <span class="pre">=</span> <span class="pre">['School_closing',</span> <span class="pre">'Workplace_closing',</span> <span class="pre">'Cancel_events',</span> <span class="pre">'Gatherings_restrictions',</span> <span class="pre">'Transport_closing',</span> <span class="pre">'Stay_home_restrictions',</span> <span class="pre">'Internal_movement_restrictions',</span> <span class="pre">'International_movement_restrictions',</span> <span class="pre">'Information_campaigns',</span> <span class="pre">'Testing_policy',</span> <span class="pre">'Contact_tracing']</span></em><a class="headerlink" href="#covsirphy.OxCGRTData.OXCGRT_VARS_INDICATORS" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="covsirphy.OxCGRTData.RAW_COLS">
+<code class="sig-name descname"><span class="pre">RAW_COLS</span></code><em class="property"> <span class="pre">=</span> <span class="pre">['Date',</span> <span class="pre">'ISO3',</span> <span class="pre">'Country',</span> <span class="pre">'School_closing',</span> <span class="pre">'Workplace_closing',</span> <span class="pre">'Cancel_events',</span> <span class="pre">'Gatherings_restrictions',</span> <span class="pre">'Transport_closing',</span> <span class="pre">'Stay_home_restrictions',</span> <span class="pre">'Internal_movement_restrictions',</span> <span class="pre">'International_movement_restrictions',</span> <span class="pre">'Information_campaigns',</span> <span class="pre">'Testing_policy',</span> <span class="pre">'Contact_tracing',</span> <span class="pre">'Stringency_index']</span></em><a class="headerlink" href="#covsirphy.OxCGRTData.RAW_COLS" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="covsirphy.OxCGRTData.SUBSET_COLS">
+<code class="sig-name descname"><span class="pre">SUBSET_COLS</span></code><em class="property"> <span class="pre">=</span> <span class="pre">['Date',</span> <span class="pre">'School_closing',</span> <span class="pre">'Workplace_closing',</span> <span class="pre">'Cancel_events',</span> <span class="pre">'Gatherings_restrictions',</span> <span class="pre">'Transport_closing',</span> <span class="pre">'Stay_home_restrictions',</span> <span class="pre">'Internal_movement_restrictions',</span> <span class="pre">'International_movement_restrictions',</span> <span class="pre">'Information_campaigns',</span> <span class="pre">'Testing_policy',</span> <span class="pre">'Contact_tracing',</span> <span class="pre">'Stringency_index']</span></em><a class="headerlink" href="#covsirphy.OxCGRTData.SUBSET_COLS" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="py method">
@@ -4041,8 +4131,19 @@ Tau value will be selected from the divisors of 1440 [min] and set to self.</p>
 <dt>Index</dt><dd><p>reset index</p>
 </dd>
 <dt>Columns</dt><dd><ul class="simple">
-<li><p>Date (pd.Timestamp): Observation date</p></li>
-<li><p>other column names are defined by OxCGRTData.COL_DICT</p></li>
+<li><p>Date (pandas.Timestamp): Observation date</p></li>
+<li><p>School_closing</p></li>
+<li><p>Workplace_closing</p></li>
+<li><p>Cancel_events</p></li>
+<li><p>Gatherings_restrictions</p></li>
+<li><p>Transport_closing</p></li>
+<li><p>Stay_home_restrictions</p></li>
+<li><p>Internal_movement_restrictions</p></li>
+<li><p>International_movement_restrictions</p></li>
+<li><p>Information_campaigns</p></li>
+<li><p>Testing_policy</p></li>
+<li><p>Contact_tracing</p></li>
+<li><p>Stringency_index</p></li>
 </ul>
 </dd>
 </dl>
@@ -4063,19 +4164,37 @@ Tau value will be selected from the divisors of 1440 [min] and set to self.</p>
 
 <dl class="py class">
 <dt id="covsirphy.PCRData">
-<em class="property"><span class="pre">class</span> </em><code class="sig-name descname"><span class="pre">PCRData</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filename</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">interval</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">min_pcr_tests</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">100</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">citation</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/cleaning/pcr_data.html#PCRData"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#covsirphy.PCRData" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">class</span> </em><code class="sig-name descname"><span class="pre">PCRData</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filename</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">data</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">interval</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">min_pcr_tests</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">100</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">citation</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/cleaning/pcr_data.html#PCRData"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#covsirphy.PCRData" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="covsirphy.cleaning.html#covsirphy.cleaning.cbase.CleaningBase" title="covsirphy.cleaning.cbase.CleaningBase"><code class="xref py py-class docutils literal notranslate"><span class="pre">covsirphy.cleaning.cbase.CleaningBase</span></code></a></p>
 <p>Data cleaning of PCR dataset.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>filename</strong> (<em>str</em><em> or </em><em>None</em>) – CSV filename of the dataset</p></li>
+<li><p><strong>data</strong> (<em>pandas.DataFrame</em><em> or </em><em>None</em>) – <dl class="simple">
+<dt>Index</dt><dd><p>reset index</p>
+</dd>
+<dt>Columns</dt><dd><ul>
+<li><p>Date: Observation date</p></li>
+<li><p>ISO3: ISO3 code</p></li>
+<li><p>Country: country/region name</p></li>
+<li><p>Province: province/prefecture/state name</p></li>
+<li><p>Tests: the number of tests</p></li>
+</ul>
+</dd>
+</dl>
+</p></li>
 <li><p><strong>interval</strong> (<em>int</em>) – expected update interval of the number of confirmed cases and tests [days]</p></li>
 <li><p><strong>min_pcr_tests</strong> (<em>int</em>) – minimum number of valid daily tests performed in order to calculate positive rate</p></li>
 <li><p><strong>citation</strong> (<em>str</em>) – citation</p></li>
 </ul>
 </dd>
 </dl>
+<dl class="py attribute">
+<dt id="covsirphy.PCRData.CLEANED_COLS">
+<code class="sig-name descname"><span class="pre">CLEANED_COLS</span></code><em class="property"> <span class="pre">=</span> <span class="pre">['Date',</span> <span class="pre">'ISO3',</span> <span class="pre">'Country',</span> <span class="pre">'Province',</span> <span class="pre">'Tests',</span> <span class="pre">'Confirmed']</span></em><a class="headerlink" href="#covsirphy.PCRData.CLEANED_COLS" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
 <dl class="py attribute">
 <dt id="covsirphy.PCRData.C_DIFF">
 <code class="sig-name descname"><span class="pre">C_DIFF</span></code><em class="property"> <span class="pre">=</span> <span class="pre">'Confirmed_diff'</span></em><a class="headerlink" href="#covsirphy.PCRData.C_DIFF" title="Permalink to this definition">¶</a></dt>
@@ -4099,6 +4218,16 @@ Tau value will be selected from the divisors of 1440 [min] and set to self.</p>
 <dl class="py attribute">
 <dt id="covsirphy.PCRData.PCR_VALUE_COLUMNS">
 <code class="sig-name descname"><span class="pre">PCR_VALUE_COLUMNS</span></code><em class="property"> <span class="pre">=</span> <span class="pre">['Tests',</span> <span class="pre">'Confirmed']</span></em><a class="headerlink" href="#covsirphy.PCRData.PCR_VALUE_COLUMNS" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="covsirphy.PCRData.RAW_COLS">
+<code class="sig-name descname"><span class="pre">RAW_COLS</span></code><em class="property"> <span class="pre">=</span> <span class="pre">['Date',</span> <span class="pre">'ISO3',</span> <span class="pre">'Country',</span> <span class="pre">'Province',</span> <span class="pre">'Tests',</span> <span class="pre">'Confirmed']</span></em><a class="headerlink" href="#covsirphy.PCRData.RAW_COLS" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="covsirphy.PCRData.SUBSET_COLS">
+<code class="sig-name descname"><span class="pre">SUBSET_COLS</span></code><em class="property"> <span class="pre">=</span> <span class="pre">['Date',</span> <span class="pre">'Tests',</span> <span class="pre">'Confirmed']</span></em><a class="headerlink" href="#covsirphy.PCRData.SUBSET_COLS" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="py attribute">
@@ -4130,10 +4259,6 @@ Tau value will be selected from the divisors of 1440 [min] and set to self.</p>
 </p>
 </dd>
 </dl>
-<div class="admonition note">
-<p class="admonition-title">Note</p>
-<p>Cleaning method is defined by self._cleaning() method.</p>
-</div>
 </dd></dl>
 
 <dl class="py method">
@@ -4143,7 +4268,22 @@ Tau value will be selected from the divisors of 1440 [min] and set to self.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>dataframe</strong> (<em>pd.DataFrame</em>) – cleaned dataset</p></li>
+<li><p><strong>dataframe</strong> (<em>pd.DataFrame</em>) – <p>cleaned dataset
+Index</p>
+<blockquote>
+<div><p>reset index</p>
+</div></blockquote>
+<dl class="simple">
+<dt>Columns</dt><dd><ul>
+<li><p>Date: Observation date</p></li>
+<li><p>ISO3: ISO3 code (optional)</p></li>
+<li><p>Country: country/region name</p></li>
+<li><p>Province: province/prefecture/state name</p></li>
+<li><p>Tests: the number of tests</p></li>
+</ul>
+</dd>
+</dl>
+</p></li>
 <li><p><strong>directory</strong> (<em>str</em>) – directory to save geometry information (for .map() method)</p></li>
 </ul>
 </dd>
@@ -6011,20 +6151,52 @@ This analysis will be done at country level because OxCGRT tracks policies at co
 
 <dl class="py class">
 <dt id="covsirphy.PopulationData">
-<em class="property"><span class="pre">class</span> </em><code class="sig-name descname"><span class="pre">PopulationData</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filename</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">citation</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/cleaning/population.html#PopulationData"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#covsirphy.PopulationData" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">class</span> </em><code class="sig-name descname"><span class="pre">PopulationData</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filename</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">data</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">citation</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/cleaning/population.html#PopulationData"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#covsirphy.PopulationData" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="covsirphy.cleaning.html#covsirphy.cleaning.cbase.CleaningBase" title="covsirphy.cleaning.cbase.CleaningBase"><code class="xref py py-class docutils literal notranslate"><span class="pre">covsirphy.cleaning.cbase.CleaningBase</span></code></a></p>
 <p>Data cleaning of total population dataset.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>filename</strong> (<em>str</em>) – CSV filename of the dataset</p></li>
-<li><p><strong>citation</strong> (<em>str</em>) – citation</p></li>
+<li><p><strong>filename</strong> (<em>str</em><em> or </em><em>None</em>) – CSV filename of the dataset</p></li>
+<li><p><strong>data</strong> (<em>pandas.DataFrame</em><em> or </em><em>None</em>) – <dl class="simple">
+<dt>Index</dt><dd><p>reset index</p>
+</dd>
+<dt>Columns</dt><dd><ul>
+<li><p>Date: Observation date</p></li>
+<li><p>ISO3: ISO3 code</p></li>
+<li><p>Country: country/region name</p></li>
+<li><p>Province: province/prefecture/state name</p></li>
+<li><p>Population: total population</p></li>
 </ul>
 </dd>
 </dl>
+</p></li>
+<li><p><strong>citation</strong> (<em>str</em><em> or </em><em>None</em>) – citation or None (empty)</p></li>
+</ul>
+</dd>
+</dl>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Either &#64;filename (high priority) or &#64;data must be specified.</p>
+</div>
+<dl class="py attribute">
+<dt id="covsirphy.PopulationData.CLEANED_COLS">
+<code class="sig-name descname"><span class="pre">CLEANED_COLS</span></code><em class="property"> <span class="pre">=</span> <span class="pre">['Date',</span> <span class="pre">'ISO3',</span> <span class="pre">'Country',</span> <span class="pre">'Province',</span> <span class="pre">'Population']</span></em><a class="headerlink" href="#covsirphy.PopulationData.CLEANED_COLS" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
 <dl class="py attribute">
 <dt id="covsirphy.PopulationData.POPULATION_COLS">
-<code class="sig-name descname"><span class="pre">POPULATION_COLS</span></code><em class="property"> <span class="pre">=</span> <span class="pre">['ISO3',</span> <span class="pre">'Country',</span> <span class="pre">'Province',</span> <span class="pre">'Date',</span> <span class="pre">'Population']</span></em><a class="headerlink" href="#covsirphy.PopulationData.POPULATION_COLS" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname"><span class="pre">POPULATION_COLS</span></code><em class="property"> <span class="pre">=</span> <span class="pre">['Date',</span> <span class="pre">'ISO3',</span> <span class="pre">'Country',</span> <span class="pre">'Province',</span> <span class="pre">'Population']</span></em><a class="headerlink" href="#covsirphy.PopulationData.POPULATION_COLS" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="covsirphy.PopulationData.RAW_COLS">
+<code class="sig-name descname"><span class="pre">RAW_COLS</span></code><em class="property"> <span class="pre">=</span> <span class="pre">['Date',</span> <span class="pre">'ISO3',</span> <span class="pre">'Country',</span> <span class="pre">'Province',</span> <span class="pre">'Population']</span></em><a class="headerlink" href="#covsirphy.PopulationData.RAW_COLS" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="covsirphy.PopulationData.SUBSET_COLS">
+<code class="sig-name descname"><span class="pre">SUBSET_COLS</span></code><em class="property"> <span class="pre">=</span> <span class="pre">['Date',</span> <span class="pre">'Population']</span></em><a class="headerlink" href="#covsirphy.PopulationData.SUBSET_COLS" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="py method">
