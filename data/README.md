@@ -155,9 +155,8 @@ LinkData:
 2. Percentage of patients without symptoms / mild or severe symptoms
 3. What to do next to prevent outbreak
 
-# License and citation
+## License and how to cite
 
-This dataset is licensed under CC BY-4.0 and recommended citation is as follows.
-
-- Lisphilar (2020), COVID-19 dataset in Japan, GitHub repository, https://github.com/lisphilar/covid19-sir/data/japan, or
-- Lisphilar (2020), COVID-19 dataset in Japan, Kaggle Dataset, https://www.kaggle.com/lisphilar/covid19-dataset-in-japan
+Kindly cite this dataset under CC BY-4.0 license as follows.
+- Hirokazu Takaya (2020-2021), COVID-19 dataset in Japan, GitHub repository, https://github.com/lisphilar/covid19-sir/data/japan, or
+- Hirokazu Takaya (2020-2021), COVID-19 dataset in Japan, Kaggle Dataset, https://www.kaggle.com/lisphilar/covid19-dataset-in-japan
