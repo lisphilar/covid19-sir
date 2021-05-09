@@ -4,6 +4,8 @@ poetry-linux:
 	@# system Python should be installed in advance
 	@# If no command "python",
 	@# sudo update-alternatives --install /usr/bin/python python /usr/bin/python3 1
+	@# If no command pip,
+	@# sudo apt install python3-pip; python -m pip install -U pip
 	@curl -sSL https://raw.githubusercontent.com/python-poetry/poetry/master/get-poetry.py | python
 	@export PATH=$PATH:$HOME/.poetry/bin
 	@source ~/.poetry/env
@@ -24,37 +26,37 @@ poetry-windows:
 
 .PHONY: install
 install:
-	@pip install --upgrade pip
+	@python -m pip install --upgrade pip
 	@poetry self update
 	@poetry install
 
 .PHONY: update
 update:
-	@pip install --upgrade pip
+	@python -m pip install --upgrade pip
 	@poetry self update
 	@poetry update
 
 .PHONY: add
 add:
-	@pip install --upgrade pip
+	@python -m pip install --upgrade pip
 	@poetry self update
 	@poetry add ${target}
 
 .PHONY: add-dev
 add-dev:
-	@pip install --upgrade pip
+	@python -m pip install --upgrade pip
 	@poetry self update
 	@poetry add ${target} --dev
 
 .PHONY: remove
 remove:
-	@pip install --upgrade pip
+	@python -m pip install --upgrade pip
 	@poetry self update
 	@poetry remove ${target}
 
 .PHONY: remove-dev
 remove-dev:
-	@pip install --upgrade pip
+	@python -m pip install --upgrade pip
 	@poetry self update
 	@poetry remove ${target} --dev
 
