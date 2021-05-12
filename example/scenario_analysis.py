@@ -25,7 +25,7 @@ def main(country="Italy", province=None, file_prefix="ita"):
         pronvince (str or None): province name or None (country level)
         file_prefix (str): prefix of the filenames
     """
-    # This script works with version >= 2.18.0-beta
+    # This script works with version >= 2.19.1-kappa
     print(cs.get_version())
     # Create output directory in example directory
     code_path = Path(__file__)
