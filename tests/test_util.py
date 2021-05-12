@@ -22,11 +22,13 @@ class TestFiler(object):
         # Create filenames
         filer.png("records")
         filer.jpg("records")
+        filer.json("records")
         filer.csv("records", index=True)
         # Check files
-        assert len(filer.files(ext=None)) == 3
+        assert len(filer.files(ext=None)) == 4
         assert len(filer.files(ext="png")) == 1
         assert len(filer.files(ext="jpg")) == 1
+        assert len(filer.files(ext="json")) == 1
         assert len(filer.files(ext="csv")) == 1
         # Save CSV file
         warnings.filterwarnings("ignore", category=DeprecationWarning)

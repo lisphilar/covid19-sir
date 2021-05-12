@@ -6,7 +6,7 @@ import warnings
 import pytest
 import pandas as pd
 from covsirphy import ScenarioNotFoundError, UnExecutedError, NotInteractiveError
-from covsirphy import Scenario, Term, PhaseTracker, SIRF
+from covsirphy import Scenario, Term, PhaseTracker, SIRF, Filer
 
 
 @pytest.fixture(scope="module")
@@ -291,3 +291,17 @@ class TestScenario(object):
         max_days = delay_est if days is None else max(days)
         end = pd.to_datetime(snl.today) + timedelta(days=max_days)
         assert pd.to_datetime(df.loc[df.index[-1], Term.END]) == end
+
+    def test_backup(self, snl, jhu_data, population_data):
+        filer = Filer("input")
+        backupfile_dict = filer.json("backup")
+        # Backup
+        snl.backup(**backupfile_dict)
+        # Restore
+        with pytest.raises(ValueError):
+            snl_restored = Scenario(country="Japan", province="Tokyo")
+            snl_restored.register(jhu_data, population_data)
+            snl_restored.restore(**backupfile_dict)
+        snl_restored = Scenario(country="Italy", province=None)
+        snl_restored.register(jhu_data, population_data)
+        snl_restored.restore(**backupfile_dict)
