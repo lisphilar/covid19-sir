@@ -1,4 +1,4 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-__version__ = "2.19.1-iota-fu1"
+__version__ = "2.19.1-kappa"
