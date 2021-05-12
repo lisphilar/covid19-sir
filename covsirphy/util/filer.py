@@ -22,6 +22,8 @@ class Filer(object):
         {"filename": "<absolute path>/output/jpn_01_records.png"}
         >>> filer.jpg("records")
         {"filename": "<absolute path>/output/jpn_01_records.jpg"}
+        >>> filer.json("backup")
+        {"filename": "<absolute path>/output/jpn_01_backup.json"}
         >>> filer.csv("records", index=True)
         {"path_or_buf": "<absolute path>/output/jpn_01_records.csv", index: True}
     """
@@ -72,7 +74,7 @@ class Filer(object):
             list[str]: list of files
         """
         if ext is None:
-            return [file for (ext, filenames) in self._file_dict.items() for file in filenames]
+            return [file for filenames in self._file_dict.values() for file in filenames]
         return self._file_dict.get(ext, [])
 
     def png(self, title, **kwargs):
@@ -101,6 +103,20 @@ class Filer(object):
             dict[str, str]: absolute filename (key: 'filename') and kwargs
         """
         filename = self._register(title=title, ext="jpg")
+        return {"filename": filename, **kwargs}
+
+    def json(self, title, **kwargs):
+        """
+        Create JSON filename and register it.
+
+        Args:
+            title (str): title of the filename, like 'records'
+            kwargs: keyword arguments to be included in the output
+
+        Returns:
+            dict[str, str]: absolute filename (key: 'filename') and kwargs
+        """
+        filename = self._register(title=title, ext="json")
         return {"filename": filename, **kwargs}
 
     def csv(self, title, **kwargs):
