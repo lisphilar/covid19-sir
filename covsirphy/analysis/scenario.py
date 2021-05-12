@@ -3,6 +3,8 @@
 
 import copy
 from datetime import timedelta
+import json
+from pathlib import Path
 import warnings
 import sys
 import numpy as np
@@ -17,6 +19,9 @@ from covsirphy.visualization.line_plot import line_plot
 from covsirphy.visualization.compare_plot import compare_plot
 from covsirphy.cleaning.jhu_data import JHUData
 from covsirphy.ode.mbase import ModelBase
+from covsirphy.ode.sir import SIR
+from covsirphy.ode.sird import SIRD
+from covsirphy.ode.sirf import SIRF
 from covsirphy.regression.reg_handler import RegressionHandler
 from covsirphy.analysis.data_handler import DataHandler
 from covsirphy.analysis.phase_tracker import PhaseTracker
@@ -1377,4 +1382,66 @@ class Scenario(Term):
         """
         self.fit(oxcgrt_data=oxcgrt_data, name=name, **find_args(Scenario.fit, **kwargs))
         self.predict(name=name, **find_args(Scenario.predict, **kwargs))
+        return self
+
+    def backup(self, filename):
+        """
+        Backup scenario information to a JSON file (so that we can use it with Scenario.restore()).
+
+        Args:
+            filename (str or pathlib.Path): JSON filename to backup the information
+        """
+        # Get information
+        info_dict = {
+            "area": self._area,
+            "timepoint": {
+                "first_date": self._data.first_date,
+                "today": self._data.today,
+                "last_date": self._data.last_date
+            },
+            "scenario": {}
+        }
+        for (name, trakcer) in self._tracker_dict.items():
+            summary_df = trakcer.summary()
+            for col in [self.START, self.END]:
+                summary_df[col] = summary_df[col].dt.strftime(self.DATE_FORMAT)
+            info_dict["scenario"][name] = summary_df.to_dict(orient="index")
+        # Save information
+        with Path(filename).open("w") as fh:
+            json.dump(info_dict, fh, indent=4)
+
+    def restore(self, filename):
+        """
+        Restore scenario information with a JSON file (written by Scenario.backup()).
+
+        Args:
+            filename (str or pathlib.Path): JSON file to read
+
+        Returns:
+            covsirphy.Scenario: self
+
+        Note:
+            If keyword arguments of Scenario.timepoint() are available as the values of "timepoint" key,
+            timpoints will be restored.
+        """
+        # Read the file
+        with Path(filename).open("r") as fh:
+            info_dict = json.load(fh)
+        # Check area name
+        if "area" not in info_dict or info_dict["area"] != self._area:
+            raise ValueError(f"Area name (value of 'area' key) must be {self._area},\n{filename}")
+        # Set timepoint
+        self.timepoints(**find_args(self.timepoints, **info_dict.get("timepoint", {})))
+        # Set scenarios and phases
+        snl_dict = info_dict.get("scenario", {})
+        model_dict = {SIR.NAME: SIR, SIRD.NAME: SIRD, SIRF.NAME: SIRF}
+        for (name, summary_dict) in snl_dict.items():
+            self.clear(name=name, include_past=True)
+            for phase_dict in summary_dict.values():
+                add_dict = phase_dict.copy()
+                add_dict["end_date"] = add_dict.pop(self.END)
+                if self.ODE in add_dict:
+                    model_name = add_dict.pop(self.ODE)
+                    add_dict["model"] = model_dict[model_name]
+                self.add(name=name, **add_dict)
         return self
