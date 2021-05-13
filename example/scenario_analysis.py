@@ -25,7 +25,7 @@ def main(country="Italy", province=None, file_prefix="ita"):
         pronvince (str or None): province name or None (country level)
         file_prefix (str): prefix of the filenames
     """
-    # This script works with version >= 2.18.0-beta
+    # This script works with version >= 2.19.1-kappa
     print(cs.get_version())
     # Create output directory in example directory
     code_path = Path(__file__)
@@ -45,12 +45,22 @@ def main(country="Italy", province=None, file_prefix="ita"):
     # Show records
     record_df = snl.records(**filer.png("records"))
     record_df.to_csv(**filer.csv("records", index=False))
-    # Show S-R trend
-    snl.trend(**filer.png("trend"))
-    print(snl.summary())
-    # Parameter estimation
-    snl.estimate(cs.SIRF)
-    snl.estimate_accuracy("10th", name="Main", **filer.png("estimate_accuracy"))
+    # Load information if available
+    backupfile_dict = filer.json("backup")
+    if Path(backupfile_dict["filename"]).exists():
+        # Restore phase setting (Main scenario)
+        print("Restore phase settings of Main scenario with backup JSON file.")
+        snl.restore(**backupfile_dict)
+    else:
+        # S-R trend analysis
+        snl.trend(**filer.png("trend"))
+        print(snl.summary())
+        # Parameter estimation
+        snl.estimate(cs.SIRF)
+        snl.estimate_accuracy("10th", name="Main", **filer.png("estimate_accuracy"))
+        # Backup
+        snl.backup(**backupfile_dict)
+    print(snl.summary(columns=["Type", "Start", "End", "Population", "Rt"]))
     # Score of parameter estimation
     metrics = ["MAE", "MSE", "MSLE", "RMSE", "RMSLE"]
     for metric in metrics:
