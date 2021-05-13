@@ -70,7 +70,7 @@
             
             
               <div class="version">
-                2.19.1-iota-fu1
+                2.19.1-kappa
               </div>
             
           
@@ -1774,6 +1774,17 @@ Default values are that of the last phase. Er can change them with kwargs.</p>
 </dd></dl>
 
 <dl class="py method">
+<dt class="sig sig-object py" id="covsirphy.analysis.scenario.Scenario.backup">
+<span class="sig-name descname"><span class="pre">backup</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filename</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/analysis/scenario.html#Scenario.backup"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#covsirphy.analysis.scenario.Scenario.backup" title="Permalink to this definition">¶</a></dt>
+<dd><p>Backup scenario information to a JSON file (so that we can use it with Scenario.restore()).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>filename</strong> (<em>str</em><em> or </em><em>pathlib.Path</em>) – JSON filename to backup the information</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
 <dt class="sig sig-object py" id="covsirphy.analysis.scenario.Scenario.clear">
 <span class="sig-name descname"><span class="pre">clear</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'Main'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">include_past</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">template</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'Main'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/analysis/scenario.html#Scenario.clear"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#covsirphy.analysis.scenario.Scenario.clear" title="Permalink to this definition">¶</a></dt>
 <dd><p>Clear phase information.</p>
@@ -2417,6 +2428,28 @@ New future phases will be added (over-written).</p>
 </ul>
 </dd>
 </dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="covsirphy.analysis.scenario.Scenario.restore">
+<span class="sig-name descname"><span class="pre">restore</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filename</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/covsirphy/analysis/scenario.html#Scenario.restore"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#covsirphy.analysis.scenario.Scenario.restore" title="Permalink to this definition">¶</a></dt>
+<dd><p>Restore scenario information with a JSON file (written by Scenario.backup()).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>filename</strong> (<em>str</em><em> or </em><em>pathlib.Path</em>) – JSON file to read</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>self</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference internal" href="covsirphy.html#covsirphy.Scenario" title="covsirphy.Scenario">covsirphy.Scenario</a></p>
+</dd>
+</dl>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>If keyword arguments of Scenario.timepoint() are available as the values of “timepoint” key,
+timpoints will be restored.</p>
+</div>
 </dd></dl>
 
 <dl class="py method">

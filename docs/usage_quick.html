@@ -72,7 +72,7 @@
             
             
               <div class="version">
-                2.19.1-iota-fu1
+                2.19.1-kappa
               </div>
             
           
@@ -108,6 +108,7 @@
 <li class="toctree-l2"><a class="reference internal" href="#Dataset-preparation">Dataset preparation</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#Start-scenario-analysis">Start scenario analysis</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#Display/save-figures">Display/save figures</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#Backup/restore-scenario">Backup/restore scenario</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="#Check-records">Check records</a></li>
@@ -496,7 +497,7 @@ div.rendered_html tbody tr:hover {
 </div>
 <div class="output_area docutils container">
 <div class="highlight"><pre>
-&#39;2.19.1-iota-fu1&#39;
+&#39;2.19.1-kappa&#39;
 </pre></div></div>
 </div>
 </div>
@@ -625,13 +626,43 @@ div.rendered_html tbody tr:hover {
 </div>
 </div>
 </div>
+<div class="section" id="Backup/restore-scenario">
+<h3>Backup/restore scenario<a class="headerlink" href="#Backup/restore-scenario" title="Permalink to this headline">¶</a></h3>
+<p>From development version 2.19.1-kappa, we have <code class="docutils literal notranslate"><span class="pre">Scenario.backup(filename)</span></code> and <code class="docutils literal notranslate"><span class="pre">Scenario.restore(filename)</span></code> to backup/restore timepoints and phase information. This will be helpful when we perform parameter estimation using a server and simulate with the estimated parameter values using local machines.</p>
+<p>Note that we need to execute <code class="docutils literal notranslate"><span class="pre">Scenario.register()</span></code> in advance to set timepoints with <code class="docutils literal notranslate"><span class="pre">Scenario.restore()</span></code>.</p>
+<p>Backup information:</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[9]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="c1"># backupfile_dict = cs.Filer(directory=&quot;output&quot;)</span>
+<span class="c1"># snl.backup(**backupfile_dict)</span>
+</pre></div>
+</div>
+</div>
+<p>Restore information:</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[10]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="c1"># backupfile_dict = cs.Filer(directory=&quot;output&quot;)</span>
+<span class="c1"># snl = cs.Scenario(country=&quot;Japan&quot;)</span>
+<span class="c1"># snl.register(jhu_data, population_data)</span>
+<span class="c1"># snl.restore(**backupfile_dict).summary()</span>
+</pre></div>
+</div>
+</div>
+<p>After restoring information, we can skip <code class="docutils literal notranslate"><span class="pre">Scenario.trend()</span></code> and <code class="docutils literal notranslate"><span class="pre">Scenario.estiate()</span></code> (their functionarities will be explaiend later).</p>
+</div>
 </div>
 <div class="section" id="Check-records">
 <h2>Check records<a class="headerlink" href="#Check-records" title="Permalink to this headline">¶</a></h2>
 <p>Let’s see the records at first. <code class="docutils literal notranslate"><span class="pre">Scenario.records()</span></code> method return the records as a pandas dataframe and show a line plot. Some kind of complement will be done for analysis, if necessary.</p>
 <p><code class="docutils literal notranslate"><span class="pre">Scenario.records()</span></code> shows the number of infected/recovered/fatal cases as default. Using <code class="docutils literal notranslate"><span class="pre">variables</span></code> argument, we can set the variables to show. Here, we chack the number of confirmed/fatal/recovered cases. They are cumurative values.</p>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[9]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[11]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
@@ -645,11 +676,11 @@ div.rendered_html tbody tr:hover {
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area docutils container">
-<img alt="_images/usage_quick_24_0.png" src="_images/usage_quick_24_0.png" />
+<img alt="_images/usage_quick_30_0.png" src="_images/usage_quick_30_0.png" />
 </div>
 </div>
 <div class="nboutput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[9]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[11]:
 </pre></div>
 </div>
 <div class="output_area rendered_html docutils container">
@@ -679,13 +710,6 @@ div.rendered_html tbody tr:hover {
   </thead>
   <tbody>
     <tr>
-      <th>456</th>
-      <td>2021-05-07</td>
-      <td>620994</td>
-      <td>10589</td>
-      <td>546042</td>
-    </tr>
-    <tr>
       <th>457</th>
       <td>2021-05-08</td>
       <td>626522</td>
@@ -713,13 +737,20 @@ div.rendered_html tbody tr:hover {
       <td>10941</td>
       <td>564128</td>
     </tr>
+    <tr>
+      <th>461</th>
+      <td>2021-05-12</td>
+      <td>651702</td>
+      <td>11064</td>
+      <td>568558</td>
+    </tr>
   </tbody>
 </table>
 </div></div>
 </div>
 <p>The number of infected cases on date:</p>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[10]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[12]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
@@ -733,12 +764,12 @@ div.rendered_html tbody tr:hover {
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area docutils container">
-<img alt="_images/usage_quick_26_0.png" src="_images/usage_quick_26_0.png" />
+<img alt="_images/usage_quick_32_0.png" src="_images/usage_quick_32_0.png" />
 </div>
 </div>
 <p>All available variables can be retrieved with <code class="docutils literal notranslate"><span class="pre">variables=&quot;all&quot;</span></code>.</p>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[11]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[13]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
@@ -763,7 +794,7 @@ div.rendered_html tbody tr:hover {
 </div>
 <p>We can specify the variables to show.</p>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[12]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[14]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
@@ -775,11 +806,11 @@ div.rendered_html tbody tr:hover {
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area docutils container">
-<img alt="_images/usage_quick_30_0.png" src="_images/usage_quick_30_0.png" />
+<img alt="_images/usage_quick_36_0.png" src="_images/usage_quick_36_0.png" />
 </div>
 </div>
 <div class="nboutput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[12]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[14]:
 </pre></div>
 </div>
 <div class="output_area rendered_html docutils container">
@@ -807,11 +838,6 @@ div.rendered_html tbody tr:hover {
   </thead>
   <tbody>
     <tr>
-      <th>456</th>
-      <td>2021-05-07</td>
-      <td>3091529</td>
-    </tr>
-    <tr>
       <th>457</th>
       <td>2021-05-08</td>
       <td>3091529</td>
@@ -829,7 +855,12 @@ div.rendered_html tbody tr:hover {
     <tr>
       <th>460</th>
       <td>2021-05-11</td>
-      <td>3500968</td>
+      <td>3674147</td>
+    </tr>
+    <tr>
+      <th>461</th>
+      <td>2021-05-12</td>
+      <td>3844717</td>
     </tr>
   </tbody>
 </table>
@@ -837,7 +868,7 @@ div.rendered_html tbody tr:hover {
 </div>
 <p>We can calculate the number of daily new cases with <code class="docutils literal notranslate"><span class="pre">Scenario.record_diff()</span></code> method.</p>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[13]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[15]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
@@ -850,12 +881,12 @@ div.rendered_html tbody tr:hover {
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area docutils container">
-<img alt="_images/usage_quick_32_0.png" src="_images/usage_quick_32_0.png" />
+<img alt="_images/usage_quick_38_0.png" src="_images/usage_quick_38_0.png" />
 </div>
 </div>
 <p><code class="docutils literal notranslate"><span class="pre">Scenario.show_complement()</span></code> method is useful to show the kinds of complement. The details of complement are explained in <a class="reference external" href="https://lisphilar.github.io/covid19-sir/usage_dataset.html#The-number-of-cases-(JHU-style)">Usage: datasets</a> section.</p>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[14]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[16]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
@@ -865,7 +896,7 @@ div.rendered_html tbody tr:hover {
 </div>
 </div>
 <div class="nboutput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[14]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[16]:
 </pre></div>
 </div>
 <div class="output_area rendered_html docutils container">
@@ -916,7 +947,7 @@ div.rendered_html tbody tr:hover {
 <h2>S-R trend analysis<a class="headerlink" href="#S-R-trend-analysis" title="Permalink to this headline">¶</a></h2>
 <p>S-R trend analysis finds the change points of SIR-derived ODE parameters. Details will be explained in <a class="reference external" href="https://lisphilar.github.io/covid19-sir/usage_phases.html">Usage (details: phases)</a>. Phases will be separated with dotted lines. i.e. Dot lines indicate the start dates of phases.</p>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[15]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[17]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
@@ -928,11 +959,11 @@ div.rendered_html tbody tr:hover {
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area docutils container">
-<img alt="_images/usage_quick_36_0.png" src="_images/usage_quick_36_0.png" />
+<img alt="_images/usage_quick_42_0.png" src="_images/usage_quick_42_0.png" />
 </div>
 </div>
 <div class="nboutput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[15]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[17]:
 </pre></div>
 </div>
 <div class="output_area rendered_html docutils container">
@@ -1203,27 +1234,27 @@ div.rendered_html tbody tr:hover {
       <th>34th</th>
       <td>Past</td>
       <td>03Feb2021</td>
-      <td>16Feb2021</td>
+      <td>17Feb2021</td>
       <td>126529100</td>
     </tr>
     <tr>
       <th>35th</th>
       <td>Past</td>
-      <td>17Feb2021</td>
-      <td>26Feb2021</td>
+      <td>18Feb2021</td>
+      <td>27Feb2021</td>
       <td>126529100</td>
     </tr>
     <tr>
       <th>36th</th>
       <td>Past</td>
-      <td>27Feb2021</td>
-      <td>10Mar2021</td>
+      <td>28Feb2021</td>
+      <td>11Mar2021</td>
       <td>126529100</td>
     </tr>
     <tr>
       <th>37th</th>
       <td>Past</td>
-      <td>11Mar2021</td>
+      <td>12Mar2021</td>
       <td>23Mar2021</td>
       <td>126529100</td>
     </tr>
@@ -1231,13 +1262,13 @@ div.rendered_html tbody tr:hover {
       <th>38th</th>
       <td>Past</td>
       <td>24Mar2021</td>
-      <td>02Apr2021</td>
+      <td>03Apr2021</td>
       <td>126529100</td>
     </tr>
     <tr>
       <th>39th</th>
       <td>Past</td>
-      <td>03Apr2021</td>
+      <td>04Apr2021</td>
       <td>13Apr2021</td>
       <td>126529100</td>
     </tr>
@@ -1259,7 +1290,7 @@ div.rendered_html tbody tr:hover {
       <th>42nd</th>
       <td>Past</td>
       <td>01May2021</td>
-      <td>11May2021</td>
+      <td>12May2021</td>
       <td>126529100</td>
     </tr>
   </tbody>
@@ -1272,7 +1303,7 @@ div.rendered_html tbody tr:hover {
 <p>Here, we will estimate the tau value [min] (using grid search) and parameter values of SIR-derived models using <a class="reference external" href="https://github.com/optuna/optuna">Optuna</a> package (automated hyperparameter optimization framework). As an example, we use SIR-F model. Details of models will be explained in <a class="reference external" href="https://lisphilar.github.io/covid19-sir/usage_theoretical.html">Usage (details: theoritical datasets)</a>.</p>
 <p><strong>We can select the model from SIR, SIRD and SIR-F model for parameter estimation. SIR-FV model (completely deprecated) and SEWIR-F model cannot be used.</strong></p>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[16]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[18]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
@@ -1290,54 +1321,54 @@ div.rendered_html tbody tr:hover {
 
 &lt;SIR-F model: parameter estimation&gt;
 Running optimization with 4 CPUs...
-         9th phase (21May2020 - 28May2020): finished  218 trials in 0 min  5 sec
-        10th phase (29May2020 - 05Jun2020): finished  188 trials in 0 min  5 sec
-        11th phase (06Jun2020 - 13Jun2020): finished  153 trials in 0 min  5 sec
-         0th phase (06Feb2020 - 18Feb2020): finished  820 trials in 0 min 25 sec
-         3rd phase (14Mar2020 - 24Mar2020): finished  794 trials in 0 min 30 sec
-         6th phase (17Apr2020 - 01May2020): finished  987 trials in 0 min 40 sec
-         1st phase (19Feb2020 - 05Mar2020): finished  650 trials in 0 min 25 sec
-         4th phase (25Mar2020 - 02Apr2020): finished  755 trials in 0 min 30 sec
-         7th phase (02May2020 - 11May2020): finished  811 trials in 0 min 35 sec
-        12th phase (14Jun2020 - 28Jun2020): finished 1302 trials in 1 min  5 sec
-         2nd phase (06Mar2020 - 13Mar2020): finished  894 trials in 0 min 40 sec
-         8th phase (12May2020 - 20May2020): finished  521 trials in 0 min 20 sec
-         5th phase (03Apr2020 - 16Apr2020): finished  889 trials in 0 min 40 sec
-        18th phase (21Aug2020 - 31Aug2020): finished  396 trials in 0 min 10 sec        15th phase (22Jul2020 - 01Aug2020): finished  464 trials in 0 min 15 sec
-
-        19th phase (01Sep2020 - 10Sep2020): finished  264 trials in 0 min  5 sec
-        20th phase (11Sep2020 - 18Sep2020): finished  808 trials in 0 min 25 sec
-        21st phase (19Sep2020 - 02Oct2020): finished 1289 trials in 0 min 40 sec
-        24th phase (28Oct2020 - 06Nov2020): finished  211 trials in 0 min  5 sec
-        13th phase (29Jun2020 - 09Jul2020): finished 1620 trials in 1 min 10 sec
-        16th phase (02Aug2020 - 10Aug2020): finished 1686 trials in 1 min  5 sec
-        25th phase (07Nov2020 - 18Nov2020): finished 1452 trials in 1 min  0 sec
-        22nd phase (03Oct2020 - 14Oct2020): finished 1718 trials in 1 min 10 sec
-        14th phase (10Jul2020 - 21Jul2020): finished 1561 trials in 1 min  5 sec
-        27th phase (29Nov2020 - 10Dec2020): finished  650 trials in 0 min 20 sec
-        17th phase (11Aug2020 - 20Aug2020): finished 1545 trials in 1 min  5 sec
-        28th phase (11Dec2020 - 22Dec2020): finished  242 trials in 0 min  5 sec
-        29th phase (23Dec2020 - 30Dec2020): finished  212 trials in 0 min  5 sec
-        33rd phase (26Jan2021 - 02Feb2021): finished  187 trials in 0 min  5 sec
-        34th phase (03Feb2021 - 16Feb2021): finished  184 trials in 0 min  5 sec
-        30th phase (31Dec2020 - 07Jan2021): finished  780 trials in 0 min 25 sec
-        35th phase (17Feb2021 - 26Feb2021): finished  211 trials in 0 min  5 sec
-        26th phase (19Nov2020 - 28Nov2020): finished 1495 trials in 1 min  0 sec
-        36th phase (27Feb2021 - 10Mar2021): finished  210 trials in 0 min  5 sec
-        37th phase (11Mar2021 - 23Mar2021): finished  169 trials in 0 min  5 sec
-        38th phase (24Mar2021 - 02Apr2021): finished  564 trials in 0 min 20 sec
-        23rd phase (15Oct2020 - 27Oct2020): finished 1823 trials in 1 min 26 sec
-        31st phase (08Jan2021 - 17Jan2021): finished  956 trials in 0 min 40 sec
-        39th phase (03Apr2021 - 13Apr2021): finished  974 trials in 0 min 40 sec
-        40th phase (14Apr2021 - 21Apr2021): finished  973 trials in 0 min 35 sec
-        42nd phase (01May2021 - 11May2021): finished 1109 trials in 0 min 45 sec
-        41st phase (22Apr2021 - 30Apr2021): finished  190 trials in 0 min  5 sec
-        32nd phase (18Jan2021 - 25Jan2021): finished 1301 trials in 0 min 50 sec
-Completed optimization. Total: 5 min 53 sec
+         9th phase (21May2020 - 28May2020): finished  171 trials in 0 min  5 sec
+        10th phase (29May2020 - 05Jun2020): finished  174 trials in 0 min  5 sec
+        11th phase (06Jun2020 - 13Jun2020): finished  194 trials in 0 min  5 sec
+         0th phase (06Feb2020 - 18Feb2020): finished  925 trials in 0 min 30 sec
+         3rd phase (14Mar2020 - 24Mar2020): finished  813 trials in 0 min 30 sec
+         6th phase (17Apr2020 - 01May2020): finished  954 trials in 0 min 40 sec
+         1st phase (19Feb2020 - 05Mar2020): finished  669 trials in 0 min 25 sec
+         4th phase (25Mar2020 - 02Apr2020): finished  735 trials in 0 min 30 sec
+        12th phase (14Jun2020 - 28Jun2020): finished 1316 trials in 1 min  0 sec
+         7th phase (02May2020 - 11May2020): finished  889 trials in 0 min 35 sec
+         8th phase (12May2020 - 20May2020): finished  141 trials in 0 min  5 sec
+         2nd phase (06Mar2020 - 13Mar2020): finished  940 trials in 0 min 35 sec
+        18th phase (21Aug2020 - 31Aug2020): finished  357 trials in 0 min 10 sec
+         5th phase (03Apr2020 - 16Apr2020): finished 1057 trials in 0 min 40 sec
+        19th phase (01Sep2020 - 10Sep2020): finished  187 trials in 0 min  5 sec
+        15th phase (22Jul2020 - 01Aug2020): finished  936 trials in 0 min 35 sec
+        20th phase (11Sep2020 - 18Sep2020): finished  718 trials in 0 min 25 sec
+        24th phase (28Oct2020 - 06Nov2020): finished  178 trials in 0 min  5 sec
+        13th phase (29Jun2020 - 09Jul2020): finished 1521 trials in 1 min  5 sec
+        21st phase (19Sep2020 - 02Oct2020): finished 1262 trials in 0 min 55 sec
+        16th phase (02Aug2020 - 10Aug2020): finished 1268 trials in 1 min  0 sec
+        25th phase (07Nov2020 - 18Nov2020): finished 1429 trials in 1 min 10 sec
+        22nd phase (03Oct2020 - 14Oct2020): finished 1114 trials in 0 min 50 sec
+        14th phase (10Jul2020 - 21Jul2020): finished 1544 trials in 1 min 15 sec
+        27th phase (29Nov2020 - 10Dec2020): finished  375 trials in 0 min 10 sec
+        28th phase (11Dec2020 - 22Dec2020): finished  210 trials in 0 min  5 sec
+        29th phase (23Dec2020 - 30Dec2020): finished  225 trials in 0 min  5 sec
+        17th phase (11Aug2020 - 20Aug2020): finished 1551 trials in 1 min  5 sec
+        33rd phase (26Jan2021 - 02Feb2021): finished  190 trials in 0 min  5 sec
+        34th phase (03Feb2021 - 17Feb2021): finished  211 trials in 0 min  5 sec
+        35th phase (18Feb2021 - 27Feb2021): finished  207 trials in 0 min  5 sec
+        30th phase (31Dec2020 - 07Jan2021): finished  821 trials in 0 min 25 sec
+        36th phase (28Feb2021 - 11Mar2021): finished  217 trials in 0 min  5 sec
+        37th phase (12Mar2021 - 23Mar2021): finished  392 trials in 0 min 10 sec
+        26th phase (19Nov2020 - 28Nov2020): finished 1799 trials in 1 min 15 sec
+        23rd phase (15Oct2020 - 27Oct2020): finished 1893 trials in 1 min 20 sec
+        42nd phase (01May2021 - 12May2021): finished  191 trials in 0 min  5 sec
+        31st phase (08Jan2021 - 17Jan2021): finished 1153 trials in 0 min 40 sec
+        38th phase (24Mar2021 - 03Apr2021): finished 1053 trials in 0 min 35 sec
+        39th phase (04Apr2021 - 13Apr2021): finished 1022 trials in 0 min 30 sec
+        32nd phase (18Jan2021 - 25Jan2021): finished 1333 trials in 0 min 40 sec
+        40th phase (14Apr2021 - 21Apr2021): finished 2050 trials in 1 min 10 sec
+        41st phase (22Apr2021 - 30Apr2021): finished  271 trials in 0 min  5 sec
+Completed optimization. Total: 6 min 29 sec
 </pre></div></div>
 </div>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[17]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[19]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
@@ -1347,7 +1378,7 @@ Completed optimization. Total: 5 min 53 sec
 </div>
 </div>
 <div class="nboutput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[17]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[19]:
 </pre></div>
 </div>
 <div class="output_area rendered_html docutils container">
@@ -1408,8 +1439,8 @@ Completed optimization. Total: 5 min 53 sec
       <td>-</td>
       <td>-</td>
       <td>0.142890</td>
-      <td>820.0</td>
-      <td>0 min 25 sec</td>
+      <td>925.0</td>
+      <td>0 min 30 sec</td>
     </tr>
     <tr>
       <th>1st</th>
@@ -1429,7 +1460,7 @@ Completed optimization. Total: 5 min 53 sec
       <td>7.0</td>
       <td>38.0</td>
       <td>0.170717</td>
-      <td>650.0</td>
+      <td>669.0</td>
       <td>0 min 25 sec</td>
     </tr>
     <tr>
@@ -1450,8 +1481,8 @@ Completed optimization. Total: 5 min 53 sec
       <td>7.0</td>
       <td>40.0</td>
       <td>0.096661</td>
-      <td>894.0</td>
-      <td>0 min 40 sec</td>
+      <td>940.0</td>
+      <td>0 min 35 sec</td>
     </tr>
     <tr>
       <th>3rd</th>
@@ -1471,7 +1502,7 @@ Completed optimization. Total: 5 min 53 sec
       <td>15.0</td>
       <td>44.0</td>
       <td>0.027972</td>
-      <td>794.0</td>
+      <td>813.0</td>
       <td>0 min 30 sec</td>
     </tr>
     <tr>
@@ -1492,7 +1523,7 @@ Completed optimization. Total: 5 min 53 sec
       <td>8.0</td>
       <td>44.0</td>
       <td>0.036945</td>
-      <td>755.0</td>
+      <td>735.0</td>
       <td>0 min 30 sec</td>
     </tr>
     <tr>
@@ -1513,7 +1544,7 @@ Completed optimization. Total: 5 min 53 sec
       <td>8.0</td>
       <td>121.0</td>
       <td>0.040911</td>
-      <td>889.0</td>
+      <td>1057.0</td>
       <td>0 min 40 sec</td>
     </tr>
     <tr>
@@ -1534,7 +1565,7 @@ Completed optimization. Total: 5 min 53 sec
       <td>22.0</td>
       <td>47.0</td>
       <td>0.089373</td>
-      <td>987.0</td>
+      <td>954.0</td>
       <td>0 min 40 sec</td>
     </tr>
     <tr>
@@ -1555,7 +1586,7 @@ Completed optimization. Total: 5 min 53 sec
       <td>79.0</td>
       <td>23.0</td>
       <td>0.099141</td>
-      <td>811.0</td>
+      <td>889.0</td>
       <td>0 min 35 sec</td>
     </tr>
     <tr>
@@ -1565,19 +1596,19 @@ Completed optimization. Total: 5 min 53 sec
       <td>20May2020</td>
       <td>126529100</td>
       <td>SIR-F</td>
-      <td>0.17</td>
-      <td>0.057684</td>
-      <td>0.002622</td>
-      <td>0.017193</td>
-      <td>0.095538</td>
+      <td>0.15</td>
+      <td>0.071806</td>
+      <td>0.002496</td>
+      <td>0.015453</td>
+      <td>0.094052</td>
       <td>1440</td>
-      <td>0.058</td>
-      <td>381.0</td>
-      <td>58.0</td>
+      <td>0.072</td>
+      <td>400.0</td>
+      <td>64.0</td>
       <td>10.0</td>
-      <td>0.026965</td>
-      <td>521.0</td>
-      <td>0 min 20 sec</td>
+      <td>0.027022</td>
+      <td>141.0</td>
+      <td>0 min  5 sec</td>
     </tr>
     <tr>
       <th>9th</th>
@@ -1597,7 +1628,7 @@ Completed optimization. Total: 5 min 53 sec
       <td>59.0</td>
       <td>10.0</td>
       <td>0.014298</td>
-      <td>218.0</td>
+      <td>171.0</td>
       <td>0 min  5 sec</td>
     </tr>
     <tr>
@@ -1618,7 +1649,7 @@ Completed optimization. Total: 5 min 53 sec
       <td>30.0</td>
       <td>14.0</td>
       <td>0.013204</td>
-      <td>188.0</td>
+      <td>174.0</td>
       <td>0 min  5 sec</td>
     </tr>
     <tr>
@@ -1639,7 +1670,7 @@ Completed optimization. Total: 5 min 53 sec
       <td>24.0</td>
       <td>15.0</td>
       <td>0.021013</td>
-      <td>153.0</td>
+      <td>194.0</td>
       <td>0 min  5 sec</td>
     </tr>
     <tr>
@@ -1660,8 +1691,8 @@ Completed optimization. Total: 5 min 53 sec
       <td>13.0</td>
       <td>13.0</td>
       <td>0.035520</td>
-      <td>1302.0</td>
-      <td>1 min  5 sec</td>
+      <td>1316.0</td>
+      <td>1 min  0 sec</td>
     </tr>
     <tr>
       <th>13th</th>
@@ -1681,8 +1712,8 @@ Completed optimization. Total: 5 min 53 sec
       <td>7.0</td>
       <td>15.0</td>
       <td>0.022931</td>
-      <td>1620.0</td>
-      <td>1 min 10 sec</td>
+      <td>1521.0</td>
+      <td>1 min  5 sec</td>
     </tr>
     <tr>
       <th>14th</th>
@@ -1702,8 +1733,8 @@ Completed optimization. Total: 5 min 53 sec
       <td>6.0</td>
       <td>13.0</td>
       <td>0.019499</td>
-      <td>1561.0</td>
-      <td>1 min  5 sec</td>
+      <td>1544.0</td>
+      <td>1 min 15 sec</td>
     </tr>
     <tr>
       <th>15th</th>
@@ -1712,19 +1743,19 @@ Completed optimization. Total: 5 min 53 sec
       <td>01Aug2020</td>
       <td>126529100</td>
       <td>SIR-F</td>
-      <td>2.02</td>
-      <td>0.000045</td>
-      <td>0.000411</td>
-      <td>0.138908</td>
-      <td>0.068502</td>
+      <td>2.00</td>
+      <td>0.000071</td>
+      <td>0.000322</td>
+      <td>0.140072</td>
+      <td>0.069706</td>
       <td>1440</td>
       <td>0.0</td>
-      <td>2434.0</td>
+      <td>3101.0</td>
       <td>7.0</td>
       <td>14.0</td>
-      <td>0.024605</td>
-      <td>464.0</td>
-      <td>0 min 15 sec</td>
+      <td>0.024510</td>
+      <td>936.0</td>
+      <td>0 min 35 sec</td>
     </tr>
     <tr>
       <th>16th</th>
@@ -1733,19 +1764,19 @@ Completed optimization. Total: 5 min 53 sec
       <td>10Aug2020</td>
       <td>126529100</td>
       <td>SIR-F</td>
-      <td>1.65</td>
-      <td>0.000310</td>
-      <td>0.000307</td>
-      <td>0.125580</td>
-      <td>0.075621</td>
+      <td>1.66</td>
+      <td>0.000305</td>
+      <td>0.000329</td>
+      <td>0.125866</td>
+      <td>0.075557</td>
       <td>1440</td>
       <td>0.0</td>
-      <td>3262.0</td>
+      <td>3041.0</td>
       <td>7.0</td>
       <td>13.0</td>
-      <td>0.028521</td>
-      <td>1686.0</td>
-      <td>1 min  5 sec</td>
+      <td>0.028522</td>
+      <td>1268.0</td>
+      <td>1 min  0 sec</td>
     </tr>
     <tr>
       <th>17th</th>
@@ -1765,7 +1796,7 @@ Completed optimization. Total: 5 min 53 sec
       <td>12.0</td>
       <td>11.0</td>
       <td>0.015641</td>
-      <td>1545.0</td>
+      <td>1551.0</td>
       <td>1 min  5 sec</td>
     </tr>
     <tr>
@@ -1786,7 +1817,7 @@ Completed optimization. Total: 5 min 53 sec
       <td>13.0</td>
       <td>10.0</td>
       <td>0.015456</td>
-      <td>396.0</td>
+      <td>357.0</td>
       <td>0 min 10 sec</td>
     </tr>
     <tr>
@@ -1797,17 +1828,17 @@ Completed optimization. Total: 5 min 53 sec
       <td>126529100</td>
       <td>SIR-F</td>
       <td>0.70</td>
-      <td>0.000778</td>
-      <td>0.001325</td>
-      <td>0.068102</td>
-      <td>0.096566</td>
+      <td>0.000142</td>
+      <td>0.001469</td>
+      <td>0.068440</td>
+      <td>0.096731</td>
       <td>1440</td>
-      <td>0.001</td>
-      <td>754.0</td>
+      <td>0.0</td>
+      <td>680.0</td>
       <td>14.0</td>
       <td>10.0</td>
-      <td>0.008953</td>
-      <td>264.0</td>
+      <td>0.008978</td>
+      <td>187.0</td>
       <td>0 min  5 sec</td>
     </tr>
     <tr>
@@ -1828,7 +1859,7 @@ Completed optimization. Total: 5 min 53 sec
       <td>12.0</td>
       <td>11.0</td>
       <td>0.013786</td>
-      <td>808.0</td>
+      <td>718.0</td>
       <td>0 min 25 sec</td>
     </tr>
     <tr>
@@ -1849,8 +1880,8 @@ Completed optimization. Total: 5 min 53 sec
       <td>12.0</td>
       <td>11.0</td>
       <td>0.020879</td>
-      <td>1289.0</td>
-      <td>0 min 40 sec</td>
+      <td>1262.0</td>
+      <td>0 min 55 sec</td>
     </tr>
     <tr>
       <th>22nd</th>
@@ -1860,18 +1891,18 @@ Completed optimization. Total: 5 min 53 sec
       <td>126529100</td>
       <td>SIR-F</td>
       <td>1.00</td>
-      <td>0.000505</td>
-      <td>0.000780</td>
-      <td>0.088660</td>
-      <td>0.087685</td>
+      <td>0.000364</td>
+      <td>0.000811</td>
+      <td>0.082063</td>
+      <td>0.081067</td>
       <td>1440</td>
-      <td>0.001</td>
-      <td>1281.0</td>
-      <td>11.0</td>
-      <td>11.0</td>
-      <td>0.012527</td>
-      <td>1718.0</td>
-      <td>1 min 10 sec</td>
+      <td>0.0</td>
+      <td>1232.0</td>
+      <td>12.0</td>
+      <td>12.0</td>
+      <td>0.012721</td>
+      <td>1114.0</td>
+      <td>0 min 50 sec</td>
     </tr>
     <tr>
       <th>23rd</th>
@@ -1891,8 +1922,8 @@ Completed optimization. Total: 5 min 53 sec
       <td>9.0</td>
       <td>10.0</td>
       <td>0.016257</td>
-      <td>1823.0</td>
-      <td>1 min 26 sec</td>
+      <td>1893.0</td>
+      <td>1 min 20 sec</td>
     </tr>
     <tr>
       <th>24th</th>
@@ -1912,7 +1943,7 @@ Completed optimization. Total: 5 min 53 sec
       <td>8.0</td>
       <td>11.0</td>
       <td>0.008525</td>
-      <td>211.0</td>
+      <td>178.0</td>
       <td>0 min  5 sec</td>
     </tr>
     <tr>
@@ -1933,8 +1964,8 @@ Completed optimization. Total: 5 min 53 sec
       <td>7.0</td>
       <td>12.0</td>
       <td>0.009908</td>
-      <td>1452.0</td>
-      <td>1 min  0 sec</td>
+      <td>1429.0</td>
+      <td>1 min 10 sec</td>
     </tr>
     <tr>
       <th>26th</th>
@@ -1944,18 +1975,18 @@ Completed optimization. Total: 5 min 53 sec
       <td>126529100</td>
       <td>SIR-F</td>
       <td>1.52</td>
-      <td>0.000628</td>
-      <td>0.000873</td>
-      <td>0.128194</td>
-      <td>0.083254</td>
+      <td>0.000176</td>
+      <td>0.000905</td>
+      <td>0.128649</td>
+      <td>0.083883</td>
       <td>1440</td>
-      <td>0.001</td>
-      <td>1144.0</td>
+      <td>0.0</td>
+      <td>1104.0</td>
       <td>7.0</td>
-      <td>12.0</td>
-      <td>0.025490</td>
-      <td>1495.0</td>
-      <td>1 min  0 sec</td>
+      <td>11.0</td>
+      <td>0.025489</td>
+      <td>1799.0</td>
+      <td>1 min 15 sec</td>
     </tr>
     <tr>
       <th>27th</th>
@@ -1965,18 +1996,18 @@ Completed optimization. Total: 5 min 53 sec
       <td>126529100</td>
       <td>SIR-F</td>
       <td>1.12</td>
-      <td>0.000445</td>
-      <td>0.001353</td>
-      <td>0.099378</td>
-      <td>0.087173</td>
+      <td>0.000106</td>
+      <td>0.001405</td>
+      <td>0.094246</td>
+      <td>0.082467</td>
       <td>1440</td>
       <td>0.0</td>
-      <td>739.0</td>
+      <td>711.0</td>
       <td>10.0</td>
-      <td>11.0</td>
-      <td>0.006898</td>
-      <td>650.0</td>
-      <td>0 min 20 sec</td>
+      <td>12.0</td>
+      <td>0.007561</td>
+      <td>375.0</td>
+      <td>0 min 10 sec</td>
     </tr>
     <tr>
       <th>28th</th>
@@ -1996,7 +2027,7 @@ Completed optimization. Total: 5 min 53 sec
       <td>9.0</td>
       <td>11.0</td>
       <td>0.009875</td>
-      <td>242.0</td>
+      <td>210.0</td>
       <td>0 min  5 sec</td>
     </tr>
     <tr>
@@ -2006,18 +2037,18 @@ Completed optimization. Total: 5 min 53 sec
       <td>30Dec2020</td>
       <td>126529100</td>
       <td>SIR-F</td>
-      <td>1.34</td>
-      <td>0.001487</td>
-      <td>0.001456</td>
-      <td>0.109510</td>
-      <td>0.080250</td>
+      <td>1.33</td>
+      <td>0.001181</td>
+      <td>0.001479</td>
+      <td>0.109438</td>
+      <td>0.080951</td>
       <td>1440</td>
       <td>0.001</td>
-      <td>686.0</td>
+      <td>676.0</td>
       <td>9.0</td>
       <td>12.0</td>
-      <td>0.007076</td>
-      <td>212.0</td>
+      <td>0.007051</td>
+      <td>225.0</td>
       <td>0 min  5 sec</td>
     </tr>
     <tr>
@@ -2038,7 +2069,7 @@ Completed optimization. Total: 5 min 53 sec
       <td>10.0</td>
       <td>15.0</td>
       <td>0.007184</td>
-      <td>780.0</td>
+      <td>821.0</td>
       <td>0 min 25 sec</td>
     </tr>
     <tr>
@@ -2059,7 +2090,7 @@ Completed optimization. Total: 5 min 53 sec
       <td>8.0</td>
       <td>15.0</td>
       <td>0.030108</td>
-      <td>956.0</td>
+      <td>1153.0</td>
       <td>0 min 40 sec</td>
     </tr>
     <tr>
@@ -2080,8 +2111,8 @@ Completed optimization. Total: 5 min 53 sec
       <td>12.0</td>
       <td>10.0</td>
       <td>0.007967</td>
-      <td>1301.0</td>
-      <td>0 min 50 sec</td>
+      <td>1333.0</td>
+      <td>0 min 40 sec</td>
     </tr>
     <tr>
       <th>33rd</th>
@@ -2101,134 +2132,134 @@ Completed optimization. Total: 5 min 53 sec
       <td>15.0</td>
       <td>9.0</td>
       <td>0.007877</td>
-      <td>187.0</td>
+      <td>190.0</td>
       <td>0 min  5 sec</td>
     </tr>
     <tr>
       <th>34th</th>
       <td>Past</td>
       <td>03Feb2021</td>
-      <td>16Feb2021</td>
+      <td>17Feb2021</td>
       <td>126529100</td>
       <td>SIR-F</td>
-      <td>0.52</td>
-      <td>0.001119</td>
-      <td>0.002592</td>
-      <td>0.056694</td>
-      <td>0.107103</td>
+      <td>0.49</td>
+      <td>0.011692</td>
+      <td>0.002089</td>
+      <td>0.052014</td>
+      <td>0.102181</td>
       <td>1440</td>
-      <td>0.001</td>
-      <td>385.0</td>
-      <td>17.0</td>
+      <td>0.012</td>
+      <td>478.0</td>
+      <td>19.0</td>
       <td>9.0</td>
-      <td>0.013223</td>
-      <td>184.0</td>
+      <td>0.012978</td>
+      <td>211.0</td>
       <td>0 min  5 sec</td>
     </tr>
     <tr>
       <th>35th</th>
       <td>Past</td>
-      <td>17Feb2021</td>
-      <td>26Feb2021</td>
+      <td>18Feb2021</td>
+      <td>27Feb2021</td>
       <td>126529100</td>
       <td>SIR-F</td>
       <td>0.68</td>
-      <td>0.000197</td>
-      <td>0.003867</td>
-      <td>0.069498</td>
-      <td>0.098701</td>
+      <td>0.000222</td>
+      <td>0.003865</td>
+      <td>0.065840</td>
+      <td>0.093157</td>
       <td>1440</td>
       <td>0.0</td>
       <td>258.0</td>
-      <td>14.0</td>
+      <td>15.0</td>
       <td>10.0</td>
-      <td>0.006311</td>
-      <td>211.0</td>
+      <td>0.007682</td>
+      <td>207.0</td>
       <td>0 min  5 sec</td>
     </tr>
     <tr>
       <th>36th</th>
       <td>Past</td>
-      <td>27Feb2021</td>
-      <td>10Mar2021</td>
+      <td>28Feb2021</td>
+      <td>11Mar2021</td>
       <td>126529100</td>
       <td>SIR-F</td>
       <td>0.75</td>
-      <td>0.024160</td>
-      <td>0.002264</td>
-      <td>0.065320</td>
-      <td>0.082515</td>
+      <td>0.008970</td>
+      <td>0.003113</td>
+      <td>0.064121</td>
+      <td>0.081605</td>
       <td>1440</td>
-      <td>0.024</td>
-      <td>441.0</td>
+      <td>0.009</td>
+      <td>321.0</td>
       <td>15.0</td>
       <td>12.0</td>
-      <td>0.013958</td>
-      <td>210.0</td>
+      <td>0.017794</td>
+      <td>217.0</td>
       <td>0 min  5 sec</td>
     </tr>
     <tr>
       <th>37th</th>
       <td>Past</td>
-      <td>11Mar2021</td>
+      <td>12Mar2021</td>
       <td>23Mar2021</td>
       <td>126529100</td>
       <td>SIR-F</td>
-      <td>1.13</td>
-      <td>0.013603</td>
-      <td>0.002012</td>
-      <td>0.090062</td>
-      <td>0.076363</td>
+      <td>1.12</td>
+      <td>0.001811</td>
+      <td>0.003078</td>
+      <td>0.089134</td>
+      <td>0.076180</td>
       <td>1440</td>
-      <td>0.014</td>
-      <td>497.0</td>
+      <td>0.002</td>
+      <td>324.0</td>
       <td>11.0</td>
       <td>13.0</td>
-      <td>0.010797</td>
-      <td>169.0</td>
-      <td>0 min  5 sec</td>
+      <td>0.011269</td>
+      <td>392.0</td>
+      <td>0 min 10 sec</td>
     </tr>
     <tr>
       <th>38th</th>
       <td>Past</td>
       <td>24Mar2021</td>
-      <td>02Apr2021</td>
+      <td>03Apr2021</td>
       <td>126529100</td>
       <td>SIR-F</td>
-      <td>1.63</td>
-      <td>0.000887</td>
-      <td>0.001724</td>
-      <td>0.112392</td>
-      <td>0.067066</td>
+      <td>1.62</td>
+      <td>0.000278</td>
+      <td>0.001855</td>
+      <td>0.115925</td>
+      <td>0.069482</td>
       <td>1440</td>
-      <td>0.001</td>
-      <td>580.0</td>
+      <td>0.0</td>
+      <td>539.0</td>
       <td>8.0</td>
       <td>14.0</td>
-      <td>0.008481</td>
-      <td>564.0</td>
-      <td>0 min 20 sec</td>
+      <td>0.009797</td>
+      <td>1053.0</td>
+      <td>0 min 35 sec</td>
     </tr>
     <tr>
       <th>39th</th>
       <td>Past</td>
-      <td>03Apr2021</td>
+      <td>04Apr2021</td>
       <td>13Apr2021</td>
       <td>126529100</td>
       <td>SIR-F</td>
-      <td>1.54</td>
-      <td>0.000272</td>
-      <td>0.000753</td>
-      <td>0.111026</td>
-      <td>0.071526</td>
+      <td>1.50</td>
+      <td>0.000517</td>
+      <td>0.000772</td>
+      <td>0.109882</td>
+      <td>0.072546</td>
       <td>1440</td>
-      <td>0.0</td>
-      <td>1328.0</td>
+      <td>0.001</td>
+      <td>1294.0</td>
       <td>9.0</td>
       <td>13.0</td>
-      <td>0.012126</td>
-      <td>974.0</td>
-      <td>0 min 40 sec</td>
+      <td>0.012383</td>
+      <td>1022.0</td>
+      <td>0 min 30 sec</td>
     </tr>
     <tr>
       <th>40th</th>
@@ -2238,18 +2269,18 @@ Completed optimization. Total: 5 min 53 sec
       <td>126529100</td>
       <td>SIR-F</td>
       <td>1.70</td>
-      <td>0.000437</td>
-      <td>0.000869</td>
-      <td>0.117121</td>
-      <td>0.067931</td>
+      <td>0.000120</td>
+      <td>0.000951</td>
+      <td>0.117556</td>
+      <td>0.068253</td>
       <td>1440</td>
       <td>0.0</td>
-      <td>1150.0</td>
+      <td>1051.0</td>
       <td>8.0</td>
       <td>14.0</td>
-      <td>0.011992</td>
-      <td>973.0</td>
-      <td>0 min 35 sec</td>
+      <td>0.011990</td>
+      <td>2050.0</td>
+      <td>1 min 10 sec</td>
     </tr>
     <tr>
       <th>41st</th>
@@ -2259,39 +2290,39 @@ Completed optimization. Total: 5 min 53 sec
       <td>126529100</td>
       <td>SIR-F</td>
       <td>1.48</td>
-      <td>0.000069</td>
-      <td>0.001158</td>
-      <td>0.096782</td>
-      <td>0.064127</td>
+      <td>0.000124</td>
+      <td>0.001081</td>
+      <td>0.096494</td>
+      <td>0.064006</td>
       <td>1440</td>
       <td>0.0</td>
-      <td>863.0</td>
+      <td>924.0</td>
       <td>10.0</td>
       <td>15.0</td>
-      <td>0.009358</td>
-      <td>190.0</td>
+      <td>0.009219</td>
+      <td>271.0</td>
       <td>0 min  5 sec</td>
     </tr>
     <tr>
       <th>42nd</th>
       <td>Past</td>
       <td>01May2021</td>
-      <td>11May2021</td>
+      <td>12May2021</td>
       <td>126529100</td>
       <td>SIR-F</td>
-      <td>1.29</td>
-      <td>0.000671</td>
-      <td>0.001042</td>
-      <td>0.083711</td>
-      <td>0.063768</td>
+      <td>1.31</td>
+      <td>0.001110</td>
+      <td>0.001021</td>
+      <td>0.082046</td>
+      <td>0.061625</td>
       <td>1440</td>
       <td>0.001</td>
-      <td>960.0</td>
-      <td>11.0</td>
-      <td>15.0</td>
-      <td>0.007698</td>
-      <td>1109.0</td>
-      <td>0 min 45 sec</td>
+      <td>979.0</td>
+      <td>12.0</td>
+      <td>16.0</td>
+      <td>0.007708</td>
+      <td>191.0</td>
+      <td>0 min  5 sec</td>
     </tr>
   </tbody>
 </table>
@@ -2306,7 +2337,7 @@ Completed optimization. Total: 5 min 53 sec
 \mathrm{RMSLE} = \sqrt{\cfrac{1}{n}\sum_{i=1}^{n}(log_{10}(A_{i} + 1) - log_{10}(P_{i} + 1))^2}
 \end{align*}</div><p>Where <span class="math notranslate nohighlight">\(A\)</span> is the observed (actual) values, <span class="math notranslate nohighlight">\(P\)</span> is estimated (predicted) values. Variables are <span class="math notranslate nohighlight">\(S (i=1), I (i=2), R (i=3)\ \mathrm{and}\ F (i=n=4)\)</span> for SIR-F model. When RMSLE score is low, hyperparameter estimation is highly accurate. Please refer to external sites, including <a class="reference external" href="https://medium.com/analytics-vidhya/root-mean-square-log-error-rmse-vs-rmlse-935c6cc1802a">Medium: What’s the Difference Between RMSE and RMSLE?</a></p>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[18]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[20]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
@@ -2316,7 +2347,7 @@ Completed optimization. Total: 5 min 53 sec
 </div>
 </div>
 <div class="nboutput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[18]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[20]:
 </pre></div>
 </div>
 <div class="output_area rendered_html docutils container">
@@ -2351,15 +2382,15 @@ Completed optimization. Total: 5 min 53 sec
       <td>06Feb2020</td>
       <td>18Feb2020</td>
       <td>0.142890</td>
-      <td>820.0</td>
-      <td>0 min 25 sec</td>
+      <td>925.0</td>
+      <td>0 min 30 sec</td>
     </tr>
     <tr>
       <th>1st</th>
       <td>19Feb2020</td>
       <td>05Mar2020</td>
       <td>0.170717</td>
-      <td>650.0</td>
+      <td>669.0</td>
       <td>0 min 25 sec</td>
     </tr>
     <tr>
@@ -2367,15 +2398,15 @@ Completed optimization. Total: 5 min 53 sec
       <td>06Mar2020</td>
       <td>13Mar2020</td>
       <td>0.096661</td>
-      <td>894.0</td>
-      <td>0 min 40 sec</td>
+      <td>940.0</td>
+      <td>0 min 35 sec</td>
     </tr>
     <tr>
       <th>3rd</th>
       <td>14Mar2020</td>
       <td>24Mar2020</td>
       <td>0.027972</td>
-      <td>794.0</td>
+      <td>813.0</td>
       <td>0 min 30 sec</td>
     </tr>
     <tr>
@@ -2383,7 +2414,7 @@ Completed optimization. Total: 5 min 53 sec
       <td>25Mar2020</td>
       <td>02Apr2020</td>
       <td>0.036945</td>
-      <td>755.0</td>
+      <td>735.0</td>
       <td>0 min 30 sec</td>
     </tr>
     <tr>
@@ -2391,7 +2422,7 @@ Completed optimization. Total: 5 min 53 sec
       <td>03Apr2020</td>
       <td>16Apr2020</td>
       <td>0.040911</td>
-      <td>889.0</td>
+      <td>1057.0</td>
       <td>0 min 40 sec</td>
     </tr>
     <tr>
@@ -2399,7 +2430,7 @@ Completed optimization. Total: 5 min 53 sec
       <td>17Apr2020</td>
       <td>01May2020</td>
       <td>0.089373</td>
-      <td>987.0</td>
+      <td>954.0</td>
       <td>0 min 40 sec</td>
     </tr>
     <tr>
@@ -2407,23 +2438,23 @@ Completed optimization. Total: 5 min 53 sec
       <td>02May2020</td>
       <td>11May2020</td>
       <td>0.099141</td>
-      <td>811.0</td>
+      <td>889.0</td>
       <td>0 min 35 sec</td>
     </tr>
     <tr>
       <th>8th</th>
       <td>12May2020</td>
       <td>20May2020</td>
-      <td>0.026965</td>
-      <td>521.0</td>
-      <td>0 min 20 sec</td>
+      <td>0.027022</td>
+      <td>141.0</td>
+      <td>0 min  5 sec</td>
     </tr>
     <tr>
       <th>9th</th>
       <td>21May2020</td>
       <td>28May2020</td>
       <td>0.014298</td>
-      <td>218.0</td>
+      <td>171.0</td>
       <td>0 min  5 sec</td>
     </tr>
     <tr>
@@ -2431,7 +2462,7 @@ Completed optimization. Total: 5 min 53 sec
       <td>29May2020</td>
       <td>05Jun2020</td>
       <td>0.013204</td>
-      <td>188.0</td>
+      <td>174.0</td>
       <td>0 min  5 sec</td>
     </tr>
     <tr>
@@ -2439,7 +2470,7 @@ Completed optimization. Total: 5 min 53 sec
       <td>06Jun2020</td>
       <td>13Jun2020</td>
       <td>0.021013</td>
-      <td>153.0</td>
+      <td>194.0</td>
       <td>0 min  5 sec</td>
     </tr>
     <tr>
@@ -2447,47 +2478,47 @@ Completed optimization. Total: 5 min 53 sec
       <td>14Jun2020</td>
       <td>28Jun2020</td>
       <td>0.035520</td>
-      <td>1302.0</td>
-      <td>1 min  5 sec</td>
+      <td>1316.0</td>
+      <td>1 min  0 sec</td>
     </tr>
     <tr>
       <th>13th</th>
       <td>29Jun2020</td>
       <td>09Jul2020</td>
       <td>0.022931</td>
-      <td>1620.0</td>
-      <td>1 min 10 sec</td>
+      <td>1521.0</td>
+      <td>1 min  5 sec</td>
     </tr>
     <tr>
       <th>14th</th>
       <td>10Jul2020</td>
       <td>21Jul2020</td>
       <td>0.019499</td>
-      <td>1561.0</td>
-      <td>1 min  5 sec</td>
+      <td>1544.0</td>
+      <td>1 min 15 sec</td>
     </tr>
     <tr>
       <th>15th</th>
       <td>22Jul2020</td>
       <td>01Aug2020</td>
-      <td>0.024605</td>
-      <td>464.0</td>
-      <td>0 min 15 sec</td>
+      <td>0.024510</td>
+      <td>936.0</td>
+      <td>0 min 35 sec</td>
     </tr>
     <tr>
       <th>16th</th>
       <td>02Aug2020</td>
       <td>10Aug2020</td>
-      <td>0.028521</td>
-      <td>1686.0</td>
-      <td>1 min  5 sec</td>
+      <td>0.028522</td>
+      <td>1268.0</td>
+      <td>1 min  0 sec</td>
     </tr>
     <tr>
       <th>17th</th>
       <td>11Aug2020</td>
       <td>20Aug2020</td>
       <td>0.015641</td>
-      <td>1545.0</td>
+      <td>1551.0</td>
       <td>1 min  5 sec</td>
     </tr>
     <tr>
@@ -2495,15 +2526,15 @@ Completed optimization. Total: 5 min 53 sec
       <td>21Aug2020</td>
       <td>31Aug2020</td>
       <td>0.015456</td>
-      <td>396.0</td>
+      <td>357.0</td>
       <td>0 min 10 sec</td>
     </tr>
     <tr>
       <th>19th</th>
       <td>01Sep2020</td>
       <td>10Sep2020</td>
-      <td>0.008953</td>
-      <td>264.0</td>
+      <td>0.008978</td>
+      <td>187.0</td>
       <td>0 min  5 sec</td>
     </tr>
     <tr>
@@ -2511,7 +2542,7 @@ Completed optimization. Total: 5 min 53 sec
       <td>11Sep2020</td>
       <td>18Sep2020</td>
       <td>0.013786</td>
-      <td>808.0</td>
+      <td>718.0</td>
       <td>0 min 25 sec</td>
     </tr>
     <tr>
@@ -2519,31 +2550,31 @@ Completed optimization. Total: 5 min 53 sec
       <td>19Sep2020</td>
       <td>02Oct2020</td>
       <td>0.020879</td>
-      <td>1289.0</td>
-      <td>0 min 40 sec</td>
+      <td>1262.0</td>
+      <td>0 min 55 sec</td>
     </tr>
     <tr>
       <th>22nd</th>
       <td>03Oct2020</td>
       <td>14Oct2020</td>
-      <td>0.012527</td>
-      <td>1718.0</td>
-      <td>1 min 10 sec</td>
+      <td>0.012721</td>
+      <td>1114.0</td>
+      <td>0 min 50 sec</td>
     </tr>
     <tr>
       <th>23rd</th>
       <td>15Oct2020</td>
       <td>27Oct2020</td>
       <td>0.016257</td>
-      <td>1823.0</td>
-      <td>1 min 26 sec</td>
+      <td>1893.0</td>
+      <td>1 min 20 sec</td>
     </tr>
     <tr>
       <th>24th</th>
       <td>28Oct2020</td>
       <td>06Nov2020</td>
       <td>0.008525</td>
-      <td>211.0</td>
+      <td>178.0</td>
       <td>0 min  5 sec</td>
     </tr>
     <tr>
@@ -2551,39 +2582,39 @@ Completed optimization. Total: 5 min 53 sec
       <td>07Nov2020</td>
       <td>18Nov2020</td>
       <td>0.009908</td>
-      <td>1452.0</td>
-      <td>1 min  0 sec</td>
+      <td>1429.0</td>
+      <td>1 min 10 sec</td>
     </tr>
     <tr>
       <th>26th</th>
       <td>19Nov2020</td>
       <td>28Nov2020</td>
-      <td>0.025490</td>
-      <td>1495.0</td>
-      <td>1 min  0 sec</td>
+      <td>0.025489</td>
+      <td>1799.0</td>
+      <td>1 min 15 sec</td>
     </tr>
     <tr>
       <th>27th</th>
       <td>29Nov2020</td>
       <td>10Dec2020</td>
-      <td>0.006898</td>
-      <td>650.0</td>
-      <td>0 min 20 sec</td>
+      <td>0.007561</td>
+      <td>375.0</td>
+      <td>0 min 10 sec</td>
     </tr>
     <tr>
       <th>28th</th>
       <td>11Dec2020</td>
       <td>22Dec2020</td>
       <td>0.009875</td>
-      <td>242.0</td>
+      <td>210.0</td>
       <td>0 min  5 sec</td>
     </tr>
     <tr>
       <th>29th</th>
       <td>23Dec2020</td>
       <td>30Dec2020</td>
-      <td>0.007076</td>
-      <td>212.0</td>
+      <td>0.007051</td>
+      <td>225.0</td>
       <td>0 min  5 sec</td>
     </tr>
     <tr>
@@ -2591,7 +2622,7 @@ Completed optimization. Total: 5 min 53 sec
       <td>31Dec2020</td>
       <td>07Jan2021</td>
       <td>0.007184</td>
-      <td>780.0</td>
+      <td>821.0</td>
       <td>0 min 25 sec</td>
     </tr>
     <tr>
@@ -2599,7 +2630,7 @@ Completed optimization. Total: 5 min 53 sec
       <td>08Jan2021</td>
       <td>17Jan2021</td>
       <td>0.030108</td>
-      <td>956.0</td>
+      <td>1153.0</td>
       <td>0 min 40 sec</td>
     </tr>
     <tr>
@@ -2607,88 +2638,88 @@ Completed optimization. Total: 5 min 53 sec
       <td>18Jan2021</td>
       <td>25Jan2021</td>
       <td>0.007967</td>
-      <td>1301.0</td>
-      <td>0 min 50 sec</td>
+      <td>1333.0</td>
+      <td>0 min 40 sec</td>
     </tr>
     <tr>
       <th>33rd</th>
       <td>26Jan2021</td>
       <td>02Feb2021</td>
       <td>0.007877</td>
-      <td>187.0</td>
+      <td>190.0</td>
       <td>0 min  5 sec</td>
     </tr>
     <tr>
       <th>34th</th>
       <td>03Feb2021</td>
-      <td>16Feb2021</td>
-      <td>0.013223</td>
-      <td>184.0</td>
-      <td>0 min  5 sec</td>
-    </tr>
-    <tr>
-      <th>35th</th>
       <td>17Feb2021</td>
-      <td>26Feb2021</td>
-      <td>0.006311</td>
+      <td>0.012978</td>
       <td>211.0</td>
       <td>0 min  5 sec</td>
     </tr>
     <tr>
-      <th>36th</th>
+      <th>35th</th>
+      <td>18Feb2021</td>
       <td>27Feb2021</td>
-      <td>10Mar2021</td>
-      <td>0.013958</td>
-      <td>210.0</td>
+      <td>0.007682</td>
+      <td>207.0</td>
+      <td>0 min  5 sec</td>
+    </tr>
+    <tr>
+      <th>36th</th>
+      <td>28Feb2021</td>
+      <td>11Mar2021</td>
+      <td>0.017794</td>
+      <td>217.0</td>
       <td>0 min  5 sec</td>
     </tr>
     <tr>
       <th>37th</th>
-      <td>11Mar2021</td>
+      <td>12Mar2021</td>
       <td>23Mar2021</td>
-      <td>0.010797</td>
-      <td>169.0</td>
-      <td>0 min  5 sec</td>
+      <td>0.011269</td>
+      <td>392.0</td>
+      <td>0 min 10 sec</td>
     </tr>
     <tr>
       <th>38th</th>
       <td>24Mar2021</td>
-      <td>02Apr2021</td>
-      <td>0.008481</td>
-      <td>564.0</td>
-      <td>0 min 20 sec</td>
+      <td>03Apr2021</td>
+      <td>0.009797</td>
+      <td>1053.0</td>
+      <td>0 min 35 sec</td>
     </tr>
     <tr>
       <th>39th</th>
-      <td>03Apr2021</td>
+      <td>04Apr2021</td>
       <td>13Apr2021</td>
-      <td>0.012126</td>
-      <td>974.0</td>
-      <td>0 min 40 sec</td>
+      <td>0.012383</td>
+      <td>1022.0</td>
+      <td>0 min 30 sec</td>
     </tr>
     <tr>
       <th>40th</th>
       <td>14Apr2021</td>
       <td>21Apr2021</td>
-      <td>0.011992</td>
-      <td>973.0</td>
-      <td>0 min 35 sec</td>
+      <td>0.011990</td>
+      <td>2050.0</td>
+      <td>1 min 10 sec</td>
     </tr>
     <tr>
       <th>41st</th>
       <td>22Apr2021</td>
       <td>30Apr2021</td>
-      <td>0.009358</td>
-      <td>190.0</td>
+      <td>0.009219</td>
+      <td>271.0</td>
       <td>0 min  5 sec</td>
     </tr>
     <tr>
       <th>42nd</th>
       <td>01May2021</td>
-      <td>11May2021</td>
-      <td>0.007698</td>
-      <td>1109.0</td>
-      <td>0 min 45 sec</td>
+      <td>12May2021</td>
+      <td>0.007708</td>
+      <td>191.0</td>
+      <td>0 min  5 sec</td>
     </tr>
   </tbody>
 </table>
@@ -2696,7 +2727,7 @@ Completed optimization. Total: 5 min 53 sec
 </div>
 <p>Additionally, we can visualize the accuracy with <code class="docutils literal notranslate"><span class="pre">Scenario.estimate_accuracy()</span></code>, specifing phase name.</p>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[19]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[21]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
@@ -2711,12 +2742,12 @@ Completed optimization. Total: 5 min 53 sec
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area docutils container">
-<img alt="_images/usage_quick_43_0.png" src="_images/usage_quick_43_0.png" />
+<img alt="_images/usage_quick_49_0.png" src="_images/usage_quick_49_0.png" />
 </div>
 </div>
 <p>We can calculate total score for all phases using <code class="docutils literal notranslate"><span class="pre">Scenario.score()</span></code> method. Metrics can be selected from MAE, MSE, MSLE, RMSE and RMSLE.</p>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[20]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[22]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
@@ -2734,10 +2765,10 @@ Completed optimization. Total: 5 min 53 sec
 </div>
 <div class="output_area docutils container">
 <div class="highlight"><pre>
-  MAE: 576.880
-  MSE: 1410395.639
+  MAE: 555.088
+  MSE: 1304215.771
  MSLE: 0.003
- RMSE: 938.171
+ RMSE: 909.189
 RMSLE: 0.059
 </pre></div></div>
 </div>
@@ -2746,7 +2777,7 @@ RMSLE: 0.059
 <h2>Get parameter value<a class="headerlink" href="#Get-parameter-value" title="Permalink to this headline">¶</a></h2>
 <p>We can get the parameter values of a phase using <code class="docutils literal notranslate"><span class="pre">Scenario.get()</span></code> method.</p>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[21]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[23]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
@@ -2756,7 +2787,7 @@ RMSLE: 0.059
 </div>
 </div>
 <div class="nboutput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[21]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[23]:
 </pre></div>
 </div>
 <div class="output_area docutils container">
@@ -2765,7 +2796,7 @@ RMSLE: 0.059
 </pre></div></div>
 </div>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[22]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[24]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
@@ -2775,12 +2806,12 @@ RMSLE: 0.059
 </div>
 </div>
 <div class="nboutput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[22]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[24]:
 </pre></div>
 </div>
 <div class="output_area docutils container">
 <div class="highlight"><pre>
-1.29
+1.31
 </pre></div></div>
 </div>
 </div>
@@ -2788,7 +2819,7 @@ RMSLE: 0.059
 <h2>Show parameter history<a class="headerlink" href="#Show-parameter-history" title="Permalink to this headline">¶</a></h2>
 <p>We can get the history of parameter values with a dataframe and a figure.</p>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[23]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[25]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
@@ -2798,7 +2829,7 @@ RMSLE: 0.059
 </div>
 </div>
 <div class="nboutput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[23]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[25]:
 </pre></div>
 </div>
 <div class="output_area rendered_html docutils container">
@@ -2894,11 +2925,11 @@ RMSLE: 0.059
     </tr>
     <tr>
       <th>8th</th>
-      <td>0.057684</td>
-      <td>0.002622</td>
-      <td>0.017193</td>
-      <td>0.095538</td>
-      <td>0.17</td>
+      <td>0.071806</td>
+      <td>0.002496</td>
+      <td>0.015453</td>
+      <td>0.094052</td>
+      <td>0.15</td>
     </tr>
     <tr>
       <th>9th</th>
@@ -2950,19 +2981,19 @@ RMSLE: 0.059
     </tr>
     <tr>
       <th>15th</th>
-      <td>0.000045</td>
-      <td>0.000411</td>
-      <td>0.138908</td>
-      <td>0.068502</td>
-      <td>2.02</td>
+      <td>0.000071</td>
+      <td>0.000322</td>
+      <td>0.140072</td>
+      <td>0.069706</td>
+      <td>2.00</td>
     </tr>
     <tr>
       <th>16th</th>
-      <td>0.000310</td>
-      <td>0.000307</td>
-      <td>0.125580</td>
-      <td>0.075621</td>
-      <td>1.65</td>
+      <td>0.000305</td>
+      <td>0.000329</td>
+      <td>0.125866</td>
+      <td>0.075557</td>
+      <td>1.66</td>
     </tr>
     <tr>
       <th>17th</th>
@@ -2982,10 +3013,10 @@ RMSLE: 0.059
     </tr>
     <tr>
       <th>19th</th>
-      <td>0.000778</td>
-      <td>0.001325</td>
-      <td>0.068102</td>
-      <td>0.096566</td>
+      <td>0.000142</td>
+      <td>0.001469</td>
+      <td>0.068440</td>
+      <td>0.096731</td>
       <td>0.70</td>
     </tr>
     <tr>
@@ -3006,10 +3037,10 @@ RMSLE: 0.059
     </tr>
     <tr>
       <th>22nd</th>
-      <td>0.000505</td>
-      <td>0.000780</td>
-      <td>0.088660</td>
-      <td>0.087685</td>
+      <td>0.000364</td>
+      <td>0.000811</td>
+      <td>0.082063</td>
+      <td>0.081067</td>
       <td>1.00</td>
     </tr>
     <tr>
@@ -3038,18 +3069,18 @@ RMSLE: 0.059
     </tr>
     <tr>
       <th>26th</th>
-      <td>0.000628</td>
-      <td>0.000873</td>
-      <td>0.128194</td>
-      <td>0.083254</td>
+      <td>0.000176</td>
+      <td>0.000905</td>
+      <td>0.128649</td>
+      <td>0.083883</td>
       <td>1.52</td>
     </tr>
     <tr>
       <th>27th</th>
-      <td>0.000445</td>
-      <td>0.001353</td>
-      <td>0.099378</td>
-      <td>0.087173</td>
+      <td>0.000106</td>
+      <td>0.001405</td>
+      <td>0.094246</td>
+      <td>0.082467</td>
       <td>1.12</td>
     </tr>
     <tr>
@@ -3062,11 +3093,11 @@ RMSLE: 0.059
     </tr>
     <tr>
       <th>29th</th>
-      <td>0.001487</td>
-      <td>0.001456</td>
-      <td>0.109510</td>
-      <td>0.080250</td>
-      <td>1.34</td>
+      <td>0.001181</td>
+      <td>0.001479</td>
+      <td>0.109438</td>
+      <td>0.080951</td>
+      <td>1.33</td>
     </tr>
     <tr>
       <th>30th</th>
@@ -3102,75 +3133,75 @@ RMSLE: 0.059
     </tr>
     <tr>
       <th>34th</th>
-      <td>0.001119</td>
-      <td>0.002592</td>
-      <td>0.056694</td>
-      <td>0.107103</td>
-      <td>0.52</td>
+      <td>0.011692</td>
+      <td>0.002089</td>
+      <td>0.052014</td>
+      <td>0.102181</td>
+      <td>0.49</td>
     </tr>
     <tr>
       <th>35th</th>
-      <td>0.000197</td>
-      <td>0.003867</td>
-      <td>0.069498</td>
-      <td>0.098701</td>
+      <td>0.000222</td>
+      <td>0.003865</td>
+      <td>0.065840</td>
+      <td>0.093157</td>
       <td>0.68</td>
     </tr>
     <tr>
       <th>36th</th>
-      <td>0.024160</td>
-      <td>0.002264</td>
-      <td>0.065320</td>
-      <td>0.082515</td>
+      <td>0.008970</td>
+      <td>0.003113</td>
+      <td>0.064121</td>
+      <td>0.081605</td>
       <td>0.75</td>
     </tr>
     <tr>
       <th>37th</th>
-      <td>0.013603</td>
-      <td>0.002012</td>
-      <td>0.090062</td>
-      <td>0.076363</td>
-      <td>1.13</td>
+      <td>0.001811</td>
+      <td>0.003078</td>
+      <td>0.089134</td>
+      <td>0.076180</td>
+      <td>1.12</td>
     </tr>
     <tr>
       <th>38th</th>
-      <td>0.000887</td>
-      <td>0.001724</td>
-      <td>0.112392</td>
-      <td>0.067066</td>
-      <td>1.63</td>
+      <td>0.000278</td>
+      <td>0.001855</td>
+      <td>0.115925</td>
+      <td>0.069482</td>
+      <td>1.62</td>
     </tr>
     <tr>
       <th>39th</th>
-      <td>0.000272</td>
-      <td>0.000753</td>
-      <td>0.111026</td>
-      <td>0.071526</td>
-      <td>1.54</td>
+      <td>0.000517</td>
+      <td>0.000772</td>
+      <td>0.109882</td>
+      <td>0.072546</td>
+      <td>1.50</td>
     </tr>
     <tr>
       <th>40th</th>
-      <td>0.000437</td>
-      <td>0.000869</td>
-      <td>0.117121</td>
-      <td>0.067931</td>
+      <td>0.000120</td>
+      <td>0.000951</td>
+      <td>0.117556</td>
+      <td>0.068253</td>
       <td>1.70</td>
     </tr>
     <tr>
       <th>41st</th>
-      <td>0.000069</td>
-      <td>0.001158</td>
-      <td>0.096782</td>
-      <td>0.064127</td>
+      <td>0.000124</td>
+      <td>0.001081</td>
+      <td>0.096494</td>
+      <td>0.064006</td>
       <td>1.48</td>
     </tr>
     <tr>
       <th>42nd</th>
-      <td>0.000671</td>
-      <td>0.001042</td>
-      <td>0.083711</td>
-      <td>0.063768</td>
-      <td>1.29</td>
+      <td>0.001110</td>
+      <td>0.001021</td>
+      <td>0.082046</td>
+      <td>0.061625</td>
+      <td>1.31</td>
     </tr>
   </tbody>
 </table>
@@ -3178,7 +3209,7 @@ RMSLE: 0.059
 </div>
 <p><code class="docutils literal notranslate"><span class="pre">Scenario.history()</span></code> method shows the trajectories of parameters (and the number of cases).</p>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[24]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[26]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
@@ -3190,11 +3221,11 @@ RMSLE: 0.059
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area docutils container">
-<img alt="_images/usage_quick_52_0.png" src="_images/usage_quick_52_0.png" />
+<img alt="_images/usage_quick_58_0.png" src="_images/usage_quick_58_0.png" />
 </div>
 </div>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[25]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[27]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
@@ -3206,11 +3237,11 @@ RMSLE: 0.059
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area docutils container">
-<img alt="_images/usage_quick_53_0.png" src="_images/usage_quick_53_0.png" />
+<img alt="_images/usage_quick_59_0.png" src="_images/usage_quick_59_0.png" />
 </div>
 </div>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[26]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[28]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
@@ -3222,11 +3253,11 @@ RMSLE: 0.059
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area docutils container">
-<img alt="_images/usage_quick_54_0.png" src="_images/usage_quick_54_0.png" />
+<img alt="_images/usage_quick_60_0.png" src="_images/usage_quick_60_0.png" />
 </div>
 </div>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[27]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[29]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
@@ -3238,7 +3269,7 @@ RMSLE: 0.059
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area docutils container">
-<img alt="_images/usage_quick_55_0.png" src="_images/usage_quick_55_0.png" />
+<img alt="_images/usage_quick_61_0.png" src="_images/usage_quick_61_0.png" />
 </div>
 </div>
 <div class="line-block">
@@ -3253,7 +3284,7 @@ RMSLE: 0.059
 <h2>Show the history of reproduction number<a class="headerlink" href="#Show-the-history-of-reproduction-number" title="Permalink to this headline">¶</a></h2>
 <p><span class="math notranslate nohighlight">\(R_0\)</span> (“R naught”) means “the average number of secondary infections caused by an infected host” (<a class="reference external" href="https://towardsdatascience.com/infection-modeling-part-1-87e74645568a">Infection Modeling — Part 1</a>). When this value is larger than 1, the infection disease is outbreaking.</p>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[28]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[30]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
@@ -3265,7 +3296,7 @@ RMSLE: 0.059
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area docutils container">
-<img alt="_images/usage_quick_58_0.png" src="_images/usage_quick_58_0.png" />
+<img alt="_images/usage_quick_64_0.png" src="_images/usage_quick_64_0.png" />
 </div>
 </div>
 </div>
@@ -3273,7 +3304,7 @@ RMSLE: 0.059
 <h2>Simulate the number of cases<a class="headerlink" href="#Simulate-the-number-of-cases" title="Permalink to this headline">¶</a></h2>
 <p>We can compare the actual and simulated (with estimated parameter values) number of confirmed/infected/recovered/fatal cases using <code class="docutils literal notranslate"><span class="pre">Scenario.history()</span></code> method.</p>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[29]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[31]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
@@ -3286,12 +3317,12 @@ RMSLE: 0.059
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area docutils container">
-<img alt="_images/usage_quick_60_0.png" src="_images/usage_quick_60_0.png" />
+<img alt="_images/usage_quick_66_0.png" src="_images/usage_quick_66_0.png" />
 </div>
 </div>
 <p>When we want to show only one scenario with all variables, we use <code class="docutils literal notranslate"><span class="pre">Scenario.simulate()</span></code> method.</p>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[30]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[32]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
@@ -3303,7 +3334,7 @@ RMSLE: 0.059
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area docutils container">
-<img alt="_images/usage_quick_62_0.png" src="_images/usage_quick_62_0.png" />
+<img alt="_images/usage_quick_68_0.png" src="_images/usage_quick_68_0.png" />
 </div>
 </div>
 </div>
@@ -3312,7 +3343,7 @@ RMSLE: 0.059
 <p>To investigate the effect of parameter changes, we will perform scenario analysis. In the main scenario, we will assume that the parameter values do not change after the last past phase.</p>
 <p>i.e. If the parameter velues will not be changed until 31Jul2021, how many cases will be? We call this scenario as “Main” scenario.</p>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[31]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[33]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
@@ -3331,11 +3362,11 @@ RMSLE: 0.059
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area docutils container">
-<img alt="_images/usage_quick_64_0.png" src="_images/usage_quick_64_0.png" />
+<img alt="_images/usage_quick_70_0.png" src="_images/usage_quick_70_0.png" />
 </div>
 </div>
 <div class="nboutput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[31]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[33]:
 </pre></div>
 </div>
 <div class="output_area rendered_html docutils container">
@@ -3367,37 +3398,37 @@ RMSLE: 0.059
     <tr>
       <th>524</th>
       <td>2021-07-27</td>
-      <td>288321</td>
-      <td>24179</td>
-      <td>1333919</td>
+      <td>300679</td>
+      <td>24738</td>
+      <td>1327586</td>
     </tr>
     <tr>
       <th>525</th>
       <td>2021-07-28</td>
-      <td>293484</td>
-      <td>24498</td>
-      <td>1352469</td>
+      <td>306210</td>
+      <td>25075</td>
+      <td>1346285</td>
     </tr>
     <tr>
       <th>526</th>
       <td>2021-07-29</td>
-      <td>298735</td>
-      <td>24823</td>
-      <td>1371350</td>
+      <td>311839</td>
+      <td>25418</td>
+      <td>1365328</td>
     </tr>
     <tr>
       <th>527</th>
       <td>2021-07-30</td>
-      <td>304075</td>
-      <td>25153</td>
-      <td>1390570</td>
+      <td>317565</td>
+      <td>25768</td>
+      <td>1384721</td>
     </tr>
     <tr>
       <th>528</th>
       <td>2021-07-31</td>
-      <td>309505</td>
-      <td>25490</td>
-      <td>1410133</td>
+      <td>323392</td>
+      <td>26124</td>
+      <td>1404470</td>
     </tr>
   </tbody>
 </table>
@@ -3409,7 +3440,7 @@ RMSLE: 0.059
 <p>To investigate the effect of new medicines, we will assume that <span class="math notranslate nohighlight">\(\sigma\)</span> will be changed in the future phases.</p>
 <p>If <span class="math notranslate nohighlight">\(\sigma\)</span> will be 1.2 times in 30 days, how many cases will be? We will call this scenario as “Medicine” scenario.</p>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[32]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[34]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
@@ -3420,16 +3451,16 @@ RMSLE: 0.059
 </div>
 </div>
 <div class="nboutput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[32]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[34]:
 </pre></div>
 </div>
 <div class="output_area docutils container">
 <div class="highlight"><pre>
-0.06376791632656452
+0.06162464727087099
 </pre></div></div>
 </div>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[33]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[35]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
@@ -3440,16 +3471,16 @@ RMSLE: 0.059
 </div>
 </div>
 <div class="nboutput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[33]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[35]:
 </pre></div>
 </div>
 <div class="output_area docutils container">
 <div class="highlight"><pre>
-0.07652149959187741
+0.07394957672504518
 </pre></div></div>
 </div>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[34]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[36]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
@@ -3463,17 +3494,17 @@ RMSLE: 0.059
 </div>
 </div>
 <div class="nboutput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[34]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[36]:
 </pre></div>
 </div>
 <div class="output_area docutils container">
 <div class="highlight"><pre>
-&lt;covsirphy.analysis.scenario.Scenario at 0x7f348551bcd0&gt;
+&lt;covsirphy.analysis.scenario.Scenario at 0x7f94304712e0&gt;
 </pre></div></div>
 </div>
 <p>Check summary of future phases.</p>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[35]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[37]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
@@ -3483,7 +3514,7 @@ RMSLE: 0.059
 </div>
 </div>
 <div class="nboutput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[35]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[37]:
 </pre></div>
 </div>
 <div class="output_area rendered_html docutils container">
@@ -3553,20 +3584,20 @@ RMSLE: 0.059
       <th rowspan="2" valign="top">Main</th>
       <th>43rd</th>
       <td>Future</td>
-      <td>12May2021</td>
-      <td>10Jun2021</td>
+      <td>13May2021</td>
+      <td>11Jun2021</td>
       <td>126529100</td>
       <td>SIR-F</td>
-      <td>1.29</td>
-      <td>0.000671</td>
-      <td>0.001042</td>
-      <td>0.083711</td>
-      <td>0.063768</td>
+      <td>1.31</td>
+      <td>0.00111</td>
+      <td>0.001021</td>
+      <td>0.082046</td>
+      <td>0.061625</td>
       <td>1440</td>
       <td>0.001</td>
-      <td>960.0</td>
-      <td>11.0</td>
-      <td>15.0</td>
+      <td>979.0</td>
+      <td>12.0</td>
+      <td>16.0</td>
       <td>-</td>
       <td>-</td>
       <td>-</td>
@@ -3574,20 +3605,20 @@ RMSLE: 0.059
     <tr>
       <th>44th</th>
       <td>Future</td>
-      <td>11Jun2021</td>
+      <td>12Jun2021</td>
       <td>31Jul2021</td>
       <td>126529100</td>
       <td>SIR-F</td>
-      <td>1.29</td>
-      <td>0.000671</td>
-      <td>0.001042</td>
-      <td>0.083711</td>
-      <td>0.063768</td>
+      <td>1.31</td>
+      <td>0.00111</td>
+      <td>0.001021</td>
+      <td>0.082046</td>
+      <td>0.061625</td>
       <td>1440</td>
       <td>0.001</td>
-      <td>960.0</td>
-      <td>11.0</td>
-      <td>15.0</td>
+      <td>979.0</td>
+      <td>12.0</td>
+      <td>16.0</td>
       <td>-</td>
       <td>-</td>
       <td>-</td>
@@ -3596,20 +3627,20 @@ RMSLE: 0.059
       <th rowspan="2" valign="top">Medicine</th>
       <th>43rd</th>
       <td>Future</td>
-      <td>12May2021</td>
-      <td>10Jun2021</td>
+      <td>13May2021</td>
+      <td>11Jun2021</td>
       <td>126529100</td>
       <td>SIR-F</td>
-      <td>1.29</td>
-      <td>0.000671</td>
-      <td>0.001042</td>
-      <td>0.083711</td>
-      <td>0.063768</td>
+      <td>1.31</td>
+      <td>0.00111</td>
+      <td>0.001021</td>
+      <td>0.082046</td>
+      <td>0.061625</td>
       <td>1440</td>
       <td>0.001</td>
-      <td>960.0</td>
-      <td>11.0</td>
-      <td>15.0</td>
+      <td>979.0</td>
+      <td>12.0</td>
+      <td>16.0</td>
       <td>-</td>
       <td>-</td>
       <td>-</td>
@@ -3617,19 +3648,19 @@ RMSLE: 0.059
     <tr>
       <th>44th</th>
       <td>Future</td>
-      <td>11Jun2021</td>
+      <td>12Jun2021</td>
       <td>31Jul2021</td>
       <td>126529100</td>
       <td>SIR-F</td>
-      <td>1.08</td>
-      <td>0.000671</td>
-      <td>0.001042</td>
-      <td>0.083711</td>
-      <td>0.076521</td>
+      <td>1.09</td>
+      <td>0.00111</td>
+      <td>0.001021</td>
+      <td>0.082046</td>
+      <td>0.073950</td>
       <td>1440</td>
       <td>0.001</td>
-      <td>960.0</td>
-      <td>11.0</td>
+      <td>979.0</td>
+      <td>12.0</td>
       <td>13.0</td>
       <td>-</td>
       <td>-</td>
@@ -3641,7 +3672,7 @@ RMSLE: 0.059
 </div>
 <p>Simulate the number of cases.</p>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[36]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[38]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
@@ -3653,7 +3684,7 @@ RMSLE: 0.059
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area docutils container">
-<img alt="_images/usage_quick_72_0.png" src="_images/usage_quick_72_0.png" />
+<img alt="_images/usage_quick_78_0.png" src="_images/usage_quick_78_0.png" />
 </div>
 </div>
 </div>
@@ -3684,7 +3715,7 @@ RMSLE: 0.059
 <p>When we use <code class="docutils literal notranslate"><span class="pre">delay=None</span></code>, the indicator used to estimate delay period (“Stringency_index” as default) will be automatically removed from X dataset. If you have some indicators to be removed additionally, please use <code class="docutils literal notranslate"><span class="pre">removed_cols</span></code> argument (list of indicator names) of <code class="docutils literal notranslate"><span class="pre">Scenario.fit()</span></code>.</p>
 <p>Here, we will remove “Tests” and “Tests_diff” as an example. (This is because we have “Testing_policy” indicator and they may be overlaped.)</p>
 <div class="nbinput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[37]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[39]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
@@ -3697,7 +3728,7 @@ RMSLE: 0.059
 </div>
 <p>Show determination coeefients of training/test dataset.</p>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[38]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[40]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
@@ -3711,13 +3742,13 @@ RMSLE: 0.059
 </div>
 <div class="output_area docutils container">
 <div class="highlight"><pre>
-RMSLE: 0.215 (train)
-RMSLE: 0.184 (test)
+RMSLE: 0.094 (train)
+RMSLE: 0.073 (test)
 </pre></div></div>
 </div>
 <p>Show the intercept and coefficient values of the regression model.</p>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[39]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[41]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
@@ -3736,119 +3767,167 @@ Coefficient:
 </pre></div></div>
 </div>
 <div class="nboutput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[39]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[41]:
 </pre></div>
 </div>
 <div class="output_area rendered_html docutils container">
 <style  type="text/css" >
-#T_fc07b_row0_col0{
-            background-color:  #b3c3de;
+#T_07514_row0_col0{
+            background-color:  #02395a;
+            color:  #f1f1f1;
+        }#T_07514_row0_col1,#T_07514_row0_col6{
+            background-color:  #0f76b3;
+            color:  #f1f1f1;
+        }#T_07514_row0_col2{
+            background-color:  #4496c3;
             color:  #000000;
-        }#T_fc07b_row0_col1{
-            background-color:  #b4c4df;
+        }#T_07514_row0_col3{
+            background-color:  #6ba5cd;
             color:  #000000;
-        }#T_fc07b_row0_col2,#T_fc07b_row0_col7,#T_fc07b_row0_col8,#T_fc07b_row0_col9,#T_fc07b_row0_col10,#T_fc07b_row0_col11,#T_fc07b_row0_col14,#T_fc07b_row1_col0,#T_fc07b_row1_col1,#T_fc07b_row1_col2,#T_fc07b_row1_col3,#T_fc07b_row1_col4,#T_fc07b_row1_col5,#T_fc07b_row1_col7,#T_fc07b_row1_col8,#T_fc07b_row1_col9,#T_fc07b_row1_col10,#T_fc07b_row1_col11,#T_fc07b_row1_col13,#T_fc07b_row1_col14,#T_fc07b_row2_col0,#T_fc07b_row2_col1,#T_fc07b_row2_col2,#T_fc07b_row2_col3,#T_fc07b_row2_col4,#T_fc07b_row2_col5,#T_fc07b_row2_col6,#T_fc07b_row2_col7,#T_fc07b_row2_col8,#T_fc07b_row2_col9,#T_fc07b_row2_col10,#T_fc07b_row2_col11,#T_fc07b_row2_col12,#T_fc07b_row2_col13,#T_fc07b_row2_col14,#T_fc07b_row3_col0,#T_fc07b_row3_col1,#T_fc07b_row3_col2,#T_fc07b_row3_col3,#T_fc07b_row3_col4,#T_fc07b_row3_col5,#T_fc07b_row3_col6,#T_fc07b_row3_col7,#T_fc07b_row3_col8,#T_fc07b_row3_col9,#T_fc07b_row3_col10,#T_fc07b_row3_col11,#T_fc07b_row3_col12,#T_fc07b_row3_col13,#T_fc07b_row3_col14{
-            background-color:  #b5c4df;
-            color:  #000000;
-        }#T_fc07b_row0_col3{
-            background-color:  #fff7fb;
-            color:  #000000;
-        }#T_fc07b_row0_col4{
-            background-color:  #b8c6e0;
-            color:  #000000;
-        }#T_fc07b_row0_col5{
-            background-color:  #e2dfee;
-            color:  #000000;
-        }#T_fc07b_row0_col6{
-            background-color:  #75a9cf;
-            color:  #000000;
-        }#T_fc07b_row0_col12{
+        }#T_07514_row0_col4{
             background-color:  #023858;
             color:  #f1f1f1;
-        }#T_fc07b_row0_col13{
-            background-color:  #83afd3;
+        }#T_07514_row0_col5{
+            background-color:  #fff7fb;
             color:  #000000;
-        }#T_fc07b_row1_col6,#T_fc07b_row1_col12{
-            background-color:  #b7c5df;
+        }#T_07514_row0_col7{
+            background-color:  #056aa6;
+            color:  #f1f1f1;
+        }#T_07514_row0_col8{
+            background-color:  #045c90;
+            color:  #f1f1f1;
+        }#T_07514_row0_col9{
+            background-color:  #71a8ce;
             color:  #000000;
-        }</style><table id="T_fc07b_" ><thead>    <tr>        <th class="blank level0" ></th>        <th class="col_heading level0 col0" >School_closing</th>        <th class="col_heading level0 col1" >Workplace_closing</th>        <th class="col_heading level0 col2" >Cancel_events</th>        <th class="col_heading level0 col3" >Gatherings_restrictions</th>        <th class="col_heading level0 col4" >Transport_closing</th>        <th class="col_heading level0 col5" >Stay_home_restrictions</th>        <th class="col_heading level0 col6" >Internal_movement_restrictions</th>        <th class="col_heading level0 col7" >International_movement_restrictions</th>        <th class="col_heading level0 col8" >Information_campaigns</th>        <th class="col_heading level0 col9" >Testing_policy</th>        <th class="col_heading level0 col10" >Contact_tracing</th>        <th class="col_heading level0 col11" >Stringency_index</th>        <th class="col_heading level0 col12" >Vaccinations</th>        <th class="col_heading level0 col13" >Vaccinated_once</th>        <th class="col_heading level0 col14" >Vaccinated_full</th>    </tr></thead><tbody>
+        }#T_07514_row0_col10{
+            background-color:  #034d79;
+            color:  #f1f1f1;
+        }#T_07514_row0_col11{
+            background-color:  #84b0d3;
+            color:  #000000;
+        }#T_07514_row0_col12{
+            background-color:  #2484ba;
+            color:  #000000;
+        }#T_07514_row0_col13{
+            background-color:  #2685bb;
+            color:  #000000;
+        }#T_07514_row0_col14{
+            background-color:  #2182b9;
+            color:  #000000;
+        }#T_07514_row1_col0,#T_07514_row1_col2,#T_07514_row1_col12,#T_07514_row1_col13,#T_07514_row2_col1,#T_07514_row2_col6,#T_07514_row2_col7,#T_07514_row3_col11{
+            background-color:  #0570b0;
+            color:  #f1f1f1;
+        }#T_07514_row1_col1,#T_07514_row1_col5,#T_07514_row1_col6,#T_07514_row2_col9{
+            background-color:  #056dab;
+            color:  #f1f1f1;
+        }#T_07514_row1_col3,#T_07514_row1_col10,#T_07514_row2_col2,#T_07514_row3_col2,#T_07514_row3_col3,#T_07514_row3_col4,#T_07514_row3_col14{
+            background-color:  #056ead;
+            color:  #f1f1f1;
+        }#T_07514_row1_col4,#T_07514_row1_col8,#T_07514_row2_col3,#T_07514_row2_col11,#T_07514_row2_col14{
+            background-color:  #056faf;
+            color:  #f1f1f1;
+        }#T_07514_row1_col7,#T_07514_row2_col8,#T_07514_row2_col12,#T_07514_row2_col13{
+            background-color:  #056dac;
+            color:  #f1f1f1;
+        }#T_07514_row1_col9{
+            background-color:  #0d75b3;
+            color:  #f1f1f1;
+        }#T_07514_row1_col11{
+            background-color:  #056caa;
+            color:  #f1f1f1;
+        }#T_07514_row1_col14,#T_07514_row2_col4,#T_07514_row2_col10,#T_07514_row3_col8,#T_07514_row3_col9,#T_07514_row3_col10,#T_07514_row3_col12,#T_07514_row3_col13{
+            background-color:  #056fae;
+            color:  #f1f1f1;
+        }#T_07514_row2_col0,#T_07514_row3_col5{
+            background-color:  #0a73b2;
+            color:  #f1f1f1;
+        }#T_07514_row2_col5{
+            background-color:  #0569a5;
+            color:  #f1f1f1;
+        }#T_07514_row3_col0{
+            background-color:  #0771b1;
+            color:  #f1f1f1;
+        }#T_07514_row3_col1,#T_07514_row3_col6,#T_07514_row3_col7{
+            background-color:  #056ba9;
+            color:  #f1f1f1;
+        }</style><table id="T_07514_" ><thead>    <tr>        <th class="blank level0" ></th>        <th class="col_heading level0 col0" >School_closing</th>        <th class="col_heading level0 col1" >Workplace_closing</th>        <th class="col_heading level0 col2" >Cancel_events</th>        <th class="col_heading level0 col3" >Gatherings_restrictions</th>        <th class="col_heading level0 col4" >Transport_closing</th>        <th class="col_heading level0 col5" >Stay_home_restrictions</th>        <th class="col_heading level0 col6" >Internal_movement_restrictions</th>        <th class="col_heading level0 col7" >International_movement_restrictions</th>        <th class="col_heading level0 col8" >Information_campaigns</th>        <th class="col_heading level0 col9" >Testing_policy</th>        <th class="col_heading level0 col10" >Contact_tracing</th>        <th class="col_heading level0 col11" >Stringency_index</th>        <th class="col_heading level0 col12" >Vaccinations</th>        <th class="col_heading level0 col13" >Vaccinated_once</th>        <th class="col_heading level0 col14" >Vaccinated_full</th>    </tr></thead><tbody>
                 <tr>
-                        <th id="T_fc07b_level0_row0" class="row_heading level0 row0" >theta</th>
-                        <td id="T_fc07b_row0_col0" class="data row0 col0" >0.120187</td>
-                        <td id="T_fc07b_row0_col1" class="data row0 col1" >0.093678</td>
-                        <td id="T_fc07b_row0_col2" class="data row0 col2" >0.000000</td>
-                        <td id="T_fc07b_row0_col3" class="data row0 col3" >-6.061296</td>
-                        <td id="T_fc07b_row0_col4" class="data row0 col4" >-0.169572</td>
-                        <td id="T_fc07b_row0_col5" class="data row0 col5" >-2.949693</td>
-                        <td id="T_fc07b_row0_col6" class="data row0 col6" >3.123696</td>
-                        <td id="T_fc07b_row0_col7" class="data row0 col7" >0.000000</td>
-                        <td id="T_fc07b_row0_col8" class="data row0 col8" >0.000000</td>
-                        <td id="T_fc07b_row0_col9" class="data row0 col9" >0.000000</td>
-                        <td id="T_fc07b_row0_col10" class="data row0 col10" >0.000000</td>
-                        <td id="T_fc07b_row0_col11" class="data row0 col11" >0.000000</td>
-                        <td id="T_fc07b_row0_col12" class="data row0 col12" >12.315676</td>
-                        <td id="T_fc07b_row0_col13" class="data row0 col13" >2.412809</td>
-                        <td id="T_fc07b_row0_col14" class="data row0 col14" >0.000000</td>
+                        <th id="T_07514_level0_row0" class="row_heading level0 row0" >theta</th>
+                        <td id="T_07514_row0_col0" class="data row0 col0" >0.421330</td>
+                        <td id="T_07514_row0_col1" class="data row0 col1" >-0.059886</td>
+                        <td id="T_07514_row0_col2" class="data row0 col2" >-0.290003</td>
+                        <td id="T_07514_row0_col3" class="data row0 col3" >-0.428860</td>
+                        <td id="T_07514_row0_col4" class="data row0 col4" >0.434699</td>
+                        <td id="T_07514_row0_col5" class="data row0 col5" >-1.362295</td>
+                        <td id="T_07514_row0_col6" class="data row0 col6" >-0.059886</td>
+                        <td id="T_07514_row0_col7" class="data row0 col7" >0.042767</td>
+                        <td id="T_07514_row0_col8" class="data row0 col8" >0.183441</td>
+                        <td id="T_07514_row0_col9" class="data row0 col9" >-0.450832</td>
+                        <td id="T_07514_row0_col10" class="data row0 col10" >0.292722</td>
+                        <td id="T_07514_row0_col11" class="data row0 col11" >-0.534657</td>
+                        <td id="T_07514_row0_col12" class="data row0 col12" >-0.160457</td>
+                        <td id="T_07514_row0_col13" class="data row0 col13" >-0.166288</td>
+                        <td id="T_07514_row0_col14" class="data row0 col14" >-0.143939</td>
             </tr>
             <tr>
-                        <th id="T_fc07b_level0_row1" class="row_heading level0 row1" >kappa</th>
-                        <td id="T_fc07b_row1_col0" class="data row1 col0" >0.010844</td>
-                        <td id="T_fc07b_row1_col1" class="data row1 col1" >-0.001458</td>
-                        <td id="T_fc07b_row1_col2" class="data row1 col2" >0.000000</td>
-                        <td id="T_fc07b_row1_col3" class="data row1 col3" >0.003802</td>
-                        <td id="T_fc07b_row1_col4" class="data row1 col4" >-0.009606</td>
-                        <td id="T_fc07b_row1_col5" class="data row1 col5" >-0.006879</td>
-                        <td id="T_fc07b_row1_col6" class="data row1 col6" >-0.048616</td>
-                        <td id="T_fc07b_row1_col7" class="data row1 col7" >0.000000</td>
-                        <td id="T_fc07b_row1_col8" class="data row1 col8" >0.000000</td>
-                        <td id="T_fc07b_row1_col9" class="data row1 col9" >0.000000</td>
-                        <td id="T_fc07b_row1_col10" class="data row1 col10" >0.000000</td>
-                        <td id="T_fc07b_row1_col11" class="data row1 col11" >0.000000</td>
-                        <td id="T_fc07b_row1_col12" class="data row1 col12" >-0.056403</td>
-                        <td id="T_fc07b_row1_col13" class="data row1 col13" >-0.012276</td>
-                        <td id="T_fc07b_row1_col14" class="data row1 col14" >0.000000</td>
+                        <th id="T_07514_level0_row1" class="row_heading level0 row1" >kappa</th>
+                        <td id="T_07514_row1_col0" class="data row1 col0" >-0.021209</td>
+                        <td id="T_07514_row1_col1" class="data row1 col1" >0.018957</td>
+                        <td id="T_07514_row1_col2" class="data row1 col2" >-0.017618</td>
+                        <td id="T_07514_row1_col3" class="data row1 col3" >0.006092</td>
+                        <td id="T_07514_row1_col4" class="data row1 col4" >-0.008485</td>
+                        <td id="T_07514_row1_col5" class="data row1 col5" >0.013960</td>
+                        <td id="T_07514_row1_col6" class="data row1 col6" >0.018957</td>
+                        <td id="T_07514_row1_col7" class="data row1 col7" >0.009405</td>
+                        <td id="T_07514_row1_col8" class="data row1 col8" >-0.010730</td>
+                        <td id="T_07514_row1_col9" class="data row1 col9" >-0.055273</td>
+                        <td id="T_07514_row1_col10" class="data row1 col10" >0.005382</td>
+                        <td id="T_07514_row1_col11" class="data row1 col11" >0.021684</td>
+                        <td id="T_07514_row1_col12" class="data row1 col12" >-0.016306</td>
+                        <td id="T_07514_row1_col13" class="data row1 col13" >-0.016744</td>
+                        <td id="T_07514_row1_col14" class="data row1 col14" >-0.002800</td>
             </tr>
             <tr>
-                        <th id="T_fc07b_level0_row2" class="row_heading level0 row2" >rho</th>
-                        <td id="T_fc07b_row2_col0" class="data row2 col0" >-0.009371</td>
-                        <td id="T_fc07b_row2_col1" class="data row2 col1" >-0.000466</td>
-                        <td id="T_fc07b_row2_col2" class="data row2 col2" >0.000000</td>
-                        <td id="T_fc07b_row2_col3" class="data row2 col3" >0.008045</td>
-                        <td id="T_fc07b_row2_col4" class="data row2 col4" >-0.011386</td>
-                        <td id="T_fc07b_row2_col5" class="data row2 col5" >0.040127</td>
-                        <td id="T_fc07b_row2_col6" class="data row2 col6" >-0.015529</td>
-                        <td id="T_fc07b_row2_col7" class="data row2 col7" >0.000000</td>
-                        <td id="T_fc07b_row2_col8" class="data row2 col8" >0.000000</td>
-                        <td id="T_fc07b_row2_col9" class="data row2 col9" >0.000000</td>
-                        <td id="T_fc07b_row2_col10" class="data row2 col10" >0.000000</td>
-                        <td id="T_fc07b_row2_col11" class="data row2 col11" >0.000000</td>
-                        <td id="T_fc07b_row2_col12" class="data row2 col12" >-0.002136</td>
-                        <td id="T_fc07b_row2_col13" class="data row2 col13" >-0.001025</td>
-                        <td id="T_fc07b_row2_col14" class="data row2 col14" >0.000000</td>
+                        <th id="T_07514_level0_row2" class="row_heading level0 row2" >rho</th>
+                        <td id="T_07514_row2_col0" class="data row2 col0" >-0.038171</td>
+                        <td id="T_07514_row2_col1" class="data row2 col1" >-0.018459</td>
+                        <td id="T_07514_row2_col2" class="data row2 col2" >0.002074</td>
+                        <td id="T_07514_row2_col3" class="data row2 col3" >-0.012939</td>
+                        <td id="T_07514_row2_col4" class="data row2 col4" >-0.005703</td>
+                        <td id="T_07514_row2_col5" class="data row2 col5" >0.054351</td>
+                        <td id="T_07514_row2_col6" class="data row2 col6" >-0.018459</td>
+                        <td id="T_07514_row2_col7" class="data row2 col7" >-0.018487</td>
+                        <td id="T_07514_row2_col8" class="data row2 col8" >0.007084</td>
+                        <td id="T_07514_row2_col9" class="data row2 col9" >0.019515</td>
+                        <td id="T_07514_row2_col10" class="data row2 col10" >-0.005187</td>
+                        <td id="T_07514_row2_col11" class="data row2 col11" >-0.014247</td>
+                        <td id="T_07514_row2_col12" class="data row2 col12" >0.012713</td>
+                        <td id="T_07514_row2_col13" class="data row2 col13" >0.012965</td>
+                        <td id="T_07514_row2_col14" class="data row2 col14" >-0.011086</td>
             </tr>
             <tr>
-                        <th id="T_fc07b_level0_row3" class="row_heading level0 row3" >sigma</th>
-                        <td id="T_fc07b_row3_col0" class="data row3 col0" >-0.009564</td>
-                        <td id="T_fc07b_row3_col1" class="data row3 col1" >0.001012</td>
-                        <td id="T_fc07b_row3_col2" class="data row3 col2" >0.000000</td>
-                        <td id="T_fc07b_row3_col3" class="data row3 col3" >0.004017</td>
-                        <td id="T_fc07b_row3_col4" class="data row3 col4" >-0.002098</td>
-                        <td id="T_fc07b_row3_col5" class="data row3 col5" >-0.015880</td>
-                        <td id="T_fc07b_row3_col6" class="data row3 col6" >0.033749</td>
-                        <td id="T_fc07b_row3_col7" class="data row3 col7" >0.000000</td>
-                        <td id="T_fc07b_row3_col8" class="data row3 col8" >0.000000</td>
-                        <td id="T_fc07b_row3_col9" class="data row3 col9" >0.000000</td>
-                        <td id="T_fc07b_row3_col10" class="data row3 col10" >0.000000</td>
-                        <td id="T_fc07b_row3_col11" class="data row3 col11" >0.000000</td>
-                        <td id="T_fc07b_row3_col12" class="data row3 col12" >-0.020450</td>
-                        <td id="T_fc07b_row3_col13" class="data row3 col13" >-0.003812</td>
-                        <td id="T_fc07b_row3_col14" class="data row3 col14" >0.000000</td>
+                        <th id="T_07514_level0_row3" class="row_heading level0 row3" >sigma</th>
+                        <td id="T_07514_row3_col0" class="data row3 col0" >-0.022864</td>
+                        <td id="T_07514_row3_col1" class="data row3 col1" >0.033416</td>
+                        <td id="T_07514_row3_col2" class="data row3 col2" >0.000300</td>
+                        <td id="T_07514_row3_col3" class="data row3 col3" >0.000277</td>
+                        <td id="T_07514_row3_col4" class="data row3 col4" >0.001853</td>
+                        <td id="T_07514_row3_col5" class="data row3 col5" >-0.036029</td>
+                        <td id="T_07514_row3_col6" class="data row3 col6" >0.033416</td>
+                        <td id="T_07514_row3_col7" class="data row3 col7" >0.031036</td>
+                        <td id="T_07514_row3_col8" class="data row3 col8" >-0.003095</td>
+                        <td id="T_07514_row3_col9" class="data row3 col9" >-0.003456</td>
+                        <td id="T_07514_row3_col10" class="data row3 col10" >-0.001152</td>
+                        <td id="T_07514_row3_col11" class="data row3 col11" >-0.019920</td>
+                        <td id="T_07514_row3_col12" class="data row3 col12" >-0.003332</td>
+                        <td id="T_07514_row3_col13" class="data row3 col13" >-0.003298</td>
+                        <td id="T_07514_row3_col14" class="data row3 col14" >0.000760</td>
             </tr>
     </tbody></table></div>
 </div>
 <p><code class="docutils literal notranslate"><span class="pre">Scenario.predict()</span></code> predicts the parameter values of future phases.</p>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[40]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[42]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
@@ -3860,17 +3939,17 @@ Coefficient:
 </div>
 </div>
 <div class="nboutput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[40]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[42]:
 </pre></div>
 </div>
 <div class="output_area docutils container">
 <div class="highlight"><pre>
-&lt;covsirphy.analysis.scenario.Scenario at 0x7f348551bcd0&gt;
+&lt;covsirphy.analysis.scenario.Scenario at 0x7f94304712e0&gt;
 </pre></div></div>
 </div>
 <p>Show summary of future phases.</p>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[41]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[43]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
@@ -3880,7 +3959,7 @@ Coefficient:
 </div>
 </div>
 <div class="nboutput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[41]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[43]:
 </pre></div>
 </div>
 <div class="output_area rendered_html docutils container">
@@ -3950,20 +4029,20 @@ Coefficient:
       <th rowspan="2" valign="top">Main</th>
       <th>43rd</th>
       <td>Future</td>
-      <td>12May2021</td>
-      <td>10Jun2021</td>
+      <td>13May2021</td>
+      <td>11Jun2021</td>
       <td>126529100</td>
       <td>SIR-F</td>
-      <td>1.29</td>
-      <td>0.000671</td>
-      <td>0.001042</td>
-      <td>0.083711</td>
-      <td>0.063768</td>
+      <td>1.31</td>
+      <td>0.00111</td>
+      <td>0.001021</td>
+      <td>0.082046</td>
+      <td>0.061625</td>
       <td>1440</td>
       <td>0.001</td>
-      <td>960.0</td>
-      <td>11.0</td>
-      <td>15.0</td>
+      <td>979.0</td>
+      <td>12.0</td>
+      <td>16.0</td>
       <td>-</td>
       <td>-</td>
       <td>-</td>
@@ -3971,20 +4050,20 @@ Coefficient:
     <tr>
       <th>44th</th>
       <td>Future</td>
-      <td>11Jun2021</td>
+      <td>12Jun2021</td>
       <td>31Jul2021</td>
       <td>126529100</td>
       <td>SIR-F</td>
-      <td>1.29</td>
-      <td>0.000671</td>
-      <td>0.001042</td>
-      <td>0.083711</td>
-      <td>0.063768</td>
+      <td>1.31</td>
+      <td>0.00111</td>
+      <td>0.001021</td>
+      <td>0.082046</td>
+      <td>0.061625</td>
       <td>1440</td>
       <td>0.001</td>
-      <td>960.0</td>
-      <td>11.0</td>
-      <td>15.0</td>
+      <td>979.0</td>
+      <td>12.0</td>
+      <td>16.0</td>
       <td>-</td>
       <td>-</td>
       <td>-</td>
@@ -3993,20 +4072,20 @@ Coefficient:
       <th rowspan="2" valign="top">Medicine</th>
       <th>43rd</th>
       <td>Future</td>
-      <td>12May2021</td>
-      <td>10Jun2021</td>
+      <td>13May2021</td>
+      <td>11Jun2021</td>
       <td>126529100</td>
       <td>SIR-F</td>
-      <td>1.29</td>
-      <td>0.000671</td>
-      <td>0.001042</td>
-      <td>0.083711</td>
-      <td>0.063768</td>
+      <td>1.31</td>
+      <td>0.00111</td>
+      <td>0.001021</td>
+      <td>0.082046</td>
+      <td>0.061625</td>
       <td>1440</td>
       <td>0.001</td>
-      <td>960.0</td>
-      <td>11.0</td>
-      <td>15.0</td>
+      <td>979.0</td>
+      <td>12.0</td>
+      <td>16.0</td>
       <td>-</td>
       <td>-</td>
       <td>-</td>
@@ -4014,19 +4093,19 @@ Coefficient:
     <tr>
       <th>44th</th>
       <td>Future</td>
-      <td>11Jun2021</td>
+      <td>12Jun2021</td>
       <td>31Jul2021</td>
       <td>126529100</td>
       <td>SIR-F</td>
-      <td>1.08</td>
-      <td>0.000671</td>
-      <td>0.001042</td>
-      <td>0.083711</td>
-      <td>0.076521</td>
+      <td>1.09</td>
+      <td>0.00111</td>
+      <td>0.001021</td>
+      <td>0.082046</td>
+      <td>0.073950</td>
       <td>1440</td>
       <td>0.001</td>
-      <td>960.0</td>
-      <td>11.0</td>
+      <td>979.0</td>
+      <td>12.0</td>
       <td>13.0</td>
       <td>-</td>
       <td>-</td>
@@ -4036,20 +4115,20 @@ Coefficient:
       <th>Forecast</th>
       <th>43rd</th>
       <td>Future</td>
-      <td>12May2021</td>
-      <td>19May2021</td>
+      <td>13May2021</td>
+      <td>06Jun2021</td>
       <td>126529100</td>
       <td>SIR-F</td>
-      <td>1.41</td>
-      <td>0.000015</td>
-      <td>0.000971</td>
-      <td>0.089410</td>
-      <td>0.062340</td>
+      <td>1.53</td>
+      <td>0.00016</td>
+      <td>0.000734</td>
+      <td>0.082530</td>
+      <td>0.053080</td>
       <td>1440</td>
       <td>0.0</td>
-      <td>1030.0</td>
-      <td>11.0</td>
-      <td>16.0</td>
+      <td>1362.0</td>
+      <td>12.0</td>
+      <td>18.0</td>
       <td>-</td>
       <td>-</td>
       <td>-</td>
@@ -4060,7 +4139,7 @@ Coefficient:
 </div>
 <p>Or, short-cut <code class="docutils literal notranslate"><span class="pre">.fit()</span></code> and <code class="docutils literal notranslate"><span class="pre">.predict()</span></code> with <code class="docutils literal notranslate"><span class="pre">Scenario.fit_predict()</span></code>. We can apply all arguments (of <code class="docutils literal notranslate"><span class="pre">.fit()</span></code> and <code class="docutils literal notranslate"><span class="pre">.predict()</span></code>) to <code class="docutils literal notranslate"><span class="pre">Scenario.fit_predict()</span></code>.</p>
 <div class="nbinput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[42]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[44]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
@@ -4071,7 +4150,7 @@ Coefficient:
 </div>
 <p>To compare this scenario with the other scenarios, we should adjust the last end date with <code class="docutils literal notranslate"><span class="pre">Scenario.adjust_end()</span></code> because the last end date is differenct from the other scenarios at this time.</p>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[43]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[45]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
@@ -4098,7 +4177,7 @@ Forecast scenario: to 31Jul2021
 </div>
 <p>Simulate the number of cases of forecast scenario.</p>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[44]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[46]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
@@ -4110,12 +4189,12 @@ Forecast scenario: to 31Jul2021
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area docutils container">
-<img alt="_images/usage_quick_91_0.png" src="_images/usage_quick_91_0.png" />
+<img alt="_images/usage_quick_97_0.png" src="_images/usage_quick_97_0.png" />
 </div>
 </div>
 <p>Compare the number of cases of the all scenario with <code class="docutils literal notranslate"><span class="pre">Scenario.history()</span></code> and variable name.</p>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[45]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[47]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
@@ -4127,7 +4206,7 @@ Forecast scenario: to 31Jul2021
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area docutils container">
-<img alt="_images/usage_quick_93_0.png" src="_images/usage_quick_93_0.png" />
+<img alt="_images/usage_quick_99_0.png" src="_images/usage_quick_99_0.png" />
 </div>
 </div>
 <p>From version 2.19.1-eta, we can focus on the values in specified date range with the following arguments.</p>
@@ -4138,7 +4217,7 @@ Forecast scenario: to 31Jul2021
 </ul>
 <p>These arguments are effective with <code class="docutils literal notranslate"><span class="pre">Scenario.history()</span></code>, <code class="docutils literal notranslate"><span class="pre">Scenario.simulate()</span></code>, <code class="docutils literal notranslate"><span class="pre">Scenario.track()</span></code> and <code class="docutils literal notranslate"><span class="pre">Scenario.score()</span></code>.</p>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[46]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[48]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
@@ -4153,12 +4232,12 @@ Forecast scenario: to 31Jul2021
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area docutils container">
-<img alt="_images/usage_quick_95_0.png" src="_images/usage_quick_95_0.png" />
+<img alt="_images/usage_quick_101_0.png" src="_images/usage_quick_101_0.png" />
 </div>
 </div>
 <p>In the past 20 days. Reference date is today (<code class="docutils literal notranslate"><span class="pre">Scenario.today</span></code> property).</p>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[47]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[49]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
@@ -4170,12 +4249,12 @@ Forecast scenario: to 31Jul2021
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area docutils container">
-<img alt="_images/usage_quick_97_0.png" src="_images/usage_quick_97_0.png" />
+<img alt="_images/usage_quick_103_0.png" src="_images/usage_quick_103_0.png" />
 </div>
 </div>
 <p>In the selected phases. Here, we will show the 3rd, 4th and 5th phase.</p>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[48]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[50]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
@@ -4187,7 +4266,7 @@ Forecast scenario: to 31Jul2021
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area docutils container">
-<img alt="_images/usage_quick_99_0.png" src="_images/usage_quick_99_0.png" />
+<img alt="_images/usage_quick_105_0.png" src="_images/usage_quick_105_0.png" />
 </div>
 </div>
 </div>
@@ -4201,7 +4280,7 @@ Forecast scenario: to 31Jul2021
 <li><p>Fatal on …: Fatal on the end date of the last phase</p></li>
 </ul>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[49]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[51]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
@@ -4210,7 +4289,7 @@ Forecast scenario: to 31Jul2021
 </div>
 </div>
 <div class="nboutput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[49]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[51]:
 </pre></div>
 </div>
 <div class="output_area rendered_html docutils container">
@@ -4244,40 +4323,40 @@ Forecast scenario: to 31Jul2021
   <tbody>
     <tr>
       <th>Main</th>
-      <td>309505</td>
+      <td>323392</td>
       <td>31Jul2021</td>
-      <td>1745128</td>
-      <td>309505</td>
-      <td>25490</td>
-      <td>1.29</td>
-      <td>1.29</td>
+      <td>1753986</td>
+      <td>323392</td>
+      <td>26124</td>
+      <td>1.31</td>
+      <td>1.31</td>
     </tr>
     <tr>
       <th>Medicine</th>
-      <td>161927</td>
+      <td>175039</td>
       <td>31Jul2021</td>
-      <td>1488659</td>
-      <td>161927</td>
-      <td>22085</td>
-      <td>1.29</td>
-      <td>1.08</td>
+      <td>1507796</td>
+      <td>175039</td>
+      <td>22746</td>
+      <td>1.31</td>
+      <td>1.09</td>
     </tr>
     <tr>
       <th>Forecast</th>
-      <td>549759</td>
+      <td>679413</td>
       <td>31Jul2021</td>
-      <td>2339076</td>
-      <td>549759</td>
-      <td>29583</td>
-      <td>1.41</td>
-      <td>1.41</td>
+      <td>2440825</td>
+      <td>679413</td>
+      <td>27460</td>
+      <td>1.53</td>
+      <td>1.53</td>
     </tr>
   </tbody>
 </table>
 </div></div>
 </div>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[50]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[52]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
@@ -4289,11 +4368,11 @@ Forecast scenario: to 31Jul2021
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area docutils container">
-<img alt="_images/usage_quick_102_0.png" src="_images/usage_quick_102_0.png" />
+<img alt="_images/usage_quick_108_0.png" src="_images/usage_quick_108_0.png" />
 </div>
 </div>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[51]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[53]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
@@ -4305,11 +4384,11 @@ Forecast scenario: to 31Jul2021
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area docutils container">
-<img alt="_images/usage_quick_103_0.png" src="_images/usage_quick_103_0.png" />
+<img alt="_images/usage_quick_109_0.png" src="_images/usage_quick_109_0.png" />
 </div>
 </div>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[52]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[54]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
@@ -4321,11 +4400,11 @@ Forecast scenario: to 31Jul2021
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area docutils container">
-<img alt="_images/usage_quick_104_0.png" src="_images/usage_quick_104_0.png" />
+<img alt="_images/usage_quick_110_0.png" src="_images/usage_quick_110_0.png" />
 </div>
 </div>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[53]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[55]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
@@ -4337,11 +4416,11 @@ Forecast scenario: to 31Jul2021
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area docutils container">
-<img alt="_images/usage_quick_105_0.png" src="_images/usage_quick_105_0.png" />
+<img alt="_images/usage_quick_111_0.png" src="_images/usage_quick_111_0.png" />
 </div>
 </div>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[54]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[56]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
@@ -4353,11 +4432,11 @@ Forecast scenario: to 31Jul2021
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area docutils container">
-<img alt="_images/usage_quick_106_0.png" src="_images/usage_quick_106_0.png" />
+<img alt="_images/usage_quick_112_0.png" src="_images/usage_quick_112_0.png" />
 </div>
 </div>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[55]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[57]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
@@ -4369,7 +4448,7 @@ Forecast scenario: to 31Jul2021
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area docutils container">
-<img alt="_images/usage_quick_107_0.png" src="_images/usage_quick_107_0.png" />
+<img alt="_images/usage_quick_113_0.png" src="_images/usage_quick_113_0.png" />
 </div>
 </div>
 </div>
@@ -4377,7 +4456,7 @@ Forecast scenario: to 31Jul2021
 <h2>Change rate of parameters in main scenario<a class="headerlink" href="#Change-rate-of-parameters-in-main-scenario" title="Permalink to this headline">¶</a></h2>
 <p>History of each parameter will be shown. Values will be divided by the values in 0th phase.</p>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[56]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[58]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
@@ -4389,7 +4468,7 @@ Forecast scenario: to 31Jul2021
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area docutils container">
-<img alt="_images/usage_quick_109_0.png" src="_images/usage_quick_109_0.png" />
+<img alt="_images/usage_quick_115_0.png" src="_images/usage_quick_115_0.png" />
 </div>
 </div>
 </div>
@@ -4397,7 +4476,7 @@ Forecast scenario: to 31Jul2021
 <h2>Retrospective analysis<a class="headerlink" href="#Retrospective-analysis" title="Permalink to this headline">¶</a></h2>
 <p>We can evaluate the impact of measures using past records. How many people were infected if the parameter values have not changed sinse 01Sep2020?</p>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[57]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[59]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
@@ -4416,90 +4495,90 @@ Forecast scenario: to 31Jul2021
 
 &lt;SIR-F model: parameter estimation&gt;
 Running optimization with 4 CPUs...
-         9th phase (21May2020 - 28May2020): finished  175 trials in 0 min  5 sec
-         0th phase (06Feb2020 - 18Feb2020): finished  361 trials in 0 min 10 sec
-         3rd phase (14Mar2020 - 24Mar2020): finished  305 trials in 0 min 10 sec
-         6th phase (17Apr2020 - 01May2020): finished  314 trials in 0 min 10 sec
-        10th phase (29May2020 - 05Jun2020): finished  160 trials in 0 min  5 sec
-        11th phase (06Jun2020 - 13Jun2020): finished  178 trials in 0 min  5 sec
-         1st phase (19Feb2020 - 05Mar2020): finished  313 trials in 0 min 10 sec
-         4th phase (25Mar2020 - 02Apr2020): finished  306 trials in 0 min 10 sec
-         7th phase (02May2020 - 11May2020): finished  320 trials in 0 min 10 sec
-        12th phase (14Jun2020 - 28Jun2020): finished  309 trials in 0 min 10 sec
-         2nd phase (06Mar2020 - 13Mar2020): finished  318 trials in 0 min 10 sec
-         5th phase (03Apr2020 - 16Apr2020): finished  291 trials in 0 min 10 sec
-         8th phase (12May2020 - 20May2020): finished  313 trials in 0 min 10 sec
-        13th phase (29Jun2020 - 09Jul2020): finished  286 trials in 0 min 10 sec
-        15th phase (22Jul2020 - 01Aug2020): finished  277 trials in 0 min 10 sec
-        18th phase (21Aug2020 - 31Aug2020): finished  272 trials in 0 min 10 sec
-        21st phase (19Sep2020 - 02Oct2020): finished  290 trials in 0 min 10 sec
-        14th phase (10Jul2020 - 21Jul2020): finished  251 trials in 0 min 10 sec
-        16th phase (02Aug2020 - 10Aug2020): finished  219 trials in 0 min 10 sec
-        19th phase (01Sep2020 - 10Sep2020): finished  204 trials in 0 min 10 sec
-        22nd phase (03Oct2020 - 14Oct2020): finished  212 trials in 0 min 10 sec
-        24th phase (28Oct2020 - 06Nov2020): finished  250 trials in 0 min 10 sec
-        17th phase (11Aug2020 - 20Aug2020): finished  278 trials in 0 min 10 sec
-        20th phase (11Sep2020 - 18Sep2020): finished  288 trials in 0 min 10 sec
-        23rd phase (15Oct2020 - 27Oct2020): finished  285 trials in 0 min 10 sec
-        25th phase (07Nov2020 - 18Nov2020): finished  303 trials in 0 min 10 sec        33rd phase (26Jan2021 - 02Feb2021): finished  165 trials in 0 min  5 sec
+         9th phase (21May2020 - 28May2020): finished  236 trials in 0 min  5 sec
+         6th phase (17Apr2020 - 01May2020): finished  434 trials in 0 min 10 sec
+         3rd phase (14Mar2020 - 24Mar2020): finished  433 trials in 0 min 10 sec
+        10th phase (29May2020 - 05Jun2020): finished  237 trials in 0 min  5 sec
+         0th phase (06Feb2020 - 18Feb2020): finished  501 trials in 0 min 10 sec
+        11th phase (06Jun2020 - 13Jun2020): finished  215 trials in 0 min  5 sec
+         7th phase (02May2020 - 11May2020): finished  403 trials in 0 min 10 sec
+         4th phase (25Mar2020 - 02Apr2020): finished  400 trials in 0 min 10 sec
+         1st phase (19Feb2020 - 05Mar2020): finished  399 trials in 0 min 10 sec
+        12th phase (14Jun2020 - 28Jun2020): finished  415 trials in 0 min 10 sec
+         8th phase (12May2020 - 20May2020): finished  420 trials in 0 min 10 sec
+         5th phase (03Apr2020 - 16Apr2020): finished  415 trials in 0 min 10 sec
+         2nd phase (06Mar2020 - 13Mar2020): finished  419 trials in 0 min 10 sec
+        13th phase (29Jun2020 - 09Jul2020): finished  415 trials in 0 min 10 sec
+        18th phase (21Aug2020 - 31Aug2020): finished  416 trials in 0 min 10 sec        15th phase (22Jul2020 - 01Aug2020): finished  418 trials in 0 min 10 sec
+        21st phase (19Sep2020 - 02Oct2020): finished  416 trials in 0 min 10 sec
 
-        27th phase (29Nov2020 - 10Dec2020): finished  300 trials in 0 min 10 sec
-        30th phase (31Dec2020 - 07Jan2021): finished  290 trials in 0 min 10 sec
-        34th phase (03Feb2021 - 16Feb2021): finished  158 trials in 0 min  5 sec
-        28th phase (11Dec2020 - 22Dec2020): finished  166 trials in 0 min  5 sec
-        26th phase (19Nov2020 - 28Nov2020): finished  293 trials in 0 min 10 sec
-        35th phase (17Feb2021 - 26Feb2021): finished  164 trials in 0 min  5 sec
-        29th phase (23Dec2020 - 30Dec2020): finished  167 trials in 0 min  5 sec
-        31st phase (08Jan2021 - 17Jan2021): finished  324 trials in 0 min 10 sec
-        36th phase (27Feb2021 - 10Mar2021): finished  166 trials in 0 min  5 sec
-        39th phase (03Apr2021 - 13Apr2021): finished  318 trials in 0 min 10 sec
-        37th phase (11Mar2021 - 23Mar2021): finished  164 trials in 0 min  5 sec
-        42nd phase (01May2021 - 11May2021): finished  310 trials in 0 min 10 sec
-        32nd phase (18Jan2021 - 25Jan2021): finished  290 trials in 0 min 10 sec
-        40th phase (14Apr2021 - 21Apr2021): finished  304 trials in 0 min 10 sec
-        38th phase (24Mar2021 - 02Apr2021): finished  323 trials in 0 min 10 sec
-        41st phase (22Apr2021 - 30Apr2021): finished  238 trials in 0 min  5 sec
+        19th phase (01Sep2020 - 10Sep2020): finished  225 trials in 0 min  5 sec
+        14th phase (10Jul2020 - 21Jul2020): finished  418 trials in 0 min 10 sec
+        22nd phase (03Oct2020 - 14Oct2020): finished  413 trials in 0 min 10 sec
+        16th phase (02Aug2020 - 10Aug2020): finished  416 trials in 0 min 10 sec
+        24th phase (28Oct2020 - 06Nov2020): finished  226 trials in 0 min  5 sec
+        20th phase (11Sep2020 - 18Sep2020): finished  418 trials in 0 min 10 sec
+        23rd phase (15Oct2020 - 27Oct2020): finished  415 trials in 0 min 10 sec
+        17th phase (11Aug2020 - 20Aug2020): finished  417 trials in 0 min 10 sec
+        25th phase (07Nov2020 - 18Nov2020): finished  417 trials in 0 min 10 sec
+        27th phase (29Nov2020 - 10Dec2020): finished  413 trials in 0 min 10 sec
+        33rd phase (26Jan2021 - 02Feb2021): finished  229 trials in 0 min  5 sec
+        30th phase (31Dec2020 - 07Jan2021): finished  417 trials in 0 min 10 sec
+        26th phase (19Nov2020 - 28Nov2020): finished  420 trials in 0 min 10 sec        28th phase (11Dec2020 - 22Dec2020): finished  228 trials in 0 min  5 sec
+
+        34th phase (03Feb2021 - 17Feb2021): finished  227 trials in 0 min  5 sec
+        29th phase (23Dec2020 - 30Dec2020): finished  223 trials in 0 min  5 sec        36th phase (28Feb2021 - 11Mar2021): finished  224 trials in 0 min  5 sec        35th phase (18Feb2021 - 27Feb2021): finished  223 trials in 0 min  5 sec
+
+
+        31st phase (08Jan2021 - 17Jan2021): finished  385 trials in 0 min 10 sec
+        42nd phase (01May2021 - 12May2021): finished  197 trials in 0 min  5 sec
+        37th phase (12Mar2021 - 23Mar2021): finished  396 trials in 0 min 10 sec
+        39th phase (04Apr2021 - 13Apr2021): finished  409 trials in 0 min 10 sec
+        32nd phase (18Jan2021 - 25Jan2021): finished  442 trials in 0 min 10 sec
+        38th phase (24Mar2021 - 03Apr2021): finished  442 trials in 0 min 10 sec
+        40th phase (14Apr2021 - 21Apr2021): finished  442 trials in 0 min 10 sec
+        41st phase (22Apr2021 - 30Apr2021): finished  281 trials in 0 min  5 sec
 Completed optimization. Total: 1 min 41 sec
 
 &lt;SIR-F model: parameter estimation&gt;
 Running optimization with 4 CPUs...
-         2nd phase (06Mar2020 - 13Mar2020): finished  292 trials in 0 min 10 sec
-         0th phase (06Feb2020 - 18Feb2020): finished  355 trials in 0 min 10 sec
-         4th phase (25Mar2020 - 02Apr2020): finished  298 trials in 0 min 10 sec
-         6th phase (17Apr2020 - 01May2020): finished  302 trials in 0 min 10 sec
-         1st phase (19Feb2020 - 05Mar2020): finished  303 trials in 0 min 10 sec
-         3rd phase (14Mar2020 - 24Mar2020): finished  307 trials in 0 min 10 sec
-         5th phase (03Apr2020 - 16Apr2020): finished  304 trials in 0 min 10 sec
-         7th phase (02May2020 - 11May2020): finished  299 trials in 0 min 10 sec
-         8th phase (12May2020 - 20May2020): finished  130 trials in 0 min  5 sec
-        10th phase (29May2020 - 05Jun2020): finished  130 trials in 0 min  5 sec
-         9th phase (21May2020 - 28May2020): finished  210 trials in 0 min  5 sec
-        14th phase (10Jul2020 - 21Jul2020): finished  306 trials in 0 min 10 sec
-        12th phase (14Jun2020 - 28Jun2020): finished  313 trials in 0 min 10 sec
-        11th phase (06Jun2020 - 13Jun2020): finished  203 trials in 0 min  5 sec
-        13th phase (29Jun2020 - 09Jul2020): finished  335 trials in 0 min 10 sec
-        16th phase (02Aug2020 - 10Aug2020): finished  340 trials in 0 min 10 sec
-        15th phase (22Jul2020 - 01Aug2020): finished  328 trials in 0 min 10 sec
-        18th phase (21Aug2020 - 31Aug2020): finished  337 trials in 0 min 10 sec
-        19th phase (01Sep2020 - 10Sep2020): finished  156 trials in 0 min  5 sec
-        17th phase (11Aug2020 - 20Aug2020): finished  349 trials in 0 min 10 sec
-        20th phase (11Sep2020 - 18Sep2020): finished  328 trials in 0 min 10 sec
-        22nd phase (03Oct2020 - 14Oct2020): finished  354 trials in 0 min 10 sec
-        24th phase (28Oct2020 - 06Nov2020): finished  213 trials in 0 min  5 sec
-        23rd phase (15Oct2020 - 27Oct2020): finished  422 trials in 0 min 10 sec        21st phase (19Sep2020 - 02Oct2020): finished  411 trials in 0 min 10 sec
+         4th phase (25Mar2020 - 02Apr2020): finished  377 trials in 0 min 10 sec
+         6th phase (17Apr2020 - 01May2020): finished  382 trials in 0 min 10 sec
+         2nd phase (06Mar2020 - 13Mar2020): finished  383 trials in 0 min 10 sec
+         0th phase (06Feb2020 - 18Feb2020): finished  438 trials in 0 min 10 sec
+         5th phase (03Apr2020 - 16Apr2020): finished  415 trials in 0 min 10 sec
+         3rd phase (14Mar2020 - 24Mar2020): finished  419 trials in 0 min 10 sec
+         7th phase (02May2020 - 11May2020): finished  418 trials in 0 min 10 sec
+         1st phase (19Feb2020 - 05Mar2020): finished  418 trials in 0 min 10 sec
+        10th phase (29May2020 - 05Jun2020): finished  226 trials in 0 min  5 sec
+         8th phase (12May2020 - 20May2020): finished  418 trials in 0 min 10 sec
+        11th phase (06Jun2020 - 13Jun2020): finished  229 trials in 0 min  5 sec
+        12th phase (14Jun2020 - 28Jun2020): finished  417 trials in 0 min 10 sec
+        14th phase (10Jul2020 - 21Jul2020): finished  417 trials in 0 min 10 sec
+         9th phase (21May2020 - 28May2020): finished  223 trials in 0 min  5 sec
+        16th phase (02Aug2020 - 10Aug2020): finished  416 trials in 0 min 10 sec
+        13th phase (29Jun2020 - 09Jul2020): finished  412 trials in 0 min 10 sec        15th phase (22Jul2020 - 01Aug2020): finished  415 trials in 0 min 10 sec
 
-        26th phase (19Nov2020 - 28Nov2020): finished  395 trials in 0 min 10 sec
-        25th phase (07Nov2020 - 18Nov2020): finished  400 trials in 0 min 10 sec
-        28th phase (11Dec2020 - 22Dec2020): finished  216 trials in 0 min  5 sec
-        30th phase (31Dec2020 - 07Jan2021): finished  395 trials in 0 min 10 sec
-        27th phase (29Nov2020 - 10Dec2020): finished  405 trials in 0 min 10 sec
-        29th phase (23Dec2020 - 30Dec2020): finished  220 trials in 0 min  5 sec
-        31st phase (08Jan2021 - 11May2021): finished  413 trials in 0 min 10 sec
+        18th phase (21Aug2020 - 31Aug2020): finished  421 trials in 0 min 10 sec
+        19th phase (01Sep2020 - 10Sep2020): finished  155 trials in 0 min  5 sec
+        17th phase (11Aug2020 - 20Aug2020): finished  434 trials in 0 min 10 sec        22nd phase (03Oct2020 - 14Oct2020): finished  403 trials in 0 min 10 sec
+
+        20th phase (11Sep2020 - 18Sep2020): finished  329 trials in 0 min 10 sec
+        24th phase (28Oct2020 - 06Nov2020): finished  191 trials in 0 min  5 sec
+        23rd phase (15Oct2020 - 27Oct2020): finished  375 trials in 0 min 10 sec
+        26th phase (19Nov2020 - 28Nov2020): finished  377 trials in 0 min 10 sec
+        21st phase (19Sep2020 - 02Oct2020): finished  374 trials in 0 min 10 sec
+        25th phase (07Nov2020 - 18Nov2020): finished  407 trials in 0 min 10 sec
+        28th phase (11Dec2020 - 22Dec2020): finished  229 trials in 0 min  5 sec
+        27th phase (29Nov2020 - 10Dec2020): finished  435 trials in 0 min 10 sec
+        30th phase (31Dec2020 - 07Jan2021): finished  434 trials in 0 min 10 sec
+        29th phase (23Dec2020 - 30Dec2020): finished  242 trials in 0 min  5 sec
+        31st phase (08Jan2021 - 12May2021): finished  539 trials in 0 min 10 sec
 Completed optimization. Total: 1 min 21 sec
 </pre></div></div>
 </div>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[58]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[60]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
@@ -4510,7 +4589,7 @@ Completed optimization. Total: 1 min 21 sec
 </div>
 </div>
 <div class="nboutput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[58]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[60]:
 </pre></div>
 </div>
 <div class="output_area rendered_html docutils container">
@@ -4568,13 +4647,13 @@ Completed optimization. Total: 1 min 21 sec
       <td>06Feb2020</td>
       <td>18Feb2020</td>
       <td>SIR-F</td>
-      <td>2.23</td>
-      <td>0.027740</td>
+      <td>2.32</td>
+      <td>0.027273</td>
       <td>0.000000</td>
-      <td>0.067256</td>
-      <td>0.029281</td>
-      <td>0.142968</td>
-      <td>361.0</td>
+      <td>0.066019</td>
+      <td>0.027718</td>
+      <td>0.142890</td>
+      <td>501.0</td>
       <td>0 min 10 sec</td>
     </tr>
     <tr>
@@ -4588,7 +4667,7 @@ Completed optimization. Total: 1 min 21 sec
       <td>0.136657</td>
       <td>0.026198</td>
       <td>0.170717</td>
-      <td>313.0</td>
+      <td>399.0</td>
       <td>0 min 10 sec</td>
     </tr>
     <tr>
@@ -4602,7 +4681,7 @@ Completed optimization. Total: 1 min 21 sec
       <td>0.126398</td>
       <td>0.024802</td>
       <td>0.096698</td>
-      <td>318.0</td>
+      <td>419.0</td>
       <td>0 min 10 sec</td>
     </tr>
     <tr>
@@ -4610,13 +4689,13 @@ Completed optimization. Total: 1 min 21 sec
       <td>14Mar2020</td>
       <td>24Mar2020</td>
       <td>SIR-F</td>
-      <td>2.38</td>
-      <td>0.000022</td>
-      <td>0.003185</td>
-      <td>0.061686</td>
-      <td>0.022751</td>
-      <td>0.029433</td>
-      <td>305.0</td>
+      <td>2.49</td>
+      <td>0.010093</td>
+      <td>0.002681</td>
+      <td>0.063014</td>
+      <td>0.022401</td>
+      <td>0.029328</td>
+      <td>433.0</td>
       <td>0 min 10 sec</td>
     </tr>
     <tr>
@@ -4624,13 +4703,13 @@ Completed optimization. Total: 1 min 21 sec
       <td>25Mar2020</td>
       <td>02Apr2020</td>
       <td>SIR-F</td>
-      <td>4.83</td>
-      <td>0.000095</td>
-      <td>0.001886</td>
-      <td>0.117750</td>
-      <td>0.022496</td>
-      <td>0.037246</td>
-      <td>306.0</td>
+      <td>4.81</td>
+      <td>0.000068</td>
+      <td>0.001829</td>
+      <td>0.117450</td>
+      <td>0.022604</td>
+      <td>0.036945</td>
+      <td>400.0</td>
       <td>0 min 10 sec</td>
     </tr>
     <tr>
@@ -4660,7 +4739,7 @@ Completed optimization. Total: 1 min 21 sec
       <td>0.096280</td>
       <td>0.084370</td>
       <td>0.007390</td>
-      <td>405.0</td>
+      <td>435.0</td>
       <td>0 min 10 sec</td>
     </tr>
     <tr>
@@ -4674,7 +4753,7 @@ Completed optimization. Total: 1 min 21 sec
       <td>0.100612</td>
       <td>0.084462</td>
       <td>0.009875</td>
-      <td>216.0</td>
+      <td>229.0</td>
       <td>0 min  5 sec</td>
     </tr>
     <tr>
@@ -4682,13 +4761,13 @@ Completed optimization. Total: 1 min 21 sec
       <td>23Dec2020</td>
       <td>30Dec2020</td>
       <td>SIR-F</td>
-      <td>1.34</td>
-      <td>0.001487</td>
-      <td>0.001456</td>
-      <td>0.109510</td>
-      <td>0.080250</td>
-      <td>0.007076</td>
-      <td>220.0</td>
+      <td>1.33</td>
+      <td>0.001181</td>
+      <td>0.001479</td>
+      <td>0.109438</td>
+      <td>0.080951</td>
+      <td>0.007051</td>
+      <td>242.0</td>
       <td>0 min  5 sec</td>
     </tr>
     <tr>
@@ -4702,21 +4781,21 @@ Completed optimization. Total: 1 min 21 sec
       <td>0.097442</td>
       <td>0.066303</td>
       <td>0.007184</td>
-      <td>395.0</td>
+      <td>434.0</td>
       <td>0 min 10 sec</td>
     </tr>
     <tr>
       <th>31st</th>
       <td>08Jan2021</td>
-      <td>11May2021</td>
+      <td>12May2021</td>
       <td>SIR-F</td>
-      <td>0.93</td>
-      <td>0.009247</td>
-      <td>0.000922</td>
-      <td>0.078023</td>
-      <td>0.082147</td>
-      <td>0.377107</td>
-      <td>413.0</td>
+      <td>0.94</td>
+      <td>0.000108</td>
+      <td>0.001704</td>
+      <td>0.079861</td>
+      <td>0.083485</td>
+      <td>0.380296</td>
+      <td>539.0</td>
       <td>0 min 10 sec</td>
     </tr>
   </tbody>
@@ -4725,7 +4804,7 @@ Completed optimization. Total: 1 min 21 sec
 </div></div>
 </div>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[59]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[61]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
@@ -4738,11 +4817,11 @@ Completed optimization. Total: 1 min 21 sec
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area docutils container">
-<img alt="_images/usage_quick_113_0.png" src="_images/usage_quick_113_0.png" />
+<img alt="_images/usage_quick_119_0.png" src="_images/usage_quick_119_0.png" />
 </div>
 </div>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[60]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[62]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
@@ -4755,11 +4834,11 @@ Completed optimization. Total: 1 min 21 sec
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area docutils container">
-<img alt="_images/usage_quick_114_0.png" src="_images/usage_quick_114_0.png" />
+<img alt="_images/usage_quick_120_0.png" src="_images/usage_quick_120_0.png" />
 </div>
 </div>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[61]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[63]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
@@ -4769,7 +4848,7 @@ Completed optimization. Total: 1 min 21 sec
 </div>
 </div>
 <div class="nboutput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[61]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[63]:
 </pre></div>
 </div>
 <div class="output_area rendered_html docutils container">
@@ -4793,15 +4872,13 @@ Completed optimization. Total: 1 min 21 sec
       <th></th>
       <th>max(Infected)</th>
       <th>argmax(Infected)</th>
-      <th>Confirmed on 11May2021</th>
-      <th>Infected on 11May2021</th>
-      <th>Fatal on 11May2021</th>
-      <th>7th_Rt</th>
-      <th>8th_Rt</th>
-      <th>13th_Rt</th>
-      <th>14th_Rt</th>
-      <th>15th_Rt</th>
-      <th>...</th>
+      <th>Confirmed on 12May2021</th>
+      <th>Infected on 12May2021</th>
+      <th>Fatal on 12May2021</th>
+      <th>17th_Rt</th>
+      <th>21st_Rt</th>
+      <th>31st_Rt</th>
+      <th>32nd_Rt</th>
       <th>33rd_Rt</th>
       <th>34th_Rt</th>
       <th>35th_Rt</th>
@@ -4819,39 +4896,35 @@ Completed optimization. Total: 1 min 21 sec
       <th>Main</th>
       <td>77827</td>
       <td>17Jan2021</td>
-      <td>650340</td>
-      <td>71126</td>
-      <td>11015</td>
-      <td>0.27</td>
-      <td>0.17</td>
-      <td>2.75</td>
-      <td>2.45</td>
-      <td>2.11</td>
-      <td>...</td>
+      <td>655550</td>
+      <td>72954</td>
+      <td>11100</td>
+      <td>0.89</td>
+      <td>0.90</td>
+      <td>1.80</td>
+      <td>0.85</td>
       <td>0.61</td>
-      <td>0.52</td>
+      <td>0.49</td>
       <td>0.68</td>
       <td>0.75</td>
-      <td>1.13</td>
+      <td>1.12</td>
       <td>1.63</td>
-      <td>1.53</td>
-      <td>1.72</td>
       <td>1.48</td>
-      <td>1.29</td>
+      <td>1.68</td>
+      <td>1.48</td>
+      <td>1.31</td>
     </tr>
     <tr>
       <th>Retrospective</th>
-      <td>47423</td>
+      <td>47443</td>
       <td>08Jan2021</td>
-      <td>589671</td>
-      <td>22554</td>
-      <td>10703</td>
-      <td>0.26</td>
-      <td>0.15</td>
-      <td>2.67</td>
-      <td>2.37</td>
-      <td>2.02</td>
-      <td>...</td>
+      <td>606910</td>
+      <td>23620</td>
+      <td>11207</td>
+      <td>0.90</td>
+      <td>0.89</td>
+      <td>0.94</td>
+      <td>-</td>
       <td>-</td>
       <td>-</td>
       <td>-</td>
@@ -4865,7 +4938,6 @@ Completed optimization. Total: 1 min 21 sec
     </tr>
   </tbody>
 </table>
-<p>2 rows × 28 columns</p>
 </div></div>
 </div>
 </div>

@@ -68,7 +68,7 @@
             
             
               <div class="version">
-                2.19.1-iota-fu1
+                2.19.1-kappa
               </div>
             
           
@@ -179,6 +179,8 @@
 
 <span class="kn">import</span> <span class="nn">copy</span>
 <span class="kn">from</span> <span class="nn">datetime</span> <span class="kn">import</span> <span class="n">timedelta</span>
+<span class="kn">import</span> <span class="nn">json</span>
+<span class="kn">from</span> <span class="nn">pathlib</span> <span class="kn">import</span> <span class="n">Path</span>
 <span class="kn">import</span> <span class="nn">warnings</span>
 <span class="kn">import</span> <span class="nn">sys</span>
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
@@ -193,6 +195,9 @@
 <span class="kn">from</span> <span class="nn">covsirphy.visualization.compare_plot</span> <span class="kn">import</span> <span class="n">compare_plot</span>
 <span class="kn">from</span> <span class="nn">covsirphy.cleaning.jhu_data</span> <span class="kn">import</span> <span class="n">JHUData</span>
 <span class="kn">from</span> <span class="nn">covsirphy.ode.mbase</span> <span class="kn">import</span> <span class="n">ModelBase</span>
+<span class="kn">from</span> <span class="nn">covsirphy.ode.sir</span> <span class="kn">import</span> <span class="n">SIR</span>
+<span class="kn">from</span> <span class="nn">covsirphy.ode.sird</span> <span class="kn">import</span> <span class="n">SIRD</span>
+<span class="kn">from</span> <span class="nn">covsirphy.ode.sirf</span> <span class="kn">import</span> <span class="n">SIRF</span>
 <span class="kn">from</span> <span class="nn">covsirphy.regression.reg_handler</span> <span class="kn">import</span> <span class="n">RegressionHandler</span>
 <span class="kn">from</span> <span class="nn">covsirphy.analysis.data_handler</span> <span class="kn">import</span> <span class="n">DataHandler</span>
 <span class="kn">from</span> <span class="nn">covsirphy.analysis.phase_tracker</span> <span class="kn">import</span> <span class="n">PhaseTracker</span>
@@ -1553,6 +1558,68 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">oxcgrt_data</span><span class="o">=</span><span class="n">oxcgrt_data</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">,</span> <span class="o">**</span><span class="n">find_args</span><span class="p">(</span><span class="n">Scenario</span><span class="o">.</span><span class="n">fit</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">))</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">,</span> <span class="o">**</span><span class="n">find_args</span><span class="p">(</span><span class="n">Scenario</span><span class="o">.</span><span class="n">predict</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">))</span>
+        <span class="k">return</span> <span class="bp">self</span></div>
+
+<div class="viewcode-block" id="Scenario.backup"><a class="viewcode-back" href="../../../covsirphy.analysis.html#covsirphy.Scenario.backup">[docs]</a>    <span class="k">def</span> <span class="nf">backup</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Backup scenario information to a JSON file (so that we can use it with Scenario.restore()).</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            filename (str or pathlib.Path): JSON filename to backup the information</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Get information</span>
+        <span class="n">info_dict</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s2">&quot;area&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_area</span><span class="p">,</span>
+            <span class="s2">&quot;timepoint&quot;</span><span class="p">:</span> <span class="p">{</span>
+                <span class="s2">&quot;first_date&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_data</span><span class="o">.</span><span class="n">first_date</span><span class="p">,</span>
+                <span class="s2">&quot;today&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_data</span><span class="o">.</span><span class="n">today</span><span class="p">,</span>
+                <span class="s2">&quot;last_date&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_data</span><span class="o">.</span><span class="n">last_date</span>
+            <span class="p">},</span>
+            <span class="s2">&quot;scenario&quot;</span><span class="p">:</span> <span class="p">{}</span>
+        <span class="p">}</span>
+        <span class="k">for</span> <span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">trakcer</span><span class="p">)</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_tracker_dict</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="n">summary_df</span> <span class="o">=</span> <span class="n">trakcer</span><span class="o">.</span><span class="n">summary</span><span class="p">()</span>
+            <span class="k">for</span> <span class="n">col</span> <span class="ow">in</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">START</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">END</span><span class="p">]:</span>
+                <span class="n">summary_df</span><span class="p">[</span><span class="n">col</span><span class="p">]</span> <span class="o">=</span> <span class="n">summary_df</span><span class="p">[</span><span class="n">col</span><span class="p">]</span><span class="o">.</span><span class="n">dt</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">DATE_FORMAT</span><span class="p">)</span>
+            <span class="n">info_dict</span><span class="p">[</span><span class="s2">&quot;scenario&quot;</span><span class="p">][</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">summary_df</span><span class="o">.</span><span class="n">to_dict</span><span class="p">(</span><span class="n">orient</span><span class="o">=</span><span class="s2">&quot;index&quot;</span><span class="p">)</span>
+        <span class="c1"># Save information</span>
+        <span class="k">with</span> <span class="n">Path</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="s2">&quot;w&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">fh</span><span class="p">:</span>
+            <span class="n">json</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">info_dict</span><span class="p">,</span> <span class="n">fh</span><span class="p">,</span> <span class="n">indent</span><span class="o">=</span><span class="mi">4</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Scenario.restore"><a class="viewcode-back" href="../../../covsirphy.analysis.html#covsirphy.Scenario.restore">[docs]</a>    <span class="k">def</span> <span class="nf">restore</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Restore scenario information with a JSON file (written by Scenario.backup()).</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            filename (str or pathlib.Path): JSON file to read</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            covsirphy.Scenario: self</span>
+
+<span class="sd">        Note:</span>
+<span class="sd">            If keyword arguments of Scenario.timepoint() are available as the values of &quot;timepoint&quot; key,</span>
+<span class="sd">            timpoints will be restored.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Read the file</span>
+        <span class="k">with</span> <span class="n">Path</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="s2">&quot;r&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">fh</span><span class="p">:</span>
+            <span class="n">info_dict</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">fh</span><span class="p">)</span>
+        <span class="c1"># Check area name</span>
+        <span class="k">if</span> <span class="s2">&quot;area&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">info_dict</span> <span class="ow">or</span> <span class="n">info_dict</span><span class="p">[</span><span class="s2">&quot;area&quot;</span><span class="p">]</span> <span class="o">!=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_area</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Area name (value of &#39;area&#39; key) must be </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_area</span><span class="si">}</span><span class="s2">,</span><span class="se">\n</span><span class="si">{</span><span class="n">filename</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="c1"># Set timepoint</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">timepoints</span><span class="p">(</span><span class="o">**</span><span class="n">find_args</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">timepoints</span><span class="p">,</span> <span class="o">**</span><span class="n">info_dict</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;timepoint&quot;</span><span class="p">,</span> <span class="p">{})))</span>
+        <span class="c1"># Set scenarios and phases</span>
+        <span class="n">snl_dict</span> <span class="o">=</span> <span class="n">info_dict</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;scenario&quot;</span><span class="p">,</span> <span class="p">{})</span>
+        <span class="n">model_dict</span> <span class="o">=</span> <span class="p">{</span><span class="n">SIR</span><span class="o">.</span><span class="n">NAME</span><span class="p">:</span> <span class="n">SIR</span><span class="p">,</span> <span class="n">SIRD</span><span class="o">.</span><span class="n">NAME</span><span class="p">:</span> <span class="n">SIRD</span><span class="p">,</span> <span class="n">SIRF</span><span class="o">.</span><span class="n">NAME</span><span class="p">:</span> <span class="n">SIRF</span><span class="p">}</span>
+        <span class="k">for</span> <span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">summary_dict</span><span class="p">)</span> <span class="ow">in</span> <span class="n">snl_dict</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">clear</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">,</span> <span class="n">include_past</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">phase_dict</span> <span class="ow">in</span> <span class="n">summary_dict</span><span class="o">.</span><span class="n">values</span><span class="p">():</span>
+                <span class="n">add_dict</span> <span class="o">=</span> <span class="n">phase_dict</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+                <span class="n">add_dict</span><span class="p">[</span><span class="s2">&quot;end_date&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">add_dict</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">END</span><span class="p">)</span>
+                <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">ODE</span> <span class="ow">in</span> <span class="n">add_dict</span><span class="p">:</span>
+                    <span class="n">model_name</span> <span class="o">=</span> <span class="n">add_dict</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">ODE</span><span class="p">)</span>
+                    <span class="n">add_dict</span><span class="p">[</span><span class="s2">&quot;model&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">model_dict</span><span class="p">[</span><span class="n">model_name</span><span class="p">]</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">,</span> <span class="o">**</span><span class="n">add_dict</span><span class="p">)</span>
         <span class="k">return</span> <span class="bp">self</span></div></div>
 </pre></div>
 

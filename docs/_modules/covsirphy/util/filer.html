@@ -68,7 +68,7 @@
             
             
               <div class="version">
-                2.19.1-iota-fu1
+                2.19.1-kappa
               </div>
             
           
@@ -198,6 +198,8 @@
 <span class="sd">        {&quot;filename&quot;: &quot;&lt;absolute path&gt;/output/jpn_01_records.png&quot;}</span>
 <span class="sd">        &gt;&gt;&gt; filer.jpg(&quot;records&quot;)</span>
 <span class="sd">        {&quot;filename&quot;: &quot;&lt;absolute path&gt;/output/jpn_01_records.jpg&quot;}</span>
+<span class="sd">        &gt;&gt;&gt; filer.json(&quot;backup&quot;)</span>
+<span class="sd">        {&quot;filename&quot;: &quot;&lt;absolute path&gt;/output/jpn_01_backup.json&quot;}</span>
 <span class="sd">        &gt;&gt;&gt; filer.csv(&quot;records&quot;, index=True)</span>
 <span class="sd">        {&quot;path_or_buf&quot;: &quot;&lt;absolute path&gt;/output/jpn_01_records.csv&quot;, index: True}</span>
 <span class="sd">    &quot;&quot;&quot;</span>
@@ -248,7 +250,7 @@
 <span class="sd">            list[str]: list of files</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="n">ext</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="k">return</span> <span class="p">[</span><span class="n">file</span> <span class="k">for</span> <span class="p">(</span><span class="n">ext</span><span class="p">,</span> <span class="n">filenames</span><span class="p">)</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_file_dict</span><span class="o">.</span><span class="n">items</span><span class="p">()</span> <span class="k">for</span> <span class="n">file</span> <span class="ow">in</span> <span class="n">filenames</span><span class="p">]</span>
+            <span class="k">return</span> <span class="p">[</span><span class="n">file</span> <span class="k">for</span> <span class="n">filenames</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_file_dict</span><span class="o">.</span><span class="n">values</span><span class="p">()</span> <span class="k">for</span> <span class="n">file</span> <span class="ow">in</span> <span class="n">filenames</span><span class="p">]</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_file_dict</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">ext</span><span class="p">,</span> <span class="p">[])</span></div>
 
 <div class="viewcode-block" id="Filer.png"><a class="viewcode-back" href="../../../covsirphy.util.html#covsirphy.Filer.png">[docs]</a>    <span class="k">def</span> <span class="nf">png</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">title</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
@@ -277,6 +279,20 @@
 <span class="sd">            dict[str, str]: absolute filename (key: &#39;filename&#39;) and kwargs</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">filename</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_register</span><span class="p">(</span><span class="n">title</span><span class="o">=</span><span class="n">title</span><span class="p">,</span> <span class="n">ext</span><span class="o">=</span><span class="s2">&quot;jpg&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="p">{</span><span class="s2">&quot;filename&quot;</span><span class="p">:</span> <span class="n">filename</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">}</span></div>
+
+<div class="viewcode-block" id="Filer.json"><a class="viewcode-back" href="../../../covsirphy.util.html#covsirphy.Filer.json">[docs]</a>    <span class="k">def</span> <span class="nf">json</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">title</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Create JSON filename and register it.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            title (str): title of the filename, like &#39;records&#39;</span>
+<span class="sd">            kwargs: keyword arguments to be included in the output</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            dict[str, str]: absolute filename (key: &#39;filename&#39;) and kwargs</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">filename</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_register</span><span class="p">(</span><span class="n">title</span><span class="o">=</span><span class="n">title</span><span class="p">,</span> <span class="n">ext</span><span class="o">=</span><span class="s2">&quot;json&quot;</span><span class="p">)</span>
         <span class="k">return</span> <span class="p">{</span><span class="s2">&quot;filename&quot;</span><span class="p">:</span> <span class="n">filename</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">}</span></div>
 
 <div class="viewcode-block" id="Filer.csv"><a class="viewcode-back" href="../../../covsirphy.util.html#covsirphy.Filer.csv">[docs]</a>    <span class="k">def</span> <span class="nf">csv</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">title</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
