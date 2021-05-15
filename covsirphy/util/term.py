@@ -182,11 +182,17 @@ class Term(object):
             name (str): argument name of the dataframe
             time_index (bool): if True, the dataframe must has DatetimeIndex
             columns (list[str] or None): the columns the dataframe must have
-            df (pandas.DataFrame): as-is the target
+
+        Returns:
+            pandas.DataFrame:
+                Index
+                    as-is
+                Columns:
+                    columns specified with @columns or all columns of @target (when @columns is None)
         """
-        df = target.copy()
-        if not isinstance(df, pd.DataFrame):
+        if not isinstance(target, pd.DataFrame):
             raise TypeError(f"@{name} must be a instance of (pandas.DataFrame).")
+        df = target.copy()
         if time_index and (not isinstance(df.index, pd.DatetimeIndex)):
             raise TypeError(f"Index of @{name} must be <pd.DatetimeIndex>.")
         if columns is None:
@@ -196,7 +202,7 @@ class Term(object):
             included = ", ".join(df.columns.tolist())
             s1 = f"Expected columns were not included in {name} with {included}."
             raise KeyError(f"{s1} {cols_str} must be included.")
-        return df
+        return df.loc[:, columns]
 
     @staticmethod
     def _ensure_natural_int(target, name="number", include_zero=False, none_ok=False):

@@ -21,25 +21,32 @@ class JHUData(CleaningBase):
                 reset index
             Columns
                 - Date: Observation date
-                - ISO3: ISO3 code
+                - ISO3: ISO3 code (optional)
                 - Country: country/region name
                 - Province: province/prefecture/state name
                 - Confirmed: the number of confirmed cases
                 - Fatal: the number of fatal cases
                 - Recovered: the number of recovered cases
+                - Population: population values (optional)
         citation (str or None): citation or None (empty)
 
     Note:
         Either @filename (high priority) or @data must be specified.
     """
-    # Columns of self._raw and self._clean_df
+    # Required/optinal cols of raw dataset
+    REQUIRED_COLS = [
+        CleaningBase.DATE, CleaningBase.COUNTRY, CleaningBase.PROVINCE,
+        CleaningBase.C, CleaningBase.F, CleaningBase.R,
+    ]
+    OPTINAL_COLS = [CleaningBase.ISO3, CleaningBase.N]
+    # Columns of self._clean_df
     RAW_COLS = [
         CleaningBase.DATE, CleaningBase.ISO3, CleaningBase.COUNTRY, CleaningBase.PROVINCE,
-        CleaningBase.C, CleaningBase.F, CleaningBase.R,
+        CleaningBase.C, CleaningBase.F, CleaningBase.R, CleaningBase.N
     ]
     # Columns of self.cleaned()
     CLEANED_COLS = [
-        CleaningBase.DATE, CleaningBase.ISO3, CleaningBase.COUNTRY, CleaningBase.PROVINCE,
+        CleaningBase.DATE, CleaningBase.COUNTRY, CleaningBase.PROVINCE,
         CleaningBase.C, CleaningBase.CI, CleaningBase.F, CleaningBase.R,
     ]
     # Columns of self.subset()
@@ -50,7 +57,7 @@ class JHUData(CleaningBase):
 
     def __init__(self, filename=None, data=None, citation=None):
         # Raw data
-        self._raw = self._parse_raw(filename, data, self.RAW_COLS)
+        self._raw = self._parse_raw(filename, data, self.REQUIRED_COLS, optional_cols=self.OPTINAL_COLS)
         # Data cleaning
         self._cleaned_df = pd.DataFrame(columns=self.RAW_COLS) if self._raw.empty else self._cleaning()
         # Citation
@@ -100,8 +107,8 @@ class JHUData(CleaningBase):
             raise ValueError(
                 "@population was removed in JHUData.cleaned(). Please use JHUData.subset()")
         df = self._cleaned_df.copy()
-        df[self.ISO3] = df[self.ISO3] if self.ISO3 in df else self.UNKNOWN
-        return df.loc[:, self.CLEANED_COLS].drop(self.ISO3, axis=1)
+        df[self.CI] = (df[self.C] - df[self.F] - df[self.R]).astype(np.int64)
+        return df.loc[:, self.CLEANED_COLS]
 
     def _cleaning(self):
         """
@@ -120,6 +127,7 @@ class JHUData(CleaningBase):
                     - Infected (int): the number of currently infected cases
                     - Fatal (int): the number of fatal cases
                     - Recovered (int): the number of recovered cases
+                    - Population (int): population values or 0 (when raw data is 0 values)
         """
         df = self._raw.loc[:, self.RAW_COLS]
         # Datetime columns
@@ -127,8 +135,8 @@ class JHUData(CleaningBase):
         # Province
         df[self.PROVINCE] = df[self.PROVINCE].fillna(self.UNKNOWN)
         # Values
-        for col in [self.C, self.F, self.R]:
-            df[col] = df[col].ffill().fillna(0).astype(np.int64)
+        for col in [self.C, self.F, self.R, self.N]:
+            df[col] = df.groupby([self.COUNTRY, self.PROVINCE])[col].ffill().fillna(0).astype(np.int64)
         # Calculate Infected
         df[self.CI] = (df[self.C] - df[self.F] - df[self.R]).astype(np.int64)
         # As country level data in China, use the total values of provinces
@@ -141,7 +149,7 @@ class JHUData(CleaningBase):
         df = pd.concat([without_c_chn_df, p_chn_df], ignore_index=True)
         # Update data types to reduce memory
         df[self.AREA_ABBR_COLS] = df[self.AREA_ABBR_COLS].astype("category")
-        return df.loc[:, self.CLEANED_COLS]
+        return df.loc[:, self.RAW_COLS]
 
     def replace(self, country_data):
         """
@@ -157,14 +165,19 @@ class JHUData(CleaningBase):
             Citation of the country data will be added to 'JHUData.citation' description.
         """
         self._ensure_instance(country_data, CountryData, name="country_data")
+        df = self._cleaned_df.copy()
         # Read new dataset
         country = country_data.country
         new = country_data.cleaned()
         new[self.ISO3] = self.country_to_iso3(country)
-        new = new.loc[:, self.RAW_COLS]
+        # Add population data
+        new[self.N] = new.loc[:, self.N] if self.N in new else None
+        new = new.set_index([self.COUNTRY, self.PROVINCE, self.DATE])
+        new.update(df.set_index([self.COUNTRY, self.PROVINCE, self.DATE]).loc[:, [self.N]])
+        new = new.reset_index().loc[:, self.RAW_COLS]
+        # Calculate Infected
         new[self.CI] = (new[self.C] - new[self.F] - new[self.R]).astype(np.int64)
         # Remove the data in the country from JHU dataset
-        df = self._cleaned_df.copy()
         df = df.loc[df[self.COUNTRY] != country]
         # Combine JHU data and the new data
         df = pd.concat([df, new], axis=0, sort=False)
@@ -196,13 +209,13 @@ class JHUData(CleaningBase):
                     - Fatal (int): the number of fatal cases
                     - Recovered (int): the number of recovered cases
                     - Infected (int): the number of currently infected cases
+                    - Population (int): population values or 0 values
         """
         try:
-            df = super().subset(
+            return super().subset(
                 country=country, province=province, start_date=start_date, end_date=end_date)
         except SubsetNotFoundError:
             return pd.DataFrame(columns=self.RAW_COLS)
-        return df
 
     def _calculate_susceptible(self, subset_df, population):
         """
@@ -218,6 +231,7 @@ class JHUData(CleaningBase):
                     - Infected (int): the number of currently infected cases
                     - Fatal (int): the number of fatal cases
                     - Recovered (int): the number of recovered cases
+                    - Population (int): population values or 0 values (0 will be ignored)
             population (int or None): population value
 
         Returns:
@@ -233,12 +247,16 @@ class JHUData(CleaningBase):
                     - Susceptible (int): the number of susceptible cases, if calculated
 
         Note:
-            If @population is not None, the number of susceptible cases will be calculated.
+            If @population (high priority) is not None or population values are registered in subset,
+            the number of susceptible cases will be calculated.
         """
-        if population is None:
-            return subset_df
-        subset_df.loc[:, self.S] = (population - subset_df.loc[:, self.C]).astype(np.int64)
-        return subset_df[self.SUBSET_COLS]
+        df = subset_df.copy()
+        df[self.S] = (population or df[self.N]) - df[self.C]
+        try:
+            df[self.S] = df[self.S].astype(np.int64)
+        except ValueError:
+            return df.loc[:, [self.DATE, self.C, self.CI, self.F, self.R]]
+        return df.loc[:, self.SUBSET_COLS]
 
     def subset(self, country, province=None, start_date=None, end_date=None, population=None):
         """
@@ -264,10 +282,11 @@ class JHUData(CleaningBase):
                     - Susceptible (int): the number of susceptible cases, if calculated
 
         Note:
-            If @population is not None, the number of susceptible cases will be calculated.
+            If @population (high priority) is not None or population values are registered in subset,
+            the number of susceptible cases will be calculated.
         """
         country_alias = self.ensure_country_name(country)
-        # Subset with area, start/end date and calculate Susceptible
+        # Subset with area, start/end date
         subset_df = self._subset(
             country=country, province=province, start_date=start_date, end_date=end_date)
         if subset_df.empty:
@@ -284,7 +303,7 @@ class JHUData(CleaningBase):
                 start_date=start_date, end_date=end_date, message="with 'Recovered > 0'") from None
         return df
 
-    @deprecate("JHUData.to_sr()", version="2.17.0-zeta")
+    @ deprecate("JHUData.to_sr()", version="2.17.0-zeta")
     def to_sr(self, country, province=None,
               start_date=None, end_date=None, population=None):
         """
@@ -315,7 +334,7 @@ class JHUData(CleaningBase):
             start_date=start_date, end_date=end_date, population=population)
         return subset_df.set_index(self.DATE).loc[:, [self.R, self.S]]
 
-    @classmethod
+    @ classmethod
     def from_dataframe(cls, dataframe, directory="input"):
         """
         Create JHUData instance using a pandas dataframe.
@@ -333,14 +352,16 @@ class JHUData(CleaningBase):
                     - Infected: the number of currently infected cases
                     - Fatal: the number of fatal cases
                     - Recovered: the number of recovered cases
+                    - Popupation: population values (optional)
             directory (str): directory to save geometry information (for .map() method)
 
         Returns:
             covsirphy.JHUData: JHU-style dataset
         """
         df = cls._ensure_dataframe(dataframe, name="dataframe")
-        df[cls.ISO3] = df[cls.ISO3] if cls.ISO3 in df.columns else cls.UNKNOWN
-        instance = cls(filename=None)
+        df[cls.ISO3] = df[cls.ISO3] if cls.ISO3 in df else cls.UNKNOWN
+        df[cls.N] = df[cls.N] if cls.N in df else 0
+        instance = cls()
         instance.directory = str(directory)
         instance._cleaned_df = cls._ensure_dataframe(df, name="dataframe", columns=cls.RAW_COLS)
         return instance
@@ -403,7 +424,7 @@ class JHUData(CleaningBase):
             if not self.subset_complement(country=country, **kwargs)[0].empty]
         return sorted(raw_ok_set | set(comp_ok_list))
 
-    @deprecate("JHUData.calculate_closing_period()")
+    @ deprecate("JHUData.calculate_closing_period()")
     def calculate_closing_period(self):
         """
         Calculate mode value of closing period, time from confirmation to get outcome.
@@ -540,7 +561,8 @@ class JHUData(CleaningBase):
                 str or bool: kind of complement or False
 
         Note:
-            If @population is not None, the number of susceptible cases will be calculated.
+            If @population (high priority) is not None or population values are registered in subset,
+            the number of susceptible cases will be calculated.
         """
         # Subset with area, start/end date and calculate Susceptible
         country_alias = self.ensure_country_name(country)
@@ -555,6 +577,7 @@ class JHUData(CleaningBase):
         handler = JHUDataComplementHandler(recovery_period=self._recovery_period, **kwargs)
         df, status, _ = handler.run(subset_df)
         # Calculate Susceptible
+        df.loc[:, self.N] = subset_df.loc[:, self.N]
         df = self._calculate_susceptible(df, population)
         # Kind of complement or False
         is_complemented = status or False
@@ -596,8 +619,11 @@ class JHUData(CleaningBase):
                 str or bool: kind of complement or False
 
         Note:
-            - If @ population is not None, the number of susceptible cases will be calculated.
-            - If necessary and @auto_complement is True, complement recovered data.
+            If @population (high priority) is not None or population values are registered in subset,
+            the number of susceptible cases will be calculated.
+
+        Note:
+            If necessary and @auto_complement is True, complement recovered data.
         """
         country_alias = self.ensure_country_name(country)
         subset_arg_dict = {
@@ -668,7 +694,7 @@ class JHUData(CleaningBase):
             if subset_df.empty:
                 raise SubsetNotFoundError(
                     country=cur_country, province=province, start_date=start_date, end_date=end_date)
-            *_, complement_dict = handler.run(subset_df)
+            * _, complement_dict = handler.run(subset_df)
             complement_dict_values = pd.Series(complement_dict.values(), dtype=bool).values
             complement_df.loc[cur_country] = [province, *complement_dict_values]
         return complement_df.reset_index()

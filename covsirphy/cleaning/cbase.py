@@ -47,7 +47,7 @@ class CleaningBase(Term):
         else:
             self._dirpath = Path(filename).resolve().parent
 
-    def _parse_raw(self, filename, data, raw_columns):
+    def _parse_raw(self, filename, data, required_cols, optional_cols=None):
         """
         Parse raw data with a CSV file or a dataframe.
 
@@ -57,26 +57,35 @@ class CleaningBase(Term):
                 Index
                     reset index
                 Columns
-                    columns defined by @raw_columns
-            raw_columns (list[str]): columns to parse
+                    columns defined by @required_cols
+            required_cols (list[str]): required columns to parse
+            optional_cols (list[str] or None): optional columns to parse or None (no optinal columns)
 
         Returns:
             pandas.DataFrame:
                 Index
                     reset index
                 Columns
-                    columns defined by @raw_columns
+                    columns defined by @required_cols
 
         Note:
             Either @filename (high priority) or @data must be specified.
+
+        Note:
+            When some optional columns are not included, None will be registered.
         """
-        if filename is not None:
-            return self.load(
-                filename, columns=raw_columns,
-                dtype={self.PROVINCE: "object", "Province/State": "object"})
-        if data is not None:
-            return self._ensure_dataframe(data, name="data", columns=raw_columns)
-        return pd.DataFrame(columns=raw_columns)
+        all_columns = [*required_cols, *optional_cols]
+        if filename is None:
+            if data is None:
+                return pd.DataFrame(columns=all_columns)
+            raw = self._ensure_dataframe(data, name="data")
+        else:
+            raw = self.load(
+                filename, columns=None, dtype={self.PROVINCE: "object", "Province/State": "object"})
+        df = self._ensure_dataframe(raw, name="loaded data", columns=required_cols)
+        for col in optional_cols:
+            df[col] = raw.loc[:, col] if col in raw else None
+        return df.loc[:, all_columns]
 
     @property
     def raw(self):
@@ -346,7 +355,7 @@ class CleaningBase(Term):
         # Subset with Start/end date
         if start_date is None and end_date is None:
             return df.reset_index(drop=True)
-        df = self._ensure_dataframe(df, name="the cleaned dataset", columns=[self.DATE])
+        self._ensure_dataframe(df, name="the cleaned dataset", columns=[self.DATE])
         series = df[self.DATE].copy()
         start_obj = self._ensure_date(start_date, default=series.min())
         end_obj = self._ensure_date(end_date, default=series.max())
