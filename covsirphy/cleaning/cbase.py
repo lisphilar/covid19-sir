@@ -81,7 +81,12 @@ class CleaningBase(Term):
             raw = self._ensure_dataframe(data, name="data")
         else:
             raw = self.load(
-                filename, columns=None, dtype={self.PROVINCE: "object", "Province/State": "object"})
+                filename, columns=None,
+                dtype={
+                    self.PROVINCE: "object", "Province/State": "object",
+                    "key": "object", "key_alpha_2": "object"
+                }
+            )
         df = self._ensure_dataframe(raw, name="loaded data", columns=required_cols)
         if optional_cols is None:
             return df
