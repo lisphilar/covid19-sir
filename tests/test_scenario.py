@@ -59,7 +59,7 @@ class TestScenario(object):
             Scenario()
         # Setting
         scenario = Scenario(country=country)
-        scenario.register(jhu_data, population_data)
+        scenario.register(jhu_data)
         # Force interactive
         scenario._interactive = True
         warnings.filterwarnings("ignore", category=UserWarning)
@@ -69,7 +69,7 @@ class TestScenario(object):
     def test_adjust_end(self, jhu_data, population_data, country):
         # Setting
         scenario = Scenario(country=country)
-        scenario.register(jhu_data, population_data)
+        scenario.register(jhu_data)
         scenario.timepoints(first_date="01Dec2020", today="01Feb2021")
         # Main scenario
         scenario.add(end_date="01Apr2021", name="Main")
@@ -300,8 +300,8 @@ class TestScenario(object):
         # Restore
         with pytest.raises(ValueError):
             snl_restored = Scenario(country="Japan", province="Tokyo")
-            snl_restored.register(jhu_data, population_data)
+            snl_restored.register(jhu_data)
             snl_restored.restore(**backupfile_dict)
         snl_restored = Scenario(country="Italy", province=None)
-        snl_restored.register(jhu_data, population_data)
+        snl_restored.register(jhu_data)
         snl_restored.restore(**backupfile_dict)
