@@ -74,7 +74,7 @@ class CleaningBase(Term):
         Note:
             When some optional columns are not included, None will be registered.
         """
-        all_columns = [*required_cols, *optional_cols]
+        all_columns = [*required_cols, *(optional_cols or [])]
         if filename is None:
             if data is None:
                 return pd.DataFrame(columns=all_columns)
@@ -83,6 +83,8 @@ class CleaningBase(Term):
             raw = self.load(
                 filename, columns=None, dtype={self.PROVINCE: "object", "Province/State": "object"})
         df = self._ensure_dataframe(raw, name="loaded data", columns=required_cols)
+        if optional_cols is None:
+            return df
         for col in optional_cols:
             df[col] = raw.loc[:, col] if col in raw else None
         return df.loc[:, all_columns]
