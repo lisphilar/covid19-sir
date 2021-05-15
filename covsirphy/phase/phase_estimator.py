@@ -49,8 +49,8 @@ class MPEstimator(Term):
                 population_data, PopulationData, name="population_data")
             self.from_dataset = True
         else:
-            self.record_df = self._ensure_dataframe(
-                record_df, name="record_df", columns=self.NLOC_COLUMNS)
+            self._ensure_dataframe(record_df, name="record_df", columns=self.NLOC_COLUMNS)
+            self.record_df = record_df.copy()
             self.from_dataset = False
         # Arguments
         self.model = self._ensure_subclass(model, ModelBase, "model")

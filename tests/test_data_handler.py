@@ -1,12 +1,13 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-from covsirphy.util.error import SubsetNotFoundError
+import warnings
 import pandas as pd
 import pytest
 from covsirphy import DataHandler, JHUData, PopulationData, Term
 from covsirphy import CountryData, JapanData, OxCGRTData, PCRData, VaccineData
-from covsirphy import UnExpectedValueError, NotRegisteredMainError, NotRegisteredExtraError
+from covsirphy import UnExpectedValueError, NotRegisteredMainError
+from covsirphy import NotRegisteredExtraError, SubsetNotFoundError
 
 
 class TestDataHandler(object):
@@ -26,14 +27,14 @@ class TestDataHandler(object):
             dhl.register(extras=[data])
 
     @pytest.mark.parametrize("country", ["Moon"])
-    def test_register_unknown_area(self, jhu_data, population_data, country):
+    def test_register_unknown_area(self, jhu_data, country):
         dhl = DataHandler(country=country, province=None)
-        dhl.register(jhu_data=jhu_data)
         with pytest.raises(SubsetNotFoundError):
-            dhl.register(population_data=population_data)
+            dhl.register(jhu_data=jhu_data)
 
     @pytest.mark.parametrize("country", ["Japan"])
     def test_population(self, jhu_data, population_data, country):
+        warnings.filterwarnings("ignore", category=DeprecationWarning)
         dhl = DataHandler(country=country, province=None)
         assert not dhl.main_satisfied
         with pytest.raises(NotRegisteredMainError):
@@ -43,13 +44,13 @@ class TestDataHandler(object):
         assert dhl.population == population_data.value(country=country)
 
     @pytest.mark.parametrize("country", ["Japan"])
-    def test_complement(self, jhu_data, population_data, country):
+    def test_complement(self, jhu_data, country):
         dhl = DataHandler(country=country, province=None)
         with pytest.raises(NotRegisteredMainError):
             assert dhl.complemented is None
         with pytest.raises(NotRegisteredMainError):
             dhl.show_complement()
-        dhl.register(jhu_data=jhu_data, population_data=population_data)
+        dhl.register(jhu_data=jhu_data)
         # Not complemented
         dhl.switch_complement(whether=False)
         dhl.records_main()
@@ -70,17 +71,17 @@ class TestDataHandler(object):
         assert isinstance(dhl.recovery_period(), int)
 
     @pytest.mark.parametrize("country", ["Japan"])
-    def test_records_main(self, jhu_data, population_data, country):
+    def test_records_main(self, jhu_data, country):
         dhl = DataHandler(country=country, province=None)
         with pytest.raises(NotRegisteredMainError):
             dhl.records_main()
-        dhl.register(jhu_data=jhu_data, population_data=population_data)
-        assert dhl.population == population_data.value(country=country)
+        dhl.register(jhu_data=jhu_data)
+        main_df = dhl.records_main()
+        assert set(main_df.columns) == set([Term.DATE, Term.C, Term.CI, Term.F, Term.R, Term.S])
 
     @pytest.mark.parametrize("country", ["Japan"])
-    def test_timepoints(self, jhu_data, population_data, country):
-        dhl = DataHandler(
-            country=country, province=None, jhu_data=jhu_data, population_data=population_data)
+    def test_timepoints(self, jhu_data, country):
+        dhl = DataHandler(country=country, province=None, jhu_data=jhu_data)
         dhl.timepoints(first_date="01Apr2020", last_date="01Sep2020", today="01Jun2020")
         series = dhl.records_main()[Term.DATE]
         assert series.min().strftime(Term.DATE_FORMAT) == dhl.first_date == "01Apr2020"
@@ -88,12 +89,11 @@ class TestDataHandler(object):
         assert dhl.today == "01Jun2020"
 
     @pytest.mark.parametrize("country", ["Japan", "France"])
-    def test_records_extras(self, jhu_data, population_data, country,
-                            japan_data, oxcgrt_data, pcr_data, vaccine_data):
+    def test_records_extras(self, jhu_data, country, japan_data, oxcgrt_data, pcr_data, vaccine_data):
         dhl = DataHandler(country=country, province=None)
         with pytest.raises(NotRegisteredMainError):
             dhl.records_extras()
-        dhl.register(jhu_data=jhu_data, population_data=population_data)
+        dhl.register(jhu_data=jhu_data)
         dhl.timepoints(first_date="01May2020", last_date="01Sep2020")
         with pytest.raises(NotRegisteredExtraError):
             dhl.records_extras()
@@ -107,8 +107,7 @@ class TestDataHandler(object):
     @pytest.mark.parametrize("extras", [True, False])
     @pytest.mark.parametrize("past", [True, False])
     @pytest.mark.parametrize("future", [True, False])
-    def test_records(self, jhu_data, population_data, country,
-                     japan_data, oxcgrt_data, pcr_data, vaccine_data,
+    def test_records(self, jhu_data, country, japan_data, oxcgrt_data, pcr_data, vaccine_data,
                      main, extras, past, future):
         dhl = DataHandler(country=country, province=None)
         # Combination of arguments
@@ -120,7 +119,7 @@ class TestDataHandler(object):
         if main:
             with pytest.raises(NotRegisteredMainError):
                 dhl.records(main=main, extras=extras, past=past, future=future)
-        dhl.register(jhu_data=jhu_data, population_data=population_data)
+        dhl.register(jhu_data=jhu_data)
         dhl.timepoints(first_date="01Apr2020", last_date="01Sep2020", today="01Jun2020")
         # Register extra datasets
         if extras:
@@ -140,9 +139,9 @@ class TestDataHandler(object):
         assert df[Term.DATE].max().strftime(Term.DATE_FORMAT) == end
 
     @pytest.mark.parametrize("country", ["Japan"])
-    def test_records_all(self, jhu_data, population_data, country, oxcgrt_data):
+    def test_records_all(self, jhu_data, country, oxcgrt_data):
         dhl = DataHandler(country=country, province=None)
-        dhl.register(jhu_data=jhu_data, population_data=population_data)
+        dhl.register(jhu_data=jhu_data)
         dhl.records_all()
         dhl.register(extras=[oxcgrt_data])
         dhl.records_all()
@@ -150,8 +149,8 @@ class TestDataHandler(object):
     @pytest.mark.parametrize("country", ["Japan"])
     @pytest.mark.parametrize("indicator", ["Stringency_index", "Confirmed"])
     @pytest.mark.parametrize("target", ["Recovered"])
-    def test_estimate_delay(self, jhu_data, population_data, country, oxcgrt_data, indicator, target):
+    def test_estimate_delay(self, country, jhu_data, oxcgrt_data, indicator, target):
         dhl = DataHandler(country=country, province=None)
-        dhl.register(jhu_data=jhu_data, population_data=population_data, extras=[oxcgrt_data])
+        dhl.register(jhu_data=jhu_data, extras=[oxcgrt_data])
         df = dhl.estimate_delay(indicator=indicator, target=target)
         assert isinstance(df, pd.DataFrame)

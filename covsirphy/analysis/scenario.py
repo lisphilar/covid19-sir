@@ -182,7 +182,7 @@ class Scenario(Term):
             today (str or None): reference date to determine whether a phase is a past phase or a future phase
 
         Raises:
-            NotRegisteredMainError: either JHUData or PopulationData was not registered
+            NotRegisteredMainError: JHUData was not registered
             SubsetNotFoundError: failed in subsetting because of lack of data
 
         Note:
@@ -281,7 +281,7 @@ class Scenario(Term):
             kwargs: the other keyword arguments of Scenario.line_plot()
 
         Raises:
-            NotRegisteredMainError: either JHUData or PopulationData was not registered
+            NotRegisteredMainError: JHUData was not registered
             SubsetNotFoundError: failed in subsetting because of lack of data
             NotRegisteredExtraError: some variables are not included in the main datasets
             and no extra datasets were registered
@@ -1187,7 +1187,7 @@ class Scenario(Term):
             kwargs: keyword arguments of DataHandler.estimate_delay()
 
         Raises:
-            NotRegisteredMainError: either JHUData or PopulationData was not registered
+            NotRegisteredMainError: JHUData was not registered
             SubsetNotFoundError: failed in subsetting because of lack of data
             UserWarning: failed in calculating and returned the default value (recovery period)
 

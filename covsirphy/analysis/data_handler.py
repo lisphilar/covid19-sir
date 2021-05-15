@@ -7,7 +7,7 @@ import warnings
 import numpy as np
 import pandas as pd
 import ruptures as rpt
-from covsirphy.util.error import SubsetNotFoundError, UnExpectedValueError
+from covsirphy.util.error import SubsetNotFoundError, UnExpectedValueError, deprecate
 from covsirphy.util.error import NotRegisteredMainError, NotRegisteredExtraError
 from covsirphy.util.term import Term
 from covsirphy.cleaning.cbase import CleaningBase
@@ -31,11 +31,7 @@ class DataHandler(Term):
     # {nameof(JHUData): JHUData} does not work with AST magics, including pytest and ipython
     # Main datasets {str: class}
     __NAME_JHU = "JHUData"
-    __NAME_POPULATION = "PopulationData"
-    MAIN_DICT = {
-        __NAME_JHU: JHUData,
-        __NAME_POPULATION: PopulationData
-    }
+    MAIN_DICT = {__NAME_JHU: JHUData}
     # Extra datasets {str: class}
     __NAME_COUNTRY = "CountryData"
     __NAME_OXCGRT = "OxCGRTData"
@@ -67,52 +63,53 @@ class DataHandler(Term):
         # Register datasets: date and main columns will be set internally if main data available
         self.register(**kwargs)
 
-    @ property
+    @property
     def main_satisfied(self):
         """
         bool: all main datasets were registered or not
         """
         return all(self._data_dict[name] for name in self.MAIN_DICT.keys())
 
-    @ property
+    @property
     def complemented(self):
         """
         bool or str: whether complemented or not and the details, None when not confirmed
 
         Raises:
-            NotRegisteredMainError: no information because either JHUData or PopulationData was not registered
+            NotRegisteredMainError: no information because JHUData was not registered
         """
         if self._complemented is None:
-            raise NotRegisteredMainError(".register(jhu_data, population_data)")
+            raise NotRegisteredMainError(".register(jhu_data)")
         return self._complemented
 
-    @ property
+    @property
+    @deprecate("DataHandler.population property", version="2.19.1-lambda")
     def population(self):
         """
         int: population value
 
         Raises:
-            NotRegisteredMainError: no information because either JHUData or PopulationData was not registered
+            NotRegisteredMainError: no information because JHUData was not registered
         """
         if self._population is None:
-            raise NotRegisteredMainError(".register(jhu_data, population_data)")
+            raise NotRegisteredMainError(".register(jhu_data)")
         return self._population
 
-    @ property
+    @property
     def first_date(self):
         """
         str: the first date of the records
         """
         return self._first_date
 
-    @ property
+    @property
     def last_date(self):
         """
         str: the last date of the records
         """
         return self._last_date
 
-    @ property
+    @property
     def today(self):
         """
         str: reference date to determine whether a phase is a past phase or a future phase
@@ -139,7 +136,7 @@ class DataHandler(Term):
         # Main: PopulationData
         if population_data is not None:
             self._ensure_instance(population_data, PopulationData, name="population_data")
-            self._data_dict[self.__NAME_POPULATION] = population_data
+            self._population = population_data.value(**self._area_dict)
         # Update date range
         try:
             self.timepoints(
@@ -201,7 +198,7 @@ class DataHandler(Term):
         Return records of the main datasets as a dataframe.
 
         Raises:
-            NotRegisteredMainError: either JHUData or PopulationData was not registered
+            NotRegisteredMainError: JHUData was not registered
             SubsetNotFoundError: failed in subsetting because of lack of data
 
         Returns:
@@ -217,12 +214,9 @@ class DataHandler(Term):
                     - Susceptible (int): the number of susceptible cases
         """
         jhu_data = self._data_dict[self.__NAME_JHU]
-        population_data = self._data_dict[self.__NAME_POPULATION]
         # Main datasets should be registered
-        if None in [jhu_data, population_data]:
-            raise NotRegisteredMainError(".register(jhu_data, population_data)")
-        # Population
-        self._population = population_data.value(**self._area_dict)
+        if jhu_data is None:
+            raise NotRegisteredMainError(".register(jhu_data)")
         # Subsetting
         df, self._complemented = jhu_data.records(
             **self._area_dict,
@@ -282,7 +276,7 @@ class DataHandler(Term):
             today (str or None): reference date to determine whether a phase is a past phase or a future phase
 
         Raises:
-            NotRegisteredMainError: either JHUData or PopulationData was not registered
+            NotRegisteredMainError: JHUData was not registered
             SubsetNotFoundError: failed in subsetting because of lack of data
 
         Note:
@@ -314,7 +308,7 @@ class DataHandler(Term):
         Return records of the extra datasets as a dataframe.
 
         Raises:
-            NotRegisteredMainError: either JHUData or PopulationData was not registered
+            NotRegisteredMainError: JHUData was not registered
             NotRegisteredExtraError: no extra datasets were registered
 
         Returns:
@@ -326,11 +320,10 @@ class DataHandler(Term):
                     - columns defined in the extra datasets
         """
         if None in self._data_dict.values():
-            raise NotRegisteredMainError(".register(jhu_data, population_data)")
+            raise NotRegisteredMainError(".register(jhu_data)")
         if not set(self._data_dict) - set(self.MAIN_DICT):
             raise NotRegisteredExtraError(
-                ".register(jhu_data, population_data, extras=[...])",
-                message="with extra datasets")
+                ".register(jhu_data, extras=[...])", message="with extra datasets")
         # Get all subset
         df = pd.DataFrame(columns=[self.DATE])
         for (name, data) in self._data_dict.items():
@@ -368,7 +361,7 @@ class DataHandler(Term):
             extras (bool): whether include extra datasets or not
 
         Raises:
-            NotRegisteredMainError: either JHUData or PopulationData was not registered
+            NotRegisteredMainError: JHUData was not registered
             SubsetNotFoundError: failed in subsetting because of lack of data
             NotRegisteredExtraError: @extras is True and no extra datasets were registered
             ValueError: both of @main and @extras were False
@@ -409,7 +402,7 @@ class DataHandler(Term):
             future (bool): whether include future records or not
 
         Raises:
-            NotRegisteredMainError: either JHUData or PopulationData was not registered
+            NotRegisteredMainError: JHUData was not registered
             SubsetNotFoundError: failed in subsetting because of lack of data
             NotRegisteredExtraError: @extras is True and no extra datasets were registered
             ValueError: both of @main and @extras were False, or both of @past and @future were False
@@ -444,7 +437,7 @@ class DataHandler(Term):
         Return registered all records of the datasets as a dataframe.
 
         Raises:
-            NotRegisteredMainError: either JHUData or PopulationData was not registered
+            NotRegisteredMainError: JHUData was not registered
             SubsetNotFoundError: failed in subsetting because of lack of data
 
         Returns:
@@ -479,7 +472,7 @@ class DataHandler(Term):
             delay_name (str): column name of delay in the output dataframe
 
         Raises:
-            NotRegisteredMainError: either JHUData or PopulationData was not registered
+            NotRegisteredMainError: JHUData was not registered
             SubsetNotFoundError: failed in subsetting because of lack of data
             UserWarning: failed in calculating and returned the default value (recovery period)
 

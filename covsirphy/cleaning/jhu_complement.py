@@ -273,6 +273,7 @@ class JHUDataComplementHandler(Term):
         df["Elapsed"] = df[self.R] - df["diff"]
         df = df.loc[df["Elapsed"] > 0]
         # Check partial recovery periods
+        warnings.filterwarnings("ignore", category=RuntimeWarning)
         per_up = (df["Elapsed"] > self.upper_limit_days).sum() / len(df)
         per_lw = (df["Elapsed"] < self.lower_limit_days).sum() / len(df)
         return per_up < self.upper_percentage and per_lw < self.lower_percentage

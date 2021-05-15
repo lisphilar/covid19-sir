@@ -150,8 +150,8 @@ class SEWIRF(ModelBase):
                     - Exposed (int): 0
                     - Waiting (int): 0
         """
-        df = cls._ensure_dataframe(
-            data_df, name="data_df", columns=cls.VALUE_COLUMNS)
+        cls._ensure_dataframe(data_df, name="data_df", columns=cls.VALUE_COLUMNS)
+        df = data_df.copy()
         # Calculate dimensional variables
         df[cls.S] = population - df[cls.C]
         df[cls.E] = 0
