@@ -53,8 +53,8 @@ class Estimator(Term):
         # Dataset
         if not set(self.NLOC_COLUMNS).issubset(record_df.columns):
             record_df = model.restore(record_df)
-        self.record_df = self._ensure_dataframe(
-            record_df, name="record_df", columns=self.NLOC_COLUMNS)
+        self._ensure_dataframe(record_df, name="record_df", columns=self.NLOC_COLUMNS)
+        self.record_df = record_df.copy()
         # Settings for simulation
         self.population = self._ensure_population(population)
         df = model.tau_free(self.record_df, population, tau=None)
