@@ -89,7 +89,8 @@ class SIR(ModelBase):
         Returns:
             dict(str, tuple(float, float)): minimum/maximum values
         """
-        df = cls._ensure_dataframe(taufree_df, name="taufree_df", columns=[cls.TS, *cls.VARIABLES])
+        cls._ensure_dataframe(taufree_df, name="taufree_df", columns=[cls.TS, *cls.VARIABLES])
+        df = taufree_df.copy()
         df = df.loc[(df[cls.S] > 0) & (df[cls.CI] > 0)]
         n, t, s, i, r = population, df[cls.TS], df[cls.S], df[cls.CI], df[cls.FR]
         # rho = - n * (dS/dt) / S / I
@@ -130,8 +131,8 @@ class SIR(ModelBase):
                         - Susceptible (int): the number of susceptible cases
                         - Fatal or Recovered (int): total number of fatal/recovered cases
         """
-        df = cls._ensure_dataframe(
-            data_df, name="data_df", columns=cls.VALUE_COLUMNS)
+        cls._ensure_dataframe(data_df, name="data_df", columns=cls.VALUE_COLUMNS)
+        df = data_df.copy()
         # Calculate dimensional variables
         df[cls.S] = population - df[cls.C]
         df[cls.FR] = df[cls.F] + df[cls.R]

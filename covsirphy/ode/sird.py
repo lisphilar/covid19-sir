@@ -93,7 +93,8 @@ class SIRD(ModelBase):
         Returns:
             dict(str, tuple(float, float)): minimum/maximum values
         """
-        df = cls._ensure_dataframe(taufree_df, name="taufree_df", columns=[cls.TS, *cls.VARIABLES])
+        cls._ensure_dataframe(taufree_df, name="taufree_df", columns=[cls.TS, *cls.VARIABLES])
+        df = taufree_df.copy()
         df = df.loc[(df[cls.S] > 0) & (df[cls.CI] > 0)]
         n, t = population, df[cls.TS]
         s, i, r, d = df[cls.S], df[cls.CI], df[cls.R], df[cls.F]
@@ -140,8 +141,8 @@ class SIRD(ModelBase):
                     - any columns @data_df has
                     - Susceptible (int): the number of susceptible cases
         """
-        df = cls._ensure_dataframe(
-            data_df, name="data_df", columns=cls.VALUE_COLUMNS)
+        cls._ensure_dataframe(data_df, name="data_df", columns=cls.VALUE_COLUMNS)
+        df = data_df.copy()
         # Calculate dimensional variables
         df[cls.S] = population - df[cls.C]
         return df
