@@ -235,6 +235,13 @@ class TestScenario(object):
             beginning_date=date, model=SIRF,
             control="Control", target="Retro", timeout=1, timeout_iteration=1)
 
+    def test_retrospective_before_estimate(self, jhu_data):
+        scenario = Scenario(country="Japan")
+        scenario.register(jhu_data)
+        scenario.retrospective(
+            beginning_date="01Jan2021", model=SIRF,
+            control="Control", target="Retro", timeout=1, timeout_iteration=1)
+
     @pytest.mark.parametrize("metrics", ["RMSLE"])
     def test_score(self, snl, metrics):
         try:

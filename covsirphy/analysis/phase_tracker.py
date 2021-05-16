@@ -252,8 +252,8 @@ class PhaseTracker(Term):
         data_df = self._track_df.reset_index()
         data_df = data_df.loc[data_df[self.ID] > 0].dropna(how="all", axis=0)
         handler = ODEHandler(model, data_df[self.DATE].min(), tau=tau, **find_args(ODEHandler, **kwargs))
-        start_dates = data_df.groupby(self.ID).first()[self.DATE]
-        end_dates = data_df.groupby(self.ID).last()[self.DATE]
+        start_dates = data_df.groupby(self.ID).first()[self.DATE].sort_values()
+        end_dates = data_df.groupby(self.ID).last()[self.DATE].sort_values()
         for (start, end) in zip(start_dates, end_dates):
             y0_series = model.convert(data_df.loc[data_df[self.DATE] >= start], tau=None).iloc[0]
             _ = handler.add(end, y0_dict=y0_series.to_dict())
