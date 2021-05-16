@@ -360,8 +360,8 @@ class PhaseTracker(Term):
         # Get parameter sets and initial values
         record_df = self._track_df.copy()
         record_df = record_df.loc[record_df[self.ID] != 0].ffill().dropna()
-        start_dates = record_df.reset_index().groupby(self.ID).first()[self.DATE]
-        end_dates = record_df.reset_index().groupby(self.ID).last()[self.DATE]
+        start_dates = record_df.reset_index().groupby(self.ID).first()[self.DATE].sort_values()
+        end_dates = record_df.reset_index().groupby(self.ID).last()[self.DATE].sort_values()
         # Set-up ODEHandler
         handler = ODEHandler(self._model, record_df.index.min(), tau=self._tau)
         parameters = self._model.PARAMETERS[:]
