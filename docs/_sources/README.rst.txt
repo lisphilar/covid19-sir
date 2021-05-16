@@ -80,10 +80,10 @@ records in Japan, but we can change the country name when creating
     # Download and update datasets
     data_loader = cs.DataLoader("input")
     jhu_data = data_loader.jhu()
-    population_data = data_loader.population()
-    # Check records
+    # Select country name and register the data
     snl = cs.Scenario(country="Japan")
-    snl.register(jhu_data, population_data)
+    snl.register(jhu_data)
+    # Check records
     snl.records()
     # S-R trend analysis
     snl.trend().summary()
@@ -164,7 +164,7 @@ with CovsirPhy, please cite the next Kaggle notebook.
 Hirokazu Takaya (2020-2021), Kaggle Notebook, COVID-19 data with SIR
 model, https://www.kaggle.com/lisphilar/covid-19-data-with-sir-model
 
-We can check the citation with the following script (version >= 2.18.0).
+We can check the citation with the following script.
 
 .. code:: python
 

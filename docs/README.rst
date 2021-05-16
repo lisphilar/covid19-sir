@@ -65,7 +65,7 @@ Installation <https://lisphilar.github.io/covid19-sir/INSTALLATION.html>`__.
 
 .. code:: bash
 
-   pip install --upgrade covsirphy
+    pip install --upgrade covsirphy
 
 Usage
 -----
@@ -76,27 +76,27 @@ records in Japan, but we can change the country name when creating
 
 .. code:: python
 
-   import covsirphy as cs
-   # Download and update datasets
-   data_loader = cs.DataLoader("input")
-   jhu_data = data_loader.jhu()
-   # Select country name and register the data
-   snl = cs.Scenario(country="Japan")
-   snl.register(jhu_data)
-   # Check records
-   snl.records()
-   # S-R trend analysis
-   snl.trend().summary()
-   # Parameter estimation of SIR-F model
-   snl.estimate(cs.SIRF)
-   # History of reproduction number
-   _ = snl.history(target="Rt")
-   # History of parameters
-   _ = snl.history_rate()
-   _ = snl.history(target="rho")
-   # Simulation for 30 days
-   snl.add(days=30)
-   _ = snl.simulate()
+    import covsirphy as cs
+    # Download and update datasets
+    data_loader = cs.DataLoader("input")
+    jhu_data = data_loader.jhu()
+    # Select country name and register the data
+    snl = cs.Scenario(country="Japan")
+    snl.register(jhu_data)
+    # Check records
+    snl.records()
+    # S-R trend analysis
+    snl.trend().summary()
+    # Parameter estimation of SIR-F model
+    snl.estimate(cs.SIRF)
+    # History of reproduction number
+    _ = snl.history(target="Rt")
+    # History of parameters
+    _ = snl.history_rate()
+    _ = snl.history(target="rho")
+    # Simulation for 30 days
+    snl.add(days=30)
+    _ = snl.simulate()
 
 Further information:
 
@@ -135,7 +135,7 @@ This project started in Kaggle platform. Lisphilar published `Kaggle
 Notebook: COVID-19 data with SIR
 model <https://www.kaggle.com/lisphilar/covid-19-data-with-sir-model>`__
 on 12Feb2020 and developed it, discussing with Kaggle community. On
-07May2020, “covid19-sir” repository was created. On 10May2020,
+07May2020, "covid19-sir" repository was created. On 10May2020,
 ``covsirphy`` version 1.0.0 was published in GitHub. First release in
 PyPI (version 2.3.0) was on 28Jun2020.
 
@@ -168,8 +168,8 @@ We can check the citation with the following script.
 
 .. code:: python
 
-   import covsirphy as cs
-   cs.__citation__
+    import covsirphy as cs
+    cs.__citation__
 
 .. |PyPI version| image:: https://badge.fury.io/py/covsirphy.svg
    :target: https://badge.fury.io/py/covsirphy
