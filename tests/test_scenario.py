@@ -241,6 +241,8 @@ class TestScenario(object):
         scenario.retrospective(
             beginning_date="01Jan2021", model=SIRF,
             control="Control", target="Retro", timeout=1, timeout_iteration=1)
+        scenario.simulate(name="Control")
+        scenario.simulate(name="Retro")
 
     @pytest.mark.parametrize("metrics", ["RMSLE"])
     def test_score(self, snl, metrics):
