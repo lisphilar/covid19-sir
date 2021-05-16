@@ -80,7 +80,7 @@ records in Japan, but we can change the country name when creating
    # Download and update datasets
    data_loader = cs.DataLoader("input")
    jhu_data = data_loader.jhu()
-   # Select country name register the data
+   # Select country name and register the data
    snl = cs.Scenario(country="Japan")
    snl.register(jhu_data)
    # Check records
