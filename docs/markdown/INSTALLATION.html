@@ -245,25 +245,25 @@
 </div>
 <p>Save the recommended datasets in “input” folder of the current directory.</p>
 <div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Create DataLoader instance</span>
-<span class="n">data_loader</span> <span class="o">=</span> <span class="n">cs</span><span class="o">.</span><span class="n">DataLoader</span><span class="p">(</span><span class="s2">&quot;input&quot;</span><span class="p">)</span>
-<span class="c1"># The number of cases (JHU style)</span>
-<span class="n">jhu_data</span> <span class="o">=</span> <span class="n">data_loader</span><span class="o">.</span><span class="n">jhu</span><span class="p">()</span>
-<span class="c1"># Population in each country</span>
-<span class="n">population_data</span> <span class="o">=</span> <span class="n">data_loader</span><span class="o">.</span><span class="n">population</span><span class="p">()</span>
+<span class="n">loader</span> <span class="o">=</span> <span class="n">cs</span><span class="o">.</span><span class="n">DataLoader</span><span class="p">(</span><span class="s2">&quot;input&quot;</span><span class="p">)</span>
+<span class="c1"># The number of cases and population values</span>
+<span class="n">jhu_data</span> <span class="o">=</span> <span class="n">loader</span><span class="o">.</span><span class="n">jhu</span><span class="p">()</span>
 <span class="c1"># Government Response Tracker (OxCGRT)</span>
-<span class="n">oxcgrt_data</span> <span class="o">=</span> <span class="n">data_loader</span><span class="o">.</span><span class="n">oxcgrt</span><span class="p">()</span>
+<span class="n">oxcgrt_data</span> <span class="o">=</span> <span class="n">loader</span><span class="o">.</span><span class="n">oxcgrt</span><span class="p">()</span>
 </pre></div>
 </div>
-<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Linelist of case reports</span>
-<span class="n">linelist</span> <span class="o">=</span> <span class="n">data_loader</span><span class="o">.</span><span class="n">linelist</span><span class="p">()</span>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Population values</span>
+<span class="n">population_data</span> <span class="o">=</span> <span class="n">loader</span><span class="o">.</span><span class="n">population</span><span class="p">()</span>
+<span class="c1"># Linelist of case reports</span>
+<span class="n">linelist</span> <span class="o">=</span> <span class="n">loader</span><span class="o">.</span><span class="n">linelist</span><span class="p">()</span>
 <span class="c1"># The number of tests</span>
-<span class="n">pcr_data</span> <span class="o">=</span> <span class="n">data_loader</span><span class="o">.</span><span class="n">pcr</span><span class="p">()</span>
+<span class="n">pcr_data</span> <span class="o">=</span> <span class="n">loader</span><span class="o">.</span><span class="n">pcr</span><span class="p">()</span>
 <span class="c1"># The number of vaccinations</span>
-<span class="n">vaccine_data</span> <span class="o">=</span> <span class="n">data_loader</span><span class="o">.</span><span class="n">vaccine</span><span class="p">()</span>
+<span class="n">vaccine_data</span> <span class="o">=</span> <span class="n">loader</span><span class="o">.</span><span class="n">vaccine</span><span class="p">()</span>
 <span class="c1"># Population pyramid</span>
-<span class="n">pyramid_data</span> <span class="o">=</span> <span class="n">data_loader</span><span class="o">.</span><span class="n">pyramid</span><span class="p">()</span>
+<span class="n">pyramid_data</span> <span class="o">=</span> <span class="n">loader</span><span class="o">.</span><span class="n">pyramid</span><span class="p">()</span>
 <span class="c1"># Japan-specific dataset</span>
-<span class="n">japan_data</span> <span class="o">=</span> <span class="n">data_loader</span><span class="o">.</span><span class="n">japan</span><span class="p">()</span>
+<span class="n">japan_data</span> <span class="o">=</span> <span class="n">loader</span><span class="o">.</span><span class="n">japan</span><span class="p">()</span>
 </pre></div>
 </div>
 <p>The downloaded datasets were retrieved from the following sites.</p>
@@ -272,7 +272,7 @@
 <p>Guidotti, E., Ardia, D., (2020), “COVID-19 Data Hub”, Journal of Open Source Software 5(51):2376, doi: 10.21105/joss.02376.</p>
 <ul class="simple">
 <li><p>The number of cases (JHU style)</p></li>
-<li><p>Population in each country</p></li>
+<li><p>Population values in each country/province</p></li>
 <li><p><a class="reference external" href="https://github.com/OxCGRT/covid-policy-tracker">Government Response Tracker (OxCGRT)</a></p></li>
 <li><p>The number of tests</p></li>
 </ul>

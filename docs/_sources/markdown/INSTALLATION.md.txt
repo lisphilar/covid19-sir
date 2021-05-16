@@ -33,26 +33,26 @@ Save the recommended datasets in "input" folder of the current directory.
 
 ```Python
 # Create DataLoader instance
-data_loader = cs.DataLoader("input")
-# The number of cases (JHU style)
-jhu_data = data_loader.jhu()
-# Population in each country
-population_data = data_loader.population()
+loader = cs.DataLoader("input")
+# The number of cases and population values
+jhu_data = loader.jhu()
 # Government Response Tracker (OxCGRT)
-oxcgrt_data = data_loader.oxcgrt()
+oxcgrt_data = loader.oxcgrt()
 ```
 
 ```Python
+# Population values
+population_data = loader.population()
 # Linelist of case reports
-linelist = data_loader.linelist()
+linelist = loader.linelist()
 # The number of tests
-pcr_data = data_loader.pcr()
+pcr_data = loader.pcr()
 # The number of vaccinations
-vaccine_data = data_loader.vaccine()
+vaccine_data = loader.vaccine()
 # Population pyramid
-pyramid_data = data_loader.pyramid()
+pyramid_data = loader.pyramid()
 # Japan-specific dataset
-japan_data = data_loader.japan()
+japan_data = loader.japan()
 ```
 
 The downloaded datasets were retrieved from the following sites.
@@ -62,7 +62,7 @@ The downloaded datasets were retrieved from the following sites.
 Guidotti, E., Ardia, D., (2020), "COVID-19 Data Hub", Journal of Open Source Software 5(51):2376, doi: 10.21105/joss.02376.
 
 - The number of cases (JHU style)
-- Population in each country
+- Population values in each country/province
 - [Government Response Tracker (OxCGRT)](https://github.com/OxCGRT/covid-policy-tracker)
 - The number of tests
 

@@ -512,17 +512,15 @@ div.rendered_html tbody tr:hover {
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="n">data_loader</span> <span class="o">=</span> <span class="n">cs</span><span class="o">.</span><span class="n">DataLoader</span><span class="p">(</span><span class="s2">&quot;../input&quot;</span><span class="p">)</span>
-<span class="c1"># The number of cases (JHU style)</span>
-<span class="n">jhu_data</span> <span class="o">=</span> <span class="n">data_loader</span><span class="o">.</span><span class="n">jhu</span><span class="p">()</span>
-<span class="c1"># Population in each country</span>
-<span class="n">population_data</span> <span class="o">=</span> <span class="n">data_loader</span><span class="o">.</span><span class="n">population</span><span class="p">()</span>
+<span></span><span class="n">loader</span> <span class="o">=</span> <span class="n">cs</span><span class="o">.</span><span class="n">DataLoader</span><span class="p">(</span><span class="s2">&quot;../input&quot;</span><span class="p">)</span>
+<span class="c1"># The number of cases and population values</span>
+<span class="n">jhu_data</span> <span class="o">=</span> <span class="n">loader</span><span class="o">.</span><span class="n">jhu</span><span class="p">()</span>
 <span class="c1"># Government Response Tracker (OxCGRT)</span>
-<span class="n">oxcgrt_data</span> <span class="o">=</span> <span class="n">data_loader</span><span class="o">.</span><span class="n">oxcgrt</span><span class="p">()</span>
+<span class="n">oxcgrt_data</span> <span class="o">=</span> <span class="n">loader</span><span class="o">.</span><span class="n">oxcgrt</span><span class="p">()</span>
 <span class="c1"># The number of tests</span>
-<span class="n">pcr_data</span> <span class="o">=</span> <span class="n">data_loader</span><span class="o">.</span><span class="n">pcr</span><span class="p">()</span>
+<span class="n">pcr_data</span> <span class="o">=</span> <span class="n">loader</span><span class="o">.</span><span class="n">pcr</span><span class="p">()</span>
 <span class="c1"># The number of vaccinations</span>
-<span class="n">vaccine_data</span> <span class="o">=</span> <span class="n">data_loader</span><span class="o">.</span><span class="n">vaccine</span><span class="p">()</span>
+<span class="n">vaccine_data</span> <span class="o">=</span> <span class="n">loader</span><span class="o">.</span><span class="n">vaccine</span><span class="p">()</span>
 </pre></div>
 </div>
 </div>
@@ -538,17 +536,21 @@ div.rendered_html tbody tr:hover {
 <span></span><span class="c1"># Specify country and province (optinal) names</span>
 <span class="n">snl</span> <span class="o">=</span> <span class="n">cs</span><span class="o">.</span><span class="n">Scenario</span><span class="p">(</span><span class="n">country</span><span class="o">=</span><span class="s2">&quot;Japan&quot;</span><span class="p">,</span> <span class="n">province</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
 <span class="c1"># Register datasets</span>
-<span class="n">snl</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="n">jhu_data</span><span class="p">,</span> <span class="n">population_data</span><span class="p">,</span> <span class="n">extras</span><span class="o">=</span><span class="p">[</span><span class="n">oxcgrt_data</span><span class="p">,</span> <span class="n">pcr_data</span><span class="p">,</span> <span class="n">vaccine_data</span><span class="p">])</span>
+<span class="n">snl</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="n">jhu_data</span><span class="p">,</span> <span class="n">extras</span><span class="o">=</span><span class="p">[</span><span class="n">oxcgrt_data</span><span class="p">,</span> <span class="n">pcr_data</span><span class="p">,</span> <span class="n">vaccine_data</span><span class="p">])</span>
 </pre></div>
 </div>
 </div>
 <div class="line-block">
-<div class="line">We call <code class="docutils literal notranslate"><span class="pre">JHUData</span></code> and <code class="docutils literal notranslate"><span class="pre">PopulationData</span></code> as “the main datasets” because they are required to calculate the number of susceptible/infected/recovered/fatal cases. These variables are used in SIR-F model.</div>
+<div class="line">We call <code class="docutils literal notranslate"><span class="pre">JHUData</span></code> as “the main datasets” because they are required to calculate the number of susceptible/infected/recovered/fatal cases. These variables are used in SIR-F model.</div>
 <div class="line">The other datasets are called as “the extra datasets” and they will be used to predict the futute parameter values of SIR-F model for forecasting the number of cases with some scenarios.</div>
 </div>
 <div class="line-block">
 <div class="line">Note:</div>
-<div class="line">From development version 2.19.1-lambda, instance of <code class="docutils literal notranslate"><span class="pre">PopulationData</span></code> is not required because <code class="docutils literal notranslate"><span class="pre">JHUData</span></code> includes population values and the number of susceptible cases.</div>
+<div class="line">When we use version &lt;= 2.19.1, instance of <code class="docutils literal notranslate"><span class="pre">PopulationData</span></code> is required because <code class="docutils literal notranslate"><span class="pre">JHUData</span></code> does not include population values.</div>
+</div>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">population_data</span> <span class="o">=</span> <span class="n">data_loader</span><span class="o">.</span><span class="n">population</span><span class="p">()</span>
+<span class="n">snl</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="n">jhu_data</span><span class="p">,</span> <span class="n">population_data</span><span class="p">)</span>
+</pre></div>
 </div>
 <p>Additional information:</p>
 <ul class="simple">
@@ -653,7 +655,7 @@ div.rendered_html tbody tr:hover {
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
 <span></span><span class="c1"># backupfile_dict = cs.Filer(directory=&quot;output&quot;)</span>
 <span class="c1"># snl = cs.Scenario(country=&quot;Japan&quot;)</span>
-<span class="c1"># snl.register(jhu_data, population_data)</span>
+<span class="c1"># snl.register(jhu_data)</span>
 <span class="c1"># snl.restore(**backupfile_dict).summary()</span>
 </pre></div>
 </div>
@@ -1332,51 +1334,51 @@ div.rendered_html tbody tr:hover {
 
 &lt;SIR-F model: parameter estimation&gt;
 Running optimization with 4 CPUs...
-         9th phase (21May2020 - 28May2020): finished  295 trials in 0 min  5 sec
-        10th phase (29May2020 - 05Jun2020): finished  279 trials in 0 min  5 sec
-        11th phase (06Jun2020 - 13Jun2020): finished  273 trials in 0 min  5 sec
-         0th phase (06Feb2020 - 18Feb2020): finished 1226 trials in 0 min 25 sec
-         3rd phase (14Mar2020 - 24Mar2020): finished 1061 trials in 0 min 25 sec
-        12th phase (14Jun2020 - 28Jun2020): finished 1465 trials in 0 min 40 sec
-         1st phase (19Feb2020 - 05Mar2020): finished 1317 trials in 0 min 35 sec
-         6th phase (17Apr2020 - 01May2020): finished 2066 trials in 1 min  5 sec
-         4th phase (25Mar2020 - 02Apr2020): finished 1808 trials in 0 min 55 sec
-         2nd phase (06Mar2020 - 13Mar2020): finished 1164 trials in 0 min 30 sec
-        13th phase (29Jun2020 - 09Jul2020): finished 1673 trials in 0 min 50 sec
-         5th phase (03Apr2020 - 16Apr2020): finished 1151 trials in 0 min 30 sec
-        15th phase (22Jul2020 - 01Aug2020): finished  981 trials in 0 min 25 sec
-        18th phase (21Aug2020 - 28Aug2020): finished  212 trials in 0 min  5 sec
-         7th phase (02May2020 - 11May2020): finished 1646 trials in 0 min 50 sec
-        19th phase (29Aug2020 - 09Sep2020): finished  266 trials in 0 min  5 sec
-        20th phase (10Sep2020 - 18Sep2020): finished  262 trials in 0 min  5 sec
-         8th phase (12May2020 - 20May2020): finished  839 trials in 0 min 20 sec
-        24th phase (24Oct2020 - 04Nov2020): finished  262 trials in 0 min  5 sec
-        25th phase (05Nov2020 - 13Nov2020): finished  256 trials in 0 min  5 sec
-        14th phase (10Jul2020 - 21Jul2020): finished 1607 trials in 0 min 50 sec
-        21st phase (19Sep2020 - 30Sep2020): finished 1251 trials in 0 min 35 sec
-        16th phase (02Aug2020 - 10Aug2020): finished 1734 trials in 0 min 55 sec
-        26th phase (14Nov2020 - 26Nov2020): finished 1251 trials in 0 min 35 sec
-        30th phase (30Dec2020 - 07Jan2021): finished  252 trials in 0 min  5 sec
-        22nd phase (01Oct2020 - 13Oct2020): finished 1234 trials in 0 min 35 sec
-        27th phase (27Nov2020 - 09Dec2020): finished 1812 trials in 1 min  0 sec
-        31st phase (08Jan2021 - 16Jan2021): finished 1105 trials in 0 min 30 sec
-        17th phase (11Aug2020 - 20Aug2020): finished 1602 trials in 0 min 50 sec
-        33rd phase (25Jan2021 - 01Feb2021): finished  264 trials in 0 min  5 sec
-        23rd phase (14Oct2020 - 23Oct2020): finished 1093 trials in 0 min 30 sec
-        34th phase (02Feb2021 - 09Feb2021): finished  257 trials in 0 min  5 sec
-        36th phase (18Feb2021 - 02Mar2021): finished  252 trials in 0 min  5 sec
-        35th phase (10Feb2021 - 17Feb2021): finished  215 trials in 0 min  5 sec
-        28th phase (10Dec2020 - 18Dec2020): finished  944 trials in 0 min 25 sec
-        37th phase (03Mar2021 - 12Mar2021): finished  414 trials in 0 min 10 sec
-        38th phase (13Mar2021 - 25Mar2021): finished 1100 trials in 0 min 30 sec
-        29th phase (19Dec2020 - 29Dec2020): finished 1354 trials in 0 min 40 sec
-        39th phase (26Mar2021 - 06Apr2021): finished 1589 trials in 0 min 50 sec
-        42nd phase (25Apr2021 - 06May2021): finished  981 trials in 0 min 25 sec
-        32nd phase (17Jan2021 - 24Jan2021): finished 2389 trials in 1 min 30 sec
-        43rd phase (07May2021 - 16May2021): finished 1477 trials in 0 min 40 sec
-        40th phase (07Apr2021 - 15Apr2021): finished 1832 trials in 0 min 55 sec
-        41st phase (16Apr2021 - 24Apr2021): finished  297 trials in 0 min  5 sec
-Completed optimization. Total: 5 min 47 sec
+         9th phase (21May2020 - 28May2020): finished  296 trials in 0 min  5 sec
+        10th phase (29May2020 - 05Jun2020): finished  294 trials in 0 min  5 sec
+        11th phase (06Jun2020 - 13Jun2020): finished  294 trials in 0 min  5 sec
+         0th phase (06Feb2020 - 18Feb2020): finished 1272 trials in 0 min 25 sec
+         3rd phase (14Mar2020 - 24Mar2020): finished 1106 trials in 0 min 25 sec
+         6th phase (17Apr2020 - 01May2020): finished 1668 trials in 0 min 45 sec
+        12th phase (14Jun2020 - 28Jun2020): finished 1526 trials in 0 min 40 sec
+         1st phase (19Feb2020 - 05Mar2020): finished 1376 trials in 0 min 35 sec
+         4th phase (25Mar2020 - 02Apr2020): finished 1781 trials in 0 min 50 sec
+         2nd phase (06Mar2020 - 13Mar2020): finished 1217 trials in 0 min 30 sec
+         7th phase (02May2020 - 11May2020): finished 1632 trials in 0 min 45 sec
+         5th phase (03Apr2020 - 16Apr2020): finished 1217 trials in 0 min 30 sec
+        13th phase (29Jun2020 - 09Jul2020): finished 1762 trials in 0 min 50 sec
+        18th phase (21Aug2020 - 28Aug2020): finished  296 trials in 0 min  5 sec
+        15th phase (22Jul2020 - 01Aug2020): finished 1084 trials in 0 min 25 sec
+        19th phase (29Aug2020 - 09Sep2020): finished  293 trials in 0 min  5 sec
+        20th phase (10Sep2020 - 18Sep2020): finished  295 trials in 0 min  5 sec
+         8th phase (12May2020 - 20May2020): finished 1897 trials in 0 min 55 sec
+        14th phase (10Jul2020 - 21Jul2020): finished 1651 trials in 0 min 45 sec
+        24th phase (24Oct2020 - 04Nov2020): finished  291 trials in 0 min  5 sec
+        21st phase (19Sep2020 - 30Sep2020): finished 1388 trials in 0 min 35 sec
+        25th phase (05Nov2020 - 13Nov2020): finished  292 trials in 0 min  5 sec
+        16th phase (02Aug2020 - 10Aug2020): finished 1768 trials in 0 min 50 sec
+        22nd phase (01Oct2020 - 13Oct2020): finished 1243 trials in 0 min 30 sec
+        26th phase (14Nov2020 - 26Nov2020): finished 1240 trials in 0 min 30 sec
+        30th phase (30Dec2020 - 07Jan2021): finished  293 trials in 0 min  5 sec
+        27th phase (27Nov2020 - 09Dec2020): finished 1767 trials in 0 min 50 sec
+        17th phase (11Aug2020 - 20Aug2020): finished 1628 trials in 0 min 45 sec
+        23rd phase (14Oct2020 - 23Oct2020): finished 1068 trials in 0 min 25 sec
+        33rd phase (25Jan2021 - 01Feb2021): finished  292 trials in 0 min  5 sec
+        36th phase (18Feb2021 - 02Mar2021): finished  294 trials in 0 min  5 sec
+        34th phase (02Feb2021 - 09Feb2021): finished  293 trials in 0 min  5 sec
+        37th phase (03Mar2021 - 12Mar2021): finished  294 trials in 0 min  5 sec
+        31st phase (08Jan2021 - 16Jan2021): finished 1213 trials in 0 min 30 sec
+        28th phase (10Dec2020 - 18Dec2020): finished 1079 trials in 0 min 25 sec
+        35th phase (10Feb2021 - 17Feb2021): finished  293 trials in 0 min  5 sec
+        38th phase (13Mar2021 - 25Mar2021): finished 1087 trials in 0 min 25 sec
+        29th phase (19Dec2020 - 29Dec2020): finished 1370 trials in 0 min 35 sec
+        39th phase (26Mar2021 - 06Apr2021): finished 1645 trials in 0 min 45 sec
+        42nd phase (25Apr2021 - 06May2021): finished 1083 trials in 0 min 25 sec
+        32nd phase (17Jan2021 - 24Jan2021): finished 1765 trials in 0 min 50 sec
+        43rd phase (07May2021 - 16May2021): finished 1389 trials in 0 min 35 sec
+        40th phase (07Apr2021 - 15Apr2021): finished 1732 trials in 0 min 50 sec
+        41st phase (16Apr2021 - 24Apr2021): finished  302 trials in 0 min  5 sec
+Completed optimization. Total: 5 min 27 sec
 </pre></div></div>
 </div>
 <div class="nbinput docutils container">
@@ -1451,7 +1453,7 @@ Completed optimization. Total: 5 min 47 sec
       <td>-</td>
       <td>-</td>
       <td>0.142890</td>
-      <td>1226.0</td>
+      <td>1272.0</td>
       <td>0 min 25 sec</td>
     </tr>
     <tr>
@@ -1472,7 +1474,7 @@ Completed optimization. Total: 5 min 47 sec
       <td>7.0</td>
       <td>43.0</td>
       <td>0.166508</td>
-      <td>1317.0</td>
+      <td>1376.0</td>
       <td>0 min 35 sec</td>
     </tr>
     <tr>
@@ -1493,7 +1495,7 @@ Completed optimization. Total: 5 min 47 sec
       <td>7.0</td>
       <td>40.0</td>
       <td>0.096661</td>
-      <td>1164.0</td>
+      <td>1217.0</td>
       <td>0 min 30 sec</td>
     </tr>
     <tr>
@@ -1514,7 +1516,7 @@ Completed optimization. Total: 5 min 47 sec
       <td>15.0</td>
       <td>44.0</td>
       <td>0.027972</td>
-      <td>1061.0</td>
+      <td>1106.0</td>
       <td>0 min 25 sec</td>
     </tr>
     <tr>
@@ -1535,8 +1537,8 @@ Completed optimization. Total: 5 min 47 sec
       <td>8.0</td>
       <td>44.0</td>
       <td>0.036672</td>
-      <td>1808.0</td>
-      <td>0 min 55 sec</td>
+      <td>1781.0</td>
+      <td>0 min 50 sec</td>
     </tr>
     <tr>
       <th>5th</th>
@@ -1556,7 +1558,7 @@ Completed optimization. Total: 5 min 47 sec
       <td>8.0</td>
       <td>121.0</td>
       <td>0.040911</td>
-      <td>1151.0</td>
+      <td>1217.0</td>
       <td>0 min 30 sec</td>
     </tr>
     <tr>
@@ -1566,19 +1568,19 @@ Completed optimization. Total: 5 min 47 sec
       <td>01May2020</td>
       <td>126529100</td>
       <td>SIR-F</td>
-      <td>1.99</td>
-      <td>0.030270</td>
-      <td>0.000887</td>
-      <td>0.045718</td>
-      <td>0.021392</td>
+      <td>2.02</td>
+      <td>0.033079</td>
+      <td>0.000737</td>
+      <td>0.046327</td>
+      <td>0.021451</td>
       <td>1440</td>
-      <td>0.03</td>
-      <td>1127.0</td>
+      <td>0.033</td>
+      <td>1357.0</td>
       <td>21.0</td>
       <td>46.0</td>
-      <td>0.088950</td>
-      <td>2066.0</td>
-      <td>1 min  5 sec</td>
+      <td>0.089109</td>
+      <td>1668.0</td>
+      <td>0 min 45 sec</td>
     </tr>
     <tr>
       <th>7th</th>
@@ -1598,8 +1600,8 @@ Completed optimization. Total: 5 min 47 sec
       <td>80.0</td>
       <td>23.0</td>
       <td>0.099103</td>
-      <td>1646.0</td>
-      <td>0 min 50 sec</td>
+      <td>1632.0</td>
+      <td>0 min 45 sec</td>
     </tr>
     <tr>
       <th>8th</th>
@@ -1608,19 +1610,19 @@ Completed optimization. Total: 5 min 47 sec
       <td>20May2020</td>
       <td>126529100</td>
       <td>SIR-F</td>
-      <td>0.17</td>
-      <td>0.057684</td>
-      <td>0.002622</td>
-      <td>0.017193</td>
-      <td>0.095538</td>
+      <td>0.16</td>
+      <td>0.054181</td>
+      <td>0.002761</td>
+      <td>0.016654</td>
+      <td>0.094815</td>
       <td>1440</td>
-      <td>0.058</td>
-      <td>381.0</td>
-      <td>58.0</td>
+      <td>0.054</td>
+      <td>362.0</td>
+      <td>60.0</td>
       <td>10.0</td>
-      <td>0.026965</td>
-      <td>839.0</td>
-      <td>0 min 20 sec</td>
+      <td>0.026957</td>
+      <td>1897.0</td>
+      <td>0 min 55 sec</td>
     </tr>
     <tr>
       <th>9th</th>
@@ -1640,7 +1642,7 @@ Completed optimization. Total: 5 min 47 sec
       <td>59.0</td>
       <td>10.0</td>
       <td>0.014298</td>
-      <td>295.0</td>
+      <td>296.0</td>
       <td>0 min  5 sec</td>
     </tr>
     <tr>
@@ -1661,7 +1663,7 @@ Completed optimization. Total: 5 min 47 sec
       <td>30.0</td>
       <td>14.0</td>
       <td>0.013204</td>
-      <td>279.0</td>
+      <td>294.0</td>
       <td>0 min  5 sec</td>
     </tr>
     <tr>
@@ -1682,7 +1684,7 @@ Completed optimization. Total: 5 min 47 sec
       <td>24.0</td>
       <td>15.0</td>
       <td>0.021013</td>
-      <td>273.0</td>
+      <td>294.0</td>
       <td>0 min  5 sec</td>
     </tr>
     <tr>
@@ -1703,7 +1705,7 @@ Completed optimization. Total: 5 min 47 sec
       <td>13.0</td>
       <td>13.0</td>
       <td>0.035520</td>
-      <td>1465.0</td>
+      <td>1526.0</td>
       <td>0 min 40 sec</td>
     </tr>
     <tr>
@@ -1724,7 +1726,7 @@ Completed optimization. Total: 5 min 47 sec
       <td>7.0</td>
       <td>15.0</td>
       <td>0.022931</td>
-      <td>1673.0</td>
+      <td>1762.0</td>
       <td>0 min 50 sec</td>
     </tr>
     <tr>
@@ -1745,8 +1747,8 @@ Completed optimization. Total: 5 min 47 sec
       <td>6.0</td>
       <td>13.0</td>
       <td>0.019499</td>
-      <td>1607.0</td>
-      <td>0 min 50 sec</td>
+      <td>1651.0</td>
+      <td>0 min 45 sec</td>
     </tr>
     <tr>
       <th>15th</th>
@@ -1755,18 +1757,18 @@ Completed optimization. Total: 5 min 47 sec
       <td>01Aug2020</td>
       <td>126529100</td>
       <td>SIR-F</td>
-      <td>2.03</td>
-      <td>0.000029</td>
-      <td>0.000332</td>
-      <td>0.138693</td>
-      <td>0.068157</td>
+      <td>2.01</td>
+      <td>0.000167</td>
+      <td>0.000279</td>
+      <td>0.139064</td>
+      <td>0.068870</td>
       <td>1440</td>
       <td>0.0</td>
-      <td>3016.0</td>
+      <td>3581.0</td>
       <td>7.0</td>
       <td>14.0</td>
-      <td>0.024505</td>
-      <td>981.0</td>
+      <td>0.024490</td>
+      <td>1084.0</td>
       <td>0 min 25 sec</td>
     </tr>
     <tr>
@@ -1787,8 +1789,8 @@ Completed optimization. Total: 5 min 47 sec
       <td>7.0</td>
       <td>13.0</td>
       <td>0.028521</td>
-      <td>1734.0</td>
-      <td>0 min 55 sec</td>
+      <td>1768.0</td>
+      <td>0 min 50 sec</td>
     </tr>
     <tr>
       <th>17th</th>
@@ -1808,8 +1810,8 @@ Completed optimization. Total: 5 min 47 sec
       <td>12.0</td>
       <td>11.0</td>
       <td>0.015641</td>
-      <td>1602.0</td>
-      <td>0 min 50 sec</td>
+      <td>1628.0</td>
+      <td>0 min 45 sec</td>
     </tr>
     <tr>
       <th>18th</th>
@@ -1829,7 +1831,7 @@ Completed optimization. Total: 5 min 47 sec
       <td>14.0</td>
       <td>11.0</td>
       <td>0.014559</td>
-      <td>212.0</td>
+      <td>296.0</td>
       <td>0 min  5 sec</td>
     </tr>
     <tr>
@@ -1850,7 +1852,7 @@ Completed optimization. Total: 5 min 47 sec
       <td>13.0</td>
       <td>10.0</td>
       <td>0.014191</td>
-      <td>266.0</td>
+      <td>293.0</td>
       <td>0 min  5 sec</td>
     </tr>
     <tr>
@@ -1860,18 +1862,18 @@ Completed optimization. Total: 5 min 47 sec
       <td>18Sep2020</td>
       <td>126529100</td>
       <td>SIR-F</td>
-      <td>0.87</td>
-      <td>0.000453</td>
-      <td>0.001457</td>
-      <td>0.081631</td>
-      <td>0.092360</td>
+      <td>0.86</td>
+      <td>0.000376</td>
+      <td>0.001487</td>
+      <td>0.080200</td>
+      <td>0.091359</td>
       <td>1440</td>
       <td>0.0</td>
-      <td>686.0</td>
+      <td>672.0</td>
       <td>12.0</td>
       <td>10.0</td>
-      <td>0.013300</td>
-      <td>262.0</td>
+      <td>0.013288</td>
+      <td>295.0</td>
       <td>0 min  5 sec</td>
     </tr>
     <tr>
@@ -1892,7 +1894,7 @@ Completed optimization. Total: 5 min 47 sec
       <td>13.0</td>
       <td>11.0</td>
       <td>0.022352</td>
-      <td>1251.0</td>
+      <td>1388.0</td>
       <td>0 min 35 sec</td>
     </tr>
     <tr>
@@ -1913,8 +1915,8 @@ Completed optimization. Total: 5 min 47 sec
       <td>10.0</td>
       <td>10.0</td>
       <td>0.012246</td>
-      <td>1234.0</td>
-      <td>0 min 35 sec</td>
+      <td>1243.0</td>
+      <td>0 min 30 sec</td>
     </tr>
     <tr>
       <th>23rd</th>
@@ -1934,8 +1936,8 @@ Completed optimization. Total: 5 min 47 sec
       <td>9.0</td>
       <td>9.0</td>
       <td>0.012303</td>
-      <td>1093.0</td>
-      <td>0 min 30 sec</td>
+      <td>1068.0</td>
+      <td>0 min 25 sec</td>
     </tr>
     <tr>
       <th>24th</th>
@@ -1944,18 +1946,18 @@ Completed optimization. Total: 5 min 47 sec
       <td>04Nov2020</td>
       <td>126529100</td>
       <td>SIR-F</td>
-      <td>1.27</td>
-      <td>0.000014</td>
-      <td>0.001239</td>
-      <td>0.101696</td>
-      <td>0.078818</td>
+      <td>1.26</td>
+      <td>0.000373</td>
+      <td>0.001250</td>
+      <td>0.104096</td>
+      <td>0.081053</td>
       <td>1440</td>
       <td>0.0</td>
-      <td>806.0</td>
+      <td>800.0</td>
       <td>9.0</td>
       <td>12.0</td>
-      <td>0.011053</td>
-      <td>262.0</td>
+      <td>0.011016</td>
+      <td>291.0</td>
       <td>0 min  5 sec</td>
     </tr>
     <tr>
@@ -1966,17 +1968,17 @@ Completed optimization. Total: 5 min 47 sec
       <td>126529100</td>
       <td>SIR-F</td>
       <td>1.58</td>
-      <td>0.000001</td>
-      <td>0.001018</td>
-      <td>0.137079</td>
-      <td>0.085766</td>
+      <td>0.000123</td>
+      <td>0.000952</td>
+      <td>0.136342</td>
+      <td>0.085139</td>
       <td>1440</td>
       <td>0.0</td>
-      <td>982.0</td>
+      <td>1050.0</td>
       <td>7.0</td>
       <td>11.0</td>
-      <td>0.005314</td>
-      <td>256.0</td>
+      <td>0.005288</td>
+      <td>292.0</td>
       <td>0 min  5 sec</td>
     </tr>
     <tr>
@@ -1997,8 +1999,8 @@ Completed optimization. Total: 5 min 47 sec
       <td>7.0</td>
       <td>12.0</td>
       <td>0.016179</td>
-      <td>1251.0</td>
-      <td>0 min 35 sec</td>
+      <td>1240.0</td>
+      <td>0 min 30 sec</td>
     </tr>
     <tr>
       <th>27th</th>
@@ -2018,8 +2020,8 @@ Completed optimization. Total: 5 min 47 sec
       <td>9.0</td>
       <td>11.0</td>
       <td>0.012040</td>
-      <td>1812.0</td>
-      <td>1 min  0 sec</td>
+      <td>1767.0</td>
+      <td>0 min 50 sec</td>
     </tr>
     <tr>
       <th>28th</th>
@@ -2039,7 +2041,7 @@ Completed optimization. Total: 5 min 47 sec
       <td>9.0</td>
       <td>11.0</td>
       <td>0.013164</td>
-      <td>944.0</td>
+      <td>1079.0</td>
       <td>0 min 25 sec</td>
     </tr>
     <tr>
@@ -2060,8 +2062,8 @@ Completed optimization. Total: 5 min 47 sec
       <td>9.0</td>
       <td>12.0</td>
       <td>0.012566</td>
-      <td>1354.0</td>
-      <td>0 min 40 sec</td>
+      <td>1370.0</td>
+      <td>0 min 35 sec</td>
     </tr>
     <tr>
       <th>30th</th>
@@ -2071,17 +2073,17 @@ Completed optimization. Total: 5 min 47 sec
       <td>126529100</td>
       <td>SIR-F</td>
       <td>1.51</td>
-      <td>0.001178</td>
-      <td>0.001233</td>
-      <td>0.098681</td>
-      <td>0.064053</td>
+      <td>0.001161</td>
+      <td>0.001289</td>
+      <td>0.099652</td>
+      <td>0.064832</td>
       <td>1440</td>
       <td>0.001</td>
-      <td>811.0</td>
+      <td>775.0</td>
       <td>10.0</td>
       <td>15.0</td>
-      <td>0.009790</td>
-      <td>252.0</td>
+      <td>0.009675</td>
+      <td>293.0</td>
       <td>0 min  5 sec</td>
     </tr>
     <tr>
@@ -2102,7 +2104,7 @@ Completed optimization. Total: 5 min 47 sec
       <td>8.0</td>
       <td>16.0</td>
       <td>0.027863</td>
-      <td>1105.0</td>
+      <td>1213.0</td>
       <td>0 min 30 sec</td>
     </tr>
     <tr>
@@ -2113,18 +2115,18 @@ Completed optimization. Total: 5 min 47 sec
       <td>126529100</td>
       <td>SIR-F</td>
       <td>0.93</td>
-      <td>0.000024</td>
-      <td>0.001136</td>
-      <td>0.082582</td>
-      <td>0.087937</td>
+      <td>0.000057</td>
+      <td>0.001123</td>
+      <td>0.083040</td>
+      <td>0.088374</td>
       <td>1440</td>
       <td>0.0</td>
-      <td>880.0</td>
+      <td>890.0</td>
       <td>12.0</td>
       <td>11.0</td>
-      <td>0.015281</td>
-      <td>2389.0</td>
-      <td>1 min 30 sec</td>
+      <td>0.015284</td>
+      <td>1765.0</td>
+      <td>0 min 50 sec</td>
     </tr>
     <tr>
       <th>33rd</th>
@@ -2144,7 +2146,7 @@ Completed optimization. Total: 5 min 47 sec
       <td>16.0</td>
       <td>10.0</td>
       <td>0.008996</td>
-      <td>264.0</td>
+      <td>292.0</td>
       <td>0 min  5 sec</td>
     </tr>
     <tr>
@@ -2155,17 +2157,17 @@ Completed optimization. Total: 5 min 47 sec
       <td>126529100</td>
       <td>SIR-F</td>
       <td>0.51</td>
-      <td>0.000397</td>
-      <td>0.002562</td>
-      <td>0.058937</td>
-      <td>0.113278</td>
+      <td>0.000226</td>
+      <td>0.002569</td>
+      <td>0.058978</td>
+      <td>0.113382</td>
       <td>1440</td>
       <td>0.0</td>
-      <td>390.0</td>
+      <td>389.0</td>
       <td>16.0</td>
       <td>8.0</td>
       <td>0.006756</td>
-      <td>257.0</td>
+      <td>293.0</td>
       <td>0 min  5 sec</td>
     </tr>
     <tr>
@@ -2186,7 +2188,7 @@ Completed optimization. Total: 5 min 47 sec
       <td>13.0</td>
       <td>8.0</td>
       <td>0.010449</td>
-      <td>215.0</td>
+      <td>293.0</td>
       <td>0 min  5 sec</td>
     </tr>
     <tr>
@@ -2207,7 +2209,7 @@ Completed optimization. Total: 5 min 47 sec
       <td>13.0</td>
       <td>9.0</td>
       <td>0.007700</td>
-      <td>252.0</td>
+      <td>294.0</td>
       <td>0 min  5 sec</td>
     </tr>
     <tr>
@@ -2218,18 +2220,18 @@ Completed optimization. Total: 5 min 47 sec
       <td>126529100</td>
       <td>SIR-F</td>
       <td>0.89</td>
-      <td>0.009564</td>
-      <td>0.003753</td>
-      <td>0.081789</td>
-      <td>0.086788</td>
+      <td>0.000001</td>
+      <td>0.004900</td>
+      <td>0.081967</td>
+      <td>0.087326</td>
       <td>1440</td>
-      <td>0.01</td>
-      <td>266.0</td>
+      <td>0.0</td>
+      <td>204.0</td>
       <td>12.0</td>
       <td>11.0</td>
-      <td>0.008375</td>
-      <td>414.0</td>
-      <td>0 min 10 sec</td>
+      <td>0.008815</td>
+      <td>294.0</td>
+      <td>0 min  5 sec</td>
     </tr>
     <tr>
       <th>38th</th>
@@ -2249,8 +2251,8 @@ Completed optimization. Total: 5 min 47 sec
       <td>11.0</td>
       <td>12.0</td>
       <td>0.012063</td>
-      <td>1100.0</td>
-      <td>0 min 30 sec</td>
+      <td>1087.0</td>
+      <td>0 min 25 sec</td>
     </tr>
     <tr>
       <th>39th</th>
@@ -2270,8 +2272,8 @@ Completed optimization. Total: 5 min 47 sec
       <td>8.0</td>
       <td>13.0</td>
       <td>0.011568</td>
-      <td>1589.0</td>
-      <td>0 min 50 sec</td>
+      <td>1645.0</td>
+      <td>0 min 45 sec</td>
     </tr>
     <tr>
       <th>40th</th>
@@ -2291,8 +2293,8 @@ Completed optimization. Total: 5 min 47 sec
       <td>8.0</td>
       <td>12.0</td>
       <td>0.018643</td>
-      <td>1832.0</td>
-      <td>0 min 55 sec</td>
+      <td>1732.0</td>
+      <td>0 min 50 sec</td>
     </tr>
     <tr>
       <th>41st</th>
@@ -2312,7 +2314,7 @@ Completed optimization. Total: 5 min 47 sec
       <td>9.0</td>
       <td>15.0</td>
       <td>0.008563</td>
-      <td>297.0</td>
+      <td>302.0</td>
       <td>0 min  5 sec</td>
     </tr>
     <tr>
@@ -2333,7 +2335,7 @@ Completed optimization. Total: 5 min 47 sec
       <td>11.0</td>
       <td>15.0</td>
       <td>0.006747</td>
-      <td>981.0</td>
+      <td>1083.0</td>
       <td>0 min 25 sec</td>
     </tr>
     <tr>
@@ -2354,8 +2356,8 @@ Completed optimization. Total: 5 min 47 sec
       <td>10.0</td>
       <td>14.0</td>
       <td>0.006304</td>
-      <td>1477.0</td>
-      <td>0 min 40 sec</td>
+      <td>1389.0</td>
+      <td>0 min 35 sec</td>
     </tr>
   </tbody>
 </table>
@@ -2415,7 +2417,7 @@ Completed optimization. Total: 5 min 47 sec
       <td>06Feb2020</td>
       <td>18Feb2020</td>
       <td>0.142890</td>
-      <td>1226.0</td>
+      <td>1272.0</td>
       <td>0 min 25 sec</td>
     </tr>
     <tr>
@@ -2423,7 +2425,7 @@ Completed optimization. Total: 5 min 47 sec
       <td>19Feb2020</td>
       <td>05Mar2020</td>
       <td>0.166508</td>
-      <td>1317.0</td>
+      <td>1376.0</td>
       <td>0 min 35 sec</td>
     </tr>
     <tr>
@@ -2431,7 +2433,7 @@ Completed optimization. Total: 5 min 47 sec
       <td>06Mar2020</td>
       <td>13Mar2020</td>
       <td>0.096661</td>
-      <td>1164.0</td>
+      <td>1217.0</td>
       <td>0 min 30 sec</td>
     </tr>
     <tr>
@@ -2439,7 +2441,7 @@ Completed optimization. Total: 5 min 47 sec
       <td>14Mar2020</td>
       <td>24Mar2020</td>
       <td>0.027972</td>
-      <td>1061.0</td>
+      <td>1106.0</td>
       <td>0 min 25 sec</td>
     </tr>
     <tr>
@@ -2447,47 +2449,47 @@ Completed optimization. Total: 5 min 47 sec
       <td>25Mar2020</td>
       <td>02Apr2020</td>
       <td>0.036672</td>
-      <td>1808.0</td>
-      <td>0 min 55 sec</td>
+      <td>1781.0</td>
+      <td>0 min 50 sec</td>
     </tr>
     <tr>
       <th>5th</th>
       <td>03Apr2020</td>
       <td>16Apr2020</td>
       <td>0.040911</td>
-      <td>1151.0</td>
+      <td>1217.0</td>
       <td>0 min 30 sec</td>
     </tr>
     <tr>
       <th>6th</th>
       <td>17Apr2020</td>
       <td>01May2020</td>
-      <td>0.088950</td>
-      <td>2066.0</td>
-      <td>1 min  5 sec</td>
+      <td>0.089109</td>
+      <td>1668.0</td>
+      <td>0 min 45 sec</td>
     </tr>
     <tr>
       <th>7th</th>
       <td>02May2020</td>
       <td>11May2020</td>
       <td>0.099103</td>
-      <td>1646.0</td>
-      <td>0 min 50 sec</td>
+      <td>1632.0</td>
+      <td>0 min 45 sec</td>
     </tr>
     <tr>
       <th>8th</th>
       <td>12May2020</td>
       <td>20May2020</td>
-      <td>0.026965</td>
-      <td>839.0</td>
-      <td>0 min 20 sec</td>
+      <td>0.026957</td>
+      <td>1897.0</td>
+      <td>0 min 55 sec</td>
     </tr>
     <tr>
       <th>9th</th>
       <td>21May2020</td>
       <td>28May2020</td>
       <td>0.014298</td>
-      <td>295.0</td>
+      <td>296.0</td>
       <td>0 min  5 sec</td>
     </tr>
     <tr>
@@ -2495,7 +2497,7 @@ Completed optimization. Total: 5 min 47 sec
       <td>29May2020</td>
       <td>05Jun2020</td>
       <td>0.013204</td>
-      <td>279.0</td>
+      <td>294.0</td>
       <td>0 min  5 sec</td>
     </tr>
     <tr>
@@ -2503,7 +2505,7 @@ Completed optimization. Total: 5 min 47 sec
       <td>06Jun2020</td>
       <td>13Jun2020</td>
       <td>0.021013</td>
-      <td>273.0</td>
+      <td>294.0</td>
       <td>0 min  5 sec</td>
     </tr>
     <tr>
@@ -2511,7 +2513,7 @@ Completed optimization. Total: 5 min 47 sec
       <td>14Jun2020</td>
       <td>28Jun2020</td>
       <td>0.035520</td>
-      <td>1465.0</td>
+      <td>1526.0</td>
       <td>0 min 40 sec</td>
     </tr>
     <tr>
@@ -2519,7 +2521,7 @@ Completed optimization. Total: 5 min 47 sec
       <td>29Jun2020</td>
       <td>09Jul2020</td>
       <td>0.022931</td>
-      <td>1673.0</td>
+      <td>1762.0</td>
       <td>0 min 50 sec</td>
     </tr>
     <tr>
@@ -2527,15 +2529,15 @@ Completed optimization. Total: 5 min 47 sec
       <td>10Jul2020</td>
       <td>21Jul2020</td>
       <td>0.019499</td>
-      <td>1607.0</td>
-      <td>0 min 50 sec</td>
+      <td>1651.0</td>
+      <td>0 min 45 sec</td>
     </tr>
     <tr>
       <th>15th</th>
       <td>22Jul2020</td>
       <td>01Aug2020</td>
-      <td>0.024505</td>
-      <td>981.0</td>
+      <td>0.024490</td>
+      <td>1084.0</td>
       <td>0 min 25 sec</td>
     </tr>
     <tr>
@@ -2543,23 +2545,23 @@ Completed optimization. Total: 5 min 47 sec
       <td>02Aug2020</td>
       <td>10Aug2020</td>
       <td>0.028521</td>
-      <td>1734.0</td>
-      <td>0 min 55 sec</td>
+      <td>1768.0</td>
+      <td>0 min 50 sec</td>
     </tr>
     <tr>
       <th>17th</th>
       <td>11Aug2020</td>
       <td>20Aug2020</td>
       <td>0.015641</td>
-      <td>1602.0</td>
-      <td>0 min 50 sec</td>
+      <td>1628.0</td>
+      <td>0 min 45 sec</td>
     </tr>
     <tr>
       <th>18th</th>
       <td>21Aug2020</td>
       <td>28Aug2020</td>
       <td>0.014559</td>
-      <td>212.0</td>
+      <td>296.0</td>
       <td>0 min  5 sec</td>
     </tr>
     <tr>
@@ -2567,15 +2569,15 @@ Completed optimization. Total: 5 min 47 sec
       <td>29Aug2020</td>
       <td>09Sep2020</td>
       <td>0.014191</td>
-      <td>266.0</td>
+      <td>293.0</td>
       <td>0 min  5 sec</td>
     </tr>
     <tr>
       <th>20th</th>
       <td>10Sep2020</td>
       <td>18Sep2020</td>
-      <td>0.013300</td>
-      <td>262.0</td>
+      <td>0.013288</td>
+      <td>295.0</td>
       <td>0 min  5 sec</td>
     </tr>
     <tr>
@@ -2583,7 +2585,7 @@ Completed optimization. Total: 5 min 47 sec
       <td>19Sep2020</td>
       <td>30Sep2020</td>
       <td>0.022352</td>
-      <td>1251.0</td>
+      <td>1388.0</td>
       <td>0 min 35 sec</td>
     </tr>
     <tr>
@@ -2591,31 +2593,31 @@ Completed optimization. Total: 5 min 47 sec
       <td>01Oct2020</td>
       <td>13Oct2020</td>
       <td>0.012246</td>
-      <td>1234.0</td>
-      <td>0 min 35 sec</td>
+      <td>1243.0</td>
+      <td>0 min 30 sec</td>
     </tr>
     <tr>
       <th>23rd</th>
       <td>14Oct2020</td>
       <td>23Oct2020</td>
       <td>0.012303</td>
-      <td>1093.0</td>
-      <td>0 min 30 sec</td>
+      <td>1068.0</td>
+      <td>0 min 25 sec</td>
     </tr>
     <tr>
       <th>24th</th>
       <td>24Oct2020</td>
       <td>04Nov2020</td>
-      <td>0.011053</td>
-      <td>262.0</td>
+      <td>0.011016</td>
+      <td>291.0</td>
       <td>0 min  5 sec</td>
     </tr>
     <tr>
       <th>25th</th>
       <td>05Nov2020</td>
       <td>13Nov2020</td>
-      <td>0.005314</td>
-      <td>256.0</td>
+      <td>0.005288</td>
+      <td>292.0</td>
       <td>0 min  5 sec</td>
     </tr>
     <tr>
@@ -2623,23 +2625,23 @@ Completed optimization. Total: 5 min 47 sec
       <td>14Nov2020</td>
       <td>26Nov2020</td>
       <td>0.016179</td>
-      <td>1251.0</td>
-      <td>0 min 35 sec</td>
+      <td>1240.0</td>
+      <td>0 min 30 sec</td>
     </tr>
     <tr>
       <th>27th</th>
       <td>27Nov2020</td>
       <td>09Dec2020</td>
       <td>0.012040</td>
-      <td>1812.0</td>
-      <td>1 min  0 sec</td>
+      <td>1767.0</td>
+      <td>0 min 50 sec</td>
     </tr>
     <tr>
       <th>28th</th>
       <td>10Dec2020</td>
       <td>18Dec2020</td>
       <td>0.013164</td>
-      <td>944.0</td>
+      <td>1079.0</td>
       <td>0 min 25 sec</td>
     </tr>
     <tr>
@@ -2647,15 +2649,15 @@ Completed optimization. Total: 5 min 47 sec
       <td>19Dec2020</td>
       <td>29Dec2020</td>
       <td>0.012566</td>
-      <td>1354.0</td>
-      <td>0 min 40 sec</td>
+      <td>1370.0</td>
+      <td>0 min 35 sec</td>
     </tr>
     <tr>
       <th>30th</th>
       <td>30Dec2020</td>
       <td>07Jan2021</td>
-      <td>0.009790</td>
-      <td>252.0</td>
+      <td>0.009675</td>
+      <td>293.0</td>
       <td>0 min  5 sec</td>
     </tr>
     <tr>
@@ -2663,23 +2665,23 @@ Completed optimization. Total: 5 min 47 sec
       <td>08Jan2021</td>
       <td>16Jan2021</td>
       <td>0.027863</td>
-      <td>1105.0</td>
+      <td>1213.0</td>
       <td>0 min 30 sec</td>
     </tr>
     <tr>
       <th>32nd</th>
       <td>17Jan2021</td>
       <td>24Jan2021</td>
-      <td>0.015281</td>
-      <td>2389.0</td>
-      <td>1 min 30 sec</td>
+      <td>0.015284</td>
+      <td>1765.0</td>
+      <td>0 min 50 sec</td>
     </tr>
     <tr>
       <th>33rd</th>
       <td>25Jan2021</td>
       <td>01Feb2021</td>
       <td>0.008996</td>
-      <td>264.0</td>
+      <td>292.0</td>
       <td>0 min  5 sec</td>
     </tr>
     <tr>
@@ -2687,7 +2689,7 @@ Completed optimization. Total: 5 min 47 sec
       <td>02Feb2021</td>
       <td>09Feb2021</td>
       <td>0.006756</td>
-      <td>257.0</td>
+      <td>293.0</td>
       <td>0 min  5 sec</td>
     </tr>
     <tr>
@@ -2695,7 +2697,7 @@ Completed optimization. Total: 5 min 47 sec
       <td>10Feb2021</td>
       <td>17Feb2021</td>
       <td>0.010449</td>
-      <td>215.0</td>
+      <td>293.0</td>
       <td>0 min  5 sec</td>
     </tr>
     <tr>
@@ -2703,47 +2705,47 @@ Completed optimization. Total: 5 min 47 sec
       <td>18Feb2021</td>
       <td>02Mar2021</td>
       <td>0.007700</td>
-      <td>252.0</td>
+      <td>294.0</td>
       <td>0 min  5 sec</td>
     </tr>
     <tr>
       <th>37th</th>
       <td>03Mar2021</td>
       <td>12Mar2021</td>
-      <td>0.008375</td>
-      <td>414.0</td>
-      <td>0 min 10 sec</td>
+      <td>0.008815</td>
+      <td>294.0</td>
+      <td>0 min  5 sec</td>
     </tr>
     <tr>
       <th>38th</th>
       <td>13Mar2021</td>
       <td>25Mar2021</td>
       <td>0.012063</td>
-      <td>1100.0</td>
-      <td>0 min 30 sec</td>
+      <td>1087.0</td>
+      <td>0 min 25 sec</td>
     </tr>
     <tr>
       <th>39th</th>
       <td>26Mar2021</td>
       <td>06Apr2021</td>
       <td>0.011568</td>
-      <td>1589.0</td>
-      <td>0 min 50 sec</td>
+      <td>1645.0</td>
+      <td>0 min 45 sec</td>
     </tr>
     <tr>
       <th>40th</th>
       <td>07Apr2021</td>
       <td>15Apr2021</td>
       <td>0.018643</td>
-      <td>1832.0</td>
-      <td>0 min 55 sec</td>
+      <td>1732.0</td>
+      <td>0 min 50 sec</td>
     </tr>
     <tr>
       <th>41st</th>
       <td>16Apr2021</td>
       <td>24Apr2021</td>
       <td>0.008563</td>
-      <td>297.0</td>
+      <td>302.0</td>
       <td>0 min  5 sec</td>
     </tr>
     <tr>
@@ -2751,7 +2753,7 @@ Completed optimization. Total: 5 min 47 sec
       <td>25Apr2021</td>
       <td>06May2021</td>
       <td>0.006747</td>
-      <td>981.0</td>
+      <td>1083.0</td>
       <td>0 min 25 sec</td>
     </tr>
     <tr>
@@ -2759,8 +2761,8 @@ Completed optimization. Total: 5 min 47 sec
       <td>07May2021</td>
       <td>16May2021</td>
       <td>0.006304</td>
-      <td>1477.0</td>
-      <td>0 min 40 sec</td>
+      <td>1389.0</td>
+      <td>0 min 35 sec</td>
     </tr>
   </tbody>
 </table>
@@ -2806,10 +2808,10 @@ Completed optimization. Total: 5 min 47 sec
 </div>
 <div class="output_area docutils container">
 <div class="highlight"><pre>
-  MAE: 644.231
-  MSE: 1711449.163
+  MAE: 647.423
+  MSE: 1728064.751
  MSLE: 0.003
- RMSE: 1020.719
+ RMSE: 1025.493
 RMSLE: 0.058
 </pre></div></div>
 </div>
@@ -2950,11 +2952,11 @@ RMSLE: 0.058
     </tr>
     <tr>
       <th>6th</th>
-      <td>0.030270</td>
-      <td>0.000887</td>
-      <td>0.045718</td>
-      <td>0.021392</td>
-      <td>1.99</td>
+      <td>0.033079</td>
+      <td>0.000737</td>
+      <td>0.046327</td>
+      <td>0.021451</td>
+      <td>2.02</td>
     </tr>
     <tr>
       <th>7th</th>
@@ -2966,11 +2968,11 @@ RMSLE: 0.058
     </tr>
     <tr>
       <th>8th</th>
-      <td>0.057684</td>
-      <td>0.002622</td>
-      <td>0.017193</td>
-      <td>0.095538</td>
-      <td>0.17</td>
+      <td>0.054181</td>
+      <td>0.002761</td>
+      <td>0.016654</td>
+      <td>0.094815</td>
+      <td>0.16</td>
     </tr>
     <tr>
       <th>9th</th>
@@ -3022,11 +3024,11 @@ RMSLE: 0.058
     </tr>
     <tr>
       <th>15th</th>
-      <td>0.000029</td>
-      <td>0.000332</td>
-      <td>0.138693</td>
-      <td>0.068157</td>
-      <td>2.03</td>
+      <td>0.000167</td>
+      <td>0.000279</td>
+      <td>0.139064</td>
+      <td>0.068870</td>
+      <td>2.01</td>
     </tr>
     <tr>
       <th>16th</th>
@@ -3062,11 +3064,11 @@ RMSLE: 0.058
     </tr>
     <tr>
       <th>20th</th>
-      <td>0.000453</td>
-      <td>0.001457</td>
-      <td>0.081631</td>
-      <td>0.092360</td>
-      <td>0.87</td>
+      <td>0.000376</td>
+      <td>0.001487</td>
+      <td>0.080200</td>
+      <td>0.091359</td>
+      <td>0.86</td>
     </tr>
     <tr>
       <th>21st</th>
@@ -3094,18 +3096,18 @@ RMSLE: 0.058
     </tr>
     <tr>
       <th>24th</th>
-      <td>0.000014</td>
-      <td>0.001239</td>
-      <td>0.101696</td>
-      <td>0.078818</td>
-      <td>1.27</td>
+      <td>0.000373</td>
+      <td>0.001250</td>
+      <td>0.104096</td>
+      <td>0.081053</td>
+      <td>1.26</td>
     </tr>
     <tr>
       <th>25th</th>
-      <td>0.000001</td>
-      <td>0.001018</td>
-      <td>0.137079</td>
-      <td>0.085766</td>
+      <td>0.000123</td>
+      <td>0.000952</td>
+      <td>0.136342</td>
+      <td>0.085139</td>
       <td>1.58</td>
     </tr>
     <tr>
@@ -3142,10 +3144,10 @@ RMSLE: 0.058
     </tr>
     <tr>
       <th>30th</th>
-      <td>0.001178</td>
-      <td>0.001233</td>
-      <td>0.098681</td>
-      <td>0.064053</td>
+      <td>0.001161</td>
+      <td>0.001289</td>
+      <td>0.099652</td>
+      <td>0.064832</td>
       <td>1.51</td>
     </tr>
     <tr>
@@ -3158,10 +3160,10 @@ RMSLE: 0.058
     </tr>
     <tr>
       <th>32nd</th>
-      <td>0.000024</td>
-      <td>0.001136</td>
-      <td>0.082582</td>
-      <td>0.087937</td>
+      <td>0.000057</td>
+      <td>0.001123</td>
+      <td>0.083040</td>
+      <td>0.088374</td>
       <td>0.93</td>
     </tr>
     <tr>
@@ -3174,10 +3176,10 @@ RMSLE: 0.058
     </tr>
     <tr>
       <th>34th</th>
-      <td>0.000397</td>
-      <td>0.002562</td>
-      <td>0.058937</td>
-      <td>0.113278</td>
+      <td>0.000226</td>
+      <td>0.002569</td>
+      <td>0.058978</td>
+      <td>0.113382</td>
       <td>0.51</td>
     </tr>
     <tr>
@@ -3198,10 +3200,10 @@ RMSLE: 0.058
     </tr>
     <tr>
       <th>37th</th>
-      <td>0.009564</td>
-      <td>0.003753</td>
-      <td>0.081789</td>
-      <td>0.086788</td>
+      <td>0.000001</td>
+      <td>0.004900</td>
+      <td>0.081967</td>
+      <td>0.087326</td>
       <td>0.89</td>
     </tr>
     <tr>
@@ -3548,7 +3550,7 @@ RMSLE: 0.058
 </div>
 <div class="output_area docutils container">
 <div class="highlight"><pre>
-&lt;covsirphy.analysis.scenario.Scenario at 0x7ff9898fc610&gt;
+&lt;covsirphy.analysis.scenario.Scenario at 0x7fcaf41fc100&gt;
 </pre></div></div>
 </div>
 <p>Check summary of future phases.</p>
@@ -3758,8 +3760,8 @@ RMSLE: 0.058
 <p><code class="docutils literal notranslate"><span class="pre">Scenario.fit()</span></code> has <code class="docutils literal notranslate"><span class="pre">delay</span></code> argument and we can apply the following values.</p>
 <ul class="simple">
 <li><p><code class="docutils literal notranslate"><span class="pre">delay=20</span></code>: Exact value of delay period [days].</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">delay=(7,</span> <span class="pre">31)</span></code>(effective from version 2.19.1-gamm-fu1): Delay period will be found by grid search in the value range of (7, 31) to minimize test score of learing. This is the default value from version 2.19.1-theta-fu1.</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">delay=None</span></code>: Delay period will be calculated with <code class="docutils literal notranslate"><span class="pre">Scenario.estimate_delay()</span></code> method. In this method, change point analysis will be done with one selected indicator (“Stringency_index” as default) and variable (“Confirmed” as default) to estimate delay period. This is the default value to version 2.19.1-theta.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">delay=(7,</span> <span class="pre">31)</span></code>: Delay period will be found by grid search in the value range of (7, 31) to minimize test score of learing. This is the default value from version 2.20.0.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">delay=None</span></code>: Delay period will be calculated with <code class="docutils literal notranslate"><span class="pre">Scenario.estimate_delay()</span></code> method. In this method, change point analysis will be done with one selected indicator (“Stringency_index” as default) and variable (“Confirmed” as default) to estimate delay period. This is the default value to version 2.19.1.</p></li>
 </ul>
 <p>When we use <code class="docutils literal notranslate"><span class="pre">delay=None</span></code>, the indicator used to estimate delay period (“Stringency_index” as default) will be automatically removed from X dataset. If you have some indicators to be removed additionally, please use <code class="docutils literal notranslate"><span class="pre">removed_cols</span></code> argument (list of indicator names) of <code class="docutils literal notranslate"><span class="pre">Scenario.fit()</span></code>.</p>
 <p>As an example, we only use OxCGRT indicators (except for “Stringency_index” because this is calculated with the other OxCGRT indicators).</p>
@@ -3772,7 +3774,7 @@ RMSLE: 0.058
 <span class="n">snl</span><span class="o">.</span><span class="n">clear</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;Forecast&quot;</span><span class="p">,</span> <span class="n">template</span><span class="o">=</span><span class="s2">&quot;Main&quot;</span><span class="p">)</span>
 <span class="c1"># Fitting with linear regression model (Elastic Net regression)</span>
 <span class="n">fit_dict</span> <span class="o">=</span> <span class="n">snl</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span>
-    <span class="n">name</span><span class="o">=</span><span class="s2">&quot;Forecast&quot;</span><span class="p">,</span> <span class="n">metric</span><span class="o">=</span><span class="s2">&quot;RMSLE&quot;</span><span class="p">,</span>
+    <span class="n">name</span><span class="o">=</span><span class="s2">&quot;Forecast&quot;</span><span class="p">,</span> <span class="n">metric</span><span class="o">=</span><span class="s2">&quot;R2&quot;</span><span class="p">,</span>
     <span class="n">removed_cols</span><span class="o">=</span><span class="p">[</span>
         <span class="s2">&quot;Stringency_index&quot;</span><span class="p">,</span> <span class="s2">&quot;Tests&quot;</span><span class="p">,</span> <span class="s2">&quot;Tests_diff&quot;</span><span class="p">,</span> <span class="s2">&quot;Vaccinations&quot;</span><span class="p">,</span> <span class="s2">&quot;Vaccinated_once&quot;</span><span class="p">,</span> <span class="s2">&quot;Vaccinated_full&quot;</span><span class="p">]</span>
 <span class="p">)</span>
@@ -3785,8 +3787,8 @@ RMSLE: 0.058
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;RMSLE: </span><span class="si">{</span><span class="n">fit_dict</span><span class="p">[</span><span class="s1">&#39;score_train&#39;</span><span class="p">]</span><span class="si">:</span><span class="s2">.3f</span><span class="si">}</span><span class="s2"> (train)&quot;</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;RMSLE: </span><span class="si">{</span><span class="n">fit_dict</span><span class="p">[</span><span class="s1">&#39;score_test&#39;</span><span class="p">]</span><span class="si">:</span><span class="s2">.3f</span><span class="si">}</span><span class="s2"> (test)&quot;</span><span class="p">)</span>
+<span></span><span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;R-squared: </span><span class="si">{</span><span class="n">fit_dict</span><span class="p">[</span><span class="s1">&#39;score_train&#39;</span><span class="p">]</span><span class="si">:</span><span class="s2">.3f</span><span class="si">}</span><span class="s2"> (train)&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;R-squared: </span><span class="si">{</span><span class="n">fit_dict</span><span class="p">[</span><span class="s1">&#39;score_test&#39;</span><span class="p">]</span><span class="si">:</span><span class="s2">.3f</span><span class="si">}</span><span class="s2"> (test)&quot;</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -3795,8 +3797,8 @@ RMSLE: 0.058
 </div>
 <div class="output_area docutils container">
 <div class="highlight"><pre>
-RMSLE: 0.198 (train)
-RMSLE: 0.153 (test)
+R-squared: 0.221 (train)
+R-squared: 0.029 (test)
 </pre></div></div>
 </div>
 <p>Show the intercept and coefficient values of the regression model.</p>
@@ -3825,113 +3827,158 @@ Coefficient:
 </div>
 <div class="output_area rendered_html docutils container">
 <style  type="text/css" >
-#T_466da_row0_col0{
-            background-color:  #c0c9e2;
+#T_dd0cb_row0_col0{
+            background-color:  #81aed2;
             color:  #000000;
-        }#T_466da_row0_col1,#T_466da_row0_col6{
-            background-color:  #f3edf5;
+        }#T_dd0cb_row0_col1{
+            background-color:  #0567a1;
+            color:  #f1f1f1;
+        }#T_dd0cb_row0_col2{
+            background-color:  #529bc7;
             color:  #000000;
-        }#T_466da_row0_col2{
-            background-color:  #d7d6e9;
+        }#T_dd0cb_row0_col3,#T_dd0cb_row0_col4,#T_dd0cb_row3_col10{
+            background-color:  #4496c3;
             color:  #000000;
-        }#T_466da_row0_col3{
-            background-color:  #fdf5fa;
+        }#T_dd0cb_row0_col5{
+            background-color:  #045e93;
+            color:  #f1f1f1;
+        }#T_dd0cb_row0_col6{
+            background-color:  #84b0d3;
             color:  #000000;
-        }#T_466da_row0_col4,#T_466da_row0_col10,#T_466da_row1_col1,#T_466da_row1_col6,#T_466da_row2_col2,#T_466da_row2_col5{
-            background-color:  #e2dfee;
+        }#T_dd0cb_row0_col7{
+            background-color:  #2786bb;
             color:  #000000;
-        }#T_466da_row0_col5{
-            background-color:  #fff7fb;
+        }#T_dd0cb_row0_col8,#T_dd0cb_row1_col3,#T_dd0cb_row1_col8,#T_dd0cb_row2_col8,#T_dd0cb_row2_col10,#T_dd0cb_row3_col8{
+            background-color:  #3790c0;
             color:  #000000;
-        }#T_466da_row0_col7{
+        }#T_dd0cb_row0_col9{
+            background-color:  #65a3cb;
+            color:  #000000;
+        }#T_dd0cb_row0_col10{
+            background-color:  #5a9ec9;
+            color:  #000000;
+        }#T_dd0cb_row1_col0{
+            background-color:  #3d93c2;
+            color:  #000000;
+        }#T_dd0cb_row1_col1{
+            background-color:  #308cbe;
+            color:  #000000;
+        }#T_dd0cb_row1_col2,#T_dd0cb_row1_col5,#T_dd0cb_row1_col7,#T_dd0cb_row1_col9{
+            background-color:  #358fc0;
+            color:  #000000;
+        }#T_dd0cb_row1_col4{
+            background-color:  #348ebf;
+            color:  #000000;
+        }#T_dd0cb_row1_col6{
+            background-color:  #3b92c1;
+            color:  #000000;
+        }#T_dd0cb_row1_col10{
+            background-color:  #3991c1;
+            color:  #000000;
+        }#T_dd0cb_row2_col0{
             background-color:  #023858;
             color:  #f1f1f1;
-        }#T_466da_row0_col8{
-            background-color:  #fcf4fa;
+        }#T_dd0cb_row2_col1{
+            background-color:  #fff7fb;
             color:  #000000;
-        }#T_466da_row0_col9{
-            background-color:  #fef6fb;
+        }#T_dd0cb_row2_col2{
+            background-color:  #034369;
+            color:  #f1f1f1;
+        }#T_dd0cb_row2_col3{
+            background-color:  #0569a4;
+            color:  #f1f1f1;
+        }#T_dd0cb_row2_col4,#T_dd0cb_row2_col7{
+            background-color:  #5c9fc9;
             color:  #000000;
-        }#T_466da_row1_col0,#T_466da_row1_col3,#T_466da_row2_col0,#T_466da_row2_col1,#T_466da_row2_col6,#T_466da_row3_col0{
-            background-color:  #e6e2ef;
+        }#T_dd0cb_row2_col5{
+            background-color:  #e0dded;
             color:  #000000;
-        }#T_466da_row1_col2{
-            background-color:  #e9e5f1;
+        }#T_dd0cb_row2_col6{
+            background-color:  #04649d;
+            color:  #f1f1f1;
+        }#T_dd0cb_row2_col9{
+            background-color:  #0d75b3;
+            color:  #f1f1f1;
+        }#T_dd0cb_row3_col0{
+            background-color:  #2987bc;
             color:  #000000;
-        }#T_466da_row1_col4,#T_466da_row1_col7,#T_466da_row1_col8,#T_466da_row2_col4,#T_466da_row2_col7,#T_466da_row2_col10,#T_466da_row3_col3,#T_466da_row3_col5,#T_466da_row3_col8,#T_466da_row3_col9,#T_466da_row3_col10{
-            background-color:  #e5e1ef;
+        }#T_dd0cb_row3_col1{
+            background-color:  #045585;
+            color:  #f1f1f1;
+        }#T_dd0cb_row3_col2{
+            background-color:  #2c89bd;
             color:  #000000;
-        }#T_466da_row1_col5,#T_466da_row2_col3,#T_466da_row2_col8,#T_466da_row3_col4{
-            background-color:  #e4e1ef;
+        }#T_dd0cb_row3_col3{
+            background-color:  #4c99c5;
             color:  #000000;
-        }#T_466da_row1_col9{
-            background-color:  #e7e3f0;
+        }#T_dd0cb_row3_col4,#T_dd0cb_row3_col9{
+            background-color:  #1e80b8;
             color:  #000000;
-        }#T_466da_row1_col10,#T_466da_row2_col9,#T_466da_row3_col7{
-            background-color:  #e3e0ee;
+        }#T_dd0cb_row3_col5{
+            background-color:  #03466e;
+            color:  #f1f1f1;
+        }#T_dd0cb_row3_col6{
+            background-color:  #c9cee4;
             color:  #000000;
-        }#T_466da_row3_col1,#T_466da_row3_col6{
-            background-color:  #e1dfed;
+        }#T_dd0cb_row3_col7{
+            background-color:  #6da6cd;
             color:  #000000;
-        }#T_466da_row3_col2{
-            background-color:  #e8e4f0;
-            color:  #000000;
-        }</style><table id="T_466da_" ><thead>    <tr>        <th class="blank level0" ></th>        <th class="col_heading level0 col0" >School_closing</th>        <th class="col_heading level0 col1" >Workplace_closing</th>        <th class="col_heading level0 col2" >Cancel_events</th>        <th class="col_heading level0 col3" >Gatherings_restrictions</th>        <th class="col_heading level0 col4" >Transport_closing</th>        <th class="col_heading level0 col5" >Stay_home_restrictions</th>        <th class="col_heading level0 col6" >Internal_movement_restrictions</th>        <th class="col_heading level0 col7" >International_movement_restrictions</th>        <th class="col_heading level0 col8" >Information_campaigns</th>        <th class="col_heading level0 col9" >Testing_policy</th>        <th class="col_heading level0 col10" >Contact_tracing</th>    </tr></thead><tbody>
+        }</style><table id="T_dd0cb_" ><thead>    <tr>        <th class="blank level0" ></th>        <th class="col_heading level0 col0" >School_closing</th>        <th class="col_heading level0 col1" >Workplace_closing</th>        <th class="col_heading level0 col2" >Cancel_events</th>        <th class="col_heading level0 col3" >Gatherings_restrictions</th>        <th class="col_heading level0 col4" >Transport_closing</th>        <th class="col_heading level0 col5" >Stay_home_restrictions</th>        <th class="col_heading level0 col6" >Internal_movement_restrictions</th>        <th class="col_heading level0 col7" >International_movement_restrictions</th>        <th class="col_heading level0 col8" >Information_campaigns</th>        <th class="col_heading level0 col9" >Testing_policy</th>        <th class="col_heading level0 col10" >Contact_tracing</th>    </tr></thead><tbody>
                 <tr>
-                        <th id="T_466da_level0_row0" class="row_heading level0 row0" >theta</th>
-                        <td id="T_466da_row0_col0" class="data row0 col0" >1.172921</td>
-                        <td id="T_466da_row0_col1" class="data row0 col1" >-0.666576</td>
-                        <td id="T_466da_row0_col2" class="data row0 col2" >0.503652</td>
-                        <td id="T_466da_row0_col3" class="data row0 col3" >-1.193588</td>
-                        <td id="T_466da_row0_col4" class="data row0 col4" >0.079381</td>
-                        <td id="T_466da_row0_col5" class="data row0 col5" >-1.357070</td>
-                        <td id="T_466da_row0_col6" class="data row0 col6" >-0.666576</td>
-                        <td id="T_466da_row0_col7" class="data row0 col7" >7.131205</td>
-                        <td id="T_466da_row0_col8" class="data row0 col8" >-1.190127</td>
-                        <td id="T_466da_row0_col9" class="data row0 col9" >-1.304358</td>
-                        <td id="T_466da_row0_col10" class="data row0 col10" >0.098240</td>
+                        <th id="T_dd0cb_level0_row0" class="row_heading level0 row0" >theta</th>
+                        <td id="T_dd0cb_row0_col0" class="data row0 col0" >-0.026532</td>
+                        <td id="T_dd0cb_row0_col1" class="data row0 col1" >0.030063</td>
+                        <td id="T_dd0cb_row0_col2" class="data row0 col2" >-0.009687</td>
+                        <td id="T_dd0cb_row0_col3" class="data row0 col3" >-0.004900</td>
+                        <td id="T_dd0cb_row0_col4" class="data row0 col4" >-0.004542</td>
+                        <td id="T_dd0cb_row0_col5" class="data row0 col5" >0.038611</td>
+                        <td id="T_dd0cb_row0_col6" class="data row0 col6" >-0.028094</td>
+                        <td id="T_dd0cb_row0_col7" class="data row0 col7" >0.006513</td>
+                        <td id="T_dd0cb_row0_col8" class="data row0 col8" >0.000000</td>
+                        <td id="T_dd0cb_row0_col9" class="data row0 col9" >-0.015817</td>
+                        <td id="T_dd0cb_row0_col10" class="data row0 col10" >-0.011910</td>
             </tr>
             <tr>
-                        <th id="T_466da_level0_row1" class="row_heading level0 row1" >kappa</th>
-                        <td id="T_466da_row1_col0" class="data row1 col0" >-0.034369</td>
-                        <td id="T_466da_row1_col1" class="data row1 col1" >0.094172</td>
-                        <td id="T_466da_row1_col2" class="data row1 col2" >-0.194902</td>
-                        <td id="T_466da_row1_col3" class="data row1 col3" >-0.035702</td>
-                        <td id="T_466da_row1_col4" class="data row1 col4" >-0.020348</td>
-                        <td id="T_466da_row1_col5" class="data row1 col5" >0.027543</td>
-                        <td id="T_466da_row1_col6" class="data row1 col6" >0.094172</td>
-                        <td id="T_466da_row1_col7" class="data row1 col7" >-0.000480</td>
-                        <td id="T_466da_row1_col8" class="data row1 col8" >-0.011395</td>
-                        <td id="T_466da_row1_col9" class="data row1 col9" >-0.112187</td>
-                        <td id="T_466da_row1_col10" class="data row1 col10" >0.052950</td>
+                        <th id="T_dd0cb_level0_row1" class="row_heading level0 row1" >kappa</th>
+                        <td id="T_dd0cb_row1_col0" class="data row1 col0" >-0.002053</td>
+                        <td id="T_dd0cb_row1_col1" class="data row1 col1" >0.002096</td>
+                        <td id="T_dd0cb_row1_col2" class="data row1 col2" >0.000700</td>
+                        <td id="T_dd0cb_row1_col3" class="data row1 col3" >0.000018</td>
+                        <td id="T_dd0cb_row1_col4" class="data row1 col4" >0.000963</td>
+                        <td id="T_dd0cb_row1_col5" class="data row1 col5" >0.000702</td>
+                        <td id="T_dd0cb_row1_col6" class="data row1 col6" >-0.001568</td>
+                        <td id="T_dd0cb_row1_col7" class="data row1 col7" >0.000429</td>
+                        <td id="T_dd0cb_row1_col8" class="data row1 col8" >0.000000</td>
+                        <td id="T_dd0cb_row1_col9" class="data row1 col9" >0.000422</td>
+                        <td id="T_dd0cb_row1_col10" class="data row1 col10" >-0.000814</td>
             </tr>
             <tr>
-                        <th id="T_466da_level0_row2" class="row_heading level0 row2" >rho</th>
-                        <td id="T_466da_row2_col0" class="data row2 col0" >-0.050720</td>
-                        <td id="T_466da_row2_col1" class="data row2 col1" >-0.058336</td>
-                        <td id="T_466da_row2_col2" class="data row2 col2" >0.086174</td>
-                        <td id="T_466da_row2_col3" class="data row2 col3" >0.008430</td>
-                        <td id="T_466da_row2_col4" class="data row2 col4" >-0.001993</td>
-                        <td id="T_466da_row2_col5" class="data row2 col5" >0.070402</td>
-                        <td id="T_466da_row2_col6" class="data row2 col6" >-0.058336</td>
-                        <td id="T_466da_row2_col7" class="data row2 col7" >-0.013264</td>
-                        <td id="T_466da_row2_col8" class="data row2 col8" >0.025606</td>
-                        <td id="T_466da_row2_col9" class="data row2 col9" >0.042432</td>
-                        <td id="T_466da_row2_col10" class="data row2 col10" >-0.015945</td>
+                        <th id="T_dd0cb_level0_row2" class="row_heading level0 row2" >rho</th>
+                        <td id="T_dd0cb_row2_col0" class="data row2 col0" >0.063072</td>
+                        <td id="T_dd0cb_row2_col1" class="data row2 col1" >-0.104886</td>
+                        <td id="T_dd0cb_row2_col2" class="data row2 col2" >0.055872</td>
+                        <td id="T_dd0cb_row2_col3" class="data row2 col3" >0.027953</td>
+                        <td id="T_dd0cb_row2_col4" class="data row2 col4" >-0.012592</td>
+                        <td id="T_dd0cb_row2_col5" class="data row2 col5" >-0.074602</td>
+                        <td id="T_dd0cb_row2_col6" class="data row2 col6" >0.032846</td>
+                        <td id="T_dd0cb_row2_col7" class="data row2 col7" >-0.012563</td>
+                        <td id="T_dd0cb_row2_col8" class="data row2 col8" >0.000000</td>
+                        <td id="T_dd0cb_row2_col9" class="data row2 col9" >0.017491</td>
+                        <td id="T_dd0cb_row2_col10" class="data row2 col10" >-0.000369</td>
             </tr>
             <tr>
-                        <th id="T_466da_level0_row3" class="row_heading level0 row3" >sigma</th>
-                        <td id="T_466da_row3_col0" class="data row3 col0" >-0.035051</td>
-                        <td id="T_466da_row3_col1" class="data row3 col1" >0.119023</td>
-                        <td id="T_466da_row3_col2" class="data row3 col2" >-0.162420</td>
-                        <td id="T_466da_row3_col3" class="data row3 col3" >-0.002658</td>
-                        <td id="T_466da_row3_col4" class="data row3 col4" >0.004227</td>
-                        <td id="T_466da_row3_col5" class="data row3 col5" >-0.029148</td>
-                        <td id="T_466da_row3_col6" class="data row3 col6" >0.119023</td>
-                        <td id="T_466da_row3_col7" class="data row3 col7" >0.038639</td>
-                        <td id="T_466da_row3_col8" class="data row3 col8" >-0.023500</td>
-                        <td id="T_466da_row3_col9" class="data row3 col9" >-0.004334</td>
-                        <td id="T_466da_row3_col10" class="data row3 col10" >0.000387</td>
+                        <th id="T_dd0cb_level0_row3" class="row_heading level0 row3" >sigma</th>
+                        <td id="T_dd0cb_row3_col0" class="data row3 col0" >0.005664</td>
+                        <td id="T_dd0cb_row3_col1" class="data row3 col1" >0.044846</td>
+                        <td id="T_dd0cb_row3_col2" class="data row3 col2" >0.004644</td>
+                        <td id="T_dd0cb_row3_col3" class="data row3 col3" >-0.007420</td>
+                        <td id="T_dd0cb_row3_col4" class="data row3 col4" >0.010129</td>
+                        <td id="T_dd0cb_row3_col5" class="data row3 col5" >0.054431</td>
+                        <td id="T_dd0cb_row3_col6" class="data row3 col6" >-0.059124</td>
+                        <td id="T_dd0cb_row3_col7" class="data row3 col7" >-0.018602</td>
+                        <td id="T_dd0cb_row3_col8" class="data row3 col8" >0.000000</td>
+                        <td id="T_dd0cb_row3_col9" class="data row3 col9" >0.009947</td>
+                        <td id="T_dd0cb_row3_col10" class="data row3 col10" >-0.004658</td>
             </tr>
     </tbody></table></div>
 </div>
@@ -3954,7 +4001,7 @@ Coefficient:
 </div>
 <div class="output_area docutils container">
 <div class="highlight"><pre>
-&lt;covsirphy.analysis.scenario.Scenario at 0x7ff9898fc610&gt;
+&lt;covsirphy.analysis.scenario.Scenario at 0x7fcaf41fc100&gt;
 </pre></div></div>
 </div>
 <p>Show summary of future phases.</p>
@@ -4044,7 +4091,7 @@ Coefficient:
       <td>126529100</td>
       <td>SIR-F</td>
       <td>1.31</td>
-      <td>6.194681e-04</td>
+      <td>0.000619</td>
       <td>0.001322</td>
       <td>0.091114</td>
       <td>0.068312</td>
@@ -4065,7 +4112,7 @@ Coefficient:
       <td>126529100</td>
       <td>SIR-F</td>
       <td>1.31</td>
-      <td>6.194681e-04</td>
+      <td>0.000619</td>
       <td>0.001322</td>
       <td>0.091114</td>
       <td>0.068312</td>
@@ -4087,7 +4134,7 @@ Coefficient:
       <td>126529100</td>
       <td>SIR-F</td>
       <td>1.31</td>
-      <td>6.194681e-04</td>
+      <td>0.000619</td>
       <td>0.001322</td>
       <td>0.091114</td>
       <td>0.068312</td>
@@ -4108,7 +4155,7 @@ Coefficient:
       <td>126529100</td>
       <td>SIR-F</td>
       <td>1.09</td>
-      <td>6.194681e-04</td>
+      <td>0.000619</td>
       <td>0.001322</td>
       <td>0.091114</td>
       <td>0.081974</td>
@@ -4126,18 +4173,18 @@ Coefficient:
       <th>44th</th>
       <td>Future</td>
       <td>17May2021</td>
-      <td>09Jun2021</td>
+      <td>24May2021</td>
       <td>126529100</td>
       <td>SIR-F</td>
-      <td>1.83</td>
-      <td>7.001000e-08</td>
-      <td>0.000537</td>
-      <td>0.115300</td>
-      <td>0.062580</td>
+      <td>1.43</td>
+      <td>0.000048</td>
+      <td>0.000939</td>
+      <td>0.095640</td>
+      <td>0.066120</td>
       <td>1440</td>
       <td>0.0</td>
-      <td>1862.0</td>
-      <td>8.0</td>
+      <td>1065.0</td>
+      <td>10.0</td>
       <td>15.0</td>
       <td>-</td>
       <td>-</td>
@@ -4219,7 +4266,7 @@ Forecast scenario: to 31Jul2021
 <img alt="_images/usage_quick_99_0.png" src="_images/usage_quick_99_0.png" />
 </div>
 </div>
-<p>From version 2.19.1-eta, we can focus on the values in specified date range with the following arguments.</p>
+<p>We can focus on the values in specified date range with the following arguments.</p>
 <ul class="simple">
 <li><p><code class="docutils literal notranslate"><span class="pre">dates</span></code>: tuple of start date and end date</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">past_days</span></code> (integer): how many past days to use in calculation from today (<code class="docutils literal notranslate"><span class="pre">Scenario.today</span></code> property)</p></li>
@@ -4353,13 +4400,13 @@ Forecast scenario: to 31Jul2021
     </tr>
     <tr>
       <th>Forecast</th>
-      <td>3490789</td>
+      <td>644592</td>
       <td>31Jul2021</td>
-      <td>8589562</td>
-      <td>3490789</td>
-      <td>49797</td>
-      <td>1.83</td>
-      <td>1.83</td>
+      <td>2638571</td>
+      <td>644592</td>
+      <td>31087</td>
+      <td>1.43</td>
+      <td>1.43</td>
     </tr>
   </tbody>
 </table>
@@ -4491,7 +4538,8 @@ Forecast scenario: to 31Jul2021
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
 <span></span><span class="c1"># Perform retrospective analysis</span>
-<span class="n">snl_retro</span> <span class="o">=</span> <span class="n">cs</span><span class="o">.</span><span class="n">Scenario</span><span class="p">(</span><span class="n">jhu_data</span><span class="p">,</span> <span class="n">population_data</span><span class="p">,</span> <span class="s2">&quot;Japan&quot;</span><span class="p">)</span>
+<span class="n">snl_retro</span> <span class="o">=</span> <span class="n">cs</span><span class="o">.</span><span class="n">Scenario</span><span class="p">(</span><span class="n">country</span><span class="o">=</span><span class="s2">&quot;Japan&quot;</span><span class="p">)</span>
+<span class="n">snl_retro</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="n">jhu_data</span><span class="p">)</span>
 <span class="n">snl_retro</span><span class="o">.</span><span class="n">retrospective</span><span class="p">(</span>
     <span class="s2">&quot;01Jan2021&quot;</span><span class="p">,</span> <span class="n">model</span><span class="o">=</span><span class="n">cs</span><span class="o">.</span><span class="n">SIRF</span><span class="p">,</span> <span class="n">control</span><span class="o">=</span><span class="s2">&quot;Main&quot;</span><span class="p">,</span> <span class="n">target</span><span class="o">=</span><span class="s2">&quot;Retrospective&quot;</span><span class="p">,</span> <span class="n">timeout</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span>
 </pre></div>
@@ -4505,87 +4553,87 @@ Forecast scenario: to 31Jul2021
 
 &lt;SIR-F model: parameter estimation&gt;
 Running optimization with 4 CPUs...
-         9th phase (21May2020 - 28May2020): finished  258 trials in 0 min  5 sec
-         6th phase (17Apr2020 - 01May2020): finished  475 trials in 0 min 10 sec
-         0th phase (06Feb2020 - 18Feb2020): finished  552 trials in 0 min 10 sec
-         3rd phase (14Mar2020 - 24Mar2020): finished  477 trials in 0 min 10 sec
-        10th phase (29May2020 - 05Jun2020): finished  265 trials in 0 min  5 sec
-        11th phase (06Jun2020 - 13Jun2020): finished  253 trials in 0 min  5 sec
-         1st phase (19Feb2020 - 05Mar2020): finished  462 trials in 0 min 10 sec
-         7th phase (02May2020 - 11May2020): finished  466 trials in 0 min 10 sec
-         4th phase (25Mar2020 - 02Apr2020): finished  469 trials in 0 min 10 sec
-        12th phase (14Jun2020 - 28Jun2020): finished  460 trials in 0 min 10 sec
-         5th phase (03Apr2020 - 16Apr2020): finished  449 trials in 0 min 10 sec         2nd phase (06Mar2020 - 13Mar2020): finished  453 trials in 0 min 10 sec         8th phase (12May2020 - 20May2020): finished  451 trials in 0 min 10 sec
+         9th phase (21May2020 - 28May2020): finished  202 trials in 0 min  5 sec
+         6th phase (17Apr2020 - 01May2020): finished  404 trials in 0 min 10 sec
+        10th phase (29May2020 - 05Jun2020): finished  234 trials in 0 min  5 sec
+         3rd phase (14Mar2020 - 24Mar2020): finished  391 trials in 0 min 10 sec
+         0th phase (06Feb2020 - 18Feb2020): finished  464 trials in 0 min 10 sec
+        11th phase (06Jun2020 - 13Jun2020): finished  208 trials in 0 min  5 sec
+         7th phase (02May2020 - 11May2020): finished  422 trials in 0 min 10 sec
+         4th phase (25Mar2020 - 02Apr2020): finished  438 trials in 0 min 10 sec
+         1st phase (19Feb2020 - 05Mar2020): finished  400 trials in 0 min 10 sec
+        12th phase (14Jun2020 - 28Jun2020): finished  442 trials in 0 min 10 sec
+         8th phase (12May2020 - 20May2020): finished  481 trials in 0 min 10 sec
+         5th phase (03Apr2020 - 16Apr2020): finished  487 trials in 0 min 10 sec
+         2nd phase (06Mar2020 - 13Mar2020): finished  489 trials in 0 min 10 sec
+        18th phase (21Aug2020 - 28Aug2020): finished  265 trials in 0 min  5 sec
+        13th phase (29Jun2020 - 09Jul2020): finished  485 trials in 0 min 10 sec
+        15th phase (22Jul2020 - 01Aug2020): finished  485 trials in 0 min 10 sec
+        19th phase (29Aug2020 - 09Sep2020): finished  269 trials in 0 min  5 sec        21st phase (19Sep2020 - 30Sep2020): finished  488 trials in 0 min 10 sec
 
+        14th phase (10Jul2020 - 21Jul2020): finished  486 trials in 0 min 10 sec        20th phase (10Sep2020 - 18Sep2020): finished  268 trials in 0 min  5 sec
 
-        18th phase (21Aug2020 - 28Aug2020): finished  263 trials in 0 min  5 sec
-        13th phase (29Jun2020 - 09Jul2020): finished  463 trials in 0 min 10 sec
-        15th phase (22Jul2020 - 01Aug2020): finished  478 trials in 0 min 10 sec
-        21st phase (19Sep2020 - 30Sep2020): finished  476 trials in 0 min 10 sec
-        19th phase (29Aug2020 - 09Sep2020): finished  262 trials in 0 min  5 sec
-        20th phase (10Sep2020 - 18Sep2020): finished  243 trials in 0 min  5 sec
-        14th phase (10Jul2020 - 21Jul2020): finished  460 trials in 0 min 10 sec
-        16th phase (02Aug2020 - 10Aug2020): finished  453 trials in 0 min 10 sec
-        22nd phase (01Oct2020 - 13Oct2020): finished  452 trials in 0 min 10 sec
-        24th phase (24Oct2020 - 04Nov2020): finished  248 trials in 0 min  5 sec
-        27th phase (27Nov2020 - 09Dec2020): finished  459 trials in 0 min 10 sec
-        25th phase (05Nov2020 - 13Nov2020): finished  253 trials in 0 min  5 sec
-        17th phase (11Aug2020 - 20Aug2020): finished  466 trials in 0 min 10 sec
-        23rd phase (14Oct2020 - 23Oct2020): finished  467 trials in 0 min 10 sec
-        26th phase (14Nov2020 - 26Nov2020): finished  459 trials in 0 min 10 sec
-        30th phase (30Dec2020 - 31Dec2020): finished  457 trials in 0 min  5 sec
-        28th phase (10Dec2020 - 18Dec2020): finished  459 trials in 0 min 10 sec
-        36th phase (10Feb2021 - 17Feb2021): finished  256 trials in 0 min  5 sec
-        33rd phase (17Jan2021 - 24Jan2021): finished  465 trials in 0 min 10 sec
-        31st phase (01Jan2021 - 07Jan2021): finished  438 trials in 0 min 10 sec
-        37th phase (18Feb2021 - 02Mar2021): finished  216 trials in 0 min  5 sec
-        34th phase (25Jan2021 - 01Feb2021): finished  197 trials in 0 min  5 sec
-        29th phase (19Dec2020 - 29Dec2020): finished  432 trials in 0 min 10 sec
-        35th phase (02Feb2021 - 09Feb2021): finished  253 trials in 0 min  5 sec
-        32nd phase (08Jan2021 - 16Jan2021): finished  465 trials in 0 min 10 sec
-        38th phase (03Mar2021 - 12Mar2021): finished  461 trials in 0 min 10 sec
-        42nd phase (16Apr2021 - 24Apr2021): finished  255 trials in 0 min  5 sec
-        39th phase (13Mar2021 - 25Mar2021): finished  462 trials in 0 min 10 sec
-        43rd phase (25Apr2021 - 06May2021): finished  528 trials in 0 min 10 sec
-        40th phase (26Mar2021 - 06Apr2021): finished  529 trials in 0 min 10 sec
-        44th phase (07May2021 - 16May2021): finished  522 trials in 0 min 10 sec
-        41st phase (07Apr2021 - 15Apr2021): finished  523 trials in 0 min 10 sec
+        16th phase (02Aug2020 - 10Aug2020): finished  482 trials in 0 min 10 sec
+        22nd phase (01Oct2020 - 13Oct2020): finished  490 trials in 0 min 10 sec
+        24th phase (24Oct2020 - 04Nov2020): finished  264 trials in 0 min  5 sec
+        27th phase (27Nov2020 - 09Dec2020): finished  477 trials in 0 min 10 sec
+        25th phase (05Nov2020 - 13Nov2020): finished  264 trials in 0 min  5 sec
+        17th phase (11Aug2020 - 20Aug2020): finished  483 trials in 0 min 10 sec
+        23rd phase (14Oct2020 - 23Oct2020): finished  482 trials in 0 min 10 sec
+        30th phase (30Dec2020 - 31Dec2020): finished  414 trials in 0 min  5 sec
+        28th phase (10Dec2020 - 18Dec2020): finished  436 trials in 0 min 10 sec
+        26th phase (14Nov2020 - 26Nov2020): finished  443 trials in 0 min 10 sec
+        36th phase (10Feb2021 - 17Feb2021): finished  253 trials in 0 min  5 sec        33rd phase (17Jan2021 - 24Jan2021): finished  442 trials in 0 min 10 sec
+
+        31st phase (01Jan2021 - 07Jan2021): finished  460 trials in 0 min 10 sec
+        29th phase (19Dec2020 - 29Dec2020): finished  465 trials in 0 min 10 sec
+        34th phase (25Jan2021 - 01Feb2021): finished  253 trials in 0 min  5 sec
+        37th phase (18Feb2021 - 02Mar2021): finished  252 trials in 0 min  5 sec
+        35th phase (02Feb2021 - 09Feb2021): finished  223 trials in 0 min  5 sec
+        32nd phase (08Jan2021 - 16Jan2021): finished  416 trials in 0 min 10 sec
+        39th phase (13Mar2021 - 25Mar2021): finished  374 trials in 0 min 10 sec
+        42nd phase (16Apr2021 - 24Apr2021): finished  241 trials in 0 min  5 sec
+        38th phase (03Mar2021 - 12Mar2021): finished  405 trials in 0 min 10 sec
+        40th phase (26Mar2021 - 06Apr2021): finished  506 trials in 0 min 10 sec
+        43rd phase (25Apr2021 - 06May2021): finished  510 trials in 0 min 10 sec
+        41st phase (07Apr2021 - 15Apr2021): finished  514 trials in 0 min 10 sec
+        44th phase (07May2021 - 16May2021): finished  518 trials in 0 min 10 sec
 Completed optimization. Total: 1 min 46 sec
 
 &lt;SIR-F model: parameter estimation&gt;
 Running optimization with 4 CPUs...
-         2nd phase (06Mar2020 - 13Mar2020): finished  437 trials in 0 min 10 sec         4th phase (25Mar2020 - 02Apr2020): finished  437 trials in 0 min 10 sec
-
-         0th phase (06Feb2020 - 18Feb2020): finished  502 trials in 0 min 10 sec
-         6th phase (17Apr2020 - 01May2020): finished  436 trials in 0 min 10 sec
-         5th phase (03Apr2020 - 16Apr2020): finished  461 trials in 0 min 10 sec
-         3rd phase (14Mar2020 - 24Mar2020): finished  464 trials in 0 min 10 sec
-         7th phase (02May2020 - 11May2020): finished  463 trials in 0 min 10 sec
-         1st phase (19Feb2020 - 05Mar2020): finished  460 trials in 0 min 10 sec
-        10th phase (29May2020 - 05Jun2020): finished  256 trials in 0 min  5 sec
-         8th phase (12May2020 - 20May2020): finished  466 trials in 0 min 10 sec
-        12th phase (14Jun2020 - 28Jun2020): finished  466 trials in 0 min 10 sec
-        11th phase (06Jun2020 - 13Jun2020): finished  255 trials in 0 min  5 sec
-        14th phase (10Jul2020 - 21Jul2020): finished  465 trials in 0 min 10 sec
-         9th phase (21May2020 - 28May2020): finished  253 trials in 0 min  5 sec
-        13th phase (29Jun2020 - 09Jul2020): finished  463 trials in 0 min 10 sec
-        18th phase (21Aug2020 - 28Aug2020): finished  256 trials in 0 min  5 sec
-        16th phase (02Aug2020 - 10Aug2020): finished  464 trials in 0 min 10 sec
-        15th phase (22Jul2020 - 01Aug2020): finished  463 trials in 0 min 10 sec
-        20th phase (10Sep2020 - 18Sep2020): finished  253 trials in 0 min  5 sec
-        19th phase (29Aug2020 - 09Sep2020): finished  255 trials in 0 min  5 sec
-        17th phase (11Aug2020 - 20Aug2020): finished  463 trials in 0 min 10 sec
-        24th phase (24Oct2020 - 04Nov2020): finished  253 trials in 0 min  5 sec
-        22nd phase (01Oct2020 - 13Oct2020): finished  462 trials in 0 min 10 sec
-        21st phase (19Sep2020 - 30Sep2020): finished  463 trials in 0 min 10 sec
-        25th phase (05Nov2020 - 13Nov2020): finished  257 trials in 0 min  5 sec
-        26th phase (14Nov2020 - 26Nov2020): finished  463 trials in 0 min 10 sec
-        23rd phase (14Oct2020 - 23Oct2020): finished  461 trials in 0 min 10 sec
-        30th phase (30Dec2020 - 31Dec2020): finished  457 trials in 0 min  5 sec
-        28th phase (10Dec2020 - 18Dec2020): finished  480 trials in 0 min 10 sec
-        27th phase (27Nov2020 - 09Dec2020): finished  489 trials in 0 min 10 sec
-        31st phase (01Jan2021 - 16May2021): finished  478 trials in 0 min 10 sec
-        29th phase (19Dec2020 - 29Dec2020): finished  504 trials in 0 min 10 sec
+         6th phase (17Apr2020 - 01May2020): finished  376 trials in 0 min 10 sec
+         4th phase (25Mar2020 - 02Apr2020): finished  401 trials in 0 min 10 sec
+         2nd phase (06Mar2020 - 13Mar2020): finished  397 trials in 0 min 10 sec
+         0th phase (06Feb2020 - 18Feb2020): finished  505 trials in 0 min 10 sec
+         5th phase (03Apr2020 - 16Apr2020): finished  392 trials in 0 min 10 sec
+         3rd phase (14Mar2020 - 24Mar2020): finished  393 trials in 0 min 10 sec
+         1st phase (19Feb2020 - 05Mar2020): finished  420 trials in 0 min 10 sec
+         7th phase (02May2020 - 11May2020): finished  374 trials in 0 min 10 sec
+        10th phase (29May2020 - 05Jun2020): finished  221 trials in 0 min  5 sec
+         8th phase (12May2020 - 20May2020): finished  395 trials in 0 min 10 sec
+        14th phase (10Jul2020 - 21Jul2020): finished  394 trials in 0 min 10 sec
+        12th phase (14Jun2020 - 28Jun2020): finished  391 trials in 0 min 10 sec
+        11th phase (06Jun2020 - 13Jun2020): finished  204 trials in 0 min  5 sec
+         9th phase (21May2020 - 28May2020): finished  244 trials in 0 min  5 sec
+        18th phase (21Aug2020 - 28Aug2020): finished  250 trials in 0 min  5 sec
+        16th phase (02Aug2020 - 10Aug2020): finished  402 trials in 0 min 10 sec
+        15th phase (22Jul2020 - 01Aug2020): finished  397 trials in 0 min 10 sec
+        13th phase (29Jun2020 - 09Jul2020): finished  335 trials in 0 min 10 sec
+        19th phase (29Aug2020 - 09Sep2020): finished  201 trials in 0 min  5 sec
+        20th phase (10Sep2020 - 18Sep2020): finished  228 trials in 0 min  5 sec
+        24th phase (24Oct2020 - 04Nov2020): finished  234 trials in 0 min  5 sec
+        17th phase (11Aug2020 - 20Aug2020): finished  389 trials in 0 min 10 sec
+        22nd phase (01Oct2020 - 13Oct2020): finished  396 trials in 0 min 10 sec
+        25th phase (05Nov2020 - 13Nov2020): finished  209 trials in 0 min  5 sec
+        21st phase (19Sep2020 - 30Sep2020): finished  415 trials in 0 min 10 sec
+        30th phase (30Dec2020 - 31Dec2020): finished  385 trials in 0 min  5 sec
+        26th phase (14Nov2020 - 26Nov2020): finished  391 trials in 0 min 10 sec
+        23rd phase (14Oct2020 - 23Oct2020): finished  379 trials in 0 min 10 sec
+        28th phase (10Dec2020 - 18Dec2020): finished  422 trials in 0 min 10 sec
+        31st phase (01Jan2021 - 16May2021): finished  455 trials in 0 min 10 sec
+        27th phase (27Nov2020 - 09Dec2020): finished  456 trials in 0 min 10 sec
+        29th phase (19Dec2020 - 29Dec2020): finished  482 trials in 0 min 10 sec
 Completed optimization. Total: 1 min 15 sec
 </pre></div></div>
 </div>
@@ -4665,7 +4713,7 @@ Completed optimization. Total: 1 min 15 sec
       <td>0.066019</td>
       <td>0.027718</td>
       <td>0.142890</td>
-      <td>552.0</td>
+      <td>464.0</td>
       <td>0 min 10 sec</td>
     </tr>
     <tr>
@@ -4679,7 +4727,7 @@ Completed optimization. Total: 1 min 15 sec
       <td>0.136657</td>
       <td>0.026198</td>
       <td>0.170717</td>
-      <td>462.0</td>
+      <td>400.0</td>
       <td>0 min 10 sec</td>
     </tr>
     <tr>
@@ -4693,7 +4741,7 @@ Completed optimization. Total: 1 min 15 sec
       <td>0.126398</td>
       <td>0.024802</td>
       <td>0.096698</td>
-      <td>453.0</td>
+      <td>489.0</td>
       <td>0 min 10 sec</td>
     </tr>
     <tr>
@@ -4701,13 +4749,13 @@ Completed optimization. Total: 1 min 15 sec
       <td>14Mar2020</td>
       <td>24Mar2020</td>
       <td>SIR-F</td>
-      <td>2.51</td>
-      <td>0.010285</td>
-      <td>0.002518</td>
-      <td>0.063876</td>
-      <td>0.022654</td>
-      <td>0.027972</td>
-      <td>477.0</td>
+      <td>2.49</td>
+      <td>0.010093</td>
+      <td>0.002681</td>
+      <td>0.063014</td>
+      <td>0.022401</td>
+      <td>0.029328</td>
+      <td>391.0</td>
       <td>0 min 10 sec</td>
     </tr>
     <tr>
@@ -4721,7 +4769,7 @@ Completed optimization. Total: 1 min 15 sec
       <td>0.117450</td>
       <td>0.022604</td>
       <td>0.036945</td>
-      <td>469.0</td>
+      <td>438.0</td>
       <td>0 min 10 sec</td>
     </tr>
     <tr>
@@ -4751,7 +4799,7 @@ Completed optimization. Total: 1 min 15 sec
       <td>0.105707</td>
       <td>0.088069</td>
       <td>0.012154</td>
-      <td>489.0</td>
+      <td>456.0</td>
       <td>0 min 10 sec</td>
     </tr>
     <tr>
@@ -4765,7 +4813,7 @@ Completed optimization. Total: 1 min 15 sec
       <td>0.109664</td>
       <td>0.087854</td>
       <td>0.013164</td>
-      <td>480.0</td>
+      <td>422.0</td>
       <td>0 min 10 sec</td>
     </tr>
     <tr>
@@ -4774,12 +4822,12 @@ Completed optimization. Total: 1 min 15 sec
       <td>29Dec2020</td>
       <td>SIR-F</td>
       <td>1.22</td>
-      <td>0.000520</td>
-      <td>0.001573</td>
-      <td>0.100136</td>
-      <td>0.080307</td>
-      <td>0.012609</td>
-      <td>504.0</td>
+      <td>0.000560</td>
+      <td>0.001466</td>
+      <td>0.100267</td>
+      <td>0.080776</td>
+      <td>0.012890</td>
+      <td>482.0</td>
       <td>0 min 10 sec</td>
     </tr>
     <tr>
@@ -4793,7 +4841,7 @@ Completed optimization. Total: 1 min 15 sec
       <td>0.104821</td>
       <td>0.056012</td>
       <td>0.000484</td>
-      <td>457.0</td>
+      <td>385.0</td>
       <td>0 min  5 sec</td>
     </tr>
     <tr>
@@ -4807,7 +4855,7 @@ Completed optimization. Total: 1 min 15 sec
       <td>0.086501</td>
       <td>0.086397</td>
       <td>0.365129</td>
-      <td>478.0</td>
+      <td>455.0</td>
       <td>0 min 10 sec</td>
     </tr>
   </tbody>
@@ -4887,11 +4935,11 @@ Completed optimization. Total: 1 min 15 sec
       <th>Confirmed on 16May2021</th>
       <th>Infected on 16May2021</th>
       <th>Fatal on 16May2021</th>
+      <th>5th_Rt</th>
+      <th>14th_Rt</th>
       <th>15th_Rt</th>
+      <th>17th_Rt</th>
       <th>20th_Rt</th>
-      <th>25th_Rt</th>
-      <th>31st_Rt</th>
-      <th>32nd_Rt</th>
       <th>...</th>
       <th>35th_Rt</th>
       <th>36th_Rt</th>
@@ -4913,13 +4961,13 @@ Completed optimization. Total: 1 min 15 sec
       <td>685367</td>
       <td>79473</td>
       <td>11563</td>
+      <td>12.31</td>
+      <td>2.24</td>
       <td>2.03</td>
-      <td>0.86</td>
-      <td>1.56</td>
-      <td>1.38</td>
-      <td>1.83</td>
+      <td>0.90</td>
+      <td>0.87</td>
       <td>...</td>
-      <td>0.51</td>
+      <td>0.49</td>
       <td>0.63</td>
       <td>0.7</td>
       <td>0.89</td>
@@ -4937,11 +4985,11 @@ Completed optimization. Total: 1 min 15 sec
       <td>615843</td>
       <td>28084</td>
       <td>11769</td>
+      <td>12.20</td>
+      <td>2.30</td>
       <td>2.02</td>
-      <td>0.87</td>
-      <td>1.58</td>
-      <td>0.98</td>
-      <td>-</td>
+      <td>0.89</td>
+      <td>0.86</td>
       <td>...</td>
       <td>-</td>
       <td>-</td>
@@ -4956,7 +5004,7 @@ Completed optimization. Total: 1 min 15 sec
     </tr>
   </tbody>
 </table>
-<p>2 rows × 22 columns</p>
+<p>2 rows × 27 columns</p>
 </div></div>
 </div>
 </div>
