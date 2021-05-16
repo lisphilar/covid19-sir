@@ -58,10 +58,10 @@ import covsirphy as cs
 # Download and update datasets
 data_loader = cs.DataLoader("input")
 jhu_data = data_loader.jhu()
-population_data = data_loader.population()
-# Check records
+# Select country name register the data
 snl = cs.Scenario(country="Japan")
-snl.register(jhu_data, population_data)
+snl.register(jhu_data)
+# Check records
 snl.records()
 # S-R trend analysis
 snl.trend().summary()
@@ -113,7 +113,7 @@ If you want to use SIR-F model, S-R trend analysis, phase-dependent approach to 
 
 Hirokazu Takaya (2020-2021), Kaggle Notebook, COVID-19 data with SIR model, [https://www.kaggle.com/lisphilar/covid-19-data-with-sir-model](https://www.kaggle.com/lisphilar/covid-19-data-with-sir-model)
 
-We can check the citation with the following script (version >= 2.18.0).
+We can check the citation with the following script.
 
 ```Python
 import covsirphy as cs
