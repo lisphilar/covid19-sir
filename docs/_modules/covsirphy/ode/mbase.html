@@ -68,7 +68,7 @@
             
             
               <div class="version">
-                2.19.1-kappa
+                2.19.1-mu-fu1
               </div>
             
           
@@ -384,8 +384,7 @@
             <span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">drop</span><span class="p">(</span><span class="bp">cls</span><span class="o">.</span><span class="n">DATE</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
             <span class="k">return</span> <span class="bp">cls</span><span class="o">.</span><span class="n">specialize</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">population</span><span class="o">=</span><span class="n">population</span><span class="p">)</span><span class="o">.</span><span class="n">reset_index</span><span class="p">(</span><span class="n">drop</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
         <span class="n">tau</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_ensure_tau</span><span class="p">(</span><span class="n">tau</span><span class="p">)</span>
-        <span class="n">df</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_ensure_dataframe</span><span class="p">(</span>
-            <span class="n">df</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;data_df&quot;</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="bp">cls</span><span class="o">.</span><span class="n">NLOC_COLUMNS</span><span class="p">)</span>
+        <span class="bp">cls</span><span class="o">.</span><span class="n">_ensure_dataframe</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;data_df&quot;</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="bp">cls</span><span class="o">.</span><span class="n">NLOC_COLUMNS</span><span class="p">)</span>
         <span class="c1"># Calculate elapsed time from the first date [min]</span>
         <span class="n">df</span><span class="p">[</span><span class="bp">cls</span><span class="o">.</span><span class="n">T</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="bp">cls</span><span class="o">.</span><span class="n">DATE</span><span class="p">]</span> <span class="o">-</span> <span class="n">df</span><span class="p">[</span><span class="bp">cls</span><span class="o">.</span><span class="n">DATE</span><span class="p">]</span><span class="o">.</span><span class="n">min</span><span class="p">())</span><span class="o">.</span><span class="n">dt</span><span class="o">.</span><span class="n">total_seconds</span><span class="p">()</span>
         <span class="n">df</span><span class="p">[</span><span class="bp">cls</span><span class="o">.</span><span class="n">T</span><span class="p">]</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="bp">cls</span><span class="o">.</span><span class="n">T</span><span class="p">]</span> <span class="o">//</span> <span class="mi">60</span>

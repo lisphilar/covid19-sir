@@ -70,7 +70,7 @@
             
             
               <div class="version">
-                2.19.1-kappa
+                2.19.1-mu-fu1
               </div>
             
           
@@ -1379,12 +1379,13 @@ dict: status for each complement type</p>
 </dd>
 <dt>Columns</dt><dd><ul>
 <li><p>Date: Observation date</p></li>
-<li><p>ISO3: ISO3 code</p></li>
+<li><p>ISO3: ISO3 code (optional)</p></li>
 <li><p>Country: country/region name</p></li>
 <li><p>Province: province/prefecture/state name</p></li>
 <li><p>Confirmed: the number of confirmed cases</p></li>
 <li><p>Fatal: the number of fatal cases</p></li>
 <li><p>Recovered: the number of recovered cases</p></li>
+<li><p>Population: population values (optional)</p></li>
 </ul>
 </dd>
 </dl>
@@ -1399,12 +1400,22 @@ dict: status for each complement type</p>
 </div>
 <dl class="py attribute">
 <dt class="sig sig-object py" id="covsirphy.cleaning.jhu_data.JHUData.CLEANED_COLS">
-<span class="sig-name descname"><span class="pre">CLEANED_COLS</span></span><em class="property"> <span class="pre">=</span> <span class="pre">['Date',</span> <span class="pre">'ISO3',</span> <span class="pre">'Country',</span> <span class="pre">'Province',</span> <span class="pre">'Confirmed',</span> <span class="pre">'Infected',</span> <span class="pre">'Fatal',</span> <span class="pre">'Recovered']</span></em><a class="headerlink" href="#covsirphy.cleaning.jhu_data.JHUData.CLEANED_COLS" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">CLEANED_COLS</span></span><em class="property"> <span class="pre">=</span> <span class="pre">['Date',</span> <span class="pre">'Country',</span> <span class="pre">'Province',</span> <span class="pre">'Confirmed',</span> <span class="pre">'Infected',</span> <span class="pre">'Fatal',</span> <span class="pre">'Recovered']</span></em><a class="headerlink" href="#covsirphy.cleaning.jhu_data.JHUData.CLEANED_COLS" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="covsirphy.cleaning.jhu_data.JHUData.OPTINAL_COLS">
+<span class="sig-name descname"><span class="pre">OPTINAL_COLS</span></span><em class="property"> <span class="pre">=</span> <span class="pre">['ISO3',</span> <span class="pre">'Population']</span></em><a class="headerlink" href="#covsirphy.cleaning.jhu_data.JHUData.OPTINAL_COLS" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="covsirphy.cleaning.jhu_data.JHUData.RAW_COLS">
-<span class="sig-name descname"><span class="pre">RAW_COLS</span></span><em class="property"> <span class="pre">=</span> <span class="pre">['Date',</span> <span class="pre">'ISO3',</span> <span class="pre">'Country',</span> <span class="pre">'Province',</span> <span class="pre">'Confirmed',</span> <span class="pre">'Fatal',</span> <span class="pre">'Recovered']</span></em><a class="headerlink" href="#covsirphy.cleaning.jhu_data.JHUData.RAW_COLS" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">RAW_COLS</span></span><em class="property"> <span class="pre">=</span> <span class="pre">['Date',</span> <span class="pre">'ISO3',</span> <span class="pre">'Country',</span> <span class="pre">'Province',</span> <span class="pre">'Confirmed',</span> <span class="pre">'Fatal',</span> <span class="pre">'Recovered',</span> <span class="pre">'Population']</span></em><a class="headerlink" href="#covsirphy.cleaning.jhu_data.JHUData.RAW_COLS" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="covsirphy.cleaning.jhu_data.JHUData.REQUIRED_COLS">
+<span class="sig-name descname"><span class="pre">REQUIRED_COLS</span></span><em class="property"> <span class="pre">=</span> <span class="pre">['Date',</span> <span class="pre">'Country',</span> <span class="pre">'Province',</span> <span class="pre">'Confirmed',</span> <span class="pre">'Fatal',</span> <span class="pre">'Recovered']</span></em><a class="headerlink" href="#covsirphy.cleaning.jhu_data.JHUData.REQUIRED_COLS" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="py attribute">
@@ -1510,6 +1521,7 @@ Index</p>
 <li><p>Infected: the number of currently infected cases</p></li>
 <li><p>Fatal: the number of fatal cases</p></li>
 <li><p>Recovered: the number of recovered cases</p></li>
+<li><p>Popupation: population values (optional)</p></li>
 </ul>
 </dd>
 </dl>
@@ -1593,10 +1605,12 @@ Records with Recovered &gt; 0 will be selected.</p>
 </dl>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
-<ul class="simple">
-<li><p>If &#64; population is not None, the number of susceptible cases will be calculated.</p></li>
-<li><p>If necessary and &#64;auto_complement is True, complement recovered data.</p></li>
-</ul>
+<p>If &#64;population (high priority) is not None or population values are registered in subset,
+the number of susceptible cases will be calculated.</p>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>If necessary and &#64;auto_complement is True, complement recovered data.</p>
 </div>
 </dd></dl>
 
@@ -1713,7 +1727,8 @@ for each country (if country/countries specified) or for all countries.</p>
 </dl>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
-<p>If &#64;population is not None, the number of susceptible cases will be calculated.</p>
+<p>If &#64;population (high priority) is not None or population values are registered in subset,
+the number of susceptible cases will be calculated.</p>
 </div>
 </dd></dl>
 
@@ -1759,7 +1774,8 @@ Records with Recovered &gt; 0 will be selected.</p>
 </dl>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
-<p>If &#64;population is not None, the number of susceptible cases will be calculated.</p>
+<p>If &#64;population (high priority) is not None or population values are registered in subset,
+the number of susceptible cases will be calculated.</p>
 </div>
 </dd></dl>
 

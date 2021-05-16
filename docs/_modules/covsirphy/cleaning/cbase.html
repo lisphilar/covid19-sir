@@ -68,7 +68,7 @@
             
             
               <div class="version">
-                2.19.1-kappa
+                2.19.1-mu-fu1
               </div>
             
           
@@ -223,7 +223,7 @@
         <span class="k">else</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_dirpath</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span><span class="o">.</span><span class="n">resolve</span><span class="p">()</span><span class="o">.</span><span class="n">parent</span>
 
-    <span class="k">def</span> <span class="nf">_parse_raw</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">raw_columns</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">_parse_raw</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">required_cols</span><span class="p">,</span> <span class="n">optional_cols</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Parse raw data with a CSV file or a dataframe.</span>
 
@@ -233,26 +233,42 @@
 <span class="sd">                Index</span>
 <span class="sd">                    reset index</span>
 <span class="sd">                Columns</span>
-<span class="sd">                    columns defined by @raw_columns</span>
-<span class="sd">            raw_columns (list[str]): columns to parse</span>
+<span class="sd">                    columns defined by @required_cols</span>
+<span class="sd">            required_cols (list[str]): required columns to parse</span>
+<span class="sd">            optional_cols (list[str] or None): optional columns to parse or None (no optinal columns)</span>
 
 <span class="sd">        Returns:</span>
 <span class="sd">            pandas.DataFrame:</span>
 <span class="sd">                Index</span>
 <span class="sd">                    reset index</span>
 <span class="sd">                Columns</span>
-<span class="sd">                    columns defined by @raw_columns</span>
+<span class="sd">                    columns defined by @required_cols</span>
 
 <span class="sd">        Note:</span>
 <span class="sd">            Either @filename (high priority) or @data must be specified.</span>
+
+<span class="sd">        Note:</span>
+<span class="sd">            When some optional columns are not included, None will be registered.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">if</span> <span class="n">filename</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">load</span><span class="p">(</span>
-                <span class="n">filename</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="n">raw_columns</span><span class="p">,</span>
-                <span class="n">dtype</span><span class="o">=</span><span class="p">{</span><span class="bp">self</span><span class="o">.</span><span class="n">PROVINCE</span><span class="p">:</span> <span class="s2">&quot;object&quot;</span><span class="p">,</span> <span class="s2">&quot;Province/State&quot;</span><span class="p">:</span> <span class="s2">&quot;object&quot;</span><span class="p">})</span>
-        <span class="k">if</span> <span class="n">data</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ensure_dataframe</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;data&quot;</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="n">raw_columns</span><span class="p">)</span>
-        <span class="k">return</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="n">raw_columns</span><span class="p">)</span>
+        <span class="n">all_columns</span> <span class="o">=</span> <span class="p">[</span><span class="o">*</span><span class="n">required_cols</span><span class="p">,</span> <span class="o">*</span><span class="p">(</span><span class="n">optional_cols</span> <span class="ow">or</span> <span class="p">[])]</span>
+        <span class="k">if</span> <span class="n">filename</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">data</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="k">return</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="n">all_columns</span><span class="p">)</span>
+            <span class="n">raw</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ensure_dataframe</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;data&quot;</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">raw</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">load</span><span class="p">(</span>
+                <span class="n">filename</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                <span class="n">dtype</span><span class="o">=</span><span class="p">{</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">PROVINCE</span><span class="p">:</span> <span class="s2">&quot;object&quot;</span><span class="p">,</span> <span class="s2">&quot;Province/State&quot;</span><span class="p">:</span> <span class="s2">&quot;object&quot;</span><span class="p">,</span>
+                    <span class="s2">&quot;key&quot;</span><span class="p">:</span> <span class="s2">&quot;object&quot;</span><span class="p">,</span> <span class="s2">&quot;key_alpha_2&quot;</span><span class="p">:</span> <span class="s2">&quot;object&quot;</span>
+                <span class="p">}</span>
+            <span class="p">)</span>
+        <span class="n">df</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ensure_dataframe</span><span class="p">(</span><span class="n">raw</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;loaded data&quot;</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="n">required_cols</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">optional_cols</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">df</span>
+        <span class="k">for</span> <span class="n">col</span> <span class="ow">in</span> <span class="n">optional_cols</span><span class="p">:</span>
+            <span class="n">df</span><span class="p">[</span><span class="n">col</span><span class="p">]</span> <span class="o">=</span> <span class="n">raw</span><span class="o">.</span><span class="n">loc</span><span class="p">[:,</span> <span class="n">col</span><span class="p">]</span> <span class="k">if</span> <span class="n">col</span> <span class="ow">in</span> <span class="n">raw</span> <span class="k">else</span> <span class="kc">None</span>
+        <span class="k">return</span> <span class="n">df</span><span class="o">.</span><span class="n">loc</span><span class="p">[:,</span> <span class="n">all_columns</span><span class="p">]</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">raw</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
@@ -522,7 +538,7 @@
         <span class="c1"># Subset with Start/end date</span>
         <span class="k">if</span> <span class="n">start_date</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">end_date</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">return</span> <span class="n">df</span><span class="o">.</span><span class="n">reset_index</span><span class="p">(</span><span class="n">drop</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-        <span class="n">df</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ensure_dataframe</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;the cleaned dataset&quot;</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">DATE</span><span class="p">])</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_ensure_dataframe</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;the cleaned dataset&quot;</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">DATE</span><span class="p">])</span>
         <span class="n">series</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">DATE</span><span class="p">]</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
         <span class="n">start_obj</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ensure_date</span><span class="p">(</span><span class="n">start_date</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="n">series</span><span class="o">.</span><span class="n">min</span><span class="p">())</span>
         <span class="n">end_obj</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ensure_date</span><span class="p">(</span><span class="n">end_date</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="n">series</span><span class="o">.</span><span class="n">max</span><span class="p">())</span>

@@ -68,7 +68,7 @@
             
             
               <div class="version">
-                2.19.1-kappa
+                2.19.1-mu-fu1
               </div>
             
           
@@ -567,8 +567,8 @@
 
     <span class="o">@</span> <span class="n">record_df</span><span class="o">.</span><span class="n">setter</span>
     <span class="k">def</span> <span class="nf">record_df</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">df</span><span class="p">):</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_record_df</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ensure_dataframe</span><span class="p">(</span>
-            <span class="n">df</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;df&quot;</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">NLOC_COLUMNS</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_ensure_dataframe</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;df&quot;</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">NLOC_COLUMNS</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_record_df</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">set_y0</span><span class="p">(</span><span class="n">df</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">_model_is_registered</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
@@ -608,8 +608,7 @@
         <span class="k">if</span> <span class="n">record_df</span><span class="o">.</span><span class="n">empty</span><span class="p">:</span>
             <span class="k">raise</span> <span class="n">UnExecutedError</span><span class="p">(</span>
                 <span class="s2">&quot;PhaseUnit.record_df = ...&quot;</span><span class="p">,</span> <span class="n">message</span><span class="o">=</span><span class="s2">&quot;or specify @record_df argument&quot;</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_ensure_dataframe</span><span class="p">(</span>
-            <span class="n">record_df</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;record_df&quot;</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">NLOC_COLUMNS</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_ensure_dataframe</span><span class="p">(</span><span class="n">record_df</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;record_df&quot;</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">NLOC_COLUMNS</span><span class="p">)</span>
         <span class="c1"># Check dates</span>
         <span class="n">sta</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ensure_date</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">start_date</span><span class="p">)</span>
         <span class="n">end</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ensure_date</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">end_date</span><span class="p">)</span>
