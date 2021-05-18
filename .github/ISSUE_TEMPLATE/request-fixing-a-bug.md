@@ -17,10 +17,9 @@ import covsirphy as cs
 # Dataset preparation
 data_loader = cs.DataLoader("input")
 jhu_data = data_loader.jhu()
-population_data = data_loader.population()
 # Scenario analysis
 snl = cs.Scenario(country="Country name used")
-snl.register(jhu_data, population_data)
+snl.register(jhu_data)
 ```
 
 ## Outputs
