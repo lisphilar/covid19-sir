@@ -39,10 +39,10 @@ class JHUData(CleaningBase):
         CleaningBase.C, CleaningBase.F, CleaningBase.R,
     ]
     OPTINAL_COLS = [CleaningBase.ISO3, CleaningBase.N]
-    # Columns of self._clean_df
+    # Columns of self._cleaned_df
     RAW_COLS = [
         CleaningBase.DATE, CleaningBase.ISO3, CleaningBase.COUNTRY, CleaningBase.PROVINCE,
-        CleaningBase.C, CleaningBase.F, CleaningBase.R, CleaningBase.N
+        CleaningBase.C, CleaningBase.CI, CleaningBase.F, CleaningBase.R, CleaningBase.N
     ]
     # Columns of self.cleaned()
     CLEANED_COLS = [
@@ -58,6 +58,7 @@ class JHUData(CleaningBase):
     def __init__(self, filename=None, data=None, citation=None):
         # Raw data
         self._raw = self._parse_raw(filename, data, self.REQUIRED_COLS, optional_cols=self.OPTINAL_COLS)
+        self._raw[self.CI] = None
         # Data cleaning
         self._cleaned_df = pd.DataFrame(columns=self.RAW_COLS) if self._raw.empty else self._cleaning()
         # Citation
