@@ -6,7 +6,8 @@ import warnings
 import numpy as np
 import pandas as pd
 from sklearn.exceptions import ConvergenceWarning
-from sklearn.linear_model import MultiTaskElasticNetCV
+from sklearn.multioutput import MultiOutputRegressor
+from sklearn.linear_model import ElasticNetCV
 from sklearn.pipeline import Pipeline
 from sklearn.preprocessing import MinMaxScaler
 from covsirphy.regression.regbase import _RegressorBase
@@ -45,31 +46,32 @@ class _ParamElasticNetRegressor(_RegressorBase):
         """
         warnings.filterwarnings("ignore", category=ConvergenceWarning)
         # Model for Elastic Net regression
-        cv = MultiTaskElasticNetCV(
+        cv = ElasticNetCV(
             alphas=[0, 0.001, 0.01, 0.1, 1, 10, 100, 1000],
             l1_ratio=[0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0],
-            cv=5, n_jobs=-1
+            cv=5, n_jobs=-1,
         )
         # Fit with pipeline
         steps = [
             ("scaler", MinMaxScaler()),
-            ("regressor", cv),
+            ("regressor", MultiOutputRegressor(cv)),
         ]
         pipeline = Pipeline(steps=steps)
         pipeline.fit(self._X_train, self._y_train)
-        reg_output = pipeline.named_steps.regressor
+        estimators = pipeline.named_steps.regressor.estimators_
         # Update regressor
         self._regressor = pipeline
         # Intercept/coef
         intercept_df = pd.DataFrame(
-            reg_output.coef_, index=self._y_train.columns, columns=self._X_train.columns)
+            np.concatenate([est.coef_ for est in estimators]),
+            index=self._y_train.columns, columns=self._X_train.columns)
         intercept_df.insert(0, "Intercept", None)
-        intercept_df["Intercept"] = reg_output.intercept_
+        intercept_df["Intercept"] = [est.intercept for est in estimators]
         # Update param
         param_dict = {
             **{k: type(v) for (k, v) in steps},
-            "alpha": reg_output.alpha_,
-            "l1_ratio": reg_output.l1_ratio_,
+            "alpha": [est.alpha_ for est in estimators],
+            "l1_ratio": [est.l1_ratio_ for est in estimators],
             "intercept": intercept_df,
             "coef": intercept_df,
         }
