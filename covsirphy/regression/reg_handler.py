@@ -1,11 +1,14 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
+from covsirphy.util.error import UnExpectedReturnValueError
 from covsirphy.util.evaluator import Evaluator
 from covsirphy.util.term import Term
 from covsirphy.ode.mbase import ModelBase
 from covsirphy.regression.param_elastic_net import _ParamElasticNetRegressor
+from covsirphy.regression.param_decision_tree import _ParamDecisionTreeRegressor
 from covsirphy.regression.rate_elastic_net import _RateElasticNetRegressor
+from covsirphy.regression.rate_decision_tree import _RateDecisionTreeRegressor
 
 
 class RegressionHandler(Term):
@@ -60,19 +63,25 @@ class RegressionHandler(Term):
         Note:
             All regressors are here.
             - Indicators -> Parameters with Elastic Net
+            - Indicators -> Parameters with Decision Tree Regressor
             - Indicators(n)/Indicators(n-1) -> Parameters(n)/Parameters(n-1) with Elastic Net
+            - Indicators(n)/Indicators(n-1) -> Parameters(n)/Parameters(n-1) with Decision Tree Regressor
         """
         # All approaches
         approach_dict = {
             _ParamElasticNetRegressor.DESC: self._fit_param_reg(_ParamElasticNetRegressor),
+            _ParamDecisionTreeRegressor.DESC: self._fit_param_reg(_ParamDecisionTreeRegressor),
             _RateElasticNetRegressor.DESC: self._fit_param_reg(_RateElasticNetRegressor),
+            _RateDecisionTreeRegressor.DESC: self._fit_param_reg(_RateDecisionTreeRegressor),
         }
         # Predicted all parameter values must be >= 0
         self._reg_dict = {
             k: v for (k, v) in approach_dict.items()
             if v.predict().ge(0).all().all() and v.predict().le(1).all().all()}
         if not self._reg_dict:
-            raise ValueError("Un-expected parameter values were predcited by all regressors, out of range (0, 1).")
+            raise UnExpectedReturnValueError(
+                name="ODE parameter values", value=None, plural=True,
+                message="Values are out of range (0, 1) with all regressors")
         # Select the best regressor with the metric
         score_dict = {k: v.score_test(metric=metric) for (k, v) in self._reg_dict.items()}
         self._best, score = Evaluator.best_one(score_dict, metric=metric)

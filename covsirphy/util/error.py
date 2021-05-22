@@ -208,3 +208,25 @@ class UnExpectedValueError(ValueError):
         s1 = f"@{self.name} must be selected from '{self.candidates_str}',"
         s2 = f"but {self.value} was applied.{self.message}"
         return f"{s1} {s2}"
+
+
+class UnExpectedReturnValueError(ValueError):
+    """
+    Error when unexpected value was returned.
+
+    Args:
+        name (str): argument name
+        value (object): value user applied or None (will not be shown)
+        plural (bool): whether prulal or not
+        message (str or None): the other messages
+    """
+
+    def __init__(self, name, value, plural=False, message=None):
+        self.name = str(name)
+        self.value = "" if value is None else f" ({value})"
+        self.s = "s" if plural else ""
+        self.be = "were" if plural else "was"
+        self.message = "" if message is None else f" {message}"
+
+    def __str__(self):
+        return f"Un-expected value{self.s}{self.value} {self.be} returned as {self.name}. {self.massage}."
