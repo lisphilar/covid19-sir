@@ -68,7 +68,7 @@
             
             
               <div class="version">
-                2.20.1
+                2.20.1-alpha
               </div>
             
           
@@ -188,7 +188,7 @@
 <span class="kn">from</span> <span class="nn">covsirphy.util.argument</span> <span class="kn">import</span> <span class="n">find_args</span>
 <span class="kn">from</span> <span class="nn">covsirphy.util.error</span> <span class="kn">import</span> <span class="n">deprecate</span><span class="p">,</span> <span class="n">ScenarioNotFoundError</span><span class="p">,</span> <span class="n">UnExecutedError</span>
 <span class="kn">from</span> <span class="nn">covsirphy.util.error</span> <span class="kn">import</span> <span class="n">NotRegisteredMainError</span><span class="p">,</span> <span class="n">NotRegisteredExtraError</span>
-<span class="kn">from</span> <span class="nn">covsirphy.util.error</span> <span class="kn">import</span> <span class="n">NotInteractiveError</span>
+<span class="kn">from</span> <span class="nn">covsirphy.util.error</span> <span class="kn">import</span> <span class="n">NotInteractiveError</span><span class="p">,</span> <span class="n">UnExpectedReturnValueError</span>
 <span class="kn">from</span> <span class="nn">covsirphy.util.evaluator</span> <span class="kn">import</span> <span class="n">Evaluator</span>
 <span class="kn">from</span> <span class="nn">covsirphy.util.term</span> <span class="kn">import</span> <span class="n">Term</span>
 <span class="kn">from</span> <span class="nn">covsirphy.visualization.line_plot</span> <span class="kn">import</span> <span class="n">line_plot</span>
@@ -1488,8 +1488,12 @@
                     <span class="n">data</span><span class="o">=</span><span class="n">data</span><span class="p">,</span> <span class="n">model</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_model</span><span class="p">,</span> <span class="n">delay</span><span class="o">=</span><span class="n">candidate</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
                 <span class="k">try</span><span class="p">:</span>
                     <span class="n">score_dict</span><span class="p">[</span><span class="n">candidate</span><span class="p">]</span> <span class="o">=</span> <span class="n">handler_candidate</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">metric</span><span class="o">=</span><span class="n">metric</span><span class="p">)</span>
-                <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
+                <span class="k">except</span> <span class="n">UnExpectedReturnValueError</span><span class="p">:</span>
                     <span class="k">pass</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">score_dict</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="n">UnExpectedReturnValueError</span><span class="p">(</span>
+                    <span class="n">name</span><span class="o">=</span><span class="s2">&quot;ODE parameter values&quot;</span><span class="p">,</span> <span class="n">value</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">plural</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                    <span class="n">message</span><span class="o">=</span><span class="s2">&quot;Values are out of range (0, 1) with all regressors and all candidates of delay&quot;</span><span class="p">)</span>
             <span class="n">delay</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">Evaluator</span><span class="o">.</span><span class="n">best_one</span><span class="p">(</span><span class="n">score_dict</span><span class="p">,</span> <span class="n">metric</span><span class="o">=</span><span class="n">metric</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="c1"># Use specified delay value</span>
