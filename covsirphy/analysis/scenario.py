@@ -12,7 +12,7 @@ import pandas as pd
 from covsirphy.util.argument import find_args
 from covsirphy.util.error import deprecate, ScenarioNotFoundError, UnExecutedError
 from covsirphy.util.error import NotRegisteredMainError, NotRegisteredExtraError
-from covsirphy.util.error import NotInteractiveError
+from covsirphy.util.error import NotInteractiveError, UnExpectedReturnValueError
 from covsirphy.util.evaluator import Evaluator
 from covsirphy.util.term import Term
 from covsirphy.visualization.line_plot import line_plot
@@ -1312,8 +1312,11 @@ class Scenario(Term):
                     data=data, model=self._model, delay=candidate, **kwargs)
                 try:
                     score_dict[candidate] = handler_candidate.fit(metric=metric)
-                except ValueError:
+                except UnExpectedReturnValueError:
                     pass
+            if not score_dict:
+                raise ValueError(
+                    "Failed in regression because parameter values are out of (0, 1) for all candidates of delay.")
             delay, _ = Evaluator.best_one(score_dict, metric=metric)
         else:
             # Use specified delay value

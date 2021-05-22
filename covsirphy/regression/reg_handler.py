@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
+from covsirphy.util.error import UnExpectedReturnValueError
 from covsirphy.util.evaluator import Evaluator
 from covsirphy.util.term import Term
 from covsirphy.ode.mbase import ModelBase
@@ -77,6 +78,10 @@ class RegressionHandler(Term):
         self._reg_dict = {
             k: v for (k, v) in approach_dict.items()
             if v.predict().ge(0).all().all() and v.predict().le(1).all().all()}
+        if not self._reg_dict:
+            raise UnExpectedReturnValueError(
+                name="ODE parameter values", value=None, plural=True,
+                message="Values are out of range (0, 1) with all regressors")
         # Select the best regressor with the metric
         score_dict = {k: v.score_test(metric=metric) for (k, v) in self._reg_dict.items()}
         self._best, score = Evaluator.best_one(score_dict, metric=metric)
