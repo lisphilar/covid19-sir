@@ -1315,8 +1315,9 @@ class Scenario(Term):
                 except UnExpectedReturnValueError:
                     pass
             if not score_dict:
-                raise ValueError(
-                    "Failed in regression because parameter values are out of (0, 1) for all candidates of delay.")
+                raise UnExpectedReturnValueError(
+                    name="ODE parameter values", value=None, plural=True,
+                    message="Values are out of range (0, 1) with all regressors and all candidates of delay")
             delay, _ = Evaluator.best_one(score_dict, metric=metric)
         else:
             # Use specified delay value
