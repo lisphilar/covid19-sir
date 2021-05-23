@@ -34,10 +34,9 @@ def main(country="Italy", province=None, file_prefix="ita"):
     output_dir.mkdir(exist_ok=True, parents=True)
     filer = cs.Filer(output_dir, prefix=file_prefix, numbering="01")
     # Load datasets
-    data_loader = cs.DataLoader(input_dir)
-    jhu_data = data_loader.jhu()
-    # Extra datasets
-    oxcgrt_data = data_loader.oxcgrt()
+    loader = cs.DataLoader(input_dir)
+    jhu_data = loader.jhu()
+    oxcgrt_data = loader.oxcgrt()
     # Start scenario analysis
     snl = cs.Scenario(country=country, province=province)
     snl.register(jhu_data, extras=[oxcgrt_data])
@@ -50,6 +49,9 @@ def main(country="Italy", province=None, file_prefix="ita"):
         # Restore phase setting (Main scenario)
         print("Restore phase settings of Main scenario with backup JSON file.")
         snl.restore(**backupfile_dict)
+        # Adjust file numbers
+        filer.png("trend")
+        filer.png("estimate_accuracy")
     else:
         # S-R trend analysis
         snl.trend(**filer.png("trend"))
@@ -73,8 +75,7 @@ def main(country="Italy", province=None, file_prefix="ita"):
     snl.history_rate(name="Main", **filer.png("history-rate_main"))
     # Forecast scenario: Short-term prediction with regression and OxCGRT data
     fit_dict = snl.fit(delay=(7, 31), name="Forecast")
-    fit_dict.pop("coef").to_csv(**filer.csv("forecast_coef", index=True))
-    del fit_dict["dataset"], fit_dict["intercept"]
+    del fit_dict["dataset"], fit_dict["intercept"], fit_dict["coef"]
     print(fit_dict)
     snl.predict(name="Forecast")
     snl.adjust_end()
