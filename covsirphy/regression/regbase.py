@@ -77,8 +77,7 @@ class _RegressorBase(Term):
         X_delayed = X.copy()
         X_delayed.index += timedelta(days=delay)
         # Training/test data
-        df = X_delayed.join(y, how="inner")
-        df = df.rolling(window=delay).mean().dropna().drop_duplicates()
+        df = X_delayed.join(y, how="inner").dropna().drop_duplicates()
         X_arranged = df.loc[:, X.columns]
         y_arranged = df.loc[:, y.columns]
         splitted = train_test_split(X_arranged, y_arranged, **split_kwargs)
