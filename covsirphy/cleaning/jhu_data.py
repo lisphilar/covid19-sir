@@ -132,7 +132,7 @@ class JHUData(CleaningBase):
         """
         df = self._raw.loc[:, self.RAW_COLS]
         # Datetime columns
-        df[self.DATE] = pd.to_datetime(df[self.DATE]).dt.round("D")
+        df[self.DATE] = pd.to_datetime(df[self.DATE]).dt.tz_convert(None).round("D")
         # Province
         df[self.PROVINCE] = df[self.PROVINCE].fillna(self.UNKNOWN)
         # Values

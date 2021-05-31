@@ -112,7 +112,7 @@ class CountryData(CleaningBase):
         df[v_cols] = df[v_cols].fillna(0).astype(np.int64)
         df[self.CI] = df[self.C] - df[self.F] - df[self.R]
         # Groupby date and province
-        df[self.DATE] = pd.to_datetime(df[self.DATE]).dt.round("D")
+        df[self.DATE] = pd.to_datetime(df[self.DATE]).dt.tz_convert(None).round("D")
         df = df.groupby([self.DATE, self.PROVINCE]).sum().reset_index()
         # Add country column
         df[self.COUNTRY] = self._country
