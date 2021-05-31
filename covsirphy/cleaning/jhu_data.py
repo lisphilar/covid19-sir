@@ -132,7 +132,7 @@ class JHUData(CleaningBase):
         """
         df = self._raw.loc[:, self.RAW_COLS]
         # Datetime columns
-        df[self.DATE] = pd.to_datetime(df[self.DATE]).round("D")
+        df[self.DATE] = pd.to_datetime(df[self.DATE]).dt.round("D")
         try:
             df[self.DATE] = df[self.DATE].dt.tz_convert(None)
         except TypeError:
