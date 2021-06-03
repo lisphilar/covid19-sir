@@ -25,7 +25,7 @@ class RegressionHandler(Term):
                 - the number of cases
                 - indicators
         model (covsirphy.ModelBase): ODE model
-        delay (int): delay period [days]
+        delay (int or tuple(int, int)): exact (or value range of) delay period [days]
         kwargs: keyword arguments of sklearn.model_selection.train_test_split(test_size=0.2, random_state=0)
 
     Note:
@@ -39,13 +39,21 @@ class RegressionHandler(Term):
         self._ensure_subclass(model, ModelBase, name="model")
         self._parameters = model.PARAMETERS[:]
         # Delay period
-        self._delay = self._ensure_natural_int(delay, name="delay")
+        if isinstance(delay, tuple):
+            delay_min, delay_max = delay
+            self._ensure_natural_int(delay_min, name="delay[0]")
+            self._ensure_natural_int(delay_max, name="delay[1]")
+            self._delay_candidates = list(range(delay_min, delay_max + 1))
+        else:
+            delay = self._ensure_natural_int(delay, name="delay")
+            self._delay_candidates = [delay]
         # Keyword arguments
         self._kwargs = kwargs.copy()
         # All regressors {name: RegressorBase}
         self._reg_dict = {}
-        # The best regressor name
+        # The best regressor name and determined delay period
         self._best = None
+        self._delay = None
 
     def fit(self, metric):
         """
@@ -68,11 +76,15 @@ class RegressionHandler(Term):
             - Indicators(n)/Indicators(n-1) -> Parameters(n)/Parameters(n-1) with Decision Tree Regressor
         """
         # All approaches
+        regressors = [
+            _ParamElasticNetRegressor,
+            _ParamDecisionTreeRegressor,
+            _RateElasticNetRegressor,
+            _RateDecisionTreeRegressor,
+        ]
         approach_dict = {
-            _ParamElasticNetRegressor.DESC: self._fit_param_reg(_ParamElasticNetRegressor),
-            _ParamDecisionTreeRegressor.DESC: self._fit_param_reg(_ParamDecisionTreeRegressor),
-            _RateElasticNetRegressor.DESC: self._fit_param_reg(_RateElasticNetRegressor),
-            _RateDecisionTreeRegressor.DESC: self._fit_param_reg(_RateDecisionTreeRegressor),
+            (reg.DESC, delay): self._fit_param_reg(reg, delay)
+            for reg in regressors for delay in self._delay_candidates
         }
         # Predicted all parameter values must be >= 0
         self._reg_dict = {
@@ -84,15 +96,16 @@ class RegressionHandler(Term):
                 message="Values are out of range (0, 1) with all regressors")
         # Select the best regressor with the metric
         score_dict = {k: v.score_test(metric=metric) for (k, v) in self._reg_dict.items()}
-        self._best, score = Evaluator.best_one(score_dict, metric=metric)
+        (self._best, self._delay), score = Evaluator.best_one(score_dict, metric=metric)
         return score
 
-    def _fit_param_reg(self, regressor_class):
+    def _fit_param_reg(self, regressor_class, delay):
         """
         Fit a regressor which uses ODE parameter values as y.
 
         Args:
             regressor_class (covsirphy.regression.regbase.RegressorBase): regression class
+            delay (int): delay period [days]
 
         Returns:
             covsirphy.regression.regbase.RegressorBase: fitted regressor
@@ -101,7 +114,7 @@ class RegressionHandler(Term):
         self._ensure_dataframe(df, name="data", columns=self._parameters)
         X = df.drop(self._parameters, axis=1)
         y = df.loc[:, self._parameters]
-        return regressor_class(X=X, y=y, delay=self._delay, **self._kwargs)
+        return regressor_class(X=X, y=y, delay=delay, **self._kwargs)
 
     def to_dict(self, metric):
         """
@@ -126,7 +139,7 @@ class RegressionHandler(Term):
                 - delay (int): delay period
         """
         fit_dict = {"best": self._best}
-        fit_dict.update(self._reg_dict[self._best].to_dict(metric=metric))
+        fit_dict.update(self._reg_dict[self._best, self._delay].to_dict(metric=metric))
         return fit_dict
 
     def predict(self):
@@ -140,4 +153,4 @@ class RegressionHandler(Term):
                 Columns
                     (float): parameter values (4 digits)
         """
-        return self._reg_dict[self._best].predict()
+        return self._reg_dict[self._best, self._delay].predict()

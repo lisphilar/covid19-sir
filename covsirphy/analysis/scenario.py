@@ -12,7 +12,7 @@ import pandas as pd
 from covsirphy.util.argument import find_args
 from covsirphy.util.error import deprecate, ScenarioNotFoundError, UnExecutedError
 from covsirphy.util.error import NotRegisteredMainError, NotRegisteredExtraError
-from covsirphy.util.error import NotInteractiveError, UnExpectedReturnValueError
+from covsirphy.util.error import NotInteractiveError
 from covsirphy.util.evaluator import Evaluator
 from covsirphy.util.term import Term
 from covsirphy.visualization.line_plot import line_plot
@@ -1301,25 +1301,7 @@ class Scenario(Term):
             delay, delay_df = self.estimate_delay(oxcgrt_data)
             records_df = records_df.loc[:, ~records_df.columns.isin(delay_df.columns)]
             data = param_df.join(records_df)
-        elif isinstance(delay, tuple):
-            # Estimate the best delay value with grid search in the range
-            delay_min, delay_max = delay
-            self._ensure_natural_int(delay_min, name="delay[0]")
-            self._ensure_natural_int(delay_max, name="delay[1]")
-            score_dict = {}
-            for candidate in range(delay_min, delay_max + 1):
-                handler_candidate = RegressionHandler(
-                    data=data, model=self._model, delay=candidate, **kwargs)
-                try:
-                    score_dict[candidate] = handler_candidate.fit(metric=metric)
-                except UnExpectedReturnValueError:
-                    pass
-            if not score_dict:
-                raise UnExpectedReturnValueError(
-                    name="ODE parameter values", value=None, plural=True,
-                    message="Values are out of range (0, 1) with all regressors and all candidates of delay")
-            delay, _ = Evaluator.best_one(score_dict, metric=metric)
-        else:
+        elif not isinstance(delay, tuple):
             # Use specified delay value
             delay = self._ensure_natural_int(delay, name="delay")
         # Fit regression models
