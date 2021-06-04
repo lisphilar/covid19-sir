@@ -68,7 +68,7 @@
             
             
               <div class="version">
-                2.20.2-alpha
+                2.20.2-beta
               </div>
             
           
@@ -188,7 +188,7 @@
 <span class="kn">from</span> <span class="nn">covsirphy.util.argument</span> <span class="kn">import</span> <span class="n">find_args</span>
 <span class="kn">from</span> <span class="nn">covsirphy.util.error</span> <span class="kn">import</span> <span class="n">deprecate</span><span class="p">,</span> <span class="n">ScenarioNotFoundError</span><span class="p">,</span> <span class="n">UnExecutedError</span>
 <span class="kn">from</span> <span class="nn">covsirphy.util.error</span> <span class="kn">import</span> <span class="n">NotRegisteredMainError</span><span class="p">,</span> <span class="n">NotRegisteredExtraError</span>
-<span class="kn">from</span> <span class="nn">covsirphy.util.error</span> <span class="kn">import</span> <span class="n">NotInteractiveError</span><span class="p">,</span> <span class="n">UnExpectedReturnValueError</span>
+<span class="kn">from</span> <span class="nn">covsirphy.util.error</span> <span class="kn">import</span> <span class="n">NotInteractiveError</span>
 <span class="kn">from</span> <span class="nn">covsirphy.util.evaluator</span> <span class="kn">import</span> <span class="n">Evaluator</span>
 <span class="kn">from</span> <span class="nn">covsirphy.util.term</span> <span class="kn">import</span> <span class="n">Term</span>
 <span class="kn">from</span> <span class="nn">covsirphy.visualization.line_plot</span> <span class="kn">import</span> <span class="n">line_plot</span>
@@ -1477,25 +1477,7 @@
             <span class="n">delay</span><span class="p">,</span> <span class="n">delay_df</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">estimate_delay</span><span class="p">(</span><span class="n">oxcgrt_data</span><span class="p">)</span>
             <span class="n">records_df</span> <span class="o">=</span> <span class="n">records_df</span><span class="o">.</span><span class="n">loc</span><span class="p">[:,</span> <span class="o">~</span><span class="n">records_df</span><span class="o">.</span><span class="n">columns</span><span class="o">.</span><span class="n">isin</span><span class="p">(</span><span class="n">delay_df</span><span class="o">.</span><span class="n">columns</span><span class="p">)]</span>
             <span class="n">data</span> <span class="o">=</span> <span class="n">param_df</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">records_df</span><span class="p">)</span>
-        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">delay</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">):</span>
-            <span class="c1"># Estimate the best delay value with grid search in the range</span>
-            <span class="n">delay_min</span><span class="p">,</span> <span class="n">delay_max</span> <span class="o">=</span> <span class="n">delay</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_ensure_natural_int</span><span class="p">(</span><span class="n">delay_min</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;delay[0]&quot;</span><span class="p">)</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_ensure_natural_int</span><span class="p">(</span><span class="n">delay_max</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;delay[1]&quot;</span><span class="p">)</span>
-            <span class="n">score_dict</span> <span class="o">=</span> <span class="p">{}</span>
-            <span class="k">for</span> <span class="n">candidate</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">delay_min</span><span class="p">,</span> <span class="n">delay_max</span> <span class="o">+</span> <span class="mi">1</span><span class="p">):</span>
-                <span class="n">handler_candidate</span> <span class="o">=</span> <span class="n">RegressionHandler</span><span class="p">(</span>
-                    <span class="n">data</span><span class="o">=</span><span class="n">data</span><span class="p">,</span> <span class="n">model</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_model</span><span class="p">,</span> <span class="n">delay</span><span class="o">=</span><span class="n">candidate</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
-                <span class="k">try</span><span class="p">:</span>
-                    <span class="n">score_dict</span><span class="p">[</span><span class="n">candidate</span><span class="p">]</span> <span class="o">=</span> <span class="n">handler_candidate</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">metric</span><span class="o">=</span><span class="n">metric</span><span class="p">)</span>
-                <span class="k">except</span> <span class="n">UnExpectedReturnValueError</span><span class="p">:</span>
-                    <span class="k">pass</span>
-            <span class="k">if</span> <span class="ow">not</span> <span class="n">score_dict</span><span class="p">:</span>
-                <span class="k">raise</span> <span class="n">UnExpectedReturnValueError</span><span class="p">(</span>
-                    <span class="n">name</span><span class="o">=</span><span class="s2">&quot;ODE parameter values&quot;</span><span class="p">,</span> <span class="n">value</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">plural</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-                    <span class="n">message</span><span class="o">=</span><span class="s2">&quot;Values are out of range (0, 1) with all regressors and all candidates of delay&quot;</span><span class="p">)</span>
-            <span class="n">delay</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">Evaluator</span><span class="o">.</span><span class="n">best_one</span><span class="p">(</span><span class="n">score_dict</span><span class="p">,</span> <span class="n">metric</span><span class="o">=</span><span class="n">metric</span><span class="p">)</span>
-        <span class="k">else</span><span class="p">:</span>
+        <span class="k">elif</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">delay</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">):</span>
             <span class="c1"># Use specified delay value</span>
             <span class="n">delay</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ensure_natural_int</span><span class="p">(</span><span class="n">delay</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;delay&quot;</span><span class="p">)</span>
         <span class="c1"># Fit regression models</span>
