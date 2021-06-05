@@ -56,7 +56,7 @@ class _RegressorBase(Term):
             X (pandas.DataFrame): indicators with time index
             y (pandas.DataFrame): target values with time index
             delay (int): delay period [days]
-            kwargs: keyword arguments of sklearn.model_selection.train_test_split(test_size=0.2, random_state=0)
+            kwargs: keyword arguments of sklearn.model_selection.train_test_split()
 
         Returns:
             tuple(pandas.DataFrame): datasets with time index
@@ -68,8 +68,12 @@ class _RegressorBase(Term):
 
         Note:
             If @seed is included in kwargs, this will be converted to @random_state.
+
+        Note:
+            default values regarding sklearn.model_selection.train_test_split() are
+            test_size=0.2, random_state=0, shuffle=False.
         """
-        split_kwargs = {"test_size": 0.2, "random_state": 0, }
+        split_kwargs = {"test_size": 0.2, "random_state": 0, "shuffle": False}
         split_kwargs.update(kwargs)
         split_kwargs["random_state"] = split_kwargs.get("seed", split_kwargs["random_state"])
         split_kwargs = find_args(train_test_split, **split_kwargs)

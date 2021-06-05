@@ -1253,7 +1253,7 @@ class Scenario(Term):
                 - None: Scenario.estimate_delay() calculate automatically
             removed_cols (list[str] or None): list of variables to remove from X dataset or None (indicators used to estimate delay period)
             metric (str): metric name
-            kwargs: keyword arguments of sklearn.model_selection.train_test_split(test_size=0.2, random_state=0)
+            kwargs: keyword arguments of sklearn.model_selection.train_test_split()
 
         Raises:
             covsirphy.UnExecutedError: Scenario.estimate() or Scenario.add() were not performed
@@ -1269,6 +1269,10 @@ class Scenario(Term):
 
         Note:
             If @seed is included in kwargs, this will be converted to @random_state.
+
+        Note:
+            default values regarding sklearn.model_selection.train_test_split() are
+            test_size=0.2, random_state=0, shuffle=False.
         """
         metric = kwargs.pop("metrics") if "metrics" in kwargs else metric
         # Clear the future phases
