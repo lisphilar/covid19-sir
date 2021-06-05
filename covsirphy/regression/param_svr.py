@@ -1,0 +1,97 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+
+from math import log10, floor
+import warnings
+import numpy as np
+import pandas as pd
+from sklearn.exceptions import ConvergenceWarning
+from sklearn.model_selection import GridSearchCV
+from sklearn.multioutput import MultiOutputRegressor
+from sklearn.pipeline import Pipeline
+from sklearn.preprocessing import MinMaxScaler
+from sklearn.svm import SVR
+from covsirphy.regression.regbase import _RegressorBase
+
+
+class _ParamSVRegressor(_RegressorBase):
+    """
+    Predict parameter values of ODE models with epsilon-supprot vector regressor.
+
+    Args:
+        X (pandas.DataFrame):
+            Index
+                Date (pandas.Timestamp): observation date
+            Columns
+                (int/float): indicators
+        y (pandas.DataFrame):
+            Index
+                Date (pandas.Timestamp): observation date
+            Columns
+                (int/float) target values
+        delay (int): delay period [days]
+        kwargs: keyword arguments of sklearn.model_selection.train_test_split()
+
+    Note:
+        If @seed is included in kwargs, this will be converted to @random_state.
+
+    Note:
+        default values regarding sklearn.model_selection.train_test_split() are
+        test_size=0.2, random_state=0, shuffle=False.
+    """
+    # Description of regressor
+    DESC = "Indicators -> Parameters with Epsilon-Supprot Vector Regressor"
+
+    def __init__(self, X, y, delay, **kwargs):
+        super().__init__(X, y, delay, **kwargs)
+
+    def _fit(self):
+        """
+        Fit regression model with training dataset, update self._regressor and self._param.
+        """
+        warnings.simplefilter("ignore", category=ConvergenceWarning)
+        # Paramters of the steps
+        param_grid = {
+            "regressor__estimator__kernel": ["linear", "rbf"],
+            "regressor__estimator__C": [1, 10, 100],
+            "regressor__estimator__gamma": [0.01, 0.1],
+            "regressor__estimator__epsilon": [0.001, 0.01, 0.02, 0.05],
+        }
+        # Fit with pipeline
+        steps = [
+            ("scaler", MinMaxScaler()),
+            ("regressor", MultiOutputRegressor(SVR())),
+        ]
+        pipeline = GridSearchCV(Pipeline(steps=steps), param_grid, n_jobs=-1, cv=5)
+        pipeline.fit(self._X_train, self._y_train)
+        # Update regressor
+        self._regressor = pipeline
+        # Update param
+        estimators = pipeline.best_estimator_.named_steps.regressor.estimators_
+        param_dict = {
+            **{k: type(v) for (k, v) in steps},
+            "kernel": [output.kernel for output in estimators],
+            "C": [output.C for output in estimators],
+            "gamma": [output.gamma for output in estimators],
+            "epsilon": [output.epsilon for output in estimators],
+            "intercept": pd.DataFrame(),
+            "coef": pd.DataFrame(),
+        }
+        self._param.update(param_dict)
+
+    def predict(self):
+        """
+        Predict parameter values (via y) with self._regressor and X_target.
+
+        Returns:
+            pandas.DataFrame:
+                Index
+                    Date (pandas.Timestamp): future dates
+                Columns
+                    (float): parameter values (4 digits)
+        """
+        # Predict parameter values
+        predicted = self._regressor.predict(self._X_target)
+        df = pd.DataFrame(predicted, index=self._X_target.index, columns=self._y_train.columns)
+        # parameter values: 4 digits
+        return df.applymap(lambda x: np.around(x, 4 - int(floor(log10(abs(x)))) - 1))
