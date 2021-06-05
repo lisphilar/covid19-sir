@@ -70,7 +70,7 @@
             
             
               <div class="version">
-                2.20.2-beta
+                2.20.2-delta
               </div>
             
           
@@ -6605,13 +6605,18 @@ With .fit() method, the best regressor will be selected based on the scores with
 </p></li>
 <li><p><strong>model</strong> (<a class="reference internal" href="#covsirphy.ModelBase" title="covsirphy.ModelBase"><em>covsirphy.ModelBase</em></a>) – ODE model</p></li>
 <li><p><strong>delay</strong> (<em>int</em><em> or </em><em>tuple</em><em>(</em><em>int</em><em>, </em><em>int</em><em>)</em>) – exact (or value range of) delay period [days]</p></li>
-<li><p><strong>kwargs</strong> – keyword arguments of sklearn.model_selection.train_test_split(test_size=0.2, random_state=0)</p></li>
+<li><p><strong>kwargs</strong> – keyword arguments of sklearn.model_selection.train_test_split()</p></li>
 </ul>
 </dd>
 </dl>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
 <p>If &#64;seed is included in kwargs, this will be converted to &#64;random_state.</p>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>default values regarding sklearn.model_selection.train_test_split() are
+test_size=0.2, random_state=0, shuffle=False.</p>
 </div>
 <dl class="py method">
 <dt class="sig sig-object py" id="covsirphy.RegressionHandler.fit">
@@ -6636,8 +6641,10 @@ With .fit() method, the best regressor will be selected based on the scores with
 <p>All regressors are here.
 - Indicators -&gt; Parameters with Elastic Net
 - Indicators -&gt; Parameters with Decision Tree Regressor
+- Indicators -&gt; Parameters with Epsilon-Supprot Vector Regressor
 - Indicators(n)/Indicators(n-1) -&gt; Parameters(n)/Parameters(n-1) with Elastic Net
-- Indicators(n)/Indicators(n-1) -&gt; Parameters(n)/Parameters(n-1) with Decision Tree Regressor</p>
+- Indicators(n)/Indicators(n-1) -&gt; Parameters(n)/Parameters(n-1) with Decision Tree Regressor
+- Indicators(n)/Indicators(n-1) -&gt; Parameters(n)/Parameters(n-1) with Epsilon-Supprot Vector Regressor</p>
 </div>
 </dd></dl>
 
@@ -8065,7 +8072,7 @@ Please refer to covsirphy.RegressionHander class.</p>
 </p></li>
 <li><p><strong>removed_cols</strong> (<em>list</em><em>[</em><em>str</em><em>] or </em><em>None</em>) – list of variables to remove from X dataset or None (indicators used to estimate delay period)</p></li>
 <li><p><strong>metric</strong> (<em>str</em>) – metric name</p></li>
-<li><p><strong>kwargs</strong> – keyword arguments of sklearn.model_selection.train_test_split(test_size=0.2, random_state=0)</p></li>
+<li><p><strong>kwargs</strong> – keyword arguments of sklearn.model_selection.train_test_split()</p></li>
 </ul>
 </dd>
 <dt class="field-even">Raises</dt>
@@ -8089,6 +8096,11 @@ Please refer to covsirphy.RegressionHander class.</p>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
 <p>If &#64;seed is included in kwargs, this will be converted to &#64;random_state.</p>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>default values regarding sklearn.model_selection.train_test_split() are
+test_size=0.2, random_state=0, shuffle=False.</p>
 </div>
 </dd></dl>
 
@@ -10026,8 +10038,10 @@ Index</p>
 <li class="toctree-l2"><a class="reference internal" href="covsirphy.regression.html#submodules">Submodules</a></li>
 <li class="toctree-l2"><a class="reference internal" href="covsirphy.regression.html#module-covsirphy.regression.param_decision_tree">covsirphy.regression.param_decision_tree module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="covsirphy.regression.html#module-covsirphy.regression.param_elastic_net">covsirphy.regression.param_elastic_net module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="covsirphy.regression.html#module-covsirphy.regression.param_svr">covsirphy.regression.param_svr module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="covsirphy.regression.html#module-covsirphy.regression.rate_decision_tree">covsirphy.regression.rate_decision_tree module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="covsirphy.regression.html#module-covsirphy.regression.rate_elastic_net">covsirphy.regression.rate_elastic_net module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="covsirphy.regression.html#module-covsirphy.regression.rate_svr">covsirphy.regression.rate_svr module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="covsirphy.regression.html#module-covsirphy.regression.reg_handler">covsirphy.regression.reg_handler module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="covsirphy.regression.html#module-covsirphy.regression.regbase">covsirphy.regression.regbase module</a></li>
 </ul>

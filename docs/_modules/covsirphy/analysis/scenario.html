@@ -68,7 +68,7 @@
             
             
               <div class="version">
-                2.20.2-beta
+                2.20.2-delta
               </div>
             
           
@@ -1429,7 +1429,7 @@
 <span class="sd">                - None: Scenario.estimate_delay() calculate automatically</span>
 <span class="sd">            removed_cols (list[str] or None): list of variables to remove from X dataset or None (indicators used to estimate delay period)</span>
 <span class="sd">            metric (str): metric name</span>
-<span class="sd">            kwargs: keyword arguments of sklearn.model_selection.train_test_split(test_size=0.2, random_state=0)</span>
+<span class="sd">            kwargs: keyword arguments of sklearn.model_selection.train_test_split()</span>
 
 <span class="sd">        Raises:</span>
 <span class="sd">            covsirphy.UnExecutedError: Scenario.estimate() or Scenario.add() were not performed</span>
@@ -1445,6 +1445,10 @@
 
 <span class="sd">        Note:</span>
 <span class="sd">            If @seed is included in kwargs, this will be converted to @random_state.</span>
+
+<span class="sd">        Note:</span>
+<span class="sd">            default values regarding sklearn.model_selection.train_test_split() are</span>
+<span class="sd">            test_size=0.2, random_state=0, shuffle=False.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">metric</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;metrics&quot;</span><span class="p">)</span> <span class="k">if</span> <span class="s2">&quot;metrics&quot;</span> <span class="ow">in</span> <span class="n">kwargs</span> <span class="k">else</span> <span class="n">metric</span>
         <span class="c1"># Clear the future phases</span>

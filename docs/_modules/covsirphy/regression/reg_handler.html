@@ -68,7 +68,7 @@
             
             
               <div class="version">
-                2.20.2-beta
+                2.20.2-delta
               </div>
             
           
@@ -183,8 +183,10 @@
 <span class="kn">from</span> <span class="nn">covsirphy.ode.mbase</span> <span class="kn">import</span> <span class="n">ModelBase</span>
 <span class="kn">from</span> <span class="nn">covsirphy.regression.param_elastic_net</span> <span class="kn">import</span> <span class="n">_ParamElasticNetRegressor</span>
 <span class="kn">from</span> <span class="nn">covsirphy.regression.param_decision_tree</span> <span class="kn">import</span> <span class="n">_ParamDecisionTreeRegressor</span>
+<span class="kn">from</span> <span class="nn">covsirphy.regression.param_svr</span> <span class="kn">import</span> <span class="n">_ParamSVRegressor</span>
 <span class="kn">from</span> <span class="nn">covsirphy.regression.rate_elastic_net</span> <span class="kn">import</span> <span class="n">_RateElasticNetRegressor</span>
 <span class="kn">from</span> <span class="nn">covsirphy.regression.rate_decision_tree</span> <span class="kn">import</span> <span class="n">_RateDecisionTreeRegressor</span>
+<span class="kn">from</span> <span class="nn">covsirphy.regression.rate_svr</span> <span class="kn">import</span> <span class="n">_RateSVRegressor</span>
 
 
 <div class="viewcode-block" id="RegressionHandler"><a class="viewcode-back" href="../../../covsirphy.regression.html#covsirphy.RegressionHandler">[docs]</a><span class="k">class</span> <span class="nc">RegressionHandler</span><span class="p">(</span><span class="n">Term</span><span class="p">):</span>
@@ -202,10 +204,14 @@
 <span class="sd">                - indicators</span>
 <span class="sd">        model (covsirphy.ModelBase): ODE model</span>
 <span class="sd">        delay (int or tuple(int, int)): exact (or value range of) delay period [days]</span>
-<span class="sd">        kwargs: keyword arguments of sklearn.model_selection.train_test_split(test_size=0.2, random_state=0)</span>
+<span class="sd">        kwargs: keyword arguments of sklearn.model_selection.train_test_split()</span>
 
 <span class="sd">    Note:</span>
 <span class="sd">        If @seed is included in kwargs, this will be converted to @random_state.</span>
+
+<span class="sd">    Note:</span>
+<span class="sd">        default values regarding sklearn.model_selection.train_test_split() are</span>
+<span class="sd">        test_size=0.2, random_state=0, shuffle=False.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">model</span><span class="p">,</span> <span class="n">delay</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
@@ -248,15 +254,19 @@
 <span class="sd">            All regressors are here.</span>
 <span class="sd">            - Indicators -&gt; Parameters with Elastic Net</span>
 <span class="sd">            - Indicators -&gt; Parameters with Decision Tree Regressor</span>
+<span class="sd">            - Indicators -&gt; Parameters with Epsilon-Supprot Vector Regressor</span>
 <span class="sd">            - Indicators(n)/Indicators(n-1) -&gt; Parameters(n)/Parameters(n-1) with Elastic Net</span>
 <span class="sd">            - Indicators(n)/Indicators(n-1) -&gt; Parameters(n)/Parameters(n-1) with Decision Tree Regressor</span>
+<span class="sd">            - Indicators(n)/Indicators(n-1) -&gt; Parameters(n)/Parameters(n-1) with Epsilon-Supprot Vector Regressor</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="c1"># All approaches</span>
         <span class="n">regressors</span> <span class="o">=</span> <span class="p">[</span>
             <span class="n">_ParamElasticNetRegressor</span><span class="p">,</span>
             <span class="n">_ParamDecisionTreeRegressor</span><span class="p">,</span>
+            <span class="n">_ParamSVRegressor</span><span class="p">,</span>
             <span class="n">_RateElasticNetRegressor</span><span class="p">,</span>
             <span class="n">_RateDecisionTreeRegressor</span><span class="p">,</span>
+            <span class="n">_RateSVRegressor</span><span class="p">,</span>
         <span class="p">]</span>
         <span class="n">approach_dict</span> <span class="o">=</span> <span class="p">{</span>
             <span class="p">(</span><span class="n">reg</span><span class="o">.</span><span class="n">DESC</span><span class="p">,</span> <span class="n">delay</span><span class="p">):</span> <span class="bp">self</span><span class="o">.</span><span class="n">_fit_param_reg</span><span class="p">(</span><span class="n">reg</span><span class="p">,</span> <span class="n">delay</span><span class="p">)</span>
