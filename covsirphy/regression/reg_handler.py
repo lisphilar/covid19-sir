@@ -7,8 +7,10 @@ from covsirphy.util.term import Term
 from covsirphy.ode.mbase import ModelBase
 from covsirphy.regression.param_elastic_net import _ParamElasticNetRegressor
 from covsirphy.regression.param_decision_tree import _ParamDecisionTreeRegressor
+from covsirphy.regression.param_svr import _ParamSVRegressor
 from covsirphy.regression.rate_elastic_net import _RateElasticNetRegressor
 from covsirphy.regression.rate_decision_tree import _RateDecisionTreeRegressor
+from covsirphy.regression.rate_svr import _RateSVRegressor
 
 
 class RegressionHandler(Term):
@@ -76,15 +78,19 @@ class RegressionHandler(Term):
             All regressors are here.
             - Indicators -> Parameters with Elastic Net
             - Indicators -> Parameters with Decision Tree Regressor
+            - Indicators -> Parameters with Epsilon-Supprot Vector Regressor
             - Indicators(n)/Indicators(n-1) -> Parameters(n)/Parameters(n-1) with Elastic Net
             - Indicators(n)/Indicators(n-1) -> Parameters(n)/Parameters(n-1) with Decision Tree Regressor
+            - Indicators(n)/Indicators(n-1) -> Parameters(n)/Parameters(n-1) with Epsilon-Supprot Vector Regressor
         """
         # All approaches
         regressors = [
             _ParamElasticNetRegressor,
             _ParamDecisionTreeRegressor,
+            _ParamSVRegressor,
             _RateElasticNetRegressor,
             _RateDecisionTreeRegressor,
+            _RateSVRegressor,
         ]
         approach_dict = {
             (reg.DESC, delay): self._fit_param_reg(reg, delay)

@@ -3,17 +3,18 @@
 
 import warnings
 import pandas as pd
-from sklearn.decomposition import PCA
 from sklearn.exceptions import ConvergenceWarning
-from sklearn.model_selection import GridSearchCV
+from sklearn.model_selection import RandomizedSearchCV
+from sklearn.multioutput import MultiOutputRegressor
 from sklearn.pipeline import Pipeline
-from sklearn.tree import DecisionTreeRegressor
+from sklearn.preprocessing import MinMaxScaler
+from sklearn.svm import SVR
 from covsirphy.regression.regbase import _RegressorBase
 
 
-class _ParamDecisionTreeRegressor(_RegressorBase):
+class _ParamSVRegressor(_RegressorBase):
     """
-    Predict parameter values of ODE models with decision tree regressor.
+    Predict parameter values of ODE models with epsilon-supprot vector regressor.
 
     Args:
         X (pandas.DataFrame):
@@ -37,7 +38,7 @@ class _ParamDecisionTreeRegressor(_RegressorBase):
         test_size=0.2, random_state=0, shuffle=False.
     """
     # Description of regressor
-    DESC = "Indicators -> Parameters with Decision Tree Regressor"
+    DESC = "Indicators -> Parameters with Epsilon-Supprot Vector Regressor"
 
     def __init__(self, X, y, delay, **kwargs):
         super().__init__(X, y, delay, **kwargs)
@@ -49,22 +50,28 @@ class _ParamDecisionTreeRegressor(_RegressorBase):
         warnings.simplefilter("ignore", category=ConvergenceWarning)
         # Paramters of the steps
         param_grid = {
-            "pca__n_components": [int(v * len(self._X_train.columns)) for v in [0.1, 0.5, 0.9, 1.0]],
-            "regressor__max_depth": [3, 5, 7, 9],
+            "regressor__estimator__kernel": ["linear", "rbf"],
+            "regressor__estimator__C": [1, 10, 100],
+            "regressor__estimator__gamma": [0.01, 0.1],
+            "regressor__estimator__epsilon": [0.001, 0.01, 0.02, 0.05],
         }
         # Fit with pipeline
         steps = [
-            ("pca", PCA(random_state=0)),
-            ("regressor", DecisionTreeRegressor(random_state=0)),
+            ("scaler", MinMaxScaler()),
+            ("regressor", MultiOutputRegressor(SVR())),
         ]
-        pipeline = GridSearchCV(Pipeline(steps=steps), param_grid, n_jobs=-1, cv=5)
+        pipeline = RandomizedSearchCV(Pipeline(steps=steps), param_grid, n_jobs=-1, cv=5, n_iter=10)
         pipeline.fit(self._X_train, self._y_train)
         # Update regressor
         self._regressor = pipeline
         # Update param
+        estimators = pipeline.best_estimator_.named_steps.regressor.estimators_
         param_dict = {
             **{k: type(v) for (k, v) in steps},
-            "pca_n_components": pipeline.best_estimator_.named_steps.pca.n_components_,
+            "kernel": [output.kernel for output in estimators],
+            "C": [output.C for output in estimators],
+            "gamma": [output.gamma for output in estimators],
+            "epsilon": [output.epsilon for output in estimators],
             "intercept": pd.DataFrame(),
             "coef": pd.DataFrame(),
         }

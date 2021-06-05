@@ -2,6 +2,8 @@
 # -*- coding: utf-8 -*-
 
 from datetime import timedelta
+from math import log10, floor
+import numpy as np
 import pandas as pd
 from sklearn.model_selection import train_test_split
 from covsirphy.util.argument import find_args
@@ -147,13 +149,16 @@ class _RegressorBase(Term):
     def predict(self):
         """
         Predict parameter values (via y) with self._regressor and X_target.
-        This method should be overwritten by child classes.
 
         Returns:
             pandas.DataFrame:
                 Index
                     Date (pandas.Timestamp): future dates
                 Columns
-                    (float): parameter values
+                    (float): parameter values (4 digits)
         """
-        raise NotImplementedError
+        # Predict parameter values
+        predicted = self._regressor.predict(self._X_target)
+        df = pd.DataFrame(predicted, index=self._X_target.index, columns=self._y_train.columns)
+        # parameter values: 4 digits
+        return df.applymap(lambda x: np.around(x, 4 - int(floor(log10(abs(x)))) - 1))
