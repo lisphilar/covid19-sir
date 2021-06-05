@@ -29,10 +29,14 @@ class _ParamDecisionTreeRegressor(_RegressorBase):
             Columns
                 (int/float) target values
         delay (int): delay period [days]
-        kwargs: keyword arguments of sklearn.model_selection.train_test_split(test_size=0.2, random_state=0)
+        kwargs: keyword arguments of sklearn.model_selection.train_test_split()
 
     Note:
         If @seed is included in kwargs, this will be converted to @random_state.
+
+    Note:
+        default values regarding sklearn.model_selection.train_test_split() are
+        test_size=0.2, random_state=0, shuffle=False.
     """
     # Description of regressor
     DESC = "Indicators -> Parameters with Decision Tree Regressor"
