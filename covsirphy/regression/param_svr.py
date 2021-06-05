@@ -6,7 +6,7 @@ import warnings
 import numpy as np
 import pandas as pd
 from sklearn.exceptions import ConvergenceWarning
-from sklearn.model_selection import GridSearchCV
+from sklearn.model_selection import RandomizedSearchCV
 from sklearn.multioutput import MultiOutputRegressor
 from sklearn.pipeline import Pipeline
 from sklearn.preprocessing import MinMaxScaler
@@ -62,7 +62,7 @@ class _ParamSVRegressor(_RegressorBase):
             ("scaler", MinMaxScaler()),
             ("regressor", MultiOutputRegressor(SVR())),
         ]
-        pipeline = GridSearchCV(Pipeline(steps=steps), param_grid, n_jobs=-1, cv=5)
+        pipeline = RandomizedSearchCV(Pipeline(steps=steps), param_grid, n_jobs=-1, cv=5, n_iter=10)
         pipeline.fit(self._X_train, self._y_train)
         # Update regressor
         self._regressor = pipeline
