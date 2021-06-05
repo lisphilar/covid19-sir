@@ -1,9 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-from math import log10, floor
 import warnings
-import numpy as np
 import pandas as pd
 from sklearn.exceptions import ConvergenceWarning
 from sklearn.model_selection import RandomizedSearchCV
@@ -78,20 +76,3 @@ class _ParamSVRegressor(_RegressorBase):
             "coef": pd.DataFrame(),
         }
         self._param.update(param_dict)
-
-    def predict(self):
-        """
-        Predict parameter values (via y) with self._regressor and X_target.
-
-        Returns:
-            pandas.DataFrame:
-                Index
-                    Date (pandas.Timestamp): future dates
-                Columns
-                    (float): parameter values (4 digits)
-        """
-        # Predict parameter values
-        predicted = self._regressor.predict(self._X_target)
-        df = pd.DataFrame(predicted, index=self._X_target.index, columns=self._y_train.columns)
-        # parameter values: 4 digits
-        return df.applymap(lambda x: np.around(x, 4 - int(floor(log10(abs(x)))) - 1))
