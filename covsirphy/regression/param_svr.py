@@ -14,7 +14,7 @@ from covsirphy.regression.regbase import _RegressorBase
 
 class _ParamSVRegressor(_RegressorBase):
     """
-    Predict parameter values of ODE models with epsilon-supprot vector regressor.
+    Predict parameter values of ODE models with epsilon-support vector regressor.
 
     Args:
         X (pandas.DataFrame):
@@ -38,7 +38,7 @@ class _ParamSVRegressor(_RegressorBase):
         test_size=0.2, random_state=0, shuffle=False.
     """
     # Description of regressor
-    DESC = "Indicators -> Parameters with Epsilon-Supprot Vector Regressor"
+    DESC = "Indicators -> Parameters with Epsilon-Support Vector Regressor"
 
     def __init__(self, X, y, delay, **kwargs):
         super().__init__(X, y, delay, **kwargs)

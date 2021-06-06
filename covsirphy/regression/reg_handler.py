@@ -78,10 +78,10 @@ class RegressionHandler(Term):
             All regressors are here.
             - Indicators -> Parameters with Elastic Net
             - Indicators -> Parameters with Decision Tree Regressor
-            - Indicators -> Parameters with Epsilon-Supprot Vector Regressor
+            - Indicators -> Parameters with Epsilon-Support Vector Regressor
             - Indicators(n)/Indicators(n-1) -> Parameters(n)/Parameters(n-1) with Elastic Net
             - Indicators(n)/Indicators(n-1) -> Parameters(n)/Parameters(n-1) with Decision Tree Regressor
-            - Indicators(n)/Indicators(n-1) -> Parameters(n)/Parameters(n-1) with Epsilon-Supprot Vector Regressor
+            - Indicators(n)/Indicators(n-1) -> Parameters(n)/Parameters(n-1) with Epsilon-Support Vector Regressor
         """
         # All approaches
         regressors = [
