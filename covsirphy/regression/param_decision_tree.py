@@ -5,7 +5,7 @@ import warnings
 import pandas as pd
 from sklearn.decomposition import PCA
 from sklearn.exceptions import ConvergenceWarning
-from sklearn.model_selection import GridSearchCV
+from sklearn.model_selection import GridSearchCV, TimeSeriesSplit
 from sklearn.pipeline import Pipeline
 from sklearn.tree import DecisionTreeRegressor
 from covsirphy.regression.regbase import _RegressorBase
@@ -49,7 +49,7 @@ class _ParamDecisionTreeRegressor(_RegressorBase):
         warnings.simplefilter("ignore", category=ConvergenceWarning)
         # Paramters of the steps
         param_grid = {
-            "pca__n_components": [int(v * len(self._X_train.columns)) for v in [0.1, 0.5, 0.9, 1.0]],
+            "pca__n_components": [0.3, 0.5, 0.7, 0.9],
             "regressor__max_depth": [3, 5, 7, 9],
         }
         # Fit with pipeline
@@ -57,7 +57,8 @@ class _ParamDecisionTreeRegressor(_RegressorBase):
             ("pca", PCA(random_state=0)),
             ("regressor", DecisionTreeRegressor(random_state=0)),
         ]
-        pipeline = GridSearchCV(Pipeline(steps=steps), param_grid, n_jobs=-1, cv=5)
+        tscv = TimeSeriesSplit(n_splits=5).split(self._X_train)
+        pipeline = GridSearchCV(Pipeline(steps=steps), param_grid, n_jobs=-1, cv=tscv)
         pipeline.fit(self._X_train, self._y_train)
         # Update regressor
         self._regressor = pipeline
