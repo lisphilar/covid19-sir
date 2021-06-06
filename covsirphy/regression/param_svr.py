@@ -4,7 +4,7 @@
 import warnings
 import pandas as pd
 from sklearn.exceptions import ConvergenceWarning
-from sklearn.model_selection import RandomizedSearchCV
+from sklearn.model_selection import RandomizedSearchCV, TimeSeriesSplit
 from sklearn.multioutput import MultiOutputRegressor
 from sklearn.pipeline import Pipeline
 from sklearn.preprocessing import MinMaxScaler
@@ -60,7 +60,8 @@ class _ParamSVRegressor(_RegressorBase):
             ("scaler", MinMaxScaler()),
             ("regressor", MultiOutputRegressor(SVR())),
         ]
-        pipeline = RandomizedSearchCV(Pipeline(steps=steps), param_grid, n_jobs=-1, cv=5, n_iter=10)
+        tscv = TimeSeriesSplit(n_splits=5).split(self._X_train)
+        pipeline = RandomizedSearchCV(Pipeline(steps=steps), param_grid, n_jobs=-1, cv=tscv, n_iter=10)
         pipeline.fit(self._X_train, self._y_train)
         # Update regressor
         self._regressor = pipeline

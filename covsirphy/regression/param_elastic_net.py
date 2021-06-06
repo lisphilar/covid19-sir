@@ -5,6 +5,7 @@ import warnings
 import pandas as pd
 from sklearn.exceptions import ConvergenceWarning
 from sklearn.linear_model import MultiTaskElasticNetCV
+from sklearn.model_selection import TimeSeriesSplit
 from sklearn.pipeline import Pipeline
 from sklearn.preprocessing import MinMaxScaler
 from covsirphy.regression.regbase import _RegressorBase
@@ -47,10 +48,11 @@ class _ParamElasticNetRegressor(_RegressorBase):
         """
         warnings.filterwarnings("ignore", category=ConvergenceWarning)
         # Model for Elastic Net regression
+        tscv = TimeSeriesSplit(n_splits=5).split(self._X_train)
         cv = MultiTaskElasticNetCV(
             alphas=[0, 0.001, 0.01, 0.1, 1, 10, 100, 1000],
             l1_ratio=[0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0],
-            cv=5, n_jobs=-1
+            cv=tscv, n_jobs=-1
         )
         # Fit with pipeline
         steps = [
