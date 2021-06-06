@@ -48,9 +48,8 @@ class _ParamDecisionTreeRegressor(_RegressorBase):
         """
         warnings.simplefilter("ignore", category=ConvergenceWarning)
         # Paramters of the steps
-        max_n = min(len(self._X_train) / 5, len(self._X_train.columns)) - 1
         param_grid = {
-            "pca__n_components": [int(v * max_n) for v in [0.3, 0.5, 0.7, 1.0]],
+            "pca__n_components": [0.3, 0.5, 0.7, 0.9],
             "regressor__max_depth": [3, 5, 7, 9],
         }
         # Fit with pipeline
