@@ -1,0 +1,35 @@
+name: installation tests
+
+on:
+  push:
+    branches:
+      - master
+    paths:
+      - "pyproject.toml"
+  # on pull requests: temporary, will be removed after solving #800
+  pull_request:
+    types: [edited, synchronize, opened, reopened]
+
+jobs:
+  anaconda_pip:
+    # Set-up Python
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [windows-latest]
+        pythonVersion: [3.7, 3.8, 3.9]
+
+    steps:
+    # Install Anaconda
+    - uses: actions/checkout@v2
+    - name: Anaconda-Action
+      id: step1
+      uses: fdiblen/anaconda-action@0.1.7
+      with:
+        envFileName: 'environment.yml'
+
+    # Install CovsirPhy with pip: will be changed to development version
+    - name: installation of CovsirPhy
+      run: |
+        pip install pip --upgrade
+        pip install covsirphy --upgrade
