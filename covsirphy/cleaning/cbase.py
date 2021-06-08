@@ -4,7 +4,6 @@
 from pathlib import Path
 import warnings
 import country_converter as coco
-from dask import dataframe as dd
 import geopandas as gpd
 from matplotlib import pyplot as plt
 import pandas as pd
@@ -36,9 +35,7 @@ class CleaningBase(Term):
             self._cleaned_df = pd.DataFrame()
         else:
             Path(filename).parent.mkdir(exist_ok=True, parents=True)
-            self._raw = dd.read_csv(
-                filename, dtype={"Province/State": "object"}
-            ).compute()
+            self._raw = pd.read_csv(filename, dtype={"Province/State": "object"})
             self._cleaned_df = self._cleaning()
         self._citation = citation or ""
         # Directory that save the file
@@ -136,10 +133,7 @@ class CleaningBase(Term):
         warnings.filterwarnings("ignore", category=DeprecationWarning)
         kwargs = {
             "low_memory": False, "dtype": dtype, "header": header, "usecols": columns}
-        try:
-            return dd.read_csv(urlpath, blocksize=None, **kwargs).compute()
-        except (FileNotFoundError, UnicodeDecodeError, pd.errors.ParserError):
-            return pd.read_csv(urlpath, **kwargs)
+        return pd.read_csv(urlpath, **kwargs)
 
     def cleaned(self):
         """
