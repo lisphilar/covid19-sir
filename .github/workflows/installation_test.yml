@@ -1,0 +1,35 @@
+name: installation tests
+
+on:
+  push:
+    branches:
+      - master
+    paths:
+      - "pyproject.toml"
+  pull_request:
+    types: [edited, synchronize, opened, reopened]
+
+jobs:
+  anaconda_pip:
+    # Set-up Python
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [windows-latest]
+        python-version: [3.9]
+
+    steps:
+      # Install Anaconda
+      - uses: actions/checkout@v2
+      - name: Setup conda
+        uses: s-weigand/setup-conda@v1
+        with:
+          update-conda: true
+          python-version: ${{ matrix.python-version }}
+          conda-channels: anaconda, conda-forge
+
+      # Install CovsirPhy with pip: will be changed to development version
+      - name: installation of CovsirPhy
+        run: |
+          conda install -c conda-forge pip fiona ruptures
+          pip install covsirphy --upgrade
