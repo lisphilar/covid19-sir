@@ -17,7 +17,7 @@ jobs:
     strategy:
       matrix:
         os: [windows-latest]
-        python-version: [3.7, 3.8, 3.9]
+        python-version: [3.9]
 
     steps:
       # Install Anaconda
@@ -32,5 +32,5 @@ jobs:
       # Install CovsirPhy with pip: will be changed to development version
       - name: installation of CovsirPhy
         run: |
-          pip install pip --upgrade
+          conda install -c conda-forge pip fiona ruptures
           pip install covsirphy --upgrade
