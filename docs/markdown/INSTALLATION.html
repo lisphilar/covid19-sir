@@ -70,7 +70,7 @@
             
             
               <div class="version">
-                2.20.2-epsilon-fu1
+                2.20.3
               </div>
             
           
@@ -98,7 +98,12 @@
               <p class="caption"><span class="caption-text">Contents:</span></p>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="../README.html">CovsirPhy introduction</a></li>
-<li class="toctree-l1 current"><a class="current reference internal" href="#">Installation</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Installation</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#stable-version">Stable version</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#development-version">Development version</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#installation-with-anaconda">Installation with Anaconda</a></li>
+</ul>
+</li>
 <li class="toctree-l1"><a class="reference internal" href="#dataset-preparation">Dataset preparation</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#recommended-datasets">1. Recommended datasets</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#covid-19-data-hub">COVID-19 Data Hub</a></li>
@@ -222,13 +227,34 @@
 </style>
 <div class="section" id="installation">
 <h1>Installation<a class="headerlink" href="#installation" title="Permalink to this headline">¶</a></h1>
-<p>The latest stable version of CovsirPhy is available at <a class="reference external" href="https://pypi.org/project/covsirphy/">PyPI (The Python Package Index): covsirphy</a> and supports Python 3.7 or newer versions. It is recommended to use virtual environment.</p>
+<p><code class="docutils literal notranslate"><span class="pre">covsirphy</span></code> library supports Python 3.7 or newer versions.</p>
+<p><strong>Please use <code class="docutils literal notranslate"><span class="pre">covsirphy</span></code> with a virtual environment</strong> (venv/poetry/conda etc.) because it has many dependencies as listed in “tool.poetry.dependencies” of <a class="reference external" href="https://github.com/lisphilar/covid19-sir/blob/master/pyproject.toml">pyproject.toml</a>.</p>
+<p>If you have any concerns, kindly create issues in <a class="reference external" href="https://github.com/lisphilar/covid19-sir/issues">CovsirPhy: GitHub Issues page</a>. All discussions are recorded there.</p>
+<div class="section" id="stable-version">
+<h2>Stable version<a class="headerlink" href="#stable-version" title="Permalink to this headline">¶</a></h2>
+<p>The latest stable version of CovsirPhy is available at <a class="reference external" href="https://pypi.org/project/covsirphy/">PyPI (The Python Package Index): covsirphy</a>.</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>pip install --upgrade covsirphy
 </pre></div>
 </div>
-<p>You can find the latest development in <a class="reference external" href="https://github.com/lisphilar/covid19-sir">GitHub repository: CovsirPhy</a> and install it with <code class="docutils literal notranslate"><span class="pre">pip</span></code> command. Please refer to <a class="reference external" href="https://lisphilar.github.io/covid19-sir/CONTRIBUTING.html">Guideline of contribution</a>.</p>
+</div>
+<div class="section" id="development-version">
+<h2>Development version<a class="headerlink" href="#development-version" title="Permalink to this headline">¶</a></h2>
+<p>You can find the latest development in <a class="reference external" href="https://github.com/lisphilar/covid19-sir">GitHub repository: CovsirPhy</a> and install it with <code class="docutils literal notranslate"><span class="pre">pip</span></code> command.</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>pip install --upgrade <span class="s2">&quot;git+https://github.com/lisphilar/covid19-sir.git#egg=covsirphy&quot;</span>
 </pre></div>
+</div>
+<p>If you have a time to contribute CovsirPhy project, please refer to <a class="reference external" href="https://lisphilar.github.io/covid19-sir/CONTRIBUTING.html">Guideline of contribution</a>. Always welcome!</p>
+</div>
+<div class="section" id="installation-with-anaconda">
+<h2>Installation with Anaconda<a class="headerlink" href="#installation-with-anaconda" title="Permalink to this headline">¶</a></h2>
+<p>Anaconda users can install <code class="docutils literal notranslate"><span class="pre">covsirphy</span></code> in a conda environment (named “covid” for example). To avoid version conflicts of dependencies, <code class="docutils literal notranslate"><span class="pre">fiona</span></code>, <code class="docutils literal notranslate"><span class="pre">ruptures</span></code> and <code class="docutils literal notranslate"><span class="pre">pip</span></code> should be installed with conda command in advance.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>conda create -n covid <span class="nv">python</span><span class="o">=</span><span class="m">3</span> pip
+conda activate covid
+conda install -c conda-forge fiona ruptures
+pip install --upgrade covsirphy
+</pre></div>
+</div>
+<p>To exit this conda environment, please use <code class="docutils literal notranslate"><span class="pre">conda</span> <span class="pre">deactivate</span></code>.</p>
 </div>
 </div>
 <div class="section" id="dataset-preparation">
@@ -302,7 +328,7 @@
 </div>
 <div class="section" id="datasets-for-covsirphy">
 <h3><a class="reference external" href="https://github.com/lisphilar/covid19-sir/tree/master/data">Datasets for CovsirPhy</a><a class="headerlink" href="#datasets-for-covsirphy" title="Permalink to this headline">¶</a></h3>
-<p>Lisphilar (2020), GitHub repository, COVID-19 dataset in Japan, <a class="reference external" href="https://github.com/lisphilar/covid19-sir/tree/master/data">https://github.com/lisphilar/covid19-sir/tree/master/data</a>.</p>
+<p>Hirokazu Takaya (2020-2021), GitHub repository, COVID-19 dataset in Japan, <a class="reference external" href="https://github.com/lisphilar/covid19-sir/tree/master/data">https://github.com/lisphilar/covid19-sir/tree/master/data</a>.</p>
 <ul class="simple">
 <li><p>The number of cases in Japan (total/prefectures)</p></li>
 <li><p>Metadata regarding Japan prefectures</p></li>
