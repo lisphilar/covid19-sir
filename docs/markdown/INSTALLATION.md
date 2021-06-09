@@ -113,7 +113,7 @@ World Bank Group (2020), World Bank Open Data, [https://data.worldbank.org/](htt
 
 ### [Datasets for CovsirPhy](https://github.com/lisphilar/covid19-sir/tree/master/data)
 
-Lisphilar (2020), GitHub repository, COVID-19 dataset in Japan, [https://github.com/lisphilar/covid19-sir/tree/master/data](https://github.com/lisphilar/covid19-sir/tree/master/data).  
+Hirokazu Takaya (2020-2021), GitHub repository, COVID-19 dataset in Japan, [https://github.com/lisphilar/covid19-sir/tree/master/data](https://github.com/lisphilar/covid19-sir/tree/master/data).  
 
 - The number of cases in Japan (total/prefectures)
 - Metadata regarding Japan prefectures
