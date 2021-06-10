@@ -23,7 +23,7 @@ class _RateElasticNetRegressor(_ParamElasticNetRegressor):
                 Date (pandas.Timestamp): observation date
             Columns
                 (int/float) target values
-        delay (int): delay period [days]
+        delay_values (list[int]): list of delay period [days]
         kwargs: keyword arguments of sklearn.model_selection.train_test_split()
 
     Note:
@@ -36,14 +36,14 @@ class _RateElasticNetRegressor(_ParamElasticNetRegressor):
     # Description of regressor
     DESC = "Indicators(n)/Indicators(n-1) -> Parameters(n)/Parameters(n-1) with Elastic Net"
 
-    def __init__(self, X, y, delay, **kwargs):
+    def __init__(self, X, y, delay_values, **kwargs):
         # Remember the last value of y (= the previous value of target y)
         self._last_param_df = y.tail(1)
         # Calculate X(n) / X(n-1) and replace inf/NA with 0
         X_div = X.div(X.shift(1)).replace(np.inf, 0).fillna(0)
         # Calculate y(n) / y(n-1) and replace inf with NAs (NAs will be removed in ._split())
         y_div = y.div(y.shift(1)).replace(np.inf, np.nan)
-        super().__init__(X_div, y_div, delay, **kwargs)
+        super().__init__(X_div, y_div, delay_values, **kwargs)
 
     def predict(self):
         """

@@ -1,7 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-from datetime import timedelta
 from math import log10, floor
 import numpy as np
 import pandas as pd
@@ -26,7 +25,7 @@ class _RegressorBase(Term):
                 Date (pandas.Timestamp): observation date
             Columns
                 (int/float) target values
-        delay (int): delay period [days]
+        delay_values (list[int]): list of delay period [days]
         kwargs: keyword arguments of sklearn.model_selection.train_test_split(test_size=0.2, random_state=0)
 
     Note:
@@ -35,13 +34,13 @@ class _RegressorBase(Term):
     # Description of regressor
     DESC = ""
 
-    def __init__(self, X, y, delay, **kwargs):
+    def __init__(self, X, y, delay_values, **kwargs):
         # Validate values
         self._ensure_dataframe(X, name="X", time_index=True)
         self._ensure_dataframe(y, name="y", time_index=True)
-        self._delay = self._ensure_natural_int(delay, name="delay")
+        self._delay_values = [self._ensure_natural_int(v) for v in self._ensure_list(delay_values)]
         # Set training/test dataset
-        splitted_all = self._split(X, y, self._delay, **kwargs)
+        splitted_all = self._split(X, y, self._delay_values, **kwargs)
         self._X_train, self._X_test, self._y_train, self._y_test, self._X_target = splitted_all
         # Regression model
         self._regressor = None
@@ -50,14 +49,14 @@ class _RegressorBase(Term):
         self._fit()
 
     @staticmethod
-    def _split(X, y, delay, **kwargs):
+    def _split(X, y, delay_values, **kwargs):
         """
-        Apply delay period to the X dataset.
+        Add delayed indicator values to X and split X and y to train/test data.
 
         Args:
             X (pandas.DataFrame): indicators with time index
             y (pandas.DataFrame): target values with time index
-            delay (int): delay period [days]
+            delay_values (list[int]): list of delay period [days]
             kwargs: keyword arguments of sklearn.model_selection.train_test_split()
 
         Returns:
@@ -79,12 +78,14 @@ class _RegressorBase(Term):
         split_kwargs.update(kwargs)
         split_kwargs["random_state"] = split_kwargs.get("seed", split_kwargs["random_state"])
         split_kwargs = find_args(train_test_split, **split_kwargs)
-        # Apply delay period to X
+        # Add delayed indicator values to X
         X_delayed = X.copy()
-        X_delayed.index += timedelta(days=delay)
+        for delay in delay_values:
+            X_delayed = X_delayed.join(X.shift(delay, freq="D"), how="outer", rsuffix=f"_{delay}")
+        X_delayed = X_delayed.ffill().bfill()
         # Training/test data
         df = X_delayed.join(y, how="inner").dropna().drop_duplicates()
-        X_arranged = df.loc[:, X.columns]
+        X_arranged = df.loc[:, X_delayed.columns]
         y_arranged = df.loc[:, y.columns]
         splitted = train_test_split(X_arranged, y_arranged, **split_kwargs)
         # X_target
@@ -130,13 +131,16 @@ class _RegressorBase(Term):
 
         Args:
             metric (str): metric name, refer to covsirphy.Evaluator.score()
+
+        Returns:
+            dict(str, object)
         """
         return {
             **self._param,
             "score_metric": metric,
             "score_train": self.score_train(metric=metric),
             "score_test": self.score_test(metric=metric),
-            "delay": self._delay,
+            "delay": self._delay_values,
             "dataset": {
                 "X_train": self._X_train,
                 "y_train": self._y_train,
