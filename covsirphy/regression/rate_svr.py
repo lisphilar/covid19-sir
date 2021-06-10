@@ -21,7 +21,7 @@ class _RateSVRegressor(_ParamSVRegressor, _RateElasticNetRegressor):
                 Date (pandas.Timestamp): observation date
             Columns
                 (int/float) target values
-        delay (int): delay period [days]
+        delay_values (list[int]): list of delay period [days]
         kwargs: keyword arguments of sklearn.model_selection.train_test_split()
 
     Note:
@@ -34,8 +34,8 @@ class _RateSVRegressor(_ParamSVRegressor, _RateElasticNetRegressor):
     # Description of regressor
     DESC = "Indicators(n)/Indicators(n-1) -> Parameters(n)/Parameters(n-1) with Epsilon-Support Vecter Regressor"
 
-    def __init__(self, X, y, delay, **kwargs):
-        _RateElasticNetRegressor.__init__(self, X, y, delay, **kwargs)
+    def __init__(self, X, y, delay_values, **kwargs):
+        _RateElasticNetRegressor.__init__(self, X, y, delay_values, **kwargs)
 
     def predict(self):
         """

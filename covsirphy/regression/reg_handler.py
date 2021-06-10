@@ -59,7 +59,6 @@ class RegressionHandler(Term):
         self._reg_dict = {}
         # The best regressor name and determined delay period
         self._best = None
-        self._delay = None
 
     def fit(self, metric):
         """
@@ -83,6 +82,11 @@ class RegressionHandler(Term):
             - Indicators(n)/Indicators(n-1) -> Parameters(n)/Parameters(n-1) with Decision Tree Regressor
             - Indicators(n)/Indicators(n-1) -> Parameters(n)/Parameters(n-1) with Epsilon-Support Vector Regressor
         """
+        # Get X/y dataset
+        df = self._data.drop([self.C, self.CI, self.F, self.R, self.S], axis=1, errors="ignore")
+        self._ensure_dataframe(df, name="data", columns=self._parameters)
+        X = df.drop(self._parameters, axis=1)
+        y = df.loc[:, self._parameters]
         # All approaches
         regressors = [
             _ParamElasticNetRegressor,
@@ -93,9 +97,7 @@ class RegressionHandler(Term):
             _RateSVRegressor,
         ]
         approach_dict = {
-            (reg.DESC, delay): self._fit_param_reg(reg, delay)
-            for reg in regressors for delay in self._delay_candidates
-        }
+            reg.DESC: reg(X, y, self._delay_candidates, **self._kwargs) for reg in regressors}
         # Predicted all parameter values must be >= 0
         self._reg_dict = {
             k: v for (k, v) in approach_dict.items()
@@ -106,25 +108,8 @@ class RegressionHandler(Term):
                 message="Values are out of range (0, 1) with all regressors")
         # Select the best regressor with the metric
         score_dict = {k: v.score_test(metric=metric) for (k, v) in self._reg_dict.items()}
-        (self._best, self._delay), score = Evaluator.best_one(score_dict, metric=metric)
+        self._best, score = Evaluator.best_one(score_dict, metric=metric)
         return score
-
-    def _fit_param_reg(self, regressor_class, delay):
-        """
-        Fit a regressor which uses ODE parameter values as y.
-
-        Args:
-            regressor_class (covsirphy.regression.regbase.RegressorBase): regression class
-            delay (int): delay period [days]
-
-        Returns:
-            covsirphy.regression.regbase.RegressorBase: fitted regressor
-        """
-        df = self._data.drop([self.C, self.CI, self.F, self.R, self.S], axis=1, errors="ignore")
-        self._ensure_dataframe(df, name="data", columns=self._parameters)
-        X = df.drop(self._parameters, axis=1)
-        y = df.loc[:, self._parameters]
-        return regressor_class(X=X, y=y, delay=delay, **self._kwargs)
 
     def to_dict(self, metric):
         """
@@ -146,10 +131,10 @@ class RegressionHandler(Term):
                 - dataset (dict[numpy.ndarray]): X_train, X_test, y_train, y_test, X_target
                 - intercept (pandas.DataFrame): intercept and coefficients (Index ODE parameters, Columns indicators)
                 - coef (pandas.DataFrame): intercept and coefficients (Index ODE parameters, Columns indicators)
-                - delay (int): delay period
+                - delay (list[int]): list of delay period [days]
         """
         fit_dict = {"best": self._best}
-        fit_dict.update(self._reg_dict[self._best, self._delay].to_dict(metric=metric))
+        fit_dict.update(self._reg_dict[self._best].to_dict(metric=metric))
         return fit_dict
 
     def predict(self):
@@ -163,4 +148,4 @@ class RegressionHandler(Term):
                 Columns
                     (float): parameter values (4 digits)
         """
-        return self._reg_dict[self._best, self._delay].predict()
+        return self._reg_dict[self._best].predict()

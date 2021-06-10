@@ -26,7 +26,7 @@ class _ParamElasticNetRegressor(_RegressorBase):
                 Date (pandas.Timestamp): observation date
             Columns
                 (int/float) target values
-        delay (int): delay period [days]
+        delay_values (list[int]): list of delay period [days]
         kwargs: keyword arguments of sklearn.model_selection.train_test_split()
 
     Note:
@@ -39,8 +39,8 @@ class _ParamElasticNetRegressor(_RegressorBase):
     # Description of regressor
     DESC = "Indicators -> Parameters with Elastic Net"
 
-    def __init__(self, X, y, delay, **kwargs):
-        super().__init__(X, y, delay, **kwargs)
+    def __init__(self, X, y, delay_values, **kwargs):
+        super().__init__(X, y, delay_values, **kwargs)
 
     def _fit(self):
         """

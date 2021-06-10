@@ -291,7 +291,7 @@ class TestScenario(object):
         snl.fit_predict(name="Forecast", delay=delay, days=days)
         # Fitting
         info_dict = snl.fit(name="Forecast", delay=delay)
-        delay_est = info_dict["delay"]
+        delay_est = max(info_dict["delay"])
         assert isinstance(info_dict, dict)
         # Prediction
         snl.predict(name="Forecast", days=days)
