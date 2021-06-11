@@ -10,7 +10,7 @@ from covsirphy.visualization.vbase import VisualizeBase
 
 class LinePlot(VisualizeBase):
     """
-    Create line plot.
+    Create a line plot.
 
     Args:
         filename (str or None): filename to save the figure or None (display)

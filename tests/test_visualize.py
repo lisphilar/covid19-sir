@@ -6,8 +6,8 @@ import warnings
 import matplotlib
 import pandas as pd
 import pytest
-from covsirphy import VisualizeBase, ColoredMap, LinePlot, line_plot, compare_plot
-from covsirphy import BarPlot, bar_plot
+from covsirphy import VisualizeBase, ColoredMap, LinePlot, BarPlot, ScatterPlot
+from covsirphy import line_plot, compare_plot, bar_plot, scatter_plot
 from covsirphy import Term, UnExecutedError
 from covsirphy import jpn_map
 
@@ -210,3 +210,30 @@ class TestComparePlot(object):
         df = tokyo_df.merge(osaka_df, on=Term.DATE, suffixes=("_tokyo", "_osaka"))
         compare_plot(
             df, variables=[Term.CI, Term.F, Term.R], groups=["tokyo", "osaka"], filename=imgfile)
+
+
+class TestScatterPlot(object):
+    def test_plot(self, jhu_data, imgfile):
+        japan_df = jhu_data.subset(country="Japan")
+        df = japan_df.rename(columns={Term.C: "x", Term.R: "y"})
+        # Create a scappter plot
+        scatter_plot(df, filename=imgfile)
+
+    def test_error(self, jhu_data, imgfile):
+        japan_df = jhu_data.subset(country="Japan")
+        df = japan_df.rename(columns={Term.C: "x", Term.R: "y"})
+        # Plotting not done
+        with ScatterPlot(filename=imgfile) as sp:
+            with pytest.raises(UnExecutedError):
+                sp.line_straight()
+        # Error with colormap
+        with ScatterPlot(filename=imgfile) as sp:
+            with pytest.raises(ValueError):
+                sp.plot(data=df, colormap="unknown")
+        # Cannnot show a legend
+        with ScatterPlot(filename=imgfile) as sp:
+            sp.plot(data=df)
+            with pytest.raises(NotImplementedError):
+                sp.legend()
+            with pytest.raises(NotImplementedError):
+                sp.legend_hide()
