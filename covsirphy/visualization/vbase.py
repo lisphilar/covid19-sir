@@ -105,7 +105,7 @@ class VisualizeBase(Term):
             kwargs: keyword arguments of matplotlib.pyplot.legend()
         """
         if not self._variables:
-            raise UnExecutedError("LinePlot.plot()")
+            raise UnExecutedError(".plot()")
         ncol = self._ensure_natural_int(
             ncol or (1 if "left" in bbox_loc else len(self._variables)), name="ncol")
         self._ax.legend(bbox_to_anchor=bbox_to_anchor, loc=bbox_loc, borderaxespad=0, ncol=ncol, **kwargs)

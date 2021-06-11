@@ -29,6 +29,7 @@ from covsirphy.visualization.japan_map import jpn_map
 from covsirphy.visualization.line_plot import LinePlot, line_plot
 from covsirphy.visualization.bar_plot import BarPlot, bar_plot
 from covsirphy.visualization.compare_plot import ComparePlot, compare_plot
+from covsirphy.visualization.scatter_plot import ScatterPlot, scatter_plot
 # cleaning
 from covsirphy.cleaning.cbase import CleaningBase
 from covsirphy.cleaning.jhu_data import JHUData
@@ -103,7 +104,7 @@ __all__ = [
     "UnExpectedReturnValueError",
     # visualization
     "VisualizeBase", "ColoredMap", "LinePlot", "line_plot", "BarPlot", "bar_plot",
-    "ComparePlot", "compare_plot",
+    "ComparePlot", "compare_plot", "ScatterPlot", "scatter_plot",
     # cleaning
     "CleaningBase", "DataLoader", "COVID19DataHub",
     "JHUData", "CountryData", "PopulationData", "OxCGRTData", "VaccineData",
