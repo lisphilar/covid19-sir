@@ -8,6 +8,7 @@ from sklearn.model_selection import train_test_split
 from covsirphy.util.argument import find_args
 from covsirphy.util.evaluator import Evaluator
 from covsirphy.util.term import Term
+from covsirphy.regression.reg_pred_actual_plot import _PredActualPlot
 
 
 class _RegressorBase(Term):
@@ -166,3 +167,36 @@ class _RegressorBase(Term):
         df = pd.DataFrame(predicted, index=self._X_target.index, columns=self._y_train.columns)
         # parameter values: 4 digits
         return df.applymap(lambda x: np.around(x, 4 - int(floor(log10(abs(x)))) - 1))
+
+    def pred_actual_plot(self, filename=None):
+        """
+        Create a scatter plot (predicted vs. actual parameter values).
+
+        Args:
+            fileaname (str): filename of the figure or None (display)
+        """
+        TITLE = f"Predicted vs. actual parameter values\n{self.DESC}"
+        PRED, ACTUAL = "Predicted values", "Actual values"
+        TRAIN, TEST = "Training data", "Test data"
+        # Predicted & training
+        pred_train = pd.DataFrame(self._regressor.predict(self._X_train), columns=self._y_train.columns)
+        pred_train["subset"] = TRAIN
+        # Predicted & test
+        pred_test = pd.DataFrame(self._regressor.predict(self._X_test), columns=self._y_test.columns)
+        pred_test["subset"] = TEST
+        # Actual & training
+        act_train = self._y_train.copy()
+        act_train["subset"] = TRAIN
+        # Actual & test
+        act_test = self._y_train.copy()
+        act_test["subset"] = TEST
+        # Combine data: index=reset, columns=parameter/subset/Predicted/Actual
+        df = pd.concat([pred_train, pred_test], ignore_index=True)
+        df = df.melt(id_vars=["subset"], var_name="parameter", value_name=PRED)
+        act_df = pd.concat([act_train, act_test], ignore_index=True)
+        act_df = act_df.melt(id_vars=["subset"], var_name="parameter", value_name=ACTUAL)
+        df.loc[:, ACTUAL] = act_df.loc[:, ACTUAL]
+        # Plotting
+        with _PredActualPlot(filename=filename) as pa:
+            pa.plot(df, x=ACTUAL, y=PRED)
+            pa.title = TITLE

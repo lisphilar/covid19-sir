@@ -1253,7 +1253,7 @@ class Scenario(Term):
                 - None: Scenario.estimate_delay() calculate automatically
             removed_cols (list[str] or None): list of variables to remove from X dataset or None (indicators used to estimate delay period)
             metric (str): metric name
-            kwargs: keyword arguments of sklearn.model_selection.train_test_split()
+            kwargs: keyword arguments of sklearn.model_selection.train_test_split() and Scenario.fit_accuracy()
 
         Raises:
             covsirphy.UnExecutedError: Scenario.estimate() or Scenario.add() were not performed
@@ -1312,8 +1312,38 @@ class Scenario(Term):
         handler = RegressionHandler(data=data, model=self._model, delay=delay, **kwargs)
         handler.fit(metric=metric)
         self._reghandler_dict[name] = handler
+        # Accuracy
+        self.fit_accuracy(name=name, **kwargs)
         # Return information
         return handler.to_dict(metric=metric)
+
+    def _get_fit_handler(self, name="Main"):
+        """
+        Get the instance of RegresionHandler.
+
+        Args:
+            name (str): scenario name
+
+        Raises:
+            covsirphy.UnExecutedError: Scenario.fit() was not performed
+        """
+        if name not in self._reghandler_dict:
+            raise UnExecutedError(f"Scenario.fit(name={name})")
+        return self._reghandler_dict[name]
+
+    def fit_accuracy(self, name="Main", show_figure=True, **kwargs):
+        """
+        Create a plot to show the accuracy of forecasting (predicted vs. actual parameter values).
+
+        Args:
+            name (str): scenario name
+            show_figure (bool): whether show figure or not
+            kwargs: keyword arguments of RegressionHandler.pred_true_plot()
+        """
+        handler = self._get_fit_handler(name=name)
+        # Show predicted vs. actual plot
+        if show_figure:
+            handler.pred_actual_plot(**find_args(RegressionHandler.pred_actual_plot, **kwargs))
 
     def predict(self, days=None, name="Main"):
         """
@@ -1332,11 +1362,8 @@ class Scenario(Term):
         Returns:
             covsirphy.Scenario: self
         """
-        # Arguments
-        if name not in self._reghandler_dict:
-            raise UnExecutedError(f"Scenario.fit(name={name})")
+        handler = self._get_fit_handler(name=name)
         # Prediction with regression model
-        handler = self._reghandler_dict[name]
         df = handler.predict()
         # -> index=end_date (pandas.Timestamp), columns=parameter values
         df.index.name = "end_date"

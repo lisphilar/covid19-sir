@@ -25,7 +25,7 @@ def main(country="Italy", province=None, file_prefix="ita"):
         pronvince (str or None): province name or None (country level)
         file_prefix (str): prefix of the filenames
     """
-    # This script works with version >= 2.19.1-lambda
+    # This script works with version >= 2.20.3-delta
     print(cs.get_version())
     # Create output directory in example directory
     code_path = Path(__file__)
@@ -74,7 +74,7 @@ def main(country="Italy", province=None, file_prefix="ita"):
     snl.simulate(name="Main", **filer.png("simulate_main"))
     snl.history_rate(name="Main", **filer.png("history-rate_main"))
     # Forecast scenario: Short-term prediction with regression and OxCGRT data
-    fit_dict = snl.fit(delay=(7, 31), name="Forecast")
+    fit_dict = snl.fit(delay=(7, 31), name="Forecast", **filer.png("fit_plot"))
     del fit_dict["dataset"], fit_dict["intercept"], fit_dict["coef"]
     print(fit_dict)
     snl.predict(name="Forecast")

@@ -285,12 +285,12 @@ class TestScenario(object):
 
     @pytest.mark.parametrize("delay", [5, (7, 31), None])
     @pytest.mark.parametrize("days", [[3], None])
-    def test_fit_predict(self, snl, delay, days):
+    def test_fit_predict(self, snl, delay, days, imgfile):
         snl.clear(name="Forecast")
         # Fitting & predict
         snl.fit_predict(name="Forecast", delay=delay, days=days)
         # Fitting
-        info_dict = snl.fit(name="Forecast", delay=delay)
+        info_dict = snl.fit(name="Forecast", delay=delay, filename=imgfile)
         delay_est = max(info_dict["delay"])
         assert isinstance(info_dict, dict)
         # Prediction
