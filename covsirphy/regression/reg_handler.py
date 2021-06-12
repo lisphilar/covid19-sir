@@ -149,3 +149,12 @@ class RegressionHandler(Term):
                     (float): parameter values (4 digits)
         """
         return self._reg_dict[self._best].predict()
+
+    def pred_actual_plot(self, filename=None):
+        """
+        Create a scatter plot (predicted vs. actual parameter values).
+
+        Args:
+            fileaname (str): filename of the figure or None (display)
+        """
+        return self._reg_dict[self._best].pred_actual_plot(filename=filename)
