@@ -75,9 +75,6 @@ class RegressionHandler(Term):
             - Indicators -> Parameters with Elastic Net
             - Indicators -> Parameters with Decision Tree Regressor
             - Indicators -> Parameters with Epsilon-Support Vector Regressor
-            - Indicators(n)/Indicators(n-1) -> Parameters(n)/Parameters(n-1) with Elastic Net
-            - Indicators(n)/Indicators(n-1) -> Parameters(n)/Parameters(n-1) with Decision Tree Regressor
-            - Indicators(n)/Indicators(n-1) -> Parameters(n)/Parameters(n-1) with Epsilon-Support Vector Regressor
         """
         # Get X/y dataset
         df = self._data.drop([self.C, self.CI, self.F, self.R, self.S], axis=1, errors="ignore")
