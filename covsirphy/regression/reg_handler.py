@@ -8,9 +8,6 @@ from covsirphy.ode.mbase import ModelBase
 from covsirphy.regression.param_elastic_net import _ParamElasticNetRegressor
 from covsirphy.regression.param_decision_tree import _ParamDecisionTreeRegressor
 from covsirphy.regression.param_svr import _ParamSVRegressor
-from covsirphy.regression.rate_elastic_net import _RateElasticNetRegressor
-from covsirphy.regression.rate_decision_tree import _RateDecisionTreeRegressor
-from covsirphy.regression.rate_svr import _RateSVRegressor
 
 
 class RegressionHandler(Term):
@@ -92,9 +89,6 @@ class RegressionHandler(Term):
             _ParamElasticNetRegressor,
             _ParamDecisionTreeRegressor,
             _ParamSVRegressor,
-            _RateElasticNetRegressor,
-            _RateDecisionTreeRegressor,
-            _RateSVRegressor,
         ]
         approach_dict = {
             reg.DESC: reg(X, y, self._delay_candidates, **self._kwargs) for reg in regressors}

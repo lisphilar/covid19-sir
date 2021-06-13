@@ -10,6 +10,7 @@ from sklearn.pipeline import Pipeline
 from sklearn.preprocessing import MinMaxScaler
 from sklearn.svm import SVR
 from covsirphy.regression.regbase import _RegressorBase
+from covsirphy.regression.reg_rate_converter import _RateConverter
 
 
 class _ParamSVRegressor(_RegressorBase):
@@ -50,6 +51,7 @@ class _ParamSVRegressor(_RegressorBase):
         warnings.simplefilter("ignore", category=ConvergenceWarning)
         # Paramters of the steps
         param_grid = {
+            "converter__to_convert": [True, False],
             "regressor__estimator__kernel": ["linear", "rbf"],
             "regressor__estimator__C": [1, 10, 100],
             "regressor__estimator__gamma": [0.01, 0.1],
@@ -57,6 +59,7 @@ class _ParamSVRegressor(_RegressorBase):
         }
         # Fit with pipeline
         steps = [
+            ("converter", _RateConverter()),
             ("scaler", MinMaxScaler()),
             ("regressor", MultiOutputRegressor(SVR())),
         ]
@@ -69,6 +72,7 @@ class _ParamSVRegressor(_RegressorBase):
         estimators = pipeline.best_estimator_.named_steps.regressor.estimators_
         param_dict = {
             **{k: type(v) for (k, v) in steps},
+            "rate_convert": pipeline.best_estimator_.named_steps.converter.to_convert_,
             "kernel": [output.kernel for output in estimators],
             "C": [output.C for output in estimators],
             "gamma": [output.gamma for output in estimators],

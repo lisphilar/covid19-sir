@@ -10,6 +10,7 @@ from sklearn.pipeline import Pipeline
 from sklearn.preprocessing import MinMaxScaler
 from sklearn.tree import DecisionTreeRegressor
 from covsirphy.regression.regbase import _RegressorBase
+from covsirphy.regression.reg_rate_converter import _RateConverter
 
 
 class _ParamDecisionTreeRegressor(_RegressorBase):
@@ -50,11 +51,13 @@ class _ParamDecisionTreeRegressor(_RegressorBase):
         warnings.simplefilter("ignore", category=ConvergenceWarning)
         # Paramters of the steps
         param_grid = {
+            "converter__to_convert": [True, False],
             "pca__n_components": [0.3, 0.5, 0.7, 0.9],
             "regressor__max_depth": list(range(1, 10)),
         }
         # Fit with pipeline
         steps = [
+            ("converter", _RateConverter()),
             ("scaler", MinMaxScaler()),
             ("pca", PCA(random_state=0)),
             ("regressor", DecisionTreeRegressor(random_state=0)),
@@ -67,6 +70,7 @@ class _ParamDecisionTreeRegressor(_RegressorBase):
         # Update param
         param_dict = {
             **{k: type(v) for (k, v) in steps},
+            "rate_convert": pipeline.best_estimator_.named_steps.converter.to_convert_,
             "pca_n_components": pipeline.best_estimator_.named_steps.pca.n_components_,
             "intercept": pd.DataFrame(),
             "coef": pd.DataFrame(),
