@@ -57,7 +57,7 @@ class _ParamElasticNetRegressor(_RegressorBase):
         )
         # Fit with pipeline
         steps = [
-            ("converter", _RateConverter()),
+            ("converter", _RateConverter(to_convert=False)),
             ("scaler", MinMaxScaler()),
             ("regressor", cv),
         ]
