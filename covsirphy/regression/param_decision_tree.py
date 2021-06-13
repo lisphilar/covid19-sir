@@ -2,7 +2,6 @@
 # -*- coding: utf-8 -*-
 
 import warnings
-import pandas as pd
 from sklearn.decomposition import PCA
 from sklearn.exceptions import ConvergenceWarning
 from sklearn.model_selection import GridSearchCV, TimeSeriesSplit
@@ -46,7 +45,7 @@ class _ParamDecisionTreeRegressor(_RegressorBase):
 
     def _fit(self):
         """
-        Fit regression model with training dataset, update self._regressor and self._param.
+        Fit regression model with training dataset, update self._pipeline and self._param.
         """
         warnings.simplefilter("ignore", category=ConvergenceWarning)
         # Paramters of the steps
@@ -66,13 +65,6 @@ class _ParamDecisionTreeRegressor(_RegressorBase):
         pipeline = GridSearchCV(Pipeline(steps=steps), param_grid, n_jobs=-1, cv=tscv)
         pipeline.fit(self._X_train, self._y_train)
         # Update regressor
-        self._regressor = pipeline
+        self._pipeline = pipeline
         # Update param
-        param_dict = {
-            **{k: type(v) for (k, v) in steps},
-            "rate_convert": pipeline.best_estimator_.named_steps.converter.to_convert_,
-            "pca_n_components": pipeline.best_estimator_.named_steps.pca.n_components_,
-            "intercept": pd.DataFrame(),
-            "coef": pd.DataFrame(),
-        }
-        self._param.update(param_dict)
+        self._param.update(**{k: type(v) for (k, v) in steps})
