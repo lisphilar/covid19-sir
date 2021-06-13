@@ -68,7 +68,7 @@
             
             
               <div class="version">
-                2.20.3-delta
+                2.20.3-epsilon-fu1
               </div>
             
           
@@ -184,9 +184,6 @@
 <span class="kn">from</span> <span class="nn">covsirphy.regression.param_elastic_net</span> <span class="kn">import</span> <span class="n">_ParamElasticNetRegressor</span>
 <span class="kn">from</span> <span class="nn">covsirphy.regression.param_decision_tree</span> <span class="kn">import</span> <span class="n">_ParamDecisionTreeRegressor</span>
 <span class="kn">from</span> <span class="nn">covsirphy.regression.param_svr</span> <span class="kn">import</span> <span class="n">_ParamSVRegressor</span>
-<span class="kn">from</span> <span class="nn">covsirphy.regression.rate_elastic_net</span> <span class="kn">import</span> <span class="n">_RateElasticNetRegressor</span>
-<span class="kn">from</span> <span class="nn">covsirphy.regression.rate_decision_tree</span> <span class="kn">import</span> <span class="n">_RateDecisionTreeRegressor</span>
-<span class="kn">from</span> <span class="nn">covsirphy.regression.rate_svr</span> <span class="kn">import</span> <span class="n">_RateSVRegressor</span>
 
 
 <div class="viewcode-block" id="RegressionHandler"><a class="viewcode-back" href="../../../covsirphy.regression.html#covsirphy.RegressionHandler">[docs]</a><span class="k">class</span> <span class="nc">RegressionHandler</span><span class="p">(</span><span class="n">Term</span><span class="p">):</span>
@@ -254,9 +251,6 @@
 <span class="sd">            - Indicators -&gt; Parameters with Elastic Net</span>
 <span class="sd">            - Indicators -&gt; Parameters with Decision Tree Regressor</span>
 <span class="sd">            - Indicators -&gt; Parameters with Epsilon-Support Vector Regressor</span>
-<span class="sd">            - Indicators(n)/Indicators(n-1) -&gt; Parameters(n)/Parameters(n-1) with Elastic Net</span>
-<span class="sd">            - Indicators(n)/Indicators(n-1) -&gt; Parameters(n)/Parameters(n-1) with Decision Tree Regressor</span>
-<span class="sd">            - Indicators(n)/Indicators(n-1) -&gt; Parameters(n)/Parameters(n-1) with Epsilon-Support Vector Regressor</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="c1"># Get X/y dataset</span>
         <span class="n">df</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_data</span><span class="o">.</span><span class="n">drop</span><span class="p">([</span><span class="bp">self</span><span class="o">.</span><span class="n">C</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">CI</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">F</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">R</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">S</span><span class="p">],</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">errors</span><span class="o">=</span><span class="s2">&quot;ignore&quot;</span><span class="p">)</span>
@@ -268,9 +262,6 @@
             <span class="n">_ParamElasticNetRegressor</span><span class="p">,</span>
             <span class="n">_ParamDecisionTreeRegressor</span><span class="p">,</span>
             <span class="n">_ParamSVRegressor</span><span class="p">,</span>
-            <span class="n">_RateElasticNetRegressor</span><span class="p">,</span>
-            <span class="n">_RateDecisionTreeRegressor</span><span class="p">,</span>
-            <span class="n">_RateSVRegressor</span><span class="p">,</span>
         <span class="p">]</span>
         <span class="n">approach_dict</span> <span class="o">=</span> <span class="p">{</span>
             <span class="n">reg</span><span class="o">.</span><span class="n">DESC</span><span class="p">:</span> <span class="n">reg</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_delay_candidates</span><span class="p">,</span> <span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">_kwargs</span><span class="p">)</span> <span class="k">for</span> <span class="n">reg</span> <span class="ow">in</span> <span class="n">regressors</span><span class="p">}</span>
