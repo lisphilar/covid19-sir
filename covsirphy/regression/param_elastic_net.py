@@ -9,6 +9,7 @@ from sklearn.model_selection import TimeSeriesSplit
 from sklearn.pipeline import Pipeline
 from sklearn.preprocessing import MinMaxScaler
 from covsirphy.regression.regbase import _RegressorBase
+from covsirphy.regression.reg_rate_converter import _RateConverter
 
 
 class _ParamElasticNetRegressor(_RegressorBase):
@@ -56,6 +57,7 @@ class _ParamElasticNetRegressor(_RegressorBase):
         )
         # Fit with pipeline
         steps = [
+            ("converter", _RateConverter()),
             ("scaler", MinMaxScaler()),
             ("regressor", cv),
         ]
