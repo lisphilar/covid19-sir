@@ -136,11 +136,14 @@ class _RegressorBase(Term):
         Returns:
             dict(str, object)
         """
-        param_dict = {
-            **self._pipeline.best_params_,
-            "intercept": pd.DataFrame(),
-            "coef": pd.DataFrame(),
-        }
+        try:
+            param_dict = {
+                **self._pipeline.best_params_,
+                "intercept": pd.DataFrame(),
+                "coef": pd.DataFrame(),
+            }
+        except AttributeError:
+            param_dict = {}
         param_dict.update(self._param)
         return {
             **param_dict,
