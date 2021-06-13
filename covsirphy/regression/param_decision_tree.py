@@ -70,8 +70,7 @@ class _ParamDecisionTreeRegressor(_RegressorBase):
         # Update param
         param_dict = {
             **{k: type(v) for (k, v) in steps},
-            "rate_convert": pipeline.best_estimator_.named_steps.converter.to_convert_,
-            "pca_n_components": pipeline.best_estimator_.named_steps.pca.n_components_,
+            **pipeline.best_params_,
             "intercept": pd.DataFrame(),
             "coef": pd.DataFrame(),
         }

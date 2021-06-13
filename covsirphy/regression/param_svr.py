@@ -68,15 +68,10 @@ class _ParamSVRegressor(_RegressorBase):
         pipeline.fit(self._X_train, self._y_train)
         # Update regressor
         self._regressor = pipeline
-        # Update param
-        estimators = pipeline.best_estimator_.named_steps.regressor.estimators_
+        # Update param: pipeline.best_estimator_.named_steps.regressor.estimators_
         param_dict = {
             **{k: type(v) for (k, v) in steps},
-            "rate_convert": pipeline.best_estimator_.named_steps.converter.to_convert_,
-            "kernel": [output.kernel for output in estimators],
-            "C": [output.C for output in estimators],
-            "gamma": [output.gamma for output in estimators],
-            "epsilon": [output.epsilon for output in estimators],
+            **pipeline.best_params_,
             "intercept": pd.DataFrame(),
             "coef": pd.DataFrame(),
         }
