@@ -45,7 +45,7 @@ class _ParamElasticNetRegressor(_RegressorBase):
 
     def _fit(self):
         """
-        Fit regression model with training dataset, update self._regressor and self._param.
+        Fit regression model with training dataset, update self._pipeline and self._param.
         """
         warnings.filterwarnings("ignore", category=ConvergenceWarning)
         # Model for Elastic Net regression
@@ -65,7 +65,7 @@ class _ParamElasticNetRegressor(_RegressorBase):
         pipeline.fit(self._X_train, self._y_train)
         reg_output = pipeline.named_steps.regressor
         # Update regressor
-        self._regressor = pipeline
+        self._pipeline = pipeline
         # Intercept/coef
         intercept_df = pd.DataFrame(
             reg_output.coef_, index=self._y_train.columns, columns=self._X_train.columns)

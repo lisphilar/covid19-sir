@@ -44,7 +44,7 @@ class _RegressorBase(Term):
         splitted_all = self._split(X, y, self._delay_values, **kwargs)
         self._X_train, self._X_test, self._y_train, self._y_test, self._X_target = splitted_all
         # Regression model
-        self._regressor = None
+        self._pipeline = None
         self._param = {}
         # Perform fitting
         self._fit()
@@ -95,7 +95,7 @@ class _RegressorBase(Term):
 
     def _fit(self):
         """
-        Fit regression model with training dataset, update self._regressor and self._param.
+        Fit regression model with training dataset, update self._pipeline and self._param.
         This method should be overwritten by child classes.
         """
         raise NotImplementedError
@@ -110,7 +110,7 @@ class _RegressorBase(Term):
         Returns:
             float: evaluation score
         """
-        pred_train = pd.DataFrame(self._regressor.predict(self._X_train), columns=self._y_train.columns)
+        pred_train = pd.DataFrame(self._pipeline.predict(self._X_train), columns=self._y_train.columns)
         return Evaluator(pred_train, self._y_train, how="all").score(metric=metric)
 
     def score_test(self, metric):
@@ -123,7 +123,7 @@ class _RegressorBase(Term):
         Returns:
             float: evaluation score
         """
-        pred_test = pd.DataFrame(self._regressor.predict(self._X_test), columns=self._y_test.columns)
+        pred_test = pd.DataFrame(self._pipeline.predict(self._X_test), columns=self._y_test.columns)
         return Evaluator(pred_test, self._y_test, how="all").score(metric=metric)
 
     def to_dict(self, metric):
@@ -136,8 +136,14 @@ class _RegressorBase(Term):
         Returns:
             dict(str, object)
         """
+        param_dict = {
+            **self._pipeline.best_params_,
+            "intercept": pd.DataFrame(),
+            "coef": pd.DataFrame(),
+        }
+        param_dict.update(self._param)
         return {
-            **self._param,
+            **param_dict,
             "score_metric": metric,
             "score_train": self.score_train(metric=metric),
             "score_test": self.score_test(metric=metric),
@@ -153,7 +159,7 @@ class _RegressorBase(Term):
 
     def predict(self):
         """
-        Predict parameter values (via y) with self._regressor and X_target.
+        Predict parameter values (via y) with self._pipeline and X_target.
 
         Returns:
             pandas.DataFrame:
@@ -163,7 +169,7 @@ class _RegressorBase(Term):
                     (float): parameter values (4 digits)
         """
         # Predict parameter values
-        predicted = self._regressor.predict(self._X_target)
+        predicted = self._pipeline.predict(self._X_target)
         df = pd.DataFrame(predicted, index=self._X_target.index, columns=self._y_train.columns)
         # parameter values: 4 digits
         return df.applymap(lambda x: np.around(x, 4 - int(floor(log10(abs(x)))) - 1))
@@ -179,10 +185,10 @@ class _RegressorBase(Term):
         PRED, ACTUAL = "Predicted values", "Actual values"
         TRAIN, TEST = "Training data", "Test data"
         # Predicted & training
-        pred_train = pd.DataFrame(self._regressor.predict(self._X_train), columns=self._y_train.columns)
+        pred_train = pd.DataFrame(self._pipeline.predict(self._X_train), columns=self._y_train.columns)
         pred_train["subset"] = TRAIN
         # Predicted & test
-        pred_test = pd.DataFrame(self._regressor.predict(self._X_test), columns=self._y_test.columns)
+        pred_test = pd.DataFrame(self._pipeline.predict(self._X_test), columns=self._y_test.columns)
         pred_test["subset"] = TEST
         # Actual & training
         act_train = self._y_train.copy()

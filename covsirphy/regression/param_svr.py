@@ -2,7 +2,6 @@
 # -*- coding: utf-8 -*-
 
 import warnings
-import pandas as pd
 from sklearn.exceptions import ConvergenceWarning
 from sklearn.model_selection import RandomizedSearchCV, TimeSeriesSplit
 from sklearn.multioutput import MultiOutputRegressor
@@ -46,7 +45,7 @@ class _ParamSVRegressor(_RegressorBase):
 
     def _fit(self):
         """
-        Fit regression model with training dataset, update self._regressor and self._param.
+        Fit regression model with training dataset, update self._pipeline and self._param.
         """
         warnings.simplefilter("ignore", category=ConvergenceWarning)
         # Paramters of the steps
@@ -67,12 +66,6 @@ class _ParamSVRegressor(_RegressorBase):
         pipeline = RandomizedSearchCV(Pipeline(steps=steps), param_grid, n_jobs=-1, cv=tscv, n_iter=10)
         pipeline.fit(self._X_train, self._y_train)
         # Update regressor
-        self._regressor = pipeline
+        self._pipeline = pipeline
         # Update param: pipeline.best_estimator_.named_steps.regressor.estimators_
-        param_dict = {
-            **{k: type(v) for (k, v) in steps},
-            **pipeline.best_params_,
-            "intercept": pd.DataFrame(),
-            "coef": pd.DataFrame(),
-        }
-        self._param.update(param_dict)
+        self._param.update(**{k: type(v) for (k, v) in steps})
