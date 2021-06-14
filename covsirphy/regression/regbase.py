@@ -83,7 +83,7 @@ class _RegressorBase(Term):
         X_delayed = X.copy()
         for delay in delay_values:
             X_delayed = X_delayed.join(X.shift(delay, freq="D"), how="outer", rsuffix=f"_{delay}")
-        X_delayed = X_delayed.ffill().bfill()
+        X_delayed = X_delayed.ffill()
         # Training/test data
         df = X_delayed.join(y, how="inner").dropna().drop_duplicates()
         X_arranged = df.loc[:, X_delayed.columns]
