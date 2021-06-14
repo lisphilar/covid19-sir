@@ -7,6 +7,7 @@ from covsirphy.util.term import Term
 from covsirphy.ode.mbase import ModelBase
 from covsirphy.regression.param_elastic_net import _ParamElasticNetRegressor
 from covsirphy.regression.param_decision_tree import _ParamDecisionTreeRegressor
+from covsirphy.regression.param_lightgbm import _ParamLightGBMRegressor
 from covsirphy.regression.param_svr import _ParamSVRegressor
 
 
@@ -74,6 +75,7 @@ class RegressionHandler(Term):
             All regressors are here.
             - Indicators -> Parameters with Elastic Net
             - Indicators -> Parameters with Decision Tree Regressor
+            - Indicators -> Parameters with Light Gradient Boosting Machine Regressor
             - Indicators -> Parameters with Epsilon-Support Vector Regressor
         """
         # Get X/y dataset
@@ -85,6 +87,7 @@ class RegressionHandler(Term):
         regressors = [
             _ParamElasticNetRegressor,
             _ParamDecisionTreeRegressor,
+            _ParamLightGBMRegressor,
             _ParamSVRegressor,
         ]
         approach_dict = {
