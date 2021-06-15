@@ -1313,7 +1313,7 @@ class Scenario(Term):
         handler.fit(metric=metric)
         self._reghandler_dict[name] = handler
         # Accuracy
-        self.fit_accuracy(name=name, **kwargs)
+        self.fit_accuracy(name=name, metric=metric, **kwargs)
         # Return information
         return handler.to_dict(metric=metric)
 

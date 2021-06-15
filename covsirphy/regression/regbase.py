@@ -175,31 +175,48 @@ class _RegressorBase(Term):
         predicted = self._pipeline.predict(self._X_target)
         df = pd.DataFrame(predicted, index=self._X_target.index, columns=self._y_train.columns)
         # parameter values: 4 digits
-        return df.applymap(lambda x: np.around(x, 4 - int(floor(log10(abs(x)))) - 1))
+        return df.applymap(lambda x: self._round(x, digits=4))
 
-    def pred_actual_plot(self, filename=None):
+    def _round(self, value, digits):
+        """
+        Round off the value to @digits significant digits.
+
+        Args:
+            value (float): target value
+            digists (int): significant digits
+
+        Return:
+            float: rounded value
+        """
+        return np.around(value, digits - int(floor(log10(abs(value)))) - 1)
+
+    def pred_actual_plot(self, metric, filename=None):
         """
         Create a scatter plot (predicted vs. actual parameter values).
 
         Args:
+            metric (str): metric name, refer to covsirphy.Evaluator.score()
             fileaname (str): filename of the figure or None (display)
         """
         TITLE = f"Predicted vs. actual parameter values\n{self.DESC}"
         PRED, ACTUAL = "Predicted values", "Actual values"
-        TRAIN = f"Training data (n={len(self._X_train)})"
-        TEST = f"Test data (n={len(self._X_test)})"
+        # Legend
+        train_score = self._round(self.score_train(metric=metric), 3)
+        test_score = self._round(self.score_test(metric=metric), 3)
+        train_title = f"Training data (n={len(self._X_train)}, {metric}={train_score})"
+        test_title = f"Test data (n={len(self._X_test)}, {metric}={test_score})"
         # Predicted & training
         pred_train = pd.DataFrame(self._pipeline.predict(self._X_train), columns=self._y_train.columns)
-        pred_train["subset"] = TRAIN
+        pred_train["subset"] = train_title
         # Predicted & test
         pred_test = pd.DataFrame(self._pipeline.predict(self._X_test), columns=self._y_test.columns)
-        pred_test["subset"] = TEST
+        pred_test["subset"] = test_title
         # Actual & training
         act_train = self._y_train.copy()
-        act_train["subset"] = TRAIN
+        act_train["subset"] = train_title
         # Actual & test
         act_test = self._y_train.copy()
-        act_test["subset"] = TEST
+        act_test["subset"] = test_title
         # Combine data: index=reset, columns=parameter/subset/Predicted/Actual
         df = pd.concat([pred_train, pred_test], ignore_index=True)
         df = df.melt(id_vars=["subset"], var_name="parameter", value_name=PRED)
