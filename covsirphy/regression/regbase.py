@@ -186,7 +186,8 @@ class _RegressorBase(Term):
         """
         TITLE = f"Predicted vs. actual parameter values\n{self.DESC}"
         PRED, ACTUAL = "Predicted values", "Actual values"
-        TRAIN, TEST = "Training data", "Test data"
+        TRAIN = f"Training data (n={len(self._X_train)})"
+        TEST = f"Test data (n={len(self._X_test)})"
         # Predicted & training
         pred_train = pd.DataFrame(self._pipeline.predict(self._X_train), columns=self._y_train.columns)
         pred_train["subset"] = TRAIN
