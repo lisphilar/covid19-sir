@@ -144,11 +144,12 @@ class RegressionHandler(Term):
         """
         return self._reg_dict[self._best].predict()
 
-    def pred_actual_plot(self, filename=None):
+    def pred_actual_plot(self, metric="R2", filename=None):
         """
         Create a scatter plot (predicted vs. actual parameter values).
 
         Args:
+            metric (str): metric name, refer to covsirphy.Evaluator.score()
             fileaname (str): filename of the figure or None (display)
         """
-        return self._reg_dict[self._best].pred_actual_plot(filename=filename)
+        return self._reg_dict[self._best].pred_actual_plot(metric=metric, filename=filename)
