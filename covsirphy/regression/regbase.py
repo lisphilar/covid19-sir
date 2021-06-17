@@ -2,8 +2,11 @@
 # -*- coding: utf-8 -*-
 
 from math import log10, floor
+import warnings
 import numpy as np
+from optuna.exceptions import ExperimentalWarning
 import pandas as pd
+from sklearn.exceptions import ConvergenceWarning
 from sklearn.model_selection import train_test_split
 from covsirphy.util.argument import find_args
 from covsirphy.util.evaluator import Evaluator
@@ -32,6 +35,8 @@ class _RegressorBase(Term):
     Note:
         If @seed is included in kwargs, this will be converted to @random_state.
     """
+    warnings.simplefilter("ignore", category=ConvergenceWarning)
+    warnings.simplefilter("ignore", category=ExperimentalWarning)
     # Description of regressor
     DESC = ""
 
@@ -188,7 +193,7 @@ class _RegressorBase(Term):
         Return:
             float: rounded value
         """
-        return np.around(value, digits - int(floor(log10(abs(value)))) - 1)
+        return 0 if not value else np.around(value, digits - int(floor(log10(abs(value)))) - 1)
 
     def pred_actual_plot(self, metric, filename=None):
         """
