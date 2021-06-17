@@ -1,9 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-import warnings
 from sklearn.decomposition import PCA
-from sklearn.exceptions import ConvergenceWarning
 from sklearn.model_selection import GridSearchCV, TimeSeriesSplit
 from sklearn.pipeline import Pipeline
 from sklearn.preprocessing import MinMaxScaler
@@ -47,7 +45,6 @@ class _ParamDecisionTreeRegressor(_RegressorBase):
         """
         Fit regression model with training dataset, update self._pipeline and self._param.
         """
-        warnings.simplefilter("ignore", category=ConvergenceWarning)
         # Paramters of the steps
         param_grid = {
             "converter__to_convert": [True, False],
