@@ -38,9 +38,6 @@ class _ParamDecisionTreeRegressor(_RegressorBase):
     # Description of regressor
     DESC = "Indicators -> Parameters with Decision Tree Regressor"
 
-    def __init__(self, X, y, delay_values, **kwargs):
-        super().__init__(X, y, delay_values, **kwargs)
-
     def _fit(self):
         """
         Fit regression model with training dataset, update self._pipeline and self._param.
