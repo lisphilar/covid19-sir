@@ -15,11 +15,16 @@ assignees: ''
 ```Python
 import covsirphy as cs
 # Dataset preparation
-data_loader = cs.DataLoader("input")
-jhu_data = data_loader.jhu()
+loader = cs.DataLoader("input")
+jhu_data = loader.jhu()
+oxcgrt_data = loader.oxcgrt()
 # Scenario analysis
-snl = cs.Scenario(country="Country name used")
-snl.register(jhu_data)
+snl = cs.Scenario(country="Country name")
+snl.register(jhu_data, extras=[oxcgrt_data])
+snl.trend()
+snl.estimate(cs.SIRF)
+snl.fit()
+snl.predict()
 ```
 
 ## Outputs
