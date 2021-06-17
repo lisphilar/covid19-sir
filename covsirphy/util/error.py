@@ -229,4 +229,4 @@ class UnExpectedReturnValueError(ValueError):
         self.message = "" if message is None else f" {message}"
 
     def __str__(self):
-        return f"Un-expected value{self.s}{self.value} {self.be} returned as {self.name}. {self.massage}."
+        return f"Un-expected value{self.s}{self.value} {self.be} returned as {self.name}. {self.message}."

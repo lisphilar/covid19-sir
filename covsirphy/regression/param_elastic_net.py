@@ -1,9 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-import warnings
 import pandas as pd
-from sklearn.exceptions import ConvergenceWarning
 from sklearn.linear_model import MultiTaskElasticNetCV
 from sklearn.model_selection import TimeSeriesSplit
 from sklearn.pipeline import Pipeline
@@ -40,14 +38,10 @@ class _ParamElasticNetRegressor(_RegressorBase):
     # Description of regressor
     DESC = "Indicators -> Parameters with Elastic Net"
 
-    def __init__(self, X, y, delay_values, **kwargs):
-        super().__init__(X, y, delay_values, **kwargs)
-
     def _fit(self):
         """
         Fit regression model with training dataset, update self._pipeline and self._param.
         """
-        warnings.filterwarnings("ignore", category=ConvergenceWarning)
         # Model for Elastic Net regression
         tscv = TimeSeriesSplit(n_splits=5).split(self._X_train)
         cv = MultiTaskElasticNetCV(

@@ -1,9 +1,9 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-import warnings
-from sklearn.exceptions import ConvergenceWarning
-from sklearn.model_selection import RandomizedSearchCV, TimeSeriesSplit
+from optuna.distributions import CategoricalDistribution, LogUniformDistribution
+from optuna.integration import OptunaSearchCV
+from sklearn.model_selection import TimeSeriesSplit
 from sklearn.multioutput import MultiOutputRegressor
 from sklearn.pipeline import Pipeline
 from sklearn.preprocessing import MinMaxScaler
@@ -40,21 +40,17 @@ class _ParamSVRegressor(_RegressorBase):
     # Description of regressor
     DESC = "Indicators -> Parameters with Epsilon-Support Vector Regressor"
 
-    def __init__(self, X, y, delay_values, **kwargs):
-        super().__init__(X, y, delay_values, **kwargs)
-
     def _fit(self):
         """
         Fit regression model with training dataset, update self._pipeline and self._param.
         """
-        warnings.simplefilter("ignore", category=ConvergenceWarning)
         # Paramters of the steps
         param_grid = {
-            "converter__to_convert": [True, False],
-            "regressor__estimator__kernel": ["linear", "rbf"],
-            "regressor__estimator__C": [1, 10, 100],
-            "regressor__estimator__gamma": [0.01, 0.1],
-            "regressor__estimator__epsilon": [0.001, 0.01, 0.02, 0.05],
+            "converter__to_convert": CategoricalDistribution([True, False]),
+            "regressor__estimator__kernel": CategoricalDistribution(["linear", "rbf"]),
+            "regressor__estimator__C": LogUniformDistribution(2 ** (-10), 2 ** 10),
+            "regressor__estimator__gamma": LogUniformDistribution(2 ** (-10), 1),
+            "regressor__estimator__epsilon": LogUniformDistribution(2 ** (-20), 1),
         }
         # Fit with pipeline
         steps = [
@@ -63,7 +59,8 @@ class _ParamSVRegressor(_RegressorBase):
             ("regressor", MultiOutputRegressor(SVR())),
         ]
         tscv = TimeSeriesSplit(n_splits=5).split(self._X_train)
-        pipeline = RandomizedSearchCV(Pipeline(steps=steps), param_grid, n_jobs=-1, cv=tscv, n_iter=10)
+        pipeline = OptunaSearchCV(
+            Pipeline(steps=steps), param_grid, cv=tscv, random_state=0, n_trials=10)
         pipeline.fit(self._X_train, self._y_train)
         # Update regressor
         self._pipeline = pipeline
