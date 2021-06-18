@@ -3,6 +3,7 @@
 
 import math
 import optuna
+from optuna.samplers import TPESampler
 from covsirphy.util.argument import find_args
 from covsirphy.util.evaluator import Evaluator
 from covsirphy.util.stopwatch import StopWatch
@@ -133,11 +134,11 @@ class _ParamEstimator(Term):
             "threshold": optuna.pruners.ThresholdPruner(upper=upper),
             "percentile": optuna.pruners.PercentilePruner(percentile=percentile),
         }
+        # constant_liar argument can be used from Optuna version 2.8.0
+        sampler_kwargs = {"seed": seed, "constant_liar": False}
+        sampler = TPESampler(find_args(TPESampler, **sampler_kwargs))
         return optuna.create_study(
-            direction="minimize",
-            sampler=optuna.samplers.TPESampler(seed=seed),
-            pruner=pruner_dict[pruner.lower()],
-        )
+            direction="minimize", sampler=sampler, pruner=pruner_dict[pruner.lower()])
 
     def _objective(self, trial):
         """
