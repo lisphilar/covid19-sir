@@ -79,7 +79,7 @@ class _ParamEstimator(Term):
             Please refer to covsirphy.Evaluator.score() for metric names.
         """
         timeout = check_dict.get("timeout", 180)
-        timeout_iteration = check_dict.get("timeout_iteration", 5)
+        timeout_iteration = check_dict.get("timeout_iteration", 1)
         tail_n = check_dict.get("tail_n", 4)
         allowance = check_dict.get("allowance", (0.99, 1.01))
         # Initialize optimization
