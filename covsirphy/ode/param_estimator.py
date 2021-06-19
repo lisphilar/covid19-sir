@@ -31,6 +31,12 @@ class _ParamEstimator(Term):
         metric (str): metric to minimize
         quantiles (tuple(int, int)): quantiles to cut parameter range, like confidence interval
     """
+    PRUNER_DICT = {
+        "hyperband": optuna.pruners.HyperbandPruner,
+        "median": optuna.pruners.MedianPruner,
+        "threshold": optuna.pruners.ThresholdPruner,
+        "percentile": optuna.pruners.PercentilePruner,
+    }
 
     def __init__(self, model, data, tau, metric, quantiles):
         self._model = self._ensure_subclass(model, ModelBase, name="model")
@@ -65,6 +71,7 @@ class _ParamEstimator(Term):
                 - pruner (str): kind of pruner (hyperband, median, threshold or percentile)
                 - upper (float): works for "threshold" pruner, intermediate score is larger than this value, it prunes
                 - percentile (float): works for "Percentile" pruner, the best intermediate value is in the bottom percentile among trials, it prunes
+                - constant_liar (bool): whether use constant liar to reduce search effort or not
 
         Returns:
             dict(str, object):
@@ -78,14 +85,12 @@ class _ParamEstimator(Term):
         Note:
             Please refer to covsirphy.Evaluator.score() for metric names.
         """
-        timeout = check_dict.get("timeout", 180)
-        timeout_iteration = check_dict.get("timeout_iteration", 1)
-        tail_n = check_dict.get("tail_n", 4)
-        allowance = check_dict.get("allowance", (0.99, 1.01))
+        timeout = check_dict["timeout"]
+        timeout_iteration = check_dict["timeout_iteration"]
+        tail_n = check_dict["tail_n"]
+        allowance = check_dict["allowance"]
         # Initialize optimization
-        study_kwargs = {"pruner": "threshold", "upper": 0.5, "percentile": 50, "seed": 0}
-        study_kwargs.update(study_dict)
-        study = self._init_study(**find_args(self._init_study, **study_kwargs))
+        study = self.init_study(**study_dict)
         # The number of iterations
         iteration_n = math.ceil(timeout / timeout_iteration)
         stopmatch = StopWatch()
@@ -94,14 +99,14 @@ class _ParamEstimator(Term):
         param_dict = {}
         for _ in range(iteration_n):
             # Run iteration
-            study.optimize(self._objective, n_jobs=1, timeout=timeout_iteration)
+            study.optimize(self.objective, n_jobs=1, timeout=timeout_iteration)
             param_dict = study.best_params.copy()
             # If score did not change in the last iterations, stop running
             scores.append(self._score(**param_dict))
             if len(scores) >= tail_n and len(set(scores[-tail_n:])) == 1:
                 break
             # Check max values are in the allowance
-            if self._is_in_allowance(allowance, **param_dict):
+            if self.is_in_allowance(allowance, **param_dict):
                 break
         model_instance = self._model(self._population, **param_dict)
         return {
@@ -113,34 +118,23 @@ class _ParamEstimator(Term):
             self.RUNTIME: stopmatch.stop_show(),
         }
 
-    def _init_study(self, pruner, upper, percentile, seed):
+    def init_study(self, pruner, **kwargs):
         """
         Initialize Optuna study.
 
         Args:
             pruner (str): Hyperband, Median, Threshold or Percentile
-            upper (float): works for "threshold" pruner,
-                intermediate score is larger than this value, it prunes
-            percentile (float): works for "threshold" pruner,
-                the best intermediate value is in the bottom percentile among trials, it prunes
-            seed (int or None): random seed of hyperparameter optimization
+            kwargs: keyword arguments of pruners and TPESampler
 
         Returns:
             optuna.study.Study
         """
-        pruner_dict = {
-            "hyperband": optuna.pruners.HyperbandPruner(),
-            "median": optuna.pruners.MedianPruner(),
-            "threshold": optuna.pruners.ThresholdPruner(upper=upper),
-            "percentile": optuna.pruners.PercentilePruner(percentile=percentile),
-        }
-        # constant_liar argument can be used from Optuna version 2.8.0
-        sampler_kwargs = {"seed": seed, "constant_liar": False}
-        sampler = TPESampler(find_args(TPESampler, **sampler_kwargs))
-        return optuna.create_study(
-            direction="minimize", sampler=sampler, pruner=pruner_dict[pruner.lower()])
+        pruner_class = self.PRUNER_DICT.get(pruner.lower(), optuna.pruners.ThresholdPruner)
+        pruner = pruner_class(**find_args(pruner_class, **kwargs))
+        sampler = TPESampler(**find_args(TPESampler, **kwargs))
+        return optuna.create_study(direction="minimize", sampler=sampler, pruner=pruner)
 
-    def _objective(self, trial):
+    def objective(self, trial):
         """
         Objective function to minimize.
         Score will be calculated with the data and metric.
@@ -180,7 +174,7 @@ class _ParamEstimator(Term):
         evaluator = Evaluator(taufree_df, sim_df, how="inner", on=None)
         return evaluator.score(metric=self._metric)
 
-    def _is_in_allowance(self, allowance, **kwargs):
+    def is_in_allowance(self, allowance, **kwargs):
         """
         Return whether all max values of estimated values are in allowance or not.
 
