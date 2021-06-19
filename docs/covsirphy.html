@@ -70,7 +70,7 @@
             
             
               <div class="version">
-                2.20.3-iota
+                2.20.3-iota-fu1
               </div>
             
           
@@ -3783,16 +3783,17 @@ Estimators know tau values before parameter estimation.</p>
 </p></li>
 <li><p><strong>quantiles</strong> (<em>tuple</em><em>(</em><em>int</em><em>, </em><em>int</em><em>)</em>) – quantiles to cut parameter range, like confidence interval</p></li>
 <li><p><strong>check_dict</strong> (<em>dict</em><em>[</em><em>str</em><em>, </em><em>object</em><em>] or </em><em>None</em>) – setting of validation
-- None means {“timeout”: 180, “timeout_interation”: 5, “tail_n”: 4, “allowance”: (0.99, 1.01)}
+- None means {“timeout”: 180, “timeout_interation”: 1, “tail_n”: 4, “allowance”: (0.99, 1.01)}
 - timeout (int): timeout of optimization
 - timeout_iteration (int): timeout of one iteration
 - tail_n (int): the number of iterations to decide whether score did not change for the last iterations
 - allowance (tuple(float, float)): the allowance of the max predicted values</p></li>
 <li><p><strong>study_dict</strong> (<em>dict</em><em>[</em><em>str</em><em>, </em><em>object</em><em>] or </em><em>None</em>) – setting of optimization study
-- None means {“pruner”: “threshold”, “upper”: 0.5, “percentile”: 50, “seed”: 0}
+- None means {“pruner”: “threshold”, “upper”: 0.5, “percentile”: 50, “seed”: 0, “constant_liar”: False}
 - pruner (str): kind of pruner (hyperband, median, threshold or percentile)
 - upper (float): works for “threshold” pruner, intermediate score is larger than this value, it prunes
-- percentile (float): works for “Percentile” pruner, the best intermediate value is in the bottom percentile among trials, it prunes</p></li>
+- percentile (float): works for “Percentile” pruner, the best intermediate value is in the bottom percentile among trials, it prunes
+- constant_liar (bool): whether use constant liar to reduce search effort or not</p></li>
 <li><p><strong>kwargs</strong> – we can set arguments directly. E.g. timeout=180 for check_dict={“timeout”: 180,…}</p></li>
 </ul>
 </dd>

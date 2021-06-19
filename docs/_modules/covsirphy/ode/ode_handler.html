@@ -68,7 +68,7 @@
             
             
               <div class="version">
-                2.20.3-iota
+                2.20.3-iota-fu1
               </div>
             
           
@@ -399,16 +399,17 @@
 <span class="sd">                    - Recovered (int): the number of recovered cases</span>
 <span class="sd">            quantiles (tuple(int, int)): quantiles to cut parameter range, like confidence interval</span>
 <span class="sd">            check_dict (dict[str, object] or None): setting of validation</span>
-<span class="sd">                - None means {&quot;timeout&quot;: 180, &quot;timeout_interation&quot;: 5, &quot;tail_n&quot;: 4, &quot;allowance&quot;: (0.99, 1.01)}</span>
+<span class="sd">                - None means {&quot;timeout&quot;: 180, &quot;timeout_interation&quot;: 1, &quot;tail_n&quot;: 4, &quot;allowance&quot;: (0.99, 1.01)}</span>
 <span class="sd">                - timeout (int): timeout of optimization</span>
 <span class="sd">                - timeout_iteration (int): timeout of one iteration</span>
 <span class="sd">                - tail_n (int): the number of iterations to decide whether score did not change for the last iterations</span>
 <span class="sd">                - allowance (tuple(float, float)): the allowance of the max predicted values</span>
 <span class="sd">            study_dict (dict[str, object] or None): setting of optimization study</span>
-<span class="sd">                - None means {&quot;pruner&quot;: &quot;threshold&quot;, &quot;upper&quot;: 0.5, &quot;percentile&quot;: 50, &quot;seed&quot;: 0}</span>
+<span class="sd">                - None means {&quot;pruner&quot;: &quot;threshold&quot;, &quot;upper&quot;: 0.5, &quot;percentile&quot;: 50, &quot;seed&quot;: 0, &quot;constant_liar&quot;: False}</span>
 <span class="sd">                - pruner (str): kind of pruner (hyperband, median, threshold or percentile)</span>
 <span class="sd">                - upper (float): works for &quot;threshold&quot; pruner, intermediate score is larger than this value, it prunes</span>
 <span class="sd">                - percentile (float): works for &quot;Percentile&quot; pruner, the best intermediate value is in the bottom percentile among trials, it prunes</span>
+<span class="sd">                - constant_liar (bool): whether use constant liar to reduce search effort or not</span>
 <span class="sd">            kwargs: we can set arguments directly. E.g. timeout=180 for check_dict={&quot;timeout&quot;: 180,...}</span>
 
 <span class="sd">        Raises:</span>
@@ -437,16 +438,18 @@
             <span class="k">raise</span> <span class="n">UnExecutedError</span><span class="p">(</span>
                 <span class="s2">&quot;ODEHandler.estimate_tau()&quot;</span><span class="p">,</span>
                 <span class="n">message</span><span class="o">=</span><span class="s2">&quot;or specify tau when creating an instance of ODEHandler&quot;</span><span class="p">)</span>
-        <span class="c1"># Arguments used in the old Estimator</span>
-        <span class="n">check_dict</span> <span class="o">=</span> <span class="n">check_dict</span> <span class="ow">or</span> <span class="p">{</span>
-            <span class="s2">&quot;timeout&quot;</span><span class="p">:</span> <span class="mi">180</span><span class="p">,</span> <span class="s2">&quot;timeout_interation&quot;</span><span class="p">:</span> <span class="mi">5</span><span class="p">,</span> <span class="s2">&quot;tail_n&quot;</span><span class="p">:</span> <span class="mi">4</span><span class="p">,</span> <span class="s2">&quot;allowance&quot;</span><span class="p">:</span> <span class="p">(</span><span class="mf">0.99</span><span class="p">,</span> <span class="mf">1.01</span><span class="p">)}</span>
-        <span class="n">check_dict</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">kwargs</span><span class="p">)</span>
-        <span class="n">study_dict</span> <span class="o">=</span> <span class="n">study_dict</span> <span class="ow">or</span> <span class="p">{</span><span class="s2">&quot;pruner&quot;</span><span class="p">:</span> <span class="s2">&quot;threshold&quot;</span><span class="p">,</span> <span class="s2">&quot;upper&quot;</span><span class="p">:</span> <span class="mf">0.5</span><span class="p">,</span> <span class="s2">&quot;percentile&quot;</span><span class="p">:</span> <span class="mi">50</span><span class="p">,</span> <span class="s2">&quot;seed&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">}</span>
-        <span class="n">study_dict</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="c1"># Arguments of _ParamEstimator</span>
+        <span class="n">check_kwargs</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;timeout&quot;</span><span class="p">:</span> <span class="mi">180</span><span class="p">,</span> <span class="s2">&quot;timeout_iteration&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span> <span class="s2">&quot;tail_n&quot;</span><span class="p">:</span> <span class="mi">4</span><span class="p">,</span> <span class="s2">&quot;allowance&quot;</span><span class="p">:</span> <span class="p">(</span><span class="mf">0.99</span><span class="p">,</span> <span class="mf">1.01</span><span class="p">)}</span>
+        <span class="n">check_kwargs</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">check_dict</span> <span class="ow">or</span> <span class="p">{})</span>
+        <span class="n">check_kwargs</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="n">study_kwargs</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s2">&quot;pruner&quot;</span><span class="p">:</span> <span class="s2">&quot;threshold&quot;</span><span class="p">,</span> <span class="s2">&quot;upper&quot;</span><span class="p">:</span> <span class="mf">0.5</span><span class="p">,</span> <span class="s2">&quot;percentile&quot;</span><span class="p">:</span> <span class="mi">50</span><span class="p">,</span> <span class="s2">&quot;seed&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span> <span class="s2">&quot;constant_liar&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">}</span>
+        <span class="n">study_kwargs</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">study_dict</span> <span class="ow">or</span> <span class="p">{})</span>
+        <span class="n">study_kwargs</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">kwargs</span><span class="p">)</span>
         <span class="c1"># ODE parameter estimation</span>
         <span class="n">est_f</span> <span class="o">=</span> <span class="n">functools</span><span class="o">.</span><span class="n">partial</span><span class="p">(</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_estimate_params</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">df</span><span class="p">,</span> <span class="n">quantiles</span><span class="o">=</span><span class="n">quantiles</span><span class="p">,</span>
-            <span class="n">check_dict</span><span class="o">=</span><span class="n">check_dict</span><span class="p">,</span> <span class="n">study_dict</span><span class="o">=</span><span class="n">study_dict</span><span class="p">)</span>
+            <span class="n">check_dict</span><span class="o">=</span><span class="n">check_kwargs</span><span class="p">,</span> <span class="n">study_dict</span><span class="o">=</span><span class="n">study_kwargs</span><span class="p">)</span>
         <span class="n">phases</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_info_dict</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_n_jobs</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
             <span class="n">est_dict_list</span> <span class="o">=</span> <span class="p">[</span><span class="n">est_f</span><span class="p">(</span><span class="n">ph</span><span class="p">)</span> <span class="k">for</span> <span class="n">ph</span> <span class="ow">in</span> <span class="n">phases</span><span class="p">]</span>
