@@ -37,9 +37,10 @@ def main(country="Italy", province=None, file_prefix="ita"):
     loader = cs.DataLoader(input_dir)
     jhu_data = loader.jhu()
     oxcgrt_data = loader.oxcgrt()
+    vaccine_data = loader.vaccine()
     # Start scenario analysis
     snl = cs.Scenario(country=country, province=province)
-    snl.register(jhu_data, extras=[oxcgrt_data])
+    snl.register(jhu_data, extras=[oxcgrt_data, vaccine_data])
     # Show records
     record_df = snl.records(**filer.png("records"))
     record_df.to_csv(**filer.csv("records", index=False))
