@@ -223,16 +223,17 @@ class ODEHandler(Term):
                     - Recovered (int): the number of recovered cases
             quantiles (tuple(int, int)): quantiles to cut parameter range, like confidence interval
             check_dict (dict[str, object] or None): setting of validation
-                - None means {"timeout": 180, "timeout_interation": 5, "tail_n": 4, "allowance": (0.99, 1.01)}
+                - None means {"timeout": 180, "timeout_interation": 1, "tail_n": 4, "allowance": (0.99, 1.01)}
                 - timeout (int): timeout of optimization
                 - timeout_iteration (int): timeout of one iteration
                 - tail_n (int): the number of iterations to decide whether score did not change for the last iterations
                 - allowance (tuple(float, float)): the allowance of the max predicted values
             study_dict (dict[str, object] or None): setting of optimization study
-                - None means {"pruner": "threshold", "upper": 0.5, "percentile": 50, "seed": 0}
+                - None means {"pruner": "threshold", "upper": 0.5, "percentile": 50, "seed": 0, "constant_liar": False}
                 - pruner (str): kind of pruner (hyperband, median, threshold or percentile)
                 - upper (float): works for "threshold" pruner, intermediate score is larger than this value, it prunes
                 - percentile (float): works for "Percentile" pruner, the best intermediate value is in the bottom percentile among trials, it prunes
+                - constant_liar (bool): whether use constant liar to reduce search effort or not
             kwargs: we can set arguments directly. E.g. timeout=180 for check_dict={"timeout": 180,...}
 
         Raises:
@@ -261,16 +262,18 @@ class ODEHandler(Term):
             raise UnExecutedError(
                 "ODEHandler.estimate_tau()",
                 message="or specify tau when creating an instance of ODEHandler")
-        # Arguments used in the old Estimator
-        check_dict = check_dict or {
-            "timeout": 180, "timeout_interation": 5, "tail_n": 4, "allowance": (0.99, 1.01)}
-        check_dict.update(kwargs)
-        study_dict = study_dict or {"pruner": "threshold", "upper": 0.5, "percentile": 50, "seed": 0}
-        study_dict.update(kwargs)
+        # Arguments of _ParamEstimator
+        check_kwargs = {"timeout": 180, "timeout_iteration": 1, "tail_n": 4, "allowance": (0.99, 1.01)}
+        check_kwargs.update(check_dict or {})
+        check_kwargs.update(kwargs)
+        study_kwargs = {
+            "pruner": "threshold", "upper": 0.5, "percentile": 50, "seed": 0, "constant_liar": False}
+        study_kwargs.update(study_dict or {})
+        study_kwargs.update(kwargs)
         # ODE parameter estimation
         est_f = functools.partial(
             self._estimate_params, data=df, quantiles=quantiles,
-            check_dict=check_dict, study_dict=study_dict)
+            check_dict=check_kwargs, study_dict=study_kwargs)
         phases = list(self._info_dict.keys())
         if self._n_jobs == 1:
             est_dict_list = [est_f(ph) for ph in phases]
