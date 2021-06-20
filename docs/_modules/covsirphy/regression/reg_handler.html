@@ -68,7 +68,7 @@
             
             
               <div class="version">
-                2.20.3-iota-fu1
+                2.20.3-lambda
               </div>
             
           
@@ -234,12 +234,13 @@
         <span class="c1"># The best regressor name and determined delay period</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_best</span> <span class="o">=</span> <span class="kc">None</span>
 
-<div class="viewcode-block" id="RegressionHandler.fit"><a class="viewcode-back" href="../../../covsirphy.regression.html#covsirphy.RegressionHandler.fit">[docs]</a>    <span class="k">def</span> <span class="nf">fit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">metric</span><span class="p">):</span>
+<div class="viewcode-block" id="RegressionHandler.fit"><a class="viewcode-back" href="../../../covsirphy.regression.html#covsirphy.RegressionHandler.fit">[docs]</a>    <span class="k">def</span> <span class="nf">fit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">metric</span><span class="p">,</span> <span class="n">regressors</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Fit regressors and select the best regressor based on the scores with test dataset.</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            metric (str): metric name to select the best regressor</span>
+<span class="sd">            regressor (list[str]): list of regressors selected from en, dt, lgbm, svr (refer to note)</span>
 
 <span class="sd">        Raises:</span>
 <span class="sd">            ValueError: un-expected parameter values were predcited by all regressors, out of range (0, 1)</span>
@@ -249,25 +250,27 @@
 
 <span class="sd">        Note:</span>
 <span class="sd">            All regressors are here.</span>
-<span class="sd">            - Indicators -&gt; Parameters with Elastic Net</span>
-<span class="sd">            - Indicators -&gt; Parameters with Decision Tree Regressor</span>
-<span class="sd">            - Indicators -&gt; Parameters with Light Gradient Boosting Machine Regressor</span>
-<span class="sd">            - Indicators -&gt; Parameters with Epsilon-Support Vector Regressor</span>
+<span class="sd">            - &quot;en&quot;: Indicators -&gt; Parameters with Elastic Net</span>
+<span class="sd">            - &quot;dt&quot;: Indicators -&gt; Parameters with Decision Tree Regressor</span>
+<span class="sd">            - &quot;lgbm&quot;: Indicators -&gt; Parameters with Light Gradient Boosting Machine Regressor</span>
+<span class="sd">            - &quot;svr&quot;: Indicators -&gt; Parameters with Epsilon-Support Vector Regressor</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="c1"># Get X/y dataset</span>
         <span class="n">df</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_data</span><span class="o">.</span><span class="n">drop</span><span class="p">([</span><span class="bp">self</span><span class="o">.</span><span class="n">C</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">CI</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">F</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">R</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">S</span><span class="p">],</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">errors</span><span class="o">=</span><span class="s2">&quot;ignore&quot;</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_ensure_dataframe</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;data&quot;</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_parameters</span><span class="p">)</span>
         <span class="n">X</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">drop</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_parameters</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
         <span class="n">y</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">loc</span><span class="p">[:,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_parameters</span><span class="p">]</span>
-        <span class="c1"># All approaches</span>
-        <span class="n">regressors</span> <span class="o">=</span> <span class="p">[</span>
-            <span class="n">_ParamElasticNetRegressor</span><span class="p">,</span>
-            <span class="n">_ParamDecisionTreeRegressor</span><span class="p">,</span>
-            <span class="n">_ParamLightGBMRegressor</span><span class="p">,</span>
-            <span class="n">_ParamSVRegressor</span><span class="p">,</span>
-        <span class="p">]</span>
+        <span class="c1"># Select regressors</span>
+        <span class="n">all_reg_dict</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s2">&quot;en&quot;</span><span class="p">:</span> <span class="n">_ParamElasticNetRegressor</span><span class="p">,</span>
+            <span class="s2">&quot;dt&quot;</span><span class="p">:</span> <span class="n">_ParamDecisionTreeRegressor</span><span class="p">,</span>
+            <span class="s2">&quot;lgbm&quot;</span><span class="p">:</span> <span class="n">_ParamLightGBMRegressor</span><span class="p">,</span>
+            <span class="s2">&quot;svr&quot;</span><span class="p">:</span> <span class="n">_ParamSVRegressor</span><span class="p">,</span>
+        <span class="p">}</span>
+        <span class="n">sel_regressors</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="n">reg</span> <span class="k">for</span> <span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">reg</span><span class="p">)</span> <span class="ow">in</span> <span class="n">all_reg_dict</span><span class="o">.</span><span class="n">items</span><span class="p">()</span> <span class="k">if</span> <span class="n">regressors</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">regressors</span><span class="p">]</span>
         <span class="n">approach_dict</span> <span class="o">=</span> <span class="p">{</span>
-            <span class="n">reg</span><span class="o">.</span><span class="n">DESC</span><span class="p">:</span> <span class="n">reg</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_delay_candidates</span><span class="p">,</span> <span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">_kwargs</span><span class="p">)</span> <span class="k">for</span> <span class="n">reg</span> <span class="ow">in</span> <span class="n">regressors</span><span class="p">}</span>
+            <span class="n">reg</span><span class="o">.</span><span class="n">DESC</span><span class="p">:</span> <span class="n">reg</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_delay_candidates</span><span class="p">,</span> <span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">_kwargs</span><span class="p">)</span> <span class="k">for</span> <span class="n">reg</span> <span class="ow">in</span> <span class="n">sel_regressors</span><span class="p">}</span>
         <span class="c1"># Predicted all parameter values must be &gt;= 0</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_reg_dict</span> <span class="o">=</span> <span class="p">{</span>
             <span class="n">k</span><span class="p">:</span> <span class="n">v</span> <span class="k">for</span> <span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="n">v</span><span class="p">)</span> <span class="ow">in</span> <span class="n">approach_dict</span><span class="o">.</span><span class="n">items</span><span class="p">()</span>
@@ -320,7 +323,7 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_reg_dict</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_best</span><span class="p">]</span><span class="o">.</span><span class="n">predict</span><span class="p">()</span></div>
 
-<div class="viewcode-block" id="RegressionHandler.pred_actual_plot"><a class="viewcode-back" href="../../../covsirphy.regression.html#covsirphy.RegressionHandler.pred_actual_plot">[docs]</a>    <span class="k">def</span> <span class="nf">pred_actual_plot</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">metric</span><span class="o">=</span><span class="s2">&quot;R2&quot;</span><span class="p">,</span> <span class="n">filename</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<div class="viewcode-block" id="RegressionHandler.pred_actual_plot"><a class="viewcode-back" href="../../../covsirphy.regression.html#covsirphy.RegressionHandler.pred_actual_plot">[docs]</a>    <span class="k">def</span> <span class="nf">pred_actual_plot</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">metric</span><span class="p">,</span> <span class="n">filename</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Create a scatter plot (predicted vs. actual parameter values).</span>
 
