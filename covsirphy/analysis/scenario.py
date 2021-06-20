@@ -1253,7 +1253,7 @@ class Scenario(Term):
                 - None: Scenario.estimate_delay() calculate automatically
             removed_cols (list[str] or None): list of variables to remove from X dataset or None (indicators used to estimate delay period)
             metric (str): metric name
-            kwargs: keyword arguments of sklearn.model_selection.train_test_split() and Scenario.fit_accuracy()
+            kwargs: keyword arguments of sklearn.model_selection.train_test_split(), RegressorHandler.fit() and Scenario.fit_accuracy()
 
         Raises:
             covsirphy.UnExecutedError: Scenario.estimate() or Scenario.add() were not performed
@@ -1310,7 +1310,7 @@ class Scenario(Term):
             delay = self._ensure_natural_int(delay, name="delay")
         # Fit regression models
         handler = RegressionHandler(data=data, model=self._model, delay=delay, **kwargs)
-        handler.fit(metric=metric)
+        handler.fit(metric=metric, **find_args(RegressionHandler.fit, **kwargs))
         self._reghandler_dict[name] = handler
         # Accuracy
         self.fit_accuracy(name=name, metric=metric, **kwargs)
