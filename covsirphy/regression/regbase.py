@@ -195,6 +195,19 @@ class _RegressorBase(Term):
         """
         return 0 if not value else np.around(value, digits - int(floor(log10(abs(value)))) - 1)
 
+    def _float2str(self, value, to_percentage):
+        """
+        Convert a float to a string.
+
+        Args:
+            value (float): target value
+            to_percentage (bool): whether show the value as a percentage or not
+
+        Returns:
+            str: the string
+        """
+        return f"{value:.2%}" if to_percentage else f"{value:.3g}"
+
     def pred_actual_plot(self, metric, filename=None):
         """
         Create a scatter plot (predicted vs. actual parameter values).
@@ -205,11 +218,15 @@ class _RegressorBase(Term):
         """
         TITLE = f"Predicted vs. actual parameter values\n{self.DESC}"
         PRED, ACTUAL = "Predicted values", "Actual values"
+        # Scores
+        train_score = self.score_train(metric=metric)
+        test_score = self.score_test(metric=metric)
         # Legend
-        train_score = self._round(self.score_train(metric=metric), 3)
-        test_score = self._round(self.score_test(metric=metric), 3)
-        train_title = f"Training data (n={len(self._X_train)}, {metric}={train_score})"
-        test_title = f"Test data (n={len(self._X_test)}, {metric}={test_score})"
+        to_percentage = metric.upper() == "MAPE"
+        train_score_str = self._float2str(train_score, to_percentage=to_percentage)
+        test_score_str = self._float2str(test_score, to_percentage=to_percentage)
+        train_title = f"Training data (n={len(self._X_train)}, {metric}={train_score_str})"
+        test_title = f"Test data (n={len(self._X_test)}, {metric}={test_score_str})"
         # Predicted & training
         pred_train = pd.DataFrame(self._pipeline.predict(self._X_train), columns=self._y_train.columns)
         pred_train["subset"] = train_title

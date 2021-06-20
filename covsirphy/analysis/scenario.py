@@ -1236,7 +1236,7 @@ class Scenario(Term):
         delay_period = int((low_lim + Q1) / 2)
         return (int(delay_period), df)
 
-    def fit(self, oxcgrt_data=None, name="Main", delay=(7, 31), removed_cols=None, metric="R2", **kwargs):
+    def fit(self, oxcgrt_data=None, name="Main", delay=(7, 31), removed_cols=None, metric="MAPE", **kwargs):
         """
         Fit regressors to predict the parameter values in the future phases,
         assuming that indicators will impact on ODE parameter values/the number of cases with delay.
@@ -1331,19 +1331,22 @@ class Scenario(Term):
             raise UnExecutedError(f"Scenario.fit(name={name})")
         return self._reghandler_dict[name]
 
-    def fit_accuracy(self, name="Main", show_figure=True, **kwargs):
+    def fit_accuracy(self, name="Main", metric="MAPE", show_figure=True, **kwargs):
         """
         Create a plot to show the accuracy of forecasting (predicted vs. actual parameter values).
 
         Args:
             name (str): scenario name
+            metric (str): metric name, refer to covsirphy.Evaluator.score()
             show_figure (bool): whether show figure or not
             kwargs: keyword arguments of RegressionHandler.pred_true_plot()
         """
+        metric = kwargs.pop("metrics") if "metrics" in kwargs else metric
         handler = self._get_fit_handler(name=name)
         # Show predicted vs. actual plot
         if show_figure:
-            handler.pred_actual_plot(**find_args(RegressionHandler.pred_actual_plot, **kwargs))
+            handler.pred_actual_plot(
+                metric=metric, **find_args(RegressionHandler.pred_actual_plot, **kwargs))
 
     def predict(self, days=None, name="Main"):
         """
