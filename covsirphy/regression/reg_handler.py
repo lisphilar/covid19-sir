@@ -58,12 +58,13 @@ class RegressionHandler(Term):
         # The best regressor name and determined delay period
         self._best = None
 
-    def fit(self, metric):
+    def fit(self, metric, regressors=None):
         """
         Fit regressors and select the best regressor based on the scores with test dataset.
 
         Args:
             metric (str): metric name to select the best regressor
+            regressor (list[str]): list of regressors selected from en, dt, lgbm, svr (refer to note)
 
         Raises:
             ValueError: un-expected parameter values were predcited by all regressors, out of range (0, 1)
@@ -73,25 +74,27 @@ class RegressionHandler(Term):
 
         Note:
             All regressors are here.
-            - Indicators -> Parameters with Elastic Net
-            - Indicators -> Parameters with Decision Tree Regressor
-            - Indicators -> Parameters with Light Gradient Boosting Machine Regressor
-            - Indicators -> Parameters with Epsilon-Support Vector Regressor
+            - "en": Indicators -> Parameters with Elastic Net
+            - "dt": Indicators -> Parameters with Decision Tree Regressor
+            - "lgbm": Indicators -> Parameters with Light Gradient Boosting Machine Regressor
+            - "svr": Indicators -> Parameters with Epsilon-Support Vector Regressor
         """
         # Get X/y dataset
         df = self._data.drop([self.C, self.CI, self.F, self.R, self.S], axis=1, errors="ignore")
         self._ensure_dataframe(df, name="data", columns=self._parameters)
         X = df.drop(self._parameters, axis=1)
         y = df.loc[:, self._parameters]
-        # All approaches
-        regressors = [
-            _ParamElasticNetRegressor,
-            _ParamDecisionTreeRegressor,
-            _ParamLightGBMRegressor,
-            _ParamSVRegressor,
-        ]
+        # Select regressors
+        all_reg_dict = {
+            "en": _ParamElasticNetRegressor,
+            "dt": _ParamDecisionTreeRegressor,
+            "lgbm": _ParamLightGBMRegressor,
+            "svr": _ParamSVRegressor,
+        }
+        sel_regressors = [
+            reg for (name, reg) in all_reg_dict.items() if regressors is None or name in regressors]
         approach_dict = {
-            reg.DESC: reg(X, y, self._delay_candidates, **self._kwargs) for reg in regressors}
+            reg.DESC: reg(X, y, self._delay_candidates, **self._kwargs) for reg in sel_regressors}
         # Predicted all parameter values must be >= 0
         self._reg_dict = {
             k: v for (k, v) in approach_dict.items()
