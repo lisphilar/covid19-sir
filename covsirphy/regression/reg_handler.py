@@ -144,7 +144,7 @@ class RegressionHandler(Term):
         """
         return self._reg_dict[self._best].predict()
 
-    def pred_actual_plot(self, metric="R2", filename=None):
+    def pred_actual_plot(self, metric, filename=None):
         """
         Create a scatter plot (predicted vs. actual parameter values).
 
